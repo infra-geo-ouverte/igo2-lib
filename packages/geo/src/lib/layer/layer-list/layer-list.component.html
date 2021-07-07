@@ -21,7 +21,7 @@
 </mat-list-item>
 <mat-divider></mat-divider>
 
-<igo-list #igoList [ngClass]="(layerTool && !selection) ? 'igo-list-min-height': 'igo-list-max-height'" [navigation]="false" [selection]="false">
+<igo-list #igoList [ngClass]="{'igo-list-tools-multi': selection, 'igo-list-tools-single': (layerTool && !selection), 'igo-list-no-tools': (!layerTool && !selection)}" [navigation]="false" [selection]="false">
   <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
       igoListItem

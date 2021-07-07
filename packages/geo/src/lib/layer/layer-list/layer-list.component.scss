@@ -1,9 +1,14 @@
-:host .igo-list-min-height {
+:host .igo-list-no-tools {
+  height: calc(100% - 57px);
+  padding-top: 8px;
+}
+
+:host .igo-list-tools-single {
   height: calc(100% - 153px);
   padding-top: 8px;
 }
 
-:host .igo-list-max-height {
+:host .igo-list-tools-multi {
   height: calc(100% - 178px);
   padding-top: 8px;
 }
