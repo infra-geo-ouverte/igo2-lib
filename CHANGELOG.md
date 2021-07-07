@@ -1,3 +1,12 @@
+## [1.8.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.0...1.8.1) (2021-07-07)
+
+
+### Bug Fixes
+
+* **layer-list:** scrollable zone bug fix ([#889](https://github.com/infra-geo-ouverte/igo2-lib/issues/889)) ([0c3a2b7](https://github.com/infra-geo-ouverte/igo2-lib/commit/0c3a2b77a5eeb87addc286f6a888223b7016044d))
+
+
+
 # [1.8.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.7.2...1.8.0) (2021-07-07)
 
 
