@@ -290,11 +290,19 @@
         "resolution": "Résolution",
         "saveBtn": "Sauvegarder",
         "scale": "Échelle",
-        "showLegend": "Afficher la légende",
         "showProjection": "Afficher la projection",
         "showScale": "Afficher l'échelle",
         "title": "Titre",
-        "subtitle": "Sous-titre"
+        "subtitle": "Sous-titre",
+        "legendPosition": "Position de la légende",
+        "legendPositions": {
+          "none": "Aucune légende",
+          "topleft": "Coin haut gauche de la carte",
+          "topright": "Coin haut droit de la carte",
+          "bottomleft": "Coin bas gauche de la carte",
+          "bottomright": "Coin bas droit de la carte",
+          "newpage": "Sur une nouvelle page"
+        }
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - arrêts",
