@@ -95,7 +95,7 @@ export class TileDBService {
     return subject;
   }
 
-  getRegionByID(id: number): Observable<any> {
+  getRegionByID(id: number): Observable<any[]> {
     if (!id) {
       return;
     }

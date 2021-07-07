@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscription, zip } from 'rxjs';
-import { skip } from 'rxjs/operators';
-import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region } from '../storage';
+import { map, skip } from 'rxjs/operators';
+import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region, TileDBData } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 import { TileGenerationParams } from './tile-downloader/tile-generation-strategies/tile-generation-params.interface';
@@ -12,6 +12,11 @@ export interface TileToDownload {
   featureText: string;
   templateUrl: string;
   tileGrid;
+}
+
+export interface RegionUpdateParams {
+  name: string;
+  newTiles: TileToDownload[];
 }
 
 @Injectable({
@@ -102,6 +107,73 @@ export class DownloadRegionService {
       });
   }
 
+  private updateRegionDBData(
+    oldRegion: RegionDBData, 
+    updateParams: RegionUpdateParams
+  ): RegionDBData {
+    const region: RegionDBData = oldRegion;
+    region.name = updateParams.name;
+    
+    const tileToDownload = updateParams.newTiles;
+    const newParentUrls = tileToDownload.map((tile) => {
+      return tile.url;
+    });
+    const parentUrls =  oldRegion.parentUrls.concat(newParentUrls);
+    region.parentUrls = parentUrls;
+
+    const newFeatureText = tileToDownload.map((tile) => {
+      return tile.featureText;
+    });
+    region.parentFeatureText = oldRegion.parentFeatureText.concat(newFeatureText);
+
+    const depth = oldRegion.generationParams.endLevel - oldRegion.generationParams.startLevel;
+    const numberOfTiles = this.getNumberOfTiles(parentUrls.length, depth);
+    region.numberOfTiles = numberOfTiles;
+
+    region.status = RegionStatus.Downloading;
+
+    this.regionDB.update(region);
+    return region;
+  }
+
+  public updateRegion(oldRegion: RegionDBData, updateParams: RegionUpdateParams) {
+    const region = this.updateRegionDBData(oldRegion, updateParams);
+
+    const regionID = oldRegion.id;
+    const tileToDownload = updateParams.newTiles;
+    const depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    for (const tile of tileToDownload) {
+      this.tileDownloader.downloadFromCoord(
+        tile.coord,
+        regionID,
+        depth,
+        tile.tileGrid,
+        tile.templateUrl
+      );
+    }
+    
+    const dbRequest = this.tileDB.getRegionByID(regionID)
+      .pipe(
+        map((tiles: TileDBData[]) => {
+          return tiles.map((tile) => { return tile.url; });
+        })
+      );
+    
+    dbRequest.subscribe((urls: string[]) => {
+      this.tileDownloader.downloadFromUrls(urls, regionID);
+      const collisionMap = this.tileDB.collisionsMap;
+      const validTile = this.tileDownloader.validDownloadCount;
+      
+      region.numberOfTiles = validTile;
+      region.timestamp = new Date();
+      region.status = RegionStatus.OK;
+      
+      this.regionDB.update(region);
+      this.regionDB.updateWithCollisions(collisionMap);
+      this.tileDB.resetCollisionMap();
+    });
+  }
+
   public deleteRegionByID(regionID: number): Observable<[boolean, boolean]> {
     if (!regionID) {
       return;
@@ -114,5 +186,9 @@ export class DownloadRegionService {
 
   public getDownloadSpaceEstimate(nTiles: number): number {
     return this.tileDownloader.downloadEstimate(nTiles);
+  }
+
+  public getNumberOfTiles(nParents: number, depth: number) {
+    return this.tileDownloader.numberOfTiles(depth) * nParents;
   }
 }
