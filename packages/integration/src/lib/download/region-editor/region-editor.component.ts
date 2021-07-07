@@ -42,10 +42,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isDownloading$$: Subscription;
 
   private addNewTile$$: Subscription;
-  private editionStrategy: EditionStrategy = new CreationEditionStrategy();
-  
-  //parentTileUrls: string[] = new Array();
-  
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -374,5 +370,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get disableCancelButton() {
     return this.isDownloading;
+  }
+
+  get editionStrategy(): EditionStrategy {
+    return this.state.editionStrategy;
+  }
+
+  set editionStrategy(strategy: EditionStrategy) {
+    this.state.editionStrategy = strategy;
   }
 }

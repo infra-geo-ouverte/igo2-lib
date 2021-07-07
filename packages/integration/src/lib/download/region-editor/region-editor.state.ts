@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { TileToDownload } from '@igo2/core/public_api';
 import { Feature } from '@igo2/geo/public_api';
 import { Observable } from 'rxjs';
+import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
+import { EditionStrategy } from './editing-strategy/edition-strategy';
 
 export interface EditedRegion {
     name: string;
@@ -28,6 +30,7 @@ function newEditedRegion(): EditedRegion {
  })
 export class RegionEditorState {
     private _editedRegion: EditedRegion = newEditedRegion();
+    private _editionStrategy: EditionStrategy = new CreationEditionStrategy();
     progression$: Observable<number>;
     isDownloading: boolean;
     
@@ -91,5 +94,13 @@ export class RegionEditorState {
 
     get editedTilesFeatures(): Feature[] {
         return this._editedRegion.features;
+    }
+
+    set editionStrategy(strategy: EditionStrategy) {
+        this._editionStrategy = strategy;
+    }
+
+    get editionStrategy(): EditionStrategy {
+        return this._editionStrategy;
     }
 }
