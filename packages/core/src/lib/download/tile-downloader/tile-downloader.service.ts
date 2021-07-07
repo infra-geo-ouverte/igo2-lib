@@ -131,16 +131,39 @@ export class TileDownloaderService {
     console.log('Queue :', this.urlQueue.length);
     // if not already downloading start downloading
     if (!this.isDownloading) {
-      this.downloadCount = 0;
-      this.validDownloadCount = 0;
-      this._nWorkerDone = 0;
-      this.currentDownloads = tiles.length;
-      console.log('starting download sequence!');
-      this._isDownloading = true;
-      this.isDownloading$.next(true);
-      this.downloadSequence(regionID);
+      this.startDownload(regionID, tiles.length);
+    } else {
+      this.currentDownloads += tiles.length;
     }
-    this.currentDownloads += tiles.length;
+  }
+
+  public downloadFromUrls(urls: string[], regionID: number) {
+    if (!this.network.isOnline()) {
+      return;
+    }
+
+    urls.forEach((url) => {
+      if (url) {
+        this.urlQueue.push(url);
+      }
+    });
+
+    if (!this.isDownloading) {
+      this.startDownload(regionID, urls.length);
+    } else {
+      this.currentDownloads += urls.length;
+    }
+  }
+
+  private startDownload(regionID: number, nDownloads: number) {
+    this.downloadCount = 0;
+    this.validDownloadCount = 0;
+    this._nWorkerDone = 0;
+    this.currentDownloads = nDownloads;
+    console.log('starting download sequence!');
+    this._isDownloading = true;
+    this.isDownloading$.next(true);
+    this.downloadSequence(regionID);
   }
 
   private downloadSequence(regionID: number) {
