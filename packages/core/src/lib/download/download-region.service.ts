@@ -99,6 +99,7 @@ export class DownloadRegionService {
                 timestamp: date,
                 generationParams
               }
+              
               this.regionDB.update(regionDBData);
               this.regionDB.updateWithCollisions(collisionMap);
               this.tileDB.resetCollisionMap();
@@ -160,17 +161,23 @@ export class DownloadRegionService {
       );
     
     dbRequest.subscribe((urls: string[]) => {
-      this.tileDownloader.downloadFromUrls(urls, regionID);
-      const collisionMap = this.tileDB.collisionsMap;
-      const validTile = this.tileDownloader.validDownloadCount;
-      
-      region.numberOfTiles = validTile;
-      region.timestamp = new Date();
-      region.status = RegionStatus.OK;
-      
-      this.regionDB.update(region);
-      this.regionDB.updateWithCollisions(collisionMap);
-      this.tileDB.resetCollisionMap();
+      this.tileDownloader.downloadFromUrls(urls, regionID)
+      this.isDownloading$$ = this.tileDownloader.isDownloading$
+        .pipe(skip(1))
+        .subscribe((isDownloading) => {
+          if (!isDownloading) {
+            const collisionMap = this.tileDB.collisionsMap;
+            const validTile = this.tileDownloader.validDownloadCount;
+
+            region.numberOfTiles = validTile;
+            region.timestamp = new Date();
+            region.status = RegionStatus.OK;
+
+            this.regionDB.update(region);
+            this.regionDB.updateWithCollisions(collisionMap);
+            this.tileDB.resetCollisionMap();
+          }
+        });
     });
   }
 
