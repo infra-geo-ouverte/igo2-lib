@@ -151,34 +151,27 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
-
       const z = coord[0];
-      const firstTile = this.tilesToDownload[0];
-      if (!firstTile) {
-        this.urlsToDownload.add(url);
-        const feature = this.getTileFeature(tileGrid, coord);
-        const featureText = JSON.stringify(feature);
-        
-        this.editedTilesFeature.push(feature);
-        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
-        this.parentTileUrls.push(url);
-        this.showEditedRegionFeatures();
-        return;
-      }
-
-      const firstZ = firstTile.coord[0];
-      if (z !== firstZ) {
+      const first: boolean = this.parentTileUrls.length === 0;
+      if (z !== this.parentLevel && !first) {
         this.messageService.error('The tile you selected is not on the same level as the previous ones');
         return;
+      } 
+
+      if (first) {
+        this.parentLevel = z;
       }
-      if (!this.urlsToDownload.has(url)) {
+
+      if (!this.urlsToDownload.has(url) || first) {
         this.urlsToDownload.add(url);
+
         const feature = this.getTileFeature(tileGrid, coord);
         const featureText = JSON.stringify(feature);
-        
+
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
         this.parentTileUrls.push(url);
+        
         this.showEditedRegionFeatures();
         this.updateVariables();
       } else {
@@ -258,6 +251,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     // need to change
     this.regionName = region.name;
+    this.parentLevel = region.generationParams.parentLevel;
+    console.log(this.parentLevel);
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
       return JSON.parse(featureText);
     });
@@ -326,6 +321,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get depth(): number {
       return this.state.depth;
+  }
+
+  set parentLevel(level: number) {
+    this.state.parentLevel = level;
+  }
+
+  get parentLevel(): number {
+    return this.state.parentLevel;
   }
 
   set editedTilesFeature(features: Feature[]) {
