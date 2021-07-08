@@ -242,6 +242,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public updateRegion(region: RegionDBData) {
+    if (!region) {
+      return;
+    }
+
+    if (this.isDownloading) {
+      this.messageService.error("There is already a region downloading")
+      return;
+    }
+
     this.clearEditedRegion();
     this.editionStrategy = new UpdateEditionStrategy(region);
     
