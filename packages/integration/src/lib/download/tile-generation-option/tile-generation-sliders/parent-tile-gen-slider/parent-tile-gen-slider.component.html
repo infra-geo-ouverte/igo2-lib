@@ -1,0 +1,12 @@
+<div><mat-label>Depth </mat-label><mat-label>{{endLevel}}</mat-label></div>
+<mat-slider 
+  #depthSlider
+  (input)="onSliderChange()"
+  [disabled]="disabled"
+  min="0" 
+  max="5" 
+  step="1" 
+  value="0" 
+  thumbLabel
+  tickInterval = "auto">
+</mat-slider>

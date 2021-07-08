@@ -23,6 +23,7 @@ import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { EditionStrategies } from './editing-strategy/edition-strategies';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
+import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
 
 
 @Component({
@@ -33,7 +34,7 @@ import { UpdateEditionStrategy } from './editing-strategy/update-editing-strateg
 export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
   @ViewChild('progressBar') progressBar: MatProgressBar;
-
+  @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
@@ -85,6 +86,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
+  }
+  
+  public onValueChangeTest() {
+    console.log(this.genParamComponent.tileGenerationParams);
+    console.log("AAAAAAA");
   }
 
   private updateVariables() {

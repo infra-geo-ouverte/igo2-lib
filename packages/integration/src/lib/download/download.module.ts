@@ -14,7 +14,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RegionEditorComponent } from './region-editor/region-editor.component';
 import { RegionManagerComponent } from './region-manager/region-manager.component';
 import { MatTableModule } from '@angular/material/table';
-import { MatRippleModule } from '@angular/material/core';
+import { MatOptionModule, MatRippleModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ParentTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
+import { TileGenerationOptionComponent } from './tile-generation-option/tile-generation-option.component';
 
 @NgModule({
   imports: [
@@ -22,6 +26,9 @@ import { MatRippleModule } from '@angular/material/core';
     CommonModule,
     MatCarouselModule,
     MatCardModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatOptionModule,
     MatSliderModule,
     MatInputModule,
     MatButtonModule,
@@ -34,7 +41,9 @@ import { MatRippleModule } from '@angular/material/core';
   declarations: [
     DownloadToolComponent,
     RegionEditorComponent,
-    RegionManagerComponent
+    RegionManagerComponent,
+    TileGenerationOptionComponent,
+    ParentTileGenSliderComponent,
   ],
   exports: [DownloadToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

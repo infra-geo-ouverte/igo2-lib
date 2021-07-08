@@ -27,6 +27,7 @@
   </mat-form-field>
   <br>
   <div>
+    <div>---old slider---</div>
     <div><mat-label>Depth </mat-label><mat-label>{{depth}}</mat-label></div>
     <div><mat-slider 
       #depthSlider
@@ -40,6 +41,10 @@
       thumbLabel
       tickInterval = "auto">
     </mat-slider></div>
+    <div>---old slider---</div>
+  </div>
+  <div>
+    <igo-tile-generation-option #genParam [onChange]="onValueChangeTest" [disabled]="disableSlider"></igo-tile-generation-option>
   </div>
   <div>
     <div>

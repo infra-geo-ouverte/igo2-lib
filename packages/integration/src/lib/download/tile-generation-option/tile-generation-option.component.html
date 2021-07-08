@@ -1,0 +1,9 @@
+<mat-form-field>
+  <mat-label>Generation Strategy</mat-label>
+  <mat-select #strategySelect (selectionChange)="onValueChange()" [disabled]="disabled">
+    <mat-option *ngFor="let strategy of strategies" [value]="strategy">
+      {{ strategy }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<igo-parent-tile-gen-slider [onChange]="onValueChange" [disabled]="disabled"></igo-parent-tile-gen-slider>
