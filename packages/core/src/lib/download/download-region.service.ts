@@ -162,6 +162,9 @@ export class DownloadRegionService {
       );
     
     dbRequest.subscribe((urls: string[]) => {
+      if (this.isDownloading$$) {
+        this.isDownloading$$.unsubscribe();
+      }
       this.tileDownloader.downloadFromUrls(urls, regionID)
       this.isDownloading$$ = this.tileDownloader.isDownloading$
         .pipe(skip(1))
