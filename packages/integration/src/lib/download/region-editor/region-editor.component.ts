@@ -252,7 +252,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // need to change
     this.regionName = region.name;
     this.parentLevel = region.generationParams.parentLevel;
-    console.log(this.parentLevel);
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
       return JSON.parse(featureText);
     });
