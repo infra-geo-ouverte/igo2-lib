@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { TileGenerationStrategies } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
-import { ParentTileGenSliderComponent } from './tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
+import { ParentTileGenSliderComponent, SliderGenerationParams } from './tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
 
 
 @Component({
@@ -11,7 +11,7 @@ import { ParentTileGenSliderComponent } from './tile-generation-sliders/parent-t
   styleUrls: ['./tile-generation-option.component.scss']
 })
 export class TileGenerationOptionComponent implements OnInit {
-  @Input('onChange') onValueChange: () => void;
+  @Output() onValueChange: EventEmitter<TileGenerationParams> = new EventEmitter();
   @Input('disabled') disabled: boolean = false;
 
   @Input('parentLevel') parentLevel: number;
@@ -21,17 +21,36 @@ export class TileGenerationOptionComponent implements OnInit {
   
   strategies = Object.values(TileGenerationStrategies);
 
-  private get endLevel(): number {
-    return this.generationSlider.tileGenerationParams.endLevel;
-  }
-
-  private get startLevel(): number {
-    return this.generationSlider.tileGenerationParams.startLevel;
-  }
-
   constructor() { }
+  private get sliderGenerationParams() {
+    return this.generationSlider.value;
+  }
+
+  get startLevel() {
+    return this.sliderGenerationParams.startLevel;
+  }
+
+  get endLevel() {
+    return this.sliderGenerationParams.endLevel;
+  }
+
+  get genMethod() {
+    return this.strategySelect.value;
+  }
 
   ngOnInit() {
+  }
+
+  onSliderChange(sliderGenerationParams: SliderGenerationParams) {
+    this.emitChanges();
+  }
+
+  onSelectionChange(strategy: TileGenerationStrategies) {
+    this.emitChanges();
+  }
+
+  private emitChanges() {
+    this.onValueChange.emit(this.tileGenerationParams);
   }
 
   get tileGenerationParams(): TileGenerationParams {
@@ -39,7 +58,7 @@ export class TileGenerationOptionComponent implements OnInit {
       startLevel: this.startLevel,
       parentLevel: this.parentLevel,
       endLevel: this.endLevel,
-      genMethod: this.strategySelect.value
-    }
+      genMethod: this.genMethod
+    };
   }
 }

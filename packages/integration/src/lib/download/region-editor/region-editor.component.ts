@@ -74,13 +74,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    console.log("onInit", this.genParamComponent);
     if (!this.editedTilesFeature) {
       this.regionStore.updateMany(this.editedTilesFeature);
     }
   }
 
   ngAfterViewInit() {
+    console.log("After view init", this.genParamComponent);
     this.slider.value = this.depth;
+    // this.genParamComponent.onValueChange = this.onValueChangeTest
   }
 
   ngOnDestroy() {
@@ -90,7 +93,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   
   public onValueChangeTest() {
     console.log(this.genParamComponent.tileGenerationParams);
-    console.log("AAAAAAA");
   }
 
   private updateVariables() {

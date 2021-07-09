@@ -44,7 +44,7 @@
     <div>---old slider---</div>
   </div>
   <div>
-    <igo-tile-generation-option #genParam [onChange]="onValueChangeTest" [disabled]="disableSlider"></igo-tile-generation-option>
+    <igo-tile-generation-option #genParam (onValueChange)="onValueChangeTest()" [disabled]="disableSlider" [parentLevel]="parentLevel"></igo-tile-generation-option>
   </div>
   <div>
     <div>

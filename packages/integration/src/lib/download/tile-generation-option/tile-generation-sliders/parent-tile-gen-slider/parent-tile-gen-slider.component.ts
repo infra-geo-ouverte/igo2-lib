@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
+import { EventEmitter } from '@angular/core';
+import { TransitionCheckState } from '@angular/material/checkbox';
 
 export interface SliderGenerationParams {
   startLevel: number;
-  parentLevel: number;
   endLevel: number;
 }
 
@@ -13,45 +14,41 @@ export interface SliderGenerationParams {
   styleUrls: ['./parent-tile-gen-slider.component.scss']
 })
 export class ParentTileGenSliderComponent implements OnInit, AfterViewInit {
-  @Input('onChange') onValueChangeFunction: () => void;
+  @Output() onValueChange: EventEmitter<any>= new EventEmitter();
+  
   @Input('disabled') disabled: boolean = false;
-  @Input('parentLevel')
-  get parentLevel(): number {
-    return this.tileGenerationParams.parentLevel;
-  }
-
-  set parentLevel(level: number) {
-    this.tileGenerationParams.startLevel = level;
-    this.tileGenerationParams.parentLevel = level;
-  };
+  @Input('parentLevel') parentLevel: number;
 
   @ViewChild('depthSlider') slider: MatSlider;
 
-  tileGenerationParams: SliderGenerationParams = {startLevel: 0, endLevel: 0, parentLevel: 0};
-  
+  _sliderValue: number = 0;
   get endLevel() {
-    return this.tileGenerationParams.endLevel;
+    return this._sliderValue + this.parentLevel;
   }
 
-  set endLevel(level: number) {
-    this.tileGenerationParams.endLevel = level;
+  get value(): SliderGenerationParams {
+    return {
+      startLevel: this.parentLevel,
+      endLevel: this.endLevel
+    }
   }
 
-  constructor() { 
-    this.endLevel = 0;
+  get depth() {
+    return this._sliderValue;
+  }
+
+  constructor() {
   }
 
   ngOnInit() {
-    console.log('Slider disabled value', this.disabled);
   }
 
   ngAfterViewInit() {
-    this.slider.value = 0;
+    this.slider.value = this._sliderValue;
   }
 
   onSliderChange() {
-    this.onValueChangeFunction();
-    this.endLevel = this.slider.value;
-    //console.log(this.endLevel);
+    this._sliderValue = this.slider.value;
+    this.onValueChange.emit(this.value);
   }
 }
