@@ -1,15 +1,30 @@
 <mat-form-field>
   <mat-label>Generation Strategy</mat-label>
-  <mat-select #strategySelect (selectionChange)="onSelectionChange($event)"[disabled]="disabled">
+  <mat-select 
+    #strategySelect
+    (selectionChange)="onSelectionChange($event)"
+    [disabled]="disabled"
+    [(value)]="strategy"
+  >
     <mat-option *ngFor="let strategy of strategies" [value]="strategy">
       {{ strategy }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 <container-element [ngSwitch]="strategy">
-  <igo-child-tile-gen-slider *ngSwitchCase="Child"
-  ></igo->
-  <igo-parent-tile-gen-slider *ngSwitchCase="Parent"
+  <igo-child-tile-gen-slider *ngSwitchCase="'Child'"
+    #genSlider
+    (onValueChange)="onSliderChange($event)"
+    [disabled]="disabled"
+    [parentLevel]="parentLevel"
+  ></igo-child-tile-gen-slider>
+  <igo-middle-tile-gen-slider *ngSwitchCase="'Middle'"
+    #genSlider
+    (onValueChange)="onSliderChange($event)"
+    [disabled]="disabled"
+    [parentLevel]="parentLevel"
+  ></igo-middle-tile-gen-slider>
+  <igo-parent-tile-gen-slider *ngSwitchCase="'Parent'"
     #genSlider
     (onValueChange)="onSliderChange($event)"
     [disabled]="disabled"

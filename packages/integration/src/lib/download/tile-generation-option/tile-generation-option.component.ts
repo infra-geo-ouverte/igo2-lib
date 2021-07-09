@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
-import { TileGenerationStrategies } from '@igo2/core';
+import { TileDownloaderService, TileGenerationStrategies } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
-import { ParentTileGenSliderComponent, SliderGenerationParams } from './tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
+import { ParentTileGenSliderComponent } from './tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
+import { SliderGenerationParams, TileGenerationSliderComponent } from './tile-generation-sliders/tile-generation-slider.component';
 
 
 @Component({
@@ -16,12 +17,17 @@ export class TileGenerationOptionComponent implements OnInit {
 
   @Input('parentLevel') parentLevel: number;
 
-  @ViewChild('genSlider') generationSlider: ParentTileGenSliderComponent; // for now
+  @ViewChild('genSlider') generationSlider: TileGenerationSliderComponent; // for now
   @ViewChild('strategySelect') strategySelect: MatSelect;
   
   strategies = Object.values(TileGenerationStrategies);
+  strategy: TileGenerationStrategies = TileGenerationStrategies.PARENT;
 
-  constructor() { }
+  constructor(
+    private tileDownloader: TileDownloaderService,
+    private cdRef: ChangeDetectorRef
+  ) { }
+  
   private get sliderGenerationParams() {
     return this.generationSlider.value;
   }
@@ -46,6 +52,10 @@ export class TileGenerationOptionComponent implements OnInit {
   }
 
   onSelectionChange(strategy: TileGenerationStrategies) {
+    const newStrategy = this.strategySelect.value
+    this.strategy = newStrategy;
+    this.tileDownloader.changeStrategy(newStrategy);
+    this.cdRef.detectChanges();
     this.emitChanges();
   }
 

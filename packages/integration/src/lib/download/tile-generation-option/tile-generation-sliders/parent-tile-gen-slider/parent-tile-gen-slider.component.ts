@@ -2,22 +2,20 @@ import { AfterViewInit, Component, Input, OnInit, Output, ViewChild } from '@ang
 import { MatSlider } from '@angular/material/slider';
 import { EventEmitter } from '@angular/core';
 import { TransitionCheckState } from '@angular/material/checkbox';
+import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
 
-export interface SliderGenerationParams {
-  startLevel: number;
-  endLevel: number;
-}
+
 
 @Component({
   selector: 'igo-parent-tile-gen-slider',
   templateUrl: './parent-tile-gen-slider.component.html',
   styleUrls: ['./parent-tile-gen-slider.component.scss']
 })
-export class ParentTileGenSliderComponent implements OnInit, AfterViewInit {
-  @Output() onValueChange: EventEmitter<any>= new EventEmitter();
+export class ParentTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit  {
+  // @Output() onValueChange: EventEmitter<any>= new EventEmitter();
   
-  @Input('disabled') disabled: boolean = false;
-  @Input('parentLevel') parentLevel: number;
+  // @Input('disabled') disabled: boolean = false;
+  // @Input('parentLevel') parentLevel: number;
 
   @ViewChild('depthSlider') slider: MatSlider;
 
@@ -38,6 +36,7 @@ export class ParentTileGenSliderComponent implements OnInit, AfterViewInit {
   }
 
   constructor() {
+    super()
   }
 
   ngOnInit() {
@@ -49,6 +48,6 @@ export class ParentTileGenSliderComponent implements OnInit, AfterViewInit {
 
   onSliderChange() {
     this._sliderValue = this.slider.value;
-    this.onValueChange.emit(this.value);
+    this.emitValue();
   }
 }

@@ -210,6 +210,7 @@ export class TileDownloaderService {
   }
 
   public changeStrategy(strategyName: string) {
+    console.log('strategy changed', strategyName);
     switch(strategyName) {
       case TileGenerationStrategies.PARENT:
         this.tileGenerationStrategy = new ParentTileGeneration();

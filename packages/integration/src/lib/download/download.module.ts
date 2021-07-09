@@ -19,6 +19,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ParentTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
 import { TileGenerationOptionComponent } from './tile-generation-option/tile-generation-option.component';
+import { ChildTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/child-tile-gen-slider/child-tile-gen-slider.component';
+import { MiddleTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/middle-tile-gen-slider/middle-tile-gen-slider.component';
 
 @NgModule({
   imports: [
@@ -43,7 +45,9 @@ import { TileGenerationOptionComponent } from './tile-generation-option/tile-gen
     RegionEditorComponent,
     RegionManagerComponent,
     TileGenerationOptionComponent,
-    ParentTileGenSliderComponent,
+    ChildTileGenSliderComponent,
+    MiddleTileGenSliderComponent,
+    ParentTileGenSliderComponent
   ],
   exports: [DownloadToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
