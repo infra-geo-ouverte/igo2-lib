@@ -30,7 +30,7 @@ export class CreationEditionStrategy extends EditionStrategy {
         regionDownloader.downloadSelectedRegion(
             editedRegion.tiles,
             editedRegion.name,
-            editedRegion.depth
+            editedRegion.genParams
         );
     }
 

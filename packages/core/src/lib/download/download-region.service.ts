@@ -38,7 +38,7 @@ export class DownloadRegionService {
   public downloadSelectedRegion(
     tilesToDownload: TileToDownload[],
     regionName: string,
-    depth: number
+    generationParams: TileGenerationParams
   ) {
 
     if (this.isDownloading$$) {
@@ -51,7 +51,7 @@ export class DownloadRegionService {
     const parentFeatureText = tilesToDownload.map((item: TileToDownload) => {
       return item.featureText;
     })
-
+    const depth = generationParams.endLevel - generationParams.startLevel;
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
     const region: Region = {
       name: regionName,
@@ -62,14 +62,14 @@ export class DownloadRegionService {
     };
     // TODO: NEED CHANGE
     // need to change after implementing generation strategy ***
-    const z = tilesToDownload[0].coord[0];
+    // const z = tilesToDownload[0].coord[0];
 
-    const generationParams: TileGenerationParams = {
-      startLevel: z,
-      parentLevel: z,
-      endLevel: z + depth,
-      genMethod: this.tileDownloader.strategy
-    }
+    // const generationParams: TileGenerationParams = {
+    //   startLevel: z,
+    //   parentLevel: z,
+    //   endLevel: z + depth,
+    //   genMethod: this.tileDownloader.strategy
+    // }
 
     // need to change after implementing generation strategy ***
     this.regionDB.add(region)

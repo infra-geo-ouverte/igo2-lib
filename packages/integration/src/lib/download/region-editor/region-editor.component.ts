@@ -24,6 +24,7 @@ import { EditionStrategies } from './editing-strategy/edition-strategies';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
+import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 
 
 @Component({
@@ -82,7 +83,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     console.log("After view init", this.genParamComponent);
-    this.slider.value = this.depth;
+    // this.slider.value = this.depth;
     // this.genParamComponent.onValueChange = this.onValueChangeTest
   }
 
@@ -91,8 +92,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
   
-  public onValueChangeTest() {
-    console.log(this.genParamComponent.tileGenerationParams);
+  public onGenerationParamsChange() {
+    this.genParams = this.genParamComponent.tileGenerationParams;
+    this.updateVariables();
   }
 
   private updateVariables() {
@@ -227,10 +229,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateVariables();
   }
 
-  public onDepthSliderChange() {
-    this.depth = this.slider.value;
-    this.updateVariables();
-  }
+  // public onDepthSliderChange() {
+  //   this.depth = this.slider.value;
+  //   this.updateVariables();
+  // }
 
   private sizeEstimationInBytes(): number {
     const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
@@ -274,7 +276,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.showEditedRegionFeatures();
     //this.changeGenerationParams(region.generationParams)
-    this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    //this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
   }
 
@@ -331,12 +333,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.state.tilesToDownload;
   }
 
-  set depth(depth: number) {
-      this.state.depth = depth;
+  set genParams(depth: TileGenerationParams) {
+      this.state.genParams = depth;
+  }
+
+  get genParams(): TileGenerationParams {
+      return this.state.genParams;
   }
 
   get depth(): number {
-      return this.state.depth;
+    return this.genParams.endLevel - this.genParams.startLevel;
   }
 
   set parentLevel(level: number) {

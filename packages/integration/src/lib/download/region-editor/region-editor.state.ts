@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TileToDownload } from '@igo2/core';
+import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Feature } from '@igo2/geo';
 import { Observable } from 'rxjs';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
@@ -11,7 +12,7 @@ export interface EditedRegion {
     parentUrls: Array<string>;
     tiles: TileToDownload[];
     parentLevel: number;
-    depth: number;
+    genParams: TileGenerationParams;
     features: Feature[];
 }
 
@@ -22,7 +23,12 @@ function newEditedRegion(): EditedRegion {
         parentUrls: new Array(),
         tiles: new Array(),
         parentLevel: undefined,
-        depth: 0,
+        genParams: {
+            startLevel: undefined,
+            parentLevel: undefined,
+            endLevel: undefined,
+            genMethod: undefined
+        },
         features: new Array()
     }
 }
@@ -90,12 +96,12 @@ export class RegionEditorState {
         return this._editedRegion.parentLevel;
     }
 
-    set depth(depth: number) {
-        this._editedRegion.depth = depth;
+    set genParams(params: TileGenerationParams) {
+        this._editedRegion.genParams = params;
     }
 
-    get depth(): number {
-        return this._editedRegion.depth;
+    get genParams(): TileGenerationParams {
+        return this._editedRegion.genParams;
     }
 
     set editedTilesFeatures(features: Feature[]) {
