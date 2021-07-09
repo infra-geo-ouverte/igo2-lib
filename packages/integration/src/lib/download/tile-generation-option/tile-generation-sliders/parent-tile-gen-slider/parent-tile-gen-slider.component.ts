@@ -20,13 +20,18 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   @ViewChild('depthSlider') slider: MatSlider;
 
   _sliderValue: number = 0;
-  get endLevel() {
+  
+  protected get endLevel(): number {
     return this._sliderValue + this.parentLevel;
+  }
+
+  protected get startLevel(): number {
+    return this.parentLevel;
   }
 
   get value(): SliderGenerationParams {
     return {
-      startLevel: this.parentLevel,
+      startLevel: this.startLevel,
       endLevel: this.endLevel
     }
   }

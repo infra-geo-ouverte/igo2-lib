@@ -1,3 +1,15 @@
-<p>
-  child-tile-gen-slider works!
-</p>
+<div><mat-label>Height </mat-label><mat-label>{{height}}</mat-label></div>
+<mat-slider 
+  invert
+  #heightSlider
+  (input)="onSliderChange()"
+  [disabled]="disabled"
+  min="0" 
+  max="5" 
+  step="1" 
+  value="0" 
+  thumbLabel
+  tickInterval = "auto"
+>
+</mat-slider>
+

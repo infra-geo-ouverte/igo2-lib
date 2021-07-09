@@ -12,16 +12,25 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
     super();
   }
 
+  protected get startLevel(): number {
+    return 0;
+  }
+
+  protected get endLevel(): number {
+    return 0;
+  }
+
+  get value(): SliderGenerationParams {
+    return {
+      startLevel: this.startLevel,
+      endLevel: this.endLevel
+    }
+  }
+
   ngOnInit() {
   }
 
   ngAfterViewInit() {
   }
 
-  get value(): SliderGenerationParams {
-    return {
-      startLevel: 0,
-      endLevel: 0,
-    }
-  }
 }
