@@ -21,6 +21,7 @@ import { ParentTileGenSliderComponent } from './tile-generation-option/tile-gene
 import { TileGenerationOptionComponent } from './tile-generation-option/tile-generation-option.component';
 import { ChildTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/child-tile-gen-slider/child-tile-gen-slider.component';
 import { MiddleTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/middle-tile-gen-slider/middle-tile-gen-slider.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { MiddleTileGenSliderComponent } from './tile-generation-option/tile-gene
     MatTabsModule,
     FormsModule,
     MatTableModule,
-    MatRippleModule
+    MatRippleModule,
+    NgxSliderModule
   ],
   declarations: [
     DownloadToolComponent,

@@ -1,3 +1,11 @@
-<p>
-  middle-tile-gen-slider works!
-</p>
+<div>
+  <ngx-slider 
+    #levelSlider
+    (valueChange)="onSliderChange()"
+    (highValueChange)="onSliderChange()"
+    [(value)]="minValue"
+    [(highValue)]="maxValue"
+    [options]="sliderOptions"
+  >
+  </ngx-slider>
+</div>
