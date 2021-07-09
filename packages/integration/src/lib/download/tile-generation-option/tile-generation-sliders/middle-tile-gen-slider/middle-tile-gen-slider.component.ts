@@ -9,7 +9,7 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
 })
 export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit {
   minValue: number = this.parentLevel;
-  maxValue: number = this.parentLevel - 2;
+  maxValue: number = this.parentLevel + 2;
   sliderOptions: Options = {
     floor: 2,
     ceil: 17
