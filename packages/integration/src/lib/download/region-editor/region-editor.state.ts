@@ -11,7 +11,6 @@ export interface EditedRegion {
     urls: Set<string>;
     parentUrls: Array<string>;
     tiles: TileToDownload[];
-    parentLevel: number;
     genParams: TileGenerationParams;
     features: Feature[];
 }
@@ -22,7 +21,6 @@ function newEditedRegion(): EditedRegion {
         urls: new Set(),
         parentUrls: new Array(),
         tiles: new Array(),
-        parentLevel: undefined,
         genParams: {
             startLevel: undefined,
             parentLevel: undefined,
@@ -89,11 +87,11 @@ export class RegionEditorState {
     }
 
     set parentLevel(level: number) {
-        this._editedRegion.parentLevel = level;
+        this._editedRegion.genParams.parentLevel = level;
     }
 
     get parentLevel(): number {
-        return this._editedRegion.parentLevel;
+        return this._editedRegion.genParams.parentLevel;
     }
 
     set genParams(params: TileGenerationParams) {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
@@ -79,10 +79,12 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.editedTilesFeature) {
       this.regionStore.updateMany(this.editedTilesFeature);
     }
+    // 
   }
 
   ngAfterViewInit() {
     console.log("After view init", this.genParams);
+    console.log('depth after init: ', this.depth);
     this.genParamComponent.tileGenerationParams = this.genParams;
     // this.slider.value = this.depth;
     // this.genParamComponent.onValueChange = this.onValueChangeTest
@@ -283,8 +285,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.showEditedRegionFeatures();
     console.log(this.editedRegion);
-    //this.changeGenerationParams(region.generationParams)
-    //this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    // this.changeGenerationParams(region.generationParams)
+    // this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
   }
 
@@ -307,7 +309,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get editedRegion(): EditedRegion {
     return this.state.editedRegion;
   }
-
 
   get parentTileUrls(): Array<string> {
     return this.state.parentTileUrls;
@@ -350,11 +351,12 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get depth(): number {
-    return this.genParams.endLevel - this.genParams.startLevel;
+    const depth = this.genParams.endLevel - this.genParams.startLevel;
+    return depth;
   }
 
   set parentLevel(level: number) {
-    this.state.genParams.parentLevel = level;
+    // this.state.genParams.parentLevel = level;
     this.state.parentLevel = level;
   }
 
