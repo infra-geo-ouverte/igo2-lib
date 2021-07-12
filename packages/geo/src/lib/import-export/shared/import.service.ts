@@ -185,7 +185,7 @@ export class ImportService {
         ) {
           observer.error(new ImportSRSError());
         } else if (error.status === 500) {
-          observer.error(new ImportOgreServerError())
+          observer.error(new ImportOgreServerError());
         } else {
           observer.error(new ImportUnreadableFileError());
         }

@@ -319,7 +319,7 @@ export function handleOgreServerImportError(
   languageService: LanguageService
 ) {
   const title = languageService.translate.instant('igo.geo.dropGeoFile.ogreServer.title');
-  const message = languageService.translate.instant('igo.geo.dropGeoFile.ogreServer.text')
+  const message = languageService.translate.instant('igo.geo.dropGeoFile.ogreServer.text');
   messageService.error(message, title);
 }
 
