@@ -40,7 +40,6 @@ export class DownloadRegionService {
     regionName: string,
     generationParams: TileGenerationParams
   ) {
-
     if (this.isDownloading$$) {
       this.isDownloading$$.unsubscribe();
     }
@@ -51,8 +50,10 @@ export class DownloadRegionService {
     const parentFeatureText = tilesToDownload.map((item: TileToDownload) => {
       return item.featureText;
     })
+
     const depth = generationParams.endLevel - generationParams.startLevel;
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
+    
     const region: Region = {
       name: regionName,
       status: RegionStatus.Downloading,
@@ -60,25 +61,14 @@ export class DownloadRegionService {
       numberOfTiles,
       parentFeatureText
     };
-    // TODO: NEED CHANGE
-    // need to change after implementing generation strategy ***
-    // const z = tilesToDownload[0].coord[0];
 
-    // const generationParams: TileGenerationParams = {
-    //   startLevel: z,
-    //   parentLevel: z,
-    //   endLevel: z + depth,
-    //   genMethod: this.tileDownloader.strategy
-    // }
-
-    // need to change after implementing generation strategy ***
     this.regionDB.add(region)
       .subscribe((regionID: number) => {
         for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
             tile.coord,
             regionID,
-            depth,
+            generationParams,
             tile.tileGrid,
             tile.templateUrl
           );
@@ -140,15 +130,16 @@ export class DownloadRegionService {
 
   public updateRegion(oldRegion: RegionDBData, updateParams: RegionUpdateParams) {
     const region = this.updateRegionDBData(oldRegion, updateParams);
-
+    
     const regionID = oldRegion.id;
     const tileToDownload = updateParams.newTiles;
-    const depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    // const depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    const generationParams = region.generationParams;
     for (const tile of tileToDownload) {
       this.tileDownloader.downloadFromCoord(
         tile.coord,
         regionID,
-        depth,
+        generationParams,
         tile.tileGrid,
         tile.templateUrl
       );

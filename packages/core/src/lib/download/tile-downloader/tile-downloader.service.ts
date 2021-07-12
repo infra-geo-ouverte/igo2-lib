@@ -11,6 +11,7 @@ import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-g
 import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
 import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
 import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
+import { TileGenerationParams } from './tile-generation-strategies/tile-generation-params.interface';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -108,18 +109,23 @@ export class TileDownloaderService {
   public downloadFromCoord(
     coord3D: [number, number, number],
     regionID: number,
-    depth: number,
+    generationParams: TileGenerationParams,
     tileGrid,
     src
   ) {
-
     if (!this.network.isOnline()) {
       return;
     }
 
     this.initURLGenerator(tileGrid, src);
     const rootTile: Tile = {X: coord3D[1], Y: coord3D[2], Z: coord3D[0]};
-    const tiles = this.generateTiles(rootTile, depth);
+
+    const generationStrategy = generationParams.genMethod;
+    this.changeStrategy(generationStrategy);
+
+    const startLevel = generationParams.startLevel;
+    const endLevel = generationParams.endLevel;
+    const tiles = this.tileGenerationStrategy.generate(rootTile, startLevel, endLevel);
 
     tiles.forEach((tile) => {
       const url = this.generateURL(tile);
@@ -129,6 +135,8 @@ export class TileDownloaderService {
     });
 
     console.log('Queue :', this.urlQueue.length);
+    console.log('current gen strat', this.tileGenerationStrategy);
+    
     // if not already downloading start downloading
     if (!this.isDownloading) {
       this.startDownload(regionID, tiles.length);
