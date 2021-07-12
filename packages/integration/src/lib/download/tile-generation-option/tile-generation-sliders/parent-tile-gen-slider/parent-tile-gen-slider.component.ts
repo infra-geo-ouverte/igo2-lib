@@ -21,6 +21,11 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
 
   _sliderValue: number = 0;
   
+  protected set endLevel(endLevel: number) {
+    this._sliderValue = endLevel - this.parentLevel;
+    this.slider.value = this._sliderValue;
+  }
+  
   protected get endLevel(): number {
     return this._sliderValue + this.parentLevel;
   }
@@ -34,6 +39,10 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
       startLevel: this.startLevel,
       endLevel: this.endLevel
     }
+  }
+
+  set value(value: SliderGenerationParams) {
+    this.endLevel = value.endLevel;
   }
 
   get depth() {

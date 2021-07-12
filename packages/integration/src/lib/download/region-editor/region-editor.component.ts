@@ -82,18 +82,21 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log("After view init", this.genParamComponent);
+    console.log("After view init", this.genParams);
+    this.genParamComponent.tileGenerationParams = this.genParams;
     // this.slider.value = this.depth;
     // this.genParamComponent.onValueChange = this.onValueChangeTest
   }
 
   ngOnDestroy() {
+    console.log('destroy: ', this.genParams);
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
   }
   
   public onGenerationParamsChange() {
     this.genParams = this.genParamComponent.tileGenerationParams;
+    console.log(this.genParams);
     this.updateVariables();
   }
 
@@ -170,6 +173,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       if (first) {
         this.parentLevel = z;
+        // put generation params slider to default
       }
 
       if (!this.urlsToDownload.has(url) || first) {
@@ -193,10 +197,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
+    console.log(this.editedRegion);
     if (this.parentTileUrls.length === 0) {
       return;
     }
-
     this._nTilesToDownload = this.numberOfTilesToDownload();
 
     if (this.isDownloading$$) {
@@ -270,11 +274,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     // need to change
     this.regionName = region.name;
+    
     this.parentLevel = region.generationParams.parentLevel;
+    this.genParams = region.generationParams;
+    this.genParamComponent.tileGenerationParams = region.generationParams;
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
       return JSON.parse(featureText);
     });
     this.showEditedRegionFeatures();
+    console.log(this.editedRegion);
     //this.changeGenerationParams(region.generationParams)
     //this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
@@ -346,6 +354,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   set parentLevel(level: number) {
+    this.state.genParams.parentLevel = level;
     this.state.parentLevel = level;
   }
 

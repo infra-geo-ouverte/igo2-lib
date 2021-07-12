@@ -25,7 +25,9 @@ export abstract class TileGenerationSliderComponent {
     this.onValueChange.emit(this.value);
   }
 
+  abstract set value(value: SliderGenerationParams);
   abstract get value(): SliderGenerationParams;
+
   protected abstract get startLevel(): number;
   protected abstract get endLevel(): number;
 }

@@ -32,6 +32,10 @@ export class TileGenerationOptionComponent implements OnInit {
     return this.generationSlider.value;
   }
 
+  private set sliderGenerationParams(params: SliderGenerationParams) {
+    this.generationSlider.value = params;
+  }
+
   get startLevel() {
     return this.sliderGenerationParams.startLevel;
   }
@@ -44,6 +48,10 @@ export class TileGenerationOptionComponent implements OnInit {
     return this.strategySelect.value;
   }
 
+  set genMethod(value: TileGenerationStrategies) {
+    this.strategySelect.value = value;
+  }
+
   ngOnInit() {
   }
 
@@ -54,13 +62,25 @@ export class TileGenerationOptionComponent implements OnInit {
   onSelectionChange(strategy: TileGenerationStrategies) {
     const newStrategy = this.strategySelect.value
     this.strategy = newStrategy;
-    this.tileDownloader.changeStrategy(newStrategy);
     this.cdRef.detectChanges();
     this.emitChanges();
   }
 
   private emitChanges() {
     this.onValueChange.emit(this.tileGenerationParams);
+  }
+
+  set tileGenerationParams(params: TileGenerationParams) {
+    this.parentLevel = params.parentLevel;
+    this.genMethod = params.genMethod;
+    this.strategy = params.genMethod;
+    
+    this.cdRef.detectChanges();
+
+    this.sliderGenerationParams = {
+      startLevel: params.startLevel,
+      endLevel: params.endLevel
+    }
   }
 
   get tileGenerationParams(): TileGenerationParams {

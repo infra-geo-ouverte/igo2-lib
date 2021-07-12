@@ -25,10 +25,18 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
     super();
   }
   
+  protected set startLevel(startLevel: number) {
+    this.minValue = startLevel;
+  }
+
   protected get startLevel(): number {
     return this.minValue;
   }
-  
+
+  protected set endLevel(endLevel: number) {
+    this.maxValue = endLevel;
+  }
+
   protected get endLevel(): number {
     return this.maxValue;
   }
@@ -38,6 +46,11 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
       startLevel: this.startLevel,
       endLevel: this.endLevel
     }
+  }
+
+  set value(value: SliderGenerationParams) {
+    this.startLevel = value.startLevel;
+    this.endLevel = value.endLevel;
   }
   
   ngOnInit() {

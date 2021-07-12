@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TileToDownload } from '@igo2/core';
+import { TileGenerationStrategies, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Feature } from '@igo2/geo';
 import { Observable } from 'rxjs';
@@ -27,7 +27,7 @@ function newEditedRegion(): EditedRegion {
             startLevel: undefined,
             parentLevel: undefined,
             endLevel: undefined,
-            genMethod: undefined
+            genMethod: TileGenerationStrategies.PARENT
         },
         features: new Array()
     }
@@ -41,7 +41,7 @@ export class RegionEditorState {
     private _editionStrategy: EditionStrategy = new CreationEditionStrategy();
     progression$: Observable<number>;
     isDownloading: boolean;
-    
+
     constructor() {}
 
     set editedRegion(editedRegion: EditedRegion) {

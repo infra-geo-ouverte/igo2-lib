@@ -16,11 +16,16 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
 
   private _sliderValue: number = 0;
 
-  get startLevel() {
+  protected set startLevel(startLevel: number) {
+    this._sliderValue = this.parentLevel - startLevel;
+    this.slider.value = this._sliderValue;
+  }
+
+  protected get startLevel() {
     return this.parentLevel - this._sliderValue;
   }
 
-  get endLevel() {
+  protected get endLevel() {
     return this.parentLevel;
   }
 
@@ -36,6 +41,10 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
       startLevel: this.startLevel,
       endLevel: this.endLevel
     }
+  }
+
+  set value(value: SliderGenerationParams) {
+    this.startLevel = value.startLevel;
   }
 
   onSliderChange() {
