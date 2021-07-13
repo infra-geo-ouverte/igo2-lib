@@ -75,23 +75,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log("onInit", this.genParamComponent);
     if (!this.editedTilesFeature) {
       this.regionStore.updateMany(this.editedTilesFeature);
     }
-    // 
   }
 
   ngAfterViewInit() {
-    console.log("After view init", this.genParams);
-    console.log('depth after init: ', this.depth);
     this.genParamComponent.tileGenerationParams = this.genParams;
-    // this.slider.value = this.depth;
-    // this.genParamComponent.onValueChange = this.onValueChangeTest
   }
 
   ngOnDestroy() {
-    console.log('destroy: ', this.genParams);
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
   }
@@ -104,9 +97,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private updateVariables() {
     this._notEnoughSpace$ = this.storageQuota.enoughSpace(this.sizeEstimationInBytes())
-      .pipe(map((value) => { 
-        return !value;
-      }));
+    .pipe(map((value) => { 
+      return !value;
+    }));
   }
 
   private getTileFeature(tileGrid, coord: [number, number, number]) {
@@ -175,7 +168,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       if (first) {
         this.parentLevel = z;
-        // put generation params slider to default
       }
 
       if (!this.urlsToDownload.has(url) || first) {
@@ -235,11 +227,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateVariables();
   }
 
-  // public onDepthSliderChange() {
-  //   this.depth = this.slider.value;
-  //   this.updateVariables();
-  // }
-
   private sizeEstimationInBytes(): number {
     const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
     const nDownloads = this.parentTileUrls.length;
@@ -284,7 +271,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return JSON.parse(featureText);
     });
     this.showEditedRegionFeatures();
-    console.log(this.editedRegion);
     // this.changeGenerationParams(region.generationParams)
     // this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
@@ -352,11 +338,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get depth(): number {
     const depth = this.genParams.endLevel - this.genParams.startLevel;
+    if (Number.isNaN(depth)) {
+      return 0;
+    }
     return depth;
   }
 
   set parentLevel(level: number) {
-    // this.state.genParams.parentLevel = level;
     this.state.parentLevel = level;
   }
 

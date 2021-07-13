@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { TileDownloaderService, TileGenerationStrategies } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
@@ -11,7 +11,7 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from './tile-ge
   templateUrl: './tile-generation-option.component.html',
   styleUrls: ['./tile-generation-option.component.scss']
 })
-export class TileGenerationOptionComponent implements OnInit {
+export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   @Output() onValueChange: EventEmitter<TileGenerationParams> = new EventEmitter();
   @Input('disabled') disabled: boolean = false;
 
@@ -29,6 +29,13 @@ export class TileGenerationOptionComponent implements OnInit {
   ) { }
   
   private get sliderGenerationParams() {
+    // console.log("parent level:", this.parentLevel);
+    if (!this.generationSlider) {
+      return {
+        startLevel: this.parentLevel,
+        endLevel: this.parentLevel
+      }
+    }
     return this.generationSlider.value;
   }
 
@@ -45,6 +52,9 @@ export class TileGenerationOptionComponent implements OnInit {
   }
 
   get genMethod() {
+    if (!this.strategySelect) {
+      return TileGenerationStrategies.PARENT;
+    }
     return this.strategySelect.value;
   }
 
@@ -53,6 +63,9 @@ export class TileGenerationOptionComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit() {
   }
 
   onSliderChange(sliderGenerationParams: SliderGenerationParams) {

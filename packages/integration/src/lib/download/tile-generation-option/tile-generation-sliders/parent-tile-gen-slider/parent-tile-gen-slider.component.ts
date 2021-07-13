@@ -22,10 +22,8 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   _sliderValue: number = 0;
   
   protected set endLevel(endLevel: number) {
-    console.log("endlvl: ", endLevel)
     this._sliderValue = endLevel - this.startLevel;
     this.slider.value = this._sliderValue;
-    console.log("slidervalue: ", this._sliderValue);
   }
 
   protected get endLevel(): number {
@@ -48,7 +46,7 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   }
 
   get depth() {
-    if (this._sliderValue === NaN) {
+    if (Number.isNaN(this._sliderValue)) {
       return 0;
     }
     return this._sliderValue;
@@ -62,7 +60,6 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   }
 
   ngAfterViewInit() {
-    this.slider.value = this._sliderValue;
   }
 
   onSliderChange() {

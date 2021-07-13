@@ -33,7 +33,7 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
   }
 
   ngAfterViewInit() {
-    this.slider.value = this._sliderValue;
+    this.startLevel = this.parentLevel;
   }
 
   get value(): SliderGenerationParams {
@@ -53,6 +53,9 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
   }
 
   get height(): number {
+    if (Number.isNaN(this._sliderValue)) {
+      return 0;
+    }
     return this._sliderValue;
   }
 }
