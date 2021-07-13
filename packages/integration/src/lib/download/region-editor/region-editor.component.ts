@@ -91,7 +91,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   
   public onGenerationParamsChange() {
     this.genParams = this.genParamComponent.tileGenerationParams;
-    console.log(this.genParams);
     this.updateVariables();
   }
 

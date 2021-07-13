@@ -61,7 +61,13 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
     this.maxValue = this.parentLevel + 2;
   }
 
-  onSliderChange() {
+  onHighValueChange(value: number) {
+    this.maxValue = value;
+    this.emitValue();
+  }
+
+  onLowValueChange(value: number) {
+    this.minValue = value;
     this.emitValue();
   }
 }

@@ -1,8 +1,8 @@
 <div>
   <ngx-slider 
     #levelSlider
-    (valueChange)="onSliderChange()"
-    (highValueChange)="onSliderChange()"
+    (valueChange)="onLowValueChange($event)"
+    (highValueChange)="onHighValueChange($event)"
     [(value)]="minValue"
     [(highValue)]="maxValue"
     [options]="sliderOptions"
