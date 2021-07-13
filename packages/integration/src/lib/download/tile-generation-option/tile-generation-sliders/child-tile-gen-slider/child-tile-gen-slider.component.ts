@@ -22,7 +22,7 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
   }
 
   protected get startLevel() {
-    return this.parentLevel - this._sliderValue;
+    return this.parentLevel - this.slider.value;
   }
 
   protected get endLevel() {
