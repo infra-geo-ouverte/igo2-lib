@@ -219,6 +219,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // need to put that in state
     this.parentTileUrls = new Array();
     this.editionStrategy = new CreationEditionStrategy();
+    this.genParamComponent.tileGenerationParams = this.genParams;
     this.clearFeatures();
   }
 
