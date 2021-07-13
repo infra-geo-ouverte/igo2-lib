@@ -83,7 +83,11 @@ export class RegionDBService {
       this.dbService.getByID(this.dbName, regionID).subscribe(
         (region: RegionDBData) => {
           region.numberOfTiles -= collisions;
-          this.updateWithNoTimestamp(region);
+          if (region.numberOfTiles === 0) {
+            this.deleteByRegionID(region.id);
+          } else {
+            this.updateWithNoTimestamp(region);
+          }
         }
       );
       regionID = it.next().value;
