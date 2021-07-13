@@ -10,6 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoLayerModule,
@@ -34,7 +38,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 
-import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatOptionModule } from '@angular/material/core';
 
@@ -43,7 +46,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoSpinnerModule } from '@igo2/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -90,7 +92,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     IgoFilterModule,
     IgoContextModule,
     IgoAppWorkspaceModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatTooltipModule
   ],
   declarations: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   exports: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],

@@ -22,11 +22,11 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    private messageService: MessageService,
+    public messageService: MessageService,
     private languageService: LanguageService,
     public authInterceptor?: AuthInterceptor
   ) {
-    super(options, authInterceptor);
+    super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }

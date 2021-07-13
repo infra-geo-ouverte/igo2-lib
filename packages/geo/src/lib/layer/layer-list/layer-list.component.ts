@@ -21,7 +21,7 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
-import { debounce, isEmpty } from 'rxjs/operators';
+import { debounce } from 'rxjs/operators';
 import {
   MetadataOptions,
   MetadataLayerOptions

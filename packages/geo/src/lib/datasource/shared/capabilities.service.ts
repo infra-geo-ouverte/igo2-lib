@@ -253,7 +253,21 @@ export class CapabilitiesService {
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
-    const extent = layer.EX_GeographicBoundingBox ?
+    let isExtentInGeographic = true;
+    if (layer.EX_GeographicBoundingBox) {
+      layer.EX_GeographicBoundingBox.forEach((coord, index) => {
+        if (index < 2 && (coord > 180 || coord < -180)) {
+          isExtentInGeographic = false;
+        }
+        if (index >= 2 && (coord > 90 || coord < -90)) {
+          isExtentInGeographic = false;
+        }
+      });
+    } else {
+      isExtentInGeographic = false;
+    }
+
+    const extent = isExtentInGeographic ?
         olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', this.mapService.getMap().projection) :
         undefined;
 
