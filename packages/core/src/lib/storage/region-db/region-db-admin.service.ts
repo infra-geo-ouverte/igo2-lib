@@ -13,15 +13,14 @@ export class RegionDBAdminService {
   private static readonly ONE_HOUR = 1000 * 60 * 60;
   private static readonly ONE_DAY = 24 * RegionDBAdminService.ONE_HOUR;
   private readonly expirationInterval = 30 * RegionDBAdminService.ONE_DAY;
-  //private readonly expirationInterval = 60 * 1000;
+  // private readonly expirationInterval = 60 * 1000;
 
   constructor(
     private regionDB: RegionDBService,
     private tileDB: TileDBService
   ) {
-    // this.checkExpirations$$ = interval(1000)
+    // interval(1000).subscribe(() => {
     interval(RegionDBAdminService.ONE_HOUR).subscribe(() => {
-        // console.log("check expiration")
         this.checkExpirations();
       });
   }
@@ -70,12 +69,12 @@ export class RegionDBAdminService {
       if (cursor) {
         const region: RegionDBData = (<any>cursor).value;
         const tileCount = tileCountPerRegion.get(region.id);
-        if (tileCount !== undefined) {
+        if (tileCount !== undefined && tileCount !== 0) {
           region.numberOfTiles = tileCount;
+          (<any>cursor).update(region);
         } else {
-          region.numberOfTiles = 0;
+          (<any>cursor).delete();
         }
-        (<any>cursor).update(region);
         (<any>cursor).continue();
       } else {
         this.regionDB.needUpdate();
