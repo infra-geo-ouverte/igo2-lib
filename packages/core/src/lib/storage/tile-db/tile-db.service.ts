@@ -25,7 +25,7 @@ export class TileDBService {
     const compress$ = this.compression.compressBlob(object);
     compress$.pipe(first())
       .subscribe((compressedObject) => {
-        const TileDBData: TileDBData = {
+        const tileDBData: TileDBData = {
           url,
           regionID,
           object: compressedObject
@@ -34,7 +34,7 @@ export class TileDBService {
         getRequest.subscribe((dbObject: TileDBData) => {
           let dbRequest: Observable<TileDBData>;
           if (!dbObject) {
-            dbRequest = this.dbService.addItem(this.dbName, TileDBData);
+            dbRequest = this.dbService.addItem(this.dbName, tileDBData);
           } else {
             const currentRegionID = dbObject.regionID;
             if (currentRegionID !== regionID) {
@@ -45,7 +45,7 @@ export class TileDBService {
                 this.collisionsMap.set(currentRegionID, 1);
               }
             }
-            dbRequest = this.customUpdate(TileDBData);
+            dbRequest = this.customUpdate(tileDBData);
           }
           dbRequest.subscribe((response) => {
             subject.next(response);
@@ -56,12 +56,12 @@ export class TileDBService {
     return subject;
   }
 
-  private customUpdate(TileDBData: TileDBData): Observable<TileDBData> {
+  private customUpdate(tileDBData: TileDBData): Observable<TileDBData> {
     const subject: Subject<TileDBData> = new Subject();
-    const deleteRequest = this.dbService.deleteByKey(this.dbName, TileDBData.url);
+    const deleteRequest = this.dbService.deleteByKey(this.dbName, tileDBData.url);
     deleteRequest.subscribe((isDeleted) => {
       if (isDeleted) {
-        const addRequest = this.dbService.addItem(this.dbName, TileDBData);
+        const addRequest = this.dbService.addItem(this.dbName, tileDBData);
         addRequest.subscribe((object) => {
           subject.next(object);
           subject.complete();
@@ -124,10 +124,10 @@ export class TileDBService {
   }
 
   openCursor(
-    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0), 
+    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0),
     mode: DBMode = DBMode.readonly
   ) {
-    const request = this.dbService.openCursorByIndex(this.dbName, 'regionID', keyRange, mode)
+    const request = this.dbService.openCursorByIndex(this.dbName, 'regionID', keyRange, mode);
     return request;
   }
 

@@ -28,7 +28,7 @@ function newEditedRegion(): EditedRegion {
             genMethod: TileGenerationStrategies.PARENT
         },
         features: new Array()
-    }
+    };
 }
 
 @Injectable({

@@ -1,14 +1,10 @@
-import { DownloadRegionService, Region, RegionDBData, RegionStatus, RegionUpdateParams, TileToDownload } from "@igo2/core"
-import { EditedRegion } from "../region-editor.state";
-import { EditionStrategy } from "./edition-strategy";
+import { DownloadRegionService, RegionDBData, RegionUpdateParams } from '@igo2/core';
+import { EditedRegion } from '../region-editor.state';
+import { EditionStrategy } from './edition-strategy';
 
 export class UpdateEditionStrategy extends EditionStrategy {
     constructor(private regionToUpdate: RegionDBData) {
         super();
-    }
-
-    addTileToEditedRegion(tileToDownload: TileToDownload) {
-        
     }
 
     get downloadButtonTitle(): string {
@@ -20,11 +16,11 @@ export class UpdateEditionStrategy extends EditionStrategy {
     }
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
-        console.log("update strategy download");
+        console.log('update strategy download');
         const updateParams: RegionUpdateParams = {
             name: editedRegion.name,
             newTiles: editedRegion.tiles
-        }
+        };
         regionDownloader.updateRegion(this.regionToUpdate, updateParams);
     }
 

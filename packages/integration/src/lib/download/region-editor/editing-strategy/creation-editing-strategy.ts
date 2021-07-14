@@ -1,16 +1,6 @@
-import { DownloadRegionService, RegionDBData } from "@igo2/core"
-import { EditedRegion } from "../region-editor.state";
-import { EditionStrategy } from "./edition-strategy";
-
-// function newEditedRegion(): EditedRegion {
-//     return {
-//         name: undefined,
-//         urls: new Set(),
-//         tiles: new Array(),
-//         depth: 0,
-//         features: new Array()
-//     }
-// }
+import { DownloadRegionService } from '@igo2/core';
+import { EditedRegion } from '../region-editor.state';
+import { EditionStrategy } from './edition-strategy';
 
 export class CreationEditionStrategy extends EditionStrategy {
     constructor() {
@@ -26,7 +16,7 @@ export class CreationEditionStrategy extends EditionStrategy {
     }
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
-        console.log("create strategy download");
+        console.log('create strategy download');
         regionDownloader.downloadSelectedRegion(
             editedRegion.tiles,
             editedRegion.name,

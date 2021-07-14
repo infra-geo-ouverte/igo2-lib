@@ -11,11 +11,11 @@ import { DisplayRegion } from './region-manager.component';
 export class RegionManagerState {
   private _selectedRegion: DisplayRegion = this.initDisplayRegion();
   readonly regionToEdit$: Subject<RegionDBData> = new Subject();
-  
+
   constructor() {}
 
   private initDisplayRegion(): DisplayRegion {
-    return { 
+    return {
       id: -1,
       status: undefined,
       name: undefined,

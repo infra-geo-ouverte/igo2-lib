@@ -1,9 +1,9 @@
-import { DownloadRegionService, RegionDBData } from "@igo2/core"
-import { EditedRegion } from "../region-editor.state";
+import { DownloadRegionService } from '@igo2/core';
+import { EditedRegion } from '../region-editor.state';
 
 export abstract class EditionStrategy {
     constructor() {}
-    
+
     abstract estimateDownloadSizeInBytes(): number;
     abstract download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService): void;
 

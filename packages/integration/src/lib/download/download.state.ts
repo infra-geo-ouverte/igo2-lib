@@ -13,13 +13,13 @@ export class DownloadState {
     private _openedWithMouse: boolean = false;
     public regionStore: FeatureStore = new FeatureStore([], { map: this.map });
     readonly rightMouseClick$: Subject<boolean> = new Subject();
-    
+
     constructor(private mapState: MapState) {}
 
     public get map() {
         return this.mapState.map;
     }
-    
+
     addNewTileToDownload(tile: TransferedTile) {
         if (!tile) {
             return;

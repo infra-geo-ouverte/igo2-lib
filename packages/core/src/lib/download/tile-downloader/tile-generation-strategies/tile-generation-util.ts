@@ -14,17 +14,17 @@ export function zoom(tile: Tile): Tile[] {
 }
 
 export function deZoom(tile: Tile): Tile {
-  if (tile.Z === 0) { 
+  if (tile.Z === 0) {
     return;
   }
-  
+
   const X = Math.floor(tile.X / 2);
   const Y = Math.floor(tile.Y / 2);
   const Z = tile.Z - 1;
 
   return { X, Y, Z };
 }
-  
+
 export function getTreeNodes(root: Tile, maxLevel: number) {
   if (root.Z === maxLevel) {
     return [root];

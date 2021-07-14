@@ -44,7 +44,6 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    
   }
 
   ngOnDestroy() {
@@ -87,7 +86,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   public deleteRegion(region) {
-    this.buttonClicked = true
+    this.buttonClicked = true;
     this.downloadManager.deleteRegionByID(region.id);
     this.unselectRegion();
     this.clearFeatures();
@@ -134,7 +133,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   public clearFeatures() {
     this.regionStore.clear();
   }
-  
+
   public rowClick(row: DisplayRegion) {
     if (this.buttonClicked) {
       this.buttonClicked = false;
@@ -162,7 +161,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
     return this.selectedRegion.parentFeatureText.map(
       (featureText: string) => {
         return JSON.parse(featureText);
-      });;
+      });
   }
 
   get selectedRowID(): number{
@@ -170,6 +169,6 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   get regionToEdit$() {
-    return this.state.regionToEdit$
+    return this.state.regionToEdit$;
   }
 }

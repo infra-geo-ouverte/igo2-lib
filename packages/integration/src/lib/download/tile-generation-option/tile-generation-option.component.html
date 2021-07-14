@@ -14,19 +14,19 @@
 <container-element [ngSwitch]="strategy">
   <igo-child-tile-gen-slider *ngSwitchCase="'Child'"
     #genSlider
-    (onValueChange)="onSliderChange($event)"
+    (valueChange)="onSliderChange($event)"
     [disabled]="disabled"
     [parentLevel]="parentLevel"
   ></igo-child-tile-gen-slider>
   <igo-middle-tile-gen-slider *ngSwitchCase="'Middle'"
     #genSlider
-    (onValueChange)="onSliderChange($event)"
+    (valueChange)="onSliderChange($event)"
     [disabled]="disabled"
     [parentLevel]="parentLevel"
   ></igo-middle-tile-gen-slider>
   <igo-parent-tile-gen-slider *ngSwitchCase="'Parent'"
     #genSlider
-    (onValueChange)="onSliderChange($event)"
+    (valueChange)="onSliderChange($event)"
     [disabled]="disabled"
     [parentLevel]="parentLevel"
   ></igo-parent-tile-gen-slider>

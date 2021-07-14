@@ -6,7 +6,7 @@ import { Region, RegionDate, RegionDBData } from './Region.interface';
 
 
 function createRegionDateFromRegion(region: Region): RegionDate {
-  const regionDate: RegionDate = <RegionDate>{};
+  const regionDate: RegionDate = {} as RegionDate;
   regionDate.name = region.name;
   regionDate.status = region.status;
   regionDate.numberOfTiles = region.numberOfTiles;
@@ -46,8 +46,8 @@ export class RegionDBService {
     return dbRequest;
   }
 
-  getByID(id: number): Observable<RegionDBData>{
-    return this.dbService.getByKey(this.dbName, id); 
+  getByID(id: number): Observable<RegionDBData> {
+    return this.dbService.getByKey(this.dbName, id);
   }
 
   getAll(): Observable<RegionDBData[]> {
@@ -67,7 +67,7 @@ export class RegionDBService {
   }
 
   openCursor(
-    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0), 
+    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0),
     mode: DBMode = DBMode.readonly
   ) {
     // need to update when openCursor method is fixed in ngx-indexed-db package

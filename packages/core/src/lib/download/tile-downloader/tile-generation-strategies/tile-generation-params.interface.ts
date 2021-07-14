@@ -1,8 +1,8 @@
-import { TileGenerationStrategies } from "./tile-generation-strategy.interface";
+import { TileGenerationStrategies } from './tile-generation-strategy.interface';
 
 export interface TileGenerationParams {
-    genMethod: TileGenerationStrategies,
-    startLevel: number,
-    parentLevel: number,
-    endLevel: number
+    genMethod: TileGenerationStrategies;
+    startLevel: number;
+    parentLevel: number;
+    endLevel: number;
 }

@@ -33,8 +33,7 @@ export class DownloadRegionService {
   ) {
     this.regionDBAdmin.updateAllRegionTileCount();
   }
-  
-  // need on right click method for the controler
+
   public downloadSelectedRegion(
     tilesToDownload: TileToDownload[],
     regionName: string,
@@ -49,11 +48,11 @@ export class DownloadRegionService {
 
     const parentFeatureText = tilesToDownload.map((item: TileToDownload) => {
       return item.featureText;
-    })
+    });
 
     const depth = generationParams.endLevel - generationParams.startLevel;
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
-    
+
     const region: Region = {
       name: regionName,
       status: RegionStatus.Downloading,
@@ -89,8 +88,8 @@ export class DownloadRegionService {
                 numberOfTiles: validTile,
                 timestamp: date,
                 generationParams
-              }
-              
+              };
+
               this.regionDB.update(regionDBData);
               this.regionDB.updateWithCollisions(collisionMap);
               this.tileDB.resetCollisionMap();
@@ -100,12 +99,12 @@ export class DownloadRegionService {
   }
 
   private updateRegionDBData(
-    oldRegion: RegionDBData, 
+    oldRegion: RegionDBData,
     updateParams: RegionUpdateParams
   ): RegionDBData {
     const region: RegionDBData = oldRegion;
     region.name = updateParams.name;
-    
+
     const tileToDownload = updateParams.newTiles;
     const newParentUrls = tileToDownload.map((tile) => {
       return tile.url;
@@ -130,10 +129,9 @@ export class DownloadRegionService {
 
   public updateRegion(oldRegion: RegionDBData, updateParams: RegionUpdateParams) {
     const region = this.updateRegionDBData(oldRegion, updateParams);
-    
+
     const regionID = oldRegion.id;
     const tileToDownload = updateParams.newTiles;
-    // const depth = region.generationParams.endLevel - region.generationParams.startLevel;
     const generationParams = region.generationParams;
     for (const tile of tileToDownload) {
       this.tileDownloader.downloadFromCoord(
@@ -144,19 +142,21 @@ export class DownloadRegionService {
         tile.templateUrl
       );
     }
-    
+
     const dbRequest = this.tileDB.getRegionByID(regionID)
       .pipe(
         map((tiles: TileDBData[]) => {
-          return tiles.map((tile) => { return tile.url; });
+          return tiles.map((tile) => tile.url );
         })
       );
-    
+
     dbRequest.subscribe((urls: string[]) => {
       if (this.isDownloading$$) {
         this.isDownloading$$.unsubscribe();
       }
-      this.tileDownloader.downloadFromUrls(urls, regionID)
+
+      this.tileDownloader.downloadFromUrls(urls, regionID);
+
       this.isDownloading$$ = this.tileDownloader.isDownloading$
         .pipe(skip(1))
         .subscribe((isDownloading) => {

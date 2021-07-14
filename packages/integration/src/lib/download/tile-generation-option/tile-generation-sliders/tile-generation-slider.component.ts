@@ -6,7 +6,7 @@ export interface SliderGenerationParams {
 }
 
 @Component({
-  selector: 'app-base',
+  selector: 'igo-tile-generation-base',
     template: `
         <div>
             base works!!
@@ -14,15 +14,15 @@ export interface SliderGenerationParams {
     `
 })
 export abstract class TileGenerationSliderComponent {
-  @Output() onValueChange: EventEmitter<any> = new EventEmitter();
+  @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
-  @Input('disabled') disabled: boolean = false;
-  @Input('parentLevel') parentLevel: number;
+  @Input() disabled: boolean = false;
+  @Input() parentLevel: number;
 
   constructor() { }
 
   protected emitValue() {
-    this.onValueChange.emit(this.value);
+    this.valueChange.emit(this.value);
   }
 
   abstract set value(value: SliderGenerationParams);

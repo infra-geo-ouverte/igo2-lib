@@ -12,15 +12,10 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
   styleUrls: ['./parent-tile-gen-slider.component.scss']
 })
 export class ParentTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit  {
-  // @Output() onValueChange: EventEmitter<any>= new EventEmitter();
-  
-  // @Input('disabled') disabled: boolean = false;
-  // @Input('parentLevel') parentLevel: number;
-
   @ViewChild('depthSlider') slider: MatSlider;
 
   _sliderValue: number = 0;
-  
+
   protected set endLevel(endLevel: number) {
     this._sliderValue = endLevel - this.startLevel;
     this.slider.value = this._sliderValue;
@@ -38,7 +33,7 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
     return {
       startLevel: this.startLevel,
       endLevel: this.endLevel
-    }
+    };
   }
 
   set value(value: SliderGenerationParams) {
@@ -53,7 +48,7 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   }
 
   constructor() {
-    super()
+    super();
   }
 
   ngOnInit() {

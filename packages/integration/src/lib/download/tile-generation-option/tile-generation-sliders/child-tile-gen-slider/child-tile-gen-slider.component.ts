@@ -9,8 +9,8 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
 })
 export class ChildTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit {
   @ViewChild('heightSlider') slider: MatSlider;
-  
-  constructor() { 
+
+  constructor() {
     super();
   }
 
@@ -40,7 +40,7 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
     return {
       startLevel: this.startLevel,
       endLevel: this.endLevel
-    }
+    };
   }
 
   set value(value: SliderGenerationParams) {

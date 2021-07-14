@@ -37,18 +37,18 @@ export class RegionDBAdminService {
       if (!event) {
         return;
       }
-      
+
       const cursor = (event.target as IDBOpenDBRequest).result;
-      if(cursor) {
-        const value: TileDBData = (<any>cursor).value;
-        const regionID = value.regionID
+      if (cursor) {
+        const value: TileDBData = (cursor as any).value;
+        const regionID = value.regionID;
         let tileCount = tileCountPerRegion.get(regionID);
         if (tileCount) {
           tileCountPerRegion.set(regionID, ++tileCount);
         } else {
           tileCountPerRegion.set(regionID, 1);
         }
-        (<any>cursor).continue();
+        (cursor as any).continue();
       } else {
         this.updateRegionTileCountWithMap(tileCountPerRegion);
       }
@@ -67,15 +67,15 @@ export class RegionDBAdminService {
 
       const cursor = (event.target as IDBOpenDBRequest).result;
       if (cursor) {
-        const region: RegionDBData = (<any>cursor).value;
+        const region: RegionDBData = (cursor as any).value;
         const tileCount = tileCountPerRegion.get(region.id);
         if (tileCount !== undefined && tileCount !== 0) {
           region.numberOfTiles = tileCount;
-          (<any>cursor).update(region);
+          (cursor as any).update(region);
         } else {
-          (<any>cursor).delete();
+          (cursor as any).delete();
         }
-        (<any>cursor).continue();
+        (cursor as any).continue();
       } else {
         this.regionDB.needUpdate();
       }
@@ -91,25 +91,25 @@ export class RegionDBAdminService {
       const cursor = (event.target as IDBOpenDBRequest).result;
       if (!cursor) {
         if (needUpdate) {
-          this.regionDB.needUpdate()
+          this.regionDB.needUpdate();
         }
         return;
       }
-      const region: RegionDBData = (<any>cursor).value;
+      const region: RegionDBData = (cursor as any).value;
       if (region.status === RegionStatus.Downloading) {
         return;
       }
-      
+
       const downloadDate: Date = region.timestamp;
       const currentDate = new Date();
       if (currentDate.getTime() - downloadDate.getTime() >= this.expirationInterval) {
         if (region.status !== RegionStatus.Expired) {
           region.status = RegionStatus.Expired;
-          (<any>cursor).update(region);
+          (cursor as any).update(region);
           needUpdate = true;
         }
       }
-      (<any>cursor).continue();
+      (cursor as any).continue();
     });
   }
 

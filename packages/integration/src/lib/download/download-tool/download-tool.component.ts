@@ -28,7 +28,7 @@ export enum Tab {
 export class DownloadToolComponent implements OnInit, AfterViewInit {
   @ViewChild('editor') regionEditor: RegionEditorComponent;
   @ViewChild('manager') regionManager: RegionManagerComponent;
-  
+
   constructor(
     private state: DownloadToolState,
     private downloadState: DownloadState

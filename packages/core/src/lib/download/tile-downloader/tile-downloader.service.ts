@@ -55,7 +55,7 @@ export class TileDownloaderService {
   readonly isDownloading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private tileGenerationStrategy: TileGenerationStrategy = new ParentTileGeneration();
-  
+
   private urlQueue: string[] = [];
   private _isDownloading: boolean = false;
   private _nWorkerDone: number;
@@ -72,22 +72,6 @@ export class TileDownloaderService {
     private network: GeoNetworkService,
     private geoDB: TileDBService,
   ) { }
-  
-  // need to change the argument of the function then change the logic in the region-editor
-  // component
-  private generateTiles(tile: Tile, depth: number): Tile[] {
-    // testing puporses
-    return this.tileGenerationStrategy.generate(tile, tile.Z, tile.Z + depth);
-    //return getTreeNodes(tile, tile.Z + depth);
-  }
-
-  private generateTilesRegion(region: Tile[], depth: number) {
-    let tiles = [];
-    region.forEach((tile) => {
-      tiles = tiles.concat(this.generateTiles(tile, depth));
-    });
-    return tiles;
-  }
 
   private initURLGenerator(tileGrid, url) {
     this.urlGenerator = createFromTemplate(url, tileGrid);
@@ -99,11 +83,6 @@ export class TileDownloaderService {
     } catch (e) {
       return undefined;
     }
-  }
-
-  // need to create to refactor download service
-  public downloadRegion(regionID: number, coords: [[number, number, number]], depth: number, tileGrids, srcs) {
-
   }
 
   public downloadFromCoord(
@@ -136,7 +115,7 @@ export class TileDownloaderService {
 
     console.log('Queue :', this.urlQueue.length);
     console.log('current gen strat', this.tileGenerationStrategy);
-    
+
     // if not already downloading start downloading
     if (!this.isDownloading) {
       this.startDownload(regionID, tiles.length);
@@ -179,7 +158,8 @@ export class TileDownloaderService {
       return (observer: Observer<any>) => {
         const request = this.http.get(url, { responseType: 'blob' }).pipe(
           retry(2)
-        )
+        );
+
         request.subscribe((blob) => {
           this.geoDB.update(url, regionID, blob).subscribe(() => {
             this.validDownloadCount++;
@@ -188,7 +168,6 @@ export class TileDownloaderService {
           });
         },
         (err) => {
-          console.log("sub error handle")
           observer.next('done downloading ' + url);
           observer.complete();
         });
@@ -218,8 +197,7 @@ export class TileDownloaderService {
   }
 
   public changeStrategy(strategyName: string) {
-    console.log('strategy changed', strategyName);
-    switch(strategyName) {
+    switch (strategyName) {
       case TileGenerationStrategies.PARENT:
         this.tileGenerationStrategy = new ParentTileGeneration();
         break;

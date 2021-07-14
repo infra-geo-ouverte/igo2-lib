@@ -2,25 +2,22 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChi
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
 import { MessageService, RegionDBData } from '@igo2/core';
-import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
-import { filter } from 'jszip';
-import { DownloadToolState } from './../download-tool/download-tool.state';
-import { MatInput } from '@angular/material/input';
+import { map, skip } from 'rxjs/operators';
 import { TileDownloaderService, DownloadRegionService, TileToDownload } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 
 import { fromExtent } from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
+
 import { Feature, FEATURE } from '@igo2/geo';
-import { RegionDBService, StorageQuotaService } from '@igo2/core';
+import { StorageQuotaService } from '@igo2/core';
 import { EditedRegion, RegionEditorState } from './region-editor.state';
 import { EditionStrategy } from './editing-strategy/edition-strategy';
-import { EditionStrategies } from './editing-strategy/edition-strategies';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
@@ -39,8 +36,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
-  
-  isDownloading$: Observable<boolean>; 
+
+  isDownloading$: Observable<boolean>;
   isDownloading$$: Subscription;
 
   private addNewTile$$: Subscription;
@@ -88,7 +85,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
   }
-  
+
   public onGenerationParamsChange() {
     this.genParams = this.genParamComponent.tileGenerationParams;
     this.updateVariables();
@@ -96,7 +93,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private updateVariables() {
     this._notEnoughSpace$ = this.storageQuota.enoughSpace(this.sizeEstimationInBytes())
-    .pipe(map((value) => { 
+    .pipe(map((value) => {
       return !value;
     }));
   }
@@ -107,11 +104,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
 
     const polygonGeometry = fromExtent(tileGrid.getTileCoordExtent(coord));
-    
+
     const feature: OlFeature = new OlFeature(polygonGeometry);
 
-    const projectionIn = 'EPSG:4326'
-    const projectionOut = 'EPSG:4326'
+    const projectionIn = 'EPSG:4326';
+    const projectionOut = 'EPSG:4326';
 
     const featuresText: string = new olformat.GeoJSON().writeFeature(
       feature,
@@ -128,11 +125,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       geometry: JSON.parse(featuresText).geometry,
       projection: this.map.projection,
       properties: {
-        id:id,
+        id,
         stopOpacity: 1
       },
       meta: {
-        id: id,
+        id,
         revision: previousRegionRevision + 1
       },
       ol: feature
@@ -150,7 +147,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.editedTilesFeature) {
       return;
     }
-    
     this.regionStore.updateMany(this.editedTilesFeature);
   }
 
@@ -163,7 +159,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       if (z !== this.parentLevel && !first) {
         this.messageService.error('The tile you selected is not on the same level as the previous ones');
         return;
-      } 
+      }
 
       if (first) {
         this.parentLevel = z;
@@ -178,7 +174,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
         this.parentTileUrls.push(url);
-        
+
         this.showEditedRegionFeatures();
         this.updateVariables();
       } else {
@@ -195,7 +191,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.genParams = this.genParamComponent.tileGenerationParams;
-    
+
     this._nTilesToDownload = this.numberOfTilesToDownload();
 
     if (this.isDownloading$$) {
@@ -211,7 +207,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.clearEditedRegion();
         }
       });
-    
+
     this.editionStrategy.download(this.editedRegion, this.downloadService);
   }
 
@@ -252,20 +248,20 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.isDownloading) {
-      this.messageService.error("There is already a region downloading")
+      this.messageService.error('There is already a region downloading');
       return;
     }
 
     this.clearEditedRegion();
     this.editionStrategy = new UpdateEditionStrategy(region);
-    
+
     region.parentUrls.forEach((url: string) => {
       this.parentTileUrls.push(url);
       this.urlsToDownload.add(url);
     });
     // need to change
     this.regionName = region.name;
-    
+
     this.parentLevel = region.generationParams.parentLevel;
     this.genParams = region.generationParams;
     this.genParamComponent.tileGenerationParams = region.generationParams;
