@@ -20,7 +20,7 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%,-50%);
-	background-color: red;
+	background-color: blue;
 }
 
 .igo-swipe-control-arrows {
@@ -32,7 +32,7 @@
 	transform: translate(-50%,-50%);
 	margin-top: -16px;
 	padding: 5px 4px;
-	background-color: red;
+	background-color: blue;
 	z-index: 2;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	div {
@@ -55,24 +55,4 @@
 
 .igo-swipe-control-arrows:active{
 	display: none;
-}
-
-.igo-swipe-control-layer-label {
-	display: none;
-	position: absolute;
-	width: 120px;
-	bottom: 55px;
-	right: 65%;
-	padding: 5px 3px; 
-	font-size: 11px;
-	font-weight: bold;
-	background-color: white;
-	border: blue;
-	
-	&:before {
-		padding-right: 3px;
-	}
-.igo-swipe-control-hidden{
-	display: none;
-}
 }

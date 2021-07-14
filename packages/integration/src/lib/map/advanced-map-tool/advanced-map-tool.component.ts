@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators  } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToolComponent } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
-import { StorageService } from '@igo2/core';
 import { MapState } from '../map.state';
+import { ToolState } from '../../tool/tool.state';
 
 @ToolComponent({
   name: 'advancedMap',
@@ -42,7 +42,7 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
     public mapState: MapState,
     private contextService: ContextService,
     private formBuilder: FormBuilder,
-    private storageService: StorageService) {
+    private toolState: ToolState) {
       this.buildForm();
   }
 
@@ -52,8 +52,7 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.layerList = this.contextService.getContextLayers(this.map);
-    this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
-    this.userControlledLayerList = this.userControlledLayerList.filter(layer => layer.displayed);
+    this.userControlledLayerList = this.layerList.filter(layer => (layer.showInLayerList && layer.displayed));
   }
 
   /**
@@ -70,8 +69,7 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
    */
   private buildForm() {
     this.form = this.formBuilder.group({
-      layers: ['', [Validators.required]],
-      name: ['', [Validators.required]]
+      layers: ['', [Validators.required]]
     });
   }
 
@@ -107,5 +105,26 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
       this.form.controls.layers.setValue([]);
     }
     this.startSwipe(false);
+  }
+
+  /**
+   * Open search tool
+   */
+  searchEmit() {
+    this.toolState.toolbox.activateTool('searchResults');
+  }
+
+  /**
+   * Open catalog
+   */
+  catalogEmit() {
+    this.toolState.toolbox.activateTool('catalog');
+  }
+
+  /**
+   * Open context manager
+   */
+  contextEmit() {
+    this.toolState.toolbox.activateTool('contextManager');
   }
 }

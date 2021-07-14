@@ -66,8 +66,18 @@
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
       },
-      "advanced-map-tools": "select the layers for swiping",
-      "selectAll": "Select all"
+      "advanced-map-tool": {
+        "swipe-select":  "select the layers for swiping",
+        "selectAll": "Select all",
+        "empty": "No layer is currently active on this map. ",
+        "customize": "Customize it by adding layer from the : ",
+        "search-tool": "Search tool",
+        "catalog-tool": "Data catalog",
+        "context-tool": "Context manager",
+        "swipe": "Swipe",
+        "swipe-tool": "Swipe-Tool",
+        "coordinates": "Coordinates"
+      }
     }
   }
 }

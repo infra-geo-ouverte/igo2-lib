@@ -66,10 +66,18 @@
         "standardExtent": "Réduire",
         "standardExtentTooltip": "Réduire la fenêtre"
       },
-      "advanced-map-tool":{
+      "advanced-map-tool": {
         "swipe-select": "Choisir les couches à swiper",
-        "selectAll": "Tout sélectionner"
-      }
+        "selectAll": "Tout sélectionner",
+        "empty": "La carte ne contient aucune couche de données.",
+        "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+        "search-tool": "Recherche",
+        "catalog-tool": "Catalogue de données",
+        "context-tool": "Gestionnaire de contextes",
+        "swipe": "Activer",
+        "swipe-tool": "Outil Swipe",
+        "coordinates": "Coordonnées du centre de la carte"
+      }      
     }
   }
 }

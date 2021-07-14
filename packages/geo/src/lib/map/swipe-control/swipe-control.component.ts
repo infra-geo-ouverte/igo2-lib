@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Layer } from '../../layer';
 import { IgoMap } from '../shared/map';
 import { getRenderPixel } from 'ol/render';
@@ -14,11 +14,10 @@ import { Subscription } from 'rxjs';
 })
 
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
-  @Input()
-
   /**
    * Get an active map
    */
+  @Input()
   get map(): IgoMap {
     return this._map;
   }
