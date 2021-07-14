@@ -106,7 +106,11 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   private selectRegion(region: DisplayRegion) {
-    this.selectedRegion = region;
+    if (this.selectedRegion.id === region.id) {
+      this.unselectRegion();
+    } else {
+      this.selectedRegion = region;
+    }
   }
 
   private unselectRegion() {
