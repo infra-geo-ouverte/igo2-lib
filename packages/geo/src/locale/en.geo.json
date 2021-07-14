@@ -212,8 +212,8 @@
         "activateSelectionMode": "Activate multiple selection mode",
         "deactivateSelectionMode": "Deactivate multiple selection mode",
         "tools": "Tools",
-        "selectAll": "Select all",
-        "deselectAll": "Deselect all",
+        "selectAll": "Select all layers",
+        "deselectAll": "Deselect all layers",
         "zoomLayer": "Zoom To Layer Extents",
         "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
@@ -291,11 +291,19 @@
         "resolution": "Resolution",
         "saveBtn": "Save",
         "scale": "Scale",
-        "showLegend": "Show legend",
         "showProjection": "Show projection",
         "showScale": "Show scale",
         "title": "Title",
-        "subtitle": "Subtitle"
+        "subtitle": "Subtitle",
+        "legendPosition": "Legend Position",
+        "legendPositions": {
+          "none": "No legend",
+          "topleft": "Top left corner of the map",
+          "topright": "Top right corner of the map",
+          "bottomleft": "Bottom left corner of the map",
+          "bottomright": "Bottom right corner of the map",
+          "newpage": "On a new page"
+        }
       },
       "directionsForm": {
         "stopLayer": "Directions - stops",
