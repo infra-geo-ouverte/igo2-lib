@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscription, zip } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
-import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region, TileDBData } from '../storage';
+import { Region, RegionDBData, RegionDBService, RegionStatus, TileDBData, TileDBService } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 import { TileGenerationParams } from './tile-downloader/tile-generation-strategies/tile-generation-params.interface';

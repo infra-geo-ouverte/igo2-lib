@@ -3,8 +3,6 @@ import { RegionDBData } from '@igo2/core/public_api';
 import { Subject } from 'rxjs';
 import { DisplayRegion } from './region-manager.component';
 
-
-
 @Injectable({
   providedIn: 'root'
 })

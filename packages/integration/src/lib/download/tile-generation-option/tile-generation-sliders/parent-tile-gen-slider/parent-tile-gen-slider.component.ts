@@ -1,7 +1,5 @@
-import { AfterViewInit, Component, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
-import { EventEmitter } from '@angular/core';
-import { TransitionCheckState } from '@angular/material/checkbox';
 import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
 
 

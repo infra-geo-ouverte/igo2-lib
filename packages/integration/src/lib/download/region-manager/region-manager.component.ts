@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { RegionDBData, DownloadRegionService, Region, RegionDBService, RegionStatus } from '@igo2/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DownloadRegionService, Region, RegionDBData, RegionDBService, RegionStatus } from '@igo2/core';
 import { Feature } from '@igo2/geo';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { MapState } from '../../map';
-import { DownloadToolState } from '../download-tool/download-tool.state';
 import { DownloadState } from '../download.state';
 import { RegionManagerState } from './region-manager.state';
 
@@ -98,7 +97,6 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
     dbRequest.subscribe((regionDBData: RegionDBData) => {
       this.regionToEdit$.next(regionDBData);
     });
-    console.log('Edit ', region);
   }
 
   public getRegion(row: DisplayRegion) {

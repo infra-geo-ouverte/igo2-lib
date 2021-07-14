@@ -3,7 +3,7 @@ import { DBMode } from 'ngx-indexed-db';
 import { interval } from 'rxjs';
 import { TileDBData, TileDBService } from '../tile-db';
 import { RegionDBService } from './region-db.service';
-import { RegionStatus, RegionDBData } from './Region.interface';
+import { RegionDBData, RegionStatus } from './Region.interface';
 
 
 @Injectable({

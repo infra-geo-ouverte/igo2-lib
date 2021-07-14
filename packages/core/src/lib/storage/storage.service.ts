@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-
-import { ConfigService } from '../config/config.service';
-import { StorageScope, StorageOptions, StorageServiceEvent, StorageServiceEventEnum } from './storage.interface';
 import { BehaviorSubject } from 'rxjs';
+import { ConfigService } from '../config/config.service';
+import { StorageOptions, StorageScope, StorageServiceEvent, StorageServiceEventEnum } from './storage.interface';
+
 
 @Injectable({
   providedIn: 'root'

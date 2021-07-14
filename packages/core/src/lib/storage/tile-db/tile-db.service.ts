@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, pipe, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { CompressionService } from '../compression/compression.service';
 import { TileDBData } from './TileDBData.interface';

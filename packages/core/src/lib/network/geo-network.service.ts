@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { interval, Observable, Observer, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { interval, Observable, Subscription } from 'rxjs';
 import { TileDBService } from '../storage';
 
 @Injectable({

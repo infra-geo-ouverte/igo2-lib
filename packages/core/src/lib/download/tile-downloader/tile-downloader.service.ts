@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TileDBService } from '../../storage';
-import { retry } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Observer } from 'rxjs';
+import { retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
+import { TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
-import { TileGenerationStrategy } from './tile-generation-strategies/tile-generation-strategy';
-import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-generation';
-import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
-import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
 import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
+import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
+import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-generation';
 import { TileGenerationParams } from './tile-generation-strategies/tile-generation-params.interface';
+import { TileGenerationStrategy } from './tile-generation-strategies/tile-generation-strategy';
+import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;

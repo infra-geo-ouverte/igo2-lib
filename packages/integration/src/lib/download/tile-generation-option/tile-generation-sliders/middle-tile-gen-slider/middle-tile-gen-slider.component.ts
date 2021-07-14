@@ -1,5 +1,5 @@
 import { Options } from '@angular-slider/ngx-slider';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
 
 @Component({

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { TransferedTile } from './TransferedTile';
-import { MapState } from '../map';
 import { FeatureStore } from '@igo2/geo';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { MapState } from '../map';
+import { TransferedTile } from './TransferedTile';
 
 @Injectable({
    providedIn: 'root'

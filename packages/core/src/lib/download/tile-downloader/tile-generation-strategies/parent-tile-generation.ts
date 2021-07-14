@@ -1,5 +1,5 @@
-import { TileGenerationStrategy } from './tile-generation-strategy';
 import { Tile } from '../../Tile.interface';
+import { TileGenerationStrategy } from './tile-generation-strategy';
 import { getNumberOfTreeNodes, getTreeNodes } from './tile-generation-util';
 
 export class ParentTileGeneration extends TileGenerationStrategy {

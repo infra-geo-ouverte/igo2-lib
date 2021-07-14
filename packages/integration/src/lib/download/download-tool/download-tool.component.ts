@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 import { RegionDBData } from '@igo2/core/public_api';
 import { DownloadState } from '../download.state';
-import { EditionStrategies } from '../region-editor/editing-strategy/edition-strategies';
 import { RegionEditorComponent } from '../region-editor/region-editor.component';
 import { RegionManagerComponent } from '../region-manager/region-manager.component';
 import { DownloadToolState } from './download-tool.state';
