@@ -6,6 +6,7 @@ export interface Region {
   parentUrls: string[];
   parentFeatureText: string[];
   numberOfTiles: number;
+  generationParams: TileGenerationParams;
 }
 
 export interface RegionDate extends Region {
@@ -14,7 +15,6 @@ export interface RegionDate extends Region {
 
 export interface RegionDBData extends RegionDate {
   id: number;
-  generationParams: TileGenerationParams;
 }
 
 export enum RegionStatus {

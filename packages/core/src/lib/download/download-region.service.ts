@@ -57,6 +57,7 @@ export class DownloadRegionService {
       name: regionName,
       status: RegionStatus.Downloading,
       parentUrls,
+      generationParams,
       numberOfTiles,
       parentFeatureText
     };

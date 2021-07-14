@@ -6,11 +6,7 @@ import { Region, RegionDate, RegionDBData } from './Region.interface';
 
 
 function createRegionDateFromRegion(region: Region): RegionDate {
-  const regionDate: RegionDate = {} as RegionDate;
-  regionDate.name = region.name;
-  regionDate.status = region.status;
-  regionDate.numberOfTiles = region.numberOfTiles;
-  regionDate.parentUrls = region.parentUrls;
+  const regionDate: RegionDate = region as RegionDate;
   regionDate.timestamp = new Date();
   return regionDate;
 }

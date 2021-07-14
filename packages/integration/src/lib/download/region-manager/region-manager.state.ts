@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RegionDBData } from '@igo2/core/public_api';
+import { RegionDBData } from '@igo2/core';
 import { Subject } from 'rxjs';
 import { DisplayRegion } from './region-manager.component';
 
@@ -19,6 +19,12 @@ export class RegionManagerState {
       name: undefined,
       numberOfTiles: undefined,
       parentUrls: new Array(),
+      generationParams: {
+        startLevel: undefined,
+        parentLevel: undefined,
+        endLevel: undefined,
+        genMethod: undefined
+      },
       parentFeatureText: new Array()
     };
   }
