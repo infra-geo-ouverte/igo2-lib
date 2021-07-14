@@ -98,7 +98,8 @@ import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advan
     MatButtonModule,
     MatTooltipModule
   ],
-  declarations: [AdvancedSwipeComponent, AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent],
+  declarations: [AdvancedSwipeComponent, AdvancedMapToolComponent, MapToolComponent,
+    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent],
   exports: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
