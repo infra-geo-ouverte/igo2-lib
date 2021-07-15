@@ -55,6 +55,33 @@ export class RegionDBAdminService {
     });
   }
 
+  public hardUpdate() {
+    this.cancelRegionDownloadStatus();
+    this.updateAllRegionTileCount();
+  }
+
+  private cancelRegionDownloadStatus() {
+    this.regionDB.openCursor(undefined, DBMode.readwrite).subscribe((event) => {
+      if (!event) {
+        return;
+      }
+
+      const cursor = (event.target as IDBOpenDBRequest).result;
+      if (cursor) {
+        const region: RegionDBData = (cursor as any).value;
+        console.log(region);
+        const status = region.status;
+        if (status === RegionStatus.Downloading) {
+          region.status = RegionStatus.OK;
+          (cursor as any).update(region);
+        }
+        (cursor as any).continue();
+      } else {
+        this.regionDB.needUpdate();
+      }
+    });
+  }
+
   private updateRegionTileCountWithMap(tileCountPerRegion: Map<number, number>) {
     if (!tileCountPerRegion) {
       return;

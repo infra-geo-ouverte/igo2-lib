@@ -31,7 +31,7 @@ export class DownloadRegionService {
     private regionDB: RegionDBService,
     private regionDBAdmin: RegionDBAdminService
   ) {
-    this.regionDBAdmin.updateAllRegionTileCount();
+    this.regionDBAdmin.hardUpdate();
   }
 
   public downloadSelectedRegion(
