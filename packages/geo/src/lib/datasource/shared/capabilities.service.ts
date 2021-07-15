@@ -3,7 +3,7 @@ import {
   HttpClient,
   HttpParams
 } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cacheable } from 'ngx-cacheable';
 
