@@ -15,7 +15,7 @@ import { ObjectUtils } from '@igo2/utils';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
-import { CapabilitiesService, TypeCapabilities } from '../../datasource';
+import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
@@ -148,7 +148,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.unsubscribeAddingCatalog();
 
     this.addingCatalog$$ = this.capabilitiesService
-    .getCapabilities(TypeCapabilities[addedCatalog.type], addedCatalog.url, addedCatalog.version)
+    .getCapabilities(addedCatalog.type as any, addedCatalog.url, addedCatalog.version)
       .pipe(
         catchError((e) => {
           const title = this.languageService.translate.instant(

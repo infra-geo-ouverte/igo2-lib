@@ -7,11 +7,11 @@ import { uuid, ObjectUtils } from '@igo2/utils';
 import { LanguageService, MessageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
-  TypeCapabilities,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions
+  ArcGISRestDataSourceOptions,
+  TypeCapabilitiesStrings
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -327,7 +327,7 @@ export class CatalogService {
   private getCatalogCapabilities(catalog: Catalog): Observable<any> {
     const sType: string = TypeCatalog[catalog.type as string];
     return this.capabilitiesService
-      .getCapabilities(TypeCapabilities[sType], catalog.url, catalog.version)
+      .getCapabilities(sType as any, catalog.url, catalog.version)
       .pipe(
         catchError((e) => {
           const title = this.languageService.translate.instant(
