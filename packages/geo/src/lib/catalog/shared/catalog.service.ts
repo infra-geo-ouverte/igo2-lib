@@ -345,7 +345,7 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
-    const configuredQueryFormat = this.retriveLayerInfoFormat(
+    const configuredQueryFormat = this.retrieveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
     );
@@ -670,7 +670,7 @@ export class CatalogService {
     return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
   }
 
-  private retriveLayerInfoFormat(
+  private retrieveLayerInfoFormat(
     layerNameFromCatalog: string,
     layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
   ): QueryFormat {
