@@ -69,7 +69,6 @@ export class RegionDBAdminService {
       const cursor = (event.target as IDBOpenDBRequest).result;
       if (cursor) {
         const region: RegionDBData = (cursor as any).value;
-        console.log(region);
         const status = region.status;
         if (status === RegionStatus.Downloading) {
           region.status = RegionStatus.OK;
