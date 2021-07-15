@@ -13,6 +13,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IgoDrawingToolModule } from '@igo2/geo';
 import { MatCarouselModule } from '@ngbmodule/material-carousel';
 import { DownloadToolComponent } from './download-tool';
 import { RegionEditorComponent } from './region-editor/region-editor.component';
@@ -39,7 +40,8 @@ import { ParentTileGenSliderComponent } from './tile-generation-option/tile-gene
     FormsModule,
     MatTableModule,
     MatRippleModule,
-    NgxSliderModule
+    NgxSliderModule,
+    IgoDrawingToolModule
   ],
   declarations: [
     DownloadToolComponent,

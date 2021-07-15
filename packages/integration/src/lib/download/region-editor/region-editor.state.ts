@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TileGenerationStrategies, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
-import { Feature } from '@igo2/geo';
+import { Feature, FeatureStore } from '@igo2/geo';
 import { Observable } from 'rxjs';
+import { MapState } from '../../map';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 
@@ -37,11 +38,22 @@ function newEditedRegion(): EditedRegion {
 export class RegionEditorState {
     private _editedRegion: EditedRegion = newEditedRegion();
     private _editionStrategy: EditionStrategy = new CreationEditionStrategy();
+    private _drawStore: FeatureStore<Feature> = new FeatureStore<Feature>([], { 
+        map: this.map 
+    });
+
     progression$: Observable<number>;
     isDownloading: boolean;
 
-    constructor() {}
+    constructor(private mapState: MapState) {}
 
+    get map() {
+        return this.mapState.map;
+    }
+
+    get drawStore() {
+        return this._drawStore;
+    }
     set editedRegion(editedRegion: EditedRegion) {
         if (!editedRegion) {
             this._editedRegion = newEditedRegion();

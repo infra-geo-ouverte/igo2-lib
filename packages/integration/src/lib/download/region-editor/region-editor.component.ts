@@ -1,27 +1,25 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { Observable, Subscription } from 'rxjs';
-import { DownloadState } from '../download.state';
-import { TransferedTile } from '../TransferedTile';
-import { MessageService, RegionDBData } from '@igo2/core';
-import { map, skip } from 'rxjs/operators';
-import { TileDownloaderService, DownloadRegionService, TileToDownload } from '@igo2/core';
+import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
+import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
+import { Feature, FEATURE, FeatureStore, IgoMap } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
-
-import { fromExtent } from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
-
-import { Feature, FEATURE } from '@igo2/geo';
-import { StorageQuotaService } from '@igo2/core';
-import { EditedRegion, RegionEditorState } from './region-editor.state';
-import { EditionStrategy } from './editing-strategy/edition-strategy';
-import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
-import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
+import { fromExtent } from 'ol/geom/Polygon';
+import { createFromTemplate } from 'ol/tileurlfunction.js';
+import { Observable, Subscription } from 'rxjs';
+import { map, skip } from 'rxjs/operators';
+import { DownloadState } from '../download.state';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
-import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
+import { TransferedTile } from '../TransferedTile';
+import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
+import { EditionStrategy } from './editing-strategy/edition-strategy';
+import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
+import { EditedRegion, RegionEditorState } from './region-editor.state';
+
+
 
 
 @Component({
@@ -37,10 +35,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
 
+  activateDrawingTool: boolean = true;
+  
   isDownloading$: Observable<boolean>;
   isDownloading$$: Subscription;
 
   private addNewTile$$: Subscription;
+  
+  get openedWithMouse() {
+    return this.downloadState.openedWithMouse;
+  }
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -48,10 +52,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private downloadState: DownloadState,
     private state: RegionEditorState,
     private messageService: MessageService,
-    private storageQuota: StorageQuotaService
+    private storageQuota: StorageQuotaService,
   ) {
-    const openedWithMouse = this.downloadState.openedWithMouse;
-    const numberToSkip = openedWithMouse ? 0 : 1;
+    if (this.openedWithMouse) {
+      this.deactivateDrawingTool();
+    }
+    
+    const numberToSkip = this.openedWithMouse ? 0 : 1;
     this.addNewTile$$ = this.downloadState.addNewTile$
       .pipe(skip(numberToSkip))
       .subscribe((tile: TransferedTile) => {
@@ -151,6 +158,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
+    this.deactivateDrawingTool();
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
@@ -221,6 +229,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onCancelClick() {
+    this.activateDrawingTool = true;
     this.clearEditedRegion();
     this.updateVariables();
   }
@@ -243,6 +252,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public updateRegion(region: RegionDBData) {
+    this.deactivateDrawingTool();
+    
     if (!region) {
       return;
     }
@@ -272,6 +283,19 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.changeGenerationParams(region.generationParams)
     // this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
+  }
+
+  private deactivateDrawingTool() {
+    this.drawStore.clear();
+    this.activateDrawingTool = false;
+  }
+
+  get igoMap(): IgoMap {
+    return this.state.map;
+  }
+
+  get drawStore(): FeatureStore<Feature> {
+    return this.state.drawStore;
   }
 
   get downloadButtonTitle() {

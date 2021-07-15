@@ -29,6 +29,11 @@
   <div>
     <igo-tile-generation-option #genParam (valueChange)="onGenerationParamsChange()" [disabled]="disableSlider" [parentLevel]="parentLevel"></igo-tile-generation-option>
   </div>
+  <div *ngIf="activateDrawingTool">
+    <hr>
+      <igo-draw [store]="drawStore" [map]="igoMap"></igo-draw>
+    <hr>
+  </div>
   <div>
     <div>
       <mat-label>Estimated Download Size in MB </mat-label>
