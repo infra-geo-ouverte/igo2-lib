@@ -19,6 +19,7 @@ import { OfflineButtonComponent } from './offline-button/offline-button.componen
 import { PointerPositionDirective } from './shared/map-pointer-position.directive';
 import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
+import { MapCenterComponent } from './map-center/map-center.component';
 
 @NgModule({
   imports: [
@@ -40,7 +41,8 @@ import { SwipeControlComponent } from './swipe-control/swipe-control.component';
     OfflineButtonComponent,
     PointerPositionDirective,
     HoverFeatureDirective,
-    SwipeControlComponent
+    SwipeControlComponent,
+    MapCenterComponent
   ],
   declarations: [
     MapBrowserComponent,
@@ -53,7 +55,8 @@ import { SwipeControlComponent } from './swipe-control/swipe-control.component';
     OfflineButtonComponent,
     PointerPositionDirective,
     HoverFeatureDirective,
-    SwipeControlComponent
+    SwipeControlComponent,
+    MapCenterComponent
   ]
 })
 export class IgoMapModule {}

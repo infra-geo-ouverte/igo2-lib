@@ -1,0 +1,25 @@
+.mapCenter {
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-15px,-15px);
+	
+	.vertical {
+	  width: 4px;
+	  height: 30px;
+	  position: absolute;
+	  left: 13px;
+	  background-color: black;
+	}
+	
+	.horizontal {
+	  width: 30px;
+	  height: 4px;
+	  position: absolute;
+	  top: 13px;
+	  background-color: black;
+	}
+  }
+  

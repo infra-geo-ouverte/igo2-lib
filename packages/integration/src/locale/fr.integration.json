@@ -67,16 +67,27 @@
         "standardExtentTooltip": "Réduire la fenêtre"
       },
       "advanced-map-tool": {
-        "swipe-select": "Choisir les couches à swiper",
-        "selectAll": "Tout sélectionner",
-        "empty": "La carte ne contient aucune couche de données.",
-        "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
-        "search-tool": "Recherche",
-        "catalog-tool": "Catalogue de données",
-        "context-tool": "Gestionnaire de contextes",
-        "swipe": "Activer",
-        "swipe-tool": "Outil Swipe",
-        "coordinates": "Coordonnées du centre de la carte"
+        "advanced-swipe":{      
+          "swipe-select": "Choisir les couches à swiper",
+          "selectAll": "Tout sélectionner",
+          "empty": "La carte ne contient aucune couche de données.",
+          "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+          "search-tool": "Recherche",
+          "catalog-tool": "Catalogue de données",
+          "context-tool": "Gestionnaire de contextes",
+          "swipe": "Activer",
+          "swipe-tool": "Outil Swipe"         
+        },
+        "advanced-coordinates": {
+          "copy": "Copier les coordonnées",
+          "lon": "Longitude",
+          "lat": "Latitude",
+          "coordinates": "Coordonnées du centre de la carte",
+          "copyMsg": "Coordonnées copiés",
+          "copyTitle": "Coordonnées du centre",
+          "center": "Afficher le centre"
+        }
+
       }      
     }
   }

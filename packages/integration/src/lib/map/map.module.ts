@@ -49,6 +49,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IgoSpinnerModule } from '@igo2/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advanced-swipe.component';
+import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coordinates/advanced-coordinates.component';
 
 
 
@@ -98,8 +99,8 @@ import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advan
     MatButtonModule,
     MatTooltipModule
   ],
-  declarations: [AdvancedSwipeComponent, AdvancedMapToolComponent, MapToolComponent,
-    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent],
+  declarations: [ AdvancedMapToolComponent, MapToolComponent,
+    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent, AdvancedCoordinatesComponent],
   exports: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

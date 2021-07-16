@@ -50,6 +50,7 @@ export class IgoMap {
   public searchResultsOverlay: Overlay;
   public viewController: MapViewController;
   public swipeEnabled$ = new BehaviorSubject<boolean>(false);
+  public mapCenter$ = new BehaviorSubject<boolean>(false);
   public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
   public swipeRatio: number = 50;
 
