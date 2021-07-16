@@ -16,7 +16,17 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
    * Get an active map
    */
-  @Input() map: IgoMap;
+  // @Input() map: IgoMap;
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+
+  /**
+   * The map to swipe on
+   */
+     private _map: IgoMap;
+
 
   /**
    * Listener of toggle from advanced-map-tool
