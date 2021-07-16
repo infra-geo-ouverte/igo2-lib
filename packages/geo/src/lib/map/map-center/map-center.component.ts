@@ -11,21 +11,21 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./map-center.component.scss']
 })
 
-export class MapCenterComponent implements AfterViewInit, OnDestroy {
+export class MapCenterComponent implements OnInit, OnDestroy {
 
   /**
    * Get an active map
    */
-  // @Input() map: IgoMap;
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
+  @Input() map: IgoMap;
+  // @Input()
+  // get map(): IgoMap {
+  //   return this._map;
+  // }
 
   /**
    * The map to swipe on
    */
-     private _map: IgoMap;
+    //  private _map: IgoMap;
 
 
   /**
@@ -37,7 +37,7 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
    * Set a visibility for cursor of the center of the map
    */
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.displayCenter$$ = this.map.mapCenter$.subscribe(value => {
       value ? document.getElementById('mapCenter').style.visibility = 'visible' : document.getElementById('mapCenter').style.visibility = 'hidden';
     });

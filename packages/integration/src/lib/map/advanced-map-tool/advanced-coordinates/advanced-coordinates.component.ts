@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '
 import { IgoMap, MapViewController } from '@igo2/geo';
 import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService, LanguageService, StorageService, StorageScope } from '@igo2/core';
 import { Subscription } from 'rxjs';
 
 /**
@@ -19,7 +19,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy, AfterVie
     return this.mapState.map;
   }
   public coordinates: string[];
-  public center: boolean;
+  public center: boolean = false;
   private mapState$$: Subscription;
   // private mapController: MapViewController;
 
@@ -27,7 +27,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy, AfterVie
     public mapState: MapState,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private cdRef: ChangeDetectorRef) { }
+    private cdRef: ChangeDetectorRef,
+    private storageService: StorageService) { }
 
   ngOnInit(): void {
     this.getCoordinates();
@@ -35,11 +36,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy, AfterVie
         this.getCoordinates();
         this.cdRef.detectChanges();
       });
+    this.checkTogglePosition();
   }
 
   ngOnDestroy(): void{
-    this.center = false;
-    this.map.mapCenter$.next(this.center);
     this.mapState$$.unsubscribe();
   }
 
@@ -75,5 +75,15 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy, AfterVie
   displayCenter(toggle: boolean){
     this.center = toggle;
     this.map.mapCenter$.next(toggle);
+    this.storageService.set('centerToggle', toggle, StorageScope.SESSION);
+  }
+
+  /**
+   * Set the toggle position in a current value
+   */
+  checkTogglePosition(){
+    if (this.storageService.get('centerToggle') === true){
+      this.center = true;
+    }
   }
 }
