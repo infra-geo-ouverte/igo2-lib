@@ -466,9 +466,9 @@ export class QueryService {
 
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
-    // replace \r \n  and ' ' with '' to validate if the body is really empty.
-    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '');
-    if (body === '<body></body>' || res === '') {
+    // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
+    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '').replace(/<(.|\n)*?>/g, '');
+    if (body === '' || res === '') {
       return [];
     }
 
