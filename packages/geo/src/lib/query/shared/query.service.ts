@@ -416,7 +416,7 @@ export class QueryService {
   private extractGeoJSONData(res, zIndex, allowedFieldsAndAlias?) {
     let features = [];
     try {
-      features = JSON.parse(res).features;
+      features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
     } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
