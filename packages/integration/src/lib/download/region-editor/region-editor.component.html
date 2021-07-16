@@ -53,4 +53,5 @@
     <button mat-button #download (click)="onDownloadClick()" [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)="onCancelClick()" [disabled]="disableCancelButton">Cancel</button>
   <div>
+    <button (click)="onTestClick()">Show Features</button>
 </div>
