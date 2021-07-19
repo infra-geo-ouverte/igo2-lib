@@ -12,8 +12,8 @@ import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { Observable, Subscription } from 'rxjs';
-import { map, skip } from 'rxjs/operators';
+import { interval, Observable, Subscription } from 'rxjs';
+import { map, skip, take } from 'rxjs/operators';
 import { DownloadState } from '../download.state';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
 import { TransferedTile } from '../TransferedTile';
@@ -98,14 +98,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         tileGrid = layer.getSource().tileGrid;
       }
     });
-    const tiles = this.getTilesFromFeatures(features, tileGrid);
-    const tilesFeatures = tiles.map((tile: Tile) => {
+    const startZ = this.map.getZoom();
+    interval(1000).pipe(take(4)).subscribe((count) => {
+      const tiles = this.getTilesFromFeatures(features, startZ + count, tileGrid);
+      const tilesFeatures = tiles.map((tile: Tile) => {
       const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
-      return this.getTileFeature(tileGrid, coord);
+        return this.getTileFeature(tileGrid, coord);
+      });
+      this.regionStore.clear();
+      this.regionStore.updateMany(tilesFeatures)
+      console.log('tiles gen by tiles from features', tiles);
     });
-    this.regionStore.clear();
-    this.regionStore.updateMany(tilesFeatures)
-    console.log('tiles gen by tiles from features', tiles);
   }
 
   // findIntersect(): Feature[] {
@@ -156,14 +159,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   //   // this.regionStore.updateMany(drawRegionIntersect);
   // }
 
-  getTilesFromFeature(feature: Feature, tileGrid): Tile[] {
+  getTilesFromFeature(feature: Feature, z:number, tileGrid): Tile[] {
     const geometry = feature.geometry;
     console.log('feature geometry:', geometry);
     if (!geometry) {
       return;
     }
     
-    const z = this.map.viewController.getZoom();
+    // const z = this.map.viewController.getZoom();
     if (geometry.type === 'Point') {
       const coord = tileGrid.getTileCoordForCoordAndZ(geometry.coordinates, z);
       return [{
@@ -239,10 +242,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return tilesCoveringPolygon;
   }
 
-  getTilesFromFeatures(features: Feature[], tileGrid): Tile[] {
+  getTilesFromFeatures(features: Feature[], z: number, tileGrid): Tile[] {
     let tiles: Tile[] = new Array();
     features.forEach((feature) => {
-      tiles = tiles.concat(this.getTilesFromFeature(feature, tileGrid));
+      tiles = tiles.concat(this.getTilesFromFeature(feature, z, tileGrid));
     });
     return tiles;
   }
