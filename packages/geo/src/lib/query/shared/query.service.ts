@@ -505,6 +505,7 @@ export class QueryService {
     const featureGeometry = featureOL.getGeometry() as any;
     const properties: any = Object.assign({}, featureOL.getProperties());
     delete properties.geometry;
+    delete properties.GEOMETRIE;
     delete properties.boundedBy;
     delete properties.shape;
     delete properties.SHAPE;
