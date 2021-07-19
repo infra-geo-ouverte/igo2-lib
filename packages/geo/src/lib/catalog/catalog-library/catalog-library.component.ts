@@ -169,10 +169,11 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       )
       .subscribe((capabilies) => {
         let title;
-
+        let version;
         switch (addedCatalog.type) {
           case 'wms':
             title = addedCatalog.title || capabilies.Service.Title;
+            version = addedCatalog.version || capabilies.version
             break;
           case 'arcgisrest':
           case 'imagearcgisrest':
@@ -197,7 +198,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
               url: addedCatalog.url,
               type: addedCatalog.type || 'wms',
               externalProvider: addedCatalog.externalProvider || false,
-              removable: true
+              removable: true,
+              version
             })) as Catalog);
         this.store.insert(catalogToAdd);
         const newCatalogs = this.addedCatalogs.slice(0);
