@@ -50,15 +50,42 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   first: boolean = true;
-  tileInsidePolygon(polygon: Polygon, tile: Tile): boolean {
-    const out = this.first;
-    this.first = false;
-    return out;
+  // tilesFeatures: Feature[] = new Array();
+  
+  getTileGeometry(tile: Tile, tileGrid): Polygon {
+    const tileGeometry = fromExtent(tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]));
+    const feature: OlFeature = new OlFeature(tileGeometry);
+
+    const projectionIn = 'EPSG:4326';
+    const projectionOut = 'EPSG:4326';
+    
+    const featureText = new olformat.GeoJSON().writeFeature(
+      feature,
+      {
+        dataProjection: projectionOut,
+        featureProjection: projectionIn,
+        featureType: 'feature',
+        featureNS: 'http://example.com/feature'
+      }
+    );
+    return JSON.parse(featureText).geometry;
+  }
+
+  tileInsidePolygon(polygon: Polygon, tile: Tile, tileGrid): boolean {
+    const tileGeometry: Polygon = this.getTileGeometry(tile, tileGrid) as Polygon;
+    console.log("tileinside polygon:", tileGeometry)
+    const intersection = intersect(polygon, tileGeometry);
+    // console.log(intersection);
+    // const tileFeature = this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]);
+    // const intersection = intersect(polygon, tileFeature.geometry as Polygon);
+    if (!intersection) {
+      return false;
+    }
+    return true;
   }
 
   onTestClick() {
     const features = [...this.drawStore.index.values()];
-    console.log(features);
     const layers = this.map.ol.getLayers();
     let tileGrid = undefined;
     layers.forEach((layer) => {
@@ -70,6 +97,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     const tiles = this.getTilesFromFeatures(features, tileGrid);
     console.log('tiles gen by tiles from features', tiles);
+    // console.log(this.findIntersect());
   }
 
   findIntersect(): Feature[] {
@@ -137,45 +165,62 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     const polygon = geometry as Polygon;
-
     const tilesCoveringPolygon: Tile[] = new Array();
-    const tileToVisit: Tile[] = [firstTile];
-    const tileVisited: Set<Tile> = new Set();
+    const tileToVisit: Tile[] = new Array();
+    tileToVisit.push(firstTile);
+    const visitedTiles: Set<string> = new Set();
     while (tileToVisit.length != 0) {
       const currentTile: Tile = tileToVisit.shift();
-      if (!tileVisited.has(currentTile) && 
-        this.tileInsidePolygon(polygon, currentTile)
+      const currentTileString: string = JSON.stringify(currentTile);
+      if (!visitedTiles.has(currentTileString) && 
+        this.tileInsidePolygon(polygon, currentTile, tileGrid)
       ) {
         tilesCoveringPolygon.push(currentTile);
-        tileVisited.add(currentTile);
         
-        const top = currentTile;
-        top.Y++;
-        tileToVisit.push(top);
-        
-        const bottom = currentTile;
-        bottom.Y--;
-        tileToVisit.push(bottom);
-        
-        const right = currentTile;
-        right.X++;
-        tileToVisit.push(right);
+        const top = {
+          X: currentTile.X,
+          Y: currentTile.Y - 1,
+          Z: currentTile.Z
+        };
+        if (!visitedTiles.has(JSON.stringify(top))) {
+          tileToVisit.push(top);
+        }
 
-        const left = currentTile;
-        left.X--;
-        tileToVisit.push(left);
+        const bottom = {
+          X: currentTile.X,
+          Y: currentTile.Y + 1,
+          Z: currentTile.Z
+        };
+        if (!visitedTiles.has(JSON.stringify(bottom))) {
+          tileToVisit.push(bottom);
+        }
+
+        const right = {
+          X: currentTile.X + 1,
+          Y: currentTile.Y,
+          Z: currentTile.Z
+        };
+        if (!visitedTiles.has(JSON.stringify(right))) {
+          tileToVisit.push(right);
+        }
+        
+        const left = {
+          X: currentTile.X - 1,
+          Y: currentTile.Y,
+          Z: currentTile.Z
+        };
+        if (!visitedTiles.has(JSON.stringify(left))) {
+          tileToVisit.push(left);
+        }
       }
+      visitedTiles.add(currentTileString);
     }
-    console.log(tilesCoveringPolygon);
     const tilesFeatures = tilesCoveringPolygon.map((tile: Tile) => {
       const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
       return this.getTileFeature(tileGrid, coord);
     });
-    // const tileFeature = this.getTileFeature(tileGrid, firstTile);
-    // console.log(tileFeature);
     this.regionStore.clear();
     this.regionStore.updateMany(tilesFeatures);
-    // console.log(this.regionStore);
   }
 
   getTilesFromFeatures(features: Feature[], tileGrid) {
@@ -246,7 +291,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private getTileFeature(tileGrid, coord: [number, number, number]): Feature {
-    console.log('getTileFeature:', coord);
+    // console.log('getTileFeature:', coord);
     const id = uuid();
     const previousRegion = this.regionStore.get(id);
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
