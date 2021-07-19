@@ -73,15 +73,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tileInsidePolygon(polygon: Polygon, tile: Tile, tileGrid): boolean {
     const tileGeometry: Polygon = this.getTileGeometry(tile, tileGrid) as Polygon;
-    console.log("tileinside polygon:", tileGeometry)
-    const intersection = intersect(polygon, tileGeometry);
-    // console.log(intersection);
-    // const tileFeature = this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]);
-    // const intersection = intersect(polygon, tileFeature.geometry as Polygon);
-    if (!intersection) {
+    try {
+      const intersection = intersect(polygon, tileGeometry);
+      if (!intersection) {
+        return false;
+      }
+      return true;
+    } catch(e) {
       return false;
     }
-    return true;
+    
   }
 
   onTestClick() {
@@ -93,77 +94,96 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
         return;
       }
-      tileGrid = layer.getSource().tileGrid;
+      if (!tileGrid) {
+        tileGrid = layer.getSource().tileGrid;
+      }
     });
     const tiles = this.getTilesFromFeatures(features, tileGrid);
+    const tilesFeatures = tiles.map((tile: Tile) => {
+      const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
+      return this.getTileFeature(tileGrid, coord);
+    });
+    this.regionStore.clear();
+    this.regionStore.updateMany(tilesFeatures)
     console.log('tiles gen by tiles from features', tiles);
-    // console.log(this.findIntersect());
   }
 
-  findIntersect(): Feature[] {
-    const regionFeatures = Array.from(this.regionStore.index.values());
-    const regionPolygons = regionFeatures.map(feature => feature.geometry as Polygon);
-    console.log('tilePolygons:', regionPolygons);
+  // findIntersect(): Feature[] {
+  //   const regionFeatures = Array.from(this.regionStore.index.values());
+  //   const regionPolygons = regionFeatures.map(feature => feature.geometry as Polygon);
+  //   console.log('tilePolygons:', regionPolygons);
 
-    const drawFeatures =  Array.from(this.drawStore.index.values());
-    const drawPolygons = drawFeatures.map(feature => feature.geometry as Polygon);
-    console.log('drawPolygons:', drawPolygons);
+  //   const drawFeatures =  Array.from(this.drawStore.index.values());
+  //   const drawPolygons = drawFeatures.map(feature => feature.geometry as Polygon);
+  //   console.log('drawPolygons:', drawPolygons);
     
-    let drawRegionIntersect: Feature[] = new Array();
-    for (let drawPolygon of drawPolygons) {
-      const regionIntersection : Feature[] = regionPolygons.map((regionPolygon: Polygon) => {
-        const polygon = intersect(drawPolygon, regionPolygon).geometry;
-        if (polygon.coordinates.length == 0) {
-          return;
-        }
-        console.log('inter polygon', polygon);
-        const id = uuid();
-        const previousRegion = this.regionStore.get(id);
-        const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
-        const feature: OlFeature = new OlFeature(polygon);
-        console.log('inter feature', feature);
+  //   let drawRegionIntersect: Feature[] = new Array();
+  //   for (let drawPolygon of drawPolygons) {
+  //     const regionIntersection : Feature[] = regionPolygons.map((regionPolygon: Polygon) => {
+  //       const polygon = intersect(drawPolygon, regionPolygon).geometry;
+  //       if (polygon.coordinates.length == 0) {
+  //         return;
+  //       }
+  //       console.log('inter polygon', polygon);
+  //       const id = uuid();
+  //       const previousRegion = this.regionStore.get(id);
+  //       const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
+  //       const feature: OlFeature = new OlFeature(polygon);
+  //       console.log('inter feature', feature);
 
-        const interFeature: Feature = {
-          type: FEATURE,
-          geometry: polygon,
-          projection: this.map.projection,
-          properties: {
-            id,
-            stopOpacity: 1
-          },
-          meta: {
-            id,
-            revision: previousRegionRevision + 1
-          },
-          ol: feature
-        };
-        return interFeature;
-      });
-      drawRegionIntersect = drawRegionIntersect.concat(regionIntersection);
-    }
-    console.log('common polygon:', drawRegionIntersect);
-    return drawRegionIntersect;
-    // this.drawStore.clear();
-    // this.regionStore.clear();
-    // this.regionStore.updateMany(drawRegionIntersect);
-  }
+  //       const interFeature: Feature = {
+  //         type: FEATURE,
+  //         geometry: polygon,
+  //         projection: this.map.projection,
+  //         properties: {
+  //           id,
+  //           stopOpacity: 1
+  //         },
+  //         meta: {
+  //           id,
+  //           revision: previousRegionRevision + 1
+  //         },
+  //         ol: feature
+  //       };
+  //       return interFeature;
+  //     });
+  //     drawRegionIntersect = drawRegionIntersect.concat(regionIntersection);
+  //   }
+  //   console.log('common polygon:', drawRegionIntersect);
+  //   return drawRegionIntersect;
+  //   // this.drawStore.clear();
+  //   // this.regionStore.clear();
+  //   // this.regionStore.updateMany(drawRegionIntersect);
+  // }
 
-  getTilesFromFeature(feature: Feature, tileGrid): [number, number][] {
+  getTilesFromFeature(feature: Feature, tileGrid): Tile[] {
     const geometry = feature.geometry;
     console.log('feature geometry:', geometry);
     if (!geometry) {
       return;
     }
+    
+    const z = this.map.viewController.getZoom();
+    if (geometry.type === 'Point') {
+      const coord = tileGrid.getTileCoordForCoordAndZ(geometry.coordinates, z);
+      return [{
+        Z: coord[0],
+        X: coord[1],
+        Y: coord[2]
+      }]
+    }
+    
     const coords = geometry.coordinates[0];
     const startPoint = coords[0];
-    const z = this.map.viewController.getZoom();
+    console.log('start point:', startPoint);
     const firstCoord: [number, number, number] = tileGrid.getTileCoordForCoordAndZ(startPoint, z);
+    console.log('first coord', firstCoord);
     const firstTile: Tile = {
       Z: firstCoord[0],
       X: firstCoord[1],
       Y: firstCoord[2]
     }
-    
+
     const polygon = geometry as Polygon;
     const tilesCoveringPolygon: Tile[] = new Array();
     const tileToVisit: Tile[] = new Array();
@@ -176,38 +196,38 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tileInsidePolygon(polygon, currentTile, tileGrid)
       ) {
         tilesCoveringPolygon.push(currentTile);
-        
+
         const top = {
+          Z: currentTile.Z,
           X: currentTile.X,
-          Y: currentTile.Y - 1,
-          Z: currentTile.Z
+          Y: currentTile.Y - 1
         };
         if (!visitedTiles.has(JSON.stringify(top))) {
           tileToVisit.push(top);
         }
 
         const bottom = {
+          Z: currentTile.Z,
           X: currentTile.X,
-          Y: currentTile.Y + 1,
-          Z: currentTile.Z
+          Y: currentTile.Y + 1
         };
         if (!visitedTiles.has(JSON.stringify(bottom))) {
           tileToVisit.push(bottom);
         }
 
         const right = {
+          Z: currentTile.Z,
           X: currentTile.X + 1,
-          Y: currentTile.Y,
-          Z: currentTile.Z
+          Y: currentTile.Y
         };
         if (!visitedTiles.has(JSON.stringify(right))) {
           tileToVisit.push(right);
         }
-        
+
         const left = {
+          Z: currentTile.Z,
           X: currentTile.X - 1,
-          Y: currentTile.Y,
-          Z: currentTile.Z
+          Y: currentTile.Y
         };
         if (!visitedTiles.has(JSON.stringify(left))) {
           tileToVisit.push(left);
@@ -215,16 +235,12 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       visitedTiles.add(currentTileString);
     }
-    const tilesFeatures = tilesCoveringPolygon.map((tile: Tile) => {
-      const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
-      return this.getTileFeature(tileGrid, coord);
-    });
-    this.regionStore.clear();
-    this.regionStore.updateMany(tilesFeatures);
+    
+    return tilesCoveringPolygon;
   }
 
-  getTilesFromFeatures(features: Feature[], tileGrid) {
-    let tiles: [number, number][] = new Array();
+  getTilesFromFeatures(features: Feature[], tileGrid): Tile[] {
+    let tiles: Tile[] = new Array();
     features.forEach((feature) => {
       tiles = tiles.concat(this.getTilesFromFeature(feature, tileGrid));
     });
@@ -345,6 +361,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
     this.deactivateDrawingTool();
+    console.log("ADD TILE TO DOWNLOAD coord:", coord, this.map.projection);
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
