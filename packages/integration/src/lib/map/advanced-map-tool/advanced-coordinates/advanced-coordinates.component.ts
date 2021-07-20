@@ -62,9 +62,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.mapState$$ = this.map.viewController.state$.subscribe(c => {
+      this.computeProjections();
       this.getCoordinates();
       this.cdRef.detectChanges();
-      this.computeProjections();
       });
     this.checkTogglePosition();
   }
