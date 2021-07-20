@@ -173,7 +173,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         switch (addedCatalog.type) {
           case 'wms':
             title = addedCatalog.title || capabilies.Service.Title;
-            version = addedCatalog.version || capabilies.version
+            version = addedCatalog.version || capabilies.version;
             break;
           case 'arcgisrest':
           case 'imagearcgisrest':
