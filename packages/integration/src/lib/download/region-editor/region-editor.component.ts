@@ -6,8 +6,10 @@ import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/ti
 import { Tile } from '@igo2/core/lib/download/Tile.interface';
 import { Feature, FEATURE, FeatureStore, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import intersect from '@turf/intersect';
-import { Polygon } from 'geojson';
+import lineIntersect from '@turf/line-intersect';
+import { LineString, Polygon } from 'geojson';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
@@ -21,7 +23,6 @@ import { CreationEditionStrategy } from './editing-strategy/creation-editing-str
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
 import { EditedRegion, RegionEditorState } from './region-editor.state';
-
 
 
 
@@ -71,16 +72,45 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return JSON.parse(featureText).geometry;
   }
 
-  tileInsidePolygon(polygon: Polygon, tile: Tile, tileGrid): boolean {
-    const tileGeometry: Polygon = this.getTileGeometry(tile, tileGrid) as Polygon;
+  private isPolygonIntersect(polygon: Polygon, tileGeometry: Polygon): boolean {
     try {
       const intersection = intersect(polygon, tileGeometry);
       if (!intersection) {
         return false;
       }
       return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private isLineIntersect(lineString: LineString, tileGeometry: Polygon): boolean {
+    try {
+      const intersection = lineIntersect(tileGeometry, lineString);
+      const features = intersection.features;
+      if (features.length === 0) {
+        const startPoint = lineString.coordinates[0];
+        const endPoint = lineString.coordinates[1];
+        if (booleanPointInPolygon(startPoint, tileGeometry) 
+          || booleanPointInPolygon(endPoint, tileGeometry)
+        ) {
+          return true;
+        }
+        return false;
+      }
+      return true;
     } catch(e) {
       return false;
+    }
+  }
+
+  tileInsidePolygon(polygon: Polygon | LineString, tile: Tile, tileGrid): boolean {
+    const tileGeometry = this.getTileGeometry(tile, tileGrid)
+    switch(polygon.type) {
+      case 'Polygon':
+        return this.isPolygonIntersect(polygon, tileGeometry);
+      case 'LineString':
+        return this.isLineIntersect(polygon, tileGeometry);
     }
     
   }
@@ -175,12 +205,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         Y: coord[2]
       }]
     }
-    
-    const coords = geometry.coordinates[0];
+    let coords = undefined;
+    if (geometry.type === 'LineString') {
+      coords = geometry.coordinates;
+
+    } else {
+      coords = geometry.coordinates[0];
+    }
+    //console.log('coordonates', coords);
     const startPoint = coords[0];
-    console.log('start point:', startPoint);
+    //console.log('start point:', startPoint);
     const firstCoord: [number, number, number] = tileGrid.getTileCoordForCoordAndZ(startPoint, z);
-    console.log('first coord', firstCoord);
+    //console.log('first coord', firstCoord);
     const firstTile: Tile = {
       Z: firstCoord[0],
       X: firstCoord[1],
