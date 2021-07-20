@@ -6,7 +6,7 @@
 	left: 50%;
 	transform: translate(-15px,-15px);
 	
-	.vertical {
+	.vertical, .horizontal {
 	  width: 4px;
 	  height: 30px;
 	  position: absolute;
@@ -15,11 +15,7 @@
 	}
 	
 	.horizontal {
-	  width: 30px;
-	  height: 4px;
-	  position: absolute;
-	  top: 13px;
-	  background-color: black;
+		transform: rotate(90deg);
 	}
   }
   

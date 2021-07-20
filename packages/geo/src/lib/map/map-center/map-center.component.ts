@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./map-center.component.scss']
 })
 
-export class MapCenterComponent implements OnInit, OnDestroy {
+export class MapCenterComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Get an active map
@@ -37,7 +37,7 @@ export class MapCenterComponent implements OnInit, OnDestroy {
   /**
    * Set a visibility for cursor of the center of the map
    */
-  ngOnInit(): void {
+   ngAfterViewInit() {
     this.displayCenter$$ = this.map.mapCenter$.subscribe(value => {
       value ? document.getElementById('mapCenter').style.visibility = 'visible' : document.getElementById('mapCenter').style.visibility = 'hidden';
     });
