@@ -230,7 +230,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     }
     this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
   }
-  
+
   /**
    * Remove all the layers of a group from map
    * @param group Catalog group
