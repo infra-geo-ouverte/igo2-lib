@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Geometry } from '@turf/helpers';
 import { Observable, Subscription, zip } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { Region, RegionDBData, RegionDBService, RegionStatus, TileDBData, TileDBService } from '../storage';
@@ -97,6 +98,66 @@ export class DownloadRegionService {
           }
         });
       });
+  }
+
+  downloadRegionFromFeatures(
+    featuresText: string[],
+    geometries: Geometry[],
+    regionName: string,
+    generationParams: TileGenerationParams,
+    tileGrid,
+    templateUrl: string
+  ) {
+    if (this.isDownloading$$) {
+      this.isDownloading$$.unsubscribe();
+    }
+    const parentUrls = undefined;
+    const parentFeatureText = featuresText;
+    const numberOfTiles = undefined;
+
+    const region: Region = {
+      name: regionName,
+      status: RegionStatus.Downloading,
+      parentUrls,
+      generationParams,
+      numberOfTiles,
+      parentFeatureText
+    };
+
+    this.regionDB.add(region).subscribe((regionID: number) => {
+      const tiles = this.tileDownloader.downloadFromFeatures(
+        geometries,
+        regionID,
+        generationParams,
+        tileGrid,
+        templateUrl
+      );
+      console.log('Generated tiles', tiles);
+      this.isDownloading$$ = this.tileDownloader.isDownloading$.subscribe(
+        (isDownloading) => {
+          if (isDownloading) {
+            return;
+          }
+
+          const collisionMap = this.tileDB.collisionsMap;
+          const validTile = this.tileDownloader.validDownloadCount;
+          const date = new Date();
+          const regionDBData: RegionDBData = {
+            id: regionID,
+            status: RegionStatus.OK,
+            name: regionName,
+            parentUrls,
+            parentFeatureText,
+            numberOfTiles: validTile,
+            timestamp: date,
+            generationParams
+          };
+          console.log('done downloading regionDB', regionDBData);
+          this.regionDB.update(regionDBData);
+          this.regionDB.updateWithCollisions(collisionMap);
+          this.tileDB.resetCollisionMap();
+      });
+    });
   }
 
   private updateRegionDBData(

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Geometry } from '@turf/helpers';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Observer } from 'rxjs';
 import { retry } from 'rxjs/operators';
@@ -97,7 +98,7 @@ export class TileDownloaderService {
     }
 
     this.initURLGenerator(tileGrid, src);
-    const rootTile: Tile = {X: coord3D[1], Y: coord3D[2], Z: coord3D[0]};
+    const rootTile: Tile = { X: coord3D[1], Y: coord3D[2], Z: coord3D[0] };
 
     const generationStrategy = generationParams.genMethod;
     this.changeStrategy(generationStrategy);
@@ -106,6 +107,51 @@ export class TileDownloaderService {
     const endLevel = generationParams.endLevel;
     const tiles = this.tileGenerationStrategy.generate(rootTile, startLevel, endLevel);
 
+    this.addTilesToDownloadQueue(tiles, regionID);
+    // tiles.forEach((tile) => {
+    //   const url = this.generateURL(tile);
+    //   if (url) {
+    //     this.urlQueue.push(url);
+    //   }
+    // });
+
+    // console.log('Queue :', this.urlQueue.length);
+    // console.log('current gen strat', this.tileGenerationStrategy);
+
+    // // if not already downloading start downloading
+    // if (!this.isDownloading) {
+    //   this.startDownload(regionID, tiles.length);
+    // } else {
+    //   this.currentDownloads += tiles.length;
+    // }
+  }
+
+  downloadFromFeatures(
+    geometries: Geometry[],
+    regionID: number,
+    generationParams: TileGenerationParams,
+    tileGrid,
+    templateUrl: string
+  ) {
+    if (!this.network.isOnline()) {
+      return;
+    }
+    this.initURLGenerator(tileGrid, templateUrl);
+    
+    const generationStrategy = generationParams.genMethod;
+    this.changeStrategy(generationStrategy);
+
+    const startLevel = generationParams.startLevel;
+    const endLevel = generationParams.endLevel;
+
+    const tiles: Tile[] = this.tileGenerationStrategy
+      .generateFromGeometries(geometries, startLevel, endLevel, tileGrid);
+
+    this.addTilesToDownloadQueue(tiles, regionID);
+    return tiles; // Testing purposes
+  }
+
+  private addTilesToDownloadQueue(tiles: Tile[], regionID: number) {
     tiles.forEach((tile) => {
       const url = this.generateURL(tile);
       if (url) {
@@ -113,10 +159,6 @@ export class TileDownloaderService {
       }
     });
 
-    console.log('Queue :', this.urlQueue.length);
-    console.log('current gen strat', this.tileGenerationStrategy);
-
-    // if not already downloading start downloading
     if (!this.isDownloading) {
       this.startDownload(regionID, tiles.length);
     } else {

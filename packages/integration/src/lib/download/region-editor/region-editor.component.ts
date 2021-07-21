@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
@@ -7,6 +7,7 @@ import { Tile } from '@igo2/core/lib/download/Tile.interface';
 import { Feature, FEATURE, FeatureStore, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import { Geometry } from '@turf/helpers';
 import intersect from '@turf/intersect';
 import lineIntersect from '@turf/line-intersect';
 import { LineString, Polygon } from 'geojson';
@@ -14,8 +15,8 @@ import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { interval, Observable, Subscription } from 'rxjs';
-import { map, skip, take } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { map, skip } from 'rxjs/operators';
 import { DownloadState } from '../download.state';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
 import { TransferedTile } from '../TransferedTile';
@@ -49,9 +50,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get openedWithMouse() {
     return this.downloadState.openedWithMouse;
   }
-
-  first: boolean = true;
-  // tilesFeatures: Feature[] = new Array();
   
   getTileGeometry(tile: Tile, tileGrid): Polygon {
     const tileGeometry = fromExtent(tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]));
@@ -105,20 +103,21 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   tileInsidePolygon(polygon: Polygon | LineString, tile: Tile, tileGrid): boolean {
-    const tileGeometry = this.getTileGeometry(tile, tileGrid)
+    const tileGeometry = this.getTileGeometry(tile, tileGrid);
     switch(polygon.type) {
       case 'Polygon':
         return this.isPolygonIntersect(polygon, tileGeometry);
       case 'LineString':
         return this.isLineIntersect(polygon, tileGeometry);
-    }
-    
+    }  
   }
 
   onTestClick() {
     const features = [...this.drawStore.index.values()];
+    console.log('draw features:', features);
     const layers = this.map.ol.getLayers();
     let tileGrid = undefined;
+    let templateUrl = undefined;
     layers.forEach((layer) => {
       const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
       if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
@@ -126,72 +125,47 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (!tileGrid) {
         tileGrid = layer.getSource().tileGrid;
+        templateUrl = igoLayer.dataSource.options.url;
       }
     });
-    const startZ = this.map.getZoom();
-    interval(1000).pipe(take(4)).subscribe((count) => {
-      const tiles = this.getTilesFromFeatures(features, startZ + count, tileGrid);
-      const tilesFeatures = tiles.map((tile: Tile) => {
-      const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
-        return this.getTileFeature(tileGrid, coord);
-      });
-      this.regionStore.clear();
-      this.regionStore.updateMany(tilesFeatures)
-      console.log('tiles gen by tiles from features', tiles);
-    });
+    this.parentLevel = this.map.getZoom();
+    this.cdRef.detectChanges();
+    this.genParams = this.genParamComponent.tileGenerationParams;
+    
+    console.log('generation params on test click from component', this.genParamComponent.tileGenerationParams)
+    console.log('generation params on test click', this.genParams)
+    
+    // change for textFeauture, polygons
+    const featuresString: string[] = features.map(feature => JSON.stringify(feature));
+    const geometries: Geometry[] = features.map(feature => feature.geometry);
+    console.log('geometries on test click', geometries);
+    console.log("generation start")
+    const tiles = this.downloadService.downloadRegionFromFeatures(
+      featuresString,
+      geometries,
+      this.regionName,
+      this.genParams,
+      tileGrid,
+      templateUrl
+    );
+    // const genTilesFeatures = tiles.map(tile => this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]));
+    // this.regionStore.clear();
+    // this.regionStore.updateMany(genTilesFeatures);
+    // console.log('generated tiles:', tiles);
+    // interval(1000).pipe(take(4)).subscribe((count) => {
+    //   const tiles = this.getTilesFromFeatures(features, startZ + count, tileGrid);
+    //   const tilesFeatures = tiles.map((tile: Tile) => {
+    //   const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
+    //     return this.getTileFeature(tileGrid, coord);
+    //   });
+    //   this.regionStore.clear();
+    //   this.regionStore.updateMany(tilesFeatures)
+    //   console.log('tiles gen by tiles from features', tiles);
+    // });
   }
 
-  // findIntersect(): Feature[] {
-  //   const regionFeatures = Array.from(this.regionStore.index.values());
-  //   const regionPolygons = regionFeatures.map(feature => feature.geometry as Polygon);
-  //   console.log('tilePolygons:', regionPolygons);
-
-  //   const drawFeatures =  Array.from(this.drawStore.index.values());
-  //   const drawPolygons = drawFeatures.map(feature => feature.geometry as Polygon);
-  //   console.log('drawPolygons:', drawPolygons);
-    
-  //   let drawRegionIntersect: Feature[] = new Array();
-  //   for (let drawPolygon of drawPolygons) {
-  //     const regionIntersection : Feature[] = regionPolygons.map((regionPolygon: Polygon) => {
-  //       const polygon = intersect(drawPolygon, regionPolygon).geometry;
-  //       if (polygon.coordinates.length == 0) {
-  //         return;
-  //       }
-  //       console.log('inter polygon', polygon);
-  //       const id = uuid();
-  //       const previousRegion = this.regionStore.get(id);
-  //       const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
-  //       const feature: OlFeature = new OlFeature(polygon);
-  //       console.log('inter feature', feature);
-
-  //       const interFeature: Feature = {
-  //         type: FEATURE,
-  //         geometry: polygon,
-  //         projection: this.map.projection,
-  //         properties: {
-  //           id,
-  //           stopOpacity: 1
-  //         },
-  //         meta: {
-  //           id,
-  //           revision: previousRegionRevision + 1
-  //         },
-  //         ol: feature
-  //       };
-  //       return interFeature;
-  //     });
-  //     drawRegionIntersect = drawRegionIntersect.concat(regionIntersection);
-  //   }
-  //   console.log('common polygon:', drawRegionIntersect);
-  //   return drawRegionIntersect;
-  //   // this.drawStore.clear();
-  //   // this.regionStore.clear();
-  //   // this.regionStore.updateMany(drawRegionIntersect);
-  // }
-
-  getTilesFromFeature(feature: Feature, z:number, tileGrid): Tile[] {
+  getTilesFromFeature(feature: Feature, z: number, tileGrid): Tile[] {
     const geometry = feature.geometry;
-    console.log('feature geometry:', geometry);
     if (!geometry) {
       return;
     }
@@ -212,11 +186,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       coords = geometry.coordinates[0];
     }
-    //console.log('coordonates', coords);
+    // console.log('coordonates', coords);
     const startPoint = coords[0];
-    //console.log('start point:', startPoint);
+    // console.log('start point:', startPoint);
     const firstCoord: [number, number, number] = tileGrid.getTileCoordForCoordAndZ(startPoint, z);
-    //console.log('first coord', firstCoord);
+    // console.log('first coord', firstCoord);
     const firstTile: Tile = {
       Z: firstCoord[0],
       X: firstCoord[1],
@@ -293,6 +267,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private state: RegionEditorState,
     private messageService: MessageService,
     private storageQuota: StorageQuotaService,
+    private cdRef: ChangeDetectorRef
   ) {
     if (this.openedWithMouse) {
       this.deactivateDrawingTool();
@@ -334,7 +309,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onGenerationParamsChange() {
+    console.log('generationParamsChange');
     this.genParams = this.genParamComponent.tileGenerationParams;
+    console.log(this.genParams);
     this.updateVariables();
   }
 
@@ -649,11 +626,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableSlider() {
-    return this.isDownloading || this.parentTileUrls.length === 0 || !this.editionStrategy.enableGenEdition;
+    return false;
+    //return this.isDownloading || this.parentTileUrls.length === 0 || !this.editionStrategy.enableGenEdition;
   }
 
   get disableDownloadButton() {
-    return !this.regionName || this.isDownloading || this.parentTileUrls.length === 0;
+    return false;
+    //return !this.regionName || this.isDownloading || this.parentTileUrls.length === 0;
   }
 
   get disableCancelButton() {

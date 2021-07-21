@@ -1,3 +1,11 @@
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import { Geometry } from '@turf/helpers';
+import intersect from '@turf/intersect';
+import lineIntersect from '@turf/line-intersect';
+import { LineString, Polygon } from 'geojson';
+import OlFeature from 'ol/Feature';
+import * as olformat from 'ol/format';
+import { fromExtent } from 'ol/geom/Polygon';
 import { Tile } from '../../Tile.interface';
 
 export function zoom(tile: Tile): Tile[] {
@@ -44,4 +52,65 @@ export function getParent(tile: Tile): Tile {
 
 export function getNumberOfTreeNodes(deltaHeigth: number) {
   return (Math.pow(4, deltaHeigth + 1) - 1) / 3;
+}
+
+export function getTileGeometry(tile: Tile, tileGrid): Polygon {
+  const tileGeometry = fromExtent(tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]));
+  const feature: OlFeature = new OlFeature(tileGeometry);
+
+  const projectionIn = 'EPSG:4326';
+  const projectionOut = 'EPSG:4326';
+  
+  const featureText = new olformat.GeoJSON().writeFeature(
+    feature,
+    {
+      dataProjection: projectionOut,
+      featureProjection: projectionIn,
+      featureType: 'feature',
+      featureNS: 'http://example.com/feature'
+    }
+  );
+  return JSON.parse(featureText).geometry;
+}
+
+export function isPolygonIntersect(polygon: Polygon, tileGeometry: Polygon): boolean {
+  try {
+    const intersection = intersect(polygon, tileGeometry);
+    if (!intersection) {
+      return false;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+export function isLineIntersect(lineString: LineString, tileGeometry: Polygon): boolean {
+  try {
+    const intersection = lineIntersect(tileGeometry, lineString);
+    const features = intersection.features;
+    if (features.length === 0) {
+      const startPoint = lineString.coordinates[0];
+      const endPoint = lineString.coordinates[1];
+      if (booleanPointInPolygon(startPoint, tileGeometry) 
+        || booleanPointInPolygon(endPoint, tileGeometry)
+      ) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+export function tileInsidePolygon(polygon: Geometry, tile: Tile, tileGrid): boolean {
+  const tileGeometry = getTileGeometry(tile, tileGrid);
+  switch(polygon.type) {
+    case 'Polygon':
+      return isPolygonIntersect(polygon as Polygon, tileGeometry);
+    case 'LineString':
+      return isLineIntersect(polygon as LineString, tileGeometry);
+  }  
 }
