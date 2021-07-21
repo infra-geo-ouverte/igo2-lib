@@ -226,7 +226,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       return this.isLayer(item) && added === false;
     });
     if (group.sortDirection !== undefined) {
-        layers = this.sortCatalogItemsByTitle(layers, group.sortDirection);
+      layers = this.sortCatalogItemsByTitle(layers, group.sortDirection);
     }
     this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
   }
