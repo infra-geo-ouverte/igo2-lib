@@ -1,20 +1,40 @@
-<mat-form-field>
-    <textarea #textArea matInput readonly rows="1"
+<mat-form-field *ngIf="units; else elseBlock" class="coordinates">
+    <textarea  #textArea matInput readonly rows="1"
       [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.lon' | translate"
       [value]="coordinates[0]"></textarea>
 </mat-form-field>
+<ng-template #elseBlock class="coordinates">
+  <mat-form-field>  <textarea #textArea matInput readonly rows="1"
+  [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.est' | translate"
+  [value]="coordinates[0]"></textarea></mat-form-field>
+</ng-template>
 
-<mat-form-field>
+<mat-form-field *ngIf="units; else elseBlock2" class="coordinates2">
     <textarea #textArea matInput readonly rows="1"
       [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.lat' | translate"
       [value]="coordinates[1]"></textarea>
 </mat-form-field>
+<ng-template #elseBlock2 class="coordinates2">
+  <mat-form-field>  <textarea #textArea matInput readonly rows="1"
+  [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.nord' | translate"
+  [value]="coordinates[1]"></textarea></mat-form-field>
+</ng-template>
+
+<!-- <div class="igo-form-button-group"> -->
+  <button class="igo-form-button-group"
+      mat-raised-button
+      (click)="copyTextToClipboard()">
+      <mat-icon svgIcon="content-copy"></mat-icon>
+      {{ 'igo.integration.advanced-map-tool.advanced-coordinates.copy' | translate }}
+  </button>
+<!-- </div> -->
+
 
 
 <form class="igo-form" [formGroup]="importForm">
-    <div class="igo-input-container">
-      <mat-form-field>
-        <mat-label>{{'igo.geo.importExportForm.importProjPlaceholder' | translate}}</mat-label>
+    <!-- <div class="igo-input-container"> -->
+      <mat-form-field class="igo-input-container">
+        <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
         <mat-select
         [(value)]="inputProj">     
           <mat-option 
@@ -27,21 +47,19 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
-</form>
-
-<div class="igo-form-button-group">
-    <button
-        mat-raised-button
-        (click)="copyTextToClipboard()">
-        <mat-icon svgIcon="content-copy"></mat-icon>
-        {{ 'igo.integration.advanced-map-tool.advanced-coordinates.copy' | translate }}
-    </button>
-</div>
-
-<mat-slide-toggle class="center-toggle"
+    <!-- </div> -->
+    <mat-slide-toggle class="center-toggle"
     [checked]="center"
     [labelPosition]="'before'"
     (change)="displayCenter($event.checked)">
     {{'igo.integration.advanced-map-tool.advanced-coordinates.center' | translate}}
 </mat-slide-toggle> 
+</form>
+
+<!-- 
+<mat-slide-toggle class="center-toggle"
+    [checked]="center"
+    [labelPosition]="'before'"
+    (change)="displayCenter($event.checked)">
+    {{'igo.integration.advanced-map-tool.advanced-coordinates.center' | translate}}
+</mat-slide-toggle>  -->

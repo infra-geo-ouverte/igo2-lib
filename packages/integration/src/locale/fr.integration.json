@@ -79,13 +79,16 @@
           "swipe-tool": "Outil Swipe"         
         },
         "advanced-coordinates": {
-          "copy": "Copier les coordonnées",
+          "copy": "Copier",
           "lon": "Longitude",
           "lat": "Latitude",
+          "nord": "Nord",
+          "est": "Est",
           "coordinates": "Coordonnées du centre de la carte",
           "copyMsg": "Coordonnées copiés",
           "copyTitle": "Coordonnées du centre",
-          "center": "Afficher le centre"
+          "center": "Centre",
+          "coordSystem": "Système de coordonnées"
         }
 
       }      

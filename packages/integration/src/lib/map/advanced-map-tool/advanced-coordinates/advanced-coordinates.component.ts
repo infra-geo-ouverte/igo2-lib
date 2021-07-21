@@ -23,13 +23,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
-  private zoneMtm$:BehaviorSubject<number> = new BehaviorSubject(0);
-  private zoneUtm$:BehaviorSubject<number> = new BehaviorSubject(0);
-  
+  private zoneMtm$: BehaviorSubject<number> = new BehaviorSubject(0);
+  private zoneUtm$: BehaviorSubject<number> = new BehaviorSubject(0);
+  public units: boolean = true;
+
   get map(): IgoMap {
     return this.mapState.map;
   }
-  
+
   // private mapController: MapViewController;
 
   get inputProj() {
@@ -53,9 +54,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     private languageService: LanguageService,
     private messageService: MessageService,
     private cdRef: ChangeDetectorRef,
-    private storageService: StorageService,  
-    private config: ConfigService,  
-    private formBuilder: FormBuilder) { 
+    private storageService: StorageService,
+    private config: ConfigService,
+    private formBuilder: FormBuilder) {
       this.computeProjections();
       this.buildForm();
     }
@@ -78,16 +79,18 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    */
   getCoordinates(){   // comprendre pourquoi par defaut WEB Mercator.
     let code = this.inputProj.code;
-    if (code && !(code.includes('EPSG:4326')||code.includes('EPSG:4269'))) {
+    if (code && !(code.includes('EPSG:4326') || code.includes('EPSG:4269'))) {
       if (code.includes('EPSG:321')){
-        this.zoneMtm$.subscribe(zone =>  {code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
-        this.cdRef.detectChanges();
-      })
+        this.zoneMtm$.subscribe(zone =>  {
+          code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
+          this.cdRef.detectChanges();
+      });
       }
       if (code.includes('EPSG:326')){
-        this.zoneUtm$.subscribe(zone => {code = `EPSG:326${zone}`;
-        this.cdRef.detectChanges();
-      })
+        this.zoneUtm$.subscribe(zone => {
+          code = `EPSG:326${zone}`;
+          this.cdRef.detectChanges();
+        });
       }
       this.coordinates = this.map.viewController.getCenter(code).map(coord => coord.toFixed(2));
     }
@@ -132,14 +135,12 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
   }
 
-
   private buildForm() {
     this.importForm = this.formBuilder.group({
       inputProj: ['', [Validators.required]]
     });
   }
 
-  
   private computeProjectionsConstraints() {
     const utmZone = this.projectionsLimitations.utmZone;
     const mtmZone = this.projectionsLimitations.mtmZone;
@@ -199,9 +200,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   public onlySelectedClick(event, code: string) {
-      event.stopPropagation();
-      this.getCoordinates();
+    event.stopPropagation();
+    this.getCoordinates();
+    this.changeUnits(code);
   }
+
+  changeUnits(code: string){
+    this.units = (code === 'EPSG:4326' || code === 'EPSG:4269'); }
 
   zoneMtm(lon: number): number {
     let lonMin = -54;
@@ -211,25 +216,21 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       lonMin = lonMin - deltaLon;
       zone ++;
     }
-    if(zone !== this.zoneMtm$.value){
-      this.zoneMtm$.next(zone);
-    }
-    return zone; 
+    if (zone !== this.zoneMtm$.value) {this.zoneMtm$.next(zone); }
+    return zone;
   }
 
   zoneUtm(lon: number): number {
     let lonMin = -54;
     const deltaLon = 6;
     let zone = 21;
-    while (Math.abs(lon - lonMin) > deltaLon){
+    while (Math.abs(lon - lonMin) > deltaLon) {
       lonMin = lonMin - deltaLon;
       zone --;
     }
-    if (zone!==this.zoneUtm$.value){
+    if (zone !== this.zoneUtm$.value) {
       this.zoneUtm$.next(zone);
     }
-    return zone; 
+    return zone;
   }
-
-  
 }

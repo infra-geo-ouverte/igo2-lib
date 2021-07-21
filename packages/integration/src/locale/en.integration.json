@@ -82,10 +82,13 @@
           "copy": "Copy coordinates",
           "lon": "Longitude",
           "lat": "Latitude",
+          "est": "Est",
+          "nord": "North",
           "coordinates": "Coordinates",
           "copyMsg": "Coordinates copied to clipboard",
           "copyTitle": "Coordinates of cetre",
-          "center": "Show center"
+          "center": "Center",
+          "coordSystem": "Systeme of coordinates" 
         }
       }
     }
