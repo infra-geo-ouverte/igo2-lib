@@ -413,7 +413,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
-    if (this.parentTileUrls.length === 0) {
+    if (this.editedTilesFeature.length === 0 
+      && this.parentTileUrls.length === 0
+    ) {
       return;
     }
 
