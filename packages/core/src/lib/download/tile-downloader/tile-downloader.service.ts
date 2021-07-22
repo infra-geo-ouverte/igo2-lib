@@ -108,22 +108,6 @@ export class TileDownloaderService {
     const tiles = this.tileGenerationStrategy.generate(rootTile, startLevel, endLevel);
 
     this.addTilesToDownloadQueue(tiles, regionID);
-    // tiles.forEach((tile) => {
-    //   const url = this.generateURL(tile);
-    //   if (url) {
-    //     this.urlQueue.push(url);
-    //   }
-    // });
-
-    // console.log('Queue :', this.urlQueue.length);
-    // console.log('current gen strat', this.tileGenerationStrategy);
-
-    // // if not already downloading start downloading
-    // if (!this.isDownloading) {
-    //   this.startDownload(regionID, tiles.length);
-    // } else {
-    //   this.currentDownloads += tiles.length;
-    // }
   }
 
   downloadFromFeatures(
@@ -148,7 +132,6 @@ export class TileDownloaderService {
       .generateFromGeometries(geometries, startLevel, endLevel, tileGrid);
 
     this.addTilesToDownloadQueue(tiles, regionID);
-    return tiles; // Testing purposes
   }
 
   private addTilesToDownloadQueue(tiles: Tile[], regionID: number) {
