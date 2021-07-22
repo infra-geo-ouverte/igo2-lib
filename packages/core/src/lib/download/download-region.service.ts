@@ -111,7 +111,7 @@ export class DownloadRegionService {
     if (this.isDownloading$$) {
       this.isDownloading$$.unsubscribe();
     }
-    const parentUrls = undefined;
+    const parentUrls = new Array();
     const parentFeatureText = featuresText;
     const numberOfTiles = undefined;
 
