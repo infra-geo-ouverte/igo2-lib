@@ -113,41 +113,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onTestClick() {
-    const features = [...this.drawStore.index.values()];
-    console.log('draw features:', features);
-    const layers = this.map.ol.getLayers();
-    let tileGrid = undefined;
-    let templateUrl = undefined;
-    layers.forEach((layer) => {
-      const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
-      if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
-        return;
-      }
-      if (!tileGrid) {
-        tileGrid = layer.getSource().tileGrid;
-        templateUrl = igoLayer.dataSource.options.url;
-      }
-    });
-    this.parentLevel = this.map.getZoom();
-    this.cdRef.detectChanges();
-    this.genParams = this.genParamComponent.tileGenerationParams;
-    
-    console.log('generation params on test click from component', this.genParamComponent.tileGenerationParams)
-    console.log('generation params on test click', this.genParams)
-    
-    // change for textFeauture, polygons
-    const featuresString: string[] = features.map(feature => JSON.stringify(feature));
-    const geometries: Geometry[] = features.map(feature => feature.geometry);
-    console.log('geometries on test click', geometries);
-    console.log("generation start")
-    const tiles = this.downloadService.downloadRegionFromFeatures(
-      featuresString,
-      geometries,
-      this.regionName,
-      this.genParams,
-      tileGrid,
-      templateUrl
-    );
+    console.log(this.drawStore.index.size);
+    this.drawStore.clear();
     // const genTilesFeatures = tiles.map(tile => this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]));
     // this.regionStore.clear();
     // this.regionStore.updateMany(genTilesFeatures);
@@ -309,9 +276,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onGenerationParamsChange() {
-    console.log('generationParamsChange');
     this.genParams = this.genParamComponent.tileGenerationParams;
-    console.log(this.genParams);
     this.updateVariables();
   }
 
@@ -376,8 +341,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
+    if (this.drawStore.index.size) {
+      return;
+    }
+
     this.deactivateDrawingTool();
-    console.log("ADD TILE TO DOWNLOAD coord:", coord, this.map.projection);
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
@@ -410,6 +378,38 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (e) {
       return;
     }
+  }
+
+  public downloadDrawingFeatures() {
+    const features = [...this.drawStore.index.values()];
+    console.log('draw features:', features);
+    const layers = this.map.ol.getLayers();
+    let tileGrid = undefined;
+    let templateUrl = undefined;
+    layers.forEach((layer) => {
+      const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
+      if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
+        return;
+      }
+      if (!tileGrid) {
+        tileGrid = layer.getSource().tileGrid;
+        templateUrl = igoLayer.dataSource.options.url;
+      }
+    });
+    this.parentLevel = this.map.getZoom();
+    this.cdRef.detectChanges();
+    this.genParams = this.genParamComponent.tileGenerationParams;
+    
+    const featuresString: string[] = features.map(feature => JSON.stringify(feature));
+    const geometries: Geometry[] = features.map(feature => feature.geometry);
+    this.downloadService.downloadRegionFromFeatures(
+      featuresString,
+      geometries,
+      this.regionName,
+      this.genParams,
+      tileGrid,
+      templateUrl
+    );
   }
 
   public onDownloadClick() {
@@ -449,10 +449,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.clearFeatures();
   }
 
-  public onCancelClick() {
+  private reset() {
     this.activateDrawingTool = true;
+    this.drawStore.clear();
     this.clearEditedRegion();
     this.updateVariables();
+  }
+
+  public onCancelClick() {
+    this.reset();
   }
 
   private sizeEstimationInBytes(): number {
