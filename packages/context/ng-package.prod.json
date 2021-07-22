@@ -18,5 +18,5 @@
       "@ngx-translate/core": "ngxt-core"
     }
   },
-  "whitelistedNonPeerDependencies": ["ts-md5"]
+  "allowedNonPeerDependencies": ["ts-md5"]
 }

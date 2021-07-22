@@ -18,5 +18,6 @@
       "ol/format/GeoJSON": "olFormatGeoJSON",
       "@ngx-translate/core": "ngxt-core"
     }
-  }
+  },
+  "allowedNonPeerDependencies": ["ts-md5"]
 }

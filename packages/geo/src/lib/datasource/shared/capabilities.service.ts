@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Cacheable } from 'ngx-cacheable';
+import { Cacheable } from 'ts-cacheable';
 
 import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';

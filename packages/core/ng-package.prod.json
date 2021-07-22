@@ -9,5 +9,5 @@
       "@ngx-translate/core" : "ngxt-core"
     }
   },
-  "whitelistedNonPeerDependencies": ["@ngx-translate", "angular2-notifications"]
+  "allowedNonPeerDependencies": ["@ngx-translate", "angular2-notifications"]
 }
