@@ -211,7 +211,7 @@ export class TileDownloaderService {
         console.log('downloading is done');
         return;
       }
-      this.progression$.next(++this.downloadCount);
+      this.progression$.next(++this.downloadCount/this.currentDownloads);
       const request = new Observable(downloadTile(url));
       request.subscribe(() => nextDownload());
     };

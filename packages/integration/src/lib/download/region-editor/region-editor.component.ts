@@ -288,7 +288,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.progression$) {
       this.progression$ = this.tileDownloader.progression$
         .pipe(map((value: number) => {
-          return Math.round(value / this._nTilesToDownload * 100);
+          return Math.round(value * 100);
         }));
     }
   }
