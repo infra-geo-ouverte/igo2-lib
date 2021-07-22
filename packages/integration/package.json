@@ -14,8 +14,8 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^10.0.3",
-    "@angular/core": "^10.0.3",
+    "@angular/common": "^11.0.9",
+    "@angular/core": "^11.0.9",
     "@igo2/geo": "1.8.1",
     "@igo2/context": "1.8.1",
     "rxjs": "^6.6.0"

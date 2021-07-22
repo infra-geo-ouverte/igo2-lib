@@ -14,9 +14,9 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^10.0.3",
-    "@angular/core": "^10.0.3",
-    "@angular/material": "^10.0.1",
+    "@angular/common": "^11.0.9",
+    "@angular/core": "^11.0.9",
+    "@angular/material": "^11.0.4",
     "@igo2/core": "^1.8.1",
     "@igo2/utils": "^1.8.1",
     "scroll-into-view-if-needed": "^2.2.20",

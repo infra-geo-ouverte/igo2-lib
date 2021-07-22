@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { globalCacheBusterNotifier } from 'ngx-cacheable';
+import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';

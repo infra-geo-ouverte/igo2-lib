@@ -19,9 +19,9 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^10.0.1",
-    "@angular/common": "^10.0.3",
-    "@angular/core": "^10.0.3",
+    "@angular/cdk": "^11.0.4",
+    "@angular/common": "^11.0.9",
+    "@angular/core": "^11.0.9",
     "@igo2/utils": "^1.8.1",
     "rxjs": "^6.6.0"
   }
