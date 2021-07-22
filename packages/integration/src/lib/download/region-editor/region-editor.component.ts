@@ -113,8 +113,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onTestClick() {
-    console.log(this.drawStore.index.size);
-    this.drawStore.clear();
+    // console.log(this.drawStore.index.size);
+    this.downloadDrawingFeatures();
+    // this.drawStore.clear();
     // const genTilesFeatures = tiles.map(tile => this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]));
     // this.regionStore.clear();
     // this.regionStore.updateMany(genTilesFeatures);
@@ -337,7 +338,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isDownloading = value;
         if (!value) {
           this.messageService.success('Your download is done');
-          this.clearEditedRegion();
+          this.clear();
         }
       });
 
@@ -353,7 +354,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.clearFeatures();
   }
 
-  private reset() {
+  private clear() {
     this.activateDrawingTool = true;
     this.drawStore.clear();
     this.clearEditedRegion();
@@ -361,7 +362,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onCancelClick() {
-    this.reset();
+    this.clear();
   }
 
   private sizeEstimationInBytes(): number {
@@ -416,8 +417,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private deactivateDrawingTool() {
-    // this.drawStore.clear();
-    // this.activateDrawingTool = false;
+    this.drawStore.clear();
+    this.activateDrawingTool = false;
   }
 
   get igoMap(): IgoMap {
@@ -537,13 +538,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableSlider() {
-    return false;
-    //return this.isDownloading || this.parentTileUrls.length === 0 || !this.editionStrategy.enableGenEdition;
+    // return false;
+    return this.isDownloading
+    || !this.editionStrategy.enableGenEdition
+    || (this.parentTileUrls.length === 0 && this.drawStore.index.size === 0);
   }
 
   get disableDownloadButton() {
-    return false;
-    //return !this.regionName || this.isDownloading || this.parentTileUrls.length === 0;
+    return !this.regionName
+    || this.isDownloading
+    || (this.parentTileUrls.length === 0 && this.drawStore.index.size === 0);
   }
 
   get disableCancelButton() {
