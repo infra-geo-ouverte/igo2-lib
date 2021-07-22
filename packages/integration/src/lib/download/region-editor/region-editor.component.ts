@@ -538,7 +538,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableSlider() {
-    // return false;
     return this.isDownloading
     || !this.editionStrategy.enableGenEdition
     || (this.parentTileUrls.length === 0 && this.drawStore.index.size === 0);
