@@ -346,8 +346,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private clearEditedRegion() {
+    // TODO need to put that in state
     this.editedRegion = undefined;
-    // need to put that in state
     this.parentTileUrls = new Array();
     this.editionStrategy = new CreationEditionStrategy();
     this.genParamComponent.tileGenerationParams = this.genParams;
@@ -393,15 +393,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.messageService.error('There is already a region downloading');
       return;
     }
-
     this.clearEditedRegion();
+    this.loadEditedRegion(region);
     this.editionStrategy = new UpdateEditionStrategy(region);
+    this.showEditedRegionFeatures();
+  }
 
+  private loadEditedRegion(region: RegionDBData) {
     region.parentUrls.forEach((url: string) => {
       this.parentTileUrls.push(url);
       this.urlsToDownload.add(url);
     });
-    // need to change
     this.regionName = region.name;
 
     this.parentLevel = region.generationParams.parentLevel;
@@ -410,10 +412,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
       return JSON.parse(featureText);
     });
-    this.showEditedRegionFeatures();
-    // this.changeGenerationParams(region.generationParams)
-    // this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
-    // need to change
   }
 
   private deactivateDrawingTool() {
