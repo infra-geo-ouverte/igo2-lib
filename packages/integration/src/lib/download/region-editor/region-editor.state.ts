@@ -12,6 +12,8 @@ export interface EditedRegion {
     urls: Set<string>;
     parentUrls: Array<string>;
     tiles: TileToDownload[];
+    tileGrid: any;
+    templateUrl: string;
     genParams: TileGenerationParams;
     features: Feature[];
 }
@@ -22,6 +24,8 @@ function newEditedRegion(): EditedRegion {
         urls: new Set(),
         parentUrls: new Array(),
         tiles: new Array(),
+        tileGrid: undefined,
+        templateUrl: undefined,
         genParams: {
             startLevel: undefined,
             parentLevel: undefined,

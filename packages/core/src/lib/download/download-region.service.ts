@@ -11,13 +11,13 @@ export interface TileToDownload {
   url: string;
   coord: [ number, number, number ];
   featureText: string;
-  templateUrl: string;
-  tileGrid;
 }
 
 export interface RegionUpdateParams {
   name: string;
   newTiles: TileToDownload[];
+  tileGrid;
+  templateUrl;
 }
 
 @Injectable({
@@ -38,7 +38,9 @@ export class DownloadRegionService {
   public downloadSelectedRegion(
     tilesToDownload: TileToDownload[],
     regionName: string,
-    generationParams: TileGenerationParams
+    generationParams: TileGenerationParams,
+    tileGrid,
+    templateUrl
   ) {
     if (this.isDownloading$$) {
       this.isDownloading$$.unsubscribe();
@@ -70,8 +72,8 @@ export class DownloadRegionService {
             tile.coord,
             regionID,
             generationParams,
-            tile.tileGrid,
-            tile.templateUrl
+            tileGrid,
+            templateUrl
           );
         }
         this.isDownloading$$ = this.tileDownloader.isDownloading$
@@ -195,13 +197,16 @@ export class DownloadRegionService {
     const regionID = oldRegion.id;
     const tileToDownload = updateParams.newTiles;
     const generationParams = region.generationParams;
+    const templateUrl = updateParams.templateUrl;
+    const tileGrid = updateParams.tileGrid;
+    
     for (const tile of tileToDownload) {
       this.tileDownloader.downloadFromCoord(
         tile.coord,
         regionID,
         generationParams,
-        tile.tileGrid,
-        tile.templateUrl
+        tileGrid,
+        templateUrl
       );
     }
 

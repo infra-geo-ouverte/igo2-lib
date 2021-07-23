@@ -261,8 +261,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
+      if (!first && tileGrid !== this.tileGrid 
+        && templateUrl !== this.templateUrl
+      ) {
+        this.messageService.error('The tile you selected is not on the same cartographic background');
+        return;
+      }
+
       if (first) {
         this.parentLevel = z;
+        this.tileGrid = tileGrid;
+        this.templateUrl = templateUrl;
       }
 
       if (!this.urlsToDownload.has(url) || first) {
@@ -272,7 +281,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         const featureText = JSON.stringify(feature);
 
         this.editedTilesFeature.push(feature);
-        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
+        this.tilesToDownload.push({ url, coord, featureText});
         this.parentTileUrls.push(url);
 
         this.showEditedRegionFeatures();
@@ -321,9 +330,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.editedTilesFeature.length === 0 
       && this.parentTileUrls.length === 0
     ) {
+      console.log('exit downloadFunction');
       return;
     }
-
+    console.log('starting on download click');
     this.genParams = this.genParamComponent.tileGenerationParams;
 
     this._nTilesToDownload = this.numberOfTilesToDownload();
@@ -445,6 +455,22 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get editedRegion(): EditedRegion {
     return this.state.editedRegion;
+  }
+
+  set tileGrid(tileGrid: any) {
+    this.state.editedRegion.tileGrid = tileGrid;
+  }
+
+  get tileGrid(): any {
+    return this.state.editedRegion.tileGrid;
+  }
+
+  set templateUrl(templateUrl: string) {
+    this.state.editedRegion.templateUrl = templateUrl;
+  }
+
+  get templateUrl(): string {
+    return this.state.editedRegion.templateUrl;
   }
 
   get parentTileUrls(): Array<string> {

@@ -17,11 +17,27 @@ export class CreationEditionStrategy extends EditionStrategy {
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
         console.log('create strategy download');
-        regionDownloader.downloadSelectedRegion(
-            editedRegion.tiles,
-            editedRegion.name,
-            editedRegion.genParams
-        );
+        console.log('edited region to download', editedRegion);
+        if (editedRegion.parentUrls.length === 0) {
+            const featuresText = editedRegion.features.map(feature => JSON.stringify(feature));
+            const geometries = editedRegion.features.map(feature => feature.geometry);
+            regionDownloader.downloadRegionFromFeatures(
+                featuresText,
+                geometries,
+                editedRegion.name,
+                editedRegion.genParams,
+                editedRegion.tileGrid,
+                editedRegion.templateUrl
+            );
+        } else {
+            regionDownloader.downloadSelectedRegion(
+                editedRegion.tiles,
+                editedRegion.name,
+                editedRegion.genParams,
+                editedRegion.tileGrid,
+                editedRegion.templateUrl
+            );
+        }
     }
 
     get enableGenEdition() {
