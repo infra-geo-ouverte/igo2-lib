@@ -50,8 +50,8 @@ export function getParent(tile: Tile): Tile {
   return deZoom(tile);
 }
 
-export function getNumberOfTreeNodes(deltaHeigth: number) {
-  return (Math.pow(4, deltaHeigth + 1) - 1) / 3;
+export function getNumberOfTreeNodes(deltaHeight: number) {
+  return (Math.pow(4, deltaHeight + 1) - 1) / 3;
 }
 
 export function getTileGeometry(tile: Tile, tileGrid): Polygon {

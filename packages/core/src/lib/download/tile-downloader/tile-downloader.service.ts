@@ -7,12 +7,7 @@ import { retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
 import { TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
-import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
-import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
-import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-generation';
-import { TileGenerationParams } from './tile-generation-strategies/tile-generation-params.interface';
-import { TileGenerationStrategy } from './tile-generation-strategies/tile-generation-strategy';
-import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
+import { ChildTileGeneration, MiddleTileGeneration, newTileGenerationStrategy, ParentTileGeneration, TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy } from './tile-generation-strategies';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -222,19 +217,20 @@ export class TileDownloaderService {
   }
 
   public changeStrategy(strategyName: string) {
-    switch (strategyName) {
-      case TileGenerationStrategies.PARENT:
-        this.tileGenerationStrategy = new ParentTileGeneration();
-        break;
-      case TileGenerationStrategies.MIDDLE:
-        this.tileGenerationStrategy = new MiddleTileGeneration();
-        break;
-      case TileGenerationStrategies.CHILD:
-        this.tileGenerationStrategy = new ChildTileGeneration();
-        break;
-      default:
-        throw new Error('Invalid Tile Generation Strategy');
-    }
+    this.tileGenerationStrategy = newTileGenerationStrategy(strategyName);
+    // switch (strategyName) {
+    //   case TileGenerationStrategies.PARENT:
+    //     this.tileGenerationStrategy = new ParentTileGeneration();
+    //     break;
+    //   case TileGenerationStrategies.MIDDLE:
+    //     this.tileGenerationStrategy = new MiddleTileGeneration();
+    //     break;
+    //   case TileGenerationStrategies.CHILD:
+    //     this.tileGenerationStrategy = new ChildTileGeneration();
+    //     break;
+    //   default:
+    //     throw new Error('Invalid Tile Generation Strategy');
+    // }
   }
 
   public getBufferProgression() {

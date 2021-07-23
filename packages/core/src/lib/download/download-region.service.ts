@@ -4,21 +4,12 @@ import { Observable, Subscription, zip } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { Region, RegionDBData, RegionDBService, RegionStatus, TileDBData, TileDBService } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
-import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
-import { TileGenerationParams } from './tile-downloader/tile-generation-strategies/tile-generation-params.interface';
+import { RegionUpdateParams, TileToDownload } from './download.interface';
+import { TileDownloaderService } from './tile-downloader';
+import { TileGenerationParams } from './tile-downloader/tile-generation-strategies';
 
-export interface TileToDownload {
-  url: string;
-  coord: [ number, number, number ];
-  featureText: string;
-}
 
-export interface RegionUpdateParams {
-  name: string;
-  newTiles: TileToDownload[];
-  tileGrid;
-  templateUrl;
-}
+
 
 @Injectable({
   providedIn: 'root'

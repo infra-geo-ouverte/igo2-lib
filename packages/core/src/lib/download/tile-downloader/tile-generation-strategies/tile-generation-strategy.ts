@@ -19,7 +19,7 @@ export abstract class TileGenerationStrategy {
         return tiles;
     }
 
-    protected getTilesFromFeatureAtLevel(geometry: Geometry, level: number, tileGrid): Tile[] {
+    getTilesFromFeatureAtLevel(geometry: Geometry, level: number, tileGrid): Tile[] {
         if (!geometry) {
             return;
         }

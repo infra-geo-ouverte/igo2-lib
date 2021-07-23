@@ -1,3 +1,3 @@
 export * from './download-region.service';
-export * from './tile-downloader/tile-downloader.service';
+export * from './download.interface';
 export * from './tile-downloader';
