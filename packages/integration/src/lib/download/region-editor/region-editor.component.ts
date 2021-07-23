@@ -4,7 +4,7 @@ import { MatSlider } from '@angular/material/slider';
 import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Tile } from '@igo2/core/lib/download/Tile.interface';
-import { Feature, FEATURE, FeatureStore, IgoMap, XYZDataSource } from '@igo2/geo';
+import { Feature, FEATURE, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import { Geometry } from '@turf/helpers';
@@ -113,9 +113,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onTestClick() {
-    // console.log(this.drawStore.index.size);
+    // console.log(this.regionStore.index.size);
     this.downloadDrawingFeatures();
-    // this.drawStore.clear();
+    // this.regionStore.clear();
     // const genTilesFeatures = tiles.map(tile => this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]));
     // this.regionStore.clear();
     // this.regionStore.updateMany(genTilesFeatures);
@@ -246,7 +246,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
-    if (this.drawStore.index.size) {
+    if (this.regionStore.index.size && this.tilesToDownload.length === 0) {
       return;
     }
 
@@ -295,7 +295,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public downloadDrawingFeatures() {
-    const features = [...this.drawStore.index.values()];
+    const features = [...this.regionStore.index.values()];
     console.log('draw features:', features);
     const layers = this.map.ol.getLayers();
     let tileGrid = undefined;
@@ -343,7 +343,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
-    if (this.drawStore.index.size === 0 
+    if (this.regionStore.index.size === 0 
       && this.parentTileUrls.length === 0
     ) {
       return;
@@ -354,7 +354,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.parentLevel = this.map.getZoom();
       this.cdRef.detectChanges();
       this.genParams = this.genParamComponent.tileGenerationParams;
-      const features = [...this.drawStore.index.values()];
+      const features = [...this.regionStore.index.values()];
       this.editedRegion.features = features;
     }
 
@@ -390,7 +390,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private clear() {
     this.activateDrawingTool = true;
-    this.drawStore.clear();
+    this.regionStore.clear();
     this.clearEditedRegion();
     this.updateVariables();
   }
@@ -449,27 +449,23 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private deactivateDrawingTool() {
-    this.drawStore.clear();
+    this.regionStore.clear();
     this.activateDrawingTool = false;
   }
 
   get isDrawingMode() {
-    return this.parentTileUrls.length === 0;
+    return this.tilesToDownload.length === 0;
   }
 
   get igoMap(): IgoMap {
     return this.state.map;
   }
 
-  get drawStore(): FeatureStore<Feature> {
-    return this.state.drawStore;
-  }
-
   get downloadButtonTitle() {
     return this.editionStrategy.downloadButtonTitle;
   }
 
-  private get regionStore() {
+  get regionStore() {
     return this.downloadState.regionStore;
   }
 
@@ -592,13 +588,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get disableSlider() {
     return this.isDownloading
     || !this.editionStrategy.enableGenEdition
-    || (this.parentTileUrls.length === 0 && this.drawStore.index.size === 0);
+    || (this.parentTileUrls.length === 0 && this.regionStore.index.size === 0);
   }
 
   get disableDownloadButton() {
     return !this.regionName
     || this.isDownloading
-    || (this.parentTileUrls.length === 0 && this.drawStore.index.size === 0);
+    || (this.parentTileUrls.length === 0 && this.regionStore.index.size === 0);
   }
 
   get disableCancelButton() {
