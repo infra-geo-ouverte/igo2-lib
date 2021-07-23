@@ -326,14 +326,38 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
+  private setTileGridAndTemplateUrl() {
+    const layers = this.map.ol.getLayers();
+    this.tileGrid = undefined;
+    this.templateUrl = undefined;
+    layers.forEach((layer) => {
+      const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
+      if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
+        return;
+      }
+      if (!this.tileGrid) {
+        this.tileGrid = layer.getSource().tileGrid;
+        this.templateUrl = igoLayer.dataSource.options.url;
+      }
+    });
+  }
+
   public onDownloadClick() {
-    if (this.editedTilesFeature.length === 0 
+    if (this.drawStore.index.size === 0 
       && this.parentTileUrls.length === 0
     ) {
-      console.log('exit downloadFunction');
       return;
     }
-    console.log('starting on download click');
+
+    if (this.isDrawingMode) {
+      this.setTileGridAndTemplateUrl();
+      this.parentLevel = this.map.getZoom();
+      this.cdRef.detectChanges();
+      this.genParams = this.genParamComponent.tileGenerationParams;
+      const features = [...this.drawStore.index.values()];
+      this.editedRegion.features = features;
+    }
+
     this.genParams = this.genParamComponent.tileGenerationParams;
 
     this._nTilesToDownload = this.numberOfTilesToDownload();
@@ -427,6 +451,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private deactivateDrawingTool() {
     this.drawStore.clear();
     this.activateDrawingTool = false;
+  }
+
+  get isDrawingMode() {
+    return this.parentTileUrls.length === 0;
   }
 
   get igoMap(): IgoMap {
