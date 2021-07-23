@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
+import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Tile } from '@igo2/core/lib/download/Tile.interface';
 import { Feature, FEATURE, IgoMap, XYZDataSource } from '@igo2/geo';
@@ -39,7 +39,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
-
+  private downloadEstimator = new DownloadEstimator();
+  
   activateDrawingTool: boolean = true;
   
   isDownloading$: Observable<boolean>;
@@ -411,9 +412,22 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public numberOfTilesToDownload() {
-    const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
-    const nDownloads = this.parentTileUrls.length;
-    return nTilesPerDownload * nDownloads;
+    const features = [...this.regionStore.index.values()];
+    const geometries = features.map(feature => feature.geometry);
+    this.setTileGridAndTemplateUrl();
+    console.log('parentLevel:', this.parentLevel);
+    
+    const genParams = !this.genParamComponent ? 
+      this.genParams : this.genParamComponent.tileGenerationParams
+    return this.downloadEstimator.estimateDownloadSize(
+      this.tilesToDownload,
+      geometries,
+      genParams,
+      this.tileGrid
+    )
+    // const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
+    // const nDownloads = this.parentTileUrls.length;
+    // return nTilesPerDownload * nDownloads;
   }
 
   public updateRegion(region: RegionDBData) {
@@ -550,6 +564,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get parentLevel(): number {
+    if (this.isDrawingMode) {
+      return this.map.getZoom();
+    }
     return this.state.parentLevel;
   }
 
