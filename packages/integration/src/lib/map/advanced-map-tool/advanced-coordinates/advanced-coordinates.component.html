@@ -3,8 +3,9 @@
       [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.lon' | translate"
       [value]="coordinates[0]"></textarea>
 </mat-form-field>
-<ng-template #elseBlock class="coordinates">
-  <mat-form-field>  <textarea #textArea matInput readonly rows="1"
+<ng-template #elseBlock >
+  <mat-form-field class="coordinates">
+    <textarea #textArea matInput readonly rows="1"
   [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.est' | translate"
   [value]="coordinates[0]"></textarea></mat-form-field>
 </ng-template>
@@ -14,8 +15,8 @@
       [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.lat' | translate"
       [value]="coordinates[1]"></textarea>
 </mat-form-field>
-<ng-template #elseBlock2 class="coordinates2">
-  <mat-form-field>  <textarea #textArea matInput readonly rows="1"
+<ng-template #elseBlock2 >
+  <mat-form-field class="coordinates2">  <textarea #textArea matInput readonly rows="1"
   [placeholder]="'igo.integration.advanced-map-tool.advanced-coordinates.nord' | translate"
   [value]="coordinates[1]"></textarea></mat-form-field>
 </ng-template>
@@ -37,7 +38,7 @@
         <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
         <mat-select
         [(value)]="inputProj">     
-          <mat-option 
+          <mat-option matTooltipShowDelay="500"
             *ngFor="let projection of (projections$ | async)"
             [value]="projection"
             (click)="onlySelectedClick($event,projection.code)">

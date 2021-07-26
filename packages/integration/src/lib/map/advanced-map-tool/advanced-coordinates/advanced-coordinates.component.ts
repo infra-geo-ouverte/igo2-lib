@@ -1,11 +1,11 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, Input } from '@angular/core';
-import { IgoMap,  MapViewController } from '@igo2/geo';
+import { IgoMap,  InputProjections, ProjectionsLimitationsOptions,  MapViewController } from '@igo2/geo';
 import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService, StorageService, StorageScope, ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { InputProjections, ProjectionsLimitationsOptions } from '@igo2/geo';
+import { debounceTime } from 'rxjs/operators';
 
 /**
  * Tool to display the coordinates and a cursor of the center of the map
@@ -21,6 +21,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public coordinates: string[];
   public center: boolean = false;
   private mapState$$: Subscription;
+  private zoneMtm$$: Subscription;
+  private zoneUtm$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private zoneMtm$: BehaviorSubject<number> = new BehaviorSubject(0);
@@ -62,16 +64,19 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    this.mapState$$ = this.map.viewController.state$.subscribe(c => {
-      this.computeProjections();
-      this.getCoordinates();
-      this.cdRef.detectChanges();
+    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1000)).subscribe(c => {
+      // this.computeProjections();
+      // this.getCoordinates();
+      this.cdRef.detectChanges(); // ??
+      // this.zoneControl();
       });
     this.checkTogglePosition();
   }
 
   ngOnDestroy(): void{
     this.mapState$$.unsubscribe();
+    this.zoneMtm$$.unsubscribe();
+    this.zoneUtm$$.unsubscribe();
   }
 
   /**
@@ -83,13 +88,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       if (code.includes('EPSG:321')){
         this.zoneMtm$.subscribe(zone =>  {
           code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
-          this.cdRef.detectChanges();
+          // this.cdRef.detectChanges();
       });
       }
       if (code.includes('EPSG:326')){
         this.zoneUtm$.subscribe(zone => {
           code = `EPSG:326${zone}`;
-          this.cdRef.detectChanges();
+          // this.cdRef.detectChanges();
         });
       }
       this.coordinates = this.map.viewController.getCenter(code).map(coord => coord.toFixed(2));
@@ -233,4 +238,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
     return zone;
   }
+
+  zoneControl(){
+    if (this.inputProj.code.includes('EPSG:321') || this.inputProj.code.includes('EPSG:326')) {
+      const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
+      this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {console.log(zone)})
+      
+    
+    }
+  }
+
 }
