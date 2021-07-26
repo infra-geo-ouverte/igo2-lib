@@ -606,7 +606,8 @@ export class CatalogService {
 
     let abstract;
     if (capabilities.serviceDescription && capabilities.serviceDescription.length) {
-      abstract = capabilities.serviceDescription;
+      const regex = /(<([^>]+)>)/ig;
+      abstract = capabilities.serviceDescription.replace(regex, '');
     }
 
     return layers
