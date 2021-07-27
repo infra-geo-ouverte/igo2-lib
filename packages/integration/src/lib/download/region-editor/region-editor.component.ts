@@ -401,9 +401,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sizeEstimationInBytes(): number {
-    const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
-    const nDownloads = this.parentTileUrls.length;
-    return space * nDownloads;
+    const features = [...this.regionStore.index.values()];
+    const geometries = features.map(feature => feature.geometry);
+    this.setTileGridAndTemplateUrl();
+    console.log('parentLevel:', this.parentLevel);
+    
+    const genParams = !this.genParamComponent ? 
+      this.genParams : this.genParamComponent.tileGenerationParams;
+    return this.downloadEstimator.estimateDownloadSizeInBytes(
+      this.tilesToDownload,
+      geometries,
+      genParams,
+      this.tileGrid)
   }
 
   public sizeEstimationInMB() {
@@ -418,7 +427,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('parentLevel:', this.parentLevel);
     
     const genParams = !this.genParamComponent ? 
-      this.genParams : this.genParamComponent.tileGenerationParams
+      this.genParams : this.genParamComponent.tileGenerationParams;
     return this.downloadEstimator.estimateDownloadSize(
       this.tilesToDownload,
       geometries,

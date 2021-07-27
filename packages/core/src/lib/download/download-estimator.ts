@@ -5,6 +5,7 @@ import { TileToDownload } from './download.interface';
 import { getNumberOfTreeNodes, newTileGenerationStrategy, TileGenerationParams } from './tile-downloader';
 
 export class DownloadEstimator {
+    readonly averageBytesPerTile = 13375;
     constructor() {}
 
     estimateDownloadSize(
@@ -53,7 +54,6 @@ export class DownloadEstimator {
         return nTiles;
     }
 
-    
     estimateTilesOfGeometryAtLevel(
         geometry: Geometry,
         genParams: TileGenerationParams,
@@ -90,5 +90,20 @@ export class DownloadEstimator {
             default:
                 throw Error('Geometry type not supported for download size estimation');
         }
+    }
+
+    public estimateDownloadSizeInBytes(
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        genParams: TileGenerationParams,
+        tileGrid
+    ) {
+        const nTiles = this.estimateDownloadSize(
+            tilesToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
+        return nTiles * this.averageBytesPerTile;
     }
 }
