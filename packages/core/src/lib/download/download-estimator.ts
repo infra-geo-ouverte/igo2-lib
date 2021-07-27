@@ -66,7 +66,7 @@ export class DownloadEstimator {
         const nTilesPerDownload = getNumberOfTreeNodes(depth);
         switch(geometry.type) {
             case 'Point':
-                return depth;
+                return depth + 1;
 
             case 'LineString':
                 const nTiles: number = getNumberOfTilesLineStringIntersect(
