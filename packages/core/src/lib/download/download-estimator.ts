@@ -2,7 +2,7 @@ import area from '@turf/area';
 import { Geometry, LineString } from '@turf/helpers';
 import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
-import { getNumberOfTreeNodes, newTileGenerationStrategy, TileGenerationParams } from './tile-downloader';
+import { getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
 
 export class DownloadEstimator {
     readonly averageBytesPerTile = 13375;
@@ -39,9 +39,6 @@ export class DownloadEstimator {
         genParams: TileGenerationParams,
         tileGrid
     ) {
-        const tileGenerator = newTileGenerationStrategy(genParams.genMethod);
-        const parentLevel = genParams.parentLevel;
-        const depth = genParams.endLevel - genParams.startLevel;
         let nTiles = 0;
         for (const geometry of geometries) {
             const tilesToDownload = this.estimateTilesOfGeometryAtLevel(
