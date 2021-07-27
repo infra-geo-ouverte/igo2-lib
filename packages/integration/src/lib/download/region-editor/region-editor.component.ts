@@ -187,14 +187,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateVariables() {
-    this._notEnoughSpace$ = this.storageQuota.enoughSpace(this.sizeEstimationInBytes())
+    const sizeEstimationBytes = this.sizeEstimationInBytes();
+    this._notEnoughSpace$ = this.storageQuota.enoughSpace(sizeEstimationBytes)
     .pipe(map((value) => {
       return !value;
     }));
   }
 
   private getTileFeature(tileGrid, coord: [number, number, number]): Feature {
-    // console.log('getTileFeature:', coord);
     const id = uuid();
     const previousRegion = this.regionStore.get(id);
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
@@ -251,15 +251,20 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    this.deactivateDrawingTool();
+    if (this.isDrawingMode) {
+      this.deactivateDrawingTool();
+    }
+
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
       const z = coord[0];
       const first: boolean = this.parentTileUrls.length === 0;
-      if (z !== this.parentLevel && !first) {
-        this.messageService.error('The tile you selected is not on the same level as the previous ones');
-        return;
+      
+      if (first) {
+        this.parentLevel = z;
+        this.tileGrid = tileGrid;
+        this.templateUrl = templateUrl;
       }
 
       if (!first && tileGrid !== this.tileGrid 
@@ -269,10 +274,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      if (first) {
-        this.parentLevel = z;
-        this.tileGrid = tileGrid;
-        this.templateUrl = templateUrl;
+      if (z !== this.parentLevel && !first) {
+        this.messageService.error('The tile you selected is not on the same level as the previous ones');
+        return;
       }
 
       if (!this.urlsToDownload.has(url) || first) {
@@ -297,7 +301,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public downloadDrawingFeatures() {
     const features = [...this.regionStore.index.values()];
-    console.log('draw features:', features);
     const layers = this.map.ol.getLayers();
     let tileGrid = undefined;
     let templateUrl = undefined;
@@ -403,8 +406,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private sizeEstimationInBytes(): number {
     const features = [...this.regionStore.index.values()];
     const geometries = features.map(feature => feature.geometry);
-    this.setTileGridAndTemplateUrl();
-    console.log('parentLevel:', this.parentLevel);
+    if (this.isDrawingMode) {
+      this.setTileGridAndTemplateUrl();
+    }
     
     const genParams = !this.genParamComponent ? 
       this.genParams : this.genParamComponent.tileGenerationParams;
@@ -423,8 +427,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   public numberOfTilesToDownload() {
     const features = [...this.regionStore.index.values()];
     const geometries = features.map(feature => feature.geometry);
-    this.setTileGridAndTemplateUrl();
-    console.log('parentLevel:', this.parentLevel);
+    if (this.isDrawingMode) {
+      this.setTileGridAndTemplateUrl();
+    }
     
     const genParams = !this.genParamComponent ? 
       this.genParams : this.genParamComponent.tileGenerationParams;
@@ -569,6 +574,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   set parentLevel(level: number) {
+    console.log('set parentLevel:', level);
     this.state.parentLevel = level;
   }
 
