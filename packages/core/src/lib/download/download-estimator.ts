@@ -1,6 +1,6 @@
 import area from '@turf/area';
-import { Geometry } from '@turf/helpers';
-import { getTileArea } from './download-estimator-utils';
+import { Geometry, LineString } from '@turf/helpers';
+import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
 import { getNumberOfTreeNodes, newTileGenerationStrategy, TileGenerationParams } from './tile-downloader';
 
@@ -13,9 +13,6 @@ export class DownloadEstimator {
         genParams: TileGenerationParams,
         tileGrid
     ) {
-        console.log('tileToDownload', tilesToDownload);
-        console.log('geometries', geometries);
-        console.log(genParams);
         if (!geometries || !genParams) {
             return 0;
         }
@@ -56,6 +53,7 @@ export class DownloadEstimator {
         return nTiles;
     }
 
+    
     estimateTilesOfGeometryAtLevel(
         geometry: Geometry,
         genParams: TileGenerationParams,
@@ -71,22 +69,22 @@ export class DownloadEstimator {
                 return depth;
 
             case 'LineString':
-                const t = undefined; // Angle between tile and line
-                const L = undefined; // Length of linestring
-                const c = undefined; // Side length of tile
-                const maxTile = Math.ceil(L*Math.cos(t)/c + 1);
-                return maxTile * nTilesPerDownload;
+                const nTiles: number = getNumberOfTilesLineStringIntersect(
+                    geometry as LineString,
+                    genParams.parentLevel,
+                    tileGrid
+                );
+                const nTilesMax: number = nTiles;
+                return nTilesMax * nTilesPerDownload;
 
             case 'Polygon':
                 const startingCoord = geometry.coordinates[0][0];
-                console.log('polygon starting coord', startingCoord);
                 const areaPerTile = getTileArea(
                     startingCoord,
                     genParams.parentLevel,
                     tileGrid
                 );
                 const maxTiles = Math.ceil(area(geometry) / areaPerTile + 3);
-                console.log('nTiles for polygon', maxTiles);
                 return maxTiles * nTilesPerDownload;
 
             default:
