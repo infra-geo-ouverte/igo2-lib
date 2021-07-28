@@ -37,7 +37,7 @@
       <mat-form-field class="igo-input-container">
         <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
         <mat-select
-        [(value)]="inputProj">     
+          [(value)]="inputProj">
           <mat-option matTooltipShowDelay="500"
             *ngFor="let projection of (projections$ | async)"
             [value]="projection"

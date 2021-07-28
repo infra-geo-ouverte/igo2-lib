@@ -28,7 +28,6 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private zoneMtm$: BehaviorSubject<number> = new BehaviorSubject(0);
   private zoneUtm$: BehaviorSubject<number> = new BehaviorSubject(0);
   public units: boolean = true;
-
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -64,11 +63,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1000)).subscribe(c => {
-      // this.computeProjections();
-      // this.getCoordinates();
+    this.computeProjections();
+    this.getCoordinates();
+    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1500)).subscribe(c => {
+      this.computeProjections();
+      this.getCoordinates();
       this.cdRef.detectChanges(); // ??
-      // this.zoneControl();
+      this.zoneControl();
       });
     this.checkTogglePosition();
   }
@@ -157,8 +158,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       utm: this.projectionsLimitations.utm === false ? false : true,
       mtm: this.projectionsLimitations.mtm === false ? false : true,
       utmZone: {
-        minZone: utmZone && utmZone.minZone ? utmZone.minZone : 1,
-        maxZone: utmZone && utmZone.maxZone ? utmZone.maxZone : 60,
+        minZone: utmZone && utmZone.minZone ? utmZone.minZone : 17,
+        maxZone: utmZone && utmZone.maxZone ? utmZone.maxZone : 21,
       },
       mtmZone: {
         minZone: mtmZone && mtmZone.minZone ? mtmZone.minZone : 1,
@@ -204,6 +205,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.projections$.next(projections.concat(configProjection));
   }
 
+
+
+/* pourquoi les 2 projections qui vient de config.getConfig restent pendant le déplacement de la carte?
+je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas à jour dans la forme
+*/
+
+
   public onlySelectedClick(event, code: string) {
     event.stopPropagation();
     this.getCoordinates();
@@ -239,13 +247,26 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     return zone;
   }
 
-  zoneControl(){
-    if (this.inputProj.code.includes('EPSG:321') || this.inputProj.code.includes('EPSG:326')) {
-      const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-      this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {console.log(zone)})
-      
-    
+  zoneControl() {
+    if (this.inputProj && (this.inputProj.code.includes('EPSG:321') || this.inputProj.code.includes('EPSG:326'))) {
+        const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
+        this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {
+            if (this.inputProj.translateKey === 'mtm'){
+                this.importForm.patchValue({inputProj: {translateKey: "mtm", alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
+            }
+        });
+        this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
+            if (this.inputProj.translateKey === 'utm'){
+                this.importForm.patchValue({inputProj: {translateKey: "utm", alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
+            }
+        })
     }
+}
+
+  testFunc(event){
+    const a = document.getElementsByTagName('mat-select');
+    console.log(a);
+    // console.log(a[1].innerText);
   }
 
 }
