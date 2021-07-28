@@ -89,6 +89,7 @@
     "@mdi/angular-material": "^5.3.45",
     "@ngbmodule/material-carousel": "^0.7.1",
     "@ngx-translate/core": "^13.0.0",
+    "@turf/area": "^6.5.0",
     "@turf/boolean-point-in-polygon": "^6.5.0",
     "@turf/buffer": "^5.1.5",
     "@turf/helpers": "^6.1.4",
