@@ -116,7 +116,7 @@ export class TileDownloaderService {
       return;
     }
     this.initURLGenerator(tileGrid, templateUrl);
-    
+
     const generationStrategy = generationParams.genMethod;
     this.changeStrategy(generationStrategy);
 
@@ -206,7 +206,7 @@ export class TileDownloaderService {
         console.log('downloading is done');
         return;
       }
-      this.progression$.next(++this.downloadCount/this.currentDownloads);
+      this.progression$.next(++this.downloadCount / this.currentDownloads);
       const request = new Observable(downloadTile(url));
       request.subscribe(() => nextDownload());
     };

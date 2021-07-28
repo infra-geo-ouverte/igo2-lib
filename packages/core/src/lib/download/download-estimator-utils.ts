@@ -1,14 +1,14 @@
-import area from "@turf/area";
-import { LineString, Position } from "@turf/helpers";
-import { getTileGeometry } from "./tile-downloader";
-import { Tile } from "./Tile.interface";
+import area from '@turf/area';
+import { LineString, Position } from '@turf/helpers';
+import { getTileGeometry } from './tile-downloader';
+import { Tile } from './Tile.interface';
 
 export function getTileArea(coord: [number, number], level: number, tileGrid): number {
     const tile: Tile = {
         X: coord[0],
         Y: coord[1],
         Z: level
-    }
+    };
     const tileGeometry = getTileGeometry(tile, tileGrid);
     const tileArea = area(tileGeometry);
     return area(tileGeometry);
@@ -27,9 +27,9 @@ export function getTileLength(tile: Tile, tileGrid): number {
     const p1 = tileGeometry.coordinates[0][1];
     let lengthSquared = 0;
     for (let dim = 0; dim < p0.length; dim++) {
-        lengthSquared += (p1[dim] - p0[dim])*(p1[dim] - p0[dim]);
+        lengthSquared += (p1[dim] - p0[dim]) * (p1[dim] - p0[dim]);
     }
-    const length = Math.sqrt(lengthSquared)
+    const length = Math.sqrt(lengthSquared);
     return length;
 }
 
@@ -51,7 +51,7 @@ export function getNumberOfTileLineIntersect(
         X: p0[0],
         Y: p0[1],
         Z: level
-    }
+    };
     const tileLength = getTileLengthFast(tile, tileGrid);
     const dx: number = Math.ceil(Math.abs(p1[0] - p0[0]) / tileLength) + 1;
     const dy: number = Math.ceil(Math.abs(p1[1] - p0[1]) / tileLength) + 1;

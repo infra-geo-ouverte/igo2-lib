@@ -60,7 +60,7 @@ export function getTileGeometry(tile: Tile, tileGrid): Polygon {
 
   const projectionIn = 'EPSG:4326';
   const projectionOut = 'EPSG:4326';
-  
+
   const featureText = new olformat.GeoJSON().writeFeature(
     feature,
     {
@@ -92,7 +92,7 @@ export function isLineIntersect(lineString: LineString, tileGeometry: Polygon): 
     if (features.length === 0) {
       const startPoint = lineString.coordinates[0];
       const endPoint = lineString.coordinates[1];
-      if (booleanPointInPolygon(startPoint, tileGeometry) 
+      if (booleanPointInPolygon(startPoint, tileGeometry)
         || booleanPointInPolygon(endPoint, tileGeometry)
       ) {
         return true;
@@ -100,17 +100,17 @@ export function isLineIntersect(lineString: LineString, tileGeometry: Polygon): 
       return false;
     }
     return true;
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 }
 
 export function tileInsidePolygon(polygon: Geometry, tile: Tile, tileGrid): boolean {
   const tileGeometry = getTileGeometry(tile, tileGrid);
-  switch(polygon.type) {
+  switch (polygon.type) {
     case 'Polygon':
       return isPolygonIntersect(polygon as Polygon, tileGeometry);
     case 'LineString':
       return isLineIntersect(polygon as LineString, tileGeometry);
-  }  
+  }
 }

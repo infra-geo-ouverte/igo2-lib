@@ -17,14 +17,14 @@ export class DownloadEstimator {
         if (!geometries || !genParams) {
             return 0;
         }
-        
+
         if (tilesToDownload.length !== 0) {
             const nTilesToDownload: number = tilesToDownload.length;
             return this.estimateNumberOfTiles(nTilesToDownload, genParams);
         }
-        return this.estimateDrawnRegionDownloadSize(geometries, genParams, tileGrid)
+        return this.estimateDrawnRegionDownloadSize(geometries, genParams, tileGrid);
     }
-    
+
     estimateNumberOfTiles(
         nTilesToDownload: number,
         genParams: TileGenerationParams
@@ -61,7 +61,7 @@ export class DownloadEstimator {
             return 0;
         }
         const nTilesPerDownload = getNumberOfTreeNodes(depth);
-        switch(geometry.type) {
+        switch (geometry.type) {
             case 'Point':
                 return depth + 1;
 

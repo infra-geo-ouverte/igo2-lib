@@ -1,13 +1,13 @@
-import { ChildTileGeneration } from "./child-tile-generation";
-import { MiddleTileGeneration } from "./middle-tile-generation";
-import { ParentTileGeneration } from "./parent-tile-generation";
-import { TileGenerationStrategy } from "./tile-generation-strategy";
-import { TileGenerationStrategies } from "./tile-generation-strategy.interface";
+import { ChildTileGeneration } from './child-tile-generation';
+import { MiddleTileGeneration } from './middle-tile-generation';
+import { ParentTileGeneration } from './parent-tile-generation';
+import { TileGenerationStrategy } from './tile-generation-strategy';
+import { TileGenerationStrategies } from './tile-generation-strategy.interface';
 
 
 export function newTileGenerationStrategy(
     strategy: string
-  ) : TileGenerationStrategy {
+  ): TileGenerationStrategy {
     switch (strategy) {
       case TileGenerationStrategies.CHILD:
         return new ChildTileGeneration();
@@ -19,4 +19,3 @@ export function newTileGenerationStrategy(
         throw new Error('Invalid Tile Generation Strategy');
     }
 }
-  

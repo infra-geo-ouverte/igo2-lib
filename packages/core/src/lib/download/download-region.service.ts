@@ -190,7 +190,7 @@ export class DownloadRegionService {
     const generationParams = region.generationParams;
     const templateUrl = updateParams.templateUrl;
     const tileGrid = updateParams.tileGrid;
-    
+
     for (const tile of tileToDownload) {
       this.tileDownloader.downloadFromCoord(
         tile.coord,

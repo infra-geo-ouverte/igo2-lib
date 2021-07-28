@@ -1,5 +1,5 @@
-import { Feature } from "@turf/helpers";
-import { TileGenerationParams } from "./tile-downloader/tile-generation-strategies/tile-generation-params.interface";
+import { Feature } from '@turf/helpers';
+import { TileGenerationParams } from './tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 
 export interface TileDownload {
     parentURL: string;
@@ -22,7 +22,7 @@ export interface TileToDownload {
     coord: [ number, number, number ];
     featureText: string;
 }
-  
+
 export interface RegionUpdateParams {
   name: string;
   newTiles: TileToDownload[];

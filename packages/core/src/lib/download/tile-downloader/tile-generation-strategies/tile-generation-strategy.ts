@@ -11,11 +11,11 @@ export abstract class TileGenerationStrategy {
         if (!geometries) {
             return [];
         }
-        
+
         let tiles: Tile[] = new Array();
         geometries.forEach((geometry: Geometry) => {
             tiles = tiles.concat(this.getTilesFromFeatureAtLevel(geometry, level, tileGrid));
-        })
+        });
         return tiles;
     }
 
@@ -33,8 +33,8 @@ export abstract class TileGenerationStrategy {
             }];
         }
 
-        const coords = geometry.type === 'LineString' ? 
-            geometry.coordinates : 
+        const coords = geometry.type === 'LineString' ?
+            geometry.coordinates :
             (geometry as Polygon).coordinates[0];
 
         const startPoint = coords[0];
@@ -43,7 +43,7 @@ export abstract class TileGenerationStrategy {
             Z: firstCoord[0],
             X: firstCoord[1],
             Y: firstCoord[2]
-        }
+        };
 
         const tilesCoveringPolygon: Tile[] = new Array();
         const tileToVisit: Tile[] = [firstTile];
@@ -51,7 +51,7 @@ export abstract class TileGenerationStrategy {
         while (tileToVisit.length !== 0) {
             const currentTile: Tile = tileToVisit.shift();
             const currentTileString = JSON.stringify(currentTile);
-            
+
             if (!visitedTiles.has(currentTileString) &&
                 tileInsidePolygon(geometry, currentTile, tileGrid)
             ) {
@@ -65,7 +65,7 @@ export abstract class TileGenerationStrategy {
                 if (!visitedTiles.has(JSON.stringify(top))) {
                   tileToVisit.push(top);
                 }
-          
+
                 const bottom = {
                   Z: currentTile.Z,
                   X: currentTile.X,
@@ -74,7 +74,7 @@ export abstract class TileGenerationStrategy {
                 if (!visitedTiles.has(JSON.stringify(bottom))) {
                   tileToVisit.push(bottom);
                 }
-          
+
                 const right = {
                   Z: currentTile.Z,
                   X: currentTile.X + 1,
@@ -83,7 +83,7 @@ export abstract class TileGenerationStrategy {
                 if (!visitedTiles.has(JSON.stringify(right))) {
                   tileToVisit.push(right);
                 }
-          
+
                 const left = {
                   Z: currentTile.Z,
                   X: currentTile.X - 1,

@@ -31,18 +31,19 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
+
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
   private downloadEstimator = new DownloadEstimator();
-  
+
   activateDrawingTool: boolean = true;
-  
+
   isDownloading$: Observable<boolean>;
   isDownloading$$: Subscription;
 
   private addNewTile$$: Subscription;
-  
+
   get openedWithMouse() {
     return this.downloadState.openedWithMouse;
   }
@@ -59,7 +60,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.openedWithMouse) {
       this.deactivateDrawingTool();
     }
-    
+
     const numberToSkip = this.openedWithMouse ? 0 : 1;
     this.addNewTile$$ = this.downloadState.addNewTile$
       .pipe(skip(numberToSkip))
@@ -174,14 +175,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const url = urlGen(coord, 0, 0);
       const z = coord[0];
       const first: boolean = this.parentTileUrls.length === 0;
-      
+
       if (first) {
         this.parentLevel = z;
         this.tileGrid = tileGrid;
         this.templateUrl = templateUrl;
       }
 
-      if (!first && tileGrid !== this.tileGrid 
+      if (!first && tileGrid !== this.tileGrid
         && templateUrl !== this.templateUrl
       ) {
         this.messageService.error('The tile you selected is not on the same cartographic background');
@@ -215,8 +216,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   public downloadDrawingFeatures() {
     const features = [...this.regionStore.index.values()];
     const layers = this.map.ol.getLayers();
-    let tileGrid = undefined;
-    let templateUrl = undefined;
+    let tileGrid;
+    let templateUrl;
     layers.forEach((layer) => {
       const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
       if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
@@ -230,7 +231,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.parentLevel = this.map.getZoom();
     this.cdRef.detectChanges();
     this.genParams = this.genParamComponent.tileGenerationParams;
-    
+
     const featuresString: string[] = features.map(feature => JSON.stringify(feature));
     const geometries: Geometry[] = features.map(feature => feature.geometry);
     this.downloadService.downloadRegionFromFeatures(
@@ -260,7 +261,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
-    if (this.regionStore.index.size === 0 
+    if (this.regionStore.index.size === 0
       && this.parentTileUrls.length === 0
     ) {
       return;
@@ -319,8 +320,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private sizeEstimationInBytes(): number {
     const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
       return feature.geometry;
-    }): new Array();
-    
+    }) : new Array();
+
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
@@ -331,7 +332,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    const genParams = !this.genParamComponent ? 
+    const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
     return this.downloadEstimator.estimateDownloadSizeInBytes(
       this.tilesToDownload,
@@ -348,8 +349,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   public numberOfTilesToDownload() {
     const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
       return feature.geometry;
-    }): new Array();
-    
+    }) : new Array();
+
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
@@ -360,7 +361,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    const genParams = !this.genParamComponent ? 
+    const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
     return this.downloadEstimator.estimateDownloadSize(
       this.tilesToDownload,
@@ -372,7 +373,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public updateRegion(region: RegionDBData) {
     this.deactivateDrawingTool();
-    
+
     if (!region) {
       return;
     }
