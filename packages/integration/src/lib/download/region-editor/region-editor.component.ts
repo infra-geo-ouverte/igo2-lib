@@ -409,14 +409,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
-    
+
+    if (this.genParamComponent) {
+      this.genParamComponent.parentLevel = this.parentLevel;
+    }
+
     const genParams = !this.genParamComponent ? 
       this.genParams : this.genParamComponent.tileGenerationParams;
     return this.downloadEstimator.estimateDownloadSizeInBytes(
       this.tilesToDownload,
       geometries,
       genParams,
-      this.tileGrid)
+      this.tileGrid);
   }
 
   public sizeEstimationInMB() {
@@ -430,7 +434,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
-    
+
+    if (this.genParamComponent) {
+      this.genParamComponent.parentLevel = this.parentLevel;
+    }
+
     const genParams = !this.genParamComponent ? 
       this.genParams : this.genParamComponent.tileGenerationParams;
     return this.downloadEstimator.estimateDownloadSize(
@@ -438,10 +446,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       geometries,
       genParams,
       this.tileGrid
-    )
-    // const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
-    // const nDownloads = this.parentTileUrls.length;
-    // return nTilesPerDownload * nDownloads;
+    );
   }
 
   public updateRegion(region: RegionDBData) {
