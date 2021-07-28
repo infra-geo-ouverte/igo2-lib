@@ -1,4 +1,5 @@
 import area from '@turf/area';
+import { Polygon } from '@turf/area/node_modules/@turf/helpers';
 import { Geometry, LineString } from '@turf/helpers';
 import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
@@ -51,6 +52,45 @@ export class DownloadEstimator {
         return nTiles;
     }
 
+    private getNumberOfTilesIntersectPoint(depth: number): number {
+        return depth + 1;
+    }
+
+    private getNumberOfTilesIntersectLineString(
+        geometry: LineString,
+        genParams: TileGenerationParams,
+        tileGrid
+    ): number {
+        const depth = genParams.endLevel - genParams.startLevel;
+        const nTilesPerDownload = getNumberOfTreeNodes(depth);
+        const nTiles: number = getNumberOfTilesLineStringIntersect(
+            geometry as LineString,
+            genParams.parentLevel,
+            tileGrid
+        );
+        const nTilesMax: number = nTiles;
+        return nTilesMax * nTilesPerDownload;
+    }
+
+    private getNumberOfTilesIntersectPolygon(
+        geometry: Polygon,
+        genParams: TileGenerationParams,
+        tileGrid
+    ): number {
+        const startingPosition = geometry.coordinates[0][0];
+        const startingCoord: [number, number] = [startingPosition[0], startingPosition[1]];
+        const areaPerTile = getTileArea(
+            startingCoord,
+            genParams.parentLevel,
+            tileGrid);
+
+        const maxTiles = Math.ceil(area(geometry) / areaPerTile + 3);
+
+        const depth = genParams.endLevel - genParams.startLevel;
+        const nTilesPerDownload= getNumberOfTreeNodes(depth)
+        return maxTiles * nTilesPerDownload;
+    }
+
     estimateTilesOfGeometryAtLevel(
         geometry: Geometry,
         genParams: TileGenerationParams,
@@ -60,29 +100,22 @@ export class DownloadEstimator {
         if (Number.isNaN(depth)) {
             return 0;
         }
-        const nTilesPerDownload = getNumberOfTreeNodes(depth);
+
         switch (geometry.type) {
             case 'Point':
-                return depth + 1;
+                return this.getNumberOfTilesIntersectPoint(depth)
 
             case 'LineString':
-                const nTiles: number = getNumberOfTilesLineStringIntersect(
+                return this.getNumberOfTilesIntersectLineString(
                     geometry as LineString,
-                    genParams.parentLevel,
-                    tileGrid
-                );
-                const nTilesMax: number = nTiles;
-                return nTilesMax * nTilesPerDownload;
+                    genParams,
+                    tileGrid);
 
             case 'Polygon':
-                const startingCoord = geometry.coordinates[0][0];
-                const areaPerTile = getTileArea(
-                    startingCoord,
-                    genParams.parentLevel,
-                    tileGrid
-                );
-                const maxTiles = Math.ceil(area(geometry) / areaPerTile + 3);
-                return maxTiles * nTilesPerDownload;
+                return this.getNumberOfTilesIntersectPolygon(
+                    geometry as Polygon,
+                    genParams,
+                    tileGrid);
 
             default:
                 throw Error('Geometry type not supported for download size estimation');
