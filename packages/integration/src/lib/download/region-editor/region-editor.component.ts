@@ -317,17 +317,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sizeEstimationInBytes(): number {
-    const geometries = new Array();
-    this.regionStore.index.forEach((feature) => {
-      geometries.push(feature.geometry);
-    });
-
+    const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
+      return feature.geometry;
+    }): new Array();
+    
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
 
     if (this.genParamComponent) {
-      this.genParamComponent.parentLevel = this.parentLevel;
+      if (this.genParamComponent.parentLevel !== this.parentLevel) {
+        this.genParamComponent.parentLevel = this.parentLevel;
+      }
     }
 
     const genParams = !this.genParamComponent ? 
@@ -345,17 +346,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public numberOfTilesToDownload() {
-    const geometries = new Array();
-    this.regionStore.index.forEach((feature) => {
-      geometries.push(feature.geometry);
-    });
-
+    const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
+      return feature.geometry;
+    }): new Array();
+    
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
 
     if (this.genParamComponent) {
-      this.genParamComponent.parentLevel = this.parentLevel;
+      if (this.genParamComponent.parentLevel !== this.parentLevel) {
+        this.genParamComponent.parentLevel = this.parentLevel;
+      }
     }
 
     const genParams = !this.genParamComponent ? 
@@ -498,7 +500,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   set parentLevel(level: number) {
-    console.log('set parentLevel:', level);
     this.state.parentLevel = level;
   }
 
