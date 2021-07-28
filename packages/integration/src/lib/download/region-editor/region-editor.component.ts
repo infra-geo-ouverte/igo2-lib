@@ -3,14 +3,9 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
-import { Tile } from '@igo2/core/lib/download/Tile.interface';
 import { Feature, FEATURE, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
-import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import { Geometry } from '@turf/helpers';
-import intersect from '@turf/intersect';
-import lineIntersect from '@turf/line-intersect';
-import { LineString, Polygon } from 'geojson';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
@@ -50,87 +45,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   
   get openedWithMouse() {
     return this.downloadState.openedWithMouse;
-  }
-  
-  getTileGeometry(tile: Tile, tileGrid): Polygon {
-    const tileGeometry = fromExtent(tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]));
-    const feature: OlFeature = new OlFeature(tileGeometry);
-
-    const projectionIn = 'EPSG:4326';
-    const projectionOut = 'EPSG:4326';
-    
-    const featureText = new olformat.GeoJSON().writeFeature(
-      feature,
-      {
-        dataProjection: projectionOut,
-        featureProjection: projectionIn,
-        featureType: 'feature',
-        featureNS: 'http://example.com/feature'
-      }
-    );
-    return JSON.parse(featureText).geometry;
-  }
-
-  private isPolygonIntersect(polygon: Polygon, tileGeometry: Polygon): boolean {
-    try {
-      const intersection = intersect(polygon, tileGeometry);
-      if (!intersection) {
-        return false;
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  private isLineIntersect(lineString: LineString, tileGeometry: Polygon): boolean {
-    try {
-      const intersection = lineIntersect(tileGeometry, lineString);
-      const features = intersection.features;
-      if (features.length === 0) {
-        const startPoint = lineString.coordinates[0];
-        const endPoint = lineString.coordinates[1];
-        if (booleanPointInPolygon(startPoint, tileGeometry) 
-          || booleanPointInPolygon(endPoint, tileGeometry)
-        ) {
-          return true;
-        }
-        return false;
-      }
-      return true;
-    } catch(e) {
-      return false;
-    }
-  }
-
-  tileInsidePolygon(polygon: Polygon | LineString, tile: Tile, tileGrid): boolean {
-    const tileGeometry = this.getTileGeometry(tile, tileGrid);
-    switch(polygon.type) {
-      case 'Polygon':
-        return this.isPolygonIntersect(polygon, tileGeometry);
-      case 'LineString':
-        return this.isLineIntersect(polygon, tileGeometry);
-    }  
-  }
-
-  onTestClick() {
-    // console.log(this.regionStore.index.size);
-    this.downloadDrawingFeatures();
-    // this.regionStore.clear();
-    // const genTilesFeatures = tiles.map(tile => this.getTileFeature(tileGrid, [tile.Z, tile.X, tile.Y]));
-    // this.regionStore.clear();
-    // this.regionStore.updateMany(genTilesFeatures);
-    // console.log('generated tiles:', tiles);
-    // interval(1000).pipe(take(4)).subscribe((count) => {
-    //   const tiles = this.getTilesFromFeatures(features, startZ + count, tileGrid);
-    //   const tilesFeatures = tiles.map((tile: Tile) => {
-    //   const coord: [number, number, number] = [tile.Z, tile.X, tile.Y];
-    //     return this.getTileFeature(tileGrid, coord);
-    //   });
-    //   this.regionStore.clear();
-    //   this.regionStore.updateMany(tilesFeatures)
-    //   console.log('tiles gen by tiles from features', tiles);
-    // });
   }
 
   constructor(
@@ -290,7 +204,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.parentTileUrls.push(url);
 
         this.showEditedRegionFeatures();
-        this.updateVariables();
       } else {
         this.messageService.error('The tile is already selected');
       }
@@ -404,8 +317,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sizeEstimationInBytes(): number {
-    const features = [...this.regionStore.index.values()];
-    const geometries = features.map(feature => feature.geometry);
+    const geometries = new Array();
+    this.regionStore.index.forEach((feature) => {
+      geometries.push(feature.geometry);
+    });
+
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
@@ -429,8 +345,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public numberOfTilesToDownload() {
-    const features = [...this.regionStore.index.values()];
-    const geometries = features.map(feature => feature.geometry);
+    const geometries = new Array();
+    this.regionStore.index.forEach((feature) => {
+      geometries.push(feature.geometry);
+    });
+
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
