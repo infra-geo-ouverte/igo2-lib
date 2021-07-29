@@ -1,4 +1,5 @@
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {
   Feature,
@@ -116,7 +117,7 @@ export class Overlay {
    * @param motion Optional: Apply this motion to the map view
    */
   addOlFeature(
-    olFeature: OlFeature,
+    olFeature: OlFeature<OlGeometry>,
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     this.addOlFeatures([olFeature], motion);
@@ -128,7 +129,7 @@ export class Overlay {
    * @param motion Optional: Apply this motion to the map view
    */
   addOlFeatures(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     this.dataSource.ol.addFeatures(olFeatures);
@@ -161,7 +162,7 @@ export class Overlay {
    * Remove an OpenLayers feature from the overlay
    * @param olFeature OpenLayers Feature
    */
-  removeOlFeature(olFeature: OlFeature) {
+  removeOlFeature(olFeature: OlFeature<OlGeometry>) {
     this.dataSource.ol.removeFeature(olFeature);
   }
 

@@ -2,7 +2,7 @@ import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
 import OlLinearRing from 'ol/geom/LinearRing';
 import OlPolygon from 'ol/geom/Polygon';
-import { GeometryEvent as OlGeometryEvent } from 'ol/geom/Geometry';
+import BasicEvent from 'ol/events/Event';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import lineIntersect from '@turf/line-intersect';
 import { lineString } from '@turf/helpers';
@@ -97,7 +97,7 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
   }
 
   const olGeoJSON = new OlGeoJSON();
-  const slicer = olGeoJSON.writeGeometryObject(olSlicer);
+  const slicer = olGeoJSON.writeGeometryObject(olSlicer) as any;
   const outerCoordinates = olPolygon.getLinearRing(0).getCoordinates();
 
   const parts = [[], []];
@@ -138,17 +138,18 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
  * @param olSlicer Slicing line
  * @returns New OL geometries
  */
-export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ): OlPolygon {
+export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ) {
   // TODO: make some validation and support updating an existing linear ring
   olPolygon.appendLinearRing(olLinearRing);
 }
 
 export function getMousePositionFromOlGeometryEvent(
-  olEvent: OlGeometryEvent
-): [number, number] {
+  olEvent: BasicEvent
+) {
   const olGeometry = olEvent.target;
-  if (olGeometry instanceof OlPolygon) {
-    return olGeometry.flatCoordinates.slice(-4, -2);
-  }
-  return olGeometry.flatCoordinates.slice(-2);
+  console.log(olGeometry);
+  // if (olGeometry instanceof OlPolygon) {
+  //   return olGeometry.getFlatCoordinates().slice(-4, -2);
+  // }
+  // return olGeometry.flatCoordinates.slice(-2);
 }

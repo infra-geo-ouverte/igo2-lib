@@ -20,7 +20,8 @@ import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
-import { olFeature } from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import type { default as olFeature } from 'ol/Feature';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
@@ -70,8 +71,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
-      this.PointStyle = (feature: olFeature, resolution: number) => {
-        const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), this.map.projection, 'EPSG:4326');
+      this.PointStyle = (feature: olFeature<OlGeometry>, resolution: number) => {
+        const coordinates = olproj.transform(feature.getGeometry()., this.map.projection, 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
             radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction

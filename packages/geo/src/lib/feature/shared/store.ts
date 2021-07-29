@@ -1,4 +1,5 @@
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {
   getEntityId,
@@ -78,10 +79,10 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * Set the store's features from an array of OL features.
    * @param olFeatures Ol features
    */
-  setStoreOlFeatures(olFeatures: OlFeature[]) {
+  setStoreOlFeatures(olFeatures: OlFeature<OlGeometry>[]) {
     this.checkLayer();
 
-    const features = olFeatures.map((olFeature: OlFeature) => {
+    const features = olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       olFeature.set('_featureStore', this, true);
       return featureFromOl(olFeature, this.layer.map.projection);
     });
@@ -111,7 +112,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * @param motion Optional: The type of motion to perform
    */
   public setLayerOlFeatures(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     motion: FeatureMotion = FeatureMotion.Default,
     viewScale?: [number, number, number, number],
     areaRatio?: number
@@ -139,8 +140,8 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * Add features to the the layer
    * @param features Openlayers feature objects
    */
-  private addOlFeaturesToLayer(olFeatures: OlFeature[]) {
-    olFeatures.forEach((olFeature: OlFeature) => {
+  private addOlFeaturesToLayer(olFeatures: OlFeature<OlGeometry>[]) {
+    olFeatures.forEach((olFeature: OlFeature<OlGeometry>) => {
       olFeature.set('_featureStore', this, true);
     });
     this.source.ol.addFeatures(olFeatures);
@@ -150,8 +151,8 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * Remove features from the the layer
    * @param features Openlayers feature objects
    */
-  private removeOlFeaturesFromLayer(olFeatures: OlFeature[]) {
-    olFeatures.forEach((olFeature: OlFeature) => {
+  private removeOlFeaturesFromLayer(olFeatures: OlFeature<OlGeometry>[]) {
+    olFeatures.forEach((olFeature: OlFeature<OlGeometry>) => {
       this.source.ol.removeFeature(olFeature);
     });
   }

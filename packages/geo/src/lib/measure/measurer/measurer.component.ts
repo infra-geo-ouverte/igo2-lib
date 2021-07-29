@@ -19,6 +19,8 @@ import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { EventsKey } from 'ol/events';
 import OlOverlay from 'ol/Overlay';
 import { unByKey } from 'ol/Observable';
 
@@ -212,12 +214,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Feature added listener key
    */
-  private onFeatureAddedKey: string;
+  private onFeatureAddedKey: EventsKey;
 
   /**
    * Feature removed listener key
    */
-  private onFeatureRemovedKey: string;
+  private onFeatureRemovedKey: EventsKey;
 
   /**
    * Active draw control
@@ -300,8 +302,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     return this.activeDrawControl !== undefined;
   }
 
-  get projection(): OlProjection {
-    return this.map.ol.getView().getProjection();
+  get projection(): string {
+    console.log(this.map.ol.getView().getProjection());
+    return this.map.ol.getView().getProjection().getCode();
   }
 
   constructor(
@@ -518,7 +521,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     } else {
       const localFeature = this.selectedFeatures$.value[0];
       const olFeatures = this.store.layer.ol.getSource().getFeatures();
-      const olFeature = olFeatures.find((_olFeature: OlFeature) => {
+      const olFeature = olFeatures.find((_olFeature: OlFeature<OlGeometry>) => {
         return _olFeature.get('id') === localFeature.properties.id;
       });
 
@@ -575,15 +578,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       many: true
     }));
 
-    this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent) => {
+    this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent<OlGeometry>) => {
       const localFeature = event.feature;
-      const olGeometry = localFeature.getGeometry();
+      const olGeometry = localFeature.getGeometry() as any;
       this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
       this.onDisplayDistance();
     });
 
-    this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
-      const olGeometry = event.feature.getGeometry();
+    this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
+      const olGeometry = event.feature.getGeometry() as any;
       this.clearTooltipsOfOlGeometry(olGeometry);
     });
 
@@ -846,7 +849,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: projection
-    });
+    }) as any;
     this.store.update({
       type: FEATURE,
       geometry,
@@ -923,18 +926,18 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private updateTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.updateTooltipsOfOlGeometry(olFeature.getGeometry());
+  private updateTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+      this.updateTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private showTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.showTooltipsOfOlGeometry(olFeature.getGeometry());
+  private showTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+      this.showTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 
@@ -942,11 +945,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Clear the map tooltips
    * @param olDrawSource OL vector source
    */
-  private clearTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
+  private clearTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
       const olGeometry = olFeature.getGeometry();
       if (olGeometry !== undefined) {
-        this.clearTooltipsOfOlGeometry(olFeature.getGeometry());
+        this.clearTooltipsOfOlGeometry(olFeature.getGeometry() as any);
       }
     });
   }

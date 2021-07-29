@@ -1,3 +1,4 @@
+import OlRenderFeature from 'ol/render/Feature';
 import { SearchSource } from './../../search/shared/sources/source';
 import { FormGroup } from '@angular/forms';
 
@@ -13,6 +14,7 @@ import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 export interface Feature<P = { [key: string]: any }> {
   type: string;
@@ -21,7 +23,7 @@ export interface Feature<P = { [key: string]: any }> {
   properties: P;
   extent?: [number, number, number, number];
   meta?: FeatureMeta;
-  ol?: OlFeature;
+  ol?: OlFeature<OlGeometry> | OlRenderFeature;
   sourceId?: string;
 }
 

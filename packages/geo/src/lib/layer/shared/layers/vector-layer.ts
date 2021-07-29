@@ -1,5 +1,6 @@
 import olLayerVector from 'ol/layer/Vector';
 import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { unByKey } from 'ol/Observable';
 import { easeOut } from 'ol/easing';
 import { asArray as ColorAsArray } from 'ol/color';
@@ -18,6 +19,7 @@ import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
+import { ListenerFunction } from 'ol/events';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -26,9 +28,13 @@ export class VectorLayer extends Layer {
     | WebSocketDataSource
     | ClusterDataSource;
   public options: VectorLayerOptions;
-  public ol: olLayerVector;
+  public ol: olLayerVector<olSourceVector<OlGeometry>>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
+
+  private loadingListener: ListenerFunction;
+  private loadedListener: ListenerFunction;
+  private errorListener: ListenerFunction;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -48,9 +54,9 @@ export class VectorLayer extends Layer {
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): olLayerVector {
+  protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVector
+      source: this.options.source.ol as olSourceVector<OlGeometry>
     });
 
     if (this.options.animation) {
@@ -67,13 +73,14 @@ export class VectorLayer extends Layer {
     }
 
     const vector = new olLayerVector(olOptions);
-    const vectorSource = (this.dataSource instanceof ClusterDataSource
-      ? vector.getSource().getSource()
-      : vector.getSource()) as olSourceVector;
+    // const vectorSource = (this.dataSource instanceof ClusterDataSource
+    //   ? vector.getSource().
+    //   : vector.getSource()) as olSourceVector<OlGeometry>;
+    const vectorSource = vector.getSource() as olSourceVector<OlGeometry>;
     const url = vectorSource.getUrl();
-    vectorSource.addEventListener('vectorloading');
-    vectorSource.addEventListener('vectorloaded');
-    vectorSource.addEventListener('vectorloaderror');
+    vectorSource.addEventListener('vectorloading', this.loadingListener);
+    vectorSource.addEventListener('vectorloaded', this.loadedListener);
+    vectorSource.addEventListener('vectorloaderror', this.errorListener);
     if (url) {
       const loader = (extent, resolution, proj) => {
         this.customLoader(

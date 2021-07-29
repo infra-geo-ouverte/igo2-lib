@@ -11,8 +11,7 @@ import {
 
 import { Subscription } from 'rxjs';
 
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
-import { MapBrowserSingleClickEvent as OlMapBrowserSingleClickEvent } from 'ol/MapBrowserEvent';
+import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
@@ -34,6 +33,7 @@ import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
 import { StyleService } from '../../layer/shared/style.service';
+import * as OlObservable from 'ol/Observable';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -55,9 +55,9 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: ListenerFunction;
+  private pointerMoveListener: OlObservable.default;
 
-  private singleClickMapListener: ListenerFunction;
+  private singleClickMapListener: OlObservable.default;
 
   private hoverFeatureId: string = 'hoverFeatureId';
   /**
@@ -175,7 +175,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+      (event: OlMapBrowserEvent<any>) => this.onMapEvent(event)
     );
   }
 
@@ -185,7 +185,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   private listenToMapClick() {
     this.singleClickMapListener = this.map.ol.on(
       'singleclick',
-      (event: OlMapBrowserSingleClickEvent) => this.onMapSingleClickEvent(event)
+      (event: OlMapBrowserEvent<any>) => this.onMapSingleClickEvent(event)
     );
   }
 
@@ -219,7 +219,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Trigger clear layer on singleclick.
    * @param event OL map browser singleclick event
    */
-  private onMapSingleClickEvent(event: OlMapBrowserSingleClickEvent){
+  private onMapSingleClickEvent(event: OlMapBrowserEvent<any>){
     this.clearLayer();
   }
 
@@ -227,7 +227,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Trigger hover when the mouse is motionless during the defined delay (pointerMoveDelay).
    * @param event OL map browser pointer event
    */
-  private onMapEvent(event: OlMapBrowserPointerEvent) {
+  private onMapEvent(event: OlMapBrowserEvent<any>) {
     if (
       event.dragging || !this.igoHoverFeatureEnabled ||
       this.mediaService.isTouchScreen()) {
@@ -262,7 +262,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
       results = results[0];
       this.clearLayer();
-      let geom = this.getGeometry(results.feature);
+      let geom = this.getGeometry(results.feature) as any;
 
       // si vector tile, merge avec les polygones voisins possiblement meme entité
       if (results.layer.ol instanceof olLayer.VectorTile) {
@@ -300,7 +300,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     return summary;
   }
 
-  private getGeometry(feature): olgeom {
+  private getGeometry(feature): olgeom.Geometry {
     let geom;
     if (!feature.getOrientedFlatCoordinates) {
       geom = feature.getGeometry();
@@ -318,7 +318,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       // TODO: test MultiX
       switch (feature.getType()) {
         case 'Point':
-          geom = new olgeom.Point([flatCoords]);
+          geom = new olgeom.Point(flatCoords);
           break;
         case 'Polygon':
           geom = new olgeom.Polygon([flatCoords]);
@@ -332,7 +332,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     return geom;
   }
 
-  private getSameFeatureNeighbour(feature, layer, neighbourCollection: olFeature[] = []) {
+  private getSameFeatureNeighbour(feature, layer, neighbourCollection: olFeature<olgeom.Geometry>[] = []) {
 
     if (neighbourCollection.length === 0) {
       neighbourCollection.push(
@@ -381,7 +381,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
  * @param feature OlFeature
  * @returns OL style function
  */
-export function hoverFeatureMarker(feature: olFeature, resolution: number): olstyle.Style {
+export function hoverFeatureMarker(feature: olFeature<olgeom.Geometry>, resolution: number): olstyle.Style[] {
 
   const olStyleText = new olstyle.Style({
     text: new olstyle.Text({
