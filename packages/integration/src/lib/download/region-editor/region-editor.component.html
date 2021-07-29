@@ -34,6 +34,13 @@
       <igo-draw [store]="regionStore" [map]="igoMap"></igo-draw>
     <hr>
   </div>
+  <div *ngIf="activateDrawingTool">
+    <igo-region-draw
+      [map]='igoMap'
+      [(formControl)]='drawFormControl'
+      ngDefaultControl
+    ></igo-region-draw>
+  </div>
   <div>
     <div>
       <mat-label>Estimated Download Size in MB </mat-label>
@@ -53,4 +60,5 @@
     <button mat-button #download (click)="onDownloadClick()" [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)="onCancelClick()" [disabled]="disableCancelButton">Cancel</button>
   <div>
+  
 </div>

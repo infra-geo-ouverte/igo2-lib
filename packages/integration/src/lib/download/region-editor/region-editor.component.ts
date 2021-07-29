@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
@@ -32,6 +33,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
 
+  public drawFormControl: FormControl = new FormControl();
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
@@ -57,6 +59,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private storageQuota: StorageQuotaService,
     private cdRef: ChangeDetectorRef
   ) {
+    console.log("map ol", this.map.ol);
     if (this.openedWithMouse) {
       this.deactivateDrawingTool();
     }
