@@ -61,15 +61,17 @@ export class DownloadEstimator {
         genParams: TileGenerationParams,
         tileGrid
     ): number {
-        const depth = genParams.endLevel - genParams.startLevel;
-        const nTilesPerDownload = getNumberOfTreeNodes(depth);
-        const nTiles: number = getNumberOfTilesLineStringIntersect(
-            geometry as LineString,
-            genParams.parentLevel,
-            tileGrid
-        );
-        const nTilesMax: number = nTiles;
-        return nTilesMax * nTilesPerDownload;
+        const startLevel = genParams.startLevel;
+        const endLevel = genParams.endLevel;
+        let nTiles = 0;
+        for (let level = startLevel; level <= endLevel; level++) {
+            nTiles += getNumberOfTilesLineStringIntersect(
+                geometry as LineString,
+                level,
+                tileGrid
+            );
+        }
+        return nTiles;
     }
 
     private getNumberOfTilesIntersectPolygon(
