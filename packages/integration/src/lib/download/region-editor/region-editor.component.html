@@ -29,13 +29,14 @@
   <div>
     <igo-tile-generation-option #genParam (valueChange)="onGenerationParamsChange()" [disabled]="disableSlider" [parentLevel]="parentLevel"></igo-tile-generation-option>
   </div>
-  <div *ngIf="activateDrawingTool">
+  <!-- <div *ngIf="activateDrawingTool">
     <hr>
       <igo-draw [store]="regionStore" [map]="igoMap"></igo-draw>
     <hr>
-  </div>
+  </div> -->
   <div *ngIf="activateDrawingTool">
     <igo-region-draw
+      #regionDraw
       [map]='igoMap'
       [(formControl)]='drawFormControl'
       ngDefaultControl

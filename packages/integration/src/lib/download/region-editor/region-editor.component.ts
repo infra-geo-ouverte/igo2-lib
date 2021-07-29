@@ -14,6 +14,7 @@ import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { DownloadState } from '../download.state';
+import { RegionDrawComponent } from '../region-draw/region-draw.component';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
 import { TransferedTile } from '../TransferedTile';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
@@ -32,7 +33,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
-
+  @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
+  
   public drawFormControl: FormControl = new FormControl();
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
@@ -92,11 +94,53 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.genParamComponent.tileGenerationParams = this.genParams;
+    this.regionDrawComponent.value$.subscribe((value) => {
+      console.log(value);
+      const feature = this.geoJsonToFeature(value);
+      const featureText = JSON.stringify(feature);
+      console.log(feature);
+      console.log(this.drawFormControl.value);
+      console.log(this.isDrawingMode);
+    });
   }
 
   ngOnDestroy() {
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
+  }
+
+  geoJsonToFeature(geometry: Geometry) {
+    const id = uuid();
+    const previousRegion = this.regionStore.get(id);
+    const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
+
+    const feature = new OlFeature(geometry);
+    const projectionIn = 'EPSG:4326';
+    const projectionOut = 'EPSG:4326';
+    const featuresText: string = new olformat.GeoJSON().writeFeature(
+      feature,
+      {
+        dataProjection: projectionOut,
+        featureProjection: projectionIn,
+        featureType: 'feature',
+        featureNS: 'http://example.com/feature'
+      }
+    );
+    const regionFeature: Feature = {
+      type: FEATURE,
+      geometry: JSON.parse(featuresText).geometry,
+      projection: this.map.projection,
+      properties: {
+        id,
+        stopOpacity: 1
+      },
+      meta: {
+        id,
+        revision: previousRegionRevision + 1
+      },
+      ol: feature
+    };
+    return regionFeature;
   }
 
   public onGenerationParamsChange() {
@@ -321,9 +365,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sizeEstimationInBytes(): number {
-    const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
-      return feature.geometry;
-    }) : new Array();
+    const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
+    // const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
+    //   return feature.geometry;
+    // }) : new Array();
 
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
@@ -350,9 +395,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public numberOfTilesToDownload() {
-    const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
-      return feature.geometry;
-    }) : new Array();
+    const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
+    // const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
+    //   return feature.geometry;
+    // }) : new Array();
 
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
@@ -411,8 +457,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activateDrawingTool = false;
   }
 
-  get isDrawingMode() {
-    return this.tilesToDownload.length === 0;
+  public hasEditedRegion(): boolean{
+    if (!this.regionDrawComponent) {
+      return this.tilesToDownload.length !== 0;
+    }
+    const regionDrawIsEmpty = this.regionDrawComponent.formControl.value === null
+    return this.tilesToDownload.length !== 0 || !regionDrawIsEmpty;
+  }
+
+  get isDrawingMode(): boolean {
+    return this.drawFormControl.value !== null;
+    // return this.tilesToDownload.length === 0;
   }
 
   get igoMap(): IgoMap {
@@ -549,13 +604,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get disableSlider() {
     return this.isDownloading
     || !this.editionStrategy.enableGenEdition
-    || (this.parentTileUrls.length === 0 && this.regionStore.index.size === 0);
+    || !this.hasEditedRegion();
   }
 
   get disableDownloadButton() {
     return !this.regionName
     || this.isDownloading
-    || (this.parentTileUrls.length === 0 && this.regionStore.index.size === 0);
+    || !this.hasEditedRegion();
   }
 
   get disableCancelButton() {
