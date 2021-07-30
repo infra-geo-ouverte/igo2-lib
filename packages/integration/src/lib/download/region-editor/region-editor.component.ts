@@ -4,12 +4,13 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
-import { Feature, FEATURE, IgoMap, XYZDataSource } from '@igo2/geo';
+import { Feature, FEATURE, GeoJSONGeometry, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 import { Geometry } from '@turf/helpers';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
+import * as olProj from 'ol/proj';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
@@ -21,7 +22,6 @@ import { CreationEditionStrategy } from './editing-strategy/creation-editing-str
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
 import { EditedRegion, RegionEditorState } from './region-editor.state';
-
 
 
 @Component({
@@ -61,7 +61,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private storageQuota: StorageQuotaService,
     private cdRef: ChangeDetectorRef
   ) {
-    console.log("map ol", this.map.ol);
     if (this.openedWithMouse) {
       this.deactivateDrawingTool();
     }
@@ -94,14 +93,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.genParamComponent.tileGenerationParams = this.genParams;
-    this.regionDrawComponent.value$.subscribe((value) => {
-      console.log(value);
-      const feature = this.geoJsonToFeature(value);
-      const featureText = JSON.stringify(feature);
-      console.log(feature);
-      console.log(this.drawFormControl.value);
-      console.log(this.isDrawingMode);
-    });
   }
 
   ngOnDestroy() {
@@ -109,12 +100,21 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
 
-  geoJsonToFeature(geometry: Geometry) {
+  geoJSONToFeature(geometry: GeoJSONGeometry) {
     const id = uuid();
     const previousRegion = this.regionStore.get(id);
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
+    
+    const mapProj = this.map.projection;
+    const transformedGeometry = geometry;
+    const coords = geometry.type !== 'Polygon'?
+      geometry.coordinates : geometry.coordinates[0];
+    
+    transformedGeometry.coordinates = [geometry.coordinates[0].map((coord) => 
+      olProj.transform(coord, 'EPSG:4326', mapProj)
+    )];
 
-    const feature = new OlFeature(geometry);
+    const feature = new OlFeature(transformedGeometry);
     const projectionIn = 'EPSG:4326';
     const projectionOut = 'EPSG:4326';
     const featuresText: string = new olformat.GeoJSON().writeFeature(
@@ -126,9 +126,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         featureNS: 'http://example.com/feature'
       }
     );
+
     const regionFeature: Feature = {
       type: FEATURE,
-      geometry: JSON.parse(featuresText).geometry,
+      geometry: transformedGeometry,
       projection: this.map.projection,
       properties: {
         id,
@@ -308,9 +309,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
-    if (this.regionStore.index.size === 0
-      && this.parentTileUrls.length === 0
-    ) {
+    if (!this.hasEditedRegion()) {
       return;
     }
 
@@ -319,7 +318,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.parentLevel = this.map.getZoom();
       this.cdRef.detectChanges();
       this.genParams = this.genParamComponent.tileGenerationParams;
-      const features = [...this.regionStore.index.values()];
+      const geometry = this.drawFormControl.value;
+      const features = [this.geoJSONToFeature(geometry)];
       this.editedRegion.features = features;
     }
 
@@ -340,7 +340,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.clear();
         }
       });
-
     this.editionStrategy.download(this.editedRegion, this.downloadService);
   }
 
@@ -366,10 +365,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private sizeEstimationInBytes(): number {
     const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
-    // const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
-    //   return feature.geometry;
-    // }) : new Array();
-
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
@@ -396,9 +391,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public numberOfTilesToDownload() {
     const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
-    // const geometries = this.isDrawingMode ? [...this.regionStore.index.values()].map((feature) => {
-    //   return feature.geometry;
-    // }) : new Array();
 
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
@@ -467,7 +459,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get isDrawingMode(): boolean {
     return this.drawFormControl.value !== null;
-    // return this.tilesToDownload.length === 0;
   }
 
   get igoMap(): IgoMap {
