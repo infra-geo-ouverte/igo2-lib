@@ -556,14 +556,14 @@ export class IgoMap {
         }
 
         if (this.ol.getView().options_.buffer) {
-          const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
+          const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
           const coordinates = geolocation.getPosition();
           this.bufferGeom = new olCircle(coordinates, bufferRadius);
-          const bufferStroke = this.ol.getView().options_.buffer.bufferStroke;
-          const bufferFill = this.ol.getView().options_.buffer.bufferFill;
+          const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
+          const bufferFill = this.ol.getView().get('options_').buffer.bufferFill;
 
           let bufferText;
-          if (this.ol.getView().options_.buffer.showBufferRadius) {
+          if (this.ol.getView().get('options_').buffer.showBufferRadius) {
             bufferText = bufferRadius.toString() + 'm';
           } else {
             bufferText = '';
@@ -577,7 +577,7 @@ export class IgoMap {
           this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
-          this.viewController.zoomToExtent(extent);
+          this.viewController.zoomToExtent(extent as [number, number, number, number]);
           this.positionFollower = !this.positionFollower;
         }
       } else if (first) {

@@ -16,6 +16,7 @@ import {
     tryAddSelectionStrategy,
     FeatureMotion,
     FeatureStoreLoadingStrategy,
+    FeatureGeometry,
   } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
@@ -39,6 +40,7 @@ import OlPolygon from 'ol/geom/Polygon';
 import OlCircle from 'ol/geom/Circle';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { uuid } from '@igo2/utils';
 import { DrawStyleService } from '../shared/draw-style.service';
@@ -48,6 +50,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createDrawingInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+import Circle from 'ol/geom/Circle';
 
 @Component ({
     selector: 'igo-draw',
@@ -244,9 +247,9 @@ export class DrawComponent implements OnInit, OnDestroy {
         }));
 
 
-        store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
+        store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
             const olGeometry = event.feature.getGeometry();
-            this.clearTooltipsOfOlGeometry(olGeometry);
+            this.clearTooltipsOfOlGeometry(olGeometry as OlPoint | OlLineString | OlPolygon | Circle);
         });
 
         store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
@@ -390,13 +393,13 @@ export class DrawComponent implements OnInit, OnDestroy {
         const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
             featureProjection: projection,
             dataProjection: projection
-        });
+        }) as FeatureGeometry;
 
         if (olGeometry instanceof OlCircle) {
             geometry.type = 'Point';
             geometry.coordinates = olGeometry.getCenter();
-            const extend4326 = transform([olGeometry.flatCoordinates[2], olGeometry.flatCoordinates[3]], projection, 'EPSG:4326');
-            const center4326 = transform([olGeometry.flatCoordinates[0], olGeometry.flatCoordinates[1]], projection, 'EPSG:4326');
+            const extend4326 = transform([olGeometry.getFlatCoordinates()[2], olGeometry.getFlatCoordinates()[3]], projection, 'EPSG:4326');
+            const center4326 = transform([olGeometry.getFlatCoordinates()[0], olGeometry.getFlatCoordinates()[1]], projection, 'EPSG:4326');
             rad = getDistance(center4326, extend4326);
         }
 

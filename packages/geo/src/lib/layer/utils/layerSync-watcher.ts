@@ -1,6 +1,8 @@
 import { Watcher } from '@igo2/utils';
 import { Layer } from '../shared/layers/layer';
 import olLayer from 'ol/layer/Layer';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { IgoMap } from '../../map/shared/map';
 import { LayersLink, LinkedProperties } from '../shared/layers/layer.interface';
@@ -15,7 +17,7 @@ export class LayerSyncWatcher extends Watcher {
     private ogcFilters$$: Subscription;
     private timeFilter$$: Subscription;
 
-    private ol: olLayer;
+    private ol: olLayer<olSourceVector<OlGeometry>>;
     private layer: Layer;
     private dataSource: DataSource;
     private map: IgoMap;
@@ -247,7 +249,7 @@ export class LayerSyncWatcher extends Watcher {
                         layer.options.linkedLayers?.linkId === linkedId);
                     if (childLayer) {
                         (childLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, false);
-                        const appliedTimeFilter = this.ol.values_.source.getParams().TIME;
+                        const appliedTimeFilter = this.ol.get('values_').source.getParams().TIME;
                         (childLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
                     }
                 });
@@ -261,7 +263,7 @@ export class LayerSyncWatcher extends Watcher {
                         parentLayer.options.linkedLayers.links.map(l => {
                             if (l.properties && l.properties.indexOf(LinkedProperties.TIMEFILTER) !== -1 &&
                                 l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
-                                const appliedTimeFilter = this.ol.values_.source.getParams().TIME;
+                                const appliedTimeFilter = this.ol.get('values_').source.getParams().TIME;
                                 (parentLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
                                 (parentLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, true);
                             }

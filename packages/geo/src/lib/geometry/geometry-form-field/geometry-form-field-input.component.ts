@@ -1,4 +1,5 @@
-import { OlModify } from 'ol/interaction/Modify';
+import { DrawControlOptions } from './../shared/controls/draw';
+import OlModify from 'ol/interaction/Modify';
 import {
   Component,
   Input,
@@ -37,6 +38,10 @@ import {
 import { DrawControl, ModifyControl } from '../shared/controls';
 import { createDrawInteractionStyle } from '../shared/geometry.utils';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
+import OlCircle from 'ol/geom/Circle';
+import OlLineString from 'ol/geom/LineString';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
 
 /**
  * This input allows a user to draw a new geometry or to edit
@@ -51,7 +56,7 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 })
 export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
-  private olOverlayLayer: OlVectorLayer;
+  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olGeoJSON = new OlGeoJSON();
   private ready = false;
 
@@ -60,7 +65,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private defaultDrawStyleRadius: number;
   private olGeometryEnds$$: Subscription;
   private olGeometryChanges$$: Subscription;
-  private olTooltip = OlOverlay;
+  private olTooltip: OlOverlay;
 
   /**
    * Active control
@@ -154,7 +159,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Style for the draw control (applies while the geometry is being drawn)
    */
   @Input()
-  set drawStyle(value: OlStyle) {
+  set drawStyle(value: OlStyle.Style) {
     if (value === undefined) {
       value = createDrawInteractionStyle();
     }
@@ -178,17 +183,17 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
-  get drawStyle(): OlStyle { return this._drawStyle; }
-  private _drawStyle: OlStyle;
+  get drawStyle(): OlStyle.Style { return this._drawStyle; }
+  private _drawStyle: OlStyle.Style;
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
   @Input()
-  set overlayStyle(value: OlStyle) { this._overlayStyle = value; }
-  get overlayStyle(): OlStyle { return this._overlayStyle; }
-  private _overlayStyle: OlStyle;
+  set overlayStyle(value: OlStyle.Style) { this._overlayStyle = value; }
+  get overlayStyle(): OlStyle.Style { return this._overlayStyle; }
+  private _overlayStyle: OlStyle.Style;
 
   /**
    * The geometry value (GeoJSON)
@@ -217,7 +222,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * The vector source to add the geometry to
    * @internal
    */
-  get olOverlaySource(): OlVectorSource {
+  get olOverlaySource(): OlVectorSource<OlGeometry> {
     return this.olOverlayLayer.getSource();
   }
 
@@ -325,7 +330,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Add an overlay layer to the map
    */
-  private addOlOverlayLayer(): OlVectorLayer {
+  private addOlOverlayLayer() {
     this.olOverlayLayer = new OlVectorLayer({
       source: new OlVectorSource(),
       zIndex: 500,
@@ -341,12 +346,12 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     const controlOptions = Object.assign({}, this.controlOptions, {
       geometryType: this.geometryType || 'Point',
       layer: this.olOverlayLayer,
-      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
+      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature<OlGeometry>, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
-    });
+    }) as DrawControlOptions;
     this.drawControl = new DrawControl(controlOptions);
   }
 
@@ -356,12 +361,12 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private createModifyControl() {
     const controlOptions = Object.assign({}, this.controlOptions, {
       layer: this.olOverlayLayer,
-      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
+      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature<OlGeometry>, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
-    });
+    }) as DrawControlOptions;
     this.modifyControl = new ModifyControl(controlOptions);
   }
 
@@ -396,7 +401,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       .subscribe((olGeometry: OlGeometry) => this.onOlGeometryEnds(olGeometry));
     if (this.measure === true && control === this.drawControl) {
       this.olGeometryChanges$$ = control.changes$
-        .subscribe((olGeometry: OlGeometry) => this.onOlGeometryChanges(olGeometry));
+        .subscribe((olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle) => this.onOlGeometryChanges(olGeometry));
     }
     control.setOlMap(this.map.ol);
   }
@@ -431,7 +436,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Update measures observables and map tooltips
    * @param olGeometry Ol linestring or polygon
    */
-  private onOlGeometryChanges(olGeometry: OlGeometry) {
+  private onOlGeometryChanges(olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle) {
     if (olGeometry.getType() !== 'Point') {
       this.updateMeasureTooltip(olGeometry);
     }
@@ -458,7 +463,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     });
     if (olGeometry.get('radius')) {
       value.radius = olGeometry.get('radius');
-      olGeometry._radius = value.radius;
+      olGeometry.set('radius', value.radius);
     }
     this.writeValue(value);
   }
@@ -494,7 +499,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Create the measure tooltip
    */
-  private createMeasureTooltip(): OlOverlay {
+  private createMeasureTooltip() {
     this.olTooltip = new OlOverlay({
       element: document.createElement('div'),
       offset: [-30, -10],
@@ -510,7 +515,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Update the measure tooltip of an OL geometry
    * @param olGeometry OL Geometry
    */
-  private updateMeasureTooltip(olGeometry: OlGeometry) {
+  private updateMeasureTooltip(olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle) {
     const measure = measureOlGeometry(olGeometry, this.map.projection);
     const lengths = measure.lengths;
     const lastIndex = olGeometry.getType() === 'Polygon' ? lengths.length - 2 : lengths.length - 1;
@@ -523,7 +528,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       return;
     }
 
-    this.olTooltip.setPosition(olLastMidpoint.flatCoordinates);
+    this.olTooltip.setPosition(olLastMidpoint.getFlatCoordinates());
 
     const innerHtml = formatMeasure(lastLength, {
       decimal: 1,
@@ -552,7 +557,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param olStyle Draw style to update
    * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
    */
-  private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
+  private updateDrawStyleWithDrawGuide(olStyle: OlStyle.Style, resolution: number) {
     const olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
     if (olGuideStyle === undefined) {
       return;
@@ -572,7 +577,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
    * @param olStyle The style on which to perform the check
    */
-  private isStyleWithRadius(olStyle: OlStyle): boolean {
+  private isStyleWithRadius(olStyle: OlStyle.Style): boolean {
     return typeof olStyle !== 'function' && olStyle.getImage && olStyle.getImage().setRadius;
   }
 
@@ -580,7 +585,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
    * @param olStyle The style on which to perform the check
    */
-  private getGuideStyleFromDrawStyle(olStyle: OlStyle |  OlStyle[]): OlStyle {
+  private getGuideStyleFromDrawStyle(olStyle: OlStyle.Style |  OlStyle.Style[]): OlStyle.Style {
     if (Array.isArray(olStyle)) {
       olStyle = olStyle[0];
     }

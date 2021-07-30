@@ -46,7 +46,7 @@ export function createDrawingInteractionStyle(fill?: string, stroke?: string, te
 export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
-    const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
+    const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
     olGeometry.setProperties({_midpoints: olMidpoints}, true);
@@ -63,7 +63,7 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
     if (olTooltip === undefined) {
       olTooltip = createOlTooltipDrawAtPoint(olMidpoint);
     } else {
-      olTooltip.setPosition(olMidpoint.flatCoordinates);
+      olTooltip.setPosition(olMidpoint.getFlatCoordinates());
     }
     return olTooltip;
   });
@@ -81,7 +81,7 @@ export function updateOlTooltipDrawAtCenter(olGeometry: OlLineString | OlPolygon
   if (olTooltip === undefined) {
     olTooltip = createOlTooltipDrawAtPoint(olCenter);
   } else {
-    olTooltip.setPosition(olCenter.flatCoordinates);
+    olTooltip.setPosition(olCenter.getFlatCoordinates());
   }
   return olTooltip;
 }
@@ -101,7 +101,7 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
     ].join(' '),
     stopEvent: false
   });
-  olTooltip.setPosition(olPoint.flatCoordinates);
+  olTooltip.setPosition(olPoint.getFlatCoordinates());
   olPoint.set('_tooltip', olTooltip);
 
   return olTooltip;

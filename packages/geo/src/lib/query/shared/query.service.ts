@@ -79,12 +79,12 @@ export class QueryService {
   }
 
   private mergeGML(gmlRes, url) {
-    let parser = new olFormatGML2();
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
-      features = parser.readFeatures(gmlRes);
+      const wmsParser = new olformat.WMSGetFeatureInfo();
+      features = wmsParser.readFeatures(gmlRes);
     }
     const olmline = new olgeom.MultiLineString([]);
     let pts;
@@ -381,13 +381,13 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
-    let parser = new olFormatGML2();
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(res);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
+      const wmsParser = new olformat.WMSGetFeatureInfo();
       try {
-        features = parser.readFeatures(res);
+        features = wmsParser.readFeatures(res);
       } catch (e) {
         console.warn(
           'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
@@ -498,7 +498,7 @@ export class QueryService {
   }
 
   public featureToResult(
-    featureOL: olFeature,
+    featureOL: olFeature<olgeom.Geometry>,
     zIndex: number,
     allowedFieldsAndAlias?
   ): Feature {

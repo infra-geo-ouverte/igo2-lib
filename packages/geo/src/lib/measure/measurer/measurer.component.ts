@@ -530,7 +530,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         this.activateModifyControl();
 
         const olGeometry = olFeature.getGeometry();
-        this.clearTooltipsOfOlGeometry(olGeometry);
+        this.clearTooltipsOfOlGeometry(olGeometry as (OlLineString | OlPolygon));
         this.modifyControl.setOlGeometry(olGeometry);
       }
     }

@@ -5,10 +5,7 @@ import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';
-import {
-  Geometry as OlGeometry,
-  GeometryEvent as OlGeometryEvent
-} from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { unByKey } from 'ol/Observable';
 
@@ -18,10 +15,10 @@ import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
   geometryType: OlGeometryType;
-  source?: OlVectorSource;
-  layer?: OlVectorLayer;
-  layerStyle?: OlStyle.Style | ((olfeature: OlFeature) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature) => OlStyle.Style);
+  source?: OlVectorSource<OlGeometry>;
+  layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  layerStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style);
   maxPoints?: number;
 }
 
@@ -45,7 +42,7 @@ export class DrawControl {
   public changes$: Subject<OlGeometry> = new Subject();
 
   private olMap: OlMap;
-  private olOverlayLayer: OlVectorLayer;
+  private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
   private onDrawStartKey: string;
   private onDrawEndKey: string;
@@ -76,7 +73,7 @@ export class DrawControl {
    * OL overlay source
    * @internal
    */
-  get olOverlaySource(): OlVectorSource {
+  get olOverlaySource(): OlVectorSource<OlGeometry> {
     return this.olOverlayLayer.getSource();
   }
 
@@ -109,14 +106,14 @@ export class DrawControl {
   /**
    * Return the overlay source
    */
-  getSource(): OlVectorSource {
+  getSource(): OlVectorSource<OlGeometry> {
     return this.olOverlaySource;
   }
 
   /**
    * Create an overlay source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
     return new OlVectorLayer({
       source: this.options.source ? this.options.source : new OlVectorSource(),
       style: this.options.layerStyle,
@@ -136,7 +133,7 @@ export class DrawControl {
   /**
    * Add the overlay layer if it wasn't defined in the options
    */
-  private addOlInnerOverlayLayer(): OlVectorLayer {
+  private addOlInnerOverlayLayer() {
     if (this.options.layer === undefined) {
       this.olMap.addLayer(this.olOverlayLayer);
     }

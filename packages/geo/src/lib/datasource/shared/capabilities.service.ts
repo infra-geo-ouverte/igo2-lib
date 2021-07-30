@@ -134,8 +134,8 @@ export class CapabilitiesService {
   }
 
   getImageArcgisOptions(
-    baseOptions: ArcGISRestImageDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions> {
+    baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
     const legendUrl = modifiedUrl + '/legend?f=json';
@@ -156,7 +156,7 @@ export class CapabilitiesService {
 
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
-  ): Observable<TileArcGISRestDataSourceOptions> {
+  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
     const arcgisOptions = this.http.get(baseUrl);
@@ -378,7 +378,7 @@ export class CapabilitiesService {
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
     const style = styleGenerator.generateStyle(arcgisOptions, units);
     const attributions = new olAttribution({
-      html: arcgisOptions.copyrightText
+      target: arcgisOptions.copyrightText
     });
     let timeExtent;
     let timeFilter;
@@ -428,7 +428,7 @@ export class CapabilitiesService {
     const title = arcgisOptions.name;
     const legendInfo = legend.layers ? legend : undefined;
     const attributions = new olAttribution({
-      html: arcgisOptions.copyrightText
+      target: arcgisOptions.copyrightText
     });
     let timeExtent;
     let timeFilter;
