@@ -100,19 +100,34 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
 
+  transformGeometry(geometry: GeoJSONGeometry, proj: string): GeoJSONGeometry {
+    const coords = geometry.coordinates;
+    switch (geometry.type) {
+      case 'Point':
+        geometry.coordinates = olProj.transform(coords, 'EPSG:4326', proj);
+        break;
+
+      case 'LineString':
+        geometry.coordinates = coords.map((coord) => olProj.transform(coord, 'EPSG:4326', proj));
+        break;
+
+      case 'Polygon':
+        geometry.coordinates = [coords[0].map((coord) => olProj.transform(coord, 'EPSG:4326', proj))];
+        break;
+
+      default:
+        throw Error("Geometry not yet supported for transform");
+    }
+    return geometry;
+  }
+
   geoJSONToFeature(geometry: GeoJSONGeometry) {
     const id = uuid();
     const previousRegion = this.regionStore.get(id);
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
-    
+
     const mapProj = this.map.projection;
-    const transformedGeometry = geometry;
-    const coords = geometry.type !== 'Polygon'?
-      geometry.coordinates : geometry.coordinates[0];
-    
-    transformedGeometry.coordinates = [geometry.coordinates[0].map((coord) => 
-      olProj.transform(coord, 'EPSG:4326', mapProj)
-    )];
+    const transformedGeometry = this.transformGeometry(geometry, this.map.projection);
 
     const feature = new OlFeature(transformedGeometry);
     const projectionIn = 'EPSG:4326';
