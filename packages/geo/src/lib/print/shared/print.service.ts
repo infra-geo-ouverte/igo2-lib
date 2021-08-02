@@ -501,8 +501,8 @@ export class PrintService {
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
       // Remove the UI buttons from the nodes
       const OverlayHTMLButton = mapOverlayHTML.getElementsByTagName('button');
-      for (const but of OverlayHTMLButton) {
-        but.setAttribute('data-html2canvas-ignore', 'true');
+      for (let i = 0; i < OverlayHTMLButton.length; i++) {
+        OverlayHTMLButton[i].setAttribute('data-html2canvas-ignore', 'true');
       }
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas

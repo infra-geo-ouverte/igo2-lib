@@ -1,7 +1,7 @@
 import { Watcher } from '@igo2/utils';
 import { Layer } from '../shared/layers/layer';
 import olLayer from 'ol/layer/Layer';
-import olSourceVector from 'ol/source/Vector';
+import olSource from 'ol/source/Source';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { IgoMap } from '../../map/shared/map';
@@ -17,7 +17,7 @@ export class LayerSyncWatcher extends Watcher {
     private ogcFilters$$: Subscription;
     private timeFilter$$: Subscription;
 
-    private ol: olLayer<olSourceVector<OlGeometry>>;
+    private ol: olLayer<olSource>;
     private layer: Layer;
     private dataSource: DataSource;
     private map: IgoMap;
@@ -173,7 +173,6 @@ export class LayerSyncWatcher extends Watcher {
                         const layerType = layerToApply.ol.getProperties().sourceOptions.type;
                         (layerToApply.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, false);
                         if (layerType === 'wfs') {
-                            layerToApply.ol.getSource().clear();
                             layerToApply.ol.getSource().refresh();
                         }
                         if (layerType === 'wms') {
@@ -203,7 +202,6 @@ export class LayerSyncWatcher extends Watcher {
                             const layerType = layer.ol.getProperties().sourceOptions.type;
                             if (layerType === 'wfs') {
                                 (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
-                                layer.ol.getSource().clear();
                                 layer.ol.getSource().refresh();
                             }
                             if (layerType === 'wms') {

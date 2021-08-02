@@ -7,6 +7,7 @@ import { Observable, Observer } from 'rxjs';
 
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { ExportFormat, EncodingFormat } from './export.type';
 
@@ -44,7 +45,7 @@ export class ExportService {
   }
 
   export(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     format: ExportFormat,
     title: string,
     encoding: EncodingFormat,
@@ -64,14 +65,14 @@ export class ExportService {
   }
 
   private generateFeature(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     format: ExportFormat
-  ): OlFeature[] {
+  ): OlFeature<OlGeometry>[] {
     if (format === ExportFormat.GPX && this.aggregateInComment) {
       return this.generateAggratedFeature(olFeatures);
     }
 
-    return olFeatures.map((olFeature: OlFeature) => {
+    return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       const keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith('_'));
@@ -86,13 +87,13 @@ export class ExportService {
     });
   }
 
-  private generateAggratedFeature(olFeatures: OlFeature[]): OlFeature[] {
-    return olFeatures.map((olFeature: OlFeature) => {
+  private generateAggratedFeature(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+    return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       const keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith('_'));
       let comment: string = '';
-      const properties: any[] = keys.reduce(
+      const properties = keys.reduce(
         (acc: object, key: string) => {
           if (key !== undefined && key !== 'geometry') {
             comment += key + ':' + olFeature.get(key) + '   \r\n';
@@ -111,7 +112,7 @@ export class ExportService {
   }
 
   private exportAsync(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     format: ExportFormat,
     title: string,
     encoding: EncodingFormat,
@@ -167,7 +168,7 @@ export class ExportService {
   }
 
   protected exportToFile(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     observer: Observer<void>,
     format: ExportFormat,
     title: string,
@@ -189,7 +190,7 @@ export class ExportService {
   }
 
   private exportWithOgre(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     observer: Observer<void>,
     format: string,
     title: string,
@@ -201,9 +202,7 @@ export class ExportService {
       olFeatures,
       {
         dataProjection: projectionOut,
-        featureProjection: projectionIn,
-        featureType: 'feature',
-        featureNS: 'http://example.com/feature'
+        featureProjection: projectionIn
       }
     );
 
@@ -272,7 +271,7 @@ export class ExportService {
     observer.complete();
   }
 
-  private nothingToExport(olFeatures: OlFeature[], format: string): boolean {
+  private nothingToExport(olFeatures: OlFeature<OlGeometry>[], format: string): boolean {
     if (olFeatures.length === 0) {
       return true;
     }

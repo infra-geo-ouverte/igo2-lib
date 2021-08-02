@@ -8,6 +8,7 @@ import { Observable, Observer } from 'rxjs';
 
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
@@ -228,7 +229,7 @@ export class ImportService {
       dataProjection: projectionIn,
       featureProjection: projectionOut
     });
-    const features = olFeatures.map((olFeature: OlFeature) => {
+    const features = olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       return Object.assign(GeoJSON.writeFeatureObject(olFeature), {
         projection: projectionOut,
         meta: {
@@ -248,7 +249,7 @@ export class ImportService {
   ): Feature[] {
     const olFormat = new olformat.GeoJSON();
     const olFeatures = olFormat.readFeatures(data);
-    const features = olFeatures.map((olFeature: OlFeature) => {
+    const features = olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       return Object.assign(olFormat.writeFeatureObject(olFeature), {
         projection: projectionOut,
         meta: {
@@ -258,6 +259,6 @@ export class ImportService {
       });
     });
 
-    return features;
+    return features as Feature[];
   }
 }

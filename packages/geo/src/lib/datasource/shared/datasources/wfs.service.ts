@@ -12,6 +12,7 @@ import { formatWFSQueryString,
           getFormatFromOptions} from './wms-wfs.utils';
 import { concatMap } from 'rxjs/operators';
 import { WFS } from 'ol/format';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 @Injectable({
   providedIn: 'root'
 })
@@ -136,7 +137,7 @@ export class WFSService extends DataService {
             })
           );
         })).subscribe((results) => {
-          let mfeatures: olFeature[] = [];
+          let mfeatures: olFeature<OlGeometry>[] = [];
           results.map((result) => {
             const loopFeatures = effectiveOlFormats.readFeatures(result);
             mfeatures = mfeatures.concat(loopFeatures);
@@ -150,7 +151,7 @@ export class WFSService extends DataService {
     });
   }
 
-  private built_properties_value(features: olFeature[]): string[] {
+  private built_properties_value(features: olFeature<OlGeometry>[]): string[] {
     if (features.length === 0) {
       return [];
     }

@@ -141,7 +141,7 @@ export function getFormatFromOptions(
 ) {
   const wfsOptions = options as WFSDataSourceOptions;
 
-  let olFormatCls = OlFormat.WFS;
+  let olFormatCls;
   const outputFormat = wfsOptions.paramsWFS.outputFormat
     ? wfsOptions.paramsWFS.outputFormat
     : undefined;

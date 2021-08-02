@@ -95,7 +95,7 @@ export class MapOfflineDirective implements AfterViewInit {
     layerList.forEach(layer => {
       if (layer.options.source instanceof MVTDataSource) {
         sourceOptions = layer.options.sourceOptions as MVTDataSourceOptions;
-        layer.ol.getSource().clear();
+        layer.ol.getSource().refresh();
       } else if (layer.options.source instanceof XYZDataSource) {
         sourceOptions = layer.options.sourceOptions as XYZDataSourceOptions;
       } else if (layer.options.source instanceof ClusterDataSource) {

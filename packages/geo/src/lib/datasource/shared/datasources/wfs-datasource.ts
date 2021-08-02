@@ -2,6 +2,8 @@ import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
+import olFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -18,9 +20,14 @@ import {
 } from './wms-wfs.utils';
 import { BehaviorSubject } from 'rxjs';
 import { AuthInterceptor } from '@igo2/auth';
+import { Listener } from 'ol/events';
 
 export class WFSDataSource extends DataSource {
-  public ol: olSourceVector;
+  public ol: olSourceVector<OlGeometry>;
+
+  public vectorLoadingListener: Listener;
+  public vectorLoadedListener: Listener;
+  public vectorErrorListener: Listener;
 
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
@@ -67,11 +74,11 @@ export class WFSDataSource extends DataSource {
     this.setOgcFilters((this.options as OgcFilterableDataSourceOptions).ogcFilters, true);
   }
 
-  protected createOlSource(): olSourceVector {
+  protected createOlSource(): olSourceVector<OlGeometry> {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
-        vectorSource.dispatchEvent({ type: 'vectorloading' });
+        vectorSource.dispatchEvent('vectorloading');
         const paramsWFS = this.options.paramsWFS;
         const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
 
@@ -105,32 +112,32 @@ export class WFSDataSource extends DataSource {
       },
       strategy: OlLoadingStrategy.bbox
     });
-    vectorSource.addEventListener('vectorloading');
-    vectorSource.addEventListener('vectorloaded');
-    vectorSource.addEventListener('vectorloaderror');
+    vectorSource.addEventListener('vectorloading', this.vectorLoadingListener);
+    vectorSource.addEventListener('vectorloaded', this.vectorLoadedListener);
+    vectorSource.addEventListener('vectorloaderror', this.vectorErrorListener);
     return vectorSource;
   }
 
-  private getFeatures(vectorSource: olSourceVector, extent, dataProjection, featureProjection, url: string, threshold: number) {
+  private getFeatures(vectorSource: olSourceVector<OlGeometry>, extent, dataProjection, featureProjection, url: string, threshold: number) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     if (this.authInterceptor) {
       this.authInterceptor.interceptXhr(xhr, url);
     }
     const onError = () => {
-      vectorSource.dispatchEvent({ type: 'vectorloaderror' });
+      vectorSource.dispatchEvent('vectorloaderror');
       vectorSource.removeLoadedExtent(extent);
     };
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200 && xhr.responseText.length > 0) {
-        const features = vectorSource.getFormat().readFeatures(xhr.responseText, {dataProjection, featureProjection});
+        const features = vectorSource.getFormat().readFeatures(xhr.responseText, {dataProjection, featureProjection}) as olFeature<OlGeometry>[];
         // TODO Manage "More feature"
         /*if (features.length === 0 || features.length < threshold ) {
           console.log('No more data to download at this resolution');
         }*/
         vectorSource.addFeatures(features);
-        vectorSource.dispatchEvent({ type: 'vectorloaded' });
+        vectorSource.dispatchEvent('vectorloaded');
       } else {
         onError();
       }

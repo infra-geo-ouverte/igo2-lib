@@ -10,5 +10,5 @@ export abstract class OptionsService {
   abstract getArcgisRestOptions(
     _baseOptions: ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions,
     detailedContextUri?: string
-  ): Observable<ArcGISRestImageDataSourceOptions>;
+  ): Observable<ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions>;
 }

@@ -245,7 +245,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
         });
         return storeOlLayer !== undefined;
       }
-    });
+    }) as OlFeature<OlGeometry>[];
     this.onSelectFromMap(olFeatures, exclusive, reverse);
   }
 
