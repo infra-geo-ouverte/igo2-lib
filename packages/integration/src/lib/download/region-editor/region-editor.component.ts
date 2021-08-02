@@ -34,7 +34,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
-  
+
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
@@ -115,7 +115,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
 
       default:
-        throw Error("Geometry not yet supported for transform");
+        throw Error('Geometry not yet supported for transform');
     }
     return geometry;
   }

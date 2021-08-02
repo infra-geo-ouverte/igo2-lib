@@ -12,7 +12,7 @@ export class RegionDrawComponent implements OnInit {
   @Input() map: IgoMap;
   @Input() formControl: FormControl;
   @Input() disabled: boolean = false;
-  
+
   @ViewChild('geometryFormField') geometryFormField: GeometryFormFieldComponent;
 
   constructor() { }
