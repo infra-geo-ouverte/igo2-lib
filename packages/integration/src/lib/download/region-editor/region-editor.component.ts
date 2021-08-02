@@ -35,7 +35,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
   
-  public drawFormControl: FormControl = new FormControl();
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
@@ -333,7 +332,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.parentLevel = this.map.getZoom();
       this.cdRef.detectChanges();
       this.genParams = this.genParamComponent.tileGenerationParams;
-      const geometry = this.drawFormControl.value;
+      const geometry = this.drawnRegionGeometryForm.value;
       const features = [this.geoJSONToFeature(geometry)];
       this.editedRegion.features = features;
     }
@@ -369,7 +368,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private clear() {
     this.activateDrawingTool = true;
-    this.drawFormControl = new FormControl();
+    this.drawnRegionGeometryForm = new FormControl();
     this.regionStore.clear();
     this.clearEditedRegion();
     this.updateVariables();
@@ -380,7 +379,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sizeEstimationInBytes(): number {
-    const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
+    const geometries = this.isDrawingMode ? [this.drawnRegionGeometryForm.value] : [];
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
     }
@@ -406,7 +405,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public numberOfTilesToDownload() {
-    const geometries = this.isDrawingMode ? [this.drawFormControl.value] : [];
+    const geometries = this.isDrawingMode ? [this.drawnRegionGeometryForm.value] : [];
 
     if (this.isDrawingMode) {
       this.setTileGridAndTemplateUrl();
@@ -469,12 +468,21 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.regionDrawComponent) {
       return this.tilesToDownload.length !== 0;
     }
-    const regionDrawIsEmpty = this.regionDrawComponent.formControl.value === null
-    return this.tilesToDownload.length !== 0 || !regionDrawIsEmpty;
+    const regionDrawIsEmpty = this.regionDrawComponent.formControl.value === null;
+    return this.tilesToDownload.length !== 0
+    || !regionDrawIsEmpty;
+  }
+
+  get drawnRegionGeometryForm(): FormControl {
+    return this.state.drawnRegionGeometryForm;
+  }
+
+  set drawnRegionGeometryForm(form: FormControl) {
+    this.state.drawnRegionGeometryForm = form;
   }
 
   get isDrawingMode(): boolean {
-    return this.drawFormControl.value !== null;
+    return this.drawnRegionGeometryForm.value !== null;
   }
 
   get igoMap(): IgoMap {
@@ -617,7 +625,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get disableDownloadButton() {
     return !this.regionName
     || this.isDownloading
-    || !this.hasEditedRegion();
+    || (!this.hasEditedRegion() && this.regionStore.index.size === 0);
   }
 
   get disableCancelButton() {
