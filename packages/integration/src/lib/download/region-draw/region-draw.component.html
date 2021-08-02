@@ -3,8 +3,9 @@
   #geometryFormField
   [geometryTypeField]='true'
   [map]='map'
-  [(formControl)]='formControl'
+  [(formControl)]='regionGeometryForm'
   ngDefaultControl
 >
 </igo-geometry-form-field>
+<mat-slide-toggle [(checked)]='drawChecked' (change)='toggleDraw($event)'>Draw toggle</mat-slide-toggle>
 <hr>

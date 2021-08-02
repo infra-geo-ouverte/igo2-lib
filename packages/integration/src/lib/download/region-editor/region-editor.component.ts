@@ -469,7 +469,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.tilesToDownload.length !== 0
       || this.regionStore.index.size !== 0;
     }
-    const regionDrawIsEmpty = this.regionDrawComponent.formControl.value === null;
+    const regionDrawIsEmpty = this.regionDrawComponent.regionGeometryForm.value === null;
     return this.tilesToDownload.length !== 0
     || this.regionStore.index.size !== 0
     || !regionDrawIsEmpty;
