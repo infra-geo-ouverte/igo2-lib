@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { GeoJSONGeometry, GeometryFormFieldComponent, IgoMap } from '@igo2/geo';
@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
   templateUrl: './region-draw.component.html',
   styleUrls: ['./region-draw.component.scss']
 })
-export class RegionDrawComponent implements OnInit {
+export class RegionDrawComponent implements OnInit, AfterViewInit {
   @Input() map: IgoMap;
   @Input() regionGeometryForm: FormControl;
   @Input() disabled: boolean = false;
@@ -21,10 +21,15 @@ export class RegionDrawComponent implements OnInit {
 
   ngOnInit() {
   }
+  
+  ngAfterViewInit() {
+    this.geometryFormField.geometryType$.subscribe((value: any) => {
+      this.drawChecked = true;
+    });
+  }
 
-  toggleDraw(value: MatSlideToggleChange) {
-    console.log(value);
-    if (value.checked) {
+  toggleDraw(slideToggleChange: MatSlideToggleChange) {
+    if (slideToggleChange.checked) {
       this.activateDraw();
     } else {
       this.deactivateDraw();
