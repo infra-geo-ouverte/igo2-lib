@@ -20,14 +20,6 @@ export class RegionDrawComponent implements OnInit {
   ngOnInit() {
   }
 
-  resetRegion() {
-    this.formControl = new FormControl();
-  }
-
-  printRegion() {
-    console.log(this.formControl);
-  }
-
   get value$(): BehaviorSubject<GeoJSONGeometry> {
     return this.geometryFormField.value$;
   }
