@@ -1,20 +1,13 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef, Component,
+  Input, OnDestroy, OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-
-import { BehaviorSubject, Subscription } from 'rxjs';
-
+import { IgoFormFieldComponent } from '@igo2/common';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { Style as OlStyle } from 'ol/style';
-
-import { IgoFormFieldComponent } from '@igo2/common';
-
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { IgoMap } from '../../map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 
@@ -35,8 +28,25 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
 
   private value$$: Subscription;
 
-  public drawControlIsActive = true;
-  public freehandDrawIsActive = false;
+  set drawControlIsActive(value: boolean) {
+    this._drawControlIsActive = value;
+    this.cdRef.detectChanges();
+  }
+
+  get drawControlIsActive(): boolean {
+    return this._drawControlIsActive;
+  }
+  private _drawControlIsActive = true;
+
+  set freehandDrawIsActive(value: boolean) {
+    this._freehandDrawIsActive = value;
+    this.cdRef.detectChanges();
+  }
+
+  get freehandDrawIsActive(): boolean {
+    return this._freehandDrawIsActive;
+  }
+  private _freehandDrawIsActive = false;
 
   /**
    * The field's form control
