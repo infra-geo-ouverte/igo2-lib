@@ -38,7 +38,15 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   }
   private _drawControlIsActive = true;
 
-  public freehandDrawIsActive = false;
+  set freehandDrawIsActive(value: boolean) {
+    this._freehandDrawIsActive = value;
+    this.cdRef.detectChanges();
+  }
+
+  get freehandDrawIsActive(): boolean {
+    return this._freehandDrawIsActive;
+  }
+  private _freehandDrawIsActive = false;
 
   /**
    * The field's form control
