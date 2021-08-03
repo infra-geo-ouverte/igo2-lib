@@ -251,12 +251,4 @@ export class DownloadRegionService {
     const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
   }
-
-  // public getDownloadSpaceEstimate(nTiles: number): number {
-  //   return this.tileDownloader.downloadEstimate(nTiles);
-  // }
-
-  // public getNumberOfTiles(nParents: number, depth: number) {
-  //   return this.tileDownloader.numberOfTiles(depth) * nParents;
-  // }
 }
