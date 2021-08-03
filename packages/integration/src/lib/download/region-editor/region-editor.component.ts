@@ -228,9 +228,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    if (this.isDrawingMode) {
-      this.deactivateDrawingTool();
-    }
+    this.deactivateDrawingTool();
 
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
@@ -460,7 +458,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private deactivateDrawingTool() {
-    this.regionStore.clear();
+    this.drawnRegionGeometryForm.reset();
     this.activateDrawingTool = false;
   }
 
