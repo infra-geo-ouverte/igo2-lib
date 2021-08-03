@@ -373,7 +373,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onCancelClick() {
-    this.clear();
+    if (this.isDownloading) {
+      this.downloadService.cancelRegionDownload();
+    } else {
+      this.clear();
+    }
   }
 
   private sizeEstimationInBytes(): number {
@@ -627,9 +631,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     || this.isDownloading
     || (!this.hasEditedRegion() && this.regionStore.index.size === 0);
   }
-
+  // TODO remove
   get disableCancelButton() {
-    return this.isDownloading;
+    return false;
   }
 
   get editionStrategy(): EditionStrategy {

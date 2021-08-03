@@ -20,6 +20,9 @@ export class DownloadRegionService {
 
   private downloadEstimator = new DownloadEstimator();
 
+  private currentDownloadRegionID: number;
+  private cancel$$: Subscription;
+
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: TileDBService,
@@ -63,6 +66,7 @@ export class DownloadRegionService {
 
     this.regionDB.add(region)
       .subscribe((regionID: number) => {
+        this.currentDownloadRegionID = regionID;
         for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
             tile.coord,
@@ -250,5 +254,24 @@ export class DownloadRegionService {
     const regionDBRequest = this.regionDB.deleteByRegionID(regionID);
     const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
+  }
+
+  public cancelRegionDownload() {
+    if (this.cancel$$) {
+      this.cancel$$.unsubscribe();
+    }
+    console.log('cancel region download');
+    const cancel$ = this.tileDownloader.cancelDownload();
+    this.isDownloading$$.unsubscribe();
+    this.cancel$$ = cancel$.subscribe(
+      (canceled) => {
+        if (canceled) {
+          this.deleteRegionByID(this.currentDownloadRegionID);
+
+          const collisionMap = this.tileDB.collisionsMap;
+          this.regionDB.updateWithCollisions(collisionMap);
+          this.tileDB.resetCollisionMap();
+        }
+      });
   }
 }

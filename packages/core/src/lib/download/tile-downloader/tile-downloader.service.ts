@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Geometry } from '@turf/helpers';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Observer } from 'rxjs';
-import { retry } from 'rxjs/operators';
+import { map, retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
 import { TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
@@ -55,6 +55,7 @@ export class TileDownloaderService {
   private urlQueue: string[] = [];
   private _isDownloading: boolean = false;
   private _nWorkerDone: number;
+  private cancelFlag: boolean = false;
 
   private currentDownloads: number = 0;
   private downloadCount: number = 0;
@@ -197,9 +198,10 @@ export class TileDownloaderService {
     const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     const nextDownload = () => {
       const url =  this.urlQueue.shift();
-      if (!url) {
+      if (!url || this.cancelFlag) {
         this._nWorkerDone++;
         if (this._nWorkerDone === nWorkers) {
+          this.cancelFlag = false;
           this._isDownloading = false;
           this.isDownloading$.next(false);
         }
@@ -214,6 +216,14 @@ export class TileDownloaderService {
     for (let i = 0; i < nWorkers; i++) {
       nextDownload();
     }
+  }
+
+  cancelDownload(): Observable<boolean> {
+    if (!this._isDownloading) {
+      throw Error('No active download in TileDownloaderService');
+    }
+    this.cancelFlag = true;
+    return this.isDownloading$.pipe(map(value => !value));
   }
 
   public changeStrategy(strategyName: string) {

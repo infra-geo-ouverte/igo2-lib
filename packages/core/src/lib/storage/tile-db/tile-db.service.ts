@@ -116,7 +116,6 @@ export class TileDBService {
     const dbRequest = this.dbService.getAllByIndex(this.dbName, 'regionID', IDBKey);
     dbRequest.subscribe((tiles: TileDBData[]) => {
       tiles.forEach((tile) => {
-        console.log(tile);
         this.dbService.deleteByKey(this.dbName, tile.url);
       });
     });

@@ -78,6 +78,7 @@ export class RegionDBService {
       const collisions = collisionsMap.get(regionID);
       this.dbService.getByID(this.dbName, regionID).subscribe(
         (region: RegionDBData) => {
+          console.log('region id:', region.id);
           region.numberOfTiles -= collisions;
           if (region.numberOfTiles === 0) {
             this.deleteByRegionID(region.id);
