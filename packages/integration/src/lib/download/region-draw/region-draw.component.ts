@@ -23,8 +23,16 @@ export class RegionDrawComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.geometryFormField.geometryType$.subscribe((value: any) => {
+    this.geometryFormField.geometryType$.subscribe(() => {
       this.drawChecked = true;
+      this.activateDraw();
+    });
+
+    this.geometryFormField.value$.subscribe((geometry) => {
+      if (!geometry) {
+        this.drawChecked = true;
+        this.activateDraw();
+      }
     });
   }
 

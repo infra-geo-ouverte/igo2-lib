@@ -368,7 +368,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private clear() {
     this.activateDrawingTool = true;
-    this.drawnRegionGeometryForm = new FormControl();
+    this.drawnRegionGeometryForm.reset();
     this.regionStore.clear();
     this.clearEditedRegion();
     this.updateVariables();
