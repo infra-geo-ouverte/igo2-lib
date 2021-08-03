@@ -120,6 +120,9 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   public getRegionSpaceInMB(region: DisplayRegion) {
     const space: number = this.downloadManager
       .getDownloadSpaceEstimate(region.numberOfTiles);
+    if (Number.isNaN(space)) {
+      return;
+    }
     return (space * 1e-06).toFixed(4);
   }
 
