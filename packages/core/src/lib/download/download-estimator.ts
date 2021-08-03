@@ -124,7 +124,7 @@ export class DownloadEstimator {
         }
     }
 
-    public estimateDownloadSizeInBytes(
+    public estimateRegionDownloadSizeInBytes(
         tilesToDownload: TileToDownload[],
         geometries: Geometry[],
         genParams: TileGenerationParams,
@@ -137,5 +137,9 @@ export class DownloadEstimator {
             tileGrid
         );
         return nTiles * this.averageBytesPerTile;
+    }
+
+    public estimateSizeInBytes(numberOfTiles: number) {
+        return numberOfTiles * this.averageBytesPerTile;
     }
 }

@@ -4,6 +4,7 @@ import { Observable, Subscription, zip } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { Region, RegionDBData, RegionDBService, RegionStatus, TileDBData, TileDBService } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
+import { DownloadEstimator } from './download-estimator';
 import { RegionUpdateParams, TileToDownload } from './download.interface';
 import { TileDownloaderService } from './tile-downloader';
 import { TileGenerationParams } from './tile-downloader/tile-generation-strategies';
@@ -16,6 +17,8 @@ import { TileGenerationParams } from './tile-downloader/tile-generation-strategi
 })
 export class DownloadRegionService {
   isDownloading$$: Subscription;
+
+  private downloadEstimator = new DownloadEstimator();
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -44,8 +47,10 @@ export class DownloadRegionService {
       return item.featureText;
     });
 
-    const depth = generationParams.endLevel - generationParams.startLevel;
-    const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
+    const numberOfTiles = this.downloadEstimator.estimateNumberOfTiles(
+      tilesToDownload.length,
+      generationParams
+    );
 
     const region: Region = {
       name: regionName,
@@ -172,8 +177,11 @@ export class DownloadRegionService {
     });
     region.parentFeatureText = oldRegion.parentFeatureText.concat(newFeatureText);
 
-    const depth = oldRegion.generationParams.endLevel - oldRegion.generationParams.startLevel;
-    const numberOfTiles = this.getNumberOfTiles(parentUrls.length, depth);
+    const genParams = oldRegion.generationParams;
+    const numberOfTiles = this.downloadEstimator.estimateNumberOfTiles(
+      parentUrls.length,
+      genParams
+    );
     region.numberOfTiles = numberOfTiles;
 
     region.status = RegionStatus.Downloading;
@@ -244,11 +252,11 @@ export class DownloadRegionService {
     return zip(regionDBRequest, tileDBRequest);
   }
 
-  public getDownloadSpaceEstimate(nTiles: number): number {
-    return this.tileDownloader.downloadEstimate(nTiles);
-  }
+  // public getDownloadSpaceEstimate(nTiles: number): number {
+  //   return this.tileDownloader.downloadEstimate(nTiles);
+  // }
 
-  public getNumberOfTiles(nParents: number, depth: number) {
-    return this.tileDownloader.numberOfTiles(depth) * nParents;
-  }
+  // public getNumberOfTiles(nParents: number, depth: number) {
+  //   return this.tileDownloader.numberOfTiles(depth) * nParents;
+  // }
 }

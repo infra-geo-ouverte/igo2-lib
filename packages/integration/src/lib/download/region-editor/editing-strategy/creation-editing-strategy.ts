@@ -11,10 +11,6 @@ export class CreationEditionStrategy extends EditionStrategy {
         return 'Download';
     }
 
-    estimateDownloadSizeInBytes(): number {
-        return 0;
-    }
-
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
         if (editedRegion.parentUrls.length === 0) {
             const featuresText = editedRegion.features.map(feature => JSON.stringify(feature));

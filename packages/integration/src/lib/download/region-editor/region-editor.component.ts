@@ -390,7 +390,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
-    return this.downloadEstimator.estimateDownloadSizeInBytes(
+    return this.downloadEstimator.estimateRegionDownloadSizeInBytes(
       this.tilesToDownload,
       geometries,
       genParams,

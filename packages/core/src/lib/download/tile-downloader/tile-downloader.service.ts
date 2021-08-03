@@ -7,7 +7,7 @@ import { retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
 import { TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
-import { ChildTileGeneration, MiddleTileGeneration, newTileGenerationStrategy, ParentTileGeneration, TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy } from './tile-generation-strategies';
+import { newTileGenerationStrategy, ParentTileGeneration, strategyToTileGenerationStrategies, TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy } from './tile-generation-strategies';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -218,38 +218,10 @@ export class TileDownloaderService {
 
   public changeStrategy(strategyName: string) {
     this.tileGenerationStrategy = newTileGenerationStrategy(strategyName);
-    // switch (strategyName) {
-    //   case TileGenerationStrategies.PARENT:
-    //     this.tileGenerationStrategy = new ParentTileGeneration();
-    //     break;
-    //   case TileGenerationStrategies.MIDDLE:
-    //     this.tileGenerationStrategy = new MiddleTileGeneration();
-    //     break;
-    //   case TileGenerationStrategies.CHILD:
-    //     this.tileGenerationStrategy = new ChildTileGeneration();
-    //     break;
-    //   default:
-    //     throw new Error('Invalid Tile Generation Strategy');
-    // }
   }
 
   public getBufferProgression() {
     return 1 - this.urlQueue.length / this.currentDownloads;
-  }
-  // need to remove from here
-  public downloadEstimate(nTiles: number) {
-    return nTiles * this.averageBytesPerTile;
-  }
-
-  // need to remove from here
-  public downloadEstimatePerDepth(depth: number) {
-    const nTiles = getNumberOfTreeNodes(depth);
-    return this.downloadEstimate(nTiles);
-  }
-
-  // need to remove from here
-  public numberOfTiles(depth: number) {
-    return getNumberOfTreeNodes(depth);
   }
 
   get isDownloading() {
@@ -257,16 +229,6 @@ export class TileDownloaderService {
   }
 
   get strategy(): TileGenerationStrategies {
-    const strategyName = this.tileGenerationStrategy.constructor.name;
-    switch (strategyName) {
-      case ChildTileGeneration.name:
-        return TileGenerationStrategies.CHILD;
-      case MiddleTileGeneration.name:
-        return TileGenerationStrategies.MIDDLE;
-      case ParentTileGeneration.name:
-        return TileGenerationStrategies.PARENT;
-      default:
-        return;
-    }
+    return strategyToTileGenerationStrategies(this.tileGenerationStrategy);
   }
 }

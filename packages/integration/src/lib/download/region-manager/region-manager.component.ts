@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { DownloadRegionService, Region, RegionDBData, RegionDBService, RegionStatus } from '@igo2/core';
+import { DownloadEstimator, DownloadRegionService, Region, RegionDBData, RegionDBService, RegionStatus } from '@igo2/core';
 import { Feature } from '@igo2/geo';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
 import { BehaviorSubject } from 'rxjs';
@@ -27,12 +27,14 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   displayedColumns = ['edit', 'delete', 'name', 'nTiles', 'space'];
   buttonClicked: boolean = false;
 
+  private downloadEstimator = new DownloadEstimator();
+
   constructor(
     private regionDB: RegionDBService,
     private downloadManager: DownloadRegionService,
     private downloadState: DownloadState,
     private state: RegionManagerState,
-    private mapState: MapState
+    private mapState: MapState,
   ) {
     this.updateRegions();
     this.regionDB.update$.subscribe(() => {
@@ -118,8 +120,9 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   public getRegionSpaceInMB(region: DisplayRegion) {
-    const space: number = this.downloadManager
-      .getDownloadSpaceEstimate(region.numberOfTiles);
+    const space = this.downloadEstimator.estimateSizeInBytes(
+      region.numberOfTiles
+    );
     if (Number.isNaN(space)) {
       return;
     }
