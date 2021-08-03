@@ -4,7 +4,6 @@ import { EditedRegion } from '../region-editor.state';
 export abstract class EditionStrategy {
     constructor() {}
 
-    abstract estimateDownloadSizeInBytes(): number;
     abstract download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService): void;
 
     abstract get downloadButtonTitle(): string;

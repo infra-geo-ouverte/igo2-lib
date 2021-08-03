@@ -11,10 +11,6 @@ export class UpdateEditionStrategy extends EditionStrategy {
         return 'Update';
     }
 
-    estimateDownloadSizeInBytes(): number {
-        return 0;
-    }
-
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
         console.log('update strategy download');
         const updateParams: RegionUpdateParams = {
