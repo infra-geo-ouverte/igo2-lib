@@ -29,10 +29,18 @@
   <div>
     <igo-tile-generation-option #genParam (valueChange)="onGenerationParamsChange()" [disabled]="disableSlider" [parentLevel]="parentLevel"></igo-tile-generation-option>
   </div>
-  <div *ngIf="activateDrawingTool">
+  <!-- <div *ngIf="activateDrawingTool">
     <hr>
       <igo-draw [store]="regionStore" [map]="igoMap"></igo-draw>
     <hr>
+  </div> -->
+  <div *ngIf="activateDrawingTool">
+    <igo-region-draw
+      #regionDraw
+      [map]='igoMap'
+      [(regionGeometryForm)]='drawnRegionGeometryForm'
+      ngDefaultControl
+    ></igo-region-draw>
   </div>
   <div>
     <div>
@@ -53,4 +61,5 @@
     <button mat-button #download (click)="onDownloadClick()" [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)="onCancelClick()" [disabled]="disableCancelButton">Cancel</button>
   <div>
+  
 </div>

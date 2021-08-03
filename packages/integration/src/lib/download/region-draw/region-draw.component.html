@@ -1,0 +1,14 @@
+<hr>
+<igo-geometry-form-field
+  #geometryFormField
+  [geometryTypeField]='true'
+  [map]='map'
+  [(formControl)]='regionGeometryForm'
+  ngDefaultControl
+>
+</igo-geometry-form-field>
+<mat-slide-toggle
+  [(ngModel)]='drawChecked'
+  (change)='toggleDraw($event)'
+>Draw toggle</mat-slide-toggle>
+<hr>

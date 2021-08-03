@@ -89,7 +89,7 @@ export class DownloadEstimator {
         const maxTiles = Math.ceil(area(geometry) / areaPerTile + 3);
 
         const depth = genParams.endLevel - genParams.startLevel;
-        const nTilesPerDownload= getNumberOfTreeNodes(depth)
+        const nTilesPerDownload = getNumberOfTreeNodes(depth);
         return maxTiles * nTilesPerDownload;
     }
 
@@ -105,7 +105,7 @@ export class DownloadEstimator {
 
         switch (geometry.type) {
             case 'Point':
-                return this.getNumberOfTilesIntersectPoint(depth)
+                return this.getNumberOfTilesIntersectPoint(depth);
 
             case 'LineString':
                 return this.getNumberOfTilesIntersectLineString(
