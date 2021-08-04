@@ -55,7 +55,6 @@ export class TileDownloaderService {
   private urlQueue: string[] = [];
   private _isDownloading: boolean = false;
   private _nWorkerDone: number;
-  private cancelFlag: boolean = false;
 
   private currentDownloads: number = 0;
   private downloadCount: number = 0;
@@ -72,6 +71,10 @@ export class TileDownloaderService {
 
   private initURLGenerator(tileGrid, url) {
     this.urlGenerator = createFromTemplate(url, tileGrid);
+  }
+
+  private emptyUrlQueue() {
+    this.urlQueue = new Array();
   }
 
   private generateURL(tile: Tile) {
@@ -198,10 +201,9 @@ export class TileDownloaderService {
     const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     const nextDownload = () => {
       const url =  this.urlQueue.shift();
-      if (!url || this.cancelFlag) {
+      if (!url) {
         this._nWorkerDone++;
         if (this._nWorkerDone === nWorkers) {
-          this.cancelFlag = false;
           this._isDownloading = false;
           this.isDownloading$.next(false);
         }
@@ -222,7 +224,7 @@ export class TileDownloaderService {
     if (!this._isDownloading) {
       throw Error('No active download in TileDownloaderService');
     }
-    this.cancelFlag = true;
+    this.emptyUrlQueue();
     return this.isDownloading$.pipe(map(value => !value));
   }
 

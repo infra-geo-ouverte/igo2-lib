@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Geometry } from '@turf/helpers';
-import { Observable, Subscription, zip } from 'rxjs';
-import { map, skip } from 'rxjs/operators';
+import { Observable, Subject, Subscription, zip } from 'rxjs';
+import { map, skip, takeUntil } from 'rxjs/operators';
 import { Region, RegionDBData, RegionDBService, RegionStatus, TileDBData, TileDBService } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { DownloadEstimator } from './download-estimator';
@@ -15,13 +15,13 @@ import { TileGenerationParams } from './tile-downloader/tile-generation-strategi
 @Injectable({
   providedIn: 'root'
 })
-export class DownloadRegionService {
+export class DownloadRegionService implements OnDestroy {
   isDownloading$$: Subscription;
 
   private downloadEstimator = new DownloadEstimator();
 
   private currentDownloadRegionID: number;
-  private cancel$$: Subscription;
+  private cancelUnsubscribe$: Subject<void> = new Subject();
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -30,6 +30,11 @@ export class DownloadRegionService {
     private regionDBAdmin: RegionDBAdminService
   ) {
     this.regionDBAdmin.hardUpdate();
+  }
+
+  ngOnDestroy() {
+    this.cancelUnsubscribe$.next();
+    this.cancelUnsubscribe$.complete();
   }
 
   public downloadSelectedRegion(
@@ -257,13 +262,9 @@ export class DownloadRegionService {
   }
 
   public cancelRegionDownload() {
-    if (this.cancel$$) {
-      this.cancel$$.unsubscribe();
-    }
-    console.log('cancel region download');
     const cancel$ = this.tileDownloader.cancelDownload();
     this.isDownloading$$.unsubscribe();
-    this.cancel$$ = cancel$.subscribe(
+    cancel$.pipe(takeUntil(this.cancelUnsubscribe$)).subscribe(
       (canceled) => {
         if (canceled) {
           this.deleteRegionByID(this.currentDownloadRegionID);
@@ -271,6 +272,8 @@ export class DownloadRegionService {
           const collisionMap = this.tileDB.collisionsMap;
           this.regionDB.updateWithCollisions(collisionMap);
           this.tileDB.resetCollisionMap();
+
+          this.cancelUnsubscribe$.next();
         }
       });
   }
