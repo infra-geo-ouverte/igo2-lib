@@ -22,6 +22,10 @@ export class UpdateEditionStrategy extends EditionStrategy {
         regionDownloader.updateRegion(this.regionToUpdate, updateParams);
     }
 
+    cancelDownload(regionDownloader: DownloadRegionService) {
+        regionDownloader.cancelRegionUpdate();
+    }
+
     get enableGenEdition() {
         return false;
     }

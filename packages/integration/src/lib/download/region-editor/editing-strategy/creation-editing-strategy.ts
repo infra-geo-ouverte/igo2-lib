@@ -34,6 +34,10 @@ export class CreationEditionStrategy extends EditionStrategy {
         }
     }
 
+    cancelDownload(regionDownloader: DownloadRegionService) {
+        regionDownloader.cancelRegionDownload();
+    }
+
     get enableGenEdition() {
         return true;
     }
