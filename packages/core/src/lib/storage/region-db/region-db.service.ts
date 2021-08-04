@@ -71,15 +71,14 @@ export class RegionDBService {
     return request;
   }
 
-  updateWithCollisions(collisionsMap: Map<number, number>) {
+  updateWithCollisions(collisionsMap: Map<number, string[]>) {
     const it = collisionsMap.keys();
     let regionID = it.next().value;
     while (regionID !== undefined) {
       const collisions = collisionsMap.get(regionID);
       this.dbService.getByID(this.dbName, regionID).subscribe(
         (region: RegionDBData) => {
-          console.log('region id:', region.id);
-          region.numberOfTiles -= collisions;
+          region.numberOfTiles -= collisions.length;
           if (region.numberOfTiles === 0) {
             this.deleteByRegionID(region.id);
           } else {

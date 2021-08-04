@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 import { CompressionService } from '../compression/compression.service';
 import { TileDBData } from './TileDBData.interface';
 
@@ -10,7 +10,9 @@ import { TileDBData } from './TileDBData.interface';
 })
 export class TileDBService {
   readonly dbName: string = 'geoData';
-  public collisionsMap: Map<number, number> = new Map();
+  public collisionsMap: Map<number, string[]> = new Map();
+  public _newTiles: number = 0;
+
   constructor(
     private dbService: NgxIndexedDBService,
     private compression: CompressionService
@@ -34,15 +36,17 @@ export class TileDBService {
         getRequest.subscribe((dbObject: TileDBData) => {
           let dbRequest: Observable<TileDBData>;
           if (!dbObject) {
+            this._newTiles++;
             dbRequest = this.dbService.addItem(this.dbName, tileDBData);
           } else {
             const currentRegionID = dbObject.regionID;
             if (currentRegionID !== regionID) {
-              let nCollision = this.collisionsMap.get(currentRegionID);
-              if (nCollision !== undefined) {
-                this.collisionsMap.set(currentRegionID, ++nCollision);
+              const collisions = this.collisionsMap.get(currentRegionID);
+              if (collisions !== undefined) {
+                collisions.push(dbObject.url);
+                this.collisionsMap.set(currentRegionID, collisions);
               } else {
-                this.collisionsMap.set(currentRegionID, 1);
+                this.collisionsMap.set(currentRegionID, [dbObject.url]);
               }
             }
             dbRequest = this.customUpdate(tileDBData);
@@ -130,7 +134,31 @@ export class TileDBService {
     return request;
   }
 
-  resetCollisionMap() {
+  resetCounters() {
+    this.resetCollisionsMap();
+    this._newTiles = 0;
+  }
+
+  resetCollisionsMap() {
     this.collisionsMap = new Map();
+  }
+
+  revertCollisions() {
+    const it = this.collisionsMap.keys();
+    for (const [regionID, collisions] of this.collisionsMap) {
+      for (const url of collisions) {
+        this.dbService.getByKey(this.dbName, url)
+          .pipe(take(1))
+          .subscribe((dbObject: TileDBData) => {
+            const updatedObject = dbObject;
+            updatedObject.regionID = regionID;
+            this.customUpdate(dbObject);
+          });
+      }
+    }
+  }
+
+  get newTiles(): number {
+    return this._newTiles;
   }
 }
