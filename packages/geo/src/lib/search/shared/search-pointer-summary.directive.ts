@@ -1,3 +1,4 @@
+import { OnReturn } from 'ol/Observable';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import {
   Directive,
@@ -61,7 +62,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: ListenerFunction;
+  private pointerMoveListener: OnReturn;
 
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
@@ -245,7 +246,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @internal
    */
   private unlistenToMapPointerMove() {
-    this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    // this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
     this.pointerMoveListener = undefined;
   }
 

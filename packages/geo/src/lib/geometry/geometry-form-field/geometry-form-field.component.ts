@@ -49,9 +49,9 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Input()
-  set geometryType(value: OlGeometryType) { this.geometryType$.next(value); }
-  get geometryType(): OlGeometryType { return this.geometryType$.value; }
-  readonly geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
+  set geometryType(value: typeof OlGeometryType) { this.geometryType$.next(value); }
+  get geometryType(): typeof OlGeometryType { return this.geometryType$.value; }
+  readonly geometryType$: BehaviorSubject<typeof OlGeometryType> = new BehaviorSubject(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed

@@ -1,3 +1,5 @@
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
 import * as OlStyle from 'ol/style';
@@ -14,11 +16,11 @@ import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
-  geometryType: OlGeometryType;
+  geometryType: typeof OlGeometryType | string;
   source?: OlVectorSource<OlGeometry>;
   layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
   layerStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style) | OlStyle.Circle | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
   maxPoints?: number;
 }
 
@@ -39,14 +41,14 @@ export class DrawControl {
   /**
    * Geometry changes observable
    */
-  public changes$: Subject<OlGeometry> = new Subject();
+  public changes$: Subject<any> = new Subject();
 
   private olMap: OlMap;
   private olOverlayLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
-  private onDrawStartKey: string;
-  private onDrawEndKey: string;
-  private onDrawKey: string;
+  private onDrawStartKey: EventsKey;
+  private onDrawEndKey: EventsKey;
+  private onDrawKey: EventsKey;
 
   private mousePosition: [number, number];
 
@@ -65,7 +67,7 @@ export class DrawControl {
    * Geometry type
    * @internal
    */
-  get geometryType(): OlGeometryType {
+  get geometryType(): typeof OlGeometryType | string {
     return this.options.geometryType;
   }
 
@@ -158,7 +160,7 @@ export class DrawControl {
         type: this.geometryType,
         source: this.getSource(),
         stopClick: true,
-        style: this.options.drawStyle,
+        style: this.options.drawStyle as OlStyle.Style,
         maxPoints: this.options.maxPoints,
         freehand: false,
         freehandCondition: () => false
@@ -218,7 +220,7 @@ export class DrawControl {
     this.clearOlInnerOverlaySource();
     this.onDrawKey = olGeometry.on(
       'change',
-      (olGeometryEvent: OlGeometryEvent) => {
+      (olGeometryEvent: MapBrowserEvent<any>) => {
         this.mousePosition = getMousePositionFromOlGeometryEvent(
           olGeometryEvent
         );

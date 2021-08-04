@@ -34,6 +34,7 @@ import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
 import { StyleService } from '../../layer/shared/style.service';
 import * as OlObservable from 'ol/Observable';
+import { OnReturn } from 'ol/Observable';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -55,9 +56,9 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: OlObservable.default;
+  private pointerMoveListener: OnReturn;
 
-  private singleClickMapListener: OlObservable.default;
+  private singleClickMapListener: OnReturn;
 
   private hoverFeatureId: string = 'hoverFeatureId';
   /**
@@ -202,7 +203,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   private unlistenToMapPointerMove() {
-    this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    // this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
     this.pointerMoveListener = undefined;
   }
 
@@ -211,7 +212,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * @internal
    */
   private unlistenToMapSingleClick() {
-    this.map.ol.un(this.singleClickMapListener.type, this.singleClickMapListener.listener);
+    // this.map.ol.un(this.singleClickMapListener.type, this.singleClickMapListener.listener);
     this.singleClickMapListener = undefined;
   }
 

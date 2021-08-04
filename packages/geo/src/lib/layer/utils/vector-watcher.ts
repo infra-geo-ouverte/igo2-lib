@@ -22,9 +22,9 @@ export class VectorWatcher extends Watcher {
       olSource = (this.layer.options.source.options as any).source;
      }
 
-    olSource.on(`vectorloading`, e => this.handleLoadStart(e));
-    olSource.on(`vectorloaded`, e => this.handleLoadEnd(e));
-    olSource.on(`vectorloaderror`, e => this.handleLoadEnd(e));
+    olSource.on(`featuresloadstart`, e => this.handleLoadStart(e));
+    olSource.on(`featuresloadend`, e => this.handleLoadEnd(e));
+    olSource.on(`featuresloaderror`, e => this.handleLoadEnd(e));
 
   }
 
@@ -33,9 +33,9 @@ export class VectorWatcher extends Watcher {
     if (this.layer.dataSource instanceof ClusterDataSource) {
       olSource = (this.layer.options.source.options as any).source;
      }
-    olSource.un(`vectorloading`, e => this.handleLoadStart(e));
-    olSource.un(`vectorloaded`, e => this.handleLoadEnd(e));
-    olSource.un(`vectorloaderror`, e => this.handleLoadEnd(e));
+    olSource.un(`featuresloadstart`, e => this.handleLoadStart(e));
+    olSource.un(`featuresloadend`, e => this.handleLoadEnd(e));
+    olSource.un(`featuresloaderror`, e => this.handleLoadEnd(e));
   }
 
   private handleLoadStart(event: any) {

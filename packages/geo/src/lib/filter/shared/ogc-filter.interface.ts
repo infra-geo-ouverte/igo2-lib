@@ -1,5 +1,8 @@
 import olGeometry from 'ol/geom/Geometry';
 import olFormatFilter from 'ol/format/filter/Filter';
+import olSource from 'ol/source/Source';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
@@ -110,6 +113,7 @@ export interface OgcSelect {
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
   ogcFilters?: OgcFiltersOptions;
+  ol?: olSourceVector<OlGeometry> | olSource;
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;

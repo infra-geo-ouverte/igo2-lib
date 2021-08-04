@@ -3,6 +3,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Layer } from '../../layer/shared/layers/layer';
 
 import { LayerOptions, VectorLayer } from '../../layer';
+import { DataSourceOptions } from '../../datasource';
 
 @Component({
   selector: 'igo-export-button',
@@ -31,7 +32,7 @@ export class ExportButtonComponent {
 
   constructor() {}
 
-  get options(): LayerOptions {
+  get options(): DataSourceOptions {
     if (!this.layer) {
       return;
     }

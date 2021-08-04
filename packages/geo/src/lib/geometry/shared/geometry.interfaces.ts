@@ -1,4 +1,4 @@
-import GeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { FormFieldInputs } from '@igo2/common';
@@ -7,7 +7,7 @@ import { IgoMap } from '../../map';
 
 export interface GeometryFormFieldInputs extends FormFieldInputs {
   map: IgoMap;
-  geometryType: GeometryType;
+  geometryType: typeof OlGeometryType;
   tooltip?: string;
 }
 

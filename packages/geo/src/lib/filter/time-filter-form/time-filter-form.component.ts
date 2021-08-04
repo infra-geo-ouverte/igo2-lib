@@ -9,6 +9,7 @@ import {
 import { DateAdapter } from '@angular/material/core';
 import { MatSlider } from '@angular/material/slider';
 import * as moment from 'moment';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
@@ -193,7 +194,8 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   checkFilterValue() {
-    const timeFromWms = this.layer.dataSource.ol.getParams().TIME;
+    const olSource = this.layer.dataSource.ol as olSourceImageWMS;
+    const timeFromWms = olSource.getParams().TIME;
     if (
       !this.isRange &&
       this.style === TimeFilterStyle.SLIDER &&

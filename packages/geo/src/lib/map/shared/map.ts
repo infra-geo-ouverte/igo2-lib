@@ -267,7 +267,7 @@ export class IgoMap {
 
   getLayerByOlUId(olUId: string): Layer {
     return this.layers.find(
-      (layer: Layer) => layer.ol.ol_uid && layer.ol.ol_uid === olUId
+      (layer: Layer) => layer.ol.get('ol_uid') && layer.ol.get('ol_uid') === olUId
     );
   }
 
@@ -555,7 +555,7 @@ export class IgoMap {
           this.overlay.addOlFeature(this.geolocationFeature);
         }
 
-        if (this.ol.getView().options_.buffer) {
+        if (this.ol.getView().get('options_').buffer) {
           const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
           const coordinates = geolocation.getPosition();
           this.bufferGeom = new olCircle(coordinates, bufferRadius);

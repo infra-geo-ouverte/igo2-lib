@@ -30,7 +30,7 @@ export interface ModifyControlOptions {
   source?: OlVectorSource<any>;
   layer?: OlVectorLayer<any>;
   layerStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style);
+  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style) | OlStyle.Circle | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
   modify?: boolean;
   translate?: boolean;
 }
@@ -258,7 +258,7 @@ export class ModifyControl {
   private addOlModifyInteraction() {
     const olModifyInteraction = new OlModify({
       source: this.olOverlaySource,
-      style: this.options.drawStyle
+      style: this.options.drawStyle as OlStyle.Style
     });
     this.olModifyInteraction = olModifyInteraction;
   }

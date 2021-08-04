@@ -72,10 +72,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
-      this.PointStyle = (feature: olFeature<OlGeometry>, resolution: number) => {
+      (feature, resolution) => {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-        return new olstyle.Style ({
+        this.PointStyle = new olstyle.Style ({
           image: new olstyle.Circle ({
             radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
             stroke: new olstyle.Stroke({
@@ -93,8 +93,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     } else {
       // If geometry types is Polygon
       this.radius = undefined;
-      this.PolyStyle = (feature, resolution) => {
-        return new olstyle.Style ({
+      this.PolyStyle = new olstyle.Style ({
           stroke: new olstyle.Stroke({
             width: 2,
             color: 'rgba(0, 153, 255)'
@@ -103,7 +102,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             color: 'rgba(0, 153, 255, 0.2)'
           })
         });
-      };
       this.overlayStyle = this.PolyStyle;
     }
     this.overlayStyle$.next(this.overlayStyle);
@@ -195,7 +193,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private bufferChanges$$: Subscription;
 
   public formControl = new FormControl();
-  public geometryType: OlGeometryType;
+  public geometryType: typeof OlGeometryType | string;
   public geometryTypeField = false;
   public geometryTypes: string[] = ['Point', 'Polygon'];
   public drawGuideField = false;

@@ -22,7 +22,7 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { EventsKey } from 'ol/events';
 import OlOverlay from 'ol/Overlay';
-import { unByKey } from 'ol/Observable';
+import { unByKey, OnReturn } from 'ol/Observable';
 
 import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
@@ -214,12 +214,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Feature added listener key
    */
-  private onFeatureAddedKey: EventsKey;
+  private onFeatureAddedKey: OnReturn;
 
   /**
    * Feature removed listener key
    */
-  private onFeatureRemovedKey: EventsKey;
+  private onFeatureRemovedKey: OnReturn;
 
   /**
    * Active draw control

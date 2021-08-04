@@ -82,7 +82,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * The geometry type
    */
   @Input()
-  set geometryType(value: OlGeometryType) {
+  set geometryType(value: typeof OlGeometryType) {
     this._geometryType = value;
     if (this.ready === false) {
       return;
@@ -93,8 +93,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
-  get geometryType(): OlGeometryType { return this._geometryType; }
-  private _geometryType: OlGeometryType;
+  get geometryType(): typeof OlGeometryType { return this._geometryType; }
+  private _geometryType: typeof OlGeometryType;
 
   /**
    * The drawGuide around the mouse pointer to help drawing
@@ -159,15 +159,15 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Style for the draw control (applies while the geometry is being drawn)
    */
   @Input()
-  set drawStyle(value: OlStyle.Style) {
+  set drawStyle(value: OlStyle.Circle) {
     if (value === undefined) {
       value = createDrawInteractionStyle();
     }
     this._drawStyle = value;
 
-    const olGuideStyle = this.getGuideStyleFromDrawStyle(value);
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(value) as OlStyle.Circle;
     if (olGuideStyle !== undefined) {
-      this.defaultDrawStyleRadius = olGuideStyle.getImage().getRadius();
+      this.defaultDrawStyleRadius = olGuideStyle.getRadius();
     } else {
       this.defaultDrawStyleRadius = null;
     }
@@ -183,17 +183,17 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
-  get drawStyle(): OlStyle.Style { return this._drawStyle; }
-  private _drawStyle: OlStyle.Style;
+  get drawStyle(): OlStyle.Circle { return this._drawStyle; }
+  private _drawStyle: OlStyle.Circle;
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
   @Input()
-  set overlayStyle(value: OlStyle.Style) { this._overlayStyle = value; }
-  get overlayStyle(): OlStyle.Style { return this._overlayStyle; }
-  private _overlayStyle: OlStyle.Style;
+  set overlayStyle(value: OlStyle.Style | OlStyle.Circle) { this._overlayStyle = value; }
+  get overlayStyle(): OlStyle.Style | OlStyle.Circle { return this._overlayStyle; }
+  private _overlayStyle: OlStyle.Style | OlStyle.Circle;
 
   /**
    * The geometry value (GeoJSON)
@@ -491,7 +491,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     const olFeature = new OlFeature({
       geometry: olGeometry
     });
-    olFeature.setStyle(this.overlayStyle);
+    olFeature.setStyle(this.overlayStyle as OlStyle.Style);
     this.olOverlaySource.clear();
     this.olOverlaySource.addFeature(olFeature);
   }
@@ -557,8 +557,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param olStyle Draw style to update
    * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
    */
-  private updateDrawStyleWithDrawGuide(olStyle: OlStyle.Style, resolution: number) {
-    const olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
+  private updateDrawStyleWithDrawGuide(olStyle: OlStyle.Circle, resolution: number) {
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle) as OlStyle.Circle;
     if (olGuideStyle === undefined) {
       return;
     }
@@ -570,22 +570,22 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     } else {
       radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
     }
-    olGuideStyle.getImage().setRadius(radius);
+    olGuideStyle.setRadius(radius);
   }
 
   /**
    * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
    * @param olStyle The style on which to perform the check
    */
-  private isStyleWithRadius(olStyle: OlStyle.Style): boolean {
-    return typeof olStyle !== 'function' && olStyle.getImage && olStyle.getImage().setRadius;
+  private isStyleWithRadius(olStyle) {
+    return typeof olStyle !== 'function' && olStyle.setRadius;
   }
 
   /**
    * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
    * @param olStyle The style on which to perform the check
    */
-  private getGuideStyleFromDrawStyle(olStyle: OlStyle.Style |  OlStyle.Style[]): OlStyle.Style {
+  private getGuideStyleFromDrawStyle(olStyle: OlStyle.Circle |  OlStyle.Circle[]): OlStyle.Style | OlStyle.Circle {
     if (Array.isArray(olStyle)) {
       olStyle = olStyle[0];
     }

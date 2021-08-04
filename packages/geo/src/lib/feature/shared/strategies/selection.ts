@@ -1,10 +1,10 @@
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import OlDragBoxInteraction, { DragBoxEvent } from 'ol/interaction/DragBox';
 import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
-import { ListenerFunction } from 'ol/events';
+import { EventsKey, ListenerFunction } from 'ol/events';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { unByKey } from 'ol/Observable';
+import { unByKey, OnReturn } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
@@ -44,11 +44,11 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * Listener to the map click event that allows selecting a feature
    * by clicking on the map
    */
-  private mapClickListener: ListenerFunction;
+  private mapClickListener: OnReturn;
 
   private olDragSelectInteraction: OlDragSelectInteraction;
 
-  private olDragSelectInteractionEndKey: string;
+  private olDragSelectInteractionEndKey: EventsKey | EventsKey[];
 
   /**
    * Subscription to all stores selected entities
@@ -135,7 +135,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * overlay.
    */
   deactivateSelection() {
-    this.unlistenToMapClick();
+    //this.unlistenToMapClick();
     this.removeDragBoxInteraction();
     this.unwatchAll();
   }
@@ -221,14 +221,14 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   /**
    * Remove the map click listener
    */
-  private unlistenToMapClick() {
-    if (this.mapClickListener !== undefined) {
-      this.map.ol.un(
-        this.mapClickListener.type,
-        this.mapClickListener.listener
-      );
-    }
-  }
+  // private unlistenToMapClick() {
+  //   if (this.mapClickListener !== undefined) {
+  //     this.map.ol.un(
+  //       this.mapClickListener.type,
+  //       this.mapClickListener.listener
+  //     );
+  //   }
+  // }
 
   /**
    * On map click, select feature at pixel
@@ -276,7 +276,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
     this.olDragSelectInteractionEndKey = olDragSelectInteraction.on(
       'boxend',
-      (event: MapBrowserPointerEvent<any>) => this.onDragBoxEnd(event)
+      (event: DragBoxEvent) => this.onDragBoxEnd(event)
     );
   }
 
@@ -299,7 +299,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private onDragBoxEnd(event: OlDragBoxEvent) {
     const exclusive = !ctrlKeyDown(event.mapBrowserEvent);
-    const extent = event.target.getGeometry().getExtent();
+    const target = event.target as any;
+    const extent = target.getGeometry().getExtent();
     const olFeatures = this.stores.reduce(
       (acc: OlFeature<OlGeometry>[], store: FeatureStore) => {
         const olSource = store.layer.ol.getSource();

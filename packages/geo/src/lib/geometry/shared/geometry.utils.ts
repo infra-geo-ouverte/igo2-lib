@@ -1,3 +1,4 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
 import OlLinearRing from 'ol/geom/LinearRing';
@@ -18,9 +19,9 @@ import {
  * @param color Style color (R, G, B)
  * @returns OL style
  */
-export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Style {
+export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Circle {
   color = color || [0, 153, 255];
-  return new olstyle.Style({
+  return new olstyle.Circle({
     stroke: new olstyle.Stroke({
       color: color.concat([1]),
       width: 2
@@ -28,15 +29,7 @@ export function createDrawInteractionStyle(color?: [number, number, number]): ol
     fill:  new olstyle.Fill({
       color: color.concat([0.2])
     }),
-    image: new olstyle.Circle({
-      radius: 8,
-      stroke: new olstyle.Stroke({
-        color: color.concat([1])
-      }),
-      fill: new olstyle.Fill({
-        color: color.concat([0.2])
-      })
-    })
+    radius: 8
   });
 }
 
@@ -146,10 +139,10 @@ export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlL
 export function getMousePositionFromOlGeometryEvent(
   olEvent: BasicEvent
 ) {
-  const olGeometry = olEvent.target;
+  const olGeometry = olEvent.target as OlGeometry;
   console.log(olGeometry);
-  // if (olGeometry instanceof OlPolygon) {
-  //   return olGeometry.getFlatCoordinates().slice(-4, -2);
-  // }
-  // return olGeometry.flatCoordinates.slice(-2);
+  if (olGeometry instanceof OlPolygon) {
+    return olGeometry.getFlatCoordinates().slice(-4, -2) as [number, number];
+  }
+  return olGeometry.getExtent().slice(-2) as [number, number];
 }
