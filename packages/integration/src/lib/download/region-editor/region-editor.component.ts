@@ -6,7 +6,6 @@ import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData,
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Feature, FEATURE, GeoJSONGeometry, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
-import { Geometry } from '@turf/helpers';
 import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { fromExtent } from 'ol/geom/Polygon';
@@ -271,37 +270,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (e) {
       return;
     }
-  }
-
-  public downloadDrawingFeatures() {
-    const features = [...this.regionStore.index.values()];
-    const layers = this.map.ol.getLayers();
-    let tileGrid;
-    let templateUrl;
-    layers.forEach((layer) => {
-      const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
-      if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
-        return;
-      }
-      if (!tileGrid) {
-        tileGrid = layer.getSource().tileGrid;
-        templateUrl = igoLayer.dataSource.options.url;
-      }
-    });
-    this.parentLevel = this.map.getZoom();
-    this.cdRef.detectChanges();
-    this.genParams = this.genParamComponent.tileGenerationParams;
-
-    const featuresString: string[] = features.map(feature => JSON.stringify(feature));
-    const geometries: Geometry[] = features.map(feature => feature.geometry);
-    this.downloadService.downloadRegionFromFeatures(
-      featuresString,
-      geometries,
-      this.regionName,
-      this.genParams,
-      tileGrid,
-      templateUrl
-    );
   }
 
   private setTileGridAndTemplateUrl() {
