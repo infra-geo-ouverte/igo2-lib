@@ -5,7 +5,7 @@ import { EditionStrategy } from './edition-strategy';
 
 
 export class UpdateEditionStrategy extends EditionStrategy {
-    
+
     constructor(private regionToUpdate: RegionDBData) {
         super();
     }

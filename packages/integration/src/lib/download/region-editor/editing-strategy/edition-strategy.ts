@@ -19,7 +19,7 @@ export abstract class EditionStrategy {
         geometries: Geometry[],
         genParams: TileGenerationParams,
         tileGrid: any
-    ): number
+    ): number;
 
     abstract get downloadButtonTitle(): string;
     abstract get enableGenEdition(): boolean;
