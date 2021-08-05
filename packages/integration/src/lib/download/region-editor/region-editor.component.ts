@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChi
 import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { DownloadEstimator, DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
+import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 import { Feature, FEATURE, GeoJSONGeometry, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
@@ -37,7 +37,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
-  private downloadEstimator = new DownloadEstimator();
 
   activateDrawingTool: boolean = true;
 
@@ -360,7 +359,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
-    return this.downloadEstimator.estimateRegionDownloadSizeInBytes(
+    return this.editionStrategy.estimateRegionDownloadSizeInBytes(
       this.tilesToDownload,
       geometries,
       genParams,
@@ -387,7 +386,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
-    return this.downloadEstimator.estimateDownloadSize(
+    return this.editionStrategy.estimateRegionDownloadSize(
       this.tilesToDownload,
       geometries,
       genParams,
@@ -596,10 +595,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return !this.regionName
     || this.isDownloading
     || (!this.hasEditedRegion() && this.regionStore.index.size === 0);
-  }
-  // TODO remove
-  get disableCancelButton() {
-    return false;
   }
 
   get editionStrategy(): EditionStrategy {

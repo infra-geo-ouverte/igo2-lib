@@ -1,4 +1,5 @@
-import { DownloadRegionService } from '@igo2/core';
+import { DownloadRegionService, TileGenerationParams, TileToDownload } from '@igo2/core';
+import { Geometry } from '@turf/helpers';
 import { EditedRegion } from '../region-editor.state';
 import { EditionStrategy } from './edition-strategy';
 
@@ -36,6 +37,34 @@ export class CreationEditionStrategy extends EditionStrategy {
 
     cancelDownload(regionDownloader: DownloadRegionService) {
         regionDownloader.cancelRegionDownload();
+    }
+
+    estimateRegionDownloadSize(
+        tileToDownload: TileToDownload[],
+        geometries: Geometry[],
+        genParams: TileGenerationParams,
+        tileGrid: any
+    ): number {
+        return this.downloadEstimator.estimateDownloadSize(
+            tileToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
+    }
+
+    estimateRegionDownloadSizeInBytes(
+        tileToDownload: TileToDownload[],
+        geometries: Geometry[],
+        genParams: TileGenerationParams,
+        tileGrid: any
+    ): number {
+        return this.downloadEstimator.estimateRegionDownloadSizeInBytes(
+            tileToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
     }
 
     get enableGenEdition() {
