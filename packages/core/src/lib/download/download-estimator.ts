@@ -9,7 +9,7 @@ export class DownloadEstimator {
     readonly averageBytesPerTile = 13375;
     constructor() {}
 
-    estimateDownloadSize(
+    estimateRegionDownloadSize(
         tilesToDownload: TileToDownload[],
         geometries: Geometry[],
         genParams: TileGenerationParams,
@@ -130,7 +130,7 @@ export class DownloadEstimator {
         genParams: TileGenerationParams,
         tileGrid
     ) {
-        const nTiles = this.estimateDownloadSize(
+        const nTiles = this.estimateRegionDownloadSize(
             tilesToDownload,
             geometries,
             genParams,

@@ -45,7 +45,7 @@ export class CreationEditionStrategy extends EditionStrategy {
         genParams: TileGenerationParams,
         tileGrid: any
     ): number {
-        return this.downloadEstimator.estimateDownloadSize(
+        return this.downloadEstimator.estimateRegionDownloadSize(
             tileToDownload,
             geometries,
             genParams,
