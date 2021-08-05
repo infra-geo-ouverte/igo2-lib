@@ -305,18 +305,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setTileGridAndTemplateUrl() {
-    const layers = this.map.ol.getLayers();
-    this.tileGrid = undefined;
-    this.templateUrl = undefined;
-    layers.forEach((layer) => {
-      const igoLayer = this.map.getLayerByOlUId(layer.ol_uid);
-      if (!igoLayer || !(igoLayer.dataSource instanceof XYZDataSource)) {
+    const baseLayer = this.map.getBaseLayers();
+    baseLayer.forEach((layer) => {
+      if (!layer.visible) {
         return;
       }
-      if (!this.tileGrid) {
-        this.tileGrid = layer.getSource().tileGrid;
-        this.templateUrl = igoLayer.dataSource.options.url;
+      if (!(layer.dataSource instanceof XYZDataSource)) {
+        return;
       }
+      this.templateUrl = layer.dataSource.options.url;
+      this.tileGrid = layer.ol.getSource().tileGrid;
     });
   }
 
