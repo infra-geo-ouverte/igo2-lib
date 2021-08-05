@@ -11,6 +11,15 @@ function createRegionDateFromRegion(region: Region): RegionDate {
   return regionDate;
 }
 
+function createRegionDBDataFromRegionDate(
+  regionDate: RegionDate,
+  id: number)
+: RegionDBData {
+  const regionDBData = regionDate as RegionDBData;
+  regionDBData.id = id;
+  return regionDBData;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,18 +37,26 @@ export class RegionDBService {
     dbRequest.subscribe(() => {
       this.update$.next(true);
     });
+    return dbRequest;
   }
 
-  add(region: Region): Observable<number> {
+  add(region: Region): Observable<RegionDBData> {
     if (!region) {
       return;
     }
     const regionDate: RegionDate = createRegionDateFromRegion(region);
     const dbRequest = this.dbService.add(this.dbName, regionDate);
-    dbRequest.subscribe((key) => {
+    const regionDBData$: Subject<RegionDBData> = new Subject();
+    dbRequest.subscribe((regionID) => {
+      const regionDBData = createRegionDBDataFromRegionDate(
+        regionDate,
+        regionID
+      );
+      regionDBData$.next(regionDBData);
+      regionDBData$.complete();
       this.update$.next(true);
     });
-    return dbRequest;
+    return regionDBData$;
   }
 
   getByID(id: number): Observable<RegionDBData> {

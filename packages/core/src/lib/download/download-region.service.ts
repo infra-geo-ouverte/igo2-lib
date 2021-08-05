@@ -20,9 +20,8 @@ export class DownloadRegionService implements OnDestroy {
 
   private downloadEstimator = new DownloadEstimator();
 
-  private currentDownloadRegionID: number;
   private cancelUnsubscribe$: Subject<void> = new Subject();
-  private oldRegionStatus: RegionStatus;
+  private currentDownloadRegion: RegionDBData;
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -36,6 +35,20 @@ export class DownloadRegionService implements OnDestroy {
   ngOnDestroy() {
     this.cancelUnsubscribe$.next();
     this.cancelUnsubscribe$.complete();
+  }
+
+  private updateDownloadedRegionStatus(regionDBData: RegionDBData) {
+    const collisionMap = this.tileDB.collisionsMap;
+    const validTiles = this.tileDownloader.validDownloadCount;
+    const date = new Date();
+
+    regionDBData.status = RegionStatus.OK;
+    regionDBData.numberOfTiles = validTiles;
+    regionDBData.timestamp = date;
+
+    this.regionDB.update(regionDBData);
+    this.regionDB.updateWithCollisions(collisionMap);
+    this.tileDB.resetCounters();
   }
 
   public downloadSelectedRegion(
@@ -71,12 +84,12 @@ export class DownloadRegionService implements OnDestroy {
     };
 
     this.regionDB.add(region)
-      .subscribe((regionID: number) => {
-        this.currentDownloadRegionID = regionID;
+      .subscribe((regionDBData: RegionDBData) => {
+        this.currentDownloadRegion = {...regionDBData};
         for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
             tile.coord,
-            regionID,
+            regionDBData.id,
             generationParams,
             tileGrid,
             templateUrl
@@ -85,24 +98,10 @@ export class DownloadRegionService implements OnDestroy {
         this.isDownloading$$ = this.tileDownloader.isDownloading$
           .pipe(skip(1))
           .subscribe((isDownloading) => {
-            if (!isDownloading) {
-              const collisionMap = this.tileDB.collisionsMap;
-              const validTile = this.tileDownloader.validDownloadCount;
-              const date = new Date();
-              const regionDBData: RegionDBData = {
-                id: regionID,
-                status: RegionStatus.OK,
-                name: regionName,
-                parentUrls,
-                parentFeatureText,
-                numberOfTiles: validTile,
-                timestamp: date,
-                generationParams
-              };
-              this.regionDB.update(regionDBData);
-              this.regionDB.updateWithCollisions(collisionMap);
-              this.tileDB.resetCounters();
-          }
+            if (isDownloading) {
+              return;
+            }
+            this.updateDownloadedRegionStatus(regionDBData);
         });
       });
   }
@@ -131,11 +130,11 @@ export class DownloadRegionService implements OnDestroy {
       parentFeatureText
     };
 
-    this.regionDB.add(region).subscribe((regionID: number) => {
-      this.currentDownloadRegionID = regionID;
+    this.regionDB.add(region).subscribe((regionDBData: RegionDBData) => {
+      this.currentDownloadRegion = {...regionDBData};
       const tiles = this.tileDownloader.downloadFromFeatures(
         geometries,
-        regionID,
+        regionDBData.id,
         generationParams,
         tileGrid,
         templateUrl
@@ -146,24 +145,7 @@ export class DownloadRegionService implements OnDestroy {
           if (isDownloading) {
             return;
           }
-
-          const collisionMap = this.tileDB.collisionsMap;
-          const validTile = this.tileDownloader.validDownloadCount;
-          const date = new Date();
-          const regionDBData: RegionDBData = {
-            id: regionID,
-            status: RegionStatus.OK,
-            name: regionName,
-            parentUrls,
-            parentFeatureText,
-            numberOfTiles: validTile,
-            timestamp: date,
-            generationParams
-          };
-          console.log('done downloading regionDB', regionDBData);
-          this.regionDB.update(regionDBData);
-          this.regionDB.updateWithCollisions(collisionMap);
-          this.tileDB.resetCounters();
+          this.updateDownloadedRegionStatus(regionDBData);
       });
     });
   }
@@ -201,12 +183,11 @@ export class DownloadRegionService implements OnDestroy {
   }
 
   public updateRegion(oldRegion: RegionDBData, updateParams: RegionUpdateParams) {
-    this.oldRegionStatus = oldRegion.status;
-    const regionID = oldRegion.id;
-    this.currentDownloadRegionID = regionID;
+    this.currentDownloadRegion = {...oldRegion};
 
     const region = this.updateRegionDBData(oldRegion, updateParams);
 
+    const regionID = oldRegion.id;
     const tileToDownload = updateParams.newTiles;
     const generationParams = region.generationParams;
     const templateUrl = updateParams.templateUrl;
@@ -239,18 +220,10 @@ export class DownloadRegionService implements OnDestroy {
       this.isDownloading$$ = this.tileDownloader.isDownloading$
         .pipe(skip(1))
         .subscribe((isDownloading) => {
-          if (!isDownloading) {
-            const collisionMap = this.tileDB.collisionsMap;
-            const validTile = this.tileDownloader.validDownloadCount;
-
-            region.numberOfTiles = validTile;
-            region.timestamp = new Date();
-            region.status = RegionStatus.OK;
-
-            this.regionDB.update(region);
-            this.regionDB.updateWithCollisions(collisionMap);
-            this.tileDB.resetCounters();
+          if (isDownloading) {
+            return;
           }
+          this.updateDownloadedRegionStatus(region);
         });
     });
   }
@@ -271,7 +244,7 @@ export class DownloadRegionService implements OnDestroy {
     cancel$.pipe(takeUntil(this.cancelUnsubscribe$)).subscribe(
       (canceled) => {
         if (canceled) {
-          this.deleteRegionByID(this.currentDownloadRegionID);
+          this.deleteRegionByID(this.currentDownloadRegion.id);
 
           this.tileDB.revertCollisions();
           this.tileDB.resetCounters();
@@ -287,10 +260,10 @@ export class DownloadRegionService implements OnDestroy {
     cancel$.pipe(takeUntil(this.cancelUnsubscribe$)).subscribe(
       (canceled) => {
         if (canceled) {
-          this.regionDB.getByID(this.currentDownloadRegionID)
+          this.regionDB.getByID(this.currentDownloadRegion.id)
             .subscribe((region: RegionDBData) => {
               region.numberOfTiles += this.tileDB.newTiles;
-              region.status = this.oldRegionStatus;
+              region.status = this.currentDownloadRegion.status;
 
               this.regionDB.update(region);
               this.tileDB.revertCollisions();
