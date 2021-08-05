@@ -35,12 +35,13 @@ export class UpdateEditionStrategy extends EditionStrategy {
         genParams: TileGenerationParams,
         tileGrid: any
     ): number {
-        return this.downloadEstimator.estimateRegionDownloadSize(
+        const updateSize = this.downloadEstimator.estimateRegionUpdateSize(
+            this.regionToUpdate,
             tileToDownload,
             geometries,
-            genParams,
             tileGrid
         );
+        return updateSize.downloadSize;
     }
 
     estimateRegionDownloadSizeInBytes(
@@ -49,12 +50,14 @@ export class UpdateEditionStrategy extends EditionStrategy {
         genParams: TileGenerationParams,
         tileGrid: any
     ): number {
-        return this.downloadEstimator.estimateRegionDownloadSizeInBytes(
-            tileToDownload,
-            geometries,
-            genParams,
-            tileGrid
-        );
+        const updateSize = this.downloadEstimator
+            .estimateRegionUpdateSizeInBytes(
+                this.regionToUpdate,
+                tileToDownload,
+                geometries,
+                tileGrid
+            );
+        return updateSize.downloadSize;
     }
 
     get enableGenEdition() {

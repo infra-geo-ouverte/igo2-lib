@@ -1,9 +1,20 @@
 import area from '@turf/area';
 import { Polygon } from '@turf/area/node_modules/@turf/helpers';
 import { Geometry, LineString } from '@turf/helpers';
+import { RegionDBData } from '../storage';
 import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
 import { getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
+
+export interface UpdateSize {
+    newAllocatedSize: number; // usefull to know if there is enough space left on update
+    downloadSize: number;
+}
+
+export interface UpdateSizeInBytes {
+    newAllocatedSize: number; // usefull to know if there is enough space left on update
+    downloadSize: number;
+}
 
 export class DownloadEstimator {
     readonly averageBytesPerTile = 13375;
@@ -24,6 +35,53 @@ export class DownloadEstimator {
             return this.estimateNumberOfTiles(nTilesToDownload, genParams);
         }
         return this.estimateDrawnRegionDownloadSize(geometries, genParams, tileGrid);
+    }
+
+
+    estimateRegionUpdateSize(
+        regionToUpdate: RegionDBData,
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        tileGrid
+    ): UpdateSize {
+        const genParams = regionToUpdate.generationParams;
+        const newTiles = this.estimateRegionDownloadSize(
+            tilesToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
+        const currentTiles = regionToUpdate.numberOfTiles;
+        return {
+            newAllocatedSize: newTiles,
+            downloadSize: newTiles + currentTiles
+        };
+    }
+
+    estimateRegionUpdateSizeInBytes(
+        regionToUpdate: RegionDBData,
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        tileGrid
+    ): UpdateSizeInBytes {
+        const updateSize = this.estimateRegionUpdateSize(
+            regionToUpdate,
+            tilesToDownload,
+            geometries,
+            tileGrid
+        );
+        return this.estimateUpdateSizeInBytes(updateSize);
+    }
+
+    estimateUpdateSizeInBytes(
+        updateSize: UpdateSize
+    ): UpdateSizeInBytes {
+        const newAllocatedSize = updateSize.newAllocatedSize * this.averageBytesPerTile;
+        const downloadSize = updateSize.downloadSize * this.averageBytesPerTile;
+        return {
+            newAllocatedSize,
+            downloadSize
+        };
     }
 
     estimateNumberOfTiles(
