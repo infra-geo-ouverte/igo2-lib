@@ -1,5 +1,5 @@
 @function theme-foreground($palette) {
-    $color: mat-color($palette);
+    $color: mat.get-color-from-palette($palette, 500);
     @return (
         base:              $color,
         divider:           rgba($color, 0.12),

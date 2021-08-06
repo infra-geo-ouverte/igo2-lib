@@ -11,6 +11,7 @@ import { debounceTime, map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
 import olPoint from 'ol/geom/Point';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { ConfigService } from '@igo2/core';
 
@@ -231,7 +232,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
             getCommonVectorStyle(
               Object.assign(
                 {},
-                { feature: result.entity.data },
+                { feature: result.entity.data as Feature | olFeature<OlGeometry> },
                 this.searchState.searchOverlayStyle,
                 result.entity.style?.base ? result.entity.style.base : {}
               ));
@@ -284,7 +285,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     const myOlFeature = featureToOl(result.data, this.map.projection);
     const olGeometry = myOlFeature.getGeometry();
-    if (featuresAreTooDeepInView(this.map, olGeometry.getExtent(), 0.0025)) {
+    if (featuresAreTooDeepInView(this.map, olGeometry.getExtent() as [number, number, number, number], 0.0025)) {
       const extent = olGeometry.getExtent();
       const x = extent[0] + (extent[2] - extent[0]) / 2;
       const y = extent[1] + (extent[3] - extent[1]) / 2;
@@ -374,7 +375,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (result.meta.dataType === FEATURE && result.data.geometry) {
       result.data.meta.style = getCommonVectorSelectedStyle(
         Object.assign({},
-          { feature: result.data },
+          { feature: result.data as Feature | olFeature<OlGeometry> },
           this.searchState.searchOverlayStyleFocus,
           result.style?.focus ? result.style.focus : {}));
 
@@ -398,9 +399,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       if (feature) {
         const style = getCommonVectorSelectedStyle(
           Object.assign({},
-            { feature: result.data },
-            this.searchState.searchOverlayStyleSelection,
-            result.style?.selection ? result.style.selection : {}));
+            { feature: result.data as Feature | olFeature<OlGeometry> },
+            this.searchState.searchOverlayStyleFocus,
+            result.style?.focus ? result.style.focus : {}));
         feature.setStyle(style);
       }
       return;

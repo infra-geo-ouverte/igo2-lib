@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import './layer-legend/layer-legend.theming';
 
 @mixin igo-layer-theming($theme) {
@@ -7,8 +8,8 @@
   @include igo-layer-legend-theming($theme);
 
   igo-layer-item.igo-layer-item-focused > mat-list-item {
-    background-color: mat-color($accent, lighter);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($accent, lighter);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   .mat-menu-opacity-slider{

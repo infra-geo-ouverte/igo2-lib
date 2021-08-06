@@ -1,14 +1,17 @@
+@use '~@angular/material' as mat;
 @import '../foreground';
 
-$primary: mat-palette($mat-blue, 700, 400, 900);
-$accent: mat-palette($mat-blue, 200);
-$warn: mat-palette($mat-red);
+$primary: mat.define-palette(mat.$blue-palette, 700, 400, 900);
+$accent: mat.define-palette(mat.$blue-palette, 200);
+$warn: mat.define-palette(mat.$red-palette);
 
-$temp-theme: mat-light-theme(
-    $primary,
-    $accent,
-    $warn
-);
+$temp-theme: mat.define-light-theme((
+    color: (
+        primary: $primary,
+        accent: $accent,
+        warn: $warn
+    )
+));
 
-$foreground: theme-foreground(mat-palette($mat-grey, 900));
+$foreground: theme-foreground(mat.define-palette(mat.$grey-palette, 900));
 $theme: map-merge($temp-theme, (foreground: $foreground));

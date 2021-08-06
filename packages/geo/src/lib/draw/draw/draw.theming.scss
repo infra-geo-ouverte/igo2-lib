@@ -1,3 +1,5 @@
+@use '~@angular/material' as mat;
+
 @mixin igo-draw-theming($theme, $typography) {
     $foreground: map-get($theme, foreground);
   
@@ -9,7 +11,7 @@
     }
   
     .igo-map-tooltip-draw {
-      color: mat-color($foreground, text);
+      color: mat.get-color-from-palette($foreground, text);
       font-weight: bold;
       font-size: mat-font-size($typography, subheading-2);
     }

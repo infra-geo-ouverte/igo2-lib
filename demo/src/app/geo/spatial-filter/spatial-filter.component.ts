@@ -22,6 +22,9 @@ import { EntityStore } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { BehaviorSubject } from 'rxjs';
 import * as olstyle from 'ol/style';
+import olSourceCluster from 'ol/source/Cluster';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 @Component({
   selector: 'app-spatial-filter',
@@ -271,7 +274,8 @@ export class AppSpatialFilterComponent {
           const featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry> | olSourceCluster;
+          ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
         });
@@ -315,7 +319,8 @@ export class AppSpatialFilterComponent {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.source.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceCluster;
+          ol.getSource().addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.map.layers.find(layer => layer.id === olLayer.id)
@@ -359,7 +364,8 @@ export class AppSpatialFilterComponent {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry> | olSourceCluster;
+          ol.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.map.layers.find(layer => layer.id === olLayer.id)
