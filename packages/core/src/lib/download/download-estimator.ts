@@ -6,12 +6,12 @@ import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-est
 import { TileToDownload } from './download.interface';
 import { getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
 
-export interface UpdateSize {
+export interface DownloadSizeEstimation {
     newAllocatedSize: number; // usefull to know if there is enough space left on update
     downloadSize: number;
 }
 
-export interface UpdateSizeInBytes {
+export interface DownloadSizeEstimationInBytes {
     newAllocatedSize: number; // usefull to know if there is enough space left on update
     downloadSize: number;
 }
@@ -25,63 +25,29 @@ export class DownloadEstimator {
         geometries: Geometry[],
         genParams: TileGenerationParams,
         tileGrid
-    ) {
+    ): DownloadSizeEstimation {
         if (!geometries || !genParams) {
-            return 0;
+            return {
+                newAllocatedSize: 0,
+                downloadSize: 0
+            };
         }
 
         if (tilesToDownload.length !== 0) {
             const nTilesToDownload: number = tilesToDownload.length;
-            return this.estimateNumberOfTiles(nTilesToDownload, genParams);
+            const nTiles = this.estimateNumberOfTiles(
+                nTilesToDownload,
+                genParams
+            );
+            return {
+                newAllocatedSize: nTiles,
+                downloadSize: nTiles
+            };
         }
-        return this.estimateDrawnRegionDownloadSize(geometries, genParams, tileGrid);
-    }
-
-
-    estimateRegionUpdateSize(
-        regionToUpdate: RegionDBData,
-        tilesToDownload: TileToDownload[],
-        geometries: Geometry[],
-        tileGrid
-    ): UpdateSize {
-        const genParams = regionToUpdate.generationParams;
-        const newTiles = this.estimateRegionDownloadSize(
-            tilesToDownload,
-            geometries,
+        return this.estimateNumberOfTilesDrawnRegionDownload(geometries,
             genParams,
             tileGrid
         );
-        const currentTiles = regionToUpdate.numberOfTiles;
-        return {
-            newAllocatedSize: newTiles,
-            downloadSize: newTiles + currentTiles
-        };
-    }
-
-    estimateRegionUpdateSizeInBytes(
-        regionToUpdate: RegionDBData,
-        tilesToDownload: TileToDownload[],
-        geometries: Geometry[],
-        tileGrid
-    ): UpdateSizeInBytes {
-        const updateSize = this.estimateRegionUpdateSize(
-            regionToUpdate,
-            tilesToDownload,
-            geometries,
-            tileGrid
-        );
-        return this.estimateUpdateSizeInBytes(updateSize);
-    }
-
-    estimateUpdateSizeInBytes(
-        updateSize: UpdateSize
-    ): UpdateSizeInBytes {
-        const newAllocatedSize = updateSize.newAllocatedSize * this.averageBytesPerTile;
-        const downloadSize = updateSize.downloadSize * this.averageBytesPerTile;
-        return {
-            newAllocatedSize,
-            downloadSize
-        };
     }
 
     estimateNumberOfTiles(
@@ -93,11 +59,11 @@ export class DownloadEstimator {
         return nTilesToDownload * nTilesPerDownload;
     }
 
-    estimateDrawnRegionDownloadSize(
+    estimateNumberOfTilesDrawnRegionDownload(
         geometries: Geometry[],
         genParams: TileGenerationParams,
         tileGrid
-    ) {
+    ): DownloadSizeEstimation {
         let nTiles = 0;
         for (const geometry of geometries) {
             const tilesToDownload = this.estimateTilesOfGeometryAtLevel(
@@ -107,7 +73,67 @@ export class DownloadEstimator {
             );
             nTiles += tilesToDownload;
         }
-        return nTiles;
+        return {
+            newAllocatedSize: nTiles,
+            downloadSize: nTiles
+        };
+    }
+
+    public estimateRegionDownloadSizeInBytes(
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        genParams: TileGenerationParams,
+        tileGrid
+    ): DownloadSizeEstimationInBytes {
+        const estimation = this.estimateRegionDownloadSize(
+            tilesToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
+        return this.downloadSizeEstimationInBytes(estimation);
+    }
+
+    estimateRegionUpdateSize(
+        regionToUpdate: RegionDBData,
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        tileGrid
+    ):  DownloadSizeEstimation {
+        const genParams = regionToUpdate.generationParams;
+        const newTilesEstimation = this.estimateRegionDownloadSize(
+            tilesToDownload,
+            geometries,
+            genParams,
+            tileGrid
+        );
+        const currentTiles = regionToUpdate.numberOfTiles;
+        const newTiles = newTilesEstimation.downloadSize;
+        return {
+            newAllocatedSize: newTiles,
+            downloadSize: newTiles + currentTiles
+        };
+    }
+
+    estimateRegionUpdateSizeInBytes(
+        regionToUpdate: RegionDBData,
+        tilesToDownload: TileToDownload[],
+        geometries: Geometry[],
+        tileGrid
+    ):  DownloadSizeEstimationInBytes {
+        const estimation = this.estimateRegionUpdateSize(
+            regionToUpdate,
+            tilesToDownload,
+            geometries,
+            tileGrid
+        );
+        return this.downloadSizeEstimationInBytes(estimation);
+    }
+
+    public downloadSizeEstimationInBytes(estimation:  DownloadSizeEstimation): DownloadSizeEstimationInBytes {
+        estimation.downloadSize *= this.averageBytesPerTile;
+        estimation.newAllocatedSize *= this.averageBytesPerTile;
+        return  estimation;
     }
 
     private getNumberOfTilesIntersectPoint(depth: number): number {
@@ -180,21 +206,6 @@ export class DownloadEstimator {
             default:
                 throw Error('Geometry type not supported for download size estimation');
         }
-    }
-
-    public estimateRegionDownloadSizeInBytes(
-        tilesToDownload: TileToDownload[],
-        geometries: Geometry[],
-        genParams: TileGenerationParams,
-        tileGrid
-    ) {
-        const nTiles = this.estimateRegionDownloadSize(
-            tilesToDownload,
-            geometries,
-            genParams,
-            tileGrid
-        );
-        return nTiles * this.averageBytesPerTile;
     }
 
     public estimateSizeInBytes(numberOfTiles: number) {

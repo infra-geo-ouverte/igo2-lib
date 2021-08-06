@@ -50,7 +50,7 @@ export class CreationEditionStrategy extends EditionStrategy {
             geometries,
             genParams,
             tileGrid
-        );
+        ).downloadSize;
     }
 
     estimateRegionDownloadSizeInBytes(
@@ -64,7 +64,7 @@ export class CreationEditionStrategy extends EditionStrategy {
             geometries,
             genParams,
             tileGrid
-        );
+        ).downloadSize;
     }
 
     get enableGenEdition() {
