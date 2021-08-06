@@ -13,6 +13,29 @@ export class RegionEditorControllerBase {
         protected state: RegionEditorState
     ) { }
 
+    public hasEditedRegion(): boolean{
+      if (!this.isDrawingMode) {
+        return this.tilesToDownload.length !== 0
+        || this.regionStore.index.size !== 0;
+      }
+      const regionDrawIsEmpty = this.drawnRegionGeometryForm.value === null;
+      return this.tilesToDownload.length !== 0
+      || this.regionStore.index.size !== 0
+      || !regionDrawIsEmpty;
+    }
+
+    get disableDownloadButton() {
+      return !this.regionName
+      || this.isDownloading
+      || (!this.hasEditedRegion() && this.regionStore.index.size === 0);
+    }
+
+    get disableGenerationParamsComponent() {
+      return this.isDownloading
+      || !this.editionStrategy.enableGenEdition
+      || !this.hasEditedRegion();
+    }
+
     get drawnRegionGeometryForm(): FormControl {
       return this.state.drawnRegionGeometryForm;
     }

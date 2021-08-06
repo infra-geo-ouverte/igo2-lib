@@ -1,4 +1,5 @@
 import { RegionDBData } from '@igo2/core/public_api';
+import { XYZDataSource } from '@igo2/geo/public_api';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { DownloadState } from "../download.state";
 import { CreationEditionStrategy, UpdateEditionStrategy } from './editing-strategy';
@@ -10,7 +11,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
 
     constructor(
         state: RegionEditorState,
-        downloadState: DownloadState,
+        downloadState: DownloadState
     ) {
         super(downloadState, state);
     }
@@ -59,6 +60,8 @@ export class RegionEditorController extends RegionEditorControllerBase {
         }
     }
 
+    public loadGeoJSON() {}
+
     public updateRegion(region: RegionDBData) {
         if (!region) {
           return;
@@ -91,5 +94,46 @@ export class RegionEditorController extends RegionEditorControllerBase {
         this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
           return JSON.parse(featureText);
         });
+    }
+
+    private setTileGridAndTemplateUrl() {
+        const baseLayer = this.igoMap.getBaseLayers();
+        baseLayer.forEach((layer) => {
+          if (!layer.visible) {
+            return;
+          }
+          if (!(layer.dataSource instanceof XYZDataSource)) {
+            return;
+          }
+          this.templateUrl = layer.dataSource.options.url;
+          this.tileGrid = layer.ol.getSource().tileGrid;
+        });
+    }
+
+    // TODO
+    public download() {
+        if (!this.hasEditedRegion()) {
+            return;
+        }
+
+        if (this.isDrawingMode) {
+            this.setTileGridAndTemplateUrl();
+            this.parentLevel = this.map.getZoom();
+            this.cdRef.detectChanges();
+            this.genParams = genParamComponent.tileGenerationParams;
+            const geometry = this.drawnRegionGeometryForm.value;
+            const features = [
+              geoJSONToFeature(geometry, this.regionStore, this.map.projection)
+            ];
+            this.editedRegion.features = features;
+        }
+
+        this.editionStrategy.download(this.editedRegion, this.downloadService);
+    }
+
+    public clear() {
+        this.drawnRegionGeometryForm.reset();
+        this.regionStore.clear();
+        this.clearEditedRegion();
     }
 }
