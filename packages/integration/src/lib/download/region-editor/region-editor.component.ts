@@ -2,8 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChi
 import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileToDownload } from '@igo2/core';
-import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
+import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Feature, FEATURE, GeoJSONGeometry, IgoMap, XYZDataSource } from '@igo2/geo';
 import { uuid } from '@igo2/utils';
 import OlFeature from 'ol/Feature';
@@ -20,6 +19,7 @@ import { TransferedTile } from '../TransferedTile';
 import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
+import { RegionDownloadEstimationComponent } from './region-download-estimation/region-download-estimation.component';
 import { EditedRegion, RegionEditorState } from './region-editor.state';
 
 
@@ -33,6 +33,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
+  @ViewChild('regionDownloadEstimation') 
+    regionDownloadEstimation: RegionDownloadEstimationComponent;
 
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
@@ -158,15 +160,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public onGenerationParamsChange() {
     this.genParams = this.genParamComponent.tileGenerationParams;
-    this.updateVariables();
-  }
-
-  private updateVariables() {
-    const sizeEstimationBytes = this.sizeEstimationInBytes();
-    this._notEnoughSpace$ = this.storageQuota.enoughSpace(sizeEstimationBytes)
-    .pipe(map((value) => {
-      return !value;
-    }));
   }
 
   private getTileFeature(tileGrid, coord: [number, number, number]): Feature {
@@ -334,7 +327,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.drawnRegionGeometryForm.reset();
     this.regionStore.clear();
     this.clearEditedRegion();
-    this.updateVariables();
   }
 
   public onCancelClick() {
@@ -343,32 +335,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.clear();
     }
-  }
-
-  private sizeEstimationInBytes(): number {
-    const geometries = this.isDrawingMode ? [this.drawnRegionGeometryForm.value] : [];
-    if (this.isDrawingMode) {
-      this.setTileGridAndTemplateUrl();
-    }
-
-    if (this.genParamComponent) {
-      if (this.genParamComponent.parentLevel !== this.parentLevel) {
-        this.genParamComponent.parentLevel = this.parentLevel;
-      }
-    }
-
-    const genParams = !this.genParamComponent ?
-      this.genParams : this.genParamComponent.tileGenerationParams;
-    return this.editionStrategy.estimateRegionDownloadSizeInBytes(
-      this.tilesToDownload,
-      geometries,
-      genParams,
-      this.tileGrid);
-  }
-
-  public sizeEstimationInMB() {
-    const size = this.sizeEstimationInBytes();
-    return (size * 1e-6).toFixed(4);
   }
 
   public numberOfTilesToDownload() {
@@ -387,6 +353,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const genParams = !this.genParamComponent ?
       this.genParams : this.genParamComponent.tileGenerationParams;
     return this.editionStrategy.estimateRegionDownloadSize(
+      this.regionDownloadEstimation,
       this.tilesToDownload,
       geometries,
       genParams,

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { TileGenerationStrategies, TileToDownload } from '@igo2/core';
-import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
+import { TileGenerationParams, TileGenerationStrategies, TileToDownload } from '@igo2/core';
 import { Feature } from '@igo2/geo';
 import { Observable } from 'rxjs';
 import { MapState } from '../../map';

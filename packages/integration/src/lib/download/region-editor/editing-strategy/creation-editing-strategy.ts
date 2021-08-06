@@ -1,5 +1,6 @@
 import { DownloadRegionService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Geometry } from '@turf/helpers';
+import { RegionDownloadEstimationComponent } from '../region-download-estimation/region-download-estimation.component';
 import { EditedRegion } from '../region-editor.state';
 import { EditionStrategy } from './edition-strategy';
 
@@ -40,26 +41,19 @@ export class CreationEditionStrategy extends EditionStrategy {
     }
 
     estimateRegionDownloadSize(
+        downloadEstimatorComponent: RegionDownloadEstimationComponent,
         tileToDownload: TileToDownload[],
         geometries: Geometry[],
         genParams: TileGenerationParams,
         tileGrid: any
     ): number {
-        return this.downloadEstimator.estimateRegionDownloadSize(
+        downloadEstimatorComponent.estimateDownload(
             tileToDownload,
             geometries,
             genParams,
             tileGrid
-        ).downloadSize;
-    }
-
-    estimateRegionDownloadSizeInBytes(
-        tileToDownload: TileToDownload[],
-        geometries: Geometry[],
-        genParams: TileGenerationParams,
-        tileGrid: any
-    ): number {
-        return this.downloadEstimator.estimateRegionDownloadSizeInBytes(
+        );
+        return this.downloadEstimator.estimateRegionDownloadSize(
             tileToDownload,
             geometries,
             genParams,

@@ -18,6 +18,7 @@ import { IgoDrawingToolModule, IgoGeometryFormFieldModule } from '@igo2/geo';
 import { MatCarouselModule } from '@ngbmodule/material-carousel';
 import { DownloadToolComponent } from './download-tool';
 import { RegionDrawComponent } from './region-draw/region-draw.component';
+import { RegionDownloadEstimationComponent } from './region-editor/region-download-estimation/region-download-estimation.component';
 import { RegionEditorComponent } from './region-editor/region-editor.component';
 import { RegionManagerComponent } from './region-manager/region-manager.component';
 import { TileGenerationOptionComponent } from './tile-generation-option/tile-generation-option.component';
@@ -56,7 +57,8 @@ import { ParentTileGenSliderComponent } from './tile-generation-option/tile-gene
     TileGenerationOptionComponent,
     ChildTileGenSliderComponent,
     MiddleTileGenSliderComponent,
-    ParentTileGenSliderComponent
+    ParentTileGenSliderComponent,
+    RegionDownloadEstimationComponent
   ],
   exports: [DownloadToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

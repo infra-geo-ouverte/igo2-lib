@@ -42,16 +42,7 @@
       ngDefaultControl
     ></igo-region-draw>
   </div>
-  <div>
-    <div>
-      <mat-label>Estimated Download Size in MB </mat-label>
-      <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div>
-    </div>
-    <div>
-      <mat-label>Number of tiles to download </mat-label>
-      <div>{{ numberOfTilesToDownload() }}</div>
-    </div>
-  </div>
+  <igo-region-download-estimation></igo-region-download-estimation>
   <div *ngIf="isDownloading$ | async">
     <br>
     <mat-label>Progression</mat-label>

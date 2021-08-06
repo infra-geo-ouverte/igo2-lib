@@ -1,0 +1,16 @@
+<div *ngIf='!disabled'>
+  <div *ngIf='!newAllocatedSizeInBytesDisabled'>
+    <mat-label>Estimated New Allocation Size in MB </mat-label>
+    <!-- <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div> -->
+    <div>{{ estimationInMB.newAllocatedSize }}</div>
+  </div>
+  <div>
+    <mat-label>Estimated Download Size in MB </mat-label>
+    <!-- <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div> -->
+    <div>{{ estimationInMB.downloadSize }}</div>
+  </div>
+  <div>
+    <mat-label>Number of tiles to download </mat-label>
+    <div>{{ estimation.downloadSize }}</div>
+  </div>
+</div>
