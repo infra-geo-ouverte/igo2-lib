@@ -3,11 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
-import { Feature, FEATURE, GeoJSONGeometry, IgoMap, XYZDataSource } from '@igo2/geo';
-import { uuid } from '@igo2/utils';
-import OlFeature from 'ol/Feature';
-import * as olformat from 'ol/format';
-import * as olProj from 'ol/proj';
+import { Feature, IgoMap, XYZDataSource } from '@igo2/geo';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { DownloadState } from '../download.state';
@@ -18,7 +14,7 @@ import { CreationEditionStrategy } from './editing-strategy/creation-editing-str
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { RegionDownloadEstimationComponent } from './region-download-estimation/region-download-estimation.component';
 import { RegionEditorController } from './region-editor-controller';
-import { AddTileError, AddTileErrors } from './region-editor-utils';
+import { AddTileError, AddTileErrors, geoJSONToFeature } from './region-editor-utils';
 import { EditedRegion, RegionEditorState } from './region-editor.state';
 
 
@@ -105,65 +101,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.addNewTile$$.unsubscribe();
     this.regionStore.clear();
-  }
-
-  transformGeometry(geometry: GeoJSONGeometry, proj: string): GeoJSONGeometry {
-    const coords = geometry.coordinates;
-    switch (geometry.type) {
-      case 'Point':
-        geometry.coordinates = olProj.transform(coords, 'EPSG:4326', proj);
-        break;
-
-      case 'LineString':
-        geometry.coordinates = coords.map((coord) => olProj.transform(coord, 'EPSG:4326', proj));
-        break;
-
-      case 'Polygon':
-        geometry.coordinates = [coords[0].map((coord) => olProj.transform(coord, 'EPSG:4326', proj))];
-        break;
-
-      default:
-        throw Error('Geometry not yet supported for transform');
-    }
-    return geometry;
-  }
-
-  geoJSONToFeature(geometry: GeoJSONGeometry) {
-    const id = uuid();
-    const previousRegion = this.regionStore.get(id);
-    const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
-
-    const mapProj = this.map.projection;
-    const transformedGeometry = this.transformGeometry(geometry, this.map.projection);
-
-    const feature = new OlFeature(transformedGeometry);
-    const projectionIn = 'EPSG:4326';
-    const projectionOut = 'EPSG:4326';
-    const featuresText: string = new olformat.GeoJSON().writeFeature(
-      feature,
-      {
-        dataProjection: projectionOut,
-        featureProjection: projectionIn,
-        featureType: 'feature',
-        featureNS: 'http://example.com/feature'
-      }
-    );
-
-    const regionFeature: Feature = {
-      type: FEATURE,
-      geometry: transformedGeometry,
-      projection: this.map.projection,
-      properties: {
-        id,
-        stopOpacity: 1
-      },
-      meta: {
-        id,
-        revision: previousRegionRevision + 1
-      },
-      ol: feature
-    };
-    return regionFeature;
   }
 
   public onGenerationParamsChange() {
@@ -260,7 +197,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.cdRef.detectChanges();
       this.genParams = this.genParamComponent.tileGenerationParams;
       const geometry = this.drawnRegionGeometryForm.value;
-      const features = [this.geoJSONToFeature(geometry)];
+      const features = [
+        geoJSONToFeature(geometry, this.regionStore, this.map.projection)
+      ];
       this.editedRegion.features = features;
     }
 

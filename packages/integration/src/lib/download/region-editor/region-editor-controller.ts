@@ -47,7 +47,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
                 tileGrid,
                 coord,
                 this.regionStore,
-                this.igoMap
+                this.igoMap.projection
             );
             const featureText = JSON.stringify(feature);
     
@@ -79,10 +79,6 @@ export class RegionEditorController extends RegionEditorControllerBase {
         this.regionStore.clear();
     }
 
-    private clearFeatures() {
-        this.regionStore.clear();
-    }
-
     private loadEditedRegion(region: RegionDBData) {
         region.parentUrls.forEach((url: string) => {
           this.parentTileUrls.push(url);
@@ -95,5 +91,5 @@ export class RegionEditorController extends RegionEditorControllerBase {
         this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
           return JSON.parse(featureText);
         });
-      }
+    }
 }
