@@ -42,7 +42,7 @@
       ngDefaultControl
     ></igo-region-draw>
   </div>
-  <igo-region-download-estimation></igo-region-download-estimation>
+  <igo-region-download-estimation #regionDownloadEstimation></igo-region-download-estimation>
   <div *ngIf="isDownloading$ | async">
     <br>
     <mat-label>Progression</mat-label>
