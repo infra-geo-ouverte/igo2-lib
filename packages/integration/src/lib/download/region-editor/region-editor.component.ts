@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChi
 import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileGenerationParams } from '@igo2/core';
+import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
@@ -13,8 +13,8 @@ import { TransferedTile } from '../TransferedTile';
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { RegionDownloadEstimationComponent } from './region-download-estimation/region-download-estimation.component';
 import { RegionEditorController } from './region-editor-controller';
-import { AddTileError, AddTileErrors, geoJSONToFeature } from './region-editor-utils';
-import { RegionEditorState } from './region-editor.state';
+import { AddTileError, AddTileErrors } from './region-editor-utils';
+import { EditedRegion, RegionEditorState } from './region-editor.state';
 
 
 @Component({
@@ -82,7 +82,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initController() {
-    this.controller = new RegionEditorController(this.state, this.downloadState);
+    this.controller = new RegionEditorController(
+      this.state,
+      this.downloadState,
+      this.cdRef
+    );
   }
 
   ngOnInit() {
@@ -116,14 +120,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.regionStore.updateMany(this.editedTilesFeature);
   }
-  // TODO replace for controler download need to not forget deactivatedrawingtool
-  // before controller.addTileToDownload
-  //  this.showEditedRegionFeatures() after every thing
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
     if (this.regionStore.index.size && this.tilesToDownload.length === 0) {
         return;
-      }
+    }
     this.deactivateDrawingTool();
     try {
       this.controller.addTileToDownload(coord, templateUrl, tileGrid);
@@ -157,40 +158,19 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // private setTileGridAndTemplateUrl() {
-  //   const baseLayer = this.map.getBaseLayers();
-  //   baseLayer.forEach((layer) => {
-  //     if (!layer.visible) {
-  //       return;
-  //     }
-  //     if (!(layer.dataSource instanceof XYZDataSource)) {
-  //       return;
-  //     }
-  //     this.templateUrl = layer.dataSource.options.url;
-  //     this.tileGrid = layer.ol.getSource().tileGrid;
-  //   });
-  // }
-
   public onDownloadClick() {
-    if (!this.hasEditedRegion()) {
+    if (!this.controller.hasEditedRegion()) {
       return;
     }
 
     if (this.isDrawingMode) {
-      // this.setTileGridAndTemplateUrl();
-      // this.parentLevel = this.map.getZoom();
+      this.controller.setTileGridAndTemplateUrl();
+      this.controller.parentLevel = this.map.getZoom();
       this.cdRef.detectChanges();
-      this.genParams = this.genParamComponent.tileGenerationParams;
       const geojson= this.drawnRegionGeometryForm.value;
-      // TODO
       this.controller.loadGeoJSON(geojson);
-      // REMOVE THAT
-      const features = [
-        geoJSONToFeature(geometry, this.regionStore, this.map.projection)
-      ];
-      this.editedRegion.features = features;
     }
-    // TODO think about that
+
     this.genParams = this.genParamComponent.tileGenerationParams;
 
     if (this.isDownloading$$) {
@@ -203,21 +183,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isDownloading = value;
         if (!value) {
           this.messageService.success('Your download is done');
-          this.clear();
+          this.controller.clear();
         }
       });
-    // REMOVE and put in controller
-    this.editionStrategy.download(this.editedRegion, this.downloadService);
+    this.controller.downloadEditedRegion(this.downloadService);
   }
-
-  // private clearEditedRegion() {
-  //   // TODO need to put that in state
-  //   this.editedRegion = undefined;
-  //   this.parentTileUrls = new Array();
-  //   this.editionStrategy = new CreationEditionStrategy();
-  //   this.genParamComponent.tileGenerationParams = this.genParams;
-  //   this.clearFeatures();
-  // }
 
   private clear() {
     this.activateDrawingTool = true;
@@ -279,61 +249,61 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.downloadState.map;
   }
 
-  // set editedRegion(editedRegion) {
-  //   this.state.editedRegion = editedRegion;
-  // }
+  set editedRegion(editedRegion) {
+    this.state.editedRegion = editedRegion;
+  }
 
-  // get editedRegion(): EditedRegion {
-  //   return this.state.editedRegion;
-  // }
+  get editedRegion(): EditedRegion {
+    return this.state.editedRegion;
+  }
 
-  // set tileGrid(tileGrid: any) {
-  //   this.state.editedRegion.tileGrid = tileGrid;
-  // }
+  set tileGrid(tileGrid: any) {
+    this.state.editedRegion.tileGrid = tileGrid;
+  }
 
-  // get tileGrid(): any {
-  //   return this.state.editedRegion.tileGrid;
-  // }
+  get tileGrid(): any {
+    return this.state.editedRegion.tileGrid;
+  }
 
-  // set templateUrl(templateUrl: string) {
-  //   this.state.editedRegion.templateUrl = templateUrl;
-  // }
+  set templateUrl(templateUrl: string) {
+    this.state.editedRegion.templateUrl = templateUrl;
+  }
 
-  // get templateUrl(): string {
-  //   return this.state.editedRegion.templateUrl;
-  // }
+  get templateUrl(): string {
+    return this.state.editedRegion.templateUrl;
+  }
 
-  // get parentTileUrls(): Array<string> {
-  //   return this.state.parentTileUrls;
-  // }
+  get parentTileUrls(): Array<string> {
+    return this.state.parentTileUrls;
+  }
 
-  // set parentTileUrls(urls: Array<string>) {
-  //   this.state.parentTileUrls = urls;
-  // }
+  set parentTileUrls(urls: Array<string>) {
+    this.state.parentTileUrls = urls;
+  }
 
-  // set regionName(name: string) {
-  //   this.state.regionName = name;
-  // }
+  set regionName(name: string) {
+    this.state.regionName = name;
+  }
 
-  // get regionName(): string {
-  //   return this.state.regionName;
-  // }
+  get regionName(): string {
+    return this.state.regionName;
+  }
 
-  // set urlsToDownload(urls: Set<string>) {
-  //   this.state.urlsToDownload = urls;
-  // }
+  set urlsToDownload(urls: Set<string>) {
+    this.state.urlsToDownload = urls;
+  }
 
-  // get urlsToDownload(): Set<string> {
-  //   return this.state.urlsToDownload;
-  // }
+  get urlsToDownload(): Set<string> {
+    return this.state.urlsToDownload;
+  }
 
-  // set tilesToDownload(tiles: TileToDownload[]) {
-  //   this.state.tilesToDownload = tiles;
-  // }
+  set tilesToDownload(tiles: TileToDownload[]) {
+    this.state.tilesToDownload = tiles;
+  }
 
-  // get tilesToDownload(): TileToDownload[] {
-  //     return this.state.tilesToDownload;
-  // }
+  get tilesToDownload(): TileToDownload[] {
+      return this.state.tilesToDownload;
+  }
 
   set genParams(depth: TileGenerationParams) {
       this.state.genParams = depth;
@@ -343,24 +313,24 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return this.state.genParams;
   }
 
-  // get depth(): number {
-  //   const depth = this.genParams.endLevel - this.genParams.startLevel;
-  //   if (Number.isNaN(depth)) {
-  //     return 0;
-  //   }
-  //   return depth;
-  // }
+  get depth(): number {
+    const depth = this.genParams.endLevel - this.genParams.startLevel;
+    if (Number.isNaN(depth)) {
+      return 0;
+    }
+    return depth;
+  }
 
-  // set parentLevel(level: number) {
-  //   this.state.parentLevel = level;
-  // }
+  set parentLevel(level: number) {
+    this.state.parentLevel = level;
+  }
 
-  // get parentLevel(): number {
-  //   if (this.isDrawingMode) {
-  //     return this.map.getZoom();
-  //   }
-  //   return this.state.parentLevel;
-  // }
+  get parentLevel(): number {
+    if (this.isDrawingMode) {
+      return this.map.getZoom();
+    }
+    return this.state.parentLevel;
+  }
 
   set editedTilesFeature(features: Feature[]) {
       this.state.editedTilesFeatures = features;

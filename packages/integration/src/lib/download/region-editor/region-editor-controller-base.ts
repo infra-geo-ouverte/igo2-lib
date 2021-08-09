@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { TileGenerationParams, TileToDownload } from '@igo2/core/public_api';
+import { TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Observable } from 'rxjs';
 import { DownloadState } from '../download.state';

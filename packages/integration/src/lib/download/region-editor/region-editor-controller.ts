@@ -1,17 +1,19 @@
-import { RegionDBData } from '@igo2/core/public_api';
-import { XYZDataSource } from '@igo2/geo/public_api';
+import { ChangeDetectorRef } from '@angular/core';
+import { DownloadRegionService, RegionDBData } from '@igo2/core';
+import { GeoJSONGeometry, XYZDataSource } from '@igo2/geo';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { DownloadState } from "../download.state";
 import { CreationEditionStrategy, UpdateEditionStrategy } from './editing-strategy';
 import { RegionEditorControllerBase } from "./region-editor-controller-base";
-import { AddTileError, AddTileErrors, getTileFeature } from './region-editor-utils';
+import { AddTileError, AddTileErrors, geoJSONToFeature, getTileFeature } from './region-editor-utils';
 import { RegionEditorState } from "./region-editor.state";
 
 export class RegionEditorController extends RegionEditorControllerBase {
 
     constructor(
         state: RegionEditorState,
-        downloadState: DownloadState
+        downloadState: DownloadState,
+        private cdReg: ChangeDetectorRef
     ) {
         super(downloadState, state);
     }
@@ -60,7 +62,12 @@ export class RegionEditorController extends RegionEditorControllerBase {
         }
     }
 
-    public loadGeoJSON() {}
+    public loadGeoJSON(geometry: GeoJSONGeometry) {
+        const geoJSONFeatures = [
+            geoJSONToFeature(geometry, this.regionStore, this.igoMap.projection)
+        ]
+        this.editedRegion.features = geoJSONFeatures;
+    }
 
     public updateRegion(region: RegionDBData) {
         if (!region) {
@@ -96,7 +103,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
         });
     }
 
-    private setTileGridAndTemplateUrl() {
+    public setTileGridAndTemplateUrl() {
         const baseLayer = this.igoMap.getBaseLayers();
         baseLayer.forEach((layer) => {
           if (!layer.visible) {
@@ -111,24 +118,8 @@ export class RegionEditorController extends RegionEditorControllerBase {
     }
 
     // TODO
-    public download() {
-        if (!this.hasEditedRegion()) {
-            return;
-        }
-
-        if (this.isDrawingMode) {
-            this.setTileGridAndTemplateUrl();
-            this.parentLevel = this.map.getZoom();
-            this.cdRef.detectChanges();
-            this.genParams = genParamComponent.tileGenerationParams;
-            const geometry = this.drawnRegionGeometryForm.value;
-            const features = [
-              geoJSONToFeature(geometry, this.regionStore, this.map.projection)
-            ];
-            this.editedRegion.features = features;
-        }
-
-        this.editionStrategy.download(this.editedRegion, this.downloadService);
+    public downloadEditedRegion(downloadService: DownloadRegionService) {
+        this.editionStrategy.download(this.editedRegion, downloadService);
     }
 
     public clear() {

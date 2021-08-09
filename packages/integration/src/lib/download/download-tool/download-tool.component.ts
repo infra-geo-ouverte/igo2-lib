@@ -1,13 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
-import { RegionDBData } from '@igo2/core/public_api';
+import { RegionDBData } from '@igo2/core';
 import { DownloadState } from '../download.state';
 import { RegionEditorComponent } from '../region-editor/region-editor.component';
 import { RegionManagerComponent } from '../region-manager/region-manager.component';
 import { DownloadToolState } from './download-tool.state';
-// need to do the TODOs in tileDownloader beforehand
-// need to make prototype of the interface
-// need to create the all the methods
 
 export enum Tab {
   Editor = 'Region Editor',
