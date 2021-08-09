@@ -228,7 +228,7 @@ export function handleFileImportError(
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError,
     'Invalid SRS definition': handleSRSImportError,
-    'Error 500 with OGRE in convert shapefile': handleOgreServerImportError
+    'Error 500 with OGRE': handleOgreServerImportError
   };
   errMapping[error.message](
     file,
