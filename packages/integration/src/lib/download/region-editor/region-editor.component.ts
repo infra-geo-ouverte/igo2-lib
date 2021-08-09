@@ -199,6 +199,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.editionStrategy.cancelDownload(this.downloadService);
     } else {
       this.clear();
+      this.genParamComponent.tileGenerationParams = this.genParams;
     }
   }
 
