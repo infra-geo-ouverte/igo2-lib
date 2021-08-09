@@ -252,14 +252,16 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
         const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
         this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {
             if (this.inputProj.translateKey === 'mtm'){
-                this.importForm.patchValue({inputProj: {translateKey: "mtm", alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
+                this.importForm.patchValue({inputProj:
+                  {translateKey: 'mtm', alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
             }
         });
         this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
             if (this.inputProj.translateKey === 'utm'){
-                this.importForm.patchValue({inputProj: {translateKey: "utm", alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
+                this.importForm.patchValue({inputProj:
+                  {translateKey: 'utm', alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
             }
-        })
+        });
     }
 }
 

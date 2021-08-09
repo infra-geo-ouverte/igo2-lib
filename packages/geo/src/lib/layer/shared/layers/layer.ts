@@ -125,7 +125,7 @@ export abstract class Layer {
   }
 
   private layerSyncWatcher: LayerSyncWatcher;
-  
+
   constructor(
     public options: LayerOptions,
     // @Optional() private languageService: LanguageService,
@@ -187,7 +187,7 @@ export abstract class Layer {
             //   message.text = message.text
             //     ? this.languageService.translate.instant(message.text)
             //     : undefined;
-              this.messageService.message(message as Message);
+            this.messageService.message(message as Message);
             // }
           });
         }

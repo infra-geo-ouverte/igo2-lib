@@ -79,8 +79,16 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   /**
    * Restart a swipe for a new layers-list
    */
-  applyNewsLayers(e) {
-    this.startSwipe(false);
+  applyNewLayers(e) {
+    this.startSwipe(false); // l'approche KISS Keep it simple stupid
+    this.startSwipe(true);
+    if (e._selected) {e._selected = false; } // ici je décoche "select all" si pas toutes les options sont choisies
+    const allLayers = this.userControlledLayerList.length;
+    const selectedLayers = this.form.controls.layers.value.length;
+    if (selectedLayers === allLayers){
+      e._selected = true; // ici je veux cocher "select all" car toutes les options sont choisies
+    } // mais je n'arrive pas
+    // blue-theme .mat-pseudo-checkbox::after {} - peut être comme ça...
   }
 
   /**
@@ -95,6 +103,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
       this.form.controls.layers.setValue([]);
     }
     this.startSwipe(false);
+    this.startSwipe(true);
   }
 
   /**

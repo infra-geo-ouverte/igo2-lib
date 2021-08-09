@@ -7,7 +7,7 @@
                     {{'igo.integration.advanced-map-tool.advanced-swipe.selectAll' | translate}}
                 </mat-option>
                 <mat-divider></mat-divider>
-                <mat-option *ngFor="let layer of userControlledLayerList" [value]="layer" (click)="applyNewsLayers(e)">{{layer.title}}</mat-option>
+                <mat-option *ngFor="let layer of userControlledLayerList" [value]="layer" (click)="applyNewLayers(e)">{{layer.title}}</mat-option>
             </mat-select>
         </mat-form-field>
     </form>

@@ -22,10 +22,10 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   //   return this._map;
   // }
 
-  /**
-   * The map to swipe on
-   */
-    //  private _map: IgoMap;
+  // /**
+  //  * The map to swipe on
+  //  */
+  // private _map: IgoMap;
 
 
   /**
@@ -39,7 +39,9 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    */
    ngAfterViewInit() {
     this.displayCenter$$ = this.map.mapCenter$.subscribe(value => {
-      value ? document.getElementById('mapCenter').style.visibility = 'visible' : document.getElementById('mapCenter').style.visibility = 'hidden';
+      value ?
+      document.getElementById('mapCenter').style.visibility = 'visible' :
+      document.getElementById('mapCenter').style.visibility = 'hidden';
     });
   }
 

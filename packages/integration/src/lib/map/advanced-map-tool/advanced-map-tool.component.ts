@@ -4,7 +4,7 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'advancedMap',
   title: 'igo.integration.tools.advancedMap',
-  icon: 'leaf-maple'
+  icon: 'toolbox'
 })
 
 /**

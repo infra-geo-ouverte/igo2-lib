@@ -106,6 +106,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
     this.layers.map(layer => layer.ol.un('prerender', this.boundPrerender));
     this.layers.map(layer => layer.ol.un('postrender', this.postrender));
     this.map.ol.render();
+    this.layers = [];
   }
 
   /**
@@ -137,35 +138,49 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   dragDown(event) {
     this.inDragAction = true;
     event.preventDefault();
-    if (event.type === 'mousdown'){
+    if (event.type === 'mousedown'){
         this.pos3 = event.clientX;
+        this.mouseSwipe();
         document.onmouseup = this.closeDragMouseElement;
     }
     else if (event.type === 'touchstart'){
         document.getElementById('arrows').style.visibility = 'hidden';
         this.pos3 = event.touches[0].clientX;
+        this.touchSwipe();
         document.ontouchend = this.closeDragTouchElement;
     }
   }
 
   /**
-   * Listen a mouse- or touch-move and move the swipe-element
+   * Moving a line with a mouse
    */
-  elementDrag(event){
-    if (this.inDragAction){
-          event.preventDefault();
-          if (event.type === 'mousemove'){
-            this.pos1 = this.pos3 - event.clientX;
-            this.pos3 = event.clientX;
-          }
-          else if (event.type === 'touchmove') {
-            document.getElementById('arrows').style.visibility = 'hidden';
-            this.pos1 = this.pos3 - event.changedTouches[0].clientX;
-            this.pos3 = event.changedTouches[0].clientX;
-          }
-          this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
-        }
-    this.map.ol.render();
+  mouseSwipe(){
+    document.addEventListener('mousemove', event => {
+      if (this.inDragAction){
+        event.preventDefault();
+        this.pos1 = this.pos3 - event.clientX;
+        this.pos3 = event.clientX;
+        this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
+      }
+      this.map.ol.render();
+    } // .bind(this));
+    );
+  }
+
+  /**
+   * Moving a line with a touch
+   */
+  touchSwipe(){
+    document.addEventListener('touchmove', event => {
+      if (this.inDragAction) {
+        event.preventDefault();
+        document.getElementById('arrows').style.visibility = 'hidden';
+        this.pos1 = this.pos3 - event.changedTouches[0].clientX;
+        this.pos3 = event.changedTouches[0].clientX;
+        this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
+      }
+      this.map.ol.render();
+    }); // .bind(this));
   }
 
   /**
