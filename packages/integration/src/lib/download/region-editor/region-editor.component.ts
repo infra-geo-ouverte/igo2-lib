@@ -4,6 +4,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadRegionService, MessageService, RegionDBData, StorageQuotaService, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
+import { Geometry } from '@turf/helpers';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { DownloadState } from '../download.state';
@@ -34,7 +35,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
-
+  // geometries: Geometry[] = [];
   activateDrawingTool: boolean = true;
 
   isDownloading$: Observable<boolean>;
@@ -45,6 +46,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   get openedWithMouse() {
     return this.downloadState.openedWithMouse;
   }
+
+  geometries: Geometry[] = [];
+
+  // get geometries(): Geometry[] {
+  //   return this.drawnRegionGeometryForm.value ? 
+  //     [this.drawnRegionGeometryForm.value] : []
+  //   // return [this.drawnRegionGeometryForm.value];
+  // }
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -79,6 +88,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           return Math.round(value * 100);
         }));
     }
+    this.drawnRegionGeometryForm.valueChanges.subscribe((value) => {
+      this.geometries = value ? [value] : [];
+      this.controller.setTileGridAndTemplateUrl();
+      this.parentLevel = this.map.getZoom();
+      this.cdRef.detectChanges();
+      this.genParams = this.genParamComponent.tileGenerationParams;
+      console.log('component',this.genParamComponent.tileGenerationParams)
+      // this.injectGenParamsIntoGenComponent();
+      // this.cdRef.detectChanges();
+      console.log('params', this.genParams);
+    });
   }
 
   private initController() {
@@ -96,7 +116,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.genParamComponent.tileGenerationParams = this.genParams;
+    this.injectGenParamsIntoGenComponent();
   }
 
   ngOnDestroy() {
@@ -135,6 +155,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.sendAddTileErrorMessage(e);
     }
+
+    // TODO need to find a better fix
+    if (this.genParamComponent) {
+      this.injectGenParamsIntoGenComponent();
+    }
+  }
+
+  private injectGenParamsIntoGenComponent() {
+    this.genParamComponent.tileGenerationParams = this.genParams;
+    this.genParams = this.genParamComponent.tileGenerationParams;
   }
 
   // TODO maybe better name
@@ -165,10 +195,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.isDrawingMode) {
       this.controller.setTileGridAndTemplateUrl();
-      this.controller.parentLevel = this.map.getZoom();
+      // this.controller.parentLevel = this.map.getZoom();
       this.cdRef.detectChanges();
-      const geojson= this.drawnRegionGeometryForm.value;
-      this.controller.loadGeoJSON(geojson);
+      const geoJSON = this.drawnRegionGeometryForm.value;
+      this.controller.loadGeoJSON(geoJSON);
     }
 
     this.genParams = this.genParamComponent.tileGenerationParams;
@@ -327,9 +357,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get parentLevel(): number {
-    if (this.isDrawingMode) {
-      return this.map.getZoom();
-    }
+    // if (this.editionStrategy instanceof CreationEditionStrategy
+    //   && this.isDrawingMode
+    // ) {
+    //   this.map.getZoom();
+    //   this.injectGenParamsIntoGenComponent();
+    //   // return this.map.getZoom();
+    // }
     return this.state.parentLevel;
   }
 

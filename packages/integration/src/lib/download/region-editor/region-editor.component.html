@@ -47,7 +47,14 @@
       ngDefaultControl
     ></igo-region-draw>
   </div>
-  <igo-region-download-estimation #regionDownloadEstimation></igo-region-download-estimation>
+  <igo-region-download-estimation
+    #regionDownloadEstimation
+    [tilesToDownload]='tilesToDownload'
+    [geometries]='geometries'
+    [genParams]='genParams'
+    [tileGrid]='tileGrid'
+    [mode]='editionStrategy'
+  ></igo-region-download-estimation>
   <div *ngIf="isDownloading$ | async">
     <br>
     <mat-label>Progression</mat-label>

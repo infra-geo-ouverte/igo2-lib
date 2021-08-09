@@ -53,6 +53,11 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
     this.endLevel = value.endLevel;
   }
 
+  protected updateLevels() {
+    this._startLevel = this._parentLevel;
+    this._endLevel = this._parentLevel + 2;
+  }
+
   ngOnInit() {
   }
 

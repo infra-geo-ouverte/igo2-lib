@@ -7,7 +7,7 @@ import { EditionStrategy } from './edition-strategy';
 
 export class UpdateEditionStrategy extends EditionStrategy {
 
-    constructor(private regionToUpdate: RegionDBData) {
+    constructor(readonly regionToUpdate: RegionDBData) {
         super();
     }
 
@@ -37,12 +37,6 @@ export class UpdateEditionStrategy extends EditionStrategy {
         genParams: TileGenerationParams,
         tileGrid: any
     ): number {
-        downloadEstimatorComponent.estimateUpdate(
-            this.regionToUpdate,
-            tileToDownload,
-            geometries,
-            tileGrid
-        );
         const updateSize = this.downloadEstimator.estimateRegionUpdateSize(
             this.regionToUpdate,
             tileToDownload,

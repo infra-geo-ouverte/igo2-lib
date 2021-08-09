@@ -29,6 +29,11 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
     return this.parentLevel;
   }
 
+  protected updateLevels() {
+    this._endLevel = this._parentLevel;
+    this._startLevel = this._parentLevel - this._sliderValue;
+  }
+
   ngOnInit() {
   }
 

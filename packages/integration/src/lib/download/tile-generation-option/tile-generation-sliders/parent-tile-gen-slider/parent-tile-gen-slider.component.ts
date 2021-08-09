@@ -14,14 +14,22 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
 
   _sliderValue: number = 0;
 
+  protected updateLevels() {
+    this._startLevel = this._parentLevel;
+    this._endLevel = this._parentLevel + this._sliderValue;
+  }
+
   protected set endLevel(endLevel: number) {
+    this._endLevel = endLevel;
     this._sliderValue = endLevel - this.startLevel;
     this.slider.value = this._sliderValue;
   }
 
   protected get endLevel(): number {
-    return this.slider.value + this.parentLevel;
+    return this._endLevel;
+    // return this.slider.value + this.parentLevel;
   }
+
 
   protected get startLevel(): number {
     return this.parentLevel;
@@ -39,10 +47,10 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   }
 
   get depth() {
-    if (Number.isNaN(this._sliderValue)) {
+    if (!this.slider) {
       return 0;
     }
-    return this._sliderValue;
+    return this.slider.value;
   }
 
   constructor() {
@@ -57,6 +65,7 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
 
   onSliderChange() {
     this._sliderValue = this.slider.value;
+    this._endLevel = this.parentLevel + this.slider.value;
     this.emitValue();
   }
 }
