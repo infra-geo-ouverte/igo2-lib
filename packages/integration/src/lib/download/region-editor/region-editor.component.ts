@@ -81,6 +81,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }));
     }
     this.drawnRegionGeometryForm.valueChanges.subscribe((value) => {
+      if (!value) {
+        return;
+      }
       this.geometries = value ? [value] : [];
       this.controller.setTileGridAndTemplateUrl();
       this.parentLevel = this.map.getZoom();
@@ -153,7 +156,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.genParamComponent.tileGenerationParams = this.genParams;
   }
 
-  // TODO maybe better name
   sendAddTileErrorMessage(error: AddTileError) {
     switch (error.addTileError) {
       case AddTileErrors.CARTO_BACKGROUND:
@@ -207,6 +209,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private clear() {
     this.activateDrawingTool = true;
     this.controller.clear();
+    this.genParamComponent.tileGenerationParams = this.genParams;
   }
 
   public onCancelClick() {
@@ -214,7 +217,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.controller.cancelDownload(this.downloadService);
     } else {
       this.clear();
-      this.genParamComponent.tileGenerationParams = this.genParams;
     }
   }
 
