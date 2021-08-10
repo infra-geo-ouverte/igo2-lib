@@ -17,7 +17,7 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
-  public importForm: FormGroup;
+  public form: FormGroup;
   public coordinates: string[];
   public center: boolean = false;
   private mapState$$: Subscription;
@@ -32,13 +32,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  // private mapController: MapViewController;
-
   get inputProj() {
-    return this.importForm.get('inputProj').value;
+    return this.form.get('inputProj').value;
   }
   set inputProj(value) {
-    this.importForm.patchValue({ inputProj: value });
+    this.form.patchValue({ inputProj: value });
   }
   get projectionsLimitations(): ProjectionsLimitationsOptions {
     return this._projectionsLimitations || {};
@@ -65,25 +63,29 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.computeProjections();
     this.getCoordinates();
-    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1500)).subscribe(c => {
+    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1500)).subscribe(() => {
       this.computeProjections();
       this.getCoordinates();
-      this.cdRef.detectChanges(); // ??
+      this.cdRef.detectChanges();
       this.zoneControl();
       });
     this.checkTogglePosition();
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.mapState$$.unsubscribe();
-    this.zoneMtm$$.unsubscribe();
-    this.zoneUtm$$.unsubscribe();
+    if (this.zoneMtm$$) {
+      this.zoneMtm$$.unsubscribe();
+    }
+    if (this.zoneUtm$$) {
+      this.zoneUtm$$.unsubscribe();
+    }
   }
 
   /**
    * Longitude and latitude of the center of the map
    */
-  getCoordinates(){   // comprendre pourquoi par defaut WEB Mercator.
+  getCoordinates(): void {   // comprendre pourquoi par defaut WEB Mercator.
     let code = this.inputProj.code;
     if (code && !(code.includes('EPSG:4326') || code.includes('EPSG:4269'))) {
       if (code.includes('EPSG:321')){
@@ -128,6 +130,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    */
   displayCenter(toggle: boolean){
     this.center = toggle;
+    // this.mapState.mapCenter$.next(toggle);
     this.map.mapCenter$.next(toggle);
     this.storageService.set('centerToggle', toggle, StorageScope.SESSION);
   }
@@ -135,14 +138,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   /**
    * Set the toggle position in a current value
    */
-  checkTogglePosition(){
+  checkTogglePosition() {
     if (this.storageService.get('centerToggle') === true){
       this.center = true;
     }
   }
 
   private buildForm() {
-    this.importForm = this.formBuilder.group({
+    this.form = this.formBuilder.group({
       inputProj: ['', [Validators.required]]
     });
   }
@@ -207,7 +210,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
 
 
-/* pourquoi les 2 projections qui vient de config.getConfig restent pendant le déplacement de la carte?
+/* pourquoi les 2 projections qui vient de config.getConfig restent affichés pendant le déplacement de la carte?
 je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas à jour dans la forme
 */
 
@@ -249,26 +252,24 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
 
   zoneControl() {
     if (this.inputProj && (this.inputProj.code.includes('EPSG:321') || this.inputProj.code.includes('EPSG:326'))) {
-        const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-        this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {
-            if (this.inputProj.translateKey === 'mtm'){
-                this.importForm.patchValue({inputProj:
-                  {translateKey: 'mtm', alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
-            }
-        });
-        this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
-            if (this.inputProj.translateKey === 'utm'){
-                this.importForm.patchValue({inputProj:
-                  {translateKey: 'utm', alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
-            }
-        });
+      const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
+      this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {
+        if (this.inputProj.translateKey === 'mtm'){
+            this.form.patchValue({inputProj:
+              {translateKey: 'mtm', alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
+        }
+      });
+      this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
+        if (this.inputProj.translateKey === 'utm'){
+            this.form.patchValue({inputProj:
+              {translateKey: 'utm', alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
+        }
+      });
     }
-}
+  }
 
-  testFunc(event){
-    const a = document.getElementsByTagName('mat-select');
-    console.log(a);
-    // console.log(a[1].innerText);
+  setInputProj(event) {
+    // console.log(this.form.controls);
   }
 
 }
