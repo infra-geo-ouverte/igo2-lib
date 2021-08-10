@@ -13,6 +13,11 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
   minValue: number = 6;
   maxValue: number = 8;
 
+  protected updateLevels() {
+    this.minValue = this._parentLevel;
+    this.maxValue = this._parentLevel + 2;
+  }
+
   get sliderOptions(): Options {
     return {
       floor: 2,
@@ -51,11 +56,6 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
   set value(value: SliderGenerationParams) {
     this.startLevel = value.startLevel;
     this.endLevel = value.endLevel;
-  }
-
-  protected updateLevels() {
-    this._startLevel = this._parentLevel;
-    this._endLevel = this._parentLevel + 2;
   }
 
   ngOnInit() {
