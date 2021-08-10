@@ -14,24 +14,28 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
     super();
   }
 
-  private _sliderValue: number = 0;
+  sliderValue: number = 0;
+
+  protected updateLevels() {
+    this._endLevel = this._parentLevel;
+    this._startLevel = this._parentLevel - this.sliderValue;
+  }
 
   protected set startLevel(startLevel: number) {
-    this._sliderValue = this.parentLevel - startLevel;
-    this.slider.value = this._sliderValue;
+    this._startLevel = startLevel;
+    if (startLevel === undefined) {
+      this.sliderValue = 0;
+      return;
+    }
+    this.sliderValue = this._parentLevel - startLevel;
   }
 
   protected get startLevel() {
-    return this.parentLevel - this.slider.value;
+    return this._startLevel;
   }
 
   protected get endLevel() {
     return this.parentLevel;
-  }
-
-  protected updateLevels() {
-    this._endLevel = this._parentLevel;
-    this._startLevel = this._parentLevel - this._sliderValue;
   }
 
   ngOnInit() {
@@ -53,14 +57,14 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
   }
 
   onSliderChange() {
-    this._sliderValue = this.slider.value;
+    this._startLevel = this.parentLevel - this.slider.value;
     this.emitValue();
   }
 
   get height(): number {
-    if (Number.isNaN(this._sliderValue)) {
+    if (Number.isNaN(this.sliderValue)) {
       return 0;
     }
-    return this._sliderValue;
+    return this.sliderValue;
   }
 }

@@ -2,6 +2,7 @@
 <mat-slider 
   invert
   #heightSlider
+  [(ngModel)]='sliderValue'
   (input)="onSliderChange()"
   [disabled]="disabled"
   min="0" 
@@ -12,4 +13,3 @@
   tickInterval = "auto"
 >
 </mat-slider>
-
