@@ -61,13 +61,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    this.computeProjections();
+    this.computeProjections(); // initialiser les projections
     this.getCoordinates();
     this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1500)).subscribe(() => {
-      this.computeProjections();
-      this.getCoordinates();
+      this.computeProjections();  // afficher après le déplacement. même si on choisit lon-lat, on a besoin
+                                  // de mettre à jour mtm et utm.
+      this.zoneControl(); // vérifie si la zone a été changée, mets à jour form.controls['inputProj']
+      this.getCoordinates(); // affiche les coordonnées
       this.cdRef.detectChanges();
-      this.zoneControl();
       });
     this.checkTogglePosition();
   }
@@ -85,7 +86,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   /**
    * Longitude and latitude of the center of the map
    */
-  getCoordinates(): void {   // comprendre pourquoi par defaut WEB Mercator.
+  getCoordinates(): void {
     let code = this.inputProj.code;
     if (code && !(code.includes('EPSG:4326') || code.includes('EPSG:4269'))) {
       if (code.includes('EPSG:321')){
@@ -172,7 +173,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   private computeProjections() {
-    this.computeProjectionsConstraints();
+    if (!this.projectionsConstraints) {
+      this.computeProjectionsConstraints();
+    }
     const projections: InputProjections[] = [];
 
     if (this.projectionsConstraints.wgs84) {
@@ -211,7 +214,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
 
 /* pourquoi les 2 projections qui vient de config.getConfig restent affichés pendant le déplacement de la carte?
-je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas à jour dans la forme
+je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas à jour dans la forme)
 */
 
 
@@ -259,6 +262,7 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
               {translateKey: 'mtm', alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
         }
       });
+      const utmZone = this.zoneUtm(this.map.viewController.getCenter('EPSG:4326')[0]);
       this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
         if (this.inputProj.translateKey === 'utm'){
             this.form.patchValue({inputProj:
@@ -269,7 +273,7 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
   }
 
   setInputProj(event) {
-    // console.log(this.form.controls);
+    console.log(this.form.controls['inputProj'].value);
   }
 
 }
