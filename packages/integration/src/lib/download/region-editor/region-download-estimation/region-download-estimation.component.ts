@@ -12,7 +12,7 @@ export class RegionDownloadEstimationComponent implements OnInit {
   @Input() disabled: boolean = false;
 
   @Input() tilesToDownload: TileToDownload[];
-  @Input() geometries: Geometry[]
+  @Input() geometries: Geometry[];
   @Input() genParams: TileGenerationParams;
   @Input() tileGrid: any;
 
@@ -79,59 +79,14 @@ export class RegionDownloadEstimationComponent implements OnInit {
     return estimation;
   }
 
-  // public estimateDownload(
-  //   tileToDownload: TileToDownload[],
-  //   geometries: Geometry[],
-  //   genParams: TileGenerationParams,
-  //   tileGrid: any
-  // ) {
-  //   this._estimation = this.estimator.estimateRegionDownloadSize(
-  //     tileToDownload,
-  //     geometries,
-  //     genParams,
-  //     tileGrid
-  //   );
-
-  //   this._estimationInBytes = this.estimator.downloadSizeEstimationInBytes(
-  //     this.estimation
-  //   );
-  // }
-
-  // public estimateUpdate(
-  //   region: RegionDBData,
-  //   tileToDownload: TileToDownload[],
-  //   geometries: Geometry[],
-  //   tileGrid: any
-  // ) {
-  //   this.estimation = this.estimator.estimateRegionUpdateSize(
-  //     region,
-  //     tileToDownload,
-  //     geometries,
-  //     tileGrid
-  //   );
-
-  //   this.estimationInBytes = this.estimator.downloadSizeEstimationInBytes(
-  //     this.estimation
-  //   );
-  // }
-
   private bytesToMB(sizeInBytes: number): string {
     return (sizeInBytes * 1e-6).toFixed(4);
   }
 
   get newAllocatedSizeInBytesDisabled(): boolean {
-    // activate: newAllocatedSize < downloadSize && allocated != 0
-    // deactivate: newAllocatedSize >= downloadSize || allocated == 0
     const newAllocatedSize = this.estimation.newAllocatedSize;
     const downloadSize = this.estimation.downloadSize;
-    return newAllocatedSize >= downloadSize || newAllocatedSize == 0;
-    // return this.estimation.newAllocatedSize != this.estimation.downloadSize
-    //   && this.estimation.newAllocatedSize == 0;
-    // new: allocated == downloadsize
-    // update without change: allocated < downloadSize allocated == 0
-    // update with change: allocated != 0 && allocated < downloadSize
-    // return this.estimation.newAllocatedSize > this.estimation.downloadSize;
-    // return true;
+    return newAllocatedSize >= downloadSize || newAllocatedSize === 0;
   }
 
   get estimationInMB() {

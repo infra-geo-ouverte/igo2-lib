@@ -21,10 +21,10 @@ export abstract class TileGenerationSliderComponent {
   set parentLevel(value: number) {
     this._parentLevel = value;
     this.updateLevels();
-  };
+  }
   get parentLevel(): number {
     return this._parentLevel;
-  };
+  }
   protected _parentLevel: number;
   protected _endLevel: number;
   protected _startLevel: number;

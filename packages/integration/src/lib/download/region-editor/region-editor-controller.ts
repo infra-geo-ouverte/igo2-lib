@@ -2,11 +2,11 @@ import { ChangeDetectorRef } from '@angular/core';
 import { DownloadRegionService, RegionDBData } from '@igo2/core';
 import { GeoJSONGeometry, XYZDataSource } from '@igo2/geo';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { DownloadState } from "../download.state";
+import { DownloadState } from '../download.state';
 import { CreationEditionStrategy, UpdateEditionStrategy } from './editing-strategy';
-import { RegionEditorControllerBase } from "./region-editor-controller-base";
+import { RegionEditorControllerBase } from './region-editor-controller-base';
 import { AddTileError, AddTileErrors, geoJSONToFeature, getTileFeature } from './region-editor-utils';
-import { RegionEditorState } from "./region-editor.state";
+import { RegionEditorState } from './region-editor.state';
 
 export class RegionEditorController extends RegionEditorControllerBase {
 
@@ -32,7 +32,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
             this.tileGrid = tileGrid;
             this.templateUrl = templateUrl;
         }
-  
+
         if (!first && tileGrid !== this.tileGrid
           && templateUrl !== this.templateUrl
         ) {
@@ -40,12 +40,12 @@ export class RegionEditorController extends RegionEditorControllerBase {
         }
 
         if (z !== this.parentLevel && !first) {
-            throw new AddTileError(AddTileErrors.LEVEL)
+            throw new AddTileError(AddTileErrors.LEVEL);
         }
 
         if (!this.urlsToDownload.has(url) || first) {
             this.urlsToDownload.add(url);
-    
+
             const feature = getTileFeature(
                 tileGrid,
                 coord,
@@ -53,7 +53,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
                 this.igoMap.projection
             );
             const featureText = JSON.stringify(feature);
-    
+
             this.editedTilesFeature.push(feature);
             this.tilesToDownload.push({ url, coord, featureText});
             this.parentTileUrls.push(url);
@@ -65,7 +65,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
     public loadGeoJSON(geometry: GeoJSONGeometry) {
         const geoJSONFeatures = [
             geoJSONToFeature(geometry, this.regionStore, this.igoMap.projection)
-        ]
+        ];
         this.editedRegion.features = geoJSONFeatures;
     }
 
@@ -73,7 +73,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
         if (!region) {
           return;
         }
-    
+
         if (this.isDownloading) {
             throw new AddTileError(AddTileErrors.ALREADY_DOWNLOADING);
         }
@@ -95,7 +95,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
           this.urlsToDownload.add(url);
         });
         this.regionName = region.name;
-    
+
         this.parentLevel = region.generationParams.parentLevel;
         this.genParams = region.generationParams;
         this.editedTilesFeature = region.parentFeatureText.map((featureText) => {

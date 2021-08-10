@@ -99,7 +99,7 @@ export class DownloadEstimator {
         tilesToDownload: TileToDownload[],
         geometries: Geometry[],
         tileGrid
-    ):  DownloadSizeEstimation {
+    ): DownloadSizeEstimation {
         const genParams = regionToUpdate.generationParams;
         const newTilesEstimation = this.estimateRegionDownloadSize(
             tilesToDownload,
@@ -120,7 +120,7 @@ export class DownloadEstimator {
         tilesToDownload: TileToDownload[],
         geometries: Geometry[],
         tileGrid
-    ):  DownloadSizeEstimationInBytes {
+    ): DownloadSizeEstimationInBytes {
         const estimation = this.estimateRegionUpdateSize(
             regionToUpdate,
             tilesToDownload,
@@ -130,7 +130,8 @@ export class DownloadEstimator {
         return this.downloadSizeEstimationInBytes(estimation);
     }
 
-    public downloadSizeEstimationInBytes(estimation:  DownloadSizeEstimation): DownloadSizeEstimationInBytes {
+    public downloadSizeEstimationInBytes(estimation: DownloadSizeEstimation)
+    : DownloadSizeEstimationInBytes {
         estimation.downloadSize *= this.averageBytesPerTile;
         estimation.newAllocatedSize *= this.averageBytesPerTile;
         return  estimation;

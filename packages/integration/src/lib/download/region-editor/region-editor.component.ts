@@ -28,7 +28,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
-  @ViewChild('regionDownloadEstimation') 
+  @ViewChild('regionDownloadEstimation')
     regionDownloadEstimation: RegionDownloadEstimationComponent;
 
   private controller: RegionEditorController;
@@ -141,7 +141,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.controller.addTileToDownload(coord, templateUrl, tileGrid);
       this.showEditedRegionFeatures();
       this.genParams = this.genParamComponent.tileGenerationParams;
-    } catch(e) {
+    } catch (e) {
       if (!(e instanceof AddTileError)) {
         return;
       }
@@ -167,7 +167,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       case AddTileErrors.ALREADY_SELECTED:
         this.messageService.error('The tile is already selected');
         break;
-      
+
       case AddTileErrors.ALREADY_DOWNLOADING:
         this.messageService.error('There is already a region downloading');
         break;
@@ -222,7 +222,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.deactivateDrawingTool();
     try {
       this.controller.updateRegion(region);
-    } catch(e) {
+    } catch (e) {
       if (!(e instanceof AddTileError)) {
         return;
       }
