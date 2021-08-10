@@ -12,24 +12,25 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
 export class ParentTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit  {
   @ViewChild('depthSlider') slider: MatSlider;
 
-  _sliderValue: number = 0;
+  sliderValue: number = 0;
 
   protected updateLevels() {
     this._startLevel = this._parentLevel;
-    this._endLevel = this._parentLevel + this._sliderValue;
+    this._endLevel = this._parentLevel + this.sliderValue;
   }
 
   protected set endLevel(endLevel: number) {
     this._endLevel = endLevel;
-    this._sliderValue = endLevel - this.startLevel;
-    this.slider.value = this._sliderValue;
+    if (endLevel === undefined) {
+      this.sliderValue = 0;
+      return;
+    }
+    this.sliderValue = endLevel - this.startLevel;
   }
 
   protected get endLevel(): number {
     return this._endLevel;
-    // return this.slider.value + this.parentLevel;
   }
-
 
   protected get startLevel(): number {
     return this.parentLevel;
@@ -61,10 +62,10 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
   }
 
   ngAfterViewInit() {
+    this.endLevel = this.parentLevel;
   }
 
   onSliderChange() {
-    this._sliderValue = this.slider.value;
     this._endLevel = this.parentLevel + this.slider.value;
     this.emitValue();
   }

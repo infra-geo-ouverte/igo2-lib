@@ -11,6 +11,7 @@ import { DownloadState } from '../download.state';
 import { RegionDrawComponent } from '../region-draw/region-draw.component';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
 import { TransferedTile } from '../TransferedTile';
+import { UpdateEditionStrategy } from './editing-strategy';
 import { EditionStrategy } from './editing-strategy/edition-strategy';
 import { RegionDownloadEstimationComponent } from './region-download-estimation/region-download-estimation.component';
 import { RegionEditorController } from './region-editor-controller';
@@ -116,7 +117,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.injectGenParamsIntoGenComponent();
+    if (this.editionStrategy instanceof UpdateEditionStrategy) {
+      this.injectGenParamsIntoGenComponent();
+    }
+    this.genParams = this.genParamComponent.tileGenerationParams;
   }
 
   ngOnDestroy() {
@@ -149,6 +153,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       this.controller.addTileToDownload(coord, templateUrl, tileGrid);
       this.showEditedRegionFeatures();
+      this.genParams = this.genParamComponent.tileGenerationParams;
     } catch(e) {
       if (!(e instanceof AddTileError)) {
         return;
@@ -157,14 +162,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // TODO need to find a better fix
-    if (this.genParamComponent) {
-      this.injectGenParamsIntoGenComponent();
-    }
+    // if (this.genParamComponent) {
+    //   this.injectGenParamsIntoGenComponent();
+    // }
   }
 
   private injectGenParamsIntoGenComponent() {
     this.genParamComponent.tileGenerationParams = this.genParams;
-    this.genParams = this.genParamComponent.tileGenerationParams;
+    // this.genParams = this.genParamComponent.tileGenerationParams;
+    console.log('genParams', this.genParams);
+    // this.genParams = this.genParamComponent.tileGenerationParams;
   }
 
   // TODO maybe better name

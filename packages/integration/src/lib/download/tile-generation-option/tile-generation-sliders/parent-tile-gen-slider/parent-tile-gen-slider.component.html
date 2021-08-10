@@ -1,6 +1,7 @@
 <div><mat-label>Depth </mat-label><mat-label>{{depth}}</mat-label></div>
 <mat-slider 
   #depthSlider
+  [(ngModel)]='sliderValue'
   (input)="onSliderChange()"
   [disabled]="disabled"
   min="0" 
