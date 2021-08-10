@@ -167,16 +167,21 @@ export class DownloadEstimator {
     ): number {
         const startingPosition = geometry.coordinates[0][0];
         const startingCoord: [number, number] = [startingPosition[0], startingPosition[1]];
-        const areaPerTile = getTileArea(
-            startingCoord,
-            genParams.parentLevel,
-            tileGrid);
-
-        const maxTiles = Math.ceil(area(geometry) / areaPerTile + 3);
-
-        const depth = genParams.endLevel - genParams.startLevel;
-        const nTilesPerDownload = getNumberOfTreeNodes(depth);
-        return maxTiles * nTilesPerDownload;
+        const startLevel = genParams.startLevel;
+        const endLevel = genParams.endLevel;
+        let nTiles = 0;
+        const geometryArea = area(geometry);
+        for (let level = startLevel; level <= endLevel; level++) {
+            const areaPerTile = getTileArea(
+                startingCoord,
+                level,
+                tileGrid
+            );
+            const maxTilesAtLevel = Math.ceil( geometryArea / areaPerTile) + 3;
+            console.log('level:', level, ' tilearea:', areaPerTile, 'maxtiles@lvl:', maxTilesAtLevel);
+            nTiles += maxTilesAtLevel;
+        }
+        return nTiles;
     }
 
     estimateTilesOfGeometryAtLevel(
