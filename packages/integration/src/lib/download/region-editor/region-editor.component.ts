@@ -211,7 +211,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public onCancelClick() {
     if (this.isDownloading) {
-      this.editionStrategy.cancelDownload(this.downloadService);
+      this.controller.cancelDownload(this.downloadService);
     } else {
       this.clear();
       this.genParamComponent.tileGenerationParams = this.genParams;

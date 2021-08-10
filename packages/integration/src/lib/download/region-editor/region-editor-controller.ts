@@ -122,6 +122,10 @@ export class RegionEditorController extends RegionEditorControllerBase {
         this.editionStrategy.download(this.editedRegion, downloadService);
     }
 
+    public cancelDownload(downloadService: DownloadRegionService) {
+        this.editionStrategy.cancelDownload(downloadService);
+    }
+
     public clear() {
         this.drawnRegionGeometryForm.reset();
         this.regionStore.clear();
