@@ -47,14 +47,11 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   }
 
   get genMethod() {
-    if (!this.strategySelect) {
-      return TileGenerationStrategies.PARENT;
-    }
-    return this.strategySelect.value;
+    return this.strategy;
   }
 
   set genMethod(value: TileGenerationStrategies) {
-    this.strategySelect.value = value;
+    this.strategy = value;
   }
 
   ngOnInit() {
