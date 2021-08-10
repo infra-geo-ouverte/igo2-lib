@@ -132,9 +132,10 @@ export class DownloadEstimator {
 
     public downloadSizeEstimationInBytes(estimation: DownloadSizeEstimation)
     : DownloadSizeEstimationInBytes {
-        estimation.downloadSize *= this.averageBytesPerTile;
-        estimation.newAllocatedSize *= this.averageBytesPerTile;
-        return  estimation;
+        return {
+            downloadSize: estimation.downloadSize * this.averageBytesPerTile,
+            newAllocatedSize: estimation.newAllocatedSize * this.averageBytesPerTile
+        };
     }
 
     private getNumberOfTilesIntersectPoint(depth: number): number {
