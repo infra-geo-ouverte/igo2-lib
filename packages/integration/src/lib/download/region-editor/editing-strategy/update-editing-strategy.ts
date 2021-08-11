@@ -1,6 +1,4 @@
-import { DownloadRegionService, RegionDBData, RegionUpdateParams, TileGenerationParams, TileToDownload } from '@igo2/core';
-import { Geometry } from '@turf/helpers';
-import { RegionDownloadEstimationComponent } from '../region-download-estimation/region-download-estimation.component';
+import { DownloadRegionService, RegionDBData, RegionUpdateParams } from '@igo2/core';
 import { EditedRegion } from '../region-editor.state';
 import { EditionStrategy } from './edition-strategy';
 
@@ -28,22 +26,6 @@ export class UpdateEditionStrategy extends EditionStrategy {
 
     cancelDownload(regionDownloader: DownloadRegionService) {
         regionDownloader.cancelRegionUpdate();
-    }
-
-    estimateRegionDownloadSize(
-        downloadEstimatorComponent: RegionDownloadEstimationComponent,
-        tileToDownload: TileToDownload[],
-        geometries: Geometry[],
-        genParams: TileGenerationParams,
-        tileGrid: any
-    ): number {
-        const updateSize = this.downloadEstimator.estimateRegionUpdateSize(
-            this.regionToUpdate,
-            tileToDownload,
-            geometries,
-            tileGrid
-        );
-        return updateSize.downloadSize;
     }
 
     get enableGenEdition() {
