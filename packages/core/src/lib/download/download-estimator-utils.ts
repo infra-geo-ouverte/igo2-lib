@@ -1,17 +1,31 @@
-import area from '@turf/area';
 import { LineString, Position } from '@turf/helpers';
+import * as olExtent from 'ol/extent';
+import { Polygon } from 'ol/geom';
+import * as olProj from 'ol/proj';
 import { getTileGeometry } from './tile-downloader';
 import { Tile } from './Tile.interface';
 
-export function getTileArea(coord: [number, number], level: number, tileGrid): number {
+export function getTileOlArea(coord: [number, number], level: number, tileGrid): number {
     const tile: Tile = {
         X: coord[0],
         Y: coord[1],
         Z: level
     };
-    const tileGeometry = getTileGeometry(tile, tileGrid);
-    const tileArea = area(tileGeometry);
-    return area(tileGeometry);
+    const tileExtent = tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]);
+    const area = olExtent.getArea(tileExtent);
+    return area;
+}
+
+export function getPolygonOlArea(polygon) {
+    console.log('asijodfj', polygon.coordinates)
+    const coords = [
+        polygon.coordinates[0].map(
+            coord => olProj.transform(coord, 'EPSG:4326', 'EPSG:3857')
+        )
+    ]
+    console.log(coords);
+    const OlPolygon = new Polygon(coords);
+    return OlPolygon.getArea();
 }
 
 export function gcd(a: number, b: number): number {

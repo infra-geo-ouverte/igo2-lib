@@ -1,8 +1,7 @@
-import area from '@turf/area';
 import { Polygon } from '@turf/area/node_modules/@turf/helpers';
 import { Geometry, LineString } from '@turf/helpers';
 import { RegionDBData } from '../storage';
-import { getNumberOfTilesLineStringIntersect, getTileArea } from './download-estimator-utils';
+import { getNumberOfTilesLineStringIntersect, getPolygonOlArea, getTileOlArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
 import { getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
 
@@ -170,14 +169,16 @@ export class DownloadEstimator {
         const startLevel = genParams.startLevel;
         const endLevel = genParams.endLevel;
         let nTiles = 0;
-        const geometryArea = area(geometry);
+        const geometryArea = getPolygonOlArea(geometry);
+        console.log('geometry area', geometryArea);
         for (let level = startLevel; level <= endLevel; level++) {
-            const areaPerTile = getTileArea(
+            const areaPerTile = getTileOlArea(
                 startingCoord,
                 level,
                 tileGrid
             );
             const maxTilesAtLevel = Math.ceil( geometryArea / areaPerTile) + 3;
+            console.log('ratio', geometryArea / (areaPerTile));
             console.log('level:', level, ' tilearea:', areaPerTile, 'maxtiles@lvl:', maxTilesAtLevel);
             nTiles += maxTilesAtLevel;
         }
