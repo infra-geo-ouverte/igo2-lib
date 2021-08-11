@@ -17,13 +17,11 @@ export function getTileOlArea(coord: [number, number], level: number, tileGrid):
 }
 
 export function getPolygonOlArea(polygon) {
-    console.log('asijodfj', polygon.coordinates)
     const coords = [
         polygon.coordinates[0].map(
             coord => olProj.transform(coord, 'EPSG:4326', 'EPSG:3857')
         )
     ]
-    console.log(coords);
     const OlPolygon = new Polygon(coords);
     return OlPolygon.getArea();
 }
