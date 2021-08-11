@@ -1,9 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, Input } from '@angular/core';
-import { IgoMap,  InputProjections, ProjectionsLimitationsOptions,  MapViewController } from '@igo2/geo';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { IgoMap,  InputProjections, ProjectionsLimitationsOptions } from '@igo2/geo';
 import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService, StorageService, StorageScope, ConfigService } from '@igo2/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
@@ -19,23 +19,26 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
   public form: FormGroup;
   public coordinates: string[];
-  public center: boolean = false;
+  private currentCenterDefaultProj: [number,number];
+  public center: boolean = this.storageService.get('centerToggle') as boolean;
   private mapState$$: Subscription;
-  private zoneMtm$$: Subscription;
-  private zoneUtm$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
   private zoneMtm$: BehaviorSubject<number> = new BehaviorSubject(0);
   private zoneUtm$: BehaviorSubject<number> = new BehaviorSubject(0);
+  private defaultProj: InputProjections = { 
+    translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.wgs84', {code: 'EPSG:4326'}), 
+    translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: ''};
+  private currentZones = {utm: undefined, mtm: undefined};
   public units: boolean = true;
   get map(): IgoMap {
     return this.mapState.map;
   }
 
-  get inputProj() {
+  get inputProj(): InputProjections {
     return this.form.get('inputProj').value;
   }
-  set inputProj(value) {
+  set inputProj(value: InputProjections) {
     this.form.patchValue({ inputProj: value });
   }
   get projectionsLimitations(): ProjectionsLimitationsOptions {
@@ -45,7 +48,6 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   @Input()
   set projectionsLimitations(value: ProjectionsLimitationsOptions) {
     this._projectionsLimitations = value;
-    this.computeProjections();
   }
 
   constructor(
@@ -61,13 +63,36 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    this.computeProjections(); // initialiser les projections
-    this.getCoordinates();
-    this.mapState$$ = this.map.viewController.state$.pipe(debounceTime(1500)).subscribe(() => {
-      this.computeProjections();  // afficher après le déplacement. même si on choisit lon-lat, on a besoin
-                                  // de mettre à jour mtm et utm.
-      this.zoneControl(); // vérifie si la zone a été changée, mets à jour form.controls['inputProj']
-      this.getCoordinates(); // affiche les coordonnées
+    this.inputProj = this.defaultProj;
+    //todo pel ne semble pas fonctionner 
+    /*this.form.get('inputProj').setValue(this.defaultProj);
+    this.form.patchValue({ inputProj: this.defaultProj });
+    this.cdRef.detectChanges();*/
+    this.coordinates = this.getCoordinates();
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+    this.currentZones.mtm = this.zoneMtm(this.currentCenterDefaultProj[0]);
+    this.currentZones.utm = this.zoneUtm(this.currentCenterDefaultProj[0]);
+
+    this.mapState$$ =
+    combineLatest([this.form.valueChanges, this.map.viewController.state$.pipe(debounceTime(50))])
+    .subscribe(() => {
+      this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+      const currentMtmZone = this.zoneMtm(this.currentCenterDefaultProj[0]);
+      const currentUtmZone = this.zoneUtm(this.currentCenterDefaultProj[0]);
+
+      let zoneChange = false;
+      if (currentMtmZone !== this.currentZones.mtm) {
+        this.currentZones.mtm = currentMtmZone;
+        zoneChange = true;
+      }
+      if (currentUtmZone !== this.currentZones.utm) {
+        this.currentZones.utm = currentUtmZone;
+        zoneChange = true;
+      }
+      if (zoneChange) {
+        this.updateProjectionsZoneChange();
+      }
+      this.coordinates =  this.getCoordinates();
       this.cdRef.detectChanges();
       });
     this.checkTogglePosition();
@@ -75,40 +100,24 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.mapState$$.unsubscribe();
-    if (this.zoneMtm$$) {
-      this.zoneMtm$$.unsubscribe();
-    }
-    if (this.zoneUtm$$) {
-      this.zoneUtm$$.unsubscribe();
-    }
   }
 
   /**
    * Longitude and latitude of the center of the map
    */
-  getCoordinates(): void {
-    let code = this.inputProj.code;
-    if (code && !(code.includes('EPSG:4326') || code.includes('EPSG:4269'))) {
-      if (code.includes('EPSG:321')){
-        this.zoneMtm$.subscribe(zone =>  {
-          code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
-          // this.cdRef.detectChanges();
-      });
-      }
-      if (code.includes('EPSG:326')){
-        this.zoneUtm$.subscribe(zone => {
-          code = `EPSG:326${zone}`;
-          // this.cdRef.detectChanges();
-        });
-      }
-      this.coordinates = this.map.viewController.getCenter(code).map(coord => coord.toFixed(2));
+  getCoordinates(): string[] {
+    this.currentZones.mtm = this.zoneMtm(this.currentCenterDefaultProj[0]);
+    this.currentZones.utm = this.zoneUtm(this.currentCenterDefaultProj[0]);
+    let coord;
+    const code = this.inputProj.code;
+    let decimal = 2;
+    if (code.includes('EPSG:4326') || code.includes('EPSG:4269')) {
+      decimal = 5;
     }
-    else if (code && code.includes('EPSG:4269')) {
-        this.coordinates = this.map.viewController.getCenter(code).map(coord => coord.toFixed(5));
-    }
-    else {
-        this.coordinates = this.map.viewController.getCenter('EPSG:4326').map(coord => coord.toFixed(5));
-    }
+    this.units = (code === 'EPSG:4326' || code === 'EPSG:4269');
+    coord = this.map.viewController.getCenter(code).map(c => c.toFixed(decimal));
+
+    return coord;
   }
 
   /**
@@ -151,6 +160,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     });
   }
 
+// todo pel déplacer dans un fichier.util dans geo.. permettant de gérer les zones utm mtm et réutiliser dans import et ici.
   private computeProjectionsConstraints() {
     const utmZone = this.projectionsLimitations.utmZone;
     const mtmZone = this.projectionsLimitations.mtmZone;
@@ -172,36 +182,85 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     };
   }
 
+  private updateProjectionsZoneChange() {
+    const modifiedProj = this.projections$.value;
+
+    const translate = this.languageService.translate;
+    modifiedProj.map(p => {
+      if (p.translateKey === 'mtm') {
+          let zone = this.zoneMtm(this.currentCenterDefaultProj[0]);
+          zone = zone < this.projectionsConstraints?.mtmZone?.minZone ? this.projectionsConstraints.mtmZone.minZone : zone;
+          zone = zone > this.projectionsConstraints?.mtmZone?.maxZone ? this.projectionsConstraints.mtmZone.maxZone : zone;
+          const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
+          p.alias = `MTM ${zone}`;
+          p.code = code;
+          p.zone = `${zone}`;
+          p.translatedValue = translate.instant('igo.geo.importExportForm.projections.mtm', p);
+      }
+      if (p.translateKey === 'utm') {
+          let zone = this.zoneUtm(this.currentCenterDefaultProj[0]);
+          zone = zone < this.projectionsConstraints?.utmZone?.minZone ? this.projectionsConstraints.utmZone.minZone : zone;
+          zone = zone > this.projectionsConstraints?.utmZone?.maxZone ? this.projectionsConstraints.utmZone.maxZone : zone;
+          const code = `EPSG:326${zone}`;
+          p.alias = `UTM ${zone}`;
+          p.code = code;
+          p.zone = `${zone}`;
+          p.translatedValue = translate.instant('igo.geo.importExportForm.projections.utm', p);
+      }
+
+  });
+    this.projections$.next(modifiedProj);
+
+  }
+
   private computeProjections() {
     if (!this.projectionsConstraints) {
       this.computeProjectionsConstraints();
     }
     const projections: InputProjections[] = [];
 
+    if(!this.currentCenterDefaultProj) {
+      this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+    }
+    
+    const translate = this.languageService.translate;
     if (this.projectionsConstraints.wgs84) {
-      projections.push({ translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: '' });
+      projections.push({ 
+        translatedValue: translate.instant('igo.geo.importExportForm.projections.wgs84',{code: 'EPSG:4326'}),
+        translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: '' });
     }
 
     if (this.projectionsConstraints.nad83) {
-      projections.push({ translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4269', zone: '' });
+      projections.push({ 
+        translatedValue: translate.instant('igo.geo.importExportForm.projections.nad83',{code: 'EPSG:4269'}),
+        translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4269', zone: '' });
     }
 
     if (this.projectionsConstraints.webMercator) {
-      projections.push({ translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: '' });
+      projections.push({ 
+        translatedValue: translate.instant('igo.geo.importExportForm.projections.webMercator',{code: 'EPSG:3857'}),
+        translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: '' });
     }
 
     if (this.projectionsConstraints.mtm) {
       // Quebec
-      const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-      const code = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-      projections.push({ translateKey: 'mtm', alias: `MTM ${mtmZone}`, code, zone: `${mtmZone}` });
+      let zone = this.zoneMtm(this.currentCenterDefaultProj[0]);
+      zone = zone < this.projectionsLimitations?.mtmZone?.minZone ? this.projectionsLimitations.mtmZone.minZone : zone;
+      zone = zone > this.projectionsLimitations?.mtmZone?.maxZone ? this.projectionsLimitations.mtmZone.maxZone : zone; 
+      const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
+      projections.push({ 
+        translatedValue: translate.instant('igo.geo.importExportForm.projections.mtm',{code, zone}),
+        translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}` });
     }
 
     if (this.projectionsConstraints.utm) {
-      // Quebec
-      const utmZone = this.zoneUtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-      const code =  `EPSG:326${utmZone}`;
-      projections.push({ translateKey: 'utm', alias: `UTM ${utmZone}`, code, zone: `${utmZone}` });
+      let zone = this.zoneUtm(this.currentCenterDefaultProj[0]);
+      zone = zone < this.projectionsLimitations?.utmZone?.minZone ? this.projectionsLimitations.utmZone.minZone : zone;
+      zone = zone > this.projectionsLimitations?.utmZone?.maxZone ? this.projectionsLimitations.utmZone.maxZone : zone;
+      const code =  `EPSG:326${zone}`;
+      projections.push({ 
+        translatedValue: translate.instant('igo.geo.importExportForm.projections.utm',{code, zone: zone}),
+        translateKey: 'utm', alias: `UTM ${zone}`, code, zone: `${zone}` });
     }
 
     let configProjection = [];
@@ -211,22 +270,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.projections$.next(projections.concat(configProjection));
   }
 
-
-
-/* pourquoi les 2 projections qui vient de config.getConfig restent affichés pendant le déplacement de la carte?
-je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas à jour dans la forme)
-*/
-
-
-  public onlySelectedClick(event, code: string) {
-    event.stopPropagation();
-    this.getCoordinates();
-    this.changeUnits(code);
-  }
-
-  changeUnits(code: string){
-    this.units = (code === 'EPSG:4326' || code === 'EPSG:4269'); }
-
+// todo pel déplacer dans un fichier.util dans geo.. permettant de gérer les zones utm mtm
   zoneMtm(lon: number): number {
     let lonMin = -54;
     const deltaLon = 3;
@@ -238,7 +282,7 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
     if (zone !== this.zoneMtm$.value) {this.zoneMtm$.next(zone); }
     return zone;
   }
-
+// todo pel déplacer dans un fichier.util dans geo.. permettant de gérer les zones utm mtm
   zoneUtm(lon: number): number {
     let lonMin = -54;
     const deltaLon = 6;
@@ -251,29 +295,6 @@ je mets à jour this.inputProj, mais pourtant [(value)] dans html ne se mets pas
       this.zoneUtm$.next(zone);
     }
     return zone;
-  }
-
-  zoneControl() {
-    if (this.inputProj && (this.inputProj.code.includes('EPSG:321') || this.inputProj.code.includes('EPSG:326'))) {
-      const mtmZone = this.zoneMtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-      this.zoneMtm$$ = this.zoneMtm$.pipe(debounceTime(250)).subscribe(zone => {
-        if (this.inputProj.translateKey === 'mtm'){
-            this.form.patchValue({inputProj:
-              {translateKey: 'mtm', alias: `MTM ${zone}`, code: `EPSG:3218${zone}`, zone: `${zone}`}});
-        }
-      });
-      const utmZone = this.zoneUtm(this.map.viewController.getCenter('EPSG:4326')[0]);
-      this.zoneUtm$$ = this.zoneUtm$.pipe(debounceTime(250)).subscribe(zone => {
-        if (this.inputProj.translateKey === 'utm'){
-            this.form.patchValue({inputProj:
-              {translateKey: 'utm', alias: `UTM ${zone}`, code: `EPSG:326${zone}`, zone: `${zone}`}});
-        }
-      });
-    }
-  }
-
-  setInputProj(event) {
-    console.log(this.form.controls['inputProj'].value);
   }
 
 }

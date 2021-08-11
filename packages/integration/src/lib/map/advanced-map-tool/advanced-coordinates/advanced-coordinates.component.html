@@ -36,17 +36,17 @@
     <!-- <div class="igo-input-container"> -->
       <mat-form-field class="igo-input-container">
         <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
-        <mat-select
-          [(value)]="inputProj">
+        <mat-select formControlName="inputProj">
           <mat-option matTooltipShowDelay="500"
             *ngFor="let projection of (projections$ | async)"
             [value]="projection"
-            (click)="onlySelectedClick($event, projection.code)">
-            <p mat-line *ngIf="projection.translateKey">{{('igo.geo.importExportForm.projections.' + projection.translateKey) | translate: projection}}</p>
-            <p mat-line *ngIf="!projection.translateKey">{{projection.alias}}</p>
+            (click)="$event.stopPropagation()">
+            {{projection.translatedValue || projection.alias }}
+
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <p>{{form.get('inputProj').value | json}}</p>
     <!-- </div> -->
     <mat-slide-toggle class="center-toggle"
       [checked]="center"
@@ -54,8 +54,6 @@
       (change)="displayCenter($event.checked)">
       {{'igo.integration.advanced-map-tool.advanced-coordinates.center' | translate}}
     </mat-slide-toggle> 
-    <button
-    (click)="setInputProj($event)">console inputProj courant</button>
 </form>
 
 <!-- 
