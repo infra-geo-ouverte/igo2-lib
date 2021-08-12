@@ -64,5 +64,5 @@
     <button mat-button #download (click)="onDownloadClick()" [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)="onCancelClick()">Cancel</button>
   <div>
-  
+  <button (click)='printGenParams()'>print genParams</button>
 </div>

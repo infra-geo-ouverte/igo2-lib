@@ -26,7 +26,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
         const url = urlGen(coord, 0, 0);
         const z = coord[0];
         const first: boolean = this.parentTileUrls.length === 0;
-
+        const parentLevel = this.genParams.parentLevel;
         if (first) {
             this.parentLevel = z;
             this.tileGrid = tileGrid;
@@ -40,6 +40,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
         }
 
         if (z !== this.parentLevel && !first) {
+            console.log('parentlevel:', parentLevel, 'z:', z, 'genParams:', this.genParams);
             throw new AddTileError(AddTileErrors.LEVEL);
         }
 
@@ -57,6 +58,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
             this.editedTilesFeature.push(feature);
             this.tilesToDownload.push({ url, coord, featureText});
             this.parentTileUrls.push(url);
+            console.log('genParams after addTile', this.genParams);
         } else {
             throw new AddTileError(AddTileErrors.ALREADY_SELECTED);
         }

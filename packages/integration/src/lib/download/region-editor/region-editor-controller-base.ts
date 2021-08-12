@@ -120,8 +120,8 @@ export class RegionEditorControllerBase {
       return this.state.tilesToDownload;
   }
 
-  set genParams(depth: TileGenerationParams) {
-      this.state.genParams = depth;
+  set genParams(tileGenerationParams: TileGenerationParams) {
+      this.state.genParams = tileGenerationParams;
   }
 
   get genParams(): TileGenerationParams {
@@ -141,9 +141,6 @@ export class RegionEditorControllerBase {
   }
 
   get parentLevel(): number {
-    if (this.isDrawingMode) {
-      return this.map.getZoom();
-    }
     return this.state.parentLevel;
   }
 

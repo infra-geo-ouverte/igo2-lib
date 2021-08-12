@@ -48,6 +48,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   geometries: Geometry[] = [];
 
+  printGenParams() {
+    console.log(this.genParams);
+  }
+
   constructor(
     private tileDownloader: TileDownloaderService,
     private downloadService: DownloadRegionService,
@@ -143,9 +147,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       this.controller.addTileToDownload(coord, templateUrl, tileGrid);
       this.showEditedRegionFeatures();
-      this.genParams = this.genParamComponent.tileGenerationParams;
     } catch (e) {
       if (!(e instanceof AddTileError)) {
+        console.error(e);
         return;
       }
       this.sendAddTileErrorMessage(e);
