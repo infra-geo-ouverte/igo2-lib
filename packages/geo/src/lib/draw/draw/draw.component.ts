@@ -218,6 +218,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.map.removeLayer(this.layer);
 
         this.layer = new VectorLayer({
+          id: 'igo-draw-layer',
           title: this.languageService.translate.instant('igo.geo.draw.drawing'),
           zIndex: 200,
           source: new FeatureDataSource(),
@@ -232,7 +233,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           },
         });
         tryBindStoreLayer(store, this.layer);
-
+        store.layer.visible = true;
         tryAddLoadingStrategy(store, new FeatureStoreLoadingStrategy({
             motion: FeatureMotion.None
           }));

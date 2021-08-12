@@ -59,7 +59,6 @@ import {
   formatMeasure
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
-import { feature } from '@turf/helpers';
 
 /**
  * Tool to measure lengths and areas
@@ -556,7 +555,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       workspace: { enabled: false }
     });
     tryBindStoreLayer(store, layer);
-
+    store.layer.visible = true;
     layer.visible$.subscribe(visible => {
       if (visible) {
         Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>

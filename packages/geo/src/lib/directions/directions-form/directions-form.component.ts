@@ -247,6 +247,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     // STOP STORE
     const stopsStore = this.stopsStore;
     const stopsLayer = new VectorLayer({
+      id: 'igo-direction-stops-layer',
       title: this.languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
       zIndex: 911,
       source: new FeatureDataSource(),
@@ -259,11 +260,13 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       style: stopMarker
     });
     tryBindStoreLayer(stopsStore, stopsLayer);
+    stopsStore.layer.visible = true;
     tryAddLoadingStrategy(stopsStore, loadingStrategy);
 
     // ROUTE AND VERTEX STORE
     const routeStore = this.routeStore;
     const routeLayer = new VectorLayer({
+      id: 'igo-direction-route-layer',
       title: this.languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
       zIndex: 910,
       source: new FeatureDataSource(),
@@ -276,6 +279,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       style: stopMarker
     });
     tryBindStoreLayer(routeStore, routeLayer);
+    routeStore.layer.visible = true;
     tryAddLoadingStrategy(routeStore, loadingStrategy);
   }
 
