@@ -94,7 +94,8 @@ export function geoJSONToFeature(
   return regionFeature;
 }
 
-export function transformGeometry(geometry: GeoJSONGeometry, proj: string): GeoJSONGeometry {
+export function transformGeometry(geoJSONGeometry: GeoJSONGeometry, proj: string): GeoJSONGeometry {
+  const geometry = {...geoJSONGeometry};
   const coords = geometry.coordinates;
   switch (geometry.type) {
     case 'Point':
