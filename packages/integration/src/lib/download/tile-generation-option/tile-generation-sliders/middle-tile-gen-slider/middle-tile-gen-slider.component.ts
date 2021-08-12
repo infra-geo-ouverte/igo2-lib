@@ -8,8 +8,6 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
   styleUrls: ['./middle-tile-gen-slider.component.scss']
 })
 export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit {
-  // minValue: number = this.parentLevel;
-  // maxValue: number = this.parentLevel + 2;
   minValue: number = 6;
   maxValue: number = 8;
 

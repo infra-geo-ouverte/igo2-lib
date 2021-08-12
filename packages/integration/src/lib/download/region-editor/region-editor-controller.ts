@@ -40,7 +40,6 @@ export class RegionEditorController extends RegionEditorControllerBase {
         }
 
         if (z !== this.parentLevel && !first) {
-            console.log('parentlevel:', parentLevel, 'z:', z, 'genParams:', this.genParams);
             throw new AddTileError(AddTileErrors.LEVEL);
         }
 
@@ -58,7 +57,6 @@ export class RegionEditorController extends RegionEditorControllerBase {
             this.editedTilesFeature.push(feature);
             this.tilesToDownload.push({ url, coord, featureText});
             this.parentTileUrls.push(url);
-            console.log('genParams after addTile', this.genParams);
         } else {
             throw new AddTileError(AddTileErrors.ALREADY_SELECTED);
         }

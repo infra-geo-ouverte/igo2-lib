@@ -13,28 +13,53 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from './tile-ge
 export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   @Output() valueChange: EventEmitter<TileGenerationParams> = new EventEmitter();
 
-  @Input() disabled: boolean = false;
-  @Input() parentLevel: number;
+  private _tileGenerationParams: TileGenerationParams = {
+    startLevel: undefined,
+    parentLevel: undefined,
+    endLevel: undefined,
+    genMethod: TileGenerationStrategies.PARENT
+  };
 
-  @ViewChild('genSlider') generationSlider: TileGenerationSliderComponent; // for now
+  @Input() disabled: boolean = false;
+  @Input()
+  get parentLevel(): number {
+    return this._tileGenerationParams.parentLevel;
+  }
+
+  set parentLevel(value: number) {
+    this._tileGenerationParams.parentLevel = value;
+    this.cdRef.detectChanges();
+    if (this.generationSlider) {
+      this.updateSliderParams(this.generationSlider.value);
+    }
+    this.emitChanges();
+  }
+
+  @ViewChild('genSlider') generationSlider: TileGenerationSliderComponent;
   @ViewChild('strategySelect') strategySelect: MatSelect;
 
   strategies = Object.values(TileGenerationStrategies);
-  strategy: TileGenerationStrategies = TileGenerationStrategies.PARENT;
+
+  set strategy(value: TileGenerationStrategies) {
+    this._tileGenerationParams.genMethod = value;
+  }
+
+  get strategy(): TileGenerationStrategies {
+    return this._tileGenerationParams.genMethod;
+  }
 
   constructor( private cdRef: ChangeDetectorRef ) { }
 
   private get sliderGenerationParams() {
-    if (!this.generationSlider) {
-      return {
-        startLevel: this.parentLevel,
-        endLevel: this.parentLevel
-      };
-    }
-    return this.generationSlider.value;
+    return {
+      startLevel: this._tileGenerationParams.startLevel,
+      endLevel: this._tileGenerationParams.endLevel
+    };
   }
 
   private set sliderGenerationParams(params: SliderGenerationParams) {
+    this._tileGenerationParams.startLevel = params.startLevel;
+    this._tileGenerationParams.endLevel = params.endLevel;
     this.generationSlider.value = params;
   }
 
@@ -60,14 +85,26 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
   }
 
+  private updateSliderParams(params: SliderGenerationParams) {
+    this._tileGenerationParams.startLevel = params.startLevel;
+    this._tileGenerationParams.endLevel = params.endLevel;
+  }
+
   onSliderChange(sliderGenerationParams: SliderGenerationParams) {
+    this.updateSliderParams(sliderGenerationParams);
     this.emitChanges();
   }
 
+  private updateStrategy(strategy: TileGenerationStrategies) {
+    this._tileGenerationParams.genMethod = strategy;
+  }
+
   onSelectionChange(strategy: TileGenerationStrategies) {
+    this.updateStrategy(strategy);
     const newStrategy = this.strategySelect.value;
     this.strategy = newStrategy;
     this.cdRef.detectChanges();
+    this.updateSliderParams(this.generationSlider.value);
     this.emitChanges();
   }
 
@@ -76,6 +113,7 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   }
 
   set tileGenerationParams(params: TileGenerationParams) {
+    this._tileGenerationParams = params;
     this.parentLevel = params.parentLevel;
     this.genMethod = params.genMethod;
     this.strategy = params.genMethod;
@@ -89,11 +127,6 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   }
 
   get tileGenerationParams(): TileGenerationParams {
-    return {
-      startLevel: this.startLevel,
-      parentLevel: this.parentLevel,
-      endLevel: this.endLevel,
-      genMethod: this.genMethod
-    };
+    return this._tileGenerationParams;
   }
 }

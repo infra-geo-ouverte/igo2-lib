@@ -23,7 +23,7 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
 
   protected set startLevel(startLevel: number) {
     this._startLevel = startLevel;
-    if (startLevel === undefined) {
+    if (startLevel === undefined || Number.isNaN(startLevel)) {
       this.sliderValue = 0;
       return;
     }

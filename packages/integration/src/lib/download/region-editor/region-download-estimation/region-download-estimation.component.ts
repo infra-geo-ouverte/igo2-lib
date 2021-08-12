@@ -60,14 +60,6 @@ export class RegionDownloadEstimationComponent implements OnInit {
     return this.estimator.downloadSizeEstimationInBytes(this._estimation);
   }
 
-  print() {
-    console.log(this.tilesToDownload);
-    console.log(this.geometries);
-    console.log(this.genParams);
-    console.log(this.tileGrid);
-    console.log(this.mode);
-  }
-
   removeNaNFromEstimation(estimation: DownloadSizeEstimation): DownloadSizeEstimation {
     if (Number.isNaN(estimation.downloadSize)) {
       estimation.downloadSize = 0;

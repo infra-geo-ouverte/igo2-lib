@@ -21,7 +21,7 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
 
   protected set endLevel(endLevel: number) {
     this._endLevel = endLevel;
-    if (endLevel === undefined) {
+    if (endLevel === undefined || Number.isNaN(endLevel)) {
       this.sliderValue = 0;
       return;
     }

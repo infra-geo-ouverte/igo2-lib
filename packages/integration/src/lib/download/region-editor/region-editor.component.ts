@@ -48,10 +48,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   geometries: Geometry[] = [];
 
-  printGenParams() {
-    console.log(this.genParams);
-  }
-
   constructor(
     private tileDownloader: TileDownloaderService,
     private downloadService: DownloadRegionService,
@@ -114,7 +110,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.controller.editionStrategy instanceof UpdateEditionStrategy) {
       this.injectGenParamsIntoGenComponent();
     }
-    this.genParams = this.genParamComponent.tileGenerationParams;
   }
 
   ngOnDestroy() {
@@ -122,8 +117,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
 
-  public onGenerationParamsChange() {
-    this.genParams = this.genParamComponent.tileGenerationParams;
+  public onGenerationParamsChange(params: TileGenerationParams) {
+    this.genParams = params;
   }
 
   public clearFeatures() {
