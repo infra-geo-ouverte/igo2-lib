@@ -21,7 +21,7 @@ export function getPolygonOlArea(polygon) {
         polygon.coordinates[0].map(
             coord => olProj.transform(coord, 'EPSG:4326', 'EPSG:3857')
         )
-    ]
+    ];
     const OlPolygon = new Polygon(coords);
     return OlPolygon.getArea();
 }

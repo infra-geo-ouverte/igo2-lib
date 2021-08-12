@@ -1,9 +1,8 @@
-import { Polygon } from '@turf/area/node_modules/@turf/helpers';
-import { Geometry, LineString } from '@turf/helpers';
+import { Geometry, LineString, Polygon } from '@turf/helpers';
 import { RegionDBData } from '../storage';
-import { getNumberOfTilesLineStringIntersect, getPolygonOlArea, getTileOlArea } from './download-estimator-utils';
+import { getNumberOfTilesLineStringIntersect, getPolygonOlArea, getTileLengthFast, getTileOlArea } from './download-estimator-utils';
 import { TileToDownload } from './download.interface';
-import { getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
+import { findDxDyOfPolygon, getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
 
 export interface DownloadSizeEstimation {
     newAllocatedSize: number; // usefull to know if there is enough space left on update
@@ -159,6 +158,7 @@ export class DownloadEstimator {
         return nTiles;
     }
 
+    // TODO better estimation (this one is under estimating)
     private getNumberOfTilesIntersectPolygon(
         geometry: Polygon,
         genParams: TileGenerationParams,
@@ -170,16 +170,23 @@ export class DownloadEstimator {
         const endLevel = genParams.endLevel;
         let nTiles = 0;
         const geometryArea = getPolygonOlArea(geometry);
-        console.log('geometry area', geometryArea);
         for (let level = startLevel; level <= endLevel; level++) {
             const areaPerTile = getTileOlArea(
                 startingCoord,
                 level,
                 tileGrid
             );
-            const maxTilesAtLevel = Math.ceil( geometryArea / areaPerTile) + 3;
-            console.log('ratio', geometryArea / (areaPerTile));
-            console.log('level:', level, ' tilearea:', areaPerTile, 'maxtiles@lvl:', maxTilesAtLevel);
+            const tile = {
+                X: startingCoord[0],
+                Y: startingCoord[1],
+                Z: level
+            };
+            const tileLength = getTileLengthFast(tile, tileGrid);
+            const dxdy = findDxDyOfPolygon(geometry);
+            const dx = Math.ceil(dxdy.dx / tileLength);
+            const dy = Math.ceil(dxdy.dy / tileLength);
+
+            const maxTilesAtLevel = Math.ceil( geometryArea / areaPerTile) + dx + dy + 1;
             nTiles += maxTilesAtLevel;
         }
         return nTiles;

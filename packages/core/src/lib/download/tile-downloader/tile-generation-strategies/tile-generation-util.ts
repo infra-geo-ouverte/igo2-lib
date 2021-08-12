@@ -116,3 +116,35 @@ export function tileInsidePolygon(polygon: Geometry, tile: Tile, tileGrid): bool
       return isLineIntersect(polygon as LineString, tileGeometry);
   }
 }
+
+export interface DxDyPolygon {
+  dx: number;
+  dy: number;
+}
+
+export function findDxDyOfPolygon(polygon: Polygon): DxDyPolygon {
+  const coords = polygon.coordinates;
+  const MAX_VALUE = Number.MAX_VALUE;
+  const MIN_VALUE = -Number.MAX_VALUE;
+  let maxX = MIN_VALUE;
+  let minX = MAX_VALUE;
+
+  let maxY = MIN_VALUE;
+  let minY = MAX_VALUE;
+  for (const point of coords[0]) {
+      const x: number = point[0];
+      const y: number = point[1];
+
+      maxX = Math.max(maxX, x);
+      minX = Math.min(minX, x);
+
+      maxY = Math.max(maxY, y);
+      minY = Math.min(minY, y);
+  }
+  const dx = maxX - minX;
+  const dy = maxY - minY;
+  return {
+      dx,
+      dy
+  };
+}
