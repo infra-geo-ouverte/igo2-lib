@@ -47,7 +47,9 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
         document.getElementById('mapCenter').style.visibility = 'hidden';
       });
     }
+    this.letZoom();
   }
+
 
   /**
    * Destroyer of a component
@@ -56,5 +58,15 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
     if (this.displayCenter$$) {
       this.displayCenter$$.unsubscribe();
     }
+  }
+
+  go(event) {
+    console.log(event);
+  }
+
+  private letZoom() {
+    document.getElementById('mapCenter').addEventListener('scroll', event => {
+      console.log('1111111111111');
+    }, true);
   }
 }

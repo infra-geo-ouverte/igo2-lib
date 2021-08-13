@@ -33,21 +33,21 @@
 
 
 <form class="igo-form" [formGroup]="form">
-    <!-- <div class="igo-input-container"> -->
-      <mat-form-field class="igo-input-container">
-        <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
-        <mat-select formControlName="inputProj">
-          <mat-option matTooltipShowDelay="500"
-            *ngFor="let projection of (projections$ | async)"
-            [value]="projection"
-            (click)="$event.stopPropagation()">
-            {{projection.translatedValue || projection.alias }}
+    <mat-form-field class="igo-input-container">
+      <mat-label>{{'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem' | translate}}</mat-label>
+      <!-- <mat-select formControlName="inputProj"> -->
+      <mat-select [(value)]="inputProj">
+        <mat-option matTooltipShowDelay="500"
+          *ngFor="let projection of (projections$ | async)"
+          [value]="projection"
+          (click)="$event.stopPropagation()">
+          {{projection.translatedValue || projection.alias }}
 
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <p>{{form.get('inputProj').value | json}}</p>
-    <!-- </div> -->
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p>{{form.get('inputProj').value | json}}</p>
+
     <mat-slide-toggle class="center-toggle"
       [checked]="center"
       [labelPosition]="'before'"
