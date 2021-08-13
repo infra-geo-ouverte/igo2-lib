@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Geometry } from '@turf/helpers';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Observer } from 'rxjs';
-import { map, retry } from 'rxjs/operators';
+import { first, map, retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
-import { TileDBService } from '../../storage';
+import { StorageQuotaService, TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
 import { newTileGenerationStrategy, ParentTileGeneration, strategyToTileGenerationStrategies, TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy } from './tile-generation-strategies';
 
@@ -67,6 +67,7 @@ export class TileDownloaderService {
     private http: HttpClient,
     private network: GeoNetworkService,
     private geoDB: TileDBService,
+    private storageQuota: StorageQuotaService
   ) { }
 
   private initURLGenerator(tileGrid, url) {
@@ -83,6 +84,19 @@ export class TileDownloaderService {
     } catch (e) {
       return undefined;
     }
+  }
+
+  private addTilesToDownload(tiles, regionID) {
+    const numberOfTiles = tiles.length;
+    const enoughSpace$ = this.storageQuota.enoughSpace(numberOfTiles);
+    enoughSpace$.pipe(first()).subscribe(
+      (enoughSpace) => {
+        if (enoughSpace) {
+          this.addTilesToDownloadQueue(tiles, regionID);
+        } else {
+          throw new Error('Not enough space for download');
+        }
+      });
   }
 
   public downloadFromCoord(
@@ -106,7 +120,7 @@ export class TileDownloaderService {
     const endLevel = generationParams.endLevel;
     const tiles = this.tileGenerationStrategy.generate(rootTile, startLevel, endLevel);
 
-    this.addTilesToDownloadQueue(tiles, regionID);
+    this.addTilesToDownload(tiles, regionID);
   }
 
   downloadFromFeatures(
@@ -130,7 +144,7 @@ export class TileDownloaderService {
     const tiles: Tile[] = this.tileGenerationStrategy
       .generateFromGeometries(geometries, startLevel, endLevel, tileGrid);
 
-    this.addTilesToDownloadQueue(tiles, regionID);
+    this.addTilesToDownload(tiles, regionID);
   }
 
   private addTilesToDownloadQueue(tiles: Tile[], regionID: number) {
@@ -179,7 +193,7 @@ export class TileDownloaderService {
 
   private downloadSequence(regionID: number) {
     const downloadTile = (url: string) => {
-      return (observer: Observer<any>) => {
+      return (observer: Observer<void>) => {
         const request = this.http.get(url, { responseType: 'blob' }).pipe(
           retry(2)
         );
@@ -187,12 +201,12 @@ export class TileDownloaderService {
         request.subscribe((blob) => {
           this.geoDB.update(url, regionID, blob).subscribe(() => {
             this.validDownloadCount++;
-            observer.next('done downloading ' + url);
+            observer.next();
             observer.complete();
           });
         },
         (err) => {
-          observer.next('done downloading ' + url);
+          observer.next();
           observer.complete();
         });
       };
