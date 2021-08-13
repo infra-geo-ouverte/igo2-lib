@@ -1,4 +1,4 @@
-import { ProjectionsLimitationsOptions } from '../../../import-export';
+import { ProjectionsLimitationsOptions } from './projection.interfaces';
 
 /**
  * Return a number of zone MTM for a longitude for province of Quebec only

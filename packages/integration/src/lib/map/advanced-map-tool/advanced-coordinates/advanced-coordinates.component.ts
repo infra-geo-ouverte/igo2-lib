@@ -63,6 +63,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       this.buildForm();
     }
 
+  /**
+   * Listen a state of the map, a state of a form, update the coordinates
+   */
   ngOnInit(): void {
     this.mapState$$ = combineLatest([this.map.viewController.state$.pipe(debounceTime(50)), this.form.valueChanges])
         .subscribe(() => {
@@ -99,7 +102,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Longitude and latitude of the center of the map
+   * Coordinates of the center of the map on the appropriate systeme of coordinates
+   * @returns string of two numbers
    */
   getCoordinates(): string[] {
     this.currentZones.mtm = zoneMtm(this.currentCenterDefaultProj[0]);
@@ -118,7 +122,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   /**
    * Copy the coordinates to a clipboard
    */
-  copyTextToClipboard() {
+  copyTextToClipboard(): void {
     const successful = Clipboard.copy(this.coordinates.toString());
     if (successful) {
       const translate = this.languageService.translate;
@@ -133,19 +137,25 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   /**
    * Display a cursor on the center of the map
    */
-  displayCenter(toggle: boolean) {
+  displayCenter(toggle: boolean): void {
     this.center = toggle;
     this.map.mapCenter$.next(toggle);
     this.storageService.set('centerToggle', toggle, StorageScope.SESSION);
   }
 
-  private buildForm() {
+  /**
+   * Builder of the form
+   */
+  private buildForm(): void {
     this.form = this.formBuilder.group({
       inputProj: ['', [Validators.required]]
     });
   }
 
-  private updateProjectionsZoneChange() {
+  /**
+   * Update list of projections after changing of the state of the map
+   */
+  private updateProjectionsZoneChange(): void {
     let modifiedProj = this.projections$.value;
     const translate = this.languageService.translate;
     modifiedProj.map(p => {
@@ -192,7 +202,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.projections$.next(modifiedProj);
   }
 
-  private computeProjections() {
+  /**
+   * Create a list of currents projections
+   */
+  private computeProjections(): void {
     this.projectionsConstraints = computeProjectionsConstraints(this.projectionsLimitations);
     const projections: InputProjections[] = [];
 
@@ -229,7 +242,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.projections$.next(projections.concat(configProjection));
   }
 
-  private pushMtmUtm(projections: Array<InputProjections>) {
+  /**
+   * Push the MTM and UTM in the array of systeme of coordinates
+   * @param projections Array of the InputProjections
+   */
+  private pushMtmUtm(projections: Array<InputProjections>): void {
     if (this.projectionsConstraints.mtm) {
       // Quebec
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
@@ -253,12 +270,16 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       });
     }
   }
-  private back2quebec() {
+
+  /**
+   * Updates the list of systems of coordinates for territory of Quebec
+   * push MTM and UTM in the Array
+   */
+  private back2quebec(): void {
     const projections = this.projections$.value;
     this.pushMtmUtm(projections);
     this.inQuebec = true;
   }
-
 }
 
 

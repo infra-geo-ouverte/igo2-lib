@@ -18,16 +18,6 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Get an active map
    */
   @Input() map: IgoMap;
-  // @Input()
-  // get map(): IgoMap {
-  //   return this._map;
-  // }
-
-  // /**
-  //  * The map to swipe on
-  //  */
-  // private _map: IgoMap;
-
 
   /**
    * Listener of toggle from advanced-map-tool
@@ -50,7 +40,6 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
     this.letZoom();
   }
 
-
   /**
    * Destroyer of a component
    */
@@ -60,14 +49,13 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  go(event) {
-    console.log(event);
-  }
-
+  /**
+   * Zoom on div
+   */
   private letZoom() {
     document.getElementById('mapCenter').addEventListener('wheel', event => {
       if (event.deltaY > 0) {
-        this.map.viewController.zoomOut()
+        this.map.viewController.zoomOut();
       }
       if (event.deltaY < 0) {
         this.map.viewController.zoomIn();
