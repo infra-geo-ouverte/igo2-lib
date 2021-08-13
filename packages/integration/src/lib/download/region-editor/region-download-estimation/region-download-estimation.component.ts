@@ -21,8 +21,7 @@ export class RegionDownloadEstimationComponent implements OnInit {
   @Input() mode: EditionStrategy = new CreationEditionStrategy();
 
   enoughSpace: boolean;
-  enoughSpace$: Observable<boolean>
-  // enoughSpace$$: Subscription;
+  enoughSpace$: Observable<boolean>;
   private lastNewAllocatedSpace: number;
 
   _estimation: DownloadSizeEstimation = {
@@ -68,7 +67,6 @@ export class RegionDownloadEstimationComponent implements OnInit {
       this.enoughSpace$ = this.storageQuota.enoughSpace(newAllocatedSize);
       this.enoughSpace$.pipe(take(1)).subscribe(
         (enoughSpace) => {
-          console.log(enoughSpace)
           this.enoughSpace = enoughSpace;
         });
     }
