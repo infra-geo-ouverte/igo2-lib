@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DownloadEstimator, DownloadSizeEstimation, DownloadSizeEstimationInBytes, TileGenerationParams, TileToDownload } from '@igo2/core';
+import { DownloadEstimator, DownloadSizeEstimation, DownloadSizeEstimationInBytes, StorageQuotaService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Geometry } from '@turf/helpers';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { CreationEditionStrategy, EditionStrategy, UpdateEditionStrategy } from '../editing-strategy';
 
 @Component({
@@ -18,6 +20,11 @@ export class RegionDownloadEstimationComponent implements OnInit {
 
   @Input() mode: EditionStrategy = new CreationEditionStrategy();
 
+  enoughSpace: boolean;
+  enoughSpace$: Observable<boolean>
+  // enoughSpace$$: Subscription;
+  private lastNewAllocatedSpace: number;
+
   _estimation: DownloadSizeEstimation = {
     newAllocatedSize: 0,
     downloadSize: 0
@@ -30,7 +37,9 @@ export class RegionDownloadEstimationComponent implements OnInit {
 
   estimator: DownloadEstimator = new DownloadEstimator();
 
-  constructor() { }
+  constructor(
+    private storageQuota: StorageQuotaService
+  ) {}
 
   ngOnInit() {
   }
@@ -50,9 +59,19 @@ export class RegionDownloadEstimationComponent implements OnInit {
         this.tilesToDownload,
         this.geometries,
         this.tileGrid
-      );
+        );
     }
     this._estimation = this.removeNaNFromEstimation(this._estimation);
+    const newAllocatedSize = this._estimation.newAllocatedSize;
+    if (newAllocatedSize !== this.lastNewAllocatedSpace) {
+      this.lastNewAllocatedSpace = newAllocatedSize;
+      this.enoughSpace$ = this.storageQuota.enoughSpace(newAllocatedSize);
+      this.enoughSpace$.pipe(take(1)).subscribe(
+        (enoughSpace) => {
+          console.log(enoughSpace)
+          this.enoughSpace = enoughSpace;
+        });
+    }
     return this._estimation;
   }
 
