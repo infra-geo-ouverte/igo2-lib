@@ -33,7 +33,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private controller: RegionEditorController;
 
-  private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
   activateDrawingTool: boolean = true;
 
@@ -238,6 +237,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activateDrawingTool = false;
   }
 
+  get enoughSpace$() {
+    return this.regionDownloadEstimation.enoughSpace$;
+  }
+
   get drawnRegionGeometryForm(): FormControl {
     return this.state.drawnRegionGeometryForm;
   }
@@ -368,10 +371,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   get isDownloading(): boolean {
     return this.state.isDownloading;
-  }
-
-  get invalidDownloadSize$(): Observable<boolean> {
-    return this._notEnoughSpace$;
   }
 
   get progression(): number {

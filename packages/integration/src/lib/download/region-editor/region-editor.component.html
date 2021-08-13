@@ -1,18 +1,19 @@
 <div>
   <mat-carousel
-  timings="250ms ease-in"
-  [autoplay]="true"
-  interval="5000"
-  color="accent"
-  maxWidth="auto"
-  proportion="100"
-  slides="5"
-  [loop]="true"
-  [hideArrows]="true"
-  [hideIndicators]="false"
-  [useKeyboard]="true"
-  [useMouseWheel]="false"
-  orientation="ltr">
+    timings="250ms ease-in"
+    [autoplay]="true"
+    interval="5000"
+    color="accent"
+    maxWidth="auto"
+    proportion="100"
+    slides="5"
+    [loop]="true"
+    [hideArrows]="true"
+    [hideIndicators]="false"
+    [useKeyboard]="true"
+    [useMouseWheel]="false"
+    orientation="ltr"
+  >
 
     <mat-carousel-slide
     *ngFor="let url of parentTileUrls; let i = index"
@@ -53,10 +54,21 @@
   <div *ngIf="isDownloading$ | async">
     <br>
     <mat-label>Progression</mat-label>
-    <mat-progress-bar #progressBar mode="determinate" [value]="progression$ | async"></mat-progress-bar>
+    <mat-progress-bar
+      #progressBar
+      mode="determinate"
+      [value]="progression$ | async"
+    ></mat-progress-bar>
   </div>
   <div class="button-row">
-    <button mat-button #download (click)="onDownloadClick()" [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
+    <button 
+      mat-button
+      #download
+      (click)="onDownloadClick()"
+      [disabled]="
+        disableDownloadButton
+        || (enoughSpace$ | async) === false"
+      >{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)="onCancelClick()">Cancel</button>
   <div>
 </div>
