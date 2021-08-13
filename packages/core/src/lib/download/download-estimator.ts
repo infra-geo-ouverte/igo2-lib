@@ -24,7 +24,7 @@ export class DownloadEstimator {
         genParams: TileGenerationParams,
         tileGrid
     ): DownloadSizeEstimation {
-        if (!geometries || !genParams) {
+        if (!geometries || !genParams || !tileGrid || !tilesToDownload) {
             return {
                 newAllocatedSize: 0,
                 downloadSize: 0
