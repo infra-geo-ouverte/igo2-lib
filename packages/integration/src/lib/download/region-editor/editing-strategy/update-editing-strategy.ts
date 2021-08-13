@@ -14,7 +14,6 @@ export class UpdateEditionStrategy extends EditionStrategy {
     }
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
-        console.log('update strategy download');
         const updateParams: RegionUpdateParams = {
             name: editedRegion.name,
             newTiles: editedRegion.tiles,
