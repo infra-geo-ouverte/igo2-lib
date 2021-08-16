@@ -57,7 +57,6 @@ export function getNumberOfTreeNodes(deltaHeight: number) {
 // TODO fix proj
 export function getTileGeometry(tile: Tile, tileGrid): Polygon {
   const tileGeometry = fromExtent(tileGrid.getTileCoordExtent([tile.Z, tile.X, tile.Y]));
-  console.log(tileGeometry);
   const feature: OlFeature = new OlFeature(tileGeometry);
 
   const projectionIn = 'EPSG:4326';

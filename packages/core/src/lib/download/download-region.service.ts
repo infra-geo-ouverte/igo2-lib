@@ -139,7 +139,6 @@ export class DownloadRegionService implements OnDestroy {
         tileGrid,
         templateUrl
       );
-      console.log('Generated tiles', tiles);
       this.isDownloading$$ = this.tileDownloader.isDownloading$.subscribe(
         (isDownloading) => {
           if (isDownloading) {

@@ -185,7 +185,6 @@ export class TileDownloaderService {
     this.validDownloadCount = 0;
     this._nWorkerDone = 0;
     this.currentDownloads = nDownloads;
-    console.log('starting download sequence!');
     this._isDownloading = true;
     this.isDownloading$.next(true);
     this.downloadSequence(regionID);
@@ -221,7 +220,6 @@ export class TileDownloaderService {
           this._isDownloading = false;
           this.isDownloading$.next(false);
         }
-        console.log('downloading is done');
         return;
       }
       this.progression$.next(++this.downloadCount / this.currentDownloads);

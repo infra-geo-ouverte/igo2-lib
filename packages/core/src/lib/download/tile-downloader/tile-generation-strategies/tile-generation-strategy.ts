@@ -99,10 +99,8 @@ export abstract class TileGenerationStrategy {
     }
 
     generateFromGeometries(geometries: Geometry[], startLevel: number, endLevel: number, tileGrid): Tile[] {
-      console.log('geometries tile generation', geometries);
       let tiles: Tile[] = new Array();
       for (let level = startLevel; level <= endLevel; level++) {
-          console.log('generation of tiles @ lvl:', level);
           tiles = tiles.concat(this.getTilesFromGeometriesAtLevel(geometries, level, tileGrid));
       }
       return tiles;
