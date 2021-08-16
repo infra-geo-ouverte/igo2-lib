@@ -10,7 +10,7 @@ export class UpdateEditionStrategy extends EditionStrategy {
     }
 
     get downloadButtonTitle(): string {
-        return 'Update';
+        return 'igo.integration.download.regionEditor.buttons.update';
     }
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {

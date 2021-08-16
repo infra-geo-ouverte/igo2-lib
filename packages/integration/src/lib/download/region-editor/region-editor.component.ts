@@ -4,6 +4,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { DownloadRegionService, MessageService, RegionDBData, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Geometry } from '@turf/helpers';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
@@ -48,6 +49,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   geometries: Geometry[] = [];
 
   constructor(
+    private translate: TranslatePipe,
     private tileDownloader: TileDownloaderService,
     private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
@@ -154,24 +156,26 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.genParamComponent.tileGenerationParams = this.genParams;
   }
 
-  sendAddTileErrorMessage(error: AddTileError) {
+  getAddTileErrorMessage(error): string {
     switch (error.addTileError) {
       case AddTileErrors.CARTO_BACKGROUND:
-        this.messageService.error('The tile you selected is not on the same cartographic background');
-        break;
+        return 'igo.integration.download.messages.errors.addTiles.cartoBackground';
 
       case AddTileErrors.LEVEL:
-        this.messageService.error('The tile you selected is not on the same level as the previous ones');
-        break;
+        return 'igo.integration.download.messages.errors.addTiles.level';
 
       case AddTileErrors.ALREADY_SELECTED:
-        this.messageService.error('The tile is already selected');
-        break;
+        return 'igo.integration.download.messages.errors.addTiles.alreadySelected';
 
       case AddTileErrors.ALREADY_DOWNLOADING:
-        this.messageService.error('There is already a region downloading');
-        break;
+        return 'igo.integration.download.messages.errors.addTiles.alreadyDownloading';
     }
+  }
+
+  sendAddTileErrorMessage(error: AddTileError) {
+    const messageToTranslate = this.getAddTileErrorMessage(error);
+    const message = this.translate.transform(messageToTranslate);
+    this.messageService.error(message);
   }
 
   public onDownloadClick() {
@@ -197,7 +201,9 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((value) => {
         this.isDownloading = value;
         if (!value) {
-          this.messageService.success('Your download is done');
+          const messageToTranslate = 'igo.integration.download.messages.completion.download';
+          const message = this.translate.transform(messageToTranslate);
+          this.messageService.success(message);
           this.clear();
         }
       });

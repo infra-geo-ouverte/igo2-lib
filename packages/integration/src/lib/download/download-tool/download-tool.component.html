@@ -1,8 +1,8 @@
 <mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex">
-  <mat-tab label='Region Editor'>
+  <mat-tab label="{{ 'igo.integration.download.regionEditor.title' | translate }}">
     <igo-region-editor #editor></igo-region-editor>
   </mat-tab>
-  <mat-tab label='Downloaded Regions'>
+  <mat-tab label="{{ 'igo.integration.download.regionManager.title' | translate }}">
     <igo-region-manager #manager></igo-region-manager>
   </mat-tab>
 </mat-tab-group>

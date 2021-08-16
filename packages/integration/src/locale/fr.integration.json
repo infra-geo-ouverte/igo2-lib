@@ -65,6 +65,62 @@
         "maximizeTooltip": "Agrandir la fenêtre",
         "standardExtent": "Réduire",
         "standardExtentTooltip": "Réduire la fenêtre"
+      },
+      "download": {
+        "messages": {
+          "completion": {
+            "download": "Votre téléchargement est terminé."
+          },
+          "errors": {
+            "addTiles": {
+              "cartoBackground": "La tuile que vous avez sélectionnée n'est pas sur le même fond cartographique.",
+              "level": "La tuile que vous avez sélectionnée n'est pas au même niveau que les précédentes.",
+              "alreadySelected": "La tuile est déjà sélectionnée.",
+              "alreadyDownloading":"Il y a déjà une région en téléchargement."
+            }
+          }
+        },
+        "generationOption": {
+          "generationStrategy": "Stratégie de Génération",
+          "strategies": {
+            "parent": "Parent",
+            "middle": "Milieu",
+            "child": "Enfant"
+          },
+          "depth": "Profondeur",
+          "height": "Hauteur"
+        },
+        "regionDraw": {
+          "toggle": "Activer le contrôle de dessin"
+        },
+        "estimator": {
+          "newAllocatedSpace": "Taille estimée de la nouvelle allocation (MB)",
+          "downloadSize": "Taille estimée du téléchargement (MB)",
+          "numberOfTiles": "Nombre de tuiles à télécharger"
+        },
+        "regionEditor": {
+          "title": "Editeur de Région",
+          "regionName": "Nom de Région",
+          "progression": "Progression",
+          "buttons": {
+            "cancel": "Annuler",
+            "download": "Télécharger",
+            "update": "Mettre à jour"
+          }
+        },
+        "regionManager": {
+          "title": "Régions Téléchargées",
+          "columns": {
+            "buttons": {
+              "edit": "Modifier",
+              "update": "Mettre à jour",
+              "delete": "Supprimer"
+            },
+            "name": "Nom",
+            "numberOfTiles": "Nombres de tuiles",
+            "size": "Espace occupée (MB)"
+          }
+        }
       }
     }
   }

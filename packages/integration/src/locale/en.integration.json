@@ -65,6 +65,60 @@
         "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
+      },
+      "download": {
+        "messages": {
+          "completion": {
+            "download": "Your download is done."
+          },
+          "errors": {
+            "addTiles": {
+              "cartoBackground": "The tile you selected is not on the same cartographic background.",
+              "level": "The tile you selected is not on the same level as the previous ones.",
+              "alreadySelected": "The tile is already selected.",
+              "alreadyDownloading":"There is already a region downloading."
+            }
+          }
+        },
+        "generationOption": {
+          "generationStrategy": "Generation Strategy",
+          "strategies": {
+            "parent": "Parent",
+            "middle": "Middle",
+            "child": "Child"
+          }
+        },
+        "estimator": {
+          "newAllocatedSpace": "Estimated New Allocation Size (MB)",
+          "size": "Estimated Download Size (MB)",
+          "numberOfTiles": "Number of tiles to download"
+        },
+        "regionDraw": {
+          "toggle": "Toggle draw controls"
+        },
+        "regionEditor": {
+          "title": "Region Editor",
+          "regionName": "Region name",
+          "progression": "Progression",
+          "buttons": {
+            "cancel": "Cancel",
+            "download": "Download",
+            "update": "Update"
+          }
+        },
+        "regionManager": {
+          "title": "Downloaded Region",
+          "columns": {
+            "buttons": {
+              "edit": "Edit",
+              "update": "Update",
+              "delete": "Delete"
+            },
+            "name": "Name",
+            "numberOfTiles": "Number of Tiles",
+            "size": "Size (MB)"
+          }
+        }
       }
     }
   }

@@ -14,8 +14,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IgoLanguageModule } from '@igo2/core';
 import { IgoDrawingToolModule, IgoGeometryFormFieldModule } from '@igo2/geo';
 import { MatCarouselModule } from '@ngbmodule/material-carousel';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DownloadToolComponent } from './download-tool';
 import { RegionDrawComponent } from './region-draw/region-draw.component';
 import { RegionDownloadEstimationComponent } from './region-editor/region-download-estimation/region-download-estimation.component';
@@ -46,6 +48,7 @@ import { ParentTileGenSliderComponent } from './tile-generation-option/tile-gene
     NgxSliderModule,
     IgoGeometryFormFieldModule,
     IgoDrawingToolModule,
+    IgoLanguageModule,
     ReactiveFormsModule,
     MatSlideToggleModule
   ],
@@ -60,6 +63,7 @@ import { ParentTileGenSliderComponent } from './tile-generation-option/tile-gene
     ParentTileGenSliderComponent,
     RegionDownloadEstimationComponent
   ],
+  providers: [TranslatePipe],
   exports: [DownloadToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

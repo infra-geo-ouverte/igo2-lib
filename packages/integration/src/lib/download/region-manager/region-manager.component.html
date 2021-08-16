@@ -28,11 +28,11 @@
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let region">
             <button mat-icon-button color="primary"  *ngIf="region.status !== 'Expired'" (click)="editRegion(region)">
-                <mat-icon>edit</mat-icon>
+                <mat-icon>{{'igo.integration.download.regionManager.columns.buttons.edit' | translate}}</mat-icon>
             </button>
 
             <button mat-icon-button color="primary"  *ngIf="region.status === 'Expired'" (click)="editRegion(region)">
-                <mat-icon>update</mat-icon>
+                <mat-icon>{{'igo.integration.download.regionManager.columns.buttons.update' | translate}}</mat-icon>
             </button>
         </mat-cell>
     </ng-container>
@@ -42,26 +42,26 @@
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let region">
             <button mat-icon-button color="primary" [disabled]="disableDeleteButton(region)" (click)="deleteRegion(region)">
-                <mat-icon>delete</mat-icon>
+                <mat-icon>{{'igo.integration.download.regionManager.columns.buttons.delete' | translate}}</mat-icon>
             </button>
         </mat-cell>
     </ng-container>
     
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> {{'igo.integration.download.regionManager.columns.name' | translate}} </mat-header-cell>
         <mat-cell *matCellDef="let region"> {{region.name}} </mat-cell>
     </ng-container>
 
     <!-- nTiles Column -->
     <ng-container matColumnDef="nTiles">
-        <mat-header-cell mat-header-cell *matHeaderCellDef> Number of Tiles </mat-header-cell>
+        <mat-header-cell mat-header-cell *matHeaderCellDef> {{'igo.integration.download.regionManager.columns.numberOfTiles' | translate}} </mat-header-cell>
         <mat-cell *matCellDef="let region"> {{region.numberOfTiles}} </mat-cell>
     </ng-container>
 
     <!-- Storage Space Column -->
     <ng-container matColumnDef="space">
-        <mat-header-cell mat-header-cell *matHeaderCellDef> Size in MB </mat-header-cell>
+        <mat-header-cell mat-header-cell *matHeaderCellDef> {{'igo.integration.download.regionManager.columns.size' | translate}} </mat-header-cell>
         <mat-cell *matCellDef="let region"> {{getRegionSpaceInMB(region)}} </mat-cell>
     </ng-container>
 

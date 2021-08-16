@@ -1,5 +1,7 @@
 <mat-form-field>
-  <mat-label>Generation Strategy</mat-label>
+  <mat-label>
+    {{ 'igo.integration.download.generationOption.generationStrategy' | translate }}
+  </mat-label>
   <mat-select 
     #strategySelect
     (selectionChange)="onSelectionChange($event)"
@@ -7,7 +9,7 @@
     [(value)]="strategy"
   >
     <mat-option *ngFor="let strategy of strategies" [value]="strategy">
-      {{ strategy }}
+      {{'igo.integration.download.generationOption.strategies.' + strategy.toLowerCase() | translate}}
     </mat-option>
   </mat-select>
 </mat-form-field>

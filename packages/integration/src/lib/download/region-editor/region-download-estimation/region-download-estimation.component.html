@@ -1,7 +1,6 @@
 <div *ngIf='!disabled'>
   <div *ngIf='!newAllocatedSizeInBytesDisabled'>
-    <mat-label>Estimated New Allocation Size in MB </mat-label>
-    <!-- <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div> -->
+    <mat-label>{{'igo.integration.download.estimator.newAllocatedSize' | translate}} </mat-label>
     <div 
       [ngClass]="{ 
           'invalid-size': (enoughSpace$ | async) === false 
@@ -10,8 +9,7 @@
     >{{ estimationInMB.newAllocatedSize }}</div>
   </div>
   <div>
-    <mat-label>Estimated Download Size in MB </mat-label>
-    <!-- <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div> -->
+    <mat-label>{{'igo.integration.download.estimator.downloadSize' | translate}} </mat-label>
     <div
       [ngClass]="{ 
           'invalid-size': (enoughSpace$ | async) === false 
@@ -20,7 +18,7 @@
     >{{ estimationInMB.downloadSize }}</div>
   </div>
   <div>
-    <mat-label>Number of tiles to download </mat-label>
+    <mat-label>{{'igo.integration.download.estimator.numberOfTiles' | translate}} </mat-label>
     <div>{{ estimation.downloadSize }}</div>
   </div>
 </div>

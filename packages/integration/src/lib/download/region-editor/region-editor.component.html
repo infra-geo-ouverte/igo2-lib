@@ -23,7 +23,7 @@
    
   </mat-carousel>
   <mat-form-field appearance="legacy">
-    <mat-label>Region Name</mat-label>
+    <mat-label>{{'igo.integration.download.regionEditor.regionName' | translate}}</mat-label>
     <input matInput [(ngModel)]="regionName">
   </mat-form-field>
   <br>
@@ -53,7 +53,7 @@
   ></igo-region-download-estimation>
   <div *ngIf="isDownloading$ | async">
     <br>
-    <mat-label>Progression</mat-label>
+    <mat-label>{{'igo.integration.download.regionEditor.progression' | translate}}</mat-label>
     <mat-progress-bar
       #progressBar
       mode="determinate"
@@ -68,7 +68,7 @@
       [disabled]="
         disableDownloadButton
         || (enoughSpace$ | async) === false"
-      >{{ downloadButtonTitle }}</button>
-    <button mat-button #cancel (click)="onCancelClick()">Cancel</button>
+      >{{ downloadButtonTitle | translate }}</button>
+    <button mat-button #cancel (click)="onCancelClick()">{{'igo.integration.download.regionEditor.buttons.cancel' | translate}}</button>
   <div>
 </div>

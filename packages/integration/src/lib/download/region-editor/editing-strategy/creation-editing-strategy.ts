@@ -8,7 +8,7 @@ export class CreationEditionStrategy extends EditionStrategy {
     }
 
     get downloadButtonTitle(): string {
-        return 'Download';
+        return 'igo.integration.download.regionEditor.buttons.download';
     }
 
     download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
