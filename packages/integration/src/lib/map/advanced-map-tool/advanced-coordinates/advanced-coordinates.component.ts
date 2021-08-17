@@ -22,7 +22,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
   public center: boolean = this.storageService.get('centerToggle') as boolean;
-  private inQuebec: boolean = true;
+  private inMtmZone: boolean = true;
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
@@ -72,7 +72,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
       const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
       const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
-      if (!this.inQuebec && currentMtmZone !== this.currentZones.mtm) {
+      if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
         this.back2quebec();
       }
 
@@ -186,7 +186,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         }
         else {
           p.alias = '';
-          this.inQuebec = false;
+          this.inMtmZone = false;
           if (this.inputProj.translateKey === 'mtm') {
             this.inputProj = this.projections$.value[0];
           }
@@ -241,7 +241,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       // Quebec
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
       if (zone) {
-        this.inQuebec = true;
+        this.inMtmZone = true;
         const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
         projections.splice(3, 0, {
           translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
@@ -249,11 +249,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         });
       }
       else {
-        this.inQuebec = false;
+        this.inMtmZone = false;
       }
     }
     if (this.projectionsConstraints.utm) {
-      const order = this.inQuebec ? 4 : 3;
+      const order = this.inMtmZone ? 4 : 3;
       const zone = zoneUtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
       projections.splice(order, 0, {
@@ -289,7 +289,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private back2quebec(): void {
     const projections = this.projections$.value;
     this.pushMtm(projections);
-    this.inQuebec = true;
+    this.inMtmZone = true;
   }
 
   /**
