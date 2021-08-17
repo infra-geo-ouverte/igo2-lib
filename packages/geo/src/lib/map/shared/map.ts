@@ -52,7 +52,6 @@ export class IgoMap {
   public swipeEnabled$ = new BehaviorSubject<boolean>(false);
   public mapCenter$ = new BehaviorSubject<boolean>(false);
   public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
-  public swipeRatio: number = 50;
 
   public bufferDataSource: FeatureDataSource;
 

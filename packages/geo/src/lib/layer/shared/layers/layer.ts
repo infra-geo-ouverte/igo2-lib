@@ -18,8 +18,7 @@ import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions } from './layer.interface';
 import { LayerSyncWatcher } from '../../utils/layerSync-watcher';
-import { LanguageService, Message, MessageService } from '@igo2/core';
-import { Optional } from '@angular/core';
+import { Message, MessageService } from '@igo2/core';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -128,7 +127,6 @@ export abstract class Layer {
 
   constructor(
     public options: LayerOptions,
-    // @Optional() private languageService: LanguageService,
     protected messageService?: MessageService,
     protected authInterceptor?: AuthInterceptor
   ) {
@@ -180,15 +178,7 @@ export abstract class Layer {
           this.options.messages.map(message => {
             message.title = message.title;
             message.text = message.text;
-            // if (message) {
-            //   message.title = message.title
-            //     ? this.languageService.translate.instant(message.title)
-            //     : undefined;
-            //   message.text = message.text
-            //     ? this.languageService.translate.instant(message.text)
-            //     : undefined;
             this.messageService.message(message as Message);
-            // }
           });
         }
       });
