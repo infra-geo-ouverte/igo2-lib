@@ -1,7 +1,9 @@
 @import './map-browser/map-browser.theming';
 @import './zoom-button/zoom-button.theming';
+@import './swipe-control/swipe-control.theming.scss';
 
 @mixin igo-map-theming($theme, $typography) {
   @include igo-map-browser-theming($theme, $typography);
   @include igo-zoom-button-theming($theme);
+  @include igo-swipe-control-theming($theme);
 }

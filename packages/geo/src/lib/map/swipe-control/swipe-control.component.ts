@@ -15,24 +15,14 @@ import { Subscription } from 'rxjs';
 
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
+   * Get an active color
+   */
+  @Input() color: string;
+
+  /**
    * Get an active map
    */
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-
-  /**
-   * Set an active map
-   */
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-
-  /**
-   * The map to swipe on
-   */
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   /**
    * The list of layers for swipe
@@ -163,8 +153,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
         this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
       }
       this.map.ol.render();
-    } // .bind(this));
-    );
+    });
   }
 
   /**
@@ -180,7 +169,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
         this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
       }
       this.map.ol.render();
-    }); // .bind(this));
+    });
   }
 
   /**

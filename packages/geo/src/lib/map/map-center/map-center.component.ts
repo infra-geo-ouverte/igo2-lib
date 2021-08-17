@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { IgoMap } from '../shared/map';
 import { Subscription } from 'rxjs';
-// import { MapState } from '@igo2/integration';
 
 /**
  * Tool to display the center of the map
@@ -23,7 +22,6 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Listener of toggle from advanced-map-tool
    */
   private displayCenter$$: Subscription;
-  // public mapState: MapState;
   constructor() {}
 
   /**
@@ -54,12 +52,7 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    */
   private letZoom() {
     document.getElementById('mapCenter').addEventListener('wheel', event => {
-      if (event.deltaY > 0) {
-        this.map.viewController.zoomOut();
-      }
-      if (event.deltaY < 0) {
-        this.map.viewController.zoomIn();
-      }
+      event.deltaY > 0 ? this.map.viewController.zoomOut() : this.map.viewController.zoomIn();
     }, true);
   }
 }

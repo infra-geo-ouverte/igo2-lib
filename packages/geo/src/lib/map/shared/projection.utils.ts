@@ -22,25 +22,20 @@ export function zoneMtm(lon: number): number {
     }
   }
 /**
- * Return a number of zone UTM for a longitude for province of Quebec only
+ * Return a number of zone UTM for a longitude
  * @param lon number
  * @returns zone
  */
 export function zoneUtm(lon: number): number {
-  const lonMax = -81;
-  let lonMin = -54;
-  if (lon > lonMin || lon < lonMax) {
-    return 0;
+  let lonMin = -180;
+  const lonMax = 180;
+  const deltaLon = 6;
+  let zone = 1;
+  while (Math.abs(lon - lonMin) > deltaLon) {
+    lonMin = lonMin + deltaLon;
+    zone++;
   }
-  else {
-    const deltaLon = 6;
-    let zone = 21;
-    while (Math.abs(lon - lonMin) > deltaLon) {
-      lonMin = lonMin - deltaLon;
-      zone--;
-    }
-    return zone;
-  }
+  return zone;
 }
 
 /**

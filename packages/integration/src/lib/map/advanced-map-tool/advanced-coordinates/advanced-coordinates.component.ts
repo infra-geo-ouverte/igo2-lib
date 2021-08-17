@@ -90,8 +90,21 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       }
       this.coordinates = this.getCoordinates();
       this.cdRef.detectChanges();
+      this.storageService.set('currentProjection', this.inputProj, StorageScope.SESSION);
     });
+
+    const tempInputProj = this.storageService.get('currentProjection') as InputProjections;
     this.inputProj = this.projections$.value[0];
+    if (tempInputProj !== null)
+    {
+      // this.inputProj = Object.assign({}, tempInputProj); // doesnt work
+      this.inputProj.translatedValue = tempInputProj.translatedValue;
+      this.inputProj.translateKey = tempInputProj.translateKey;
+      this.inputProj.alias = tempInputProj.alias;
+      this.inputProj.code = tempInputProj.code;
+      this.inputProj.zone = tempInputProj.zone;
+      this.updateZoneMtmUtm();
+    }
     this.map.mapCenter$.next(this.center);
     this.coordinates = this.getCoordinates();
     this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
@@ -103,7 +116,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
 
   /**
    * Coordinates of the center of the map on the appropriate systeme of coordinates
-   * @returns string of two numbers
+   * @returns Array of two numbers
    */
   getCoordinates(): string[] {
     this.currentZones.mtm = zoneMtm(this.currentCenterDefaultProj[0]);
@@ -159,10 +172,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     let modifiedProj = this.projections$.value;
     const translate = this.languageService.translate;
     modifiedProj.map(p => {
-      if (p.translateKey === 'mtm') {
+      if (modifiedProj.length === 6 && zoneMtm(this.currentCenterDefaultProj[0])) {
+        this.pushMtm(modifiedProj);
+      }
+      else if (p.translateKey === 'mtm') {
         const zone = zoneMtm(this.currentCenterDefaultProj[0]);
-        // zone = zone < this.projectionsConstraints?.mtmZone?.minZone ? 0 : zone;
-        // zone = zone > this.projectionsConstraints?.mtmZone?.maxZone ? 0 : zone;
         if (zone) {
           const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
           p.alias = `MTM ${zone}`;
@@ -180,22 +194,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       }
       if (p.translateKey === 'utm') {
         const zone = zoneUtm(this.currentCenterDefaultProj[0]);
-        if (zone) {
-          // zone = zone < this.projectionsConstraints?.utmZone?.minZone ? this.projectionsConstraints.utmZone.minZone : zone;
-          // zone = zone > this.projectionsConstraints?.utmZone?.maxZone ? this.projectionsConstraints.utmZone.maxZone : zone;
-          const code = `EPSG:326${zone}`;
-          p.alias = `UTM ${zone}`;
-          p.code = code;
-          p.zone = `${zone}`;
-          p.translatedValue = translate.instant('igo.geo.importExportForm.projections.utm', p);
-        }
-        else {
-          p.alias = '';
-          this.inQuebec = false;
-          if (this.inputProj.translateKey === 'utm') {
-            this.inputProj = this.projections$.value[0];
-          }
-        }
+        const code = `EPSG:326${zone}`;
+        p.alias = `UTM ${zone}`;
+        p.code = code;
+        p.zone = `${zone}`;
+        p.translatedValue = translate.instant('igo.geo.importExportForm.projections.utm', p);
       }
     });
     modifiedProj = modifiedProj.filter(p => p.alias !== '');
@@ -234,7 +237,30 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: ''
       });
     }
-    this.pushMtmUtm(projections);
+    if (this.projectionsConstraints.mtm) {
+      // Quebec
+      const zone = zoneMtm(this.currentCenterDefaultProj[0]);
+      if (zone) {
+        this.inQuebec = true;
+        const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
+        projections.splice(3, 0, {
+          translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
+          translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}`
+        });
+      }
+      else {
+        this.inQuebec = false;
+      }
+    }
+    if (this.projectionsConstraints.utm) {
+      const order = this.inQuebec ? 4 : 3;
+      const zone = zoneUtm(this.currentCenterDefaultProj[0]);
+      const code = zone < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
+      projections.splice(order, 0, {
+        translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone }),
+        translateKey: 'utm', alias: `UTM ${zone}`, code, zone: `${zone}`
+      });
+    }
     let configProjection = [];
     if (this.projectionsConstraints.projFromConfig) {
       configProjection = this.config.getConfig('projections') || [];
@@ -243,31 +269,16 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Push the MTM and UTM in the array of systeme of coordinates
+   * Push the MTM in the array of systeme of coordinates
    * @param projections Array of the InputProjections
    */
-  private pushMtmUtm(projections: Array<InputProjections>): void {
+  private pushMtm(projections: Array<InputProjections>): void {
     if (this.projectionsConstraints.mtm) {
-      // Quebec
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
-      // zone = zone < this.projectionsLimitations?.mtmZone?.minZone ? this.projectionsLimitations.mtmZone.minZone : zone;
-      // zone = zone > this.projectionsLimitations?.mtmZone?.maxZone ? this.projectionsLimitations.mtmZone.maxZone : zone;
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
-      // je ne sais pas si c'est correct d'utiliser "3 et 4" comme des valeurs pour slice.
       projections.splice(3, 0, {
-        translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
-        translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}`
-      });
-    }
-    if (this.projectionsConstraints.utm) {
-      const zone = zoneUtm(this.currentCenterDefaultProj[0]);
-      // zone = zone < this.projectionsLimitations?.utmZone?.minZone ? this.projectionsLimitations.utmZone.minZone : zone;
-      // zone = zone > this.projectionsLimitations?.utmZone?.maxZone ? this.projectionsLimitations.utmZone.maxZone : zone;
-      const code = `EPSG:326${zone}`;
-      projections.splice(4, 0, {
-        translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone }),
-        translateKey: 'utm', alias: `UTM ${zone}`, code, zone: `${zone}`
-      });
+          translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
+          translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}`});
     }
   }
 
@@ -277,9 +288,29 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    */
   private back2quebec(): void {
     const projections = this.projections$.value;
-    this.pushMtmUtm(projections);
+    this.pushMtm(projections);
     this.inQuebec = true;
   }
+
+  /**
+   * Update the numbers of the zones when application is restarted
+   */
+  private updateZoneMtmUtm() {
+    if (this.inputProj.translateKey === 'mtm') {
+      const zone = zoneMtm(this.currentCenterDefaultProj[0]);
+      this.inputProj.alias = `MTM ${zone}`;
+      const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
+      this.inputProj.code = code;
+      this.inputProj.zone = `${zone}`;
+      this.inputProj.translatedValue = this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone });
+    }
+    if (this.inputProj.translateKey === 'utm') {
+      const zone = zoneUtm(this.currentCenterDefaultProj[0]);
+      this.inputProj.alias = `UTM ${zone}`;
+      const code = zone < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
+      this.inputProj.code = code;
+      this.inputProj.zone = `${zone}`;
+      this.inputProj.translatedValue = this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone });
+    }
+  }
 }
-
-

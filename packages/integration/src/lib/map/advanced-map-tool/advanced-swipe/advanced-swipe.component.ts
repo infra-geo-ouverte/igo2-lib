@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
 import { MapState } from '../../map.state';
@@ -40,9 +39,9 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
    * Get the list of layers for swipe
    * @internal
    */
-  ngOnInit() {
-    this.layerList = this.contextService.getContextLayers(this.map);
-    this.userControlledLayerList = this.layerList.filter(layer => (layer.showInLayerList && layer.displayed));
+   ngOnInit() {
+    this.map.layers$.subscribe(ll => this.userControlledLayerList = ll.filter(layer =>
+      (!layer.baseLayer && layer.showInLayerList && layer.displayed)));
   }
 
   /**
@@ -80,15 +79,14 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
    * Restart a swipe for a new layers-list
    */
   applyNewLayers(e) {
-    this.startSwipe(false); // l'approche KISS Keep it simple stupid
+    this.startSwipe(false); // l'approche KISS
     this.startSwipe(true);
-    if (e._selected) {e._selected = false; } // ici je décoche "select all" si pas toutes les options sont choisies
+    if (e._selected) {e._selected = false; }
     const allLayers = this.userControlledLayerList.length;
     const selectedLayers = this.form.controls.layers.value.length;
     if (selectedLayers === allLayers){
-      e._selected = true; // ici je veux cocher "select all" car toutes les options sont choisies
-    } // mais je n'arrive pas
-    // blue-theme .mat-pseudo-checkbox::after {} - peut être comme ça...
+      e._selected = true;
+    }
   }
 
   /**
@@ -99,7 +97,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
       this.form.controls.layers.setValue(this.userControlledLayerList);
       e._selected = true;
     }
-    if (e._selected === false) {
+    else {
       this.form.controls.layers.setValue([]);
     }
     this.startSwipe(false);
