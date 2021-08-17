@@ -14,10 +14,7 @@ import { Subscription } from 'rxjs';
 })
 
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
-  /**
-   * Get an active color
-   */
-  @Input() color: string;
+
 
   /**
    * Get an active map
