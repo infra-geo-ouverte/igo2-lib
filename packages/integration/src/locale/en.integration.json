@@ -88,7 +88,8 @@
           "copyMsg": "Coordinates copied to clipboard",
           "copyTitle": "Coordinates of cetre",
           "center": "Center",
-          "coordSystem": "Systeme of coordinates" 
+          "coordSystem": "Systeme of coordinates",
+          "zoom": "Current zoom-level: "
         }
       }
     }
