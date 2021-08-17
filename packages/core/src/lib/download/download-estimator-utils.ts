@@ -65,10 +65,25 @@ export function getNumberOfTileLineIntersect(
         Z: level
     };
     const tileLength = getTileLengthFast(tile, tileGrid);
-    const dx: number = Math.ceil(Math.abs(p1[0] - p0[0]) / tileLength) + 1;
-    const dy: number = Math.ceil(Math.abs(p1[1] - p0[1]) / tileLength) + 1;
+    const transP0 = olProj.transform(p0, 'EPSG:4326', 'EPSG:3857');
+    const transP1 = olProj.transform(p1, 'EPSG:4326', 'EPSG:3857');
+    const dx: number = Math.ceil(Math.abs(transP1[0] - transP0[0]) / tileLength) + 1;
+    const dy: number = Math.ceil(Math.abs(transP1[1] - transP0[1]) / tileLength) + 1;
     const nTiles = dx + dy - gcd(dx, dy);
     return nTiles;
+}
+
+export function transformTile(
+    tile: Tile,
+    inProj: string,
+    outProj: string
+): Tile {
+    const coord = [tile.X, tile.Y]
+    const transformedCoord = olProj.transform(coord, inProj, outProj);
+    const X = transformedCoord[0];
+    const Y = transformedCoord[1];
+    const Z = tile.Z;
+    return { X, Y, Z };
 }
 
 export function getNumberOfTilesLineStringIntersect(
