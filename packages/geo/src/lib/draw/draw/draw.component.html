@@ -1,133 +1,142 @@
 <div>
-    <div class="draw-type-toggle mat-typography">
-      <mat-button-toggle-group
-        [value]="activeDrawType"
-        (change)="onDrawTypeChange($event.value)">
-        <mat-button-toggle [value]="drawType.Point">
-          {{('igo.geo.draw.' + drawType.Point) | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="drawType.LineString">
-          {{('igo.geo.draw.' + drawType.LineString) | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="drawType.Polygon">
-          {{('igo.geo.draw.' + drawType.Polygon) | translate}}
-        </mat-button-toggle>
-        <mat-button-toggle [value]="drawType.Circle">
-          {{('igo.geo.draw.' + drawType.Circle) | translate}}
-        </mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-    <div class="draw-options mat-typography">
-      <mat-slide-toggle
-        [checked]="drawControlIsActive"
-        [labelPosition]="'before'"
-        (change)="onToggleDrawControl($event.checked)">
-        {{'igo.geo.spatialFilter.drawControl' | translate}}
-      </mat-slide-toggle>
-      <mat-slide-toggle
-        [checked]="toggleLabel"
-        [labelPosition]="'before'"
-        (change)="onToggleTooltips($event.checked)">
-        {{'igo.geo.draw.toggleMapTooltips' | translate}}
-      </mat-slide-toggle>
-    </div>
-    <form class="igo-form" [formGroup]="form" >
-      <div class="fill-color-picker mat-typography">
-        <span class="color_element">
-          {{'igo.geo.draw.fill' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon>
-        </span>
-        <mat-form-field appearance="outline">
-          <mat-label>{{fillColor}}</mat-label>
-          <input
-            formControlName="fill"
-            matInput
-            type="text"
-            [(colorPicker)]="fillColor"
-            [style.background]="fillColor"
-            [readonly]="true"
-            [colorPicker]="fillColor"
-            [cpWidth]="('220px')"
-            [cpPosition]="'bottom'"
-            [cpOutputFormat] = "'rgba'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
-            [cpOKButton]="true"
-            [cpOKButtonText]="'igo.geo.draw.okColorPicker' | translate"
-            [value]="fillColor"
-            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
-        </mat-form-field>
-      </div>
-      <br>
+  <div class="geometry-type-toggle mat-typography">
+    <mat-button-toggle-group
+      (change)="onGeometryTypeChange($event.value)">
+      <mat-button-toggle [value]="geometryType.Point">
+        {{('igo.geo.draw.' + geometryType.Point) | translate}}
+      </mat-button-toggle>
 
-      <div class="stroke-color-picker mat-typography">
-        <span class="color_element">
-          {{'igo.geo.draw.stroke' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon>
-        </span>
-        <mat-form-field class="stroke-color-picker-box" appearance="outline">
-          <mat-label>{{strokeColor}}</mat-label>
-          <input
-            formControlName="stroke"
-            matInput
-            type="text"
-            [(colorPicker)]="strokeColor"
-            [style.background]="strokeColor"
-            [readonly]="true"
-            [colorPicker]="strokeColor"
-            [cpWidth]="('220px')"
-            [cpPosition]="'bottom'"
-            [cpOutputFormat] = "'rgba'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
-            [cpOKButton]="true"
-            [cpOKButtonText]="'igo.geo.draw.okColorPicker' | translate"
-            [value]="strokeColor"
-            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field *ngIf="icons.length >= 1">
-          <mat-label>{{'igo.geo.draw.icon' | translate}}</mat-label>
-          <mat-select>
-            <mat-select-trigger>
-              <div *ngIf="icon" class="box">
-                <img src={{icon}}>
-              </div>
-            </mat-select-trigger>
-            <mat-option value="" (click)="onIconChange()">{{'igo.geo.draw.noIcon' | translate}}</mat-option>
-            <mat-option
-              *ngFor="let icon_html of icons"
-              [value]="icon_html"
-              (click)="onIconChange(icon_html)">
-              <div class="box">
-                <img src={{icon_html}}>
-              </div>
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </form>
+      <mat-button-toggle [value]="geometryType.LineString">
+        {{('igo.geo.draw.' + geometryType.LineString) | translate}}
+      </mat-button-toggle>
 
-    <mat-divider></mat-divider>
+      <mat-button-toggle [value]="geometryType.Polygon">
+        {{('igo.geo.draw.' + geometryType.Polygon) | translate}}
+      </mat-button-toggle>
+
+      <mat-button-toggle [value]="geometryType.Circle">
+        {{('igo.geo.draw.' + geometryType.Circle) | translate}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="draw-options mat-typography">
+    <mat-slide-toggle
+      [disabled]="drawControlIsDisabled"
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onToggleDrawControl($event.checked)">
+      {{'igo.geo.spatialFilter.drawControl' | translate}}
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      [checked]="labelsAreShown"
+      [labelPosition]="'before'"
+      (change)="onToggleLabels()">
+      {{'igo.geo.draw.toggleMapTooltips' | translate}}
+    </mat-slide-toggle>
+  </div>
+
+  <form class="igo-form" [formGroup]="form" >
+    <div class="fill-color-picker mat-typography">
+      <span>
+        <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
+        {{'igo.geo.draw.fill' | translate}}
+      </span>
+
+      <mat-form-field class="fill-field" appearance="outline" floatLabel="always">
+        <mat-label>{{fillColor}}</mat-label>
+
+        <input
+          formControlName="fill"
+          matInput
+          type="text"
+          [(colorPicker)]="fillColor"
+          [style.background]="fillColor"
+          [readonly]="true"
+          [colorPicker]="fillColor"
+          [cpWidth]="('200px')"
+          [cpOutputFormat]="'rgba'"
+          [cpPosition]="'bottom'"
+          [cpPositionOffset]="'-8%'"
+          [cpCancelButton]="true"
+          [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+          [cpOKButton]="true"
+          (colorPickerChange)="onColorChange(labelsAreShown, false)">
+      </mat-form-field>
+    </div>
+
+    <div class="stroke-color-picker mat-typography">
+      <span>
+        <mat-icon class="stroke-palette-icon" svgIcon="square-outline"></mat-icon>
+        {{'igo.geo.draw.stroke' | translate}}
+      </span>
+
+      <mat-form-field class="stroke-field" appearance="outline" floatLabel="always">
+        <mat-label>{{strokeColor}}</mat-label>
+
+        <input
+          formControlName="stroke"
+          matInput
+          type="text"
+          [(colorPicker)]="strokeColor"
+          [style.background]="strokeColor"
+          [readonly]="true"
+          [colorPicker]="strokeColor"
+          [cpWidth]="('200px')"
+          [cpPosition]="'bottom'"
+          [cpPositionOffset]="'-8%'"
+          [cpOutputFormat]="'rgba'"
+          [cpCancelButton]="true"
+          [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+          [cpOKButton]="true"
+          (colorPickerChange)="onColorChange(labelsAreShown, false)">
+      </mat-form-field>
+    </div>
 
     <div>
-      <button
-        *ngIf="drawsPresence"
-        class="deleteBtn"
-        mat-icon-button
-        color="warn"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.delete' | translate"
-        [disabled]="(selectedFeatures$ | async).length === 0"
-        (click)="deleteDrawings()">
-        <mat-icon svgIcon="delete"></mat-icon>
-      </button>
-
-      <igo-entity-table
-        #table
-        class="table-compact"
-        [store]="store"
-        [template]="tableTemplate">
-      </igo-entity-table>
+      <mat-form-field *ngIf="icons.length >= 1">
+        <mat-label>{{'igo.geo.draw.icon' | translate}}</mat-label>
+        <mat-select>
+          <mat-select-trigger>
+            <div *ngIf="icon" class="box">
+              <img src={{icon}}>
+            </div>
+          </mat-select-trigger>
+          <mat-option value="" (click)="onIconChange()">{{'igo.geo.draw.noIcon' | translate}}</mat-option>
+          <mat-option
+            *ngFor="let icon_html of icons"
+            [value]="icon_html"
+            (click)="onIconChange(icon_html)">
+            <div class="box">
+              <img src={{icon_html}}>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
+  </form>
+
+  <mat-divider></mat-divider>
+
+  <div>
+    <button *ngIf="store.count$.getValue() > 0"
+      class="deleteBtn"
+      mat-icon-button
+      color="warn"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.draw.delete' | translate"
+      [disabled]="(selectedFeatures$ | async).length === 0"
+      (click)="deleteDrawings()">
+      <mat-icon svgIcon="delete"></mat-icon>
+    </button>
+
+    <igo-entity-table
+      #table
+      class="table-compact"
+      [store]="store"
+      [template]="tableTemplate">
+    </igo-entity-table>
+  </div>
 </div>

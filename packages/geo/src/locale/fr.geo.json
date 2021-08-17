@@ -118,6 +118,7 @@
         "exportButton": "Exporter",
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
+        "exportCircleToPolygon": "Transformer les entités de type Cercle en polygones",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
@@ -616,7 +617,7 @@
         }
       },
       "draw": {
-        "cancelColorPicker": "Annulé",
+        "cancelColorPicker": "Annuler",
         "Circle": "Cercle",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
@@ -626,6 +627,7 @@
         "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
+        "noLabel": "Aucune étiquette",
         "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygone",

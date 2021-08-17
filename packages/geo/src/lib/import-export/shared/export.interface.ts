@@ -7,4 +7,5 @@ export interface ExportOptions {
   layersWithSelection?: string[];
   name?: string;
   featureInMapExtent?: boolean;
+  circlesToPolygons?: boolean;
 }

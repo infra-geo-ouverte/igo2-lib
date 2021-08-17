@@ -1,6 +1,19 @@
-<h1>{{'igo.geo.draw.dialogTitle' | translate}}</h1>
-<p class="mat-typography">{{'igo.geo.draw.dialogInstruction' | translate}}</p>
-<mat-form-field class="example-full-width">
-<input matInput placeholder="{{'igo.geo.draw.dialogTitle' | translate}}" #input (keydown.enter)="onOk$.next(input.value); dialog.close()">
-</mat-form-field>
-<button mat-button (click)="onOk$.next(input.value); dialog.close()">OK</button>
+<div mat-dialog-content>
+  <p class="mat-typography">{{'igo.geo.draw.dialogInstruction' | translate}}</p>
+  <mat-form-field class="example-full-width">
+    <input
+      #input
+      matInput
+      placeholder="{{'igo.geo.draw.dialogTitle' | translate}}">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-raised-button
+    (click)="noLabel()">{{'igo.geo.draw.noLabel' | translate}}
+  </button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="input.value">OK
+  </button>
+</div>
