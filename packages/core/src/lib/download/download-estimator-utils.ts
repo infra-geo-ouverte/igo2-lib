@@ -78,7 +78,7 @@ export function transformTile(
     inProj: string,
     outProj: string
 ): Tile {
-    const coord = [tile.X, tile.Y]
+    const coord = [tile.X, tile.Y];
     const transformedCoord = olProj.transform(coord, inProj, outProj);
     const X = transformedCoord[0];
     const Y = transformedCoord[1];
