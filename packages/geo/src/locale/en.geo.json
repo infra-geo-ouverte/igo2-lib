@@ -36,7 +36,8 @@
       "dataSource": {
         "unavailableTitle": "Layer unavailable",
         "optionsApiUnavailable": "Layer information could not be retrieved. Some layers may not present the correct information.",
-        "unavailable": "The layer '{{value}}' is unavailable at the moment or you don't have the required permissions."
+        "unavailable": "The layer '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "olLoadProblem": "Unable to load the layer '{{value}}'"
       },
       "dropGeoFile": {
         "invalid": {
