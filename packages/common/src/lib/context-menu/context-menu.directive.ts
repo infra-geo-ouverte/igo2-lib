@@ -12,7 +12,7 @@ import type { TemplateRef } from '@angular/core';
 
 import { TemplatePortal } from '@angular/cdk/portal';
 import { fromEvent, Observable, of, Subscription } from 'rxjs';
-import { delay, filter, mergeMap, take, takeUntil } from 'rxjs/operators';
+import { delay, filter, mergeMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 
 @Directive({
@@ -22,9 +22,12 @@ export class ContextMenuDirective implements OnDestroy {
   private overlayRef: OverlayRef | null;
   private sub: Subscription;
   private longTouch$$: Subscription;
+  private touchmove$$: Subscription;
+  private touchend$$: Subscription;
+  private isDragging: boolean = false;
 
   @Input('igoContextMenu') menuContext: TemplateRef<any>;
-  @Input() touchDelayMs: number = 1500;
+  @Input() touchDelayMs: number = 500;
   @Output() menuPosition = new EventEmitter<{ x: number; y: number }>();
 
   constructor(
@@ -34,9 +37,20 @@ export class ContextMenuDirective implements OnDestroy {
   ) {
 
     const touchstart$: Observable<TouchEvent> = fromEvent(elementRef.nativeElement, 'touchstart');
+    const touchmove$: Observable<TouchEvent> = fromEvent(elementRef.nativeElement, 'touchmove');
     const touchend$: Observable<TouchEvent> = fromEvent(elementRef.nativeElement, 'touchend');
 
+    touchmove$.subscribe(() => {
+      this.isDragging = true;
+      this.close();
+    });
+    touchend$.subscribe(() => this.isDragging = false);
+
     const longTouch$ = touchstart$.pipe(
+      tap((event) => {
+        event.preventDefault();
+        window.document.body.style['-webkit-user-select'] = 'none';
+      }),
       mergeMap((e) => {
         return of(e).pipe(
           delay(this.touchDelayMs),
@@ -45,17 +59,28 @@ export class ContextMenuDirective implements OnDestroy {
       }),
     );
     this.longTouch$$ = longTouch$.pipe(
-      delay(this.touchDelayMs),
-    ).subscribe((event) => this.onContextMenu(event));
+      tap((event) => {
+        this.onContextMenu(event);
+      }), delay(2000)
+    ).subscribe(() => window.document.body.style['-webkit-user-select'] = 'auto');
   }
   ngOnDestroy(): void {
-    if (this.longTouch$$){
+    if (this.longTouch$$) {
       this.longTouch$$.unsubscribe();
+    }
+    if (this.touchmove$$) {
+      this.touchmove$$.unsubscribe();
+    }
+    if (this.touchend$$) {
+      this.touchend$$.unsubscribe();
     }
   }
 
   @HostListener('contextmenu', ['$event'])
   public onContextMenu(e: MouseEvent | TouchEvent): void {
+    if (this.isDragging) {
+      return;
+    }
 
     let x = 0;
     let y = 0;
