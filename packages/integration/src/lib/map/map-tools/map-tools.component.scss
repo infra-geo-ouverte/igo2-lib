@@ -29,6 +29,6 @@ mat-tab-group ::ng-deep .mat-tab-body-wrapper {
 }
 
 :host ::ng-deep  .mat-tab-body-content  {
-    overflow: hidden;
+    overflow: auto;
   }
   
