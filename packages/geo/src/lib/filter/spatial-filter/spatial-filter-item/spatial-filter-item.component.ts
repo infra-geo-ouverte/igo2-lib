@@ -1,3 +1,4 @@
+import OlFeature from 'ol/Feature';
 import {
   Component,
   Input,
@@ -16,13 +17,11 @@ import { Feature } from './../../../feature/shared/feature.interfaces';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { Style as OlStyle } from 'ol/style';
-import * as olstyle from 'ol/style';
+import * as olStyle from 'ol/style';
 import * as olproj from 'ol/proj';
 import OlPoint from 'ol/geom/Point';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import type { default as olFeature } from 'ol/Feature';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
@@ -72,17 +71,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
-      (feature, resolution) => {
+      this.PointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-        this.PointStyle = new olstyle.Style ({
-          image: new olstyle.Circle ({
+        return new olStyle.Style ({
+          image: new olStyle.Circle ({
             radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
-            stroke: new olstyle.Stroke({
+            stroke: new olStyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
             }),
-            fill: new olstyle.Fill({
+            fill: new olStyle.Fill({
               color: 'rgba(0, 153, 255, 0.2)'
             })
           })
@@ -93,16 +92,41 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     } else {
       // If geometry types is Polygon
       this.radius = undefined;
-      this.PolyStyle = new olstyle.Style ({
-          stroke: new olstyle.Stroke({
+      this.PolyStyle = () => {
+        return new olStyle.Style ({
+          stroke: new olStyle.Stroke({
             width: 2,
             color: 'rgba(0, 153, 255)'
           }),
-          fill: new olstyle.Fill({
+          fill: new olStyle.Fill({
             color: 'rgba(0, 153, 255, 0.2)'
           })
         });
+      };
+      const color = [0, 153, 255];
+      const drawStyle = () => {
+        return new olStyle.Style({
+          image: new olStyle.Circle ({
+            radius: 8,
+            stroke: new olStyle.Stroke({
+              width: 2,
+              color: 'rgba(0, 153, 255)'
+            }),
+            fill: new olStyle.Fill({
+              color: 'rgba(0, 153, 255, 0.2)'
+            })
+          }),
+          stroke: new olStyle.Stroke({
+            color: color.concat([1]),
+            width: 2
+          }),
+          fill:  new olStyle.Fill({
+            color: color.concat([0.2])
+          })
+        });
+      };
       this.overlayStyle = this.PolyStyle;
+      this.drawStyle$.next(drawStyle);
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
@@ -185,8 +209,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
+  overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
+  drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
@@ -202,11 +226,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public measure = false;
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
-  public drawStyle: OlStyle;
+  public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public drawZone;
-  public overlayStyle: OlStyle;
-  public PointStyle: OlStyle;
-  public PolyStyle: OlStyle;
+  public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
+  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
+  public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
   public buffer: number = 0;

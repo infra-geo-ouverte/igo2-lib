@@ -19,7 +19,7 @@ import olVectorSource from 'ol/source/Vector';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { ListenerFunction, EventsKey } from 'ol/events';
+import { EventsKey } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -196,18 +196,17 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: OlFeature<OlGeometry>, layerOL: OlLayer<OlSource>) => {
-          console.log(layerOL);
-          const layer = this.map.getLayerById(layerOL.get('values_')._layer.id);
+        (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
+          const layer = this.map.getLayerById(layerOL.values_._layer.id);
           if (featureOL) {
             if (featureOL.get('features')) {
               for (const feature of featureOL.get('features')) {
                 const newFeature = featureFromOl(feature, this.map.projection);
                 newFeature.meta = {
                   title: feature.values_.nom,
-                  id: layerOL.get('values_')._layer.id + '.' + feature.id_,
+                  id: layerOL.values_._layer.id + '.' + feature.id_,
                   icon: feature.values_._icon,
-                  sourceTitle: layerOL.get('values_').title,
+                  sourceTitle: layerOL.values_.title,
                   alias: this.queryService.getAllowedFieldsAndAlias(layer),
                   // title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
                 };
@@ -220,8 +219,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 layerOL
               );
               newFeature.meta = {
-                id: layerOL.get('values_')._layer.id + '.' + newFeature.meta.id,
-                sourceTitle: layerOL.get('values_').title,
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
                 title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
               };
@@ -233,8 +232,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 layerOL
               );
               newFeature.meta = {
-                id: layerOL.get('values_')._layer.id + '.' + newFeature.meta.id,
-                sourceTitle: layerOL.get('values_').title,
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
                 title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
               };
@@ -251,18 +250,17 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       );
     } else if (event.type === 'boxend') {
       const target = event.target as any;
-      console.log(target);
       const dragExtent = target.getGeometry().getExtent();
       this.map.layers
         .filter(layerIsQueryable)
         .filter(layer => layer instanceof VectorLayer && layer.visible)
         .map(layer => {
           const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
-          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature<OlGeometry>) => {
+          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: any) => {
             const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
             newFeature.meta = {
-              id: layer.id + '.' + olFeature.get('id_'),
-              icon: olFeature.get('values_')._icon,
+              id: layer.id + '.' + olFeature.getId(),
+              icon: olFeature.values_._icon,
               sourceTitle: layer.title,
               alias: this.queryService.getAllowedFieldsAndAlias(layer),
               title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title

@@ -92,7 +92,8 @@ export class StyleService {
         text: this.getLabel(feature, label)
       };
 
-      labelStyle instanceof olstyle.Style ? labelStyle.setText(new olstyle.Text(options)) : labelStyle.setText(this.getLabel(feature, label));
+      labelStyle instanceof olstyle.Style ? labelStyle.setText(new olstyle.Text(options)) :
+      labelStyle.setText(this.getLabel(feature, label));
     }
 
     if (type === 'circle') {
@@ -268,7 +269,6 @@ export class StyleService {
             })
           })
         ];
-        style[0].getImage().setOpacity(0.4);
       }
     } else {
       style = this.createStyle(layerStyle);

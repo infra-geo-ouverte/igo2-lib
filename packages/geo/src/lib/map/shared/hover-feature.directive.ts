@@ -4,15 +4,12 @@ import {
     OnDestroy,
     Self,
     OnInit,
-    HostListener,
-    AfterContentChecked,
-    Testability
+    HostListener
   } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
 import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
-import { ListenerFunction } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -20,7 +17,6 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 
 import olFeature from 'ol/Feature';
 import * as olstyle from 'ol/style';
-import CircleStyle from 'ol/style/Circle';
 import * as olgeom from 'ol/geom';
 import * as olLayer from 'ol/layer';
 
@@ -33,7 +29,6 @@ import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
 import { StyleService } from '../../layer/shared/style.service';
-import * as OlObservable from 'ol/Observable';
 import { OnReturn } from 'ol/Observable';
 
 /**
@@ -405,7 +400,7 @@ export function hoverFeatureMarker(feature: olFeature<olgeom.Geometry>, resoluti
   switch (feature.getGeometry().getType()) {
     case 'Point':
       olStyle.push(new olstyle.Style({
-        image: new CircleStyle({
+        image: new olstyle.Circle({
           radius: 10,
           stroke: new olstyle.Stroke({
             color: 'blue',

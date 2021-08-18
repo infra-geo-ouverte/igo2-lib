@@ -1,5 +1,5 @@
 import OlLayer from 'ol/layer/Layer';
-import OlSource from 'ol/source/Source'
+import OlSource from 'ol/source/Source';
 
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { QueryableDataSource } from './query.interfaces';

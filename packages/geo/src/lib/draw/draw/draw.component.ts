@@ -50,7 +50,6 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createDrawingInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
-import Circle from 'ol/geom/Circle';
 
 @Component ({
     selector: 'igo-draw',
@@ -249,7 +248,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
         store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
             const olGeometry = event.feature.getGeometry();
-            this.clearTooltipsOfOlGeometry(olGeometry as OlPoint | OlLineString | OlPolygon | Circle);
+            this.clearTooltipsOfOlGeometry(olGeometry as OlPoint | OlLineString | OlPolygon | OlCircle);
         });
 
         store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {

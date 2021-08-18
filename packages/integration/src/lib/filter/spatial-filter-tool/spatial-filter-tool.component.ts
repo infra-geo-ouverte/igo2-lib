@@ -487,7 +487,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createSvgIcon(icon) {
+  private createSvgIcon(icon): olstyle.Style {
     let style: olstyle.Style;
     this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
       const xmlSerializer = new XMLSerializer();

@@ -62,7 +62,7 @@ export function getCommonVectorStyle(
   let geometry;
   let text;
   if (isOlFeature) {
-    feature = feature as olFeature<OlGeometry>
+    feature = feature as olFeature<OlGeometry>;
     geometry = feature.getGeometry();
   } else {
     feature = feature as Feature;

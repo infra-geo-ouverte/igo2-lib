@@ -1448,16 +1448,12 @@ export function stopMarker(
 
   const routeStyle = [
     new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: '#6a7982', width: 10 }),
+      stroke: new olstyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
     }),
     new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: '#4fa9dd', width: 6 })
+      stroke: new olstyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
     })
   ];
-
-  for (const style of routeStyle) {
-    style.getImage().setOpacity(0.75);
-  }
 
   if (feature.get('type') === 'stop') {
     return stopStyle;

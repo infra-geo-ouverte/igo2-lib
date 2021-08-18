@@ -7,6 +7,8 @@ import OlModify from 'ol/interaction/Modify';
 import OlTranslate from 'ol/interaction/Translate';
 import OlDraw from 'ol/interaction/Draw';
 import OlPolygon from 'ol/geom/Polygon';
+import OlLineString from 'ol/geom/LineString';
+import OlCircle from 'ol/geom/Circle';
 import OlLinearRing from 'ol/geom/LinearRing';
 import OlInteraction from 'ol/interaction/Interaction';
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
@@ -30,7 +32,8 @@ export interface ModifyControlOptions {
   source?: OlVectorSource<any>;
   layer?: OlVectorLayer<any>;
   layerStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style) | OlStyle.Circle | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
+  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style) | OlStyle.Circle |
+    ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
   modify?: boolean;
   translate?: boolean;
 }
@@ -315,10 +318,10 @@ export class ModifyControl {
     this.onModifyKey = olGeometry.on(
       'change',
       (olGeometryEvent: BasicEvent) => {
-        // this.mousePosition = getMousePositionFromOlGeometryEvent(
-        //   olGeometryEvent
-        // );
-        //this.changes$.next(olGeometryEvent.target);
+        this.mousePosition = getMousePositionFromOlGeometryEvent(
+          olGeometryEvent
+        );
+        this.changes$.next(olGeometryEvent.target as OlLineString | OlCircle | OlPolygon);
       }
     );
     this.subscribeToKeyDown();
@@ -426,7 +429,7 @@ export class ModifyControl {
     this.onTranslateKey = olGeometry.on(
       'change',
       (olGeometryEvent: BasicEvent) => {
-        //this.changes$.next(olGeometryEvent.target);
+        // this.changes$.next(olGeometryEvent.target);
       }
     );
   }
@@ -616,13 +619,14 @@ export class ModifyControl {
     this.onDrawKey = olGeometry.on(
       'change',
       (olGeometryEvent: BasicEvent) => {
-        // this.mousePosition = getMousePositionFromOlGeometryEvent(
-        //   olGeometryEvent
-        // );
-        // const _linearRingCoordinates = olGeometryEvent.target
-        //   .getLinearRing()
-        //   .getCoordinates();
-        // this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
+        this.mousePosition = getMousePositionFromOlGeometryEvent(
+          olGeometryEvent
+        );
+        const olGeometryTarget = olGeometryEvent.target as OlPolygon;
+        const _linearRingCoordinates = olGeometryTarget
+          .getLinearRing(0)
+          .getCoordinates();
+        this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
         this.changes$.next(this.getOlGeometry());
       }
     );

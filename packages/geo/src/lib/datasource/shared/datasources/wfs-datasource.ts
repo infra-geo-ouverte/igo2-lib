@@ -21,6 +21,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { AuthInterceptor } from '@igo2/auth';
 import { Listener } from 'ol/events';
+import BaseEvent from 'ol/events/Event';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector<OlGeometry>;
@@ -78,7 +79,7 @@ export class WFSDataSource extends DataSource {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
-        vectorSource.dispatchEvent('vectorloading');
+        vectorSource.dispatchEvent({type: 'vectorloading'} as BaseEvent);
         const paramsWFS = this.options.paramsWFS;
         const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
 
@@ -131,7 +132,10 @@ export class WFSDataSource extends DataSource {
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200 && xhr.responseText.length > 0) {
-        const features = vectorSource.getFormat().readFeatures(xhr.responseText, {dataProjection, featureProjection}) as olFeature<OlGeometry>[];
+        const features =
+          vectorSource
+          .getFormat()
+          .readFeatures(xhr.responseText, {dataProjection, featureProjection}) as olFeature<OlGeometry>[];
         // TODO Manage "More feature"
         /*if (features.length === 0 || features.length < threshold ) {
           console.log('No more data to download at this resolution');

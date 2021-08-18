@@ -131,7 +131,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          //layer.ol.getSource().setUrl(sourceOptions.pathOffline);
+          // layer.ol.getSource().setUrl(sourceOptions.pathOffline);
         } else if (
           (sourceOptions.pathOffline &&
             this.networkState.connection === false) ||
@@ -144,7 +144,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          //layer.ol.getSource().setUrl(sourceOptions.url);
+          // layer.ol.getSource().setUrl(sourceOptions.url);
         } else {
           if (
             this.networkState.connection === false ||

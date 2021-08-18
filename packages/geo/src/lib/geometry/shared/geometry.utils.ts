@@ -1,3 +1,5 @@
+import OlCircle from 'ol/geom/Circle';
+import OlPoint from 'ol/geom/Point';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
@@ -140,9 +142,9 @@ export function getMousePositionFromOlGeometryEvent(
   olEvent: BasicEvent
 ) {
   const olGeometry = olEvent.target as OlGeometry;
-  console.log(olGeometry);
   if (olGeometry instanceof OlPolygon) {
     return olGeometry.getFlatCoordinates().slice(-4, -2) as [number, number];
   }
-  return olGeometry.getExtent().slice(-2) as [number, number];
+  const olGeometryCast = olGeometry as OlPoint | OlLineString | OlCircle;
+  return olGeometryCast.getFlatCoordinates().slice(-2) as [number, number];
 }

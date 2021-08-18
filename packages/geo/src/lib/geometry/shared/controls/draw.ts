@@ -20,7 +20,8 @@ export interface DrawControlOptions {
   source?: OlVectorSource<OlGeometry>;
   layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
   layerStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style) | OlStyle.Circle | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
+  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<OlGeometry>) => OlStyle.Style) | OlStyle.Circle |
+    ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
   maxPoints?: number;
 }
 

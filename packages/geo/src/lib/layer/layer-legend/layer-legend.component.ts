@@ -236,7 +236,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     //   STYLES += this.currentStyle + ','
     // );
     STYLES = STYLES.slice(0, -1);
-    //this.layer.dataSource.ol.updateParams({STYLES});
+    // this.layer.dataSource.ol.updateParams({STYLES});
   }
 
   onLoadImage(id: string) {

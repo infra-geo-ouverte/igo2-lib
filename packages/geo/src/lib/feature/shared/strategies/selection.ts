@@ -135,7 +135,6 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * overlay.
    */
   deactivateSelection() {
-    //this.unlistenToMapClick();
     this.removeDragBoxInteraction();
     this.unwatchAll();
   }

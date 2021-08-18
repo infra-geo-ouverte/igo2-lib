@@ -11,7 +11,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
-import { Style as OlStyle } from 'ol/style';
+import * as OlStyle from 'ol/style';
 
 import { IgoFormFieldComponent } from '@igo2/common';
 
@@ -94,13 +94,13 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() drawStyle: OlStyle;
+  @Input() drawStyle: OlStyle.Style;
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyle;
+  @Input() overlayStyle: OlStyle.Style;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

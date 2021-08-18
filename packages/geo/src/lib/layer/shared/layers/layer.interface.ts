@@ -1,5 +1,5 @@
 import olLayer from 'ol/layer/Layer';
-import olSource from 'ol/source/Source'
+import olSource from 'ol/source/Source';
 import { Message } from '@igo2/core';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';

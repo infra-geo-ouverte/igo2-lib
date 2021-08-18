@@ -263,7 +263,7 @@ export class PrintService {
   getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jspdf) {
     const pdfResolution = 96;
     const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
-    doc.setFont('Times', 'bold');;
+    doc.setFont('Times', 'bold');
     const width = doc.getTextWidth(title);
 
     const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
@@ -288,7 +288,7 @@ export class PrintService {
   getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jspdf) {
     const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% of the title's font size
 
-    doc.setFont('Times','bold');
+    doc.setFont('Times', 'bold');
 
     const subtitleWidth = doc.getStringUnitWidth(subtitle) * subtitleSize / doc.internal.scaleFactor;
 
@@ -302,13 +302,13 @@ export class PrintService {
   }
 
   private addTitle(doc: jspdf, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
-    doc.setFont('Times','bold');
+    doc.setFont('Times', 'bold');
     doc.setFontSize(titleFontSize);
     doc.text(title, titleMarginLeft, titleMarginTop);
   }
 
   private addSubTitle(doc: jspdf, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
-    doc.setFont('Times','bold');;
+    doc.setFont('Times', 'bold');
     doc.setFontSize(subtitleFontSize);
     doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop);
   }
@@ -500,9 +500,10 @@ export class PrintService {
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
       // Remove the UI buttons from the nodes
-      const OverlayHTMLButton = mapOverlayHTML.getElementsByTagName('button');
-      for (let i = 0; i < OverlayHTMLButton.length; i++) {
-        OverlayHTMLButton[i].setAttribute('data-html2canvas-ignore', 'true');
+      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
+      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
+        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
