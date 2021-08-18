@@ -31,6 +31,7 @@
     "build.integration": "ng build integration --prod && gulp integration",
     "build.demo": "ng build demo --configuration=production",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
+    "copy": "copy-newer --cwd dist ** \"..\\igo2\\node_modules\\@igo2\"",
     "doc": "npm run build.doc && compodoc -s --port 4220",
     "pretest": "ng lint",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
