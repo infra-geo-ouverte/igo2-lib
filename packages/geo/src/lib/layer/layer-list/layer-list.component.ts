@@ -255,10 +255,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
         let checks = 0;
         for (const layer of this.layers) {
           layer.status$.subscribe(valStatus => {
-            if (valStatus == 0) {
+            if (valStatus === 0) {
               this.map.removeLayer(layer);
-            }     
-          })
+            }
+          });
           if (layer.options.active) {
             this.activeLayer = layer;
             this.layerTool = true;
@@ -946,7 +946,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return [igoList, checkItem];
   }
 
-  removeProblemLayerInList(layersList : Layer[]) : Layer[] {
+  removeProblemLayerInList(layersList: Layer[]): Layer[] {
     for (const layer of layersList) {
       if (layer.olLoadingProblem === true) {
         this.map.removeLayer(layer);

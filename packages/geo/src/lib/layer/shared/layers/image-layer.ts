@@ -30,10 +30,10 @@ export class ImageLayer extends Layer {
     this.watcher = new ImageWatcher(this, this.messageService, this.languageService);
     this.status$ = this.watcher.status$;
     this.status$.subscribe(valStatus => {
-      if (valStatus == 0) {
+      if (valStatus === 0) {
         this.olLoadingProblem = true;
       }
-    })
+    });
   }
 
   protected createOlLayer(): olLayerImage {
