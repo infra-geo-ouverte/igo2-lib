@@ -78,7 +78,7 @@ export class ImageWatcher extends Watcher {
       'igo.geo.dataSource.unavailableTitle'
     );
     const message = this.languageService.translate.instant(
-      'igo.geo.dataSource.olLoadProblem', {value: event.target.params_.LAYERS}
+      'igo.geo.dataSource.unavailable', {value: event.target.params_.LAYERS}
     );
 
     this.messageService.error(message, title);

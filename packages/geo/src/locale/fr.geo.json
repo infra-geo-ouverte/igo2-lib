@@ -36,8 +36,7 @@
       "dataSource": {
         "unavailableTitle": "Couche indisponible",
         "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
-        "unavailable": "La couche '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
-        "olLoadProblem": "Problème lors du chargement de la couche '{{value}}'"
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
       },
       "dropGeoFile": {
         "invalid": {
