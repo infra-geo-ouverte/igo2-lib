@@ -22,17 +22,17 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
    * Listener of toggle from advanced-map-tool
    */
   private displayCenter$$: Subscription;
-  constructor() {}
+  constructor() { }
 
   /**
    * Set a visibility for cursor of the center of the map
    */
-   ngAfterViewInit() {
+  ngAfterViewInit() {
     if (this.map) {
       this.displayCenter$$ = this.map.mapCenter$.subscribe(value => {
         value ?
-        document.getElementById('mapCenter').style.visibility = 'visible' :
-        document.getElementById('mapCenter').style.visibility = 'hidden';
+          document.getElementById('mapCenter').style.visibility = 'visible' :
+          document.getElementById('mapCenter').style.visibility = 'hidden';
       });
     }
     this.letZoom();
@@ -41,7 +41,7 @@ export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**
    * Destroyer of a component
    */
-  ngOnDestroy(){
+  ngOnDestroy() {
     if (this.displayCenter$$) {
       this.displayCenter$$.unsubscribe();
     }
