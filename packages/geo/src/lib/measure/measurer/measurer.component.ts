@@ -59,7 +59,6 @@ import {
   formatMeasure
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
-import { feature } from '@turf/helpers';
 
 /**
  * Tool to measure lengths and areas
@@ -112,6 +111,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       }
     ]
   };
+
+  private subscriptions$$: Subscription[] = [];
 
   /**
    * Reference to the MeasureType enum
@@ -332,6 +333,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.setActiveMeasureType(undefined);
     this.deactivateModifyControl();
     this.freezeStore();
+    this.subscriptions$$.map(s => s.unsubscribe());
   }
 
   /**
@@ -556,7 +558,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       workspace: { enabled: false }
     });
     tryBindStoreLayer(store, layer);
-
+    store.layer.visible = true;
     layer.visible$.subscribe(visible => {
       if (visible) {
         Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>
@@ -599,14 +601,20 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.selectedFeatures$.next(records.map(record => record.entity));
     });
 
-    this.store.entities$.subscribe(objectsExists  => {
+    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists  => {
     if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
         this.hasArea$.next(true);
       }
       else {
         this.hasArea$.next(false);
       }
-    });
+    }));
+
+    this.subscriptions$$.push(this.store.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.store.layer.options.showInLayerList = true :
+        this.store.layer.options.showInLayerList = false;
+    }));
   }
 
   /**
