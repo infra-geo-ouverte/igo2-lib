@@ -101,6 +101,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsDisabled: boolean = true;
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
+  private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
   public form: FormGroup;
@@ -135,6 +136,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.drawControl.setOlMap(undefined);
+    this.subscriptions$$.map(s => s.unsubscribe());
   }
 
   /**
@@ -171,6 +173,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.map.removeLayer(this.olDrawingLayer);
 
     this.olDrawingLayer = new VectorLayer({
+      id: 'igo-draw-layer',
       title: this.languageService.translate.instant('igo.geo.draw.drawing'),
       zIndex: 200,
       source: new FeatureDataSource(),
@@ -195,19 +198,23 @@ export class DrawComponent implements OnInit, OnDestroy {
       motion: FeatureMotion.None,
       many: true
     }));
-
+    this.store.layer.visible = true;
     this.store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
       const olGeometry = event.feature.getGeometry();
       this.clearLabelsOfOlGeometry(olGeometry);
     });
 
-    this.store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+    this.subscriptions$$.push(this.store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
       return record.state.selected === true;
     }).pipe(
       skip(1)  // Skip initial emission
     ).subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
       this.selectedFeatures$.next(records.map(record => record.entity));
-    });
+    }));
+
+    this.subscriptions$$.push(this.store.count$.subscribe(cnt => {
+      cnt >= 1 ? this.store.layer.options.showInLayerList = true : this.store.layer.options.showInLayerList = false;
+    }));
   }
 
   /**
