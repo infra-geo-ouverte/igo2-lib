@@ -21,8 +21,9 @@ export interface FeatureWithDraw extends Feature<FeatureWithDrawProperties> {}
 export interface FeatureWithDrawProperties {
   id: string;
   draw: string;
-  center: any;
-  radius: any;
+  longitude: number;
+  latitude: number;
+  rad: number;
 }
 
 export interface FeatureStoreDrawStrategyOptions {

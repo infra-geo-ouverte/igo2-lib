@@ -35,6 +35,7 @@ import * as OlStyle from 'ol/style';
 import * as OlColor from 'ol/color';
 import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
+import OlPoint from 'ol/geom/Point';
 import OlGeometry from 'ol/geom/Geometry';
 import OlCollection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
@@ -44,6 +45,7 @@ import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
+import { DrawShorcutsComponent } from './draw-shorcuts.component';
 import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
@@ -372,8 +374,11 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @internal
    */
   private addFeatureToStore(olGeometry: OlGeometry, feature?: FeatureWithDraw) {
-    let rad;
-    let center4326;
+    let rad: number;
+    let center4326: Array<number>;
+    let point4326: Array<number>;
+    let lon4326: number;
+    let lat4326: number;
     const featureId = feature ? feature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
 
@@ -387,7 +392,15 @@ export class DrawComponent implements OnInit, OnDestroy {
       geometry.coordinates = olGeometry.getCenter();
       const extent4326 = transform([olGeometry.flatCoordinates[2], olGeometry.flatCoordinates[3]], projection, 'EPSG:4326');
       center4326 = transform([olGeometry.flatCoordinates[0], olGeometry.flatCoordinates[1]], projection, 'EPSG:4326');
+      lon4326 = center4326[0];
+      lat4326 = center4326[1];
       rad = getDistance(center4326, extent4326);
+    }
+
+    if (olGeometry instanceof OlPoint) {
+      point4326 = transform(olGeometry.flatCoordinates, projection, 'EPSG:4326');
+      lon4326 = point4326[0];
+      lat4326 = point4326[1];
     }
 
     this.store.update({
@@ -397,8 +410,9 @@ export class DrawComponent implements OnInit, OnDestroy {
       properties: {
         id: featureId,
         draw: olGeometry.get('_label'),
-        center: center4326 ? center4326 : undefined,
-        radius: rad ? rad : undefined
+        longitude: lon4326 ? lon4326 : null,
+        latitude: lat4326 ? lat4326 : null,
+        rad: rad ? rad : null
       },
       meta: {
        id: featureId
@@ -465,5 +479,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.store.layer.ol.setStyle((feature, resolution) => {
       return this.drawStyleService.createDrawingLayerStyle(feature, resolution, true, this.icon);
     });
+  }
+
+  openShorcutsDialog() {
+    this.dialog.open(DrawShorcutsComponent);
   }
 }

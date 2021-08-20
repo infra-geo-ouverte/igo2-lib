@@ -140,14 +140,6 @@
     </mat-slide-toggle>
   </div>
 
-  <div class="export-options mat-typography" *ngIf="form.value.format !== 'URL' && circlesArePresent">
-    <mat-slide-toggle
-        formControlName="circlesToPolygons"
-        [labelPosition]="'before'">
-        {{'igo.geo.importExportForm.exportCircleToPolygon' | translate}}
-    </mat-slide-toggle>
-  </div>
-
   <div class="igo-form-button-group">
     <button
       mat-raised-button

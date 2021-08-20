@@ -300,18 +300,18 @@ export class DrawControl {
     this.unsubscribeKeyDown();
     this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       // On Escape or 'c' keydowns, abort the current drawing
-      if (event.key === 'Escape' || event.key === 'c') {
+      if (event.key === 'Escape') {
         this.olDrawInteraction.abortDrawing();
         return;
       }
 
       // On Backspace or 'u' keydowns, remove last vertex of current drawing
-      if (event.key === 'Backspace' || event.key === 'u') {
+      if (event.key === 'Backspace') {
         this.olDrawInteraction.removeLastPoint();
       }
 
       // On Enter or 'f' keydowns, finish current drawing
-      if (event.key === 'Enter' || event.key === 'f') {
+      if (event.key === 'Enter') {
         this.olDrawInteraction.finishDrawing();
       }
 

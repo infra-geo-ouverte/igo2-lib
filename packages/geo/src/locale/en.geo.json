@@ -617,25 +617,30 @@
         }
       },
       "draw": {
+        "abort": "Abort current drawing",
         "cancelColorPicker": "Cancel",
         "Circle": "Circle",
+        "colorPicker": "Click to open the color picker",
         "dialogInstruction": "Enter your draw's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
         "fill": "Fill",
+        "finish": "Finish current drawing",
         "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",
-        "okColorPicker": "OK",
-        "noLabel": "Aucune étiquette",
+        "move": "Center view on cursor",
+        "noIcon": "No icon",
+        "noLabel": "No label",
         "Point": "Point",
         "Polygon": "Polygon",
         "radius": "Radius",
+        "shortcuts": "Keyboard shortcuts",
         "stroke": "Stroke",
         "styleSelect": "Select style",
         "toggleMapTooltips": "Show map tooltips",
-        "noIcon": "No icon"
+        "undo": "Remove last vertex"
       },
       "network": {
         "online": {

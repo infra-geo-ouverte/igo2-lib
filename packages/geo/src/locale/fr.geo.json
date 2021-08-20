@@ -617,25 +617,30 @@
         }
       },
       "draw": {
+        "abort": "Annuler le dessin en cours",
         "cancelColorPicker": "Annuler",
         "Circle": "Cercle",
+        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
         "fill": "Remplissage",
+        "finish": "Terminer le dessin en cours",
         "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
+        "move": "Centrer la vue sur le curseur",
+        "noIcon": "Aucune icône",
         "noLabel": "Aucune étiquette",
-        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygone",
         "radius": "Rayon",
+        "shortcuts": "Raccourcis clavier",
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
-        "noIcon": "Aucune icône"
+        "undo": "Retirer le dernier sommet"
       },
       "network": {
         "online": {

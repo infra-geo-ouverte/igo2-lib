@@ -19,6 +19,7 @@ import { IgoEntityTableModule } from '@igo2/common';
 import { DrawComponent } from './draw.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawPopupComponent } from './draw-popup.component';
+import { DrawShorcutsComponent } from './draw-shorcuts.component';
 
 /**
  * @ignore
@@ -46,7 +47,8 @@ import { DrawPopupComponent } from './draw-popup.component';
   ],
   declarations: [
     DrawComponent,
-    DrawPopupComponent
+    DrawPopupComponent,
+    DrawShorcutsComponent
   ],
   exports: [
     DrawComponent

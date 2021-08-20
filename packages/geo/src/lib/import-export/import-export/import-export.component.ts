@@ -66,7 +66,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
-  public circlesArePresent: boolean = false;
 
   private layers$$: Subscription;
   private exportableLayers$$: Subscription;
@@ -274,13 +273,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         if (layers.length === 1) {
           this.form.patchValue({ layers: layers[0].id });
         }
-        layers.forEach((layer: VectorLayer) => {
-          layer.ol.getSource().getFeatures().forEach(feature => {
-            if (feature.get('radius')) {
-              this.circlesArePresent = true;
-            }
-          });
-        });
       });
 
     this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
@@ -549,22 +541,18 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         geomTypes = [{ geometryType: '', features: olFeatures }];
       }
 
-      if (data.circlesToPolygons) {
-        geomTypes = [];
-        geomTypes.forEach(geomType => {
-          geomType.features.forEach(feature => {
-            const radius = feature.get('radius');
-            if (radius) {
-              const center4326 = feature.get('center');
-              const circle = circular(center4326, radius, 500);
-              circle.transform('EPSG:4326', feature.get('_projection'));
-              feature.setGeometry(circle);
-              feature.unset('center');
-              feature.unset('radius');
-            }
-          });
+      geomTypes.forEach(geomType => {
+        geomType.features.forEach(feature => {
+          const radius: number = feature.get('rad');
+          if (radius) {
+            const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
+            const circle = circular(center4326, radius, 500);
+            circle.transform('EPSG:4326', feature.get('_projection'));
+            feature.setGeometry(circle);
+          }
         });
-      }
+      });
+
 
       if (data.format === ExportFormat.GPX) {
         const gpxFeatureCnt = geomTypes.length;
@@ -610,7 +598,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
-        circlesToPolygons: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
     } else {
@@ -620,7 +607,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
-        circlesToPolygons: [false, [Validators.required]]
       });
     }
   }

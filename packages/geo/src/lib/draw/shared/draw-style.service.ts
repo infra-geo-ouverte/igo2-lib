@@ -14,7 +14,6 @@ export class DrawStyleService {
   private fillColor: OlColor = 'rgba(255,255,255,0.4)';
   private strokeColor: OlColor = 'rgba(143,7,7,1)';
   private strokeWidth: number = 1;
-  private drawCount: number = 1;
   private labelsAreShown = true;
   private icon: string;
 
@@ -42,24 +41,12 @@ export class DrawStyleService {
     return this.strokeWidth;
   }
 
-  setStrokeWidth(strokeWidth: number) {
-    this.strokeWidth = strokeWidth;
-  }
-
-  getDrawCount() {
-    return this.drawCount;
-  }
-
   getLabelsAreShown() {
     return this.labelsAreShown;
   }
 
   toggleLabelsAreShown() {
     this.labelsAreShown = !this.labelsAreShown;
-  }
-
-  raiseDrawCount() {
-    this.drawCount += 1;
   }
 
   setIcon(icon: string) {
@@ -73,7 +60,7 @@ export class DrawStyleService {
   createDrawingLayerStyle(feature, resolution, labelsAreShown?: boolean, icon?: string): OlStyle.Style {
     let style;
     let labelsAreOffset: boolean = false;
-    const proj = this.mapService.getMap().ol.getView().getProjection().getCode();
+    const proj = this.mapService.getMap().projection;
     const geom = feature.getGeometry();
 
     if (geom instanceof OlPoint) {
@@ -81,7 +68,7 @@ export class DrawStyleService {
     }
 
     // if feature is a circle
-    if (feature.get('radius')) {
+    if (feature.get('rad')) {
       const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
 
       style = new OlStyle.Style({
@@ -99,7 +86,7 @@ export class DrawStyleService {
         }),
 
         image: new OlStyle.Circle({
-          radius: feature.get('radius') / Math.cos((Math.PI / 180) * coordinates[1]) / resolution,
+          radius: feature.get('rad') / Math.cos((Math.PI / 180) * coordinates[1]) / resolution,
           stroke: new OlStyle.Stroke({
             color: this.strokeColor,
             width: this.strokeWidth

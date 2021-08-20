@@ -44,7 +44,13 @@
         {{'igo.geo.draw.fill' | translate}}
       </span>
 
-      <mat-form-field class="fill-field" appearance="outline" floatLabel="always">
+      <mat-form-field
+        class="fill-field"
+        appearance="outline"
+        floatLabel="always"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.draw.colorPicker' | translate">
         <mat-label>{{fillColor}}</mat-label>
 
         <input
@@ -58,7 +64,7 @@
           [cpWidth]="('200px')"
           [cpOutputFormat]="'rgba'"
           [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-8%'"
+          [cpPositionOffset]="'-75%'"
           [cpCancelButton]="true"
           [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
           [cpOKButton]="true"
@@ -72,7 +78,13 @@
         {{'igo.geo.draw.stroke' | translate}}
       </span>
 
-      <mat-form-field class="stroke-field" appearance="outline" floatLabel="always">
+      <mat-form-field
+        class="stroke-field"
+        appearance="outline"
+        floatLabel="always"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.draw.colorPicker' | translate">
         <mat-label>{{strokeColor}}</mat-label>
 
         <input
@@ -85,7 +97,7 @@
           [colorPicker]="strokeColor"
           [cpWidth]="('200px')"
           [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-8%'"
+          [cpPositionOffset]="'-75%'"
           [cpOutputFormat]="'rgba'"
           [cpCancelButton]="true"
           [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
@@ -139,4 +151,18 @@
       [template]="tableTemplate">
     </igo-entity-table>
   </div>
+
+  <button
+    mat-icon-button
+    color="accent"
+    disableRipple="true"
+    (click)="openShorcutsDialog()">
+    <mat-icon
+      class="shortcuts-icon"
+      svgIcon="keyboard-outline"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.draw.shortcuts' | translate">
+    </mat-icon>
+  </button>
 </div>
