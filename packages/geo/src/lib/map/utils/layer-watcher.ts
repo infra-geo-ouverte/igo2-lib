@@ -30,6 +30,10 @@ export class LayerWatcher extends Watcher {
     const layer$$ = layer.status$
       .pipe(distinctUntilChanged())
       .subscribe(status => {
+        if (status === SubjectStatus.Error) {
+          this.loading = 0;
+          this.loaded = -1;
+        }
         if (status === SubjectStatus.Working) {
           this.loading += 1;
         } else if (status === SubjectStatus.Done) {

@@ -118,7 +118,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
     const regexBase = /<base href="[\w:\/\.]+">/;
     if (!regexBase.test(value.body)) {
-      const url = new URL(value.url);
+      const url = new URL(value.url, window.location.origin);
       value.body = value.body.replace('<head>', `<head><base href="${url.origin}">`);
     }
 

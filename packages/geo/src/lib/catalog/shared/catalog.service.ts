@@ -7,11 +7,11 @@ import { uuid, ObjectUtils } from '@igo2/utils';
 import { LanguageService, MessageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
-  TypeCapabilities,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions
+  ArcGISRestDataSourceOptions,
+  TypeCapabilitiesStrings
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -117,6 +117,7 @@ export class CatalogService {
           {
             id: 'catalog.group.baselayers',
             type: CatalogItemType.Group,
+            externalProvider: catalog.externalProvider,
             title: catalog.title,
             items
           }
@@ -189,10 +190,12 @@ export class CatalogService {
     const compositeCatalog = (catalog as CompositeCatalog).composite;
 
     const catalogsFromInstance = [] as Catalog[];
-    compositeCatalog.map((component: Catalog) =>
+    compositeCatalog.map((component: Catalog) => {
+      component.sortDirection = catalog.sortDirection;  // propagate sortDirection with parent value
       catalogsFromInstance.push(
         CatalogFactory.createInstanceCatalog(component, this)
-      )
+    );
+  }
     );
 
     // get CatalogItems for each original Catalog-----------------------------------------------------
@@ -222,6 +225,10 @@ export class CatalogService {
         const outGroupImpose = Object.assign({}, c.groupImpose);
         outGroupImpose.address = c.id;
         outGroupImpose.type = CatalogItemType.Group;
+        outGroupImpose.externalProvider = c.externalProvider;
+        if (outGroupImpose.sortDirection === undefined) {
+          outGroupImpose.sortDirection = c.sortDirection;
+        }
         outGroupImpose.items = [];
 
         const flatLayer = flatDeepLayer(item);
@@ -327,7 +334,7 @@ export class CatalogService {
   private getCatalogCapabilities(catalog: Catalog): Observable<any> {
     const sType: string = TypeCatalog[catalog.type as string];
     return this.capabilitiesService
-      .getCapabilities(TypeCapabilities[sType], catalog.url, catalog.version)
+      .getCapabilities(sType as any, catalog.url, catalog.version)
       .pipe(
         catchError((e) => {
           const title = this.languageService.translate.instant(
@@ -345,7 +352,7 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
-    const configuredQueryFormat = this.retriveLayerInfoFormat(
+    const configuredQueryFormat = this.retrieveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
     );
@@ -433,6 +440,8 @@ export class CatalogService {
       type: CatalogItemType.Group,
       title: itemListIn.Title,
       address: catalog.id,
+      externalProvider: catalog.externalProvider || false,
+      sortDirection: catalog.sortDirection,  // propagate sortDirection
       items: itemListIn.Layer.reduce((items: CatalogItem[], layer: any) => {
         if (layer.Layer !== undefined) {
           // recursive, check next level
@@ -606,7 +615,8 @@ export class CatalogService {
 
     let abstract;
     if (capabilities.serviceDescription && capabilities.serviceDescription.length) {
-      abstract = capabilities.serviceDescription;
+      const regex = /(<([^>]+)>)/ig;
+      abstract = capabilities.serviceDescription.replace(regex, '');
     }
 
     return layers
@@ -670,7 +680,7 @@ export class CatalogService {
     return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
   }
 
-  private retriveLayerInfoFormat(
+  private retrieveLayerInfoFormat(
     layerNameFromCatalog: string,
     layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
   ): QueryFormat {
