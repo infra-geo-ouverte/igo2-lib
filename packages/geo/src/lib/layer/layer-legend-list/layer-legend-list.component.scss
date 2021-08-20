@@ -18,3 +18,8 @@ igo-list {
   text-align: justify;
   margin: 10px;
 }
+
+.layer-legend-list-container {
+  max-height: 100%;
+  overflow: auto;
+}
