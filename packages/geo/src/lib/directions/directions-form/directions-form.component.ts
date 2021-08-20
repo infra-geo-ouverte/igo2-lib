@@ -63,7 +63,7 @@ import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-st
 })
 export class DirectionsFormComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
-  
+
   private subscriptions$$: Subscription[] = [];
 
   public stopsForm: FormGroup;
@@ -264,7 +264,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
           {
             bidirectionnal: false,
             syncedDelete: true,
-            linkedIds: ["igo-direction-route-layer"],
+            linkedIds: ['igo-direction-route-layer'],
             properties: []
           }
         ]
