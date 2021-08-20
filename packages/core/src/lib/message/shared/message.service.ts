@@ -34,38 +34,53 @@ export class MessageService {
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
 
-    message.options = message.options || {};
-    message = this.handleTemplate(message);
+    message.options = message.options || {} as MessageOptions;
+    const currentDate = new Date();
 
-    let notification: Notification;
-    if (message.text) {
-      notification = this.notificationService.create(
-        message.title,
-        message.text,
-        (message.type as any) as NotificationType,
-        message.options
-      );
-    } else if (message.html) {
-      if (!message.icon) {
-        message.options.theClass = message.options.theClass
-          ? message.options.theClass + ' noIcon'
-          : 'noIcon';
+    message.options.from = message.options.from ? message.options.from : new Date('1 jan 1900');
+    message.options.to = message.options.to ? message.options.to : new Date('1 jan 3000');
+    if (typeof message.options.from === 'string') {
+      message.options.from = new Date(Date.parse(message.options.from.replace(/-/g, ' ')));
+    }
+    if (typeof message.options.to === 'string') {
+      message.options.to = new Date(Date.parse(message.options.to.replace(/-/g, ' ')));
+    }
+    if (
+      currentDate > message.options.from && currentDate < message.options.to) {
+
+      message = this.handleTemplate(message);
+
+      let notification: Notification;
+      if (message.text) {
+        notification = this.notificationService.create(
+          message.title,
+          message.text,
+          (message.type as any) as NotificationType,
+          message.options
+        );
+      } else if (message.html) {
+        if (!message.icon) {
+          message.options.theClass = message.options.theClass
+            ? message.options.theClass + ' noIcon'
+            : 'noIcon';
+        }
+
+        notification = this.notificationService.html(
+          message.html,
+          (message.type as any) as NotificationType,
+          message.options
+        );
+      } else {
+        return;
       }
 
-      notification = this.notificationService.html(
-        message.html,
-        (message.type as any) as NotificationType,
-        message.options
-      );
-    } else {
-      return;
+      if (message.icon !== undefined) {
+        this.addIcon(notification, message.icon);
+      }
+      message.options.id = notification.id;
+      return notification;
     }
-
-    if (message.icon !== undefined) {
-      this.addIcon(notification, message.icon);
-    }
-
-    return notification;
+    return;
   }
 
   success(text: string, title?: string, options: any = {}) {
@@ -110,6 +125,14 @@ export class MessageService {
 
   remove(id?: string) {
     this.notificationService.remove(id);
+  }
+
+  removeAllAreNotError() {
+    for (const mess of this.messages$.value) {
+      if (mess.type !== 'error') {
+        this.remove(mess.options.id);
+      }
+    }
   }
 
   private addIcon(notification: Notification, icon: string) {

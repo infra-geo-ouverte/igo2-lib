@@ -15,6 +15,7 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
+import { LegendMapViewOptions } from '../../../layer/shared/layers/layer.interface';
 import { BehaviorSubject } from 'rxjs';
 import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 
@@ -112,9 +113,22 @@ export class WMSDataSource extends DataSource {
         'wms'
       );
     } else {
-      initOgcFilters.advancedOgcFilters = initOgcFilters.pushButtons
+      initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes
+        || initOgcFilters.radioButtons || initOgcFilters.select)
         ? false
         : true;
+      if (initOgcFilters.pushButtons){
+        initOgcFilters.pushButtons.selectorType = 'pushButton';
+      }
+      if (initOgcFilters.checkboxes){
+        initOgcFilters.checkboxes.selectorType = 'checkbox';
+      }
+      if (initOgcFilters.radioButtons){
+        initOgcFilters.radioButtons.selectorType = 'radioButton';
+      }
+      if (initOgcFilters.select){
+        initOgcFilters.select.selectorType = 'select';
+      }
     }
 
     if (
@@ -167,7 +181,7 @@ export class WMSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceImageWMS {
-    return new olSourceImageWMS(this.options);
+    return new olSourceImageWMS(Object.assign({ratio: 1}, this.options));
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
@@ -184,10 +198,18 @@ export class WMSDataSource extends DataSource {
     }
   }
 
-  getLegend(style?: string, scale?: number): Legend[] {
+  getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
     let legend = super.getLegend();
-    if (legend.length > 0 && (style === undefined && !scale)) {
+    if (legend.length > 0 && (style === undefined && !view?.scale)) {
       return legend;
+    }
+
+    let contentDependent = false;
+    let projParam;
+
+    if (view?.size && view?.extent && view?.projection && this.options.contentDependentLegend) {
+      projParam = this.params.VERSION === '1.3.0' || this.params.VERSION === undefined ? 'CRS' : 'SRS';
+      contentDependent = true;
     }
 
     const sourceParams = this.params;
@@ -208,8 +230,14 @@ export class WMSDataSource extends DataSource {
     if (style !== undefined) {
       params.push(`STYLE=${style}`);
     }
-    if (scale !== undefined) {
-      params.push(`SCALE=${scale}`);
+    if (view?.scale !== undefined) {
+      params.push(`SCALE=${view.scale}`);
+    }
+    if (contentDependent) {
+      params.push(`WIDTH=${view.size[0]}`);
+      params.push(`HEIGHT=${view.size[1]}`);
+      params.push(`BBOX=${view.extent.join(',')}`);
+      params.push(`${projParam}=${view.projection}`);
     }
 
     legend = layers.map((layer: string) => {

@@ -216,8 +216,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
 
         if (
           this.paginator &&
-          firstSelectedStateviewPosition < pageMin ||
-          firstSelectedStateviewPosition >= pageMax) {
+          (firstSelectedStateviewPosition < pageMin ||
+          firstSelectedStateviewPosition >= pageMax)) {
           const pageToReach = Math.floor(firstSelectedStateviewPosition / this.paginator.pageSize);
           this.dataSource.paginator.pageIndex = pageToReach;
         }

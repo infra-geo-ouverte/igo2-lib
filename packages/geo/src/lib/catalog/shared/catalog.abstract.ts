@@ -14,6 +14,10 @@ export abstract class Catalog implements ICatalog {
     id: string;
     title: string;
     url: string;
+    removable?: boolean;
+    externalProvider?: boolean;
+    abstract?: string;
+    forcedProperties?: any[];
     items?: CatalogItem[];
     type?: TypeCatalogStrings;
     version?: string;
@@ -21,6 +25,7 @@ export abstract class Catalog implements ICatalog {
     requestEncoding?: string;
     regFilters?: string[];
     groupImpose?: CatalogItemGroup;
+    groupSeparator?: string;
     timeFilter?: TimeFilterOptions;
     queryFormat?: QueryFormat;
     queryHtmlTarget?: QueryHtmlTarget;
@@ -91,11 +96,10 @@ class ArcGISRestCatalog extends Catalog {
     }
 }
 
-class TileArcGISRestCatalog extends Catalog {
-    constructor(options: Catalog, service: CatalogService) {
+class TileOrImageArcGISRestCatalog extends Catalog {
+    constructor(options: Catalog, service: CatalogService, typeCatalog: TypeCatalog) {
         super(options, service);
-        const sType: string = TypeCatalog[TypeCatalog.tilearcgisrest];
-        this.type =  TypeCatalog[sType];
+        this.type =  TypeCatalog[TypeCatalog[typeCatalog]];
     }
 
     public collectCatalogItems() {
@@ -130,7 +134,9 @@ export class CatalogFactory {
         } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
             catalog = new ArcGISRestCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
-            catalog = new TileArcGISRestCatalog(options, service);
+            catalog = new TileOrImageArcGISRestCatalog(options, service, TypeCatalog.tilearcgisrest);
+        } else if (options.type === TypeCatalog[TypeCatalog.imagearcgisrest]) {
+            catalog = new TileOrImageArcGISRestCatalog(options, service, TypeCatalog.imagearcgisrest);
         } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
             catalog = new WMTSCatalog(options, service);
         } else {

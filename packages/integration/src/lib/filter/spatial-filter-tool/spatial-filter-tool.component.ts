@@ -209,7 +209,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.loading = true;
     let zeroResults = true;
     let thematics;
-    if (this.buffer === 0) {
+    if (this.buffer === 0 || this.type === SpatialFilterType.Point) {
       this.tryAddFeaturesToMap([this.zone]);
     }
     if (this.itemType !== SpatialFilterItemType.Thematics) {
@@ -222,6 +222,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
     if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
       this.buffer = this.buffer * 1000;
+    }
+    if (this.type === SpatialFilterType.Polygon) {
+      this.buffer = 0; // to avoid buffer enter a second time in terrAPI
     }
 
     const observables$: Observable<Feature[]>[] = [];

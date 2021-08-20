@@ -19,7 +19,8 @@ import {
   WMSDataSource,
   CartoDataSource,
   TileArcGISRestDataSource,
-  WMSDataSourceOptions
+  WMSDataSourceOptions,
+  ImageArcGISRestDataSource
 } from '../../datasource';
 
 import {
@@ -32,6 +33,7 @@ import {
   QueryableDataSource,
   QueryableDataSourceOptions
 } from './query.interfaces';
+import { MapExtent } from '../../map/shared/map.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +50,7 @@ export class QueryService {
   }
 
   queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
-    const url = this.getQueryUrl(layer.dataSource, options);
+    const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
     if (!url) {
       return of([]);
     }
@@ -241,10 +243,10 @@ export class QueryService {
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
       case QueryFormat.GEOJSON2:
-        features = this.extractGeoJSONData(res);
+        features = this.extractGeoJSONData(res, layer.zIndex, allowedFieldsAndAlias);
         break;
       case QueryFormat.ESRIJSON:
-        features = this.extractEsriJSONData(res, layer.zIndex);
+        features = this.extractEsriJSONData(res, layer.zIndex, allowedFieldsAndAlias);
         break;
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
@@ -321,7 +323,6 @@ export class QueryService {
     const height = parseInt(searchParams.height, 10);
     const xPosition = parseInt(searchParams.i || searchParams.x, 10);
     const yPosition = parseInt(searchParams.j || searchParams.y, 10);
-    const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
 
     const bbox = bboxRaw.split(',');
     let threshold =
@@ -412,21 +413,33 @@ export class QueryService {
     );
   }
 
-  private extractGeoJSONData(res) {
+  private extractGeoJSONData(res, zIndex, allowedFieldsAndAlias?) {
     let features = [];
     try {
-      features = JSON.parse(res).features;
+      features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
     } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
+    features.map(feature => feature.meta = {
+      id: uuid(),
+      order: 1000 - zIndex,
+      alias: allowedFieldsAndAlias
+    });
     return features;
   }
 
-  private extractEsriJSONData(res, zIndex) {
+  private extractEsriJSONData(res, zIndex, allowedFieldsAndAlias) {
+    if (res) {
+      try {
+        if (JSON.parse(res).error) {
+          return [];
+        }
+      } catch (e) {}
+    }
     const parser = new olFormatEsriJSON();
     const features = parser.readFeatures(res);
 
-    return features.map(feature => this.featureToResult(feature, zIndex));
+    return features.map(feature => this.featureToResult(feature, zIndex, allowedFieldsAndAlias));
   }
 
   private extractTextData(res) {
@@ -453,9 +466,9 @@ export class QueryService {
 
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
-    // replace \r \n  and ' ' with '' to validate if the body is really empty.
-    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '');
-    if (body === '<body></body>' || res === '') {
+    // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
+    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '').replace(/<(.|\n)*?>/g, '');
+    if (body === '' || res === '') {
       return [];
     }
 
@@ -492,6 +505,7 @@ export class QueryService {
     const featureGeometry = featureOL.getGeometry() as any;
     const properties: any = Object.assign({}, featureOL.getProperties());
     delete properties.geometry;
+    delete properties.GEOMETRIE;
     delete properties.boundedBy;
     delete properties.shape;
     delete properties.SHAPE;
@@ -499,7 +513,7 @@ export class QueryService {
     delete properties.geom;
 
     let geometry;
-    if (featureGeometry !== undefined) {
+    if (featureGeometry) {
       geometry = {
         type: featureGeometry.getType(),
         coordinates: featureGeometry.getCoordinates()
@@ -522,7 +536,8 @@ export class QueryService {
   private getQueryUrl(
     datasource: QueryableDataSource,
     options: QueryOptions,
-    forceGML2 = false
+    forceGML2 = false,
+    mapExtent?: MapExtent
   ): string {
     let url;
     switch (datasource.constructor) {
@@ -582,15 +597,18 @@ export class QueryService {
 
         url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
         break;
+      case ImageArcGISRestDataSource:
       case TileArcGISRestDataSource:
         const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
-        let extent = olextent.boundingExtent([options.coordinates]);
-        if (tileArcGISRestDatasource.options.queryPrecision) {
-          extent = olextent.buffer(
-            extent,
-            tileArcGISRestDatasource.options.queryPrecision
-          );
-        }
+        const deltaX = Math.abs(mapExtent[0] - mapExtent[2]);
+        const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
+        const maxDelta = deltaX > deltaY ? deltaX : deltaY;
+        const clickBuffer = maxDelta * 0.005;
+        const threshold = tileArcGISRestDatasource.options.queryPrecision ? tileArcGISRestDatasource.options.queryPrecision : clickBuffer;
+        const extent = olextent.buffer(
+          olextent.boundingExtent([options.coordinates]),
+          threshold
+        );
         const serviceUrl =
           tileArcGISRestDatasource.options.url +
           '/' +
@@ -641,10 +659,7 @@ export class QueryService {
   getAllowedFieldsAndAlias(layer: any) {
     let allowedFieldsAndAlias;
     if (
-      layer.options &&
-      layer.options.source &&
-      layer.options.source.options &&
-      layer.options.source.options.sourceFields &&
+      layer.options?.source?.options?.sourceFields &&
       layer.options.source.options.sourceFields.length >= 1
     ) {
       allowedFieldsAndAlias = {};
@@ -658,7 +673,7 @@ export class QueryService {
 
   getQueryTitle(feature: Feature, layer: Layer): string {
     let title;
-    if (layer.options && layer.options.source && layer.options.source.options) {
+    if (layer.options?.source?.options) {
       const dataSourceOptions = layer.options.source
         .options as QueryableDataSourceOptions;
       if (dataSourceOptions.queryTitle) {

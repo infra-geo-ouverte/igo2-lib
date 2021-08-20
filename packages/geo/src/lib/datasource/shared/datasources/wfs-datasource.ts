@@ -51,6 +51,19 @@ export class WFSDataSource extends DataSource {
       this.wfsService.getSourceFieldsFromWFS(this.options);
     }
 
+    if (ogcFilters?.pushButtons){
+      ogcFilters.pushButtons.selectorType = 'pushButton';
+    }
+    if (ogcFilters?.checkboxes){
+      ogcFilters.checkboxes.selectorType = 'checkbox';
+    }
+    if (ogcFilters?.radioButtons){
+      ogcFilters.radioButtons.selectorType = 'radioButton';
+    }
+    if (ogcFilters?.select){
+      ogcFilters.select.selectorType = 'select';
+    }
+
     this.setOgcFilters((this.options as OgcFilterableDataSourceOptions).ogcFilters, true);
   }
 

@@ -1,0 +1,65 @@
+$slide-toggle-width: 60px;
+
+.draw-type-toggle {
+    padding: 10px;
+    text-align: center;
+
+    mat-button-toggle-group {
+      width: 100%;
+
+      mat-button-toggle {
+        width: 25%;
+      }
+    }
+}
+
+.draw-options {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
+}
+
+.igo-form {
+  padding: 10px;
+}
+
+.fill-color-picker {
+  mat-icon {
+    position: relative;
+    top: 7px;
+  }
+  mat-form-field {
+    left: 8px;
+  }
+}
+
+.stroke-color-picker {
+  mat-icon {
+    position: relative;
+    top: 7px;
+  }
+  mat-form-field {
+    left: 35px;
+  }
+}
+
+.box {
+  width: 25px;
+  height: 25px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+}
+
+.deleteBtn {
+  margin-left: 12px;
+}

@@ -54,6 +54,7 @@ import { FeatureStore } from '../../feature/shared/store';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { roundCoordTo } from '../../map/shared/map.utils';
+import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 
 @Component({
   selector: 'igo-directions-form',
@@ -68,6 +69,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   public currentStopIndex: number;
   public routesQueries$$: Subscription[] = [];
   private search$$: Subscription;
+  private selectStop;
+  private translateStop;
+  private selectedRoute;
 
   private stream$ = new Subject<string>();
 
@@ -80,6 +84,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     if (value && this.activeRoute$.getValue() && value.id !== this.activeRoute$.getValue().id) {
       this.activeRoute$.next(value);
     }
+    this.activeRouteDescription.emit(this.directionsToText());
   }
   private _activeRoute: Directions;
   public activeRoute$: BehaviorSubject<Directions> = new BehaviorSubject(undefined);
@@ -127,7 +132,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
    */
   @Input() routeStore: FeatureStore;
 
-  @Output() submit: EventEmitter<any> = new EventEmitter();
+  @Output() activeRouteDescription = new EventEmitter<string>();
   constructor(
     private formBuilder: FormBuilder,
     private directionsService: DirectionsService,
@@ -242,35 +247,45 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     // STOP STORE
     const stopsStore = this.stopsStore;
     const stopsLayer = new VectorLayer({
-      title: 'Directions - stops',
+      id: 'igo-direction-stops-layer',
+      title: this.languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
       zIndex: 911,
       source: new FeatureDataSource(),
-      showInLayerList: false,
-      exportable: false,
+      showInLayerList: true,
+      workspace: {
+        enabled: false,
+      },
+      exportable: true,
       browsable: false,
       style: stopMarker
     });
     tryBindStoreLayer(stopsStore, stopsLayer);
+    stopsStore.layer.visible = true;
     tryAddLoadingStrategy(stopsStore, loadingStrategy);
 
     // ROUTE AND VERTEX STORE
     const routeStore = this.routeStore;
     const routeLayer = new VectorLayer({
-      title: 'Directions - route and vertex',
+      id: 'igo-direction-route-layer',
+      title: this.languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
       zIndex: 910,
       source: new FeatureDataSource(),
-      showInLayerList: false,
-      exportable: false,
+      showInLayerList: true,
+      workspace: {
+        enabled: false,
+      },
+      exportable: true,
       browsable: false,
       style: stopMarker
     });
     tryBindStoreLayer(routeStore, routeLayer);
+    routeStore.layer.visible = true;
     tryAddLoadingStrategy(routeStore, loadingStrategy);
   }
 
   private initOlInteraction() {
     let selectedStopFeature;
-    const selectStop = new olinteraction.Select({
+    this.selectStop = new olinteraction.Select({
       layers: [this.stopsStore.layer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7,
@@ -279,17 +294,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       }
     });
 
-    selectStop.on('select', evt => {
+    this.selectStop.on('select', evt => {
       selectedStopFeature = evt.target.getFeatures()[0];
     });
 
-    const translateStop = new olinteraction.Translate({
+    this.translateStop = new olinteraction.Translate({
       layers: [this.stopsStore.layer.ol],
       features: selectedStopFeature
       // TODO In Openlayers >= 6.x, filter is now allowed.
     });
 
-    translateStop.on('translating', evt => {
+    this.translateStop.on('translating', evt => {
       const features = evt.features;
       if (features.getLength() === 0) {
         return;
@@ -297,7 +312,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.executeTranslation(features, false, 50, true);
     });
 
-    translateStop.on('translateend', evt => {
+    this.translateStop.on('translateend', evt => {
       const features = evt.features;
       if (features.getLength() === 0) {
         return;
@@ -305,7 +320,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.executeTranslation(features, true, 0, false);
     });
 
-    const selectedRoute = new olinteraction.Select({
+    this.selectedRoute = new olinteraction.Select({
       layers: [this.routeStore.layer.ol],
       condition: olcondition.click,
       hitTolerance: 7,
@@ -313,7 +328,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         return feature.getId() === 'route';
       }
     });
-    selectedRoute.on('select', evt => {
+    this.selectedRoute.on('select', evt => {
       if (this.focusOnStop === false) {
         const selectCoordinates = olproj.transform(
           (evt as any).mapBrowserEvent.coordinate,
@@ -325,14 +340,14 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         this.stops.at(pos).patchValue({ stopCoordinates: selectCoordinates });
         this.handleLocationProposals(selectCoordinates, pos);
         this.addStopOverlay(selectCoordinates, pos);
-        selectedRoute.getFeatures().clear();
+        this.selectedRoute.getFeatures().clear();
       }
-      selectedRoute.getFeatures().clear();
+      this.selectedRoute.getFeatures().clear();
     });
 
-    this.map.ol.addInteraction(selectStop);
-    this.map.ol.addInteraction(translateStop);
-    this.map.ol.addInteraction(selectedRoute);
+    this.map.ol.addInteraction(this.selectStop);
+    this.map.ol.addInteraction(this.translateStop);
+    this.map.ol.addInteraction(this.selectedRoute);
   }
 
   private subscribeToFormChange() {
@@ -354,8 +369,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const stopsStore = this.stopsStore;
     const routeStore = this.routeStore;
 
-    this.map.removeLayer(stopsStore.layer);
-    this.map.removeLayer(routeStore.layer);
+    this.map.ol.removeInteraction(this.selectStop);
+    this.map.ol.removeInteraction(this.translateStop);
+    this.map.ol.removeInteraction(this.selectedRoute);
     stopsStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
     routeStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
   }
@@ -1003,7 +1019,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   getRoutes(
-    moveToExtent: boolean = true,
+    moveToExtent: boolean = false,
     directionsOptions: DirectionsOptions = {}
   ) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
@@ -1058,6 +1074,19 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   copyDirectionsToClipboard() {
+    const directionsBody = this.directionsToText();
+    const successful = Clipboard.copy(directionsBody);
+    if (successful) {
+      const translate = this.languageService.translate;
+      const title = translate.instant(
+        'igo.geo.directionsForm.dialog.copyTitle'
+      );
+      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsg');
+      this.messageService.success(msg, title);
+    }
+  }
+
+  private directionsToText() {
     const indent = '\t';
     let activeRouteDirective =
       this.languageService.translate.instant(
@@ -1136,15 +1165,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const directionsBody =
       summary + wayPointList + '\n' + url + '\n\n' + activeRouteDirective;
 
-    const successful = Clipboard.copy(directionsBody);
-    if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.geo.directionsForm.dialog.copyTitle'
-      );
-      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsg');
-      this.messageService.success(msg, title);
-    }
+    return directionsBody;
   }
 
   private handleTermChanged(term: string) {
@@ -1306,17 +1327,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     let stopColor;
     let stopText;
     if (directionsText === 'start') {
-      stopColor = 'green';
+      stopColor = '#008000';
       stopText = this.languageService.translate.instant(
         'igo.geo.directionsForm.start'
       );
     } else if (directionsText === 'end') {
-      stopColor = 'red';
+      stopColor = '#f64139';
       stopText = this.languageService.translate.instant(
         'igo.geo.directionsForm.end'
       );
     } else {
-      stopColor = 'yellow';
+      stopColor = '#ffd700';
       stopText =
         this.languageService.translate.instant(
           'igo.geo.directionsForm.intermediate'
@@ -1422,25 +1443,11 @@ export function stopMarker(
     })
   ];
 
-  const stopStyle = new olstyle.Style({
-    image: new olstyle.Icon({
-      src:
-        './assets/igo2/geo/icons/place_' +
-        feature.get('stopColor') +
-        '_36px.svg',
-      opacity: feature.get('stopOpacity'),
-      imgSize: [36, 36], // for ie
-      anchor: [0.5, 0.92]
-    }),
-
-    text: new olstyle.Text({
-      text: feature.get('stopText'),
-      font: '12px Calibri,sans-serif',
-      fill: new olstyle.Fill({ color: '#000' }),
-      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
-      overflow: true
-    })
-  });
+  const stopStyle = createOverlayMarkerStyle({
+    text: feature.get('stopText'),
+    opacity: feature.get('stopOpacity'),
+    markerColor: feature.get('stopColor'),
+    markerOutlineColor: [255, 255, 255]});
 
   const routeStyle = [
     new olstyle.Style({

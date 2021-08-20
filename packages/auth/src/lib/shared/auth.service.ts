@@ -9,7 +9,7 @@ import { globalCacheBusterNotifier } from 'ngx-cacheable';
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
-import { User } from './auth.interface';
+import { User, IInfosUser } from './auth.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -20,6 +20,10 @@ export class AuthService {
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   private anonymous = false;
+
+  get hasAuthService() {
+    return this.config.getConfig('auth.url') !== undefined;
+  }
 
   constructor(
     private http: HttpClient,
@@ -37,25 +41,24 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<void> {
-    const myHeader = new HttpHeaders();
-    myHeader.append('Content-Type', 'application/json');
+    const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    const body = JSON.stringify({
+    const body = {
       username,
       password: this.encodePassword(password)
-    });
+    };
 
     return this.loginCall(body, myHeader);
   }
 
-  loginWithToken(token: string, type: string): Observable<void> {
-    const myHeader = new HttpHeaders();
-    myHeader.append('Content-Type', 'application/json');
+  loginWithToken(token: string, type: string, infosUser?: IInfosUser): Observable<void> {
+    const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    const body = JSON.stringify({
+    const body = {
       token,
-      typeConnection: type
-    });
+      typeConnection: type,
+      infosUser
+    };
 
     return this.loginCall(body, myHeader);
   }
@@ -128,7 +131,7 @@ export class AuthService {
 
   updateUser(user: User): Observable<User> {
     const url = this.config.getConfig('auth.url');
-    return this.http.patch<User>(url, JSON.stringify(user));
+    return this.http.patch<User>(url, user);
   }
 
   private encodePassword(password: string) {

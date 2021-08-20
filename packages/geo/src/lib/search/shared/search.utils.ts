@@ -53,3 +53,40 @@ export function featureToSearchResult(
     }
   };
 }
+
+export function findDiff(str1: string, str2: string){
+  let diff = '';
+  str2.split('').forEach((val, i) => {
+    if (val !== str1.charAt(i)) {
+      diff += val;
+    }
+  });
+  return diff;
+}
+
+
+/**
+ * Return a score calculation based on "from" term with the "to" term,
+ * where the perfect match is 100 and a total difference is 0 or under.
+ * @param from string
+ * @param to string
+ * @param caseSensitive boolean
+ * @returns number
+ */
+export function computeTermSimilarity(from, to, caseSensitive: boolean = false): number {
+  if (!from || !to) {
+    return 0;
+  }
+  const termFrom = caseSensitive ? from : from.toLowerCase();
+  const termTo = caseSensitive ? to : to.toLowerCase();
+  const fromToDiff = findDiff(termFrom, termTo);
+  const toFromDiff = findDiff(termTo, termFrom);
+  const totalDiff = fromToDiff + toFromDiff;
+
+  let delta = 0;
+  if (totalDiff.length) {
+    delta =  totalDiff.length / termFrom.length * 100;
+  }
+
+  return 100 - Math.floor(delta);
+}

@@ -4,6 +4,7 @@ import OlGeometry from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
+import OlCircle from 'ol/geom/Circle';
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';
 import {
@@ -317,25 +318,31 @@ export function measureOlGeometry(olGeometry: OlGeometry, projection: string): M
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-export function updateOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[] {
-  const olMidpoints = getOlGeometryMidpoints(olGeometry);
+export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint[] {
+  let olMidpoints;
+  if (olGeometry instanceof OlPoint) {
+    const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
+    olMidpoints = new Array(1);
+    olMidpoints[0] = olMidpointPoint;
+  } else  {
+    olMidpoints = getOlGeometryMidpoints(olGeometry);
+    // TODO: handle multi geometries
+    const coordinates = olGeometry.flatCoordinates;
+    const midpointsLength = olMidpoints.length;
+    for (let i = 0; i < midpointsLength; i++) {
+      const j = i * 2;
+      const olSegment = new OlLineString([
+        [coordinates[j], coordinates[j + 1]],
+        [coordinates[j + 2], coordinates[j + 3]]
+      ]);
 
-  // TODO: handle multi geometries
-  const coordinates = olGeometry.flatCoordinates;
-  const midpointsLength = olMidpoints.length;
-  for (let i = 0; i < midpointsLength; i++) {
-    const j = i * 2;
-    const olSegment = new OlLineString([
-      [coordinates[j], coordinates[j + 1]],
-      [coordinates[j + 2], coordinates[j + 3]]
-    ]);
-
-    const midpointCoordinate = olSegment.getCoordinateAt(0.5);
-    const olMidpoint = olMidpoints[i];
-    if (olMidpoint !== undefined) {
-      olMidpoint.setCoordinates(midpointCoordinate);
-    } else {
-      olMidpoints[i] = new OlPoint(midpointCoordinate);
+      const midpointCoordinate = olSegment.getCoordinateAt(0.5);
+      const olMidpoint = olMidpoints[i];
+      if (olMidpoint !== undefined) {
+        olMidpoint.setCoordinates(midpointCoordinate);
+      } else {
+        olMidpoints[i] = new OlPoint(midpointCoordinate);
+      }
     }
   }
   return olMidpoints;
@@ -345,7 +352,7 @@ export function updateOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon):
  * Clear an OL geometry midpoints and return an array of those points
  * @param olGeometry OL Geometry
  */
-export function clearOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon) {
+export function clearOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle) {
   const olMidpoints = olGeometry.get('_midpoints') || [];
   const midpointsLength = olMidpoints.length;
   for (let i = 0; i < midpointsLength; i++) {
@@ -367,15 +374,28 @@ export function clearOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon) {
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-function getOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[] {
-  const expectedNumber = Math.max((olGeometry.flatCoordinates.length / 2) - 1, 0);
-
+function getOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint[] {
+  let expectedNumber;
+  if (olGeometry instanceof OlCircle) {
+    expectedNumber = 0;
+  } else {
+    expectedNumber = Math.max((olGeometry.flatCoordinates.length / 2) - 1, 0);
+  }
   // TODO: This works but it's quite messy. If time permits,
   // clean this. Maybe a Tooltip class could handle that
   let olMidpoints = olGeometry.get('_midpoints');
+
   if (olMidpoints === undefined) {
-    olMidpoints = new Array(expectedNumber);
+    if (olGeometry instanceof OlPoint) {
+      olMidpoints = new Array(1);
+    } else {
+      olMidpoints = new Array(expectedNumber);
+    }
     olGeometry.set('_midpoints', olMidpoints, true);
+    return olMidpoints;
+  }
+
+  if (expectedNumber === 0) {
     return olMidpoints;
   }
 
@@ -418,12 +438,18 @@ function clearOlMidpointTooltip(olMidpoint: OlPoint) {
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function updateOlTooltipsAtMidpoints(olGeometry: OlLineString | OlPolygon): OlOverlay[] {
+export function updateOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   const olMidpoints = updateOlGeometryMidpoints(olGeometry);
+  let typeGeom = '';
+  if (olGeometry instanceof OlLineString) {
+  typeGeom = 'line-';
+  } else if (olGeometry instanceof OlPolygon) {
+    typeGeom = 'polygone-';
+    }
   const olTooltips = olMidpoints.map((olMidpoint: OlPoint) => {
     let olTooltip = olMidpoint.get('_tooltip');
     if (olTooltip === undefined) {
-      olTooltip = createOlTooltipAtPoint(olMidpoint);
+      olTooltip = createOlTooltipAtPoint(olMidpoint, false, typeGeom);
     } else {
       olTooltip.setPosition(olMidpoint.flatCoordinates);
     }
@@ -437,7 +463,7 @@ export function updateOlTooltipsAtMidpoints(olGeometry: OlLineString | OlPolygon
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getOlTooltipsAtMidpoints(olGeometry: OlLineString | OlPolygon): OlOverlay[] {
+export function getOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   const olMidpoints = getOlGeometryMidpoints(olGeometry);
   return olMidpoints.map((olMidpoint: OlPoint) => {
     return olMidpoint ? olMidpoint.get('_tooltip') : undefined;
@@ -449,7 +475,7 @@ export function getOlTooltipsAtMidpoints(olGeometry: OlLineString | OlPolygon): 
  * @param olGeometry OL Geometry
  * @returns OL point
  */
-export function updateOlGeometryCenter(olGeometry: OlLineString | OlPolygon): OlPoint {
+export function updateOlGeometryCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint {
   let olCenter = olGeometry.get('_center');
   const centerCoordinate = olGetCenter(olGeometry.getExtent());
   if (olCenter !== undefined) {
@@ -467,11 +493,11 @@ export function updateOlGeometryCenter(olGeometry: OlLineString | OlPolygon): Ol
  * @param olGeometry OL Geometry
  * @returns OL overlay
  */
-export function updateOlTooltipAtCenter(olGeometry: OlLineString | OlPolygon): OlOverlay {
+export function updateOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay {
   const olCenter = updateOlGeometryCenter(olGeometry);
   let olTooltip = olCenter.get('_tooltip');
   if (olTooltip === undefined) {
-    olTooltip = createOlTooltipAtPoint(olCenter);
+    olTooltip = createOlTooltipAtPoint(olCenter, true);
   } else {
     olTooltip.setPosition(olCenter.flatCoordinates);
   }
@@ -483,7 +509,7 @@ export function updateOlTooltipAtCenter(olGeometry: OlLineString | OlPolygon): O
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getOlTooltipAtCenter(olGeometry: OlLineString | OlPolygon): OlOverlay {
+export function getOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay {
   const olCenter = olGeometry.get('_center');
   return olCenter ? olCenter.get('_tooltip') : undefined;
 }
@@ -493,7 +519,7 @@ export function getOlTooltipAtCenter(olGeometry: OlLineString | OlPolygon): OlOv
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon): OlOverlay[] {
+export function getTooltipsOfOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   const olTooltips = [].concat(getOlTooltipsAtMidpoints(olGeometry) || []);
   const olCenterTooltip = getOlTooltipAtCenter(olGeometry);
   if (olCenterTooltip !== undefined) {
@@ -507,14 +533,14 @@ export function getTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon): O
  * @param olPoint OL Point
  * @returns OL overlay
  */
-export function createOlTooltipAtPoint(olPoint: OlPoint): OlOverlay {
+export function createOlTooltipAtPoint(olPoint: OlPoint, center: boolean = false, srcGeomType: string= ''): OlOverlay {
   const olTooltip = new OlOverlay({
     element: document.createElement('div'),
     offset: [-30, -10],
-    className: [
-      'igo-map-tooltip',
-      'igo-map-tooltip-measure'
-    ].join(' '),
+    className: (center ?
+    [ 'igo-map-tooltip',
+      'igo-map-tooltip-measure', 'igo-map-tooltip-measure-area'] : ['igo-map-tooltip', 'igo-map-tooltip-measure',
+      `igo-map-tooltip-measure-${srcGeomType}segments`]).join(' '),
     stopEvent: false
   });
   olTooltip.setPosition(olPoint.flatCoordinates);

@@ -10,7 +10,22 @@
         "group.removeFromMap": "Remove all layers from this group to map",
         "baseLayers": "Baselayers",
         "unavailableTitle": "Catalog unavailable",
-        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions."
+        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "externalProvider": {
+           "catalog": "This catalog comes from an external organization.",
+           "group": "This layers comes from an external organization.",
+           "layer": "This layer comes from an external organization.",
+           "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
+        },
+        "library.add": "Add this catalog to the list",
+        "library.cancel": "Cancel",
+        "library.remove": "Remove this catalog from the list",
+        "library.inlist": {
+          "title": "Catalog already contained",
+          "message": "The catalog is already contained in the list."
+        },
+        "library.addTitle": "Adding a catalog",
+        "library.addBtn": "Add a catalog"
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -47,9 +62,17 @@
         "invalidSRS": {
           "text": "The projection is valid. It must start with EPSG:",
           "title": "Invalid projection"
+        },
+        "ogreServer": {
+          "title": "Ogre server error 500",
+          "text": "Error in convert to geojson. Maybe file is too big, try to import that file in geojson format"
         }
       },
       "export": {
+        "customList": {
+          "text": "Some of the selected layers ( {{value}} ) limit the format's list",
+          "title": "Restricted list of formats"
+        },
         "nothing": {
           "text": "No feature could be exported.",
           "title": "Nothing to export"
@@ -82,6 +105,10 @@
           "CSVsemicolon": "CSV (semicolon delimited)",
           "URL": "External link"
         },
+        "gpx.error.poly": {
+          "title": "GPX error",
+          "text": "GPX format do now allow polygon features"
+        },
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
@@ -105,7 +132,7 @@
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Shapefiles must be zipped.",
+        "importShpZip": "Shapefiles must be zipped AND geometries stored in Latitude Longitude coordinate (EPSG:4326/WGS:84)",
         "other": "other",
         "others": "others",
         "projections": {
@@ -157,6 +184,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
+        "resetFilters": "(Apply no filters)",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -165,9 +193,13 @@
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
         "advancedOgcFilters": "Advanced filters",
+        "displayMoreResults": "Display more (+)",
+        "displayLessResults": "Display less (-)",
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
-        "selectOperator": "Select an operator"
+        "selectOperator": "Select an operator",
+        "sliderModeTitle": "Time slider",
+        "reportingDate": "Reporting date"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -185,13 +217,17 @@
         "activateSelectionMode": "Activate multiple selection mode",
         "deactivateSelectionMode": "Deactivate multiple selection mode",
         "tools": "Tools",
-        "selectAll": "Select all",
-        "deselectAll": "Deselect all",
+        "selectAll": "Select all layers",
+        "deselectAll": "Deselect all layers",
+        "zoomLayer": "Zoom To Layer Extents",
+        "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
         "moreOptions": "Layer's tools",
         "removeLayer": "Remove this layer from the map",
+        "removeSelectedLayers": "Remove selected layers from the map",
+        "removeSelectedLayersRestriction": "Some selected layers cannot be removed",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
         "showSelectedLayers": "Show selected layers",
@@ -243,12 +279,12 @@
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
         "paperFormats": {
-          "A0": "A0",
-          "A1": "A1",
-          "A2": "A2",
-          "A3": "A3",
-          "A4": "A4",
-          "A5": "A5",
+          "A0": "33.1 X 46.8\" (A0)",
+          "A1": "23.4 X 33.1\" (A1)",
+          "A2": "16.5 X 23.5\" (A2)",
+          "A3": "11.7 X 16.5\" (A3)",
+          "A4": "8.3 X 11.7\" (A4)",
+          "A5": "5.8 X 8.3\" (A5)",
           "Letter": "Letter",
           "Legal": "Legal"
         },
@@ -260,12 +296,23 @@
         "resolution": "Resolution",
         "saveBtn": "Save",
         "scale": "Scale",
-        "showLegend": "Show legend",
         "showProjection": "Show projection",
         "showScale": "Show scale",
-        "title": "Title"
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "legendPosition": "Legend Position",
+        "legendPositions": {
+          "none": "No legend",
+          "topleft": "Top left corner of the map",
+          "topright": "Top right corner of the map",
+          "bottomleft": "Bottom left corner of the map",
+          "bottomright": "Bottom right corner of the map",
+          "newpage": "On a new page"
+        }
       },
       "directionsForm": {
+        "stopLayer": "Directions - stops",
+        "routeLayer": "Directions - route",
         "start": "Start",
         "intermediate": "Intermediate",
         "end": "End",
@@ -368,6 +415,7 @@
             "gcc": "Coast Guard mark (CCG)",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
+            "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },
@@ -378,7 +426,10 @@
         },
         "coordinates": {
           "name": "Coordinates",
-          "coord": "Geographic (longitude, latitude)"
+          "coord": "Geographic (longitude, latitude)",
+          "coordDMS": "Geographic (longitude, latitude) (DMS)",
+          "radius": "Radius",
+          "conf": "Confidence"
         },
         "menu.tooltip": "Search Options",
         "settings": {
@@ -386,7 +437,11 @@
         },
         "pointerSearchSummary": {
           "title": "Pointer position",
-          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
+          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/deactivate."
+        },
+        "searchResultsGeometry": {
+          "title": "Show results geometries",
+          "tooltip": "Hide/ show the results geometries "
         },
         "searchSources": {
           "selectAll": "Select All",
@@ -523,6 +578,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
+        "layerTitle": "Measure on map",
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
@@ -549,13 +605,35 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activate measures",
-        "toggleMapTooltips": "Show map tooltips",
+        "toggleDisplayLines": "Display distances for the lines",
+        "toggleDisplayDistance": "Display distances for the areas",
+        "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",
           "delete.tooltip": "Delete",
           "modify.tooltip": "Modify"
         }
+      },
+      "draw": {
+        "cancelColorPicker": "Cancel",
+        "Circle": "Circle",
+        "dialogInstruction": "Enter your draw's label",
+        "dialogTitle": "Label",
+        "delete": "Remove Drawings from map",
+        "drawing": "Draws",
+        "fill": "Fill",
+        "icon": "Icons",
+        "labels": "Labels",
+        "LineString": "Line",
+        "okColorPicker": "OK",
+        "Point": "Point",
+        "Polygon": "Polygon",
+        "radius": "Radius",
+        "stroke": "Stroke",
+        "styleSelect": "Select style",
+        "toggleMapTooltips": "Show map tooltips",
+        "noIcon": "No icon"
       },
       "network": {
         "online": {
@@ -566,7 +644,7 @@
           "message": "Offline",
           "title": "Status:"
         }
-      },   
+      },
       "workspace": {
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"

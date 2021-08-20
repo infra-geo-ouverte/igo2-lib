@@ -25,7 +25,8 @@ import {
 } from './storedqueries.interfaces';
 
 import * as olformat from 'ol/format';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
+import { computeTermSimilarity } from '../search.utils';
 
 /**
  * StoredQueries search source
@@ -48,9 +49,10 @@ export class StoredQueriesSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions
   ) {
-    super(options);
+    super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions;
     if (this.storedQueriesOptions && !this.storedQueriesOptions.available) {
       return;
@@ -173,6 +175,11 @@ export class StoredQueriesSearchSource extends SearchSource
       options || {},
       storedqueriesParams
     );
+    if (this.options.params == null) {
+      this.options.params = { page : '1'};
+    } else {
+      this.options.params.page = options.page != null ? String(options.page) : '1';
+    }
 
     if (
       new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
@@ -181,13 +188,28 @@ export class StoredQueriesSearchSource extends SearchSource
         .get(this.searchUrl, { params, responseType: 'text' })
         .pipe(
           map(response => {
-            return this.extractResults(this.extractWFSData(response));
+            let resultArray = this.extractResults(this.extractWFSData(response), term);
+            resultArray.sort((a, b) =>
+              (a.meta.score > b.meta.score) ? 1 :
+              (a.meta.score === b.meta.score) ? ((a.meta.titleHtml < b.meta.titleHtml) ? 1 : -1) : -1);
+            resultArray.reverse();
+            if (resultArray.length > Number(this.options.params.limit)) {
+              const idxEnd = Number(this.options.params.limit) * Number(this.options.params.page);
+              const resultTotLenght = resultArray.length;
+              resultArray = resultArray.slice(0, idxEnd);
+              if (idxEnd < resultTotLenght) {
+                resultArray[resultArray.length - 1 ].meta.nextPage = true;
+              } else {
+                resultArray[resultArray.length - 1 ].meta.nextPage = false;
+              }
+            }
+            return resultArray;
           })
         );
     } else {
       return this.http.get(this.searchUrl, { params }).pipe(
         map(response => {
-          return this.extractResults(this.extractWFSData(response));
+          return this.extractResults(this.extractWFSData(response), term);
         })
       );
     }
@@ -278,14 +300,14 @@ export class StoredQueriesSearchSource extends SearchSource
   }
 
   private extractResults(
-    response: StoredQueriesResponse
+    response: StoredQueriesResponse, term: string
   ): SearchResult<Feature>[] {
     return response.features.map((data: StoredQueriesData) => {
-      return this.dataToResult(data);
+      return this.dataToResult(data, term);
     });
   }
 
-  private dataToResult(data: StoredQueriesData): SearchResult<Feature> {
+  private dataToResult(data: StoredQueriesData, term: string): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
     const title = data.properties[this.storedQueriesOptions.resultTitle]
@@ -309,7 +331,11 @@ export class StoredQueriesSearchSource extends SearchSource
         id,
         title: data.properties.title,
         titleHtml: data.properties[title],
-        icon: 'map-marker'
+        icon: 'map-marker',
+        score: (data.properties.title) ?
+        computeTermSimilarity(term.trim(), data.properties.title) :
+        computeTermSimilarity(term.trim(), data.properties[title]),
+
       }
     };
   }
@@ -349,9 +375,10 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions
   ) {
-    super(options);
+    super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions;
 
     if (!this.storedQueriesOptions || (this.storedQueriesOptions && !this.storedQueriesOptions.available) ) {

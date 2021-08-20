@@ -1,11 +1,11 @@
 import { Injectable, Inject, Injector } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -26,6 +26,7 @@ import {
   IChercheReverseData,
   IChercheReverseResponse
 } from './icherche.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -33,6 +34,26 @@ export class IChercheSearchResultFormatter {
 
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
+  }
+}
+
+// Fix the "+" is replaced with space " " in a query string
+// https://github.com/angular/angular/issues/11058
+export class IgoHttpParameterCodec implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
   }
 }
 
@@ -55,12 +76,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
     @Inject(IChercheSearchResultFormatter)
     private formatter: IChercheSearchResultFormatter,
     injector: Injector
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
@@ -95,18 +117,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
-    const types =
-      this.options.params && this.options.params.type
+
+    const types = this.options.params?.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : [
             'adresses',
             'codes-postaux',
             'routes',
+            'intersections',
             'municipalites',
             'mrc',
             'regadmin',
             'lieux'
           ];
+
     return {
       title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
@@ -212,6 +236,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'bornes-sumi',
               enabled: types.indexOf('bornes-sumi') !== -1,
               hashtags: ['borne', 'bornes', 'sumi']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.hq',
+              value: 'hq',
+              enabled: types.indexOf('hq') !== -1,
+              hashtags: ['hq']
             },
             {
               title: 'igo.geo.search.icherche.type.cadastre',
@@ -322,7 +352,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     this.options.params.page = params.get('page') || '1';
 
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
-      map((response: IChercheResponse) => this.extractResults(response)),
+      map((response: IChercheResponse) => this.extractResults(response, term)),
       catchError((err) => {
         err.error.toDisplay = true;
         err.error.title = this.languageService.translate.instant(
@@ -353,6 +383,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             ];
           }
         });
+        this.setParamFromSetting(typeSetting, false);
       });
   }
 
@@ -383,23 +414,25 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       delete queryParams.loc;
     }
 
-    if (queryParams.q.indexOf('#') !== -1) {
+    if (/#[A-Za-z]+/.test(queryParams.q)) {
       queryParams.type = 'lieux';
     }
 
     return new HttpParams({
-      fromObject: ObjectUtils.removeUndefined(queryParams)
+      fromObject: ObjectUtils.removeUndefined(queryParams),
+      encoder: new IgoHttpParameterCodec()
     });
   }
 
-  private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
+  private extractResults(response: IChercheResponse, term: string): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data, response));
+      return this.formatter.formatResult(this.dataToResult(data, term, response));
     });
   }
 
   private dataToResult(
     data: IChercheData,
+    term: string,
     response?: IChercheResponse
   ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
@@ -432,6 +465,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
+        score: data.score ||  computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
@@ -534,7 +568,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    */
   private computeTerm(term: string): string {
     // Keep hashtags for "lieux"
-    const hashtags = term.match(/(#[^\s]+)/g) || [];
+    const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
     let keep = false;
     keep = hashtags.some((hashtag) => {
       const hashtagKey = hashtag.substring(1);
@@ -552,10 +586,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     });
 
     if (!keep) {
-      term = term.replace(/(#[^\s]*)/g, '');
+      term = term.replace(/(#[A-Za-z]+)/g, '');
     }
 
-    return term.replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+    return term.replace(/[^\wÀ-ÿ !\-\+\(\)\.\/½¼¾,'#]+/g, '');
   }
 
   /**
@@ -597,10 +631,11 @@ export class IChercheReverseSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
-    injector: Injector
+    injector: Injector,
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
@@ -677,7 +712,7 @@ export class IChercheReverseSearchSource extends SearchSource
         {
           type: 'radiobutton',
           title: 'radius',
-          name: 'buffer',
+          name: 'bufferInput',
           values: [
             {
               title: '100 m',
@@ -739,6 +774,7 @@ export class IChercheReverseSearchSource extends SearchSource
         typeSetting.values.forEach((v) => {
           v.available = types.indexOf(v.value as string) > -1;
         });
+        this.setParamFromSetting(typeSetting, false);
       });
   }
 
@@ -748,7 +784,7 @@ export class IChercheReverseSearchSource extends SearchSource
   ): HttpParams {
     if (options.distance || this.options.distance) {
       options.params = Object.assign(options.params || {}, {
-        buffer: options.distance || this.options.distance
+        bufferInput: options.distance || this.options.distance
       });
     }
 

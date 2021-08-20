@@ -102,6 +102,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() pointerSummaryStatus = new EventEmitter<boolean>();
 
   /**
+   * Event emitted when the show geometry setting is changed
+   */
+   @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+
+  /**
    * Search term
    */
   @Input()
@@ -126,6 +131,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input() pointerSummaryEnabled: boolean = false;
+  @Input() searchResultsGeometryEnabled: boolean = false;
   /**
    * Whether a float label should be displayed
    */
@@ -141,6 +147,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Icons color (search and clear)
    */
   @Input() color = 'primary';
+
+  @Input() termSplitter: string = '|';
 
   /**
    * Debounce time between each keystroke
@@ -390,22 +398,33 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Execute the search
    * @param term Search term
    */
-  private doSearch(term: string | undefined) {
+  private doSearch(rawTerm: string | undefined) {
     if (this.researches$$) {
       this.researches$$.map((research) => research.unsubscribe());
       this.researches$$ = undefined;
     }
 
-    const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
-    if (slug === '') {
-      if (this.store !== undefined) {
-        this.store.clear();
-      }
-      return;
+    let terms;
+    if (this.termSplitter && rawTerm.match(new RegExp(this.termSplitter, 'g'))) {
+      terms = rawTerm.split(this.termSplitter).filter((t) => t.length >= this.minLength);
+      this.store.clear();
+    } else {
+      terms = [rawTerm];
     }
 
-    const researches = this.searchService.search(term, {
-      forceNA: this.forceNA
+    let researches: Research[] = [];
+    terms.map((term: string) => {
+      const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
+      if (slug === '') {
+        if (this.store !== undefined) {
+          this.store.clear();
+        }
+        return;
+      }
+
+      researches = researches.concat(this.searchService.search(term, {
+        forceNA: this.forceNA
+      }));
     });
     this.researches$$ = researches.map((research) => {
       return research.request.subscribe((results: SearchResult[]) => {
@@ -428,7 +447,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .all()
         .filter((result) => result.source !== research.source)
         .concat(results);
-      this.store.load(newResults);
+      this.store.updateMany(newResults);
     }
   }
 }

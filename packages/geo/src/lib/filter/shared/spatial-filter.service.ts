@@ -187,7 +187,7 @@ export class SpatialFilterService {
               params: {
                 geometry: 'true',
                 icon: 'true',
-                buffer: buffer.toString(),
+                bufferInput: buffer.toString(),
                 simplified: '100'
               }
             }
@@ -214,7 +214,9 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            loc: JSON.stringify(feature)
+            loc: JSON.stringify(feature),
+            bufferInput: buffer.toString(),
+            simplified: '100'
           })
           .pipe(
             map(featureCollection =>
@@ -237,7 +239,9 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            loc: JSON.stringify(feature)
+            loc: JSON.stringify(feature),
+            bufferInput: buffer.toString(),
+            simplified: '100'
           })
           .pipe(
             map(featureCollection =>

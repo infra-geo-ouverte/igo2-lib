@@ -39,8 +39,8 @@ export class ArcGISRestDataSource extends DataSource {
           'returnGeometry=true',
           'outSR=102100'
         ];
-        if (this.options.params.timeFilter) {
-          const time = `time=${this.options.params.timeExtent}`;
+        if (this.options.params.time) {
+          const time = `time=${this.options.params.time}`;
           params.push(time);
         }
         if (this.options.params.customParams) {
@@ -55,15 +55,18 @@ export class ArcGISRestDataSource extends DataSource {
   }
 
   getLegend(): Legend[] {
-    const legendInfo = this.options.params.legendInfo;
+    const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
     if (legendInfo === undefined || legend.length > 0) {
       return legend;
     }
 
     const id = parseInt(this.options.layer, 10);
-    const lyr = legendInfo.layers[id];
-    let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
+    const lyr = legendInfo.layers.find(layer => layer.layerId === id);
+    if (!lyr) {
+      return;
+    }
+    let htmlString = '<table>';
 
     for (const lyrLegend of lyr.legend) {
       const modifiedUrl = this.options.url.replace(

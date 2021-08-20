@@ -30,6 +30,8 @@ import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.int
 import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
+import { MatSliderChange } from '@angular/material/slider';
+import * as olextent from 'ol/extent';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -282,6 +284,65 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.change$$.unsubscribe();
     this.selectAllCheck$$.unsubscribe();
     this.layers$$.unsubscribe();
+  }
+
+  activeLayerIsValid(layer: Layer): boolean {
+    let valid = false;
+    const layerExtent = layer.options.extent;
+    const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
+
+    if (layerExtent) {
+      if (maxLayerZoomExtent) {
+        valid = olextent.containsExtent(maxLayerZoomExtent, layerExtent);
+      } else {
+        valid = true;
+      }
+    }
+    return valid;
+  }
+
+  activeLayersAreValid(layers: Layer[]): boolean {
+    let valid = false;
+    const layersExtent = olextent.createEmpty();
+    const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
+
+    for (const layer of layers) {
+      const layerExtent = layer.options.extent;
+
+      if (layerExtent && !layerExtent.includes(Infinity)) {
+        olextent.extend(layersExtent, layerExtent);
+      }
+    }
+
+    if (!olextent.isEmpty(layersExtent)) {
+      if (maxLayerZoomExtent) {
+        valid = (olextent.containsExtent(maxLayerZoomExtent, layersExtent));
+      } else {
+        valid = true;
+      }
+    }
+    return valid;
+  }
+
+  zoomLayerExtents(layer: Layer) {
+    this.map.viewController.zoomToExtent(layer.options.extent);
+  }
+
+  zoomLayersExtents(layers: Layer[]) {
+    const layersExtent = olextent.createEmpty();
+
+    for (const layer of layers) {
+      const layerExtent = layer.options.extent;
+
+      if (layerExtent) {
+        olextent.extend(layersExtent, layerExtent);
+      }
+    }
+    this.map.viewController.zoomToExtent(layersExtent);
+  }
+
+  changeOpacity(event: MatSliderChange ){
+    this.opacity = event.value;
   }
 
   clearKeyword() {
@@ -668,11 +729,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   removeLayers(layers?: Layer[]) {
     if (layers && layers.length > 0) {
-      for (const layer of layers) {
-        layer.map.removeLayer(layer);
-      }
       this.layersChecked = [];
-    } else if (!layers) {
+      for (const layer of layers) {
+        if (layer.options.removable !== false) {
+          layer.map.removeLayer(layer);
+        } else {
+          this.layersChecked.push(layer);
+        }
+      }
+    } else if (!layers && this.activeLayer.options.removable !== false) {
       this.activeLayer.map.removeLayer(this.activeLayer);
       this.layerTool = false;
     }
@@ -685,6 +750,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     this.layerItemChangeDetection$.next(true);
+  }
+
+  isLayerRemovable(layer: Layer): boolean {
+    return layer.options.removable !== false;
+  }
+
+  isAllLayersRemovable(layers: Layer[]): boolean {
+    return layers.every(l => this.isLayerRemovable(l));
   }
 
   get statusSelectedLayersCheck(): LayerListSelectVisibleEnum {

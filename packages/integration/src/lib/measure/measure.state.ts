@@ -18,6 +18,16 @@ export class MeasureState {
     map: this.mapState.map
   });
 
-  constructor(private mapState: MapState) {}
+  constructor(private mapState: MapState) {
+
+    this.mapState.map.layers$.subscribe((layers) => {
+      if ((layers.filter(l => l.id.startsWith('igo-measures-')).length === 0)) {
+        this.store.deleteMany(this.store.all());
+        this.mapState.map.ol.getOverlays().getArray()
+          .filter(overlay => overlay.options.className.includes('igo-map-tooltip'))
+          .map(overlay => this.mapState.map.ol.removeOverlay(overlay));
+      }
+    });
+  }
 
 }

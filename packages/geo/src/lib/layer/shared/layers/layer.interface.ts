@@ -1,7 +1,9 @@
 import olLayer from 'ol/layer/Layer';
+import { Message } from '@igo2/core';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
+import { MapExtent, MapViewOptions } from '../../../map/shared/map.interface';
 
 export interface LayerOptions {
   source?: DataSource;
@@ -12,8 +14,9 @@ export interface LayerOptions {
   baseLayer?: boolean;
   opacity?: number;
   visible?: boolean;
-  extent?: [number, number, number, number];
+  extent?: MapExtent;
   zIndex?: number;
+  messages?: Message[];
   minResolution?: number;
   maxResolution?: number;
   minScaleDenom?: number;
@@ -81,6 +84,11 @@ export interface LegendOptions {
   url?: string;
   html?: string;
   stylesAvailable?: ItemStyleOptions[];
+}
+
+export interface LegendMapViewOptions extends MapViewOptions{
+  scale?: number;
+  size?: [number, number];
 }
 
 export interface ItemStyleOptions {

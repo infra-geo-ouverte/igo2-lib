@@ -7,7 +7,7 @@
       </td>
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
-        <a href="{{property.value}}" target='_blank'> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
+        <a href="{{property.value}}" target='_blank' rel="noopener noreferrer"> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
       </td>
 
       <td id="keyValue" *ngIf="feature.properties.target === undefined">
@@ -18,7 +18,7 @@
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
-        <a href="{{property.value}}" target='_blank'>
+        <a href="{{property.value}}" target='_blank' rel="noopener noreferrer">
           <img *ngIf="isImg(property.value);else notImg" src="{{(property.value | secureImage) | async}}" width="225" heigth="auto">
           <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
         </a>
@@ -31,4 +31,4 @@
   </tbody>
 </table>
 
-<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]="htmlSanitizer(feature.properties.url)"></iframe>
+<iframe *ngIf="isHtmlDisplay()" [srcdoc]="htmlSanitizer(feature.properties)" [src]="urlSanitizer(feature.properties.url)"></iframe>

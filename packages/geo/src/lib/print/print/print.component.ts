@@ -10,7 +10,8 @@ import {
   PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
-  PrintSaveImageFormat
+  PrintSaveImageFormat,
+  PrintLegendPosition
 } from '../shared/print.type';
 
 import { PrintService } from '../shared/print.service';
@@ -68,6 +69,15 @@ export class PrintComponent {
   private _imageFormat: PrintSaveImageFormat;
 
   @Input()
+  get legendPosition(): PrintLegendPosition {
+    return this._legendPosition;
+  }
+  set legendPosition(value: PrintLegendPosition) {
+    this._legendPosition = value;
+  }
+  private _legendPosition: PrintLegendPosition;
+
+  @Input()
   get resolution(): PrintResolution {
     return this._resolution;
   }
@@ -79,6 +89,7 @@ export class PrintComponent {
   constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
+
     this.disabled$.next(true);
 
     if (data.isPrintService === true) {
@@ -112,6 +123,7 @@ export class PrintComponent {
           data.showScale,
           data.showLegend,
           data.title,
+          data.subtitle,
           data.comment,
           data.doZipFile
         )

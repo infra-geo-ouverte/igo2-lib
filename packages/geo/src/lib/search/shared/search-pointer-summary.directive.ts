@@ -72,12 +72,6 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    */
   @Input() igoSearchPointerSummaryEnabled: boolean = false;
 
-  @HostListener('mouseout')
-  mouseout() {
-    clearTimeout(this.lastTimeoutRequest);
-    this.clearLayer();
-  }
-
   /**
    * IGO map
    * @internal

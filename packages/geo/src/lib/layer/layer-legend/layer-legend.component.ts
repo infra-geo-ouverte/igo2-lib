@@ -1,13 +1,17 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer, ItemStyleOptions } from '../shared/layers';
+import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
+import { WMSDataSourceOptions } from '../../datasource';
+import { SecureImagePipe } from '@igo2/common';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -27,7 +31,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the map's resolution
    */
-  private resolution$$: Subscription;
+  private state$$: Subscription;
 
   /**
    * The available styles
@@ -45,6 +49,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   private scale: number = undefined;
 
   /**
+   * The extent used to make the legend
+   */
+  private view: LegendMapViewOptions  = undefined;
+  /**
    * Get list of images display
    */
   @ViewChildren('renderedLegend') renderedLegends: QueryList<ElementRef>;
@@ -59,9 +67,21 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   @Input() layer: Layer;
 
+  /**
+   * if getLegendGraphic is authorized
+   */
+  public getLegend = true;
+
+  /**
+   * activeLegend
+   */
+  public legendGraphic: string;
+
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService,
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -87,24 +107,45 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if ( typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
       lastlLegend = [];
     } else {
-      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     }
 
-    if (this.updateLegendOnResolutionChange === true) {
-      const resolution$ = this.layer.map.viewController.resolution$;
-      this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));
-    } else if (lastlLegend.length !== 0) {
+    if (this.updateLegendOnResolutionChange === true || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
+      const state$ = this.layer.map.viewController.state$;
+      this.state$$ = state$
+      .subscribe(() => this.onViewControllerStateChange());
+    } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
+      for (const legend of lastlLegend) {
+        this.getLegendGraphic(legend);
+      }
     }
   }
 
   /**
-   * On destroy, unsubscribe to the map,s resolution
+   * On destroy, unsubscribe to the map's view state
    */
   ngOnDestroy() {
-    if (this.resolution$$ !== undefined) {
-      this.resolution$$.unsubscribe();
+    if (this.state$$ !== undefined) {
+      this.state$$.unsubscribe();
     }
+  }
+
+  getLegendGraphic(item: Legend) {
+    const secureIMG = new SecureImagePipe(this.http);
+    secureIMG.transform(item.url).pipe(
+      catchError((err) => {
+        if (err.error) {
+          err.error.caught = true;
+          this.getLegend = false;
+          this.cdRef.detectChanges();
+          return err;
+        }
+      })
+    ).subscribe((legend: string) => {
+      this.legendGraphic = legend;
+      this.cdRef.detectChanges();
+    });
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
@@ -141,8 +182,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * legend accordingly.
    * @param resolution Map resolution
    */
-  private onResolutionChange(resolution: number) {
-    this.scale = this.layer.map.viewController.getScale();
+  private onViewControllerStateChange() {
+    this.view = {
+      resolution: this.layer.map.viewController.getResolution(),
+      extent: this.layer.map.viewController.getExtent(),
+      projection: this.layer.map.viewController.getOlProjection().getCode(),
+      scale: this.layer.map.viewController.getScale(),
+      size: this.layer.map.ol.getSize()
+    } as LegendMapViewOptions;
     this.updateLegend();
   }
 
@@ -150,7 +197,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    let legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     if (this.layer.legend && this.layer.legend.length > 1) { legendItems = this.transfertToggleLegendItem(legendItems); }
     this.layer.legend = legendItems;
 
@@ -158,6 +205,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       return;
     }
     this.legendItems$.next(legendItems);
+    for (const legend of this.legendItems$.value) {
+      this.getLegendGraphic(legend);
+    }
   }
 
   private listStyles() {
@@ -171,6 +221,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'defaut')));
       }
+      stylesAvailable.filter(sa => !sa.title).map((sa) => sa.title = sa.name);
       stylesAvailable.map(s => s.title = s.title.charAt(0).toUpperCase() + s.title.slice(1).replace(/_/g, ' '));
       return stylesAvailable;
     }

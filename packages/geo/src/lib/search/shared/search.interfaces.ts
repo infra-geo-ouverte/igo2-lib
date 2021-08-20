@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+import { CommonVectorStyleOptions } from '../../utils/commonVectorStyle.interface';
 import { SearchSource } from './sources/source';
 
 export interface Research {
@@ -17,6 +18,12 @@ export interface SearchResult<T = { [key: string]: any }> {
     title: string;
     titleHtml?: string;
     icon: string;
+    score?: number;
     nextPage?: boolean;
+  };
+  style?: {
+    base?: CommonVectorStyleOptions;
+    selection?: CommonVectorStyleOptions;
+    focus?: CommonVectorStyleOptions;
   };
 }

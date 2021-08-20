@@ -16,6 +16,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   ratio?: number;
   ol?: olSourceImageWMS;
   refreshIntervalSec?: number;
+  contentDependentLegend?: boolean;
   excludeAttribute?: Array<string>;
 }
 

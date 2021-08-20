@@ -1,46 +1,41 @@
 import { Injectable, Optional } from '@angular/core';
 
-import { RouteService, ConfigService, MessageService } from '@igo2/core';
+import { RouteService, MessageService } from '@igo2/core';
 import { Layer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
+import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShareMapService {
-  private apiUrl: string;
 
   constructor(
-    private config: ConfigService,
     private contextService: ContextService,
     private messageService: MessageService,
     @Optional() private route: RouteService
-  ) {
-    this.apiUrl = this.config.getConfig('context.url');
+  ) {}
+
+  getUrlWithApi(formValues) {
+    return `${location.origin + location.pathname}?context=${formValues.uri}`;
   }
 
-  getUrl(map: IgoMap, formValues, publicShareOption) {
-    if (this.apiUrl) {
-      return this.getUrlWithApi(map, formValues);
-    }
-    return this.getUrlWithoutApi(map, publicShareOption);
-  }
-
-  getUrlWithApi(map: IgoMap, formValues) {
+  createContextShared(map: IgoMap, formValues) {
     const context = this.contextService.getContextFromMap(map);
     context.scope = 'public';
     context.title = formValues.title;
     context.uri = formValues.uri;
-    this.contextService.create(context).subscribe(
-      rep => {},
-      err => {
-        err.error.title = 'Share Map';
-        this.messageService.showError(err);
-      }
-    );
-    return `${location.origin + location.pathname}?context=${formValues.uri}`;
+    return this.contextService.create(context);
+  }
+
+  updateContextShared(map: IgoMap, formValues, id: string) {
+    const context = this.contextService.getContextFromMap(map);
+    return this.contextService.update(id, {
+      title: formValues.title,
+      map: context.map
+    } as DetailedContext);
   }
 
   getUrlWithoutApi(map: IgoMap, publicShareOption) {
@@ -93,6 +88,9 @@ export class ShareMapService {
 
     const addedLayersQueryParamsWms = this.makeLayersByService(layers, contextLayersID, 'wms');
     const addedLayersQueryParamsWmts = this.makeLayersByService(layers, contextLayersID, 'wmts');
+    const addedLayersQueryParamsArcgisRest = this.makeLayersByService(layers, contextLayersID, 'arcgisrest');
+    const addedLayersQueryParamsImageArcgisRest = this.makeLayersByService(layers, contextLayersID, 'imagearcgisrest');
+    const addedLayersQueryParamsTileArcgisRest = this.makeLayersByService(layers, contextLayersID, 'tilearcgisrest');
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
@@ -110,7 +108,7 @@ export class ShareMapService {
       context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
-    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}`;
+    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
@@ -126,16 +124,20 @@ export class ShareMapService {
   private makeLayersByService(layers: Layer[], contextLayersID: any[], typeService: string): string {
 
     const addedLayersByService = [];
-    for (const layer of layers.filter(
-      l => l.dataSource.options && (l.dataSource.options.type === typeService)
-    )) {
+    for (const layer of layers.filter(l => l.dataSource.options?.type === typeService)) {
       if (contextLayersID.indexOf(layer.id) === -1) {
-        const linkUrl = (layer.dataSource.options as any).url;
+        const linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
         let addedLayer = '';
-        if (layer.dataSource.options.type === 'wms') {
-          addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
-        } else if (layer.dataSource.options.type === 'wmts') {
-          addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+        switch (layer.dataSource.options.type.toLowerCase()) {
+          case 'wms':
+            addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
+            break;
+          case 'wmts':
+          case 'arcgisrest':
+          case 'imagearcgisrest':
+          case 'tilearcgisrest':
+            addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+            break;
         }
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
@@ -158,10 +160,39 @@ export class ShareMapService {
 
     let addedLayersQueryParams = '';
     if (addedLayersByService.length >= 1) {
+      let linkUrlKey;
+      let layersKey;
+      /*
       const linkUrlKey = (typeService === 'wms') ? this.route.options.wmsUrlKey :
         (typeService === 'wmts') ? this.route.options.wmtsUrlKey : '' ;
       const layersKey = (typeService === 'wms') ? this.route.options.wmsLayersKey :
         (typeService === 'wmts') ? this.route.options.wmtsLayersKey : '' ;
+*/
+      switch (typeService.toLowerCase()) {
+        case 'wms':
+          linkUrlKey = this.route.options.wmsUrlKey;
+          layersKey = this.route.options.wmsLayersKey;
+          break;
+        case 'wmts':
+          linkUrlKey = this.route.options.wmtsUrlKey;
+          layersKey = this.route.options.wmtsLayersKey;
+          break;
+        case 'arcgisrest':
+          linkUrlKey = this.route.options.arcgisUrlKey;
+          layersKey = this.route.options.arcgisLayersKey;
+          break;
+        case 'imagearcgisrest':
+          linkUrlKey = this.route.options.iarcgisUrlKey;
+          layersKey = this.route.options.iarcgisLayersKey;
+          break;
+        case 'tilearcgisrest':
+          linkUrlKey = this.route.options.tarcgisUrlKey;
+          layersKey = this.route.options.tarcgisLayersKey;
+          break;
+        default:
+          linkUrlKey = '';
+          layersKey = '';
+      }
 
       let linkUrlQueryParams = '';
       let layersQueryParams = '';

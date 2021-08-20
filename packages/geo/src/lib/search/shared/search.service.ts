@@ -47,7 +47,7 @@ export class SearchService {
       forceNA: options.forceNA
     });
     if (response.lonLat) {
-      return this.reverseSearch(response.lonLat, { distance: response.radius });
+      return this.reverseSearch(response.lonLat, { distance: response.radius, conf: response.conf });
     } else if (response.message) {
       console.log(response.message);
     }

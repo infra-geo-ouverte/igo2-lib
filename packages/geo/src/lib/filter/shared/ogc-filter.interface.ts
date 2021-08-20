@@ -43,7 +43,10 @@ export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
-  pushButtons?: IgoPushButton;
+  pushButtons?: IgoOgcSelector;
+  checkboxes?: IgoOgcSelector;
+  radioButtons?: IgoOgcSelector;
+  select?: IgoOgcSelector;
   interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
   advancedOgcFilters?: boolean;
@@ -51,32 +54,58 @@ export interface OgcFiltersOptions {
   allowedOperatorsType?: OgcFilterOperatorType;
 }
 
-export interface IgoPushButton  {
-  groups?: PushButtonGroup[];
-  bundles?: OgcPushButtonBundle[];
+export interface IgoOgcSelector  {
+  groups: SelectorGroup[];
+  bundles: OgcSelectorBundle[];
+  selectorType: 'pushButton' | 'checkbox' | 'radioButton' | 'select';
+  order?: number;
 }
 
-export interface PushButtonGroup  {
+export interface SelectorGroup  {
   enabled?: boolean;
   title?: string;
   name: string;
   ids?;
-  computedButtons?: OgcPushButtonBundle[];
+  computedSelectors?: OgcSelectorBundle[];
 }
 
-export interface OgcPushButtonBundle  {
-  id?: string;
+export interface OgcSelectorBundle  {
+  id: string;
+  title?: string;
   logical?: string;
   vertical?: boolean;
-  buttons: OgcPushButton[];
+  multiple?: boolean;
+  unfiltered?: boolean;
+  selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[] | OgcSelect[];
 }
 
 export interface OgcPushButton {
   title: string;
   tooltip?: string;
-  enabled: boolean;
+  enabled?: boolean;
   filters: IgoOgcFilterObject;
   color?: string;
+}
+
+export interface OgcCheckbox {
+  title: string;
+  tooltip?: string;
+  enabled?: boolean;
+  filters: IgoOgcFilterObject;
+}
+
+export interface OgcRadioButton {
+  title: string;
+  tooltip?: string;
+  enabled?: boolean;
+  filters: IgoOgcFilterObject;
+}
+
+export interface OgcSelect {
+  title: string;
+  tooltip?: string;
+  enabled?: boolean;
+  filters: IgoOgcFilterObject;
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
@@ -118,6 +147,8 @@ export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   end?: string;
   step: string;
   restrictToStep?: boolean;
+  sliderOptions?: SliderOptionsInterface;
+  displayFormat?: string;
 }
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;
@@ -145,6 +176,8 @@ export interface OgcInterfaceFilterOptions {
   end?: string;
   step?: string;
   restrictToStep?: boolean;
+  sliderOptions: SliderOptionsInterface;
+  displayFormat?: string;
   escapeChar?: string;
   expression?: string | number;
   extent?: [number, number, number, number];
@@ -168,4 +201,10 @@ export interface OgcInterfaceFilterOptions {
   // id?: string;
   // abbrev?: string;
 
+}
+
+export interface SliderOptionsInterface extends OgcFilterDuringOptions {
+  interval?: number;
+  displayFormat?: string;
+  enabled?: boolean;
 }

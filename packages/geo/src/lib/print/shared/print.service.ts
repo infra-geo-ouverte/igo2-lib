@@ -15,6 +15,7 @@ import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
+import { LegendMapViewOptions, OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
@@ -39,6 +40,7 @@ export class PrintService {
     const paperFormat: string = options.paperFormat;
     const resolution = +options.resolution; // Default is 96
     const orientation = options.orientation;
+    const legendPostion = options.legendPosition;
 
     this.activityId = this.activityService.register();
     const doc = new jsPDF({
@@ -51,15 +53,23 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [20, 10, 20, 10];
+    const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
+    let titleSizeResults = [0, 0];
 
     if (options.title !== undefined) {
-      this.addTitle(doc, options.title, dimensions[0]);
+      titleSizeResults = this.getTitleSize(options.title, width, height, doc); // return : size(pt) and left margin (mm)
+      this.addTitle(doc, options.title, titleSizeResults[0], margins[3] + titleSizeResults[1], titleSizeResults[0] * (25.4 / 72));
     }
-
+    if (options.subtitle !== undefined) {
+      let subtitleSizeResult = 0;
+      const titleH = titleSizeResults[0];
+      subtitleSizeResult = this.getSubTitleSize(options.subtitle, width, height, doc); // return : size(pt) and left margin (mm)
+      this.addSubTitle(doc, options.subtitle, titleH * 0.7, margins[3] + subtitleSizeResult, titleH * 1.7 * (25.4 / 72));
+      margins[0] = margins[0] + titleSizeResults[0] * 0.7 * (25.4 / 72);
+    }
     if (options.showProjection === true || options.showScale === true) {
       this.addProjScale(
         doc,
@@ -67,7 +77,7 @@ export class PrintService {
         resolution,
         options.showProjection,
         options.showScale
-      );
+        );
     }
     if (options.comment !== '') {
       this.addComment(doc, options.comment);
@@ -76,8 +86,14 @@ export class PrintService {
     this.addMap(doc, map, resolution, size, margins).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          if (options.showLegend === true) {
-            await this.addLegend(doc, map, margins, resolution);
+          await this.addScale(doc, map, margins);
+          await this.handleMeasureLayer(doc, map, margins);
+          if (options.legendPosition !== 'none') {
+            if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
+              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
+            } else if (options.legendPosition === 'newpage') {
+              await this.addLegend(doc, map, margins, resolution);
+            }
           } else {
             await this.saveDoc(doc);
           }
@@ -91,6 +107,30 @@ export class PrintService {
     );
 
     return status$;
+  }
+
+  /**
+   * Add measure overlay on the map on the document when the measure layer is present
+   * @param  doc - Pdf document where measure tooltip will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
+  private async handleMeasureLayer(
+    doc: jsPDF,
+    map: IgoMap,
+    margins: Array<number>
+  ) {
+    if (map.layers.find(layer => layer.visible && layer.id.startsWith('igo-measures-'))) {
+      let canvasOverlayHTMLMeasures;
+      const mapOverlayMeasuresHTML = map.ol.getOverlayContainer();
+      await html2canvas(mapOverlayMeasuresHTML, {
+        scale: 1,
+        backgroundColor: null
+      }).then(e => {
+        canvasOverlayHTMLMeasures = e;
+      });
+      this.addCanvas(doc, canvasOverlayHTMLMeasures, margins); // this adds measure overlays
+    }
   }
 
   /**
@@ -108,46 +148,46 @@ export class PrintService {
       let html = '';
       const legends = getLayersLegends(
         map.layers,
-        map.viewController.getScale(resolution)
+        {
+          resolution: map.viewController.getResolution(),
+          extent: map.viewController.getExtent(),
+          projection: map.viewController.getOlProjection().getCode(),
+          scale: map.viewController.getScale(resolution),
+          size: map.ol.getSize()
+        } as LegendMapViewOptions
       );
       if (legends.length === 0) {
         observer.next(html);
         observer.complete();
         return;
       }
-
       // Define important style to be sure that all container is convert
       // to image not just visible part
       html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: ' + width;
-      html += 'mm !important; height: 2000px !important; }';
+      html += '.html2canvas-container { width: ' + width + 'mm !important; height: 2000px !important; }';
+      html += 'table.tableLegend {table-layout: auto;}';
+      html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
       html += '</style>';
-      html += '<font size="2" face="Courier New" >';
-      html +=
-        '<div style="display:grid;grid-template-columns:' +
-        width / 2 +
-        'mm ' +
-        width / 2 +
-        'mm;max-width:' +
-        width +
-        'mm">';
+      // The font size will also be lowered afterwards (globally along the legend size)
+      // this allows having a good relative font size here and to keep ajusting the legend size
+      // while keeping good relative font size
+      html += '<font size="3" face="Times" >';
+      html += '<div class="styleLegend">';
+      html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
       const images$ = legends.map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
-            let htmlImg =
-              '<table border=1 style="vertical-align:top">';
-            htmlImg += '<tr><th width="170px">' + legend.title + '</th>';
-            htmlImg +=
-              '<td><img class="printImageLegend" src="' + dataImage + '">';
-            htmlImg += '</td></tr></table>';
+            let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
+            htmlImg  += '<tr><td><img src="' + dataImage + '"></td></tr>';
             return htmlImg;
           })
         )
       );
       forkJoin(images$).subscribe((dataImages) => {
         html = dataImages.reduce((acc, current) => (acc += current), html);
+        html += '</table>';
         html += '</div>';
         observer.next(html);
         observer.complete();
@@ -220,23 +260,62 @@ export class PrintService {
     return status$;
   }
 
-  private addTitle(doc: jsPDF, title: string, pageWidth: number) {
+  getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
     const pdfResolution = 96;
-    const titleSize = 32;
-    const titleWidth = ((titleSize * 25.4) / pdfResolution) * title.length;
+    const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+    const width = doc.getTextWidth(title);
+
+    const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
+    const titleTailleMinimale = Math.round( 2 * (pageHeight + 150 ) * 0.037) / 2;
+    let titleFontSize = 0;
 
     let titleMarginLeft;
-    if (titleWidth > pageWidth) {
+    if (titleWidth >= (pageWidth)) {
       titleMarginLeft = 0;
+      titleFontSize = Math.round(((pageWidth / title.length) * pdfResolution) / 25.4);
+      // If the formula to find the font size gives below the defined minimum size
+      if (titleFontSize < titleTailleMinimale) {
+        titleFontSize = titleTailleMinimale;
+      }
     } else {
-      titleMarginLeft = (pageWidth - titleWidth) / 2;
+      titleMarginLeft = (pageWidth - titleWidth) / 2 ;
+      titleFontSize = titleSize;
     }
-
-    doc.setFont('courier');
-    doc.setFontSize(32);
-    doc.text(title, titleMarginLeft, 15);
+    return [titleFontSize, titleMarginLeft];
   }
 
+  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
+    const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% of the title's font size
+
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+
+    const subtitleWidth = doc.getStringUnitWidth(subtitle) * subtitleSize / doc.internal.scaleFactor;
+
+    let subtitleMarginLeft;
+    if (subtitleWidth >= (pageWidth)) {
+      subtitleMarginLeft = 0;
+    } else {
+      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ;
+    }
+    return subtitleMarginLeft;
+  }
+
+  private addTitle(doc: jsPDF, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+    doc.setFontSize(titleFontSize);
+    doc.text(title, titleMarginLeft, titleMarginTop);
+  }
+
+  private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
+    doc.setFont('Times');
+    doc.setFontType();
+    doc.setFontSize(subtitleFontSize);
+    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop);
+  }
   /**
    * Add comment to the document
    * * @param  doc - pdf document
@@ -331,15 +410,123 @@ export class PrintService {
     });
 
     if (canvas) {
+      const pourcentageReduction = 0.85;
+      const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution, pourcentageReduction
+        * (25.4 * canvas.height) / resolution];
       let imgData;
-      const position = 10;
-      imgData = canvas.toDataURL('image/png');
       doc.addPage();
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-      doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-      await this.saveDoc(doc);
+      imgData = canvas.toDataURL('image/png');
+      doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
       div.parentNode.removeChild(div); // remove temp div (IE style)
     }
+
+    await this.saveDoc(doc);
+
+  }
+
+  /**
+   * Add the legend to the document
+   * @param  doc - Pdf document where legend will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
+     private async addLegendSamePage(
+      doc: jsPDF,
+      map: IgoMap,
+      margins: Array<number>,
+      resolution: number,
+      legendPosition: string
+    ) {
+      // Get html code for the legend
+      const width = doc.internal.pageSize.width;
+      const html = await this.getLayersLegendHtml(
+        map,
+        width,
+        resolution
+      ).toPromise();
+      // If no legend, save the map directly
+      if (html === '') {
+        await this.saveDoc(doc);
+        return true;
+      }
+      // Create div to contain html code for legend
+      const div = window.document.createElement('div');
+      div.style.position = 'absolute';
+      div.style.top = '0';
+      // Add html code to convert in the new window
+      window.document.body.appendChild(div);
+      div.innerHTML = html;
+      await this.timeout(1);
+      const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+        console.log(e);
+      });
+      let marginsLegend;
+      if (canvas) {
+        const pourcentageReduction = 0.85;
+        const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution,
+           pourcentageReduction * (25.4 * canvas.height) / resolution];
+        // Move the legend to the correct position on the page
+        if ( legendPosition === 'bottomright') {
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1], margins[1],
+           margins[2], doc.internal.pageSize.width - margins[1] - imageSize[0]];
+        } else if (legendPosition === 'topright') {
+          marginsLegend = [margins[0], margins[1], doc.internal.pageSize.height - margins[0] - imageSize[1],
+          doc.internal.pageSize.width - margins[1] - imageSize[0] ];
+        } else if (legendPosition === 'bottomleft') {
+          // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1] - 15,
+          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2] + 15, margins[3] ];
+        } else if (legendPosition === 'topleft') {
+          marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
+           doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
+        }
+        this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
+        div.parentNode.removeChild(div); // remove temp div (IE style)
+        await this.saveDoc(doc);
+      }
+    }
+
+  /**
+   * Add scale and attributions on the map on the document
+   * @param  doc - Pdf document where legend will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
+  private async addScale(
+    doc: jsPDF,
+    map: IgoMap,
+    margins: Array<number>
+    ) {
+      const mapSize = map.ol.getSize();
+      const extent = map.ol.getView().calculateExtent(mapSize);
+      // Get the scale and attribution
+      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
+      let canvasOverlayHTML;
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+      // Remove the UI buttons from the nodes
+      const OverlayHTMLButton = mapOverlayHTML.getElementsByTagName('button');
+      for (const but of OverlayHTMLButton) {
+        but.setAttribute('data-html2canvas-ignore', 'true');
+      }
+      // Change the styles of hyperlink in the printed version
+      // Transform the Overlay into a canvas
+      // scale is necessary to make it in google chrome
+      // background as null because otherwise it is white and cover the map
+      // allowtaint is to allow rendering images in the attributions
+      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
+      const canvas = await html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      }).then( e => {
+        canvasOverlayHTML = e;
+      });
+      this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
+ }
+
+  defineNbFileToProcess(nbFileToProcess) {
+    this.nbFileToProcess = nbFileToProcess;
   }
 
   private timeout(ms) {
@@ -352,8 +539,9 @@ export class PrintService {
     margins: Array<number>
   ) {
     let image;
-
-    image = canvas.toDataURL('image/png');
+    if (canvas) {
+      image = canvas.toDataURL('image/png');
+    }
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
@@ -388,9 +576,7 @@ export class PrintService {
     let timeout;
 
     map.ol.once('rendercomplete', (event: any) => {
-      const canvases = event.target
-        .getViewport()
-        .getElementsByTagName('canvas');
+      const canvases = event.target.getViewport().getElementsByTagName('canvas');
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
 
@@ -415,11 +601,9 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
-
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       });
@@ -444,11 +628,9 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
-
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       }, 200);
@@ -459,10 +641,6 @@ export class PrintService {
     return status$;
   }
 
-  defineNbFileToProcess(nbFileToProcess) {
-    this.nbFileToProcess = nbFileToProcess;
-  }
-
   /**
    * Download an image of the map with addition of informations
    * @param  map - Map of the app
@@ -471,6 +649,7 @@ export class PrintService {
    * @param  scale - Indicate if scale need to be add. Default to false
    * @param  legend - Indicate if the legend of layers need to be download. Default to false
    * @param  title - Title to add for the map - Default to blank
+   * @param  subtitle - Subtitle to add for the map - Default to blank
    * @param  comment - Comment to add for the map - Default to blank
    * @param  doZipFile - Indicate if we do a zip with the file
    * @return Image file of the map with extension format given as parameter
@@ -483,6 +662,7 @@ export class PrintService {
     scale = false,
     legend = false,
     title = '',
+    subtitle = '',
     comment = '',
     doZipFile = true
   ) {
@@ -509,6 +689,8 @@ export class PrintService {
       const commentWidth = newContext.measureText(comment).width;
       // Add height for title if defined
       height = title !== '' ? height + 30 : height;
+      // Add height for title if defined
+      height = subtitle !== '' ? height + 30 : height;
       // Add height for projection or scale (same line) if defined
       height = projection !== false || scale !== false ? height + 30 : height;
       const positionHProjScale = height - 10;
@@ -529,10 +711,19 @@ export class PrintService {
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
+        // Adjust according to title length
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        newContext.fillText(title, width / 2, 20);
+        newContext.fillText(title, width / 2, 20, width * 0.9);
+      }
+      if (subtitle !== '') {
+        // Set font for subtitle
+        // Adjust according to title length
+        newContext.font = '26px Calibri';
+        positionHCanvas = 60;
+        newContext.textAlign = 'center';
+        newContext.fillText(subtitle, width / 2, 50, width * 0.9);
       }
       // Set font for next section
       newContext.font = '20px Calibri';
@@ -547,6 +738,7 @@ export class PrintService {
         );
         positionWProjScale += 200; // Width position change for scale position
       }
+
       // If scale need to be added to canvas
       if (scale !== false) {
         const scaleText = translate.instant('igo.geo.printForm.scale');
@@ -649,6 +841,7 @@ export class PrintService {
   }
 
   private renderMap(map, size, extent) {
+    map.ol.updateSize();
     map.ol.renderSync();
   }
 
@@ -730,8 +923,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }
@@ -767,8 +959,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }

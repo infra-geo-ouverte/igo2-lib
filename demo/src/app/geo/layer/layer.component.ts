@@ -28,6 +28,7 @@ export class AppLayerComponent {
 
   public view = {
     center: [-73, 47.2],
+    maxLayerZoomExtent: [-11000000, 4500000, -4500000, 10000000],
     zoom: 7
   };
 
@@ -120,7 +121,8 @@ export class AppLayerComponent {
         const layer: LayerOptions = {
           title: 'WFS (Custom EPSG)',
           visible: true,
-          source: dataSource
+          source: dataSource,
+          removable: false
         };
         this.map.addLayer(this.layerService.createLayer(layer));
       });

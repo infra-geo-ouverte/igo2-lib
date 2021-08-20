@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
-import { OgcFilterableDataSourceOptions, IgoPushButton, OgcFiltersOptions } from '../shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, IgoOgcSelector, OgcFiltersOptions } from '../shared/ogc-filter.interface';
 
 @Component({
   selector: 'igo-ogc-filter-button',
@@ -16,23 +16,54 @@ export class OgcFilterButtonComponent implements OnInit {
 
   get badge() {
     const filter = this.options.ogcFilters as any;
+    let cnt = 0;
     if (filter && !filter.advancedOgcFilters) {
       if (filter.pushButtons) {
-        const pushButtons = filter.pushButtons as IgoPushButton;
+        const pushButtons = filter.pushButtons as IgoOgcSelector;
         const currentPushButtonGroup = pushButtons.groups.find(gr => gr.enabled);
         let cntPushButtons = 0;
         if (currentPushButtonGroup) {
-          currentPushButtonGroup.computedButtons.map(cb => cntPushButtons += cb.buttons.filter(button => button.enabled).length);
+          currentPushButtonGroup.computedSelectors.map(cb => cntPushButtons += (cb.selectors as any).filter(
+            button => button.enabled).length);
         }
-        return cntPushButtons > 0 ? cntPushButtons : undefined;
-      } else {
-        return;
+        cnt += cntPushButtons;
+      }
+      if (filter.checkboxes) {
+        const checkboxes = filter.checkboxes as IgoOgcSelector;
+        const currentCheckboxGroup = checkboxes.groups.find(gr => gr.enabled);
+        let cntCheckboxes = 0;
+        if (currentCheckboxGroup) {
+          currentCheckboxGroup.computedSelectors.map(cb => cntCheckboxes += (cb.selectors as any).filter(
+            checkbox => checkbox.enabled).length);
+        }
+        cnt += cntCheckboxes;
+      }
+      if (filter.radioButtons) {
+        const radioButtons = filter.radioButtons as IgoOgcSelector;
+        const currentRadioButtonsGroup = radioButtons.groups.find(gr => gr.enabled);
+        let cntRadioButtons = 0;
+        if (currentRadioButtonsGroup) {
+          currentRadioButtonsGroup.computedSelectors.map(cb => cntRadioButtons += (cb.selectors as any).filter(
+            radio => radio.enabled).length);
+        }
+        cnt += cntRadioButtons;
+      }
+      if (filter.select) {
+        const select = filter.select as IgoOgcSelector;
+        const currentSelectGroup = select.groups.find(gr => gr.enabled);
+        let cntSelect = 0;
+        if (currentSelectGroup) {
+          currentSelectGroup.computedSelectors.map(cb => cntSelect += (cb.selectors as any).filter(
+            multi => multi.enabled).length);
+        }
+        cnt += cntSelect;
       }
     } else if (filter && filter.filters && !filter.filters.filters) {
       return 1;
     } else if (filter && filter.filters && filter.filters.filters) {
       return filter.filters.filters.length;
     }
+    return cnt > 0 ? cnt : undefined;
   }
 
   @Input()

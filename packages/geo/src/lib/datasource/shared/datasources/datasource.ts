@@ -7,7 +7,7 @@ import {
 
 import { DataService } from './data.service';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
-import { LegendOptions } from '../../../layer';
+import { LegendMapViewOptions, LegendOptions } from '../../../layer/shared/layers/layer.interface';
 
 export abstract class DataSource {
 
@@ -30,7 +30,7 @@ export abstract class DataSource {
     return generateIdFromSourceOptions(this.options);
   }
 
-  public getLegend(style?: string, scale?: number): Legend[] {
+  public getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
     return this.legend ? this.legend : [];
   }
 

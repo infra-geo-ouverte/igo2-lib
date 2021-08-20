@@ -24,7 +24,6 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
-
   public focusedCls = 'igo-layer-item-focused';
 
   @Input()
@@ -100,10 +99,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   @Input() selectionMode;
 
   @Input() changeDetection;
-
-  get removable(): boolean {
-    return this.layer.options.removable !== false;
-  }
 
   get opacity() {
     return this.layer.opacity * 100;
