@@ -40,7 +40,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-slide-toggle class="center-toggle"
+  <mat-slide-toggle class="center-toggle mat-typography"
     [checked]="center"
     [labelPosition]="'before'"
     (change)="displayCenter($event.checked)">
@@ -48,4 +48,4 @@
   </mat-slide-toggle> 
 </form>
 
-<p class="igo-zoom">{{'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate}} {{map.getZoom() }}</p>
+<p class="igo-zoom mat-typography">{{'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate}} {{map.getZoom() }}</p>
