@@ -18,6 +18,13 @@ export class DrawState {
     map: this.mapState.map
   });
 
-  constructor(private mapState: MapState) {}
+  constructor(private mapState: MapState) {
+
+    this.mapState.map.layers$.subscribe(() => {
+      if (!this.mapState.map.getLayerById('igo-draw-layer')) {
+        this.store.deleteMany(this.store.all());
+      }
+    });
+  }
 
 }

@@ -27,8 +27,13 @@ export class ImageLayer extends Layer {
     public authInterceptor?: AuthInterceptor
   ) {
     super(options, messageService, authInterceptor);
-    this.watcher = new ImageWatcher(this);
+    this.watcher = new ImageWatcher(this, this.messageService, this.languageService);
     this.status$ = this.watcher.status$;
+    this.status$.subscribe(valStatus => {
+      if (valStatus === 0) {
+        this.olLoadingProblem = true;
+      }
+    });
   }
 
   protected createOlLayer(): olLayerImage {
