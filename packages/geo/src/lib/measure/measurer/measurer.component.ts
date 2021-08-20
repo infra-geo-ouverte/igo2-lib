@@ -112,6 +112,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     ]
   };
 
+  private subscriptions$$: Subscription[] = [];
+
   /**
    * Reference to the MeasureType enum
    * @internal
@@ -331,6 +333,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.setActiveMeasureType(undefined);
     this.deactivateModifyControl();
     this.freezeStore();
+    this.subscriptions$$.map(s => s.unsubscribe());
   }
 
   /**
@@ -598,14 +601,20 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.selectedFeatures$.next(records.map(record => record.entity));
     });
 
-    this.store.entities$.subscribe(objectsExists  => {
+    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists  => {
     if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
         this.hasArea$.next(true);
       }
       else {
         this.hasArea$.next(false);
       }
-    });
+    }));
+
+    this.subscriptions$$.push(this.store.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.store.layer.options.showInLayerList = true :
+        this.store.layer.options.showInLayerList = false;
+    }));
   }
 
   /**

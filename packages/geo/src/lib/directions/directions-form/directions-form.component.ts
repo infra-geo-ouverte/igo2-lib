@@ -63,6 +63,8 @@ import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-st
 })
 export class DirectionsFormComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  
+  private subscriptions$$: Subscription[] = [];
 
   public stopsForm: FormGroup;
   public projection = 'EPSG:4326';
@@ -237,6 +239,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = true;
     this.freezeStores();
     this.writeStopsToFormService();
+    this.subscriptions$$.map(s => s.unsubscribe());
   }
 
   private initStores() {
@@ -254,6 +257,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       showInLayerList: true,
       workspace: {
         enabled: false,
+      },
+      linkedLayers: {
+        linkId: 'igo-direction-stops-layer',
+        links: [
+          {
+            bidirectionnal: false,
+            syncedDelete: true,
+            linkedIds: ["igo-direction-route-layer"],
+            properties: []
+          }
+        ]
       },
       exportable: true,
       browsable: false,
@@ -274,6 +288,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       workspace: {
         enabled: false,
       },
+      linkedLayers: {
+        linkId: 'igo-direction-route-layer'
+      },
       exportable: true,
       browsable: false,
       style: stopMarker
@@ -281,6 +298,18 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     tryBindStoreLayer(routeStore, routeLayer);
     routeStore.layer.visible = true;
     tryAddLoadingStrategy(routeStore, loadingStrategy);
+
+    this.subscriptions$$.push(this.stopsStore.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.stopsStore.layer.options.showInLayerList = true :
+        this.stopsStore.layer.options.showInLayerList = false;
+    }));
+
+    this.subscriptions$$.push(this.routeStore.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.routeStore.layer.options.showInLayerList = true :
+        this.routeStore.layer.options.showInLayerList = false;
+    }));
   }
 
   private initOlInteraction() {
