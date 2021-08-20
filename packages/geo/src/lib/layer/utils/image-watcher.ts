@@ -1,7 +1,8 @@
 import olSourceImage from 'ol/source/Image';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
-
+import { LanguageService, MessageService } from '@igo2/core';
 import { ImageLayer } from '../shared/layers/image-layer';
+
 
 export class ImageWatcher extends Watcher {
   protected id: string;
@@ -10,22 +11,29 @@ export class ImageWatcher extends Watcher {
 
   private source: olSourceImage;
 
-  constructor(layer: ImageLayer) {
+  private messageService: MessageService;
+  private languageService: LanguageService;
+
+  constructor(layer: ImageLayer, messageService: MessageService, languageService: LanguageService) {
     super();
     this.source = layer.options.source.ol;
     this.id = uuid();
+    this.messageService = messageService;
+    this.languageService = languageService;
   }
 
   protected watch() {
     this.source.on(`imageloadstart`, e => this.handleLoadStart(e));
     this.source.on(`imageloadend`, e => this.handleLoadEnd(e));
     this.source.on(`imageloaderror`, e => this.handleLoadEnd(e));
+    this.source.on(`imageloaderror`, e => this.handleLoadError(e));
   }
 
   protected unwatch() {
     this.source.un(`imageloadstart`, e => this.handleLoadStart(e));
     this.source.un(`imageloadend`, e => this.handleLoadEnd(e));
     this.source.un(`imageloaderror`, e => this.handleLoadEnd(e));
+    this.source.un(`imageloaderror`, e => this.handleLoadError(e));
   }
 
   private handleLoadStart(event: any) {
@@ -59,5 +67,24 @@ export class ImageWatcher extends Watcher {
         this.loaded = this.loading = 0;
       }
     }
+  }
+
+  private handleLoadError(event) {
+
+    if (!event.image.__watchers__) {
+      return;
+    }
+    const title = this.languageService.translate.instant(
+      'igo.geo.dataSource.unavailableTitle'
+    );
+    const message = this.languageService.translate.instant(
+      'igo.geo.dataSource.unavailable', {value: event.target.params_.LAYERS}
+    );
+
+    this.messageService.error(message, title);
+    this.loaded = -1;
+    this.loading = 0;
+    this.status = SubjectStatus.Error;
+
   }
 }
