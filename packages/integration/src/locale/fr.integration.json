@@ -68,7 +68,7 @@
       },
       "advanced-map-tool": {
         "advanced-swipe":{      
-          "swipe-select": "Choisir les couches à swiper",
+          "swipe-select": "Choisir les couches à comparer",
           "selectAll": "Tout sélectionner",
           "empty": "La carte ne contient aucune couche de données.",
           "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
