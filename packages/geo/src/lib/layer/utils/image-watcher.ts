@@ -11,8 +11,8 @@ export class ImageWatcher extends Watcher {
 
   private source: olSourceImage;
 
-  public messageService: MessageService;
-  public languageService: LanguageService;
+  private messageService: MessageService;
+  private languageService: LanguageService;
 
   constructor(layer: ImageLayer, messageService: MessageService, languageService: LanguageService) {
     super();
