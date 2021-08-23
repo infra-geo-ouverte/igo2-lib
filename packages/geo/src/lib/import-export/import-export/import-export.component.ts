@@ -466,22 +466,23 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handleExportFormSubmit(data: ExportOptions) {
+    const dataCopy = JSON.parse(JSON.stringify(data))
     this.loading$.next(true);
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
-    if (!this.popupChecked && data.layers.length > 1 &&
-      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) && !this.popupAllowed) {
+    if (!this.popupChecked && dataCopy.layers.length > 1 &&
+      (ogreFormats.indexOf(dataCopy.format) >= 0 || dataCopy.format === ExportFormat.URL) && !this.popupAllowed) {
       this.handlePopup();
     }
 
-    data.layers.forEach((layer) => {
+    dataCopy.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
       let filename = lay.title;
-      if (data.name !== undefined) {
-        filename = data.name;
+      if (dataCopy.name !== undefined) {
+        filename = dataCopy.name;
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
-      if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
+      if (dataCopy.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
@@ -494,15 +495,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       let olFeatures;
       if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
 
-        if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
+        if (dataCopy.layersWithSelection.indexOf(layer) !== -1 && dataCopy.featureInMapExtent) {
           // Only export selected feature && into map extent
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
+        } else if (dataCopy.layersWithSelection.indexOf(layer) !== -1 && !dataCopy.featureInMapExtent) {
           // Only export selected feature &&  (into map extent OR not)
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.featureInMapExtent) {
+        } else if (dataCopy.featureInMapExtent) {
           // Only into map extent
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
@@ -512,7 +513,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
       else {
-        if (data.featureInMapExtent) {
+        if (dataCopy.featureInMapExtent) {
           olFeatures = lay.dataSource.ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()
           );
@@ -527,7 +528,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
       const translate = this.languageService.translate;
       let geomTypes: { geometryType: string, features: any[] }[] = [];
-      if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
+      if (dataCopy.format === ExportFormat.Shapefile || dataCopy.format === ExportFormat.GPX) {
         olFeatures.forEach((olFeature) => {
           const featureGeomType = olFeature.getGeometry().getType();
           const currentGeomType = geomTypes.find(geomType => geomType.geometryType === featureGeomType);
@@ -554,7 +555,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       });
 
 
-      if (data.format === ExportFormat.GPX) {
+      if (dataCopy.format === ExportFormat.GPX) {
         const gpxFeatureCnt = geomTypes.length;
         geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
         const gpxFeatureCntPointOrPoly = geomTypes.length;
@@ -573,7 +574,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       } else {
         geomTypes.map(geomType =>
-          this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
+          this.exportService.export(geomType.features, dataCopy.format, filename + geomType.geometryType, dataCopy.encoding, this.map.projection)
           .subscribe(
             () => {},
             (error: Error) => this.onFileExportError(error),

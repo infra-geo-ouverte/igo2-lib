@@ -5,8 +5,5 @@ import { Component } from '@angular/core';
   templateUrl: './draw-shorcuts.component.html',
   styleUrls: ['./draw-shorcuts.component.scss']
 })
-export class DrawShorcutsComponent {
 
-  constructor() {}
-
-}
+export class DrawShorcutsComponent {}
