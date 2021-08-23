@@ -41,9 +41,7 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
             "allowedCommonJsDependencies": [
               "hammerjs",
@@ -119,14 +117,9 @@
             "polyfills": "demo/src/polyfills.ts",
             "tsConfig": "demo/src/tsconfig.spec.json",
             "karmaConfig": "demo/src/karma.conf.js",
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
-            "assets": [
-              "demo/src/favicon.ico",
-              "demo/src/assets"
-            ]
+            "assets": ["demo/src/favicon.ico", "demo/src/assets"]
           }
         },
         "lint": {
@@ -136,9 +129,7 @@
               "demo/src/tsconfig.app.json",
               "demo/src/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -158,9 +149,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -205,9 +194,7 @@
               "packages/auth/tsconfig.lib.json",
               "packages/auth/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -252,9 +239,7 @@
               "packages/common/tsconfig.lib.json",
               "packages/common/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -299,9 +284,7 @@
               "packages/core/tsconfig.lib.json",
               "packages/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -346,9 +329,7 @@
               "packages/geo/tsconfig.lib.json",
               "packages/geo/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -379,9 +360,7 @@
               "packages/utils/tsconfig.lib.json",
               "packages/utils/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -426,9 +405,7 @@
               "packages/context/tsconfig.lib.json",
               "packages/context/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -461,19 +438,12 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "packages/integration/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["packages/integration/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
     }
   },
-  "defaultProject": "demo",
-  "cli": {
-    "analytics": false
-  }
+  "defaultProject": "demo"
 }
