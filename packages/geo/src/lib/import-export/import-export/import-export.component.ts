@@ -466,7 +466,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handleExportFormSubmit(data: ExportOptions) {
-    const dataCopy = JSON.parse(JSON.stringify(data))
+    const dataCopy = JSON.parse(JSON.stringify(data));
     this.loading$.next(true);
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
@@ -574,7 +574,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       } else {
         geomTypes.map(geomType =>
-          this.exportService.export(geomType.features, dataCopy.format, filename + geomType.geometryType, dataCopy.encoding, this.map.projection)
+          this.exportService.export(
+          geomType.features,
+          dataCopy.format,
+          filename + geomType.geometryType,
+          dataCopy.encoding,
+          this.map.projection)
           .subscribe(
             () => {},
             (error: Error) => this.onFileExportError(error),
