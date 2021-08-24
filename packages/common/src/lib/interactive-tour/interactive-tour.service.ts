@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ShepherdService } from 'angular-shepherd/angular-shepherd';
+import { ShepherdService } from 'angular-shepherd';
 
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { InteractiveTourLoader } from './interactive-tour.loader';
