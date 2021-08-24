@@ -25,6 +25,7 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import olPoint from 'ol/geom/Point';
 import { circular } from 'ol/geom/Polygon';
 
 import {
@@ -466,23 +467,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handleExportFormSubmit(data: ExportOptions) {
-    const dataCopy = JSON.parse(JSON.stringify(data));
     this.loading$.next(true);
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
-    if (!this.popupChecked && dataCopy.layers.length > 1 &&
-      (ogreFormats.indexOf(dataCopy.format) >= 0 || dataCopy.format === ExportFormat.URL) && !this.popupAllowed) {
+    if (!this.popupChecked && data.layers.length > 1 &&
+      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) && !this.popupAllowed) {
       this.handlePopup();
     }
 
-    dataCopy.layers.forEach((layer) => {
+    data.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
       let filename = lay.title;
-      if (dataCopy.name !== undefined) {
-        filename = dataCopy.name;
+      if (data.name !== undefined) {
+        filename = data.name;
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
-      if (dataCopy.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
+      if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
@@ -495,15 +495,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       let olFeatures;
       if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
 
-        if (dataCopy.layersWithSelection.indexOf(layer) !== -1 && dataCopy.featureInMapExtent) {
+        if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
           // Only export selected feature && into map extent
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (dataCopy.layersWithSelection.indexOf(layer) !== -1 && !dataCopy.featureInMapExtent) {
+        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
           // Only export selected feature &&  (into map extent OR not)
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (dataCopy.featureInMapExtent) {
+        } else if (data.featureInMapExtent) {
           // Only into map extent
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
@@ -513,7 +513,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
       else {
-        if (dataCopy.featureInMapExtent) {
+        if (data.featureInMapExtent) {
           olFeatures = lay.dataSource.ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()
           );
@@ -526,9 +526,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           );
         }
       }
+
       const translate = this.languageService.translate;
       let geomTypes: { geometryType: string, features: any[] }[] = [];
-      if (dataCopy.format === ExportFormat.Shapefile || dataCopy.format === ExportFormat.GPX) {
+      if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
         olFeatures.forEach((olFeature) => {
           const featureGeomType = olFeature.getGeometry().getType();
           const currentGeomType = geomTypes.find(geomType => geomType.geometryType === featureGeomType);
@@ -545,6 +546,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       geomTypes.forEach(geomType => {
         geomType.features.forEach(feature => {
           const radius: number = feature.get('rad');
+
           if (radius) {
             const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
             const circle = circular(center4326, radius, 500);
@@ -554,8 +556,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         });
       });
 
-
-      if (dataCopy.format === ExportFormat.GPX) {
+      if (data.format === ExportFormat.GPX) {
         const gpxFeatureCnt = geomTypes.length;
         geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
         const gpxFeatureCntPointOrPoly = geomTypes.length;
@@ -574,17 +575,23 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       } else {
         geomTypes.map(geomType =>
-          this.exportService.export(
-          geomType.features,
-          dataCopy.format,
-          filename + geomType.geometryType,
-          dataCopy.encoding,
-          this.map.projection)
+          this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
           .subscribe(
             () => {},
             (error: Error) => this.onFileExportError(error),
             () => {
               this.onFileExportSuccess();
+
+              geomType.features.forEach(feature => {
+                const radius: number = feature.get('rad');
+
+                if (radius) {
+                  const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+                  point.transform('EPSG:4326', feature.get('_projection'));
+                  feature.setGeometry(point);
+                }
+              });
+
               this.loading$.next(false);
             }
         ));
