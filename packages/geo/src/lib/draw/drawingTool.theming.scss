@@ -1,5 +1,3 @@
-@import './draw/draw.theming';
-
 @mixin igo-drawingTool-theming($theme, $typography) {
   @include igo-draw-theming($theme, $typography);
 }

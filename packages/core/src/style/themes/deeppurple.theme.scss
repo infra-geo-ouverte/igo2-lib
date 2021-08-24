@@ -1,13 +1,16 @@
-@use '~@angular/material' as mat;
+.deeppurple-theme {
+    $primary: mat.define-palette(mat.$deep-purple-palette);
+    $accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+    $warn: mat.define-palette(mat.$red-palette);
 
-$primary: mat.define-palette(mat.$deep-purple-palette);
-$accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
-$warn: mat.define-palette(mat.$red-palette);
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
 
-$theme: mat.define-light-theme((
-    color: (
-        primary: $primary,
-        accent: $accent,
-        warn: $warn
-    )
-));
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}

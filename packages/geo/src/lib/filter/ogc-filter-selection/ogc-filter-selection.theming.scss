@@ -1,5 +1,3 @@
-@use '~@angular/material' as mat;
-
 @mixin igo-ogc-filter-selection-theming($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);

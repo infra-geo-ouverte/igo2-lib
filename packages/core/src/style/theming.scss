@@ -1,11 +1,7 @@
-//@use '~@angular/material/theming'; // include only in core
-
-@import './core.theming';
 @import './material.font';
 
-@mixin igo-theming($theme, $typography, $mat) {
+@mixin igo-theming($theme, $typography) {
   @include mat.core($typography);
-  //@include angular-material-theme($theme);
 
-  @include igo-core-theming($theme, $typography, $mat);
+  @include igo-core-theming($theme, $typography);
 }

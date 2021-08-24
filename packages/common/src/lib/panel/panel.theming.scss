@@ -1,5 +1,3 @@
-@use '~@angular/material' as mat;
-
 @mixin igo-panel-theming($theme) {
   $primary: map-get($theme, primary);
 

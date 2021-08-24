@@ -1,5 +1,3 @@
-@use '~@angular/material' as mat;
-
 @mixin igo-map-browser-theming($theme, $typography) {
   $primary: map-get($theme, primary);
   $is-dark: map-get($theme, is-dark);
@@ -13,6 +11,6 @@
   }
 
   igo-map-browser div.ol-attribution > ul {
-    font-size: mat-font-size($typography, body-1);
+    font-size: mat.font-size($typography, body-1);
   }
 }

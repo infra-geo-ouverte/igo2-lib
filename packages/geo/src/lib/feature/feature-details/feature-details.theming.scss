@@ -1,5 +1,3 @@
-//@use '~@angular/material' as featureMaterial;
-
 @mixin igo-feature-details-theming($theme) {
   $is-dark: map-get($theme, is-dark);
   $foreground: map-get($theme, foreground);

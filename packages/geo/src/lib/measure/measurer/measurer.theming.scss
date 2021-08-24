@@ -1,5 +1,3 @@
-@use '~@angular/material' as mat;
-
 @mixin igo-measurer-theming($theme, $typography) {
   $foreground: map-get($theme, foreground);
 
@@ -15,7 +13,7 @@
     border: 1px solid rgb(255, 205, 51);
     color: mat.get-color-from-palette($foreground, text);
     font-weight: bold;
-    font-size: mat-font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subheading-2);
   }
   .igo-map-tooltip-hidden {
     display: none;

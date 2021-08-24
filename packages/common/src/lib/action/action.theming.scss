@@ -1,5 +1,3 @@
-@import './actionbar/actionbar.theming';
-
 @mixin igo-action-theming($theme) {
   @include igo-actionbar-theming($theme);
 }
