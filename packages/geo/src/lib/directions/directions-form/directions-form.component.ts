@@ -65,6 +65,8 @@ import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-st
 export class DirectionsFormComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
+  private subscriptions$$: Subscription[] = [];
+
   public stopsForm: FormGroup;
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
@@ -238,6 +240,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = true;
     this.freezeStores();
     this.writeStopsToFormService();
+    this.subscriptions$$.map(s => s.unsubscribe());
   }
 
   private initStores() {
@@ -248,6 +251,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     // STOP STORE
     const stopsStore = this.stopsStore;
     const stopsLayer = new VectorLayer({
+      id: 'igo-direction-stops-layer',
       title: this.languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
       zIndex: 911,
       source: new FeatureDataSource(),
@@ -255,16 +259,29 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       workspace: {
         enabled: false,
       },
+      linkedLayers: {
+        linkId: 'igo-direction-stops-layer',
+        links: [
+          {
+            bidirectionnal: false,
+            syncedDelete: true,
+            linkedIds: ['igo-direction-route-layer'],
+            properties: []
+          }
+        ]
+      },
       exportable: true,
       browsable: false,
       style: stopMarker
     });
     tryBindStoreLayer(stopsStore, stopsLayer);
+    stopsStore.layer.visible = true;
     tryAddLoadingStrategy(stopsStore, loadingStrategy);
 
     // ROUTE AND VERTEX STORE
     const routeStore = this.routeStore;
     const routeLayer = new VectorLayer({
+      id: 'igo-direction-route-layer',
       title: this.languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
       zIndex: 910,
       source: new FeatureDataSource(),
@@ -272,12 +289,28 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       workspace: {
         enabled: false,
       },
+      linkedLayers: {
+        linkId: 'igo-direction-route-layer'
+      },
       exportable: true,
       browsable: false,
       style: stopMarker
     });
     tryBindStoreLayer(routeStore, routeLayer);
+    routeStore.layer.visible = true;
     tryAddLoadingStrategy(routeStore, loadingStrategy);
+
+    this.subscriptions$$.push(this.stopsStore.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.stopsStore.layer.options.showInLayerList = true :
+        this.stopsStore.layer.options.showInLayerList = false;
+    }));
+
+    this.subscriptions$$.push(this.routeStore.count$.subscribe(cnt => {
+      cnt >= 1 ?
+        this.routeStore.layer.options.showInLayerList = true :
+        this.routeStore.layer.options.showInLayerList = false;
+    }));
   }
 
   private initOlInteraction() {

@@ -1,3 +1,12 @@
+## [1.8.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.1...1.8.2) (2021-08-12)
+
+
+### Bug Fixes
+
+* **feature-details:** create base href with relative url ([c4bf4bf](https://github.com/infra-geo-ouverte/igo2-lib/commit/c4bf4bfd70d15daa39e173b24de76a1d9f5d6df8))
+
+
+
 ## [1.8.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.0...1.8.1) (2021-07-07)
 
 

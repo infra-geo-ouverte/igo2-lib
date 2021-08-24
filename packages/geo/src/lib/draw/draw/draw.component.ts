@@ -135,6 +135,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     public strokeForm: string;
     public toggleLabel: boolean;
     public drawsPresence: boolean = false;
+    private subscriptions$$: Subscription[] = [];
 
     public position: string = 'bottom';
     public form: FormGroup;
@@ -173,6 +174,7 @@ export class DrawComponent implements OnInit, OnDestroy {
      */
     ngOnDestroy() {
         this.setActiveDrawType(undefined);
+        this.subscriptions$$.map(s => s.unsubscribe());
     }
 
     createDrawPointControl(fill?: string, stroke?: string) {
@@ -220,6 +222,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.map.removeLayer(this.layer);
 
         this.layer = new VectorLayer({
+          id: 'igo-draw-layer',
           title: this.languageService.translate.instant('igo.geo.draw.drawing'),
           zIndex: 200,
           source: new FeatureDataSource(),
@@ -234,7 +237,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           },
         });
         tryBindStoreLayer(store, this.layer);
-
+        store.layer.visible = true;
         tryAddLoadingStrategy(store, new FeatureStoreLoadingStrategy({
             motion: FeatureMotion.None
           }));
@@ -251,15 +254,20 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.clearTooltipsOfOlGeometry(olGeometry as OlPoint | OlLineString | OlPolygon | OlCircle);
         });
 
-        store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+        this.subscriptions$$.push(store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
             return record.state.selected === true;
         }).pipe(
             skip(1)  // Skip initial emission
         )
         .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
             this.selectedFeatures$.next(records.map(record => record.entity));
-        });
+        }));
 
+        this.subscriptions$$.push(this.store.count$.subscribe(cnt => {
+            cnt >= 1 ?
+              this.store.layer.options.showInLayerList = true :
+              this.store.layer.options.showInLayerList = false;
+          }));
     }
 
     changeStoreLayerStyle(enableLabel: boolean, icon: boolean) {

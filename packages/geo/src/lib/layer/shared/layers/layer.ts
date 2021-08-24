@@ -29,6 +29,7 @@ export abstract class Layer {
   public firstLoadComponent: boolean = true;
   public map: IgoMap;
   public ol: olLayer<olSource>;
+  public olLoadingProblem: boolean = false;
   public status$: Subject<SubjectStatus>;
   public hasBeenVisible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
   private hasBeenVisible$$: Subscription;

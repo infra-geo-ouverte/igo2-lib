@@ -82,7 +82,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input()
   set layers(value: Layer[]) {
-    this._layers = value;
+    this._layers = this.removeProblemLayerInList(value);
     this.next();
   }
   get layers(): Layer[] {
@@ -254,6 +254,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (this.layers) {
         let checks = 0;
         for (const layer of this.layers) {
+          layer.status$.subscribe(valStatus => {
+            if (valStatus === 0) {
+              this.map.removeLayer(layer);
+            }
+          });
           if (layer.options.active) {
             this.activeLayer = layer;
             this.layerTool = true;
@@ -939,5 +944,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
     )[0];
 
     return [igoList, checkItem];
+  }
+
+  removeProblemLayerInList(layersList: Layer[]): Layer[] {
+    for (const layer of layersList) {
+      if (layer.olLoadingProblem === true) {
+        this.map.removeLayer(layer);
+      }
+    }
+    return layersList;
   }
 }

@@ -34,3 +34,10 @@ export class ImportSRSError extends ImportError {
       Object.setPrototypeOf(this, ImportNothingToImportError.prototype);
   }
 }
+
+export class ImportOgreServerError extends ImportError {
+  constructor() {
+      super('Error 500 with OGRE');
+      Object.setPrototypeOf(this, ImportOgreServerError.prototype);
+  }
+}

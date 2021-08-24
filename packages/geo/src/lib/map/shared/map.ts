@@ -290,6 +290,7 @@ export class IgoMap {
     let offsetBaseLayerZIndex = 0;
     const addedLayers = layers
       .map((layer: Layer) => {
+        if (!layer) { return; }
         const offset = layer.zIndex
           ? 0
           : layer.baseLayer
