@@ -234,7 +234,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.sendAddTileErrorMessage(e);
     }
-    this.genParamComponent.tileGenerationParams = region.generationParams;
+    this.genParamComponent.tileGenerationParams = {...region.generationParams};
     this.showEditedRegionFeatures();
   }
 
