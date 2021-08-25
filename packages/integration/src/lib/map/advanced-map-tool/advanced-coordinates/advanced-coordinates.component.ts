@@ -23,6 +23,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private currentCenterDefaultProj: [number, number];
   public center: boolean = this.storageService.get('centerToggle') as boolean;
   private inMtmZone: boolean = true;
+  private inLambert: boolean = true;
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
@@ -75,7 +76,6 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
         this.back2quebec();
       }
-
       let zoneChange = false;
       if (currentMtmZone !== this.currentZones.mtm) {
         this.currentZones.mtm = currentMtmZone;
@@ -88,6 +88,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       if (zoneChange) {
         this.updateProjectionsZoneChange();
       }
+      this.checkLambert(this.currentCenterDefaultProj);
       this.coordinates = this.getCoordinates();
       this.cdRef.detectChanges();
       this.storageService.set('currentProjection', this.inputProj, StorageScope.SESSION);
@@ -97,12 +98,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.inputProj = this.projections$.value[0];
     if (tempInputProj !== null)
     {
-      // this.inputProj = Object.assign({}, tempInputProj); // doesnt work
-      this.inputProj.translatedValue = tempInputProj.translatedValue;
-      this.inputProj.translateKey = tempInputProj.translateKey;
-      this.inputProj.alias = tempInputProj.alias;
-      this.inputProj.code = tempInputProj.code;
-      this.inputProj.zone = tempInputProj.zone;
+      const pos =  this.positionInList(tempInputProj);
+      this.inputProj = this.projections$.value[pos];
       this.updateZoneMtmUtm();
     }
     this.map.mapCenter$.next(this.center);
@@ -172,10 +169,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     let modifiedProj = this.projections$.value;
     const translate = this.languageService.translate;
     modifiedProj.map(p => {
-      if (modifiedProj.length === 6 && zoneMtm(this.currentCenterDefaultProj[0])) {
-        this.pushMtm(modifiedProj);
-      }
-      else if (p.translateKey === 'mtm') {
+      if (p.translateKey === 'mtm') {
         const zone = zoneMtm(this.currentCenterDefaultProj[0]);
         if (zone) {
           const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
@@ -311,6 +305,60 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       this.inputProj.code = code;
       this.inputProj.zone = `${zone}`;
       this.inputProj.translatedValue = this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone });
+    }
+  }
+
+  /**
+   * Compute the position of a current projection in a list. 0 if the projection is not in the list
+   * @param translateKey string, translate key of a projection
+   * @returns numeric, position of an element in the array
+   */
+  positionInList(tempInputProj: InputProjections): number {
+    const tk = tempInputProj.translateKey;
+    const alias = tempInputProj.alias;
+    let position; // = undefined;
+    let iter = 0;
+    this.projections$.value.map((projection) => {
+      if (tk) {
+        if (tk === projection.translateKey) {
+          position = iter;
+        }
+      }
+      else if (alias === projection.alias) {
+        position = iter;
+      }
+      iter++;
+    });
+    position = position ? position : 0;
+    return position;
+  }
+
+  /**
+   * Change the list of projections depending on the projections of Lambert
+   * @param coordinates An array of numbers, longitude and latitude
+   */
+   checkLambert(coordinates: [number, number]) {
+    const limitLambert = { N: 62.5600, E: -57.1000, S: 44.9900, W: -79.7600 };
+    let modifiedProj = this.projections$.value;
+    if (coordinates[0] < limitLambert.W || coordinates[0] > limitLambert.E ||
+        coordinates[1] < limitLambert.S || coordinates[1] > limitLambert.N) {
+      this.inLambert = false;
+      if (this.inputProj.alias === 'Quebec Lambert' || this.inputProj.alias === 'MTQ Lambert') {
+        this.inputProj = this.projections$.value[0];
+      }
+      modifiedProj = modifiedProj.filter(p => p.alias !== 'Quebec Lambert');
+      modifiedProj = modifiedProj.filter(p => p.alias !== 'MTQ Lambert');
+      this.projections$.next(modifiedProj);
+    }
+    else {
+      if (!this.inLambert) {  // back2Lambert
+        let configProjection = [];
+        if (this.projectionsConstraints.projFromConfig) {
+          configProjection = this.config.getConfig('projections') || [];
+        }
+        this.projections$.next(modifiedProj.concat(configProjection));
+      }
+      this.inLambert = true;
     }
   }
 }
