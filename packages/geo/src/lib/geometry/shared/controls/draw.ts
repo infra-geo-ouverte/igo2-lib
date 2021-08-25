@@ -68,7 +68,6 @@ export class DrawControl {
   private olMap: OlMap;
   private olDrawingLayer: OlVectorLayer;
   private olDrawInteraction: OlDraw;
-  private olModifyInteraction: OlModify;
   private olSelectInteraction: OlSelect;
   private onDrawStartKey: string;
   private onDrawEndKey: string;
@@ -216,9 +215,6 @@ export class DrawControl {
     });
 
     this.olMap.addInteraction(olModifyInteraction);
-    this.olModifyInteraction = olModifyInteraction;
-
-    this.olModifyInteraction.on('modifyend', (event: OlModifyEvent) => this.onModifyEnd(event));
 
     // Create a select interaction and add it to map
     if (!this.olSelectInteraction) {
@@ -243,11 +239,9 @@ export class DrawControl {
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
-      this.olMap.removeInteraction(this.olModifyInteraction);
     }
 
     this.olDrawInteraction = undefined;
-    this.olModifyInteraction = undefined;
   }
 
   /**
@@ -266,21 +260,17 @@ export class DrawControl {
   }
 
   /**
-   * When drawing ends, update the drawing (feature) geometry observable
+   * When drawing ends, update the drawing (feature) geometry observable and add
    * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
     this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
-    this.end$.next(event.feature.getGeometry());
-  }
-
-  /**
-   * When a feature is modified, update the drawn features observable
-   * @param event Modify event (modifyend)
-   */
-  private onModifyEnd(event: OlModifyEvent) {
-    this.modify$.next(event.features);
+    const olGeometry = event.feature.getGeometry();
+    olGeometry.on('change', () => {
+      this.modify$.next(olGeometry);
+    });
+    this.end$.next(olGeometry);
   }
 
   /**

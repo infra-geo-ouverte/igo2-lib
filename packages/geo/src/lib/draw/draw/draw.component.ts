@@ -92,7 +92,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   private olDrawingLayerSource = new OlVectorSource();
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
-  private drawModify$$: Subscription;
   private drawSelect$$: Subscription;
   private olDrawingLayer: VectorLayer;
   public selectedFeatures$: BehaviorSubject<FeatureWithDraw[]> = new BehaviorSubject([]);
@@ -296,8 +295,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.openDialog(olGeometry, true);
     });
 
-    this.drawModify$$ = this.drawControl.modify$.subscribe((olCollection: OlCollection) => {
-      this.onModifyDraw(olCollection);
+    this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
+      this.onModifyDraw(olGeometry);
     });
 
     if (!this.drawSelect$$) {
@@ -321,10 +320,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.drawEnd$$.unsubscribe();
     }
 
-    if (this.drawModify$$) {
-      this.drawModify$$.unsubscribe();
-    }
-
     this.drawControl.setOlMap(undefined);
     this.drawControlIsActive = false;
   }
@@ -339,21 +334,18 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.store.layer.ol.getSource().refresh();
   }
 
-  private onModifyDraw(olCollection: OlCollection) {
+  private onModifyDraw(olGeometry: OlGeometry) {
     const entities = this.store.all();
 
     entities.forEach(entity => {
       const entityId = entity.properties.id;
 
-      olCollection.forEach((feature: OlFeature) => {
-        const olGeometryId = feature.getGeometry().ol_uid;
+      const olGeometryId = olGeometry.ol_uid;
 
-        if (entityId === olGeometryId) {
-          const olGeometry = feature.getGeometry();
-          this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
-          this.replaceFeatureInStore(entity, olGeometry);
-        }
-      });
+      if (entityId === olGeometryId) {
+        this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
+        this.replaceFeatureInStore(entity, olGeometry);
+      }
     });
   }
 
