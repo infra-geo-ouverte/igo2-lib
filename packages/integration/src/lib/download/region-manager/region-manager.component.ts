@@ -24,7 +24,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
-  displayedColumns = ['edit', 'delete', 'name', 'nTiles', 'space'];
+  displayedColumns = ['edit', 'delete', 'name', 'space'];
   buttonClicked: boolean = false;
 
   private downloadEstimator = new DownloadEstimator();
