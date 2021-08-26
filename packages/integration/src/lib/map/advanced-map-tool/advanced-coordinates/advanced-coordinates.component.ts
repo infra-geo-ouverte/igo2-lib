@@ -7,7 +7,7 @@ import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { zoneMtm, zoneUtm, computeProjectionsConstraints } from '@igo2/geo';
-
+import * as olproj from 'ol/proj';
 /**
  * Tool to display the coordinates and a cursor of the center of the map
  */
@@ -23,7 +23,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private currentCenterDefaultProj: [number, number];
   public center: boolean = this.storageService.get('centerToggle') as boolean;
   private inMtmZone: boolean = true;
-  private inLambert: boolean = true;
+  private inLambert2 = {32198: true, 3798: true};
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
@@ -337,28 +337,28 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Change the list of projections depending on the projections of Lambert
    * @param coordinates An array of numbers, longitude and latitude
    */
-   checkLambert(coordinates: [number, number]) {
-    const limitLambert = { N: 62.5600, E: -57.1000, S: 44.9900, W: -79.7600 };
-    let modifiedProj = this.projections$.value;
-    if (coordinates[0] < limitLambert.W || coordinates[0] > limitLambert.E ||
-        coordinates[1] < limitLambert.S || coordinates[1] > limitLambert.N) {
-      this.inLambert = false;
-      if (this.inputProj.alias === 'Quebec Lambert' || this.inputProj.alias === 'MTQ Lambert') {
-        this.inputProj = this.projections$.value[0];
-      }
-      modifiedProj = modifiedProj.filter(p => p.alias !== 'Quebec Lambert');
-      modifiedProj = modifiedProj.filter(p => p.alias !== 'MTQ Lambert');
-      this.projections$.next(modifiedProj);
-    }
-    else {
-      if (!this.inLambert) {  // back2Lambert
-        let configProjection = [];
-        if (this.projectionsConstraints.projFromConfig) {
-          configProjection = this.config.getConfig('projections') || [];
+  checkLambert(coordinates: [number, number]) {
+    const lambertProjections = this.config.getConfig('projections');
+    lambertProjections.forEach(projection => {
+        let modifiedProj = this.projections$.value;
+        const extent = projection.extent;
+        const code = projection.code.match(/\d+/);
+        const currentExtentWGS = olproj.transformExtent(extent, projection.code, this.defaultProj.code);
+        if (coordinates[0] < currentExtentWGS[0] || coordinates[0] > currentExtentWGS[2] ||
+            coordinates[1] < currentExtentWGS[1] || coordinates[1] > currentExtentWGS[3]) {
+            this.inLambert2[code] = false;
+            if (this.inputProj.alias === projection.alias) {
+              this.inputProj = this.projections$.value[0];
+            }
+            modifiedProj = modifiedProj.filter(p => p.alias !== projection.alias);
+            this.projections$.next(modifiedProj);
         }
-        this.projections$.next(modifiedProj.concat(configProjection));
-      }
-      this.inLambert = true;
-    }
+        else {
+            if (!this.inLambert2[code]) {
+                this.projections$.next(modifiedProj.concat(projection));
+                this.inLambert2[code] = true;
+            }
+        }
+    });
   }
 }
