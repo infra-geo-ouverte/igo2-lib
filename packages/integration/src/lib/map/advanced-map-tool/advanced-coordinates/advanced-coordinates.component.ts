@@ -108,6 +108,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.map.mapCenter$.next(false);
     this.mapState$$.unsubscribe();
   }
 
