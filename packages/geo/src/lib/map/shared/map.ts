@@ -49,6 +49,9 @@ export class IgoMap {
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
   public viewController: MapViewController;
+  public swipeEnabled$ = new BehaviorSubject<boolean>(false);
+  public mapCenter$ = new BehaviorSubject<boolean>(false);
+  public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
 
   public bufferDataSource: FeatureDataSource;
 

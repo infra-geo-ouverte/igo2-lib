@@ -9,3 +9,4 @@ export * from './hover-feature.directive';
 export * from './projection.interfaces';
 export * from './projection.service';
 export * from './controllers';
+export * from './projection.utils';
