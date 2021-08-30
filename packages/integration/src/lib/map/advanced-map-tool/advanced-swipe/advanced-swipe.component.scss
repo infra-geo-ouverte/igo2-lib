@@ -1,0 +1,53 @@
+.nameOfTool{
+    text-align: center;
+    font-weight: bold;
+    font-size: small;
+    margin: 15px 10px 0px;
+}
+
+.igo-swipe-select-container {
+    padding: 10px;
+  
+    mat-form-field {
+      width: 100%;
+    }
+  }
+  
+.igo-form {
+padding: 1px 5px;
+width: 100%
+}
+
+.swipe-toggle{
+padding: 10px 5px 35px;
+}
+
+.map-empty, .search-tool, .catalog-tool, .context-tool {
+margin: 5px;
+}
+
+.map-empty {
+padding: 10px;
+text-align: justify;
+}
+
+.search-tool, .catalog-tool, .context-tool {
+cursor: pointer;
+}
+
+mat-list mat-list-item h4 {
+font-weight: bold;
+}
+
+mat-list-item ::ng-deep .mat-list-text {
+font-size: smaller;
+}
+
+mat-list.mat-list-base mat-list-item.mat-list-item ::ng-deep div.mat-list-item-content div.mat-list-text {
+padding-left: 15px;
+}
+
+.advanced-tool-line {
+height: 2px;
+background-color: gray;
+}
