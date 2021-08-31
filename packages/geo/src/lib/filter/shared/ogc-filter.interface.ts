@@ -149,6 +149,7 @@ export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   restrictToStep?: boolean;
   sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
+  calendarModeYear?: boolean;
 }
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;
