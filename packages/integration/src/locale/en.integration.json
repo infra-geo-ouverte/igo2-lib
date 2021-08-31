@@ -17,7 +17,8 @@
         "shareMap": "Share",
         "timeFilter": "Time Filter",
         "about": "About",
-        "spatialFilter": "Spatial Filter"
+        "spatialFilter": "Spatial Filter",
+        "advancedMap": "Advanced map tools"
       },
       "searchResultsTool": {
         "noResults": "No results",
@@ -64,6 +65,32 @@
         "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
+      },
+      "advanced-map-tool": {
+        "advanced-swipe": {
+          "swipe-select":  "select the layers for swiping",
+          "selectAll": "Select all",
+          "empty": "No layer is currently active on this map. ",
+          "customize": "Customize it by adding layer from the : ",
+          "search-tool": "Search tool",
+          "catalog-tool": "Data catalog",
+          "context-tool": "Context manager",
+          "swipe": "Swipe",
+          "swipe-tool": "Swipe-Tool"
+        },
+        "advanced-coordinates": {
+          "copy": "Copy coordinates",
+          "lon": "Longitude",
+          "lat": "Latitude",
+          "est": "Est",
+          "nord": "North",
+          "coordinates": "Coordinates",
+          "copyMsg": "Coordinates copied to clipboard",
+          "copyTitle": "Coordinates of cetre",
+          "center": "Center",
+          "coordSystem": "Systeme of coordinates",
+          "zoom": "Current zoom-level: "
+        }
       }
     }
   }
