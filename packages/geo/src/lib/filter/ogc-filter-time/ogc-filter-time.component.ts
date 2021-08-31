@@ -215,7 +215,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
         this.onlyYearBegin = yearInt;
         // in year mode, change begin date -1 to include day 1 of same year in filter
-        const yearPast = year.getUTCFullYear() -1 ;
+        const yearPast = year.getUTCFullYear() - 1;
         year = moment().set('year', yearPast).toDate();
         year = moment(year).endOf('year').toDate();
       }
