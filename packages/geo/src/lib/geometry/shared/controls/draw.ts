@@ -98,7 +98,7 @@ export class DrawControl {
    * Add or remove this control to/from a map.
    * @param map OL Map
    */
-  setOlMap(olMap: OlMap | undefined) {
+  setOlMap(olMap: OlMap | undefined, activateModifyAndSelect?: boolean) {
     if (!olMap) {
       this.clearOlInnerOverlaySource();
       this.removeOlInnerOverlayLayer();
@@ -109,7 +109,7 @@ export class DrawControl {
 
     this.olMap = olMap;
     this.addOlInnerOverlayLayer();
-    this.addOlInteractions();
+    this.addOlInteractions(activateModifyAndSelect);
   }
 
   /**
@@ -168,7 +168,7 @@ export class DrawControl {
   /**
    * Add interactions to the map an set up some listeners
    */
-  addOlInteractions() {
+  addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
     if (!this.freehand$.getValue()) {
@@ -208,24 +208,26 @@ export class DrawControl {
     this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
     this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
 
-    // Create a Modify interaction, add it to map and create a listener
-    const olModifyInteraction = new OlModify({
-      source: this.getSource()
-    });
-
-    this.olMap.addInteraction(olModifyInteraction);
-
-    // Create a select interaction and add it to map
-    if (!this.olSelectInteraction) {
-      const olSelectInteraction = new OlSelect({
-        condition: doubleClick,
-        style: undefined,
+    if (activateModifyAndSelect) {
+      // Create a Modify interaction, add it to map and create a listener
+      const olModifyInteraction = new OlModify({
         source: this.getSource()
       });
-      this.olMap.addInteraction(olSelectInteraction);
-      this.olSelectInteraction = olSelectInteraction;
 
-      this.olSelectInteraction.on('select', (event: OlSelectEvent) => this.onSelect(event));
+      this.olMap.addInteraction(olModifyInteraction);
+
+      // Create a select interaction and add it to map
+      if (!this.olSelectInteraction) {
+        const olSelectInteraction = new OlSelect({
+          condition: doubleClick,
+          style: undefined,
+          source: this.getSource()
+        });
+        this.olMap.addInteraction(olSelectInteraction);
+        this.olSelectInteraction = olSelectInteraction;
+
+        this.olSelectInteraction.on('select', (event: OlSelectEvent) => this.onSelect(event));
+      }
     }
   }
 

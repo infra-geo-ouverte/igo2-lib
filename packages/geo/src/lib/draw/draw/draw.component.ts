@@ -304,7 +304,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.drawControl.setOlMap(this.map.ol);
+    this.drawControl.setOlMap(this.map.ol, true);
   }
 
   /**
