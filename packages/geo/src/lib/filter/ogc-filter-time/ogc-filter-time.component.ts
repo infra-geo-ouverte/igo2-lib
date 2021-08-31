@@ -110,7 +110,7 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.beginValue = this.parseFilter(this.handleMin());
     this.endValue = this.parseFilter(this.handleMax());
-    
+
     this.onlyYearBegin = this.beginValue.getUTCFullYear();
     this.onlyYearEnd = this.endValue.getUTCFullYear();
  
@@ -118,7 +118,7 @@ export class OgcFilterTimeComponent implements OnInit {
     // update value for now value
     this.updateValues();
     if (this.currentFilter.calendarModeYear) {
-      this.beginValue.setUTCFullYear(this.beginValue.getUTCFullYear() +1)
+      this.beginValue.setUTCFullYear(this.beginValue.getUTCFullYear()+1 );
     }
   }
 
@@ -210,28 +210,27 @@ export class OgcFilterTimeComponent implements OnInit {
       if (datePicker) {
         datePicker.close();
       }
-      let yearInt = year.getUTCFullYear();
+      const yearInt = year.getUTCFullYear();
       if (property === 'begin' && this.currentFilter.calendarModeYear) {
-        
+
         this.onlyYearBegin = yearInt;
         // in year mode, change begin date -1 to include day 1 of same year in filter
-        const yearPast = year.getUTCFullYear()-1;
+        const yearPast = year.getUTCFullYear() -1;
         year = moment().set('year', yearPast).toDate();
         year = moment(year).endOf('year').toDate();
       }
       if (property === 'end') {
         this.onlyYearEnd = yearInt;
-        // change value 01 jan to 31 dec same year 
+        // change value 01 jan to 31 dec same year
         year = moment(year).endOf('year').toDate();
       } else if (property === 'begin' && this.restrictedToStep()) {
         this.yearSelected(year, undefined, 'end');
       }
       this.changeTemporalProperty(year, property === 'begin' ? 1 : 2, refreshFilter);
-      debugger;
       if (property === 'begin' && this.currentFilter.calendarModeYear) {
         // datepicker value set to original year not year-1
-        let newMoment = moment(year).startOf('year');
-        let newDate = newMoment.set('year', year.getFullYear()+1).toDate();
+        const newMoment = moment(year).startOf('year');
+        const newDate = newMoment.set('year', year.getFullYear() +1 ).toDate();
         this.beginValue = newDate;
       }
     }
