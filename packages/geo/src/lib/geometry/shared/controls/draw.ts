@@ -10,7 +10,6 @@ import OlSelect from 'ol/interaction/Select';
 import { Geometry as OlGeometry, GeometryEvent as OlGeometryEvent } from 'ol/geom/Geometry';
 import OlCollection from 'ol/Collection';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
-import { ModifyEvent as OlModifyEvent } from 'ol/interaction/Modify';
 import { SelectEvent as OlSelectEvent } from 'ol/interaction/Select';
 import { unByKey } from 'ol/Observable';
 import { doubleClick } from 'ol/events/condition';

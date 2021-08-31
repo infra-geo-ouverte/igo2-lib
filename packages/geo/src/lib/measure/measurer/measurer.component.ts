@@ -509,6 +509,13 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   onDeleteClick() {
     this.store.deleteMany(this.selectedFeatures$.value);
+    this.selectedFeatures$.value.forEach(selectedFeature => {
+      this.olDrawSource.getFeatures().forEach(drawingLayerFeature => {
+        if (selectedFeature.properties.id === drawingLayerFeature.getGeometry().ol_uid) {
+          this.olDrawSource.removeFeature(drawingLayerFeature);
+        }
+      });
+    });
   }
 
   onModifyClick() {
@@ -849,7 +856,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   private addFeatureToStore(olGeometry: OlLineString | OlPolygon, localFeature?: FeatureWithMeasure) {
-    const featureId = localFeature ? localFeature.properties.id : uuid();
+    const featureId = localFeature ? localFeature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,

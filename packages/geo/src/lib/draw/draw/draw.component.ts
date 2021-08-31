@@ -37,7 +37,6 @@ import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
 import OlPoint from 'ol/geom/Point';
 import OlGeometry from 'ol/geom/Geometry';
-import OlCollection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
@@ -438,6 +437,13 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   deleteDrawings() {
     this.store.deleteMany(this.selectedFeatures$.value);
+    this.selectedFeatures$.value.forEach(selectedFeature => {
+      this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
+        if (selectedFeature.properties.id === drawingLayerFeature.getGeometry().ol_uid) {
+          this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
+        }
+      });
+    });
   }
 
   /**
