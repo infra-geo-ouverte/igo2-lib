@@ -46,8 +46,9 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { InputProjections, ProjectionsLimitationsOptions } from './import-export.interface';
+import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
+import { computeProjectionsConstraints } from '../../map';
 
 @Component({
   selector: 'igo-import-export',
@@ -293,29 +294,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  private computeProjectionsConstraints() {
-    const utmZone = this.projectionsLimitations.utmZone;
-    const mtmZone = this.projectionsLimitations.mtmZone;
-    this.projectionsConstraints = {
-      projFromConfig: this.projectionsLimitations.projFromConfig === false ? false : true,
-      nad83: this.projectionsLimitations.nad83 === false ? false : true,
-      wgs84: this.projectionsLimitations.wgs84 === false ? false : true,
-      webMercator: this.projectionsLimitations.webMercator === false ? false : true,
-      utm: this.projectionsLimitations.utm === false ? false : true,
-      mtm: this.projectionsLimitations.mtm === false ? false : true,
-      utmZone: {
-        minZone: utmZone && utmZone.minZone ? utmZone.minZone : 1,
-        maxZone: utmZone && utmZone.maxZone ? utmZone.maxZone : 60,
-      },
-      mtmZone: {
-        minZone: mtmZone && mtmZone.minZone ? mtmZone.minZone : 1,
-        maxZone: mtmZone && mtmZone.maxZone ? mtmZone.maxZone : 10,
-      }
-    };
-  }
-
   private computeProjections() {
-    this.computeProjectionsConstraints();
+    this.projectionsConstraints = computeProjectionsConstraints(this.projectionsLimitations);
     const projections: InputProjections[] = [];
 
     if (this.projectionsConstraints.nad83) {
