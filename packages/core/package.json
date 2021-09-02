@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "1.8.2",
+  "version": "1.9.0-alpha",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@ngx-translate/core": "^13.0.0",
-    "@igo2/angular2-notifications": "^12.0.0",
+    "@igo2/angular2-notifications": "^12.0.1",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
