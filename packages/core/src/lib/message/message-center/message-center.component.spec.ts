@@ -1,5 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SimpleNotificationsModule } from 'angular2-notifications';
+import { SimpleNotificationsModule } from '@igo2/angular2-notifications';
 
 import { MessageCenterComponent } from './message-center.component';
 

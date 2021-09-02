@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@ngx-translate/core": "^13.0.0",
-    "angular2-notifications": "^9.0.0",
+    "@igo2/angular2-notifications": "^12.0.0",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
