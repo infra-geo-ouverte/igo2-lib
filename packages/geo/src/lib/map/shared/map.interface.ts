@@ -7,6 +7,7 @@ export interface MapViewOptions {
   geolocate?: boolean;
   buffer?: Buffer;
   alwaysTracking?: boolean;
+  autoRefreshGeolocate?: boolean;
   constrainRotation?: boolean | number;
   enableRotation?: boolean;
   extent?: MapExtent;

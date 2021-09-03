@@ -1340,7 +1340,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   geolocateStop(index: number) {
     moveToOlFeatures(
       this.map,
-      [this.map.geolocationFeature],
+      [this.map.geolocationPositionFeature],
       FeatureMotion.Move
     );
     const geolocateCoordinates = this.map.viewController.getCenter(
