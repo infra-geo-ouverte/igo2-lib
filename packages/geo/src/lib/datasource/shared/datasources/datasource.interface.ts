@@ -1,6 +1,7 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
+import { SourceFieldsOptionsType } from './datasource.enum';
 
 export interface DataSourceOptions {
   type?:
@@ -31,6 +32,7 @@ export interface DataSourceOptions {
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
+  edition?: boolean;
 }
 
 export interface SourceFieldsOptionsParams {
@@ -39,6 +41,7 @@ export interface SourceFieldsOptionsParams {
   values?: any;
   excludeFromOgcFilters?: boolean;
   allowedOperatorsType?: OgcFilterOperatorType;
+  type: SourceFieldsOptionsType;
 }
 
 export interface Legend {
