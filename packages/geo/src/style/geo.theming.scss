@@ -1,4 +1,4 @@
-@import '~ol/ol';
+@import '~ol/ol.css';
 
 @mixin igo-geo-theming($theme, $typography) {
   @include igo-drawingTool-theming($theme, $typography);

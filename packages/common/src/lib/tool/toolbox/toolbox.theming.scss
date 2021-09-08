@@ -23,7 +23,7 @@
     & > #topChevron {
       &:hover {
         background-color: mat.get-color-from-palette($accent, lighter);
-        color: mat.get-color-from-palette($foreground, text);
+        color: black;
       }
     }
   }
@@ -54,13 +54,13 @@
       .mat-list-item.mat-list-item-with-avatar {
         color: white;
         &:hover {
-          color: mat.get-color-from-palette($foreground, text);
+          color: black;
         }
 
         &.tool-activated,
         &.children-tool-activated {
           background-color: white;
-          color: mat.get-color-from-palette($foreground, text);
+          color: black;
         }
       }
     }

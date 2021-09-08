@@ -1,4 +1,4 @@
-@import '~shepherd.js/dist/css/shepherd';
+@import '~shepherd.js/dist/css/shepherd.css';
 
 @mixin igo-common-theming($theme, $typography) {
   @include igo-action-theming($theme);

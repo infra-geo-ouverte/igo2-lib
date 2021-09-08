@@ -195,8 +195,7 @@ gulp.task('core:concatStyles', done => {
       './packages/core/src/style/themes/teal.theme.scss'
     ])
     .pipe(concat('index.theming.scss'))
-    .pipe(gulp.dest('./dist/core/style'), { overwrite: true })
-    .pipe(gulp.dest('./packages/core/src/style', { overwrite: true }));
+    .pipe(gulp.dest('./dist/core/style'), { overwrite: true });
 
   done();
 });
