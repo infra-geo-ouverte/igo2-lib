@@ -51,7 +51,7 @@ export const environment: Environment = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
             'application/json': [
@@ -65,7 +65,7 @@ export const environment: Environment = {
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           regFilters: ['zpegt']
         },
         {
@@ -93,7 +93,7 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
             },
             {
               id: 'rn_wmts',
@@ -113,7 +113,7 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['zpegt'],
               groupImpose: { id: 'zpegt', title: 'zpegt' }
             },
@@ -150,7 +150,7 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['limtn_charg'],
               groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' }
             },

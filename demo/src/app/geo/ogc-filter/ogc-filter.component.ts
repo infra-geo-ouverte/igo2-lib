@@ -504,8 +504,8 @@ export class AppOgcFilterComponent {
 
     const filterableWMSwithPushButtons: WMSoptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-      urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+      url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
       params: {
         LAYERS: 'radars_photos',
         VERSION: '1.3.0'
@@ -653,8 +653,8 @@ export class AppOgcFilterComponent {
 
     // const datasourceWmsWith2Layers: WMSoptions = {
     //   type: 'wms',
-    //   url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-    //   urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+    //   url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+    //   urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
     //   params: {
     //     layers: 'stations_meteoroutieres,histo_stations_meteoroutieres',
     //     version: '1.3.0'
