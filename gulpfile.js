@@ -195,22 +195,17 @@ gulp.task('core:concatStyles', done => {
       './packages/core/src/style/themes/teal.theme.scss'
     ])
     .pipe(concat('index.theming.scss'))
-    .pipe(gulp.dest('./dist/core/style'), { overwrite: true });
-
+    .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
+    .pipe(exec(
+      'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
+    ));
   done();
 });
 
-// ==========================================================
 
-gulp.task('core:bundleAllStyles', done => {
-  return gulp
-    .src('.')
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
-      )
-    )
-    .pipe(exec.reporter());
+gulp.task('core:cleanConcatStyles', done => {
+  del(['packages/core/src/style/index.theming.scss'], { force: true });
+  done();
 });
 
 // ==========================================================
@@ -335,7 +330,7 @@ gulp.task('core:bumpVersion', done => {
   gulp
     .src(['./packages/core/src/lib/config/version.ts'])
     .pipe(replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`))
-    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))   
+    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))
     .pipe(gulp.dest('./packages/core/src/lib/config/.'));
 
   done();
@@ -487,8 +482,9 @@ gulp.task(
     'core:clean',
     gulp.parallel(['core:copyAssets', 'core:copyStyles', 'core:copyLocale']),
     'core:concatStyles',
-    gulp.parallel(['core:copyIcons', 'core:bundleAllStyles']),
-    'core:bundleLocale'
+    gulp.parallel(['core:copyIcons']),
+    'core:bundleLocale',
+    'core:cleanConcatStyles'
   )
 );
 
