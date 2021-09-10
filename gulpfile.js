@@ -1,7 +1,6 @@
 /*jshint esversion: 6 */
 const gulp = require('gulp');
 const del = require('del');
-const babel = require('gulp-babel');
 const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
 const jeditor = require('gulp-json-editor');
