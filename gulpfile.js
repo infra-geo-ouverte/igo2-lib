@@ -3,6 +3,7 @@ const gulp = require('gulp');
 const del = require('del');
 const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
+wait = require('gulp-wait')
 const jeditor = require('gulp-json-editor');
 const replace = require('gulp-replace');
 const concat = require('gulp-concat');
@@ -197,15 +198,14 @@ gulp.task('core:concatStyles', done => {
     .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
     .pipe(exec(
       'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
-    ));
+    ))
+    .pipe(wait(500)).on('end', function() { 
+      del(['packages/core/src/style/index.theming.scss'], { force: true });
+    })
+
   done();
 });
 
-
-gulp.task('core:cleanConcatStyles', done => {
-  del(['packages/core/src/style/index.theming.scss'], { force: true });
-  done();
-});
 
 // ==========================================================
 
@@ -482,8 +482,7 @@ gulp.task(
     gulp.parallel(['core:copyAssets', 'core:copyStyles', 'core:copyLocale']),
     'core:concatStyles',
     gulp.parallel(['core:copyIcons']),
-    'core:bundleLocale',
-    'core:cleanConcatStyles'
+    'core:bundleLocale'
   )
 );
 
