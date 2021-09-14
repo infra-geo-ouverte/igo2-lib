@@ -19,7 +19,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "gulp fixLibs && ngcc",
+    "postinstall": "gulp fixLibs && ngcc --tsconfig ./tsconfig.json",
     "build.all": "npm run build.libs && npm run build.demo",
     "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && gulp core:bundleLocale",
     "build.utils": "ng build utils --configuration production",
