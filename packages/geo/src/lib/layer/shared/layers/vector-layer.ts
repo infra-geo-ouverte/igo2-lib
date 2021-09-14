@@ -19,7 +19,6 @@ import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
-import { ListenerFunction } from 'ol/events';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -31,10 +30,6 @@ export class VectorLayer extends Layer {
   public ol: olLayerVector<olSourceVector<OlGeometry>>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
-
-  private loadingListener: ListenerFunction;
-  private loadedListener: ListenerFunction;
-  private errorListener: ListenerFunction;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -78,24 +73,23 @@ export class VectorLayer extends Layer {
     //   : vector.getSource()) as olSourceVector<OlGeometry>;
     const vectorSource = vector.getSource() as olSourceVector<OlGeometry>;
     const url = vectorSource.getUrl();
-    vectorSource.addEventListener('vectorloading', this.loadingListener);
-    vectorSource.addEventListener('vectorloaded', this.loadedListener);
-    vectorSource.addEventListener('vectorloaderror', this.errorListener);
-    if (url) {
-      const loader = (extent, resolution, proj) => {
-        this.customLoader(
-          vectorSource,
-          url,
-          this.authInterceptor,
-          extent,
-          resolution,
-          proj
-        );
-      };
-      if (loader) {
-        vectorSource.setLoader(loader);
-      }
+
+    const loader = (extent, resolution, proj, success, failure) => {
+      this.customLoader(
+        vectorSource,
+        url,
+        this.authInterceptor,
+        extent,
+        resolution,
+        proj,
+        success,
+        failure
+      );
+    };
+    if (loader) {
+      vectorSource.setLoader(loader);
     }
+    
     return vector;
   }
 
@@ -242,63 +236,63 @@ export class VectorLayer extends Layer {
     interceptor,
     extent,
     resolution,
-    projection
+    projection,
+    success,
+    failure
   ) {
-    vectorSource.dispatchEvent({ type: 'vectorloading' });
-    const xhr = new XMLHttpRequest();
-    xhr.open(
-      'GET',
-      typeof url === 'function'
-        ? (url = url(extent, resolution, projection))
-        : url
-    );
-    const format = vectorSource.getFormat();
-    if (format.getType() === FormatType.ARRAY_BUFFER) {
-      xhr.responseType = 'arraybuffer';
-    }
-    if (interceptor) {
-      interceptor.interceptXhr(xhr, url);
-    }
+    if (url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open(
+        'GET',
+        typeof url === 'function'
+          ? (url = url(extent, resolution, projection))
+          : url
+      );
+      const format = vectorSource.getFormat();
+      if (format.getType() === FormatType.ARRAY_BUFFER) {
+        xhr.responseType = 'arraybuffer';
+      }
+      if (interceptor) {
+        interceptor.interceptXhr(xhr, url);
+      }
 
-    const onError = () => {
-      vectorSource.dispatchEvent({ type: 'vectorloaderror' });
-      vectorSource.removeLoadedExtent(extent);
-    };
-    xhr.onerror = onError;
-    xhr.onload = () => {
-      // status will be 0 for file:// urls
-      if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
-        const type = format.getType();
-        let source;
-        if (type === FormatType.JSON || type === FormatType.TEXT) {
-          source = xhr.responseText;
-        } else if (type === FormatType.XML) {
-          source = xhr.responseXML;
-          if (!source) {
-            source = new DOMParser().parseFromString(
-              xhr.responseText,
-              'application/xml'
-            );
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+      xhr.onerror = onError;
+      xhr.onload = () => {
+        // status will be 0 for file:// urls
+        if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
+          const type = format.getType();
+          let source;
+          if (type === FormatType.JSON || type === FormatType.TEXT) {
+            source = xhr.responseText;
+          } else if (type === FormatType.XML) {
+            source = xhr.responseXML;
+            if (!source) {
+              source = new DOMParser().parseFromString(
+                xhr.responseText,
+                'application/xml'
+              );
+            }
+          } else if (type === FormatType.ARRAY_BUFFER) {
+            source = xhr.response;
           }
-        } else if (type === FormatType.ARRAY_BUFFER) {
-          source = xhr.response;
-        }
-        if (source) {
-          vectorSource.addFeatures(
-            format.readFeatures(source, {
-              extent,
-              featureProjection: projection
-            }),
-            format.readProjection(source)
-          );
-          vectorSource.dispatchEvent({ type: 'vectorloaded' });
+          if (source) {
+            const features = format.readFeatures(source, { extent, featureProjection: projection })
+            vectorSource.addFeatures(features, format.readProjection(source));
+            success(features);
+          } else {
+            onError();
+          }
         } else {
           onError();
         }
-      } else {
-        onError();
-      }
-    };
-    xhr.send();
+      };
+      xhr.send();
+    } else {
+      success(vectorSource.getFeatures());
+    }
   }
 }

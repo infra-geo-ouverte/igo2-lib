@@ -43,7 +43,7 @@ export class VectorWatcher extends Watcher {
     this.status = SubjectStatus.Working;
   }
 
-  private handleLoadEnd(event) {
+  private handleLoadEnd(event: any) {
     this.loaded += 1;
 
     const loading = this.loading;

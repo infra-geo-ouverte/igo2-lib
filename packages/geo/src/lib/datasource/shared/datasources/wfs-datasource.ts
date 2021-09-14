@@ -26,10 +26,6 @@ import BaseEvent from 'ol/events/Event';
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector<OlGeometry>;
 
-  public vectorLoadingListener: Listener;
-  public vectorLoadedListener: Listener;
-  public vectorErrorListener: Listener;
-
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
@@ -79,7 +75,6 @@ export class WFSDataSource extends DataSource {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
-        vectorSource.dispatchEvent({type: 'vectorloading'} as BaseEvent);
         const paramsWFS = this.options.paramsWFS;
         const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
 
@@ -113,9 +108,6 @@ export class WFSDataSource extends DataSource {
       },
       strategy: OlLoadingStrategy.bbox
     });
-    vectorSource.addEventListener('vectorloading', this.vectorLoadingListener);
-    vectorSource.addEventListener('vectorloaded', this.vectorLoadedListener);
-    vectorSource.addEventListener('vectorloaderror', this.vectorErrorListener);
     return vectorSource;
   }
 
@@ -126,7 +118,6 @@ export class WFSDataSource extends DataSource {
       this.authInterceptor.interceptXhr(xhr, url);
     }
     const onError = () => {
-      vectorSource.dispatchEvent('vectorloaderror');
       vectorSource.removeLoadedExtent(extent);
     };
     xhr.onerror = onError;
@@ -141,7 +132,6 @@ export class WFSDataSource extends DataSource {
           console.log('No more data to download at this resolution');
         }*/
         vectorSource.addFeatures(features);
-        vectorSource.dispatchEvent('vectorloaded');
       } else {
         onError();
       }
