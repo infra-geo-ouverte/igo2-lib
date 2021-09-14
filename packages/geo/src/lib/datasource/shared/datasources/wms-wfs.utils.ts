@@ -147,6 +147,8 @@ export function getFormatFromOptions(
     : undefined;
 
   if (!outputFormat) {
+    console.log(wfsOptions);
+    olFormatCls = OlFormat.WFS;
     return new olFormatCls(wfsOptions.formatOptions);
   }
 
