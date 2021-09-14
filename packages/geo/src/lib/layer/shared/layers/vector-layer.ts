@@ -89,7 +89,6 @@ export class VectorLayer extends Layer {
     if (loader) {
       vectorSource.setLoader(loader);
     }
-    
     return vector;
   }
 
@@ -280,7 +279,7 @@ export class VectorLayer extends Layer {
             source = xhr.response;
           }
           if (source) {
-            const features = format.readFeatures(source, { extent, featureProjection: projection })
+            const features = format.readFeatures(source, { extent, featureProjection: projection });
             vectorSource.addFeatures(features, format.readProjection(source));
             success(features);
           } else {
