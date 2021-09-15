@@ -2,7 +2,6 @@ import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
-import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { DataSource } from './datasource';
@@ -12,16 +11,13 @@ import { WFSService } from './wfs.service';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
 import {
-  formatWFSQueryString,
   defaultFieldNameGeometry,
   checkWfsParams,
   getFormatFromOptions,
-  defaultMaxFeatures
+  buildUrl
 } from './wms-wfs.utils';
 import { BehaviorSubject } from 'rxjs';
 import { AuthInterceptor } from '@igo2/auth';
-import { Listener } from 'ol/events';
-import BaseEvent from 'ol/events/Event';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector<OlGeometry>;
@@ -74,69 +70,17 @@ export class WFSDataSource extends DataSource {
   protected createOlSource(): olSourceVector<OlGeometry> {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
-      loader: (extent, resolution, proj: olProjection) => {
+      url: (extent, resolution, proj: olProjection) => {
         const paramsWFS = this.options.paramsWFS;
         const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
-
-        const currentExtent = olproj.transformExtent(
-          extent,
-          proj,
-          wfsProj
-        );
-
+        const ogcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+        const currentExtent = olproj.transformExtent(extent,proj,wfsProj);
         paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
-        const url = this.buildUrl(
-          currentExtent,
-          wfsProj,
-          (this.options as OgcFilterableDataSourceOptions).ogcFilters);
-        let startIndex = 0;
-        if (paramsWFS.version === '2.0.0' && paramsWFS.maxFeatures > defaultMaxFeatures) {
-          const nbOfFeature = 1000;
-          while (startIndex < paramsWFS.maxFeatures) {
-            let alteredUrl = url.replace('count=' + paramsWFS.maxFeatures, 'count=' + nbOfFeature);
-            alteredUrl = alteredUrl.replace('startIndex=0', '0');
-            alteredUrl += '&startIndex=' + startIndex;
-            alteredUrl.replace(/&&/g, '&');
-            this.getFeatures(vectorSource, currentExtent, wfsProj, proj, alteredUrl, nbOfFeature);
-            startIndex += nbOfFeature;
-          }
-        } else {
-          this.getFeatures(vectorSource, currentExtent, wfsProj, proj, url, paramsWFS.maxFeatures);
-        }
-
-
+        return buildUrl(this.options,currentExtent,wfsProj,ogcFilters);
       },
       strategy: OlLoadingStrategy.bbox
     });
     return vectorSource;
-  }
-
-  private getFeatures(vectorSource: olSourceVector<OlGeometry>, extent, dataProjection, featureProjection, url: string, threshold: number) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
-    if (this.authInterceptor) {
-      this.authInterceptor.interceptXhr(xhr, url);
-    }
-    const onError = () => {
-      vectorSource.removeLoadedExtent(extent);
-    };
-    xhr.onerror = onError;
-    xhr.onload = () => {
-      if (xhr.status === 200 && xhr.responseText.length > 0) {
-        const features =
-          vectorSource
-          .getFormat()
-          .readFeatures(xhr.responseText, {dataProjection, featureProjection}) as olFeature<OlGeometry>[];
-        // TODO Manage "More feature"
-        /*if (features.length === 0 || features.length < threshold ) {
-          console.log('No more data to download at this resolution');
-        }*/
-        vectorSource.addFeatures(features);
-      } else {
-        onError();
-      }
-    };
-    xhr.send();
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
@@ -144,31 +88,6 @@ export class WFSDataSource extends DataSource {
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
     }
-  }
-
-  private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
-    const paramsWFS = this.options.paramsWFS;
-    const queryStringValues = formatWFSQueryString(this.options, undefined, this.options.paramsWFS.srsName);
-    let igoFilters;
-    if (ogcFilters && ogcFilters.enabled) {
-      igoFilters = ogcFilters.filters;
-    }
-    const ogcFilterWriter = new OgcFilterWriter();
-    const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, this.options);
-    let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName, extent, proj);
-
-    let prefix = 'filter';
-    if (!filterOrPush) {
-      prefix = 'bbox';
-      filterOrPush = extent.join(',') + ',' + proj.getCode();
-    }
-
-    paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters ? filterOrBox : `${prefix}=${filterOrPush}`;
-    let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
-    const patternFilter = /(filter|bbox)=.*/gi;
-    baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
-    this.options.download = Object.assign({}, this.options.download, { dynamicUrl: baseUrl });
-    return baseUrl.replace(/&&/g, '&');
   }
 
   public onUnwatch() { }
