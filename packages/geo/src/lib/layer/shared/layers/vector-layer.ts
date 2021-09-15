@@ -81,7 +81,7 @@ export class VectorLayer extends Layer {
     const url = vectorSource.getUrl();
     if (url) {
       let loader;
-      const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions
+      const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
       if (wfsOptions?.type === 'wfs' && (wfsOptions.params || wfsOptions.paramsWFS)) {
         loader = (extent, resolution, proj, success, failure) => {
           this.customWFSLoader(
@@ -300,13 +300,22 @@ export class VectorLayer extends Layer {
    * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param dataProjection the projection of the retrieved data
-   * @param featureProjection the projection of the created features 
+   * @param featureProjection the projection of the created features
    * @param url the url string to retrieve the data
    * @param threshold the threshold to manage "more features" (TODO)
    * @param success success callback
    * @param failure failure callback
    */
-  private getFeatures(vectorSource: olSourceVector<OlGeometry>, interceptor, extent, dataProjection, featureProjection, url: string, threshold: number, success, failure) {
+  private getFeatures(
+    vectorSource: olSourceVector<OlGeometry>,
+    interceptor,
+    extent,
+    dataProjection,
+    featureProjection,
+    url: string,
+    threshold: number,
+    success, failure) {
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     if (interceptor) {

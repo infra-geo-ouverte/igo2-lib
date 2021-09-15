@@ -74,9 +74,9 @@ export class WFSDataSource extends DataSource {
         const paramsWFS = this.options.paramsWFS;
         const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
         const ogcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-        const currentExtent = olproj.transformExtent(extent,proj,wfsProj);
+        const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
         paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
-        return buildUrl(this.options,currentExtent,wfsProj,ogcFilters);
+        return buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
       },
       strategy: OlLoadingStrategy.bbox
     });
