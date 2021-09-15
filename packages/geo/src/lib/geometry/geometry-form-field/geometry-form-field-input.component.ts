@@ -340,8 +340,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private createDrawControl() {
     const controlOptions = Object.assign({}, this.controlOptions, {
       geometryType: this.geometryType || 'Point',
-      layer: this.olOverlayLayer,
-      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
+      drawingLayer: this.olOverlayLayer,
+      interactionStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
@@ -398,7 +398,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.olGeometryChanges$$ = control.changes$
         .subscribe((olGeometry: OlGeometry) => this.onOlGeometryChanges(olGeometry));
     }
-    control.setOlMap(this.map.ol);
+    control.setOlMap(this.map.ol, false);
   }
 
   /**
