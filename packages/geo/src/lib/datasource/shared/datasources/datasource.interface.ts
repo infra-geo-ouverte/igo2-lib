@@ -41,7 +41,7 @@ export interface SourceFieldsOptionsParams {
   values?: any;
   excludeFromOgcFilters?: boolean;
   allowedOperatorsType?: OgcFilterOperatorType;
-  type: SourceFieldsOptionsType;
+  type?: SourceFieldsOptionsType;
 }
 
 export interface Legend {
