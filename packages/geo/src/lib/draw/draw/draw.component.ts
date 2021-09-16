@@ -389,7 +389,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     if (olGeometry instanceof OlCircle) {
       geometry.type = 'Point';
-      console.log(geometry);
       geometry.coordinates = olGeometry.getCenter();
       const extent4326 = transform([olGeometry.getFlatCoordinates()[2], olGeometry.getFlatCoordinates()[3]], projection, 'EPSG:4326');
       center4326 = transform([olGeometry.getFlatCoordinates()[0], olGeometry.getFlatCoordinates()[1]], projection, 'EPSG:4326');
