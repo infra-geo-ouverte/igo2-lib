@@ -10,21 +10,20 @@ import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../shared';
 
+import OlMap from 'ol/Map';
+import OlView from 'ol/View';
+
 @Component({
   selector: 'igo-mini-basemap',
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss']
 })
 export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-    this.handleMoveEnd();
-  }
-  private _map: IgoMap;
+
+  @Input() map: IgoMap;
+  @Input() disabled: boolean;
+  @Input() display: boolean;
+  @Input() title: string;
 
   @Input()
   get baseLayer(): Layer {
@@ -36,43 +35,33 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   }
   private _baseLayer: Layer;
 
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
-  }
-  set disabled(value: boolean) {
-    this._disabled = value;
-  }
-  private _disabled: boolean;
-
-  @Input()
-  get display(): boolean {
-    return this._display;
-  }
-  set display(value: boolean) {
-    this._display = value;
-  }
-  private _display: boolean;
-
   public basemap = new IgoMap({
     controls: {},
     interactions: false
   });
 
-  @Input() title: string;
-
   constructor(
     private layerService: LayerService,
     private appRef: ApplicationRef
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
-    this.map.ol.on('moveend', () => this.handleMoveEnd());
-    this.handleMoveEnd();
+    this.handleMainMapViewChange(this.map.ol.getView());
+    this.map.viewController.olView.on('change', change => {
+      this.handleMainMapViewChange((change.target as OlView));
+    });
+    this.map.ol.on('pointerdrag', change => {
+      this.handleMainMapViewChange((change.target as OlMap).getView());
+    });
   }
 
   ngOnDestroy() {
-    this.map.ol.un('moveend', () => this.handleMoveEnd());
+    this.map.viewController.olView.un('change', change => {
+      this.handleMainMapViewChange((change.target as OlView));
+    });
+    this.map.ol.un('pointerdrag', change => {
+      this.handleMainMapViewChange((change.target as OlMap).getView());
+    });
   }
 
   changeBaseLayer(baseLayer: Layer) {
@@ -83,8 +72,11 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     this.appRef.tick();
   }
 
-  private handleMoveEnd() {
-    this.basemap.ol.setView(this.map.ol.getView());
+  private handleMainMapViewChange(mainMapView) {
+    const mainMapViewProperties = mainMapView.getProperties();
+    this.basemap.viewController.olView.setResolution(mainMapViewProperties.resolution);
+    this.basemap.viewController.olView.setRotation(mainMapViewProperties.rotation);
+    this.basemap.viewController.olView.setCenter(this.map.viewController.getCenter());
   }
 
   private handleBaseLayerChanged(baselayer: Layer) {

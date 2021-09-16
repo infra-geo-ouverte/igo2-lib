@@ -304,7 +304,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   get projection(): string {
-    console.log(this.map.ol.getView().getProjection());
     return this.map.ol.getView().getProjection().getCode();
   }
 

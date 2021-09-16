@@ -458,20 +458,8 @@ exports.filename = null;`
   done();
 });
 
-gulp.task('libs:fixOL', done => {
-  gulp
-    .src(['./node_modules/ol/package.json'])
-    .pipe(
-      jeditor({
-        sideEffects: true
-      })
-    )
-    .pipe(gulp.dest('./node_modules/ol/'));
 
-  done();
-});
-
-gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixOL']));
+gulp.task('fixLibs', gulp.parallel(['libs:fixStylus']));
 
 // ==========================================================
 
