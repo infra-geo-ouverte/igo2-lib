@@ -118,6 +118,7 @@
         "exportButton": "Exporter",
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
+        "exportCircleToPolygon": "Transformer les entités de type Cercle en polygones",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
@@ -616,24 +617,30 @@
         }
       },
       "draw": {
-        "cancelColorPicker": "Annulé",
+        "abort": "Annuler le dessin en cours",
+        "cancelColorPicker": "Annuler",
         "Circle": "Cercle",
+        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
         "fill": "Remplissage",
+        "finish": "Terminer le dessin en cours",
         "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
-        "okColorPicker": "OK",
+        "move": "Centrer la vue sur le curseur",
+        "noIcon": "Aucune icône",
+        "noLabel": "Aucune étiquette",
         "Point": "Point",
         "Polygon": "Polygone",
         "radius": "Rayon",
+        "shortcuts": "Raccourcis clavier",
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
-        "noIcon": "Aucune icône"
+        "undo": "Retirer le dernier sommet"
       },
       "network": {
         "online": {
