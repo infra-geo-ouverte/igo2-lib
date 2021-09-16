@@ -7,10 +7,12 @@
     "umdModuleIds": {
       "@igo2/auth": "igoAuth",
       "@igo2/geo": "igoGeo",
+      "@igo2/utils": "igoUtils",
       "ol/Feature": "olFeature",
       "ol/geom/Point": "olPoint",
       "ol/format/GeoJSON": "olFormatGeoJSON",
       "ol/style": "olstyle",
+      "ol/proj": "olProj",
       "@igo2/core": "core",
       "@igo2/context": "context",
       "@igo2/common": "common",
