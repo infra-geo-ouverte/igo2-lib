@@ -54,14 +54,7 @@ export class ExportService {
   ): Observable<void> {
     const exportOlFeatures = this.generateFeature(olFeatures, format);
 
-    return this.exportAsync(
-      exportOlFeatures,
-      format,
-      title,
-      encoding,
-      projectionIn,
-      projectionOut
-    );
+    return this.exportAsync(exportOlFeatures, format, title, encoding, projectionIn, projectionOut);
   }
 
   private generateFeature(
@@ -69,7 +62,7 @@ export class ExportService {
     format: ExportFormat
   ): OlFeature<OlGeometry>[] {
     if (format === ExportFormat.GPX && this.aggregateInComment) {
-      return this.generateAggratedFeature(olFeatures);
+      return this.generateAggregatedFeature(olFeatures);
     }
 
     return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
@@ -87,22 +80,21 @@ export class ExportService {
     });
   }
 
-  private generateAggratedFeature(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+  private generateAggregatedFeature(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
     return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
-      const keys = olFeature
-        .getKeys()
-        .filter((key: string) => !key.startsWith('_'));
+      const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
       let comment: string = '';
-      const properties = keys.reduce(
-        (acc: object, key: string) => {
-          if (key !== undefined && key !== 'geometry') {
-            comment += key + ':' + olFeature.get(key) + '   \r\n';
-          }
-          acc[key] = olFeature.get(key);
-          return acc;
-        },
-        { geometry: olFeature.getGeometry() }
-      );
+      const properties = keys.reduce((acc: object, key: string) => {
+        if (key && key !== 'geometry') {
+          key === 'id' && olFeature.get('draw') ? comment += key + ':' + olFeature.get('draw') + '   \r\n'
+          : comment += key + ':' + olFeature.get(key) + '   \r\n';
+        }
+        acc[key] = olFeature.get(key);
+        return acc;
+      },
+      {
+        geometry: olFeature.getGeometry()
+      });
       const newFeature = new OlFeature(properties);
       newFeature.set('name', olFeature.getId());
       newFeature.set('cmt', comment);
@@ -121,46 +113,24 @@ export class ExportService {
   ): Observable<void> {
     const doExport = (observer: Observer<void>) => {
       const nothingToExport = this.nothingToExport(olFeatures, format);
-      if (nothingToExport === true) {
+      if (nothingToExport) {
         observer.error(new ExportNothingToExportError());
         return;
       }
 
       const ogreFormats = Object.keys(ExportService.ogreFormats);
       if (ogreFormats.indexOf(format) >= 0) {
-        if (this.ogreUrl === undefined) {
+        if (!this.ogreUrl) {
           if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
-            this.exportToFile(
-              olFeatures,
-              observer,
-              format,
-              title,
-              projectionIn,
-              projectionOut
-            );
+            this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
           } else {
             observer.error(new ExportInvalidFileError());
           }
           return;
         }
-        this.exportWithOgre(
-          olFeatures,
-          observer,
-          format,
-          title,
-          encoding,
-          projectionIn,
-          projectionOut
-        );
+        this.exportWithOgre(olFeatures, observer, format, title, encoding, projectionIn, projectionOut);
       } else {
-        this.exportToFile(
-          olFeatures,
-          observer,
-          format,
-          title,
-          projectionIn,
-          projectionOut
-        );
+        this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
       }
     };
 
@@ -241,10 +211,7 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    let outputName =
-      format === 'Shapefile'
-        ? `${title}.zip`
-        : `${title}.${format.toLowerCase()}`;
+    let outputName = format === 'Shapefile' ? `${title}.zip` : `${title}.${format.toLowerCase()}`;
     if (format === 'CSVcomma' || format === 'CSVsemicolon') {
       outputName = `${title}.csv`;
     }
@@ -278,8 +245,7 @@ export class ExportService {
     if (format === 'GPX') {
       const pointOrLine = olFeatures.find(olFeature => {
         return (
-          ['Point', 'LineString', 'MultiLineString'].indexOf(olFeature.getGeometry().getType()) >=
-          0
+          ['Point', 'LineString', 'MultiLineString'].indexOf(olFeature.getGeometry().getType()) >= 0
         );
       });
       return pointOrLine === undefined;
