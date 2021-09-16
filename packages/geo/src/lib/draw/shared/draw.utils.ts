@@ -19,7 +19,7 @@ import {
  * @param label a label
  * @returns OL style
  */
-export function createInteractionStyle(fillColor?: OlColor, strokeColor?: OlColor, strokeWidth?: number, label?: string): Olstyle.Style {
+export function createInteractionStyle(fillColor?: string, strokeColor?: string, strokeWidth?: number, label?: string): Olstyle.Style {
   return new Olstyle.Style({
     stroke: new Olstyle.Stroke({
       color: strokeColor ? strokeColor : 'rgba(143,7,7,1)',

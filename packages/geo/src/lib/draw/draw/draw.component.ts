@@ -15,8 +15,7 @@ import {
     tryAddLoadingStrategy,
     tryAddSelectionStrategy,
     FeatureMotion,
-    FeatureStoreLoadingStrategy,
-    FeatureGeometry,
+    FeatureStoreLoadingStrategy
   } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
@@ -33,7 +32,6 @@ import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 
 import * as OlStyle from 'ol/style';
-import * as OlColor from 'ol/color';
 import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
 import OlPoint from 'ol/geom/Point';
@@ -82,8 +80,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
 
-  @Output() fillColor: OlColor.Color;
-  @Output() strokeColor: OlColor.Color;
+  @Output() fillColor: string;
+  @Output() strokeColor: string;
   @Output() strokeWidth: number;
 
   @Input() map: IgoMap; // Map to draw on
@@ -98,8 +96,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   private drawSelect$$: Subscription;
   private olDrawingLayer: VectorLayer;
   public selectedFeatures$: BehaviorSubject<FeatureWithDraw[]> = new BehaviorSubject([]);
-  public fillForm: OlColor.Color;
-  public strokeForm: OlColor.Color;
+  public fillForm: string;
+  public strokeForm: string;
   public drawControlIsDisabled: boolean = true;
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
@@ -148,7 +146,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param strokeWidth the stroke width
    * @returns a Draw Control
    */
-  createDrawControl(fillColor?: OlColor.Color, strokeColor?: OlColor.Color, strokeWidth?: number) {
+  createDrawControl(fillColor?: string, strokeColor?: string, strokeWidth?: number) {
     const drawControl = new DrawControl({
       geometryType: undefined,
       drawingLayerSource: this.olDrawingLayerSource,

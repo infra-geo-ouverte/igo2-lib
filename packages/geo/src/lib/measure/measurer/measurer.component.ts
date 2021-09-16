@@ -513,7 +513,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.store.deleteMany(this.selectedFeatures$.value);
     this.selectedFeatures$.value.forEach(selectedFeature => {
       this.olDrawSource.getFeatures().forEach(drawingLayerFeature => {
-        if (selectedFeature.properties.id === drawingLayerFeature.getGeometry().ol_uid) {
+        const geometry = drawingLayerFeature.getGeometry() as any;
+        if (selectedFeature.properties.id === geometry.ol_uid) {
           this.olDrawSource.removeFeature(drawingLayerFeature);
         }
       });
@@ -857,7 +858,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry: OlLineString | OlPolygon, localFeature?: FeatureWithMeasure) {
+  private addFeatureToStore(olGeometry, localFeature?: FeatureWithMeasure) {
     const featureId = localFeature ? localFeature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
