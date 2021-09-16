@@ -1,6 +1,6 @@
 $slide-toggle-width: 60px;
 
-.draw-type-toggle {
+.geometry-type-toggle {
     padding: 10px;
     text-align: center;
 
@@ -28,6 +28,10 @@ $slide-toggle-width: 60px;
 
 .igo-form {
   padding: 10px;
+}
+
+.fill-field, .stroke-field {
+  width: 130px;
 }
 
 .fill-color-picker {
