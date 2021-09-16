@@ -13,23 +13,8 @@ import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
   animations: [baseLayersSwitcherSlideInOut()]
 })
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
-
-  @Input()
-  get useStaticIcon(): boolean {
-    return this._useStaticIcon;
-  }
-  set useStaticIcon(value: boolean) {
-    this._useStaticIcon = value;
-  }
-  private _useStaticIcon: boolean;
+  @Input() map: IgoMap;
+  @Input() useStaticIcon: boolean;
 
   public _baseLayers: Layer[] = [];
   public expand = false;

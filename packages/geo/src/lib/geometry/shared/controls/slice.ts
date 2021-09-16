@@ -154,7 +154,7 @@ export class SliceControl {
   private addDrawLineControl() {
     this.drawLineControl = new DrawControl({
       geometryType: 'LineString',
-      drawStyle: this.options.drawStyle,
+      interactionStyle: this.options.drawStyle,
       maxPoints: 2
     });
     this.drawLineStart$$ = this.drawLineControl.start$

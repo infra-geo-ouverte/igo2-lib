@@ -1,10 +1,14 @@
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
+import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
+import olProjection from 'ol/proj/Projection';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -12,6 +16,41 @@ export const defaultWfsVersion = '2.0.0';
 export const defaultFieldNameGeometry = 'geometry';
 export const gmlRegex = new RegExp(/(.*)?gml(.*)?/gi);
 export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
+
+
+/**
+ * This method build the WFS URL based on the layer property.
+ * @param options  WFSDataSourceOptions The common wfs datasource options interface
+ * @param extent  An extent like array [number, number, number, number]
+ * @param proj  olProjection
+ * @param ogcFilters  OgcFiltersOptions
+ * @returns A string representing the datasource options, based on filter and views
+ */
+export function  buildUrl(options: WFSDataSourceOptions, extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
+  const paramsWFS = options.paramsWFS;
+  const queryStringValues = formatWFSQueryString(options, undefined, options.paramsWFS.srsName);
+  let igoFilters;
+  if (ogcFilters && ogcFilters.enabled) {
+    igoFilters = ogcFilters.filters;
+  }
+  const ogcFilterWriter = new OgcFilterWriter();
+  const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, options);
+  let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(options, ogcFilters.geometryName, extent, proj);
+
+  let prefix = 'filter';
+  if (!filterOrPush) {
+    prefix = 'bbox';
+    filterOrPush = extent.join(',') + ',' + proj.getCode();
+  }
+
+  paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters ? filterOrBox : `${prefix}=${filterOrPush}`;
+  let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+  const patternFilter = /(filter|bbox)=.*/gi;
+  baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
+  options.download = Object.assign({}, options.download, { dynamicUrl: baseUrl });
+  return baseUrl.replace(/&&/g, '&');
+}
+
 
 /**
  * This method build/standardize WFS call query params based on the layer property.
@@ -147,6 +186,7 @@ export function getFormatFromOptions(
     : undefined;
 
   if (!outputFormat) {
+    olFormatCls = OlFormat.WFS;
     return new olFormatCls(wfsOptions.formatOptions);
   }
 

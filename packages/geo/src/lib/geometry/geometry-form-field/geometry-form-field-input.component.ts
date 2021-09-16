@@ -31,7 +31,7 @@ import {
   formatMeasure,
   measureOlGeometry
 } from '../../measure';
-import { DrawControl, ModifyControl } from '../shared/controls';
+import { DrawControl, ModifyControl, ModifyControlOptions } from '../shared/controls';
 import { createDrawInteractionStyle } from '../shared/geometry.utils';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 import OlCircle from 'ol/geom/Circle';
@@ -340,8 +340,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private createDrawControl() {
     const controlOptions = Object.assign({}, this.controlOptions, {
       geometryType: this.geometryType || 'Point',
-      layer: this.olOverlayLayer,
-      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature<OlGeometry>, resolution: number) => {
+      drawingLayer: this.olOverlayLayer,
+      interactionStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature<OlGeometry>, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
@@ -361,7 +361,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
-    }) as DrawControlOptions;
+    }) as ModifyControlOptions;
     this.modifyControl = new ModifyControl(controlOptions);
   }
 
@@ -398,7 +398,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.olGeometryChanges$$ = control.changes$
         .subscribe((olGeometry: OlPolygon | OlPoint | OlLineString | OlCircle) => this.onOlGeometryChanges(olGeometry));
     }
-    control.setOlMap(this.map.ol);
+    control.setOlMap(this.map.ol, false);
   }
 
   /**

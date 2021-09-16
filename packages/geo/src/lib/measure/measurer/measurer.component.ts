@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import OlProjection from 'ol/proj/Projection';
 import OlStyle from 'ol/style/Style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
@@ -20,7 +19,6 @@ import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { EventsKey } from 'ol/events';
 import OlOverlay from 'ol/Overlay';
 import { unByKey, OnReturn } from 'ol/Observable';
 
@@ -304,7 +302,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   get projection(): string {
-    console.log(this.map.ol.getView().getProjection());
     return this.map.ol.getView().getProjection().getCode();
   }
 
@@ -512,6 +509,14 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   onDeleteClick() {
     this.store.deleteMany(this.selectedFeatures$.value);
+    this.selectedFeatures$.value.forEach(selectedFeature => {
+      this.olDrawSource.getFeatures().forEach(drawingLayerFeature => {
+        const geometry = drawingLayerFeature.getGeometry() as any;
+        if (selectedFeature.properties.id === geometry.ol_uid) {
+          this.olDrawSource.removeFeature(drawingLayerFeature);
+        }
+      });
+    });
   }
 
   onModifyClick() {
@@ -640,9 +645,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private createDrawLineControl() {
     this.drawLineControl = new DrawControl({
       geometryType: 'LineString',
-      source: this.olDrawSource,
-      drawStyle: createMeasureInteractionStyle(),
-      layerStyle: new OlStyle({})
+      drawingLayerSource: this.olDrawSource,
+      interactionStyle: createMeasureInteractionStyle(),
+      drawingLayerStyle: new OlStyle({})
     });
   }
 
@@ -652,9 +657,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private createDrawPolygonControl() {
     this.drawPolygonControl = new DrawControl({
       geometryType: 'Polygon',
-      source: this.olDrawSource,
-      drawStyle: createMeasureInteractionStyle(),
-      layerStyle: new OlStyle({})
+      drawingLayerSource: this.olDrawSource,
+      interactionStyle: createMeasureInteractionStyle(),
+      drawingLayerStyle: new OlStyle({})
     });
   }
 
@@ -695,7 +700,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.drawChanges$$ = drawControl.changes$
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawChanges(olGeometry));
 
-    drawControl.setOlMap(this.map.ol);
+    drawControl.setOlMap(this.map.ol, false);
   }
 
   /**
@@ -851,8 +856,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry: OlLineString | OlPolygon, localFeature?: FeatureWithMeasure) {
-    const featureId = localFeature ? localFeature.properties.id : uuid();
+  private addFeatureToStore(olGeometry, localFeature?: FeatureWithMeasure) {
+    const featureId = localFeature ? localFeature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,

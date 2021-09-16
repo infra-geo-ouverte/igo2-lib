@@ -30,15 +30,15 @@
     "@igo2/common": "^1.8.1",
     "@igo2/core": "^1.8.1",
     "@igo2/utils": "^1.8.1",
-    "ol": "^6.3.1",
-    "proj4": "^2.6.2",
+    "ol": "^6.7.0",
+    "proj4": "^2.7.5",
     "rxjs": "^6.6.7",
-    "ol-mapbox-style": "^6.1.2"
+    "ol-mapbox-style": "^6.4.1"
   },
   "optionalDependencies": {
     "file-saver": "^2.0.2",
     "html2canvas": "^1.0.0-rc.5",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "jszip": "^3.1.5",
     "moment": "^2.24.0",
     "stream": "^0.0.2"

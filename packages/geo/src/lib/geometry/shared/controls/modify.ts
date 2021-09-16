@@ -313,7 +313,7 @@ export class ModifyControl {
    * @param event Modify start event
    */
   private onModifyStart(event: OlModifyEvent) {
-    const olGeometry = event.features.item(0).getGeometry();
+    const olGeometry = event.features.item(0).getGeometry() as OlGeometry;
     this.start$.next(olGeometry);
     this.onModifyKey = olGeometry.on(
       'change',
@@ -333,7 +333,7 @@ export class ModifyControl {
    */
   private onModifyEnd(event: OlModifyEvent) {
     unByKey(this.onModifyKey);
-    this.end$.next(event.features.item(0).getGeometry());
+    this.end$.next(event.features.item(0).getGeometry() as OlGeometry);
     this.unsubscribeToKeyDown();
   }
 
@@ -424,7 +424,7 @@ export class ModifyControl {
    * @param event Translate start event
    */
   private onTranslateStart(event: OlTranslateEvent) {
-    const olGeometry = event.features.item(0).getGeometry();
+    const olGeometry = event.features.item(0).getGeometry() as OlGeometry;
     this.start$.next(olGeometry);
     this.onTranslateKey = olGeometry.on(
       'change',
@@ -440,7 +440,7 @@ export class ModifyControl {
    */
   private onTranslateEnd(event: OlTranslateEvent) {
     unByKey(this.onTranslateKey);
-    this.end$.next(event.features.item(0).getGeometry());
+    this.end$.next(event.features.item(0).getGeometry() as OlGeometry);
   }
 
   /**
