@@ -35,8 +35,6 @@ import * as OlStyle from 'ol/style';
 import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
 import OlPoint from 'ol/geom/Point';
-import OlPolygon from 'ol/geom/Polygon';
-import OlLineString from 'ol/geom/Linestring';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
@@ -263,7 +261,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param olGeometry geometry at draw end or selected geometry
    * @param drawEnd event fired at drawEnd?
    */
-  private openDialog(olGeometryFeature: OlGeometry | OlFeature<OlGeometry>, isDrawEnd: boolean) {
+  private openDialog(olGeometryFeature, isDrawEnd: boolean) {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -272,15 +270,15 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
-        this.updateLabelOfOlGeometry(olGeometryFeature as OlGeometry, label);
+        this.updateLabelOfOlGeometry(olGeometryFeature, label);
 
         // if event was fired at draw end
         if (isDrawEnd) {
-          this.onDrawEnd(olGeometryFeature as OlGeometry);
+          this.onDrawEnd(olGeometryFeature);
 
         // if event was fired at select
         } else {
-          this.onSelectDraw(olGeometryFeature as OlFeature<OlGeometry>, label);
+          this.onSelectDraw(olGeometryFeature, label);
         }
       });
     }, 250);
@@ -453,8 +451,8 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Clear the tooltips of an OL geometry
    * @param olGeometry OL geometry with tooltips
    */
-  private clearLabelsOfOlGeometry(olGeometry: OlGeometry) {
-    getTooltipsOfOlGeometry(olGeometry as OlCircle | OlPoint | OlLineString | OlPolygon).forEach((olTooltip: OlOverlay | undefined) => {
+  private clearLabelsOfOlGeometry(olGeometry) {
+    getTooltipsOfOlGeometry(olGeometry).forEach((olTooltip: OlOverlay | undefined) => {
       if (olTooltip && olTooltip.getMap()) {
         this.map.ol.removeOverlay(olTooltip);
       }

@@ -1,5 +1,4 @@
 import * as Olstyle from 'ol/style';
-import * as OlColor from 'ol/color';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';

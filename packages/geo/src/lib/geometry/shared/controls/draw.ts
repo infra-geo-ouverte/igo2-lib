@@ -1,4 +1,3 @@
-import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
@@ -11,7 +10,6 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlModify from 'ol/interaction/Modify';
 import OlSelect from 'ol/interaction/Select';
 import BasicEvent from 'ol/events/Event';
-import OlCollection from 'ol/Collection';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { SelectEvent as OlSelectEvent } from 'ol/interaction/Select';
 import { unByKey } from 'ol/Observable';

@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import OlProjection from 'ol/proj/Projection';
 import OlStyle from 'ol/style/Style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
@@ -20,7 +19,6 @@ import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { EventsKey } from 'ol/events';
 import OlOverlay from 'ol/Overlay';
 import { unByKey, OnReturn } from 'ol/Observable';
 
