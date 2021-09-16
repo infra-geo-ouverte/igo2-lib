@@ -483,7 +483,8 @@ gulp.task(
       'common:copyStyles',
       'common:copyLocale'
     ]),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -492,7 +493,8 @@ gulp.task(
   gulp.series(
     'auth:clean',
     gulp.parallel(['auth:copyAssets', 'auth:copyStyles', 'auth:copyLocale']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -506,7 +508,8 @@ gulp.task(
       'geo:copyLocale',
       'geo:copyNGCC'
     ]),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -514,7 +517,8 @@ gulp.task(
   'context',
   gulp.series(
     gulp.parallel(['context:copyLocale', 'context:copyNGCC']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -522,7 +526,8 @@ gulp.task(
   'integration',
   gulp.series(
     gulp.parallel(['integration:copyLocale', 'integration:copyNGCC']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
