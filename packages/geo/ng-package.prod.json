@@ -26,7 +26,6 @@
       "ol/loadingstrategy": "OlLoadingStrategy",
       "ol/render": "olRender",
       "ol/source/TileArcGISRest": "olSourceTileArcGISRest",
-      "string-strip-html": "stringStripHtml",
       "striptags": "striptags",
       "ts-md5": "tsMd5",
       "ol/source/VectorTile": "olSourceVectorTile",
@@ -102,7 +101,6 @@
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect",
-    "@turf/point-on-feature",
-    "string-strip-html"
+    "@turf/point-on-feature"
   ]
 }
