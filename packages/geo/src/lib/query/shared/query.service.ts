@@ -470,7 +470,7 @@ export class QueryService {
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
     // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
     const striptags = striptags_;
-    const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''))
+    const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
     if (body === '' || res === '') {
       return [];
     }
