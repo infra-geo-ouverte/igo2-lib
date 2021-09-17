@@ -1,6 +1,7 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { DownloadRegionService, RegionDBData } from '@igo2/core';
 import { GeoJSONGeometry, XYZDataSource } from '@igo2/geo';
+import TileGrid from 'ol/tilegrid/TileGrid';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { DownloadState } from '../download.state';
 import { CreationEditionStrategy, UpdateEditionStrategy } from './editing-strategy';
@@ -18,12 +19,13 @@ export class RegionEditorController extends RegionEditorControllerBase {
         super(downloadState, state);
     }
 
-    addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
+    addTileToDownload(coord: [number, number, number], templateUrl, tileGrid: TileGrid) {
         if (this.regionStore.index.size && this.tilesToDownload.length === 0) {
             return;
         }
         const urlGen = createFromTemplate(templateUrl, tileGrid);
-        const url = urlGen(coord, 0, 0);
+        // TODO Validate PEL if undefined is OK. 
+        const url = urlGen(coord, 0, undefined);
         const z = coord[0];
         const first: boolean = this.parentTileUrls.length === 0;
         const parentLevel = this.genParams.parentLevel;
@@ -113,7 +115,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
             return;
           }
           this.templateUrl = layer.dataSource.options.url;
-          this.tileGrid = layer.ol.getSource().tileGrid;
+          this.tileGrid = (layer.ol.getSource() as any).getTileGrid();
         });
     }
 
