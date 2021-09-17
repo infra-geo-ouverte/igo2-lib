@@ -80,7 +80,8 @@
               "raf",
               "pako/lib/inflate",
               "txml",
-              "lru-cache"
+              "lru-cache",
+              "striptags"
 
             ]
           },
