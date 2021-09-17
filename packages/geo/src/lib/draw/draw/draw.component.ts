@@ -327,8 +327,8 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Clear the draw source and track the geometry being draw
    * @param olGeometry Ol linestring or polygon
    */
-  private onDrawEnd(olGeometry: OlGeometry) {
-    this.addFeatureToStore(olGeometry);
+  private onDrawEnd(olGeometry: OlGeometry, radius?: number) {
+    this.addFeatureToStore(olGeometry, radius);
     this.clearLabelsOfOlGeometry(olGeometry);
     this.store.layer.ol.getSource().refresh();
   }
@@ -360,8 +360,10 @@ export class DrawComponent implements OnInit, OnDestroy {
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
+        const rad: number = entity.properties.rad ? entity.properties.rad : undefined;
+
         this.updateLabelOfOlGeometry(olGeometry, label);
-        this.replaceFeatureInStore(entity, olGeometry);
+        this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
   }
@@ -371,7 +373,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry, feature?: FeatureWithDraw) {
+  private addFeatureToStore(olGeometry, radius?: number, feature?: FeatureWithDraw) {
     let rad: number;
     let center4326: Array<number>;
     let point4326: Array<number>;
@@ -385,14 +387,18 @@ export class DrawComponent implements OnInit, OnDestroy {
       dataProjection: projection
     }) as any;
 
-    if (olGeometry instanceof OlCircle) {
-      geometry.type = 'Point';
-      geometry.coordinates = olGeometry.getCenter();
-      const extent4326 = transform([olGeometry.getFlatCoordinates()[2], olGeometry.getFlatCoordinates()[3]], projection, 'EPSG:4326');
-      center4326 = transform([olGeometry.getFlatCoordinates()[0], olGeometry.getFlatCoordinates()[1]], projection, 'EPSG:4326');
-      lon4326 = center4326[0];
-      lat4326 = center4326[1];
-      rad = getDistance(center4326, extent4326);
+    if (olGeometry instanceof OlCircle || radius) {
+      if (radius) {
+        rad = radius;
+      } else {
+        geometry.type = 'Point';
+        geometry.coordinates = olGeometry.getCenter();
+        const extent4326 = transform([olGeometry.getFlatCoordinates()[2], olGeometry.getFlatCoordinates()[3]], projection, 'EPSG:4326');
+        center4326 = transform([olGeometry.getFlatCoordinates()[0], olGeometry.getFlatCoordinates()[1]], projection, 'EPSG:4326');
+        lon4326 = center4326[0];
+        lat4326 = center4326[1];
+        rad = getDistance(center4326, extent4326);
+      }
     }
 
     if (olGeometry instanceof OlPoint) {
@@ -423,9 +429,9 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param entity the entity to replace
    * @param olGeometry the new geometry to insert in the store
    */
-  private replaceFeatureInStore(entity, olGeometry: OlGeometry) {
+  private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number) {
     this.store.delete(entity);
-    this.onDrawEnd(olGeometry);
+    this.onDrawEnd(olGeometry, radius);
   }
 
   private buildForm() {

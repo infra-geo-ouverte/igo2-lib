@@ -69,6 +69,7 @@ export class DrawControl {
   private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
   private olSelectInteraction: OlSelect;
+  private olModifyInteraction: OlModify;
   private onDrawStartKey: EventsKey;
   private onDrawEndKey: EventsKey;
   private onDrawKey: EventsKey;
@@ -216,6 +217,7 @@ export class DrawControl {
       });
 
       this.olMap.addInteraction(olModifyInteraction);
+      this.olModifyInteraction = olModifyInteraction;
 
       // Create a select interaction and add it to map
       if (!this.olSelectInteraction) {
@@ -240,9 +242,11 @@ export class DrawControl {
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
+      this.olMap.removeInteraction(this.olModifyInteraction);
     }
 
     this.olDrawInteraction = undefined;
+    this.olModifyInteraction = undefined;
   }
 
   /**

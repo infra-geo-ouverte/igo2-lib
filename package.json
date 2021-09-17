@@ -111,6 +111,7 @@
     "scroll-into-view-if-needed": "^2.2.20",
     "scss-bundle": "^3.1.2",
     "stream": "^0.0.2",
+    "striptags": "^3.2.0",
     "ts-cacheable": "^1.0.5",
     "ts-md5": "^1.2.4",
     "tslib": "^2.0.0",
