@@ -1,11 +1,11 @@
 @mixin igo-ogc-filter-selection-theming($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
-  $dark: mat-palette($mat-grey, 800, 700, 900);
+  $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
 
   mat-button-toggle.mat-button-toggle-checked {
-    background-color: mat-color($accent);
-    color: mat-color($dark);
+    background-color: mat.get-color-from-palette($accent);
+    color: mat.get-color-from-palette($dark);
   }
 
   mat-button-toggle {

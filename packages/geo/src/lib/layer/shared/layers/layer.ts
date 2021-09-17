@@ -8,6 +8,7 @@ import {
 import { map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
@@ -27,7 +28,7 @@ export abstract class Layer {
   public legendCollapsed: boolean = true;
   public firstLoadComponent: boolean = true;
   public map: IgoMap;
-  public ol: olLayer;
+  public ol: olLayer<olSource>;
   public olLoadingProblem: boolean = false;
   public status$: Subject<SubjectStatus>;
   public hasBeenVisible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
@@ -164,7 +165,7 @@ export abstract class Layer {
     this.ol.set('_layer', this, true);
   }
 
-  protected abstract createOlLayer(): olLayer;
+  protected abstract createOlLayer(): olLayer<olSource>;
 
   setMap(igoMap: IgoMap | undefined) {
     this.map = igoMap;

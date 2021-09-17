@@ -52,6 +52,11 @@ import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
 import { computeProjectionsConstraints } from '../../map';
 
+import olVectorSource from 'ol/source/Vector';
+import olClusterSource from 'ol/source/Cluster';
+import olVectorTileSource from 'ol/source/VectorTile';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
 @Component({
   selector: 'igo-import-export',
   templateUrl: './import-export.component.html',
@@ -493,12 +498,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
       else {
+        const ol = lay.dataSource.ol as olVectorSource<OlGeometry> | olClusterSource ;
         if (data.featureInMapExtent) {
-          olFeatures = lay.dataSource.ol.getFeaturesInExtent(
+          olFeatures = ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()
           );
         } else {
-          olFeatures = lay.dataSource.ol.getFeatures();
+          olFeatures = ol.getFeatures();
         }
         if (lay.dataSource instanceof ClusterDataSource) {
           olFeatures = olFeatures.flatMap((cluster: any) =>

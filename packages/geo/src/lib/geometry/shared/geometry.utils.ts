@@ -1,8 +1,11 @@
+import OlCircle from 'ol/geom/Circle';
+import OlPoint from 'ol/geom/Point';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
 import OlLinearRing from 'ol/geom/LinearRing';
 import OlPolygon from 'ol/geom/Polygon';
-import { GeometryEvent as OlGeometryEvent } from 'ol/geom/Geometry';
+import BasicEvent from 'ol/events/Event';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import lineIntersect from '@turf/line-intersect';
 import { lineString } from '@turf/helpers';
@@ -18,9 +21,9 @@ import {
  * @param color Style color (R, G, B)
  * @returns OL style
  */
-export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Style {
+export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Circle {
   color = color || [0, 153, 255];
-  return new olstyle.Style({
+  return new olstyle.Circle({
     stroke: new olstyle.Stroke({
       color: color.concat([1]),
       width: 2
@@ -28,15 +31,7 @@ export function createDrawInteractionStyle(color?: [number, number, number]): ol
     fill:  new olstyle.Fill({
       color: color.concat([0.2])
     }),
-    image: new olstyle.Circle({
-      radius: 8,
-      stroke: new olstyle.Stroke({
-        color: color.concat([1])
-      }),
-      fill: new olstyle.Fill({
-        color: color.concat([0.2])
-      })
-    })
+    radius: 8
   });
 }
 
@@ -97,7 +92,7 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
   }
 
   const olGeoJSON = new OlGeoJSON();
-  const slicer = olGeoJSON.writeGeometryObject(olSlicer);
+  const slicer = olGeoJSON.writeGeometryObject(olSlicer) as any;
   const outerCoordinates = olPolygon.getLinearRing(0).getCoordinates();
 
   const parts = [[], []];
@@ -138,17 +133,18 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
  * @param olSlicer Slicing line
  * @returns New OL geometries
  */
-export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ): OlPolygon {
+export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ) {
   // TODO: make some validation and support updating an existing linear ring
   olPolygon.appendLinearRing(olLinearRing);
 }
 
 export function getMousePositionFromOlGeometryEvent(
-  olEvent: OlGeometryEvent
-): [number, number] {
-  const olGeometry = olEvent.target;
+  olEvent: BasicEvent
+) {
+  const olGeometry = olEvent.target as OlGeometry;
   if (olGeometry instanceof OlPolygon) {
-    return olGeometry.flatCoordinates.slice(-4, -2);
+    return olGeometry.getFlatCoordinates().slice(-4, -2) as [number, number];
   }
-  return olGeometry.flatCoordinates.slice(-2);
+  const olGeometryCast = olGeometry as OlPoint | OlLineString | OlCircle;
+  return olGeometryCast.getFlatCoordinates().slice(-2) as [number, number];
 }

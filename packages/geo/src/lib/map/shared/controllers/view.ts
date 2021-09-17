@@ -13,6 +13,7 @@ import { MapViewAction } from '../map.enums';
 import { MapExtent, MapViewState } from '../map.interface';
 import { getScaleFromResolution, viewStatesAreEqual } from '../map.utils';
 import { MapController } from './controller';
+import { EventsKey } from 'ol/events';
 
 export interface MapViewControllerOptions {
   stateHistory: boolean;
@@ -100,7 +101,7 @@ export class MapViewController extends MapController {
   setupObservers() {
     if (this.stateHistory === true) {
       this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) => this.onMoveEnd(event))
+        this.olMap.on('moveend', (event: OlMapEvent) => this.onMoveEnd(event)) as EventsKey
       );
     }
 
@@ -136,9 +137,9 @@ export class MapViewController extends MapController {
    * @returns Center
    */
   getCenter(projection?: string | OlProjection): [number, number] {
-    let center = this.olView.getCenter();
+    let center = this.olView.getCenter() as [number, number];
     if (projection && center) {
-      center = olproj.transform(center, this.getOlProjection(), projection);
+      center = olproj.transform(center, this.getOlProjection(), projection) as [number, number];
     }
     return center;
   }
@@ -157,7 +158,7 @@ export class MapViewController extends MapController {
         projection
       );
     }
-    return extent;
+    return extent as [number, number, number, number];
   }
 
   /**

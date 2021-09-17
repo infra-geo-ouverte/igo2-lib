@@ -1,5 +1,3 @@
-@import './toolbox/toolbox.theming';
-
 @mixin igo-tool-theming($theme) {
   @include igo-toolbox-theming($theme);
 }

@@ -5,35 +5,35 @@
 
   div.simple-notification {
     &.info {
-      color: mat-color($primary, default-contrast);
-      background-color: mat-color($primary);
+      color: mat.get-color-from-palette($primary, default-contrast);
+      background-color: mat.get-color-from-palette($primary);
       .sn-progress-loader span {
-        background-color: mat-color($primary, darker);
+        background-color: mat.get-color-from-palette($primary, darker);
       }
       svg {
-        fill: mat-color($primary, default-contrast);
+        fill: mat.get-color-from-palette($primary, default-contrast);
       }
     }
 
     &.alert {
-      color: mat-color($accent, default-contrast);
-      background-color: mat-color($accent);
+      color: mat.get-color-from-palette($accent, default-contrast);
+      background-color: mat.get-color-from-palette($accent);
       .sn-progress-loader span {
-        background-color: mat-color($accent, darker);
+        background-color: mat.get-color-from-palette($accent, darker);
       }
       svg {
-        fill: mat-color($accent, default-contrast);
+        fill: mat.get-color-from-palette($accent, default-contrast);
       }
     }
 
     &.error {
-      color: mat-color($warn, default-contrast);
-      background-color: mat-color($warn);
+      color: mat.get-color-from-palette($warn, default-contrast);
+      background-color: mat.get-color-from-palette($warn);
       .sn-progress-loader span {
-        background-color: mat-color($warn, darker);
+        background-color: mat.get-color-from-palette($warn, darker);
       }
       svg {
-        fill: mat-color($warn, default-contrast);
+        fill: mat.get-color-from-palette($warn, default-contrast);
       }
     }
   }

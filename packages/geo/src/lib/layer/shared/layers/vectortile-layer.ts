@@ -9,6 +9,7 @@ import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
 import { IgoMap } from '../../../map';
 import { MessageService } from '@igo2/core';
+import VectorTile from 'ol/VectorTile';
 
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
@@ -34,7 +35,7 @@ export class VectorTileLayer extends Layer {
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction((tile, url) => {
+    vectorTileSource.setTileLoadFunction((tile: VectorTile, url) => {
       const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
       if (loader) {
         tile.setLoader(loader);

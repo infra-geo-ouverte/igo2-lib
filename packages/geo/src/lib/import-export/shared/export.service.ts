@@ -7,6 +7,7 @@ import { Observable, Observer } from 'rxjs';
 
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { ExportFormat, EncodingFormat } from './export.type';
 
@@ -44,7 +45,7 @@ export class ExportService {
   }
 
   export(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     format: ExportFormat,
     title: string,
     encoding: EncodingFormat,
@@ -56,29 +57,34 @@ export class ExportService {
     return this.exportAsync(exportOlFeatures, format, title, encoding, projectionIn, projectionOut);
   }
 
-  private generateFeature(olFeatures: OlFeature[], format: ExportFormat): OlFeature[] {
+  private generateFeature(
+    olFeatures: OlFeature<OlGeometry>[],
+    format: ExportFormat
+  ): OlFeature<OlGeometry>[] {
     if (format === ExportFormat.GPX && this.aggregateInComment) {
       return this.generateAggregatedFeature(olFeatures);
     }
 
-    return olFeatures.map((olFeature: OlFeature) => {
-      const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
-      const properties = keys.reduce((acc: object, key: string) => {
-        acc[key] = olFeature.get(key);
-        return acc;
-      },
-      {
-        geometry: olFeature.getGeometry()
-      });
+    return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
+      const keys = olFeature
+        .getKeys()
+        .filter((key: string) => !key.startsWith('_'));
+      const properties = keys.reduce(
+        (acc: object, key: string) => {
+          acc[key] = olFeature.get(key);
+          return acc;
+        },
+        { geometry: olFeature.getGeometry() }
+      );
       return new OlFeature(properties);
     });
   }
 
-  private generateAggregatedFeature(olFeatures: OlFeature[]): OlFeature[] {
-    return olFeatures.map((olFeature: OlFeature) => {
+  private generateAggregatedFeature(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+    return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
       const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
       let comment: string = '';
-      const properties: any[] = keys.reduce((acc: object, key: string) => {
+      const properties = keys.reduce((acc: object, key: string) => {
         if (key && key !== 'geometry') {
           key === 'id' && olFeature.get('draw') ? comment += key + ':' + olFeature.get('draw') + '   \r\n'
           : comment += key + ':' + olFeature.get(key) + '   \r\n';
@@ -98,7 +104,7 @@ export class ExportService {
   }
 
   private exportAsync(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     format: ExportFormat,
     title: string,
     encoding: EncodingFormat,
@@ -132,7 +138,7 @@ export class ExportService {
   }
 
   protected exportToFile(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     observer: Observer<void>,
     format: ExportFormat,
     title: string,
@@ -154,7 +160,7 @@ export class ExportService {
   }
 
   private exportWithOgre(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     observer: Observer<void>,
     format: string,
     title: string,
@@ -166,9 +172,7 @@ export class ExportService {
       olFeatures,
       {
         dataProjection: projectionOut,
-        featureProjection: projectionIn,
-        featureType: 'feature',
-        featureNS: 'http://example.com/feature'
+        featureProjection: projectionIn
       }
     );
 
@@ -234,7 +238,7 @@ export class ExportService {
     observer.complete();
   }
 
-  private nothingToExport(olFeatures: OlFeature[], format: string): boolean {
+  private nothingToExport(olFeatures: OlFeature<OlGeometry>[], format: string): boolean {
     if (olFeatures.length === 0) {
       return true;
     }

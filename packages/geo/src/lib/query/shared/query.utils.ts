@@ -1,4 +1,5 @@
 import OlLayer from 'ol/layer/Layer';
+import OlSource from 'ol/source/Source';
 
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { QueryableDataSource } from './query.interfaces';
@@ -18,7 +19,7 @@ export function layerIsQueryable(layer: AnyLayer): boolean {
  * @param layer Layer
  * @returns True if the ol layer is queryable
  */
-export function olLayerIsQueryable(olLayer: OlLayer): boolean {
+export function olLayerIsQueryable(olLayer: OlLayer<OlSource>): boolean {
   const layer = olLayer.get('_layer');
   return layer === undefined ? false : layerIsQueryable(layer);
 }
