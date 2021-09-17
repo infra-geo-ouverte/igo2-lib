@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import OlProjection from 'ol/proj/Projection';
 import OlStyle from 'ol/style/Style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
@@ -19,8 +18,9 @@ import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlOverlay from 'ol/Overlay';
-import { unByKey } from 'ol/Observable';
+import { unByKey, OnReturn } from 'ol/Observable';
 
 import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
@@ -213,12 +213,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Feature added listener key
    */
-  private onFeatureAddedKey: string;
+  private onFeatureAddedKey: OnReturn;
 
   /**
    * Feature removed listener key
    */
-  private onFeatureRemovedKey: string;
+  private onFeatureRemovedKey: OnReturn;
 
   /**
    * Active draw control
@@ -301,8 +301,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     return this.activeDrawControl !== undefined;
   }
 
-  get projection(): OlProjection {
-    return this.map.ol.getView().getProjection();
+  get projection(): string {
+    return this.map.ol.getView().getProjection().getCode();
   }
 
   constructor(
@@ -511,7 +511,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.store.deleteMany(this.selectedFeatures$.value);
     this.selectedFeatures$.value.forEach(selectedFeature => {
       this.olDrawSource.getFeatures().forEach(drawingLayerFeature => {
-        if (selectedFeature.properties.id === drawingLayerFeature.getGeometry().ol_uid) {
+        const geometry = drawingLayerFeature.getGeometry() as any;
+        if (selectedFeature.properties.id === geometry.ol_uid) {
           this.olDrawSource.removeFeature(drawingLayerFeature);
         }
       });
@@ -527,7 +528,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     } else {
       const localFeature = this.selectedFeatures$.value[0];
       const olFeatures = this.store.layer.ol.getSource().getFeatures();
-      const olFeature = olFeatures.find((_olFeature: OlFeature) => {
+      const olFeature = olFeatures.find((_olFeature: OlFeature<OlGeometry>) => {
         return _olFeature.get('id') === localFeature.properties.id;
       });
 
@@ -536,7 +537,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         this.activateModifyControl();
 
         const olGeometry = olFeature.getGeometry();
-        this.clearTooltipsOfOlGeometry(olGeometry);
+        this.clearTooltipsOfOlGeometry(olGeometry as (OlLineString | OlPolygon));
         this.modifyControl.setOlGeometry(olGeometry);
       }
     }
@@ -584,15 +585,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       many: true
     }));
 
-    this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent) => {
+    this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent<OlGeometry>) => {
       const localFeature = event.feature;
-      const olGeometry = localFeature.getGeometry();
+      const olGeometry = localFeature.getGeometry() as any;
       this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
       this.onDisplayDistance();
     });
 
-    this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
-      const olGeometry = event.feature.getGeometry();
+    this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
+      const olGeometry = event.feature.getGeometry() as any;
       this.clearTooltipsOfOlGeometry(olGeometry);
     });
 
@@ -855,13 +856,13 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry: OlLineString | OlPolygon, localFeature?: FeatureWithMeasure) {
+  private addFeatureToStore(olGeometry, localFeature?: FeatureWithMeasure) {
     const featureId = localFeature ? localFeature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: projection
-    });
+    }) as any;
     this.store.update({
       type: FEATURE,
       geometry,
@@ -938,18 +939,18 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private updateTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.updateTooltipsOfOlGeometry(olFeature.getGeometry());
+  private updateTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+      this.updateTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 
   /**
    * Show the map tooltips of all the geometries of a source
    */
-  private showTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
-      this.showTooltipsOfOlGeometry(olFeature.getGeometry());
+  private showTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
+      this.showTooltipsOfOlGeometry(olFeature.getGeometry() as any);
     });
   }
 
@@ -957,11 +958,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Clear the map tooltips
    * @param olDrawSource OL vector source
    */
-  private clearTooltipsOfOlSource(olSource: OlVectorSource) {
-    olSource.forEachFeature((olFeature: OlFeature) => {
+  private clearTooltipsOfOlSource(olSource: OlVectorSource<OlGeometry>) {
+    olSource.forEachFeature((olFeature: OlFeature<OlGeometry>) => {
       const olGeometry = olFeature.getGeometry();
       if (olGeometry !== undefined) {
-        this.clearTooltipsOfOlGeometry(olFeature.getGeometry());
+        this.clearTooltipsOfOlGeometry(olFeature.getGeometry() as any);
       }
     });
   }

@@ -10,8 +10,36 @@
       width: 100%;
     }
   }
+  .closeIcon ::ng-deep .sn-title:after {
+    content: 'close';
+    font-family: 'Material Icons';
+    font-feature-settings: 'liga' 1;
+    font-size: 24px;
+    font-weight: normal;
+    right: 5px;
+    top: 5px;
+    position: absolute;
+  }
+}
 
-  div.simple-notification {
+:host ::ng-deep .simple-notification .icon {
+
+    top: 0;
+    left: 0;
+    width: 45px;
+    height: 45px;
+    height: 100%;
+    padding: 7px;
+
+    mat-icon {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      font-size: 32px;
+    }
+}
+
+:host ::ng-deep div.simple-notification {
     min-height: 50px;
     margin-bottom: 5px;
     padding-left: 45px;
@@ -35,31 +63,5 @@
       line-height: 18px;
       font-size: 15px;
     }
-
-    .icon  {
-      top: 0;
-      left: 0;
-      width: 45px;
-      height: 100%;
-      padding: 7px;
-
-      mat-icon {
-        display: flex;
-        align-items: center;
-        height: 100%;
-        font-size: 32px;
-      }
-    }
-  }
-
-  .closeIcon ::ng-deep .sn-title:after {
-    content: 'close';
-    font-family: 'Material Icons';
-    font-feature-settings: 'liga' 1;
-    font-size: 24px;
-    font-weight: normal;
-    right: 5px;
-    top: 5px;
-    position: absolute;
-  }
 }
+

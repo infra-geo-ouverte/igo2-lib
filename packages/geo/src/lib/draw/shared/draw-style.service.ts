@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import * as OlStyle from 'ol/style';
-import * as OlColor from 'ol/color';
 import OlPoint from 'ol/geom/Point';
 import { transform } from 'ol/proj';
 import { MapService } from '../../map/shared/map.service';
@@ -11,8 +10,8 @@ import { MapService } from '../../map/shared/map.service';
   })
 export class DrawStyleService {
 
-  private fillColor: OlColor = 'rgba(255,255,255,0.4)';
-  private strokeColor: OlColor = 'rgba(143,7,7,1)';
+  private fillColor = 'rgba(255,255,255,0.4)';
+  private strokeColor = 'rgba(143,7,7,1)';
   private strokeWidth: number = 1;
   private labelsAreShown = true;
   private icon: string;
@@ -21,19 +20,19 @@ export class DrawStyleService {
     private mapService: MapService
   ) {}
 
-  getFillColor(): OlColor {
+  getFillColor(): string {
     return this.fillColor;
   }
 
-  setFillColor(fillColor: OlColor) {
+  setFillColor(fillColor: string) {
     this.fillColor = fillColor;
   }
 
-  getStrokeColor(): OlColor {
+  getStrokeColor(): string {
     return this.strokeColor;
   }
 
-  setStrokeColor(strokeColor: OlColor) {
+  setStrokeColor(strokeColor: string) {
     this.strokeColor = strokeColor;
   }
 

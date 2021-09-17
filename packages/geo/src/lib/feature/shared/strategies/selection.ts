@@ -1,9 +1,10 @@
 import OlFeature from 'ol/Feature';
-import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlDragBoxInteraction, { DragBoxEvent } from 'ol/interaction/DragBox';
 import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
-import { ListenerFunction } from 'ol/events';
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
-import { unByKey } from 'ol/Observable';
+import { EventsKey, ListenerFunction } from 'ol/events';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey, OnReturn } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
@@ -43,11 +44,11 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * Listener to the map click event that allows selecting a feature
    * by clicking on the map
    */
-  private mapClickListener: ListenerFunction;
+  private mapClickListener: OnReturn;
 
   private olDragSelectInteraction: OlDragSelectInteraction;
 
-  private olDragSelectInteractionEndKey: string;
+  private olDragSelectInteractionEndKey: EventsKey | EventsKey[];
 
   /**
    * Subscription to all stores selected entities
@@ -134,7 +135,6 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * overlay.
    */
   deactivateSelection() {
-    this.unlistenToMapClick();
     this.removeDragBoxInteraction();
     this.unwatchAll();
   }
@@ -211,7 +211,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   private listenToMapClick() {
     this.mapClickListener = this.map.ol.on(
       'singleclick',
-      (event: OlMapBrowserPointerEvent) => {
+      (event: MapBrowserPointerEvent<any>) => {
         this.onMapClick(event);
       }
     );
@@ -220,20 +220,20 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   /**
    * Remove the map click listener
    */
-  private unlistenToMapClick() {
-    if (this.mapClickListener !== undefined) {
-      this.map.ol.un(
-        this.mapClickListener.type,
-        this.mapClickListener.listener
-      );
-    }
-  }
+  // private unlistenToMapClick() {
+  //   if (this.mapClickListener !== undefined) {
+  //     this.map.ol.un(
+  //       this.mapClickListener.type,
+  //       this.mapClickListener.listener
+  //     );
+  //   }
+  // }
 
   /**
    * On map click, select feature at pixel
    * @param event OL MapBrowserPointerEvent
    */
-  private onMapClick(event: OlMapBrowserPointerEvent) {
+  private onMapClick(event: MapBrowserPointerEvent<any>) {
     const exclusive = !ctrlKeyDown(event);
     const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
@@ -244,7 +244,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
         });
         return storeOlLayer !== undefined;
       }
-    });
+    }) as OlFeature<OlGeometry>[];
     this.onSelectFromMap(olFeatures, exclusive, reverse);
   }
 
@@ -275,7 +275,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
     this.olDragSelectInteractionEndKey = olDragSelectInteraction.on(
       'boxend',
-      (event: OlMapBrowserPointerEvent) => this.onDragBoxEnd(event)
+      (event: DragBoxEvent) => this.onDragBoxEnd(event)
     );
   }
 
@@ -298,9 +298,10 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private onDragBoxEnd(event: OlDragBoxEvent) {
     const exclusive = !ctrlKeyDown(event.mapBrowserEvent);
-    const extent = event.target.getGeometry().getExtent();
+    const target = event.target as any;
+    const extent = target.getGeometry().getExtent();
     const olFeatures = this.stores.reduce(
-      (acc: OlFeature[], store: FeatureStore) => {
+      (acc: OlFeature<OlGeometry>[], store: FeatureStore) => {
         const olSource = store.layer.ol.getSource();
         acc.push(...olSource.getFeaturesInExtent(extent));
         return acc;
@@ -320,7 +321,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const olOverlayFeatures = this.overlayStore.layer.ol
       .getSource()
       .getFeatures();
-    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) =>
+    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature<OlGeometry>) =>
       olFeature.getId()
     );
     const featuresKeys = features.map(this.overlayStore.getKey);
@@ -351,7 +352,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param olFeatures OL feature objects
    */
   private onSelectFromMap(
-    olFeatures: OlFeature[],
+    olFeatures: OlFeature<OlGeometry>[],
     exclusive: boolean,
     reverse: boolean
   ) {
@@ -403,14 +404,14 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @returns Store -> features mapping
    */
   private groupFeaturesByStore(
-    olFeatures: OlFeature[]
+    olFeatures: OlFeature<OlGeometry>[]
   ): Map<FeatureStore, Feature[]> {
     const groupedFeatures = new Map<FeatureStore, Feature[]>();
     if (olFeatures === null || olFeatures === undefined) {
       return groupedFeatures;
     }
 
-    olFeatures.forEach((olFeature: OlFeature) => {
+    olFeatures.forEach((olFeature: OlFeature<OlGeometry>) => {
       const store = olFeature.get('_featureStore');
       if (store === undefined) {
         return;

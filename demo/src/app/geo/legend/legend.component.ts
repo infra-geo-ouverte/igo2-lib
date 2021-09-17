@@ -168,7 +168,7 @@ export class AppLegendComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             LAYERS: 'bgr_v_sous_route_res_sup_act',
             VERSION: '1.3.0'
@@ -183,7 +183,7 @@ export class AppLegendComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           optionsFromCapabilities: true,
           params: {
             LAYERS: 'lieuhabite',
@@ -224,7 +224,7 @@ export class AppLegendComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             LAYERS: 'evenements',
             VERSION: '1.3.0'

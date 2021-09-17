@@ -19,6 +19,14 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AboutToolComponent implements OnInit {
   @Input()
+  get headerHtml() {
+    return this._headerHtml;
+  }
+  set headerHtml(value: string) {
+    this._headerHtml = Array.isArray(value) ? value.join('\n') : value;
+  }
+
+  @Input()
   get html() {
     return this._html;
   }
@@ -41,6 +49,7 @@ export class AboutToolComponent implements OnInit {
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
+  private _headerHtml: string = 'igo.integration.aboutTool.headerHtml';
 
   private baseUrlProfil;
   private baseUrlGuide;

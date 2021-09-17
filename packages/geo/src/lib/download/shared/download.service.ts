@@ -67,13 +67,13 @@ export class DownloadService {
         .handleOgcFiltersAppliedValue(
           layer.dataSource.options,
           ogcFilters.geometryName,
-          currentExtent,
+          currentExtent as [number, number, number, number],
           currentProj);
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
-            currentExtent,
+            currentExtent as [number, number, number, number],
             currentProj,
             ogcFilters.geometryName
           );

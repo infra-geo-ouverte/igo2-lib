@@ -95,7 +95,7 @@ export class MapOfflineDirective implements AfterViewInit {
     layerList.forEach(layer => {
       if (layer.options.source instanceof MVTDataSource) {
         sourceOptions = layer.options.sourceOptions as MVTDataSourceOptions;
-        layer.ol.getSource().clear();
+        layer.ol.getSource().refresh();
       } else if (layer.options.source instanceof XYZDataSource) {
         sourceOptions = layer.options.sourceOptions as XYZDataSourceOptions;
       } else if (layer.options.source instanceof ClusterDataSource) {
@@ -131,7 +131,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          layer.ol.getSource().setUrl(sourceOptions.pathOffline);
+          // layer.ol.getSource().setUrl(sourceOptions.pathOffline);
         } else if (
           (sourceOptions.pathOffline &&
             this.networkState.connection === false) ||
@@ -144,7 +144,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          layer.ol.getSource().setUrl(sourceOptions.url);
+          // layer.ol.getSource().setUrl(sourceOptions.url);
         } else {
           if (
             this.networkState.connection === false ||

@@ -45,6 +45,8 @@ export class SearchSettingsComponent implements OnInit {
   public buffer = [];
   public lastKeyTime = Date.now();
 
+  public displayBlock = 'block';
+
   get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }

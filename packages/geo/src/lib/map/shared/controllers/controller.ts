@@ -1,3 +1,4 @@
+import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { unByKey } from 'ol/Observable';
 
@@ -14,7 +15,7 @@ export class MapController {
   /**
    * Array of observer keys
    */
-  protected observerKeys: string[] = [];
+  protected observerKeys: EventsKey[] = [];
 
   /**
    * Return the OL map this controller is bound to
@@ -46,7 +47,7 @@ export class MapController {
    * Teardown any observers
    */
   teardownObservers() {
-    this.observerKeys.forEach((key: string) => unByKey(key));
+    this.observerKeys.forEach((key: EventsKey) => unByKey(key));
     this.observerKeys = [];
   }
 

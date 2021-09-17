@@ -5,7 +5,7 @@ import {
   Notification,
   NotificationsService,
   NotificationType
-} from 'angular2-notifications';
+} from '@igo2/angular2-notifications';
 
 import { ConfigService } from '../../config/config.service';
 

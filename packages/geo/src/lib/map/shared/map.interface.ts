@@ -44,7 +44,7 @@ export interface MapControlsOptions {
 export interface MapScaleLineOptions {
   className?: string;
   minWidth?: number;
-  target?: Element;
+  target?: string | HTMLElement;
   units?: string;
   bar?: boolean;
   steps?: number;

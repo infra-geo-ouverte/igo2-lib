@@ -68,7 +68,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         queryable: true,
         queryTitle: 'num_rts',
         params: {
@@ -89,7 +89,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         queryable: true,
         queryFormat: QueryFormat.HTMLGML2,
         queryHtmlTarget: QueryHtmlTarget.IFRAME,

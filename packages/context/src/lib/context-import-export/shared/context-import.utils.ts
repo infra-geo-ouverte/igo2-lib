@@ -1,4 +1,5 @@
 import * as olStyle from 'ol/style';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {
   FeatureDataSource,
@@ -169,7 +170,7 @@ export function computeLayerTitleFromFile(file: File): string {
 }
 
 export function addImportedFeaturesToMap(
-  olFeatures: OlFeature[],
+  olFeatures: OlFeature<OlGeometry>[],
   map: IgoMap,
   layerTitle: string
 ): VectorLayer {
@@ -209,7 +210,7 @@ export function addImportedFeaturesToMap(
 }
 
 export function addImportedFeaturesStyledToMap(
-  olFeatures: OlFeature[],
+  olFeatures: OlFeature<OlGeometry>[],
   map: IgoMap,
   layerTitle: string,
   styleListService: StyleListService,
