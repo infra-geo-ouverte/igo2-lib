@@ -1,14 +1,15 @@
+import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import OlStyle from 'ol/style';
+import * as OlStyle from 'ol/style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlModify from 'ol/interaction/Modify';
 import OlSelect from 'ol/interaction/Select';
-import { Geometry as OlGeometry, GeometryEvent as OlGeometryEvent } from 'ol/geom/Geometry';
-import OlCollection from 'ol/Collection';
+import BasicEvent from 'ol/events/Event';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { SelectEvent as OlSelectEvent } from 'ol/interaction/Select';
 import { unByKey } from 'ol/Observable';
@@ -19,11 +20,11 @@ import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
-  geometryType: OlGeometryType;
-  drawingLayerSource?: OlVectorSource;
-  drawingLayer?: OlVectorLayer;
-  drawingLayerStyle?: OlStyle | ((olFeature: OlFeature) => OlStyle);
-  interactionStyle?: OlStyle | ((olFeature: OlFeature) => OlStyle);
+  geometryType: typeof OlGeometryType | string;
+  drawingLayerSource?: OlVectorSource<OlGeometry>;
+  drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  drawingLayerStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  interactionStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
   maxPoints?: number;
 }
 
@@ -44,12 +45,12 @@ export class DrawControl {
   /**
    * Draw changes observable (while drawing)
    */
-  public changes$: Subject<OlGeometry> = new Subject();
+  public changes$: Subject<any> = new Subject();
 
   /**
    * Draw modify observable (modify drawn features)
    */
-  public modify$: Subject<OlCollection> = new Subject();
+  public modify$: Subject<OlGeometry> = new Subject();
 
   /**
    * Draw select observable (modify drawn features)
@@ -63,14 +64,15 @@ export class DrawControl {
 
   private keyDown$$: Subscription;
 
-  private olGeometryType: OlGeometryType | undefined;
+  private olGeometryType: typeof OlGeometryType | undefined | string;
   private olMap: OlMap;
-  private olDrawingLayer: OlVectorLayer;
+  private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
   private olSelectInteraction: OlSelect;
-  private onDrawStartKey: string;
-  private onDrawEndKey: string;
-  private onDrawKey: string;
+  private olModifyInteraction: OlModify;
+  private onDrawStartKey: EventsKey;
+  private onDrawEndKey: EventsKey;
+  private onDrawKey: EventsKey;
 
   private mousePosition: [number, number];
 
@@ -85,7 +87,7 @@ export class DrawControl {
    * OL overlay source
    * @internal
    */
-  get olDrawingLayerSource(): OlVectorSource {
+  get olDrawingLayerSource(): OlVectorSource<OlGeometry> {
     return this.olDrawingLayer.getSource();
   }
 
@@ -115,7 +117,7 @@ export class DrawControl {
   /**
    * Return the drawing layer source
    */
-  getSource(): OlVectorSource {
+  getSource(): OlVectorSource<OlGeometry> {
     return this.olDrawingLayerSource;
   }
 
@@ -123,14 +125,14 @@ export class DrawControl {
    * Set the current geometry type
    * @param geometryType the geometry type
    */
-  setGeometryType(geometryType: OlGeometryType) {
+  setGeometryType(geometryType: typeof OlGeometryType) {
     this.olGeometryType = geometryType;
   }
 
   /**
    * Create a drawing source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer {
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
     return new OlVectorLayer({
       source: this.options.drawingLayerSource ? this.options.drawingLayerSource : new OlVectorSource(),
       style: this.options.drawingLayerStyle,
@@ -150,7 +152,7 @@ export class DrawControl {
   /**
    * Add the drawing layer if it wasn't defined in the options
    */
-  private addOlInnerOverlayLayer(): OlVectorLayer {
+  private addOlInnerOverlayLayer() {
     if (!this.options.drawingLayer) {
       this.olMap.addLayer(this.olDrawingLayer);
     }
@@ -215,13 +217,13 @@ export class DrawControl {
       });
 
       this.olMap.addInteraction(olModifyInteraction);
+      this.olModifyInteraction = olModifyInteraction;
 
       // Create a select interaction and add it to map
       if (!this.olSelectInteraction) {
         const olSelectInteraction = new OlSelect({
           condition: doubleClick,
-          style: undefined,
-          source: this.getSource()
+          style: undefined
         });
         this.olMap.addInteraction(olSelectInteraction);
         this.olSelectInteraction = olSelectInteraction;
@@ -240,9 +242,11 @@ export class DrawControl {
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
+      this.olMap.removeInteraction(this.olModifyInteraction);
     }
 
     this.olDrawInteraction = undefined;
+    this.olModifyInteraction = undefined;
   }
 
   /**
@@ -253,7 +257,7 @@ export class DrawControl {
     const olGeometry = event.feature.getGeometry();
     this.start$.next(olGeometry);
     this.clearOlInnerOverlaySource();
-    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
+import * as striptags_ from 'striptags';
+
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
 import olFormatGML2 from 'ol/format/GML2';
@@ -79,12 +81,12 @@ export class QueryService {
   }
 
   private mergeGML(gmlRes, url) {
-    let parser = new olFormatGML2();
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
-      features = parser.readFeatures(gmlRes);
+      const wmsParser = new olformat.WMSGetFeatureInfo();
+      features = wmsParser.readFeatures(gmlRes);
     }
     const olmline = new olgeom.MultiLineString([]);
     let pts;
@@ -381,13 +383,13 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
-    let parser = new olFormatGML2();
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(res);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
+      const wmsParser = new olformat.WMSGetFeatureInfo();
       try {
-        features = parser.readFeatures(res);
+        features = wmsParser.readFeatures(res);
       } catch (e) {
         console.warn(
           'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
@@ -467,7 +469,8 @@ export class QueryService {
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
     // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
-    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '').replace(/<(.|\n)*?>/g, '');
+    const striptags = striptags_;
+    const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
     if (body === '' || res === '') {
       return [];
     }
@@ -498,7 +501,7 @@ export class QueryService {
   }
 
   public featureToResult(
-    featureOL: olFeature,
+    featureOL: olFeature<olgeom.Geometry>,
     zIndex: number,
     allowedFieldsAndAlias?
   ): Feature {

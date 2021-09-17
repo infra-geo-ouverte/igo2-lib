@@ -16,7 +16,7 @@ import { LanguageService, MessageService } from '@igo2/core';
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
   public options: ImageLayerOptions;
-  public ol: olLayerImage;
+  public ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 
@@ -36,7 +36,7 @@ export class ImageLayer extends Layer {
     });
   }
 
-  protected createOlLayer(): olLayerImage {
+  protected createOlLayer(): olLayerImage<olSourceImage> {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceImage
     });

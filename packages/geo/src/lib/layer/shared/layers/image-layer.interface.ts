@@ -1,4 +1,5 @@
 import olLayerImage from 'ol/layer/Image';
+import olSourceImage from 'ol/source/Image';
 
 import { LayerOptions } from './layer.interface';
 
@@ -16,7 +17,7 @@ export interface ImageLayerOptions extends LayerOptions {
     | WMSDataSourceOptions
     | ArcGISRestImageDataSourceOptions;
   tokenKey?: string;
-  ol?: olLayerImage;
+  ol?: olLayerImage<olSourceImage>;
   metadata?: {
     url?: string;
     extern?: boolean;

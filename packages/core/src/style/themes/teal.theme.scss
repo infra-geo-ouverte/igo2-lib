@@ -1,9 +1,16 @@
-$primary: mat-palette($mat-teal, 600, 400, 900);
-$accent: mat-palette($mat-teal, 400);
-$warn: mat-palette($mat-red);
+.teal-theme {
+    $primary: mat.define-palette(mat.$teal-palette, 600, 400, 900);
+    $accent: mat.define-palette(mat.$teal-palette, 400);
+    $warn: mat.define-palette(mat.$red-palette);
 
-$theme: mat-light-theme(
-    $primary,
-    $accent,
-    $warn
-);
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}

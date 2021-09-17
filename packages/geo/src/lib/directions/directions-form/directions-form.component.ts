@@ -24,6 +24,7 @@ import * as olstyle from 'ol/style';
 import * as olcondition from 'ol/events/condition';
 import * as olinteraction from 'ol/interaction';
 import * as olobservable from 'ol/Observable';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { Clipboard } from '@igo2/utils';
 import {
@@ -51,7 +52,7 @@ import { DirectionsFormService } from './directions-form.service';
 
 import { QueryService } from '../../query/shared/query.service';
 import { FeatureStore } from '../../feature/shared/store';
-import { Feature } from '../../feature/shared/feature.interfaces';
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { roundCoordTo } from '../../map/shared/map.utils';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
@@ -367,8 +368,8 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         this.addStop();
         const pos = this.stops.length - 2;
         this.stops.at(pos).patchValue({ stopCoordinates: selectCoordinates });
-        this.handleLocationProposals(selectCoordinates, pos);
-        this.addStopOverlay(selectCoordinates, pos);
+        this.handleLocationProposals(selectCoordinates as [number, number], pos);
+        this.addStopOverlay(selectCoordinates as [number, number], pos);
         this.selectedRoute.getFeatures().clear();
       }
       this.selectedRoute.getFeatures().clear();
@@ -439,7 +440,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         stopProposals: []
       });
     if (reverseSearchProposal) {
-      this.handleLocationProposals(translationCoordinates, p);
+      this.handleLocationProposals(translationCoordinates as [number, number], p);
     }
 
     const directionsOptions = {
@@ -962,7 +963,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.map.projection,
       dataProjection: this.map.projection
-    });
+    }) as FeatureGeometry;
 
     const previousVertex = this.routeStore.get(vertexId);
     const previousVertexRevision = previousVertex
@@ -985,7 +986,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     };
     this.routeStore.update(vertexFeature);
     if (zoomToExtent) {
-      this.map.viewController.zoomToExtent(feature.getGeometry().getExtent());
+      this.map.viewController.zoomToExtent(feature.getGeometry().getExtent() as [number, number, number, number]);
     }
   }
 
@@ -1000,7 +1001,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
           .find(f => f.getId() === 'route');
         if (routeFeature) {
           const routeExtent = routeFeature.getGeometry().getExtent();
-          this.map.viewController.zoomToExtent(routeExtent);
+          this.map.viewController.zoomToExtent(routeExtent as [number, number, number, number]);
         }
       }
     }
@@ -1023,7 +1024,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         featureProjection: this.map.projection,
         dataProjection: this.map.projection
       }
-    );
+    ) as FeatureGeometry;
 
     const previousRoute = this.routeStore.get('route');
     const previousRouteRevision = previousRoute
@@ -1313,7 +1314,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  private handleMapClick(event: olcondition, indexPos?) {
+  private handleMapClick(event, indexPos?) {
     if (this.currentStopIndex === undefined) {
       this.addStop();
       indexPos = this.stops.length - 2;
@@ -1330,8 +1331,8 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       .at(indexPos)
       .patchValue({ stopProposals: [], stopCoordinates: clickCoordinates });
 
-    this.handleLocationProposals(clickCoordinates, indexPos);
-    this.addStopOverlay(clickCoordinates, indexPos);
+    this.handleLocationProposals(clickCoordinates as [number, number], indexPos);
+    this.addStopOverlay(clickCoordinates as [number, number], indexPos);
     setTimeout(() => {
       this.focusOnStop = false; // prevent to trigger map click and Select on routes at same time.
     }, 500);
@@ -1383,7 +1384,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.map.projection,
       dataProjection: this.map.projection
-    });
+    }) as FeatureGeometry;
 
     const previousStop = this.stopsStore.get(stopID);
     const previousStopRevision = previousStop ? previousStop.meta.revision : 0;
@@ -1459,9 +1460,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
  * @returns OL style function
  */
 export function stopMarker(
-  feature: olFeature,
+  feature: olFeature<OlGeometry>,
   resolution: number
-): olstyle.Style {
+): olstyle.Style | olstyle.Style[] {
   const vertexStyle = [
     new olstyle.Style({
       geometry: feature.getGeometry(),
@@ -1480,10 +1481,10 @@ export function stopMarker(
 
   const routeStyle = [
     new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: '#6a7982', width: 10, opacity: 0.75 })
+      stroke: new olstyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
     }),
     new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: '#4fa9dd', width: 6, opacity: 0.75 })
+      stroke: new olstyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
     })
   ];
 

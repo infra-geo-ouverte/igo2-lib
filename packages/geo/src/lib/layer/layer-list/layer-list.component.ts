@@ -334,7 +334,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   zoomLayersExtents(layers: Layer[]) {
-    const layersExtent = olextent.createEmpty();
+    const layersExtent = olextent.createEmpty() as [number, number, number, number];
 
     for (const layer of layers) {
       const layerExtent = layer.options.extent;

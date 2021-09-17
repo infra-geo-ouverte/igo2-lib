@@ -93,7 +93,7 @@ export class AppPrintComponent {
             title: 'Geomet',
             sourceOptions: {
               type: 'wms',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wms',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wms',
               params: {
                 layers: 'swtq',
                 version: '1.3.0',

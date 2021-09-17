@@ -1,5 +1,3 @@
-@import './feature-details/feature-details.theming';
-
 @mixin igo-feature-theming($theme) {
   @include igo-feature-details-theming($theme);
 }

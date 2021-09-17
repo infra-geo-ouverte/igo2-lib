@@ -250,7 +250,7 @@ export class InteractiveTourService {
     step: InteractiveTourStep,
     actionConfig: InteractiveTourAction
   ) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       this.executeAction(step, actionConfig);
       if (!actionConfig || !actionConfig.waitFor) {
         resolve();

@@ -57,7 +57,7 @@ export interface TileGridOptions {
   minZoom?: number;
   origin?: [number, number];
   origins?: [number, number][];
-  resolutions?: number[];
+  resolutions: number[];
   sizes?: [number, number][];
   tileSize?: [number, number];
   tileSizes?: [number, number][];

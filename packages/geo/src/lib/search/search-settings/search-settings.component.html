@@ -68,6 +68,7 @@
                   </div>
                   <mat-checkbox *ngFor="let settingValue of getAvailableValues(setting)"
                     class="mat-menu-item"
+                    [style.display]="displayBlock"
                     [checked]="settingValue.enabled"
                     [value]="setting"
                     [matTooltip]="getAvailableHashtagsValues(settingValue)"
