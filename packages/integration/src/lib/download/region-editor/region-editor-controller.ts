@@ -24,7 +24,7 @@ export class RegionEditorController extends RegionEditorControllerBase {
             return;
         }
         const urlGen = createFromTemplate(templateUrl, tileGrid);
-        // TODO Validate PEL if undefined is OK. 
+        // TODO Validate PEL if undefined is OK.
         const url = urlGen(coord, 0, undefined);
         const z = coord[0];
         const first: boolean = this.parentTileUrls.length === 0;
