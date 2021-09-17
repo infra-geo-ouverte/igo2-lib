@@ -360,7 +360,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
-        const rad: number = entity.properties.rad ? entity.properties.rad : undefined
+        const rad: number = entity.properties.rad ? entity.properties.rad : undefined;
 
         this.updateLabelOfOlGeometry(olGeometry, label);
         this.replaceFeatureInStore(entity, olGeometry, rad);
@@ -389,7 +389,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     if (olGeometry instanceof OlCircle || radius) {
       if (radius) {
-        rad = radius
+        rad = radius;
       } else {
         geometry.type = 'Point';
         geometry.coordinates = olGeometry.getCenter();
