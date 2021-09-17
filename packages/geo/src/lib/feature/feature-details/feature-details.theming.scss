@@ -5,7 +5,7 @@
 
   igo-feature-details > table.igo-striped tbody tr:nth-child(odd) {
     background-color: mat.get-color-from-palette($background, if($is-dark, app-bar, status-bar));
-    color: mat.get-color-from-palette($foreground, text);
+    color: black;
   }
 
 }
