@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
-import { stripHtml } from "string-strip-html";
+import { stripHtml } from 'string-strip-html';
 
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
