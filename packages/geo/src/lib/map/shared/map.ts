@@ -591,7 +591,6 @@ export class IgoMap {
 
         if (this.ol.getView().get('options_').buffer) {
           const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
-          const coordinates = geolocation.getPosition();
           this.bufferGeom = new olCircle(coordinates, bufferRadius);
           const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
           const bufferFill = this.ol.getView().get('options_').buffer.bufferFill;
