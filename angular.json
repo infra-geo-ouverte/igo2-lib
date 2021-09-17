@@ -65,6 +65,7 @@
               "core-js-pure/features/symbol",
               "core-js-pure/features/symbol/iterator",
               "canvg/lib/index.es.js",
+              "html-entities",
               "@turf/helpers",
               "@turf/line-segment",
               "@turf/meta",

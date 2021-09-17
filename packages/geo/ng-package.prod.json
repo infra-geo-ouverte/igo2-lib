@@ -26,6 +26,7 @@
       "ol/loadingstrategy": "OlLoadingStrategy",
       "ol/render": "olRender",
       "ol/source/TileArcGISRest": "olSourceTileArcGISRest",
+      "string-strip-html": "stringStripHtml",
       "ts-md5": "tsMd5",
       "ol/source/VectorTile": "olSourceVectorTile",
       "ol/source/Cluster": "olSourceCluster",
