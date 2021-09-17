@@ -1,4 +1,5 @@
 import olLayerTile from 'ol/layer/Tile';
+import olSourceTile from 'ol/source/Tile';
 
 import { LayerOptions } from './layer.interface';
 
@@ -31,5 +32,5 @@ export interface TileLayerOptions extends LayerOptions {
     | TileDebugDataSourceOptions
     | CartoDataSourceOptions
     | TileArcGISRestDataSourceOptions;
-  ol?: olLayerTile;
+  ol?: olLayerTile<olSourceTile>;
 }

@@ -11,9 +11,9 @@
   .igo-map-tooltip-measure {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
-    color: mat-color($foreground, text);
+    color: black;
     font-weight: bold;
-    font-size: mat-font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subheading-2);
   }
   .igo-map-tooltip-hidden {
     display: none;

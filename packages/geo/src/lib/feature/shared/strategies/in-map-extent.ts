@@ -100,7 +100,6 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
   private unwatchStore(store: FeatureStore) {
     const key = this.stores$$.get(store);
     if (key !== undefined) {
-      unByKey(key);
       this.stores$$.delete(store);
     }
   }
@@ -109,9 +108,6 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach((entries: [FeatureStore, string]) => {
-      unByKey(entries[1]);
-    });
     this.stores$$.clear();
     this.states$$.map(state => state.unsubscribe());
     if (this.empty$$) { this.empty$$.unsubscribe(); }

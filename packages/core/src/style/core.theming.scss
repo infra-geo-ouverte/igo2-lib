@@ -1,5 +1,3 @@
-@import '../lib/message/message.theming';
-
 @mixin igo-core-theming($theme, $typography) {
   @include igo-message-theming($theme);
 

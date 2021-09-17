@@ -1,6 +1,8 @@
 import olStyle from 'ol/style/Style';
 import olLayerVector from 'ol/layer/Vector';
-import olColor from 'ol/color';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olColor from 'ol/color';
 
 import { LayerOptions } from './layer.interface';
 
@@ -19,6 +21,8 @@ import { ClusterDataSourceOptions } from '../../../datasource/shared/datasources
 import { ClusterParam } from '../clusterParam';
 
 import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
+import RenderFeature from 'ol/render/Feature';
+import Feature from 'ol/Feature';
 
 export interface VectorLayerOptions extends LayerOptions {
   source?:
@@ -33,10 +37,10 @@ export interface VectorLayerOptions extends LayerOptions {
     | ArcGISRestDataSourceOptions
     | WebSocketDataSourceOptions
     | ClusterDataSourceOptions;
-  style?: { [key: string]: any } | olStyle | olStyle[];
+  style?: olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);
   browsable?: boolean;
   exportable?: boolean;
-  ol?: olLayerVector;
+  ol?: olLayerVector<olSourceVector<OlGeometry>>;
   animation?: VectorAnimation;
   styleByAttribute?: StyleByAttribute;
   clusterBaseStyle?: { [key: string]: any } | olStyle | olStyle[];
@@ -47,5 +51,5 @@ export interface VectorLayerOptions extends LayerOptions {
 
 export interface VectorAnimation {
   duration?: number;
-  color?: olColor;
+  color?: olColor.Color;
 }

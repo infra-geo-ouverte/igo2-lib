@@ -231,11 +231,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     let STYLES = '';
-    this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
-      STYLES += this.currentStyle + ','
-    );
+    console.log(this.layer.dataSource.ol);
+    // this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
+    //   STYLES += this.currentStyle + ','
+    // );
     STYLES = STYLES.slice(0, -1);
-    this.layer.dataSource.ol.updateParams({STYLES});
+    // this.layer.dataSource.ol.updateParams({STYLES});
   }
 
   onLoadImage(id: string) {

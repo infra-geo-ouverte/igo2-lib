@@ -7,6 +7,10 @@
   [discoverTitleInLocale$]="discoverTitleInLocale$">
 </igo-interactive-tour>
 
+<igo-custom-html class="mat-typography"
+  [html]="headerHtml |  translate">
+</igo-custom-html>
+
 <button *ngIf="auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1"
   class="training-guide-button"
   mat-raised-button
