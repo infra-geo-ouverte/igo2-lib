@@ -19,7 +19,8 @@
     "@turf/helpers": "^6.1.4",
     "@turf/line-intersect": "^6.0.2",
     "@turf/point-on-feature": "^5.1.5",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "string-strip-html": "^9.0.1"
   },
   "peerDependencies": {
     "@angular/animations": "~12.1.3",

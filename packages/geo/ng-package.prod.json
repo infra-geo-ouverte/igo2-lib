@@ -101,6 +101,7 @@
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect",
-    "@turf/point-on-feature"
+    "@turf/point-on-feature",
+    "string-strip-html"
   ]
 }
