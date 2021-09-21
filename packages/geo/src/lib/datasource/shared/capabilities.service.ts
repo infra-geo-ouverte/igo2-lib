@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Cacheable } from 'ngx-cacheable';
+import { Cacheable } from 'ts-cacheable';
 
 import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
@@ -133,8 +133,8 @@ export class CapabilitiesService {
   }
 
   getImageArcgisOptions(
-    baseOptions: ArcGISRestImageDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions> {
+    baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
     const legendUrl = modifiedUrl + '/legend?f=json';
@@ -156,7 +156,7 @@ export class CapabilitiesService {
 
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
-  ): Observable<TileArcGISRestDataSourceOptions> {
+  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities('tilearcgisrest', baseOptions.url);
@@ -379,7 +379,7 @@ export class CapabilitiesService {
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
     const style = styleGenerator.generateStyle(arcgisOptions, units);
     const attributions = new olAttribution({
-      html: arcgisOptions.copyrightText
+      target: arcgisOptions.copyrightText
     });
     let timeExtent;
     let timeFilter;
@@ -434,7 +434,7 @@ export class CapabilitiesService {
     const title = arcgisOptions.name;
     const legendInfo = legend.layers ? legend : undefined;
     const attributions = new olAttribution({
-      html: arcgisOptions.copyrightText
+      target: arcgisOptions.copyrightText
     });
     let timeExtent;
     let timeFilter;

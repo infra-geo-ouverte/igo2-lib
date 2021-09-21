@@ -1,4 +1,4 @@
-import { TileDebug } from 'ol/source';
+import TileDebug from 'ol/source/TileDebug';
 import TileGrid from 'ol/tilegrid/TileGrid';
 
 import { DataSource } from './datasource';

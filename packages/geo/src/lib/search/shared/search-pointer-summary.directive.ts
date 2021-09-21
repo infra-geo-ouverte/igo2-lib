@@ -1,3 +1,5 @@
+import { OnReturn } from 'ol/Observable';
+import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import {
   Directive,
   Input,
@@ -10,7 +12,7 @@ import {
 
 import { Subscription } from 'rxjs';
 
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
@@ -23,6 +25,7 @@ import { transform } from 'ol/proj';
 import * as olstyle from 'ol/style';
 import * as olgeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { SearchResult, Research } from './search.interfaces';
 import { EntityStore } from '@igo2/common';
@@ -59,7 +62,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: ListenerFunction;
+  private pointerMoveListener: OnReturn;
 
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
@@ -218,7 +221,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+      (event: MapBrowserPointerEvent<any>) => this.onMapEvent(event)
     );
   }
 
@@ -243,7 +246,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @internal
    */
   private unlistenToMapPointerMove() {
-    this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    // this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
     this.pointerMoveListener = undefined;
   }
 
@@ -251,7 +254,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * Trigger reverse search when the mouse is motionless during the defined delay (pointerMoveDelay).
    * @param event OL map browser pointer event
    */
-  private onMapEvent(event: OlMapBrowserPointerEvent) {
+  private onMapEvent(event: MapBrowserPointerEvent<any>) {
     if (
       event.dragging || !this.igoSearchPointerSummaryEnabled ||
       !this.hasPointerReverseSearchSource || this.mediaService.isTouchScreen()) {
@@ -264,7 +267,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
       this.unsubscribeReverseSearch();
     }
 
-    this.lonLat = transform(event.coordinate, this.mapProjection, 'EPSG:4326');
+    this.lonLat = transform(event.coordinate, this.mapProjection, 'EPSG:4326') as [number, number];
 
     this.lastTimeoutRequest = setTimeout(() => {
       this.onSearchCoordinate();
@@ -307,7 +310,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.mapProjection,
       dataProjection: this.mapProjection
-    });
+    }) as FeatureGeometry;
 
     const f: Feature = {
       type: FEATURE,
@@ -341,7 +344,7 @@ private clearLayer() {
  * @param feature OlFeature
  * @returns OL style function
  */
-export function pointerPositionSummaryMarker(feature: olFeature, resolution: number): olstyle.Style {
+export function pointerPositionSummaryMarker(feature: olFeature<OlGeometry>, resolution: number): olstyle.Style {
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/cross_black_18px.svg',

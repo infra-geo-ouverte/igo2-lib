@@ -1,32 +1,35 @@
+import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import OlStyle from 'ol/style';
+import * as OlStyle from 'ol/style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';
-import {
-  Geometry as OlGeometry,
-  GeometryEvent as OlGeometryEvent
-} from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlModify from 'ol/interaction/Modify';
+import OlSelect from 'ol/interaction/Select';
+import BasicEvent from 'ol/events/Event';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
+import { SelectEvent as OlSelectEvent } from 'ol/interaction/Select';
 import { unByKey } from 'ol/Observable';
+import { doubleClick } from 'ol/events/condition';
 
 import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
-  geometryType: OlGeometryType;
-  source?: OlVectorSource;
-  layer?: OlVectorLayer;
-  layerStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
-  drawStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
+  geometryType: typeof OlGeometryType | string;
+  drawingLayerSource?: OlVectorSource<OlGeometry>;
+  drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  drawingLayerStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  interactionStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
   maxPoints?: number;
 }
 
 /**
- * Control to draw geometries
+ * Control to draw entities
  */
 export class DrawControl {
   /**
@@ -40,22 +43,38 @@ export class DrawControl {
   public end$: Subject<OlGeometry> = new Subject();
 
   /**
-   * Geometry changes observable
+   * Draw changes observable (while drawing)
    */
-  public changes$: Subject<OlGeometry> = new Subject();
+  public changes$: Subject<any> = new Subject();
 
-  private olMap: OlMap;
-  private olOverlayLayer: OlVectorLayer;
-  private olDrawInteraction: OlDraw;
-  private onDrawStartKey: string;
-  private onDrawEndKey: string;
-  private onDrawKey: string;
+  /**
+   * Draw modify observable (modify drawn features)
+   */
+  public modify$: Subject<OlGeometry> = new Subject();
 
-  private mousePosition: [number, number];
+  /**
+   * Draw select observable (modify drawn features)
+   */
+  public select$: Subject<any> =  new Subject();
+
+  /**
+   * Freehand mode observable (defaults to false)
+   */
+  freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private keyDown$$: Subscription;
 
-  freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private olGeometryType: typeof OlGeometryType | undefined | string;
+  private olMap: OlMap;
+  private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olDrawInteraction: OlDraw;
+  private olSelectInteraction: OlSelect;
+  private olModifyInteraction: OlModify;
+  private onDrawStartKey: EventsKey;
+  private onDrawEndKey: EventsKey;
+  private onDrawKey: EventsKey;
+
+  private mousePosition: [number, number];
 
   /**
    * Wheter the control is active
@@ -65,118 +84,118 @@ export class DrawControl {
   }
 
   /**
-   * Geometry type
-   * @internal
-   */
-  get geometryType(): OlGeometryType {
-    return this.options.geometryType;
-  }
-
-  /**
    * OL overlay source
    * @internal
    */
-  get olOverlaySource(): OlVectorSource {
-    return this.olOverlayLayer.getSource();
+  get olDrawingLayerSource(): OlVectorSource<OlGeometry> {
+    return this.olDrawingLayer.getSource();
   }
 
   constructor(private options: DrawControlOptions) {
-    if (options.layer !== undefined) {
-      this.olOverlayLayer = options.layer;
-    } else {
-      this.olOverlayLayer = this.createOlInnerOverlayLayer();
-    }
+    this.olDrawingLayer = options.drawingLayer ? options.drawingLayer : this.createOlInnerOverlayLayer();
+    this.olGeometryType = this.options.geometryType;
   }
 
   /**
    * Add or remove this control to/from a map.
    * @param map OL Map
    */
-  setOlMap(olMap: OlMap | undefined) {
-    if (olMap === undefined) {
+  setOlMap(olMap: OlMap | undefined, activateModifyAndSelect?: boolean) {
+    if (!olMap) {
       this.clearOlInnerOverlaySource();
       this.removeOlInnerOverlayLayer();
-      this.removeOlDrawInteraction();
+      this.removeOlInteractions();
       this.olMap = olMap;
       return;
     }
 
     this.olMap = olMap;
     this.addOlInnerOverlayLayer();
-    this.addOlDrawInteraction();
+    this.addOlInteractions(activateModifyAndSelect);
   }
 
   /**
-   * Return the overlay source
+   * Return the drawing layer source
    */
-  getSource(): OlVectorSource {
-    return this.olOverlaySource;
+  getSource(): OlVectorSource<OlGeometry> {
+    return this.olDrawingLayerSource;
   }
 
   /**
-   * Create an overlay source if none is defined in the options
+   * Set the current geometry type
+   * @param geometryType the geometry type
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer {
+  setGeometryType(geometryType: typeof OlGeometryType) {
+    this.olGeometryType = geometryType;
+  }
+
+  /**
+   * Create a drawing source if none is defined in the options
+   */
+  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
     return new OlVectorLayer({
-      source: this.options.source ? this.options.source : new OlVectorSource(),
-      style: this.options.layerStyle,
+      source: this.options.drawingLayerSource ? this.options.drawingLayerSource : new OlVectorSource(),
+      style: this.options.drawingLayerStyle,
       zIndex: 500
     });
   }
 
   /**
-   * Clear the overlay layer if it wasn't defined in the options
+   * Clear the drawing layer if it wasn't defined in the options
    */
   private removeOlInnerOverlayLayer() {
-    if (this.options.layer === undefined && this.olMap !== undefined) {
-      this.olMap.removeLayer(this.olOverlayLayer);
+    if (!this.options.drawingLayer && this.olMap) {
+      this.olMap.removeLayer(this.olDrawingLayer);
     }
   }
 
   /**
-   * Add the overlay layer if it wasn't defined in the options
+   * Add the drawing layer if it wasn't defined in the options
    */
-  private addOlInnerOverlayLayer(): OlVectorLayer {
-    if (this.options.layer === undefined) {
-      this.olMap.addLayer(this.olOverlayLayer);
+  private addOlInnerOverlayLayer() {
+    if (!this.options.drawingLayer) {
+      this.olMap.addLayer(this.olDrawingLayer);
     }
   }
 
   /**
-   * Clear the overlay source if it wasn't defined in the options
+   * Clear the drawing layer source if it wasn't defined in the options
    */
   private clearOlInnerOverlaySource() {
-    if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear(true);
+    if (!this.options.drawingLayer && !this.options.drawingLayerSource) {
+      this.olDrawingLayerSource.clear(true);
     }
   }
 
   /**
-   * Add a draw interaction to the map an set up some listeners
+   * Add interactions to the map an set up some listeners
    */
-  addOlDrawInteraction() {
+  addOlInteractions(activateModifyAndSelect?: boolean) {
+    // Create Draw interaction
     let olDrawInteraction;
-    if (this.freehand$.getValue() === false) {
+    if (!this.freehand$.getValue()) {
       olDrawInteraction = new OlDraw({
-        type: this.geometryType,
+        type: this.olGeometryType,
         source: this.getSource(),
         stopClick: true,
-        style: this.options.drawStyle,
+        style: this.options.interactionStyle,
         maxPoints: this.options.maxPoints,
         freehand: false,
         freehandCondition: () => false
       });
+
     } else {
-      if (this.geometryType === 'Point') {
+      if (this.olGeometryType === 'Point') {
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
           maxPoints: this.options.maxPoints,
           freehand: true
         });
+
       } else {
         olDrawInteraction = new OlDraw({
-          type: this.geometryType,
+          type: this.olGeometryType,
           source: this.getSource(),
           maxPoints: this.options.maxPoints,
           freehand: true
@@ -184,93 +203,129 @@ export class DrawControl {
       }
     }
 
-    this.onDrawStartKey = olDrawInteraction.on(
-      'drawstart',
-      (event: OlDrawEvent) => this.onDrawStart(event)
-    );
-    this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) =>
-      this.onDrawEnd(event)
-    );
+    // Add Draw interaction to map and create listeners
     this.olMap.addInteraction(olDrawInteraction);
     this.olDrawInteraction = olDrawInteraction;
+
+    this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
+    this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
+
+    if (activateModifyAndSelect) {
+      // Create a Modify interaction, add it to map and create a listener
+      const olModifyInteraction = new OlModify({
+        source: this.getSource()
+      });
+
+      this.olMap.addInteraction(olModifyInteraction);
+      this.olModifyInteraction = olModifyInteraction;
+
+      // Create a select interaction and add it to map
+      if (!this.olSelectInteraction) {
+        const olSelectInteraction = new OlSelect({
+          condition: doubleClick,
+          style: undefined
+        });
+        this.olMap.addInteraction(olSelectInteraction);
+        this.olSelectInteraction = olSelectInteraction;
+
+        this.olSelectInteraction.on('select', (event: OlSelectEvent) => this.onSelect(event));
+      }
+    }
   }
 
   /**
-   * Remove the draw interaction
+   * Remove interactions
    */
-  private removeOlDrawInteraction() {
-    if (this.olDrawInteraction === undefined) {
-      return;
+  private removeOlInteractions() {
+    this.unsubscribeKeyDown();
+    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey]);
+
+    if (this.olMap) {
+      this.olMap.removeInteraction(this.olDrawInteraction);
+      this.olMap.removeInteraction(this.olModifyInteraction);
     }
 
-    this.unsubscribeToKeyDown();
-    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey]);
-    if (this.olMap !== undefined) {
-      this.olMap.removeInteraction(this.olDrawInteraction);
-    }
     this.olDrawInteraction = undefined;
+    this.olModifyInteraction = undefined;
   }
 
   /**
-   * When drawing starts, clear the overlay and start watching from changes
+   * When drawing starts, clear the overlay and start watching for changes
    * @param event Draw start event
    */
   private onDrawStart(event: OlDrawEvent) {
     const olGeometry = event.feature.getGeometry();
     this.start$.next(olGeometry);
     this.clearOlInnerOverlaySource();
-    this.onDrawKey = olGeometry.on(
-      'change',
-      (olGeometryEvent: OlGeometryEvent) => {
-        this.mousePosition = getMousePositionFromOlGeometryEvent(
-          olGeometryEvent
-        );
-        this.changes$.next(olGeometryEvent.target);
-      }
-    );
-    this.subscribeToKeyDown();
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
+      this.changes$.next(olGeometryEvent.target);
+    });
+    this.subscribeKeyDown();
   }
 
   /**
-   * When drawing ends, update the geometry observable and start watching from changes
-   * @param event Draw end event
+   * When drawing ends, update the drawing (feature) geometry observable and add
+   * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
-    this.unsubscribeToKeyDown();
+    this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
-    this.end$.next(event.feature.getGeometry());
+    const olGeometry = event.feature.getGeometry();
+    olGeometry.on('change', () => {
+      this.modify$.next(olGeometry);
+    });
+    this.end$.next(olGeometry);
   }
 
   /**
-   * Subscribe to CTRL key down to activate the draw control
+   * When a feature is selected, update the selected feature observable
+   * @param event Modify event (modifyend)
    */
-  private subscribeToKeyDown() {
-    this.unsubscribeToKeyDown();
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
-      (event: KeyboardEvent) => {
-        // On ESC key down, remove the last vertex
-        if (event.key === 'Escape') {
-          this.olDrawInteraction.removeLastPoint();
-          return;
-        }
+  private onSelect(event: OlSelectEvent) {
+    if (event.selected.length === 1) {
+      this.select$.next(event.selected[0]);
+    }
+  }
 
-        // On space bar, pan to the current mouse position
-        if (event.key === ' ') {
-          this.olMap.getView().animate({
-            center: this.mousePosition,
-            duration: 0
-          });
-          return;
-        }
+  /**
+   * Subscribe to key downs used as drawing interaction shorcuts
+   */
+  private subscribeKeyDown() {
+    this.unsubscribeKeyDown();
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+      // On Escape or 'c' keydowns, abort the current drawing
+      if (event.key === 'Escape') {
+        this.olDrawInteraction.abortDrawing();
+        return;
       }
-    );
+
+      // On Backspace or 'u' keydowns, remove last vertex of current drawing
+      if (event.key === 'Backspace') {
+        this.olDrawInteraction.removeLastPoint();
+      }
+
+      // On Enter or 'f' keydowns, finish current drawing
+      if (event.key === 'Enter') {
+        this.olDrawInteraction.finishDrawing();
+      }
+
+      // On space bar key down, pan to the current mouse position
+      if (event.key === ' ') {
+        this.olMap.getView().animate({
+          center: this.mousePosition,
+          duration: 100
+        });
+        return;
+      }
+    });
   }
 
   /**
    * Unsubscribe to key down
    */
-  private unsubscribeToKeyDown() {
-    if (this.keyDown$$ !== undefined) {
+  private unsubscribeKeyDown() {
+    if (this.keyDown$$) {
       this.keyDown$$.unsubscribe();
       this.keyDown$$ = undefined;
     }

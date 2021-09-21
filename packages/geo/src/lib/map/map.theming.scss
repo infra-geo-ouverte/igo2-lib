@@ -1,6 +1,3 @@
-@import './map-browser/map-browser.theming';
-@import './zoom-button/zoom-button.theming';
-
 @mixin igo-map-theming($theme, $typography) {
   @include igo-map-browser-theming($theme, $typography);
   @include igo-zoom-button-theming($theme);

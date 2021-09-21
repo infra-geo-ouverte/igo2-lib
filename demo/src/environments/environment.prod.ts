@@ -40,7 +40,7 @@ export const environment: Environment = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
             'application/json': [
@@ -54,7 +54,7 @@ export const environment: Environment = {
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           regFilters: ['zpegt']
         },
         {

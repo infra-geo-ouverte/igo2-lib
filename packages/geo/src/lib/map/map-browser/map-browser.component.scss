@@ -64,7 +64,8 @@
 }
 
 :host ::ng-deep .ol-attribution {
-  left: $igo-margin;
+  flex-flow: row;
+  left: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   bottom: $igo-margin;
   text-align: left;
   padding: 0;

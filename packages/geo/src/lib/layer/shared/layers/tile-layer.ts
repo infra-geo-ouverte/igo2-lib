@@ -24,7 +24,7 @@ export class TileLayer extends Layer {
     | CartoDataSource
     | TileArcGISRestDataSource;
   public options: TileLayerOptions;
-  public ol: olLayerTile;
+  public ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 
@@ -37,7 +37,7 @@ export class TileLayer extends Layer {
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): olLayerTile {
+  protected createOlLayer(): olLayerTile<olSourceTile> {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceTile
     });

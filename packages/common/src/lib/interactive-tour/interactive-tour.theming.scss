@@ -8,8 +8,8 @@
   }
 
   igo-interactive-tour > button.tour-button-tool-icon {
-    background-color: mat-color($primary);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
 
     box-shadow: none;
     border:none;
@@ -27,14 +27,14 @@
   }
 
   igo-interactive-tour > button.tour-button-tool {
-    background-color: mat-color($primary);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
     border: none;
   }
 
   igo-interactive-tour > button.tour-button-tool-icon:hover {
-    background-color: mat-color($primary, default-contrast);
-    color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary, default-contrast);
+    color: mat.get-color-from-palette($primary);
     cursor: pointer;
   }
 }

@@ -1,6 +1,6 @@
 import { TemplateRef } from '@angular/core';
 import { MessageType } from './message.enum';
-import { Notification } from 'angular2-notifications';
+import { Notification } from '@igo2/angular2-notifications';
 
 export interface Message {
   title?: string;
