@@ -1,7 +1,6 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
-import { SourceFieldsOptionsType } from './datasource.enum';
 
 export interface DataSourceOptions {
   type?:
@@ -41,7 +40,7 @@ export interface SourceFieldsOptionsParams {
   values?: any;
   excludeFromOgcFilters?: boolean;
   allowedOperatorsType?: OgcFilterOperatorType;
-  type?: SourceFieldsOptionsType;
+  type?: number | number[] | string | string[] | boolean | Date;
 }
 
 export interface Legend {
