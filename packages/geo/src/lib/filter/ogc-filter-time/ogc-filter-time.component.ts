@@ -201,9 +201,11 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   isCalendarYearMode(): boolean {
-    if (this.calendarType() == 'year') {
+    if (this.calendarType() === 'year') {
       return true;
-    } else return false;
+    } else {
+      return false;
+    }
   }
 
   yearOnlyInputChange(changeEvent, datePicker?: any, property?: string) {
