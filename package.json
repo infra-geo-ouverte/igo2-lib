@@ -63,6 +63,9 @@
     "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
+    "preghpages.win": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
+    "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
+    "postghpages.win": "rimraf ./dist/ghpages",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""
   },
   "private": true,
