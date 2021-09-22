@@ -343,18 +343,17 @@ export class CatalogService {
           const title = this.languageService.translate.instant(
             'igo.geo.catalog.unavailableTitle'
           );
-          const message = 
+          const message =
           catalog.title ? this.languageService.translate.instant(
             'igo.geo.catalog.unavailable',
             { value: catalog.title }
           ) : this.languageService.translate.instant(
             'igo.geo.catalog.someUnavailable'
-          )
-
+          );
 
           this.messageService.error(message, title);
           console.error(e);
-          return of(undefined)
+          return of(undefined);
         })
       );
   }
