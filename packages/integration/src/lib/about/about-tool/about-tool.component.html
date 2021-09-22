@@ -7,10 +7,6 @@
   [discoverTitleInLocale$]="discoverTitleInLocale$">
 </igo-interactive-tour>
 
-<igo-custom-html class="mat-typography"
-  [html]="headerHtml |  translate">
-</igo-custom-html>
-
 <button *ngIf="auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1"
   class="training-guide-button"
   mat-raised-button
@@ -38,6 +34,10 @@
 <mat-menu #menu="matMenu">
   <button *ngFor="let guide of trainingGuideURLs" mat-menu-item (click)="openGuide(guide)">{{formatFileName(guide)}}</button>
 </mat-menu>
+
+<igo-custom-html *ngIf="headerHtml !== ''" class="mat-typography"
+  [html]="headerHtml |  translate">
+</igo-custom-html>
 
 <igo-custom-html class="mat-typography"
   [html]="html |  translate: {version: version}">
