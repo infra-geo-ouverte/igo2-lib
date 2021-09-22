@@ -54,6 +54,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
   public onlyYearBegin: number;
   public onlyYearEnd: number;
+  public calendarTypeYear = false;
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
@@ -113,6 +114,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
     this.onlyYearBegin = this.beginValue.getUTCFullYear();
     this.onlyYearEnd = this.endValue.getUTCFullYear();
+    this.calendarTypeYear = this.isCalendarYearMode();
 
     this.updateHoursMinutesArray();
     // update value for now value
@@ -196,6 +198,12 @@ export class OgcFilterTimeComponent implements OnInit {
       return 'datetime';
     }
     return 'date';
+  }
+
+  isCalendarYearMode(): boolean {
+    if (this.calendarType() == 'year') {
+      return true;
+    } else return false;
   }
 
   yearOnlyInputChange(changeEvent, datePicker?: any, property?: string) {
