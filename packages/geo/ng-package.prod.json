@@ -35,6 +35,7 @@
       "ol/Geolocation": "olGeolocation",
       "ol/control/Attribution": "olAttribution",
       "ol/control/ScaleLine": "olControlScaleLine",
+      "ol/interaction/Select": "olInteractionSelect",
       "ol/geom/Circle": "olCircle",
       "ol/layer/Image": "olLayerImage",
       "ol/layer/Tile": "olLayerTile",
