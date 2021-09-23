@@ -1,9 +1,9 @@
 import { GeoJsonGeometryTypes } from 'geojson';
 import { DirectionsFormat, SourceDirectionsType } from './directions.enum';
 
-import { Feature } from "../../feature/shared/feature.interfaces";
+import { Feature } from '../../feature/shared/feature.interfaces';
 
-export interface FeatureWithStops extends Feature<Stop> {}
+export interface FeatureWithStops extends Feature<Stop> { }
 
 export interface DirectionsOptions {
   overview?: boolean;
@@ -13,8 +13,8 @@ export interface DirectionsOptions {
 }
 
 export interface Stop {
-  id: string,
-  order: number,
+  id: string;
+  order: number;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;

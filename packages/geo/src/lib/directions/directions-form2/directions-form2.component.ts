@@ -14,7 +14,7 @@ import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
   templateUrl: './directions-form2.component.html',
   styleUrls: ['./directions-form2.component.scss']
 })
-export class DirectionsFormComponent2 implements OnInit, OnDestroy {
+export class DirectionsForm2Component implements OnInit, OnDestroy {
 
 
   get allStops() {
@@ -25,6 +25,11 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   public moreThanTwoStops: boolean = false;
+
+  /**
+   * The route and vertex store
+   */
+  @Input() stopsStore: EntityStore<Stop>;
 
   constructor(
     private languageService: LanguageService
@@ -38,11 +43,6 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
   }
-
-  /**
-   * The route and vertex store
-   */
-  @Input() stopsStore: EntityStore<Stop>;
 
   private initStores() {
     // Watch if the store is empty to reset it
@@ -68,17 +68,17 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
   }
 
   private getRoutes() {
-    const stopsWithCoords = this.stopsStore.all().filter((s) => s.stopCoordinates)
+    const stopsWithCoords = this.stopsStore.all().filter((s) => s.stopCoordinates);
     if (stopsWithCoords.length >= 2) {
-      console.log('stopsWithCoords', stopsWithCoords)
+      console.log('stopsWithCoords', stopsWithCoords);
     } else {
-      console.log('clear route!!!')
+      console.log('clear route!!!');
     }
   }
 
   private updateSortOrder() {
     setTimeout(() => {
-      this.computeStopOrderBasedOnListOrder(this.allStops, false)
+      this.computeStopOrderBasedOnListOrder(this.allStops, false);
     }, 50);
     this.updateStoreSorting();
   }
@@ -95,9 +95,10 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
     this.stopsStore.get(lastStopId).order = lastStopOrder + 1;
     // todo put back uuid()
     this.stopsStore.insert(
-      { id: this.stopsStore.count.toLocaleString(),
+      {
+        id: this.stopsStore.count.toLocaleString(),
         order: lastStopOrder,
-        stopCoordinates: [this.stopsStore.count,this.stopsStore.count] 
+        stopCoordinates: [this.stopsStore.count, this.stopsStore.count]
       });
   }
 
@@ -105,7 +106,7 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
     this.stopsStore.delete(stop);
   }
 
-  private checkStoreCount(){
+  private checkStoreCount() {
     if (this.stopsStore.count > 2) {
       this.moreThanTwoStops = true;
     } else {
@@ -114,10 +115,10 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.moveStops(event.previousIndex, event.currentIndex)
+    this.moveStops(event.previousIndex, event.currentIndex);
   }
 
-  private updateStoreSorting(direction: 'asc'|'desc' = 'asc', field='order') {
+  private updateStoreSorting(direction: 'asc' | 'desc' = 'asc', field = 'order') {
     this.stopsStore.view.sort({
       direction,
       valueAccessor: (stop: Stop) => stop[field]
@@ -126,7 +127,7 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
 
   private moveStops(fromIndex, toIndex) {
     if (fromIndex !== toIndex) {
-      const stopsList = [...this.allStops]
+      const stopsList = [...this.allStops];
       moveItemInArray(stopsList, fromIndex, toIndex);
       this.computeStopOrderBasedOnListOrder(stopsList, true);
       this.updateStoreSorting();
@@ -143,7 +144,7 @@ export class DirectionsFormComponent2 implements OnInit, OnDestroy {
         this.stopsStore.get(s.id).order = cnt;
         cnt += 1;
       }
-    })
+    });
     if (emit) {
       this.storeSortChange$.next(true);
     }
