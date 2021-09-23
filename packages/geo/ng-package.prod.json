@@ -19,16 +19,18 @@
       "ol/render/Feature": "OlRenderFeature",
       "ol/source/ImageWMS": "olSourceImageWMS",
       "ol/source/WMTS": "olSourceWMTS",
+      "ol/source/TileDebug":"TileDebug",
       "ol/tilegrid/WMTS": "olTileGridWMTS",
       "ol/extent.js": "extent_js",
       "ol/source/CartoDB": "olSourceCarto",
       "ol/loadingstrategy": "OlLoadingStrategy",
       "ol/render": "olRender",
       "ol/source/TileArcGISRest": "olSourceTileArcGISRest",
+      "striptags": "striptags",
       "ts-md5": "tsMd5",
       "ol/source/VectorTile": "olSourceVectorTile",
       "ol/source/Cluster": "olSourceCluster",
-      "ngx-cacheable": "ngxCacheable",
+      "ts-cacheable": "tsCacheable",
       "ol/source/WMTS.js": "WMTS_js",
       "ol/Map": "olMap",
       "ol/View": "olView",
@@ -94,8 +96,8 @@
       "@ngx-translate/core": "ngxt-core"
     }
   },
-  "whitelistedNonPeerDependencies": [
-    "ngx-cacheable",
+  "allowedNonPeerDependencies": [
+    "ts-cacheable",
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect",

@@ -3,13 +3,13 @@
   $accent: map-get($theme, accent);
 
   igo-list [igolistitem][color="primary"].igo-list-item-selected > mat-list-item {
-    background-color: mat-color($primary);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   igo-list [igolistitem][color="accent"].igo-list-item-selected > mat-list-item {
-    background-color: mat-color($accent);
-    color: mat-color($accent, default-contrast);
+    background-color: mat.get-color-from-palette($accent);
+    color: mat.get-color-from-palette($accent, default-contrast);
   }
 
   igo-list [igolistitem].igo-list-item-disabled > mat-list-item {
@@ -18,13 +18,13 @@
 
   igo-list [igolistitem][color="primary"]:not(.igo-list-item-disabled):hover > mat-list-item,
   igo-list [igolistitem][color="primary"].igo-list-item-focused > mat-list-item {
-    background-color: mat-color($primary, lighter);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary, lighter);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   igo-list [igolistitem][color="accent"]:not(.igo-list-item-disabled):hover > mat-list-item,
   igo-list [igolistitem][color="accent"].igo-list-item-focused > mat-list-item {
-    background-color: mat-color($accent, lighter);
-    color: mat-color($accent, default-contrast);
+    background-color: mat.get-color-from-palette($accent, lighter);
+    color: mat.get-color-from-palette($accent, default-contrast);
   }
 }

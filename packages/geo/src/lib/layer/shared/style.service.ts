@@ -23,7 +23,7 @@ export class StyleService {
     return this.parseStyle('style', options);
   }
 
-  private parseStyle(key: string, value: any): olstyle {
+  private parseStyle(key: string, value: any) {
     const styleOptions = {};
     const olCls = this.getOlCls(key);
 
@@ -81,13 +81,18 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
-    const label = styleByAttribute.label ? (styleByAttribute.label.attribute || styleByAttribute.label) : undefined;
-    const labelStyle = styleByAttribute.label ?
-      this.parseStyle('text', styleByAttribute.label.style) ||
+    const label = styleByAttribute.label;
+    const labelStyle = label instanceof olstyle.Style ?
+      this.parseStyle('text', styleByAttribute.label) ||
       new olstyle.Text() : undefined;
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
+      const options = {
+        text: this.getLabel(feature, label)
+      };
+
+      labelStyle instanceof olstyle.Style ? labelStyle.setText(new olstyle.Text(options)) :
       labelStyle.setText(this.getLabel(feature, label));
     }
 
@@ -121,7 +126,7 @@ export class StyleService {
                   color: fill ? fill[i] : 'black'
                 })
               }),
-              text: labelStyle
+              text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
             })
           ];
           return style;
@@ -166,7 +171,7 @@ export class StyleService {
               fill: new olstyle.Fill({
                 color: fill ? fill[i] : 'rgba(255,255,255,0.4)'
               }),
-              text: labelStyle
+              text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
             })
           ];
           return style;
@@ -198,7 +203,7 @@ export class StyleService {
   }
 
   createClusterStyle(feature, clusterParam: ClusterParam = {}, layerStyle) {
-    let style: olstyle.Style;
+    let style;
     const size = feature.get('features').length;
     if (size !== 1) {
       if (clusterParam.clusterRanges) {
@@ -207,7 +212,7 @@ export class StyleService {
             (!r.minRadius || r.minRadius <= size) &&
             (!r.maxRadius || r.maxRadius >= size)
           ) {
-            style = this.createStyle(r.style);
+            style = this.createStyle(r.style) as olstyle.Circle;
 
             if (r.showRange) {
               const text = new olstyle.Text({
@@ -221,7 +226,7 @@ export class StyleService {
 
             if (r.dynamicRadius) {
               let clusterRadius: number;
-              const radiusMin = style.image_.getRadius();
+              const radiusMin = style.getRadius();
               clusterRadius = 5 * Math.log(size);
               if (clusterRadius < radiusMin) {
                 clusterRadius = radiusMin;
@@ -249,7 +254,6 @@ export class StyleService {
           new olstyle.Style({
             image: new olstyle.Circle({
               radius: clusterRadius,
-              opacity: 0.4,
               stroke: new olstyle.Stroke({
                 color: 'black'
               }),

@@ -8,15 +8,15 @@ import {
 } from '@angular/core';
 
 import {
-  FEATURE,
-  FeatureStore,
-  FeatureStoreSelectionStrategy,
-  tryBindStoreLayer,
-  tryAddLoadingStrategy,
-  tryAddSelectionStrategy,
-  FeatureMotion,
-  FeatureStoreLoadingStrategy,
-} from '../../feature';
+    FEATURE,
+    FeatureStore,
+    FeatureStoreSelectionStrategy,
+    tryBindStoreLayer,
+    tryAddLoadingStrategy,
+    tryAddSelectionStrategy,
+    FeatureMotion,
+    FeatureStoreLoadingStrategy
+  } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,14 +32,14 @@ import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 
 import * as OlStyle from 'ol/style';
-import * as OlColor from 'ol/color';
 import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
 import OlPoint from 'ol/geom/Point';
-import OlGeometry from 'ol/geom/Geometry';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
@@ -78,8 +78,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
 
-  @Output() fillColor: OlColor;
-  @Output() strokeColor: OlColor;
+  @Output() fillColor: string;
+  @Output() strokeColor: string;
   @Output() strokeWidth: number;
 
   @Input() map: IgoMap; // Map to draw on
@@ -144,7 +144,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param strokeWidth the stroke width
    * @returns a Draw Control
    */
-  createDrawControl(fillColor?: OlColor, strokeColor?: OlColor, strokeWidth?: number) {
+  createDrawControl(fillColor?: string, strokeColor?: string, strokeWidth?: number) {
     const drawControl = new DrawControl({
       geometryType: undefined,
       drawingLayerSource: this.olDrawingLayerSource,
@@ -159,7 +159,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: GeometryType) {
+  onGeometryTypeChange(geometryType: typeof OlGeometryType) {
     this.drawControl.setGeometryType(geometryType);
     this.toggleDrawControl();
   }
@@ -197,7 +197,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       many: true
     }));
     this.store.layer.visible = true;
-    this.store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
+    this.store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
       const olGeometry = event.feature.getGeometry();
       this.clearLabelsOfOlGeometry(olGeometry);
     });
@@ -261,7 +261,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param olGeometry geometry at draw end or selected geometry
    * @param drawEnd event fired at drawEnd?
    */
-  private openDialog(olGeometryFeature: OlGeometry | OlFeature, isDrawEnd: boolean) {
+  private openDialog(olGeometryFeature, isDrawEnd: boolean) {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -299,7 +299,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
 
     if (!this.drawSelect$$) {
-      this.drawSelect$$ = this.drawControl.select$.subscribe((olFeature: OlFeature) => {
+      this.drawSelect$$ = this.drawControl.select$.subscribe((olFeature: OlFeature<OlGeometry>) => {
         this.openDialog(olFeature, false);
       });
     }
@@ -327,13 +327,13 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Clear the draw source and track the geometry being draw
    * @param olGeometry Ol linestring or polygon
    */
-  private onDrawEnd(olGeometry: OlGeometry) {
-    this.addFeatureToStore(olGeometry);
+  private onDrawEnd(olGeometry: OlGeometry, radius?: number) {
+    this.addFeatureToStore(olGeometry, radius);
     this.clearLabelsOfOlGeometry(olGeometry);
     this.store.layer.ol.getSource().refresh();
   }
 
-  private onModifyDraw(olGeometry: OlGeometry) {
+  private onModifyDraw(olGeometry) {
     const entities = this.store.all();
 
     entities.forEach(entity => {
@@ -348,10 +348,10 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
   }
 
-  private onSelectDraw(olFeature: OlFeature, label: string) {
+  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string) {
     const entities = this.store.all();
 
-    const olGeometry = olFeature.getGeometry();
+    const olGeometry = olFeature.getGeometry() as any;
     olGeometry.ol_uid = olFeature.get('id');
 
     const olGeometryCoordinates = JSON.stringify(olGeometry.getCoordinates()[0]);
@@ -360,8 +360,10 @@ export class DrawComponent implements OnInit, OnDestroy {
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
+        const rad: number = entity.properties.rad ? entity.properties.rad : undefined;
+
         this.updateLabelOfOlGeometry(olGeometry, label);
-        this.replaceFeatureInStore(entity, olGeometry);
+        this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
   }
@@ -371,7 +373,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry: OlGeometry, feature?: FeatureWithDraw) {
+  private addFeatureToStore(olGeometry, radius?: number, feature?: FeatureWithDraw) {
     let rad: number;
     let center4326: Array<number>;
     let point4326: Array<number>;
@@ -383,20 +385,24 @@ export class DrawComponent implements OnInit, OnDestroy {
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
       dataProjection: projection
-    });
+    }) as any;
 
-    if (olGeometry instanceof OlCircle) {
-      geometry.type = 'Point';
-      geometry.coordinates = olGeometry.getCenter();
-      const extent4326 = transform([olGeometry.flatCoordinates[2], olGeometry.flatCoordinates[3]], projection, 'EPSG:4326');
-      center4326 = transform([olGeometry.flatCoordinates[0], olGeometry.flatCoordinates[1]], projection, 'EPSG:4326');
-      lon4326 = center4326[0];
-      lat4326 = center4326[1];
-      rad = getDistance(center4326, extent4326);
+    if (olGeometry instanceof OlCircle || radius) {
+      if (radius) {
+        rad = radius;
+      } else {
+        geometry.type = 'Point';
+        geometry.coordinates = olGeometry.getCenter();
+        const extent4326 = transform([olGeometry.getFlatCoordinates()[2], olGeometry.getFlatCoordinates()[3]], projection, 'EPSG:4326');
+        center4326 = transform([olGeometry.getFlatCoordinates()[0], olGeometry.getFlatCoordinates()[1]], projection, 'EPSG:4326');
+        lon4326 = center4326[0];
+        lat4326 = center4326[1];
+        rad = getDistance(center4326, extent4326);
+      }
     }
 
     if (olGeometry instanceof OlPoint) {
-      point4326 = transform(olGeometry.flatCoordinates, projection, 'EPSG:4326');
+      point4326 = transform(olGeometry.getFlatCoordinates(), projection, 'EPSG:4326');
       lon4326 = point4326[0];
       lat4326 = point4326[1];
     }
@@ -423,9 +429,9 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param entity the entity to replace
    * @param olGeometry the new geometry to insert in the store
    */
-  private replaceFeatureInStore(entity, olGeometry: OlGeometry) {
+  private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number) {
     this.store.delete(entity);
-    this.onDrawEnd(olGeometry);
+    this.onDrawEnd(olGeometry, radius);
   }
 
   private buildForm() {
@@ -439,7 +445,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.store.deleteMany(this.selectedFeatures$.value);
     this.selectedFeatures$.value.forEach(selectedFeature => {
       this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
-        if (selectedFeature.properties.id === drawingLayerFeature.getGeometry().ol_uid) {
+        const geometry = drawingLayerFeature.getGeometry() as any;
+        if (selectedFeature.properties.id === geometry.ol_uid) {
           this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
         }
       });
@@ -450,7 +457,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Clear the tooltips of an OL geometry
    * @param olGeometry OL geometry with tooltips
    */
-  private clearLabelsOfOlGeometry(olGeometry: OlGeometry) {
+  private clearLabelsOfOlGeometry(olGeometry) {
     getTooltipsOfOlGeometry(olGeometry).forEach((olTooltip: OlOverlay | undefined) => {
       if (olTooltip && olTooltip.getMap()) {
         this.map.ol.removeOverlay(olTooltip);

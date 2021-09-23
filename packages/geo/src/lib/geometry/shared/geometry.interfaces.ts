@@ -7,7 +7,7 @@ import { IgoMap } from '../../map';
 
 export interface GeometryFormFieldInputs extends FormFieldInputs {
   map: IgoMap;
-  geometryType: OlGeometryType;
+  geometryType: typeof OlGeometryType;
   tooltip?: string;
 }
 

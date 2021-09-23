@@ -1,3 +1,4 @@
+import { Options } from 'ol/source/WMTS';
 import olSourceWMTS from 'ol/source/WMTS';
 
 import { createDefaultTileGrid } from '../../utils/tilegrid';
@@ -18,7 +19,7 @@ export class WMTSDataSource extends DataSource {
         tileGrid: createDefaultTileGrid(this.options.projection as string)
       },
       this.options
-    );
+    ) as Options;
 
     return new olSourceWMTS(sourceOptions);
   }

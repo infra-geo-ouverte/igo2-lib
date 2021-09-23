@@ -1,5 +1,5 @@
 import * as olproj from 'ol/proj';
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
@@ -310,7 +310,7 @@ export function stringToLonLat(
     const dest = 'EPSG:' + toProjection;
 
     try {
-      lonLat = olproj.transform(lonLat, source, dest);
+      lonLat = olproj.transform(lonLat, source, dest) as [number, number];
     } catch (e) {
       return {
         lonLat: undefined,
@@ -461,7 +461,7 @@ export function getScaleFromResolution(
  * @param event OL MapBrowserPointerEvent
  * @returns Whether the CTRL key is pushed
  */
-export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
+export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
   const originalEvent = event.originalEvent;
   return (
     !originalEvent.altKey &&
@@ -491,7 +491,7 @@ export function lonLatConversion(
   coord: [number, number];
   igo2CoordFormat: string;
 }[] {
-  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857');
+  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857') as [number, number];
   const convertedLonLat = [
     {
       code: 'EPSG:3857',
@@ -505,7 +505,7 @@ export function lonLatConversion(
   const utmZone = utmZoneFromLonLat(lonLat);
   const epsgUtm = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
   const utmName = `UTM-${utmZone}`;
-  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm);
+  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm) as [number, number];
   convertedLonLat.push({
     code: epsgUtm,
     alias: 'UTM',
@@ -519,7 +519,7 @@ export function lonLatConversion(
     const epsgMtm =
       mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
     const mtmName = `MTM-${mtmZone}`;
-    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm);
+    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm) as [number, number];
     convertedLonLat.push({
       code: epsgMtm,
       alias: 'MTM',
@@ -529,7 +529,7 @@ export function lonLatConversion(
   }
 
   projections.forEach(projection => {
-    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code);
+    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code) as [number, number];
     const numericEpsgCode = projection.code.split(':')[1];
     convertedLonLat.push({
       code: projection.code,

@@ -26,6 +26,9 @@ import {
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
+import olSourceVector from 'ol/source/Vector';
+import olSourceCluster from 'ol/source/Cluster';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject } from 'rxjs';
 import { MapState } from '../../map/map.state';
 import { ImportExportMode, ImportExportState } from './../../import-export/import-export.state';
@@ -406,7 +409,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry> | olSourceCluster;
+          ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
@@ -462,7 +466,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.source.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceCluster;
+          ol.getSource().addFeatures(featuresOl);
           if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.layers.find(layer => layer.id === olLayer.id)
@@ -482,7 +487,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createSvgIcon(icon) {
+  private createSvgIcon(icon): olstyle.Style {
     let style: olstyle.Style;
     this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
       const xmlSerializer = new XMLSerializer();
@@ -531,7 +536,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry>;
+          ol.addFeatures(featuresOl);
           if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.layers.find(layer => layer.id === olLayer.id)

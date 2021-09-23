@@ -48,7 +48,7 @@ export class AppHoverComponent {
     this.dataSourceService
     .createAsyncDataSource({
       type: 'wmts',
-      url: 'https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
       layer: 'carte_gouv_qc_public',
       matrixSet: 'EPSG_3857',
       version: '1.3.0'
@@ -69,7 +69,7 @@ export class AppHoverComponent {
 
     const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'adn_bassin_n1_public_v',
         fieldNameGeometry: 'geometry',
@@ -93,7 +93,7 @@ export class AppHoverComponent {
 
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'CASERNE',
         fieldNameGeometry: 'geometry',

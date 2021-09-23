@@ -102,7 +102,7 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (semicolon delimited)",
+          "CSVsemicolon": "CSV (Excel compatible)",
           "URL": "External link"
         },
         "gpx.error.poly": {

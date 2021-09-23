@@ -6,7 +6,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { IgoFormFieldComponent } from '@igo2/common';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
-import { Style as OlStyle } from 'ol/style';
+import * as OlStyle from 'ol/style';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IgoMap } from '../../map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
@@ -59,9 +59,9 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Input()
-  set geometryType(value: OlGeometryType) { this.geometryType$.next(value); }
-  get geometryType(): OlGeometryType { return this.geometryType$.value; }
-  readonly geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
+  set geometryType(value: typeof OlGeometryType) { this.geometryType$.next(value); }
+  get geometryType(): typeof OlGeometryType { return this.geometryType$.value; }
+  readonly geometryType$: BehaviorSubject<typeof OlGeometryType> = new BehaviorSubject(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
@@ -104,13 +104,13 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() drawStyle: OlStyle;
+  @Input() drawStyle: OlStyle.Style;
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyle;
+  @Input() overlayStyle: OlStyle.Style;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

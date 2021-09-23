@@ -9,6 +9,7 @@
       "ol/geom/Point": "olPoint",
       "ol/style": "olStlyle",
       "ol/source/Cluster": "cluster",
+      "ol/source/Vector": "vector",
       "@igo2/utils": "utils",
       "@igo2/auth": "auth",
       "@igo2/core": "core",
@@ -18,5 +19,5 @@
       "@ngx-translate/core": "ngxt-core"
     }
   },
-  "whitelistedNonPeerDependencies": ["ts-md5"]
+  "allowedNonPeerDependencies": ["ts-md5"]
 }

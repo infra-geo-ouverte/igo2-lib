@@ -1,5 +1,4 @@
 import * as Olstyle from 'ol/style';
-import * as OlColor from 'ol/color';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
@@ -19,7 +18,7 @@ import {
  * @param label a label
  * @returns OL style
  */
-export function createInteractionStyle(fillColor?: OlColor, strokeColor?: OlColor, strokeWidth?: number, label?: string): Olstyle.Style {
+export function createInteractionStyle(fillColor?: string, strokeColor?: string, strokeWidth?: number, label?: string): Olstyle.Style {
   return new Olstyle.Style({
     stroke: new Olstyle.Stroke({
       color: strokeColor ? strokeColor : 'rgba(143,7,7,1)',
@@ -49,7 +48,7 @@ export function createInteractionStyle(fillColor?: OlColor, strokeColor?: OlColo
 export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
-    const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
+    const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
     olGeometry.setProperties({_midpoints: olMidpoints}, true);
@@ -66,7 +65,7 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
     if (olTooltip === undefined) {
       olTooltip = createOlTooltipDrawAtPoint(olMidpoint);
     } else {
-      olTooltip.setPosition(olMidpoint.flatCoordinates);
+      olTooltip.setPosition(olMidpoint.getFlatCoordinates());
     }
     return olTooltip;
   });
@@ -84,7 +83,7 @@ export function updateOlTooltipDrawAtCenter(olGeometry: OlLineString | OlPolygon
   if (olTooltip === undefined) {
     olTooltip = createOlTooltipDrawAtPoint(olCenter);
   } else {
-    olTooltip.setPosition(olCenter.flatCoordinates);
+    olTooltip.setPosition(olCenter.getFlatCoordinates());
   }
   return olTooltip;
 }
@@ -104,7 +103,7 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
     ].join(' '),
     stopEvent: false
   });
-  olTooltip.setPosition(olPoint.flatCoordinates);
+  olTooltip.setPosition(olPoint.getFlatCoordinates());
   olPoint.set('_tooltip', olTooltip);
 
   return olTooltip;

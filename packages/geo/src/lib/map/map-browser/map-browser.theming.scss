@@ -3,14 +3,14 @@
   $is-dark: map-get($theme, is-dark);
 
   igo-map-browser div.ol-attribution > button {
-    color: mat-color($primary, if($is-dark, default-contrast, default));
-    background-color: mat-color(
+    color: mat.get-color-from-palette($primary, if($is-dark, default-contrast, default));
+    background-color: mat.get-color-from-palette(
       $primary,
       if($is-dark, default, default-contrast)
     );
   }
 
   igo-map-browser div.ol-attribution > ul {
-    font-size: mat-font-size($typography, body-1);
+    font-size: mat.font-size($typography, body-1);
   }
 }

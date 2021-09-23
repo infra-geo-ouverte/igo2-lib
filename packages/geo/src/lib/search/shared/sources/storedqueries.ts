@@ -146,17 +146,17 @@ export class StoredQueriesSearchSource extends SearchSource
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
+      searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
     };
   }
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
   //  tslint:disable-next-line:max-line-length
-  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
+  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
   //  tslint:disable-next-line:max-line-length
-  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
+  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
    * Search a location by name or keyword
