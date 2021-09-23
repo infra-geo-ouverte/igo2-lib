@@ -19,10 +19,13 @@ import { DirectionsFormComponent } from './directions-form/directions-form.compo
 import { DirectionsFormBindingDirective } from './directions-form/directions-form-binding.directive';
 import { DirectionsFormService } from './directions-form/directions-form.service';
 import { provideDirectionsSourceService } from './shared/directions-source.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DirectionsFormComponent2 } from './directions-form2/directions-form2.component';
 
 @NgModule({
   imports: [
     CommonModule,
+    DragDropModule,
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
@@ -37,8 +40,8 @@ import { provideDirectionsSourceService } from './shared/directions-source.servi
     MatAutocompleteModule,
     IgoLanguageModule
   ],
-  exports: [DirectionsFormComponent, DirectionsFormBindingDirective],
-  declarations: [DirectionsFormComponent, DirectionsFormBindingDirective],
+  exports: [DirectionsFormComponent,DirectionsFormComponent2, DirectionsFormBindingDirective],
+  declarations: [DirectionsFormComponent,DirectionsFormComponent2, DirectionsFormBindingDirective],
   providers: [DirectionsFormService, provideDirectionsSourceService()]
 })
 export class IgoDirectionsModule {

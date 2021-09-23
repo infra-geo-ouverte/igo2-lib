@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
-import { IgoMap, FeatureStore } from '@igo2/geo';
+import { EntityStore, ToolComponent } from '@igo2/common';
+import { IgoMap, FeatureStore, Stop } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
@@ -20,7 +20,7 @@ export class DirectionsToolComponent {
    * stops
    * @internal
    */
-  get stopsStore(): FeatureStore { return this.directionState.stopsStore; }
+  get stopsStore(): EntityStore<Stop> { return this.directionState.stopsStore; }
 
   /**
    * routes

@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
+import { EntityStore } from '@igo2/common';
 
-import { DirectionsFormService, FeatureStore } from '@igo2/geo';
+import { DirectionsFormService, FeatureStore, Stop } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -14,9 +15,8 @@ export class DirectionState {
   /**
    * Store that holds the stop and the driving route
    */
-  public stopsStore: FeatureStore = new FeatureStore([], {
-    map: this.mapState.map
-  });
+  public stopsStore: EntityStore<Stop> = new EntityStore<Stop>([]);
+
 
   /**
    * Store that holds the driving route

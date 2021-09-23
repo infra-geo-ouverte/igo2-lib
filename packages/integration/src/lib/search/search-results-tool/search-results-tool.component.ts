@@ -561,6 +561,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.toolState.toolbox.activateTool('directions');
     this.directionState.stopsStore.clear();
     this.directionState.setRouteFromFeatureDetail(true);
-    this.directionState.stopsStore.insertMany(features);
+  // todo this.directionState.stopsStore.insertMany(features);
   }
 }

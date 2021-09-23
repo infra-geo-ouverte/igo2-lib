@@ -1,0 +1,49 @@
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+  <div class="example-box" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
+    {{stop | json}}
+
+    <div class="igo-form-button-group">
+      <button cdkDragHandle mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="primary">
+        <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
+      </button>
+
+      <button *ngIf="moreThanTwoStops" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
+        <mat-icon svgIcon="delete"></mat-icon>
+      </button>
+      <button *ngIf="!moreThanTwoStops" disabled="true" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn">
+        <mat-icon svgIcon="blank"></mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="igo-form-button-group">
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.directionsForm.addStop' | translate" color="primary" (click)="addStop()">
+    <mat-icon svgIcon="map-marker-plus"></mat-icon>
+  </button>
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate"  color="primary">
+    <!-- todo *ngIf="routesResults" (click)="console.log('zoomRoute()')" -->
+    <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
+  </button>
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.directionsForm.resetDirectionsBtn' | translate" color="warn" (click)="resetStops()">
+    <mat-icon svgIcon="file-restore"></mat-icon>
+  </button>
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.directionsForm.copy' | translate" color="primary">
+    <!-- todo *ngIf="routesResults" (click)="console.log('copyDirectionsToClipboard()')"-->
+    <mat-icon svgIcon="content-copy"></mat-icon>
+  </button>
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.directionsForm.link' | translate" color="primary">
+    <!-- todo *ngIf="routesResults" (click)="console.log('copyLinkToClipboard()')" -->
+    <mat-icon svgIcon="link"></mat-icon>
+  </button>
+</div>
