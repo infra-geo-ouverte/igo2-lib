@@ -12,15 +12,13 @@
         [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
-      <button *ngIf="!moreThanTwoStops" disabled="true" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn">
+      <button *ngIf="!moreThanTwoStops" disabled="true" mat-icon-button tooltip-position="below"
+        matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn">
         <mat-icon svgIcon="blank"></mat-icon>
       </button>
     </div>
   </div>
 </div>
-
-
 
 <div class="igo-form-button-group">
   <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
@@ -28,7 +26,7 @@
     <mat-icon svgIcon="map-marker-plus"></mat-icon>
   </button>
   <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-    [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate"  color="primary">
+    [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate" color="primary">
     <!-- todo *ngIf="routesResults" (click)="console.log('zoomRoute()')" -->
     <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
   </button>
