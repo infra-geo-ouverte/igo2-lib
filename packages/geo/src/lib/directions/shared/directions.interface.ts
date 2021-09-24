@@ -2,6 +2,8 @@ import { GeoJsonGeometryTypes } from 'geojson';
 import { DirectionsFormat, SourceDirectionsType } from './directions.enum';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { SearchSource } from '../../search/shared/sources/source';
+
 
 export interface FeatureWithStops extends Feature<Stop> { }
 
@@ -15,10 +17,28 @@ export interface DirectionsOptions {
 export interface Stop {
   id: string;
   order: number;
+  text?: string;
+  searchProposals?: SourceProposal[];
+  coordinates?: [number, number];
+  isLastStop?: boolean;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;
   stopCoordinates?: [number, number];
+}
+
+export interface SourceProposal {
+  source: SearchSource;
+  results: { [key: string]: any }[];
+  meta: {
+    dataType: string;
+    id: string;
+    title: string;
+    titleHtml?: string;
+    icon: string;
+    score?: number;
+    nextPage?: boolean;
+  };
 }
 
 export interface Directions {

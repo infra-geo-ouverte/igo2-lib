@@ -1,13 +1,19 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+
+import { debounceTime, distinctUntilChanged, map, skipWhile } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Subscription, zip } from 'rxjs';
 
 import { LanguageService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { Stop } from '../shared/directions.interface';
-import { distinctUntilChanged, skipWhile } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
+import { Stop, StopStateInList } from '../shared/directions.interface';
+
+import { SearchService } from '../../search/shared/search.service';
+import { SearchResult } from '../../search/shared/search.interfaces';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import pointOnFeature from '@turf/point-on-feature';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -20,19 +26,25 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
   get allStops() {
     return this.stopsStore.view.all();
   }
+  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
-  storeSortChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  private stopChange$: BehaviorSubject<{ stop: Stop, property: string }> = new BehaviorSubject(undefined);
+  private storeSortChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+
+  private search$$: Subscription;
+  private stopChange$$: Subscription;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   public moreThanTwoStops: boolean = false;
 
-  /**
-   * The route and vertex store
-   */
   @Input() stopsStore: EntityStore<Stop>;
+  @Input() debounce: number = 200;
+  @Input() length: number = 2;
 
   constructor(
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private searchService: SearchService,
+    private changeDetectorRefs: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -42,6 +54,7 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
+    this.stopChange$$.unsubscribe();
   }
 
   private initStores() {
@@ -50,9 +63,8 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
       .pipe(distinctUntilChanged())
       .subscribe((empty) => {
         if (empty) {
-          // todo put back uuid()
-          this.stopsStore.insert({ id: '0', order: 0 });
-          this.stopsStore.insert({ id: '1', order: 1 });
+          this.stopsStore.insert({ id: uuid(), order: 0 });
+          this.stopsStore.insert({ id: uuid(), order: 1, isLastStop: true });
         }
       });
     this.storeChange$$ =
@@ -65,10 +77,104 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
           this.updateSortOrder();
           this.getRoutes();
         });
+
+    this.stopChange$$ = this.stopChange$
+      .pipe(
+        skipWhile(change => !change),
+        debounceTime(this.debounce),
+        distinctUntilChanged()
+      )
+      .subscribe((change: { stop: Stop, property: string }) => {
+        switch (change.property) {
+          case 'text':
+            console.log('changement de type texte', change);
+            this.handleTermChanged(change.stop[change.property], change.stop);
+            break;
+          case 'coordinates':
+            console.log('changement de type coordinates', change);
+            break;
+          default:
+            break;
+        }
+      });
+  }
+
+
+  private handleTermChanged(term: string, stop: Stop) {
+    if (term !== undefined || term.length !== 0) {
+      if (this.search$$) {
+        this.search$$.unsubscribe();
+      }
+      const researches = this.searchService.search(term, { searchType: 'Feature' });
+      const requests$ = researches.map(
+        res => res.request
+          .pipe(
+            map((results: SearchResult[]) => results.filter(r => r.data.geometry)))
+      );
+      this.search$$ = zip(...requests$)
+        .pipe(
+          map((searchRequests: SearchResult[][]) => [].concat.apply([], searchRequests)),
+          map((searchResults: SearchResult[]) => {
+            const searchProposals = [];
+            [...new Set(searchResults.map(item => item.source))].map(source => {
+              searchProposals.push({
+                source,
+                meta: searchResults.find(sr => sr.source === source).meta,
+                results: searchResults.filter(sr => sr.source === source).map(r => r.data)
+              });
+            });
+            stop.searchProposals = searchProposals;
+          })
+        ).subscribe(() => this.changeDetectorRefs.detectChanges());
+    }
+
+  }
+
+  chooseProposal(result: Feature, stop: Stop) {
+    if (result) {
+      let geomCoord;
+      const geom = result.geometry;
+      if (geom.type === 'Point') {
+        geomCoord = geom.coordinates;
+      } else {
+        const point = pointOnFeature(result.geometry);
+        geomCoord = [
+          point.geometry.coordinates[0],
+          point.geometry.coordinates[1]
+        ];
+      }
+      if (geomCoord) {
+        stop.coordinates = geomCoord;
+        stop.text = result.meta.title;
+        this.stopChange$.next({ stop, property: 'coordinates' });
+      }
+    }
+  }
+
+  setStopText(event: KeyboardEvent, stop: Stop) {
+    const term = (event.target as HTMLInputElement).value;
+    if (this.validateTerm(term)) {
+      stop.text = term;
+      this.stopChange$.next({ stop, property: 'text' });
+    }
+  }
+
+  validateTerm(term: string) {
+    if (
+      this.keyIsValid(term) &&
+      (term.length >= this.length || term.length === 0)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private keyIsValid(key: string) {
+    return this.invalidKeys.find(value => value === key) === undefined;
   }
 
   private getRoutes() {
-    const stopsWithCoords = this.stopsStore.all().filter((s) => s.stopCoordinates);
+    const stopsWithCoords = this.stopsStore.all().filter((s) => s.coordinates);
     if (stopsWithCoords.length >= 2) {
       console.log('stopsWithCoords', stopsWithCoords);
     } else {
@@ -93,17 +199,19 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     const lastStopId = lastStop.id;
     const lastStopOrder = lastStop.order;
     this.stopsStore.get(lastStopId).order = lastStopOrder + 1;
-    // todo put back uuid()
     this.stopsStore.insert(
       {
-        id: this.stopsStore.count.toLocaleString(),
-        order: lastStopOrder,
-        stopCoordinates: [this.stopsStore.count, this.stopsStore.count]
+        id: uuid(),
+        order: lastStopOrder
       });
   }
 
   removeStop(stop) {
     this.stopsStore.delete(stop);
+  }
+
+  clearStop(stop: Stop) {
+    this.stopsStore.update({ id: stop.id, order: stop.order });
   }
 
   private checkStoreCount() {
@@ -137,11 +245,13 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
 
   private computeStopOrderBasedOnListOrder(stops: Stop[], emit: boolean) {
     let cnt = 0;
+    const stopsCnt = stops.length;
     const localStops = [...stops];
     localStops.map(s => {
       const stop = this.stopsStore.get(s.id);
       if (stop) {
-        this.stopsStore.get(s.id).order = cnt;
+        stop.order = cnt;
+        stop.isLastStop = cnt === stopsCnt - 1 ? true : false;
         cnt += 1;
       }
     });
