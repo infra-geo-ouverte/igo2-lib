@@ -8,7 +8,7 @@ import { LanguageService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { Stop, StopStateInList } from '../shared/directions.interface';
+import { Stop } from '../shared/directions.interface';
 
 import { SearchService } from '../../search/shared/search.service';
 import { SearchResult } from '../../search/shared/search.interfaces';
