@@ -589,7 +589,7 @@ export class IgoMap {
           });
         }
 
-        if (this.ol.getView().get('options_').buffer) {
+        if (this.ol.getView().get('options_')?.buffer) {
           const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
           this.bufferGeom = new olCircle(coordinates, bufferRadius);
           const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
