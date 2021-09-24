@@ -1,4 +1,4 @@
 export * from './shared';
 export * from './directions-sources';
 export * from './directions-form';
-export * from './directions-form2';
+export * from './directions-inputs';

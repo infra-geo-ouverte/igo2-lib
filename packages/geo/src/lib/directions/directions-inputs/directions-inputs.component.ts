@@ -10,11 +10,11 @@ import { distinctUntilChanged, skipWhile } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'igo-directions-form2',
-  templateUrl: './directions-form2.component.html',
-  styleUrls: ['./directions-form2.component.scss']
+  selector: 'igo-directions-inputs',
+  templateUrl: './directions-inputs.component.html',
+  styleUrls: ['./directions-inputs.component.scss']
 })
-export class DirectionsForm2Component implements OnInit, OnDestroy {
+export class DirectionsInputsComponent implements OnInit, OnDestroy {
 
 
   get allStops() {
