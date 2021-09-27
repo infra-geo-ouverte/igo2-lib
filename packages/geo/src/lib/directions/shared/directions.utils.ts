@@ -1,6 +1,20 @@
+import olFeature from 'ol/Feature';
+import * as olstyle from 'ol/style';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
-import { Stop } from './directions.interface';
+
+import { FeatureWithStop, Stop } from './directions.interface';
+import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import { FeatureStore } from '../../feature/shared/store';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
+import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
+import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
+import { LanguageService } from '@igo2/core';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -31,11 +45,11 @@ export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, 
     if (stop) {
       stop.order = cnt;
       if (cnt === 0) {
-        stop.placeholder = 'start';
+        stop.relativePosition = 'start';
       } else if (cnt === stopsCnt - 1) {
-        stop.placeholder = 'end';
+        stop.relativePosition = 'end';
       } else {
-        stop.placeholder = 'intermediate';
+        stop.relativePosition = 'intermediate';
       }
       cnt += 1;
     }
@@ -60,7 +74,114 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
     {
       id,
       order: lastStopOrder,
-      placeholder: 'intermediate'
+      relativePosition: 'intermediate'
     });
   return stopsStore.get(id);
 }
+
+/**
+ * Create a style for the directions stops and routes
+ * @param feature OlFeature
+ * @returns OL style function
+ */
+ export function directionsStyle(
+  feature: olFeature<OlGeometry>,
+  resolution: number
+): olstyle.Style | olstyle.Style[] {
+  const vertexStyle = [
+    new olstyle.Style({
+      geometry: feature.getGeometry(),
+      image: new olstyle.Circle({
+        radius: 7,
+        stroke: new olstyle.Stroke({ color: '#FF0000', width: 3 })
+      })
+    })
+  ];
+
+  const stopStyle = createOverlayMarkerStyle({
+    text: feature.get('stopText'),
+    opacity: feature.get('stopOpacity'),
+    markerColor: feature.get('stopColor'),
+    markerOutlineColor: [255, 255, 255]});
+
+  const routeStyle = [
+    new olstyle.Style({
+      stroke: new olstyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
+    }),
+    new olstyle.Style({
+      stroke: new olstyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
+    })
+  ];
+
+  if (feature.get('type') === 'stop') {
+    return stopStyle;
+  }
+  if (feature.get('type') === 'vertex') {
+    return vertexStyle;
+  }
+  if (feature.get('type') === 'route') {
+    return routeStyle;
+  }
+}
+
+export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWithStop>,languageService: LanguageService) {
+  const loadingStrategy = new FeatureStoreLoadingStrategy({
+    motion: FeatureMotion.None
+  });
+
+  const stopsLayer = new VectorLayer({
+    id: 'igo-direction-stops-layer',
+    title: languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
+    zIndex: 911,
+    source: new FeatureDataSource(),
+    showInLayerList: true,
+    workspace: {
+      enabled: false,
+    },
+    linkedLayers: {
+      linkId: 'igo-direction-stops-layer',
+      links: [
+        {
+          bidirectionnal: false,
+          syncedDelete: true,
+          linkedIds: ['igo-direction-route-layer'],
+          properties: []
+        }
+      ]
+    },
+    exportable: true,
+    browsable: false,
+    style: directionsStyle
+  });
+  tryBindStoreLayer(stopsFeatureStore, stopsLayer);
+  stopsFeatureStore.layer.visible = true;
+  tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
+}
+
+export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWithStop>,languageService: LanguageService) {
+  const loadingStrategy = new FeatureStoreLoadingStrategy({
+    motion: FeatureMotion.None
+  });
+
+  const routeLayer = new VectorLayer({
+    id: 'igo-direction-route-layer',
+    title: languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
+    zIndex: 910,
+    source: new FeatureDataSource(),
+    showInLayerList: true,
+    workspace: {
+      enabled: false,
+    },
+    linkedLayers: {
+      linkId: 'igo-direction-route-layer'
+    },
+    exportable: true,
+    browsable: false,
+    style: directionsStyle
+  });
+  tryBindStoreLayer(routeFeatureStore, routeLayer);
+  routeFeatureStore.layer.visible = true;
+  tryAddLoadingStrategy(routeFeatureStore, loadingStrategy);
+
+}
+

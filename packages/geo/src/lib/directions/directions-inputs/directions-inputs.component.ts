@@ -118,7 +118,7 @@ export class DirectionsInputsComponent {
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id, order: stop.order, placeholder: stop.placeholder });
+    this.stopsStore.update({ id: stop.id, order: stop.order, relativePosition: stop.relativePosition });
   }
 
 

@@ -2,12 +2,16 @@ import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+import { LanguageService } from '@igo2/core';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { Stop } from './shared/directions.interface';
+import { FeatureWithStop, Stop } from './shared/directions.interface';
 import { Subscription } from 'rxjs';
-import { computeStopOrderBasedOnListOrder, updateStoreSorting } from './shared/directions.utils';
+import { computeStopOrderBasedOnListOrder, initRouteFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { FeatureStore } from '../feature/shared/store';
+
+
 
 @Component({
   selector: 'igo-directions',
@@ -25,15 +29,26 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
 
-  @Input() stopsStore: EntityStore<Stop>;
+  @Input() stopsStore: EntityStore<Stop>; 
+  @Input() stopsFeatureStore: FeatureStore<FeatureWithStop>;
+  @Input() routeFeatureStore: FeatureStore<FeatureWithStop>;
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
-  constructor(private cdRef: ChangeDetectorRef) { }
+  constructor(
+    private cdRef: ChangeDetectorRef,
+    private languageService: LanguageService
+    ) { }
 
 
   ngOnInit(): void {
-    this.initStores();
+    this.initEntityStores();
+    setTimeout(() => {
+      initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
+      initRouteFeatureStore(this.routeFeatureStore, this.languageService);
+      // this.initOlInteraction();
+    }, 1);
+
   }
 
   ngOnDestroy(): void {
@@ -41,24 +56,44 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeChange$$.unsubscribe();
   }
 
-  private initStores() {
+  private initEntityStores() {
+    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
+    this.monitorEmptyEntityStore();
+    this.monitorEntityStoreChange();
+  }
+
+
+  private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
     this.storeEmpty$$ = this.stopsStore.empty$
       .pipe(distinctUntilChanged())
       .subscribe((empty) => {
         if (empty) {
-          this.stopsStore.insert({ id: uuid(), order: 0, placeholder: 'start' });
-          this.stopsStore.insert({ id: uuid(), order: 1, placeholder: 'end' });
+          this.stopsStore.insert({ id: uuid(), order: 0, relativePosition: 'start' });
+          this.stopsStore.insert({ id: uuid(), order: 1, relativePosition: 'end' });
         }
+      /*  if (this.stopsFeatureStore?.layer?.options) {
+          this.stopsFeatureStore.layer.options.showInLayerList = empty ? false : true;
+        }
+        if (this.stopsFeatureStore?.layer?.options) {
+          this.routeFeatureStore.layer.options.showInLayerList = empty ? false : true;
+        }       */
       });
-    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
+  }
 
+  private monitorEntityStoreChange() {
     this.storeChange$$ = this.stopsStore.entities$
       .pipe(debounceTime(this.debounce))
-      .subscribe(() => {
+      .subscribe((stops: Stop[]) => {
         this.updateSortOrder();
+        this.handleStopsFeature();
         /*this.getRoutes();*/
       });
+  }
+
+  private handleStopsFeature() {
+    const stopsWithCoordinates = this.allStops.filter(stop => stop.coordinates)
+    console.log('stopsWithCoordinates', stopsWithCoordinates);
   }
 
   private updateSortOrder() {

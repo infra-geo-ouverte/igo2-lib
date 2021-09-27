@@ -23,10 +23,16 @@ export class DirectionsToolComponent {
   get stopsStore(): EntityStore<Stop> { return this.directionState.stopsStore; }
 
   /**
+   * stops
+   * @internal
+   */
+   get stopsFeatureStore(): FeatureStore { return this.directionState.stopsFeatureStore; }
+
+  /**
    * routes
    * @internal
    */
-  get routeStore(): FeatureStore { return this.directionState.routeStore; }
+  get routeFeatureStore(): FeatureStore { return this.directionState.routeFeatureStore; }
 
   /**
    * Map to measure on

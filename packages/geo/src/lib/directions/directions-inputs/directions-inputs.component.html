@@ -2,7 +2,7 @@
   <div class="example-box" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
     <div class="igo-input-container">
     <input type="text"
-           [placeholder]="'igo.geo.directionsForm.'+ stop.placeholder | translate"
+           [placeholder]="'igo.geo.directionsForm.'+ stop.relativePosition | translate"
            aria-label="Number"
            matInput
            [(ngModel)]="stop.text"

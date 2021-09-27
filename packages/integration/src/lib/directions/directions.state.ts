@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityStore } from '@igo2/common';
 
-import { DirectionsFormService, FeatureStore, Stop } from '@igo2/geo';
+import { FeatureStore, FeatureWithStop, Stop } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -17,11 +17,17 @@ export class DirectionState {
    */
   public stopsStore: EntityStore<Stop> = new EntityStore<Stop>([]);
 
+  /**
+   * Store that holds the driving route
+   */
+   public stopsFeatureStore: FeatureStore = new FeatureStore<FeatureWithStop>([], {
+    map: this.mapState.map
+  });
 
   /**
    * Store that holds the driving route
    */
-  public routeStore: FeatureStore = new FeatureStore([], {
+  public routeFeatureStore: FeatureStore = new FeatureStore<FeatureWithStop>([], {
     map: this.mapState.map
   });
 
@@ -29,11 +35,9 @@ export class DirectionState {
 
   public routeFromFeatureDetail = false;
 
-  constructor(
-    private mapState: MapState,
-    private directionsFormService: DirectionsFormService) {
+  constructor(private mapState: MapState) {
 
-    this.mapState.map.layers$.subscribe(() => {
+  /*  this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
        // this.stopsStore.deleteMany(this.stopsStore.all());
         this.directionsFormService.setStops([]);
@@ -41,7 +45,7 @@ export class DirectionState {
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
         this.routeStore.deleteMany(this.routeStore.all());
       }
-    });
+    });*/
   }
 
   setRouteFromFeatureDetail(value: boolean) {

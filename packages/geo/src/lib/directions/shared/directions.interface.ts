@@ -14,13 +14,20 @@ export interface DirectionsOptions {
   alternatives?: boolean;
 }
 
+export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
+
+export interface FeatureWithStopProperties {
+  id: string;
+  stop: Stop;
+}
+
 export interface Stop {
   id: string;
   order: number;
   text?: string;
   searchProposals?: SourceProposal[];
   coordinates?: [number, number];
-  placeholder?: string;
+  relativePosition?: string;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;
