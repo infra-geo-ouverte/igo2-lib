@@ -36,7 +36,6 @@ export class DirectionsInputsComponent {
   @Input() length: number = 2;
 
   constructor(
-    private languageService: LanguageService,
     private searchService: SearchService,
     private cdRef: ChangeDetectorRef
   ) { }
@@ -116,39 +115,12 @@ export class DirectionsInputsComponent {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
-  private getRoutes() {
-    const stopsWithCoords = this.stopsStore.all().filter((s) => s.coordinates);
-    if (stopsWithCoords.length >= 2) {
-      console.log('stopsWithCoords', stopsWithCoords);
-    } else {
-      console.log('clear route!!!');
-    }
-  }
-
-  resetStops() {
-    this.stopsStore.clear();
-  }
-
-  // stop are always added before the last stop.
-  addStop(): void {
-    const lastStop = this.allStops[this.stopsStore.count - 1];
-    const lastStopId = lastStop.id;
-    const lastStopOrder = lastStop.order;
-    this.stopsStore.get(lastStopId).order = lastStopOrder + 1;
-    this.stopsStore.insert(
-      {
-        id: uuid(),
-        order: lastStopOrder,
-        placeholder: 'intermediate'
-      });
-  }
-
-  removeStop(stop) {
+  removeStop(stop: Stop) {
     this.stopsStore.delete(stop);
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id, order: stop.order });
+    this.stopsStore.update({ id: stop.id, order: stop.order, placeholder: stop.placeholder });
   }
 
 
