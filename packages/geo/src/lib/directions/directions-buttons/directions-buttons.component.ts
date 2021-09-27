@@ -1,14 +1,9 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
-import { Subscription } from 'rxjs';
-
-import { LanguageService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
-import { uuid } from '@igo2/utils';
 
 import { Stop } from '../shared/directions.interface';
-
-import { SearchService } from '../../search/shared/search.service';
+import { addStopToStore } from '../shared/directions.utils';
 
 @Component({
   selector: 'igo-directions-buttons',
@@ -32,16 +27,6 @@ export class DirectionsButtonsComponent {
 
   // stop are always added before the last stop.
   addStop(): void {
-    const lastStop = this.allStops[this.stopsStore.count - 1];
-    const lastStopId = lastStop.id;
-    const lastStopOrder = lastStop.order;
-    this.stopsStore.get(lastStopId).order = lastStopOrder + 1;
-    this.stopsStore.insert(
-      {
-        id: uuid(),
-        order: lastStopOrder,
-        placeholder: 'intermediate'
-      });
+    addStopToStore(this.stopsStore);
   }
-
 }

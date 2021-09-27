@@ -1,4 +1,5 @@
 import { EntityStore } from '@igo2/common';
+import { uuid } from '@igo2/utils';
 import { Stop } from './directions.interface';
 
 /**
@@ -42,4 +43,24 @@ export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, 
   if (emit) {
     stopsStore.updateMany(stops);
   }
+}
+
+/**
+ * Function that add a stop to the stop store. Stop are always added before the last stop.
+ * @param source stop store
+ */
+export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
+
+  const lastStop = this.allStops[stopsStore.count - 1];
+  const lastStopId = lastStop.id;
+  const lastStopOrder = lastStop.order;
+  stopsStore.get(lastStopId).order = lastStopOrder + 1;
+  const id = uuid();
+  stopsStore.insert(
+    {
+      id,
+      order: lastStopOrder,
+      placeholder: 'intermediate'
+    });
+  return stopsStore.get(id);
 }

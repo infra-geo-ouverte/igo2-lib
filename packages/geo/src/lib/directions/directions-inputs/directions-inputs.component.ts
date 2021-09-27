@@ -4,9 +4,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { map } from 'rxjs/operators';
 import { Subscription, zip } from 'rxjs';
 
-import { LanguageService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
-import { uuid } from '@igo2/utils';
 
 import { Stop } from '../shared/directions.interface';
 
