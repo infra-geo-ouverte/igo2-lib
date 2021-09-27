@@ -2,7 +2,7 @@
   <div class="example-box" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
     <div class="igo-input-container">
     <input type="text"
-           [placeholder]="stop.order === 0 ? ('igo.geo.directionsForm.start' | translate): stop.isLastStop ? ('igo.geo.directionsForm.end' | translate) : ('igo.geo.directionsForm.intermediate' | translate)"
+           [placeholder]="'igo.geo.directionsForm.'+ stop.placeholder | translate"
            aria-label="Number"
            matInput
            [(ngModel)]="stop.text"
@@ -36,11 +36,11 @@
         <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
       </button>
 
-      <button *ngIf="moreThanTwoStops" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+      <button *ngIf="(stopsStore.count$ | async)> 2" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
-      <button *ngIf="!moreThanTwoStops" disabled="true" mat-icon-button tooltip-position="below"
+      <button *ngIf="(stopsStore.count$ | async)<= 2" disabled="true" mat-icon-button tooltip-position="below"
         matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn">
         <mat-icon svgIcon="blank"></mat-icon>
       </button>

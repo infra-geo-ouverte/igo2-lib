@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Subscription, zip } from 'rxjs';
 
 import { LanguageService } from '@igo2/core';
-import { EntityStore, EntityStoreWatcher } from '@igo2/common';
+import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { Stop } from '../shared/directions.interface';
@@ -14,27 +14,23 @@ import { SearchService } from '../../search/shared/search.service';
 import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
+import { computeStopOrderBasedOnListOrder, updateStoreSorting } from '../shared/directions.utils';
 
 @Component({
   selector: 'igo-directions-inputs',
   templateUrl: './directions-inputs.component.html',
   styleUrls: ['./directions-inputs.component.scss']
 })
-export class DirectionsInputsComponent implements OnInit, OnDestroy {
+export class DirectionsInputsComponent {
 
 
   get allStops() {
     return this.stopsStore.view.all();
   }
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
-  private watcher: EntityStoreWatcher<Stop>;
+
   private search$$: Subscription;
-  private storeEmpty$$: Subscription;
-  private storeChange$$: Subscription;
-  public moreThanTwoStops: boolean = false;
-
   @Input() stopsStore: EntityStore<Stop>;
-
 
   @Input() debounce: number = 200;
   @Input() length: number = 2;
@@ -44,36 +40,6 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private cdRef: ChangeDetectorRef
   ) { }
-
-  ngOnInit(): void {
-    this.initStores();
-  }
-
-  ngOnDestroy(): void {
-    this.storeEmpty$$.unsubscribe();
-    this.storeChange$$.unsubscribe();
-  }
-
-  private initStores() {
-    // Watch if the store is empty to reset it
-    this.storeEmpty$$ = this.stopsStore.empty$
-      .pipe(distinctUntilChanged())
-      .subscribe((empty) => {
-        if (empty) {
-          this.stopsStore.insert({ id: uuid(), order: 0 });
-          this.stopsStore.insert({ id: uuid(), order: 1, isLastStop: true });
-        }
-      });
-    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
-
-    this.storeChange$$ = this.stopsStore.entities$
-      .pipe(debounceTime(this.debounce))
-      .subscribe(() => {
-        this.checkStoreCount();
-        this.updateSortOrder();
-        this.getRoutes();
-      });
-  }
 
 
   private computeSearchProposal(term: string, stop: Stop) {
@@ -159,13 +125,6 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateSortOrder() {
-    setTimeout(() => {
-      this.computeStopOrderBasedOnListOrder(this.allStops, false);
-    }, 50);
-    this.updateStoreSorting();
-  }
-
   resetStops() {
     this.stopsStore.clear();
   }
@@ -179,7 +138,8 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     this.stopsStore.insert(
       {
         id: uuid(),
-        order: lastStopOrder
+        order: lastStopOrder,
+        placeholder: 'intermediate'
       });
   }
 
@@ -191,49 +151,18 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     this.stopsStore.update({ id: stop.id, order: stop.order });
   }
 
-  private checkStoreCount() {
-    if (this.stopsStore.count > 2) {
-      this.moreThanTwoStops = true;
-    } else {
-      this.moreThanTwoStops = false;
-    }
-  }
 
   drop(event: CdkDragDrop<string[]>) {
     this.moveStops(event.previousIndex, event.currentIndex);
-  }
-
-  private updateStoreSorting(direction: 'asc' | 'desc' = 'asc', field = 'order') {
-    this.stopsStore.view.sort({
-      direction,
-      valueAccessor: (stop: Stop) => stop[field]
-    });
   }
 
   private moveStops(fromIndex, toIndex) {
     if (fromIndex !== toIndex) {
       const stopsList = [...this.allStops];
       moveItemInArray(stopsList, fromIndex, toIndex);
-      this.computeStopOrderBasedOnListOrder(stopsList, true);
-      this.updateStoreSorting();
-    }
-
-  }
-
-  private computeStopOrderBasedOnListOrder(stops: Stop[], emit: boolean) {
-    let cnt = 0;
-    const stopsCnt = stops.length;
-    const localStops = [...stops];
-    localStops.map(s => {
-      const stop = this.stopsStore.get(s.id);
-      if (stop) {
-        stop.order = cnt;
-        stop.isLastStop = cnt === stopsCnt - 1 ? true : false;
-        cnt += 1;
-      }
-    });
-    if (emit) {
-      this.stopsStore.updateMany(stops);
+      computeStopOrderBasedOnListOrder(this.stopsStore, stopsList, true);
+      updateStoreSorting(this.stopsStore);
     }
   }
+
 }

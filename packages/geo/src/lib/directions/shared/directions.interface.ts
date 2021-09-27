@@ -20,7 +20,7 @@ export interface Stop {
   text?: string;
   searchProposals?: SourceProposal[];
   coordinates?: [number, number];
-  isLastStop?: boolean;
+  placeholder?: string;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;
