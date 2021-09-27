@@ -89,13 +89,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(this.debounce))
       .subscribe((stops: Stop[]) => {
         this.updateSortOrder();
-        this.handleStopsFeature();
+        this.handleStopsFeature(stops);
         /*this.getRoutes();*/
       });
   }
 
-  private handleStopsFeature() {
-    const stopsWithCoordinates = this.allStops.filter(stop => stop.coordinates);
+  private handleStopsFeature(stops: Stop[]) {
+    const stopsWithCoordinates = stops.filter(stop => stop.coordinates);
     stopsWithCoordinates.map(stop => this.addStopOverlay(stop));
     this.stopsFeatureStore.all().map(
       (stopFeature: Feature<FeatureWithStopProperties>) => {
@@ -103,7 +103,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           this.stopsFeatureStore.delete(stopFeature);
         }
       })
-      const stopsWithoutCoordinates = this.allStops.filter(stop => !stop.coordinates);
+      const stopsWithoutCoordinates = stops.filter(stop => !stop.coordinates);
       stopsWithoutCoordinates.map(stop => {
         const stopFeature = this.stopsFeatureStore.get(stop.id)
         if (stopFeature) {
