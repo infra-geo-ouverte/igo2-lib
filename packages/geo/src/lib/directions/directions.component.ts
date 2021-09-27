@@ -102,14 +102,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         if (!this.stopsStore.get(stopFeature.properties.id)) {
           this.stopsFeatureStore.delete(stopFeature);
         }
-      })
-      const stopsWithoutCoordinates = stops.filter(stop => !stop.coordinates);
-      stopsWithoutCoordinates.map(stop => {
-        const stopFeature = this.stopsFeatureStore.get(stop.id)
-        if (stopFeature) {
-          this.stopsFeatureStore.delete(stopFeature);
-        }
       });
+    const stopsWithoutCoordinates = stops.filter(stop => !stop.coordinates);
+    stopsWithoutCoordinates.map(stop => {
+      const stopFeature = this.stopsFeatureStore.get(stop.id);
+      if (stopFeature) {
+        this.stopsFeatureStore.delete(stopFeature);
+      }
+    });
   }
 
   private updateSortOrder() {
