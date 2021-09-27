@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { EntityStore } from '@igo2/common';
 
 import { DirectionsFormService, FeatureStore, Stop } from '@igo2/geo';
@@ -35,7 +35,7 @@ export class DirectionState {
 
     this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
-        this.stopsStore.deleteMany(this.stopsStore.all());
+       // this.stopsStore.deleteMany(this.stopsStore.all());
         this.directionsFormService.setStops([]);
       }
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {

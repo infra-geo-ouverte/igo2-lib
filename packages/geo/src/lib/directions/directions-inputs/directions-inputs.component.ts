@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { debounceTime, distinctUntilChanged, map, skipWhile } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Subscription, zip } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { Subscription, zip } from 'rxjs';
 
 import { LanguageService } from '@igo2/core';
-import { EntityStore } from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { Stop } from '../shared/directions.interface';
@@ -27,24 +27,22 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     return this.stopsStore.view.all();
   }
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
-
-  private stopChange$: BehaviorSubject<{ stop: Stop, property: string }> = new BehaviorSubject(undefined);
-  private storeSortChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
-
+  private watcher: EntityStoreWatcher<Stop>;
   private search$$: Subscription;
-  private stopChange$$: Subscription;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   public moreThanTwoStops: boolean = false;
 
   @Input() stopsStore: EntityStore<Stop>;
+
+
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
   constructor(
     private languageService: LanguageService,
     private searchService: SearchService,
-    private changeDetectorRefs: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -54,7 +52,6 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
-    this.stopChange$$.unsubscribe();
   }
 
   private initStores() {
@@ -67,40 +64,19 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
           this.stopsStore.insert({ id: uuid(), order: 1, isLastStop: true });
         }
       });
-    this.storeChange$$ =
-      combineLatest([
-        this.storeSortChange$,
-        this.stopsStore.count$.pipe(distinctUntilChanged())
-      ])
-        .subscribe(() => {
-          this.checkStoreCount();
-          this.updateSortOrder();
-          this.getRoutes();
-        });
+    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
 
-    this.stopChange$$ = this.stopChange$
-      .pipe(
-        skipWhile(change => !change),
-        debounceTime(this.debounce),
-        distinctUntilChanged()
-      )
-      .subscribe((change: { stop: Stop, property: string }) => {
-        switch (change.property) {
-          case 'text':
-            console.log('changement de type texte', change);
-            this.handleTermChanged(change.stop[change.property], change.stop);
-            break;
-          case 'coordinates':
-            console.log('changement de type coordinates', change);
-            break;
-          default:
-            break;
-        }
+    this.storeChange$$ = this.stopsStore.entities$
+      .pipe(debounceTime(this.debounce))
+      .subscribe(() => {
+        this.checkStoreCount();
+        this.updateSortOrder();
+        this.getRoutes();
       });
   }
 
 
-  private handleTermChanged(term: string, stop: Stop) {
+  private computeSearchProposal(term: string, stop: Stop) {
     if (term !== undefined || term.length !== 0) {
       if (this.search$$) {
         this.search$$.unsubscribe();
@@ -125,7 +101,7 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
             });
             stop.searchProposals = searchProposals;
           })
-        ).subscribe(() => this.changeDetectorRefs.detectChanges());
+        ).subscribe(() => this.cdRef.detectChanges());
     }
 
   }
@@ -146,7 +122,7 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
       if (geomCoord) {
         stop.coordinates = geomCoord;
         stop.text = result.meta.title;
-        this.stopChange$.next({ stop, property: 'coordinates' });
+        this.stopsStore.update(stop);
       }
     }
   }
@@ -155,7 +131,8 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
     const term = (event.target as HTMLInputElement).value;
     if (this.validateTerm(term)) {
       stop.text = term;
-      this.stopChange$.next({ stop, property: 'text' });
+      this.computeSearchProposal(term, stop);
+      this.stopsStore.update(stop);
     }
   }
 
@@ -256,7 +233,7 @@ export class DirectionsInputsComponent implements OnInit, OnDestroy {
       }
     });
     if (emit) {
-      this.storeSortChange$.next(true);
+      this.stopsStore.updateMany(stops);
     }
   }
 }

@@ -5,6 +5,7 @@
            [placeholder]="stop.order === 0 ? ('igo.geo.directionsForm.start' | translate): stop.isLastStop ? ('igo.geo.directionsForm.end' | translate) : ('igo.geo.directionsForm.intermediate' | translate)"
            aria-label="Number"
            matInput
+           [(ngModel)]="stop.text"
            (keyup)="setStopText($event,stop)"
            (keydown.enter)="$event.preventDefault()"
            [matAutocomplete]="auto">
