@@ -75,12 +75,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           this.stopsStore.insert({ id: uuid(), order: 0, relativePosition: 'start' });
           this.stopsStore.insert({ id: uuid(), order: 1, relativePosition: 'end' });
         }
-        /*  if (this.stopsFeatureStore?.layer?.options) {
-            this.stopsFeatureStore.layer.options.showInLayerList = empty ? false : true;
-          }
-          if (this.stopsFeatureStore?.layer?.options) {
-            this.routeFeatureStore.layer.options.showInLayerList = empty ? false : true;
-          }       */
       });
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityStore } from '@igo2/common';
 
-import { FeatureStore, FeatureWithStop, Stop } from '@igo2/geo';
+import { addStopToStore, FeatureStore, FeatureWithStop, Stop } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -46,15 +46,15 @@ export class DirectionState {
       });
     });
 
-  /*  this.mapState.map.layers$.subscribe(() => {
+    this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
-       // this.stopsStore.deleteMany(this.stopsStore.all());
-        this.directionsFormService.setStops([]);
+       this.stopsStore.deleteMany(this.stopsStore.all());
+       this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
       }
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
-        this.routeStore.deleteMany(this.routeStore.all());
+        this.routeFeatureStore.deleteMany(this.routeFeatureStore.all());
       }
-    });*/
+    });
   }
 
   setRouteFromFeatureDetail(value: boolean) {
