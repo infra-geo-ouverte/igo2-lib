@@ -37,6 +37,15 @@ export class DirectionState {
 
   constructor(private mapState: MapState) {
 
+    this.mapState.map.ol.once('rendercomplete', () => {
+      this.stopsFeatureStore.empty$.subscribe((empty) => {
+        this.stopsFeatureStore.layer.options.showInLayerList = !empty;
+      });
+      this.routeFeatureStore.empty$.subscribe((empty) => {
+        this.routeFeatureStore.layer.options.showInLayerList = !empty;
+      });
+    });
+
   /*  this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
        // this.stopsStore.deleteMany(this.stopsStore.all());
