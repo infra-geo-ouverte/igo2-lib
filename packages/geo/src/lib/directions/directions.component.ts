@@ -6,10 +6,11 @@ import { LanguageService } from '@igo2/core';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { FeatureWithStop, Stop } from './shared/directions.interface';
+import { FeatureWithStop, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { Subscription } from 'rxjs';
-import { computeStopOrderBasedOnListOrder, initRouteFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { addStopToStopsFeatureStore, computeStopOrderBasedOnListOrder, initRouteFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { FeatureStore } from '../feature/shared/store';
+import { Feature } from '../feature/shared/feature.interfaces';
 
 
 
@@ -26,10 +27,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private watcher: EntityStoreWatcher<Stop>;
 
+  private projection = 'EPSG:4326';
+
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
 
-  @Input() stopsStore: EntityStore<Stop>; 
+  @Input() stopsStore: EntityStore<Stop>;
   @Input() stopsFeatureStore: FeatureStore<FeatureWithStop>;
   @Input() routeFeatureStore: FeatureStore<FeatureWithStop>;
   @Input() debounce: number = 200;
@@ -38,7 +41,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   constructor(
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService
-    ) { }
+  ) { }
 
 
   ngOnInit(): void {
@@ -72,12 +75,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           this.stopsStore.insert({ id: uuid(), order: 0, relativePosition: 'start' });
           this.stopsStore.insert({ id: uuid(), order: 1, relativePosition: 'end' });
         }
-      /*  if (this.stopsFeatureStore?.layer?.options) {
-          this.stopsFeatureStore.layer.options.showInLayerList = empty ? false : true;
-        }
-        if (this.stopsFeatureStore?.layer?.options) {
-          this.routeFeatureStore.layer.options.showInLayerList = empty ? false : true;
-        }       */
+        /*  if (this.stopsFeatureStore?.layer?.options) {
+            this.stopsFeatureStore.layer.options.showInLayerList = empty ? false : true;
+          }
+          if (this.stopsFeatureStore?.layer?.options) {
+            this.routeFeatureStore.layer.options.showInLayerList = empty ? false : true;
+          }       */
       });
   }
 
@@ -92,8 +95,21 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private handleStopsFeature() {
-    const stopsWithCoordinates = this.allStops.filter(stop => stop.coordinates)
-    console.log('stopsWithCoordinates', stopsWithCoordinates);
+    const stopsWithCoordinates = this.allStops.filter(stop => stop.coordinates);
+    stopsWithCoordinates.map(stop => this.addStopOverlay(stop));
+    this.stopsFeatureStore.all().map(
+      (stopFeature: Feature<FeatureWithStopProperties>) => {
+        if (!this.stopsStore.get(stopFeature.properties.id)) {
+          this.stopsFeatureStore.delete(stopFeature);
+        }
+      })
+      const stopsWithoutCoordinates = this.allStops.filter(stop => !stop.coordinates);
+      stopsWithoutCoordinates.map(stop => {
+        const stopFeature = this.stopsFeatureStore.get(stop.id)
+        if (stopFeature) {
+          this.stopsFeatureStore.delete(stopFeature);
+        }
+      });
   }
 
   private updateSortOrder() {
@@ -103,4 +119,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     updateStoreSorting(this.stopsStore);
   }
 
+  public addStopOverlay(stop: Stop) {
+    addStopToStopsFeatureStore(stop, this.stopsFeatureStore, this.projection, this.languageService);
+  }
 }

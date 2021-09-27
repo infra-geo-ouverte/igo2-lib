@@ -1,11 +1,15 @@
 import olFeature from 'ol/Feature';
-import * as olstyle from 'ol/style';
+import * as olStyle from 'ol/style';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olGeom from 'ol/geom';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olProj from 'ol/proj';
+
 
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { FeatureWithStop, Stop } from './directions.interface';
+import { FeatureWithStop, FeatureWithStopProperties, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -13,8 +17,9 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
-import { FeatureMotion } from '../../feature/shared/feature.enums';
+import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -84,16 +89,16 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
  * @param feature OlFeature
  * @returns OL style function
  */
- export function directionsStyle(
+export function directionsStyle(
   feature: olFeature<OlGeometry>,
   resolution: number
-): olstyle.Style | olstyle.Style[] {
+): olStyle.Style | olStyle.Style[] {
   const vertexStyle = [
-    new olstyle.Style({
+    new olStyle.Style({
       geometry: feature.getGeometry(),
-      image: new olstyle.Circle({
+      image: new olStyle.Circle({
         radius: 7,
-        stroke: new olstyle.Stroke({ color: '#FF0000', width: 3 })
+        stroke: new olStyle.Stroke({ color: '#FF0000', width: 3 })
       })
     })
   ];
@@ -102,14 +107,15 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
     text: feature.get('stopText'),
     opacity: feature.get('stopOpacity'),
     markerColor: feature.get('stopColor'),
-    markerOutlineColor: [255, 255, 255]});
+    markerOutlineColor: [255, 255, 255]
+  });
 
   const routeStyle = [
-    new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
+    new olStyle.Style({
+      stroke: new olStyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
     }),
-    new olstyle.Style({
-      stroke: new olstyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
+    new olStyle.Style({
+      stroke: new olStyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
     })
   ];
 
@@ -124,7 +130,7 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
   }
 }
 
-export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWithStop>,languageService: LanguageService) {
+export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWithStop>, languageService: LanguageService) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -158,7 +164,7 @@ export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWit
   tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
 }
 
-export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWithStop>,languageService: LanguageService) {
+export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWithStop>, languageService: LanguageService) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -182,6 +188,63 @@ export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWit
   tryBindStoreLayer(routeFeatureStore, routeLayer);
   routeFeatureStore.layer.visible = true;
   tryAddLoadingStrategy(routeFeatureStore, loadingStrategy);
-
 }
+
+
+export function addStopToStopsFeatureStore(
+  stop: Stop,
+  stopsFeatureStore: FeatureStore<FeatureWithStop>,
+  projection: string,
+  languageService: LanguageService) {
+  let stopColor;
+  let stopText;
+
+  switch (stop.relativePosition) {
+    case 'start':
+      stopColor = '#008000';
+      stopText = languageService.translate.instant('igo.geo.directionsForm.start');
+      break;
+    case 'end':
+      stopColor = '#f64139';
+      stopText = languageService.translate.instant('igo.geo.directionsForm.end');
+      break;
+    default:
+      stopColor = '#ffd700';
+      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stop.order}`;
+      break;
+  }
+
+  const geometry = new olGeom.Point(
+    olProj.transform(stop.coordinates, projection, stopsFeatureStore.map.projection)
+  );
+
+  const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+    featureProjection: stopsFeatureStore.map.projection,
+    dataProjection: stopsFeatureStore.map.projection
+  }) as FeatureGeometry;
+
+  const previousStop = stopsFeatureStore.get(stop.id);
+  const previousStopRevision = previousStop ? previousStop.meta.revision : 0;
+
+  const stopFeatureStore: Feature<FeatureWithStopProperties> = {
+    type: FEATURE,
+    geometry: geojsonGeom,
+    projection: stopsFeatureStore.map.projection,
+    properties: {
+      id: stop.id,
+      type: 'stop',
+      stopText,
+      stopColor,
+      stopOpacity: 1,
+      stop
+    },
+    meta: {
+      id: stop.id,
+      revision: previousStopRevision + 1
+    },
+    ol: new olFeature({ geometry })
+  };
+  stopsFeatureStore.update(stopFeatureStore);
+}
+
 

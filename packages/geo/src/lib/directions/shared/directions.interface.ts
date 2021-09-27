@@ -19,6 +19,10 @@ export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
 export interface FeatureWithStopProperties {
   id: string;
   stop: Stop;
+  type: 'stop';
+  stopText: string;
+  stopColor: string;
+  stopOpacity: 1;
 }
 
 export interface Stop {
