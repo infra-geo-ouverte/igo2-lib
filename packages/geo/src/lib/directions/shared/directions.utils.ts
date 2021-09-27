@@ -51,7 +51,7 @@ export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, 
  */
 export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
 
-  const lastStop = this.allStops[stopsStore.count - 1];
+  const lastStop = stopsStore.view.all()[stopsStore.count - 1];
   const lastStopId = lastStop.id;
   const lastStopOrder = lastStop.order;
   stopsStore.get(lastStopId).order = lastStopOrder + 1;
