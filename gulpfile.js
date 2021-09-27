@@ -183,6 +183,7 @@ gulp.task('core:concatStyles', done => {
       './packages/geo/src/lib/map/map.theming.scss',
       './packages/geo/src/lib/map/map-browser/map-browser.theming.scss',
       './packages/geo/src/lib/map/zoom-button/zoom-button.theming.scss',
+      './packages/geo/src/lib/map/menu-button/menu-button.theming.scss',
       './packages/geo/src/lib/measure/measure.theming.scss',
       './packages/geo/src/lib/measure/measurer/measurer.theming.scss',
       './packages/core/src/style/themes/blue.theme.scss',
