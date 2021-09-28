@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { Cacheable } from 'ts-cacheable';
+
 import { uuid } from '@igo2/utils';
 import { ConfigService, Message } from '@igo2/core';
 
@@ -35,6 +37,9 @@ export class OsrmDirectionsSource extends DirectionsSource {
     return OsrmDirectionsSource._name;
   }
 
+  @Cacheable({
+    maxCacheCount: 20
+  })
   route(coordinates: [number, number][], directionsOptions: DirectionOptions = {}): Observable<Direction[]> {
     const directionsParams = this.getRouteParams(directionsOptions);
     return this.http

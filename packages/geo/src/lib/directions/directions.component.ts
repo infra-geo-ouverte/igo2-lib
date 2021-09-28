@@ -110,17 +110,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRoutes(isOverview: boolean = false) {
+  private getRoutes(isOverview: boolean = false, round: number = 6) {
     const stopsWithCoordinates = this.stopsStore.view.all().filter(stop => stop.coordinates);
     if (stopsWithCoordinates.length < 2) {
       this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       return;
     }
 
+    const roundFactor = Math.pow(10, round);
     const roundedCoordinates = stopsWithCoordinates.map((stop: Stop) => {
       const roundedCoord: [number, number] = [
-        Math.round((stop.coordinates[0]) * 1000000) / 1000000,
-        Math.round((stop.coordinates[1]) * 1000000) / 1000000];
+        Math.round((stop.coordinates[0]) * roundFactor) / roundFactor,
+        Math.round((stop.coordinates[1]) * roundFactor) / roundFactor];
       return roundedCoord;
     });
     const overviewDirectionsOptions: DirectionOptions = {
