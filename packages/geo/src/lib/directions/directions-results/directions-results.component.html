@@ -1,0 +1,31 @@
+<div class="igo-input-container" *ngIf="directions && activeDirection">
+    <mat-form-field *ngIf="directions && directions.length > 1">
+        <mat-select placeholder="{{'igo.geo.directionsForm.drivingOptions' | translate}}"
+            (selectionChange)="changeRoute()" [(ngModel)]="activeDirection">
+            <mat-option *ngFor="let pathDirections of directions; let cnt = index;" [value]="pathDirections">
+                Option {{cnt + 1}} : {{formatDistance(pathDirections.distance)}}
+                ({{formatDuration(pathDirections.duration)}})
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-divider *ngIf="directions && directions.length === 0"></mat-divider>
+
+    <mat-list>
+        <h2 mat-header class="igo-route-title mat-typography">{{activeDirection.title}}</h2>
+        <h2 mat-subheader>{{formatDistance(activeDirection.distance)}}, {{formatDuration(activeDirection.duration)}}</h2>
+        <!-- (mouseenter)="showSegment(step)" (click)="showSegment(step,true)" -->
+        <mat-list-item class="igo-steps" 
+            *ngFor="let step of activeDirection.steps; let cnt = index;" igoListItem>
+            <mat-icon [ngClass]="formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{formatStep(step,cnt).image}}">
+            </mat-icon>
+
+            <h4 mat-line>{{cnt +1}}. {{formatStep(step,cnt).instruction}}</h4>
+            <h4 mat-line class="right">{{formatDistance(step.distance)}}</h4>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+
+    </mat-list>
+
+</div>

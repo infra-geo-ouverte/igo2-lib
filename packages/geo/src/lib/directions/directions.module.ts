@@ -23,6 +23,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
 import { DirectionsComponent } from './directions.component';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
+import { DirectionsResultsComponent } from './directions-results/directions-results.component';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { DirectionsButtonsComponent } from './directions-buttons/directions-butt
     DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
+    DirectionsResultsComponent,
     DirectionsFormBindingDirective
   ],
   declarations: [
@@ -54,6 +56,7 @@ import { DirectionsButtonsComponent } from './directions-buttons/directions-butt
     DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
+    DirectionsResultsComponent,
     DirectionsFormBindingDirective
   ],
   providers: [DirectionsFormService, provideDirectionsSourceService()]
