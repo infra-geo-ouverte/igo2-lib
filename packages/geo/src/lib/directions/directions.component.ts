@@ -138,7 +138,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         this.routesQueries$$.push(
           res.subscribe(directions => {
             this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
-            directions.map(direction => addDirectionToRoutesFeatureStore(this.routesFeatureStore, direction, this.projection));
+            directions.map(direction =>
+              addDirectionToRoutesFeatureStore(
+                this.routesFeatureStore,
+                direction,
+                this.projection,
+                direction === directions[0] ? true : false)
+            );
           })
         )
       );

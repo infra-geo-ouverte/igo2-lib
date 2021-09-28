@@ -9,7 +9,7 @@ import * as olProj from 'ol/proj';
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { Direction, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, Stop } from './directions.interface';
+import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -19,7 +19,8 @@ import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
-import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { DirectionType } from './directions.enum';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -112,20 +113,20 @@ export function directionsStyle(
 
   const routeStyle = [
     new olStyle.Style({
-      stroke: new olStyle.Stroke({ color: 'rgba(106, 121, 130, 0.75)', width: 10 })
+      stroke: new olStyle.Stroke({ color: `rgba(106, 121, 130, ${feature.get('active') ? 0.75 : 0})`, width: 10 })
     }),
     new olStyle.Style({
-      stroke: new olStyle.Stroke({ color: 'rgba(79, 169, 221, 0.75)', width: 6 })
+      stroke: new olStyle.Stroke({ color: `rgba(79, 169, 221, ${feature.get('active') ? 0.75 : 0})`, width: 6 })
     })
   ];
 
-  if (feature.get('type') === 'stop') {
+  if (feature.get('type') === DirectionType.Stop) {
     return stopStyle;
   }
   if (feature.get('type') === 'vertex') {
     return vertexStyle;
   }
-  if (feature.get('type') === 'route') {
+  if (feature.get('type') === DirectionType.Route) {
     return routeStyle;
   }
 }
@@ -226,13 +227,13 @@ export function addStopToStopsFeatureStore(
   const previousStop = stopsFeatureStore.get(stop.id);
   const previousStopRevision = previousStop ? previousStop.meta.revision : 0;
 
-  const stopFeatureStore: Feature<FeatureWithStopProperties> = {
+  const stopFeatureStore: FeatureWithStop = {
     type: FEATURE,
     geometry: geojsonGeom,
     projection: stopsFeatureStore.map.projection,
     properties: {
       id: stop.id,
-      type: 'stop',
+      type: DirectionType.Stop,
       stopText,
       stopColor,
       stopOpacity: 1,
@@ -250,7 +251,9 @@ export function addStopToStopsFeatureStore(
 export function addDirectionToRoutesFeatureStore(
   routesFeatureStore: FeatureStore,
   direction: Direction,
-  projection: string, moveToExtent = false) {
+  projection: string,
+  active: boolean = false,
+  moveToExtent = false) {
   const geom = direction.geometry.coordinates;
   const geometry4326 = new olGeom.LineString(geom);
   const geometry = geometry4326.transform(
@@ -273,13 +276,14 @@ export function addDirectionToRoutesFeatureStore(
     ? previousRoute.meta.revision
     : 0;
 
-  const routeFeatureStore: Feature = {
+  const routeFeatureStore: FeatureWithDirection = {
     type: FEATURE,
     geometry: geojsonGeom,
     projection: routesFeatureStore.map.projection,
     properties: {
       id: direction.id,
-      type: 'route',
+      type: DirectionType.Route,
+      active,
       direction
     },
     meta: {
