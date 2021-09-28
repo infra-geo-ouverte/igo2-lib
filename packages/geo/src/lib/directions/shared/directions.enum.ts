@@ -3,8 +3,8 @@ export enum DirectionsFormat {
   JSON
 }
 export enum SourceDirectionsType {
-  Route = 'Route',
-  Trip = 'Trip'
+  Route = 'route',
+  Trip = 'trip'
 }
 
 export enum DirectionType {

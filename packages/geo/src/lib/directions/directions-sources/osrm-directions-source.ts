@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
 import { uuid } from '@igo2/utils';
-import { ConfigService, Message } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsFormat, SourceDirectionsType } from '../shared/directions.enum';
