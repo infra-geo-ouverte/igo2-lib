@@ -9,7 +9,7 @@ import * as olProj from 'ol/proj';
 import { EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { FeatureWithStop, FeatureWithStopProperties, Stop } from './directions.interface';
+import { Direction, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -164,7 +164,7 @@ export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWit
   tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
 }
 
-export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWithStop>, languageService: LanguageService) {
+export function initRoutesFeatureStore(routesFeatureStore: FeatureStore<FeatureWithDirection>, languageService: LanguageService) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -185,9 +185,9 @@ export function initRouteFeatureStore(routeFeatureStore: FeatureStore<FeatureWit
     browsable: false,
     style: directionsStyle
   });
-  tryBindStoreLayer(routeFeatureStore, routeLayer);
-  routeFeatureStore.layer.visible = true;
-  tryAddLoadingStrategy(routeFeatureStore, loadingStrategy);
+  tryBindStoreLayer(routesFeatureStore, routeLayer);
+  routesFeatureStore.layer.visible = true;
+  tryAddLoadingStrategy(routesFeatureStore, loadingStrategy);
 }
 
 
@@ -245,6 +245,50 @@ export function addStopToStopsFeatureStore(
     ol: new olFeature({ geometry })
   };
   stopsFeatureStore.update(stopFeatureStore);
+}
+
+export function addDirectionToRoutesFeatureStore(
+  routesFeatureStore: FeatureStore,
+  direction: Direction,
+  projection: string, moveToExtent = false) {
+  const geom = direction.geometry.coordinates;
+  const geometry4326 = new olGeom.LineString(geom);
+  const geometry = geometry4326.transform(
+    projection,
+    routesFeatureStore.map.projection
+  );
+  // todo
+  /*if (moveToExtent) {
+    this.zoomRoute(geometryMapProjection.getExtent());
+  }*/
+
+  const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+    featureProjection: routesFeatureStore.map.projection,
+    dataProjection: routesFeatureStore.map.projection
+  }) as FeatureGeometry;
+
+
+  const previousRoute = routesFeatureStore.get(direction.id);
+  const previousRouteRevision = previousRoute
+    ? previousRoute.meta.revision
+    : 0;
+
+  const routeFeatureStore: Feature = {
+    type: FEATURE,
+    geometry: geojsonGeom,
+    projection: routesFeatureStore.map.projection,
+    properties: {
+      id: direction.id,
+      type: 'route',
+      direction
+    },
+    meta: {
+      id: direction.id,
+      revision: previousRouteRevision + 1
+    },
+    ol: new olFeature({ geometry })
+  };
+  routesFeatureStore.update(routeFeatureStore);
 }
 
 

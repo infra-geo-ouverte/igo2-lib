@@ -4,10 +4,10 @@ import { DirectionsFormat, SourceDirectionsType } from './directions.enum';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
 
+// todo delete
+export interface DirectionsOptions extends DirectionOptions { }
 
-export interface FeatureWithStops extends Feature<Stop> { }
-
-export interface DirectionsOptions {
+export interface DirectionOptions {
   overview?: boolean;
   steps?: boolean;
   geometries?: string;
@@ -15,7 +15,12 @@ export interface DirectionsOptions {
 }
 
 export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
+export interface FeatureWithDirection extends Feature<FeatureWithDirectionProperties> { }
 
+export interface FeatureWithDirectionProperties {
+  id: string;
+  direction: Direction[];
+}
 export interface FeatureWithStopProperties {
   id: string;
   stop: Stop;
@@ -52,7 +57,9 @@ export interface SourceProposal {
   };
 }
 
-export interface Directions {
+// todo delete
+export interface Directions extends Direction { }
+export interface Direction {
   id: string;
   source: string;
   sourceType?: SourceDirectionsType;

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { EntityStore, ToolComponent } from '@igo2/common';
 import { IgoMap, FeatureStore, Stop } from '@igo2/geo';
+import { FeatureWithStop, FeatureWithDirection } from '@igo2/geo/lib/directions/shared/directions.interface';
 
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
@@ -26,13 +27,13 @@ export class DirectionsToolComponent {
    * stops
    * @internal
    */
-   get stopsFeatureStore(): FeatureStore { return this.directionState.stopsFeatureStore; }
+   get stopsFeatureStore(): FeatureStore<FeatureWithStop> { return this.directionState.stopsFeatureStore; }
 
   /**
    * routes
    * @internal
    */
-  get routeFeatureStore(): FeatureStore { return this.directionState.routeFeatureStore; }
+  get routesFeatureStore(): FeatureStore<FeatureWithDirection> { return this.directionState.routesFeatureStore; }
 
   /**
    * Map to measure on

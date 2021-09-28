@@ -6,11 +6,12 @@ import { LanguageService } from '@igo2/core';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { FeatureWithStop, FeatureWithStopProperties, Stop } from './shared/directions.interface';
+import { DirectionOptions, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { Subscription } from 'rxjs';
-import { addStopToStopsFeatureStore, computeStopOrderBasedOnListOrder, initRouteFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, computeStopOrderBasedOnListOrder, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { FeatureStore } from '../feature/shared/store';
 import { Feature } from '../feature/shared/feature.interfaces';
+import { DirectionsService } from './shared/directions.service';
 
 
 
@@ -31,16 +32,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
+  private routesQueries$$: Subscription[] = [];
 
   @Input() stopsStore: EntityStore<Stop>;
   @Input() stopsFeatureStore: FeatureStore<FeatureWithStop>;
-  @Input() routeFeatureStore: FeatureStore<FeatureWithStop>;
+  @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private directionsService: DirectionsService
   ) { }
 
 
@@ -48,7 +51,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.initEntityStores();
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
-      initRouteFeatureStore(this.routeFeatureStore, this.languageService);
+      initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
       // this.initOlInteraction();
     }, 1);
 
@@ -57,6 +60,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
+    this.routesQueries$$.map((u) => u.unsubscribe());
   }
 
   private initEntityStores() {
@@ -84,7 +88,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       .subscribe((stops: Stop[]) => {
         this.updateSortOrder();
         this.handleStopsFeature(stops);
-        /*this.getRoutes();*/
+        this.getRoutes();
       });
   }
 
@@ -104,6 +108,40 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         this.stopsFeatureStore.delete(stopFeature);
       }
     });
+  }
+
+  private getRoutes(isOverview: boolean = false) {
+    const stopsWithCoordinates = this.stopsStore.view.all().filter(stop => stop.coordinates);
+    if (stopsWithCoordinates.length < 2) {
+      this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+      return;
+    }
+
+    const roundedCoordinates = stopsWithCoordinates.map((stop: Stop) => {
+      const roundedCoord: [number, number] = [
+        Math.round((stop.coordinates[0]) * 1000000) / 1000000,
+        Math.round((stop.coordinates[1]) * 1000000) / 1000000];
+      return roundedCoord;
+    });
+    const overviewDirectionsOptions: DirectionOptions = {
+      overview: true,
+      steps: false,
+      alternatives: false,
+    };
+    const routeResponse = this.directionsService.route(
+      roundedCoordinates,
+      isOverview ? overviewDirectionsOptions : undefined
+    );
+    if (routeResponse) {
+      routeResponse.map(res =>
+        this.routesQueries$$.push(
+          res.subscribe(directions => {
+            this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
+            directions.map(direction => addDirectionToRoutesFeatureStore(this.routesFeatureStore, direction, this.projection));
+          })
+        )
+      );
+    }
   }
 
   private updateSortOrder() {
