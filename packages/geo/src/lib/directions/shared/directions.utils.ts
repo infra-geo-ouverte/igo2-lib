@@ -55,7 +55,7 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
   const id = uuid();
   const stopsWithStates = stopsStore.stateView.all();
   let positions: number[];
-  let relativePosition = DirectionRelativePositionType.Intermediate
+  let relativePosition = DirectionRelativePositionType.Intermediate;
   if (stopsStore.empty) {
     positions = [0];
     relativePosition = DirectionRelativePositionType.Start;
@@ -204,7 +204,7 @@ export function addStopToStopsFeatureStore(
   let stopColor;
   let stopText;
 
-  const stopWithState = stopsStore.stateView.get(stop.id)
+  const stopWithState = stopsStore.stateView.get(stop.id);
   switch (stopWithState.state.relativePosition) {
     case DirectionRelativePositionType.Start:
       stopColor = '#008000';

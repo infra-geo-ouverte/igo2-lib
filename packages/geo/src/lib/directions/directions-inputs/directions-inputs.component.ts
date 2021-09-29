@@ -70,6 +70,8 @@ export class DirectionsInputsComponent {
   }
 
   chooseProposal(result: Feature, stop: Stop) {
+    // ne marche pas sur changement.???
+    console.log(result, stop);
     if (result) {
       let geomCoord;
       const geom = result.geometry;
@@ -115,11 +117,11 @@ export class DirectionsInputsComponent {
 
   removeStop(stop: Stop) {
     this.stopsStore.delete(stop);
-    // todo state de lui + suivant
+    //  todo state de lui + suivant
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id });   
+    this.stopsStore.update({ id: stop.id });
   }
 
 
@@ -132,8 +134,8 @@ export class DirectionsInputsComponent {
       const stopsWithState = [...this.stopsStore.stateView.all()];
       moveItemInArray(stopsWithState, fromIndex, toIndex);
       stopsWithState.map((stopWithState, i) => {
-        const relativePosition = computeRelativePosition(i,stopsWithState.length)
-        this.stopsStore.state.update(stopWithState.entity, { position : i, relativePosition})
+        const relativePosition = computeRelativePosition(i, stopsWithState.length);
+        this.stopsStore.state.update(stopWithState.entity, { position : i, relativePosition});
       });
       updateStoreSorting(this.stopsStore);
     }

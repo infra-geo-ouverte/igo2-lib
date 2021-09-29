@@ -95,7 +95,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private handleStopsFeature() {
-    const stops =this.stopsStore.all();
+    const stops = this.stopsStore.all();
     const stopsWithCoordinates = stops.filter(stop => stop.coordinates);
     stopsWithCoordinates.map(stop => this.addStopOverlay(stop));
     this.stopsFeatureStore.all().map(
