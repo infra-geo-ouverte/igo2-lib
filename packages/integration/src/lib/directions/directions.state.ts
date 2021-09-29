@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityStore } from '@igo2/common';
 
-import { FeatureStore, FeatureWithDirection, FeatureWithStop, Stop } from '@igo2/geo';
+import { addStopToStore, FeatureStore, FeatureWithDirection, FeatureWithStop, Stop } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -20,7 +20,7 @@ export class DirectionState {
   /**
    * Store that holds the driving route
    */
-   public stopsFeatureStore: FeatureStore<FeatureWithStop> = new FeatureStore<FeatureWithStop>([], {
+  public stopsFeatureStore: FeatureStore<FeatureWithStop> = new FeatureStore<FeatureWithStop>([], {
     map: this.mapState.map
   });
 
@@ -39,17 +39,21 @@ export class DirectionState {
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {
-        this.stopsFeatureStore.layer.options.showInLayerList = !empty;
+        if (this.stopsFeatureStore.layer?.options) {
+          this.stopsFeatureStore.layer.options.showInLayerList = !empty;
+        }
       });
       this.routesFeatureStore.empty$.subscribe((empty) => {
-        this.routesFeatureStore.layer.options.showInLayerList = !empty;
+        if (this.routesFeatureStore.layer?.options) {
+          this.routesFeatureStore.layer.options.showInLayerList = !empty;
+        }
       });
     });
 
     this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
-       this.stopsStore.deleteMany(this.stopsStore.all());
-       this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
+        this.stopsStore.deleteMany(this.stopsStore.all());
+        this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
       }
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
         this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
