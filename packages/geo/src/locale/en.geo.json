@@ -477,7 +477,9 @@
         "endDate": "End Date",
         "startDate": "Start Date",
         "hour": "Hour",
-        "minute": "Minute"
+        "minute": "Minute",
+        "endYear": "End Year",
+        "startYear": "Start Year"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
