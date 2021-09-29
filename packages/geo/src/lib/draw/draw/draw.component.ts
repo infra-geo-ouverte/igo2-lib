@@ -265,7 +265,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
-        disableClose: false
+        disableClose: false,
+        data: {currentLabel: olGeometryFeature.get('draw')}
       });
 
       // when dialog box is closed, get label and set it to geometry

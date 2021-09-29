@@ -1,3 +1,4 @@
+
 ::ng-deep input {
   text-align: center !important;
   margin: auto 5px auto 5px !important;
@@ -8,6 +9,11 @@
 }
 
 .datetime-input {
+  display: inline-block;
+  margin: 5px 25px;
+}
+
+.year-input-container {
   display: inline-block;
   margin: 5px 25px;
 }
@@ -29,3 +35,36 @@
 .minute-input {
   margin-left: 10px;
 }
+
+.year-input {
+  width: 120px;
+  margin-right: 25px;
+}
+
+.year-input-hide {
+  width: 120px;
+  margin-right: 25px;
+  display: none;
+}
+
+
+.year-input-only-year {
+  width: 120px;
+  margin-right: 25px;
+}
+
+// to disable selection the month and day for year picker
+::ng-deep .datepicker-year ::ng-deep .mat-calendar-arrow {
+  display: none;
+}
+
+::ng-deep .datepicker-year ::ng-deep .mat-calendar-period-button {
+  pointer-events: none;
+}
+
+::ng-deep .datepicker-year ::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
+  background-color: rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+}
+
+
