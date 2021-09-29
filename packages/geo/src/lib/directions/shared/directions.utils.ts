@@ -67,7 +67,7 @@ export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, 
 
 /**
  * Function that add a stop to the stop store. Stop are always added before the last stop.
- * @param source stop store
+ * @param stopsStore stop store as an EntityStore
  */
 export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
 
@@ -337,20 +337,19 @@ export function formatInstruction(
   languageService: LanguageService,
   lastStep = false
 ) {
-  let directiveFr;
-  let directiveEn;
+  const translate = languageService.translate;
+  let directive;
   let image = 'forward';
   let cssClass = 'rotate-270';
   const translatedDirection = translateBearing(direction, languageService);
   const translatedModifier = translateModifier(modifier, languageService);
-  const enPrefix = modifier === 'straight' ? '' : 'on the ';
-  const frPrefix = modifier === 'straight' ? '' : 'à ';
+  const prefix = modifier === 'straight' ? '' : translate.instant('igo.geo.directions.modifier.prefix');
 
-  let frAggregatedDirection = frPrefix + translatedModifier;
-  let enAggregatedDirection = enPrefix + translatedModifier;
+  let aggregatedDirection = prefix + translatedModifier;
 
-  if (modifier && modifier.search('slight') >= 0) {
-    enAggregatedDirection = translatedModifier;
+
+  if (modifier?.search('slight') >= 0) {
+    aggregatedDirection = translatedModifier;
   }
 
   if (modifier === 'uturn') {
@@ -380,136 +379,86 @@ export function formatInstruction(
 
   if (type === 'turn') {
     if (modifier === 'straight') {
-      directiveFr = 'Continuer sur ' + route;
-      directiveEn = 'Continue on ' + route;
+      directive = translate.instant('igo.geo.directions.turn.straight', { route });
     } else if (modifier === 'uturn') {
-      directiveFr = 'Faire demi-tour sur ' + route;
-      directiveEn = 'Make u-turn on ' + route;
+      directive = translate.instant('igo.geo.directions.turn.uturn', { route });
     } else {
-      directiveFr = 'Tourner ' + frAggregatedDirection + ' sur ' + route;
-      directiveEn = 'Turn ' + translatedModifier + ' onto ' + route;
+      directive = translate.instant('igo.geo.directions.turn.else', { route, aggregatedDirection, translatedModifier });
     }
   } else if (type === 'new name') {
-    directiveFr =
-      'Continuer en direction ' + translatedDirection + ' sur ' + route;
-    directiveEn = 'Head ' + translatedDirection + ' on ' + route;
+    directive = translate.instant('igo.geo.directions.new name', { route, translatedDirection });
     image = 'compass';
     cssClass = '';
   } else if (type === 'depart') {
-    directiveFr =
-      'Aller en direction ' + translatedDirection + ' sur ' + route;
-    directiveEn = 'Head ' + translatedDirection + ' on ' + route;
+    directive = translate.instant('igo.geo.directions.depart', { route, translatedDirection });
     image = 'compass';
     cssClass = '';
   } else if (type === 'arrive') {
     if (lastStep) {
-      let coma = ', ';
-      if (!translatedModifier) {
-        frAggregatedDirection = '';
-        enAggregatedDirection = '';
-        coma = '';
-      }
-      directiveFr = 'Vous êtes arrivé' + coma + frAggregatedDirection;
-      directiveEn =
-        'You have reached your destination' + coma + enAggregatedDirection;
+      const coma = !translatedModifier ? '' : ', ';
+      aggregatedDirection = !translatedModifier ? '' : aggregatedDirection;
+      directive = translate.instant('igo.geo.directions.arrive.lastStep', { coma, aggregatedDirection });
     } else {
-      directiveFr = 'Vous atteignez le point intermédiare sur ' + route;
-      directiveEn = 'You have reached the intermediate stop onto ' + route;
+      directive = translate.instant('igo.geo.directions.arrive.intermediate', { route });
       image = 'map-marker';
       cssClass = '';
     }
   } else if (type === 'merge') {
-    directiveFr = 'Continuer sur ' + route;
-    directiveEn = 'Continue on ' + route;
+    directive = translate.instant('igo.geo.directions.merge', { route });
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'on ramp') {
-    directiveFr = "Prendre l'entrée d'autoroute " + frAggregatedDirection;
-    directiveEn = 'Take the ramp ' + enAggregatedDirection;
+    directive = translate.instant('igo.geo.directions.on ramp', { aggregatedDirection });
   } else if (type === 'off ramp') {
-    directiveFr = "Prendre la sortie d'autoroute " + frAggregatedDirection;
-    directiveEn = 'Take exit ' + enAggregatedDirection;
+    directive = translate.instant('igo.geo.directions.off ramp', { aggregatedDirection });
   } else if (type === 'fork') {
     if (modifier.search('left') >= 0) {
-      directiveFr = 'Garder la gauche sur ' + route;
-      directiveEn = 'Merge left onto ' + route;
+      directive = translate.instant('igo.geo.directions.fork.left', { route });
     } else if (modifier.search('right') >= 0) {
-      directiveFr = 'Garder la droite sur ' + route;
-      directiveEn = 'Merge right onto ' + route;
+      directive = translate.instant('igo.geo.directions.fork.right', { route });
     } else {
-      directiveFr = 'Continuer sur ' + route;
-      directiveEn = 'Continue on ' + route;
+      directive = translate.instant('igo.geo.directions.fork.else', { route });
     }
   } else if (type === 'end of road') {
-    directiveFr =
-      'À la fin de la route, tourner ' + translatedModifier + ' sur ' + route;
-    directiveEn =
-      'At the end of the road, turn ' + translatedModifier + ' onto ' + route;
+    directive = translate.instant('igo.geo.directions.end of road', { translatedModifier, route });
   } else if (type === 'use lane') {
-    directiveFr = 'Prendre la voie de ... ';
-    directiveEn = 'Take the lane ...';
+    directive = translate.instant('igo.geo.directions.use lane');
   } else if (type === 'continue' && modifier !== 'uturn') {
-    directiveFr = 'Continuer sur ' + route;
-    directiveEn = 'Continue on ' + route;
+    directive = translate.instant('igo.geo.directions.continue.notUturn', { route });
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'roundabout') {
-    directiveFr = 'Au rond-point, prendre la ' + exit;
-    directiveFr += exit === 1 ? 're' : 'e';
-    directiveFr += ' sortie vers ' + route;
-    directiveEn = 'At the roundabout, take the ' + exit;
-    directiveEn += exit === 1 ? 'st' : 'rd';
-    directiveEn += ' exit towards ' + route;
+    const cntSuffix = exit === 1 ?
+    translate.instant('igo.geo.directions.cntSuffix.first') : translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
+    directive = translate.instant('igo.geo.directions.roundabout', { exit, cntSuffix, route });
     image = 'chart-donut';
     cssClass = '';
   } else if (type === 'rotary') {
-    directiveFr = 'Rond-point rotary....';
-    directiveEn = 'Roundabout rotary....';
+    directive = translate.instant('igo.geo.directions.rotary');
     image = 'chart-donut';
     cssClass = '';
   } else if (type === 'roundabout turn') {
-    directiveFr = 'Rond-point, prendre la ...';
-    directiveEn = 'Roundabout, take the ...';
+    directive = translate.instant('igo.geo.directions.roundabout turn');
     image = 'chart-donut';
     cssClass = '';
   } else if (type === 'exit roundabout') {
-    directiveFr = 'Poursuivre vers ' + route;
-    directiveEn = 'Continue to ' + route;
+    directive = translate.instant('igo.geo.directions.exit roundabout', { route });
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'notification') {
-    directiveFr = 'notification ....';
-    directiveEn = 'notification ....';
+    directive = translate.instant('igo.geo.directions.notification');
   } else if (modifier === 'uturn') {
-    directiveFr =
-      'Faire demi-tour et continuer en direction ' +
-      translatedDirection +
-      ' sur ' +
-      route;
-    directiveEn =
-      'Make u-turn and head ' + translatedDirection + ' on ' + route;
+    directive = translate.instant('igo.geo.directions.uturnText', { translatedDirection, route });
   } else {
-    directiveFr = '???';
-    directiveEn = '???';
+    directive = translate.instant('igo.geo.directions.unknown');
   }
 
-  if (lastStep) {
-    image = 'flag-variant';
-    cssClass = '';
-  }
-  if (stepPosition === 0) {
-    image = 'compass';
-    cssClass = '';
-  }
+  image = lastStep ? 'flag-variant' : image;
+  cssClass = lastStep ? '' : cssClass;
+  image = stepPosition === 0 ? 'compass' : image;
+  cssClass = stepPosition === 0 ? '' : cssClass;
 
-  /*let directive;
-  if (this.browserLanguage === 'fr') {
-    directive = directiveFr;
-  } else if (this.browserLanguage === 'en') {
-    directive = directiveEn;
-  }*/
-
-  return { instruction: directiveFr, image, cssClass };
+  return { instruction: directive, image, cssClass };
 }
 
 export function translateModifier(modifier, languageService: LanguageService) {

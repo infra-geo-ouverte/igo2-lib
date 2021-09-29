@@ -346,7 +346,46 @@
         "sharp left": "fortement à gauche",
         "left": "gauche",
         "slight left": "légèrement à gauche",
-        "straight": "tout droit"
+        "straight": "tout droit",
+        "turn": {
+          "straight": "Continuer sur {{route}}",
+          "uturn": "Faire demi-tour sur {{route}}",
+          "else": "Tourner {{aggregatedDirection}} sur {{route}}"
+        },
+        "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
+        "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
+        "arrive": {
+          "lastStep" : "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
+          "intermediate" : "Vous atteignez le point intermédiare sur {{route}}"
+        },
+        "merge": "Continuer sur {{route}}",
+        "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",
+        "off ramp": "Prendre la sortie d'autoroute {{aggregatedDirection}}",
+        "fork": {
+          "left" : "Garder la gauche sur {{route}}",
+          "right" : "Garder la droite sur {{route}}",
+          "else" : "Continuer sur {{route}}"
+        },
+        "end of road": "À la fin de la route, tourner {{translatedModifier}} sur {{route}}",
+        "use lane": "Prendre la voie de ...",
+        "continue": {
+          "notUturn": "Continuer sur {{route}}"
+        },
+        "roundabout": "Au rond-point, prendre la {{exit}}{{cntSuffix}} sortie vers {{route}}",
+        "rotary": "Rond-point rotary ...",
+        "roundabout turn": "Rond-point, prendre la ...",
+        "exit roundabouts": "Poursuivre vers {{route}}",
+        "notification": "notification ...",
+        "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
+        "unknown": "???",
+    
+        "cntSuffix": { 
+          "first": "ère",
+          "secondAndMore": "e"
+        },
+        "modifier": {
+          "prefix": "à "
+        }
       },
       "cardinalPoints": {
         "n": "nord",

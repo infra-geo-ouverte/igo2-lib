@@ -347,7 +347,46 @@
         "sharp left": "sharp left",
         "left": "left",
         "slight left": "slightly on left",
-        "straight": "forward"
+        "straight": "forward",
+        "turn": {
+          "straight": "Continue on {{route}}",
+          "uturn": "Make u-turn on {{route}}",
+          "else": "Turn {{translatedModifier}} onto {{route}}"
+        },
+        "new name": "Head {{translatedDirection}} on {{route}}",
+        "depart": "Head {{translatedDirection}} on {{route}}",
+        "arrive": {
+          "lastStep" : "You have reached your destination {{coma}} {{aggregatedDirection}}",
+          "intermediate" : "You have reached the intermediate stop onto {{route}}"
+        },
+        "merge": "Continue on {{route}}",
+        "on ramp": "Take the ramp {{aggregatedDirection}}",
+        "off ramp": "Take exit {{aggregatedDirection}}",
+        "fork": {
+          "left" : "Merge left onto {{route}}",
+          "right" : "Merge right onto {{route}}",
+          "else" : "Continue on {{route}}"
+        },
+        "end of road": "At the end of the road, turn {{translatedModifier}} onto {{route}}",
+        "use lane": "Take the lane ...",
+        "continue": {
+          "notUturn": "Continue on {{route}}"
+        },
+        "roundabout": "At the roundabout, take the {{exit}}{{cntSuffix}} exit towards {{route}}",
+        "rotary": "Roundabout rotary ...",
+        "roundabout turn": "Roundabout, take the ...",
+        "exit roundabouts": "Continue to {{route}}",
+        "notification": "notification ...",
+        "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
+        "unknown": "???",
+    
+        "cntSuffix": { 
+          "first": "st",
+          "secondAndMore": "rd"
+        },
+        "modifier": {
+          "prefix": "on the "
+        }
       },
       "cardinalPoints": {
         "n": "north",
