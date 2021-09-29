@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityStore } from '@igo2/common';
 
-import { addStopToStore, FeatureStore, FeatureWithDirection, FeatureWithStop, Stop } from '@igo2/geo';
+import { AnyLayerOptions, FeatureStore, FeatureWithDirection, FeatureWithStop, Stop } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -40,12 +40,12 @@ export class DirectionState {
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {
         if (this.stopsFeatureStore.layer?.options) {
-          this.stopsFeatureStore.layer.options.showInLayerList = !empty;
+          (this.stopsFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
         }
       });
       this.routesFeatureStore.empty$.subscribe((empty) => {
         if (this.routesFeatureStore.layer?.options) {
-          this.routesFeatureStore.layer.options.showInLayerList = !empty;
+          (this.routesFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
         }
       });
     });

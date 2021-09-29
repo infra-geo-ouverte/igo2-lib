@@ -12,7 +12,7 @@ import { SearchService } from '../../search/shared/search.service';
 import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
-import { computeStopOrderBasedOnListOrder, updateStoreSorting } from '../shared/directions.utils';
+import { computeRelativePosition, updateStoreSorting } from '../shared/directions.utils';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -115,10 +115,11 @@ export class DirectionsInputsComponent {
 
   removeStop(stop: Stop) {
     this.stopsStore.delete(stop);
+    // todo state de lui + suivant
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id, order: stop.order, relativePosition: stop.relativePosition });
+    this.stopsStore.update({ id: stop.id });   
   }
 
 
@@ -128,9 +129,12 @@ export class DirectionsInputsComponent {
 
   private moveStops(fromIndex, toIndex) {
     if (fromIndex !== toIndex) {
-      const stopsList = [...this.allStops];
-      moveItemInArray(stopsList, fromIndex, toIndex);
-      computeStopOrderBasedOnListOrder(this.stopsStore, stopsList, true);
+      const stopsWithState = [...this.stopsStore.stateView.all()];
+      moveItemInArray(stopsWithState, fromIndex, toIndex);
+      stopsWithState.map((stopWithState, i) => {
+        const relativePosition = computeRelativePosition(i,stopsWithState.length)
+        this.stopsStore.state.update(stopWithState.entity, { position : i, relativePosition})
+      });
       updateStoreSorting(this.stopsStore);
     }
   }

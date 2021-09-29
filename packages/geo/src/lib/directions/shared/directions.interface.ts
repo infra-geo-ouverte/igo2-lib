@@ -34,11 +34,9 @@ export interface FeatureWithStopProperties {
 
 export interface Stop {
   id: string;
-  order: number;
   text?: string;
   searchProposals?: SourceProposal[];
   coordinates?: [number, number];
-  relativePosition?: string;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;

@@ -32,14 +32,14 @@ export class DirectionsButtonsComponent {
   }
 
   copyDirectionsToClipboard() {
-    console.log('copyDirectionsToClipboard')
+    console.log('copyDirectionsToClipboard');
   }
 
   copyLinkToClipboard() {
-    console.log('copyLinkToClipboard')
+    console.log('copyLinkToClipboard');
   }
 
   zoomRoute() {
-    console.log('zoomRoute')
+    console.log('zoomRoute');
   }
 }

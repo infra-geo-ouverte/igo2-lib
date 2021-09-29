@@ -375,7 +375,7 @@
         "roundabout": "Au rond-point, prendre la {{exit}}{{cntSuffix}} sortie vers {{route}}",
         "rotary": "Rond-point rotary ...",
         "roundabout turn": "Rond-point, prendre la ...",
-        "exit roundabouts": "Poursuivre vers {{route}}",
+        "exit roundabout": "Poursuivre vers {{route}}",
         "notification": "notification ...",
         "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
         "unknown": "???",

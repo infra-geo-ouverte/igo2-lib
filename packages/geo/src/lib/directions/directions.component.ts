@@ -4,11 +4,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
-import { uuid } from '@igo2/utils';
 
 import { DirectionOptions, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, Stop } from './shared/directions.interface';
-import { Subscription } from 'rxjs';
-import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, computeStopOrderBasedOnListOrder, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { combineLatest, Subscription } from 'rxjs';
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { FeatureStore } from '../feature/shared/store';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
@@ -72,27 +71,31 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
-    this.storeEmpty$$ = this.stopsStore.empty$
-      .pipe(distinctUntilChanged())
-      .subscribe((empty) => {
-        if (empty) {
-          this.stopsStore.insert({ id: uuid(), order: 0, relativePosition: 'start' });
-          this.stopsStore.insert({ id: uuid(), order: 1, relativePosition: 'end' });
+    this.storeEmpty$$ = this.stopsStore.count$
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(this.debounce)
+      ).subscribe((count) => {
+        if (count < 2) {
+          addStopToStore(this.stopsStore);
         }
       });
   }
 
   private monitorEntityStoreChange() {
-    this.storeChange$$ = this.stopsStore.entities$
+    this.storeChange$$ = combineLatest([
+      this.stopsStore.state.change$,
+      this.stopsStore.entities$])
       .pipe(debounceTime(this.debounce))
-      .subscribe((stops: Stop[]) => {
-        this.updateSortOrder();
-        this.handleStopsFeature(stops);
+      .subscribe(() => {
+        updateStoreSorting(this.stopsStore);
+        this.handleStopsFeature();
         this.getRoutes();
       });
   }
 
-  private handleStopsFeature(stops: Stop[]) {
+  private handleStopsFeature() {
+    const stops =this.stopsStore.all();
     const stopsWithCoordinates = stops.filter(stop => stop.coordinates);
     stopsWithCoordinates.map(stop => this.addStopOverlay(stop));
     this.stopsFeatureStore.all().map(
@@ -151,14 +154,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateSortOrder() {
-    setTimeout(() => {
-      computeStopOrderBasedOnListOrder(this.stopsStore, this.allStops, false);
-    }, 50);
-    updateStoreSorting(this.stopsStore);
-  }
-
   public addStopOverlay(stop: Stop) {
-    addStopToStopsFeatureStore(stop, this.stopsFeatureStore, this.projection, this.languageService);
+    addStopToStopsFeatureStore(stop, this.stopsStore, this.stopsFeatureStore, this.projection, this.languageService);
   }
 }

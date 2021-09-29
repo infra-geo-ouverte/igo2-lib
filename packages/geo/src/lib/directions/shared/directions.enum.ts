@@ -11,3 +11,9 @@ export enum DirectionType {
   Stop = 'stop',
   Route = 'route'
 }
+
+export enum DirectionRelativePositionType {
+  Start = 'start',
+  Intermediate = 'intermediate',
+  End = 'end'
+}

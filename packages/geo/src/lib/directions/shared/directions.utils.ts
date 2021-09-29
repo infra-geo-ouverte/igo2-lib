@@ -6,7 +6,7 @@ import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olProj from 'ol/proj';
 
 
-import { EntityStore } from '@igo2/common';
+import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './directions.interface';
@@ -20,7 +20,7 @@ import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loa
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
-import { DirectionType } from './directions.enum';
+import { DirectionRelativePositionType, DirectionType } from './directions.enum';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -28,41 +28,21 @@ import { DirectionType } from './directions.enum';
  * @param direction asc / desc sort order
  * @param field the field to use to sort the view
  */
-export function updateStoreSorting(stopsStore: EntityStore<Stop>, direction: 'asc' | 'desc' = 'asc', field = 'order') {
-  stopsStore.view.sort({
+export function updateStoreSorting(stopsStore: EntityStore<Stop>, direction: 'asc' | 'desc' = 'asc', field = 'position') {
+  stopsStore.stateView.sort({
     direction,
-    valueAccessor: (stop: Stop) => stop[field]
+    valueAccessor: (entity: EntityRecord<Stop, EntityState>) => entity.state[field]
   });
 }
 
-
-/**
- * Function that compute the order property based on the provide list order.
- * @param source stop store
- * @param stop stops list (this list order must be used!)
- * @param emit if the store must emit a update change
- */
-export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, stops: Stop[], emit: boolean) {
-  let cnt = 0;
-  const stopsCnt = stops.length;
-  const localStops = [...stops];
-  localStops.map(s => {
-    const stop = stopsStore.get(s.id);
-    if (stop) {
-      stop.order = cnt;
-      if (cnt === 0) {
-        stop.relativePosition = 'start';
-      } else if (cnt === stopsCnt - 1) {
-        stop.relativePosition = 'end';
-      } else {
-        stop.relativePosition = 'intermediate';
-      }
-      cnt += 1;
-    }
-  });
-  if (emit) {
-    stopsStore.updateMany(stops);
+export function computeRelativePosition(index: number, totalLength): DirectionRelativePositionType {
+  let relativePosition = DirectionRelativePositionType.Intermediate;
+  if (index === 0) {
+    relativePosition = DirectionRelativePositionType.Start;
+  } else if (index === totalLength - 1) {
+    relativePosition = DirectionRelativePositionType.End;
   }
+  return relativePosition;
 }
 
 /**
@@ -71,18 +51,41 @@ export function computeStopOrderBasedOnListOrder(stopsStore: EntityStore<Stop>, 
  */
 export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
 
-  const lastStop = stopsStore.view.all()[stopsStore.count - 1];
-  const lastStopId = lastStop.id;
-  const lastStopOrder = lastStop.order;
-  stopsStore.get(lastStopId).order = lastStopOrder + 1;
+  let addedStop: Stop;
   const id = uuid();
-  stopsStore.insert(
-    {
-      id,
-      order: lastStopOrder,
-      relativePosition: 'intermediate'
+  const stopsWithStates = stopsStore.stateView.all();
+  let positions: number[];
+  let relativePosition = DirectionRelativePositionType.Intermediate
+  if (stopsStore.empty) {
+    positions = [0];
+    relativePosition = DirectionRelativePositionType.Start;
+  } else {
+    positions = stopsWithStates.map(stopState => stopState.state.position);
+  }
+  const maxPosition: number = Math.max(...positions);
+  stopsStore.insert({ id });
+  addedStop = stopsStore.get(id);
+  const stopsCnt = stopsStore.count;
+  if (stopsCnt === 1) {
+    stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
+    return addedStop;
+  }
+  const stopsWithStateToIncrementPosition = stopsStore.stateView.all().filter(stopState => stopState.state.position >= maxPosition);
+  stopsWithStateToIncrementPosition.map(stopWithStateToIncrementPosition => {
+    const stop = stopWithStateToIncrementPosition.entity;
+    const state = stopWithStateToIncrementPosition.state;
+    stopsStore.state.update(stop, {
+      position: state.position + 1,
+      relativePosition: computeRelativePosition(state.position + 1, stopsCnt)
     });
-  return stopsStore.get(id);
+
+  });
+  relativePosition = computeRelativePosition(maxPosition, stopsCnt);
+
+  stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
+
+  updateStoreSorting(stopsStore);
+  return addedStop;
 }
 
 /**
@@ -194,24 +197,26 @@ export function initRoutesFeatureStore(routesFeatureStore: FeatureStore<FeatureW
 
 export function addStopToStopsFeatureStore(
   stop: Stop,
+  stopsStore: EntityStore<Stop>,
   stopsFeatureStore: FeatureStore<FeatureWithStop>,
   projection: string,
   languageService: LanguageService) {
   let stopColor;
   let stopText;
 
-  switch (stop.relativePosition) {
-    case 'start':
+  const stopWithState = stopsStore.stateView.get(stop.id)
+  switch (stopWithState.state.relativePosition) {
+    case DirectionRelativePositionType.Start:
       stopColor = '#008000';
       stopText = languageService.translate.instant('igo.geo.directionsForm.start');
       break;
-    case 'end':
+    case DirectionRelativePositionType.End:
       stopColor = '#f64139';
       stopText = languageService.translate.instant('igo.geo.directionsForm.end');
       break;
     default:
       stopColor = '#ffd700';
-      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stop.order}`;
+      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stopWithState.state.position}`;
       break;
   }
 
