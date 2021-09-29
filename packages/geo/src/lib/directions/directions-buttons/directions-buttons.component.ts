@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
+import { FeatureStore } from '../../feature/shared/store';
 
-import { Stop } from '../shared/directions.interface';
+import { FeatureWithDirection, Stop } from '../shared/directions.interface';
 import { addStopToStore } from '../shared/directions.utils';
 
 @Component({
@@ -18,7 +19,7 @@ export class DirectionsButtonsComponent {
   }
 
   @Input() stopsStore: EntityStore<Stop>;
-
+  @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
   constructor() { }
 
   resetStops() {
@@ -28,5 +29,17 @@ export class DirectionsButtonsComponent {
   // stop are always added before the last stop.
   addStop(): void {
     addStopToStore(this.stopsStore);
+  }
+
+  copyDirectionsToClipboard() {
+    console.log('copyDirectionsToClipboard')
+  }
+
+  copyLinkToClipboard() {
+    console.log('copyLinkToClipboard')
+  }
+
+  zoomRoute() {
+    console.log('zoomRoute')
   }
 }
