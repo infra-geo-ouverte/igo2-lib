@@ -2,9 +2,9 @@
     <mat-form-field *ngIf="directions && directions.length > 1">
         <mat-select placeholder="{{'igo.geo.directionsForm.drivingOptions' | translate}}"
             (selectionChange)="changeRoute()" [(ngModel)]="activeDirection">
-            <mat-option *ngFor="let pathDirections of directions; let cnt = index;" [value]="pathDirections">
-                Option {{cnt + 1}} : {{formatDistance(pathDirections.distance)}}
-                ({{formatDuration(pathDirections.duration)}})
+            <mat-option *ngFor="let direction of directions; let cnt = index;" [value]="direction">
+                Option {{cnt + 1}} : {{formatDistance(direction.distance)}}
+                ({{formatDuration(direction.duration)}})
             </mat-option>
         </mat-select>
     </mat-form-field>

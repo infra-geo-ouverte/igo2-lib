@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatSelect } from '@angular/material/select';
 import { LanguageService } from '@igo2/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -47,7 +48,12 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   }
 
   changeRoute() {
-
+    this.routesFeatureStore.entities$.value.map(entity =>
+      entity.properties.active = !entity.properties.active
+    );
+    this.routesFeatureStore.layer.ol.getSource().getFeatures().map(feature =>
+      feature.set('active', !feature.get('active'))
+    );
   }
 
   formatDistance(distance: number): string {
