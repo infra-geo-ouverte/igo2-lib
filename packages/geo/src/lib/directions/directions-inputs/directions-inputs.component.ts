@@ -12,7 +12,7 @@ import { SearchService } from '../../search/shared/search.service';
 import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
-import { computeRelativePosition, decreaseStopsStatePosition, removeStopToStore, updateStoreSorting } from '../shared/directions.utils';
+import { computeRelativePosition, removeStopFromStore, updateStoreSorting } from '../shared/directions.utils';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 
@@ -112,7 +112,7 @@ export class DirectionsInputsComponent {
   }
 
   removeStop(stopWithState: EntityRecord<Stop, EntityState>) {
-    removeStopToStore(this.stopsStore, stopWithState);
+    removeStopFromStore(this.stopsStore, stopWithState);
   }
 
   clearStop(stop: Stop) {

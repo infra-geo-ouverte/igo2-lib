@@ -102,7 +102,7 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
   return addedStop;
 }
 
-export function removeStopToStore(stopsStore: EntityStore<Stop>, stopWithState: EntityRecord<Stop, EntityState>) {
+export function removeStopFromStore(stopsStore: EntityStore<Stop>, stopWithState: EntityRecord<Stop, EntityState>) {
   const deletedStopPosition = stopWithState.state.position;
   stopsStore.delete(stopWithState.entity);
   decreaseStopsStatePosition(stopsStore, deletedStopPosition);
