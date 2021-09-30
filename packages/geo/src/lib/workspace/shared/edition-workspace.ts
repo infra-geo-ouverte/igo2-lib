@@ -4,11 +4,11 @@ import {
 } from '@igo2/common';
 import { BehaviorSubject } from 'rxjs';
 
-import { VectorLayer } from '../../layer';
+import { ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
-  layer: VectorLayer;
+  layer: ImageLayer | VectorLayer;
   map: IgoMap;
 }
 
@@ -16,7 +16,7 @@ export class EditionWorkspace extends Workspace {
 
   readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-  get layer(): VectorLayer { return this.options.layer; }
+  get layer(): ImageLayer | VectorLayer { return this.options.layer; }
 
   get map(): IgoMap { return this.options.map; }
 

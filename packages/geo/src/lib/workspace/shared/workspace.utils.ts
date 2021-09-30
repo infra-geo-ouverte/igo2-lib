@@ -1,5 +1,6 @@
 import { WfsWorkspace } from './wfs-workspace';
 import { FeatureWorkspace } from './feature-workspace';
+import { EditionWorkspace } from './edition-workspace';
 import { Observable } from 'rxjs';
 import { EntityStoreFilterCustomFuncStrategy, EntityRecord } from '@igo2/common';
 import { map } from 'rxjs/operators';
@@ -23,13 +24,13 @@ export function setSelectedOnly(value, layerId, storageService) {
   storageService.set(`workspace.selectedOnly.${layerId}`, value, StorageScope.SESSION);
 }
 
-export function mapExtentStrategyActiveToolTip(ws: WfsWorkspace | FeatureWorkspace): Observable<string> {
+export function mapExtentStrategyActiveToolTip(ws: WfsWorkspace | FeatureWorkspace | EditionWorkspace): Observable<string> {
   return ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy).active$.pipe(
     map((active: boolean) => active ? 'igo.geo.workspace.inMapExtent.active.tooltip' : 'igo.geo.workspace.inMapExtent.inactive.tooltip')
   );
 }
 
-export function noElementSelected(ws: WfsWorkspace | FeatureWorkspace): Observable<boolean> {
+export function noElementSelected(ws: WfsWorkspace | FeatureWorkspace | EditionWorkspace): Observable<boolean> {
   return ws.entityStore.stateView.manyBy$((record: EntityRecord<Feature>) => {
     return record.state.selected === true;
   }).pipe(

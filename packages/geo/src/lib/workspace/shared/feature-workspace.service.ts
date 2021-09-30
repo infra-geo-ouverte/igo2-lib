@@ -45,7 +45,7 @@ export class FeatureWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
-    if (layer.options.workspace?.enabled === false) {
+    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition === true) {
       return;
     }
     layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});

@@ -12,6 +12,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
@@ -31,6 +32,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   constructor(
     private wfsWorkspaceService: WfsWorkspaceService,
     private wmsWorkspaceService: WmsWorkspaceService,
+    private editionWorkspaceService: EditionWorkspaceService,
     private featureWorkspaceService: FeatureWorkspaceService
   ) {}
 
@@ -81,10 +83,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     if (workspace !== undefined) {
       return;
     }
-    if (layer.dataSource instanceof WFSDataSource) {
+    if (layer.dataSource instanceof WFSDataSource && layer.dataSource.options.edition !== true) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return wfsWks;
-    } else if (layer.dataSource instanceof WMSDataSource) {
+    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition !== true) {
       if (!layer.dataSource.options.paramsWFS) { return; }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
@@ -92,9 +94,17 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
         (wmsWks.layer.dataSource.options as QueryableDataSourceOptions).queryable = inResolutionRange;
       });
       return wmsWks;
-    } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
+    } else if (
+        layer.dataSource instanceof FeatureDataSource &&
+        (layer as VectorLayer).exportable === true &&
+        layer.dataSource.options.edition !== true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return featureWks;
+    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition === true) {
+      console.log('ici3', layer);
+      const editionWks = this.editionWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
+      console.log(editionWks);
+      return editionWks;
     }
 
     return;

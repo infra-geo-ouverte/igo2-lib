@@ -27,7 +27,6 @@ import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 import { WfsWorkspace } from './wfs-workspace';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService } from '@igo2/core';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
@@ -43,7 +42,7 @@ export class WfsWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled === false) {
+    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition === true) {
       return;
     }
 

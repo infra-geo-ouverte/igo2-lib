@@ -13,7 +13,6 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -30,7 +29,7 @@ export class WmsWorkspaceService {
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled !== true) {
+    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition === true) {
       return;
     }
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;

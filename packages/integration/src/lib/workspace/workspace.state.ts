@@ -3,10 +3,11 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, Workspace, WorkspaceStore, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
+import { WfsWorkspace, FeatureWorkspace, EditionWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
 import { StorageService } from '@igo2/core';
+import { EditionActionsService } from './shared/edition-actions.service';
 
 /**
  * Service that holds the state of the workspace module
@@ -53,6 +54,7 @@ export class WorkspaceState implements OnDestroy {
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
+    private editionActionsService: EditionActionsService,
     private storageService: StorageService
   ) {
     this.initWorkspaces();
@@ -75,6 +77,7 @@ export class WorkspaceState implements OnDestroy {
     this._store.stateView.all$()
     .subscribe((workspaces: EntityRecord<Workspace>[]) => {
       workspaces.map((wks: EntityRecord<Workspace>) => {
+        console.log('init', wks);
         if (wks.entity.actionStore.empty) {
           if (wks.entity instanceof WfsWorkspace) {
             this.wfsActionsService.loadActions(
@@ -83,6 +86,11 @@ export class WorkspaceState implements OnDestroy {
               this.selectOnlyCheckCondition$);
           } else if (wks.entity instanceof FeatureWorkspace) {
             this.featureActionsService.loadActions(
+              wks.entity,
+              this.rowsInMapExtentCheckCondition$,
+              this.selectOnlyCheckCondition$);
+          } else if (wks.entity instanceof EditionWorkspace) {
+            this.editionActionsService.loadActions(
               wks.entity,
               this.rowsInMapExtentCheckCondition$,
               this.selectOnlyCheckCondition$);
