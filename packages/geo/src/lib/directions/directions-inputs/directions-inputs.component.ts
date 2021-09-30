@@ -13,6 +13,8 @@ import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
 import { computeRelativePosition, updateStoreSorting } from '../shared/directions.utils';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { MatOption } from '@angular/material/core';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -66,12 +68,10 @@ export class DirectionsInputsComponent {
           })
         ).subscribe(() => this.cdRef.detectChanges());
     }
-
   }
 
-  chooseProposal(result: Feature, stop: Stop) {
-    // ne marche pas sur changement.???
-    console.log(result, stop);
+  chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
+    const result: Feature = event.option.value;
     if (result) {
       let geomCoord;
       const geom = result.geometry;
@@ -135,7 +135,7 @@ export class DirectionsInputsComponent {
       moveItemInArray(stopsWithState, fromIndex, toIndex);
       stopsWithState.map((stopWithState, i) => {
         const relativePosition = computeRelativePosition(i, stopsWithState.length);
-        this.stopsStore.state.update(stopWithState.entity, { position : i, relativePosition});
+        this.stopsStore.state.update(stopWithState.entity, { position: i, relativePosition });
       });
       updateStoreSorting(this.stopsStore);
     }
