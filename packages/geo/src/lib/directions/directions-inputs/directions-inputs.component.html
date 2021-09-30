@@ -38,7 +38,7 @@
       </button>
 
       <button *ngIf="(stopsStore.count$ | async)> 2" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stopWithState.entity)">
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stopWithState)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
       <button *ngIf="(stopsStore.count$ | async)<= 2" disabled="true" mat-icon-button tooltip-position="below"

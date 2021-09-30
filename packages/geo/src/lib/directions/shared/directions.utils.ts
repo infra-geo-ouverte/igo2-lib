@@ -45,6 +45,29 @@ export function computeRelativePosition(index: number, totalLength): DirectionRe
   return relativePosition;
 }
 
+export function increaseStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number) {
+  computeStopsStatePosition(stopsStore, fromPosition, true);
+}
+export function decreaseStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number) {
+  computeStopsStatePosition(stopsStore, fromPosition, false);
+}
+
+export function computeStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number, increase: boolean) {
+  const stopsCnt = stopsStore.count;
+  const stopsWithStateToComputePosition = stopsStore.stateView
+    .all()
+    .filter(stopState => stopState.state.position >= fromPosition);
+  stopsWithStateToComputePosition.map(stopWithStateToComputePosition => {
+    const stop = stopWithStateToComputePosition.entity;
+    const state = stopWithStateToComputePosition.state;
+    const delta = increase ? 1 : -1;
+    stopsStore.state.update(stop, {
+      position: state.position + delta,
+      relativePosition: computeRelativePosition(state.position + delta, stopsCnt)
+    });
+  });
+}
+
 /**
  * Function that add a stop to the stop store. Stop are always added before the last stop.
  * @param stopsStore stop store as an EntityStore
@@ -70,22 +93,26 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
     stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
     return addedStop;
   }
-  const stopsWithStateToIncrementPosition = stopsStore.stateView.all().filter(stopState => stopState.state.position >= maxPosition);
-  stopsWithStateToIncrementPosition.map(stopWithStateToIncrementPosition => {
-    const stop = stopWithStateToIncrementPosition.entity;
-    const state = stopWithStateToIncrementPosition.state;
-    stopsStore.state.update(stop, {
-      position: state.position + 1,
-      relativePosition: computeRelativePosition(state.position + 1, stopsCnt)
-    });
-
-  });
+  increaseStopsStatePosition(stopsStore, maxPosition);
   relativePosition = computeRelativePosition(maxPosition, stopsCnt);
 
   stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
 
   updateStoreSorting(stopsStore);
   return addedStop;
+}
+
+export function removeStopToStore(stopsStore: EntityStore<Stop>, stopWithState: EntityRecord<Stop, EntityState>) {
+  const deletedStopPosition = stopWithState.state.position;
+  stopsStore.delete(stopWithState.entity);
+  decreaseStopsStatePosition(stopsStore, deletedStopPosition);
+  const previousStop = stopsStore.stateView.all().find(stopState => stopState.state.position >= deletedStopPosition - 1);
+  if (previousStop) {
+    stopsStore.state.update(previousStop.entity, {
+      position: previousStop.state.position,
+      relativePosition: computeRelativePosition(previousStop.state.position, stopsStore.count)
+    });
+  }
 }
 
 /**
@@ -434,7 +461,8 @@ export function formatInstruction(
     cssClass = 'rotate-270';
   } else if (type === 'roundabout') {
     const cntSuffix = exit === 1 ?
-    translate.instant('igo.geo.directions.cntSuffix.first') : translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
+      translate.instant('igo.geo.directions.cntSuffix.first') :
+      translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
     directive = translate.instant('igo.geo.directions.roundabout', { exit, cntSuffix, route });
     image = 'chart-donut';
     cssClass = '';

@@ -4,7 +4,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { map } from 'rxjs/operators';
 import { Subscription, zip } from 'rxjs';
 
-import { EntityStore } from '@igo2/common';
+import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
 
 import { Stop } from '../shared/directions.interface';
 
@@ -12,7 +12,7 @@ import { SearchService } from '../../search/shared/search.service';
 import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
-import { computeRelativePosition, updateStoreSorting } from '../shared/directions.utils';
+import { computeRelativePosition, decreaseStopsStatePosition, removeStopToStore, updateStoreSorting } from '../shared/directions.utils';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 
@@ -111,15 +111,13 @@ export class DirectionsInputsComponent {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
-  removeStop(stop: Stop) {
-    this.stopsStore.delete(stop);
-    //  todo state de lui + suivant
+  removeStop(stopWithState: EntityRecord<Stop, EntityState>) {
+    removeStopToStore(this.stopsStore, stopWithState);
   }
 
   clearStop(stop: Stop) {
     this.stopsStore.update({ id: stop.id });
   }
-
 
   drop(event: CdkDragDrop<string[]>) {
     this.moveStops(event.previousIndex, event.currentIndex);
