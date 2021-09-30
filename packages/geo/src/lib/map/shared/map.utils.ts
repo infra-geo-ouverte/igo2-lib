@@ -470,8 +470,11 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
   );
 }
 
-export function roundCoordTo(coord: [number, number], decimal: number = 3) {
-  return [coord[0].toFixed(decimal), coord[1].toFixed(decimal)];
+export function roundCoordTo(coord: [number, number], decimal: number = 3): [number, number] {
+  const roundFactor = Math.pow(10, decimal);
+  return [
+    Math.round((coord[0]) * roundFactor) / roundFactor,
+    Math.round((coord[1]) * roundFactor) / roundFactor] as [number, number];
 }
 
 /**
