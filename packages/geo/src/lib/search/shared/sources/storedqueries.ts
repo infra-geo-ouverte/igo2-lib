@@ -27,6 +27,7 @@ import {
 import * as olformat from 'ol/format';
 import { LanguageService, StorageService } from '@igo2/core';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 
 /**
  * StoredQueries search source
@@ -163,6 +164,10 @@ export class StoredQueriesSearchSource extends SearchSource
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
+  
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string,
     options?: TextSearchOptions
@@ -430,6 +435,9 @@ export class StoredQueriesReverseSearchSource extends SearchSource
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions

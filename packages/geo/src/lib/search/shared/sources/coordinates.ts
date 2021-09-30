@@ -16,6 +16,7 @@ import { GoogleLinks } from '../../../utils/googleLinks';
 import { Projection } from '../../../map/shared/projection.interfaces';
 import { lonLatConversion, roundCoordTo, convertDDToDMS } from '../../../map/shared/map.utils';
 import { OsmLinks } from '../../../utils';
+import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -77,6 +78,9 @@ export class CoordinatesReverseSearchSource extends SearchSource
    * @param options options of ReverseSearchOptions (distance, conf, zoom, params)
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
