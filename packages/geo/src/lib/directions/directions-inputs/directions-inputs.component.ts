@@ -23,10 +23,6 @@ import { MatOption } from '@angular/material/core';
 })
 export class DirectionsInputsComponent {
 
-
-  get allStops() {
-    return this.stopsStore.view.all();
-  }
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
   private search$$: Subscription;

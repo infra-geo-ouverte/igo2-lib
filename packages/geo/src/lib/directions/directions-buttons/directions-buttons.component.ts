@@ -13,11 +13,6 @@ import { addStopToStore } from '../shared/directions.utils';
 })
 export class DirectionsButtonsComponent {
 
-
-  get allStops() {
-    return this.stopsStore.view.all();
-  }
-
   @Input() stopsStore: EntityStore<Stop>;
   @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
   constructor() { }
