@@ -29,6 +29,9 @@
 * **libs:** upgrade librairies to angular 11 ([1bf0506](https://github.com/infra-geo-ouverte/igo2-lib/commit/1bf0506226b50d933b4223b1ddf8ef97fe6f0048))
 * **map:** Advanced map tool ([#900](https://github.com/infra-geo-ouverte/igo2-lib/issues/900)) ([a0c7785](https://github.com/infra-geo-ouverte/igo2-lib/commit/a0c778541c7351fee92e73f7a4fbc190238f5e33))
 
+### BREAKING CHANGES
+
+With the update to Angular 12 and the new sass package, use rules are now priorized over import rules. This causes new breaking changes for themings compilation. Before, component theming would simply be imported in the main package theming file (../../packages/{{packageName}}/src/style/{{packageName}}.theming.scss) to be compiled correctly. In this new 1.9 version, component theming file need to be added to the task list of ‘core:concatStyles’ in gulpfile.js. Thereby, all themings are concatenated into one main file.
 
 
 ## [1.8.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.1...1.8.2) (2021-08-12)
