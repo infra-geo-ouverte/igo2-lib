@@ -1,15 +1,13 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { map } from 'rxjs/operators';
-import { Subscription, zip } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
 
 import { Stop } from '../shared/directions.interface';
 
 import { SearchService } from '../../search/shared/search.service';
-import { SearchResult } from '../../search/shared/search.interfaces';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
 import { computeRelativePosition, removeStopFromStore, updateStoreSorting } from '../shared/directions.utils';
@@ -36,36 +34,6 @@ export class DirectionsInputsComponent {
     private cdRef: ChangeDetectorRef
   ) { }
 
-
-  private computeSearchProposal(term: string, stop: Stop) {
-    if (term !== undefined || term.length !== 0) {
-      if (this.search$$) {
-        this.search$$.unsubscribe();
-      }
-      const researches = this.searchService.search(term, { searchType: 'Feature' });
-      const requests$ = researches.map(
-        res => res.request
-          .pipe(
-            map((results: SearchResult[]) => results.filter(r => r.data.geometry)))
-      );
-      this.search$$ = zip(...requests$)
-        .pipe(
-          map((searchRequests: SearchResult[][]) => [].concat.apply([], searchRequests)),
-          map((searchResults: SearchResult[]) => {
-            const searchProposals = [];
-            [...new Set(searchResults.map(item => item.source))].map(source => {
-              searchProposals.push({
-                source,
-                meta: searchResults.find(sr => sr.source === source).meta,
-                results: searchResults.filter(sr => sr.source === source).map(r => r.data)
-              });
-            });
-            stop.searchProposals = searchProposals;
-          })
-        ).subscribe(() => this.cdRef.detectChanges());
-    }
-  }
-
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
     const result: Feature = event.option.value;
     if (result) {
@@ -90,9 +58,10 @@ export class DirectionsInputsComponent {
 
   setStopText(event: KeyboardEvent, stop: Stop) {
     const term = (event.target as HTMLInputElement).value;
-    if (this.validateTerm(term)) {
+    if (term.length === 0) {
+      this.clearStop(stop);
+    } else if (this.validateTerm(term)) {
       stop.text = term;
-      this.computeSearchProposal(term, stop);
       this.stopsStore.update(stop);
     }
   }

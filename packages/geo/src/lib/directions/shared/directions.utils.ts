@@ -9,7 +9,7 @@ import * as olProj from 'ol/proj';
 import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './directions.interface';
+import { Direction, FeatureWithDirection, FeatureWithStop, SourceProposal, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -19,8 +19,14 @@ import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
-import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionRelativePositionType, DirectionType } from './directions.enum';
+import { SearchResult } from '../../search/shared/search.interfaces';
+import { map } from 'rxjs/operators';
+import { Subscription, zip } from 'rxjs';
+import { SearchService } from '../../search/shared/search.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { stringToLonLat } from '../../map/shared/map.utils';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -342,6 +348,53 @@ export function formatDistance(distance: number): string {
   }
   return distance + ' m';
 }
+
+export function computeSearchProposal(
+  stop: Stop,
+  searchService: SearchService,
+  subscription$$: Subscription,
+  cdRef: ChangeDetectorRef) {
+  if (!stop) {
+      return;
+  }
+  const term = stop.text;
+  const coord = stop.coordinates;
+  if (!term || term.length === 0) {
+    return;
+  }
+
+  const response = stringToLonLat(term, 'EPSG:3857');
+  let researches;
+  let isCoord = false;
+  if (response.lonLat) {
+    isCoord = true;
+  }
+  researches = searchService.search(term, { searchType: 'Feature' });
+
+  if (subscription$$) {
+    subscription$$.unsubscribe();
+  }
+  const requests$ = researches.map(res => res.request
+    .pipe(map((results: SearchResult[]) => results.filter(r =>
+      isCoord ? r.data.geometry.type === 'Point' && r.data.geometry : r.data.geometry)))
+  );
+  subscription$$ = zip(...requests$)
+    .pipe(
+      map((searchRequests: SearchResult[][]) => [].concat.apply([], searchRequests)),
+      map((searchResults: SearchResult[]) => {
+        const searchProposals: SourceProposal[] = [];
+        [...new Set(searchResults.map(item => item.source))].map(source => {
+          searchProposals.push({
+            source,
+            meta: searchResults.find(sr => sr.source === source).meta,
+            results: searchResults.filter(sr => sr.source === source).map(r => r.data)
+          });
+        });
+        stop.searchProposals = searchProposals;
+      })
+    ).subscribe(() => cdRef.detectChanges());
+}
+
 
 export function formatDuration(duration: number): string {
   if (duration >= 3600) {

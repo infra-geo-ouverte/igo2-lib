@@ -12,7 +12,7 @@
             [matAutocomplete]="auto">
         <button 
             mat-button 
-            *ngIf="stopWithState.entity.text"
+            *ngIf="stopWithState.entity.text || stopWithState.entity.coordinates"
             matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stopWithState.entity)">
             <mat-icon svgIcon="close"></mat-icon>
         </button>

@@ -164,7 +164,7 @@ export class StoredQueriesSearchSource extends SearchSource
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
-  
+
   @Cacheable({
     maxCacheCount: 20
   })

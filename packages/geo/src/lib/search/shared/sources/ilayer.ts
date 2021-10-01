@@ -204,7 +204,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Layer name or keyword
    * @returns Observable of <SearchResult<LayerOptions>[]
    */
-  
+
   @Cacheable({
     maxCacheCount: 20
   })

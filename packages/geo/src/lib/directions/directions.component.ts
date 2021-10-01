@@ -12,13 +12,17 @@ import { TranslateEvent } from 'ol/interaction/Translate';
 import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
 
-import { DirectionOptions, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, Stop } from './shared/directions.interface';
+import { DirectionOptions, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, SourceProposal, Stop } from './shared/directions.interface';
 import { combineLatest, Subscription } from 'rxjs';
-import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { FeatureStore } from '../feature/shared/store';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
 import { DirectionType } from './shared/directions.enum';
+import { roundCoordTo } from '../map';
+import { SearchService } from '../search/shared/search.service';
+import { SearchResult } from '../search/shared/search.interfaces';
+import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
 
 
@@ -43,16 +47,22 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private focusOnStop: boolean = false;
   private isTranslating: boolean = false;
 
+  public previousStops: Stop[] = [];
+
+  private search$$: Subscription;
+
   @Input() stopsStore: EntityStore<Stop>;
   @Input() stopsFeatureStore: FeatureStore<FeatureWithStop>;
   @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
   @Input() debounce: number = 200;
   @Input() length: number = 2;
+  @Input() coordRoundedDecimals: number = 6;
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
-    private directionsService: DirectionsService
+    private directionsService: DirectionsService,
+    private searchService: SearchService
   ) { }
 
 
@@ -93,7 +103,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.translateStop.on('translating', (evt: TranslateEvent) => {
       this.isTranslating = true;
       this.executeStopTranslation(evt.features);
-      // set overview mode
     });
     this.translateStop.on('translateend', (evt: TranslateEvent) => {
       this.isTranslating = false;
@@ -107,16 +116,17 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       filter: feature => {
         return feature.get('type') === DirectionType.Route &&
           feature.get('active') &&
-          !this.isTranslating
+          !this.isTranslating;
       }
     });
     this.selectedRoute.on('select', (evt: SelectEvent) => {
       if (this.focusOnStop === false) {
-        const selectCoordinates = olProj.transform(
-          (evt as any).mapBrowserEvent.coordinate,
-          this.routesFeatureStore.layer.map.projection,
-          this.projection
-        );
+        const selectCoordinates = roundCoordTo(
+          olProj.transform(
+            (evt as any).mapBrowserEvent.coordinate,
+            this.routesFeatureStore.layer.map.projection,
+            this.projection
+          ) as [number, number], this.coordRoundedDecimals);
         const addedStop = addStopToStore(this.stopsStore);
         addedStop.text = selectCoordinates.join(',');
         addedStop.coordinates = [selectCoordinates[0], selectCoordinates[1]];
@@ -143,9 +153,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       this.projection
     );
     const translatedStop = this.stopsStore.get(translatedStopId);
-    translatedStop.coordinates = [translationCoordinates[0], translationCoordinates[1]];
-    translatedStop.text = translationCoordinates.join(',');
-    this.stopsStore.update(translatedStop);
+    const roundedCoord = roundCoordTo(translationCoordinates as [number, number], this.coordRoundedDecimals);
+    translatedStop.coordinates = roundedCoord;
+    translatedStop.text = roundedCoord.join(',');
+    if (!this.isTranslating) {
+      this.stopsStore.update(translatedStop);
+    }
     // todo refresh proposals
   }
 
@@ -167,11 +180,34 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       this.stopsStore.state.change$,
       this.stopsStore.entities$])
       .pipe(debounceTime(this.debounce))
-      .subscribe(() => {
+      .subscribe((bunch: [a: void, entities: Stop[]]) => {
+        this.handleStopDiff(bunch[1]);
         updateStoreSorting(this.stopsStore);
         this.handleStopsFeature();
         this.getRoutes(this.isTranslating);
       });
+  }
+
+  private handleStopDiff(stops: Stop[]) {
+    const simplifiedStops = stops.map((stop: Stop) => {
+      return ObjectUtils.removeUndefined({ ...{ id: stop.id, text: stop.text, coordinates: stop.coordinates } });
+    });
+    const diff = ChangeUtils.findChanges(this.previousStops, simplifiedStops, ['coordinates']);
+    const stopIdToProcess = diff.added.concat(diff.modified);
+    if (stopIdToProcess) {
+      stopIdToProcess.map((change) => {
+        const changedStop = (change.newValue as Stop);
+        if (changedStop) {
+          const stop: Stop = this.stopsStore.get(changedStop.id);
+          computeSearchProposal(
+            stop,
+            this.searchService,
+            this.search$$,
+            this.cdRef);
+        }
+      });
+    }
+    this.previousStops = simplifiedStops;
   }
 
   private handleStopsFeature() {
@@ -193,7 +229,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getRoutes(isOverview: boolean = false, round: number = 6) {
+  private getRoutes(isOverview: boolean = false) {
     const stopsWithCoordinates = this.stopsStore.stateView
       .all()
       .filter(stopWithState => stopWithState.entity.coordinates);
@@ -202,11 +238,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const roundFactor = Math.pow(10, round);
     const roundedCoordinates = stopsWithCoordinates.map((stopWithState) => {
-      const roundedCoord: [number, number] = [
-        Math.round((stopWithState.entity.coordinates[0]) * roundFactor) / roundFactor,
-        Math.round((stopWithState.entity.coordinates[1]) * roundFactor) / roundFactor];
+      const roundedCoord = roundCoordTo(stopWithState.entity.coordinates, this.coordRoundedDecimals);
       return roundedCoord;
     });
     const overviewDirectionsOptions: DirectionOptions = {
