@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EntityStore } from '@igo2/common';
+import { EntityRecord, EntityState } from '@igo2/common';
 
-import { AnyLayerOptions, FeatureStore, FeatureWithDirection, FeatureWithStop, Stop } from '@igo2/geo';
+import { AnyLayerOptions, Stop, StopsStore, StopsFeatureStore, RoutesFeatureStore } from '@igo2/geo';
+import { first, skipWhile } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
 /**
@@ -15,19 +16,19 @@ export class DirectionState {
   /**
    * Store that holds the stop and the driving route
    */
-  public stopsStore: EntityStore<Stop> = new EntityStore<Stop>([]);
+  public stopsStore: StopsStore = new StopsStore([]);
 
   /**
    * Store that holds the driving route
    */
-  public stopsFeatureStore: FeatureStore<FeatureWithStop> = new FeatureStore<FeatureWithStop>([], {
+  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
     map: this.mapState.map
   });
 
   /**
    * Store that holds the driving route
    */
-  public routesFeatureStore: FeatureStore<FeatureWithDirection> = new FeatureStore<FeatureWithDirection>([], {
+  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
     map: this.mapState.map
   });
 
@@ -36,6 +37,18 @@ export class DirectionState {
   public routeFromFeatureDetail = false;
 
   constructor(private mapState: MapState) {
+
+    this.stopsStore.stateView.all$()
+    .pipe(
+      skipWhile((stopsWithState: EntityRecord<Stop, EntityState>[]) => stopsWithState.filter(s => s.state.position === 1).length === 0 ),
+      first()
+    )
+    .subscribe((stopsWithState: EntityRecord<Stop, EntityState>[]) => {
+      console.log(stopsWithState)
+
+
+    })
+
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {

@@ -1,18 +1,17 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { Subscription } from 'rxjs';
 
-import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
+import { EntityRecord, EntityState } from '@igo2/common';
 
 import { Stop } from '../shared/directions.interface';
 
-import { SearchService } from '../../search/shared/search.service';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
 import { computeRelativePosition, removeStopFromStore, updateStoreSorting } from '../shared/directions.utils';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
+import { StopsStore } from '../shared/store';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -23,16 +22,12 @@ export class DirectionsInputsComponent {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
-  private search$$: Subscription;
-  @Input() stopsStore: EntityStore<Stop>;
+  @Input() stopsStore: StopsStore;
 
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
-  constructor(
-    private searchService: SearchService,
-    private cdRef: ChangeDetectorRef
-  ) { }
+  constructor() { }
 
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
     const result: Feature = event.option.value;

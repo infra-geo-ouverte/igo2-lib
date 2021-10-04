@@ -1,10 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
-import { FeatureStore } from '../../feature/shared/store';
-
-import { FeatureWithDirection, Stop } from '../shared/directions.interface';
 import { addStopToStore } from '../shared/directions.utils';
+import { RoutesFeatureStore, StopsStore } from '../shared/store';
 
 @Component({
   selector: 'igo-directions-buttons',
@@ -13,11 +10,12 @@ import { addStopToStore } from '../shared/directions.utils';
 })
 export class DirectionsButtonsComponent {
 
-  @Input() stopsStore: EntityStore<Stop>;
-  @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
+  @Input() stopsStore: StopsStore;
+  @Input() routesFeatureStore: RoutesFeatureStore;
   constructor() { }
 
   resetStops() {
+    this.stopsStore.storeInitialized$.next(false);
     this.stopsStore.clear();
   }
 

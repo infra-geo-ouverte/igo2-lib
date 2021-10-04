@@ -6,12 +6,11 @@ import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olProj from 'ol/proj';
 
 
-import { EntityRecord, EntityState, EntityStore } from '@igo2/common';
+import { EntityRecord, EntityState } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { Direction, FeatureWithDirection, FeatureWithStop, SourceProposal, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
-import { FeatureStore } from '../../feature/shared/store';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
@@ -19,7 +18,7 @@ import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
-import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionRelativePositionType, DirectionType } from './directions.enum';
 import { SearchResult } from '../../search/shared/search.interfaces';
 import { map } from 'rxjs/operators';
@@ -27,6 +26,7 @@ import { Subscription, zip } from 'rxjs';
 import { SearchService } from '../../search/shared/search.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { stringToLonLat } from '../../map/shared/map.utils';
+import { RoutesFeatureStore, StopsFeatureStore, StopsStore } from './store';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -34,7 +34,7 @@ import { stringToLonLat } from '../../map/shared/map.utils';
  * @param direction asc / desc sort order
  * @param field the field to use to sort the view
  */
-export function updateStoreSorting(stopsStore: EntityStore<Stop>, direction: 'asc' | 'desc' = 'asc', field = 'position') {
+export function updateStoreSorting(stopsStore: StopsStore, direction: 'asc' | 'desc' = 'asc', field = 'position') {
   stopsStore.stateView.sort({
     direction,
     valueAccessor: (entity: EntityRecord<Stop, EntityState>) => entity.state[field]
@@ -51,14 +51,14 @@ export function computeRelativePosition(index: number, totalLength): DirectionRe
   return relativePosition;
 }
 
-export function increaseStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number) {
+export function increaseStopsStatePosition(stopsStore: StopsStore, fromPosition: number) {
   computeStopsStatePosition(stopsStore, fromPosition, true);
 }
-export function decreaseStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number) {
+export function decreaseStopsStatePosition(stopsStore: StopsStore, fromPosition: number) {
   computeStopsStatePosition(stopsStore, fromPosition, false);
 }
 
-export function computeStopsStatePosition(stopsStore: EntityStore<Stop>, fromPosition: number, increase: boolean) {
+export function computeStopsStatePosition(stopsStore: StopsStore, fromPosition: number, increase: boolean) {
   const stopsCnt = stopsStore.count;
   const stopsWithStateToComputePosition = stopsStore.stateView
     .all()
@@ -78,7 +78,7 @@ export function computeStopsStatePosition(stopsStore: EntityStore<Stop>, fromPos
  * Function that add a stop to the stop store. Stop are always added before the last stop.
  * @param stopsStore stop store as an EntityStore
  */
-export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
+export function addStopToStore(stopsStore: StopsStore): Stop {
 
   let addedStop: Stop;
   const id = uuid();
@@ -108,7 +108,7 @@ export function addStopToStore(stopsStore: EntityStore<Stop>): Stop {
   return addedStop;
 }
 
-export function removeStopFromStore(stopsStore: EntityStore<Stop>, stopWithState: EntityRecord<Stop, EntityState>) {
+export function removeStopFromStore(stopsStore: StopsStore, stopWithState: EntityRecord<Stop, EntityState>) {
   const deletedStopPosition = stopWithState.state.position;
   stopsStore.delete(stopWithState.entity);
   decreaseStopsStatePosition(stopsStore, deletedStopPosition);
@@ -167,7 +167,7 @@ export function directionsStyle(
   }
 }
 
-export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWithStop>, languageService: LanguageService) {
+export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, languageService: LanguageService) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -201,7 +201,7 @@ export function initStopsFeatureStore(stopsFeatureStore: FeatureStore<FeatureWit
   tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
 }
 
-export function initRoutesFeatureStore(routesFeatureStore: FeatureStore<FeatureWithDirection>, languageService: LanguageService) {
+export function initRoutesFeatureStore(routesFeatureStore: RoutesFeatureStore, languageService: LanguageService) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -230,8 +230,8 @@ export function initRoutesFeatureStore(routesFeatureStore: FeatureStore<FeatureW
 
 export function addStopToStopsFeatureStore(
   stop: Stop,
-  stopsStore: EntityStore<Stop>,
-  stopsFeatureStore: FeatureStore<FeatureWithStop>,
+  stopsStore: StopsStore,
+  stopsFeatureStore: StopsFeatureStore,
   projection: string,
   languageService: LanguageService) {
   let stopColor;
@@ -287,7 +287,7 @@ export function addStopToStopsFeatureStore(
 }
 
 export function addDirectionToRoutesFeatureStore(
-  routesFeatureStore: FeatureStore,
+  routesFeatureStore: RoutesFeatureStore,
   direction: Direction,
   projection: string,
   active: boolean = false,
@@ -358,7 +358,6 @@ export function computeSearchProposal(
       return;
   }
   const term = stop.text;
-  const coord = stop.coordinates;
   if (!term || term.length === 0) {
     return;
   }

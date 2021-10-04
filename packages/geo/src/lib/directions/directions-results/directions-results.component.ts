@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatSelect } from '@angular/material/select';
 import { LanguageService } from '@igo2/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { FeatureStore } from '../../feature/shared/store';
-
-import { Direction, FeatureWithDirection } from '../shared/directions.interface';
+import { Direction } from '../shared/directions.interface';
 import { formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
+import { RoutesFeatureStore } from '../shared/store';
 
 @Component({
   selector: 'igo-directions-results',
@@ -21,7 +19,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
 
   private entities$$: Subscription;
 
-  @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
+  @Input() routesFeatureStore: RoutesFeatureStore;
 
   constructor(
     private languageService: LanguageService,

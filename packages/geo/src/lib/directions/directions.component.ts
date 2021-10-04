@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
-import { EntityStore, EntityStoreWatcher } from '@igo2/common';
+import { EntityStoreWatcher } from '@igo2/common';
 
 import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
@@ -12,17 +12,16 @@ import { TranslateEvent } from 'ol/interaction/Translate';
 import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
 
-import { DirectionOptions, FeatureWithDirection, FeatureWithStop, FeatureWithStopProperties, SourceProposal, Stop } from './shared/directions.interface';
+import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { combineLatest, Subscription } from 'rxjs';
 import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
-import { FeatureStore } from '../feature/shared/store';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
 import { DirectionType } from './shared/directions.enum';
 import { roundCoordTo } from '../map';
 import { SearchService } from '../search/shared/search.service';
-import { SearchResult } from '../search/shared/search.interfaces';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
+import { RoutesFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
 
 
 
@@ -51,9 +50,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private search$$: Subscription;
 
-  @Input() stopsStore: EntityStore<Stop>;
-  @Input() stopsFeatureStore: FeatureStore<FeatureWithStop>;
-  @Input() routesFeatureStore: FeatureStore<FeatureWithDirection>;
+  @Input() stopsStore: StopsStore;
+  @Input() stopsFeatureStore: StopsFeatureStore;
+  @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() debounce: number = 200;
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
@@ -171,6 +170,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       ).subscribe((count) => {
         if (count < 2) {
           addStopToStore(this.stopsStore);
+          this.stopsStore.storeInitialized$.next(true);
         }
       });
   }
