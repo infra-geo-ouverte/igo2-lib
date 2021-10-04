@@ -11,6 +11,7 @@
         "baseLayers": "Fonds de carte",
         "unavailableTitle": "Catalogue indisponible",
         "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
+        "someUnavailable": "Certaines couches d'information du catalogue sont indisponible pour le moment ou vous n'avez pas les permissions requises.",
         "externalProvider": {
           "catalog": "Ce catalogue provient d'une organisation externe.",
           "group": "Ces couches proviennent d'une organisation externe.",
@@ -476,7 +477,9 @@
         "endDate": "Date de fin",
         "startDate": "Date de début",
         "hour": "Heure",
-        "minute": "Minute"
+        "minute": "Minute",
+        "endYear": "Année de fin",
+        "startYear": "Année de début"
       },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",
