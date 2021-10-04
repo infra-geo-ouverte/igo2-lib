@@ -5,8 +5,6 @@ import * as olGeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olProj from 'ol/proj';
 
-
-import { EntityRecord, EntityState } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { Direction, FeatureWithDirection, FeatureWithStop, SourceProposal, Stop } from './directions.interface';
@@ -35,9 +33,9 @@ import { RoutesFeatureStore, StopsFeatureStore, StopsStore } from './store';
  * @param field the field to use to sort the view
  */
 export function updateStoreSorting(stopsStore: StopsStore, direction: 'asc' | 'desc' = 'asc', field = 'position') {
-  stopsStore.stateView.sort({
+  stopsStore.view.sort({
     direction,
-    valueAccessor: (entity: EntityRecord<Stop, EntityState>) => entity.state[field]
+    valueAccessor: (entity: Stop) => entity[field]
   });
 }
 
@@ -51,27 +49,25 @@ export function computeRelativePosition(index: number, totalLength): DirectionRe
   return relativePosition;
 }
 
-export function increaseStopsStatePosition(stopsStore: StopsStore, fromPosition: number) {
-  computeStopsStatePosition(stopsStore, fromPosition, true);
+export function increaseStopsPosition(stopsStore: StopsStore, fromPosition: number) {
+  computeStopsPosition(stopsStore, fromPosition, true);
 }
-export function decreaseStopsStatePosition(stopsStore: StopsStore, fromPosition: number) {
-  computeStopsStatePosition(stopsStore, fromPosition, false);
+export function decreaseStopsPosition(stopsStore: StopsStore, fromPosition: number) {
+  computeStopsPosition(stopsStore, fromPosition, false);
 }
 
-export function computeStopsStatePosition(stopsStore: StopsStore, fromPosition: number, increase: boolean) {
+export function computeStopsPosition(stopsStore: StopsStore, fromPosition: number, increase: boolean) {
   const stopsCnt = stopsStore.count;
-  const stopsWithStateToComputePosition = stopsStore.stateView
-    .all()
-    .filter(stopState => stopState.state.position >= fromPosition);
-  stopsWithStateToComputePosition.map(stopWithStateToComputePosition => {
-    const stop = stopWithStateToComputePosition.entity;
-    const state = stopWithStateToComputePosition.state;
+  const stopsToComputePosition = stopsStore.entities$.value
+    .filter(stop => stop.position >= fromPosition);
+  stopsToComputePosition.map(stop => {
     const delta = increase ? 1 : -1;
-    stopsStore.state.update(stop, {
-      position: state.position + delta,
-      relativePosition: computeRelativePosition(state.position + delta, stopsCnt)
-    });
+    stop.position = stop.position + delta;
+    stop.relativePosition = computeRelativePosition(stop.position, stopsCnt + delta);
   });
+  if (stopsToComputePosition) {
+    stopsStore.updateMany(stopsToComputePosition);
+  }
 }
 
 /**
@@ -80,44 +76,33 @@ export function computeStopsStatePosition(stopsStore: StopsStore, fromPosition: 
  */
 export function addStopToStore(stopsStore: StopsStore): Stop {
 
-  let addedStop: Stop;
   const id = uuid();
-  const stopsWithStates = stopsStore.stateView.all();
+  const stops = stopsStore.all();
   let positions: number[];
   let relativePosition = DirectionRelativePositionType.Intermediate;
   if (stopsStore.empty) {
     positions = [0];
     relativePosition = DirectionRelativePositionType.Start;
   } else {
-    positions = stopsWithStates.map(stopState => stopState.state.position);
+    positions = stops.map(stop => stop.position);
   }
   const maxPosition: number = Math.max(...positions);
-  stopsStore.insert({ id });
-  addedStop = stopsStore.get(id);
-  const stopsCnt = stopsStore.count;
-  if (stopsCnt === 1) {
-    stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
-    return addedStop;
-  }
-  increaseStopsStatePosition(stopsStore, maxPosition);
-  relativePosition = computeRelativePosition(maxPosition, stopsCnt);
-
-  stopsStore.state.update(addedStop, { position: maxPosition, relativePosition });
+  increaseStopsPosition(stopsStore, maxPosition);
+  stopsStore.insert({ id, position: maxPosition, relativePosition: computeRelativePosition(maxPosition, stopsStore.count + 1) });
 
   updateStoreSorting(stopsStore);
-  return addedStop;
+  return stopsStore.get(id);
 }
 
-export function removeStopFromStore(stopsStore: StopsStore, stopWithState: EntityRecord<Stop, EntityState>) {
-  const deletedStopPosition = stopWithState.state.position;
-  stopsStore.delete(stopWithState.entity);
-  decreaseStopsStatePosition(stopsStore, deletedStopPosition);
-  const previousStop = stopsStore.stateView.all().find(stopState => stopState.state.position >= deletedStopPosition - 1);
+export function removeStopFromStore(stopsStore: StopsStore, stop: Stop) {
+  const deletedStopPosition = stop.position;
+  stopsStore.delete(stop);
+  decreaseStopsPosition(stopsStore, deletedStopPosition);
+  const previousStop = stopsStore.all().find(s => s.position >= deletedStopPosition - 1);
   if (previousStop) {
-    stopsStore.state.update(previousStop.entity, {
-      position: previousStop.state.position,
-      relativePosition: computeRelativePosition(previousStop.state.position, stopsStore.count)
-    });
+    previousStop.position = previousStop.position;
+    previousStop.relativePosition = computeRelativePosition(previousStop.position, stopsStore.count);
+    stopsStore.update(previousStop);
   }
 }
 
@@ -237,8 +222,8 @@ export function addStopToStopsFeatureStore(
   let stopColor;
   let stopText;
 
-  const stopWithState = stopsStore.stateView.get(stop.id);
-  switch (stopWithState.state.relativePosition) {
+
+  switch (stop.relativePosition) {
     case DirectionRelativePositionType.Start:
       stopColor = '#008000';
       stopText = languageService.translate.instant('igo.geo.directionsForm.start');
@@ -249,7 +234,7 @@ export function addStopToStopsFeatureStore(
       break;
     default:
       stopColor = '#ffd700';
-      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stopWithState.state.position}`;
+      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stop.position}`;
       break;
   }
 

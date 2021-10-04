@@ -44,11 +44,8 @@ export class DirectionState {
       first()
     )
     .subscribe((stopsWithState: EntityRecord<Stop, EntityState>[]) => {
-      console.log(stopsWithState)
-
-
-    })
-
+      console.log(stopsWithState);
+    });
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {

@@ -1,24 +1,24 @@
 <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-  <div class="example-box" *ngFor="let stopWithState of stopsStore.stateView.all$() | async; let i = index;" cdkDrag>
+  <div class="example-box" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
     <div class="igo-input-container">
       <mat-form-field>
         <input type="text"
-            [placeholder]="stopWithState.state.relativePosition ? (('igo.geo.directionsForm.'+ stopWithState.state.relativePosition) | translate) : ''"
+            [placeholder]="stop.relativePosition ? (('igo.geo.directionsForm.'+ stop.relativePosition) | translate) : ''"
             aria-label="Number"
             matInput
-            [(ngModel)]="stopWithState.entity.text"
-            (keyup)="setStopText($event,stopWithState.entity)"
+            [(ngModel)]="stop.text"
+            (keyup)="setStopText($event,stop)"
             (keydown.enter)="$event.preventDefault()"
             [matAutocomplete]="auto">
         <button 
             mat-button 
-            *ngIf="stopWithState.entity.text || stopWithState.entity.coordinates"
-            matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stopWithState.entity)">
+            *ngIf="stop.text || stop.coordinates"
+            matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stop)">
             <mat-icon svgIcon="close"></mat-icon>
         </button>
       
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="chooseProposal($event,stopWithState.entity)">
-          <mat-optgroup *ngFor="let source of stopWithState.entity.searchProposals" [label]="source.source.title" [disabled]="source.source.enabled === false">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="chooseProposal($event,stop)">
+          <mat-optgroup *ngFor="let source of stop.searchProposals" [label]="source.source.title" [disabled]="source.source.enabled === false">
           <mat-option *ngFor="let result of source.results" [value]="result" 
           matTooltipShowDelay="500" [matTooltip]="result.meta ? result.meta.title : ''">
             {{ result.meta ? result.meta.title : '' }}
@@ -38,7 +38,7 @@
       </button>
 
       <button *ngIf="(stopsStore.count$ | async)> 2" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stopWithState)">
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
       <button *ngIf="(stopsStore.count$ | async)<= 2" disabled="true" mat-icon-button tooltip-position="below"

@@ -1,5 +1,5 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { DirectionsFormat, DirectionType, SourceDirectionsType } from './directions.enum';
+import { DirectionRelativePositionType, DirectionsFormat, DirectionType, SourceDirectionsType } from './directions.enum';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
@@ -37,6 +37,8 @@ export interface Stop {
   text?: string;
   searchProposals?: SourceProposal[];
   coordinates?: [number, number];
+  position: number;
+  relativePosition: DirectionRelativePositionType;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;

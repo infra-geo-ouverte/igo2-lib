@@ -75,12 +75,12 @@ export class DirectionsInputsComponent {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
-  removeStop(stopWithState: EntityRecord<Stop, EntityState>) {
-    removeStopFromStore(this.stopsStore, stopWithState);
+  removeStop(stop: Stop) {
+    removeStopFromStore(this.stopsStore, stop);
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id });
+    this.stopsStore.update({ id: stop.id, relativePosition: stop.relativePosition, position: stop.position });
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -89,12 +89,13 @@ export class DirectionsInputsComponent {
 
   private moveStops(fromIndex, toIndex) {
     if (fromIndex !== toIndex) {
-      const stopsWithState = [...this.stopsStore.stateView.all()];
-      moveItemInArray(stopsWithState, fromIndex, toIndex);
-      stopsWithState.map((stopWithState, i) => {
-        const relativePosition = computeRelativePosition(i, stopsWithState.length);
-        this.stopsStore.state.update(stopWithState.entity, { position: i, relativePosition });
+      const stops = [...this.stopsStore.view.all()];
+      moveItemInArray(stops, fromIndex, toIndex);
+      stops.map((stop, i) => {
+        stop.relativePosition = computeRelativePosition(i, stops.length);
+        stop.position = i;
       });
+      this.stopsStore.updateMany(stops);
       updateStoreSorting(this.stopsStore);
     }
   }

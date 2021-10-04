@@ -15,8 +15,7 @@ export class DirectionsButtonsComponent {
   constructor() { }
 
   resetStops() {
-    this.stopsStore.storeInitialized$.next(false);
-    this.stopsStore.clear();
+    this.stopsStore.clearStops();
   }
 
   // stop are always added before the last stop.

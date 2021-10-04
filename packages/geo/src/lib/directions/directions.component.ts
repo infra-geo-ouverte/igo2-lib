@@ -165,23 +165,25 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     // Watch if the store is empty to reset it
     this.storeEmpty$$ = this.stopsStore.count$
       .pipe(
-        distinctUntilChanged(),
-        debounceTime(this.debounce)
+        distinctUntilChanged()
       ).subscribe((count) => {
         if (count < 2) {
           addStopToStore(this.stopsStore);
-          this.stopsStore.storeInitialized$.next(true);
+          if (this.stopsStore.count === 2) {
+            this.stopsStore.storeInitialized$.next(true);
+            return;
+          }
+          this.stopsStore.storeInitialized$.next(false);
         }
       });
   }
 
   private monitorEntityStoreChange() {
     this.storeChange$$ = combineLatest([
-      this.stopsStore.state.change$,
       this.stopsStore.entities$])
       .pipe(debounceTime(this.debounce))
-      .subscribe((bunch: [a: void, entities: Stop[]]) => {
-        this.handleStopDiff(bunch[1]);
+      .subscribe((bunch: [entities: Stop[]]) => {
+        this.handleStopDiff(bunch[0]);
         updateStoreSorting(this.stopsStore);
         this.handleStopsFeature();
         this.getRoutes(this.isTranslating);
@@ -230,16 +232,16 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private getRoutes(isOverview: boolean = false) {
-    const stopsWithCoordinates = this.stopsStore.stateView
+    const stopsWithCoordinates = this.stopsStore.view
       .all()
-      .filter(stopWithState => stopWithState.entity.coordinates);
+      .filter(stop => stop.coordinates);
     if (stopsWithCoordinates.length < 2) {
       this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       return;
     }
 
-    const roundedCoordinates = stopsWithCoordinates.map((stopWithState) => {
-      const roundedCoord = roundCoordTo(stopWithState.entity.coordinates, this.coordRoundedDecimals);
+    const roundedCoordinates = stopsWithCoordinates.map((stop) => {
+      const roundedCoord = roundCoordTo(stop.coordinates, this.coordRoundedDecimals);
       return roundedCoord;
     });
     const overviewDirectionsOptions: DirectionOptions = {
