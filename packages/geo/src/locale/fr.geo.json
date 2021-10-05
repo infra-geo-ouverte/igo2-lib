@@ -325,6 +325,8 @@
         "raiseStop": "Prioriser l'arrêt",
         "lowerStop": "Reporter l'arrêt plus loin dans le parcours",
         "addStop": "Ajouter un arrêt",
+        "clearStop": "Réinitialiser cet arrêt",
+        "moveStop": "Déplacer cet arrêt",
         "removeStop": "Supprimer l'arrêt",
         "drivingOptions": "Choix d'itinéraires",
         "summary": "Résumé de l'itinéraire",

@@ -34,7 +34,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private watcher: EntityStoreWatcher<Stop>;
 
-  private projection = 'EPSG:4326';
+  public projection: string = 'EPSG:4326';
 
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;

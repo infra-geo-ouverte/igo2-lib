@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-
-import { EntityRecord, EntityState } from '@igo2/common';
+import * as olProj from 'ol/proj';
+import * as olObservable from 'ol/Observable';
 
 import { Stop } from '../shared/directions.interface';
 
@@ -11,7 +11,8 @@ import pointOnFeature from '@turf/point-on-feature';
 import { computeRelativePosition, removeStopFromStore, updateStoreSorting } from '../shared/directions.utils';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
-import { StopsStore } from '../shared/store';
+import { StopsFeatureStore, StopsStore } from '../shared/store';
+import { roundCoordTo } from '../../map/shared/map.utils';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -21,8 +22,12 @@ import { StopsStore } from '../shared/store';
 export class DirectionsInputsComponent {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  private onMapClickEventKeys = [];
 
   @Input() stopsStore: StopsStore;
+  @Input() stopsFeatureStore: StopsFeatureStore;
+  @Input() projection: string;
+  @Input() coordRoundedDecimals: number = 6;
 
   @Input() debounce: number = 200;
   @Input() length: number = 2;
@@ -52,6 +57,7 @@ export class DirectionsInputsComponent {
   }
 
   setStopText(event: KeyboardEvent, stop: Stop) {
+    this.unlistenMapSingleClick();
     const term = (event.target as HTMLInputElement).value;
     if (term.length === 0) {
       this.clearStop(stop);
@@ -100,4 +106,30 @@ export class DirectionsInputsComponent {
     }
   }
 
+  onInputFocus(stop: Stop) {
+    this.unlistenMapSingleClick();
+    this.listenMapSingleClick(stop);
+  }
+
+  private listenMapSingleClick(stop: Stop) {
+    const key = this.stopsFeatureStore.layer.map.ol.once('singleclick', event => {
+      const clickCoordinates = olProj.transform(
+        event.coordinate,
+        this.stopsFeatureStore.layer.map.projection,
+        this.projection
+      );
+      const roundedCoord = roundCoordTo(clickCoordinates as [number, number], this.coordRoundedDecimals);
+      stop.text = roundedCoord.join(',');
+      stop.coordinates = roundedCoord;
+      this.stopsStore.update(stop);
+    });
+    this.onMapClickEventKeys.push(key);
+  }
+
+  private unlistenMapSingleClick() {
+    this.onMapClickEventKeys.map(key => {
+      olObservable.unByKey(key);
+    });
+    this.onMapClickEventKeys = [];
+  }
 }

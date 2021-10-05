@@ -1,11 +1,14 @@
-<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-  <div class="example-box" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
+<div cdkDropList class="stops-list" (cdkDropListDropped)="drop($event)">
+  <div cdkDragLockAxis="y" class="stop-box mat-typography" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
     <div class="igo-input-container">
       <mat-form-field>
-        <input type="text"
+        <input id="{{stop.id}}" type="text"
             [placeholder]="stop.relativePosition ? (('igo.geo.directionsForm.'+ stop.relativePosition) | translate) : ''"
+            matTooltipShowDelay="500"
+            [matTooltip]="stop.text"
             aria-label="Number"
             matInput
+            (focus)="onInputFocus(stop)"
             [(ngModel)]="stop.text"
             (keyup)="setStopText($event,stop)"
             (keydown.enter)="$event.preventDefault()"
@@ -13,6 +16,8 @@
         <button 
             mat-button 
             *ngIf="stop.text || stop.coordinates"
+            matTooltipShowDelay="500"
+            [matTooltip]="'igo.geo.directionsForm.clearStop' | translate"
             matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stop)">
             <mat-icon svgIcon="close"></mat-icon>
         </button>
@@ -32,8 +37,8 @@
 
 
     <div class="igo-form-button-group">
-      <button cdkDragHandle mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="primary">
+      <button class="swipe-vertical" cdkDragHandle mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.moveStop' | translate" color="primary">
         <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
       </button>
 

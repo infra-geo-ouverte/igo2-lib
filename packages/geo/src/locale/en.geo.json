@@ -326,6 +326,8 @@
         "raiseStop": "Raise stop's priority",
         "lowerStop": "Lower stop's priority",
         "addStop": "Add a stop",
+        "clearStop": "Clear this stop",
+        "moveStop": "Move this stop",
         "removeStop": "Remove this stop",
         "drivingOptions": "Options",
         "summary": "Direction's summary",
