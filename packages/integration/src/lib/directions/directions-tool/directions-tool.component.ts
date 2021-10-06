@@ -22,6 +22,8 @@ export class DirectionsToolComponent {
    */
   get stopsStore(): StopsStore { return this.directionState.stopsStore; }
 
+  get debounceTime(): number { return this.directionState.debounceTime; }
+
   /**
    * stops
    * @internal

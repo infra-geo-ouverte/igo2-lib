@@ -36,6 +36,8 @@ export class DirectionState {
 
   public routeFromFeatureDetail = false;
 
+  public debounceTime: number = 200;
+
   constructor(private mapState: MapState) {
 
     this.stopsStore.stateView.all$()

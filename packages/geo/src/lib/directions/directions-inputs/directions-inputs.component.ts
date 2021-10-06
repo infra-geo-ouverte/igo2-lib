@@ -107,8 +107,10 @@ export class DirectionsInputsComponent {
   }
 
   onInputFocus(stop: Stop) {
-    this.unlistenMapSingleClick();
-    this.listenMapSingleClick(stop);
+    if (!stop.text || stop.text?.length === 0) {
+      this.unlistenMapSingleClick();
+      this.listenMapSingleClick(stop);
+    }
   }
 
   private listenMapSingleClick(stop: Stop) {

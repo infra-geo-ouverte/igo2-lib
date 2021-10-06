@@ -7,6 +7,7 @@
     (activeRouteDescription)="onActiveRouteDescriptionChange($event)">
 </igo-directions-form> -->
 <igo-directions
+    [debounceTime]="debounceTime"
     [stopsStore]="stopsStore"
     [stopsFeatureStore]="stopsFeatureStore"
     [routesFeatureStore]="routesFeatureStore">  

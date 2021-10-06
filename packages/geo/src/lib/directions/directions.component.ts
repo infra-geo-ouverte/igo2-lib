@@ -13,7 +13,7 @@ import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
 
 import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
-import { combineLatest, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
@@ -155,10 +155,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     const roundedCoord = roundCoordTo(translationCoordinates as [number, number], this.coordRoundedDecimals);
     translatedStop.coordinates = roundedCoord;
     translatedStop.text = roundedCoord.join(',');
-    if (!this.isTranslating) {
-      this.stopsStore.update(translatedStop);
-    }
-    // todo refresh proposals
+    this.stopsStore.update(translatedStop);
   }
 
   private monitorEmptyEntityStore() {
@@ -179,11 +176,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private monitorEntityStoreChange() {
-    this.storeChange$$ = combineLatest([
-      this.stopsStore.entities$])
+    this.storeChange$$ = 
+      this.stopsStore.entities$
       .pipe(debounceTime(this.debounce))
-      .subscribe((bunch: [entities: Stop[]]) => {
-        this.handleStopDiff(bunch[0]);
+      .subscribe((stops: Stop[]) => {
+        this.handleStopDiff(stops);
         updateStoreSorting(this.stopsStore);
         this.handleStopsFeature();
         this.getRoutes(this.isTranslating);
