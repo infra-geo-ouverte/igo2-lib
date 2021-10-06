@@ -5,7 +5,7 @@ import * as olGeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olProj from 'ol/proj';
 
-import { uuid } from '@igo2/utils';
+import { uuid, NumberUtils } from '@igo2/utils';
 
 import { Direction, FeatureWithDirection, FeatureWithStop, SourceProposal, Stop } from './directions.interface';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
@@ -349,15 +349,15 @@ export function formatDistance(distance: number): string {
     return;
   }
   if (distance >= 100000) {
-    return Math.round(distance / 1000) + ' km';
+    return NumberUtils.roundToNDecimal(Math.round(distance) / 1000, 1) + ' km';
   }
   if (distance >= 10000) {
-    return Math.round(distance / 100) / 10 + ' km';
+    return NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km';
   }
-  if (distance >= 100) {
-    return Math.round(distance / 100) / 10 + ' km';
+  if (distance >= 1000) {
+    return NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km';
   }
-  return distance + ' m';
+  return NumberUtils.roundToNDecimal(distance, 0) + ' m';
 }
 
 export function computeSearchProposal(

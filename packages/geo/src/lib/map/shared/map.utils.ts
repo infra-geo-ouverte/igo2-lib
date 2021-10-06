@@ -2,7 +2,7 @@ import * as olproj from 'ol/proj';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { MAC } from 'ol/has';
 
-import { NumberUtils } from '@igo2/utils'
+import { NumberUtils } from '@igo2/utils';
 
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
