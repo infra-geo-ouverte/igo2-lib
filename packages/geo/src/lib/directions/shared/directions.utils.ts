@@ -24,7 +24,7 @@ import { Subscription, zip } from 'rxjs';
 import { SearchService } from '../../search/shared/search.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { stringToLonLat } from '../../map/shared/map.utils';
-import { RoutesFeatureStore, StopsFeatureStore, StopsStore } from './store';
+import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './store';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -210,6 +210,32 @@ export function initRoutesFeatureStore(routesFeatureStore: RoutesFeatureStore, l
   tryBindStoreLayer(routesFeatureStore, routeLayer);
   routesFeatureStore.layer.visible = true;
   tryAddLoadingStrategy(routesFeatureStore, loadingStrategy);
+}
+
+export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
+  const loadingStrategy = new FeatureStoreLoadingStrategy({
+    motion: FeatureMotion.None
+  });
+
+  const stepLayer = new VectorLayer({
+    id: 'igo-direction-step-layer',
+    title: '',
+    zIndex: 910,
+    source: new FeatureDataSource(),
+    showInLayerList: false,
+    workspace: {
+      enabled: false,
+    },
+    linkedLayers: {
+      linkId: 'igo-direction-route-layer'
+    },
+    exportable: false,
+    browsable: false,
+    style: directionsStyle
+  });
+  tryBindStoreLayer(stepFeatureStore, stepLayer);
+  stepFeatureStore.layer.visible = true;
+  tryAddLoadingStrategy(stepFeatureStore, loadingStrategy);
 }
 
 

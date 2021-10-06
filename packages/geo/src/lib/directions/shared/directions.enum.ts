@@ -9,7 +9,8 @@ export enum SourceDirectionsType {
 
 export enum DirectionType {
   Stop = 'stop',
-  Route = 'route'
+  Route = 'route',
+  Vertex = 'vertex'
 }
 
 export enum DirectionRelativePositionType {

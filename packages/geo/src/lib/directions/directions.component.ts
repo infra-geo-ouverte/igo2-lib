@@ -14,14 +14,15 @@ import { SelectEvent } from 'ol/interaction/Select';
 
 import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { Subscription } from 'rxjs';
-import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
 import { DirectionType } from './shared/directions.enum';
 import { roundCoordTo } from '../map';
 import { SearchService } from '../search/shared/search.service';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
-import { RoutesFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
+import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
+import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
 
 
 
@@ -57,6 +58,8 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
 
+  public stepFeatureStore: StepFeatureStore;
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
@@ -70,6 +73,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
       initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
+      this.stepFeatureStore = new StepFeatureStore([], {
+        map: this.routesFeatureStore.layer.map
+      });
+      initStepFeatureStore(this.stepFeatureStore);
       this.initOlInteraction();
     }, 1);
 
@@ -79,6 +86,16 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
+    this.freezeStores();
+  }
+
+  private freezeStores() {
+    this.stopsFeatureStore.layer.map.ol.removeInteraction(this.selectStopInteraction);
+    this.stopsFeatureStore.layer.map.ol.removeInteraction(this.translateStop);
+    this.routesFeatureStore.layer.map.ol.removeInteraction(this.selectedRoute);
+    this.stopsFeatureStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
+    this.routesFeatureStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
+    this.stepFeatureStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
   }
 
   private initEntityStores() {
@@ -176,8 +193,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private monitorEntityStoreChange() {
-    this.storeChange$$ = 
-      this.stopsStore.entities$
+    this.storeChange$$ = this.stopsStore.entities$
       .pipe(debounceTime(this.debounce))
       .subscribe((stops: Stop[]) => {
         this.handleStopDiff(stops);

@@ -3,9 +3,17 @@ import { LanguageService } from '@igo2/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { Direction } from '../shared/directions.interface';
+import { Direction, FeatureWithStep, IgoStep } from '../shared/directions.interface';
 import { formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
-import { RoutesFeatureStore } from '../shared/store';
+import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
+
+import olFeature from 'ol/Feature';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olGeom from 'ol/geom';
+
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { FEATURE } from '../../feature/shared/feature.enums';
+import { DirectionType } from '../shared/directions.enum';
 
 @Component({
   selector: 'igo-directions-results',
@@ -20,6 +28,7 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   private entities$$: Subscription;
 
   @Input() routesFeatureStore: RoutesFeatureStore;
+  @Input() stepFeatureStore: StepFeatureStore;
 
   constructor(
     private languageService: LanguageService,
@@ -74,4 +83,59 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
       cnt === this.activeDirection.steps.length - 1
     );
   }
+
+  onStepsListBlur() {
+    this.stepFeatureStore.clear();
+  }
+
+  showSegment(step: IgoStep, zoomToExtent = false) {
+    this.showRouteSegmentGeometry(step, zoomToExtent);
+  }
+
+  showRouteSegmentGeometry(step: IgoStep, zoomToExtent = false) {
+
+    const coordinates = step.geometry.coordinates;
+    const vertexId = 'vertex';
+    const geometry4326 = new olGeom.LineString(coordinates);
+    const geometryMapProjection = geometry4326.transform(
+      'EPSG:4326',
+      this.stepFeatureStore.layer.map.projection
+    );
+    const routeSegmentCoordinates = (geometryMapProjection as any).getCoordinates();
+    const lastPoint = routeSegmentCoordinates[0];
+
+    const geometry = new olGeom.Point(lastPoint);
+    const feature = new olFeature({ geometry });
+
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+      featureProjection: this.stepFeatureStore.layer.map.projection,
+      dataProjection: this.stepFeatureStore.layer.map.projection
+    }) as FeatureGeometry;
+
+    const previousVertex = this.stepFeatureStore.get(vertexId);
+    const previousVertexRevision = previousVertex
+      ? previousVertex.meta.revision
+      : 0;
+
+    const stepFeature: FeatureWithStep = {
+      type: FEATURE,
+      geometry: geojsonGeom,
+      projection: this.stepFeatureStore.layer.map.projection,
+      properties: {
+        id: vertexId,
+        step,
+        type: DirectionType.Vertex
+      },
+      meta: {
+        id: vertexId,
+        revision: previousVertexRevision + 1
+      },
+      ol: feature
+    };
+    this.stepFeatureStore.update(stepFeature);
+    if (zoomToExtent) {
+      this.stepFeatureStore.layer.map.viewController.zoomToExtent(feature.getGeometry().getExtent() as [number, number, number, number]);
+    }
+  }
+
 }

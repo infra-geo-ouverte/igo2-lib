@@ -11,11 +11,12 @@
 
     <mat-divider *ngIf="directions && directions.length === 0"></mat-divider>
 
-    <mat-list>
+    <mat-list (mouseleave)="onStepsListBlur()">
         <h2 mat-header class="igo-route-title mat-typography">{{activeDirection.title}}</h2>
         <h2 mat-subheader>{{formatDistance(activeDirection.distance)}}, {{formatDuration(activeDirection.duration)}}</h2>
-        <!-- (mouseenter)="showSegment(step)" (click)="showSegment(step,true)" -->
         <mat-list-item class="igo-steps" 
+            (mouseenter)="showSegment(step)" 
+            (click)="showSegment(step,true)" 
             *ngFor="let step of activeDirection.steps; let cnt = index;" igoListItem>
             <mat-icon [ngClass]="formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{formatStep(step,cnt).image}}">
             </mat-icon>

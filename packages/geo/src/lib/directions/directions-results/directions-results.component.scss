@@ -10,6 +10,10 @@ mat-form-field {
     cursor: pointer;
   }
 
+.igo-steps:hover {
+    background-color: lightslategray
+  }
+
   .mat-line {
     word-wrap: break-word !important;
     white-space: pre-wrap !important;

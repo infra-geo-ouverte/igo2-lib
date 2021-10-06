@@ -312,7 +312,7 @@
         }
       },
       "directionsForm": {
-        "stopLayer": "Itinéraire - arrêts",
+        "stopLayer": "Itinéraire - Arrêts",
         "routeLayer": "Itinéraire - Tracé",
         "start": "Début",
         "intermediate": "Intermédiaire",

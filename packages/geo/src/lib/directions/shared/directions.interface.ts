@@ -16,7 +16,13 @@ export interface DirectionOptions {
 
 export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
 export interface FeatureWithDirection extends Feature<FeatureWithDirectionProperties> { }
+export interface FeatureWithStep extends Feature<FeatureWithStepProperties> {}
 
+export interface FeatureWithStepProperties {
+  id: string;
+  step: IgoStep;
+  type: DirectionType;
+}
 export interface FeatureWithDirectionProperties {
   id: string;
   direction: Direction;

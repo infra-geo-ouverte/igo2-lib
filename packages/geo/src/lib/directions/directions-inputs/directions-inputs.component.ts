@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import * as olProj from 'ol/proj';
@@ -19,7 +19,7 @@ import { roundCoordTo } from '../../map/shared/map.utils';
   templateUrl: './directions-inputs.component.html',
   styleUrls: ['./directions-inputs.component.scss']
 })
-export class DirectionsInputsComponent {
+export class DirectionsInputsComponent implements OnDestroy {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
@@ -33,6 +33,10 @@ export class DirectionsInputsComponent {
   @Input() length: number = 2;
 
   constructor() { }
+
+  ngOnDestroy(): void {
+    this.unlistenMapSingleClick();
+  }
 
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
     const result: Feature = event.option.value;
