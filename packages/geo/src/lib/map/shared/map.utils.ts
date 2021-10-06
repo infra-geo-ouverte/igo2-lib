@@ -2,6 +2,8 @@ import * as olproj from 'ol/proj';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { MAC } from 'ol/has';
 
+import { NumberUtils } from '@igo2/utils'
+
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
 
@@ -471,10 +473,9 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
 }
 
 export function roundCoordTo(coord: [number, number], decimal: number = 3): [number, number] {
-  const roundFactor = Math.pow(10, decimal);
   return [
-    Math.round((coord[0]) * roundFactor) / roundFactor,
-    Math.round((coord[1]) * roundFactor) / roundFactor] as [number, number];
+    NumberUtils.roundToNDecimal(coord[0], decimal),
+    NumberUtils.roundToNDecimal(coord[1], decimal)] as [number, number];
 }
 
 /**
