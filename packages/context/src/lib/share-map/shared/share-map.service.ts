@@ -143,10 +143,10 @@ export class ShareMapService {
             break;
         }
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
-        
+
         let version = '';
         if (layerVersion) {
-          let operator = linkUrl.indexOf('?') === -1 ? '?' : '&';
+          const operator = linkUrl.indexOf('?') === -1 ? '?' : '&';
           version = encodeURIComponent(`${operator}VERSION=${layerVersion}`);
         }
         linkUrl = `${linkUrl}${version}`;
