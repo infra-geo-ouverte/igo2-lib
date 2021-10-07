@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService, MessageService, StorageScope, StorageService } from '@igo2/core';
 import { IgoMap, RoutesFeatureStore, StopsFeatureStore, StopsStore, StepFeatureStore } from '@igo2/geo';
 import { Subject } from 'rxjs';
 
@@ -66,16 +66,21 @@ export class DirectionsToolComponent implements OnInit {
     private directionState: DirectionState,
     private mapState: MapState,
     private languageService: LanguageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
-    const translate = this.languageService.translate;
-    const title = translate.instant(
-      'igo.integration.directions.warning.title'
-    );
-    const msg = translate.instant('igo.integration.directions.warning.message');
-    this.messageService.info(msg, title, { timeOut: 20000 });
+    const warningShown = this.storageService.get('direction.warning.shown') as boolean;
+    if (!warningShown) {
+      const translate = this.languageService.translate;
+      const title = translate.instant(
+        'igo.integration.directions.warning.title'
+      );
+      const msg = translate.instant('igo.integration.directions.warning.message');
+      this.messageService.info(msg, title, { timeOut: 20000 });  
+      this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
+    }
   }
 
   onActiveRouteDescriptionChange(directions) {
