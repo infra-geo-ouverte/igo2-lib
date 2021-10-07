@@ -37,7 +37,7 @@ export class DirectionsToolComponent implements OnInit {
    * @internal
    */
   get routesFeatureStore(): RoutesFeatureStore { return this.directionState.routesFeatureStore; }
-  
+
   /**
    * step store
    * @internal

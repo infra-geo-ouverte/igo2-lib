@@ -106,7 +106,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private monitorActiveRouteZoom() {
     this.zoomRoute$$ = this.zoomToActiveRoute$.subscribe(() => {
-      if (this.routesFeatureStore.count >=1) {
+      if (this.routesFeatureStore.count >= 1) {
         const activeRoute = this.routesFeatureStore.all().find(route => route.properties.active);
 
         if (activeRoute) {
@@ -115,7 +115,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           this.routesFeatureStore.layer.map.viewController.zoomToExtent(routeExtent as [number, number, number, number]);
         }
       }
-    })
+    });
   }
 
   private initOlInteraction() {
@@ -188,6 +188,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     translatedStop.text = roundedCoord.join(',');
     this.stopsStore.update(translatedStop);
   }
+
+  /*
+  todo
+  bug delete add stop
+  flush form et truc pas utiles lié a form
+  */
 
   private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
