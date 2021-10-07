@@ -316,7 +316,7 @@
         "stopLayer": "Directions - stops",
         "routeLayer": "Directions - route",
         "start": "Start",
-        "intermediate": "Intermediate",
+        "intermediate": "Intermediate # {{position}}",
         "end": "End",
         "directionsBtn": "Get route",
         "resetDirectionsBtn": "Reset",

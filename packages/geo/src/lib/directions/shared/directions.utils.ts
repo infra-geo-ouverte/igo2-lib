@@ -264,7 +264,7 @@ export function addStopToStopsFeatureStore(
       break;
     default:
       stopColor = '#ffd700';
-      stopText = `${languageService.translate.instant('igo.geo.directionsForm.intermediate')} # ${stop.position}`;
+      stopText = languageService.translate.instant('igo.geo.directionsForm.intermediate', { position: stop.position });
       break;
   }
 

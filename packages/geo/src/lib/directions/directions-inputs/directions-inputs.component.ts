@@ -23,6 +23,7 @@ export class DirectionsInputsComponent implements OnDestroy {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
+  public removalInProgress: boolean = false;
 
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
@@ -86,7 +87,11 @@ export class DirectionsInputsComponent implements OnDestroy {
   }
 
   removeStop(stop: Stop) {
+    this.removalInProgress = true;
     removeStopFromStore(this.stopsStore, stop);
+    setTimeout(() => {
+      this.removalInProgress = false;
+    }, 100);
   }
 
   clearStop(stop: Stop) {

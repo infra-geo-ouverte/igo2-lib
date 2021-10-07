@@ -315,7 +315,7 @@
         "stopLayer": "Itinéraire - Arrêts",
         "routeLayer": "Itinéraire - Tracé",
         "start": "Début",
-        "intermediate": "Intermédiaire",
+        "intermediate": "Intermédiaire # {{position}}",
         "end": "Fin",
         "directionsBtn": "Obtenir l'itinéraire",
         "resetDirectionsBtn": "Supprimer l'itinéraire",
