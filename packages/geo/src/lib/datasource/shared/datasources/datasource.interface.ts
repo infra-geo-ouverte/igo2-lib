@@ -41,6 +41,7 @@ export interface SourceFieldsOptionsParams {
   excludeFromOgcFilters?: boolean;
   allowedOperatorsType?: OgcFilterOperatorType;
   type?: number | number[] | string | string[] | boolean | Date;
+  primary?: boolean;
 }
 
 export interface Legend {

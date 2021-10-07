@@ -186,6 +186,8 @@ gulp.task('core:concatStyles', done => {
       './packages/geo/src/lib/map/menu-button/menu-button.theming.scss',
       './packages/geo/src/lib/measure/measure.theming.scss',
       './packages/geo/src/lib/measure/measurer/measurer.theming.scss',
+      './packages/geo/src/lib/workspace/workspace.theming.scss',
+      './packages/geo/src/lib/workspace/confirmation-popup/confirmation-popup.theming.scss',
       './packages/core/src/style/themes/blue.theme.scss',
       './packages/core/src/style/themes/bluedq.theme.scss',
       './packages/core/src/style/themes/bluegrey.theme.scss',

@@ -77,7 +77,6 @@ export class WorkspaceState implements OnDestroy {
     this._store.stateView.all$()
     .subscribe((workspaces: EntityRecord<Workspace>[]) => {
       workspaces.map((wks: EntityRecord<Workspace>) => {
-        console.log('init', wks);
         if (wks.entity.actionStore.empty) {
           if (wks.entity instanceof WfsWorkspace) {
             this.wfsActionsService.loadActions(

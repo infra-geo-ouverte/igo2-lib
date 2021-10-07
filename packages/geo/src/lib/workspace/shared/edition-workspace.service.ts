@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   ActionStore,
   EntityRecord,
@@ -8,7 +9,7 @@ import {
   EntityTableColumnRenderer,
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { ConfigService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -24,6 +25,8 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { HttpClient } from '@angular/common/http';
+import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +37,12 @@ export class EditionWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(private layerService: LayerService, private storageService: StorageService) { }
+  constructor(
+    private layerService: LayerService,
+    private storageService: StorageService,
+    private configService: ConfigService,
+    private http: HttpClient,
+    private dialog: MatDialog) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
     if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition !== true) {
@@ -205,27 +213,28 @@ export class EditionWorkspaceService {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
         renderer: EntityTableColumnRenderer.UnsanitizedHTML,
-        valueAccessor: undefined
+        valueAccessor: undefined,
+        primary: field.primary === true ? true : false
       };
     });
     columns.push({
       name: 'edition',
       title: undefined,
       renderer: EntityTableColumnRenderer.ButtonGroup,
+      primary: false,
       valueAccessor: (entity: object) => {
         return [{
           icon: 'pencil',
           color: 'primary',
-          click: (row) => { console.log(row); }
+          click: (feature) => { this.modifyFeature(feature, workspace) }
         },
         {
           icon: 'delete',
           color: 'warn',
-          click: (row) => { console.log(row); }
+          click: (feature) => { this.deleteFeature(feature, workspace) }
         }] as EntityTableButton[];
       }
     });
-    console.log('columns', columns);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
@@ -238,5 +247,58 @@ export class EditionWorkspaceService {
       return record.state.inMapExtent === true && record.state.inMapResolution === true;
     };
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
+  }
+
+  public addFeature(feature) {
+    console.log(feature);
+    const url = this.configService.getConfig('edition.url');
+    if (url) {
+      this.http.post(`${url}`, {}).subscribe(
+        (data: any) => {
+          console.log('Add success');
+          console.log(data);
+        }
+      );
+    }
+  }
+
+  public deleteFeature(feature, workspace: EditionWorkspace) {
+
+    setTimeout(() => {
+      const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+        disableClose: false,
+        data: {type: 'delete'}
+    });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === false) {
+          let id;
+          const url = this.configService.getConfig('edition.url');
+          for (const column of workspace.meta.tableTemplate.columns) {
+            for (const property in feature.properties) {
+              const columnName = column.name.slice(11);
+              if (columnName === property && column.primary === true) {
+                id = feature.properties[property];
+              }
+            }
+          }
+          if (url) {
+            this.http.delete(`${url}?id_caserne=eq.${id}`, {}).subscribe(
+              () => {
+                console.log('Delete success');
+                workspace.entityStore.delete(feature);
+              },
+              error => {
+                console.log(error);
+              }
+            );
+          }
+        }
+      })
+    }, 250)
+  }
+
+  public modifyFeature(feature, workspace) {
+    
   }
 }

@@ -656,6 +656,9 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Do you really want to delete this entity?",
+        "addConfirmation": "Do you really wish to add an entity?",
+        "cancel": "Cancel",
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"
       }
