@@ -4,9 +4,6 @@ import { DirectionRelativePositionType, DirectionsFormat, DirectionType, SourceD
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
 
-// todo delete
-export interface DirectionsOptions extends DirectionOptions { }
-
 export interface DirectionOptions {
   overview?: boolean;
   steps?: boolean;
@@ -65,8 +62,6 @@ export interface SourceProposal {
   };
 }
 
-// todo delete
-export interface Directions extends Direction { }
 export interface Direction {
   id: string;
   source: string;

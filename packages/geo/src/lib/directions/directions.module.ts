@@ -15,9 +15,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 
-import { DirectionsFormComponent } from './directions-form/directions-form.component';
-import { DirectionsFormBindingDirective } from './directions-form/directions-form-binding.directive';
-import { DirectionsFormService } from './directions-form/directions-form.service';
 import { provideDirectionsSourceService } from './shared/directions-source.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
@@ -44,22 +41,18 @@ import { DirectionsResultsComponent } from './directions-results/directions-resu
     IgoLanguageModule
   ],
   exports: [
-    DirectionsFormComponent,
     DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
-    DirectionsResultsComponent,
-    DirectionsFormBindingDirective
+    DirectionsResultsComponent
   ],
   declarations: [
-    DirectionsFormComponent,
-    DirectionsComponent,
+     DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
-    DirectionsResultsComponent,
-    DirectionsFormBindingDirective
+    DirectionsResultsComponent
   ],
-  providers: [DirectionsFormService, provideDirectionsSourceService()]
+  providers: [provideDirectionsSourceService()]
 })
 export class IgoDirectionsModule {
   static forRoot(): ModuleWithProviders<IgoDirectionsModule> {
