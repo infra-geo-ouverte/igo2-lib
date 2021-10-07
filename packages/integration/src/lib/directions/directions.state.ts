@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EntityRecord, EntityState } from '@igo2/common';
 
-import { AnyLayerOptions, Stop, StopsStore, StopsFeatureStore, RoutesFeatureStore } from '@igo2/geo';
+import { AnyLayerOptions, Stop, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
 import { first, skipWhile } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
@@ -14,21 +14,25 @@ import { MapState } from '../map/map.state';
 export class DirectionState {
 
   /**
-   * Store that holds the stop and the driving route
+   * Store that holds the stop
    */
   public stopsStore: StopsStore = new StopsStore([]);
 
   /**
-   * Store that holds the driving route
+   * Store that holds the driving stops as feature
    */
   public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
     map: this.mapState.map
   });
 
   /**
-   * Store that holds the driving route
+   * Store that holds the driving route as feature
    */
   public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
+    map: this.mapState.map
+  });
+
+  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
     map: this.mapState.map
   });
 

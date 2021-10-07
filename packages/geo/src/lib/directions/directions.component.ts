@@ -54,11 +54,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
+  @Input() stepFeatureStore: StepFeatureStore;
   @Input() debounce: number = 200;
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
-
-  public stepFeatureStore: StepFeatureStore;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -73,9 +72,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
       initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
-      this.stepFeatureStore = new StepFeatureStore([], {
-        map: this.routesFeatureStore.layer.map
-      });
       initStepFeatureStore(this.stepFeatureStore);
       this.initOlInteraction();
     }, 1);
