@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import * as olProj from 'ol/proj';
@@ -35,6 +35,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
+  @Output() stopInputHasFocus: EventEmitter<boolean> = new EventEmitter<boolean>(false);
   constructor(private languageService: LanguageService) { }
 
   ngOnDestroy(): void {
@@ -134,6 +135,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   onInputFocus(stop: Stop) {
     if (!stop.text || stop.text?.length === 0) {
       this.unlistenMapSingleClick();
+      this.stopInputHasFocus.emit(true);
       this.listenMapSingleClick(stop);
     }
   }
@@ -149,6 +151,9 @@ export class DirectionsInputsComponent implements OnDestroy {
       stop.text = roundedCoord.join(',');
       stop.coordinates = roundedCoord;
       this.stopsStore.update(stop);
+      setTimeout(() => {
+        this.stopInputHasFocus.emit(false);
+      }, 500);
     });
     this.onMapClickEventKeys.push(key);
   }

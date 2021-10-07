@@ -168,6 +168,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
   }
 
+  onStopInputHasFocusChange(stopInputHasFocus: boolean) {
+    stopInputHasFocus ?
+      this.routesFeatureStore.layer.map.ol.removeInteraction(this.selectedRoute) :
+      this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
+  }
+
   private executeStopTranslation(
     features: Collection<any>
   ) {

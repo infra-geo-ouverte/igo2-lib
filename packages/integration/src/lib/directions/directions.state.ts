@@ -47,15 +47,6 @@ export class DirectionState {
 
   constructor(private mapState: MapState) {
 
-    this.stopsStore.stateView.all$()
-    .pipe(
-      skipWhile((stopsWithState: EntityRecord<Stop, EntityState>[]) => stopsWithState.filter(s => s.state.position === 1).length === 0 ),
-      first()
-    )
-    .subscribe((stopsWithState: EntityRecord<Stop, EntityState>[]) => {
-      console.log(stopsWithState);
-    });
-
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {
         if (this.stopsFeatureStore.layer?.options) {
