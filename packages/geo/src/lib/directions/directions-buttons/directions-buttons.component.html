@@ -4,14 +4,14 @@
     <mat-icon svgIcon="map-marker-plus"></mat-icon>
   </button>
   <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-    *ngIf="(routesFeatureStore.count$ | async)>=1" (click)="zoomRoute()"
-    [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate" color="primary">
-    <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
-  </button>
-  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     *ngIf="(routesFeatureStore.count$ | async)>=1 || (stopsStore.count$ | async)>=1"
     [matTooltip]="'igo.geo.directionsForm.resetDirectionsBtn' | translate" color="warn" (click)="resetStops()">
     <mat-icon svgIcon="file-restore"></mat-icon>
+  </button>
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    *ngIf="(routesFeatureStore.count$ | async)>=1" (click)="zoomRoute()"
+    [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate" color="primary">
+    <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
   </button>
   <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     *ngIf="(routesFeatureStore.count$ | async)>=1" (click)="copyDirectionsToClipboard()"
