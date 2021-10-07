@@ -309,10 +309,6 @@ export function addDirectionToRoutesFeatureStore(
     projection,
     routesFeatureStore.map.projection
   );
-  // todo
-  /*if (moveToExtent) {
-    this.zoomRoute(geometryMapProjection.getExtent());
-  }*/
 
   const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
     featureProjection: routesFeatureStore.map.projection,

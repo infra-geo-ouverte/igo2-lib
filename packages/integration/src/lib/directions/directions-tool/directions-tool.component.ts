@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import { IgoMap, RoutesFeatureStore, StopsFeatureStore, StopsStore, StepFeatureStore } from '@igo2/geo';
+import { Subject } from 'rxjs';
 
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
@@ -42,6 +43,13 @@ export class DirectionsToolComponent implements OnInit {
    * @internal
    */
    get stepFeatureStore(): StepFeatureStore { return this.directionState.stepFeatureStore; }
+
+  /**
+   * step store
+   * @internal
+   */
+   get zoomToActiveRoute$(): Subject<void> { return this.directionState.zoomToActiveRoute$; }
+
 
   /**
    * Map to measure on

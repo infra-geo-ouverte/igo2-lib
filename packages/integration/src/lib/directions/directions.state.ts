@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { EntityRecord, EntityState } from '@igo2/common';
 
 import { AnyLayerOptions, Stop, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
+import { Subject } from 'rxjs';
 import { first, skipWhile } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
@@ -12,6 +13,8 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
+
+  public zoomToActiveRoute$: Subject<void> = new Subject();
 
   /**
    * Store that holds the stop

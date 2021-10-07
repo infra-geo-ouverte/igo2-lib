@@ -1,6 +1,7 @@
 import { Component, Input, Optional } from '@angular/core';
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
+import { Subject } from 'rxjs';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
 import { RoutesFeatureStore, StopsStore } from '../shared/store';
@@ -16,6 +17,7 @@ export class DirectionsButtonsComponent {
     return this.routesFeatureStore.all().find(route => route.properties.active);
   }
 
+  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   constructor(
@@ -48,11 +50,7 @@ export class DirectionsButtonsComponent {
   }
 
   zoomRoute() {
-    if (this.activeRoute) {
-      this.activeRoute.ol.getGeometry();
-      const routeExtent = this.activeRoute.ol.getGeometry().getExtent();
-      this.routesFeatureStore.layer.map.viewController.zoomToExtent(routeExtent as [number, number, number, number]);
-    }
+    this.zoomToActiveRoute$.next();
   }
 
   copyDirectionsToClipboard() {

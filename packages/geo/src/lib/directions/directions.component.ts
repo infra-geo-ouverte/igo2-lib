@@ -13,7 +13,7 @@ import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
 
 import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
@@ -37,6 +37,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   public projection: string = 'EPSG:4326';
 
+  private zoomRoute$$: Subscription;
   private storeEmpty$$: Subscription;
   private storeChange$$: Subscription;
   private routesQueries$$: Subscription[] = [];
@@ -58,6 +59,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() debounce: number = 200;
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
+  @Input() zoomToActiveRoute$: Subject<void> = new Subject();
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -82,6 +84,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
+    this.zoomRoute$$.unsubscribe();
     this.freezeStores();
   }
 
@@ -98,6 +101,21 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
     this.monitorEmptyEntityStore();
     this.monitorEntityStoreChange();
+    this.monitorActiveRouteZoom();
+  }
+
+  private monitorActiveRouteZoom() {
+    this.zoomRoute$$ = this.zoomToActiveRoute$.subscribe(() => {
+      if (this.routesFeatureStore.count >=1) {
+        const activeRoute = this.routesFeatureStore.all().find(route => route.properties.active);
+
+        if (activeRoute) {
+          activeRoute.ol.getGeometry();
+          const routeExtent = activeRoute.ol.getGeometry().getExtent();
+          this.routesFeatureStore.layer.map.viewController.zoomToExtent(routeExtent as [number, number, number, number]);
+        }
+      }
+    })
   }
 
   private initOlInteraction() {
