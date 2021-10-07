@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import { LanguageService, MessageService } from '@igo2/core';
 import { IgoMap, RoutesFeatureStore, StopsFeatureStore, StopsStore } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -15,7 +16,7 @@ import { DirectionState } from '../directions.state';
   selector: 'igo-directions-tool',
   templateUrl: './directions-tool.component.html'
 })
-export class DirectionsToolComponent {
+export class DirectionsToolComponent implements OnInit {
   /**
    * stops
    * @internal
@@ -49,8 +50,19 @@ export class DirectionsToolComponent {
 
   constructor(
     private directionState: DirectionState,
-    private mapState: MapState
+    private mapState: MapState,
+    private languageService: LanguageService,
+    private messageService: MessageService
   ) {}
+
+  ngOnInit(): void {
+    const translate = this.languageService.translate;
+    const title = translate.instant(
+      'igo.integration.directions.warning.title'
+    );
+    const msg = translate.instant('igo.integration.directions.warning.message');
+    this.messageService.info(msg, title, { timeOut: 20000 });
+  }
 
   onActiveRouteDescriptionChange(directions) {
     this.directionState.activeRouteDescription = directions;
