@@ -6,7 +6,7 @@
     <mat-list-item [formGroupName]="i">
 
       <div class="igo-input-container">
-        <button *ngIf="map.geolocationFeature" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.geolocate' | translate" (click)="geolocateStop(i)">
+        <button *ngIf="map.geolocationPositionFeature" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.geolocate' | translate" (click)="geolocateStop(i)">
           <mat-icon svgIcon="crosshairs-gps"></mat-icon>
         </button>
         <mat-form-field>

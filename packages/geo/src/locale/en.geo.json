@@ -11,6 +11,7 @@
         "baseLayers": "Baselayers",
         "unavailableTitle": "Catalog unavailable",
         "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "someUnavailable": "Some of the layers from the current catalog are unavailable at the moment or you don't have the required permissions.",
         "externalProvider": {
            "catalog": "This catalog comes from an external organization.",
            "group": "This layers comes from an external organization.",
@@ -477,7 +478,9 @@
         "endDate": "End Date",
         "startDate": "Start Date",
         "hour": "Hour",
-        "minute": "Minute"
+        "minute": "Minute",
+        "endYear": "End Year",
+        "startYear": "Start Year"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",

@@ -20,7 +20,73 @@
   </div>
 
   <div *ngIf="!sliderMode">
-    <div class="datetime-input">
+            
+      <div class="year-input-container" *ngIf="calendarTypeYear">
+        <!-- to emulate a year-picker, 2 input: first input to show user just year and second input hiden and bind 
+          with the datepicker  -->
+        <mat-form-field  class="year-input">
+          <mat-label>{{'igo.geo.timeFilter.startYear'| translate}}</mat-label>
+          <input 
+            matInput 
+            class="year-input-only-year" 
+            value="{{onlyYearBegin}}"
+            (change)= "yearOnlyInputChange($event, beginDatepicker, 'begin')"
+            >
+          <mat-datepicker-toggle matSuffix [for]="beginDatepicker"></mat-datepicker-toggle>
+    
+          <mat-datepicker
+            panelClass="datepicker-year"
+            #beginDatepicker
+            [startView]="calendarView()"
+            [startAt]="beginValue"
+            (yearSelected)="yearSelected($event, beginDatepicker, 'begin')"
+            >
+          </mat-datepicker>
+
+          <input #beginYear
+            class= "year-input-hide"
+            matInput
+            [matDatepicker]="beginDatepicker"
+            enabled= false
+            readonly= true
+            [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+            [min]="handleDate(datasource.options.minDate)"
+            [max]="(endValue && (!restrictedToStep()))?endValue:handleDate(datasource.options.maxDate)"
+            >
+ 
+        </mat-form-field>
+
+        <mat-form-field  class="year-input">
+          <mat-label>{{'igo.geo.timeFilter.endYear'| translate}}</mat-label>
+          <input 
+            matInput 
+            class="year-input-only-year" 
+            value="{{onlyYearEnd}}">
+          <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker
+            panelClass="datepicker-year"
+            #endDatepicker
+            [startView]="calendarView()"
+            [startAt]="endValue"
+            (yearSelected)="yearSelected($event, endDatepicker, 'end')"
+            >
+          </mat-datepicker>
+
+          <input #endYear
+            class= "year-input-hide"
+            matInput
+            [matDatepicker]="endDatepicker"
+            enabled= false
+            readonly= true
+            [value]="endValue?endValue:handleDate(datasource.options.maxDate)"
+            [min]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+            [max]="handleDate(datasource.options.maxDate)"
+            >
+        </mat-form-field>
+
+      </div>
+
+      <div class="datetime-input" *ngIf="calendarType()!=='year'">
       <mat-form-field class="date-input">
         <mat-datepicker-toggle matSuffix [for]="beginDatepicker"></mat-datepicker-toggle>
         <input #begin
@@ -64,7 +130,7 @@
       </div>
     </div>
 
-    <div class="datetime-input" *ngIf="!restrictedToStep()">
+    <div class="datetime-input" *ngIf="!restrictedToStep() && calendarType()!=='year'">
       <mat-form-field class="date-input">
         <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
           <input #end

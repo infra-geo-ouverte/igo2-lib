@@ -136,6 +136,9 @@ export class CatalogService {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
+        if (!capabilities) {
+          return items;
+        }
         if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
           catalog.abstract = capabilities.Service.Abstract;
         }
@@ -340,13 +343,17 @@ export class CatalogService {
           const title = this.languageService.translate.instant(
             'igo.geo.catalog.unavailableTitle'
           );
-          const message = this.languageService.translate.instant(
+          const message =
+          catalog.title ? this.languageService.translate.instant(
             'igo.geo.catalog.unavailable',
             { value: catalog.title }
+          ) : this.languageService.translate.instant(
+            'igo.geo.catalog.someUnavailable'
           );
 
           this.messageService.error(message, title);
-          throw e;
+          console.error(e);
+          return of(undefined);
         })
       );
   }
@@ -537,6 +544,9 @@ export class CatalogService {
     catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
+    if (!capabilities) {
+      return [];
+    }
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -608,6 +618,9 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
+    if (!capabilities) {
+      return [];
+    }
     const layers = capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
