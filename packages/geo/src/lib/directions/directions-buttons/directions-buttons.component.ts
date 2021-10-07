@@ -2,6 +2,7 @@ import { Component, Input, Optional } from '@angular/core';
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
 import { Subject } from 'rxjs';
+import { FeatureWithDirection } from '../shared/directions.interface';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
 import { RoutesFeatureStore, StopsStore } from '../shared/store';
@@ -162,12 +163,20 @@ export class DirectionsButtonsComponent {
     if (!this.route) {
       return;
     }
+
+    const pos = this.routesFeatureStore.all()
+    .map((direction: FeatureWithDirection) => direction.properties.id).indexOf(this.activeRoute.properties.id);
+    let routingOptions = '';
+    if (pos !== 0) {
+      const routingOptionsKey = this.route.options.directionsOptionsKey;
+      routingOptions = `&${routingOptionsKey}=result:${pos}`;
+    }
     const directionsKey = this.route.options.directionsCoordKey;
     const stopsCoordinates = this.stopsStore.view.all().map(stop => stop.coordinates);
     let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
-      return `${location.origin}${location.pathname}?tool=directions&sidenav=1&${directionsUrl}`;
+      return `${location.origin}${location.pathname}?tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;
   }

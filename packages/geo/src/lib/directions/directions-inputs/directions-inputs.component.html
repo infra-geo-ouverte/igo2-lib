@@ -1,5 +1,12 @@
 <div cdkDropList class="stops-list" (cdkDropListDropped)="drop($event)">
-  <div cdkDragLockAxis="y" class="stop-box mat-typography" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
+  <div touchleave  
+  (touchenter)="onStopEnter(stop)"
+  (touchleave)="onStopLeave()"
+  (mouseover)="onStopEnter(stop)"
+  (mouseleave)="onStopLeave()"
+  (cdkDragStarted)="stopIsDragged=true"
+  (cdkDragEnded)="stopIsDragged=false"
+  cdkDragLockAxis="y" class="stop-box mat-typography" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
     <div class="igo-input-container">
       <mat-form-field>
         <input id="{{stop.id}}" type="text"
@@ -36,7 +43,7 @@
 
 
 
-    <div class="igo-form-button-group">
+    <div class="igo-form-button-group" *ngIf="!stopIsDragged && stopWithHover && stop.id === stopWithHover.id">
       <button class="swipe-vertical" cdkDragHandle mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.directionsForm.moveStop' | translate" color="primary">
         <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>

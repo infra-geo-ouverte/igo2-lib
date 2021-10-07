@@ -71,7 +71,7 @@ export function addStopToStore(stopsStore: StopsStore): Stop {
   const id = uuid();
   const stops = stopsStore.all();
   let positions: number[];
-  if (stopsStore.empty) {
+  if (stopsStore.count === 0) {
     positions = [0];
   } else {
     positions = stops.map(stop => stop.position);

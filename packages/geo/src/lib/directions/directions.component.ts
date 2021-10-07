@@ -189,11 +189,6 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.stopsStore.update(translatedStop);
   }
 
-  /*
-  todo
-  bug delete add stop
-  flush form et truc pas utiles lié a form
-  */
 
   private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
@@ -209,6 +204,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           }
           this.stopsStore.storeInitialized$.next(false);
         }
+        this.routesQueries$$.map((u) => u.unsubscribe());
       });
   }
 

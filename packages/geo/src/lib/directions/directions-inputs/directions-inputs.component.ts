@@ -25,7 +25,8 @@ export class DirectionsInputsComponent implements OnDestroy {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
-
+  public stopWithHover: Stop;
+  public stopIsDragged: boolean = false;
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() projection: string;
@@ -39,7 +40,12 @@ export class DirectionsInputsComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.unlistenMapSingleClick();
   }
-
+  onStopEnter(stop: Stop){
+    this.stopWithHover = stop;
+  }
+  onStopLeave(){
+    this.stopWithHover = undefined;
+  }
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
     const result: Feature = event.option.value;
     if (result) {
