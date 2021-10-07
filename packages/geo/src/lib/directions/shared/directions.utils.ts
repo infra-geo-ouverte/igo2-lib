@@ -79,10 +79,8 @@ export function addStopToStore(stopsStore: StopsStore): Stop {
   const id = uuid();
   const stops = stopsStore.all();
   let positions: number[];
-  let relativePosition = DirectionRelativePositionType.Intermediate;
   if (stopsStore.empty) {
     positions = [0];
-    relativePosition = DirectionRelativePositionType.Start;
   } else {
     positions = stops.map(stop => stop.position);
   }
@@ -98,12 +96,18 @@ export function removeStopFromStore(stopsStore: StopsStore, stop: Stop) {
   const deletedStopPosition = stop.position;
   stopsStore.delete(stop);
   decreaseStopsPosition(stopsStore, deletedStopPosition);
+  const nextStop = stopsStore.all().find(s => s.position === deletedStopPosition);
   const previousStop = stopsStore.all().find(s => s.position >= deletedStopPosition - 1);
   if (previousStop) {
     previousStop.position = previousStop.position;
     previousStop.relativePosition = computeRelativePosition(previousStop.position, stopsStore.count);
     stopsStore.update(previousStop);
   }
+  if (nextStop) {
+    nextStop.position = nextStop.position;
+    nextStop.relativePosition = computeRelativePosition(nextStop.position, stopsStore.count);
+    stopsStore.update(nextStop);
+}
 }
 
 /**
