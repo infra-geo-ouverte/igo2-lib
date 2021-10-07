@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { EntityRecord, EntityState } from '@igo2/common';
 
-import { AnyLayerOptions, Stop, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
+import { AnyLayerOptions, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
 import { Subject } from 'rxjs';
-import { first, skipWhile } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
 /**
@@ -39,10 +37,6 @@ export class DirectionState {
     map: this.mapState.map
   });
 
-  public activeRouteDescription: string;
-
-  public routeFromFeatureDetail = false;
-
   public debounceTime: number = 200;
 
   constructor(private mapState: MapState) {
@@ -69,10 +63,6 @@ export class DirectionState {
         this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       }
     });
-  }
-
-  setRouteFromFeatureDetail(value: boolean) {
-    this.routeFromFeatureDetail = value;
   }
 
 }

@@ -57,11 +57,6 @@ export class DirectionsToolComponent implements OnInit {
    */
   get map(): IgoMap { return this.mapState.map; }
 
-
-  get routeFromFeatureDetail() {
-    return this.directionState.routeFromFeatureDetail;
-  }
-
   constructor(
     private directionState: DirectionState,
     private mapState: MapState,
@@ -78,13 +73,9 @@ export class DirectionsToolComponent implements OnInit {
         'igo.integration.directions.warning.title'
       );
       const msg = translate.instant('igo.integration.directions.warning.message');
-      this.messageService.info(msg, title, { timeOut: 20000 });  
+      this.messageService.info(msg, title, { timeOut: 20000 });
       this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
     }
-  }
-
-  onActiveRouteDescriptionChange(directions) {
-    this.directionState.activeRouteDescription = directions;
   }
 
 }
