@@ -49,21 +49,13 @@ export function computeRelativePosition(index: number, totalLength): DirectionRe
   return relativePosition;
 }
 
-export function increaseStopsPosition(stopsStore: StopsStore, fromPosition: number) {
-  computeStopsPosition(stopsStore, fromPosition, true);
-}
-export function decreaseStopsPosition(stopsStore: StopsStore, fromPosition: number) {
-  computeStopsPosition(stopsStore, fromPosition, false);
-}
+export function computeStopsPosition(stopsStore: StopsStore) {
 
-export function computeStopsPosition(stopsStore: StopsStore, fromPosition: number, increase: boolean) {
-  const stopsCnt = stopsStore.count;
-  const stopsToComputePosition = stopsStore.entities$.value
-    .filter(stop => stop.position >= fromPosition);
-  stopsToComputePosition.map(stop => {
-    const delta = increase ? 1 : -1;
-    stop.position = stop.position + delta;
-    stop.relativePosition = computeRelativePosition(stop.position, stopsCnt + delta);
+  const stopsToComputePosition = [...stopsStore.all()];
+  stopsToComputePosition.sort((a, b) => a.position - b.position);
+  stopsToComputePosition.map((stop, i) => {
+    stop.position = i;
+    stop.relativePosition = computeRelativePosition(stop.position, stopsToComputePosition.length);
   });
   if (stopsToComputePosition) {
     stopsStore.updateMany(stopsToComputePosition);
@@ -85,29 +77,24 @@ export function addStopToStore(stopsStore: StopsStore): Stop {
     positions = stops.map(stop => stop.position);
   }
   const maxPosition: number = Math.max(...positions);
-  increaseStopsPosition(stopsStore, maxPosition);
-  stopsStore.insert({ id, position: maxPosition, relativePosition: computeRelativePosition(maxPosition, stopsStore.count + 1) });
+  const insertPosition: number = maxPosition;
+  const lastPosition: number = maxPosition + 1;
+
+  const stopToUpdate = stopsStore.all().find(stop => stop.position === maxPosition);
+  if (stopToUpdate) {
+    stopToUpdate.position = lastPosition;
+    stopToUpdate.relativePosition = computeRelativePosition(lastPosition, stopsStore.count + 1);
+  }
+
+  stopsStore.insert({ id, position: insertPosition, relativePosition: computeRelativePosition(insertPosition, stopsStore.count + 1) });
 
   updateStoreSorting(stopsStore);
   return stopsStore.get(id);
 }
 
 export function removeStopFromStore(stopsStore: StopsStore, stop: Stop) {
-  const deletedStopPosition = stop.position;
   stopsStore.delete(stop);
-  decreaseStopsPosition(stopsStore, deletedStopPosition);
-  const nextStop = stopsStore.all().find(s => s.position === deletedStopPosition);
-  const previousStop = stopsStore.all().find(s => s.position >= deletedStopPosition - 1);
-  if (previousStop) {
-    previousStop.position = previousStop.position;
-    previousStop.relativePosition = computeRelativePosition(previousStop.position, stopsStore.count);
-    stopsStore.update(previousStop);
-  }
-  if (nextStop) {
-    nextStop.position = nextStop.position;
-    nextStop.relativePosition = computeRelativePosition(nextStop.position, stopsStore.count);
-    stopsStore.update(nextStop);
-}
+  computeStopsPosition(stopsStore);
 }
 
 /**
@@ -264,7 +251,7 @@ export function addStopToStopsFeatureStore(
       break;
     default:
       stopColor = '#ffd700';
-      stopText = languageService.translate.instant('igo.geo.directionsForm.intermediate', { position: stop.position });
+      stopText = languageService.translate.instant('igo.geo.directionsForm.intermediate') + ' #' + stop.position;
       break;
   }
 
@@ -366,7 +353,7 @@ export function computeSearchProposal(
   subscription$$: Subscription,
   cdRef: ChangeDetectorRef) {
   if (!stop) {
-      return;
+    return;
   }
   const term = stop.text;
   if (!term || term.length === 0) {

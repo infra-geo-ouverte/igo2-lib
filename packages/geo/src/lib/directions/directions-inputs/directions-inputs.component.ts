@@ -13,6 +13,8 @@ import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 import { StopsFeatureStore, StopsStore } from '../shared/store';
 import { roundCoordTo } from '../../map/shared/map.utils';
+import { LanguageService } from '@igo2/core';
+import { DirectionRelativePositionType } from '../shared/directions.enum';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -23,7 +25,6 @@ export class DirectionsInputsComponent implements OnDestroy {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
-  public removalInProgress: boolean = false;
 
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
@@ -33,7 +34,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
-  constructor() { }
+  constructor(private languageService: LanguageService) { }
 
   ngOnDestroy(): void {
     this.unlistenMapSingleClick();
@@ -86,12 +87,21 @@ export class DirectionsInputsComponent implements OnDestroy {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
+  getPlaceholder(stop: Stop): string {
+
+    let extra = '';
+    if (stop.relativePosition) {
+      if (stop.relativePosition === DirectionRelativePositionType.Intermediate) {
+        extra = ' #' + stop.position;
+      }
+      return this.languageService.translate.instant('igo.geo.directionsForm.' + stop.relativePosition) + extra;
+    } else {
+      return '';
+    }
+  }
+
   removeStop(stop: Stop) {
-    this.removalInProgress = true;
     removeStopFromStore(this.stopsStore, stop);
-    setTimeout(() => {
-      this.removalInProgress = false;
-    }, 100);
   }
 
   clearStop(stop: Stop) {

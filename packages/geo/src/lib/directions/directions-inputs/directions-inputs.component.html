@@ -3,7 +3,7 @@
     <div class="igo-input-container">
       <mat-form-field>
         <input id="{{stop.id}}" type="text"
-            [placeholder]="stop.relativePosition ? (('igo.geo.directionsForm.'+ stop.relativePosition) | translate: stop) : ''"
+            [placeholder]="getPlaceholder(stop)"
             matTooltipShowDelay="500"
             [matTooltip]="stop.text"
             aria-label="Number"
@@ -42,7 +42,7 @@
         <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
       </button>
 
-      <button *ngIf="(stopsStore.count$ | async)> 2" [disabled]="removalInProgress" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+      <button *ngIf="(stopsStore.count$ | async)> 2" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
