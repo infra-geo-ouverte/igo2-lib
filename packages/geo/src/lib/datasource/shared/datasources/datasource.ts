@@ -1,7 +1,6 @@
 import olSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
-import olVectorTileSource from 'ol/source/VectorTile';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {

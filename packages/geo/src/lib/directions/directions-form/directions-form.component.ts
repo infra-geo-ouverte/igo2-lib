@@ -46,7 +46,7 @@ import {
 } from '../../feature/shared/feature.utils';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 
-import { Directions, DirectionsOptions, Stop } from '../shared/directions.interface';
+import { Directions, DirectionsOptions } from '../shared/directions.interface';
 import { DirectionsService } from '../shared/directions.service';
 import { DirectionsFormService } from './directions-form.service';
 

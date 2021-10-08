@@ -22,7 +22,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlOverlay from 'ol/Overlay';
 import { unByKey } from 'ol/Observable';
 
-import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
+import { LanguageService, StorageScope, StorageService } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 import type { EntityTableComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';

@@ -2,8 +2,6 @@ import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import * as olextent from 'ol/extent';
-import * as olproj from 'ol/proj';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';

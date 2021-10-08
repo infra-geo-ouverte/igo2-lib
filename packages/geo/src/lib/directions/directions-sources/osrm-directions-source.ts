@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { uuid } from '@igo2/utils';
-import { ConfigService, Message } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 
 import { Directions, DirectionsOptions } from '../shared/directions.interface';
 import { DirectionsFormat, SourceDirectionsType } from '../shared/directions.enum';

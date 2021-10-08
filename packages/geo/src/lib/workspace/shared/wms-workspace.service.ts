@@ -13,7 +13,6 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';

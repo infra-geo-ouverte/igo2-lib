@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Message } from '@igo2/core';
 
 import { Directions, DirectionsOptions } from '../shared/directions.interface';
 import { DirectionsSource } from '../directions-sources/directions-source';

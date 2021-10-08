@@ -150,6 +150,7 @@
     "conventional-changelog-cli": "^2.0.12",
     "del": "^6.0.0",
     "eslint": "^7.26.0",
+    "eslint-plugin-unused-imports": "^1.1.5",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-concat": "^2.6.1",

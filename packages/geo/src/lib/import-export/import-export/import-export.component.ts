@@ -54,7 +54,6 @@ import { computeProjectionsConstraints } from '../../map';
 
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
-import olVectorTileSource from 'ol/source/VectorTile';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 @Component({

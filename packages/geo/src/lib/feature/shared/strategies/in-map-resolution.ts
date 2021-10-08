@@ -1,7 +1,7 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreInMapResolutionStrategyOptions, Feature } from '../feature.interfaces';
+import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
 
 

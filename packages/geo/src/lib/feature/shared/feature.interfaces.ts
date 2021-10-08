@@ -1,5 +1,4 @@
 import OlRenderFeature from 'ol/render/Feature';
-import { SearchSource } from './../../search/shared/sources/source';
 import { FormGroup } from '@angular/forms';
 
 import { GeoJsonGeometryTypes } from 'geojson';

@@ -2,7 +2,6 @@ import { Watcher } from '@igo2/utils';
 import { Layer } from '../shared/layers/layer';
 import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { IgoMap } from '../../map/shared/map';
 import { LayersLink, LinkedProperties } from '../shared/layers/layer.interface';

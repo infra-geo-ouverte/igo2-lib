@@ -1,4 +1,4 @@
-import { Directive, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';

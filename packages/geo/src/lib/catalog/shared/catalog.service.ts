@@ -10,8 +10,7 @@ import {
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  TypeCapabilitiesStrings
+  ArcGISRestDataSourceOptions
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -24,7 +23,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
-import { generateIdFromSourceOptions, generateId } from '../../utils';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'

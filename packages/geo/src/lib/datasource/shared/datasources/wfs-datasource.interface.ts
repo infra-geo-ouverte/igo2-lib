@@ -1,4 +1,3 @@
-import { DataSourceOptions } from './datasource.interface';
 import olSourceVector from 'ol/source/Vector';
 import olSource from 'ol/source/Source';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
