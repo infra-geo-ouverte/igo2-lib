@@ -646,7 +646,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.loading$.next(false);
     const translate = this.languageService.translate;
     const title = translate.instant('igo.geo.export.popupBlocked.title');
-    const extraMessage = preCheck ? translate.instant('igo.geo.export.popupBlocked.selectAgain') : translate.instant('igo.geo.export.popupBlocked.retry');
+    const extraMessage = preCheck ?
+      translate.instant('igo.geo.export.popupBlocked.selectAgain') :
+      translate.instant('igo.geo.export.popupBlocked.retry');
     const message = translate.instant('igo.geo.export.popupBlocked.text', { extraMessage });
     this.messageService.error(message, title, { timeOut: 20000 });
   }

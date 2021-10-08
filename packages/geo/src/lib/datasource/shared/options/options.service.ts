@@ -1,6 +1,11 @@
 import { Observable } from 'rxjs';
 
-import { ArcGISRestDataSourceOptions, ArcGISRestImageDataSourceOptions, TileArcGISRestDataSourceOptions, WMSDataSourceOptions } from '../datasources';
+import {
+  ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  TileArcGISRestDataSourceOptions,
+  WMSDataSourceOptions
+} from '../datasources';
 
 export abstract class OptionsService {
   abstract getWMSOptions(
