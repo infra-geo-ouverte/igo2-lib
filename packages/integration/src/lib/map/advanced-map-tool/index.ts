@@ -1,1 +1,1 @@
-export * from  './advanced-map-tool.component';
+export * from './advanced-map-tool.component';

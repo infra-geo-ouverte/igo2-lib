@@ -3,8 +3,7 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy
+  ChangeDetectorRef
 } from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, ReplaySubject, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';

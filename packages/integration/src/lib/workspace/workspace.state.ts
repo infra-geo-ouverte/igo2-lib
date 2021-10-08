@@ -152,7 +152,7 @@ export class WorkspaceState implements OnDestroy {
   public setActiveWorkspaceById(id: string) {
     const wksFromId = this.store
     .all()
-    .find(workspace  => workspace.id === id);
+    .find(workspace => workspace.id === id);
     if (wksFromId) {
       this.store.activateWorkspace(wksFromId);
     }

@@ -38,8 +38,7 @@ import {
   getCommonVectorStyle,
   getCommonVectorSelectedStyle,
   computeOlFeaturesExtent,
-  featuresAreOutOfView,
-  createOverlayMarkerStyle
+  featuresAreOutOfView
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';

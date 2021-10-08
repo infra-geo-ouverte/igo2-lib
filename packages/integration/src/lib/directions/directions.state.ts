@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { DirectionsFormService, FeatureStore } from '@igo2/geo';
 import { MapState } from '../map/map.state';
