@@ -1,3 +1,15 @@
+.igo-input-container {
+  width: 100%;
+  mat-form-field {
+    width: 100%;
+  }
+}
+.igo-input-container.reduce {
+  width: 70%;
+  mat-form-field {
+    width: 100%;
+  }
+}
 
 .stops-list {
   max-width: 100%;

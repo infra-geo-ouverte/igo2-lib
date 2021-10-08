@@ -121,7 +121,6 @@ export class DirectionsButtonsComponent {
       wayPointsCnt++;
     });
 
-    // Directions
     let localCnt = 0;
     this.activeRoute.properties.direction.steps.forEach(step => {
       const instruction = this.formatStep(step, localCnt).instruction;

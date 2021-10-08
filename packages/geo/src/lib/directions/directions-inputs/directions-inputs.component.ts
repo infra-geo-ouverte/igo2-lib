@@ -41,10 +41,10 @@ export class DirectionsInputsComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.unlistenMapSingleClick();
   }
-  onStopEnter(stop: Stop){
+  onStopEnter(stop: Stop) {
     this.stopWithHover = stop;
   }
-  onStopLeave(){
+  onStopLeave() {
     this.stopWithHover = undefined;
   }
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
@@ -94,8 +94,17 @@ export class DirectionsInputsComponent implements OnDestroy {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
-  getPlaceholder(stop: Stop): string {
+  getNgClass(stop: Stop): string {
+    if (!this.stopWithHover) {
+      return 'igo-input-container';
+    } else if (stop.id === this.stopWithHover.id) {
+      return 'igo-input-container reduce';
+    } else {
+      return 'igo-input-container';
+    }
+  }
 
+  getPlaceholder(stop: Stop): string {
     let extra = '';
     if (stop.relativePosition) {
       if (stop.relativePosition === DirectionRelativePositionType.Intermediate) {

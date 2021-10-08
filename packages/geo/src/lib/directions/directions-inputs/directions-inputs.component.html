@@ -7,7 +7,7 @@
   (cdkDragStarted)="stopIsDragged=true"
   (cdkDragEnded)="stopIsDragged=false"
   cdkDragLockAxis="y" class="stop-box mat-typography" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
-    <div class="igo-input-container">
+    <div [ngClass]="getNgClass(stop)">
       <mat-form-field>
         <input id="{{stop.id}}" type="text"
             [placeholder]="getPlaceholder(stop)"
@@ -22,7 +22,7 @@
             [matAutocomplete]="auto">
         <button 
             mat-button 
-            *ngIf="stop.text || stop.coordinates"
+            *ngIf="(stop.text || stop.coordinates) && stopWithHover && stop.id===stopWithHover.id"
             matTooltipShowDelay="500"
             [matTooltip]="'igo.geo.directionsForm.clearStop' | translate"
             matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stop)">
