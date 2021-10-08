@@ -175,10 +175,10 @@ export class StoredQueriesSearchSource extends SearchSource
       options || {},
       storedqueriesParams
     );
-    if (this.options.params == null) {
+    if (this.options.params === null) {
       this.options.params = { page : '1'};
     } else {
-      this.options.params.page = options.page != null ? String(options.page) : '1';
+      this.options.params.page = options.page !== null ? String(options.page) : '1';
     }
 
     if (

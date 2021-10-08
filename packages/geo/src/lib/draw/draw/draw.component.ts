@@ -205,7 +205,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.subscriptions$$.push(this.store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
       return record.state.selected === true;
     }).pipe(
-      skip(1)  // Skip initial emission
+      skip(1) // Skip initial emission
     ).subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
       this.selectedFeatures$.next(records.map(record => record.entity));
     }));

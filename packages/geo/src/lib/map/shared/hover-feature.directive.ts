@@ -355,7 +355,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     });
 
     return neighbourCollection.map(f => {
-      return   new olFeature({
+      return new olFeature({
         geometry: this.getGeometry(f),
         meta: {id: this.hoverFeatureId}
       });

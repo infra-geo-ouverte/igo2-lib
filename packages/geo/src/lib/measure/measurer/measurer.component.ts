@@ -600,7 +600,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.selectedFeatures$$ = store.stateView.manyBy$((record: EntityRecord<FeatureWithMeasure>) => {
       return record.state.selected === true;
     }).pipe(
-      skip(1)  // Skip initial emission
+      skip(1) // Skip initial emission
     )
     .subscribe((records: EntityRecord<FeatureWithMeasure>[]) => {
       if (this.modifyControl.active === true) {
@@ -609,7 +609,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.selectedFeatures$.next(records.map(record => record.entity));
     });
 
-    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists  => {
+    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists => {
     if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
         this.hasArea$.next(true);
       }
@@ -758,7 +758,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private onDrawChanges(olGeometry: OlLineString | OlPolygon) {
     const measure = measureOlGeometry(olGeometry, this.projection);
     this.updateMeasureOfOlGeometry(olGeometry, Object.assign({}, measure, {
-      area: undefined  // We don't want to display an area tooltip while drawing.
+      area: undefined // We don't want to display an area tooltip while drawing.
     }));
     this.measure$.next(measure);
   }
@@ -906,7 +906,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     if (area !== undefined) {
       this.updateOlTooltip(
         updateOlTooltipAtCenter(olGeometry),
-        squareMetersToUnit(area,  this.activeAreaUnit),
+        squareMetersToUnit(area, this.activeAreaUnit),
         this.activeAreaUnit,
         MeasureType.Area
       );

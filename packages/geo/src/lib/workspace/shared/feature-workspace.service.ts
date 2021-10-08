@@ -106,7 +106,7 @@ export class FeatureWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(workspace: FeatureWorkspace,  layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: FeatureWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
 
     if (fields.length === 0) {

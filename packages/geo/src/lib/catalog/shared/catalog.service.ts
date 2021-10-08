@@ -194,7 +194,7 @@ export class CatalogService {
 
     const catalogsFromInstance = [] as Catalog[];
     compositeCatalog.map((component: Catalog) => {
-      component.sortDirection = catalog.sortDirection;  // propagate sortDirection with parent value
+      component.sortDirection = catalog.sortDirection; // propagate sortDirection with parent value
       catalogsFromInstance.push(
         CatalogFactory.createInstanceCatalog(component, this)
     );
@@ -448,7 +448,7 @@ export class CatalogService {
       title: itemListIn.Title,
       address: catalog.id,
       externalProvider: catalog.externalProvider || false,
-      sortDirection: catalog.sortDirection,  // propagate sortDirection
+      sortDirection: catalog.sortDirection, // propagate sortDirection
       items: itemListIn.Layer.reduce((items: CatalogItem[], layer: any) => {
         if (layer.Layer !== undefined) {
           // recursive, check next level

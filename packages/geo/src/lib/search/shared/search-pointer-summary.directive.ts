@@ -55,7 +55,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   private store$$: Subscription;
   private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
-  private hasPointerReverseSearchSource: boolean =  false;
+  private hasPointerReverseSearchSource: boolean = false;
 
   /**
    * Listener to the pointer move event

@@ -270,9 +270,4 @@ export class LayerSyncWatcher extends Watcher {
                 });
         }
     }
-
-
-
-
-
 }

@@ -1283,8 +1283,8 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       } else if (geom.type.search('Polygon') >= 0) {
         const poly = new OlGeoJSON().readFeatures(geom);
         geomCoord = poly[0].getGeometry().getType() === 'Polygon' ?
-          geomCoord =  poly[0].getGeometry().getInteriorPoint().getFirstCoordinate() :
-          geomCoord =  poly[0].getGeometry().getInteriorPoints().getFirstCoordinate();
+          geomCoord = poly[0].getGeometry().getInteriorPoint().getFirstCoordinate() :
+          geomCoord = poly[0].getGeometry().getInteriorPoints().getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       }
 

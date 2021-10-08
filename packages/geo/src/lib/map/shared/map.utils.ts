@@ -376,7 +376,7 @@ export function convertDDToDMS(
   lonLatDD.forEach(dd => {
     const degrees = dd < 0 ? Math.ceil(dd) : Math.floor(dd);
     const int = dd < 0 ? (degrees - dd) * 60 : (dd - degrees) * 60;
-    const minutes =  Math.floor(int);
+    const minutes = Math.floor(int);
     const seconds = ((int - minutes) * 60).toFixed(decimal);
 
     lonLatDMS.push(`${degrees}° ${minutes}' ${seconds}"`);

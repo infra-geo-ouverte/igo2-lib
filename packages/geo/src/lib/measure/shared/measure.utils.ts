@@ -323,7 +323,7 @@ export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | O
     const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
-  } else  {
+  } else {
     olMidpoints = getOlGeometryMidpoints(olGeometry);
     // TODO: handle multi geometries
     const coordinates = olGeometry.getFlatCoordinates();

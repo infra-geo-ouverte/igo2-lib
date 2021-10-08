@@ -55,9 +55,9 @@ export class OsrmDirectionsSource extends DirectionsSource {
   private getRouteParams(directionsOptions: DirectionsOptions = {}): HttpParams {
 
     directionsOptions.alternatives = directionsOptions.alternatives !== undefined ? directionsOptions.alternatives : true;
-    directionsOptions.steps = directionsOptions.steps !== undefined  ? directionsOptions.steps : true;
-    directionsOptions.geometries = directionsOptions.geometries !== undefined  ? directionsOptions.geometries : 'geojson';
-    directionsOptions.overview = directionsOptions.overview !== undefined  ? directionsOptions.overview : false;
+    directionsOptions.steps = directionsOptions.steps !== undefined ? directionsOptions.steps : true;
+    directionsOptions.geometries = directionsOptions.geometries !== undefined ? directionsOptions.geometries : 'geojson';
+    directionsOptions.overview = directionsOptions.overview !== undefined ? directionsOptions.overview : false;
 
     return new HttpParams({
       fromObject: {

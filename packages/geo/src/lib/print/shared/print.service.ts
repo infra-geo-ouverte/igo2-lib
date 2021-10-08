@@ -180,7 +180,7 @@ export class PrintService {
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
-            htmlImg  += '<tr><td><img src="' + dataImage + '"></td></tr>';
+            htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
             return htmlImg;
           })
         )

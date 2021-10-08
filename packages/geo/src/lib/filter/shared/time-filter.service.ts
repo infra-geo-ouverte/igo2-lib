@@ -45,7 +45,7 @@ export class TimeFilterService {
     const params = { TIME: time };
     datasource.ol.updateParams(params);
     if (datasource instanceof WMSDataSource) {
-      const wmsDataSource  = datasource as WMSDataSource;
+      const wmsDataSource = datasource as WMSDataSource;
       wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
     }
   }
@@ -78,14 +78,14 @@ export class TimeFilterService {
       if (newdateformStart === newdateformEnd) {
         time = newdateformStart;
       }
-    } else {  // to reset filter.
+    } else { // to reset filter.
       time = year;
     }
 
     const params = { TIME: time };
     datasource.ol.updateParams(params);
     if (datasource instanceof WMSDataSource) {
-      const wmsDataSource  = datasource as WMSDataSource;
+      const wmsDataSource = datasource as WMSDataSource;
       wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
     }
   }
