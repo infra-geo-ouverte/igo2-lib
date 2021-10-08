@@ -1,4 +1,3 @@
-import { OnReturn } from 'ol/Observable';
 import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import {
   Directive,
@@ -6,14 +5,12 @@ import {
   OnDestroy,
   Self,
   OnInit,
-  HostListener,
   AfterContentChecked
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { ListenerFunction } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -38,6 +35,7 @@ import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 import { SearchSourceService } from './search-source.service';
 import { sourceCanReverseSearchAsSummary } from './search.utils';
 import { MediaService } from '@igo2/core';
+import { unByKey } from 'ol/Observable';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -62,7 +60,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: OnReturn;
+  private pointerMoveListener;
 
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
@@ -246,7 +244,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @internal
    */
   private unlistenToMapPointerMove() {
-    // this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    unByKey(this.pointerMoveListener);
     this.pointerMoveListener = undefined;
   }
 

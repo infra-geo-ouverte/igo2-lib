@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { BehaviorSubject, from, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
 import OlStyle from 'ol/style/Style';
@@ -20,7 +20,7 @@ import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlOverlay from 'ol/Overlay';
-import { unByKey, OnReturn } from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 
 import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
@@ -213,12 +213,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Feature added listener key
    */
-  private onFeatureAddedKey: OnReturn;
+  private onFeatureAddedKey;
 
   /**
    * Feature removed listener key
    */
-  private onFeatureRemovedKey: OnReturn;
+  private onFeatureRemovedKey;
 
   /**
    * Active draw control

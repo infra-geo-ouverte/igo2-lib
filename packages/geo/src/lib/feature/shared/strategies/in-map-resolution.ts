@@ -1,11 +1,9 @@
-import { unByKey } from 'ol/Observable';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
 import { FeatureStoreInMapResolutionStrategyOptions, Feature } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
-import { skipWhile } from 'rxjs/operators';
+
 
 /**
  * This strategy maintain the store features updated while the map is scrolled.

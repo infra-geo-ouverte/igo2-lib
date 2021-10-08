@@ -1,4 +1,3 @@
-import { unByKey } from 'ol/Observable';
 import OlEvent from 'ol/events/Event';
 
 import { EntityStoreStrategy } from '@igo2/common';

@@ -15,7 +15,7 @@ import { MapBrowserComponent } from '../../map/map-browser/map-browser.component
 
 import { transform } from 'ol/proj';
 import { MediaService } from '@igo2/core';
-import { OnReturn } from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 /**
  * This directive return the pointer coordinate (on click or pointermove)
  * in [longitude, latitude], delayed by in input (pointerMoveDelay)
@@ -31,12 +31,12 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: OnReturn;
+  private pointerMoveListener;
 
   /**
    * Listener to the map click event
    */
-  private mapClickListener: OnReturn;
+  private mapClickListener;
 
   /**
    * Delay before emitting an event
@@ -107,6 +107,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
    * Stop listening for map pointermove
    */
   private unlistenToMapPointerMove() {
+    unByKey(this.pointerMoveListener);
     this.pointerMoveListener = undefined;
   }
 
