@@ -18,19 +18,19 @@
     </ng-template>
   </igo-list>
   <p class="layers-empty mat-typography" 
-    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
+    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async)===false && allowShowAllLegends">
     {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate}} 
   </p>
   <p class="layers-empty mat-typography" 
-    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
+    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
     {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButtonButZoom' | translate}} 
   </p>
   <p class="layers-empty mat-typography"
-    *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
+    *ngIf="(layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async)===false && !allowShowAllLegends">
     {{'igo.geo.layer.legend.noLayersVisible' | translate}} 
   </p>
   <p class="layers-empty mat-typography"
-    *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
+    *ngIf="(layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
     {{'igo.geo.layer.legend.noLayersVisibleButZoom' | translate}} 
   </p>
 

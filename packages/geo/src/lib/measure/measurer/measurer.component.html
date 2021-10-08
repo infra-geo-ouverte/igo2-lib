@@ -28,7 +28,7 @@
     </mat-slide-toggle> 
 
     <mat-slide-toggle
-      [disabled]="!(hasArea$ | async)"
+      [disabled]="(hasArea$ | async)===false"
       [checked]="displayDistance"
       [labelPosition]="'before'"
       (change)="onToggleDisplayDistance($event.checked)">
@@ -36,7 +36,7 @@
     </mat-slide-toggle>
 
     <mat-slide-toggle
-      [disabled]="!(hasArea$ | async)"
+      [disabled]="(hasArea$ | async)===false"
       [checked]="displayAreas"
       [labelPosition]="'before'"
       (change)="onToggleDisplayAreas($event.checked)">

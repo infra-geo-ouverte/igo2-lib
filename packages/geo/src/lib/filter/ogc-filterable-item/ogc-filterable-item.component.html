@@ -25,7 +25,7 @@
                     ('igo.geo.layer.showLayer' | translate)"
       (click)="layer.visible = !layer.visible">
       <mat-icon
-        [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+        [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
         [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
       </mat-icon>
     </button>
