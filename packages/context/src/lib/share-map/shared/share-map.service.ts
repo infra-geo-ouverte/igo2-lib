@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService, MessageService } from '@igo2/core';
-import { Layer } from '@igo2/geo';
+import { Layer, WMSDataSourceOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { DetailedContext } from '../../context-manager/shared/context.interface';
@@ -126,11 +126,14 @@ export class ShareMapService {
     const addedLayersByService = [];
     for (const layer of layers.filter(l => l.dataSource.options?.type === typeService)) {
       if (contextLayersID.indexOf(layer.id) === -1) {
-        const linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
+        let linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
         let addedLayer = '';
+        let layerVersion: string;
         switch (layer.dataSource.options.type.toLowerCase()) {
           case 'wms':
-            addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
+            const datasourceOptions = layer.dataSource.options as WMSDataSourceOptions;
+            addedLayer = encodeURIComponent(datasourceOptions.params.LAYERS);
+            layerVersion = datasourceOptions.params.VERSION === '1.3.0' ? layerVersion : datasourceOptions.params.VERSION;
             break;
           case 'wmts':
           case 'arcgisrest':
@@ -140,6 +143,13 @@ export class ShareMapService {
             break;
         }
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
+
+        let version = '';
+        if (layerVersion) {
+          const operator = linkUrl.indexOf('?') === -1 ? '?' : '&';
+          version = encodeURIComponent(`${operator}VERSION=${layerVersion}`);
+        }
+        linkUrl = `${linkUrl}${version}`;
 
         if (
           !addedLayersByService.find(definedUrl => definedUrl.url === linkUrl)
