@@ -14,7 +14,8 @@ import { SelectEvent } from 'ol/interaction/Select';
 
 import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { Subject, Subscription } from 'rxjs';
-import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal, initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal,
+  initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
 import { DirectionType } from './shared/directions.enum';
@@ -23,8 +24,6 @@ import { SearchService } from '../search/shared/search.service';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
-
-
 
 @Component({
   selector: 'igo-directions',
