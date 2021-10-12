@@ -1,0 +1,18 @@
+@mixin igo-menu-button-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  igo-menu-button > #menu-button {
+    color: mat.get-color-from-palette($primary);
+  }
+
+  igo-menu-button > #menu-button.menu-button-reverse-color-close {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+  igo-menu-button > #menu-button.menu-button-reverse-color {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+}
+

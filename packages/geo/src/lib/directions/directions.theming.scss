@@ -1,3 +1,3 @@
 @mixin igo-directions-theming($theme) {
-  @include igo-directions-form-theming($theme);
+  @include igo-directions-results-theming($theme);
 }
