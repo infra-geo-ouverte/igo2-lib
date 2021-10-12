@@ -17,6 +17,7 @@ import { PointerPositionDirective } from './shared/map-pointer-position.directiv
 import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { MapCenterComponent } from './map-center/map-center.component';
+import { MenuButtonComponent } from './menu-button/menu-button.component';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { MapCenterComponent } from './map-center/map-center.component';
     PointerPositionDirective,
     HoverFeatureDirective,
     SwipeControlComponent,
-    MapCenterComponent
+    MapCenterComponent,
+    MenuButtonComponent
   ],
   declarations: [
     MapBrowserComponent,
@@ -53,7 +55,8 @@ import { MapCenterComponent } from './map-center/map-center.component';
     PointerPositionDirective,
     HoverFeatureDirective,
     SwipeControlComponent,
-    MapCenterComponent
+    MapCenterComponent,
+    MenuButtonComponent
   ]
 })
 export class IgoMapModule {}

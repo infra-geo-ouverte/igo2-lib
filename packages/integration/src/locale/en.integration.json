@@ -67,6 +67,12 @@
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
       },
+      "directions": {
+        "warning": {
+          "title": "Warning",
+          "message": "The route proposed in this tool does not take into account current road conditions, road congestion or obstacles present on the network."
+        }
+      },
       "advanced-map-tool": {
         "advanced-swipe": {
           "swipe-select":  "select the layers for swiping",

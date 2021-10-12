@@ -14,7 +14,7 @@ export interface DialogData {
 
     constructor(
       public dialogRef: MatDialogRef<DrawPopupComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+      @Inject(MAT_DIALOG_DATA) public data: {currentLabel: string}) {}
 
     noLabel() {
       this.dialogRef.close();

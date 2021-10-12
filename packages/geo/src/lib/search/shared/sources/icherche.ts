@@ -27,6 +27,7 @@ import {
   IChercheReverseResponse
 } from './icherche.interfaces';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -341,6 +342,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string,
     options?: TextSearchOptions
@@ -751,6 +755,9 @@ export class IChercheReverseSearchSource extends SearchSource
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
