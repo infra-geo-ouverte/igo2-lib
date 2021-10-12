@@ -169,7 +169,7 @@ gulp.task('core:concatStyles', done => {
       './packages/common/src/lib/interactive-tour/interactive-tour.theming.scss',
       './packages/geo/src/style/geo.theming.scss',
       './packages/geo/src/lib/directions/directions.theming.scss',
-      './packages/geo/src/lib/directions/directions-form/directions-form.theming.scss',
+      './packages/geo/src/lib/directions/directions-results/directions-results.theming.scss',
       './packages/geo/src/lib/draw/drawingTool.theming.scss',
       './packages/geo/src/lib/draw/draw/draw.theming.scss',
       './packages/geo/src/lib/feature/feature.theming.scss',

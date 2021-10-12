@@ -25,7 +25,7 @@ export abstract class Watcher {
 
   protected abstract unwatch();
 
-  // tslint:disable-next-line:ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   subscribe(callback: Function, scope?: any) {
     this.watch();
 
