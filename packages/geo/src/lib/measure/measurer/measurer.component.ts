@@ -335,6 +335,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.toggleDrawControl();
     this.updateTooltipsOfOlSource(this.store.source.ol);
     this.checkDistanceAreaToggle();
+    this.setActiveMeasureType(MeasureType.Length);
   }
 
   /**
