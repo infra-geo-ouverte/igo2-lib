@@ -1,3 +1,19 @@
+## [1.9.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.0...1.9.1) (2021-10-12)
+
+
+### Bug Fixes
+
+* **demo:** urls ([505e177](https://github.com/infra-geo-ouverte/igo2-lib/commit/505e177643ff43f80124bf9f7806691780b2fd32))
+* **draw:** selected feature label transfered in popup ([#912](https://github.com/infra-geo-ouverte/igo2-lib/issues/912)) ([7efb8bf](https://github.com/infra-geo-ouverte/igo2-lib/commit/7efb8bf60b9d64a8bc1fe3987a530876b7b1d9a6))
+
+
+### Features
+
+* **geolocation:** add a point (center) to the geolocation feature ([#908](https://github.com/infra-geo-ouverte/igo2-lib/issues/908)) ([45199c2](https://github.com/infra-geo-ouverte/igo2-lib/commit/45199c2c5317da783051c4e63444c13b2dcada87))
+* **sharemap:** keep the layer wms version on share map ([#917](https://github.com/infra-geo-ouverte/igo2-lib/issues/917)) ([5dc345d](https://github.com/infra-geo-ouverte/igo2-lib/commit/5dc345d1d141a8f9019795998de48a44978fc85c))
+
+
+
 # [1.9.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.2...1.9.0) (2021-09-20)
 
 
@@ -29,9 +45,6 @@
 * **libs:** upgrade librairies to angular 11 ([1bf0506](https://github.com/infra-geo-ouverte/igo2-lib/commit/1bf0506226b50d933b4223b1ddf8ef97fe6f0048))
 * **map:** Advanced map tool ([#900](https://github.com/infra-geo-ouverte/igo2-lib/issues/900)) ([a0c7785](https://github.com/infra-geo-ouverte/igo2-lib/commit/a0c778541c7351fee92e73f7a4fbc190238f5e33))
 
-### BREAKING CHANGES
-
-With the update to Angular 12 and the new sass package, use rules are now priorized over import rules. This causes new breaking changes for themings compilation. Before, component theming would simply be imported in the main package theming file (../../packages/{{packageName}}/src/style/{{packageName}}.theming.scss) to be compiled correctly. In this new 1.9 version, component theming file need to be added to the task list of ‘core:concatStyles’ in gulpfile.js. Thereby, all themings are concatenated into one main file.
 
 
 ## [1.8.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.8.1...1.8.2) (2021-08-12)
