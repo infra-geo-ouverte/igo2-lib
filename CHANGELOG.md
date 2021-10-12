@@ -1,3 +1,7 @@
+## [1.9.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.1...1.9.2) (2021-10-12)
+
+
+
 ## [1.9.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.0...1.9.1) (2021-10-12)
 
 
