@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoEntityTableModule } from '@igo2/common';
@@ -32,6 +33,7 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,
+    MatDividerModule,
     IgoLanguageModule,
     IgoEntityTableModule
   ],

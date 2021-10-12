@@ -157,6 +157,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   public displayAreas: boolean = true;
 
   /**
+   * Observable of line boolean
+   * @internal
+   */
+   public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  /**
    * Observable of area boolean
    * @internal
    */
@@ -179,6 +185,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   public showTooltips: boolean = true;
+
+  /**
+   * Whether draw control toggle is disabled or not
+   * @internal
+   */
+  public drawControlIsDisabled: boolean = true;
 
   /**
    * Draw line control
@@ -283,7 +295,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   @Input()
   set activeMeasureType(value: MeasureType) { this.setActiveMeasureType(value); }
   get activeMeasureType(): MeasureType { return this._activeMeasureType; }
-  private _activeMeasureType: MeasureType = MeasureType.Length;
+  private _activeMeasureType: MeasureType;
 
   /**
    * The minimum length a segment must have to display a tooltip.
@@ -323,6 +335,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.toggleDrawControl();
     this.updateTooltipsOfOlSource(this.store.source.ol);
     this.checkDistanceAreaToggle();
+    this.setActiveMeasureType(MeasureType.Length);
   }
 
   /**
@@ -610,11 +623,16 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists  => {
-    if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
+      if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
         this.hasArea$.next(true);
-      }
-      else {
+      } else {
         this.hasArea$.next(false);
+      }
+
+      if (objectsExists.find(objectExist => objectExist.geometry.type === 'LineString')){
+        this.hasLine$.next(true);
+      } else {
+        this.hasLine$.next(false);
       }
     }));
 
@@ -692,6 +710,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param drawControl Draw control
    */
   private activateDrawControl(drawControl: DrawControl) {
+    this.drawControlIsDisabled = false;
     this.activeDrawControl = drawControl;
     this.drawStart$$ = drawControl.start$
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawStart(olGeometry));
