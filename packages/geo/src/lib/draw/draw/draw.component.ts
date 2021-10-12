@@ -126,6 +126,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initStore();
     this.drawControl = this.createDrawControl(this.fillColor, this.strokeColor, this.strokeWidth);
+    this.drawControl.setGeometryType(this.geometryType.Point as any);
+    this.toggleDrawControl();
   }
 
   /**

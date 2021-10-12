@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 
-import { Directions, DirectionsOptions } from '../shared/directions.interface';
+import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from '../directions-sources/directions-source';
 import { DirectionsSourceService } from './directions-source.service';
 
@@ -12,7 +12,7 @@ import { DirectionsSourceService } from './directions-source.service';
 export class DirectionsService {
   constructor(private directionsSourceService: DirectionsSourceService) {}
 
-  route(coordinates: [number, number][], directionsOptions: DirectionsOptions = {}): Observable<Directions[]>[] {
+  route(coordinates: [number, number][], directionsOptions: DirectionOptions = {}): Observable<Direction[]>[] {
     if (coordinates.length === 0) {
       return;
     }
@@ -24,8 +24,8 @@ export class DirectionsService {
   routeSource(
     source: DirectionsSource,
     coordinates: [number, number][],
-    directionsOptions: DirectionsOptions = {}
-  ): Observable<Directions[]> {
+    directionsOptions: DirectionOptions = {}
+  ): Observable<Direction[]> {
     const request = source.route(coordinates, directionsOptions );
     return request;
   }

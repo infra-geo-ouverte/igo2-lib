@@ -15,6 +15,14 @@
     <igo-rotation-button [map]="map" [showIfNoRotation]="false" color="primary"></igo-rotation-button>
   </igo-map-browser>
 
-  <igo-directions-form [stopsStore]="stopsStore" [routeStore]="routeStore" [map]="map"></igo-directions-form>
+  <igo-directions
+    [stopsStore]="stopsStore"
+    [stopsFeatureStore]="stopsFeatureStore"
+    [stepFeatureStore]="stepFeatureStore"
+    [routesFeatureStore]="routesFeatureStore"
+    [zoomToActiveRoute$]="zoomToActiveRoute$">  
+  </igo-directions>
+
+
 
 </mat-card>

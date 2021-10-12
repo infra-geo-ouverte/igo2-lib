@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { DirectionsFormService, FeatureStore } from '@igo2/geo';
+import { AnyLayerOptions, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
+import { Subject } from 'rxjs';
 import { MapState } from '../map/map.state';
 
 /**
@@ -11,41 +12,57 @@ import { MapState } from '../map/map.state';
 })
 export class DirectionState {
 
+  public zoomToActiveRoute$: Subject<void> = new Subject();
+
   /**
-   * Store that holds the stop and the driving route
+   * Store that holds the stop
    */
-  public stopsStore: FeatureStore = new FeatureStore([], {
+  public stopsStore: StopsStore = new StopsStore([]);
+
+  /**
+   * Store that holds the driving stops as feature
+   */
+  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
     map: this.mapState.map
   });
 
   /**
-   * Store that holds the driving route
+   * Store that holds the driving route as feature
    */
-  public routeStore: FeatureStore = new FeatureStore([], {
+  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
     map: this.mapState.map
   });
 
-  public activeRouteDescription: string;
+  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
+    map: this.mapState.map
+  });
 
-  public routeFromFeatureDetail = false;
+  public debounceTime: number = 200;
 
-  constructor(
-    private mapState: MapState,
-    private directionsFormService: DirectionsFormService) {
+  constructor(private mapState: MapState) {
+
+    this.mapState.map.ol.once('rendercomplete', () => {
+      this.stopsFeatureStore.empty$.subscribe((empty) => {
+        if (this.stopsFeatureStore.layer?.options) {
+          (this.stopsFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+        }
+      });
+      this.routesFeatureStore.empty$.subscribe((empty) => {
+        if (this.routesFeatureStore.layer?.options) {
+          (this.routesFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+        }
+      });
+    });
 
     this.mapState.map.layers$.subscribe(() => {
       if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
         this.stopsStore.deleteMany(this.stopsStore.all());
-        this.directionsFormService.setStops([]);
+        this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
       }
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
-        this.routeStore.deleteMany(this.routeStore.all());
+        this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       }
     });
-  }
-
-  setRouteFromFeatureDetail(value: boolean) {
-    this.routeFromFeatureDetail = value;
   }
 
 }

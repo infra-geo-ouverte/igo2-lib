@@ -13,6 +13,8 @@ import olFeature from 'ol/Feature';
 import olPoint from 'ol/geom/Point';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
+import pointOnFeature from '@turf/point-on-feature';
+
 import { ConfigService } from '@igo2/core';
 
 import {
@@ -69,6 +71,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private hasFeatureEmphasisOnSelection: boolean = false;
 
   private showResultsGeometries$$: Subscription;
+  private getRoute$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
   private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
@@ -105,9 +108,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       .pipe(
         map(
           (element) =>
-            (this.feature = element
-              ? (element.entity.data as Feature)
-              : undefined)
+          (this.feature = element
+            ? (element.entity.data as Feature)
+            : undefined)
         )
       );
   }
@@ -219,11 +222,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       }
       this.shownResultsGeometries.map(result => this.map.queryResultsOverlay.removeFeature(result));
       const featureToHandleGeom = searchResults
-      .filter(result =>
-        result.entity.meta.dataType === FEATURE &&
-        result.entity.data.geometry &&
-        !result.state.selected &&
-        !result.state.focused );
+        .filter(result =>
+          result.entity.meta.dataType === FEATURE &&
+          result.entity.data.geometry &&
+          !result.state.selected &&
+          !result.state.focused);
 
       featureToHandleGeom.map(result => {
         if (searchResultsGeometryEnabled) {
@@ -361,6 +364,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     if (this.showResultsGeometries$$) {
       this.showResultsGeometries$$.unsubscribe();
+    }
+    if (this.getRoute$$) {
+      this.getRoute$$.unsubscribe();
     }
   }
 
@@ -556,10 +562,30 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
   }
 
-  getRoute(features: Feature[]) {
+  getRoute() {
     this.toolState.toolbox.activateTool('directions');
-    this.directionState.stopsStore.clear();
-    this.directionState.setRouteFromFeatureDetail(true);
-    this.directionState.stopsStore.insertMany(features);
+    this.directionState.stopsStore.clearStops();
+    setTimeout(() => {
+      let routingCoordLoaded = false;
+      if (this.getRoute$$) { this.getRoute$$.unsubscribe(); }
+      this.getRoute$$ = this.directionState.stopsStore.storeInitialized$.subscribe((init: boolean) => {
+        if (this.directionState.stopsStore.storeInitialized$.value && !routingCoordLoaded) {
+          routingCoordLoaded = true;
+          const stop = this.directionState.stopsStore.all().find((e) => e.position === 1);
+          let coord;
+          if (this.feature.geometry) {
+            if (this.feature.geometry.type === 'Point') {
+              coord = [this.feature.geometry.coordinates[0], this.feature.geometry.coordinates[1]];
+            } else {
+              const point = pointOnFeature(this.feature.geometry);
+              coord = [point.geometry.coordinates[0], point.geometry.coordinates[1]];
+            }
+          }
+          stop.text = this.featureTitle;
+          stop.coordinates = coord;
+          this.directionState.stopsStore.update(stop);
+        }
+      });
+    }, 250);
   }
 }
