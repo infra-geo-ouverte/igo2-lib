@@ -12,6 +12,7 @@ import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 
 /**
  * Nominatim search source
@@ -141,6 +142,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Place name
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string | undefined,
     options?: TextSearchOptions

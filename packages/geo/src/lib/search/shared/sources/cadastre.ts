@@ -14,6 +14,7 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService, StorageService } from '@igo2/core';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 /**
  * Cadastre search source
  */
@@ -54,6 +55,9 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
    * @param term Place name
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string | undefined,
     options?: TextSearchOptions
