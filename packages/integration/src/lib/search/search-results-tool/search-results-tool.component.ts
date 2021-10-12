@@ -493,7 +493,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       'igo-list'
     )[0];
     let selectedItem;
-    // eslint-disable-next-line
+    // tslint:disable-next-line
     for (let i = 0; i < items.length; i++) {
       if (items[i].className.includes('igo-list-item-selected')) {
         selectedItem = items[i];
