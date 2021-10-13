@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* tslint:disable */
 
 const ALPHA =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';

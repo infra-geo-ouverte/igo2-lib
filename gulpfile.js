@@ -144,6 +144,17 @@ gulp.task('geo:copyStyles', done => {
   done();
 });
 
+gulp.task('prepublishOnly', done => {
+  gulp.src('./dist/auth/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/auth'));
+  gulp.src('./dist/common/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/common'));
+  gulp.src('./dist/context/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/context'));
+  gulp.src('./dist/core/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/core'));
+  gulp.src('./dist/geo/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/geo'));
+  gulp.src('./dist/integration/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/integration'));
+  gulp.src('./dist/utils/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/utils'));
+  done();
+});
+
 // ==========================================================
 
 gulp.task('core:concatStyles', done => {

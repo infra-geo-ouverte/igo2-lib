@@ -300,7 +300,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // tslint:disable-next-line:ban-types
   registerOnChange(fn: Function) {
     this.onChange = fn;
   }
@@ -309,7 +309,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // tslint:disable-next-line:ban-types
   registerOnTouched(fn: Function) {
     this.onTouched = fn;
   }
