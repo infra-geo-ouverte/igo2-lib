@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 
 @ToolComponent({
@@ -16,7 +16,6 @@ import { ToolComponent } from '@igo2/common';
   styleUrls: ['./advanced-map-tool.component.scss']
 })
 
-export class AdvancedMapToolComponent implements OnInit {
+export class AdvancedMapToolComponent {
 
-  ngOnInit(): void{}
 }

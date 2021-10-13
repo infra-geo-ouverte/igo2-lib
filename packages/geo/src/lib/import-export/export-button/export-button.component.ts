@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 
-import { LayerOptions, VectorLayer } from '../../layer';
+import { VectorLayer } from '../../layer';
 import { DataSourceOptions } from '../../datasource';
 
 @Component({

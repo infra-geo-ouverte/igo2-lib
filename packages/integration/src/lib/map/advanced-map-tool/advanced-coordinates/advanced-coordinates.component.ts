@@ -98,7 +98,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.inputProj = this.projections$.value[0];
     if (tempInputProj !== null)
     {
-      const pos =  this.positionInList(tempInputProj);
+      const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
       this.updateZoneMtmUtm();
     }

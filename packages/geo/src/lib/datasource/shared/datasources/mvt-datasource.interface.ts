@@ -1,5 +1,4 @@
 import olSourceVectorTile from 'ol/source/VectorTile';
-import olAttribution from 'ol/control/Attribution';
 
 import { DataSourceOptions } from './datasource.interface';
 

@@ -7,7 +7,7 @@
 </div>
 
 <igo-flexible
-  *ngIf="store && !(store.stateView.empty$ | async)"
+  *ngIf="store && (store.stateView.empty$ | async)===false"
   #topPanel
   initial="100%"
   initialMobile="100%"
@@ -63,7 +63,7 @@
         [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
         matBadgeColor="accent"
         matBadgeSize="small"
-        [matBadgeHidden]="!(isSelectedResultOutOfView$ | async)"     
+        [matBadgeHidden]="(isSelectedResultOutOfView$ | async)===false"     
         svgIcon="magnify-plus-outline"></mat-icon>
       </button>
 

@@ -101,7 +101,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Getter of element
    */
   get swipeId() {
-    return  document.getElementById('igo-layer-swipe');
+    return document.getElementById('igo-layer-swipe');
   }
 
   /**

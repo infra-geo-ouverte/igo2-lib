@@ -29,7 +29,7 @@ export class MapState {
 
   constructor(
     private mapService: MapService,
-    private projectionService: ProjectionService  // Don't remove this or it'll never be injected
+    private projectionService: ProjectionService // Don't remove this or it'll never be injected
   ) {
     this._map = new IgoMap({
       controls: {

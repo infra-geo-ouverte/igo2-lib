@@ -51,7 +51,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * The extent used to make the legend
    */
-  private view: LegendMapViewOptions  = undefined;
+  private view: LegendMapViewOptions = undefined;
   /**
    * Get list of images display
    */
@@ -215,7 +215,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
-      let stylesAvailable =  [{ name: '', title } as ItemStyleOptions];
+      let stylesAvailable = [{ name: '', title } as ItemStyleOptions];
       if (layerOptions.legendOptions.stylesAvailable) {
         stylesAvailable = stylesAvailable.concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&

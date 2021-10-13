@@ -81,7 +81,7 @@ export class ShareMapService {
     const contextLayersID = [];
     const contextLayers = this.contextService.context$.value.layers;
     for (const contextLayer of contextLayers) {
-      if ( typeof contextLayer.id !== 'undefined'  ||  typeof contextLayer.source !== 'undefined' ) {
+      if ( typeof contextLayer.id !== 'undefined' || typeof contextLayer.source !== 'undefined' ) {
         contextLayersID.push(contextLayer.id || contextLayer.source.id);
       }
     }

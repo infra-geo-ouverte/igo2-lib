@@ -1,6 +1,5 @@
 import { Feature } from '../../feature';
 import { IgoMap } from '../../map';
-import { MeasureAreaUnit, MeasureLengthUnit } from './measure.enum';
 
 export interface Measure {
   area?: number;

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
 import { IgoMap, DataSourceService, LayerService, WFSDataSourceOptions, VectorLayerOptions, WFSDataSource } from '@igo2/geo';
-import { transform } from 'ol/proj';
 
 @Component({
   selector: 'app-hover',

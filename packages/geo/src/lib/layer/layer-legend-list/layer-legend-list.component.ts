@@ -16,7 +16,7 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
-  showAllLegend: boolean =  false;
+  showAllLegend: boolean = false;
   public change$ = new ReplaySubject<void>(1);
   private change$$: Subscription;
   @Input()

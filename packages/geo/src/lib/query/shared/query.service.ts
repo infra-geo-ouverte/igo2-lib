@@ -274,7 +274,7 @@ export class QueryService {
         break;
     }
 
-    if (features.length > 0 && features[0].geometry == null) {
+    if (features.length > 0 && features[0].geometry === null) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
       for (const feature of features) {

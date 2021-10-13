@@ -285,7 +285,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'years', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
         return (monthDiffPlus1 % moment.duration(this.step).asYears()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asYears()) === 0;
@@ -295,7 +295,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'months', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
         return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asMonths()) === 0;
@@ -304,7 +304,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const weekDiff = moment(dateValue).diff(moment(this.handleMin()), 'weeks', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const weekDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
+        const weekDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
         return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
       } else if ( type === 'begin' ) {
         return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
@@ -313,9 +313,9 @@ export class OgcFilterTimeComponent implements OnInit {
       const dayDiff = moment(dateValue).diff(moment(this.handleMin()), 'days', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const dayDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
+        const dayDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
         const _mod = (dayDiffPlus1 % moment.duration(this.step).asDays());
-        return  (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+        return (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
       } else if ( type === 'begin' ) {
         const _mod = ((dayDiff % moment.duration(this.step).asDays()) + 1);
         return (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8

@@ -15,7 +15,7 @@ export class QueryState {
    * Store that holds the query results
    */
   public store: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
-  public queryOverlayStyle: CommonVectorStyleOptions  = {};
+  public queryOverlayStyle: CommonVectorStyleOptions = {};
   public queryOverlayStyleSelection: CommonVectorStyleOptions = {};
   public queryOverlayStyleFocus: CommonVectorStyleOptions = {};
 

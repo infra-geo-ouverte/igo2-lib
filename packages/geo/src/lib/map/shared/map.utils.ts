@@ -79,7 +79,7 @@ export function stringToLonLat(
   const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex = new RegExp(`^${patternDmd}`, 'g');
 
-  // tslint:disable:max-line-length
+ /* eslint-disable max-len */
   const patternBELL =
     'LAT\\s*[\\s:]*\\s*([-+])?(\\d{1,2})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*LONG\\s*[\\s:]*\\s*([-+])?(\\d{1,3})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*UNC\\s*[\\s:]?\\s*(\\d+)\\s*CONF\\s*[\\s:]?\\s*(\\d{1,3})';
   const bellRegex = new RegExp(`^${patternBELL}?`, 'gi');
@@ -378,7 +378,7 @@ export function convertDDToDMS(
   lonLatDD.forEach(dd => {
     const degrees = dd < 0 ? Math.ceil(dd) : Math.floor(dd);
     const int = dd < 0 ? (degrees - dd) * 60 : (dd - degrees) * 60;
-    const minutes =  Math.floor(int);
+    const minutes = Math.floor(int);
     const seconds = ((int - minutes) * 60).toFixed(decimal);
 
     lonLatDMS.push(`${degrees}° ${minutes}' ${seconds}"`);

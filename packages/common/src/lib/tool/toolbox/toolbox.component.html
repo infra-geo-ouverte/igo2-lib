@@ -3,7 +3,7 @@
   [store]="actionStore"
   [withIcon]="true"
   [withTitle]="toolbarWithTitle$ | async"
-  [withTooltip]="!(toolbarWithTitle$ | async)"
+  [withTooltip]="(toolbarWithTitle$ | async) === false"
   [scrollActive]="toolbarWithTitle$ | async"
   [horizontal]="false">
 </igo-actionbar>

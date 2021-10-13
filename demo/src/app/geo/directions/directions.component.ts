@@ -5,8 +5,6 @@ import {
   IgoMap,
   LayerService,
   MapService,
-  FeatureStore,
-  Feature,
   ProjectionService,
   StopsStore,
   StopsFeatureStore,
