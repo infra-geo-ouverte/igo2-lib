@@ -18,7 +18,6 @@ import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { MapCenterComponent } from './map-center/map-center.component';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
-import { HomeButtonComponent } from './home-button/home-button.component';
 
 @NgModule({
   imports: [
@@ -42,8 +41,7 @@ import { HomeButtonComponent } from './home-button/home-button.component';
     HoverFeatureDirective,
     SwipeControlComponent,
     MapCenterComponent,
-    MenuButtonComponent,
-    HomeButtonComponent
+    MenuButtonComponent
   ],
   declarations: [
     MapBrowserComponent,
@@ -58,8 +56,7 @@ import { HomeButtonComponent } from './home-button/home-button.component';
     HoverFeatureDirective,
     SwipeControlComponent,
     MapCenterComponent,
-    MenuButtonComponent,
-    HomeButtonComponent
+    MenuButtonComponent
   ]
 })
 export class IgoMapModule {}

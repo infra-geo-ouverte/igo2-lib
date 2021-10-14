@@ -2,5 +2,4 @@
   @include igo-map-browser-theming($theme, $typography);
   @include igo-zoom-button-theming($theme);
   @include igo-menu-button-theming($theme);
-  @include igo-home-button-theming($theme);
 }
