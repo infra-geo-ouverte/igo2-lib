@@ -42,6 +42,14 @@ export interface SourceFieldsOptionsParams {
   allowedOperatorsType?: OgcFilterOperatorType;
   type?: number | number[] | string | string[] | boolean | Date;
   primary?: boolean;
+  validation?: SourceFieldsValidationParams;
+}
+
+export interface SourceFieldsValidationParams {
+  mandatory?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  readonly: boolean;
 }
 
 export interface Legend {

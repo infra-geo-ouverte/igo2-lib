@@ -9,7 +9,7 @@ import {
   EntityTableColumnRenderer,
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
-import { ConfigService, StorageService } from '@igo2/core';
+import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -41,6 +41,8 @@ export class EditionWorkspaceService {
     private layerService: LayerService,
     private storageService: StorageService,
     private configService: ConfigService,
+    private messageService: MessageService,
+    private languageService: LanguageService,
     private http: HttpClient,
     private dialog: MatDialog) { }
 
@@ -287,9 +289,18 @@ export class EditionWorkspaceService {
               () => {
                 console.log('Delete success');
                 workspace.entityStore.delete(feature);
+
+                const message = this.languageService.translate.instant(
+                  'igo.geo.workspace.deleteSuccess'
+                );
+                this.messageService.success(message);
               },
               error => {
-                console.log(error);
+                error.error.caught = true;
+                const message = this.languageService.translate.instant(
+                  'igo.geo.workspace.deleteError'
+                );
+                this.messageService.error(message);
               }
             );
           }

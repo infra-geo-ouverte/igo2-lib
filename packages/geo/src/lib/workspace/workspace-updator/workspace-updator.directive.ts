@@ -101,7 +101,6 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return featureWks;
     } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition === true) {
-      console.log('ici3', layer);
       const editionWks = this.editionWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       console.log(editionWks);
       return editionWks;

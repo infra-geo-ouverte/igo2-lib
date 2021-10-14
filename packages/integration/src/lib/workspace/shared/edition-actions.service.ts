@@ -31,8 +31,6 @@ export class EditionActionsService implements OnDestroy  {
     this.storageService.get('workspaceMaximize') as boolean
   );
 
-  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
