@@ -1,7 +1,5 @@
-import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { IgoMap } from '../shared/map';
-import { Observable, BehaviorSubject, Subscription, fromEvent } from 'rxjs';
-import { debounceTime, startWith } from 'rxjs/operators';
 import { ConfigService } from '@igo2/core';
 
 @Component({

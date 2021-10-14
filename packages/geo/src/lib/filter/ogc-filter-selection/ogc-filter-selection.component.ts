@@ -296,7 +296,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     });
   }
 
-  getToolTip(selector): string  {
+  getToolTip(selector): string {
     let toolTip;
     if (selector.tooltip) {
       if (Array.isArray(selector.tooltip)) {

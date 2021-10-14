@@ -26,5 +26,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g gulp-cli
     - run: npm ci
+    - run: npm run lint
     - run: npm run build.libs --if-present
     - run: npm run test

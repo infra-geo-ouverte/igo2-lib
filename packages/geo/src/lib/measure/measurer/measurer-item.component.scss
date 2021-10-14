@@ -5,12 +5,14 @@
 }
 
 .measure-field {
+  pointer-events: none;
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
 }
 
 .unit-field {
-  width: 110px;
+  width: 50px;
   margin-left: 10px;
+  margin-top: 10px;
 }

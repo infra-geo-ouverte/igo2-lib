@@ -153,10 +153,10 @@ export class StoredQueriesSearchSource extends SearchSource
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
-  // eslint-disable-next-line max-len
+ /* eslint-disable max-len */
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
-  // eslint-disable-next-line max-len
+ /* eslint-disable max-len */
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
@@ -180,10 +180,10 @@ export class StoredQueriesSearchSource extends SearchSource
       options || {},
       storedqueriesParams
     );
-    if (this.options.params == null) {
+    if (this.options.params === null) {
       this.options.params = { page : '1'};
     } else {
-      this.options.params.page = options.page != null ? String(options.page) : '1';
+      this.options.params.page = options.page !== null ? String(options.page) : '1';
     }
 
     if (
@@ -363,7 +363,7 @@ export class StoredQueriesSearchSource extends SearchSource
  */
 
 // EXAMPLE CALLS
-// eslint-disable-next-line max-len
+ /* eslint-disable max-len */
 // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
 //
 

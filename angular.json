@@ -64,6 +64,13 @@
               "core-js-pure/features/reflect/get",
               "core-js-pure/features/symbol",
               "core-js-pure/features/symbol/iterator",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "core-js/modules/web.dom-collections.iterator.js",
               "canvg/lib/index.es.js",
               "html-entities",
               "@turf/helpers",
@@ -170,12 +177,11 @@
             "devServerTarget": "demo:serve"
           }
         },
-        "klint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "e2e/**/*.ts"
             ]
           }
         }

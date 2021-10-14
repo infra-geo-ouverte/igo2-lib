@@ -1,7 +1,7 @@
 <div>
   <div class="geometry-type-toggle mat-typography">
     <mat-button-toggle-group
-      (change)="onGeometryTypeChange($event.value)">
+      (change)="onGeometryTypeChange($event.value)" [value]="geometryType.Point">
       <mat-button-toggle [value]="geometryType.Point">
         {{('igo.geo.draw.' + geometryType.Point) | translate}}
       </mat-button-toggle>

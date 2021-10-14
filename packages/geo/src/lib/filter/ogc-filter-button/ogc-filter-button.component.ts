@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
-import { OgcFilterableDataSourceOptions, IgoOgcSelector, OgcFiltersOptions } from '../shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, IgoOgcSelector } from '../shared/ogc-filter.interface';
 
 @Component({
   selector: 'igo-ogc-filter-button',

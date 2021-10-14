@@ -27,7 +27,6 @@ import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService } from '@igo2/core';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -106,7 +105,7 @@ export class FeatureWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(workspace: FeatureWorkspace,  layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: FeatureWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
 
     if (fields.length === 0) {

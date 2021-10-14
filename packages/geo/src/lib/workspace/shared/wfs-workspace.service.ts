@@ -101,7 +101,7 @@ export class WfsWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(workspace: WfsWorkspace,  layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
 
     if (fields.length === 0) {

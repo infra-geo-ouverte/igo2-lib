@@ -49,7 +49,7 @@ export interface CatalogItemLayer<L = MetadataLayerOptions>
 
 export interface CatalogItemGroup extends CatalogItem {
   items?: CatalogItem[];
-  sortDirection?: 'asc' | 'desc';  // use with groupImpose and ICompositeCatalog
+  sortDirection?: 'asc' | 'desc'; // use with groupImpose and ICompositeCatalog
 }
 
 export interface CatalogItemState extends EntityState {

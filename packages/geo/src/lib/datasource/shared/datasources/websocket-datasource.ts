@@ -1,14 +1,7 @@
 import olSourceVector from 'ol/source/Vector';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olformat from 'ol/format';
-import { unByKey } from 'ol/Observable';
-import { easeOut } from 'ol/easing';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
 
-import { Md5 } from 'ts-md5';
-
-import { uuid } from '@igo2/utils';
 import { FeatureDataSource } from './feature-datasource';
 import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
 

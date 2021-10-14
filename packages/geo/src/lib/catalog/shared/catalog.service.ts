@@ -10,8 +10,7 @@ import {
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  TypeCapabilitiesStrings
+  ArcGISRestDataSourceOptions
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -24,7 +23,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
-import { generateIdFromSourceOptions, generateId } from '../../utils';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -194,7 +193,7 @@ export class CatalogService {
 
     const catalogsFromInstance = [] as Catalog[];
     compositeCatalog.map((component: Catalog) => {
-      component.sortDirection = catalog.sortDirection;  // propagate sortDirection with parent value
+      component.sortDirection = catalog.sortDirection; // propagate sortDirection with parent value
       catalogsFromInstance.push(
         CatalogFactory.createInstanceCatalog(component, this)
     );
@@ -448,7 +447,7 @@ export class CatalogService {
       title: itemListIn.Title,
       address: catalog.id,
       externalProvider: catalog.externalProvider || false,
-      sortDirection: catalog.sortDirection,  // propagate sortDirection
+      sortDirection: catalog.sortDirection, // propagate sortDirection
       items: itemListIn.Layer.reduce((items: CatalogItem[], layer: any) => {
         if (layer.Layer !== undefined) {
           // recursive, check next level

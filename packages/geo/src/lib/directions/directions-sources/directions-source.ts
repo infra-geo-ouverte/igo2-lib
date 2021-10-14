@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 
-import { Message } from '@igo2/core';
 
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 

@@ -469,7 +469,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
-        score: data.score ||  computeTermSimilarity(term.trim(), data.properties.nom),
+        score: data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
