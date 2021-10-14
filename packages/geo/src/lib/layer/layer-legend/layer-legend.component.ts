@@ -10,7 +10,7 @@ import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { catchError, map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
-import { WMSDataSourceOptions } from '../../datasource';
+import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
 import { SecureImagePipe } from '@igo2/common';
 
 @Component({
@@ -231,12 +231,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     let STYLES = '';
-    console.log(this.layer.dataSource.ol);
-    // this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
-    //   STYLES += this.currentStyle + ','
-    // );
-    STYLES = STYLES.slice(0, -1);
-    // this.layer.dataSource.ol.updateParams({STYLES});
+    if (this.layer.dataSource instanceof WMSDataSource) {
+      this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
+        STYLES += this.currentStyle + ','
+      );
+      STYLES = STYLES.slice(0, -1);
+      this.layer.dataSource.ol.updateParams({ STYLES });
+    }
   }
 
   onLoadImage(id: string) {
