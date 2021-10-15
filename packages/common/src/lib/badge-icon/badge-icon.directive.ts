@@ -43,7 +43,11 @@ export class IgoBadgeIconDirective implements OnInit {
   private inheritColor = false;
 
   get badge() {
-    return this.el.nativeElement.querySelector('.mat-badge-content');
+    const badge = this.el.nativeElement.querySelector('.mat-badge-content');
+    if (!badge) {
+      throw new Error(`A value must be set into the matBadge directive ex: matBadge="icon". The badge content will be overrided by this current directive`);
+    };
+    return badge;
   }
 
   private originalColor: string;
