@@ -9,7 +9,7 @@
 }
 
 :host .igo-list-tools-multi {
-  height: calc(100% - 178px);
+  height: calc(100% - 191px);
   padding-top: 8px;
 }
 
@@ -83,4 +83,8 @@ mat-checkbox ::ng-deep .mat-checkbox-inner-container {
   .mat-menu-content:not(:empty) {
     padding-top: 20px;
   }
+}
+
+.select-all ::ng-deep .mat-list-item-content {
+  margin: 0px;
 }
