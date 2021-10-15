@@ -173,6 +173,7 @@ gulp.task('core:concatStyles', done => {
       './packages/common/src/lib/collapsible/collapsible.theming.scss',
       './packages/common/src/lib/entity/entity.theming.scss',
       './packages/common/src/lib/entity/entity-table/entity-table.theming.scss',
+      './packages/common/src/lib/home-button/home-button.theming.scss',
       './packages/common/src/lib/list/list.theming.scss',
       './packages/common/src/lib/panel/panel.theming.scss',
       './packages/common/src/lib/tool/tool.theming.scss',

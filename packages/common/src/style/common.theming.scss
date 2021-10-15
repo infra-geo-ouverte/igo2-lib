@@ -8,4 +8,5 @@
   @include igo-panel-theming($theme);
   @include igo-tool-theming($theme);
   @include igo-tour-theming($theme);
+  @include igo-home-button-theming($theme);
 }
