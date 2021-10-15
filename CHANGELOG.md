@@ -1,3 +1,19 @@
+## [1.9.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.1...1.9.2) (2021-10-15)
+
+
+### Bug Fixes
+
+* **igoMatBadgeIcon:** empty matBadge directive cause icondirective to… ([#924](https://github.com/infra-geo-ouverte/igo2-lib/issues/924)) ([9629b6e](https://github.com/infra-geo-ouverte/igo2-lib/commit/9629b6e8c671db40f2ef0a7fe66c069c6c25b507))
+* **layer-legend:** WMS datasource with multiple style were not updated after style selection ([b1cc06f](https://github.com/infra-geo-ouverte/igo2-lib/commit/b1cc06f8c6c119809818172c63d7c1f44a3154b3))
+* **layer-list:** fix layer-list tool crop ([#925](https://github.com/infra-geo-ouverte/igo2-lib/issues/925)) ([a3b32dd](https://github.com/infra-geo-ouverte/igo2-lib/commit/a3b32dd5b4d7c4538c912193ef8ca7666b8431bf))
+
+
+### Features
+
+* **home-button:** add home-button component to library ([#923](https://github.com/infra-geo-ouverte/igo2-lib/issues/923)) ([4d0c8b2](https://github.com/infra-geo-ouverte/igo2-lib/commit/4d0c8b27099e47d641e82937cbe22d9dfb96b3bf))
+
+
+
 ## [1.9.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.0...1.9.1) (2021-10-13)
 
 
