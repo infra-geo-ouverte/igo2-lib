@@ -27,7 +27,7 @@
     [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
     (click)="onToggleClick($event)">
     <mat-icon
-       matBadge
+       matBadge="icon"
        igoMatBadgeIcon="eye-off"
        igoMatBadgeInverseColor="true"
        [matBadgeHidden]="isInResolutionsRange()"

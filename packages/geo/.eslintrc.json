@@ -1,44 +1,44 @@
 {
-  "extends": "../../.eslintrc.json",
-  "ignorePatterns": [
-    "!**/*"
-  ],
-  "overrides": [
-    {
-      "files": [
-        "*.ts"
-      ],
-      "parserOptions": {
-        "project": [
-          "packages/geo/tsconfig.lib.json",
-          "packages/geo/tsconfig.spec.json"
+    "extends": "../../.eslintrc.json",
+    "ignorePatterns": [
+      "!**/*"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts"
         ],
-        "createDefaultProgram": true
+        "parserOptions": {
+          "project": [
+            "packages/geo/tsconfig.lib.json",
+            "packages/geo/tsconfig.spec.json"
+          ],
+          "createDefaultProgram": true
+        },
+        "rules": {
+          "@angular-eslint/directive-selector": [
+            "error",
+            {
+              "type": "attribute",
+              "prefix": "igo",
+              "style": "camelCase"
+            }
+          ],
+          "@angular-eslint/component-selector": [
+            "error",
+            {
+              "type": "element",
+              "prefix": "igo",
+              "style": "kebab-case"
+            }
+          ]
+        }
       },
-      "rules": {
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "prefix": "igo",
-            "style": "camelCase"
-          }
+      {
+        "files": [
+          "*.html"
         ],
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "igo",
-            "style": "kebab-case"
-          }
-        ]
+        "rules": {}
       }
-    },
-    {
-      "files": [
-        "*.html"
-      ],
-      "rules": {}
-    }
-  ]
-}
+    ]
+  }
