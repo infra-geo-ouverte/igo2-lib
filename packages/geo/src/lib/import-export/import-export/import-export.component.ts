@@ -459,11 +459,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.handlePopup();
     }
 
-    data.layers.forEach((layer) => {
+    let geomTypesCSV: { geometryType: string, features: any[] }[] = [];
+    let featuresCSV: any[] = [];
+    let filename: string = "";
+
+    for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
-      let filename = lay.title;
-      if (data.name !== undefined) {
-        filename = data.name;
+      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)) {
+        filename = lay.title;
+        if (data.name) {
+          filename = data.name;
+        }
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
       if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
@@ -552,6 +558,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
 
+      if (data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) {
+        geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
+
+        if (layerIndex !== data.layers.length - 1) {
+          filename = filename + lay.title + "_";
+          continue;
+        } else {
+          filename += lay.title;
+          geomTypesCSV.forEach(geomType => {
+            geomType.features.forEach(feature => {
+              featuresCSV.push(feature);
+            });
+          });
+        }
+      }
+
       if (geomTypes.length === 0) {
         this.loading$.next(false);
         const title = translate.instant('igo.geo.export.nothing.title');
@@ -559,29 +581,53 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.messageService.error(message, title, { timeOut: 20000 });
 
       } else {
-        geomTypes.map(geomType =>
-          this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
-          .subscribe(
-            () => {},
-            (error: Error) => this.onFileExportError(error),
-            () => {
-              this.onFileExportSuccess();
+        if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)) {
+          geomTypes.map(geomType =>
+            this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
+            .subscribe(
+              () => {},
+              (error: Error) => this.onFileExportError(error),
+              () => {
+                this.onFileExportSuccess();
 
-              geomType.features.forEach(feature => {
-                const radius: number = feature.get('rad');
+                geomType.features.forEach(feature => {
+                  const radius: number = feature.get('rad');
 
-                if (radius) {
-                  const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
-                  point.transform('EPSG:4326', feature.get('_projection'));
-                  feature.setGeometry(point);
-                }
-              });
+                  if (radius) {
+                    const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+                    point.transform('EPSG:4326', feature.get('_projection'));
+                    feature.setGeometry(point);
+                  }
+                });
 
-              this.loading$.next(false);
+                this.loading$.next(false);
             }
-        ));
+          ));
+        }
       }
-    });
+    };
+    if (data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) {
+      this.exportService.export(featuresCSV, data.format, filename, data.encoding, this.map.projection)
+      .subscribe(
+        () => {},
+        (error: Error) => this.onFileExportError(error),
+        () => {
+          this.onFileExportSuccess();
+
+          featuresCSV.forEach(feature => {
+            const radius: number = feature.get('rad');
+
+            if (radius) {
+              const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+              point.transform('EPSG:4326', feature.get('_projection'));
+              feature.setGeometry(point);
+            }
+          });
+
+          this.loading$.next(false);
+        }
+      );
+    }
   }
 
   private buildForm() {
