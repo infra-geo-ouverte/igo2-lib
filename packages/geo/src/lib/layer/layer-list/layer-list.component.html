@@ -10,7 +10,7 @@
   </igo-layer-list-tool>
 </mat-list>
 
-<mat-list-item *ngIf="selection">
+<mat-list-item *ngIf="selection" class="select-all">
   <mat-checkbox
     class="select-all-checkbox mat-subheading-2"
     [color]="!selectAllCheck && layersChecked.length > 0 ? 'accent' : 'primary'"
