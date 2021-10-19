@@ -43,7 +43,7 @@ export function zoneUtm(lon: number): number {
  * @param projectionsLimitations: ProjectionsLimitationsOptions
  * @returns projectionsContraints: ProjectionsLimitationsOptions
  */
-export function   computeProjectionsConstraints(
+export function computeProjectionsConstraints(
     projectionsLimitations: ProjectionsLimitationsOptions):
     ProjectionsLimitationsOptions {
     const mtmZone = projectionsLimitations.mtmZone;

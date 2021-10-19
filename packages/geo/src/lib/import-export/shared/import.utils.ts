@@ -1,6 +1,6 @@
 import * as olStyle from 'ol/style';
 
-import { MessageService, LanguageService, ConfigService } from '@igo2/core';
+import { MessageService, LanguageService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';

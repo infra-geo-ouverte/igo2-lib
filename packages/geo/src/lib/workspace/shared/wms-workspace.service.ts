@@ -1,11 +1,25 @@
 import { Injectable } from '@angular/core';
-import { ActionStore, EntityRecord, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy, EntityStoreStrategyFuncOptions, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
+import {
+  ActionStore,
+  EntityRecord,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreFilterSelectionStrategy,
+  EntityStoreStrategyFuncOptions,
+  EntityTableColumnRenderer,
+  EntityTableTemplate } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
-import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreSelectionStrategy } from '../../feature';
+import {
+  Feature,
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreInMapExtentStrategy,
+  FeatureStoreInMapResolutionStrategy,
+  FeatureStoreLoadingLayerStrategy,
+  FeatureStoreSelectionStrategy } from '../../feature';
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
@@ -13,7 +27,6 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';

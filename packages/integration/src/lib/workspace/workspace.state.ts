@@ -2,7 +2,9 @@ import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { EntityRecord, Workspace, WorkspaceStore, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import {
+  EntityRecord,Workspace, WorkspaceStore, Widget,
+  EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
@@ -152,7 +154,7 @@ export class WorkspaceState implements OnDestroy {
   public setActiveWorkspaceById(id: string) {
     const wksFromId = this.store
     .all()
-    .find(workspace  => workspace.id === id);
+    .find(workspace => workspace.id === id);
     if (wksFromId) {
       this.store.activateWorkspace(wksFromId);
     }

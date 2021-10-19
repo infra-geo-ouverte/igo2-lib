@@ -52,6 +52,10 @@ export class OgcFilterTimeComponent implements OnInit {
   readonly defaultStepMillisecond = 60000;
   public options: OgcFilterableDataSourceOptions;
 
+  public onlyYearBegin: number;
+  public onlyYearEnd: number;
+  public calendarTypeYear = false;
+
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
   @ViewChild('beginTime') beginTime: HTMLInputElement;
@@ -98,7 +102,6 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.displayFormat ? this.currentFilter.displayFormat : this._defaultDisplayFormat;
   }
 
-
   constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit(){
@@ -108,9 +111,17 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.beginValue = this.parseFilter(this.handleMin());
     this.endValue = this.parseFilter(this.handleMax());
+
+    this.onlyYearBegin = this.beginValue.getUTCFullYear();
+    this.onlyYearEnd = this.endValue.getUTCFullYear();
+    this.calendarTypeYear = this.isCalendarYearMode();
+
     this.updateHoursMinutesArray();
     // update value for now value
     this.updateValues();
+    if (this.currentFilter.calendarModeYear) {
+      this.beginValue.setUTCFullYear(this.beginValue.getUTCFullYear() + 1);
+    }
   }
 
   parseFilter(filter): Date {
@@ -180,10 +191,28 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   calendarType() {
+    if (this.currentFilter.calendarModeYear) {
+      return 'year';
+    }
     if (this.stepMilliseconds < 86400000) {
       return 'datetime';
     }
     return 'date';
+  }
+
+  isCalendarYearMode(): boolean {
+    if (this.calendarType() === 'year') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  yearOnlyInputChange(changeEvent, datePicker?: any, property?: string) {
+    const year = changeEvent.target.value;
+    const dateString = `${year}-01-01T05:00:00.000Z`;
+    const dateUtc = new Date(dateString);
+    this.yearSelected(dateUtc, datePicker, property);
   }
 
   yearSelected(year, datePicker?: any, property?: string, refreshFilter = true) {
@@ -191,12 +220,29 @@ export class OgcFilterTimeComponent implements OnInit {
       if (datePicker) {
         datePicker.close();
       }
+      const yearInt = year.getUTCFullYear();
+      if (property === 'begin' && this.currentFilter.calendarModeYear) {
+
+        this.onlyYearBegin = yearInt;
+        // in year mode, change begin date -1 to include day 1 of same year in filter
+        const yearPast = year.getUTCFullYear() - 1;
+        year = moment().set('year', yearPast).toDate();
+        year = moment(year).endOf('year').toDate();
+      }
       if (property === 'end') {
+        this.onlyYearEnd = yearInt;
+        // change value 01 jan to 31 dec same year
         year = moment(year).endOf('year').toDate();
       } else if (property === 'begin' && this.restrictedToStep()) {
         this.yearSelected(year, undefined, 'end');
       }
       this.changeTemporalProperty(year, property === 'begin' ? 1 : 2, refreshFilter);
+      if (property === 'begin' && this.currentFilter.calendarModeYear) {
+        // datepicker value set to original year not year-1
+        const newMoment = moment(year).startOf('year');
+        const newDate = newMoment.set('year', year.getFullYear() + 1).toDate();
+        this.beginValue = newDate;
+      }
     }
   }
 
@@ -239,7 +285,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'years', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
         return (monthDiffPlus1 % moment.duration(this.step).asYears()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asYears()) === 0;
@@ -249,7 +295,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'months', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
         return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asMonths()) === 0;
@@ -258,7 +304,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const weekDiff = moment(dateValue).diff(moment(this.handleMin()), 'weeks', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const weekDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
+        const weekDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
         return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
       } else if ( type === 'begin' ) {
         return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
@@ -267,9 +313,9 @@ export class OgcFilterTimeComponent implements OnInit {
       const dayDiff = moment(dateValue).diff(moment(this.handleMin()), 'days', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const dayDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
+        const dayDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
         const _mod = (dayDiffPlus1 % moment.duration(this.step).asDays());
-        return  (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+        return (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
       } else if ( type === 'begin' ) {
         const _mod = ((dayDiff % moment.duration(this.step).asDays()) + 1);
         return (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8
@@ -288,21 +334,32 @@ export class OgcFilterTimeComponent implements OnInit {
   getDateTime(date, pos) {
     const valuetmp = new Date(date);
     let valuetmp2;
-
     if (!this.sliderMode) {
       switch (pos) {
-        case 1:
-          valuetmp2 = valuetmp.setHours(
+        case 1: {
+          if (this.currentFilter.calendarModeYear) {
+            valuetmp2 = valuetmp.setHours(0, 0);
+            break;
+          } else {
+            valuetmp2 = valuetmp.setHours(
             this.beginHourFormControl.value,
             this.beginMinuteFormControl.value
-          );
-          break;
-        case 2:
-          valuetmp2 = valuetmp.setHours(
-            this.endHourFormControl.value,
-            this.endMinuteFormControl.value
-          );
-          break;
+            );
+            break;
+          }
+        }
+        case 2: {
+          if (this.currentFilter.calendarModeYear) {
+            valuetmp2 = valuetmp.setHours(0, 0);
+            break;
+          } else {
+            valuetmp2 = valuetmp.setHours(
+              this.endHourFormControl.value,
+              this.endMinuteFormControl.value
+            );
+            break;
+          }
+        }
       }
     }
     return new Date(valuetmp2 ? valuetmp2 : valuetmp);

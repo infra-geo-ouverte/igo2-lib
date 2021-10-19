@@ -11,6 +11,7 @@
         "baseLayers": "Fonds de carte",
         "unavailableTitle": "Catalogue indisponible",
         "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
+        "someUnavailable": "Certaines couches d'information du catalogue sont indisponible pour le moment ou vous n'avez pas les permissions requises.",
         "externalProvider": {
           "catalog": "Ce catalogue provient d'une organisation externe.",
           "group": "Ces couches proviennent d'une organisation externe.",
@@ -102,7 +103,7 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
-          "CSVsemicolon": "CSV (séparateur point-virgule)",
+          "CSVsemicolon": "CSV (compatible Excel)",
           "URL": "Lien externe"
         },
         "gpx.error.poly": {
@@ -311,7 +312,7 @@
         }
       },
       "directionsForm": {
-        "stopLayer": "Itinéraire - arrêts",
+        "stopLayer": "Itinéraire - Arrêts",
         "routeLayer": "Itinéraire - Tracé",
         "start": "Début",
         "intermediate": "Intermédiaire",
@@ -324,6 +325,8 @@
         "raiseStop": "Prioriser l'arrêt",
         "lowerStop": "Reporter l'arrêt plus loin dans le parcours",
         "addStop": "Ajouter un arrêt",
+        "clearStop": "Réinitialiser cet arrêt",
+        "moveStop": "Déplacer cet arrêt",
         "removeStop": "Supprimer l'arrêt",
         "drivingOptions": "Choix d'itinéraires",
         "summary": "Résumé de l'itinéraire",
@@ -346,7 +349,46 @@
         "sharp left": "fortement à gauche",
         "left": "gauche",
         "slight left": "légèrement à gauche",
-        "straight": "tout droit"
+        "straight": "tout droit",
+        "turn": {
+          "straight": "Continuer sur {{route}}",
+          "uturn": "Faire demi-tour sur {{route}}",
+          "else": "Tourner {{aggregatedDirection}} sur {{route}}"
+        },
+        "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
+        "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
+        "arrive": {
+          "lastStep" : "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
+          "intermediate" : "Vous atteignez le point intermédiare sur {{route}}"
+        },
+        "merge": "Continuer sur {{route}}",
+        "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",
+        "off ramp": "Prendre la sortie d'autoroute {{aggregatedDirection}}",
+        "fork": {
+          "left" : "Garder la gauche sur {{route}}",
+          "right" : "Garder la droite sur {{route}}",
+          "else" : "Continuer sur {{route}}"
+        },
+        "end of road": "À la fin de la route, tourner {{translatedModifier}} sur {{route}}",
+        "use lane": "Prendre la voie de ...",
+        "continue": {
+          "notUturn": "Continuer sur {{route}}"
+        },
+        "roundabout": "Au rond-point, prendre la {{exit}}{{cntSuffix}} sortie vers {{route}}",
+        "rotary": "Rond-point rotary ...",
+        "roundabout turn": "Rond-point, prendre la ...",
+        "exit roundabout": "Poursuivre vers {{route}}",
+        "notification": "notification ...",
+        "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
+        "unknown": "???",
+    
+        "cntSuffix": { 
+          "first": "ère",
+          "secondAndMore": "e"
+        },
+        "modifier": {
+          "prefix": "à "
+        }
       },
       "cardinalPoints": {
         "n": "nord",
@@ -476,7 +518,9 @@
         "endDate": "Date de fin",
         "startDate": "Date de début",
         "hour": "Heure",
-        "minute": "Minute"
+        "minute": "Minute",
+        "endYear": "Année de fin",
+        "startYear": "Année de début"
       },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",
@@ -568,15 +612,15 @@
           "title": "Sommes de la sélection",
           "length.title": "Distance",
           "area.title": "Superficie",
-          "lengthInMeters": "Mètres",
-          "lengthInKilometers": "Kilomètres",
-          "lengthInMiles": "Miles",
-          "lengthInFeet": "Pieds",
-          "areaInSquareMeters": "Mètres²",
-          "areaInSquareKilometers": "Kilomètres²",
-          "areaInSquareMiles": "Miles²",
-          "areaInHectares": "Hectares",
-          "areaInAcres": "Acres",
+          "lengthInMeters": "m",
+          "lengthInKilometers": "km",
+          "lengthInMiles": "mi",
+          "lengthInFeet": "pi",
+          "areaInSquareMeters": "m²",
+          "areaInSquareKilometers": "km²",
+          "areaInSquareMiles": "mi²",
+          "areaInHectares": "ha",
+          "areaInAcres": "ac",
           "perimeterInMeters": "Périmètre en mètres"
         },
         "layerTitle": "Mesure à la carte",
@@ -585,33 +629,33 @@
         "length": "Distance",
         "lengthHeader": "Distance / Périmètre",
         "perimeter": "Périmètre",
-        "meters": "Mètres",
+        "meters": "m",
         "m": "m",
-        "kilometers": "Kilomètres",
+        "kilometers": "km",
         "km": "km",
-        "miles": "Miles",
+        "miles": "mi",
         "mi": "mi",
-        "feet": "Pieds",
+        "feet": "pi",
         "ft": "pi",
-        "squareMeters": "Mètres²",
+        "squareMeters": "m²",
         "m²": "m²",
-        "squareKilometers": "Kilomètres²",
+        "squareKilometers": "km²",
         "km²": "km²",
-        "squareMiles": "Miles²",
+        "squareMiles": "mi²",
         "mi²": "mi²",
-        "squareFeet": "Pieds²",
+        "squareFeet": "pi²",
         "ft²": "pi²",
-        "hectares": "Hectares",
+        "hectares": "ha",
         "ha": "ha",
-        "acres": "Acres",
+        "acres": "ac",
         "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
-        "toggleDisplayLines": "Afficher les distances sur les lignes",
+        "toggleDisplayLines": "Afficher les distances pour les lignes",
         "toggleDisplayDistance": "Afficher les distances pour les superficies",
         "toggleDisplayAreas": "Afficher les superficies",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
-          "calculate.tooltip": "Calculer",
+          "calculate.tooltip": "Totaux et conversions",
           "delete.tooltip": "Supprimer",
           "modify.tooltip": "Modifier"
         }

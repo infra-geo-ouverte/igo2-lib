@@ -2,9 +2,9 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlDragBoxInteraction, { DragBoxEvent } from 'ol/interaction/DragBox';
 import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
-import { EventsKey, ListenerFunction } from 'ol/events';
+import { EventsKey } from 'ol/events';
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { unByKey, OnReturn } from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
@@ -44,7 +44,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * Listener to the map click event that allows selecting a feature
    * by clicking on the map
    */
-  private mapClickListener: OnReturn;
+  private mapClickListener;
 
   private olDragSelectInteraction: OlDragSelectInteraction;
 
@@ -135,6 +135,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * overlay.
    */
   deactivateSelection() {
+    this.unlistenToMapClick();
     this.removeDragBoxInteraction();
     this.unwatchAll();
   }
@@ -220,14 +221,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   /**
    * Remove the map click listener
    */
-  // private unlistenToMapClick() {
-  //   if (this.mapClickListener !== undefined) {
-  //     this.map.ol.un(
-  //       this.mapClickListener.type,
-  //       this.mapClickListener.listener
-  //     );
-  //   }
-  // }
+  private unlistenToMapClick() {
+    unByKey(this.mapClickListener);
+  }
 
   /**
    * On map click, select feature at pixel

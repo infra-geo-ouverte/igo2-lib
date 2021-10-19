@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { BehaviorSubject, from, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
 import OlStyle from 'ol/style/Style';
@@ -20,9 +20,9 @@ import OlPolygon from 'ol/geom/Polygon';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlOverlay from 'ol/Overlay';
-import { unByKey, OnReturn } from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 
-import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
+import { LanguageService, StorageScope, StorageService } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 import type { EntityTableComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
@@ -157,6 +157,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   public displayAreas: boolean = true;
 
   /**
+   * Observable of line boolean
+   * @internal
+   */
+   public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  /**
    * Observable of area boolean
    * @internal
    */
@@ -179,6 +185,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   public showTooltips: boolean = true;
+
+  /**
+   * Whether draw control toggle is disabled or not
+   * @internal
+   */
+  public drawControlIsDisabled: boolean = true;
 
   /**
    * Draw line control
@@ -213,12 +225,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Feature added listener key
    */
-  private onFeatureAddedKey: OnReturn;
+  private onFeatureAddedKey;
 
   /**
    * Feature removed listener key
    */
-  private onFeatureRemovedKey: OnReturn;
+  private onFeatureRemovedKey;
 
   /**
    * Active draw control
@@ -283,7 +295,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   @Input()
   set activeMeasureType(value: MeasureType) { this.setActiveMeasureType(value); }
   get activeMeasureType(): MeasureType { return this._activeMeasureType; }
-  private _activeMeasureType: MeasureType = MeasureType.Length;
+  private _activeMeasureType: MeasureType;
 
   /**
    * The minimum length a segment must have to display a tooltip.
@@ -323,6 +335,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.toggleDrawControl();
     this.updateTooltipsOfOlSource(this.store.source.ol);
     this.checkDistanceAreaToggle();
+    this.setActiveMeasureType(MeasureType.Length);
   }
 
   /**
@@ -600,7 +613,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.selectedFeatures$$ = store.stateView.manyBy$((record: EntityRecord<FeatureWithMeasure>) => {
       return record.state.selected === true;
     }).pipe(
-      skip(1)  // Skip initial emission
+      skip(1) // Skip initial emission
     )
     .subscribe((records: EntityRecord<FeatureWithMeasure>[]) => {
       if (this.modifyControl.active === true) {
@@ -609,12 +622,17 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.selectedFeatures$.next(records.map(record => record.entity));
     });
 
-    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists  => {
-    if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
+    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists => {
+      if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
         this.hasArea$.next(true);
-      }
-      else {
+      } else {
         this.hasArea$.next(false);
+      }
+
+      if (objectsExists.find(objectExist => objectExist.geometry.type === 'LineString')){
+        this.hasLine$.next(true);
+      } else {
+        this.hasLine$.next(false);
       }
     }));
 
@@ -692,6 +710,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param drawControl Draw control
    */
   private activateDrawControl(drawControl: DrawControl) {
+    this.drawControlIsDisabled = false;
     this.activeDrawControl = drawControl;
     this.drawStart$$ = drawControl.start$
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawStart(olGeometry));
@@ -758,7 +777,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private onDrawChanges(olGeometry: OlLineString | OlPolygon) {
     const measure = measureOlGeometry(olGeometry, this.projection);
     this.updateMeasureOfOlGeometry(olGeometry, Object.assign({}, measure, {
-      area: undefined  // We don't want to display an area tooltip while drawing.
+      area: undefined // We don't want to display an area tooltip while drawing.
     }));
     this.measure$.next(measure);
   }
@@ -906,7 +925,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     if (area !== undefined) {
       this.updateOlTooltip(
         updateOlTooltipAtCenter(olGeometry),
-        squareMetersToUnit(area,  this.activeAreaUnit),
+        squareMetersToUnit(area, this.activeAreaUnit),
         this.activeAreaUnit,
         MeasureType.Area
       );

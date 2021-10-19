@@ -57,14 +57,14 @@ export interface OgcFiltersOptions {
   allowedOperatorsType?: OgcFilterOperatorType;
 }
 
-export interface IgoOgcSelector  {
+export interface IgoOgcSelector {
   groups: SelectorGroup[];
   bundles: OgcSelectorBundle[];
   selectorType: 'pushButton' | 'checkbox' | 'radioButton' | 'select';
   order?: number;
 }
 
-export interface SelectorGroup  {
+export interface SelectorGroup {
   enabled?: boolean;
   title?: string;
   name: string;
@@ -72,7 +72,7 @@ export interface SelectorGroup  {
   computedSelectors?: OgcSelectorBundle[];
 }
 
-export interface OgcSelectorBundle  {
+export interface OgcSelectorBundle {
   id: string;
   title?: string;
   logical?: string;
@@ -153,6 +153,7 @@ export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   restrictToStep?: boolean;
   sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
+  calendarModeYear?: boolean;
 }
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;

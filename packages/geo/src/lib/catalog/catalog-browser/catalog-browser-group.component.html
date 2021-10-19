@@ -26,7 +26,7 @@
     </mat-icon>
   </button>
 
-  <ng-container *ngIf="(added$ | async) && !(preview$ | async); else notadded">
+  <ng-container *ngIf="(added$ | async) && (preview$ | async) === false; else notadded">
     <button
       mat-icon-button
       tooltip-position="below"

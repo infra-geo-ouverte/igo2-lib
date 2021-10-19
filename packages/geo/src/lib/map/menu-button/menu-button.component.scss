@@ -1,0 +1,31 @@
+@import '../../../../../core/src/style/partial/core.variables';
+
+#menu-button {
+  background-color: $app-background-color;
+  border-radius: 0;
+  left: $igo-margin;
+  top: $igo-margin;
+}
+
+#menu-button.menu-button-reverse-color {
+  height: 40px;
+  border-radius: 0;
+  height: 45px;
+  width: 48px;
+  left: 0px;
+  top: 3px;
+}
+
+#menu-button.menu-button-reverse-color-close {
+  border-radius: 0;
+  left: $igo-margin;
+  top: $igo-margin;
+}
+
+mat-icon.disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+#menu-button ::ng-deep div.mat-button-ripple-round {
+  border-radius: 0;
+}

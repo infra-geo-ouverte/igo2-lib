@@ -25,7 +25,7 @@ import { handleZoomAuto } from './workspace.utils';
 @Injectable({
   providedIn: 'root'
 })
-export class WfsActionsService implements OnDestroy  {
+export class WfsActionsService implements OnDestroy {
 
   public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
     this.storageService.get('workspaceMaximize') as boolean

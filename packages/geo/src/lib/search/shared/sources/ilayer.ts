@@ -23,6 +23,7 @@ import {
   ILayerDataSource
 } from './ilayer.interfaces';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -203,6 +204,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Layer name or keyword
    * @returns Observable of <SearchResult<LayerOptions>[]
    */
+
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string | undefined,
     options?: TextSearchOptions

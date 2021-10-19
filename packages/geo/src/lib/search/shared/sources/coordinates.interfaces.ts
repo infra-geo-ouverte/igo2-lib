@@ -1,4 +1,3 @@
-import { FeatureGeometry } from '../../../feature';
 
 export interface CoordinatesData {
   coord: [number, number];

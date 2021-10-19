@@ -11,7 +11,6 @@ import { formatWFSQueryString,
           defaultMaxFeatures,
           getFormatFromOptions} from './wms-wfs.utils';
 import { concatMap } from 'rxjs/operators';
-import { WFS } from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 @Injectable({
   providedIn: 'root'

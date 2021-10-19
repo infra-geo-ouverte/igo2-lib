@@ -7,6 +7,7 @@ export interface RouteServiceOptions {
   visibleOnLayersKey?: boolean | string;
   visibleOffLayersKey?: boolean | string;
   directionsCoordKey?: boolean | string;
+  directionsOptionsKey?: boolean | string;
   toolKey?: boolean | string;
   wmsUrlKey?: boolean | string;
   wmsLayersKey?: boolean | string;

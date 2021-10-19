@@ -5,10 +5,13 @@ import {
   IgoMap,
   LayerService,
   MapService,
-  FeatureStore,
-  Feature,
-  ProjectionService
+  ProjectionService,
+  StopsStore,
+  StopsFeatureStore,
+  RoutesFeatureStore,
+  StepFeatureStore
 } from '@igo2/geo';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-directions',
@@ -30,8 +33,11 @@ export class AppDirectionsComponent {
     geolocate: true
   };
 
-  public stopsStore = new FeatureStore<Feature>([], { map: this.map });
-  public routeStore = new FeatureStore<Feature>([], { map: this.map });
+  public stopsStore: StopsStore = new StopsStore([]);
+  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], { map: this.map });
+  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], { map: this.map });
+  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], { map: this.map });
+  public zoomToActiveRoute$: Subject<void> = new Subject();
 
   constructor(
     private projectionService: ProjectionService,

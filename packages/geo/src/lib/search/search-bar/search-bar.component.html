@@ -22,7 +22,7 @@
     </button>
 
     <button
-      *ngIf="!(empty$ | async)"
+      *ngIf="(empty$ | async)===false"
       mat-icon-button
       [color]="color"
       (click)="onClearButtonClick()">

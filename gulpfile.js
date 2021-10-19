@@ -144,6 +144,17 @@ gulp.task('geo:copyStyles', done => {
   done();
 });
 
+gulp.task('prepublishOnly', done => {
+  gulp.src('./dist/auth/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/auth'));
+  gulp.src('./dist/common/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/common'));
+  gulp.src('./dist/context/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/context'));
+  gulp.src('./dist/core/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/core'));
+  gulp.src('./dist/geo/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/geo'));
+  gulp.src('./dist/integration/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/integration'));
+  gulp.src('./dist/utils/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/utils'));
+  done();
+});
+
 // ==========================================================
 
 gulp.task('core:concatStyles', done => {
@@ -162,6 +173,7 @@ gulp.task('core:concatStyles', done => {
       './packages/common/src/lib/collapsible/collapsible.theming.scss',
       './packages/common/src/lib/entity/entity.theming.scss',
       './packages/common/src/lib/entity/entity-table/entity-table.theming.scss',
+      './packages/common/src/lib/home-button/home-button.theming.scss',
       './packages/common/src/lib/list/list.theming.scss',
       './packages/common/src/lib/panel/panel.theming.scss',
       './packages/common/src/lib/tool/tool.theming.scss',
@@ -169,7 +181,7 @@ gulp.task('core:concatStyles', done => {
       './packages/common/src/lib/interactive-tour/interactive-tour.theming.scss',
       './packages/geo/src/style/geo.theming.scss',
       './packages/geo/src/lib/directions/directions.theming.scss',
-      './packages/geo/src/lib/directions/directions-form/directions-form.theming.scss',
+      './packages/geo/src/lib/directions/directions-results/directions-results.theming.scss',
       './packages/geo/src/lib/draw/drawingTool.theming.scss',
       './packages/geo/src/lib/draw/draw/draw.theming.scss',
       './packages/geo/src/lib/feature/feature.theming.scss',
@@ -183,6 +195,7 @@ gulp.task('core:concatStyles', done => {
       './packages/geo/src/lib/map/map.theming.scss',
       './packages/geo/src/lib/map/map-browser/map-browser.theming.scss',
       './packages/geo/src/lib/map/zoom-button/zoom-button.theming.scss',
+      './packages/geo/src/lib/map/menu-button/menu-button.theming.scss',
       './packages/geo/src/lib/measure/measure.theming.scss',
       './packages/geo/src/lib/measure/measurer/measurer.theming.scss',
       './packages/core/src/style/themes/blue.theme.scss',

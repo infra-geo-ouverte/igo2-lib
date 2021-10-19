@@ -126,6 +126,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initStore();
     this.drawControl = this.createDrawControl(this.fillColor, this.strokeColor, this.strokeWidth);
+    this.drawControl.setGeometryType(this.geometryType.Point as any);
+    this.toggleDrawControl();
   }
 
   /**
@@ -205,7 +207,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.subscriptions$$.push(this.store.stateView.manyBy$((record: EntityRecord<FeatureWithDraw>) => {
       return record.state.selected === true;
     }).pipe(
-      skip(1)  // Skip initial emission
+      skip(1) // Skip initial emission
     ).subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
       this.selectedFeatures$.next(records.map(record => record.entity));
     }));
@@ -265,7 +267,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
-        disableClose: false
+        disableClose: false,
+        data: {currentLabel: olGeometryFeature.get('draw')}
       });
 
       // when dialog box is closed, get label and set it to geometry

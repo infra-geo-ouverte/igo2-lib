@@ -23,7 +23,7 @@ import {
   FeatureMotion
 } from '@igo2/geo';
 
-import { getEntityTitle, EntityStore } from '@igo2/common';
+import { getEntityTitle } from '@igo2/common';
 
 @Component({
   selector: 'app-query',

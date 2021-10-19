@@ -4,6 +4,7 @@ export * from './change';
 export * from './change.interface';
 export * from './file';
 export * from './object-utils';
+export * from './number-utils';
 export * from './strenum';
 export * from './string-utils';
 export * from './user-agent';
