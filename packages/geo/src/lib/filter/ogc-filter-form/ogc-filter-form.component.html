@@ -35,7 +35,7 @@
 
 <mat-form-field
   class="field"
-  *ngIf="!(currentFilterIsSpatial$ | async) && (fields$ | async) && (fields$| async).length > 0 && (fields$| async)[0].name !== ''"
+  *ngIf="(currentFilterIsSpatial$ | async)===false && (fields$ | async) && (fields$| async).length > 0 && (fields$| async)[0].name !== ''"
   (mouseenter)="inputClearable = 'selectField'"
   (mouseleave)="inputClearable = undefined"
   [floatLabel]="floatLabel">
@@ -73,7 +73,7 @@
 
 
 <mat-form-field
-  [ngClass]="{'operator': !(currentFilterIsSpatial$ | async) , 'dualInput': (currentFilterIsSpatial$ | async)}"
+  [ngClass]="{'operator': (currentFilterIsSpatial$ | async)===false , 'dualInput': (currentFilterIsSpatial$ | async)}"
   [floatLabel]="floatLabel">
   <mat-select
     tooltip-position="below"

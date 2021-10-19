@@ -7,9 +7,11 @@ import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
+import olPoint from 'ol/geom/Point';
 import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
 import olCircle from 'ol/geom/Circle';
+import * as olstyle from 'ol/style';
 
 import proj4 from 'proj4';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -42,7 +44,8 @@ export class IgoMap {
   public alwaysTracking: boolean;
   public positionFollower: boolean = true;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
-  public geolocationFeature: olFeature<OlGeometry>;
+  public geolocationPositionFeature: olFeature<OlGeometry>;
+  public geolocationAccuracyFeature: olFeature<OlGeometry>;
   public bufferGeom: olCircle;
   public bufferFeature: olFeature<OlGeometry>;
   public buffer: Overlay;
@@ -130,7 +133,7 @@ export class IgoMap {
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.layerWatcher.subscribe(() => {}, null);
+      this.layerWatcher.subscribe(() => { }, null);
     } else {
       this.layerWatcher.unsubscribe();
     }
@@ -297,8 +300,8 @@ export class IgoMap {
         const offset = layer.zIndex
           ? 0
           : layer.baseLayer
-          ? offsetBaseLayerZIndex++
-          : offsetZIndex++;
+            ? offsetBaseLayerZIndex++
+            : offsetZIndex++;
         return this.doAddLayer(layer, offset);
       })
       .filter((layer: Layer | undefined) => layer !== undefined);
@@ -532,36 +535,62 @@ export class IgoMap {
         return;
       }
       const accuracy = geolocation.getAccuracy();
+      const coordinates = geolocation.getPosition();
       if (accuracy < 10000) {
-        const geometry = geolocation.getAccuracyGeometry();
-        const extent = geometry.getExtent();
-        if (
-          this.geolocationFeature &&
-          this.overlay.dataSource.ol.getFeatureById(
-            this.geolocationFeature.getId()
-          )
-        ) {
-          this.overlay.dataSource.ol.removeFeature(this.geolocationFeature);
-        }
+        const positionGeometry = coordinates ? new olPoint(coordinates) : null;
+
+        const accuracyGeometry = geolocation.getAccuracyGeometry();
+        const accuracyExtent = accuracyGeometry.getExtent();
+
+        [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
+          if (feature && this.overlay.dataSource.ol.getFeatureById(feature.getId())) {
+            this.overlay.dataSource.ol.removeFeature(feature);
+          }
+        });
 
         if (this.bufferFeature) {
           this.buffer.dataSource.ol.removeFeature(this.bufferFeature);
         }
 
-        this.geolocationFeature = new olFeature({ geometry });
-        this.geolocationFeature.setId('geolocationFeature');
+        this.geolocationPositionFeature = new olFeature({ geometry: positionGeometry });
+        this.geolocationPositionFeature.setId('geolocationPositionFeature');
+
+        this.geolocationPositionFeature.setStyle(
+          new olstyle.Style({
+            image: new olstyle.Circle({
+              radius: 6,
+              fill: new olstyle.Fill({
+                color: '#3399CC',
+              }),
+              stroke: new olstyle.Stroke({
+                color: '#fff',
+                width: 2,
+              }),
+            }),
+          })
+        );
+
+
+        this.geolocationAccuracyFeature = new olFeature({ geometry: accuracyGeometry });
+        this.geolocationAccuracyFeature.setId('geolocationAccuracyFeature');
         if (this.alwaysTracking) {
-          this.overlay.addOlFeature(
-            this.geolocationFeature,
-            this.positionFollower ? FeatureMotion.Move : FeatureMotion.None
-          );
+          [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
+            this.overlay.addOlFeature(
+              feature,
+              this.positionFollower ? FeatureMotion.Move : FeatureMotion.None
+            );
+          });
+
         } else {
-          this.overlay.addOlFeature(this.geolocationFeature);
+          [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
+            this.overlay.addOlFeature(
+              feature
+            );
+          });
         }
 
-        if (this.ol.getView().get('options_').buffer) {
+        if (this.ol.getView().get('options_')?.buffer) {
           const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
-          const coordinates = geolocation.getPosition();
           this.bufferGeom = new olCircle(coordinates, bufferRadius);
           const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
           const bufferFill = this.ol.getView().get('options_').buffer.bufferFill;
@@ -581,12 +610,11 @@ export class IgoMap {
           this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
-          this.viewController.zoomToExtent(extent as [number, number, number, number]);
+          this.viewController.zoomToExtent(accuracyExtent as [number, number, number, number]);
           this.positionFollower = !this.positionFollower;
         }
       } else if (first) {
         const view = this.ol.getView();
-        const coordinates = geolocation.getPosition();
         view.setCenter(coordinates);
         view.setZoom(14);
       }

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 import { Subscription, Observable, of, zip } from 'rxjs';
-import { unByKey, OnReturn } from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 
 import OlFeature from 'ol/Feature';
 import OlRenderFeature from 'ol/render/Feature';
@@ -49,7 +49,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Listener to the map click event
    */
-  private mapClickListener: OnReturn;
+  private mapClickListener;
 
   /**
    * OL drag box interaction
@@ -135,7 +135,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * Stop listening for map clicks
    */
   private unlistenToMapClick() {
-    // this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
+    unByKey(this.mapClickListener);
     this.mapClickListener = undefined;
   }
 

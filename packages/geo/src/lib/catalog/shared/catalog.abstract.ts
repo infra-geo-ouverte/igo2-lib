@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 
 import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
-import { QueryFormat, QueryHtmlTarget  } from '../../query';
+import { QueryFormat, QueryHtmlTarget } from '../../query';
 
 import { ICatalog, ICompositeCatalog , CatalogItem, CatalogItemGroup } from './catalog.interface';
 import { CatalogService } from './catalog.service';
@@ -52,7 +52,7 @@ class WMSCatalog extends Catalog {
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.wms];
-        this.type =  TypeCatalog[sType];
+        this.type = TypeCatalog[sType];
     }
 
     public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -64,7 +64,7 @@ class WMTSCatalog extends Catalog {
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.wmts];
-        this.type =  TypeCatalog[sType];
+        this.type = TypeCatalog[sType];
     }
 
     public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -76,7 +76,7 @@ class BaselayersCatalog extends Catalog {
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.baselayers];
-        this.type =  TypeCatalog[sType];
+        this.type = TypeCatalog[sType];
     }
 
     public collectCatalogItems(): Observable<CatalogItemGroup[]> {
@@ -88,7 +88,7 @@ class ArcGISRestCatalog extends Catalog {
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.arcgisrest];
-        this.type =  TypeCatalog[sType];
+        this.type = TypeCatalog[sType];
     }
 
     public collectCatalogItems() {
@@ -99,7 +99,7 @@ class ArcGISRestCatalog extends Catalog {
 class TileOrImageArcGISRestCatalog extends Catalog {
     constructor(options: Catalog, service: CatalogService, typeCatalog: TypeCatalog) {
         super(options, service);
-        this.type =  TypeCatalog[TypeCatalog[typeCatalog]];
+        this.type = TypeCatalog[TypeCatalog[typeCatalog]];
     }
 
     public collectCatalogItems() {
@@ -113,7 +113,7 @@ export class CompositeCatalog extends Catalog implements ICompositeCatalog {
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.composite];
-        this.type =  TypeCatalog[sType];
+        this.type = TypeCatalog[sType];
         this.url = null;
     }
 

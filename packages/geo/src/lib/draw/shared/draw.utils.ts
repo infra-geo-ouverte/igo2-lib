@@ -57,7 +57,7 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
     olGeometry.setProperties({_midpoints: olMidpoints}, true);
-  } else  {
+  } else {
     olMidpoints = updateOlGeometryMidpoints(olGeometry);
   }
   const olTooltips = olMidpoints.map((olMidpoint: OlPoint) => {

@@ -10,7 +10,6 @@ import { uuid, ObjectUtils } from '@igo2/utils';
 import {
   OgcFilter,
   IgoOgcFilterObject,
-  WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions,
   OgcInterfaceFilterOptions,
   OgcFilterableDataSourceOptions,

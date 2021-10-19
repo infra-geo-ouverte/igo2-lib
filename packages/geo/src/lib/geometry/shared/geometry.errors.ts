@@ -1,8 +1,8 @@
-/* tslint:disable */
+/* eslint-disable */
 // See this issue: https://github.com/Microsoft/TypeScript/issues/13965
 // And the solution: https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
 // for an explanation as to why the prototype is set manually
-/* tslint:enable */
+/* eslint-enable */
 
 export class GeometrySliceError extends Error {}
 

@@ -3,10 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { uuid } from '@igo2/utils';
-import { ConfigService, Message } from '@igo2/core';
+import { Cacheable } from 'ts-cacheable';
 
-import { Directions, DirectionsOptions } from '../shared/directions.interface';
+import { uuid } from '@igo2/utils';
+import { ConfigService } from '@igo2/core';
+
+import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsFormat, SourceDirectionsType } from '../shared/directions.enum';
 
 import { DirectionsSource } from './directions-source';
@@ -35,7 +37,10 @@ export class OsrmDirectionsSource extends DirectionsSource {
     return OsrmDirectionsSource._name;
   }
 
-  route(coordinates: [number, number][], directionsOptions: DirectionsOptions = {}): Observable<Directions[]> {
+  @Cacheable({
+    maxCacheCount: 20
+  })
+  route(coordinates: [number, number][], directionsOptions: DirectionOptions = {}): Observable<Direction[]> {
     const directionsParams = this.getRouteParams(directionsOptions);
     return this.http
       .get<JSON[]>(this.directionsUrl + coordinates.join(';'), {
@@ -44,7 +49,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
       .pipe(map(res => this.extractRoutesData(res)));
   }
 
-  private extractRoutesData(response): Directions[] {
+  private extractRoutesData(response): Direction[] {
     const routeResponse = [];
     response.routes.forEach(route => {
       routeResponse.push(this.formatRoute(route, response.waypoints));
@@ -52,12 +57,12 @@ export class OsrmDirectionsSource extends DirectionsSource {
     return routeResponse;
   }
 
-  private getRouteParams(directionsOptions: DirectionsOptions = {}): HttpParams {
+  private getRouteParams(directionsOptions: DirectionOptions = {}): HttpParams {
 
     directionsOptions.alternatives = directionsOptions.alternatives !== undefined ? directionsOptions.alternatives : true;
-    directionsOptions.steps = directionsOptions.steps !== undefined  ? directionsOptions.steps : true;
-    directionsOptions.geometries = directionsOptions.geometries !== undefined  ? directionsOptions.geometries : 'geojson';
-    directionsOptions.overview = directionsOptions.overview !== undefined  ? directionsOptions.overview : false;
+    directionsOptions.steps = directionsOptions.steps !== undefined ? directionsOptions.steps : true;
+    directionsOptions.geometries = directionsOptions.geometries !== undefined ? directionsOptions.geometries : 'geojson';
+    directionsOptions.overview = directionsOptions.overview !== undefined ? directionsOptions.overview : false;
 
     return new HttpParams({
       fromObject: {
@@ -69,7 +74,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
     });
   }
 
-  private formatRoute(roadNetworkRoute: any, waypoints: any): Directions {
+  private formatRoute(roadNetworkRoute: any, waypoints: any): Direction {
     const stepsUI = [];
     roadNetworkRoute.legs.forEach(leg => {
       leg.steps.forEach(step => {

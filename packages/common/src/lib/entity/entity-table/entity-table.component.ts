@@ -34,7 +34,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
+export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 

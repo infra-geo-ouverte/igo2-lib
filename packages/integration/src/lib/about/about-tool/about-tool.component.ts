@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { ConfigService, Version } from '@igo2/core';
+import { ConfigService, LanguageService, Version } from '@igo2/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
@@ -49,7 +49,7 @@ export class AboutToolComponent implements OnInit {
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
-  private _headerHtml: string = 'igo.integration.aboutTool.headerHtml';
+  private _headerHtml: string = this.languageService.translate.instant('igo.integration.aboutTool.headerHtml');
 
   private baseUrlProfil;
   private baseUrlGuide;
@@ -60,7 +60,8 @@ export class AboutToolComponent implements OnInit {
     public configService: ConfigService,
     public auth: AuthService,
     private http: HttpClient,
-    private cdRef: ChangeDetectorRef) {
+    private cdRef: ChangeDetectorRef,
+    private languageService: LanguageService) {
     this.version = configService.getConfig('version');
     this.baseUrlProfil = configService.getConfig('context.url') + '/user/igo?';
     this.baseUrlGuide = configService.getConfig('depot.url') + '/projects/Documentation/files/';

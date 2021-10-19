@@ -21,7 +21,7 @@ export class MsalBroadcastServiceb2c {
         private authService: MsalServiceb2c
     ) {
         this._msalSubject = new Subject<EventMessage>();
-        this.msalSubject$  = this._msalSubject.asObservable();
+        this.msalSubject$ = this._msalSubject.asObservable();
 
         // InProgress as BehaviorSubject so most recent inProgress state will be available upon subscription
         this._inProgress = new BehaviorSubject<InteractionStatus>(InteractionStatus.Startup);

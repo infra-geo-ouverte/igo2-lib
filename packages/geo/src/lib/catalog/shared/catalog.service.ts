@@ -10,8 +10,7 @@ import {
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  TypeCapabilitiesStrings
+  ArcGISRestDataSourceOptions
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -24,7 +23,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
-import { generateIdFromSourceOptions, generateId } from '../../utils';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -136,6 +135,9 @@ export class CatalogService {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
+        if (!capabilities) {
+          return items;
+        }
         if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
           catalog.abstract = capabilities.Service.Abstract;
         }
@@ -191,7 +193,7 @@ export class CatalogService {
 
     const catalogsFromInstance = [] as Catalog[];
     compositeCatalog.map((component: Catalog) => {
-      component.sortDirection = catalog.sortDirection;  // propagate sortDirection with parent value
+      component.sortDirection = catalog.sortDirection; // propagate sortDirection with parent value
       catalogsFromInstance.push(
         CatalogFactory.createInstanceCatalog(component, this)
     );
@@ -340,13 +342,17 @@ export class CatalogService {
           const title = this.languageService.translate.instant(
             'igo.geo.catalog.unavailableTitle'
           );
-          const message = this.languageService.translate.instant(
+          const message =
+          catalog.title ? this.languageService.translate.instant(
             'igo.geo.catalog.unavailable',
             { value: catalog.title }
+          ) : this.languageService.translate.instant(
+            'igo.geo.catalog.someUnavailable'
           );
 
           this.messageService.error(message, title);
-          throw e;
+          console.error(e);
+          return of(undefined);
         })
       );
   }
@@ -441,7 +447,7 @@ export class CatalogService {
       title: itemListIn.Title,
       address: catalog.id,
       externalProvider: catalog.externalProvider || false,
-      sortDirection: catalog.sortDirection,  // propagate sortDirection
+      sortDirection: catalog.sortDirection, // propagate sortDirection
       items: itemListIn.Layer.reduce((items: CatalogItem[], layer: any) => {
         if (layer.Layer !== undefined) {
           // recursive, check next level
@@ -537,6 +543,9 @@ export class CatalogService {
     catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
+    if (!capabilities) {
+      return [];
+    }
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -608,6 +617,9 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
+    if (!capabilities) {
+      return [];
+    }
     const layers = capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)

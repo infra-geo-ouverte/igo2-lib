@@ -55,7 +55,7 @@ export class DrawControl {
   /**
    * Draw select observable (modify drawn features)
    */
-  public select$: Subject<any> =  new Subject();
+  public select$: Subject<any> = new Subject();
 
   /**
    * Freehand mode observable (defaults to false)

@@ -16,7 +16,8 @@
       "@igo2/core": "core",
       "@igo2/context": "context",
       "@igo2/common": "common",
-      "@ngx-translate/core" : "ngxt-core"
+      "@ngx-translate/core" : "ngxt-core",
+      "@turf/point-on-feature":"pointOnFeature"
     }
   }
 }

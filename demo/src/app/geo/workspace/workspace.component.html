@@ -44,7 +44,7 @@
       [template]="workspace.meta.tableTemplate">
     </igo-entity-table>
     <mat-card-content
-    *ngIf="!(workspace.inResolutionRange$ | async)">
+    *ngIf="(workspace.inResolutionRange$ | async) === false">
       No data available at this scale. Please zoom in. 
     </mat-card-content>
 
