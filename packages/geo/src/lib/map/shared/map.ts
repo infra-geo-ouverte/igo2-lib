@@ -1,6 +1,7 @@
 import olMap from 'ol/Map';
 import olView from 'ol/View';
 import olFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olGeolocation from 'ol/Geolocation';
 import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
@@ -41,14 +42,17 @@ export class IgoMap {
   public alwaysTracking: boolean;
   public positionFollower: boolean = true;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
-  public geolocationFeature: olFeature;
+  public geolocationFeature: olFeature<OlGeometry>;
   public bufferGeom: olCircle;
-  public bufferFeature: olFeature;
+  public bufferFeature: olFeature<OlGeometry>;
   public buffer: Overlay;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
   public viewController: MapViewController;
+  public swipeEnabled$ = new BehaviorSubject<boolean>(false);
+  public mapCenter$ = new BehaviorSubject<boolean>(false);
+  public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
 
   public bufferDataSource: FeatureDataSource;
 
@@ -201,7 +205,7 @@ export class IgoMap {
       controls.push(new olControlScaleLine(scaleLineOpt));
     }
 
-    const currentControls = Object.assign([], this.ol.getControls().array_);
+    const currentControls = Object.assign([], this.ol.getControls().getArray());
     currentControls.forEach(control => {
       this.ol.removeControl(control);
     });
@@ -266,7 +270,7 @@ export class IgoMap {
 
   getLayerByOlUId(olUId: string): Layer {
     return this.layers.find(
-      (layer: Layer) => layer.ol.ol_uid && layer.ol.ol_uid === olUId
+      (layer: Layer) => layer.ol.get('ol_uid') && layer.ol.get('ol_uid') === olUId
     );
   }
 
@@ -555,15 +559,15 @@ export class IgoMap {
           this.overlay.addOlFeature(this.geolocationFeature);
         }
 
-        if (this.ol.getView().options_.buffer) {
-          const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
+        if (this.ol.getView().get('options_').buffer) {
+          const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
           const coordinates = geolocation.getPosition();
           this.bufferGeom = new olCircle(coordinates, bufferRadius);
-          const bufferStroke = this.ol.getView().options_.buffer.bufferStroke;
-          const bufferFill = this.ol.getView().options_.buffer.bufferFill;
+          const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
+          const bufferFill = this.ol.getView().get('options_').buffer.bufferFill;
 
           let bufferText;
-          if (this.ol.getView().options_.buffer.showBufferRadius) {
+          if (this.ol.getView().get('options_').buffer.showBufferRadius) {
             bufferText = bufferRadius.toString() + 'm';
           } else {
             bufferText = '';
@@ -577,7 +581,7 @@ export class IgoMap {
           this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
-          this.viewController.zoomToExtent(extent);
+          this.viewController.zoomToExtent(extent as [number, number, number, number]);
           this.positionFollower = !this.positionFollower;
         }
       } else if (first) {

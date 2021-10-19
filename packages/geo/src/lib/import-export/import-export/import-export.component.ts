@@ -25,6 +25,8 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import olPoint from 'ol/geom/Point';
+import { circular } from 'ol/geom/Polygon';
 
 import {
   handleFileExportError,
@@ -46,8 +48,14 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { InputProjections, ProjectionsLimitationsOptions } from './import-export.interface';
+import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
+import { computeProjectionsConstraints } from '../../map';
+
+import olVectorSource from 'ol/source/Vector';
+import olClusterSource from 'ol/source/Cluster';
+import olVectorTileSource from 'ol/source/VectorTile';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 @Component({
   selector: 'igo-import-export',
@@ -72,6 +80,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private encodings$$: Subscription;
   private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
+
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
@@ -293,29 +302,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
-  private computeProjectionsConstraints() {
-    const utmZone = this.projectionsLimitations.utmZone;
-    const mtmZone = this.projectionsLimitations.mtmZone;
-    this.projectionsConstraints = {
-      projFromConfig: this.projectionsLimitations.projFromConfig === false ? false : true,
-      nad83: this.projectionsLimitations.nad83 === false ? false : true,
-      wgs84: this.projectionsLimitations.wgs84 === false ? false : true,
-      webMercator: this.projectionsLimitations.webMercator === false ? false : true,
-      utm: this.projectionsLimitations.utm === false ? false : true,
-      mtm: this.projectionsLimitations.mtm === false ? false : true,
-      utmZone: {
-        minZone: utmZone && utmZone.minZone ? utmZone.minZone : 1,
-        maxZone: utmZone && utmZone.maxZone ? utmZone.maxZone : 60,
-      },
-      mtmZone: {
-        minZone: mtmZone && mtmZone.minZone ? mtmZone.minZone : 1,
-        maxZone: mtmZone && mtmZone.maxZone ? mtmZone.maxZone : 10,
-      }
-    };
-  }
-
   private computeProjections() {
-    this.computeProjectionsConstraints();
+    this.projectionsConstraints = computeProjectionsConstraints(this.projectionsLimitations);
     const projections: InputProjections[] = [];
 
     if (this.projectionsConstraints.nad83) {
@@ -467,11 +455,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.loading$.next(true);
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
-    if (
-      !this.popupChecked &&
-      data.layers.length > 1 &&
-      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) &&
-      !this.popupAllowed) {
+    if (!this.popupChecked && data.layers.length > 1 &&
+      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) && !this.popupAllowed) {
       this.handlePopup();
     }
 
@@ -482,19 +467,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         filename = data.name;
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
-      if (
-        data.format === ExportFormat.URL &&
-        dSOptions.download &&
-        (dSOptions.download.url || dSOptions.download.dynamicUrl)
-      ) {
+      if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
-          if (url.match(/service=wfs/gi)) {
-            this.downloadService.open(lay);
-          } else {
-            window.open(url , '_blank');
-          }
+          url.match(/service=wfs/gi) ? this.downloadService.open(lay) : window.open(url , '_blank');
           this.loading$.next(false);
         }, 500);
         return;
@@ -504,7 +481,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
 
         if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
-          // Only export selected feature &&  into map extent
+          // Only export selected feature && into map extent
           olFeatures = wks.entityStore.stateView.all()
             .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
         } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
@@ -521,12 +498,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
       else {
+        const ol = lay.dataSource.ol as olVectorSource<OlGeometry> | olClusterSource ;
         if (data.featureInMapExtent) {
-          olFeatures = lay.dataSource.ol.getFeaturesInExtent(
+          olFeatures = ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()
           );
         } else {
-          olFeatures = lay.dataSource.ol.getFeatures();
+          olFeatures = ol.getFeatures();
         }
         if (lay.dataSource instanceof ClusterDataSource) {
           olFeatures = olFeatures.flatMap((cluster: any) =>
@@ -534,6 +512,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           );
         }
       }
+
       const translate = this.languageService.translate;
       let geomTypes: { geometryType: string, features: any[] }[] = [];
       if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
@@ -550,6 +529,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         geomTypes = [{ geometryType: '', features: olFeatures }];
       }
 
+      geomTypes.forEach(geomType => {
+        geomType.features.forEach(feature => {
+          const radius: number = feature.get('rad');
+
+          if (radius) {
+            const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
+            const circle = circular(center4326, radius, 500);
+            circle.transform('EPSG:4326', feature.get('_projection'));
+            feature.setGeometry(circle);
+          }
+        });
+      });
+
       if (data.format === ExportFormat.GPX) {
         const gpxFeatureCnt = geomTypes.length;
         geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
@@ -560,23 +552,35 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.messageService.error(message, title, { timeOut: 20000 });
         }
       }
+
       if (geomTypes.length === 0) {
         this.loading$.next(false);
         const title = translate.instant('igo.geo.export.nothing.title');
         const message = translate.instant('igo.geo.export.nothing.text');
         this.messageService.error(message, title, { timeOut: 20000 });
+
       } else {
         geomTypes.map(geomType =>
-          this.exportService
-            .export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
-            .subscribe(
-              () => { },
-              (error: Error) => this.onFileExportError(error),
-              () => {
-                this.onFileExportSuccess();
-                this.loading$.next(false);
-              }
-            ));
+          this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
+          .subscribe(
+            () => {},
+            (error: Error) => this.onFileExportError(error),
+            () => {
+              this.onFileExportSuccess();
+
+              geomType.features.forEach(feature => {
+                const radius: number = feature.get('rad');
+
+                if (radius) {
+                  const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+                  point.transform('EPSG:4326', feature.get('_projection'));
+                  feature.setGeometry(point);
+                }
+              });
+
+              this.loading$.next(false);
+            }
+        ));
       }
     });
   }
@@ -601,7 +605,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
-        featureInMapExtent: [false, [Validators.required]]
+        featureInMapExtent: [false, [Validators.required]],
       });
     }
   }

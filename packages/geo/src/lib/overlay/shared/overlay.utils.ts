@@ -6,6 +6,7 @@ import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { StyleService } from '../../layer/shared/style.service';
 import { createOverlayMarkerStyle } from './overlay-marker-style.utils';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 /**
  * Create an overlay layer and it's source
@@ -26,13 +27,13 @@ export function createOverlayLayer(): VectorLayer {
  * combination for lines and polygons
  * @returns Style function
  */
-function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
+function createOverlayLayerStyle(): (olFeature: OlFeature<OlGeometry>) => olstyle.Style {
   const defaultStyle = createOverlayDefaultStyle();
   const markerStyle = createOverlayMarkerStyle();
 
   let style;
 
-  return (olFeature: OlFeature) => {
+  return (olFeature: OlFeature<OlGeometry>) => {
     if (olFeature.getId() === 'bufferFeature') {
       style = createBufferStyle(
         olFeature.get('bufferStroke'),
@@ -111,7 +112,7 @@ function createBufferStyle(
     color: strokeRGBA
   });
 
-  const fill = new olstyle.Stroke({
+  const fill = new olstyle.Fill({
     color: fillRGBA
   });
 

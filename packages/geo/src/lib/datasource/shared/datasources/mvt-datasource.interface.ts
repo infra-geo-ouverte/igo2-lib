@@ -6,7 +6,7 @@ import { DataSourceOptions } from './datasource.interface';
 export interface MVTDataSourceOptions extends DataSourceOptions {
   // type?: 'mvt';
   projection?: string;
-  attributions?: olAttribution;
+  attributions?: string | string[];
   format?: any;
   ol?: olSourceVectorTile;
   url?: string;

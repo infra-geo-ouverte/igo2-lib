@@ -113,7 +113,7 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
   }
 
   set tileGenerationParams(params: TileGenerationParams) {
-    this._tileGenerationParams = params;
+    this._tileGenerationParams = {...params};
     this.parentLevel = params.parentLevel;
     this.genMethod = params.genMethod;
     this.strategy = params.genMethod;

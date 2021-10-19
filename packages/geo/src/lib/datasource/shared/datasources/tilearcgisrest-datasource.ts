@@ -1,4 +1,5 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
+import { Options } from 'ol/source/TileArcGISRest';
 
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
@@ -30,7 +31,7 @@ export class TileArcGISRestDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceTileArcGISRest {
-    return new olSourceTileArcGISRest(this.options);
+    return new olSourceTileArcGISRest(this.options as Options);
   }
 
   getLegend(): Legend[] {

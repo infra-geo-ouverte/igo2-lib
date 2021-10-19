@@ -6,3 +6,5 @@ export * from './geolocate-button';
 export * from './offline-button';
 export * from './baselayers-switcher';
 export * from './rotation-button';
+export * from './swipe-control';
+export * from './map-center';

@@ -7,5 +7,5 @@
       "bowser" : "bowser"
     }
   },
-  "whitelistedNonPeerDependencies": ["bowser"]
+  "allowedNonPeerDependencies": ["bowser"]
 }

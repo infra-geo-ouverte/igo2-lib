@@ -51,6 +51,21 @@
               "jspdf",
               "file-saver",
               "jwt-decode",
+              "canvg",
+              "core-js-pure/features/array/from",
+              "core-js-pure/features/array/is-array",
+              "core-js-pure/features/instance/slice",
+              "core-js-pure/features/object/create",
+              "core-js-pure/features/object/define-property",
+              "core-js-pure/features/object/get-own-property-descriptor",
+              "core-js-pure/features/object/get-prototype-of",
+              "core-js-pure/features/object/set-prototype-of",
+              "core-js-pure/features/promise",
+              "core-js-pure/features/reflect/get",
+              "core-js-pure/features/symbol",
+              "core-js-pure/features/symbol/iterator",
+              "canvg/lib/index.es.js",
+              "html-entities",
               "@turf/helpers",
               "@turf/line-segment",
               "@turf/meta",
@@ -61,7 +76,13 @@
               "minimatch",
               "path",
               "pixelworks",
-              "brace-expansion"
+              "brace-expansion",
+              "raf",
+              "pako/lib/inflate",
+              "txml",
+              "lru-cache",
+              "striptags"
+
             ]
           },
           "configurations": {
@@ -178,7 +199,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/auth/tsconfig.lib.json",
             "project": "packages/auth/ng-package.json"
@@ -225,7 +246,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/common/tsconfig.lib.json",
             "project": "packages/common/ng-package.json"
@@ -272,7 +293,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/core/tsconfig.lib.json",
             "project": "packages/core/ng-package.json"
@@ -319,7 +340,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/geo/tsconfig.lib.json",
             "project": "packages/geo/ng-package.json"
@@ -360,7 +381,7 @@
       "prefix": "igo",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/utils/tsconfig.lib.json",
             "project": "packages/utils/ng-package.json"
@@ -399,7 +420,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/context/tsconfig.lib.json",
             "project": "packages/context/ng-package.json"
@@ -446,7 +467,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/integration/tsconfig.lib.json",
             "project": "packages/integration/ng-package.json"
@@ -472,8 +493,5 @@
       }
     }
   },
-  "defaultProject": "demo",
-  "cli": {
-    "analytics": false
-  }
+  "defaultProject": "demo"
 }

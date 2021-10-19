@@ -5,13 +5,13 @@
 
   igo-zoom-button > div.igo-zoom-button-container > button {
     &.mat-primary {
-      color: mat-color($primary, if($is-dark, default-contrast, default));
-      background-color: mat-color($primary, if($is-dark, default, default-contrast));
+      color: mat.get-color-from-palette($primary, if($is-dark, default-contrast, default));
+      background-color: mat.get-color-from-palette($primary, if($is-dark, default, default-contrast));
     }
 
     &.mat-accent {
-      color: mat-color($accent, if($is-dark, default-contrast, default));
-      background-color: mat-color($accent, if($is-dark, default, default-contrast));
+      color: mat.get-color-from-palette($accent, if($is-dark, default-contrast, default));
+      background-color: mat.get-color-from-palette($accent, if($is-dark, default, default-contrast));
     }
   }
 

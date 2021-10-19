@@ -1,5 +1,3 @@
-@import './entity-table/entity-table.theming';
-
 @mixin igo-entity-theming($theme) {
   @include igo-entity-table-theming($theme);
 }

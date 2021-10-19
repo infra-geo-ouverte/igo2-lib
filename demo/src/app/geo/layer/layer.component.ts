@@ -131,10 +131,10 @@ export class AppLayerComponent {
       .createAsyncLayer({
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           optionsFromCapabilities: true,
           params: {
-            LAYERS: 'MELS_CS_ANGLO_S',
+            LAYERS: 'parc_routier',
             VERSION: '1.3.0'
           }
         }
@@ -147,7 +147,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             LAYERS: 'bgr_v_sous_route_res_sup_act',
             VERSION: '1.3.0'
@@ -162,7 +162,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           optionsFromCapabilities: true,
           params: {
             LAYERS: 'lieuhabite',
@@ -219,7 +219,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             LAYERS: 'evenements',
             VERSION: '1.3.0'
