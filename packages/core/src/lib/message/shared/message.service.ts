@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import {
-  Notification,
-  NotificationsService,
-  NotificationType
-} from '@igo2/angular2-notifications';
 
 import { ConfigService } from '../../config/config.service';
 
 import { Message, MessageOptions } from './message.interface';
+import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MessageType } from './message.enum';
 
 @Injectable({
@@ -20,8 +16,8 @@ export class MessageService {
   private options: MessageOptions;
 
   constructor(
-    private notificationService: NotificationsService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private toastr: ToastrService
   ) {
     this.options = this.configService.getConfig('message') || {};
   }
@@ -50,98 +46,57 @@ export class MessageService {
 
       message = this.handleTemplate(message);
 
-      let notification: Notification;
       if (message.text) {
-        notification = this.notificationService.create(
-          message.title,
-          message.text,
-          (message.type as any) as NotificationType,
-          message.options
-        );
-      } else if (message.html) {
-        if (!message.icon) {
-          message.options.theClass = message.options.theClass
-            ? message.options.theClass + ' noIcon'
-            : 'noIcon';
+        let messageShown: ActiveToast<any>;
+        switch (message.type) {
+          case MessageType.SUCCESS:
+            messageShown = this.success(message.text, message.title, message.options);
+            break;
+          case MessageType.ERROR:
+            messageShown = this.error(message.text, message.title, message.options);
+            break;
+          case MessageType.INFO:
+            messageShown = this.info(message.text, message.title, message.options);
+            break;
+          case MessageType.ALERT:
+          case MessageType.WARNING:
+            messageShown = this.alert(message.text, message.title, message.options);
+            break;
+          default:
+            messageShown = this.info(message.text, message.title, message.options);
+            break;
         }
-
-        notification = this.notificationService.html(
-          message.html,
-          (message.type as any) as NotificationType,
-          message.options
-        );
-      } else {
-        return;
+        message.options.id = messageShown.toastId;
       }
-
-      if (message.icon !== undefined) {
-        this.addIcon(notification, message.icon);
-      }
-      message.options.id = notification.id;
-      return notification;
     }
-    return;
   }
 
-  success(text: string, title?: string, options: any = {}) {
-    return this.message({
-      text,
-      title,
-      icon: options.icon || 'check',
-      options,
-      type: MessageType.SUCCESS
-    });
+  success(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+    return this.toastr.success(text, title, options);
   }
 
-  error(text: string, title?: string, options: any = {}) {
-    return this.message({
-      text,
-      title,
-      icon: options.icon || 'error_outline',
-      options,
-      type: MessageType.ERROR
-    });
+  error(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+    return this.toastr.error(text, title, options);
   }
 
-  info(text: string, title?: string, options: any = {}) {
-    return this.message({
-      text,
-      title,
-      icon: options.icon || 'info_outline',
-      options,
-      type: MessageType.INFO
-    });
+  info(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+    return this.toastr.info(text, title, options);
   }
 
-  alert(text: string, title?: string, options: any = {}) {
-    return this.message({
-      text,
-      title,
-      icon: options.icon || 'access_alarm',
-      options,
-      type: MessageType.ALERT
-    });
+  alert(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+    return this.toastr.warning(text, title, options);
   }
 
-  remove(id?: string) {
-    this.notificationService.remove(id);
+  remove(id?: number) {
+    this.toastr.remove(id);
   }
 
   removeAllAreNotError() {
     for (const mess of this.messages$.value) {
-      if (mess.type !== 'error') {
+      if (mess.type !== MessageType.ERROR) {
         this.remove(mess.options.id);
       }
     }
-  }
-
-  private addIcon(notification: Notification, icon: string) {
-    // There is no way to add an icon to a notification when reating
-    // it so we simply set it on the notification directly.
-    // See https://github.com/flauc/angular2-notifications/issues/165
-    notification.icon = `
-      <mat-icon class="material-icons mat-icon mat-list-avatar" svgIcon="${icon}">
-      </mat-icon>`;
   }
 
   private handleTemplate(message: Message): Message {
@@ -152,12 +107,10 @@ export class MessageService {
     let html = this.options.template;
     html = html.replace('${text}', message.text);
     html = html.replace('${title}', message.title);
-    html = html.replace('${icon}', message.icon);
 
-    message.html = html;
-    message.text = undefined;
+    message.html = undefined;
+    message.text = html;
     message.title = undefined;
-    message.icon = undefined;
     return message;
   }
 }
