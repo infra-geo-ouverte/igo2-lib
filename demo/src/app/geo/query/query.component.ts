@@ -64,7 +64,7 @@ export class AppQueryComponent {
           })
         );
       });
-      /*
+    
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
@@ -159,7 +159,7 @@ export class AppQueryComponent {
     });
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
-    */
+    
     this.layerService
       .createAsyncLayer({
         title: 'Vector tile with custom getfeatureinfo url',
