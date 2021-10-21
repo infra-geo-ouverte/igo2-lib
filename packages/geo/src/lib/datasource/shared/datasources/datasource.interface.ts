@@ -31,7 +31,7 @@ export interface DataSourceOptions {
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
-  edition?: boolean;
+  edition?: EditionOptions;
 }
 
 export interface SourceFieldsOptionsParams {
@@ -43,6 +43,14 @@ export interface SourceFieldsOptionsParams {
   type?: number | number[] | string | string[] | boolean | Date;
   primary?: boolean;
   validation?: SourceFieldsValidationParams;
+}
+
+export interface EditionOptions {
+  enabled: boolean;
+  baseUrl: string;
+  addUrl: string;
+  deleteUrl: string;
+  modifyUrl: string;
 }
 
 export interface SourceFieldsValidationParams {

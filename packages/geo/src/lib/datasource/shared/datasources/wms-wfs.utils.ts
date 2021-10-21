@@ -123,6 +123,10 @@ export function formatWFSQueryString(
   const getCapabilities = `${url}${separator}service=WFS&request=GetCapabilities&${version}`;
   let getFeature = `${url}${separator}service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
+  if (paramsWFS.key) {
+    const key = paramsWFS.key;
+    getFeature += `&key=${key}`;
+  }
 
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
   getpropertyvalue += `&${cnt}&${valueReference}`;

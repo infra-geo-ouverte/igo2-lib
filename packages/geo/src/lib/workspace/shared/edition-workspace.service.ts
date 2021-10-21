@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
 import {
   ActionStore,
   EntityRecord,
@@ -25,8 +26,6 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { HttpClient } from '@angular/common/http';
-import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +46,7 @@ export class EditionWorkspaceService {
     private dialog: MatDialog) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
-    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition !== true) {
+    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition.enabled !== true) {
       return;
     }
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;
@@ -111,7 +110,8 @@ export class EditionWorkspaceService {
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
-          sourceFields: dataSource.options.sourceFields || undefined
+          sourceFields: dataSource.options.sourceFields || undefined,
+          edition: dataSource.options.edition
         } as WFSoptions
       })
       .subscribe((workspaceLayer: VectorLayer) => {
@@ -129,7 +129,7 @@ export class EditionWorkspaceService {
           meta: {
             tableTemplate: undefined
           }
-        });
+        }, this, this.dialog, this.configService);
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
@@ -228,12 +228,12 @@ export class EditionWorkspaceService {
         return [{
           icon: 'pencil',
           color: 'primary',
-          click: (feature) => { this.modifyFeature(feature, workspace) }
+          click: (feature) => { workspace.modifyFeature(feature, workspace) }
         },
         {
           icon: 'delete',
           color: 'warn',
-          click: (feature) => { this.deleteFeature(feature, workspace) }
+          click: (feature) => { workspace.deleteFeature(feature, workspace) }
         }] as EntityTableButton[];
       }
     });
@@ -251,65 +251,48 @@ export class EditionWorkspaceService {
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
-  public addFeature(feature) {
-    console.log(feature);
-    const url = this.configService.getConfig('edition.url');
+  public addFeature(url, properties) {
     if (url) {
-      this.http.post(`${url}`, {}).subscribe(
-        (data: any) => {
-          console.log('Add success');
-          console.log(data);
+      // this.http.post(`${url}`, {properties}).subscribe(
+      //   (data: any) => {
+      //     console.log('Add success');
+      //     console.log(data);
+      //   }
+      // );
+      //console.log(url);
+    }
+  }
+
+  public deleteFeature(feature, workspace, url) {
+    if (url) {
+      this.http.delete(`${url}`, {}).subscribe(
+        () => {
+          console.log('Delete success');
+          workspace.entityStore.delete(feature);
+          setTimeout(() => {
+            const inMapExtent = workspace.entityStore.strategies.find(strategy =>
+              strategy instanceof FeatureStoreInMapExtentStrategy) as FeatureStoreInMapExtentStrategy;
+            //console.log(inMapExtent);
+            inMapExtent.updateEntitiesInExtent(workspace.entityStore);
+          }, 1000);
+
+          const message = this.languageService.translate.instant(
+            'igo.geo.workspace.deleteSuccess'
+          );
+          this.messageService.success(message);
+        },
+        error => {
+          error.error.caught = true;
+          const message = this.languageService.translate.instant(
+            'igo.geo.workspace.deleteError'
+          );
+          this.messageService.error(message);
         }
       );
     }
   }
 
-  public deleteFeature(feature, workspace: EditionWorkspace) {
-
-    setTimeout(() => {
-      const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
-        disableClose: false,
-        data: {type: 'delete'}
-    });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === false) {
-          let id;
-          const url = this.configService.getConfig('edition.url');
-          for (const column of workspace.meta.tableTemplate.columns) {
-            for (const property in feature.properties) {
-              const columnName = column.name.slice(11);
-              if (columnName === property && column.primary === true) {
-                id = feature.properties[property];
-              }
-            }
-          }
-          if (url) {
-            this.http.delete(`${url}?id_caserne=eq.${id}`, {}).subscribe(
-              () => {
-                console.log('Delete success');
-                workspace.entityStore.delete(feature);
-
-                const message = this.languageService.translate.instant(
-                  'igo.geo.workspace.deleteSuccess'
-                );
-                this.messageService.success(message);
-              },
-              error => {
-                error.error.caught = true;
-                const message = this.languageService.translate.instant(
-                  'igo.geo.workspace.deleteError'
-                );
-                this.messageService.error(message);
-              }
-            );
-          }
-        }
-      })
-    }, 250)
-  }
-
   public modifyFeature(feature, workspace) {
-    
+    workspace.meta.tableTemplate.columns
   }
 }

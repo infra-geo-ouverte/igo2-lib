@@ -86,10 +86,10 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     if (workspace !== undefined) {
       return;
     }
-    if (layer.dataSource instanceof WFSDataSource && layer.dataSource.options.edition !== true) {
+    if (layer.dataSource instanceof WFSDataSource && layer.dataSource.options.edition?.enabled !== true) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return wfsWks;
-    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition !== true) {
+    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition?.enabled !== true) {
       if (!layer.dataSource.options.paramsWFS) { return; }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
@@ -100,10 +100,10 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     } else if (
         layer.dataSource instanceof FeatureDataSource &&
         (layer as VectorLayer).exportable === true &&
-        layer.dataSource.options.edition !== true) {
+        layer.dataSource.options.edition?.enabled !== true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return featureWks;
-    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition === true) {
+    } else if (layer.dataSource instanceof WMSDataSource && layer.dataSource.options.edition?.enabled === true) {
       const editionWks = this.editionWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       return editionWks;
     }

@@ -80,7 +80,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     }));
   }
 
-  private updateEntitiesInExtent(store) {
+  updateEntitiesInExtent(store) {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
