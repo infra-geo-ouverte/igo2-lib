@@ -7,7 +7,6 @@ import { ConfigService } from '../../config/config.service';
 import { Message, MessageOptions } from './message.interface';
 import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MessageType } from './message.enum';
-import { LanguageService } from '../../language/shared/language.service';
 
 
 @Injectable({
@@ -19,8 +18,7 @@ export class MessageService {
 
   constructor(
     private configService: ConfigService,
-    private toastr: ToastrService,
-    private languageService: LanguageService
+    private toastr: ToastrService
   ) {
     this.options = this.configService.getConfig('message') || {};
   }
@@ -75,27 +73,19 @@ export class MessageService {
   }
 
   success(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
-    const message = this.languageService.translate.instant(text);
-    const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.success(message, translatedTitle, options);
+    return this.toastr.success(text, title, options);
   }
 
   error(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
-    const message = this.languageService.translate.instant(text);
-    const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.error(message, translatedTitle, options);
+    return this.toastr.error(text, title, options);
   }
 
   info(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
-    const message = this.languageService.translate.instant(text);
-    const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.info(message, translatedTitle, options);
+    return this.toastr.info(text, title, options);
   }
 
   alert(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
-    const message = this.languageService.translate.instant(text);
-    const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.warning(message, translatedTitle, options);
+    return this.toastr.warning(text, title, options);
   }
 
   remove(id?: number) {
