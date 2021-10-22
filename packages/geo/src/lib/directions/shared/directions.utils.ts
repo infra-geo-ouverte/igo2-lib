@@ -18,9 +18,9 @@ import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionRelativePositionType, DirectionType } from './directions.enum';
-import { SearchResult } from '../../search/shared/search.interfaces';
+import { Research, SearchResult } from '../../search/shared/search.interfaces';
 import { map } from 'rxjs/operators';
-import { Subscription, zip } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { SearchService } from '../../search/shared/search.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { stringToLonLat } from '../../map/shared/map.utils';
@@ -361,7 +361,7 @@ export function computeSearchProposal(
   }
 
   const response = stringToLonLat(term, 'EPSG:3857');
-  let researches;
+  let researches: Research[];
   let isCoord = false;
   if (response.lonLat) {
     isCoord = true;
@@ -375,7 +375,7 @@ export function computeSearchProposal(
     .pipe(map((results: SearchResult[]) => results.filter(r =>
       isCoord ? r.data.geometry.type === 'Point' && r.data.geometry : r.data.geometry)))
   );
-  subscription$$ = zip(...requests$)
+  subscription$$ = combineLatest(requests$)
     .pipe(
       map((searchRequests: SearchResult[][]) => [].concat.apply([], searchRequests)),
       map((searchResults: SearchResult[]) => {
