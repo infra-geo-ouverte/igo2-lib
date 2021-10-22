@@ -55,7 +55,10 @@ export function addLayerAndFeaturesStyledToMap(
   styleListService: StyleListService,
   styleService: StyleService,
   layerId?: string,
-  imposedSourceOptions?
+  imposedSourceOptions?,
+  imposedLayerOptions?,
+  zoomTo: boolean = true
+
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -154,15 +157,17 @@ export function addLayerAndFeaturesStyledToMap(
     source.ol.addFeatures(olFeatures);
   }
 
-  const layer = new VectorLayer({
-    title: layerTitle,
-    id: layerId || uuid(),
-    source,
-    style
-  });
+  const layer = new VectorLayer(
+    Object.assign({
+      title: layerTitle,
+      id: layerId || uuid(),
+      source,
+      style
+    }, imposedLayerOptions));
   map.addLayer(layer);
-  moveToOlFeatures(map, olFeatures);
-
+  if (zoomTo){
+    moveToOlFeatures(map, olFeatures);
+  }
   return layer;
 }
 
