@@ -184,7 +184,7 @@ export class AppQueryComponent {
       this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/securite.fcgi',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/incendie.fcgi',
         queryable: true,
         queryUrl: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}',
         queryFormat: 'geojson',
