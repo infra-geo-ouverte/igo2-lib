@@ -119,7 +119,7 @@
         "exportButton": "Export",
         "exportButtonLink": "Open the link",
         "exportButtonLinks": "Open the links",
-        "exportCircleToPolygon": "Transform Circle entities in polygons",
+        "exportCombineResults": "Combine layers into one file",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
@@ -382,8 +382,8 @@
         "notification": "notification ...",
         "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "st",
           "secondAndMore": "rd"
         },

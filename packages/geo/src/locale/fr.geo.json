@@ -119,7 +119,7 @@
         "exportButton": "Exporter",
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
-        "exportCircleToPolygon": "Transformer les entités de type Cercle en polygones",
+        "exportCombineResults": "Combiner les couches dans un seul fichier",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
@@ -381,8 +381,8 @@
         "notification": "notification ...",
         "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "ère",
           "secondAndMore": "e"
         },

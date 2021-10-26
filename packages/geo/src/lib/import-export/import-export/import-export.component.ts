@@ -465,11 +465,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
-      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)) {
+      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || ! data.combineLayers) {
         filename = lay.title;
         if (data.name) {
           filename = data.name;
         }
+      } else {
+        filename = "combinedLayers";
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
       if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
@@ -558,14 +560,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
 
-      if (data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) {
+      if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
         geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
 
         if (layerIndex !== data.layers.length - 1) {
-          filename = filename + lay.title + "_";
           continue;
         } else {
-          filename += lay.title;
           geomTypesCSV.forEach(geomType => {
             geomType.features.forEach(feature => {
               featuresCSV.push(feature);
@@ -581,7 +581,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.messageService.error(message, title, { timeOut: 20000 });
 
       } else {
-        if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)) {
+        if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || !data.combineLayers) {
           geomTypes.map(geomType =>
             this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
             .subscribe(
@@ -606,7 +606,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
     };
-    if (data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) {
+    if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
       this.exportService.export(featuresCSV, data.format, filename, data.encoding, this.map.projection)
       .subscribe(
         () => {},
@@ -641,6 +641,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
+        combineLayers: [true, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
@@ -650,6 +651,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
+        combineLayers: [true, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
       });
     }

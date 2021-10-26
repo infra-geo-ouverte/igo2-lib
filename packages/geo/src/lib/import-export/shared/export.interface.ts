@@ -6,6 +6,6 @@ export interface ExportOptions {
   layers: string[];
   layersWithSelection?: string[];
   name?: string;
+  combineLayers?: boolean;
   featureInMapExtent?: boolean;
-  circlesToPolygons?: boolean;
 }
