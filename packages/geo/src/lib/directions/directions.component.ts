@@ -18,7 +18,7 @@ import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopTo
   initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
-import { DirectionType } from './shared/directions.enum';
+import { DirectionType, ProposalType } from './shared/directions.enum';
 import { roundCoordTo, stringToLonLat } from '../map';
 import { SearchService } from '../search/shared/search.service';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
@@ -268,11 +268,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                   if (!stop.searchProposals) {
                     stop.searchProposals = [];
                   }
+                  stop.searchProposals = stop.searchProposals.filter(sp => sp.type === (isCoord ? ProposalType.Coord : ProposalType.Text));
                   let storedSource = stop.searchProposals.find(sp => sp.source === source);
                   if (storedSource) {
                     storedSource.results = results;
                   } else {
                     stop.searchProposals.push({
+                      type: isCoord ? ProposalType.Coord : ProposalType.Text,
                       source,
                       meta,
                       results
