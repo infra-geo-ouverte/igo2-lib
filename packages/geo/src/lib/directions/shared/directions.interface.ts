@@ -9,6 +9,7 @@ export interface DirectionOptions {
   steps?: boolean;
   geometries?: string;
   alternatives?: boolean;
+  continue_straight?: boolean;
 }
 
 export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}

@@ -326,6 +326,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       overview: true,
       steps: false,
       alternatives: false,
+      continue_straight: false
     };
     this.routesQueries$$.map((u) => u.unsubscribe());
     const routeResponse = this.directionsService.route(
