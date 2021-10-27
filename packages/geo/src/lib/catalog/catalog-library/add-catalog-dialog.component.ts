@@ -62,6 +62,10 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
         this.form.get('title').updateValueAndValidity();
       });
 
+    this.predefinedCatalogs.map(c => {
+      c.title = c.title ? c.title : c.url;
+    });
+
     this.computePredefinedCatalogList();
     this.storeViewAll$$ = this.store.view
       .all$()
