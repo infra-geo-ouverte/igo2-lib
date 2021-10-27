@@ -62,10 +62,6 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
         this.form.get('title').updateValueAndValidity();
       });
 
-    this.predefinedCatalogs.map(c => {
-      c.title = c.title ? c.title : c.url;
-    });
-
     this.computePredefinedCatalogList();
     this.storeViewAll$$ = this.store.view
       .all$()
@@ -77,10 +73,6 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.addedCatalogType$$.unsubscribe();
     this.storeViewAll$$.unsubscribe();
-  }
-
-  displayFn(catalog?: Catalog): string | undefined {
-    return catalog.title || '';
   }
 
   changeUrlOrTitle(catalog: Catalog) {
@@ -97,7 +89,6 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
 
   addCatalog(addedCatalog: Catalog) {
     this.error = false;
-    addedCatalog.title = addedCatalog.title === addedCatalog.url ? undefined : addedCatalog.title;
     this.dialogRef.close(addedCatalog);
   }
 
