@@ -4,7 +4,7 @@
     <div class="igo-input-container">
       <mat-form-field>
         <input type="text" formControlName="title" placeholder="{{'igo.geo.printForm.title' | translate}}" matInput [matAutocomplete]="auto2">
-        <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)'>
+        <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)' [displayWith]="displayFn">
           <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
             [matTooltip]="predefinedCatalog.title" [value]="predefinedCatalog">
             {{predefinedCatalog.title}}

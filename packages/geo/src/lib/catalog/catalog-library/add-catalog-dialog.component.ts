@@ -75,6 +75,10 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     this.storeViewAll$$.unsubscribe();
   }
 
+  displayFn(catalog?: Catalog): string | undefined {
+    return catalog.title || '';
+  }
+
   changeUrlOrTitle(catalog: Catalog) {
     this.form.patchValue(catalog);
     this.error = false;
