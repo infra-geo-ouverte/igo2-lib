@@ -97,6 +97,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
 
   addCatalog(addedCatalog: Catalog) {
     this.error = false;
+    addedCatalog.title = addedCatalog.title === addedCatalog.url ? undefined : addedCatalog.title;
     this.dialogRef.close(addedCatalog);
   }
 
