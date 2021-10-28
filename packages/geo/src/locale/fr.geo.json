@@ -123,6 +123,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
+        "exportSeparator": "Insérer un enregistrement vide entre les couches",
         "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",

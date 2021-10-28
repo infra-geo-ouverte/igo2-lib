@@ -566,9 +566,23 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         if (layerIndex !== data.layers.length - 1) {
           continue;
         } else {
+          let previousFeature = undefined;
           geomTypesCSV.forEach(geomType => {
-            geomType.features.forEach(feature => {
-              featuresCSV.push(feature);
+            geomType.features.forEach(currentFeature => {
+              if (data.separator) {
+                if (previousFeature) {
+                  if (currentFeature.get('type') !== previousFeature.get('type')) {
+                    const emptyRowFeature = previousFeature.clone();
+                    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
+                    previousFeatureKeys.forEach(key => {
+                      emptyRowFeature.unset(key, true);
+                    });
+                    featuresCSV.push(emptyRowFeature);
+                  }
+                }
+              }
+              featuresCSV.push(currentFeature);
+              previousFeature = currentFeature;
             });
           });
         }
@@ -642,6 +656,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
         combineLayers: [true, [Validators.required]],
+        separator: [false, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
@@ -652,6 +667,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
         combineLayers: [true, [Validators.required]],
+        separator: [false, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
       });
     }

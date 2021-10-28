@@ -7,5 +7,6 @@ export interface ExportOptions {
   layersWithSelection?: string[];
   name?: string;
   combineLayers?: boolean;
+  separator?: boolean;
   featureInMapExtent?: boolean;
 }
