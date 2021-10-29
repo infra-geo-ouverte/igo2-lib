@@ -14,6 +14,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
 import { IgoImageModule } from '../../image/image.module';
 import { IgoLanguageModule } from '@igo2/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { DateTimeInputModule } from '../../date-time-input/date-time-input.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 /**
  * @ignore
@@ -31,7 +36,13 @@ import { IgoLanguageModule } from '@igo2/core';
     IgoCustomHtmlModule,
     IgoEntityTablePaginatorModule,
     IgoImageModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatTooltipModule,
+    DateTimeInputModule
   ],
   exports: [
     EntityTableComponent

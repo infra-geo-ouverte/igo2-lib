@@ -8,7 +8,10 @@ import {
   OnInit,
   OnDestroy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ElementRef,
+  Optional,
+  Self
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -27,12 +30,17 @@ import {
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { FormBuilder, NgControl, NgForm, FormControlName } from '@angular/forms';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
   selector: 'igo-entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{ provide: MatFormFieldControl, useExisting: EntityTableComponent }]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -183,7 +191,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef,
+    private formBuilder: FormBuilder,
+    protected _focusMonitor: FocusMonitor,
+    protected _elementRef: ElementRef<HTMLElement>,
+    @Optional() @Self() public ngControl: NgControl,
+    @Optional() protected _parentForm: NgForm,
+    @Optional() protected _controlName: FormControlName,
+    protected _defaultErrorStateMatcher: ErrorStateMatcher
+  ) {
+  }
 
   /**
    * Track the selection state to properly display the selection checkboxes

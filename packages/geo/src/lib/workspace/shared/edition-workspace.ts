@@ -93,4 +93,8 @@ export class EditionWorkspace extends Workspace {
   modifyFeature(feature, workspace) {
     
   }
+
+  cancelEdit(feature, workspace){
+    
+  }
 }

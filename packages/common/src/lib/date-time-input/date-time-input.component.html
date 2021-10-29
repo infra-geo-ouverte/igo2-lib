@@ -1,0 +1,22 @@
+<div [formGroup]="parts" class="container">
+  <mat-datepicker-toggle id="toggle"
+    class="date-picker-toggle"
+    matSuffix [for]="picker"
+    (mousedown)="_handleToggleCalendar($event)">
+  </mat-datepicker-toggle>
+  <input #focusField matInput class="date-picker"
+    [matDatepicker]="picker"
+    formControlName="date"
+    aria-label="Date"
+    (dateChange)="_handleInput()"
+    [max]="maxDate">
+  <input #timeInput matInput class="time-input"
+    type="time"
+    formControlName="time"
+    aria-label="Heure et minute"
+    placeholder="--:--"
+    pattern="([01]?[0-9]{1}|2[0-3]{1}):[0-5]{1}[0-9]{1}"
+    (change)="_handleInput()">
+  <span class="filler"></span>
+  <mat-datepicker #picker (closed)="_handleCloseCalendar(picker)"></mat-datepicker>
+</div>

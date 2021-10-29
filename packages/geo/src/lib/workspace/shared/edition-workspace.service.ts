@@ -182,6 +182,52 @@ export class EditionWorkspaceService {
 
   private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
+    const edit = true;
+    let rendereType = EntityTableColumnRenderer.UnsanitizedHTML;
+    let buttons = [];
+    let columns = [];
+
+if (edit){
+  rendereType = EntityTableColumnRenderer.Editable;
+  buttons = [{
+    name: 'edition',
+    title: undefined,
+    renderer: EntityTableColumnRenderer.ButtonGroup,
+    primary: false,
+    valueAccessor: (entity: object) => {
+      return [{
+        icon: 'check',
+        color: 'primary',
+        click: (feature) => { workspace.addFeature(feature, workspace) }
+      },
+      {
+        icon: 'alpha-x',
+        color: 'primary',
+        click: (feature) => { workspace.cancelEdit(feature, workspace) }
+      }] as EntityTableButton[];
+    }
+  }];
+}
+else {
+  buttons = [{
+    name: 'edition',
+    title: undefined,
+    renderer: EntityTableColumnRenderer.ButtonGroup,
+    primary: false,
+    valueAccessor: (entity: object) => {
+      return [{
+        icon: 'pencil',
+        color: 'primary',
+        click: (feature) => { workspace.modifyFeature(feature, workspace) }
+      },
+      {
+        icon: 'delete',
+        color: 'warn',
+        click: (feature) => { workspace.deleteFeature(feature, workspace) }
+      }] as EntityTableButton[];
+    }
+  }];
+}
 
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
@@ -199,7 +245,7 @@ export class EditionWorkspaceService {
             return {
               name: `properties.${key}`,
               title: key,
-              renderer: EntityTableColumnRenderer.UnsanitizedHTML
+              renderer: rendereType
             };
           });
         workspace.meta.tableTemplate = {
@@ -210,39 +256,26 @@ export class EditionWorkspaceService {
       });
       return;
     }
-    let columns = fields.map((field: SourceFieldsOptionsParams) => {
+
+    columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
+        renderer: rendereType,
         valueAccessor: undefined,
-        primary: field.primary === true ? true : false
+        primary: field.primary === true ? true : false,
+        type: field.type
       };
     });
-    columns.push({
-      name: 'edition',
-      title: undefined,
-      renderer: EntityTableColumnRenderer.ButtonGroup,
-      primary: false,
-      valueAccessor: (entity: object) => {
-        return [{
-          icon: 'pencil',
-          color: 'primary',
-          click: (feature) => { workspace.modifyFeature(feature, workspace) }
-        },
-        {
-          icon: 'delete',
-          color: 'warn',
-          click: (feature) => { workspace.deleteFeature(feature, workspace) }
-        }] as EntityTableButton[];
-      }
-    });
+    columns.push(...buttons);
+   
+    console.log(columns);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
       columns
     };
-  }
+}
 
   private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
     const filterClauseFunc = (record: EntityRecord<object>) => {
