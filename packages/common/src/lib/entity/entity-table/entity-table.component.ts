@@ -25,7 +25,8 @@ import {
   EntityTableColumn,
   EntityTableColumnRenderer,
   EntityTableSelectionState,
-  EntityTableScrollBehavior
+  EntityTableScrollBehavior,
+  EntityTableColumnValidation
 } from '../shared';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -490,6 +491,22 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return this.template.valueAccessor(entity, column.name, record);
     }
     return this.store.getProperty(entity, column.name);
+  }
+
+  getValidationAttributeValue(column: EntityTableColumn, validationType: string): any {
+    if (column.validation !== undefined && column.validation[validationType]) {
+      return column.validation[validationType];
+    } else {
+      return false;
+    }
+  }
+
+  getReadOnly(column: EntityTableColumn): any {
+    return (column.validation !== undefined && column.validation.readOnly)
+  }
+
+  getMandatory(column: EntityTableColumn): any {
+    return (column.validation !== undefined && column.validation.mandatory)
   }
 
   /**

@@ -90,7 +90,16 @@ export interface EntityTableTemplate {
   };
 }
 
+export interface EntityTableColumnValidation {
+  readOnly?: boolean;
+  mandatory?: boolean;
+  maxlength?: number;
+  minlength?: number;
+
+}
+
 export interface EntityTableColumn {
+  validation?: EntityTableColumnValidation;
   name: string;
   title: string;
   renderer?: EntityTableColumnRenderer;
