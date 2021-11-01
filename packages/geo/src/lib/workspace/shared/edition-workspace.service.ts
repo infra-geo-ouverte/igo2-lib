@@ -26,6 +26,7 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 
 @Injectable({
   providedIn: 'root'
@@ -300,14 +301,19 @@ else {
     if (url) {
       this.http.delete(`${url}`, {}).subscribe(
         () => {
-          console.log('Delete success');
           workspace.entityStore.delete(feature);
-          setTimeout(() => {
-            const inMapExtent = workspace.entityStore.strategies.find(strategy =>
-              strategy instanceof FeatureStoreInMapExtentStrategy) as FeatureStoreInMapExtentStrategy;
-            //console.log(inMapExtent);
-            inMapExtent.updateEntitiesInExtent(workspace.entityStore);
-          }, 1000);
+          for (const layer of workspace.layer.map.layers) {
+            if (
+              layer.id !== workspace.layer.id &&
+              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
+              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
+              ) {
+                const olLayer = layer.dataSource.ol;
+                let params = olLayer.getParams();
+                params._t = new Date().getTime();
+                olLayer.updateParams(params);
+              }
+          }
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.deleteSuccess'

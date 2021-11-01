@@ -1,5 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
 import {
+  EntityTableColumnRenderer,
   Workspace,
   WorkspaceOptions
 } from '@igo2/common';
@@ -10,7 +11,6 @@ import { ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { EditionWorkspaceService } from './edition-workspace.service';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
-import { ChangeDetectorRef } from '@angular/core';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -87,7 +87,11 @@ export class EditionWorkspace extends Workspace {
   }
 
   activateModifyMode(feature, workspace) {
-    
+    // for (const column of workspace.meta.tableTemplate.columns) {
+    //   if (column.name !== 'edition') {
+    //     column.renderer = EntityTableColumnRenderer.Input;
+    //   }
+    // }
   }
 
   modifyFeature(feature, workspace) {
