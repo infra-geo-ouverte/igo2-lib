@@ -183,12 +183,12 @@ export class EditionWorkspaceService {
   private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
     const edit = true;
-    let rendereType = EntityTableColumnRenderer.UnsanitizedHTML;
+    let rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
 
 if (edit){
-  rendereType = EntityTableColumnRenderer.Editable;
+  rendererType = EntityTableColumnRenderer.Editable;
   buttons = [{
     name: 'edition',
     title: undefined,
@@ -245,7 +245,7 @@ else {
             return {
               name: `properties.${key}`,
               title: key,
-              renderer: rendereType
+              renderer: rendererType,
             };
           });
         workspace.meta.tableTemplate = {
@@ -261,9 +261,12 @@ else {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: rendereType,
+        renderer: rendererType,
         valueAccessor: undefined,
         primary: field.primary === true ? true : false,
+        visible: field.visible,
+        validation: field.validation,
+        valueReturn: field.valueReturn,
         type: field.type
       };
     });

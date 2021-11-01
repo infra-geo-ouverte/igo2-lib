@@ -501,14 +501,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getReadOnly(column: EntityTableColumn): any {
-    return (column.validation !== undefined && column.validation.readOnly)
-  }
-
-  getMandatory(column: EntityTableColumn): any {
-    return (column.validation !== undefined && column.validation.mandatory)
-  }
-
   /**
    * Return the type of renderer of a column
    * @param column Column

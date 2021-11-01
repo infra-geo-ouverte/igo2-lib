@@ -42,7 +42,9 @@ export interface SourceFieldsOptionsParams {
   allowedOperatorsType?: OgcFilterOperatorType;
   type?: number | number[] | string | string[] | boolean | Date;
   primary?: boolean;
+  visible?: boolean;
   validation?: SourceFieldsValidationParams;
+  valueReturn?: boolean;
 }
 
 export interface EditionOptions {

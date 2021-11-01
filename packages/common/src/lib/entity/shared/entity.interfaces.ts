@@ -91,7 +91,7 @@ export interface EntityTableTemplate {
 }
 
 export interface EntityTableColumnValidation {
-  readOnly?: boolean;
+  readonly?: boolean;
   mandatory?: boolean;
   maxlength?: number;
   minlength?: number;
