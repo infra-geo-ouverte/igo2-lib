@@ -70,7 +70,7 @@
       "directions": {
         "warning": {
           "title": "Warning",
-          "message": "The route proposed in this tool does not take into account current road conditions, road congestion or obstacles present on the network."
+          "message": "The route proposed in this tool does not take into account current road conditions, road congestion, obstacles present on the network and ferry schedules (daily and seasonal opening)."
         }
       },
       "advanced-map-tool": {
