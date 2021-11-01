@@ -25,6 +25,7 @@ import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
 import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { QueryService } from '../query/shared/query.service';
 
 @Component({
   selector: 'igo-directions',
@@ -65,11 +66,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
     private directionsService: DirectionsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private queryService: QueryService
   ) { }
 
 
   ngOnInit(): void {
+    this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
@@ -81,6 +84,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.queryService.queryEnabled = true;
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
