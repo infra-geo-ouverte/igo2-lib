@@ -31,9 +31,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName } from '@angular/forms';
+import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
+
+const defaultErrors = {
+  required: 'Champ obligatoire'
+};
 
 @Component({
   selector: 'igo-entity-table',
@@ -577,6 +581,18 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (typeof clickFunc === 'function') {
       clickFunc(record.entity, record);
     }
+  }
+
+  public getErrors(formControl: AbstractControl): string[] {
+    const errorMessages: string[] = [];
+
+    if (formControl.touched && formControl.errors) {
+      Object.keys(formControl.errors).forEach(error => {
+        errorMessages.push(defaultErrors[error] || formControl.errors[error]);
+      });
+    }
+
+    return errorMessages;
   }
 
 }
