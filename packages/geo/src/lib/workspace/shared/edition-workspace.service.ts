@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+
 import {
   ActionStore,
   EntityRecord,
@@ -12,7 +13,7 @@ import {
   EntityTableButton} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
-import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreSelectionStrategy } from '../../feature';
@@ -26,6 +27,7 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { WorkspaceSelectorDirective } from '../workspace-selector/workspace-selector.directive';
 
 @Injectable({
   providedIn: 'root'
@@ -107,6 +109,7 @@ export class EditionWorkspaceService {
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
+          relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
@@ -181,11 +184,16 @@ export class EditionWorkspaceService {
   }
 
   private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
+    let directive: WorkspaceSelectorDirective;
     const fields = layer.dataSource.options.sourceFields || [];
+
+    const relations = layer.dataSource.options.relations || [];
+
     const edit = true;
     let rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
+    let relationsColumn = [];
 
 if (edit){
   rendererType = EntityTableColumnRenderer.Editable;
@@ -270,6 +278,20 @@ else {
         type: field.type
       };
     });
+
+    relationsColumn = relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        onClick: function () { directive.event.emit(relation.name); }
+      };
+    });
+
+    columns.push(...relationsColumn);
     columns.push(...buttons);
    
     console.log(columns);

@@ -1,4 +1,4 @@
-import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
+import { Directive, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -26,6 +26,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   private entities$$: Subscription[] = [];
 
   @Input() map: IgoMap;
+
+  @Output() event = new EventEmitter<string>();
 
   get workspaceStore(): WorkspaceStore {
     return this.component.store;

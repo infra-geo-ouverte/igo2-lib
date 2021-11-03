@@ -104,6 +104,7 @@ export class WmsWorkspaceService {
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
+          relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),

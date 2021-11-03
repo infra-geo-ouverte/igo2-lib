@@ -165,6 +165,15 @@ export class WorkspaceState implements OnDestroy {
     }
   }
 
+  public setActiveWorkspaceByTitle(title: string) {
+    const wksFromTitle = this.store
+      .all()
+      .find(workspace => workspace.title === title);
+    if (wksFromTitle) {
+      this.store.activateWorkspace(wksFromTitle);
+    }
+  }
+
   /**
    * Teardown all the workspaces
    * @internal
