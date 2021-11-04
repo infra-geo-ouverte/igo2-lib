@@ -32,6 +32,7 @@ export interface DataSourceOptions {
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
   edition?: EditionOptions;
+  relations?: RelationOptions[];
 }
 
 export interface SourceFieldsOptionsParams {
@@ -42,7 +43,9 @@ export interface SourceFieldsOptionsParams {
   allowedOperatorsType?: OgcFilterOperatorType;
   type?: number | number[] | string | string[] | boolean | Date;
   primary?: boolean;
+  visible?: boolean;
   validation?: SourceFieldsValidationParams;
+  valueReturn?: boolean;
 }
 
 export interface EditionOptions {
@@ -51,6 +54,15 @@ export interface EditionOptions {
   addUrl: string;
   deleteUrl: string;
   modifyUrl: string;
+}
+
+export interface RelationOptions {
+  name: string;
+  alias: string;
+  icon: string;
+  table: string;
+  parent: string;
+  parent_id: string;
 }
 
 export interface SourceFieldsValidationParams {

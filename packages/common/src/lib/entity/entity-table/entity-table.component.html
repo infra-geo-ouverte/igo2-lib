@@ -82,8 +82,8 @@
                                 <mat-datepicker #picker></mat-datepicker>
                             </div>
                             <input matInput type="time" *ngIf="column.type === 'time'" [formControlName]="column.name" step="900" (focus)="column.onFocus($event)" (keypress)="column.onChange($event)" (blur)="column.onBlur($event)">
-                            <input matInput type="number" *ngIf="column.type === 'number'" [formControlName]="column.name" value="{{getValue(record, column)}}" readonly="{{getReadOnly(column)}}">
-                            <input matInput type="text" *ngIf="!column.type || column.type === 'string'" [formControlName]="column.name" value="{{getValue(record, column)}}">
+                            <input matInput type="number" *ngIf="column.type === 'number'" [formControlName]="column.name" value="{{getValue(record, column)}}" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
+                            <input matInput type="text" *ngIf="!column.type || column.type === 'string'" [formControlName]="column.name" value="{{getValue(record, column)}}" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
                             <mat-checkbox *ngIf="column.type === 'boolean'" [formControlName]="column.name" checked="{{getValue(record, column)}}"></mat-checkbox>
                             <ng-container *ngFor="let validation of getErrors(column.name)" ngProjectAs="mat-error">
                                 <mat-error>{{ validation }}</mat-error>
@@ -93,7 +93,7 @@
                 </ng-container>
                 <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
                     <td mat-cell *matCellDef="let record" class="mat-cell-text" [ngClass]="getCellClass(record, column)">
-                        <mat-icon svgIcon="{{getValue(record, column)}}"></mat-icon>
+                        <mat-icon svgIcon="{{getValue(record, column) || column.icon}}" (click)="column.onClick($event)"></mat-icon>
                     </td>
                 </ng-container>
                 <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup">

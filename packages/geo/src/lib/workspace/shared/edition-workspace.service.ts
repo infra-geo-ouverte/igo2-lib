@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
+
 import {
   ActionStore,
   EntityRecord,
@@ -13,7 +14,7 @@ import {
   WorkspaceSelectorComponent} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
-import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreSelectionStrategy } from '../../feature';
@@ -27,6 +28,7 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { WorkspaceSelectorDirective } from '../workspace-selector/workspace-selector.directive';
 
 @Injectable({
   providedIn: 'root'
@@ -108,6 +110,7 @@ export class EditionWorkspaceService {
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
+          relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
@@ -181,30 +184,59 @@ export class EditionWorkspaceService {
     return store;
   }
 
-  public createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
+    let directive: WorkspaceSelectorDirective;
     const fields = layer.dataSource.options.sourceFields || [];
-    let rendereType = EntityTableColumnRenderer.UnsanitizedHTML;
+
+    const relations = layer.dataSource.options.relations || [];
+
+    const edit = true;
+    let rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
+    let relationsColumn = [];
 
-    buttons = [{
-      name: 'edition',
-      title: undefined,
-      renderer: EntityTableColumnRenderer.ButtonGroup,
-      primary: false,
-      valueAccessor: (entity: object) => {
-        return [{
-          icon: 'pencil',
-          color: 'primary',
-          click: (feature) => { workspace.modifyFeature(feature, workspace) }
-        },
-        {
-          icon: 'delete',
-          color: 'warn',
-          click: (feature) => { workspace.deleteFeature(feature, workspace) }
-        }] as EntityTableButton[];
-      }
-    }];
+if (edit){
+  rendererType = EntityTableColumnRenderer.Editable;
+  buttons = [{
+    name: 'edition',
+    title: undefined,
+    renderer: EntityTableColumnRenderer.ButtonGroup,
+    primary: false,
+    valueAccessor: (entity: object) => {
+      return [{
+        icon: 'check',
+        color: 'primary',
+        click: (feature) => { workspace.addFeature(feature, workspace) }
+      },
+      {
+        icon: 'alpha-x',
+        color: 'primary',
+        click: (feature) => { workspace.cancelEdit(feature, workspace) }
+      }] as EntityTableButton[];
+    }
+  }];
+}
+else {
+  buttons = [{
+    name: 'edition',
+    title: undefined,
+    renderer: EntityTableColumnRenderer.ButtonGroup,
+    primary: false,
+    valueAccessor: (entity: object) => {
+      return [{
+        icon: 'pencil',
+        color: 'primary',
+        click: (feature) => { workspace.modifyFeature(feature, workspace) }
+      },
+      {
+        icon: 'delete',
+        color: 'warn',
+        click: (feature) => { workspace.deleteFeature(feature, workspace) }
+      }] as EntityTableButton[];
+    }
+  }];
+}
 
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
@@ -222,7 +254,7 @@ export class EditionWorkspaceService {
             return {
               name: `properties.${key}`,
               title: key,
-              renderer: rendereType
+              renderer: rendererType,
             };
           });
         workspace.meta.tableTemplate = {
@@ -238,12 +270,29 @@ export class EditionWorkspaceService {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: rendereType,
+        renderer: rendererType,
         valueAccessor: undefined,
         primary: field.primary === true ? true : false,
+        visible: field.visible,
+        validation: field.validation,
+        valueReturn: field.valueReturn,
         type: field.type
       };
     });
+
+    relationsColumn = relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        onClick: function () { directive.event.emit(relation.name); }
+      };
+    });
+
+    columns.push(...relationsColumn);
     columns.push(...buttons);
    
     console.log(columns);
