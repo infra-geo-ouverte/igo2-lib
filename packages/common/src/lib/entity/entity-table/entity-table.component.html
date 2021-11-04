@@ -73,9 +73,9 @@
                         </ng-template>
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Editable">
+                <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Editable && formGroup">
                     <ng-container *matCellDef="let record">
-                        <td>
+                        <td mat-cell class="mat-cell-text" [formGroup]="formGroup">
                             <div class="date-picker" *ngIf="column.type === 'date'">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <input matInput [matDatepicker]="picker" [formControlName]="column.name">

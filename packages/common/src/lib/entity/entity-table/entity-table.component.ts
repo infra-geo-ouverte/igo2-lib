@@ -25,14 +25,13 @@ import {
   EntityTableColumn,
   EntityTableColumnRenderer,
   EntityTableSelectionState,
-  EntityTableScrollBehavior,
-  EntityTableColumnValidation
+  EntityTableScrollBehavior
 } from '../shared';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl } from '@angular/forms';
+import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
 
@@ -50,6 +49,8 @@ const defaultErrors = {
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  public formGroup: FormGroup = new FormGroup({});
 
   /**
    * Reference to the column renderer types
@@ -220,10 +221,22 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+    console.log(this.dataSource);
+    this.dataSource.data.forEach(value => {
+      const entity = value as any;
+      const item = entity.entity.properties;
+      this.template.columns.forEach(column => {
+        if (column.renderer === EntityTableColumnRenderer.Editable || column.renderer === EntityTableColumnRenderer.ButtonGroup) {
+          this.formGroup.addControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
+        }
+      })
+    });
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
       this.handleDatasource();
     }
+    this.refresh();
   }
 
   private handleDatasource() {

@@ -449,7 +449,7 @@ export class ContextService {
         )
         .sort((a, b) => a.zIndex - b.zIndex);
     } else {
-      layers = igoMap.layers$.getValue().sort((a, b) => a.zIndex - b.zIndex);
+      layers = igoMap.layers$.getValue().filter(lay => !lay.id.includes('WfsWorkspaceTableDest')).sort((a, b) => a.zIndex - b.zIndex);
     }
 
     let i = 0;

@@ -9,7 +9,8 @@ import {
   EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate,
-  EntityTableButton} from '@igo2/common';
+  EntityTableButton,
+  WorkspaceSelectorComponent} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
@@ -26,7 +27,6 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 
 @Injectable({
   providedIn: 'root'
@@ -181,54 +181,30 @@ export class EditionWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
+  public createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
-    const edit = true;
     let rendereType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
 
-if (edit){
-  rendereType = EntityTableColumnRenderer.Editable;
-  buttons = [{
-    name: 'edition',
-    title: undefined,
-    renderer: EntityTableColumnRenderer.ButtonGroup,
-    primary: false,
-    valueAccessor: (entity: object) => {
-      return [{
-        icon: 'check',
-        color: 'primary',
-        click: (feature) => { workspace.addFeature(feature, workspace) }
-      },
-      {
-        icon: 'alpha-x',
-        color: 'primary',
-        click: (feature) => { workspace.cancelEdit(feature, workspace) }
-      }] as EntityTableButton[];
-    }
-  }];
-}
-else {
-  buttons = [{
-    name: 'edition',
-    title: undefined,
-    renderer: EntityTableColumnRenderer.ButtonGroup,
-    primary: false,
-    valueAccessor: (entity: object) => {
-      return [{
-        icon: 'pencil',
-        color: 'primary',
-        click: (feature) => { workspace.modifyFeature(feature, workspace) }
-      },
-      {
-        icon: 'delete',
-        color: 'warn',
-        click: (feature) => { workspace.deleteFeature(feature, workspace) }
-      }] as EntityTableButton[];
-    }
-  }];
-}
+    buttons = [{
+      name: 'edition',
+      title: undefined,
+      renderer: EntityTableColumnRenderer.ButtonGroup,
+      primary: false,
+      valueAccessor: (entity: object) => {
+        return [{
+          icon: 'pencil',
+          color: 'primary',
+          click: (feature) => { workspace.modifyFeature(feature, workspace) }
+        },
+        {
+          icon: 'delete',
+          color: 'warn',
+          click: (feature) => { workspace.deleteFeature(feature, workspace) }
+        }] as EntityTableButton[];
+      }
+    }];
 
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
@@ -285,7 +261,57 @@ else {
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
-  public addFeature(url, properties) {
+  public modifyTableTemplate(workspace: EditionWorkspace, layer, feature, url, add?: boolean) {
+    const fields = layer.dataSource.options.sourceFields || [];
+    let rendereType = EntityTableColumnRenderer.Editable;
+    let buttons = [];
+    let columns = [];
+
+    buttons = [{
+      name: 'edition',
+      title: undefined,
+      renderer: EntityTableColumnRenderer.ButtonGroup,
+      primary: false,
+      valueAccessor: () => {
+        return [{
+          icon: 'check',
+          color: 'primary',
+          click: (feature) => { add ? this.addFeature(url, feature) : this.modifyFeature(url, feature) }
+        },
+        {
+          icon: 'alpha-x',
+          color: 'primary',
+          click: (feature) => {  this.cancelEdit(workspace, layer, feature, add) }
+        }] as EntityTableButton[];
+      }
+    }];
+
+    columns = fields.map((field: SourceFieldsOptionsParams) => {
+      return {
+        name: `properties.${field.name}`,
+        title: field.alias ? field.alias : field.name,
+        renderer: rendereType,
+        valueAccessor: undefined,
+        primary: field.primary === true ? true : false,
+        type: field.type
+      };
+    });
+    columns.push(...buttons);
+
+    workspace.meta.tableTemplate = {
+      selection: true,
+      sort: true,
+      columns
+    };
+
+    console.log('add', columns);
+  }
+
+  public addFeature(url, feature) {
+    const message = this.languageService.translate.instant(
+      'igo.geo.workspace.addSuccess'
+    );
+    this.messageService.success(message);
     if (url) {
       // this.http.post(`${url}`, {properties}).subscribe(
       //   (data: any) => {
@@ -331,7 +357,68 @@ else {
     }
   }
 
-  public modifyFeature(feature, workspace) {
-    workspace.meta.tableTemplate.columns
+  public modifyFeature(url, feature) {
+    const message = this.languageService.translate.instant(
+      'igo.geo.workspace.modifySuccess'
+    );
+    this.messageService.success(message);
+    if (url) {
+      // this.http.patch(`${url}`, {properties}).subscribe(
+      //   (data: any) => {
+      //     console.log('Add success');
+      //     console.log(data);
+      //   }
+      // );
+      //console.log(url);
+    }
+  }
+
+  cancelEdit(workspace, layer, feature, add?){
+    if (add) {
+      workspace.entityStore.delete(feature);
+    } else {
+      const fields = layer.dataSource.options.sourceFields || [];
+      let renderType = EntityTableColumnRenderer.UnsanitizedHTML;
+      let buttons = [];
+      let columns = [];
+
+      buttons = [{
+        name: 'edition',
+        title: undefined,
+        renderer: EntityTableColumnRenderer.ButtonGroup,
+        primary: false,
+        valueAccessor: () => {
+          return [{
+            icon: 'pencil',
+            color: 'primary',
+            click: (feature) => { workspace.modifyFeature(feature, workspace) }
+          },
+          {
+            icon: 'delete',
+            color: 'warn',
+            click: (feature) => { workspace.deleteFeature(feature, workspace) }
+          }] as EntityTableButton[];
+        }
+      }];
+
+      columns = fields.map((field: SourceFieldsOptionsParams) => {
+        return {
+          name: `properties.${field.name}`,
+          title: field.alias ? field.alias : field.name,
+          renderer: renderType,
+          valueAccessor: undefined,
+          primary: field.primary === true ? true : false,
+          type: field.type
+        };
+      });
+      columns.push(...buttons);
+
+      workspace.meta.tableTemplate = {
+        selection: true,
+        sort: true,
+        columns
+      };
+      workspace.entityStore.state.update(feature, { selected: false });
+    }
   }
 }

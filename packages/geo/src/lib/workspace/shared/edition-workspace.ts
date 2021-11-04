@@ -44,15 +44,12 @@ export class EditionWorkspace extends Workspace {
     console.log('add', feature);
     workspace.entityStore.insert(feature);
     workspace.entityStore.state.update(feature, { selected: true });
-    this.activateModifyMode(feature, workspace);
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl;
-    let properties;
-    if (url) {
-      //this.editionWorkspaceService.addFeature(url, properties);
-      //console.log(url);
-    }
+    let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
+      .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
+    element.click();
   }
 
   deleteFeature(feature, workspace) {
@@ -86,19 +83,13 @@ export class EditionWorkspace extends Workspace {
     }, 250)
   }
 
-  activateModifyMode(feature, workspace) {
-    // for (const column of workspace.meta.tableTemplate.columns) {
-    //   if (column.name !== 'edition') {
-    //     column.renderer = EntityTableColumnRenderer.Input;
-    //   }
-    // }
-  }
-
   modifyFeature(feature, workspace) {
-    
-  }
-
-  cancelEdit(feature, workspace){
-    
+    console.log('modify', feature);
+    workspace.entityStore.state.update(feature, { selected: true });
+    let url =
+      this.configService.getConfig('edition.url') +
+      workspace.layer.dataSource.options.edition.baseUrl +
+      workspace.layer.dataSource.options.edition.modifyUrl;
+    this.editionWorkspaceService.modifyTableTemplate(workspace, workspace.layer, feature, url);
   }
 }
