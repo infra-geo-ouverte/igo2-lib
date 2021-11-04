@@ -190,53 +190,30 @@ export class EditionWorkspaceService {
 
     const relations = layer.dataSource.options.relations || [];
 
-    const edit = true;
     let rendererType = EntityTableColumnRenderer.UnsanitizedHTML;
     let buttons = [];
     let columns = [];
     let relationsColumn = [];
 
-if (edit){
-  rendererType = EntityTableColumnRenderer.Editable;
-  buttons = [{
-    name: 'edition',
-    title: undefined,
-    renderer: EntityTableColumnRenderer.ButtonGroup,
-    primary: false,
-    valueAccessor: (entity: object) => {
-      return [{
-        icon: 'check',
-        color: 'primary',
-        click: (feature) => { workspace.addFeature(feature, workspace) }
-      },
-      {
-        icon: 'alpha-x',
-        color: 'primary',
-        click: (feature) => { workspace.cancelEdit(feature, workspace) }
-      }] as EntityTableButton[];
-    }
-  }];
-}
-else {
-  buttons = [{
-    name: 'edition',
-    title: undefined,
-    renderer: EntityTableColumnRenderer.ButtonGroup,
-    primary: false,
-    valueAccessor: (entity: object) => {
-      return [{
-        icon: 'pencil',
-        color: 'primary',
-        click: (feature) => { workspace.modifyFeature(feature, workspace) }
-      },
-      {
-        icon: 'delete',
-        color: 'warn',
-        click: (feature) => { workspace.deleteFeature(feature, workspace) }
-      }] as EntityTableButton[];
-    }
-  }];
-}
+    buttons = [{
+      name: 'edition',
+      title: undefined,
+      renderer: EntityTableColumnRenderer.ButtonGroup,
+      primary: false,
+      valueAccessor: (entity: object) => {
+        return [{
+          icon: 'pencil',
+          color: 'primary',
+          click: (feature) => { workspace.modifyFeature(feature, workspace) }
+        },
+        {
+          icon: 'delete',
+          color: 'warn',
+          click: (feature) => { workspace.deleteFeature(feature, workspace) }
+        }] as EntityTableButton[];
+      }
+    }];
+
 
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
