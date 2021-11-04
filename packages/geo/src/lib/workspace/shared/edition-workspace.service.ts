@@ -29,11 +29,14 @@ import { EditionWorkspace } from './edition-workspace';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { WorkspaceSelectorDirective } from '../workspace-selector/workspace-selector.directive';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EditionWorkspaceService {
+
+  public ws$ = new BehaviorSubject<string>(undefined);
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -265,7 +268,7 @@ export class EditionWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
-        onClick: function () { directive.event.emit(relation.name); }
+        onClick: () => { this.ws$.next(relation.title)}
       };
     });
 

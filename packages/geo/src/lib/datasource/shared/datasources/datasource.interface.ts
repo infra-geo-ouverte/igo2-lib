@@ -57,6 +57,7 @@ export interface EditionOptions {
 }
 
 export interface RelationOptions {
+  title: string;
   name: string;
   alias: string;
   icon: string;

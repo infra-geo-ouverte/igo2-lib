@@ -27,7 +27,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   @Input() map: IgoMap;
 
-  @Output() event = new EventEmitter<string>();
+  @Output() changeWorkspace = new EventEmitter<string>();
 
   get workspaceStore(): WorkspaceStore {
     return this.component.store;
@@ -47,6 +47,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       .subscribe((layers: Layer[]) =>
         this.onLayersChange(layers)
       );
+
+    this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws) });
   }
 
   ngOnDestroy() {
