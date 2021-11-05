@@ -55,20 +55,29 @@ export class RouteService {
   }
 
   get queryParams(): Observable<Params> {
-    const queryParams = {...this.route.snapshot.queryParams};
+    const queryParams: any = location.search
+      .slice(1)
+      .split('&')
+      .map(p => p.split('='))
+      .reduce((obj, pair) => {
+        const [key, value] = pair.map(decodeURIComponent);
+        obj[key] = value;
+        return obj;
+      }, {});
+
     let center;
-    if (Object.keys(queryParams)) {
-        Object.keys(queryParams).map(key => {
-            if (queryParams[key].includes('¢er=')) {
-                const error = queryParams[key].split('¢er=');
-                queryParams[key] = error[0];
-                center = error[1];
-            }
-        });
+    if (queryParams && Object.keys(queryParams).length) {
+      Object.keys(queryParams).map(key => {
+        if (queryParams[key]?.includes('¢er=')) {
+          const error = queryParams[key].split('¢er=');
+          queryParams[key] = error[0];
+          center = error[1];
+        }
+      });
     }
     if (center) {
-        queryParams.center = center;
-        this.router.navigate([], { queryParams });
+      queryParams.center = center;
+      this.router.navigate([], { queryParams });
     }
     return this.route.queryParams;
   }
