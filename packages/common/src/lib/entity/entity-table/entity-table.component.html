@@ -82,9 +82,9 @@
                                 <mat-datepicker #picker></mat-datepicker>
                             </div>
                             <input matInput type="time" *ngIf="column.type === 'time'" [formControlName]="column.name" step="900" (focus)="column.onFocus($event)" (keypress)="column.onChange($event)" (blur)="column.onBlur($event)">
-                            <input matInput type="number" *ngIf="column.type === 'number'" [formControlName]="column.name" value="{{getValue(record, column)}}" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
-                            <input matInput type="text" *ngIf="!column.type || column.type === 'string'" [formControlName]="column.name" value="{{getValue(record, column)}}" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
-                            <mat-checkbox *ngIf="column.type === 'boolean'" [formControlName]="column.name" checked="{{getValue(record, column)}}"></mat-checkbox>
+                            <input matInput type="number" *ngIf="column.type === 'number'" [formControlName]="column.name" value="{{getValue(record, column)}}" (click)="onValueChange(column.name, record, $event)" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
+                            <input matInput type="text" *ngIf="!column.type || column.type === 'string'" [formControlName]="column.name" value="{{getValue(record, column)}}" (keypress)="onValueChange(column.name, record, $event)" readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
+                            <mat-checkbox *ngIf="column.type === 'boolean'" [formControlName]="column.name" checked="{{getValue(record, column)}}" (change)="onBooleanValueChange(column.name, record, $event)"></mat-checkbox>
                             <ng-container *ngFor="let validation of getErrors(column.name)" ngProjectAs="mat-error">
                                 <mat-error>{{ validation }}</mat-error>
                             </ng-container>

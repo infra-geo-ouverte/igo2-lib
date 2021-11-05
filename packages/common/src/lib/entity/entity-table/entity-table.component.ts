@@ -51,6 +51,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public formGroup: FormGroup = new FormGroup({});
+  public enabledEdit = false;
+  public enableEditIndex = null;
 
   /**
    * Reference to the column renderer types
@@ -223,20 +225,44 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
     console.log(this.dataSource);
-    this.dataSource.data.forEach(value => {
-      const entity = value as any;
-      const item = entity.entity.properties;
-      this.template.columns.forEach(column => {
-        if (column.renderer === EntityTableColumnRenderer.Editable || column.renderer === EntityTableColumnRenderer.ButtonGroup) {
-          this.formGroup.addControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
-        }
-      })
-    });
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
       this.handleDatasource();
     }
-    this.refresh();
+
+    if (this.template.columns.find(column => column.renderer === EntityTableColumnRenderer.Editable)) {
+      this.enableEdit();
+    }
+  }
+
+  onValueChange(column, record, event) {
+    if (column.includes('properties.')) {
+      record.entity.properties[column.slice(11)] = event.target.value;
+    } else {
+      record.entity.properties[column] = event.target.value;
+    }
+  }
+
+  onBooleanValueChange(column, record, event) {
+    if (column.includes('properties.')) {
+      record.entity.properties[column.slice(11)] = event.checked;
+    } else {
+      record.entity.properties[column] = event.checked;
+    }
+  }
+
+  private enableEdit() {
+    this.enabledEdit = true;
+    this.enableEditIndex = this.dataSource.data.indexOf(entity => entity.state.selected);
+    console.log(this.enabledEdit);
+    console.log(this.enableEditIndex);
+    this.dataSource.data.forEach(value => {
+      const entity = value as any;
+      const item = entity.entity.properties;
+      this.template.columns.forEach(column => {
+          this.formGroup.addControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
+      })
+    });
   }
 
   private handleDatasource() {

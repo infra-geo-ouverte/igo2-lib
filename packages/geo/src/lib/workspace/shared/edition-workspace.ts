@@ -1,6 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
 import {
-  EntityTableColumnRenderer,
   Workspace,
   WorkspaceOptions
 } from '@igo2/common';
@@ -47,9 +46,12 @@ export class EditionWorkspace extends Workspace {
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl;
-    let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
+    setTimeout(() => {
+      let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
       .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
-    element.click();
+      console.log(element);
+      element.click();
+    }, 500);
   }
 
   deleteFeature(feature, workspace) {
@@ -88,8 +90,20 @@ export class EditionWorkspace extends Workspace {
     workspace.entityStore.state.update(feature, { selected: true });
     let url =
       this.configService.getConfig('edition.url') +
-      workspace.layer.dataSource.options.edition.baseUrl +
+      workspace.layer.dataSource.options.edition.baseUrl + '?' +
       workspace.layer.dataSource.options.edition.modifyUrl;
-    this.editionWorkspaceService.modifyTableTemplate(workspace, workspace.layer, feature, url);
+    let id;
+    for (const column of workspace.meta.tableTemplate.columns) {
+      for (const property in feature.properties) {
+        const columnName = column.name.slice(11);
+        if (columnName === property && column.primary === true) {
+          id = feature.properties[property];
+        }
+      }
+    }
+    if (url) {
+      url += id;
+      this.editionWorkspaceService.modifyTableTemplate(workspace, workspace.layer, feature, url);
+    }
   }
 }

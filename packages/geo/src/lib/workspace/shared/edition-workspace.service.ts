@@ -10,8 +10,7 @@ import {
   EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate,
-  EntityTableButton,
-  WorkspaceSelectorComponent} from '@igo2/common';
+  EntityTableButton} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
@@ -305,7 +304,7 @@ export class EditionWorkspaceService {
         return [{
           icon: 'check',
           color: 'primary',
-          click: (feature) => { add ? this.addFeature(url, feature) : this.modifyFeature(url, feature) }
+          click: (feature) => { add ? this.addFeature(url, feature) : this.modifyFeature(feature, workspace, url) }
         },
         {
           icon: 'alpha-x',
@@ -353,52 +352,56 @@ export class EditionWorkspaceService {
   }
 
   public deleteFeature(feature, workspace, url) {
-    if (url) {
-      this.http.delete(`${url}`, {}).subscribe(
-        () => {
-          workspace.entityStore.delete(feature);
-          for (const layer of workspace.layer.map.layers) {
-            if (
-              layer.id !== workspace.layer.id &&
-              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
-              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
-              ) {
-                const olLayer = layer.dataSource.ol;
-                let params = olLayer.getParams();
-                params._t = new Date().getTime();
-                olLayer.updateParams(params);
-              }
-          }
+    this.http.delete(`${url}`, {}).subscribe(
+      () => {
+        workspace.entityStore.delete(feature);
+        for (const layer of workspace.layer.map.layers) {
+          if (
+            layer.id !== workspace.layer.id &&
+            layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
+            layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
+            ) {
+              const olLayer = layer.dataSource.ol;
+              let params = olLayer.getParams();
+              params._t = new Date().getTime();
+              olLayer.updateParams(params);
+            }
+        }
 
+        const message = this.languageService.translate.instant(
+          'igo.geo.workspace.deleteSuccess'
+        );
+        this.messageService.success(message);
+      },
+      error => {
+        error.error.caught = true;
+        const message = this.languageService.translate.instant(
+          'igo.geo.workspace.deleteError'
+        );
+        this.messageService.error(message);
+      }
+    );
+  }
+
+  public modifyFeature(feature, workspace, url) {
+    if (url) {
+      this.http.patch(`${url}`, feature.properties).subscribe(
+        () => {
+          this.cancelEdit(workspace, workspace.layer, feature);
           const message = this.languageService.translate.instant(
-            'igo.geo.workspace.deleteSuccess'
+            'igo.geo.workspace.modifySuccess'
           );
           this.messageService.success(message);
+
         },
         error => {
           error.error.caught = true;
           const message = this.languageService.translate.instant(
-            'igo.geo.workspace.deleteError'
+            'igo.geo.workspace.modifyError'
           );
           this.messageService.error(message);
         }
       );
-    }
-  }
-
-  public modifyFeature(url, feature) {
-    const message = this.languageService.translate.instant(
-      'igo.geo.workspace.modifySuccess'
-    );
-    this.messageService.success(message);
-    if (url) {
-      // this.http.patch(`${url}`, {properties}).subscribe(
-      //   (data: any) => {
-      //     console.log('Add success');
-      //     console.log(data);
-      //   }
-      // );
-      //console.log(url);
     }
   }
 
@@ -407,9 +410,12 @@ export class EditionWorkspaceService {
       workspace.entityStore.delete(feature);
     } else {
       const fields = layer.dataSource.options.sourceFields || [];
+      const relations = layer.dataSource.options.relations || [];
+      let directive: WorkspaceSelectorDirective;
       let renderType = EntityTableColumnRenderer.UnsanitizedHTML;
       let buttons = [];
       let columns = [];
+      let relationsColumn = [];
 
       buttons = [{
         name: 'edition',
@@ -440,6 +446,20 @@ export class EditionWorkspaceService {
           type: field.type
         };
       });
+
+      relationsColumn = relations.map((relation: RelationOptions) => {
+        return {
+          name: `properties.${relation.name}`,
+          title: relation.alias ? relation.alias : relation.name,
+          renderer: EntityTableColumnRenderer.Icon,
+          icon: relation.icon,
+          parent: relation.parent,
+          type: 'relation',
+          onClick: function () { directive.event.emit(relation.name); }
+        };
+      });
+  
+      columns.push(...relationsColumn);
       columns.push(...buttons);
 
       workspace.meta.tableTemplate = {
