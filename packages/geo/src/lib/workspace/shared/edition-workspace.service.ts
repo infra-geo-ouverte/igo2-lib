@@ -455,7 +455,7 @@ export class EditionWorkspaceService {
           icon: relation.icon,
           parent: relation.parent,
           type: 'relation',
-          onClick: function () { directive.event.emit(relation.name); }
+          onClick: function () { this.ws$.next(relation.title) }
         };
       });
   
