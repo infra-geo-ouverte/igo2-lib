@@ -55,7 +55,10 @@ export class RouteService {
   }
 
   get queryParams(): Observable<Params> {
-    const queryParams: any = location.search
+    let url = decodeURIComponent(location.search);
+    if (url.includes('¢er=')) {
+      url = url.replace('¢er', '&center');
+      const queryParams: any = url
       .slice(1)
       .split('&')
       .map(p => p.split('='))
@@ -64,19 +67,6 @@ export class RouteService {
         obj[key] = value;
         return obj;
       }, {});
-
-    let center;
-    if (queryParams && Object.keys(queryParams).length) {
-      Object.keys(queryParams).map(key => {
-        if (queryParams[key]?.includes('¢er=')) {
-          const error = queryParams[key].split('¢er=');
-          queryParams[key] = error[0];
-          center = error[1];
-        }
-      });
-    }
-    if (center) {
-      queryParams.center = center;
       this.router.navigate([], { queryParams });
     }
     return this.route.queryParams;
