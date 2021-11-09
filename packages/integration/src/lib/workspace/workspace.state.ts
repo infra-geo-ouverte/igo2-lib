@@ -72,7 +72,6 @@ export class WorkspaceState implements OnDestroy {
    */
   private initWorkspaces() {
     this.workspace$.subscribe(val => {
-      debugger;
       this.queryService.workspace = val;
     });
     this._store = new WorkspaceStore([]);
