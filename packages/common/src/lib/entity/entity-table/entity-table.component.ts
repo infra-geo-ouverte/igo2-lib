@@ -223,8 +223,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
-    console.log(this.dataSource);
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
       this.handleDatasource();
@@ -254,8 +252,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   private enableEdit() {
     this.enabledEdit = true;
     this.enableEditIndex = this.dataSource.data.indexOf(entity => entity.state.selected);
-    console.log(this.enabledEdit);
-    console.log(this.enableEditIndex);
     this.dataSource.data.forEach(value => {
       const entity = value as any;
       const item = entity.entity.properties;

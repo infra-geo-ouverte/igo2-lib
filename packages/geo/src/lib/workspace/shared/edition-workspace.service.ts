@@ -27,7 +27,6 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { WorkspaceSelectorDirective } from '../workspace-selector/workspace-selector.directive';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -187,7 +186,6 @@ export class EditionWorkspaceService {
   }
 
   private createTableTemplate(workspace: EditionWorkspace, layer: VectorLayer): EntityTableTemplate {
-    let directive: WorkspaceSelectorDirective;
     const fields = layer.dataSource.options.sourceFields || [];
 
     const relations = layer.dataSource.options.relations || [];
@@ -273,8 +271,7 @@ export class EditionWorkspaceService {
 
     columns.push(...relationsColumn);
     columns.push(...buttons);
-   
-    console.log(columns);
+
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
@@ -291,9 +288,10 @@ export class EditionWorkspaceService {
 
   public modifyTableTemplate(workspace: EditionWorkspace, layer, feature, url, add?: boolean) {
     const fields = layer.dataSource.options.sourceFields || [];
-    let rendereType = EntityTableColumnRenderer.Editable;
+    let rendererType = EntityTableColumnRenderer.Editable;
     let buttons = [];
     let columns = [];
+    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
 
     buttons = [{
       name: 'edition',
@@ -309,7 +307,10 @@ export class EditionWorkspaceService {
         {
           icon: 'alpha-x',
           color: 'primary',
-          click: (feature) => {  this.cancelEdit(workspace, layer, feature, add) }
+          click: (feature: Feature) => {
+            feature.properties = featureProperties;
+            this.cancelEdit(workspace, layer, feature, add)
+          }
         }] as EntityTableButton[];
       }
     }];
@@ -318,7 +319,7 @@ export class EditionWorkspaceService {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: rendereType,
+        renderer: rendererType,
         valueAccessor: undefined,
         primary: field.primary === true ? true : false,
         type: field.type
@@ -331,23 +332,27 @@ export class EditionWorkspaceService {
       sort: true,
       columns
     };
-
-    console.log('add', columns);
   }
 
   public addFeature(url, feature) {
-    const message = this.languageService.translate.instant(
-      'igo.geo.workspace.addSuccess'
-    );
-    this.messageService.success(message);
+    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
+    delete featureProperties.boundedBy;
     if (url) {
-      // this.http.post(`${url}`, {properties}).subscribe(
-      //   (data: any) => {
-      //     console.log('Add success');
-      //     console.log(data);
-      //   }
-      // );
-      //console.log(url);
+      this.http.post(`${url}`, { featureProperties }).subscribe(
+        () => {
+          const message = this.languageService.translate.instant(
+            'igo.geo.workspace.addSuccess'
+          );
+          this.messageService.success(message);
+        },
+        error => {
+          error.error.caught = true;
+          const message = this.languageService.translate.instant(
+            'igo.geo.workspace.addError'
+          );
+          this.messageService.error(message);
+        }
+      );
     }
   }
 
@@ -384,8 +389,10 @@ export class EditionWorkspaceService {
   }
 
   public modifyFeature(feature, workspace, url) {
+    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
+    delete featureProperties.boundedBy;
     if (url) {
-      this.http.patch(`${url}`, feature.properties).subscribe(
+      this.http.patch(`${url}`, featureProperties).subscribe(
         () => {
           this.cancelEdit(workspace, workspace.layer, feature);
           const message = this.languageService.translate.instant(
@@ -405,13 +412,12 @@ export class EditionWorkspaceService {
     }
   }
 
-  cancelEdit(workspace, layer, feature, add?){
+  cancelEdit(workspace, layer, feature, add?) {
     if (add) {
       workspace.entityStore.delete(feature);
     } else {
       const fields = layer.dataSource.options.sourceFields || [];
       const relations = layer.dataSource.options.relations || [];
-      let directive: WorkspaceSelectorDirective;
       let renderType = EntityTableColumnRenderer.UnsanitizedHTML;
       let buttons = [];
       let columns = [];
@@ -458,7 +464,7 @@ export class EditionWorkspaceService {
           onClick: function () { this.ws$.next(relation.title) }
         };
       });
-  
+
       columns.push(...relationsColumn);
       columns.push(...buttons);
 
