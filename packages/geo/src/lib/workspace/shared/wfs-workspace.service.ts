@@ -51,7 +51,6 @@ export class WfsWorkspaceService {
     } else {
       wksConfig = {};
     }
-    
     wksConfig.srcId = layer.id;
     wksConfig.workspaceId = layer.id;
     wksConfig.enabled = true;

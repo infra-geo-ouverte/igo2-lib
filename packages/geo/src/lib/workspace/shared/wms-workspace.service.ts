@@ -82,7 +82,7 @@ export class WmsWorkspaceService {
     layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId ? layer.options.linkedLayers.linkId : wmsLinkId,
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
-    
+
     let wksConfig;
     if (layer.options.workspace) {
       wksConfig = layer.options.workspace;
@@ -92,7 +92,6 @@ export class WmsWorkspaceService {
     wksConfig.srcId = layer.id;
     wksConfig.workspaceId = undefined;
     wksConfig.enabled = false;
-    
     let wks;
     this.layerService
       .createAsyncLayer({

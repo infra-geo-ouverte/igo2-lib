@@ -160,7 +160,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     const resolution = this.map.ol.getView().getResolution();
 
     this.setQueryableForCombineWMS_WFS(this.map.layers);
-    this.setQueryableForWorkspaceOpen(this.map.layers)
+    this.setQueryableForWorkspaceOpen(this.map.layers);
 
     const queryLayers = this.map.layers.filter(layerIsQueryable);
     queries$.push(
@@ -207,9 +207,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
           // check no query param workspace
           if (layer.options.workspace && layer.options.workspace.noMapQueryOnOpenTab) {
-            if(this.queryService.workspace && 
-              this.queryService.workspace.id === getShortLayerId(layer) && 
-              this.queryService.workspace.active && 
+            if(this.queryService.workspace &&
+              this.queryService.workspace.id === getShortLayerId(layer) &&
+              this.queryService.workspace.active &&
               this.queryService.workspace.getInResolutionRange() &&
               this.queryService.workspaceIsOpen) {
                 return;
@@ -351,9 +351,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private setQueryableForWorkspaceOpen(layers: AnyLayer[]) {
     for (let layer of layers) {
       if (layer.options.workspace && layer.options.workspace.noMapQueryOnOpenTab) {
-        if (this.queryService.workspace && 
-          this.queryService.workspace.id === getShortLayerId(layer) && 
-          this.queryService.workspace.active && 
+        if (this.queryService.workspace &&
+          this.queryService.workspace.id === getShortLayerId(layer) &&
+          this.queryService.workspace.active &&
           this.queryService.workspace.getInResolutionRange() &&
           this.queryService.workspaceIsOpen) {
             setLayerQueryable(layer, false);

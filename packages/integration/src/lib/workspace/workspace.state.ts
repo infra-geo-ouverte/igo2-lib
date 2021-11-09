@@ -62,7 +62,7 @@ export class WorkspaceState implements OnDestroy {
     this.initWorkspaces();
     this.workspacePanelExpanded$.subscribe(isOpen => {
       this.queryService.workspaceIsOpen = isOpen;
-    })
+    });
   }
 
   /**
@@ -74,7 +74,7 @@ export class WorkspaceState implements OnDestroy {
     this.workspace$.subscribe(val => {
       debugger;
       this.queryService.workspace = val;
-    })
+    });
     this._store = new WorkspaceStore([]);
     this._store.stateView
       .firstBy$((record: EntityRecord<Workspace>) => record.state.active === true)
