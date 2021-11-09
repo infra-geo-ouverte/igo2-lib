@@ -27,10 +27,13 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
+import { layerIsQueryable, olLayerIsQueryable, getShortLayerId, setLayerQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { ImageLayer } from '../../layer/shared/layers/image-layer';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { WFSDataSource } from '../../datasource';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -155,6 +158,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
 
     const resolution = this.map.ol.getView().getResolution();
+
+    this.setQueryableForCombineWMS_WFS(this.map.layers);
+    this.setQueryableForWorkspaceOpen(this.map.layers)
+
     const queryLayers = this.map.layers.filter(layerIsQueryable);
     queries$.push(
       ...this.queryService.query(queryLayers, {
@@ -198,6 +205,21 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         event.pixel,
         (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
+          // check no query param workspace
+          if (layer.options.workspace && layer.options.workspace.noMapQueryOnOpenTab) {
+            if(this.queryService.workspace && 
+              this.queryService.workspace.id === getShortLayerId(layer) && 
+              this.queryService.workspace.active && 
+              this.queryService.workspace.getInResolutionRange() &&
+              this.queryService.workspaceIsOpen) {
+                return;
+              }
+          }
+          // no query if query in wms
+          if(layer.dataSource instanceof WFSDataSource && layer.dataSource.getCombineLayerWFSMapQuerySameAsWms()) {
+            return;
+          }
+
           if (featureOL) {
             if (featureOL.get('features')) {
               for (const feature of featureOL.get('features')) {
@@ -325,4 +347,45 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
     this.olDragSelectInteraction = undefined;
   }
+
+  private setQueryableForWorkspaceOpen(layers: AnyLayer[]) {
+    for (let layer of layers) {
+      if (layer.options.workspace && layer.options.workspace.noMapQueryOnOpenTab) {
+        if (this.queryService.workspace && 
+          this.queryService.workspace.id === getShortLayerId(layer) && 
+          this.queryService.workspace.active && 
+          this.queryService.workspace.getInResolutionRange() &&
+          this.queryService.workspaceIsOpen) {
+            setLayerQueryable(layer, false);
+        } else {
+          setLayerQueryable(layer, true);
+        }
+      }
+    }
+  }
+
+  private setQueryableForCombineWMS_WFS(layers: AnyLayer[]): void {
+    let layerIdsToChangeQuery = new Array();
+    for (let lay of layers) {
+      if (lay.dataSource instanceof WFSDataSource && lay.dataSource.getCombineLayerWFSMapQuerySameAsWms()) {
+        let layShortId = getShortLayerId(lay);
+        layerIdsToChangeQuery.push(layShortId);
+      }
+    }
+    if (layerIdsToChangeQuery.length === 0) {
+      return;
+    }
+    // change queryable WMS and WFS layer
+    for (let lay2 of layers) {
+      let layId2 = getShortLayerId(lay2);
+      if(layerIdsToChangeQuery.includes(layId2)) {
+        if (lay2 instanceof ImageLayer) {
+          setLayerQueryable(lay2, true);
+        } else if (lay2 instanceof VectorLayer) {
+          setLayerQueryable(lay2, false);
+        }
+      }
+    }
+  }
+
 }
