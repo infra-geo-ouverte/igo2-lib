@@ -266,7 +266,7 @@ export class EditionWorkspaceService {
         cellClassFunc: () => {
           const cellClass = {}
           if (field.type) {
-            cellClass[`class_${field.type}`] = true;;
+            cellClass[`class_${field.type}`] = true;
             return cellClass;
           }
         },
@@ -319,7 +319,7 @@ export class EditionWorkspaceService {
     if (feature.new) {
       this.addFeature(feature, url);
     } else {
-      url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.properties.id;
+      url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.idkey;
       this.modifyFeature(feature, workspace, url);
     }
   }
@@ -408,63 +408,6 @@ export class EditionWorkspaceService {
     if (feature.new) {
       workspace.entityStore.delete(feature);
     } else {
-      const fields = layer.dataSource.options.sourceFields || [];
-      const relations = layer.dataSource.options.relations || [];
-      let renderType = EntityTableColumnRenderer.UnsanitizedHTML;
-      let buttons = [];
-      let columns = [];
-      let relationsColumn = [];
-
-      buttons = [{
-        name: 'edition',
-        title: undefined,
-        renderer: EntityTableColumnRenderer.ButtonGroup,
-        primary: false,
-        valueAccessor: () => {
-          return [{
-            icon: 'pencil',
-            color: 'primary',
-            click: (feature) => { workspace.modifyFeature(feature, workspace) }
-          },
-          {
-            icon: 'delete',
-            color: 'warn',
-            click: (feature) => { workspace.deleteFeature(feature, workspace) }
-          }] as EntityTableButton[];
-        }
-      }];
-
-      columns = fields.map((field: SourceFieldsOptionsParams) => {
-        return {
-          name: `properties.${field.name}`,
-          title: field.alias ? field.alias : field.name,
-          renderer: renderType,
-          valueAccessor: undefined,
-          primary: field.primary === true ? true : false,
-          type: field.type
-        };
-      });
-
-      relationsColumn = relations.map((relation: RelationOptions) => {
-        return {
-          name: `properties.${relation.name}`,
-          title: relation.alias ? relation.alias : relation.name,
-          renderer: EntityTableColumnRenderer.Icon,
-          icon: relation.icon,
-          parent: relation.parent,
-          type: 'relation',
-          onClick: function () { this.ws$.next(relation.title) }
-        };
-      });
-
-      columns.push(...relationsColumn);
-      columns.push(...buttons);
-
-      workspace.meta.tableTemplate = {
-        selection: true,
-        sort: true,
-        columns
-      };
       workspace.entityStore.state.update(feature, { selected: false });
     }
   }

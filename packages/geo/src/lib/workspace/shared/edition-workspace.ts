@@ -74,17 +74,18 @@ export class EditionWorkspace extends Workspace {
     feature.edition = true;
     console.log('edition', feature);
     let id;
-    for (const column of workspace.meta.tableTemplate.columns) {
+    outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
       for (const property in feature.properties) {
         const columnName = column.name.slice(11);
         if (columnName === property && column.primary === true) {
           id = feature.properties[property];
-          break;
+          break outerloop;
         }
       }
     }
     if (id) {
       console.log('edit');
+      feature.idkey = id;
       workspace.entityStore.state.update(feature, { selected: true });
 
     } else {
