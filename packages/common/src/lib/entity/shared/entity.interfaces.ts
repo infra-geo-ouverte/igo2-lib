@@ -17,6 +17,7 @@ export interface EntityRecord<E extends object, S extends EntityState = EntitySt
   state: S;
   revision: number;
   ref: string;
+  edition?: boolean;
 }
 
 export interface EntityStoreOptions {
@@ -106,6 +107,7 @@ export interface EntityTableColumn {
   valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
   visible?: boolean;
   sort?: boolean;
+  type?: string;
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
@@ -116,4 +118,5 @@ export interface EntityTableButton {
   click: (entity: object, record: EntityRecord<object>) => void;
   color?: 'primary' | 'accent' | 'warn';
   style?: 'mat-mini-fab' | 'mat-icon-button';
+  editMode?: boolean;
 }

@@ -43,3 +43,17 @@ entity-table table.igo-entity-table-with-selection tr:hover {
 table button {
   margin: 7px;
 }
+
+.class_boolean,
+.class_icon {
+    text-align: center;
+}
+
+.class_sting,
+.class_text {
+    text-align: left;
+}
+
+.class_number {
+    text-align: right;
+}

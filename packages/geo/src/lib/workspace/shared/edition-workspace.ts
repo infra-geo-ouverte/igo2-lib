@@ -39,21 +39,6 @@ export class EditionWorkspace extends Workspace {
     });
   }
 
-  addFeature(feature, workspace) {
-    console.log('add', feature);
-    workspace.entityStore.insert(feature);
-    workspace.entityStore.state.update(feature, { selected: true });
-    let url =
-      this.configService.getConfig('edition.url') +
-      workspace.layer.dataSource.options.edition.baseUrl;
-    setTimeout(() => {
-      let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
-      .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
-      console.log(element);
-      element.click();
-    }, 500);
-  }
-
   deleteFeature(feature, workspace) {
     setTimeout(() => {
       const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
@@ -85,25 +70,34 @@ export class EditionWorkspace extends Workspace {
     }, 250)
   }
 
-  modifyFeature(feature, workspace) {
-    console.log('modify', feature);
-    workspace.entityStore.state.update(feature, { selected: true });
-    let url =
-      this.configService.getConfig('edition.url') +
-      workspace.layer.dataSource.options.edition.baseUrl + '?' +
-      workspace.layer.dataSource.options.edition.modifyUrl;
+  editFeature(feature, workspace) {
+    feature.edition = true;
+    console.log('edition', feature);
     let id;
     for (const column of workspace.meta.tableTemplate.columns) {
       for (const property in feature.properties) {
         const columnName = column.name.slice(11);
         if (columnName === property && column.primary === true) {
           id = feature.properties[property];
+          break;
         }
       }
     }
-    if (url) {
-      url += id;
-      this.editionWorkspaceService.modifyTableTemplate(workspace, workspace.layer, feature, url);
+    if (id) {
+      console.log('edit');
+      workspace.entityStore.state.update(feature, { selected: true });
+
+    } else {
+      console.log('add');
+      feature.new = true;
+      workspace.entityStore.insert(feature);
+      workspace.entityStore.state.update(feature, { selected: true });
+      setTimeout(() => {
+        let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
+          .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
+        console.log(element);
+        element.click();
+      }, 500);
     }
   }
 }

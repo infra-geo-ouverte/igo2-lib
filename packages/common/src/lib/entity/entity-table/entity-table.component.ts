@@ -227,10 +227,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (store && store.currentValue !== store.previousValue) {
       this.handleDatasource();
     }
-
-    if (this.template.columns.find(column => column.renderer === EntityTableColumnRenderer.Editable)) {
-      this.enableEdit();
-    }
+    this.enableEdit();
   }
 
   onValueChange(column, record, event) {
@@ -250,8 +247,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private enableEdit() {
-    this.enabledEdit = true;
-    this.enableEditIndex = this.dataSource.data.indexOf(entity => entity.state.selected);
     this.dataSource.data.forEach(value => {
       const entity = value as any;
       const item = entity.entity.properties;
@@ -259,6 +254,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           this.formGroup.addControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
       })
     });
+    console.log(this.formGroup);
   }
 
   private handleDatasource() {
@@ -519,13 +515,20 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getValue(record: EntityRecord<object>, column: EntityTableColumn): any {
     const entity = record.entity;
+    let value;
     if (column.valueAccessor !== undefined) {
       return column.valueAccessor(entity, record);
     }
     if (this.template.valueAccessor !== undefined) {
       return this.template.valueAccessor(entity, column.name, record);
     }
-    return this.store.getProperty(entity, column.name);
+    value = this.store.getProperty(entity, column.name);
+
+    if (column.type === 'boolean' && !record.edition) {
+
+      value = value ? '&#10003;' : '';  // check mark
+    }
+    return value;
   }
 
   getValidationAttributeValue(column: EntityTableColumn, validationType: string): any {
@@ -534,6 +537,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       return false;
     }
+  }
+
+  public isEdition(record) {
+    return record.entity.edition ? true : false;
   }
 
   /**

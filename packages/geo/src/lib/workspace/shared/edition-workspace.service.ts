@@ -200,16 +200,30 @@ export class EditionWorkspaceService {
       title: undefined,
       renderer: EntityTableColumnRenderer.ButtonGroup,
       primary: false,
-      valueAccessor: (entity: object) => {
+      valueAccessor: () => {
         return [{
+          editMode: false,
           icon: 'pencil',
           color: 'primary',
-          click: (feature) => { workspace.modifyFeature(feature, workspace) }
+          click: (feature) => { workspace.editFeature(feature, workspace) }
         },
         {
+          editMode: false,
           icon: 'delete',
           color: 'warn',
           click: (feature) => { workspace.deleteFeature(feature, workspace) }
+        },
+        {
+          editMode: true,
+          icon: 'check',
+          color: 'primary',
+          click: (feature) => { this.saveFeature(feature, workspace) }
+        },
+        {
+          editMode: true,
+          icon: 'alpha-x',
+          color: 'primary',
+          click: (feature) => { this.cancelEdit(workspace, layer, feature) }
         }] as EntityTableButton[];
       }
     }];
@@ -249,6 +263,13 @@ export class EditionWorkspaceService {
         title: field.alias ? field.alias : field.name,
         renderer: rendererType,
         valueAccessor: undefined,
+        cellClassFunc: () => {
+          const cellClass = {}
+          if (field.type) {
+            cellClass[`class_${field.type}`] = true;;
+            return cellClass;
+          }
+        },
         primary: field.primary === true ? true : false,
         visible: field.visible,
         validation: field.validation,
@@ -265,7 +286,10 @@ export class EditionWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
-        onClick: () => { this.ws$.next(relation.title)}
+        onClick: () => { this.ws$.next(relation.title)},
+        cellClassFunc: () => {
+          return { 'class_icon': true };
+      }
       };
     });
 
@@ -286,58 +310,25 @@ export class EditionWorkspaceService {
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
-  public modifyTableTemplate(workspace: EditionWorkspace, layer, feature, url, add?: boolean) {
-    const fields = layer.dataSource.options.sourceFields || [];
-    let rendererType = EntityTableColumnRenderer.Editable;
-    let buttons = [];
-    let columns = [];
-    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
+  public saveFeature(feature, workspace){
+    let url =
+      this.configService.getConfig('edition.url') +
+      workspace.layer.dataSource.options.edition.baseUrl;
 
-    buttons = [{
-      name: 'edition',
-      title: undefined,
-      renderer: EntityTableColumnRenderer.ButtonGroup,
-      primary: false,
-      valueAccessor: () => {
-        return [{
-          icon: 'check',
-          color: 'primary',
-          click: (feature) => { add ? this.addFeature(url, feature) : this.modifyFeature(feature, workspace, url) }
-        },
-        {
-          icon: 'alpha-x',
-          color: 'primary',
-          click: (feature: Feature) => {
-            feature.properties = featureProperties;
-            this.cancelEdit(workspace, layer, feature, add)
-          }
-        }] as EntityTableButton[];
-      }
-    }];
 
-    columns = fields.map((field: SourceFieldsOptionsParams) => {
-      return {
-        name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name,
-        renderer: rendererType,
-        valueAccessor: undefined,
-        primary: field.primary === true ? true : false,
-        type: field.type
-      };
-    });
-    columns.push(...buttons);
-
-    workspace.meta.tableTemplate = {
-      selection: true,
-      sort: true,
-      columns
-    };
+    if (feature.new) {
+      this.addFeature(feature, url);
+    } else {
+      url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.properties.id;
+      this.modifyFeature(feature, workspace, url);
+    }
   }
 
   public addFeature(url, feature) {
     const featureProperties = JSON.parse(JSON.stringify(feature.properties));
     delete featureProperties.boundedBy;
     if (url) {
+      feature.new = false;
       this.http.post(`${url}`, { featureProperties }).subscribe(
         () => {
           const message = this.languageService.translate.instant(
@@ -412,8 +403,9 @@ export class EditionWorkspaceService {
     }
   }
 
-  cancelEdit(workspace, layer, feature, add?) {
-    if (add) {
+  cancelEdit(workspace, layer, feature) {
+    feature.edition = false;
+    if (feature.new) {
       workspace.entityStore.delete(feature);
     } else {
       const fields = layer.dataSource.options.sourceFields || [];
