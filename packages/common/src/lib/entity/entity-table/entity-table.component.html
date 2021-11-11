@@ -77,7 +77,7 @@
                 <ng-container *ngIf="columnRenderer ===
           entityTableColumnRenderer.UnsanitizedHTML">
                     <ng-container *matCellDef="let record">
-                        <td mat-cell class="mat-cell-text" [formGroup]="formGroup" *ngIf="isEdition(record);else isUnsanitizedHTML">
+                        <td mat-cell class="mat-cell-text" [formGroup]="formGroup" *ngIf="isEdition(record);else isUnsanitizedHTML" [ngClass]="getCellClass(record, column)">
                             <div class="date-picker" *ngIf="column.type === 'date'">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                 <input matInput [matDatepicker]="picker" [formControlName]="column.name">
