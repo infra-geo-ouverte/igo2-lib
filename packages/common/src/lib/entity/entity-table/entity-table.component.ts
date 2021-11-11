@@ -528,6 +528,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
       value = value ? '&#10003;' : '';  // check mark
     }
+
+    if(value === undefined) {
+      value = '';
+    }
+
     return value;
   }
 
