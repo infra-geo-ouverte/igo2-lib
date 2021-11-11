@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
-import { MeasureLengthUnit } from '../../../measure';
 import { Layer, VectorLayer } from '../../../layer';
 
 import { SpatialType, PredefinedType } from '../shared/geometry-predefined-or-draw.enum';
@@ -33,7 +32,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
 
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
-  @Input() queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
+  @Input() queryType: string[] = [];
   @Input() selectedQueryType: PredefinedType;
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
@@ -46,15 +45,12 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   @Output() eventType = new EventEmitter<SpatialType>();
   @Output() eventQueryType = new EventEmitter<PredefinedType>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
-  @Output() bufferChange = new EventEmitter<number>();
-  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   constructor() {}
 
   ngOnInit() {
-    this.onTypeChange();
     this.initCurrentZoneStore();
-
+    this.onTypeChange();
   }
 
   private initCurrentZoneStore() {
@@ -63,8 +59,8 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
       title: 'Current zone',
       zIndex: 900,
       source: new FeatureDataSource(),
-      showInLayerList: true,
-      exportable: true,
+      showInLayerList: false,
+      exportable: false,
       browsable: false,
       style: zoneStyle,
       workspace: {enabled: false}

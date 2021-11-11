@@ -8,7 +8,7 @@
       <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
       <mat-select (selectionChange)="onSelectionChange()" [(value)]="selectedQueryType">
         <mat-option *ngFor="let queryType of queryType" [value]="queryType">
-          {{('igo.geo.terrapi.' + queryType) | translate}}
+          {{queryType | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>

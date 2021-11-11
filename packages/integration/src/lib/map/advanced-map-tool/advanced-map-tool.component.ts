@@ -30,8 +30,8 @@ export class AdvancedMapToolComponent implements OnInit {
     new FeatureStore<FeatureForPredefinedOrDrawGeometry>([], { map: this.mapState.map });
   public currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry> =
     new FeatureStore<FeatureForPredefinedOrDrawGeometry>([], { map: this.mapState.map });
-  public queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
-  public selectedQueryType = 'AdmRegion';
+  public queryType: string[] = ['type1', 'type2'];
+  public selectedQueryType = 'type1';
   public layers: Layer[];
   public activeLayers: Layer[] = [];
   public allRegionsFeatures = [];
@@ -53,7 +53,7 @@ export class AdvancedMapToolComponent implements OnInit {
         properties: {
           id: 1,
           title: 'Name 1',
-          _predefinedType: 'CS'
+          _predefinedType: 'type1'
         }
       },
       {
@@ -67,7 +67,7 @@ export class AdvancedMapToolComponent implements OnInit {
         properties: {
           id: 2,
           title: 'Name 2',
-          _predefinedType: 'CS'
+          _predefinedType: 'type1'
         }
       },
       {
@@ -75,13 +75,13 @@ export class AdvancedMapToolComponent implements OnInit {
         type: 'Feature',
         geometry: {
           type: 'Polygon',
-          coordinates: [[[-71, 46.8], [-73, 47], [-71.2, 46.6]]]
+          coordinates: [[[-71, 46.8], [-73, 47], [-71.2, 46.6],[-71, 46.8]]]
         },
         projection: 'EPSG:4326',
         properties: {
           id: 3,
           title: 'Name 3',
-          _predefinedType: 'DGT'
+          _predefinedType: 'type2'
         }
       }
     ]);
@@ -100,11 +100,11 @@ export class AdvancedMapToolComponent implements OnInit {
   handleQueryType() {
     let f = [];
     switch (this.selectedQueryType) {
-      case 'Arrond':
-        f = this.allRegionsStore.entities$.value.filter(f => f.properties._predefinedType === 'CS');
+      case 'type1':
+        f = this.allRegionsStore.entities$.value.filter(f => f.properties._predefinedType === 'type1');
         break;
-      case 'CircFed':
-        f = this.allRegionsStore.entities$.value.filter(f => f.properties._predefinedType === 'DGT');
+      case 'type2':
+        f = this.allRegionsStore.entities$.value.filter(f => f.properties._predefinedType === 'type2');
         break;
       default:
         this.predefinedRegionsStore.clear();

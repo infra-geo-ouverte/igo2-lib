@@ -106,7 +106,13 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     return feature ? feature.properties.title : undefined;
   }
 
+  clearCurrentRegionStore() {
+    this.currentRegionStore.clear();
+    this.currentRegionStore.clearLayer();
+  }
+
   onZoneChange(feature: FeatureForPredefinedOrDrawGeometry) {
+    this.clearCurrentRegionStore();
     this.selectedZone$.next(feature);
     if (feature && this.queryType) {
       this.bufferFormControl.enable();
@@ -142,11 +148,11 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
         ol: myOlFeature
       };
 
-      this.currentRegionStore.clear();
+      this.clearCurrentRegionStore();
       this.currentRegionStore.load([zoneFeature]);
       moveToOlFeatures(this.map, [myOlFeature], FeatureMotion.Zoom);
     } else {
-      this.currentRegionStore.clear();
+      this.clearCurrentRegionStore();
     }
   }
 
