@@ -1,0 +1,30 @@
+.mat-form-field {
+    padding: 5px;
+    width: 95%;
+    margin-left: 2px;
+}
+
+.mat-tab-group ::ng-deep .mat-tab-body-content {
+    overflow: hidden;
+}
+
+.mat-tab-group ::ng-deep .mat-tab-label {
+    padding: 10px;
+}
+
+.mat-tab-group ::ng-deep .mat-tab-body-wrapper {
+    margin-top: 5px;
+}
+
+.spatial-type-toggle {
+    padding: 10px;
+    text-align: center;
+
+    mat-button-toggle-group {
+      width: 50%;
+
+      mat-button-toggle {
+        width: 50%;
+      }
+    }
+  }

@@ -1,0 +1,39 @@
+<mat-tab-group
+  [selectedIndex]="selectedTypeIndex.value"
+  (selectedIndexChange)="selectedTypeIndex.setValue($event)"
+  (selectedTabChange)="onTypeChange()">
+
+  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
+    <mat-form-field>
+      <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
+      <mat-select (selectionChange)="onSelectionChange()" [(value)]="selectedQueryType">
+        <mat-option *ngFor="let queryType of queryType" [value]="queryType">
+          {{('igo.geo.terrapi.' + queryType) | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <igo-geometry-predefined-list
+      [predefinedRegionsStore]="predefinedRegionsStore"
+      [currentRegionStore]="currentRegionStore"
+      [queryType]="selectedQueryType"
+      [layers]="layers"
+      [map]="map">
+    </igo-geometry-predefined-list>
+  </mat-tab>
+
+  <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
+    <div class="spatial-type-toggle">
+      <mat-button-toggle-group
+        [value]="activeDrawType"
+        (change)="onDrawTypeChange($event.value)">
+        <mat-button-toggle [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
+            <mat-icon svgIcon="pentagon-outline"></mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
+            <mat-icon svgIcon="record-circle-outline"></mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </mat-tab>
+
+</mat-tab-group>
