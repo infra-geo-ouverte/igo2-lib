@@ -223,7 +223,7 @@ export class EditionWorkspaceService {
           editMode: true,
           icon: 'alpha-x',
           color: 'primary',
-          click: (feature) => { this.cancelEdit(workspace, layer, feature) }
+          click: (feature) => { this.cancelEdit(workspace, feature) }
         }] as EntityTableButton[];
       }
     }];
@@ -313,7 +313,8 @@ export class EditionWorkspaceService {
   public saveFeature(feature, workspace){
     let url =
       this.configService.getConfig('edition.url') +
-      workspace.layer.dataSource.options.edition.baseUrl;
+      workspace.layer.dataSource.options.edition.baseUrl +
+      workspace.layer.dataSource.options.edition.addUrl;
 
 
     if (feature.new) {
@@ -326,7 +327,6 @@ export class EditionWorkspaceService {
 
   public addFeature(url, feature) {
     const featureProperties = JSON.parse(JSON.stringify(feature.properties));
-    delete featureProperties.boundedBy;
     if (url) {
       feature.new = false;
       this.http.post(`${url}`, { featureProperties }).subscribe(
@@ -385,7 +385,7 @@ export class EditionWorkspaceService {
     if (url) {
       this.http.patch(`${url}`, featureProperties).subscribe(
         () => {
-          this.cancelEdit(workspace, workspace.layer, feature);
+          this.cancelEdit(workspace, feature);
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
@@ -403,7 +403,7 @@ export class EditionWorkspaceService {
     }
   }
 
-  cancelEdit(workspace, layer, feature) {
+  cancelEdit(workspace, feature) {
     feature.edition = false;
     if (feature.new) {
       workspace.entityStore.delete(feature);
