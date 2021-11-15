@@ -146,7 +146,7 @@ export class ShareMapService {
 
         let version = '';
         if (layerVersion) {
-          const operator = linkUrl.indexOf('?') === -1 ? '?' : '&';
+          const operator = (layer.dataSource.options as any).url.indexOf('?') === -1 ? '?' : '&';
           version = encodeURIComponent(`${operator}VERSION=${layerVersion}`);
         }
         linkUrl = `${linkUrl}${version}`;
