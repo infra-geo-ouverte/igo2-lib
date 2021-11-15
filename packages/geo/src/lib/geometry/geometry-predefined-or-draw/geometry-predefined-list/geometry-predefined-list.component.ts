@@ -87,7 +87,6 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
       this.selectedZone$,
       this.measureUnit$])
       .subscribe((bunch: [bufferValue: number, zone: FeatureForPredefinedOrDrawGeometry, unit: MeasureLengthUnit]) => {
-        console.log(bunch);
         const bufferValue: number = bunch[0];
         const zone: FeatureForPredefinedOrDrawGeometry = bunch[1];
         const unit: MeasureLengthUnit = bunch[2];

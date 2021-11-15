@@ -99,12 +99,20 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
     this.eventType.emit(this.type);
   }
 
+  clearCurrentRegionStore() {
+    this.currentRegionStore.clear();
+    this.currentRegionStore.clearLayer();
+  }
+
   onDrawTypeChange(spatialType: SpatialType) {
+    this.clearCurrentRegionStore();
     this.activeDrawType = spatialType;
+    this.currentRegionStore.clear();
     this.eventType.emit(this.activeDrawType);
   }
 
   onSelectionChange() {
+    this.clearCurrentRegionStore();
     this.eventQueryType.emit(this.selectedQueryType);
     this.zoneChange.emit(undefined);
   }
