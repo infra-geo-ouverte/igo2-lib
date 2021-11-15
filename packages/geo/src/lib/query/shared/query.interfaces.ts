@@ -17,6 +17,8 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
+  queryUrl?: string;
+  queryFeature?: boolean;
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
   ol?: olSourceVector<OlGeometry> | olSource;

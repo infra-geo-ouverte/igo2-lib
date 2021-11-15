@@ -23,3 +23,23 @@ export function olLayerIsQueryable(olLayer: OlLayer<OlSource>): boolean {
   const layer = olLayer.get('_layer');
   return layer === undefined ? false : layerIsQueryable(layer);
 }
+
+/**
+ * Whether a layer's feature is queryable
+ * @param layer Layer
+ * @returns True if the layer's feature is queryable
+ */
+export function layerFeatureIsQueryable(layer: AnyLayer): boolean {
+  const dataSource = layer.dataSource as QueryableDataSource;
+  return dataSource.options.queryFeature === true;
+}
+
+/**
+ * Whether an OL Vector layer is queryable
+ * @param layer Layer
+ * @returns True if the ol vector layer is queryable
+ */
+export function olLayerFeatureIsQueryable(olLayer: OlLayer<OlSource>): boolean {
+  const layer = olLayer.get('_layer');
+  return layer === undefined ? false : (layerIsQueryable(layer) && layerFeatureIsQueryable(layer));
+}
