@@ -28,7 +28,7 @@
           <div *ngIf="!(item.collapsed)">
             <div *ngIf="item.url">
               <img #renderedLegend id="{{item.title}}" (load)="onLoadImage(item.title)"
-                src="{{legendGraphic}}"
+                src="{{legendGraphic[item.title]}}"
                 alt="{{'igo.geo.layer.legend.loadingLegendText' | translate}}">
               <small *ngIf="imagesHeight[item.title]<16">
                   {{'igo.geo.layer.legend.noLegendScale' | translate}}
