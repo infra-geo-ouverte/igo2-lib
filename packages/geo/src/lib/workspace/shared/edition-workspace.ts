@@ -101,4 +101,8 @@ export class EditionWorkspace extends Workspace {
       }, 500);
     }
   }
+
+  private getInResolutionRange(): boolean {
+    return this.inResolutionRange$.value;
+  }
 }

@@ -47,13 +47,19 @@ export class FeatureWorkspaceService {
     if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition.enabled === true) {
       return;
     }
-    layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    }
+    wksConfig.srcId = layer.id;
+    wksConfig.workspaceId = layer.id;
+    wksConfig.enabled = true;
 
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
-        enabled: true,
-        srcId: layer.id,
-        workspaceId: layer.id
+        wksConfig
       } as GeoWorkspaceOptions);
 
 

@@ -89,6 +89,19 @@ export class WFSDataSource extends DataSource {
       this.ogcFilters$.next(this.ogcFilters);
     }
   }
+  getParamsWFSFeatureTypes() {
+    if (this.options.paramsWFS && this.options.paramsWFS.featureTypes) {
+      return this.options.paramsWFS.featureTypes;
+    }
+    else return null;
+  }
+
+  getCombineLayerWFSMapQuerySameAsWms() {
+    if (this.options.paramsWFS && this.options.paramsWFS.combineLayerWFSMapQuerySameAsWms) {
+      return this.options.paramsWFS.combineLayerWFSMapQuerySameAsWms;
+    }
+    else return null;
+  }
 
   public onUnwatch() { }
 }

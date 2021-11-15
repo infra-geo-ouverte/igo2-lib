@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, Workspace, WorkspaceStore, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { WfsWorkspace, FeatureWorkspace, EditionWorkspace } from '@igo2/geo';
+import { WfsWorkspace, FeatureWorkspace, EditionWorkspace, QueryService  } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
 import { StorageService } from '@igo2/core';
@@ -18,6 +18,7 @@ import { EditionActionsService } from './shared/edition-actions.service';
 export class WorkspaceState implements OnDestroy {
 
   public workspacePanelExpanded: boolean = false;
+  public workspacePanelExpanded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   readonly rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -45,6 +46,7 @@ export class WorkspaceState implements OnDestroy {
    */
   public workspace$ = new BehaviorSubject<Workspace>(undefined);
 
+
   /**
    * Store that holds all the available workspaces
    */
@@ -55,9 +57,13 @@ export class WorkspaceState implements OnDestroy {
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
     private editionActionsService: EditionActionsService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    public queryService: QueryService
   ) {
     this.initWorkspaces();
+    this.workspacePanelExpanded$.subscribe(isOpen => {
+      this.queryService.workspaceIsOpen = isOpen;
+    });
   }
 
   /**
@@ -66,6 +72,9 @@ export class WorkspaceState implements OnDestroy {
    * to make sure only one widget is active at a time.
    */
   private initWorkspaces() {
+    this.workspace$.subscribe(val => {
+      this.queryService.workspace = val;
+    });
     this._store = new WorkspaceStore([]);
     this._store.stateView
       .firstBy$((record: EntityRecord<Workspace>) => record.state.active === true)

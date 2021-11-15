@@ -82,6 +82,16 @@ export class WmsWorkspaceService {
     layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId ? layer.options.linkedLayers.linkId : wmsLinkId,
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
+
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    }
+    wksConfig.srcId = layer.id;
+    wksConfig.workspaceId = undefined;
+    wksConfig.enabled = false;
     let wks;
     this.layerService
       .createAsyncLayer({
@@ -89,11 +99,7 @@ export class WmsWorkspaceService {
         linkedLayers: {
           linkId: wfsLinkId
         },
-        workspace: {
-          srcId: layer.id,
-          workspaceId: undefined,
-          enabled: false,
-        },
+        workspace: wksConfig,
         showInLayerList: false,
         opacity: 0,
         title: layer.title,

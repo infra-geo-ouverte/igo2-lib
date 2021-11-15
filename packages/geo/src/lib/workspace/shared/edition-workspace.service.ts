@@ -53,6 +53,18 @@ export class EditionWorkspaceService {
     if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition.enabled !== true) {
       return;
     }
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    }
+    wksConfig.srcId = layer.id;
+    wksConfig.workspaceId = layer.id;
+    wksConfig.enabled = true;
+    wksConfig.noQueryOnClickInTab = true;
+    wksConfig.noMapQueryOnOpenTab = true;
+
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;
     const wmsLinkId = layer.id + '.WmsWorkspaceTableSrc';
     const wfsLinkId = layer.id + '.WfsWorkspaceTableDest';
@@ -100,6 +112,8 @@ export class EditionWorkspaceService {
           srcId: layer.id,
           workspaceId: undefined,
           enabled: false,
+          noMapQueryOnOpenTab: true,
+          noQueryOnClickInTab: true
         },
         showInLayerList: false,
         opacity: 0,
@@ -140,9 +154,7 @@ export class EditionWorkspaceService {
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
         layer.options.workspace = Object.assign({}, layer.options.workspace,
           {
-            enabled: true,
-            srcId: layer.id,
-            workspaceId: workspaceLayer.id
+            wksConfig
           } as GeoWorkspaceOptions);
 
         delete dataSource.options.download;

@@ -30,4 +30,8 @@ export class WfsWorkspace extends Workspace {
       }
     });
   }
+
+  private getInResolutionRange(): boolean {
+    return this.inResolutionRange$.value;
+  }
 }

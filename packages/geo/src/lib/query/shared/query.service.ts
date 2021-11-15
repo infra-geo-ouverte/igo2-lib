@@ -42,6 +42,8 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
+  public workspace;
+  public workspaceIsOpen = false;
 
   constructor(private http: HttpClient) {}
 

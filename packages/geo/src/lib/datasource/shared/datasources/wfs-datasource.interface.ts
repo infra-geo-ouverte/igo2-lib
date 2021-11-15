@@ -22,4 +22,5 @@ export interface WFSDataSourceOptionsParams {
   srsName?: string;
   xmlFilter?: string;
   key?: string;
+  combineLayerWFSMapQuerySameAsWms?: boolean;
 }
