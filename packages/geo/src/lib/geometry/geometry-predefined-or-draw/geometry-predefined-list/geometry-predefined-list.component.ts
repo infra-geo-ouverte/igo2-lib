@@ -7,7 +7,7 @@ import {
   OnDestroy,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { FormControl, Validators } from '@angular/forms';
 import { Feature, FEATURE, FeatureGeometry, FeatureMotion, FeatureStore, featureToOl, moveToOlFeatures } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
@@ -20,6 +20,7 @@ import { IgoMap } from '../../../map/shared/map';
 import { Geometry } from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefined-or-draw.interface';
+import { PredefinedType } from '../shared/geometry-predefined-or-draw.enum';
 
 
 @Component({
@@ -30,33 +31,34 @@ import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefine
 })
 export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
+  @Input() minBufferMeters: number = 0;
+  @Input() maxBufferMeters: number = 100000;
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
   @Input()
-  get queryType(): string {
-    return this._queryType;
+  get selectedQueryType(): PredefinedType {
+    return this._selectedQueryType;
   }
-  set queryType(queryType: string) {
-    this.formControl.setValue('');
-    this._queryType = queryType;
+  set selectedQueryType(queryType: PredefinedType) {
+    this.regionsFormControl.setValue('');
+    this._selectedQueryType = queryType;
   }
-  private _queryType: string;
+  private _selectedQueryType: PredefinedType;
 
-  @Input() minBufferMeters: number = 0;
-  @Input() maxBufferMeters: number = 100000;
 
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
   private kilometersValidator = [Validators.max(this.maxBufferMeters/1000), Validators.min(this.minBufferMeters/1000), Validators.required];
 
-  public zoneWithBuffer;
   public selectedZone$: BehaviorSubject<FeatureForPredefinedOrDrawGeometry> = new BehaviorSubject(undefined);
-  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-  public formControl = new FormControl();
+  public measureUnit$: BehaviorSubject<MeasureLengthUnit> = new BehaviorSubject(MeasureLengthUnit.Meters);
+  public regionsFormControl = new FormControl();
   public bufferFormControl = new FormControl(0, this.metersValidator);
+
   private formValueChanges$$: Subscription;
   private selectedZone$$: Subscription;
+  private predefinedRegionsStoreCount$$: Subscription;
   private bufferValueChanges$$: Subscription;
 
   get measureUnits(): string[] {
@@ -70,7 +72,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
     this.selectedZone$$ = this.selectedZone$.subscribe(zone => zone ? this.bufferFormControl.enable(): this.bufferFormControl.disable());
 
-    this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
+    this.formValueChanges$$ = this.regionsFormControl.valueChanges.subscribe((value) => {
       if (value.length) {
         this.predefinedRegionsStore.view.filter((feature) => {
           const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -80,19 +82,23 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.bufferValueChanges$$ = this.bufferFormControl.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
-      .subscribe((value: number) => {
+    this.bufferValueChanges$$ = combineLatest([
+      this.bufferFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
+      this.selectedZone$,
+      this.measureUnit$])
+      .subscribe((bunch: [bufferValue: number, zone: FeatureForPredefinedOrDrawGeometry, unit: MeasureLengthUnit]) => {
+        console.log(bunch);
+        const bufferValue: number = bunch[0];
+        const zone: FeatureForPredefinedOrDrawGeometry = bunch[1];
+        const unit: MeasureLengthUnit = bunch[2];
+
         if (this.bufferFormControl.errors) {
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           return;
         }
-        this.selectedZone$.value.properties._buffer = value;
-        this.onZoneChange(this.selectedZone$.value);
+        this.selectedZone$.value.properties._buffer = bufferValue;
+        this.processZone(zone);
       });
   }
 
@@ -100,6 +106,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     this.formValueChanges$$.unsubscribe();
     this.bufferValueChanges$$.unsubscribe();
     this.selectedZone$$.unsubscribe();
+    this.predefinedRegionsStoreCount$$.unsubscribe();
   }
 
   displayFn(feature?: Feature): string | undefined {
@@ -111,15 +118,14 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     this.currentRegionStore.clearLayer();
   }
 
-  onZoneChange(feature: FeatureForPredefinedOrDrawGeometry) {
+  private processZone(feature: FeatureForPredefinedOrDrawGeometry) {
     this.clearCurrentRegionStore();
-    this.selectedZone$.next(feature);
-    if (feature && this.queryType) {
+    if (feature && this.selectedQueryType) {
       this.bufferFormControl.enable();
       feature.properties._buffer = this.bufferFormControl.value;
       let currentZone = feature;
       if (feature.properties._buffer && feature.properties._buffer !== 0) {
-        const bufferedZone = buffer(feature.geometry, feature.properties._buffer, { units: this.measureUnit });
+        const bufferedZone = buffer(feature.geometry, feature.properties._buffer, { units: this.measureUnit$.value });
 
         bufferedZone.properties = feature.properties;
         currentZone = bufferedZone as FeatureForPredefinedOrDrawGeometry;
@@ -139,7 +145,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
         properties: {
           id: featureId,
           title: myOlFeature.get('title'),
-          _predefinedType: this.queryType,
+          _predefinedType: this.selectedQueryType,
           _buffer: this.bufferFormControl.value
         },
         meta: {
@@ -151,9 +157,11 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
       this.clearCurrentRegionStore();
       this.currentRegionStore.load([zoneFeature]);
       moveToOlFeatures(this.map, [myOlFeature], FeatureMotion.Zoom);
-    } else {
-      this.clearCurrentRegionStore();
     }
+  }
+
+  onZoneChange(feature: FeatureForPredefinedOrDrawGeometry) {
+    this.selectedZone$.next(feature);
   }
 
   /**
@@ -166,11 +174,11 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     } else {
       this.bufferFormControl.setValidators(this.kilometersValidator);
     }
-    if (unit === this.measureUnit) {
+    if (unit === this.measureUnit$.value) {
       return;
     } else {
-      this.measureUnit = unit;
-      this.measureUnit === MeasureLengthUnit.Meters ?
+      this.measureUnit$.next(unit);
+      this.measureUnit$.value === MeasureLengthUnit.Meters ?
         this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
         this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
     }

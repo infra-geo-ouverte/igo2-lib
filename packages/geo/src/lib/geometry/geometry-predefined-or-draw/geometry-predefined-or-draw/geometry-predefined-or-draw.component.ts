@@ -33,7 +33,22 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
   @Input() queryType: string[] = [];
-  @Input() selectedQueryType: PredefinedType;
+  @Input() minBufferMeters: number = 0;
+  @Input() maxBufferMeters: number = 100000;
+  // @Input() selectedQueryType: PredefinedType;
+  @Input()
+  get selectedQueryType(): PredefinedType {
+    return this._selectedQueryTypee;
+  }
+  set selectedQueryType(queryType: PredefinedType) {
+    this._selectedQueryTypee = queryType;
+    if (this.predefinedRegionsStore.empty) {
+      this.eventQueryType.emit(queryType);
+    }
+  }
+  private _selectedQueryTypee: PredefinedType;
+
+
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
 
