@@ -74,9 +74,6 @@ export class VectorLayer extends Layer {
     }
 
     const vector = new olLayerVector(olOptions);
-    // const vectorSource = (this.dataSource instanceof ClusterDataSource
-    //   ? vector.getSource().
-    //   : vector.getSource()) as olSourceVector<OlGeometry>;
     const vectorSource = vector.getSource() as olSourceVector<OlGeometry>;
     const url = vectorSource.getUrl();
     if (url) {

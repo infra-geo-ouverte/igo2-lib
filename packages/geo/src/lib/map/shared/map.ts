@@ -273,7 +273,7 @@ export class IgoMap {
 
   getLayerByOlUId(olUId: string): Layer {
     return this.layers.find(
-      (layer: Layer) => layer.ol.get('ol_uid') && layer.ol.get('ol_uid') === olUId
+      (layer: Layer) => (layer.ol as any).ol_uid && (layer.ol as any).ol_uid === olUId
     );
   }
 
