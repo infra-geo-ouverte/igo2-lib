@@ -261,7 +261,7 @@ export class EditionWorkspaceService {
             };
           });
         workspace.meta.tableTemplate = {
-          selection: true,
+          selection: false,
           sort: true,
           columns: columnsFromFeatures
         };
@@ -309,7 +309,7 @@ export class EditionWorkspaceService {
     columns.push(...buttons);
 
     workspace.meta.tableTemplate = {
-      selection: true,
+      selection: false,
       sort: true,
       columns
     };
