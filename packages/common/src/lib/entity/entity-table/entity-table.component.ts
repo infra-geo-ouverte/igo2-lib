@@ -227,7 +227,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (store && store.currentValue !== store.previousValue) {
       this.handleDatasource();
     }
-    this.enableEdit();
   }
 
   onValueChange(column, record, event) {
@@ -246,14 +245,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  private enableEdit() {
-    this.dataSource.data.forEach(value => {
-      const entity = value as any;
-      const item = entity.entity.properties;
+  private enableEdit(record) {
+      const item = record.entity.properties;
       this.template.columns.forEach(column => {
-          this.formGroup.addControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
-      })
-    });
+        this.formGroup.setControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
+      });
     console.log(this.formGroup);
   }
 
@@ -634,6 +630,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     clickFunc: (entity: object, record?: EntityRecord<object>) => void,
     record: EntityRecord<object>
   ) {
+    this.enableEdit(record);
     if (typeof clickFunc === 'function') {
       clickFunc(record.entity, record);
     }
