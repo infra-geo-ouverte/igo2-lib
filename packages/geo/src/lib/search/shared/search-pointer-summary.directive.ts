@@ -272,6 +272,15 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     }, this.igoSearchPointerSummaryDelay);
   }
 
+    /**
+   * Sort the results by display order.
+   * @param r1 First result
+   * @param r2 Second result
+   */
+     private sortByOrder(r1: SearchResult, r2: SearchResult) {
+      return r1.source.displayOrder - r2.source.displayOrder;
+    }
+
   private onSearchCoordinate() {
     this.pointerSearchStore.clear();
     const results = this.searchService.reverseSearch(this.lonLat, { params: { geometry: 'false', icon: 'false' } }, true);
@@ -291,7 +300,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const newResults = this.pointerSearchStore.all()
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
-    this.pointerSearchStore.load(newResults);
+    this.pointerSearchStore.load(newResults.sort(this.sortByOrder));
   }
 
   /**
