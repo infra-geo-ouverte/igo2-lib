@@ -17,4 +17,5 @@ export interface MessageOptions extends Notification {
   from?: Date | string;
   to?: Date | string;
   id?: string;
+  showOnEachLayerVisibility?: boolean;
 }
