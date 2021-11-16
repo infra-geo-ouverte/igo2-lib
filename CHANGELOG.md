@@ -1,3 +1,28 @@
+## [1.9.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.3...1.9.4) (2021-11-15)
+
+
+### Bug Fixes
+
+* **context/vector/map/measure:** various fix ([#934](https://github.com/infra-geo-ouverte/igo2-lib/issues/934)) ([227d5e8](https://github.com/infra-geo-ouverte/igo2-lib/commit/227d5e8d436f1338a2d3cb52d8e80f2bbf388a7b))
+* **directions:** observable management on search ([#929](https://github.com/infra-geo-ouverte/igo2-lib/issues/929)) ([07089b8](https://github.com/infra-geo-ouverte/igo2-lib/commit/07089b855ae94ed31705fb9c967d79092c683732))
+* **legend:** for layer with more than one layer ([#935](https://github.com/infra-geo-ouverte/igo2-lib/issues/935)) ([f39d868](https://github.com/infra-geo-ouverte/igo2-lib/commit/f39d8686adb4791fae3c9cca48a507d586c2f00e))
+* **route-service:** URL issue from certains Office suite (teams, word… ([#937](https://github.com/infra-geo-ouverte/igo2-lib/issues/937)) ([0c4270b](https://github.com/infra-geo-ouverte/igo2-lib/commit/0c4270bd8a4f76d7cb9f8e068d8b6a894e6b8704))
+* **storedQueries:** param was undefined. ([#933](https://github.com/infra-geo-ouverte/igo2-lib/issues/933)) ([9b7fcf2](https://github.com/infra-geo-ouverte/igo2-lib/commit/9b7fcf2a0bed561cac024aa84515307a2f420ddf))
+
+
+### Features
+
+* **auth:** Provide a config to setup a key value based on regex value ([#926](https://github.com/infra-geo-ouverte/igo2-lib/issues/926)) ([b9bc82e](https://github.com/infra-geo-ouverte/igo2-lib/commit/b9bc82edd16129591b48fe739b61d4557965854c))
+* **catalog:** add catalog dialog, the title is now a list to select values ([#931](https://github.com/infra-geo-ouverte/igo2-lib/issues/931)) ([33543e5](https://github.com/infra-geo-ouverte/igo2-lib/commit/33543e54b751acbf9cc9bf0ef6a1695b7cb21510))
+* **query:** Custom url for get info ([#927](https://github.com/infra-geo-ouverte/igo2-lib/issues/927)) ([1e51e39](https://github.com/infra-geo-ouverte/igo2-lib/commit/1e51e39c2ad43050a3f862aff231ef5bf25de501))
+
+
+### Reverts
+
+* Revert "fix(context-menu): ios context menu was not available. (#899)" (#939) ([4571b98](https://github.com/infra-geo-ouverte/igo2-lib/commit/4571b98f0477971d61716078b19c5fa5c379cc55)), closes [#899](https://github.com/infra-geo-ouverte/igo2-lib/issues/899) [#939](https://github.com/infra-geo-ouverte/igo2-lib/issues/939)
+
+
+
 ## [1.9.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.2...1.9.3) (2021-10-18)
 
 
