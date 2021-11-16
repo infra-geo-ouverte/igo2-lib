@@ -16,6 +16,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { GeometryPredefinedListComponent }
   from './geometry-predefined-list/geometry-predefined-list.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { GeometryDrawComponent } from './geometry-draw/geometry-draw.component';
+import { IgoGeometryFormFieldModule } from '../geometry-form-field/geometry-form-field.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 /**
@@ -34,16 +37,20 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     IgoLanguageModule,
     MatOptionModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatTabsModule,
     MatButtonToggleModule,
     MatTooltipModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    IgoGeometryFormFieldModule
   ],
   exports: [
+    GeometryDrawComponent,
     GeometryPredefinedOrDrawTypeComponent,
     GeometryPredefinedListComponent
   ],
   declarations: [
+    GeometryDrawComponent,
     GeometryPredefinedOrDrawTypeComponent,
     GeometryPredefinedListComponent
   ]

@@ -1,0 +1,178 @@
+@import '../../../../../../core/src/style/partial/media';
+
+.header {
+    margin-top: 5px;
+    width: 100%;
+}
+
+.mat-slide-toggle {
+    padding: 5px;
+    margin-bottom: 15px;
+    width: 98%;
+
+    ::ng-deep .mat-slide-toggle-content {
+        width: calc(100% - 20px);
+    }
+}
+
+.title {
+    margin-left: 5px;
+    font-size: initial;
+}
+
+.mat-radio-group {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+
+.mat-radio-button {
+    display: inline-flex;
+    position: relative;
+    margin-left: 16px;
+    margin-top: 10px;
+}
+
+.mat-form-field {
+    margin-top: 5px;
+}
+
+.mat-column-select {
+    overflow: auto;
+}
+
+.buttons {
+    margin-top: 15px;
+}
+
+.search-button {
+    left: 15px;
+    width: 165px;
+
+    @include mobile {
+        left: 10px;
+        width: 45%;
+        min-height: 35px;
+        white-space: normal;
+        line-height: normal;
+    }
+}
+
+.export-button {
+    left: 15px;
+    width: 165px;
+
+    @include mobile {
+        left: 10px;
+        margin-top: 10px;
+        width: 45%;
+        min-height: 35px;
+        white-space: normal;
+        line-height: normal;
+    }
+}
+
+.remove-button {
+    margin-top: 12px;
+    left: 5px;
+    width: 165px;
+
+    @include mobile {
+        margin: 0px;
+        width: 45%;
+        min-height: 35px;
+        white-space: normal;
+        line-height: normal;
+    }
+}
+
+.clear-form-button {
+    left: 5px;
+    width: 165px;
+
+    @include mobile {
+        width: 45%;
+        min-height: 35px;
+        white-space: normal;
+        line-height: normal;
+    }
+}
+
+.clear-search-button {
+    left: 5px;
+    width: 165px;
+
+    @include mobile {
+        width: 45%;
+        min-height: 35px;
+        white-space: normal;
+        line-height: normal;
+    }
+}
+
+.results {
+    overflow: auto;
+    max-height: 250px;
+    width: 98%
+}
+
+.mat-column-typeResults {
+    max-width: 100px;
+    margin-right: 5px;
+}
+
+.buffer-unit, .radius-unit {
+    display: flex;
+    width: 100%;
+    margin-left: 2px;
+    padding: 5px;
+}
+
+.radius, .buffer {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 110%;
+}
+
+.unit-field {
+    width: 110px;
+    margin-left: 30px;
+}
+
+.example-tree-invisible {
+    display: none;
+}
+
+.tree-ul {
+    margin: 0px;
+    padding: 0px;
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.tree-check, .tree-check-2 {
+    position: relative;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+
+.checks-header {
+    padding: none;
+    max-width: calc(100% - 316px);
+    overflow: hidden;
+}
+
+.mat-checkbox {
+    padding: 5px;
+}
+
+.mat-tree-node {
+    position: relative;
+    min-height: 42px;
+    width: 280px;
+}
+
+.mat-header-cell {
+    height: 56px;
+}

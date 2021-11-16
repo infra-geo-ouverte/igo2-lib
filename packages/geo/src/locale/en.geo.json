@@ -530,6 +530,7 @@
         "polygon": "Polygon",
         "point": "Circle",
         "drawPolygon": "Draw a polygon",
+        "drawLine": "Draw a line",
         "drawCircle": "Draw a circle",
         "searchLabel": "Search by",
         "buffer": "Buffer",

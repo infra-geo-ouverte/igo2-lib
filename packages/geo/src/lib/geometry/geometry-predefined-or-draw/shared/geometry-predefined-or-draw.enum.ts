@@ -1,4 +1,5 @@
 export enum PredefinedType {
+    // TODO DELETE , REPLACE WITH INTERFACE
     AdmRegion = 'AdmRegion',
     Mun = 'Mun',
     Arrond = 'Arrond',

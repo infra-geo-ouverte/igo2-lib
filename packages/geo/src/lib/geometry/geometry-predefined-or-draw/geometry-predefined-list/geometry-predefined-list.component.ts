@@ -58,7 +58,6 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   private formValueChanges$$: Subscription;
   private selectedZone$$: Subscription;
-  private predefinedRegionsStoreCount$$: Subscription;
   private bufferValueChanges$$: Subscription;
 
   get measureUnits(): string[] {
@@ -105,7 +104,6 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     this.formValueChanges$$.unsubscribe();
     this.bufferValueChanges$$.unsubscribe();
     this.selectedZone$$.unsubscribe();
-    this.predefinedRegionsStoreCount$$.unsubscribe();
   }
 
   displayFn(feature?: Feature): string | undefined {
