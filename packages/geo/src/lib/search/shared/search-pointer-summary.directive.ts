@@ -176,10 +176,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance = closestResultByType[result.data.properties.type].distance;
           if (result.data.properties.distance < prevDistance) {
-            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+            const title = result.meta.pointerSummaryTitle || result.meta.title;
+            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
           }
         } else {
-          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+          const title = result.meta.pointerSummaryTitle || result.meta.title;
+          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
         }
       }
     });
@@ -204,7 +206,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         processedSummarizedClosestType.push(result.data.properties.type);
       } else {
         if (processedSummarizedClosestType.indexOf(result.data.properties.type) === -1) {
-          summary.push(result.meta.title);
+          summary.push(result.meta.pointerSummaryTitle || result.meta.title);
         }
       }
     });
