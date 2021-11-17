@@ -1,4 +1,4 @@
-import OlFeature from 'ol/Feature';
+import olFeature from 'ol/Feature';
 import {
   Component,
   Input,
@@ -8,9 +8,9 @@ import {
   OnInit
 } from '@angular/core';
 import { IgoMap } from '../../../map';
-import { Feature } from './../../../feature/shared/feature.interfaces';
+import { Feature, FeatureGeometry } from './../../../feature/shared/feature.interfaces';
 import { FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
@@ -18,11 +18,16 @@ import * as olStyle from 'ol/style';
 import * as olproj from 'ol/proj';
 import OlPoint from 'ol/geom/Point';
 import { MeasureLengthUnit } from '../../../measure';
-import { EntityStore } from '@igo2/common';
 import { MessageService, LanguageService } from '@igo2/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { SpatialType } from '../shared/geometry-predefined-or-draw.enum';
-
+import { FeatureStore } from '../../../feature/shared/store';
+import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefined-or-draw.interface';
+import buffer from '@turf/buffer';
+import { featureToOl, moveToOlFeatures } from '../../../feature/shared/feature.utils';
+import { FEATURE, FeatureMotion } from '../../../feature/shared/feature.enums';
+import { Geometry } from 'ol/geom';
+import OlGeoJSON from 'ol/format/GeoJSON';
 /**
  * Spatial-Filter-Item (search parameters)
  */
@@ -37,14 +42,14 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
   @Input() map: IgoMap;
-  @Input() store: EntityStore<Feature>;
+  @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>;
   @Input()
-  get type(): SpatialType {
-    return this._type;
+  get activeDrawType(): SpatialType {
+    return this._activeDrawType;
   }
-  set type(type: SpatialType) {
-    this._type = type;
-    const index = this.geometryTypes.findIndex(geom => geom === this.type);
+  set activeDrawType(type: SpatialType) {
+    this._activeDrawType = type;
+    const index = this.geometryTypes.findIndex(geom => geom === this.activeDrawType);
     this.geometryType = this.geometryTypes[index];
     this.geometryformControl.reset();
     this.radius = undefined;
@@ -52,7 +57,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     this.drawStyle$.next(undefined);
 
     // Necessary to keep reference to the geometry form field input
-    if (this.type === SpatialType.Predefined) {
+    if (this.activeDrawType === SpatialType.Predefined) {
       const geojson: GeoJSONGeometry = {
         type: 'Point',
         coordinates: ''
@@ -60,12 +65,12 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
       this.geometryformControl.setValue(geojson);
     }
     // Necessary to apply the right style when geometry type is Point
-    if (this.type === SpatialType.Point) {
+    if (this.activeDrawType === SpatialType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
       this.overlayStyle = this.PointStyle;
       this.drawStyle$.next(this.overlayStyle);
-    } else if (this.type === SpatialType.Line) {
+    } else if (this.activeDrawType === SpatialType.Line) {
       console.log('// todo');
     } else {
       // If geometry types is Polygon
@@ -75,7 +80,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
-  private _type: SpatialType;
+  private _activeDrawType: SpatialType;
 
   /**
    * Available measure units for the measure type given
@@ -86,15 +91,16 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
 
   // For geometry form field input
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
+  private drawnGeometry$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
   overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
   drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
 
-  private value$$: Subscription;
+  private drawnGeometry$$: Subscription;
   private radiusChanges$$: Subscription;
   private bufferChanges$$: Subscription;
   private measureUnit$$: Subscription;
+  private allValueChanges$$: Subscription;
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
   private kilometersValidator = [Validators.max(this.maxBufferMeters/1000), Validators.min(this.minBufferMeters/1000), Validators.required];
 
@@ -132,7 +138,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     });
   };
 
-  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = (feature: OlFeature<OlGeometry>, resolution: number) => {
+  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = (feature: olFeature<OlGeometry>, resolution: number) => {
     const geom = feature.getGeometry() as OlPoint;
     const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
     return new olStyle.Style({
@@ -173,26 +179,56 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     private languageService: LanguageService) {}
 
   ngOnInit() {
-    this.store.entities$.subscribe(() => { this.cdRef.detectChanges(); });
+
+    this.drawnGeometry$.next(undefined);
+
 
     this.drawGuide$.next(null);
-    this.value$.next(this.geometryformControl.value ? this.geometryformControl.value : undefined);
-    this.value$$ = this.geometryformControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
+    this.allValueChanges$$ = combineLatest([
+      this.geometryformControl.valueChanges,
+      this.bufferFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
+      this.radiusFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
+      this.measureUnit$])
+      .subscribe((bunch: [
+        geom: GeoJSONGeometry,
+        bufferValue: number,
+        radiusValue: number,
+        unit: MeasureLengthUnit
+      ]) => {
+        const geom = bunch[0];
+        const bufferValue: number = bunch[1];
+        const radiusValue: number = bunch[2];
+        const unit: MeasureLengthUnit = bunch[3];
+
+        console.log('bunch', bunch);
+
+       /* if (this.bufferFormControl.errors) {
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          return;
+        }
+        this.geometryformControl.value.properties._buffer = bufferValue;
+        this.geometryformControl.value.properties._radius = radiusValue;
+        // this.processZone(zone);*/
+      });
+
+    this.drawnGeometry$.next(this.geometryformControl.value ? this.geometryformControl.value : undefined);
+    this.drawnGeometry$$ = this.geometryformControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
       console.log('value',value);
       if (value) {
-        this.value$.next(value);
+        this.drawnGeometry$.next(value);
         this.drawZone = this.geometryformControl.value as Feature;
         if (this.buffer !== 0) {
          // this.drawZoneEvent.emit(this.drawZone);
           this.bufferFormControl.setValue(this.buffer);
         }
       } else {
-        this.value$.next(undefined);
+        this.drawnGeometry$.next(undefined);
         this.drawZone = undefined;
       }
     });
 
-    this.value$.subscribe(() => {
+    this.drawnGeometry$.subscribe(() => {
       this.getRadius();
       this.cdRef.detectChanges();
     });
@@ -240,17 +276,17 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
    * @internal
    */
   ngOnDestroy() {
-    this.value$$.unsubscribe();
     this.radiusChanges$$.unsubscribe();
     this.bufferChanges$$.unsubscribe();
     this.cdRef.detach();
     if (this.radiusChanges$$) {
       this.radiusChanges$$.unsubscribe();
     }
-    if (this.value$$) {
-      this.value$$.unsubscribe();
+    if (this.drawnGeometry$$) {
+      this.drawnGeometry$$.unsubscribe();
     }
     this.measureUnit$$.unsubscribe();
+    this.allValueChanges$$.unsubscribe();
   }
 
   /**
@@ -262,19 +298,19 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
 
   isPredefined() {
-    return this.type === SpatialType.Predefined;
+    return this.activeDrawType === SpatialType.Predefined;
   }
 
   isPolygon() {
-    return this.type === SpatialType.Polygon;
+    return this.activeDrawType === SpatialType.Polygon;
   }
 
   isPolyline() {
-    return this.type === SpatialType.Line;
+    return this.activeDrawType === SpatialType.Line;
   }
 
   isPoint() {
-    return this.type === SpatialType.Point;
+    return this.activeDrawType === SpatialType.Point;
   }
 
   onDrawControlChange() {
@@ -305,7 +341,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
       formValue = undefined;
     }
 
-    if (this.type === SpatialType.Point) {
+    if (this.activeDrawType === SpatialType.Point) {
       if (!this.freehandDrawIsActive) {
         if (
           this.radiusFormControl.value < 0 ||

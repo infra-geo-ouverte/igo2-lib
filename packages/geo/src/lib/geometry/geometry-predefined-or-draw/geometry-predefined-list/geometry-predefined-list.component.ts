@@ -58,7 +58,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   private formValueChanges$$: Subscription;
   private selectedZone$$: Subscription;
-  private bufferValueChanges$$: Subscription;
+  private allValueChanges$$: Subscription;
 
   get measureUnits(): string[] {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
@@ -81,7 +81,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.bufferValueChanges$$ = combineLatest([
+    this.allValueChanges$$ = combineLatest([
       this.bufferFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
       this.selectedZone$,
       this.measureUnit$])
@@ -102,7 +102,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.formValueChanges$$.unsubscribe();
-    this.bufferValueChanges$$.unsubscribe();
+    this.allValueChanges$$.unsubscribe();
     this.selectedZone$$.unsubscribe();
   }
 
