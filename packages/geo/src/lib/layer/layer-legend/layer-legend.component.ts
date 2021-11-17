@@ -142,7 +142,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
         }
       })
       ).subscribe(function(item, legendGraph) {
-        const idx = this.legendItems$.value.findIndex(leg => leg.title == item.title);
+        const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
         this.legendItems$.value[idx].imgGraphValue = legendGraph;
         this.cdRef.detectChanges();
       }.bind(this, item));
