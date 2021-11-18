@@ -489,10 +489,6 @@
             "production": {
               "project": "packages/integration/ng-package.prod.json",
               "tsConfig": "packages/integration/tsconfig.lib.prod.json"
-            },
-            "debug": {
-              "project": "packages/integration/ng-package.debug.json",
-              "tsConfig": "packages/integration/tsconfig.lib.debug.json"
             }
           }
         },
