@@ -12,12 +12,10 @@ import { EditionWorkspaceService } from './edition-workspace.service';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 import { DrawControl } from '../../geometry';
 import { createInteractionStyle, GeometryType } from '../../draw';
-import { FEATURE } from '../../feature';
+import { FeatureStoreInMapExtentStrategy, featureToOl } from '../../feature';
 
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { transform } from 'ol/proj';
-import OlPoint from 'ol/geom/Point';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
@@ -96,8 +94,6 @@ export class EditionWorkspace extends Workspace {
 
   editFeature(feature, workspace) {
     feature.edition = true;
-  
-    console.log('edition', feature);
     let id;
     outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
       for (const property in feature.properties) {
@@ -113,8 +109,9 @@ export class EditionWorkspace extends Workspace {
       feature.idkey = id;
       workspace.entityStore.state.update(feature, { selected: true });
     } else {
-      feature.new = true;
-      const geometryType = workspace.entityStore.entities$.getValue()[0].geometry.type;
+      feature.newFeature = true;
+      //const geometryType = workspace.entityStore.entities$.getValue()[0].geometry.type;
+      const geometryType = 'Point' as any;
       this.onGeometryTypeChange(geometryType, feature, workspace);
     }
   }
@@ -170,28 +167,26 @@ export class EditionWorkspace extends Workspace {
     this.drawControlIsActive = false;
   }
 
-  private getInResolutionRange(): boolean {
-    return this.inResolutionRange$.value;
-  }
-
   /**
    * Activate a given control
    */
    private activateDrawControl(feature, workspace) {
     this.drawControlIsActive = true;
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
+      workspace.layer.map.viewController.zoomToExtent(olGeometry.getExtent());
       this.onDrawEnd(olGeometry, feature, workspace);
     });
 
-    this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
-      //this.onModifyDraw(olGeometry);
-    });
+    // this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
+    //   this.onModifyDraw(olGeometry, workspace);
+    // });
 
     this.drawControl.setOlMap(this.map.ol, true);
   }
 
-  // private onModifyDraw(olGeometry) {
-  //   const primaryColumn = this.options.meta.tableTemplate.columns.find(col => col.primary === true);
+  // private onModifyDraw(olGeometry, workspace) {
+  //   console.log('onModify');
+  //   const primaryColumn = workspace.options.meta.tableTemplate.columns.find(col => col.primary === true);
   //   let primaryField;
   //   if (primaryColumn.name.includes('properties.')) {
   //     primaryField = primaryColumn.name.slice(11);
@@ -199,15 +194,16 @@ export class EditionWorkspace extends Workspace {
   //     primaryField = primaryColumn.name;
   //   }
 
-  //   const entities = this.options.entityStore.all();
+  //   const entities = workspace.options.entityStore.all();
 
   //   entities.forEach(entity => {
   //     const entityId = entity.properties[primaryField];
 
   //     const olGeometryId = olGeometry.ol_uid;
-
+  //     console.log(entityId);
+  //     console.log(olGeometryId);
   //     if (entityId === olGeometryId) {
-  //       this.replaceFeatureInStore(entity, olGeometry);
+  //       this.replaceFeatureInStore(entity, olGeometry, workspace);
   //     }
   //   });
   // }
@@ -217,10 +213,10 @@ export class EditionWorkspace extends Workspace {
    * @param entity the entity to replace
    * @param olGeometry the new geometry to insert in the store
    */
-    //  private replaceFeatureInStore(entity, olGeometry: OlGeometry) {
-    //   this.options.entityStore.delete(entity);
-    //   this.onDrawEnd(olGeometry);
-    // }
+  // private replaceFeatureInStore(entity, olGeometry: OlGeometry, workspace) {
+  //     workspace.options.entityStore.delete(entity);
+  //     this.onDrawEnd(olGeometry);
+  //   }
 
   /**
    * Clear the draw source and track the geometry being draw
@@ -228,7 +224,7 @@ export class EditionWorkspace extends Workspace {
    */
   private onDrawEnd(olGeometry: OlGeometry, feature?, workspace?) {
     this.addFeatureToStore(olGeometry, feature, workspace);
-    this.options.layer.dataSource.ol.refresh();
+    //workspace.layer.dataSource.ol.refresh();
   }
 
   /**
@@ -237,36 +233,30 @@ export class EditionWorkspace extends Workspace {
    * @internal
    */
   private addFeatureToStore(olGeometry, feature?, workspace?) {
-  let point4326: Array<number>;
-  const projection = this.map.ol.getView().getProjection();
+    const projection = this.map.ol.getView().getProjection();
 
-  const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
-    featureProjection: projection,
-    dataProjection: projection
-  }) as any;
-  let featureGeometry;
+    const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
+      featureProjection: projection,
+      dataProjection: 'EPSG:4326'
+    }) as any;
 
-  if (olGeometry instanceof OlPoint) {
-    point4326 = transform(olGeometry.getFlatCoordinates(), projection, 'EPSG:4326');
-    featureGeometry = {
-      type: 'Point',
-      coordinates: [point4326[0], point4326[1]]
-    };
+    feature.geometry = geometry;
+    feature.projection = 'EPSG:4326';
+
+    const featureOl = featureToOl(feature, projection.getCode());
+
+    workspace.layer.dataSource.ol.addFeature(featureOl);
+    for (const entity of workspace.entityStore.entities$.getValue()) {
+      if (entity.newFeature) {
+        workspace.entityStore.state.update(entity, { selected: true });
+      }
+    }
+
+    this.deactivateDrawControl();
+    setTimeout(() => {
+      let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
+        .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
+      element.click();
+    }, 500);
   }
-
-  featureGeometry ? feature.geometry = featureGeometry : feature.geometry = geometry;
-  feature.projection = 'EPSG:4326';
-
-  this.deactivateDrawControl();
-  console.log('feature', feature);
-  workspace.entityStore.insert(feature);
-  workspace.entityStore.state.update(feature, { selected: true });
-  console.log(workspace.entityStore.all());
-  // setTimeout(() => {
-  //   let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
-  //     .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
-  //   console.log(element);
-  //   element.click();
-  // }, 500);
-}
 }

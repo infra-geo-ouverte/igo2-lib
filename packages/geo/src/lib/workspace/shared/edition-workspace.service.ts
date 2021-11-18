@@ -16,7 +16,7 @@ import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
-import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreSelectionStrategy } from '../../feature';
+import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreLoadingStrategy, FeatureStoreSelectionStrategy } from '../../feature';
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
@@ -313,7 +313,7 @@ export class EditionWorkspaceService {
       sort: true,
       columns
     };
-}
+  }
 
   private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
     const filterClauseFunc = (record: EntityRecord<object>) => {
@@ -323,26 +323,43 @@ export class EditionWorkspaceService {
   }
 
   public saveFeature(feature, workspace){
+    console.log('save', feature);
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl +
       workspace.layer.dataSource.options.edition.addUrl;
 
 
-    if (feature.new) {
-      this.addFeature(feature, url);
+    if (feature.newFeature) {
+      this.addFeature(feature, workspace, url);
     } else {
       url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.idkey;
       this.modifyFeature(feature, workspace, url);
     }
   }
 
-  public addFeature(url, feature) {
-    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
+  public addFeature(feature, workspace, url) {
+    feature.properties['geometry'] = feature.geometry;
+    console.log(feature.properties);
+    feature.newFeature = false;
     if (url) {
-      feature.new = false;
-      this.http.post(`${url}`, { featureProperties }).subscribe(
+      this.http.post(`${url}`, feature.properties).subscribe(
         () => {
+          workspace.deactivateDrawControl();
+          this.cancelEdit(workspace, feature);
+          for (const layer of workspace.layer.map.layers) {
+            if (
+              layer.id !== workspace.layer.id &&
+              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
+              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
+              ) {
+                const olLayer = layer.dataSource.ol;
+                let params = olLayer.getParams();
+                params._t = new Date().getTime();
+                olLayer.updateParams(params);
+              }
+          }
+
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.addSuccess'
           );
@@ -417,10 +434,11 @@ export class EditionWorkspaceService {
 
   cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
-    if (feature.new) {
+    if (feature.newFeature) {
       workspace.entityStore.delete(feature);
+      workspace.layer.dataSource.ol.removeFeature(feature);
     } else {
-      if(!fromSave) {
+      if (!fromSave) {
         feature.properties = feature.original_properties;
       }
       delete feature.original_properties;
