@@ -118,6 +118,33 @@
                   "maximumWarning": "6kb"
                 }
               ]
+            },
+            "debug": {
+              "fileReplacements": [
+                {
+                  "replace": "demo/src/environments/environment.ts",
+                  "with": "demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": false,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "6mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
             }
           }
         },
@@ -129,6 +156,9 @@
           "configurations": {
             "production": {
               "browserTarget": "demo:build:production"
+            },
+            "debug": {
+              "browserTarget": "demo:build:debug"
             }
           }
         },
@@ -459,6 +489,10 @@
             "production": {
               "project": "packages/integration/ng-package.prod.json",
               "tsConfig": "packages/integration/tsconfig.lib.prod.json"
+            },
+            "debug": {
+              "project": "packages/integration/ng-package.debug.json",
+              "tsConfig": "packages/integration/tsconfig.lib.debug.json"
             }
           }
         },
