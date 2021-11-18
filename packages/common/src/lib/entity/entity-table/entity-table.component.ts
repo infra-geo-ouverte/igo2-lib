@@ -230,10 +230,15 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onValueChange(column, record, event) {
+    let value = event.target.value;
+    if (column.type === 'number') {
+      value = parseInt(value);
+    }
+
     if (column.includes('properties.')) {
-      record.entity.properties[column.slice(11)] = event.target.value;
+      record.entity.properties[column.slice(11)] = value;
     } else {
-      record.entity.properties[column] = event.target.value;
+      record.entity.properties[column] = value;
     }
   }
 
@@ -525,7 +530,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       value = value ? '&#10003;' : '';  // check mark
     }
 
-    if(value === undefined) {
+    if (value === undefined) {
       value = '';
     }
 
