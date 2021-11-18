@@ -397,7 +397,7 @@ export class EditionWorkspaceService {
     if (url) {
       this.http.patch(`${url}`, featureProperties).subscribe(
         () => {
-          this.cancelEdit(workspace, feature);
+          this.cancelEdit(workspace, feature, true);
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
@@ -415,11 +415,15 @@ export class EditionWorkspaceService {
     }
   }
 
-  cancelEdit(workspace, feature) {
+  cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
     if (feature.new) {
       workspace.entityStore.delete(feature);
     } else {
+      if(!fromSave) {
+        feature.properties = feature.original_properties;
+      }
+      delete feature.original_properties;
       workspace.entityStore.state.update(feature, { selected: false });
     }
   }

@@ -96,6 +96,7 @@ export class EditionWorkspace extends Workspace {
 
   editFeature(feature, workspace) {
     feature.edition = true;
+  
     console.log('edition', feature);
     let id;
     outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
@@ -108,11 +109,10 @@ export class EditionWorkspace extends Workspace {
       }
     }
     if (id) {
-      console.log('edit');
+      feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
       feature.idkey = id;
       workspace.entityStore.state.update(feature, { selected: true });
     } else {
-      console.log('add');
       feature.new = true;
       const geometryType = workspace.entityStore.entities$.getValue()[0].geometry.type;
       this.onGeometryTypeChange(geometryType, feature, workspace);
