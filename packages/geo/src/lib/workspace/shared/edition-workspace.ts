@@ -259,4 +259,9 @@ export class EditionWorkspace extends Workspace {
       element.click();
     }, 500);
   }
+
+  deleteDrawings(feature, workspace) {
+    workspace.layer.dataSource.ol.removeFeature(feature);
+    this.olDrawingLayerSource.removeFeature(feature);
+  }
 }

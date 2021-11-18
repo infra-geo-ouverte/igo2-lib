@@ -341,11 +341,11 @@ export class EditionWorkspaceService {
   public addFeature(feature, workspace, url) {
     feature.properties['geometry'] = feature.geometry;
     console.log(feature.properties);
-    feature.newFeature = false;
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
           workspace.deactivateDrawControl();
+          feature.newFeature = false;
           this.cancelEdit(workspace, feature);
           for (const layer of workspace.layer.map.layers) {
             if (
@@ -409,6 +409,7 @@ export class EditionWorkspaceService {
   }
 
   public modifyFeature(feature, workspace, url) {
+    feature.properties['geometry'] = feature.geometry;
     const featureProperties = JSON.parse(JSON.stringify(feature.properties));
     delete featureProperties.boundedBy;
     if (url) {
@@ -435,8 +436,7 @@ export class EditionWorkspaceService {
   cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
     if (feature.newFeature) {
-      workspace.entityStore.delete(feature);
-      workspace.layer.dataSource.ol.removeFeature(feature);
+      workspace.deleteDrawings(feature, workspace);
     } else {
       if (!fromSave) {
         feature.properties = feature.original_properties;
