@@ -132,8 +132,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   activateExportTool() {
     const ids = [];
+    const re = new RegExp('^Zone \\d+');
     for (const layer of this.layers) {
-      ids.push(layer.id);
+      if(layer.title.match(re)[0]) {
+        ids.push(layer.id);
+      }
     }
     this.importExportState.setMode(ImportExportMode.export);
     this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);

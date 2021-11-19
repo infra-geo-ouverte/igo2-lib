@@ -123,7 +123,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
-        "exportSeparator": "Insert empty row between layers",
+        "exportSeparator": "Insert separator (empty row) between layers",
         "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",

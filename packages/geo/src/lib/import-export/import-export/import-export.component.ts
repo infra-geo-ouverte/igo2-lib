@@ -538,6 +538,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       geomTypes.forEach(geomType => {
         geomType.features.forEach(feature => {
+          const re = new RegExp('^\\D+');
+          feature.set('couche', lay.title.match(re)[0].trim());
           const radius: number = feature.get('rad');
 
           if (radius) {
