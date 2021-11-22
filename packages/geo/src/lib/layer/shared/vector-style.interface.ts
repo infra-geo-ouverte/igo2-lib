@@ -1,4 +1,5 @@
 import olStyle from 'ol/style/Style';
+import olText from 'ol/style/Text';
 
 export interface StyleByAttribute {
     type?: string;
@@ -10,7 +11,7 @@ export interface StyleByAttribute {
     radius?: Array<number>;
     icon?: Array<string>;
     scale?: Array<number>;
-    label?: string | { [key: string]: any } | olStyle | olStyle[];
+    label?: string | { [key: string]: any } | olText | olText[];
     baseStyle?: { [key: string]: any } | olStyle | olStyle[];
     hoverStyle?: StyleByAttribute;
 }
