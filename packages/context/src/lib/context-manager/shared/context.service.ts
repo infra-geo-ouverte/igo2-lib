@@ -569,13 +569,14 @@ export class ContextService {
               }
             );
           } else {
-          //   features = writer.writeFeatures(
-          //     layer.ol.getSource().getFeatures(),
-          //     {
-          //       dataProjection: 'EPSG:4326',
-          //       featureProjection: 'EPSG:3857'
-          //     }
-          //   );
+            const source = layer.ol.getSource() as any;
+            features = writer.writeFeatures(
+              source.getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
           }
           features = JSON.parse(features);
           features.name = layer.options.title;

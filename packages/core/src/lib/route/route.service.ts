@@ -1,5 +1,5 @@
 import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { RouteServiceOptions } from './route.interface';
@@ -22,6 +22,7 @@ export class RouteService {
   public options: RouteServiceOptions;
 
   constructor(
+    private router: Router,
     public route: ActivatedRoute,
     @Inject(ROUTE_SERVICE_OPTIONS)
     @Optional()
@@ -54,6 +55,20 @@ export class RouteService {
   }
 
   get queryParams(): Observable<Params> {
+    let url = decodeURIComponent(location.search);
+    if (url.includes('¢er=')) {
+      url = url.replace('¢er', '&center');
+      const queryParams: any = url
+      .slice(1)
+      .split('&')
+      .map(p => p.split('='))
+      .reduce((obj, pair) => {
+        const [key, value] = pair.map(decodeURIComponent);
+        obj[key] = value;
+        return obj;
+      }, {});
+      this.router.navigate([], { queryParams });
+    }
     return this.route.queryParams;
   }
 }

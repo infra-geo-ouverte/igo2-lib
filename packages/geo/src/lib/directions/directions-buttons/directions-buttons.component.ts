@@ -2,6 +2,7 @@ import { Component, Input, Optional } from '@angular/core';
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
 import { Subject } from 'rxjs';
+import { roundCoordTo } from '../../map/shared/map.utils';
 import { FeatureWithDirection } from '../shared/directions.interface';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
@@ -101,11 +102,11 @@ export class DirectionsButtonsComponent {
     this.stopsStore.view.all().forEach(stop => {
       let coord = '';
       let stopText = '';
-      if (stop.text !== stop.coordinates.join(',')) {
+      if (stop.text !== roundCoordTo(stop.coordinates).join(',')) {
         stopText = stop.text;
-        coord = ` ( ${stop.coordinates.join(',')} )`;
+        coord = ` ( ${roundCoordTo(stop.coordinates).join(',')} )`;
       } else {
-        stopText = stop.coordinates.join(
+        stopText = roundCoordTo(stop.coordinates).join(
           ','
         );
       }
@@ -171,7 +172,7 @@ export class DirectionsButtonsComponent {
       routingOptions = `&${routingOptionsKey}=result:${pos}`;
     }
     const directionsKey = this.route.options.directionsCoordKey;
-    const stopsCoordinates = this.stopsStore.view.all().map(stop => stop.coordinates);
+    const stopsCoordinates = this.stopsStore.view.all().map(stop => roundCoordTo(stop.coordinates, 6));
     let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;

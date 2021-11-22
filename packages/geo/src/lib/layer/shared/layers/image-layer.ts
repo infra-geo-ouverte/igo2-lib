@@ -60,14 +60,19 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src, interceptor, messageService, languageService) {
+  private customLoader(tile, src: string, interceptor: AuthInterceptor, messageService: MessageService, languageService: LanguageService) {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', src);
 
-    const intercepted = interceptor.interceptXhr(xhr, src);
+    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(src);
+    let url = src;
+    if (alteredUrlWithKeyAuth) {
+      url = alteredUrlWithKeyAuth;
+    }
+    xhr.open('GET', url);
+    const intercepted = interceptor.interceptXhr(xhr, url);
     if (!intercepted) {
       xhr.abort();
-      tile.getImage().src = src;
+      tile.getImage().src = url;
       return;
     }
 

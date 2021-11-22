@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 import { EntityStoreWatcher } from '@igo2/common';
@@ -14,16 +14,18 @@ import { SelectEvent } from 'ol/interaction/Select';
 
 import { DirectionOptions, FeatureWithStopProperties, Stop } from './shared/directions.interface';
 import { Subject, Subscription } from 'rxjs';
-import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore, computeSearchProposal,
+import { addDirectionToRoutesFeatureStore, addStopToStopsFeatureStore, addStopToStore,
   initRoutesFeatureStore, initStepFeatureStore, initStopsFeatureStore, updateStoreSorting } from './shared/directions.utils';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { DirectionsService } from './shared/directions.service';
-import { DirectionType } from './shared/directions.enum';
-import { roundCoordTo } from '../map';
+import { DirectionType, ProposalType } from './shared/directions.enum';
+import { roundCoordTo, stringToLonLat } from '../map';
 import { SearchService } from '../search/shared/search.service';
 import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './shared/store';
 import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
+import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { QueryService } from '../query/shared/query.service';
 
 @Component({
   selector: 'igo-directions',
@@ -49,7 +51,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   public previousStops: Stop[] = [];
 
-  private search$$: Subscription;
+  private searchs$$: Subscription[] = [];
 
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
@@ -64,11 +66,13 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
     private directionsService: DirectionsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private queryService: QueryService
   ) { }
 
 
   ngOnInit(): void {
+    this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
       initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
@@ -80,6 +84,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.queryService.queryEnabled = true;
     this.storeEmpty$$.unsubscribe();
     this.storeChange$$.unsubscribe();
     this.routesQueries$$.map((u) => u.unsubscribe());
@@ -224,6 +229,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       });
   }
 
+  cancelSearch() {
+    this.searchs$$.map(s => s.unsubscribe());
+  }
+
   private handleStopDiff(stops: Stop[]) {
     const simplifiedStops = stops.map((stop: Stop) => {
       return ObjectUtils.removeUndefined({ ...{ id: stop.id, text: stop.text, coordinates: stop.coordinates } });
@@ -235,11 +244,50 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         const changedStop = (change.newValue as Stop);
         if (changedStop) {
           const stop: Stop = this.stopsStore.get(changedStop.id);
-          computeSearchProposal(
-            stop,
-            this.searchService,
-            this.search$$,
-            this.cdRef);
+          const term = stop.text;
+          if (!term || term.length === 0) {
+            return;
+          }
+          const response = stringToLonLat(term, this.stopsFeatureStore.layer.map.projection);
+          let researches: Research[];
+          let isCoord = false;
+          if (response.lonLat) {
+            isCoord = true;
+          }
+          researches = this.searchService.search(term, { searchType: 'Feature' });
+          this.cancelSearch();
+          const requests$ = researches.map(res => res.request
+            .pipe(map((results: SearchResult[]) => results.filter(r =>
+              isCoord ? r.data.geometry.type === 'Point' && r.data.geometry : r.data.geometry)))
+
+          );
+          this.searchs$$ = requests$.map((request) => {
+            return request.pipe(map((results: SearchResult[]) => results.filter(r =>
+              isCoord ? r.data.geometry.type === 'Point' && r.data.geometry : r.data.geometry)))
+              .subscribe((res: SearchResult[]) => {
+                if (res.length > 0) {
+                  const source = res[0].source;
+                  const meta = res[0].meta;
+                  const results = res.map(r => r.data);
+                  if (!stop.searchProposals) {
+                    stop.searchProposals = [];
+                  }
+                  stop.searchProposals = stop.searchProposals.filter(sp => sp.type === (isCoord ? ProposalType.Coord : ProposalType.Text));
+                  let storedSource = stop.searchProposals.find(sp => sp.source === source);
+                  if (storedSource) {
+                    storedSource.results = results;
+                  } else {
+                    stop.searchProposals.push({
+                      type: isCoord ? ProposalType.Coord : ProposalType.Text,
+                      source,
+                      meta,
+                      results
+                    });
+                  }
+                }
+                this.cdRef.detectChanges();
+              });
+          });
         }
       });
     }
@@ -282,6 +330,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       overview: true,
       steps: false,
       alternatives: false,
+      continue_straight: false
     };
     this.routesQueries$$.map((u) => u.unsubscribe());
     const routeResponse = this.directionsService.route(

@@ -359,7 +359,7 @@
         "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
         "arrive": {
           "lastStep" : "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
-          "intermediate" : "Vous atteignez le point intermédiare sur {{route}}"
+          "intermediate" : "Vous atteignez le point intermédiaire sur {{route}}"
         },
         "merge": "Continuer sur {{route}}",
         "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",

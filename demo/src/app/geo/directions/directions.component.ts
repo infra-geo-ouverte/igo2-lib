@@ -30,7 +30,7 @@ export class AppDirectionsComponent {
   public view = {
     center: [-73, 47.2],
     zoom: 9,
-    geolocate: true
+    geolocate: false
   };
 
   public stopsStore: StopsStore = new StopsStore([]);

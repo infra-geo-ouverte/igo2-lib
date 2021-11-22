@@ -63,6 +63,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
     directionsOptions.steps = directionsOptions.steps !== undefined ? directionsOptions.steps : true;
     directionsOptions.geometries = directionsOptions.geometries !== undefined ? directionsOptions.geometries : 'geojson';
     directionsOptions.overview = directionsOptions.overview !== undefined ? directionsOptions.overview : false;
+    directionsOptions.continue_straight = directionsOptions.continue_straight !== undefined ? directionsOptions.continue_straight : false;
 
     return new HttpParams({
       fromObject: {
@@ -70,6 +71,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
         overview: directionsOptions.overview ? 'simplified' : 'full',
         steps: directionsOptions.steps ? 'true' : 'false',
         geometries: directionsOptions.geometries ? directionsOptions.geometries : 'geojson',
+        continue_straight: directionsOptions.continue_straight ? 'true' : 'false',
       }
     });
   }
