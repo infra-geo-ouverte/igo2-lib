@@ -27,7 +27,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
+import { getShortLayerId, layerIsQueryable, olLayerFeatureIsQueryable, setLayerQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';

@@ -344,7 +344,6 @@ export class EditionWorkspaceService {
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
-          workspace.deactivateDrawControl();
           feature.newFeature = false;
           this.cancelEdit(workspace, feature);
           for (const layer of workspace.layer.map.layers) {

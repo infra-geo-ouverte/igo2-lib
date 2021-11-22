@@ -12,7 +12,7 @@ import { EditionWorkspaceService } from './edition-workspace.service';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 import { DrawControl } from '../../geometry';
 import { createInteractionStyle, GeometryType } from '../../draw';
-import { FeatureStoreInMapExtentStrategy, featureToOl } from '../../feature';
+import { featureToOl } from '../../feature';
 
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -35,7 +35,6 @@ export class EditionWorkspace extends Workspace {
 
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
-  public drawControlIsActive: boolean = false;
   private olDrawingLayerSource = new OlVectorSource();
   public geometryType = GeometryType; // Reference to the GeometryType enum
 
@@ -59,6 +58,10 @@ export class EditionWorkspace extends Workspace {
 
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point as any);
+  }
+
+  private getInResolutionRange(): boolean {
+    return this.inResolutionRange$.value;
   }
 
   deleteFeature(feature, workspace) {
@@ -110,8 +113,7 @@ export class EditionWorkspace extends Workspace {
       workspace.entityStore.state.update(feature, { selected: true });
     } else {
       feature.newFeature = true;
-      //const geometryType = workspace.entityStore.entities$.getValue()[0].geometry.type;
-      const geometryType = 'Point' as any;
+      const geometryType = workspace.layer.dataSource.options.edition.geomType;
       this.onGeometryTypeChange(geometryType, feature, workspace);
     }
   }
@@ -123,7 +125,7 @@ export class EditionWorkspace extends Workspace {
    * @param strokeWidth the stroke width
    * @returns a Draw Control
    */
-   createDrawControl(fillColor?: string, strokeColor?: string, strokeWidth?: number) {
+  createDrawControl(fillColor?: string, strokeColor?: string, strokeWidth?: number) {
     const drawControl = new DrawControl({
       geometryType: undefined,
       drawingLayerSource: this.olDrawingLayerSource,
@@ -138,7 +140,7 @@ export class EditionWorkspace extends Workspace {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-     onGeometryTypeChange(geometryType: typeof OlGeometryType, feature, workspace) {
+  onGeometryTypeChange(geometryType: typeof OlGeometryType, feature, workspace) {
       this.drawControl.setGeometryType(geometryType);
       this.toggleDrawControl(feature, workspace);
     }
@@ -154,7 +156,7 @@ export class EditionWorkspace extends Workspace {
   /**
    * Deactivate the active draw control
    */
-   private deactivateDrawControl() {
+  private deactivateDrawControl() {
     if (!this.drawControl) {
       return;
     }
@@ -164,14 +166,12 @@ export class EditionWorkspace extends Workspace {
     }
 
     this.drawControl.setOlMap(undefined);
-    this.drawControlIsActive = false;
   }
 
   /**
    * Activate a given control
    */
-   private activateDrawControl(feature, workspace) {
-    this.drawControlIsActive = true;
+  private activateDrawControl(feature, workspace) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
       workspace.layer.map.viewController.zoomToExtent(olGeometry.getExtent());
       this.onDrawEnd(olGeometry, feature, workspace);
@@ -224,7 +224,6 @@ export class EditionWorkspace extends Workspace {
    */
   private onDrawEnd(olGeometry: OlGeometry, feature?, workspace?) {
     this.addFeatureToStore(olGeometry, feature, workspace);
-    //workspace.layer.dataSource.ol.refresh();
   }
 
   /**
@@ -252,16 +251,17 @@ export class EditionWorkspace extends Workspace {
       }
     }
 
-    this.deactivateDrawControl();
     setTimeout(() => {
       let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
         .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
       element.click();
-    }, 500);
+      this.deactivateDrawControl();
+    }, 100);
   }
 
   deleteDrawings(feature, workspace) {
-    workspace.layer.dataSource.ol.removeFeature(feature);
-    this.olDrawingLayerSource.removeFeature(feature);
+    workspace.layer.dataSource.ol.removeFeature(feature.ol);
+    workspace.entityStore.delete(feature);
+    this.olDrawingLayerSource.clear();
   }
 }
