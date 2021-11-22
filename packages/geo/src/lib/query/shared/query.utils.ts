@@ -31,7 +31,7 @@ export function olLayerIsQueryable(olLayer: OlLayer<OlSource>): boolean {
  */
 export function layerFeatureIsQueryable(layer: AnyLayer): boolean {
   const dataSource = layer.dataSource as QueryableDataSource;
-  return dataSource.options.queryFeature ? (dataSource.options.queryFeature === true) : true;
+  return dataSource.options.queryLayerFeatures ? (dataSource.options.queryLayerFeatures === true) : true;
 }
 
 /**
