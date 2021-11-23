@@ -42,7 +42,7 @@ export class WfsWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition.enabled === true) {
+    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
       return;
     }
     let wksConfig;

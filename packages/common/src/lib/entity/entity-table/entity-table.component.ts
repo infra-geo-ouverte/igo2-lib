@@ -251,10 +251,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private enableEdit(record) {
-      const item = record.entity.properties;
-      this.template.columns.forEach(column => {
-        this.formGroup.setControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
-      });
+    const item = record.entity.properties;
+    this.template.columns.forEach(column => {
+      this.formGroup.setControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
+    });
   }
 
   private handleDatasource() {

@@ -44,7 +44,7 @@ export class FeatureWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
-    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition.enabled === true) {
+    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
       return;
     }
     let wksConfig;

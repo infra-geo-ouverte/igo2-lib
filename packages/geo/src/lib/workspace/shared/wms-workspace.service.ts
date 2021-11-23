@@ -43,7 +43,7 @@ export class WmsWorkspaceService {
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition.enabled === true) {
+    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition) {
       return;
     }
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;

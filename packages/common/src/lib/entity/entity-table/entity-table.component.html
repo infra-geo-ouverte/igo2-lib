@@ -4,24 +4,21 @@
             <th mat-header-cell *matHeaderCellDef>
                 <ng-container *ngIf="selectMany">
                     <ng-container *ngIf="selectionState$ | async as selectionState">
-                        <mat-checkbox (change)="onToggleRows($event.checked)" [checked]="selectionState === entityTableSelectionState.All" [indeterminate]="selectionState ===
-              entityTableSelectionState.Some">
+                        <mat-checkbox (change)="onToggleRows($event.checked)" [checked]="selectionState === entityTableSelectionState.All"
+                        [indeterminate]="selectionState === entityTableSelectionState.Some">
                         </mat-checkbox>
                     </ng-container>
                 </ng-container>
             </th>
             <td mat-cell *matCellDef="let record">
-                <mat-checkbox (mousedown)="$event.shiftKey ? $event.preventDefault() :
-          null" (click)="$event.shiftKey ?
-          onShiftToggleRow(!rowIsSelected(record), record, $event) :
-          $event.stopPropagation()" (change)="onToggleRow($event.checked,
-          record)" [checked]="rowIsSelected(record)">
+                <mat-checkbox (mousedown)="$event.shiftKey ? $event.preventDefault() : null" (click)="$event.shiftKey ?
+                onShiftToggleRow(!rowIsSelected(record), record, $event) : $event.stopPropagation()" (change)="onToggleRow($event.checked,record)"
+                [checked]="rowIsSelected(record)">
                 </mat-checkbox>
             </td>
         </ng-container>
 
-        <ng-container [matColumnDef]="column.name" *ngFor="let column of
-      template.columns">
+        <ng-container [matColumnDef]="column.name" *ngFor="let column of template.columns">
             <ng-container *ngIf="columnIsSortable(column)">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{column.title}}
@@ -35,17 +32,13 @@
             </ng-container>
 
             <ng-container *ngIf="getColumnRenderer(column) as columnRenderer">
-                <ng-container *ngIf="columnRenderer ===
-          entityTableColumnRenderer.Default">
+                <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Default">
                     <ng-container *matCellDef="let record">
-                        <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record,
-              column));else isAnUrlDefault" [ngClass]="getCellClass(record,
-              column)">
+                        <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record, column));else isAnUrlDefault" [ngClass]="getCellClass(record, column)">
                             {{getValue(record, column)}}
                         </td>
                         <ng-template #isAnUrlDefault>
-                            <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record,
-                column)">
+                            <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                                 <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
                                     <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
                                     <ng-template #notImg><span>{{
@@ -58,13 +51,11 @@
                 </ng-container>
                 <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.HTML">
                     <ng-container *matCellDef="let record">
-                        <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record,
-              column));else isAnUrlHTML" [ngClass]="getCellClass(record,
-              column)" [innerHTML]="getValue(record, column)">
+                        <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record, column));else isAnUrlHTML" [ngClass]="getCellClass(record, column)"
+                        [innerHTML]="getValue(record, column)">
                         </td>
                         <ng-template #isAnUrlHTML>
-                            <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record,
-                column)">
+                            <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                                 <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
                                     <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
                                     <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' |
@@ -82,7 +73,8 @@
                                 <input matInput [matDatepicker]="picker" [formControlName]="column.name">
                                 <mat-datepicker #picker></mat-datepicker>
                             </div>
-                            <input matInput type="time" *ngIf="column.type === 'time'" [formControlName]="column.name" step="900" (focus)="column.onFocus($event)" (keypress)="column.onChange($event)" (blur)="column.onBlur($event)">
+                            <input matInput type="time" *ngIf="column.type === 'time'" [formControlName]="column.name" step="900" (focus)="column.onFocus($event)"
+                            (keypress)="column.onChange($event)" (blur)="column.onBlur($event)">
                             <input matInput type="number" *ngIf="column.type === 'number'" [formControlName]="column.name"
                             value="{{getValue(record,column)}}" (input)="onValueChange(column.name, record, $event)"
                             readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
@@ -96,15 +88,14 @@
                             </ng-container>
                         </td>
                         <ng-template #isUnsanitizedHTML>
-                            <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record,
-                column));else isAnUrlUnsanitizedHTML" [ngClass]="getCellClass(record, column)" [innerHTML]="getValue(record, column) | sanitizeHtml">
+                            <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record, column));else isAnUrlUnsanitizedHTML" [ngClass]="getCellClass(record, column)"
+                            [innerHTML]="getValue(record, column) | sanitizeHtml">
                             </td>
                             <ng-template #isAnUrlUnsanitizedHTML>
                                 <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                                     <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
                                         <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
-                                        <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' |
-                        translate }} </span></ng-template>
+                                        <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
                                     </a>
                                 </td>
                             </ng-template>
@@ -116,23 +107,21 @@
                         <mat-icon svgIcon="{{getValue(record, column)|| column.icon}}" (click)="column.onClick($event)"></mat-icon>
                     </td>
                 </ng-container>
-                <ng-container *ngIf="columnRenderer ===
-          entityTableColumnRenderer.ButtonGroup">
+                <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup">
                     <ng-container *matCellDef="let record">
-                        <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record,
-              column)">
+                        <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                             <span *ngFor="let button of getValue(record, column)">
-                <ng-container *ngIf="isEdition(record) === button.editMode">
-                  <button *ngIf="button.style === 'mat-icon-button'" type="button" igoStopPropagation mat-icon-button
-                    [color]="button.color" (click)="onButtonClick(button.click, record)">
-                    <mat-icon svgIcon="{{button.icon}}"></mat-icon>
-                  </button>
-                  <button *ngIf="button.style !== 'mat-icon-button'" type="button" igoStopPropagation mat-mini-fab
-                    [color]="button.color" (click)="onButtonClick(button.click, record)">
-                    <mat-icon svgIcon="{{button.icon}}"></mat-icon>
-                  </button>
-                </ng-container>
-              </span>
+                                <ng-container *ngIf="isEdition(record) === button.editMode">
+                                    <button *ngIf="button.style === 'mat-icon-button'" igoStopPropagation mat-icon-button
+                                        [color]="button.color" (click)="onButtonClick(button.click, record)">
+                                        <mat-icon svgIcon="{{button.icon}}"></mat-icon>
+                                    </button>
+                                    <button *ngIf="button.style !== 'mat-icon-button'" igoStopPropagation mat-mini-fab
+                                        [color]="button.color" (click)="onButtonClick(button.click, record)">
+                                        <mat-icon svgIcon="{{button.icon}}"></mat-icon>
+                                    </button>
+                                </ng-container>
+                            </span>
                         </td>
                     </ng-container>
                 </ng-container>

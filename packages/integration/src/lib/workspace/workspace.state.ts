@@ -116,6 +116,10 @@ export class WorkspaceState implements OnDestroy {
       this.setWorkspaceIsMaximized(maximized);
     }));
 
+    this.actionMaximize$$.push(this.editionActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
+    }));
+
     this.activeWorkspace$$ = this.workspace$
       .subscribe((workspace: Workspace) => {
         if (this.activeWorkspaceWidget$$ !== undefined) {
