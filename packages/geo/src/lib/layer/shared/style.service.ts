@@ -6,7 +6,6 @@ import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
-import { Options } from 'ol/layer/Base';
 
 @Injectable({
   providedIn: 'root'
@@ -83,16 +82,16 @@ export class StyleService {
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
 
-    const labelStyle = typeof styleByAttribute.label  === 'object' ?
+    const labelStyle = typeof styleByAttribute.label === 'object' ?
       this.parseStyle('text', styleByAttribute.label) ||
       new olstyle.Text(styleByAttribute.label as {}) : new olstyle.Text();
-    
-    styleByAttribute.label ? 
-      typeof styleByAttribute.label  === 'object' ? 
+
+    styleByAttribute.label ?
+      typeof styleByAttribute.label === 'object' ?
         labelStyle.setText(this.getLabel(feature, styleByAttribute.label['text'])) :
         labelStyle.setText(this.getLabel(feature, styleByAttribute.label)) :
       undefined;
-      
+
     const baseStyle = styleByAttribute.baseStyle;
 
     if (type === 'circle') {
