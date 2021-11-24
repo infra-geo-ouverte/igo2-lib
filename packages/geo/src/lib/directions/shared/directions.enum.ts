@@ -7,6 +7,11 @@ export enum SourceDirectionsType {
   Trip = 'trip'
 }
 
+export enum ProposalType {
+  Coord = 'coord',
+  Text = 'text'
+}
+
 export enum DirectionType {
   Stop = 'stop',
   Route = 'route',

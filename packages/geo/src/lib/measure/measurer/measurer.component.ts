@@ -574,7 +574,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       source: new FeatureDataSource(),
       style: createMeasureLayerStyle(),
       showInLayerList: true,
-      exportable: false,
+      exportable: true,
       browsable: false,
       workspace: { enabled: false }
     });
