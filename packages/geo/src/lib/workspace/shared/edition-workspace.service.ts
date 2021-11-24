@@ -349,8 +349,7 @@ export class EditionWorkspaceService {
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
-          feature.newFeature = false;
-          this.cancelEdit(workspace, feature);
+          workspace.entityStore.delete(feature);
           for (const layer of workspace.layer.map.layers) {
             if (
               layer.id !== workspace.layer.id &&
@@ -363,6 +362,7 @@ export class EditionWorkspaceService {
                 olLayer.updateParams(params);
               }
           }
+          workspace.layer.dataSource.ol.refresh();
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.addSuccess'
@@ -451,7 +451,6 @@ export class EditionWorkspaceService {
         feature.properties = feature.original_properties;
       }
       delete feature.original_properties;
-      workspace.entityStore.state.update(feature, { selected: false });
     }
   }
 }

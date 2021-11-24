@@ -110,7 +110,6 @@ export class EditionWorkspace extends Workspace {
     if (id) {
       feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
       feature.idkey = id;
-      workspace.entityStore.state.update(feature, { selected: true });
     } else {
       feature.newFeature = true;
       const geometryType = workspace.layer.dataSource.options.edition.geomType;
@@ -245,11 +244,6 @@ export class EditionWorkspace extends Workspace {
     const featureOl = featureToOl(feature, projection.getCode());
 
     workspace.layer.dataSource.ol.addFeature(featureOl);
-    for (const entity of workspace.entityStore.entities$.getValue()) {
-      if (entity.newFeature) {
-        workspace.entityStore.state.update(entity, { selected: true });
-      }
-    }
 
     setTimeout(() => {
       let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
