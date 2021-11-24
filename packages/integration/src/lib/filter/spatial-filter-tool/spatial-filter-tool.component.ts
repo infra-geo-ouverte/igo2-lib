@@ -134,7 +134,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     const ids = [];
     const re = new RegExp('^Zone \\d+');
     for (const layer of this.layers) {
-      if(layer.title.match(re)[0]) {
+      if (!layer.title.match(re)) {
         ids.push(layer.id);
       }
     }
