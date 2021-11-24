@@ -113,11 +113,11 @@
                             <span *ngFor="let button of getValue(record, column)">
                                 <ng-container *ngIf="isEdition(record) === button.editMode">
                                     <button *ngIf="button.style === 'mat-icon-button'" igoStopPropagation mat-icon-button
-                                        [color]="button.color" (click)="onButtonClick(button.click, record)">
+                                        [color]="button.color" (mousedown)="onButtonClick(button.click, record)">
                                         <mat-icon svgIcon="{{button.icon}}"></mat-icon>
                                     </button>
                                     <button *ngIf="button.style !== 'mat-icon-button'" igoStopPropagation mat-mini-fab
-                                        [color]="button.color" (click)="onButtonClick(button.click, record)">
+                                        [color]="button.color" (mousedown)="onButtonClick(button.click, record)">
                                         <mat-icon svgIcon="{{button.icon}}"></mat-icon>
                                     </button>
                                 </ng-container>
