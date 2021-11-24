@@ -1,4 +1,4 @@
-import { OnInit, HostBinding, Input, ElementRef, Self, Optional, OnDestroy, Injectable, Directive } from '@angular/core';
+import { OnInit, HostBinding, Input, ElementRef, Self, Optional, OnDestroy, Directive } from '@angular/core';
 import { FormControl, NgControl, NgForm, FormControlName, ControlValueAccessor } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -11,7 +11,6 @@ import { Subject } from 'rxjs';
  * formulaires dynamiques et Material
  */
 @Directive()
-@Injectable()
 export abstract class CustomFormControlDirective<T> implements OnInit, OnDestroy, ControlValueAccessor,
   MatFormFieldControl<T> {
 
@@ -110,7 +109,7 @@ export abstract class CustomFormControlDirective<T> implements OnInit, OnDestroy
     });
 
     // Replace the provider from above with this
-    if (this.ngControl != null) {
+    if (this.ngControl !== null) {
       // Setting the value accessor directly (instead of using
       // the providers) to avoid running into a circular import.
       this.ngControl.valueAccessor = this;

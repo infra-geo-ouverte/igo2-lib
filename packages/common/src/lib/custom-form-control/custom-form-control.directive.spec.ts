@@ -4,11 +4,11 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldControl } from '@angular/material/form-field';
 
-import { MaterialModule } from '../material/material.module';
+// import { MaterialModule } from '@angular/material/material.module';
 import { CustomFormControlDirective } from './custom-form-control.directive';
 
 @Component({
-  selector: `test-component`,
+  selector: `igo-test-component`,
   template: ``,
   providers: [{ provide: MatFormFieldControl, useExisting: TestComponent }]
 })
@@ -34,12 +34,12 @@ class TestComponent extends CustomFormControlDirective<string> implements OnInit
 }
 
 @Component({
-  selector: `host-component`,
+  selector: `igo-host-component`,
   template: `
     <div [formGroup]="form">
       <mat-form-field>
-        <test-component formControlName="input">
-        </test-component>
+        <igo-test-component formControlName="input">
+        </igo-test-component>
       </mat-form-field>
     </div>`
 })
@@ -70,7 +70,6 @@ describe('CustomFormControlComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        MaterialModule,
         BrowserAnimationsModule
       ],
       schemas: [

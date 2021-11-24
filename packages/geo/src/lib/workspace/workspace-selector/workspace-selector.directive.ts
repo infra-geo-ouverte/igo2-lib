@@ -48,7 +48,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
         this.onLayersChange(layers)
       );
 
-    this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws) });
+    this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
   }
 
   ngOnDestroy() {

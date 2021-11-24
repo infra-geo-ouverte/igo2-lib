@@ -2,8 +2,14 @@ import { Injectable, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { EntityRecord, Workspace, WorkspaceStore, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { WfsWorkspace, FeatureWorkspace, EditionWorkspace, QueryService  } from '@igo2/geo';
+import {
+  EntityRecord,
+  Workspace,
+  WorkspaceStore,
+  Widget,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { WfsWorkspace, FeatureWorkspace, EditionWorkspace, QueryService } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
 import { StorageService } from '@igo2/core';

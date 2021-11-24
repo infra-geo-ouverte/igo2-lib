@@ -91,8 +91,8 @@ export class EditionWorkspace extends Workspace {
             this.editionWorkspaceService.deleteFeature(feature, workspace, url);
           }
         }
-      })
-    }, 250)
+      });
+    }, 250);
   }
 
   editFeature(feature, workspace) {
@@ -250,7 +250,7 @@ export class EditionWorkspace extends Workspace {
         .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
       element.click();
       this.deactivateDrawControl();
-    }, 100);
+    }, 500);
   }
 
   deleteDrawings(feature, workspace) {

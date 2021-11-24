@@ -253,7 +253,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
-      this.formGroup.setControl(column.name, this.formBuilder.control(item[column.name.substring(column.name.indexOf('.') + 1, column.name.length)]));
+      this.formGroup.setControl(column.name, this.formBuilder.control(
+        item[column.name.substring(column.name.indexOf('.') + 1,column.name.length)]
+      ));
     });
   }
 
@@ -525,8 +527,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     value = this.store.getProperty(entity, column.name);
 
     if (column.type === 'boolean' && !record.edition) {
-
-      value = value ? '&#10003;' : '';  // check mark
+      value = value ? '&#10003;' : ''; // check mark
     }
 
     if (value === undefined) {

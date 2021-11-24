@@ -11,12 +11,12 @@ import { CustomFormControlDirective } from '../custom-form-control/custom-form-c
  * Contrôle de formulaire permettant la saisie d'une date et d'une heure
  */
 @Component({
-  selector: 'risc-date-time-input',
+  selector: 'igo-date-time-input',
   templateUrl: './date-time-input.component.html',
   styleUrls: ['./date-time-input.component.scss'],
   providers: [{ provide: MatFormFieldControl, useExisting: DateTimeInputComponent }]
 })
-export class DateTimeInputComponent extends CustomFormControlDirective<moment.Moment> implements OnInit  {
+export class DateTimeInputComponent extends CustomFormControlDirective<moment.Moment> implements OnInit {
 
   @Input() maxDate: moment.Moment; // Date maximale du calendrier
 

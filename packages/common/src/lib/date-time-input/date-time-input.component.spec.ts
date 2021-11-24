@@ -4,19 +4,19 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angul
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatNativeDateModule } from '@angular/material/core';
 
-import { MaterialModule } from './../material/material.module';
+// import { MaterialModule } from './../material/material.module';
 import { DateTimeInputComponent } from './date-time-input.component';
 
 @Component({
-  selector: `host-component`,
+  selector: `igo-host-component`,
   template: `
     <div *ngIf="form" [formGroup]="form">
       <mat-form-field>
-        <risc-date-time-input
+        <igo-date-time-input
             [required]="true"
             placeholder="Date et heure"
             formControlName="datetime">
-        </risc-date-time-input>
+        </igo-date-time-input>
       </mat-form-field>
     </div>`
 })
@@ -44,7 +44,6 @@ describe('DateTimeInputComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        MaterialModule,
         FormsModule,
         ReactiveFormsModule,
         MatNativeDateModule,

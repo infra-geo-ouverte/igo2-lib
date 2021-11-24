@@ -16,7 +16,14 @@ import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
-import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, FeatureStoreInMapResolutionStrategy, FeatureStoreLoadingLayerStrategy, FeatureStoreLoadingStrategy, FeatureStoreSelectionStrategy } from '../../feature';
+import {
+  Feature,
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreInMapExtentStrategy,
+  FeatureStoreInMapResolutionStrategy,
+  FeatureStoreLoadingLayerStrategy,
+  FeatureStoreSelectionStrategy } from '../../feature';
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
@@ -217,25 +224,25 @@ export class EditionWorkspaceService {
           editMode: false,
           icon: 'pencil',
           color: 'primary',
-          click: (feature) => { workspace.editFeature(feature, workspace) }
+          click: (feature) => { workspace.editFeature(feature, workspace); }
         },
         {
           editMode: false,
           icon: 'delete',
           color: 'warn',
-          click: (feature) => { workspace.deleteFeature(feature, workspace) }
+          click: (feature) => { workspace.deleteFeature(feature, workspace); }
         },
         {
           editMode: true,
           icon: 'check',
           color: 'primary',
-          click: (feature) => { this.saveFeature(feature, workspace) }
+          click: (feature) => { this.saveFeature(feature, workspace); }
         },
         {
           editMode: true,
           icon: 'alpha-x',
           color: 'primary',
-          click: (feature) => { this.cancelEdit(workspace, feature) }
+          click: (feature) => { this.cancelEdit(workspace, feature); }
         }] as EntityTableButton[];
       }
     }];
@@ -276,7 +283,7 @@ export class EditionWorkspaceService {
         renderer: rendererType,
         valueAccessor: undefined,
         cellClassFunc: () => {
-          const cellClass = {}
+          const cellClass = {};
           if (field.type) {
             cellClass[`class_${field.type}`] = true;
             return cellClass;
@@ -298,7 +305,7 @@ export class EditionWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
-        onClick: () => { this.ws$.next(relation.title)},
+        onClick: () => { this.ws$.next(relation.title); },
         cellClassFunc: () => {
           return { 'class_icon': true };
       }
