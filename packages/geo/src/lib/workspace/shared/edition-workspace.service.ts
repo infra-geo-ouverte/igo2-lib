@@ -339,7 +339,12 @@ export class EditionWorkspaceService {
   }
 
   public addFeature(feature, workspace, url) {
-    feature.properties['geometry'] = feature.geometry;
+    const geom = workspace.layer.dataSource.options.edition.geomField;
+    if (geom){
+      //feature.properties[geom] = feature.geometry;
+      feature.properties["longitude"] = feature.geometry.coordinates[0];
+      feature.properties["latitude"] = feature.geometry.coordinates[1];
+    }
     console.log(feature.properties);
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
@@ -408,7 +413,12 @@ export class EditionWorkspaceService {
   }
 
   public modifyFeature(feature, workspace, url) {
-    feature.properties['geometry'] = feature.geometry;
+    const geom = workspace.layer.dataSource.options.edition.geomField;
+    if (geom) {
+      //feature.properties[geom] = feature.geometry;
+      feature.properties["longitude"] = feature.geometry.coordinates[0];
+      feature.properties["latitude"] = feature.geometry.coordinates[1];
+    }
     const featureProperties = JSON.parse(JSON.stringify(feature.properties));
     delete featureProperties.boundedBy;
     if (url) {
