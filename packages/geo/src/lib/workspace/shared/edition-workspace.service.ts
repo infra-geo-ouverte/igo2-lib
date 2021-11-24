@@ -403,6 +403,7 @@ export class EditionWorkspaceService {
               olLayer.updateParams(params);
             }
         }
+        workspace.layer.dataSource.ol.refresh();
 
         const message = this.languageService.translate.instant(
           'igo.geo.workspace.deleteSuccess'
