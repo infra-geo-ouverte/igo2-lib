@@ -1,3 +1,19 @@
+<div class="spatial-type-toggle">
+  <mat-button-toggle-group
+    [value]="activeDrawType"
+    (change)="onDrawTypeChange($event.value)">
+    <mat-button-toggle [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
+        <mat-icon svgIcon="pentagon-outline"></mat-icon>
+    </mat-button-toggle>       
+    <mat-button-toggle [value]="spatialType.Line" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
+      <mat-icon svgIcon="vector-polyline"></mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
+        <mat-icon svgIcon="record-circle-outline"></mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
 <igo-geometry-form-field-input
   [formControl]="geometryformControl"
   [map]="map"

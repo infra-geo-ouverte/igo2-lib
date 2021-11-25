@@ -9,7 +9,6 @@
       [predefinedRegionsStore]="predefinedRegionsStore"
       [currentRegionStore]="currentRegionStore"
       [selectedPredefinedType]="selectedPredefinedType"
-      [layers]="layers"
       [map]="map"
       [minBufferMeters]="minBufferMeters"
       [maxBufferMeters]="maxBufferMeters"
@@ -19,27 +18,10 @@
   </mat-tab>
 
   <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
-    <div class="spatial-type-toggle">
-      <mat-button-toggle-group
-        [value]="activeDrawType"
-        (change)="onDrawTypeChange($event.value)">
-        <mat-button-toggle [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
-            <mat-icon svgIcon="pentagon-outline"></mat-icon>
-        </mat-button-toggle>       
-        <mat-button-toggle [value]="spatialType.Line" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
-          <mat-icon svgIcon="vector-polyline"></mat-icon>
-        </mat-button-toggle>
-        <mat-button-toggle [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
-            <mat-icon svgIcon="record-circle-outline"></mat-icon>
-        </mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
     <igo-geometry-draw
-    [map]="map"
-    [activeDrawType]="activeDrawType"
-    [currentRegionStore]="currentRegionStore"
-    >
-
+      [map]="map"
+      [activeDrawType]="predefinedOrDrawType"
+      [currentRegionStore]="currentRegionStore">
     </igo-geometry-draw>
     
   </mat-tab>

@@ -41,11 +41,8 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   @Input() map: IgoMap;
 
   public selectedTypeIndex = new FormControl(0);
-  public spatialType = SpatialType;
-  public activeDrawType: SpatialType = this.spatialType.Polygon;
-  public predefinedOrDrawType: SpatialType;
+  public predefinedOrDrawType: SpatialType = SpatialType.Polygon;
 
-  @Output() predefinedOrDrawTypeChange = new EventEmitter<SpatialType>();
   @Output() predefinedTypeChange = new EventEmitter<PredefinedType>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
 
@@ -82,21 +79,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
       this.predefinedOrDrawType = SpatialType.Predefined;
     }
     if (this.selectedTypeIndex.value === 1) {
-      this.predefinedOrDrawType = this.activeDrawType;
+      this.predefinedOrDrawType = SpatialType.Polygon;
     }
-    this.predefinedOrDrawTypeChange.emit(this.predefinedOrDrawType);
   }
-
-  clearCurrentRegionStore() {
-    this.currentRegionStore.clear();
-    this.currentRegionStore.clearLayer();
-  }
-
-  onDrawTypeChange(spatialType: SpatialType) {
-    this.clearCurrentRegionStore();
-    this.activeDrawType = spatialType;
-    this.clearCurrentRegionStore();
-    this.predefinedOrDrawTypeChange.emit(this.activeDrawType);
-  }
-
 }

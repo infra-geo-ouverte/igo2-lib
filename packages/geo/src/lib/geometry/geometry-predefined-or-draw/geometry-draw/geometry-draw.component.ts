@@ -64,6 +64,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
         coordinates: ''
       };
       this.geometryformControl.setValue(geojson);
+      // todo set draw off
     }
     // Necessary to apply the right style when geometry type is Point
     if (this.activeDrawType === SpatialType.Point) {
@@ -93,6 +94,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
   drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
 
+  public spatialType = SpatialType;
   private bufferChanges$$: Subscription;
   private measureUnit$$: Subscription;
   private allValueChanges$$: Subscription;
@@ -243,8 +245,11 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     else {
       this.drawGuide$.next(null);
     }
-
-
+  }
+  onDrawTypeChange(spatialType: SpatialType) {
+    this.currentRegionStore.clear();
+    this.currentRegionStore.clearLayer();
+    this.activeDrawType = spatialType;
   }
 
   private monitorUnits() {

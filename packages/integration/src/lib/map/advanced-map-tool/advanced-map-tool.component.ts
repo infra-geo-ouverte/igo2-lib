@@ -87,9 +87,6 @@ export class AdvancedMapToolComponent implements OnInit {
     ]);
   }
 
-  onPredefinedOrDrawTypeChange(event) {
-    console.log('onPredefinedOrDrawTypeChange', event);
-  }
   onPredefinedTypeChange(event) {
     this.selectedPredefinedType = event;
     this.handlePredefinedType();

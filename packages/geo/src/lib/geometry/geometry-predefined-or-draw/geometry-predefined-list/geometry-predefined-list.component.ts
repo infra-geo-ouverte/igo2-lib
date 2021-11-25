@@ -38,7 +38,6 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   @Input() maxBufferMeters: number = 100000;
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>;
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>;
-  @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
   @Input()
   get selectedPredefinedType(): PredefinedType {
