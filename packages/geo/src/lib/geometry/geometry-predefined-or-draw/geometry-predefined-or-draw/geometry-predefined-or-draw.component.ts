@@ -32,21 +32,21 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
 
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
-  @Input() queryType: string[] = [];
+  @Input() predefinedTypes: string[] = [];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
   // @Input() selectedQueryType: PredefinedType;
   @Input()
-  get selectedQueryType(): PredefinedType {
-    return this._selectedQueryTypee;
+  get selectedPredefinedType(): PredefinedType {
+    return this._selectedPredefinedType;
   }
-  set selectedQueryType(queryType: PredefinedType) {
-    this._selectedQueryTypee = queryType;
+  set selectedPredefinedType(queryType: PredefinedType) {
+    this._selectedPredefinedType = queryType;
     if (this.predefinedRegionsStore.empty) {
-      this.eventQueryType.emit(queryType);
+      this.predefinedTypeChange.emit(queryType);
     }
   }
-  private _selectedQueryTypee: PredefinedType;
+  private _selectedPredefinedType: PredefinedType;
 
 
   @Input() layers: Layer[] = [];
@@ -55,17 +55,17 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   public selectedTypeIndex = new FormControl(0);
   public spatialType = SpatialType;
   public activeDrawType: SpatialType = this.spatialType.Polygon;
-  public type: SpatialType;
+  public predefinedOrDrawType: SpatialType;
 
-  @Output() eventType = new EventEmitter<SpatialType>();
-  @Output() eventQueryType = new EventEmitter<PredefinedType>();
+  @Output() predefinedOrDrawTypeChange = new EventEmitter<SpatialType>();
+  @Output() predefinedTypeChange = new EventEmitter<PredefinedType>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
 
   constructor() {}
 
   ngOnInit() {
     this.initCurrentZoneStore();
-    this.onTypeChange();
+    this.onPredefinedOrDrawTypeChange();
   }
 
   private initCurrentZoneStore() {
@@ -89,14 +89,14 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   }
 
 
-  onTypeChange() {
+  onPredefinedOrDrawTypeChange() {
     if (this.selectedTypeIndex.value === 0) {
-      this.type = SpatialType.Predefined;
+      this.predefinedOrDrawType = SpatialType.Predefined;
     }
     if (this.selectedTypeIndex.value === 1) {
-      this.type = this.activeDrawType;
+      this.predefinedOrDrawType = this.activeDrawType;
     }
-    this.eventType.emit(this.type);
+    this.predefinedOrDrawTypeChange.emit(this.predefinedOrDrawType);
   }
 
   clearCurrentRegionStore() {
@@ -108,12 +108,12 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
     this.clearCurrentRegionStore();
     this.activeDrawType = spatialType;
     this.clearCurrentRegionStore();
-    this.eventType.emit(this.activeDrawType);
+    this.predefinedOrDrawTypeChange.emit(this.activeDrawType);
   }
 
   onSelectionChange() {
     this.clearCurrentRegionStore();
-    this.eventQueryType.emit(this.selectedQueryType);
+    this.predefinedTypeChange.emit(this.selectedPredefinedType);
     this.zoneChange.emit(undefined);
   }
 }

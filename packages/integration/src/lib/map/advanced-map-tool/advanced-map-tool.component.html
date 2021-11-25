@@ -1,10 +1,10 @@
 <igo-geometry-predefined-or-draw 
   [predefinedRegionsStore]="predefinedRegionsStore" 
   [currentRegionStore]="currentRegionStore" 
-  [queryType]="queryType"
-  [selectedQueryType]="selectedQueryType"
+  [predefinedTypes]="predefinedTypes"
+  [selectedPredefinedType]="selectedPredefinedType"
   [layers]="layers"
   [map]="mapState.map"
-  (eventType)="onEventType($event)"
-  (eventQueryType)="onEventQueryType($event)">
+  (predefinedOrDrawTypeChange)="onPredefinedOrDrawTypeChange($event)"
+  (predefinedTypeChange)="onPredefinedTypeChange($event)">
 </igo-geometry-predefined-or-draw>

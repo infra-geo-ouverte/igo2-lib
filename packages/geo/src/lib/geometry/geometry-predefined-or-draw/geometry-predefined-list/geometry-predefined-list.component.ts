@@ -38,14 +38,14 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
   @Input()
-  get selectedQueryType(): PredefinedType {
-    return this._selectedQueryType;
+  get selectedPredefinedType(): PredefinedType {
+    return this._selectedPredefinedType;
   }
-  set selectedQueryType(queryType: PredefinedType) {
+  set selectedPredefinedType(queryType: PredefinedType) {
     this.regionsFormControl.setValue('');
-    this._selectedQueryType = queryType;
+    this._selectedPredefinedType = queryType;
   }
-  private _selectedQueryType: PredefinedType;
+  private _selectedPredefinedType: PredefinedType;
 
 
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
@@ -114,7 +114,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   }
 
   private processZone(feature: FeatureForPredefinedOrDrawGeometry) {
-    if (feature && this.selectedQueryType) {
+    if (feature && this.selectedPredefinedType) {
       this.bufferFormControl.enable({emitEvent: false});
       feature.properties._buffer = this.bufferFormControl.value;
       let currentZone = feature;
@@ -139,7 +139,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
         properties: {
           id: featureId,
           title: myOlFeature.get('title'),
-          _predefinedType: this.selectedQueryType,
+          _predefinedType: this.selectedPredefinedType,
           _buffer: this.bufferFormControl.value
         },
         meta: {

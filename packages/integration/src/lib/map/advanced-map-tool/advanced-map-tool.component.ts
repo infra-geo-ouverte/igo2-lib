@@ -30,8 +30,8 @@ export class AdvancedMapToolComponent implements OnInit {
     new FeatureStore<FeatureForPredefinedOrDrawGeometry>([], { map: this.mapState.map });
   public currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry> =
     new FeatureStore<FeatureForPredefinedOrDrawGeometry>([], { map: this.mapState.map });
-  public queryType: string[] = ['type1', 'type2'];
-  public selectedQueryType = 'type1';
+  public predefinedTypes: string[] = ['type1', 'type2'];
+  public selectedPredefinedType = 'type1';
   public layers: Layer[];
   public activeLayers: Layer[] = [];
   public allRegionsFeatures = [];
@@ -87,19 +87,18 @@ export class AdvancedMapToolComponent implements OnInit {
     ]);
   }
 
-  onEventType(event) {
-    // console.log('eventType', event);
+  onPredefinedOrDrawTypeChange(event) {
+    console.log('onPredefinedOrDrawTypeChange', event);
   }
-  onEventQueryType(event) {
-    // console.log('eventQueryType', event);
-    this.selectedQueryType = event;
-    this.handleQueryType();
+  onPredefinedTypeChange(event) {
+    this.selectedPredefinedType = event;
+    this.handlePredefinedType();
   }
 
 
-  handleQueryType() {
+  handlePredefinedType() {
     let f = [];
-    switch (this.selectedQueryType) {
+    switch (this.selectedPredefinedType) {
       case 'type1':
         f = this.allRegionsStore.entities$.value.filter(f => f.properties._predefinedType === 'type1');
         break;
