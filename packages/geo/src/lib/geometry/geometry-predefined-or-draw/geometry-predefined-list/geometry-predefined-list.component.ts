@@ -1,4 +1,4 @@
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 import olFeature from 'ol/Feature';
 import {
   Component,
@@ -33,8 +33,8 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
-  @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
-  @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
+  @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>;
+  @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>;
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
   @Input()
@@ -69,7 +69,8 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.selectedZone$$ = this.selectedZone$.subscribe(zone => zone ? this.bufferFormControl.enable(): this.bufferFormControl.disable());
+    this.selectedZone$$ = this.selectedZone$
+    .subscribe(zone => zone ? this.bufferFormControl.enable({emitEvent: false}): this.bufferFormControl.disable({emitEvent: false}));
 
     this.formValueChanges$$ = this.regionsFormControl.valueChanges.subscribe((value) => {
       if (value.length) {
@@ -82,7 +83,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     });
 
     this.allValueChanges$$ = combineLatest([
-      this.bufferFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
+      this.bufferFormControl.valueChanges.pipe(startWith(0), debounceTime(500), distinctUntilChanged()),
       this.selectedZone$,
       this.measureUnit$])
       .subscribe((bunch: [bufferValue: number, zone: FeatureForPredefinedOrDrawGeometry, unit: MeasureLengthUnit]) => {
@@ -95,8 +96,10 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           return;
         }
-        this.selectedZone$.value.properties._buffer = bufferValue;
-        this.processZone(zone);
+        if (zone) {
+          this.selectedZone$.value.properties._buffer = bufferValue;
+          this.processZone(zone);
+        }
       });
   }
 
@@ -110,15 +113,9 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     return feature ? feature.properties.title : undefined;
   }
 
-  clearCurrentRegionStore() {
-    this.currentRegionStore.clear();
-    this.currentRegionStore.clearLayer();
-  }
-
   private processZone(feature: FeatureForPredefinedOrDrawGeometry) {
-    this.clearCurrentRegionStore();
     if (feature && this.selectedQueryType) {
-      this.bufferFormControl.enable();
+      this.bufferFormControl.enable({emitEvent: false});
       feature.properties._buffer = this.bufferFormControl.value;
       let currentZone = feature;
       if (feature.properties._buffer && feature.properties._buffer !== 0) {
@@ -150,8 +147,6 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
         },
         ol: myOlFeature
       };
-
-      this.clearCurrentRegionStore();
       this.currentRegionStore.load([zoneFeature]);
       moveToOlFeatures(this.map, [myOlFeature], FeatureMotion.Zoom);
     }

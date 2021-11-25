@@ -8,7 +8,6 @@ import {
   OnInit
 } from '@angular/core';
 import { IgoMap } from '../../../map';
-import { Feature, FeatureGeometry } from './../../../feature/shared/feature.interfaces';
 import { FormControl, Validators } from '@angular/forms';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
@@ -19,7 +18,7 @@ import * as olproj from 'ol/proj';
 import OlPoint from 'ol/geom/Point';
 import { MeasureLengthUnit } from '../../../measure';
 import { MessageService, LanguageService } from '@igo2/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { SpatialType } from '../shared/geometry-predefined-or-draw.enum';
 import { FeatureStore } from '../../../feature/shared/store';
 import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefined-or-draw.interface';
@@ -28,6 +27,9 @@ import { featureToOl, moveToOlFeatures } from '../../../feature/shared/feature.u
 import { FEATURE, FeatureMotion } from '../../../feature/shared/feature.enums';
 import { Geometry } from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import { FeatureGeometry } from './../../../feature/shared/feature.interfaces';
+
+import { uuid } from '@igo2/utils';
 /**
  * Spatial-Filter-Item (search parameters)
  */
@@ -52,7 +54,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     const index = this.geometryTypes.findIndex(geom => geom === this.activeDrawType);
     this.geometryType = this.geometryTypes[index];
     this.geometryformControl.reset();
-    this.radius = undefined;
     this.drawGuide$.next(null);
     this.drawStyle$.next(undefined);
 
@@ -66,15 +67,12 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     }
     // Necessary to apply the right style when geometry type is Point
     if (this.activeDrawType === SpatialType.Point) {
-      this.radius = 1000; // Base radius
-      this.radiusFormControl.setValue(this.radius);
       this.overlayStyle = this.PointStyle;
       this.drawStyle$.next(this.overlayStyle);
     } else if (this.activeDrawType === SpatialType.Line) {
       console.log('// todo');
     } else {
       // If geometry types is Polygon
-      this.radius = undefined;
       this.overlayStyle = this.PolyStyle;
       this.drawStyle$.next(this.drawStyle);
     }
@@ -91,34 +89,31 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
 
   // For geometry form field input
-  private drawnGeometry$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
   overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
   drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
 
-  private drawnGeometry$$: Subscription;
-  private radiusChanges$$: Subscription;
   private bufferChanges$$: Subscription;
   private measureUnit$$: Subscription;
   private allValueChanges$$: Subscription;
+  private geometryformControlChanges$$: Subscription;
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
-  private kilometersValidator = [Validators.max(this.maxBufferMeters/1000), Validators.min(this.minBufferMeters/1000), Validators.required];
+  private kilometersValidator = [
+    Validators.max(this.maxBufferMeters / 1000),
+    Validators.min(this.minBufferMeters / 1000), Validators.required];
 
   public geometryformControl = new FormControl();
-  public radiusFormControl = new FormControl(0, this.metersValidator);
-  public bufferFormControl = new FormControl(0, this.metersValidator);
+  public bufferOrRadiusFormControl = new FormControl(0, this.metersValidator);
 
   public geometryType: typeof OlGeometryType | string;
   public geometryTypes: string[] = ['Point', 'Line', 'Polygon'];
 
-  public measure = false;
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
-  public drawZone;
   public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
     return new olStyle.Style({
-      image: new olStyle.Circle ({
+      image: new olStyle.Circle({
         radius: 8,
         stroke: new olStyle.Stroke({
           width: 2,
@@ -132,7 +127,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
         color: [0, 153, 255].concat([1]),
         width: 2
       }),
-      fill:  new olStyle.Fill({
+      fill: new olStyle.Fill({
         color: [0, 153, 255].concat([0.2])
       })
     });
@@ -141,9 +136,10 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = (feature: olFeature<OlGeometry>, resolution: number) => {
     const geom = feature.getGeometry() as OlPoint;
     const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+    const factor = this.measureUnit$.value === MeasureLengthUnit.Meters ? 1 : 1000;
     return new olStyle.Style({
       image: new olStyle.Circle({
-        radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
+        radius: this.bufferOrRadiusFormControl.value * factor / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
         stroke: new olStyle.Stroke({
           width: 2,
           color: 'rgba(0, 153, 255)'
@@ -155,7 +151,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     });
   }
   public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
-    return new olStyle.Style ({
+    return new olStyle.Style({
       stroke: new olStyle.Stroke({
         width: 2,
         color: 'rgba(0, 153, 255)'
@@ -166,7 +162,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     });
   };
 
-  public radius: number;
   public buffer: number = 0;
 
   public measureUnit$: BehaviorSubject<MeasureLengthUnit> = new BehaviorSubject(MeasureLengthUnit.Meters);
@@ -176,98 +171,95 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   constructor(
     private cdRef: ChangeDetectorRef,
     private messageService: MessageService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService) { }
 
   ngOnInit() {
-
-    this.drawnGeometry$.next(undefined);
-
 
     this.drawGuide$.next(null);
     this.allValueChanges$$ = combineLatest([
       this.geometryformControl.valueChanges,
-      this.bufferFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
-      this.radiusFormControl.valueChanges.pipe(debounceTime(500), distinctUntilChanged()),
+      this.bufferOrRadiusFormControl.valueChanges,
       this.measureUnit$])
       .subscribe((bunch: [
         geom: GeoJSONGeometry,
         bufferValue: number,
-        radiusValue: number,
         unit: MeasureLengthUnit
       ]) => {
-        const geom = bunch[0];
-        const bufferValue: number = bunch[1];
-        const radiusValue: number = bunch[2];
-        const unit: MeasureLengthUnit = bunch[3];
-
-        console.log('bunch', bunch);
-
-       /* if (this.bufferFormControl.errors) {
+        console.log(bunch);
+        const geometry = bunch[0];
+        let bufferValue: number = bunch[1];
+        const unit: MeasureLengthUnit = bunch[2];
+        const factor = unit === MeasureLengthUnit.Meters ? 1 : 1000;
+        if ((geometry as any)?.radius) {
+          // this.bufferOrRadiusFormControl.setValue((geometry as any).radius / factor, { emitEvent: false });
+          // delete (geometry as any).radius;
+          // this.geometryformControl.setValue(geometry, { emitEvent: true });
+          // return;
+        }
+        if (this.bufferOrRadiusFormControl.errors) {
+          const deltaMin = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.minBufferMeters);
+          const deltaMax = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.maxBufferMeters);
+          this.bufferOrRadiusFormControl
+            .setValue((deltaMax > deltaMin ? this.maxBufferMeters : this.minBufferMeters) / factor, { emitEvent: false });
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.geometryformControl.setValue(null);
           return;
         }
-        this.geometryformControl.value.properties._buffer = bufferValue;
-        this.geometryformControl.value.properties._radius = radiusValue;
-        // this.processZone(zone);*/
+        const id = uuid();
+
+        this.setDrawGuide();
+        if (geometry) {
+          const feature: FeatureForPredefinedOrDrawGeometry = {
+            type: FEATURE,
+            geometry,
+            projection: 'EPSG:4326',
+            properties: {
+              id: id,
+              title: id,
+              _predefinedType: this.activeDrawType,
+              _buffer: this.bufferOrRadiusFormControl.value
+            },
+            meta: {
+              id: id
+            },
+            ol: undefined
+          };
+          this.processZone(feature);
+        }
       });
 
-    this.drawnGeometry$.next(this.geometryformControl.value ? this.geometryformControl.value : undefined);
-    this.drawnGeometry$$ = this.geometryformControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      console.log('value',value);
-      if (value) {
-        this.drawnGeometry$.next(value);
-        this.drawZone = this.geometryformControl.value as Feature;
-        if (this.buffer !== 0) {
-         // this.drawZoneEvent.emit(this.drawZone);
-          this.bufferFormControl.setValue(this.buffer);
-        }
-      } else {
-        this.drawnGeometry$.next(undefined);
-        this.drawZone = undefined;
-      }
-    });
-
-    this.drawnGeometry$.subscribe(() => {
-      this.getRadius();
-      this.cdRef.detectChanges();
-    });
-
-    this.radiusChanges$$ = this.radiusFormControl.valueChanges.subscribe(() => {
-      this.getRadius();
-      this.cdRef.detectChanges();
-    });
-
-    this.bufferChanges$$ = this.bufferFormControl.valueChanges
-      .pipe(debounceTime(500))
-      .subscribe((value) => {
-        console.log(value);
-        // todo
-    });
-
     this.monitorUnits();
+  }
+
+  setDrawGuide() {
+    if (this.isPoint()) {
+      if (this.bufferOrRadiusFormControl.value === 0) {
+        this.bufferOrRadiusFormControl.setValue(1000);
+        return;
+      }
+      this.drawGuide$.next(this.bufferOrRadiusFormControl.value);
+    }
+    else {
+      this.drawGuide$.next(null);
+    }
+
+
   }
 
   private monitorUnits() {
     this.measureUnit$$ = this.measureUnit$
       .pipe(distinctUntilChanged())
       .subscribe((measureUnit) => {
-        if(measureUnit === MeasureLengthUnit.Meters) {
-          this.bufferFormControl.setValidators(this.metersValidator);
-          this.radiusFormControl.setValidators(this.metersValidator);
+        if (measureUnit === MeasureLengthUnit.Meters) {
+          this.bufferOrRadiusFormControl.setValidators(this.metersValidator);
         } else {
-          this.bufferFormControl.setValidators(this.kilometersValidator);
-          this.radiusFormControl.setValidators(this.kilometersValidator);
+          this.bufferOrRadiusFormControl.setValidators(this.kilometersValidator);
         }
-        if (this.isPolygon()) {
-          measureUnit === MeasureLengthUnit.Meters ?
-            this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
-            this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
-        } else if (this.isPoint()) {
-          measureUnit === MeasureLengthUnit.Meters ?
-            this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
-            this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
-        }
+        measureUnit === MeasureLengthUnit.Meters ?
+          this.bufferOrRadiusFormControl.setValue(this.bufferOrRadiusFormControl.value * 1000) :
+          this.bufferOrRadiusFormControl.setValue(this.bufferOrRadiusFormControl.value / 1000);
+
       });
   }
 
@@ -276,15 +268,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
    * @internal
    */
   ngOnDestroy() {
-    this.radiusChanges$$.unsubscribe();
-    this.bufferChanges$$.unsubscribe();
     this.cdRef.detach();
-    if (this.radiusChanges$$) {
-      this.radiusChanges$$.unsubscribe();
-    }
-    if (this.drawnGeometry$$) {
-      this.drawnGeometry$$.unsubscribe();
-    }
     this.measureUnit$$.unsubscribe();
     this.allValueChanges$$.unsubscribe();
   }
@@ -294,7 +278,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
    * @internal
    */
   onMeasureUnitChange(unit: MeasureLengthUnit) {
-      this.measureUnit$.next(unit);
+    this.measureUnit$.next(unit);
   }
 
   isPredefined() {
@@ -324,61 +308,45 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
   clearDrawZone() {
     this.geometryformControl.reset();
-    this.bufferFormControl.setValue(0);
+    this.bufferOrRadiusFormControl.setValue(0);
     this.buffer = 0;
   }
 
-  /**
-   * Manage radius value at user change
-   */
-  getRadius() {
-    let formValue;
-    if (this.geometryformControl.value !== null) {
-      this.measureUnit$.value === MeasureLengthUnit.Meters ?
-        formValue = this.geometryformControl.value.radius :
-        formValue = this.geometryformControl.value.radius / 1000;
-    } else {
-      formValue = undefined;
-    }
 
-    if (this.activeDrawType === SpatialType.Point) {
-      if (!this.freehandDrawIsActive) {
-        if (
-          this.radiusFormControl.value < 0 ||
-          (this.measureUnit$.value === MeasureLengthUnit.Meters && this.radiusFormControl.value >= 100000) ||
-          (this.measureUnit$.value === MeasureLengthUnit.Kilometers && this.radiusFormControl.value >= 100)) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.radius = 1000;
-          this.measureUnit$.value === MeasureLengthUnit.Meters ?
-            this.radiusFormControl.setValue(this.radius) :
-            this.radiusFormControl.setValue(this.radius / 1000);
-          this.drawGuide$.next(this.radius);
-          return;
-        }
-      } else {
-        if (formValue) {
-          if (formValue >= 100000) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-            this.geometryformControl.reset();
-            return;
-          }
-          if (formValue !== this.radiusFormControl.value) {
-            this.radiusFormControl.setValue(formValue);
-            return;
-          }
-        }
+  private processZone(feature: FeatureForPredefinedOrDrawGeometry) {
+    if (feature && this.activeDrawType) {
+      this.bufferOrRadiusFormControl.enable({ emitEvent: false });
+      feature.properties._buffer = this.bufferOrRadiusFormControl.value;
+      let currentZone = feature;
+      if (feature.properties._buffer && feature.properties._buffer !== 0) {
+        const bufferedZone = buffer(feature.geometry, feature.properties._buffer, { units: this.measureUnit$.value });
+        currentZone.geometry = bufferedZone.geometry;
       }
-      if (this.measureUnit$.value === MeasureLengthUnit.Meters) {
-        this.radius = this.radiusFormControl.value;
-        this.drawGuide$.next(this.radius);
-      } else {
-        this.radius = this.radiusFormControl.value * 1000;
-        this.drawGuide$.next(this.radius * 1000);
-      }
-      this.overlayStyle$.next(this.PointStyle);
-      this.drawStyle$.next(this.PointStyle);
+      const myOlFeature: olFeature<Geometry> = featureToOl(currentZone, this.map.projection);
+
+      const geojsonGeom = new OlGeoJSON().writeGeometryObject(myOlFeature.getGeometry(), {
+        featureProjection: this.map.projection,
+        dataProjection: this.map.projection
+      }) as FeatureGeometry;
+
+      const featureId = `${myOlFeature.getId()}.${this.bufferOrRadiusFormControl.value}`;
+      const zoneFeature: FeatureForPredefinedOrDrawGeometry = {
+        type: FEATURE,
+        geometry: geojsonGeom,
+        projection: this.map.projection,
+        properties: {
+          id: featureId,
+          title: myOlFeature.get('title'),
+          _predefinedType: this.activeDrawType,
+          _buffer: this.bufferOrRadiusFormControl.value
+        },
+        meta: {
+          id: featureId
+        },
+        ol: myOlFeature
+      };
+      this.currentRegionStore.load([zoneFeature]);
+      moveToOlFeatures(this.map, [myOlFeature], FeatureMotion.None);
     }
   }
 }

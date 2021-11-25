@@ -13,6 +13,6 @@ export enum PredefinedType {
 export enum SpatialType {
     Predefined = 'Predefined',
     Polygon = 'Polygon',
-    Line = 'Line',
+    Line = 'Line_string',
     Point = 'Point'
 }

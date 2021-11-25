@@ -3,12 +3,12 @@
   [map]="map"
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
-  [measure]="measure"
+  [measure]="false"
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async"
-  [radius]="radius">
+  [radius]="bufferOrRadiusFormControl.value">
 </igo-geometry-form-field-input>
 
 <div class="header">
@@ -26,30 +26,11 @@
     </mat-slide-toggle>
 </div>
 
-<div class="buffer-unit" *ngIf="isPolygon()">
+<div class="buffer-unit">
   <form class="buffer-form">
     <mat-form-field class="buffer">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
-      [value]="0" [readonly]="this.geometryformControl.value === null">
-    </mat-form-field>
-  </form>
-
-  <mat-form-field class="unit-field">
-    <mat-select
-    [value]="measureUnit$.value"
-    (selectionChange)="onMeasureUnitChange($event.value)">
-    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
-    </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-
-<div class="radius-unit" *ngIf="isPoint()">
-  <form class="radius-form">
-    <mat-form-field class="radius">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-      [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.geometryformControl.value === null">
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferOrRadiusFormControl"
+      [value]="0">
     </mat-form-field>
   </form>
 
