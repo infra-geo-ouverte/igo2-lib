@@ -35,19 +35,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   @Input() predefinedTypes: string[] = [];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
-  // @Input() selectedQueryType: PredefinedType;
-  @Input()
-  get selectedPredefinedType(): PredefinedType {
-    return this._selectedPredefinedType;
-  }
-  set selectedPredefinedType(queryType: PredefinedType) {
-    this._selectedPredefinedType = queryType;
-    if (this.predefinedRegionsStore.empty) {
-      this.predefinedTypeChange.emit(queryType);
-    }
-  }
-  private _selectedPredefinedType: PredefinedType;
-
+  @Input() selectedPredefinedType: PredefinedType;
 
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
@@ -111,9 +99,4 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
     this.predefinedOrDrawTypeChange.emit(this.activeDrawType);
   }
 
-  onSelectionChange() {
-    this.clearCurrentRegionStore();
-    this.predefinedTypeChange.emit(this.selectedPredefinedType);
-    this.zoneChange.emit(undefined);
-  }
 }

@@ -1,3 +1,12 @@
+<mat-form-field>
+    <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
+    <mat-select (selectionChange)="onPredefinedTypeChange()" [(value)]="selectedPredefinedType">
+      <mat-option *ngFor="let predefinedType of predefinedTypes" [value]="predefinedType">
+        {{predefinedType | translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
 <form class="form-list">
     <mat-form-field class="zone-list">
         <input #input type="text" placeholder="{{'igo.geo.spatialFilter.listLabel' | translate}}" matInput

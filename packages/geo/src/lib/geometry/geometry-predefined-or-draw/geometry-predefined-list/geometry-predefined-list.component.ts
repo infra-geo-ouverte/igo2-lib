@@ -5,7 +5,9 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { FormControl, Validators } from '@angular/forms';
@@ -31,6 +33,7 @@ import { PredefinedType } from '../shared/geometry-predefined-or-draw.enum';
 })
 export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
+  @Input() predefinedTypes: string[] = [];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>;
@@ -43,10 +46,12 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   }
   set selectedPredefinedType(queryType: PredefinedType) {
     this.regionsFormControl.setValue('');
+    if (this.predefinedRegionsStore.empty) {
+      this.predefinedTypeChange.emit(queryType);
+    }
     this._selectedPredefinedType = queryType;
   }
   private _selectedPredefinedType: PredefinedType;
-
 
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
   private kilometersValidator = [Validators.max(this.maxBufferMeters/1000), Validators.min(this.minBufferMeters/1000), Validators.required];
@@ -63,6 +68,10 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   get measureUnits(): string[] {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
+
+  @Output() predefinedTypeChange = new EventEmitter<PredefinedType>();
+  @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
+
   constructor(
     private messageService: MessageService,
     private languageService: LanguageService) {}
@@ -111,6 +120,13 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   displayFn(feature?: Feature): string | undefined {
     return feature ? feature.properties.title : undefined;
+  }
+
+  onPredefinedTypeChange() {
+    this.currentRegionStore.clear();
+    this.currentRegionStore.clearLayer();
+    this.predefinedTypeChange.emit(this.selectedPredefinedType);
+    this.zoneChange.emit(undefined);
   }
 
   private processZone(feature: FeatureForPredefinedOrDrawGeometry) {

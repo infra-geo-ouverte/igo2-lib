@@ -4,22 +4,17 @@
   (selectedTabChange)="onPredefinedOrDrawTypeChange()">
 
   <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
-    <mat-form-field>
-      <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
-      <mat-select (selectionChange)="onSelectionChange()" [(value)]="selectedPredefinedType">
-        <mat-option *ngFor="let predefinedType of predefinedTypes" [value]="predefinedType">
-          {{predefinedType | translate}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
     <igo-geometry-predefined-list
+      [predefinedTypes]="predefinedTypes"
       [predefinedRegionsStore]="predefinedRegionsStore"
       [currentRegionStore]="currentRegionStore"
       [selectedPredefinedType]="selectedPredefinedType"
       [layers]="layers"
       [map]="map"
       [minBufferMeters]="minBufferMeters"
-      [maxBufferMeters]="maxBufferMeters">
+      [maxBufferMeters]="maxBufferMeters"
+      (predefinedTypeChange)="predefinedTypeChange.emit($event)"
+      (zoneChange)="zoneChange.emit($event)">
     </igo-geometry-predefined-list>
   </mat-tab>
 
