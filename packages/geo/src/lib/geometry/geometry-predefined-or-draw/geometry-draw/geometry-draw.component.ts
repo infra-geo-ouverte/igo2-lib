@@ -30,6 +30,7 @@ import OlGeoJSON from 'ol/format/GeoJSON';
 import { FeatureGeometry } from './../../../feature/shared/feature.interfaces';
 
 import { uuid } from '@igo2/utils';
+import { createOverlayMarkerStyle } from '../../../overlay/shared/overlay-marker-style.utils';
 /**
  * Spatial-Filter-Item (search parameters)
  */
@@ -57,15 +58,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     this.drawGuide$.next(null);
     this.drawStyle$.next(undefined);
 
-    // Necessary to keep reference to the geometry form field input
-    if (this.activeDrawType === SpatialType.Predefined) {
-      const geojson: GeoJSONGeometry = {
-        type: 'Point',
-        coordinates: ''
-      };
-      this.geometryformControl.setValue(geojson);
-      // todo set draw off
-    }
     // Necessary to apply the right style when geometry type is Point
     if (this.activeDrawType === SpatialType.Point) {
       this.overlayStyle = this.PointStyle;
@@ -139,6 +131,9 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     const geom = feature.getGeometry() as OlPoint;
     const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
     const factor = this.measureUnit$.value === MeasureLengthUnit.Meters ? 1 : 1000;
+    if (this.bufferOrRadiusFormControl.value === 0) {
+      return createOverlayMarkerStyle({markerColor: [0, 153, 255]});
+    }
     return new olStyle.Style({
       image: new olStyle.Circle({
         radius: this.bufferOrRadiusFormControl.value * factor / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
@@ -235,10 +230,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
   setDrawGuide() {
     if (this.isPoint()) {
-      if (this.bufferOrRadiusFormControl.value === 0) {
-        this.bufferOrRadiusFormControl.setValue(1000);
-        return;
-      }
       this.drawGuide$.next(this.bufferOrRadiusFormControl.value);
     }
     else {
