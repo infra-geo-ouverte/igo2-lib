@@ -52,24 +52,8 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
   set activeDrawType(type: SpatialType) {
     this._activeDrawType = type;
-    const index = this.geometryTypes.findIndex(geom => geom === this.activeDrawType);
-    this.geometryType = this.geometryTypes[index];
+    this.geometryType = this.geometryTypes[this.geometryTypes.findIndex(geom => geom === this.activeDrawType)];
     this.geometryformControl.reset();
-    this.drawGuide$.next(null);
-    this.drawStyle$.next(undefined);
-
-    // Necessary to apply the right style when geometry type is Point
-    if (this.activeDrawType === SpatialType.Point) {
-      this.overlayStyle = this.PointStyle;
-      this.drawStyle$.next(this.overlayStyle);
-    } else if (this.activeDrawType === SpatialType.Line) {
-      console.log('// todo');
-    } else {
-      // If geometry types is Polygon
-      this.overlayStyle = this.PolyStyle;
-      this.drawStyle$.next(this.drawStyle);
-    }
-    this.overlayStyle$.next(this.overlayStyle);
   }
   private _activeDrawType: SpatialType;
 
@@ -104,7 +88,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
-  public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
     return new olStyle.Style({
       image: new olStyle.Circle({
@@ -127,11 +110,11 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     });
   };
 
-  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = (feature: olFeature<OlGeometry>, resolution: number) => {
+  public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = (feature: olFeature<OlGeometry>, resolution: number) => {
     const geom = feature.getGeometry() as OlPoint;
     const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
     const factor = this.measureUnit$.value === MeasureLengthUnit.Meters ? 1 : 1000;
-    if (this.bufferOrRadiusFormControl.value === 0) {
+    if (this.bufferOrRadiusFormControl.value === 0 && this.activeDrawType === SpatialType.Point) {
       return createOverlayMarkerStyle({markerColor: [0, 153, 255]});
     }
     return new olStyle.Style({
@@ -144,23 +127,17 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
         fill: new olStyle.Fill({
           color: 'rgba(0, 153, 255, 0.2)'
         })
+      }),
+      stroke: new olStyle.Stroke({
+        color: [0, 153, 255].concat([1]),
+        width: 2
+      }),
+      fill: new olStyle.Fill({
+        color: [0, 153, 255].concat([0.2])
       })
     });
   }
-  public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
-    return new olStyle.Style({
-      stroke: new olStyle.Stroke({
-        width: 2,
-        color: 'rgba(0, 153, 255)'
-      }),
-      fill: new olStyle.Fill({
-        color: 'rgba(0, 153, 255, 0.2)'
-      })
-    });
-  };
-
   public buffer: number = 0;
-
   public measureUnit$: BehaviorSubject<MeasureLengthUnit> = new BehaviorSubject(MeasureLengthUnit.Meters);
   public zoneWithBuffer;
 
@@ -171,6 +148,8 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     private languageService: LanguageService) { }
 
   ngOnInit() {
+    this.drawStyle$.next(this.drawStyle);
+    this.overlayStyle$.next(this.overlayStyle);
 
     this.drawGuide$.next(null);
     this.allValueChanges$$ = combineLatest([
