@@ -84,7 +84,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   public bufferOrRadiusFormControl = new FormControl(0, this.metersValidator);
 
   public geometryType: typeof OlGeometryType | string;
-  public geometryTypes: string[] = ['Point', 'Line', 'Polygon'];
+  public geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
 
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
@@ -263,8 +263,8 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
     return this.activeDrawType === SpatialType.Polygon;
   }
 
-  isPolyline() {
-    return this.activeDrawType === SpatialType.Line;
+  isLineString() {
+    return this.activeDrawType === SpatialType.LineString;
   }
 
   isPoint() {
