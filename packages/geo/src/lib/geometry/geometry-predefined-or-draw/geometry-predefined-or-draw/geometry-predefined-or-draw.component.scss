@@ -9,16 +9,3 @@
 .mat-tab-group ::ng-deep .mat-tab-body-wrapper {
     margin-top: 5px;
 }
-
-.spatial-type-toggle {
-    padding: 10px;
-    text-align: center;
-
-    mat-button-toggle-group {
-      width: 50%;
-
-      mat-button-toggle {
-        width: 50%;
-      }
-    }
-  }

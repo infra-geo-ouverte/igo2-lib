@@ -189,23 +189,22 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
       ]) => {
         console.log(bunch);
         const geometry = bunch[0];
-        let bufferValue: number = bunch[1];
+        let bufferValue = bunch[1];
         const unit: MeasureLengthUnit = bunch[2];
         const factor = unit === MeasureLengthUnit.Meters ? 1 : 1000;
         if ((geometry as any)?.radius) {
-          // this.bufferOrRadiusFormControl.setValue((geometry as any).radius / factor, { emitEvent: false });
-          // delete (geometry as any).radius;
-          // this.geometryformControl.setValue(geometry, { emitEvent: true });
-          // return;
+          this.bufferOrRadiusFormControl.setValue((geometry as any).radius / factor, { emitEvent: false });
+          delete (geometry as any).radius;
+          this.geometryformControl.setValue(geometry, { emitEvent: true });
+          return;
         }
         if (this.bufferOrRadiusFormControl.errors) {
           const deltaMin = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.minBufferMeters);
           const deltaMax = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.maxBufferMeters);
-          this.bufferOrRadiusFormControl
-            .setValue((deltaMax > deltaMin ? this.maxBufferMeters : this.minBufferMeters) / factor, { emitEvent: false });
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.geometryformControl.setValue(null);
+          const bufferToApply = (deltaMax < deltaMin ? this.maxBufferMeters : this.minBufferMeters) / factor;
+          this.bufferOrRadiusFormControl.setValue(bufferToApply, { emitEvent: true });
           return;
         }
         const id = uuid();

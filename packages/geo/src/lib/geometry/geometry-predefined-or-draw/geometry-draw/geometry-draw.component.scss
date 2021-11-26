@@ -176,3 +176,16 @@
 .mat-header-cell {
     height: 56px;
 }
+
+.spatial-type-toggle {
+    padding: 10px;
+    text-align: center;
+
+    mat-button-toggle-group {
+      width: 50%;
+
+      mat-button-toggle {
+        width: 50%;
+      }
+    }
+  }

@@ -13,7 +13,6 @@ import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import { FormControl, Validators } from '@angular/forms';
 import { Feature, FEATURE, FeatureGeometry, FeatureMotion, FeatureStore, featureToOl, moveToOlFeatures } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
-import { Layer } from '../../../layer';
 import { EntityStore } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import buffer from '@turf/buffer';
@@ -99,9 +98,14 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
         const zone: FeatureForPredefinedOrDrawGeometry = bunch[1];
         const unit: MeasureLengthUnit = bunch[2];
 
+        const factor = unit === MeasureLengthUnit.Meters ? 1 : 1000;
         if (this.bufferFormControl.errors) {
+          const deltaMin = Math.abs(this.bufferFormControl.value / factor - this.minBufferMeters);
+          const deltaMax = Math.abs(this.bufferFormControl.value / factor - this.maxBufferMeters);
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          const bufferToApply = (deltaMax < deltaMin ? this.maxBufferMeters : this.minBufferMeters) / factor;
+          this.bufferFormControl.setValue(bufferToApply, { emitEvent: true });
           return;
         }
         if (zone) {
