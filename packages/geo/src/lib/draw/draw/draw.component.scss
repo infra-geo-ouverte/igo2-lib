@@ -67,3 +67,21 @@ img {
 .deleteBtn {
   margin-left: 12px;
 }
+
+.radius {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 110%;
+}
+
+.unit-field {
+  width: 110px;
+  margin-left: 30px;
+}
+
+.radius-unit {
+  display: flex;
+  width: 100%;
+  margin-left: 2px;
+  padding: 5px;
+}

@@ -18,8 +18,9 @@ import {
     FeatureStoreLoadingStrategy
   } from '../../feature';
 
-import { LanguageService } from '@igo2/core';
+import { MessageService, LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl } from '@angular/forms';
 import { GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -30,6 +31,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
+import * as olproj from 'ol/proj';
 
 import * as OlStyle from 'ol/style';
 import OlVectorSource from 'ol/source/Vector';
@@ -49,6 +51,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+import { MeasureLengthUnit } from './../../measure/shared/measure.enum';
 
 @Component ({
   selector: 'igo-draw',
@@ -88,6 +91,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
 
+  public PointStyle: OlStyle.Style | ((feature, resolution) => OlStyle.Style);
+
   private olDrawingLayerSource = new OlVectorSource();
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
@@ -106,12 +111,24 @@ export class DrawComponent implements OnInit, OnDestroy {
   public icons: Array<string>;
   public icon: string;
 
+  public radiusFormControl = new FormControl();
+  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+
+  /**
+   * Available measure units for the measure type given
+   * @internal
+   */
+   get measureUnits(): string[] {
+    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
+  }
+
   constructor(
     private languageService: LanguageService,
     private formBuilder: FormBuilder,
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
-    private drawIconService: DrawIconService
+    private drawIconService: DrawIconService,
+    private messageService: MessageService,
   ) {
     this.buildForm();
     this.fillColor = this.drawStyleService.getFillColor();
@@ -498,5 +515,60 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   openShorcutsDialog() {
     this.dialog.open(DrawShorcutsComponent);
+  }
+
+  isCircle() {
+    return this.drawControl.getGeometryType() === this.geometryType.Circle;
+  }
+
+  isPoint() {
+    return this.drawControl.getGeometryType() === this.geometryType.Point;
+  }
+
+  changeRadius() {
+    let radiusMeters;
+    if (this.radiusFormControl.value) {
+      this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = this.radiusFormControl.value : radiusMeters = this.radiusFormControl.value * 1000;
+    } else {
+      radiusMeters = undefined;
+    }
+    console.log(radiusMeters)
+
+    if (radiusMeters >= 100000 || radiusMeters < 0) {
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+        this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+
+      this.radiusFormControl.setValue(undefined);
+    }
+
+    if (radiusMeters) {
+      this.PointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
+        const geom = feature.getGeometry() as OlPoint;
+        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+        return new OlStyle.Style ({
+          image: new OlStyle.Circle ({
+            radius: radiusMeters / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution,
+            stroke: new OlStyle.Stroke({
+              color: 'rgba(143,7,7,1)',
+              width: 1
+            }),
+            fill: new OlStyle.Fill({
+              color: 'rgba(255,255,255,0.4)'
+            })
+          })
+        });
+      };
+
+      this.drawControl.setInteractionStyle(this.PointStyle);
+    }
+  }
+
+  onMeasureUnitChange(selectedMeasureUnit: MeasureLengthUnit) {
+    if (selectedMeasureUnit === this.measureUnit) {
+      return;
+    } else {
+      this.measureUnit = selectedMeasureUnit;
+      this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) : this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+    }
   }
 }

@@ -130,6 +130,17 @@ export class DrawControl {
   }
 
   /**
+   * Get the current geometry type
+   */
+   getGeometryType() {
+    return this.olGeometryType;
+  }
+
+  setInteractionStyle(style) {
+    this.olDrawInteraction.setProperties({'style': style})
+  }
+
+  /**
    * Create a drawing source if none is defined in the options
    */
   private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
@@ -183,24 +194,6 @@ export class DrawControl {
         freehand: false,
         freehandCondition: () => false
       });
-
-    } else {
-      if (this.olGeometryType === 'Point') {
-        olDrawInteraction = new OlDraw({
-          type: 'Circle',
-          source: this.getSource(),
-          maxPoints: this.options.maxPoints,
-          freehand: true
-        });
-
-      } else {
-        olDrawInteraction = new OlDraw({
-          type: this.olGeometryType,
-          source: this.getSource(),
-          maxPoints: this.options.maxPoints,
-          freehand: true
-        });
-      }
     }
 
     // Add Draw interaction to map and create listeners
