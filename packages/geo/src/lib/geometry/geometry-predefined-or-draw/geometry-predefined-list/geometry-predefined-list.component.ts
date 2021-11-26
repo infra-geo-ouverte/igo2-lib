@@ -21,7 +21,6 @@ import { IgoMap } from '../../../map/shared/map';
 import { Geometry } from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefined-or-draw.interface';
-import { PredefinedType } from '../shared/geometry-predefined-or-draw.enum';
 
 
 @Component({
@@ -39,17 +38,17 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>;
   @Input() map: IgoMap;
   @Input()
-  get selectedPredefinedType(): PredefinedType {
+  get selectedPredefinedType(): string {
     return this._selectedPredefinedType;
   }
-  set selectedPredefinedType(queryType: PredefinedType) {
+  set selectedPredefinedType(queryType: string) {
     this.regionsFormControl.setValue('');
     if (this.predefinedRegionsStore.empty) {
       this.predefinedTypeChange.emit(queryType);
     }
     this._selectedPredefinedType = queryType;
   }
-  private _selectedPredefinedType: PredefinedType;
+  private _selectedPredefinedType: string;
 
   private metersValidator = [Validators.max(this.maxBufferMeters), Validators.min(this.minBufferMeters), Validators.required];
   private kilometersValidator = [Validators.max(this.maxBufferMeters/1000), Validators.min(this.minBufferMeters/1000), Validators.required];
@@ -67,7 +66,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Output() predefinedTypeChange = new EventEmitter<PredefinedType>();
+  @Output() predefinedTypeChange = new EventEmitter<string>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
 
   constructor(

@@ -10,7 +10,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { Layer, VectorLayer } from '../../../layer';
 
-import { SpatialType, PredefinedType } from '../shared/geometry-predefined-or-draw.enum';
+import { SpatialType } from '../shared/geometry-predefined-or-draw.enum';
 import { EntityStore } from '@igo2/common';
 import { IgoMap } from '../../../map/shared/map';
 import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefined-or-draw.interface';
@@ -35,7 +35,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   @Input() predefinedTypes: string[] = [];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
-  @Input() selectedPredefinedType: PredefinedType;
+  @Input() selectedPredefinedType: string;
 
   @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
@@ -43,7 +43,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   public selectedTypeIndex = new FormControl(0);
   public predefinedOrDrawType: SpatialType = SpatialType.Polygon;
 
-  @Output() predefinedTypeChange = new EventEmitter<PredefinedType>();
+  @Output() predefinedTypeChange = new EventEmitter<string>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
 
   constructor() {}
