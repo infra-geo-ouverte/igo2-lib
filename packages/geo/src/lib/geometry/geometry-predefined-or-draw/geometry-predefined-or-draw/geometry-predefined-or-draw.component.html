@@ -5,6 +5,7 @@
 
   <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
     <igo-geometry-predefined-list
+      [reset$]="reset$"
       [predefinedTypes]="predefinedTypes"
       [predefinedRegionsStore]="predefinedRegionsStore"
       [currentRegionStore]="currentRegionStore"

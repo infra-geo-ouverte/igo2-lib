@@ -4,7 +4,8 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnDestroy
 } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
@@ -21,6 +22,7 @@ import { FeatureStoreLoadingStrategy } from '../../../feature/shared/strategies/
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import { tryAddLoadingStrategy } from '../../../feature/shared/strategies.utils';
 import { FeatureStore } from '../../../feature/shared/store';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'igo-geometry-predefined-or-draw',
@@ -28,7 +30,7 @@ import { FeatureStore } from '../../../feature/shared/store';
   styleUrls: ['./geometry-predefined-or-draw.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
+export class GeometryPredefinedOrDrawTypeComponent implements OnInit, OnDestroy {
 
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
@@ -42,6 +44,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
 
   public selectedTypeIndex = new FormControl(0);
   public predefinedOrDrawType: SpatialType = SpatialType.Polygon;
+  public reset$ = new Subject<void>();
 
   @Output() predefinedTypeChange = new EventEmitter<string>();
   @Output() zoneChange = new EventEmitter<FeatureForPredefinedOrDrawGeometry>();
@@ -51,6 +54,11 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
   ngOnInit() {
     this.initCurrentZoneStore();
     this.onPredefinedOrDrawTypeChange();
+  }
+
+  ngOnDestroy(): void {
+    this.reset$.next();
+    this.reset$.complete();
   }
 
   private initCurrentZoneStore() {
@@ -83,5 +91,6 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
     }
     this.currentRegionStore.clear();
     this.currentRegionStore.clearLayer();
+    this.reset$.next();
   }
 }

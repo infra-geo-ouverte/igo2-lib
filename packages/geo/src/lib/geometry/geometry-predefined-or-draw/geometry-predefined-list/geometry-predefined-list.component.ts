@@ -9,7 +9,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject, Subscription } from 'rxjs';
 import { FormControl, Validators } from '@angular/forms';
 import { Feature, FEATURE, FeatureGeometry, FeatureMotion, FeatureStore, featureToOl, moveToOlFeatures } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
@@ -30,7 +30,7 @@ import { FeatureForPredefinedOrDrawGeometry } from '../shared/geometry-predefine
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
-
+  @Input() reset$ = new Subject<void>();
   @Input() predefinedTypes: string[] = [];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
@@ -42,7 +42,7 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
     return this._selectedPredefinedType;
   }
   set selectedPredefinedType(queryType: string) {
-    this.regionsFormControl.setValue('');
+    this.reset$.next();
     if (this.predefinedRegionsStore.empty) {
       this.predefinedTypeChange.emit(queryType);
     }
@@ -75,11 +75,13 @@ export class GeometryPredefinedListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.reset$.subscribe(() => this.regionsFormControl.reset());
+
     this.selectedZone$$ = this.selectedZone$
     .subscribe(zone => zone ? this.bufferFormControl.enable({emitEvent: false}): this.bufferFormControl.disable({emitEvent: false}));
 
     this.formValueChanges$$ = this.regionsFormControl.valueChanges.subscribe((value) => {
-      if (value.length) {
+      if (value?.length) {
         this.predefinedRegionsStore.view.filter((feature) => {
           const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const featureNameNormalized = feature.properties.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
