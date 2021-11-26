@@ -81,5 +81,7 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit {
     if (this.selectedTypeIndex.value === 1) {
       this.predefinedOrDrawType = SpatialType.Polygon;
     }
+    this.currentRegionStore.clear();
+    this.currentRegionStore.clearLayer();
   }
 }
