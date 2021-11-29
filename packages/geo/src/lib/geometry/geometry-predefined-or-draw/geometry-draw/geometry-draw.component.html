@@ -2,13 +2,13 @@
   <mat-button-toggle-group
     [value]="activeDrawType"
     (change)="onDrawTypeChange($event.value)">
-    <mat-button-toggle [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Polygon)" [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
         <mat-icon svgIcon="pentagon-outline"></mat-icon>
     </mat-button-toggle>       
-    <mat-button-toggle [value]="spatialType.LineString" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.LineString)" [value]="spatialType.LineString" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
       <mat-icon svgIcon="vector-polyline"></mat-icon>
     </mat-button-toggle>
-    <mat-button-toggle [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Point)" [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
         <mat-icon svgIcon="record-circle-outline"></mat-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>

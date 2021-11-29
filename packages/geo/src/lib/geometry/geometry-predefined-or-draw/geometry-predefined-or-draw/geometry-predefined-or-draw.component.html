@@ -20,6 +20,7 @@
 
   <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
     <igo-geometry-draw
+      [geometryTypes]="geometryTypes"
       [map]="map"
       [activeDrawType]="predefinedOrDrawType"
       [currentRegionStore]="currentRegionStore">

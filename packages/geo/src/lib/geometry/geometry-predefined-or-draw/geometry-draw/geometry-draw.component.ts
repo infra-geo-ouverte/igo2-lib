@@ -42,6 +42,7 @@ import { createOverlayMarkerStyle } from '../../../overlay/shared/overlay-marker
 })
 export class GeometryDrawComponent implements OnDestroy, OnInit {
 
+  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
   @Input() map: IgoMap;
@@ -52,7 +53,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
   set activeDrawType(type: SpatialType) {
     this._activeDrawType = type;
-    this.geometryType = this.geometryTypes[this.geometryTypes.findIndex(geom => geom === this.activeDrawType)];
+    this.geometryType = this.getGeometryType(this.activeDrawType); //  this.geometryTypes[this.geometryTypes.findIndex(geom => geom === this.activeDrawType)];
     this.geometryformControl.reset();
   }
   private _activeDrawType: SpatialType;
@@ -84,7 +85,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   public bufferOrRadiusFormControl = new FormControl(0, this.metersValidator);
 
   public geometryType: typeof OlGeometryType | string;
-  public geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
 
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
@@ -206,6 +206,11 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
     this.monitorUnits();
   }
+
+  getGeometryType(type) :typeof OlGeometryType | string {
+    return this.geometryTypes[this.geometryTypes.findIndex(geom => geom === type)];
+  }
+
 
   setDrawGuide() {
     if (this.isPoint()) {

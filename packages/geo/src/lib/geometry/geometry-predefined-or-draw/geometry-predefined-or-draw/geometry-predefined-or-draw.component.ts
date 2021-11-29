@@ -32,6 +32,7 @@ import { Subject } from 'rxjs';
 })
 export class GeometryPredefinedOrDrawTypeComponent implements OnInit, OnDestroy {
 
+  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
   @Input() predefinedTypes: string[] = [];

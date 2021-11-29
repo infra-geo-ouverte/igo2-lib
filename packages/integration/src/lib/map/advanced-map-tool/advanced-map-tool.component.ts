@@ -24,6 +24,7 @@ import { MapState } from '../map.state';
 export class AdvancedMapToolComponent implements OnInit {
 
   @Input() type: SpatialType;
+  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
 
   public predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry> = new EntityStore<FeatureForPredefinedOrDrawGeometry>([]);
   public allRegionsStore: FeatureStore<FeatureForPredefinedOrDrawGeometry> =
