@@ -9,9 +9,6 @@ import { RegionUpdateParams, TileToDownload } from './download.interface';
 import { TileDownloaderService } from './tile-downloader';
 import { TileGenerationParams } from './tile-downloader/tile-generation-strategies';
 
-
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -160,7 +157,7 @@ export class DownloadRegionService implements OnDestroy {
     const newParentUrls = tileToDownload.map((tile) => {
       return tile.url;
     });
-    const parentUrls =  oldRegion.parentUrls.concat(newParentUrls);
+    const parentUrls = oldRegion.parentUrls.concat(newParentUrls);
     region.parentUrls = parentUrls;
 
     const newFeatureText = tileToDownload.map((tile) => {

@@ -7,7 +7,10 @@ import { first, map, retry } from 'rxjs/operators';
 import { GeoNetworkService } from '../../network';
 import { StorageQuotaService, TileDBService } from '../../storage';
 import { Tile } from '../Tile.interface';
-import { newTileGenerationStrategy, ParentTileGeneration, strategyToTileGenerationStrategies, TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy } from './tile-generation-strategies';
+import {
+  newTileGenerationStrategy, ParentTileGeneration, strategyToTileGenerationStrategies,
+  TileGenerationParams, TileGenerationStrategies, TileGenerationStrategy
+} from './tile-generation-strategies';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -213,7 +216,7 @@ export class TileDownloaderService {
 
     const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     const nextDownload = () => {
-      const url =  this.urlQueue.shift();
+      const url = this.urlQueue.shift();
       if (!url) {
         this._nWorkerDone++;
         if (this._nWorkerDone === nWorkers) {

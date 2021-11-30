@@ -31,7 +31,7 @@ export class GeoNetworkService {
     return request;
   }
 
-  private getOffline(url: string): Observable<Blob>  {
+  private getOffline(url: string): Observable<Blob> {
     return this.geoDataDB.get(url);
   }
 

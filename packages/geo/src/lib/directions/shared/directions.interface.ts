@@ -1,5 +1,5 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { DirectionRelativePositionType, DirectionsFormat, DirectionType, SourceDirectionsType } from './directions.enum';
+import { DirectionRelativePositionType, DirectionsFormat, DirectionType, ProposalType, SourceDirectionsType } from './directions.enum';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
@@ -9,6 +9,7 @@ export interface DirectionOptions {
   steps?: boolean;
   geometries?: string;
   alternatives?: boolean;
+  continue_straight?: boolean;
 }
 
 export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
@@ -49,6 +50,7 @@ export interface Stop {
 }
 
 export interface SourceProposal {
+  type: ProposalType;
   source: SearchSource;
   results: { [key: string]: any }[];
   meta: {

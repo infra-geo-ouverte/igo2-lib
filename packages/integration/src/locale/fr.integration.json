@@ -71,7 +71,7 @@
       "directions": {
         "warning": {
           "title": "Avertissement",
-          "message": "L'itinéraire proposé dans cet outil ne tient pas compte des conditions routières actuelles, de la congestion routière ou des entraves présentes sur le réseau."
+          "message": "L'itinéraire proposé dans cet outil ne tient pas compte des conditions routières actuelles, de la congestion routière, des entraves présente sur le réseau et des horaires de traversiers (ouverture quotidienne et saisonnière)."
         }
       },
       "download": {

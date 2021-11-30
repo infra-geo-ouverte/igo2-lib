@@ -11,8 +11,6 @@ import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
 
-
-
 const dbConfig: DBConfig = {
   name: 'igo2DB',
   version: 1,

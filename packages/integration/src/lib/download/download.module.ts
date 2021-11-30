@@ -24,9 +24,15 @@ import { RegionDownloadEstimationComponent } from './region-editor/region-downlo
 import { RegionEditorComponent } from './region-editor/region-editor.component';
 import { RegionManagerComponent } from './region-manager/region-manager.component';
 import { TileGenerationOptionComponent } from './tile-generation-option/tile-generation-option.component';
-import { ChildTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/child-tile-gen-slider/child-tile-gen-slider.component';
-import { MiddleTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/middle-tile-gen-slider/middle-tile-gen-slider.component';
-import { ParentTileGenSliderComponent } from './tile-generation-option/tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
+import {
+  ChildTileGenSliderComponent
+} from './tile-generation-option/tile-generation-sliders/child-tile-gen-slider/child-tile-gen-slider.component';
+import {
+  MiddleTileGenSliderComponent
+} from './tile-generation-option/tile-generation-sliders/middle-tile-gen-slider/middle-tile-gen-slider.component';
+import {
+  ParentTileGenSliderComponent
+} from './tile-generation-option/tile-generation-sliders/parent-tile-gen-slider/parent-tile-gen-slider.component';
 
 @NgModule({
   imports: [

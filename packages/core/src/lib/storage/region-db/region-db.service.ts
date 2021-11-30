@@ -3,8 +3,6 @@ import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject } from 'rxjs';
 import { Region, RegionDate, RegionDBData } from './Region.interface';
 
-
-
 function createRegionDateFromRegion(region: Region): RegionDate {
   const regionDate: RegionDate = region as RegionDate;
   regionDate.timestamp = new Date();
