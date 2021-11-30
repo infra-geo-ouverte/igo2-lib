@@ -97,7 +97,7 @@ export class AppHoverComponent {
         featureTypes: 'CASERNE',
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
-        version: '3.0.0',
+        version: '2.0.0',
         outputFormat: undefined,
         outputFormatDownload: 'shp'
       }

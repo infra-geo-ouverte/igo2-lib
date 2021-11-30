@@ -449,7 +449,7 @@ export class ContextService {
         )
         .sort((a, b) => a.zIndex - b.zIndex);
     } else {
-      layers = igoMap.layers$.getValue().sort((a, b) => a.zIndex - b.zIndex);
+      layers = igoMap.layers$.getValue().filter(lay => !lay.id.includes('WfsWorkspaceTableDest')).sort((a, b) => a.zIndex - b.zIndex);
     }
 
     let i = 0;
@@ -569,13 +569,14 @@ export class ContextService {
               }
             );
           } else {
-          //   features = writer.writeFeatures(
-          //     layer.ol.getSource().getFeatures(),
-          //     {
-          //       dataProjection: 'EPSG:4326',
-          //       featureProjection: 'EPSG:3857'
-          //     }
-          //   );
+            const source = layer.ol.getSource() as any;
+            features = writer.writeFeatures(
+              source.getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
           }
           features = JSON.parse(features);
           features.name = layer.options.title;

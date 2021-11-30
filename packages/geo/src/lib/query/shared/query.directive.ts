@@ -27,7 +27,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerIsQueryable, getShortLayerId, setLayerQueryable } from './query.utils';
+import { layerIsQueryable, olLayerFeatureIsQueryable, getShortLayerId, setLayerQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -267,7 +267,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           hitTolerance: this.queryFeaturesHitTolerance || 0,
           layerFilter: this.queryFeaturesCondition
             ? this.queryFeaturesCondition
-            : olLayerIsQueryable
+            : olLayerFeatureIsQueryable
         }
       );
     } else if (event.type === 'boxend') {
