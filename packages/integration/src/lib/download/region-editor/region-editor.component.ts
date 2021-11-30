@@ -2,7 +2,9 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChi
 import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
-import { DownloadRegionService, MessageService, RegionDBData, TileDownloaderService, TileGenerationParams, TileToDownload } from '@igo2/core';
+import {
+  DownloadRegionService, MessageService, RegionDBData, TileDownloaderService, TileGenerationParams, TileToDownload
+} from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Geometry } from '@turf/helpers';
@@ -102,6 +104,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.regionStore.entities$.subscribe((r) => console.log(r));
     if (!this.editedTilesFeature) {
       this.regionStore.updateMany(this.editedTilesFeature);
     }
