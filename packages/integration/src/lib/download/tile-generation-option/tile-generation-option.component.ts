@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import { TileGenerationStrategies } from '@igo2/core';
 import { TileGenerationParams } from '@igo2/core/lib/download/tile-downloader/tile-generation-strategies/tile-generation-params.interface';
@@ -10,7 +10,7 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from './tile-ge
   templateUrl: './tile-generation-option.component.html',
   styleUrls: ['./tile-generation-option.component.scss']
 })
-export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
+export class TileGenerationOptionComponent {
   @Output() valueChange: EventEmitter<TileGenerationParams> = new EventEmitter();
 
   private _tileGenerationParams: TileGenerationParams = {
@@ -77,12 +77,6 @@ export class TileGenerationOptionComponent implements OnInit, AfterViewInit {
 
   set genMethod(value: TileGenerationStrategies) {
     this.strategy = value;
-  }
-
-  ngOnInit() {
-  }
-
-  ngAfterViewInit() {
   }
 
   private updateSliderParams(params: SliderGenerationParams) {

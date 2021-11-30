@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { DownloadEstimator, DownloadSizeEstimation, DownloadSizeEstimationInBytes, StorageQuotaService, TileGenerationParams, TileToDownload } from '@igo2/core';
+import { Component, Input } from '@angular/core';
+import {
+  DownloadEstimator, DownloadSizeEstimation, DownloadSizeEstimationInBytes, StorageQuotaService, TileGenerationParams, TileToDownload
+} from '@igo2/core';
 import { Geometry } from '@turf/helpers';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -10,7 +12,7 @@ import { CreationEditionStrategy, EditionStrategy, UpdateEditionStrategy } from 
   templateUrl: './region-download-estimation.component.html',
   styleUrls: ['./region-download-estimation.component.scss']
 })
-export class RegionDownloadEstimationComponent implements OnInit {
+export class RegionDownloadEstimationComponent {
   @Input() disabled: boolean = false;
 
   @Input() tilesToDownload: TileToDownload[];
@@ -39,9 +41,6 @@ export class RegionDownloadEstimationComponent implements OnInit {
   constructor(
     private storageQuota: StorageQuotaService
   ) {}
-
-  ngOnInit() {
-  }
 
   get estimation() {
     if (this.mode instanceof CreationEditionStrategy) {

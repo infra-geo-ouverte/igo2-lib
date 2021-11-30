@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
 import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
 
@@ -7,7 +7,7 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
   templateUrl: './child-tile-gen-slider.component.html',
   styleUrls: ['./child-tile-gen-slider.component.scss']
 })
-export class ChildTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit {
+export class ChildTileGenSliderComponent extends TileGenerationSliderComponent implements AfterViewInit {
   @ViewChild('heightSlider') slider: MatSlider;
 
   constructor() {
@@ -36,9 +36,6 @@ export class ChildTileGenSliderComponent extends TileGenerationSliderComponent i
 
   protected get endLevel() {
     return this.parentLevel;
-  }
-
-  ngOnInit() {
   }
 
   ngAfterViewInit() {

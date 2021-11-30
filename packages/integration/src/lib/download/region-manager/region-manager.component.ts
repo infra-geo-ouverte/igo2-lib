@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { DownloadEstimator, DownloadRegionService, Region, RegionDBData, RegionDBService, RegionStatus } from '@igo2/core';
 import { Feature } from '@igo2/geo';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
@@ -20,7 +20,7 @@ export interface DisplayRegion extends Region {
   templateUrl: './region-manager.component.html',
   styleUrls: ['./region-manager.component.scss']
 })
-export class RegionManagerComponent implements OnInit, OnDestroy {
+export class RegionManagerComponent implements OnDestroy {
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
@@ -42,9 +42,6 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
         this.updateRegions();
       }
     );
-  }
-
-  ngOnInit() {
   }
 
   ngOnDestroy() {

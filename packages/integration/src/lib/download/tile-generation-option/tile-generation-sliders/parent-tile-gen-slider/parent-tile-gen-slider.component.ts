@@ -1,15 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material/slider';
 import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
-
-
 
 @Component({
   selector: 'igo-parent-tile-gen-slider',
   templateUrl: './parent-tile-gen-slider.component.html',
   styleUrls: ['./parent-tile-gen-slider.component.scss']
 })
-export class ParentTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit  {
+export class ParentTileGenSliderComponent extends TileGenerationSliderComponent implements AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
 
   sliderValue: number = 0;
@@ -56,9 +54,6 @@ export class ParentTileGenSliderComponent extends TileGenerationSliderComponent 
 
   constructor() {
     super();
-  }
-
-  ngOnInit() {
   }
 
   ngAfterViewInit() {

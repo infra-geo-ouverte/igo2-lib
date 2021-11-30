@@ -1,5 +1,5 @@
 import { Options } from '@angular-slider/ngx-slider';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-generation-slider.component';
 
 @Component({
@@ -7,7 +7,7 @@ import { SliderGenerationParams, TileGenerationSliderComponent } from '../tile-g
   templateUrl: './middle-tile-gen-slider.component.html',
   styleUrls: ['./middle-tile-gen-slider.component.scss']
 })
-export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent implements OnInit, AfterViewInit {
+export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent implements AfterViewInit {
   minValue: number = 6;
   maxValue: number = 8;
 
@@ -54,9 +54,6 @@ export class MiddleTileGenSliderComponent extends TileGenerationSliderComponent 
   set value(value: SliderGenerationParams) {
     this.startLevel = value.startLevel;
     this.endLevel = value.endLevel;
-  }
-
-  ngOnInit() {
   }
 
   ngAfterViewInit() {
