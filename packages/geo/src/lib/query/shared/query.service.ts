@@ -286,7 +286,7 @@ export class QueryService {
       const mapLabel = feature.properties[queryDataSource.mapLabel];
 
       let exclude;
-      if (layer.options.sourceOptions.type === 'wms') {
+      if (layer.options.sourceOptions?.type === 'wms') {
         const sourceOptions = layer.options
           .sourceOptions as WMSDataSourceOptions;
         exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
@@ -543,6 +543,11 @@ export class QueryService {
     mapExtent?: MapExtent
   ): string {
     let url;
+
+    if (datasource.options.queryUrl) {
+      return this.getCustomQueryUrl(datasource, options, mapExtent);
+    }
+
     switch (datasource.constructor) {
       case WMSDataSource:
         const wmsDatasource = datasource as WMSDataSource;
@@ -702,4 +707,28 @@ export class QueryService {
 
     return label;
   }
+
+  /**
+   * @param datasource QueryableDataSource
+   * @param options QueryOptions
+   * @mapExtent extent of the map when click event
+   *
+   */
+
+  getCustomQueryUrl(
+    datasource: QueryableDataSource,
+    options: QueryOptions,
+    mapExtent?: MapExtent): string {
+
+      let url = datasource.options.queryUrl.replace(/\{xmin\}/g, mapExtent[0].toString())
+      .replace(/\{ymin\}/g, mapExtent[1].toString())
+      .replace(/\{xmax\}/g, mapExtent[2].toString())
+      .replace(/\{ymax\}/g, mapExtent[3].toString())
+      .replace(/\{x\}/g, options.coordinates[0].toString())
+      .replace(/\{y\}/g, options.coordinates[1].toString())
+      .replace(/\{resolution\}/g, options.resolution.toString())
+      .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+
+      return url;
+    }
 }

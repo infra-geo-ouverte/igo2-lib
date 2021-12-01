@@ -87,6 +87,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       c.id = Md5.hashStr(
         (c.type || 'wms') + standardizeUrl(c.url)
       ) as string;
+      c.title = c.title === '' || !c.title ? c.url : c.title;
       return c;
     });
   }

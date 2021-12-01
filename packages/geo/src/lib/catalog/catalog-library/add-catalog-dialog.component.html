@@ -3,21 +3,24 @@
   <form class="igo-form" [formGroup]="form">
     <div class="igo-input-container">
       <mat-form-field>
-        <input type="text" formControlName="url" placeholder="URL" matInput [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='changeUrl($event.option.value)'>
+        <input type="text" formControlName="title" placeholder="{{'igo.geo.printForm.title' | translate}}" matInput [matAutocomplete]="auto2">
+        <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)'>
           <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
-            [matTooltip]="predefinedCatalog.url" [value]="predefinedCatalog">
-            {{predefinedCatalog.url}}
+            [matTooltip]="predefinedCatalog.title" [value]="predefinedCatalog">
+            {{predefinedCatalog.title}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </div>
     <div class="igo-input-container">
       <mat-form-field>
-        <input
-          matInput
-          formControlName="title"
-          placeholder="{{'igo.geo.printForm.title' | translate}}">
+        <input type="text" formControlName="url" placeholder="URL" matInput [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)'>
+          <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
+            [matTooltip]="predefinedCatalog.url" [value]="predefinedCatalog">
+            {{predefinedCatalog.url}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
     </div>
     <div class="igo-input-container">

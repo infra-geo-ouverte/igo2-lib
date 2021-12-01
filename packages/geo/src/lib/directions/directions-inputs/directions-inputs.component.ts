@@ -47,6 +47,14 @@ export class DirectionsInputsComponent implements OnDestroy {
   onStopLeave() {
     this.stopWithHover = undefined;
   }
+
+  getOptionText(option) {
+    if (option instanceof Object) {
+      return option?.meta ? option.meta.title : '';
+    }
+    return option;
+  }
+
   chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
     const result: Feature = event.option.value;
     if (result) {
