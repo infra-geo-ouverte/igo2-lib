@@ -8,6 +8,7 @@ import { IgoConfirmDialogModule } from '@igo2/common';
 import { MapBrowserComponent } from './map-browser/map-browser.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.component';
+import { InitialButtonComponent } from './initial-button/initial-button.component';
 import { RotationButtonComponent } from './rotation-button/rotation-button.component';
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
@@ -32,6 +33,7 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     MapBrowserComponent,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    InitialButtonComponent,
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
@@ -47,6 +49,7 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     MapBrowserComponent,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    InitialButtonComponent,
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,

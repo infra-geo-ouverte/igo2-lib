@@ -262,12 +262,16 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "initial": "Retourner à la position initiale",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte"
+      },
+      "initial-button": {
+        "tooltip": "Retourner à la position initiale"
       },
       "metadata": {
         "show": "Montrer les métadonnées"
@@ -381,8 +385,8 @@
         "notification": "notification ...",
         "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "ère",
           "secondAndMore": "e"
         },

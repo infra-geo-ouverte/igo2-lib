@@ -263,12 +263,16 @@
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
+        "initial": "Go back to initial position",
         "offline": "Offline mode",
         "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
         "resetRotation": "Set map to north",
         "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map."
+      },
+      "initial-button": {
+        "tooltip": "Go back to initial position"
       },
       "metadata": {
         "show": "Show metadata"
@@ -382,8 +386,8 @@
         "notification": "notification ...",
         "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "st",
           "secondAndMore": "rd"
         },
