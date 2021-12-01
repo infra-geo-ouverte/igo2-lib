@@ -132,7 +132,7 @@ export class StyleService {
           return style;
         }
       }
-      if (!feature.getStyle()) {
+      if (feature.getStyle === undefined || !feature.getStyle()) {
         if (baseStyle) {
           style = this.createStyle(baseStyle);
           if (labelStyle) {
@@ -278,6 +278,9 @@ export class StyleService {
 
   getLabel(feature, labelMatch): string {
     let label = labelMatch;
+    if (!label) {
+      return;
+    }
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
     labelToGet.forEach(v => {
