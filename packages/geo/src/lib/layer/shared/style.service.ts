@@ -99,7 +99,7 @@ export class StyleService {
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined'
+          typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
         if (val === data[i] || val.toString().match(data[i])) {
@@ -158,7 +158,7 @@ export class StyleService {
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined'
+        typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
         if (val === data[i] || val.toString().match(data[i])) {
