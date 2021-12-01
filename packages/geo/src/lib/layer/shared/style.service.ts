@@ -102,7 +102,7 @@ export class StyleService {
           typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(data[i])) {
+        if (val === data[i]) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -161,7 +161,7 @@ export class StyleService {
         typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(data[i])) {
+        if (val === data[i]) {
           style = [
             new olstyle.Style({
               stroke: new olstyle.Stroke({
