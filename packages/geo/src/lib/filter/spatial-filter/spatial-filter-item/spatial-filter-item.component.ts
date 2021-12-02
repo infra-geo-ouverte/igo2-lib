@@ -803,7 +803,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       title: this.languageService.translate.instant('igo.geo.spatialFilter.searchResults'),
       renderer: EntityTableColumnRenderer.UnsanitizedHTML
     };
-    const columns = [typeColumn, nameColumn]
+    const columns = [typeColumn, nameColumn];
 
     this.tableTemplate = {
       selection: true,

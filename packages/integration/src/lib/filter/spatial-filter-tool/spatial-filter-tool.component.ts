@@ -171,7 +171,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         this.selectWorkspaceEntity(record);
         this.moveendKey = this.map.ol.on('moveend', () => {
           this.selectWorkspaceEntity(record);
-        })
+        });
       }
     });
   }
@@ -183,7 +183,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         this.workspaceState.setActiveWorkspaceById(workspace.id);
         workspace.entityStore.state.updateMany(record.added, {selected: true});
       }
-    })
+    });
   }
 
   private loadFilterList() {
