@@ -545,6 +545,8 @@
         "Address": "Adresses",
         "Thematics": "Thématiques",
         "searchResults": "Résultats de la recherche",
+        "showSearchResults": "Afficher les résultats de la recherche",
+        "hideSearchResults": "Masquer les résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
         "radiusAlert": "Le rayon doit être compris entre 0 et 100 kilomètres (ou 100 000 mètres)",

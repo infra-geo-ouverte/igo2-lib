@@ -186,3 +186,9 @@
 .mat-header-cell {
     height: 56px;
 }
+
+.results {
+    overflow: auto;
+    max-height: 45%;
+    width: 98%;
+}
