@@ -81,18 +81,13 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
-    const label = styleByAttribute.label;
-    const labelStyle = label instanceof olstyle.Style ?
-      this.parseStyle('text', styleByAttribute.label) ||
+    const label = styleByAttribute.label ? (styleByAttribute.label['attribute'] || styleByAttribute.label) : undefined;
+    const labelStyle = styleByAttribute.label ?
+      this.parseStyle('text', styleByAttribute.label['style']) ||
       new olstyle.Text() : undefined;
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
-      const options = {
-        text: this.getLabel(feature, label)
-      };
-
-      labelStyle instanceof olstyle.Style ? labelStyle.setText(new olstyle.Text(options)) :
       labelStyle.setText(this.getLabel(feature, label));
     }
 
@@ -109,7 +104,8 @@ export class StyleService {
                 image: new olstyle.Icon({
                   src: icon[i],
                   scale: scale ? scale[i] : 1
-                })
+                }),
+                text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
               })
             ];
             return style;
@@ -178,7 +174,7 @@ export class StyleService {
         }
       }
       if (feature instanceof OlFeature) {
-        if (!feature.getStyle()) {
+        if (feature.getStyle === undefined || !feature.getStyle()) {
           if (baseStyle) {
             style = this.createStyle(baseStyle);
             if (labelStyle) {
