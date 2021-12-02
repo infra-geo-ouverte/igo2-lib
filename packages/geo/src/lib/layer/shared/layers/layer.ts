@@ -109,7 +109,7 @@ export abstract class Layer {
     }
     if (this.options?.messages && value) {
       this.options?.messages
-        .filter(m => m.options.showOnEachLayerVisibility)
+        .filter(m => m.options?.showOnEachLayerVisibility)
         .map(message =>
           this.showMessage(message)
         );
