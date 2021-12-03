@@ -96,7 +96,9 @@
           "copyTitle": "Coordonnées du centre",
           "center": "Centre",
           "coordSystem": "Système de coordonnées",
-          "zoom": "Niveau de zoom courant: "
+          "zoom": "Niveau de zoom courant: ",
+          "scale": "Échelle cartographique: ",
+          "resolution": "Résolution cartographique: "
         }
 
       }      
