@@ -68,6 +68,29 @@ export class StyleService {
     return olCls;
   }
 
+  createHoverStyle(feature, hoverStyle: StyleByAttribute) {
+    const label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
+    let hasLabelStyle = hoverStyle.label?.style ? true : false;
+
+    if (!hasLabelStyle && label) {
+      hoverStyle.label.style =
+      {
+        textAlign: 'left',
+        textBaseline: 'bottom',
+        font: '12px Calibri,sans-serif',
+        fill: { color: '#000' },
+        backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
+        backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
+        stroke: { color: '#fff', width: 3 },
+        overflow: true,
+        offsetX: 10,
+        offsetY: -10,
+        padding: [2.5, 2.5, 2.5, 2.5]
+      };
+    }
+    return this.createStyleByAttribute(feature, hoverStyle);
+  }
+
   createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
 
     let style;
@@ -81,10 +104,11 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
-    const label = styleByAttribute.label ? (styleByAttribute.label['attribute'] || styleByAttribute.label) : undefined;
-    const labelStyle = styleByAttribute.label ?
-      this.parseStyle('text', styleByAttribute.label['style']) ||
-      new olstyle.Text() : undefined;
+    const label = styleByAttribute.label ? styleByAttribute.label.attribute : undefined;
+    let labelStyle = styleByAttribute.label?.style ? this.parseStyle('text', styleByAttribute.label.style) : undefined;
+    if (!labelStyle && label) {
+        labelStyle = new olstyle.Text();
+    }
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
@@ -97,7 +121,7 @@ export class StyleService {
           typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i]) {
+        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -128,7 +152,7 @@ export class StyleService {
           return style;
         }
       }
-      if (feature.getStyle === undefined || !feature.getStyle()) {
+      if (!feature.getStyle()) {
         if (baseStyle) {
           style = this.createStyle(baseStyle);
           if (labelStyle) {
@@ -157,7 +181,7 @@ export class StyleService {
         typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i]) {
+        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           style = [
             new olstyle.Style({
               stroke: new olstyle.Stroke({
@@ -174,7 +198,7 @@ export class StyleService {
         }
       }
       if (feature instanceof OlFeature) {
-        if (feature.getStyle === undefined || !feature.getStyle()) {
+        if (!feature.getStyle()) {
           if (baseStyle) {
             style = this.createStyle(baseStyle);
             if (labelStyle) {

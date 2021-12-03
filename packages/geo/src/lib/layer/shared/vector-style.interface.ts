@@ -1,5 +1,3 @@
-import olStyle from 'ol/style/Style';
-
 export interface StyleByAttribute {
     type?: string;
     attribute?: string;
@@ -10,9 +8,16 @@ export interface StyleByAttribute {
     radius?: Array<number>;
     icon?: Array<string>;
     scale?: Array<number>;
-    label?: string | { [key: string]: any } | olStyle | olStyle[];
-    baseStyle?: { [key: string]: any } | olStyle | olStyle[];
+    label?: IgoLabel;
+    baseStyle?: { [key: string]: any };
     hoverStyle?: StyleByAttribute;
+}
+
+export interface IgoLabel {
+  attribute: string;
+  style?: { [key: string]: any };
+  // minScaleDenom?: number; // todo
+  // maxScaleDenom?: number; // todo
 }
 
 export interface MapboxStyle {

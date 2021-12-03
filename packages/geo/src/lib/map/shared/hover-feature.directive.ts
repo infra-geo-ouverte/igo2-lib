@@ -244,7 +244,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           this.pointerHoverFeatureStore.load([{layer: igoLayer, feature: f}]);
         }
         return true;
-      }.bind(this));
+      }.bind(this), { hitTolerance: 10});
     }, this.igoHoverFeatureDelay);
   }
 
@@ -260,7 +260,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       this.clearLayer();
       let geom = this.getGeometry(results.feature) as any;
 
-      // si vector tile, merge avec les polygones voisins possiblement meme entité
+      // if vector tile, merge with neighbor feature.. high possibility of similar entities....
       if (results.layer.ol instanceof olLayer.VectorTile) {
         geom = [geom];
         const neighbourCollection = this.getSameFeatureNeighbour(results.feature, results.layer);
@@ -282,7 +282,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
   private setLayerStyleFromOptions(igoLayer: VectorLayer, feat) {
     if ( igoLayer.options?.styleByAttribute?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.styleService.createStyleByAttribute(feat, igoLayer.options.styleByAttribute.hoverStyle));
+      this.store.layer.ol.setStyle(this.styleService.createHoverStyle(feat, igoLayer.options.styleByAttribute.hoverStyle));
     } else {
       this.store.layer.ol.setStyle(hoverFeatureMarker);
     }
@@ -291,9 +291,11 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   private getHoverSummary(properties): string{
     let summary = '';
     for (const [key, value] of Object.entries(properties)) {
-      summary += `${key}: ${value}` + '\n';
+      if (!key.startsWith('_') && key !== 'geometry') {
+        summary += `${key}: ${value}` + '\n';
+      }
     }
-    return summary;
+    return summary.length >=2 ? summary.slice(0, -2) : summary;
   }
 
   private getGeometry(feature): olgeom.Geometry {
