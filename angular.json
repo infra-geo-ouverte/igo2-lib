@@ -16,6 +16,7 @@
       },
       "architect": {
         "build": {
+          "defaultConfiguration": "developpement",
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "aot": true,
@@ -119,7 +120,7 @@
                 }
               ]
             },
-            "debug": {
+            "developpement": {
               "optimization": false,
               "outputHashing": "all",
               "sourceMap": true,

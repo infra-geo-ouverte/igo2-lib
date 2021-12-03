@@ -15,7 +15,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "start.debug": "ng serve --proxy-config proxy.conf.json --configuration debug",
     "start.watch": "run-p watch.libs \"_start.watch -- -- {@}\" --",
     "build": "ng build",
     "lint": "ng lint",
