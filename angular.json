@@ -151,9 +151,6 @@
           "configurations": {
             "production": {
               "browserTarget": "demo:build:production"
-            },
-            "debug": {
-              "browserTarget": "demo:build:debug"
             }
           }
         },
