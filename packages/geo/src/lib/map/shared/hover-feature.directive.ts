@@ -364,9 +364,10 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       );
     }
 
-    const toDoNeighbour = [];
+    const used = [];
+    const rejected = [];
     let neighbourFeatures: (olFeature<OlGeometry> | RenderFeature)[] =
-      layer.ol.getSource().getFeaturesInExtent(feature.getGeometry().getExtent());
+      layer.ol.getSource().getFeaturesInExtent(this.map.viewController.getExtent());
 
     neighbourFeatures.forEach((nf: olFeature<OlGeometry> | RenderFeature) => {
 
@@ -384,15 +385,27 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       const nfProperties = f.getProperties();
       delete nfProperties.geometry;
 
+      for (const key of Object.keys(srcProperties)) {
+        const value = srcProperties[key];
+        srcProperties[key] = value.toLocaleString();
+      }
+      for (const key of Object.keys(nfProperties)) {
+        const value = srcProperties[key];
+        srcProperties[key] = value.toLocaleString();
+      }
       const eq = ObjectUtils.objectsAreEquivalent;
       const checkIf = neighbourCollection.find(x => x === f);
 
-      if (eq(srcProperties || {}, nfProperties || {})) {
-        toDoNeighbour.push(f);
+      if (eq(srcProperties || {}, nfProperties || {}) && !checkIf) {
+        used.push(f.getProperties());
         neighbourCollection.push(f);
+      } else {
+        rejected.push(f.getProperties());
       }
     });
-
+    console.log(neighbourCollection);
+    console.log(used);
+    console.log(rejected);
     return neighbourCollection;
   }
 
