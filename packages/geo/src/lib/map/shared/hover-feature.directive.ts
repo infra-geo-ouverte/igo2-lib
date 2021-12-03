@@ -7,6 +7,7 @@ import {
     HostListener
   } from '@angular/core';
 
+import { ObjectUtils } from '@igo2/utils';
 import { Subscription } from 'rxjs';
 
 import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
@@ -15,14 +16,14 @@ import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
 
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olFeature from 'ol/Feature';
 import * as olstyle from 'ol/style';
 import * as olgeom from 'ol/geom';
-import * as olLayer from 'ol/layer';
 
 import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { VectorLayer, Layer } from '../../layer/shared/layers';
+import { VectorLayer, Layer, VectorTileLayer } from '../../layer/shared/layers';
 import { take } from 'rxjs/operators';
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
 import { FeatureStore } from '../../feature/shared/store';
@@ -30,6 +31,13 @@ import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
 import { StyleService } from '../../layer/shared/style.service';
 import { unByKey } from 'ol/Observable';
+import RenderFeature from 'ol/render/Feature';
+
+
+interface HoverEntity {
+  layer: VectorLayer | VectorTileLayer;
+  feature: olFeature<OlGeometry>;
+}
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -43,7 +51,7 @@ import { unByKey } from 'ol/Observable';
 export class HoverFeatureDirective implements OnInit, OnDestroy {
 
   public store: FeatureStore<Feature>;
-  private pointerHoverFeatureStore: EntityStore<any> = new EntityStore<any>([]);
+  private pointerHoverFeatureStore: EntityStore<HoverEntity> = new EntityStore<HoverEntity>([]);
   private lastTimeoutRequest;
   private store$$: Subscription;
   private layers$$: Subscription;
@@ -117,7 +125,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Initialize the pointer position store
    * @internal
    */
-  private initStore(layerSource?: Layer) {
+  private initStore() {
     const store = this.store;
 
     const layer = new VectorLayer({
@@ -159,7 +167,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * convert store entities to a pointer position overlay with label summary on.
    * @param event OL map browser pointer event
    */
-  private entitiesToPointerOverlay(resultsUnderPointerPosition: any[]) {
+  private entitiesToPointerOverlay(resultsUnderPointerPosition: HoverEntity[]) {
 
     this.addFeatureOverlay(resultsUnderPointerPosition);
 
@@ -237,14 +245,24 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     const pixel = this.map.ol.getPixelFromCoordinate(event.coordinate);
     this.lastTimeoutRequest = setTimeout(() => {
 
-      this.map.ol.forEachFeatureAtPixel(pixel, function(f, l) {
-        if (f.get('hoverSummary') === undefined) {
-          const igoLayer: VectorLayer = this.map.getLayerByOlUId(l.ol_uid);
-          this.setLayerStyleFromOptions(igoLayer, f);
-          this.pointerHoverFeatureStore.load([{layer: igoLayer, feature: f}]);
+      this.map.ol.forEachFeatureAtPixel(pixel, (feature: RenderFeature | olFeature<OlGeometry>, layerOL: any) => {
+        if (feature.get('hoverSummary') === undefined) {
+          const igoLayer = this.map.getLayerByOlUId(layerOL.ol_uid) as VectorLayer | VectorTileLayer;
+          let localFeature: olFeature<OlGeometry>;
+          if (feature instanceof RenderFeature) {
+            localFeature = new olFeature({
+              geometry: this.getGeometry(feature)
+            });
+            localFeature.setId(feature.getId());
+          } else if (feature instanceof olFeature) {
+            localFeature = feature;
+          }
+
+          this.setLayerStyleFromOptions(igoLayer, localFeature);
+          this.pointerHoverFeatureStore.load([{ layer: igoLayer, feature: localFeature }]);
         }
         return true;
-      }.bind(this), { hitTolerance: 10});
+      }, { hitTolerance: 10 });
     }, this.igoHoverFeatureDelay);
   }
 
@@ -252,39 +270,41 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Add a feature to the pointer store
    * @param text string
    */
-  private addFeatureOverlay(results) {
+  private addFeatureOverlay(hoverEntity: HoverEntity[]) {
 
-    if (results.length > 0 ) {
+    if (hoverEntity.length > 0 ) {
 
-      results = results[0];
+      const result = hoverEntity[0];
       this.clearLayer();
-      let geom = this.getGeometry(results.feature) as any;
+      let geom = result.feature.getGeometry();
+      let geomCollection = [];
 
       // if vector tile, merge with neighbor feature.. high possibility of similar entities....
-      if (results.layer.ol instanceof olLayer.VectorTile) {
-        geom = [geom];
-        const neighbourCollection = this.getSameFeatureNeighbour(results.feature, results.layer);
+      if (result.layer instanceof VectorTileLayer) {
+        geomCollection = [geom];
+        const neighbourCollection = this.getSameFeatureNeighbour(result.feature, result.layer);
 
         neighbourCollection.forEach( (n) => {
-          geom.push(n.getGeometry());
+          geomCollection.push(n.getGeometry());
         });
       }
-
       const feature = new olFeature({
-        geometry: geom instanceof Array ? new olgeom.GeometryCollection(geom) : geom,
+        geometry: geomCollection ? new olgeom.GeometryCollection(geomCollection) : geom,
         meta: {id: this.hoverFeatureId},
-        hoverSummary: this.getHoverSummary(results.feature.getProperties())
+        hoverSummary: this.getHoverSummary(result.feature.getProperties())
       });
 
       this.store.setLayerOlFeatures([feature], FeatureMotion.None);
     }
   }
 
-  private setLayerStyleFromOptions(igoLayer: VectorLayer, feat) {
-    if ( igoLayer.options?.styleByAttribute?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.styleService.createHoverStyle(feat, igoLayer.options.styleByAttribute.hoverStyle));
-    } else {
-      this.store.layer.ol.setStyle(hoverFeatureMarker);
+  private setLayerStyleFromOptions(igoLayer: VectorLayer | VectorTileLayer, feature: olFeature<OlGeometry>) {
+    if (igoLayer.options?.styleByAttribute?.hoverStyle) {
+      this.store.layer.ol.setStyle(this.styleService.createHoverStyle(feature, igoLayer.options.styleByAttribute.hoverStyle));
+      return;
+    }
+    if (igoLayer.options?.hoverStyle) {
+      this.store.layer.ol.setStyle(this.styleService.createHoverStyle(feature, igoLayer.options.hoverStyle));
     }
   }
 
@@ -330,7 +350,10 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     return geom;
   }
 
-  private getSameFeatureNeighbour(feature, layer, neighbourCollection: olFeature<olgeom.Geometry>[] = []) {
+  private getSameFeatureNeighbour(
+    feature: olFeature<OlGeometry>,
+    layer: VectorTileLayer,
+    neighbourCollection: olFeature<OlGeometry>[] = []) {
 
     if (neighbourCollection.length === 0) {
       neighbourCollection.push(
@@ -342,26 +365,35 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     }
 
     const toDoNeighbour = [];
-    const neighbourFeatures = layer.ol.getSource().getFeaturesInExtent(feature.getGeometry().getExtent());
+    let neighbourFeatures: (olFeature<OlGeometry> | RenderFeature)[] =
+      layer.ol.getSource().getFeaturesInExtent(feature.getGeometry().getExtent());
 
-    neighbourFeatures.forEach(f => {
+    neighbourFeatures.forEach((nf: olFeature<OlGeometry> | RenderFeature) => {
 
-      const checkIf = neighbourCollection.find(x => {
-        return x === f;
-      });
+      let f = nf;
+      if (f instanceof RenderFeature) {
+        f = new olFeature({
+          geometry: this.getGeometry(feature)
+        });
+        f.setId(feature.getId());
+        f.setProperties(feature.getProperties());
+      }
 
-      if (f.getId() === feature.getId() && !checkIf) {
+      const srcProperties = feature.getProperties();
+      delete srcProperties.geometry;
+      const nfProperties = f.getProperties();
+      delete nfProperties.geometry;
+
+      const eq = ObjectUtils.objectsAreEquivalent;
+      const checkIf = neighbourCollection.find(x => x === f);
+
+      if (eq(srcProperties || {}, nfProperties || {})) {
         toDoNeighbour.push(f);
         neighbourCollection.push(f);
       }
     });
 
-    return neighbourCollection.map(f => {
-      return new olFeature({
-        geometry: this.getGeometry(f),
-        meta: {id: this.hoverFeatureId}
-      });
-    });
+    return neighbourCollection;
   }
 
   /**

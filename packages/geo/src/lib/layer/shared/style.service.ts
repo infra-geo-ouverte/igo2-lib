@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import RenderFeature from 'ol/render/Feature';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +70,7 @@ export class StyleService {
     return olCls;
   }
 
-  createHoverStyle(feature, hoverStyle: StyleByAttribute) {
+  createHoverStyle(feature: RenderFeature | OlFeature<OlGeometry>, hoverStyle: StyleByAttribute) {
     const label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
     let hasLabelStyle = hoverStyle.label?.style ? true : false;
 
@@ -91,7 +93,7 @@ export class StyleService {
     return this.createStyleByAttribute(feature, hoverStyle);
   }
 
-  createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
+  createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute) {
 
     let style;
     const type = styleByAttribute.type ? styleByAttribute.type : this.guessTypeFeature(feature);
@@ -152,7 +154,7 @@ export class StyleService {
           return style;
         }
       }
-      if (!feature.getStyle()) {
+      if (!(feature as OlFeature<OlGeometry>).getStyle()) {
         if (baseStyle) {
           style = this.createStyle(baseStyle);
           if (labelStyle) {
