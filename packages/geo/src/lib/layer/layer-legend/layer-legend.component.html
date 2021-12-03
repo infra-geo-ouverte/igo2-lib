@@ -36,7 +36,7 @@
             </div>
             <div
               [ngStyle]="item.style"
-              [innerHTML]="item.html"
+              [innerHTML]="item.html | sanitizeHtml"
               *ngIf="item.html">
             </div>
           </div>
