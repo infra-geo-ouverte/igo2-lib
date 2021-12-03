@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import { IgoMap, LayerService } from '@igo2/geo';
+import { WorkspaceStore } from '@igo2/common'
 
 @Component({
   selector: 'app-import-export',
@@ -21,6 +22,8 @@ export class AppImportExportComponent {
     center: [-73, 47.2],
     zoom: 9
   };
+
+  public store = new WorkspaceStore([]);
 
   constructor(
     private languageService: LanguageService,
