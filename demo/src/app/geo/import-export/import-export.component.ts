@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import { IgoMap, LayerService } from '@igo2/geo';
-import { WorkspaceStore } from '@igo2/common'
+import { WorkspaceStore } from '@igo2/common';
 
 @Component({
   selector: 'app-import-export',
