@@ -141,11 +141,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
           return err;
         }
       })
-      ).subscribe(function(item, legendGraph) {
+      ).subscribe(obsLegGraph => {
         const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
+        const legendGraph = obsLegGraph as string;
         this.legendItems$.value[idx].imgGraphValue = legendGraph;
         this.cdRef.detectChanges();
-      }.bind(this, item));
+      }
+    );
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
