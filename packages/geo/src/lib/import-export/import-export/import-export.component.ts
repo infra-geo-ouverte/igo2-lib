@@ -471,7 +471,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           filename = data.name;
         }
       } else {
-        filename = "combinedLayers";
+        filename = this.languageService.translate.instant('igo.geo.export.combinedLayers');
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
       if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
@@ -560,9 +560,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           const message = translate.instant('igo.geo.export.gpx.error.poly.text');
           this.messageService.error(message, title, { timeOut: 20000 });
         }
-      }
-
-      if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
+      } else if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
         geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
 
         if (layerIndex !== data.layers.length - 1) {
@@ -573,14 +571,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             geomType.features.forEach(currentFeature => {
               if (data.separator) {
                 if (previousFeature) {
-                  if (currentFeature.get('type') !== previousFeature.get('type')) {
-                    const emptyRowFeature = previousFeature.clone();
-                    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
-                    previousFeatureKeys.forEach(key => {
-                      emptyRowFeature.unset(key, true);
-                    });
-                    featuresCSV.push(emptyRowFeature);
+                  if (currentFeature.get('couche') !== previousFeature.get('couche')) {
+                    const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
+                    featuresCSV.push(titleEmptyRows[1]);
+                    featuresCSV.push(titleEmptyRows[0]);
                   }
+                } else {
+                  const titleEmptyRows = this.createTitleEmptyRows(currentFeature, currentFeature);
+                  featuresCSV.push(titleEmptyRows[0]);
                 }
               }
               featuresCSV.push(currentFeature);
@@ -588,6 +586,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             });
           });
         }
+        featuresCSV.forEach(feature => {
+          feature.unset('couche', true);
+        });
       }
 
       if (geomTypes.length === 0) {
@@ -607,13 +608,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                 this.onFileExportSuccess();
 
                 geomType.features.forEach(feature => {
-                  const radius: number = feature.get('rad');
-
-                  if (radius) {
-                    const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
-                    point.transform('EPSG:4326', feature.get('_projection'));
-                    feature.setGeometry(point);
-                  }
+                  this.circleToPoint(feature);
                 });
 
                 this.loading$.next(false);
@@ -631,18 +626,39 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.onFileExportSuccess();
 
           featuresCSV.forEach(feature => {
-            const radius: number = feature.get('rad');
-
-            if (radius) {
-              const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
-              point.transform('EPSG:4326', feature.get('_projection'));
-              feature.setGeometry(point);
-            }
+            this.circleToPoint(feature);
           });
 
           this.loading$.next(false);
         }
       );
+    }
+  }
+
+  private createTitleEmptyRows(previousFeature, currentFeature) {
+    const titleRow = previousFeature.clone();
+    const emptyRow = previousFeature.clone();
+    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
+    previousFeatureKeys.forEach(key => {
+      if (key === 'code') {
+        titleRow.set(key, currentFeature.get('couche'), true);
+        emptyRow.unset(key, true);
+      } else {
+        titleRow.unset(key, true);
+        emptyRow.unset(key, true);
+      }
+    });
+    const titleEmptyRows = [titleRow, emptyRow];
+    return titleEmptyRows;
+  }
+
+  private circleToPoint(feature) {
+    const radius: number = feature.get('rad');
+
+    if (radius) {
+      const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+      point.transform('EPSG:4326', feature.get('_projection'));
+      feature.setGeometry(point);
     }
   }
 

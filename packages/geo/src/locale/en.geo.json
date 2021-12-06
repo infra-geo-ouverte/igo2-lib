@@ -113,7 +113,8 @@
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
-        }
+        },
+        "combinedLayers": "combinedLayers"
       },
       "importExportForm": {
         "exportButton": "Export",
