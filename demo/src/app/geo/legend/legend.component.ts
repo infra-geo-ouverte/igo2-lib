@@ -103,12 +103,12 @@ export class AppLegendComponent {
       visible: true,
       legendOptions: {
         display: true,
-        html: '<h2>HTML légende</h2>'
+        html: '<h2 style="background-color: blue;">HTML légende</h2>'
       },
       sourceOptions: {
         type: 'wms',
         url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/mffpecofor.fcgi',
-        optionsFromCapabilities: true,
+        optionsFromCapabilities: false,
         params: {
           LAYERS: 'sh_sreg_eco',
           VERSION: '1.3.0'
