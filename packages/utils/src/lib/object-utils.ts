@@ -75,12 +75,7 @@ export class ObjectUtils {
 
     for (const property in obj) {
       if (obj.hasOwnProperty(property)) {
-        let upperCaseProperty;
-       if (property !== 'key') {
-         upperCaseProperty = property.toUpperCase();
-       } else {
-         upperCaseProperty = property;
-       }
+        const upperCaseProperty = property.toUpperCase();
         if (!summaryCapitalizeObject.hasOwnProperty(upperCaseProperty)) {
           summaryCapitalizeObject[upperCaseProperty] = [
             { [property]: obj[property] }
