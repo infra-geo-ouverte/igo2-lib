@@ -532,35 +532,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     } else {
       radiusMeters = undefined;
     }
-    console.log(radiusMeters)
+    console.log(radiusMeters);
 
-    if (radiusMeters >= 100000 || radiusMeters < 0) {
-      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-        this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-
-      this.radiusFormControl.setValue(undefined);
-    }
-
-    if (radiusMeters) {
-      this.PointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
-        const geom = feature.getGeometry() as OlPoint;
-        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-        return new OlStyle.Style ({
-          image: new OlStyle.Circle ({
-            radius: radiusMeters / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution,
-            stroke: new OlStyle.Stroke({
-              color: 'rgba(143,7,7,1)',
-              width: 1
-            }),
-            fill: new OlStyle.Fill({
-              color: 'rgba(255,255,255,0.4)'
-            })
-          })
-        });
-      };
-
-      this.drawControl.setInteractionStyle(this.PointStyle);
-    }
+    this.drawControl.setInteractionStyle(radiusMeters)
   }
 
   onMeasureUnitChange(selectedMeasureUnit: MeasureLengthUnit) {

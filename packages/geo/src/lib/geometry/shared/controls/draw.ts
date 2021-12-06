@@ -136,9 +136,10 @@ export class DrawControl {
     return this.olGeometryType;
   }
 
-  setInteractionStyle(style) {
-    this.olDrawInteraction.setProperties({'style': style})
+  setInteractionStyle(radius: number) {
+    this.olMap.removeInteraction(this.olDrawInteraction);
   }
+
 
   /**
    * Create a drawing source if none is defined in the options
