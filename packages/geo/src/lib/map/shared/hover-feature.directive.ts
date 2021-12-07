@@ -187,7 +187,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       localHoverStyle.label.style =
       {
         textAlign: 'left',
-        textBaseline: 'bottom',
+        textBaseline: 'top',
         font: '12px Calibri,sans-serif',
         fill: { color: '#000' },
         backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
@@ -195,7 +195,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         stroke: { color: '#fff', width: 3 },
         overflow: true,
         offsetX: 10,
-        offsetY: -10,
+        offsetY: 20,
         padding: [2.5, 2.5, 2.5, 2.5]
       };
     }
@@ -530,7 +530,7 @@ export function hoverFeatureMarker(feature: OlFeature<OlGeom.Geometry>, resoluti
     text: new OlStyle.Text({
       text: feature.get('hoverSummary'),
       textAlign: 'left',
-      textBaseline: 'bottom',
+      textBaseline: 'top',
       font: '12px Calibri,sans-serif',
       fill: new OlStyle.Fill({ color: '#000' }),
       backgroundFill: new OlStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
@@ -538,7 +538,7 @@ export function hoverFeatureMarker(feature: OlFeature<OlGeom.Geometry>, resoluti
       stroke: new OlStyle.Stroke({ color: '#fff', width: 3 }),
       overflow: true,
       offsetX: 10,
-      offsetY: -10,
+      offsetY: 20,
       padding: [2.5, 2.5, 2.5, 2.5]
     })
   });
