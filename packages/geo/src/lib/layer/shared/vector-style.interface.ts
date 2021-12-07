@@ -1,4 +1,5 @@
 export interface StyleByAttribute {
+    anchor?: Array<[number,number]>;
     type?: string;
     attribute?: string;
     data?: Array<any>;

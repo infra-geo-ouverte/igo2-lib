@@ -79,6 +79,7 @@ export class StyleService {
     const stroke = styleByAttribute.stroke;
     const width = styleByAttribute.width;
     const fill = styleByAttribute.fill;
+    const anchor = styleByAttribute.anchor;
     const radius = styleByAttribute.radius;
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
@@ -105,8 +106,10 @@ export class StyleService {
             style = [
               new olstyle.Style({
                 image: new olstyle.Icon({
+                  color: fill ? fill[i] : undefined,
                   src: icon[i],
-                  scale: scale ? scale[i] : 1
+                  scale: scale ? scale[i] : 1,
+                  anchor: anchor ? anchor[i] : [0.5, 0.5]
                 }),
                 text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
               })
