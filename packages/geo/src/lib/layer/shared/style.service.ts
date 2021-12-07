@@ -71,11 +71,34 @@ export class StyleService {
   }
 
   createHoverStyle(feature: RenderFeature | OlFeature<OlGeometry>, hoverStyle: StyleByAttribute) {
-    const label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
+    const localHoverStyle = {...hoverStyle};
+    let label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
     let hasLabelStyle = hoverStyle.label?.style ? true : false;
 
+    if (!feature.get('_isLabel')) {
+      localHoverStyle.label = undefined;
+      hasLabelStyle = false;
+      label = undefined;
+    } else {
+      // clear the style for label....
+      const size = localHoverStyle.data ? localHoverStyle.data.length : 0;
+      const radius = [];
+      const stroke = [];
+      const width = [];
+      const fill = [];
+      for (let i = 0; i < size; i++) {
+        radius.push(0);
+        stroke.push('rgba(255, 255, 255, 0)');
+        width.push(0);
+        fill.push('rgba(255, 255, 255, 0)');
+      }
+      localHoverStyle.radius = radius;
+      localHoverStyle.stroke = stroke;
+      localHoverStyle.width = width;
+      localHoverStyle.fill = fill;
+    }
     if (!hasLabelStyle && label) {
-      hoverStyle.label.style =
+      localHoverStyle.label.style =
       {
         textAlign: 'left',
         textBaseline: 'bottom',
@@ -90,7 +113,7 @@ export class StyleService {
         padding: [2.5, 2.5, 2.5, 2.5]
       };
     }
-    return this.createStyleByAttribute(feature, hoverStyle);
+    return this.createStyleByAttribute(feature, localHoverStyle);
   }
 
   createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute) {

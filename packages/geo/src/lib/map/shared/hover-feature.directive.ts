@@ -144,6 +144,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
     this.selectionLayer = new olLayerVectorTile({
       map: this.map.ol,
+      zIndex: 901,
       renderMode: "vector",
       declutter: true,
       source: new olVectorTileSource({}),
@@ -290,6 +291,14 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             return;
           }
           let localOlFeature = this.handleRenderFeature(feature);
+          localOlFeature.set("_isLabel", false);
+          const myLabelOlFeature = new olFeature();
+          myLabelOlFeature.setProperties(localOlFeature.getProperties());
+          myLabelOlFeature.setGeometry(new OlGeom.Point(event.coordinate));
+          myLabelOlFeature.setId(localOlFeature.getId());
+          myLabelOlFeature.set("_isLabel", true);
+          this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
+          this.pointerHoverFeatureStore.load([myLabelOlFeature]);
 
           this.selectionMVT[feature.getId()] = localOlFeature;
           this.selectionLayer.changed();
@@ -303,7 +312,16 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           const igoLayer = this.map.getLayerByOlUId(layerOL.ol_uid) as VectorLayer | VectorTileLayer;
           let localOlFeature = this.handleRenderFeature(feature);
           this.setLayerStyleFromOptions(igoLayer, localOlFeature);
-          this.pointerHoverFeatureStore.load([localOlFeature]);
+          const featuresToLoad = [localOlFeature];
+          localOlFeature.set("_isLabel", false);
+          const myLabelOlFeature = new olFeature();
+          myLabelOlFeature.setProperties(localOlFeature.getProperties());
+          myLabelOlFeature.setGeometry(new OlGeom.Point(event.coordinate));
+          myLabelOlFeature.setId(localOlFeature.getId());
+          myLabelOlFeature.set("_isLabel", true);
+          this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
+          featuresToLoad.push(myLabelOlFeature);
+          this.pointerHoverFeatureStore.load(featuresToLoad);
         }
         return true;
       }, {
