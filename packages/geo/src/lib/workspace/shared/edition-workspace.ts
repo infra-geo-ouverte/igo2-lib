@@ -80,7 +80,10 @@ export class EditionWorkspace extends Workspace {
             workspace.layer.dataSource.options.edition.deleteUrl;
           for (const column of workspace.meta.tableTemplate.columns) {
             for (const property in feature.properties) {
-              const columnName = column.name.slice(11);
+              let columnName = column.name;
+              if (columnName.includes('properties.')) {
+                columnName = columnName.split('.')[1];
+              }
               if (columnName === property && column.primary === true) {
                 id = feature.properties[property];
               }
@@ -100,7 +103,10 @@ export class EditionWorkspace extends Workspace {
     let id;
     outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
       for (const property in feature.properties) {
-        const columnName = column.name.slice(11);
+        let columnName = column.name;
+        if (columnName.includes('properties.')) {
+          columnName = columnName.split('.')[1];
+        }
         if (columnName === property && column.primary === true) {
           id = feature.properties[property];
           break outerloop;
@@ -111,9 +117,11 @@ export class EditionWorkspace extends Workspace {
       feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
       feature.idkey = id;
     } else {
-      feature.newFeature = true;
-      const geometryType = workspace.layer.dataSource.options.edition.geomType;
-      this.onGeometryTypeChange(geometryType, feature, workspace);
+      if (!feature.newFeature) {
+        feature.newFeature = true;
+        const geometryType = workspace.layer.dataSource.options.edition.geomType;
+        this.onGeometryTypeChange(geometryType, feature, workspace);
+      }
     }
   }
 
@@ -173,7 +181,7 @@ export class EditionWorkspace extends Workspace {
   private activateDrawControl(feature, workspace) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
       workspace.layer.map.viewController.zoomToExtent(olGeometry.getExtent());
-      this.onDrawEnd(olGeometry, feature, workspace);
+      this.addFeatureToStore(olGeometry, feature, workspace);
     });
 
     // this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
@@ -218,16 +226,8 @@ export class EditionWorkspace extends Workspace {
   //   }
 
   /**
-   * Clear the draw source and track the geometry being draw
-   * @param olGeometry Ol linestring or polygon
-   */
-  private onDrawEnd(olGeometry: OlGeometry, feature?, workspace?) {
-    this.addFeatureToStore(olGeometry, feature, workspace);
-  }
-
-  /**
-   * Add a feature with draw label to the store. The loading stragegy of the store
-   * will trigger and add the feature to the map.
+   * Add a feature to layer. The loading strategy of the layer
+   * will trigger and add the feature to the workspace store.
    * @internal
    */
   private addFeatureToStore(olGeometry, feature?, workspace?) {
@@ -245,12 +245,7 @@ export class EditionWorkspace extends Workspace {
 
     workspace.layer.dataSource.ol.addFeature(featureOl);
 
-    setTimeout(() => {
-      let element = document.getElementsByClassName('edition-table')[0].getElementsByTagName('tbody')[0]
-        .lastElementChild.lastElementChild.firstElementChild.firstElementChild as HTMLElement;
-      element.click();
-      this.deactivateDrawControl();
-    }, 500);
+    this.deactivateDrawControl();
   }
 
   deleteDrawings(feature, workspace) {

@@ -34,6 +34,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { debounceTime } from 'rxjs/operators';
 
 const defaultErrors = {
   required: 'Champ obligatoire'
@@ -51,8 +52,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public formGroup: FormGroup = new FormGroup({});
-  public enabledEdit = false;
-  public enableEditIndex = null;
 
   /**
    * Reference to the column renderer types
@@ -217,6 +216,20 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
+    this.store.entities$.pipe(debounceTime(500)).subscribe(entities => {
+      const editionColumn = this.template?.columns?.find(col => col.name === 'edition');
+      if (editionColumn) {
+        entities.forEach(e => {
+          const entity = e as any;
+          this.store.stateView.all().forEach(record => {
+            if (entity.newFeature && entity === record.entity) {
+              const clickFunc = editionColumn.valueAccessor(entity, record).find(value => value.icon === 'pencil').click;
+              this.onButtonClick(clickFunc, record);
+            }
+          });
+        });
+      }
+    });
   }
 
   /**
@@ -236,7 +249,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (column.includes('properties.')) {
-      record.entity.properties[column.slice(11)] = value;
+      record.entity.properties[column.split('.')[1]] = value;
     } else {
       record.entity.properties[column] = value;
     }
@@ -244,7 +257,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   onBooleanValueChange(column, record, event) {
     if (column.includes('properties.')) {
-      record.entity.properties[column.slice(11)] = event.checked;
+      record.entity.properties[column.split('.')[1]] = event.checked;
     } else {
       record.entity.properties[column] = event.checked;
     }

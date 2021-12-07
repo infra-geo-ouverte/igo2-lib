@@ -433,6 +433,19 @@ export class EditionWorkspaceService {
       this.http.patch(`${url}`, featureProperties).subscribe(
         () => {
           this.cancelEdit(workspace, feature, true);
+          for (const layer of workspace.layer.map.layers) {
+            if (
+              layer.id !== workspace.layer.id &&
+              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
+              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
+              ) {
+                const olLayer = layer.dataSource.ol;
+                let params = olLayer.getParams();
+                params._t = new Date().getTime();
+                olLayer.updateParams(params);
+              }
+          }
+          workspace.layer.dataSource.ol.refresh();
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
