@@ -344,7 +344,9 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             localOlFeature.set("_isLabel", false);
             const myLabelOlFeature = new OlFeature();
             myLabelOlFeature.setProperties(localOlFeature.getProperties());
-            myLabelOlFeature.setGeometry(new OlGeom.Point(event.coordinate));
+            const labelGeom =
+              localOlFeature.getGeometry().getType() === 'Point' ? localOlFeature.getGeometry() : new OlGeom.Point(event.coordinate);
+            myLabelOlFeature.setGeometry(labelGeom);
             myLabelOlFeature.setId(localOlFeature.getId());
             myLabelOlFeature.set("_isLabel", true);
             this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
@@ -379,7 +381,9 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               localOlFeature.set("_isLabel", false);
               const myLabelOlFeature = new OlFeature();
               myLabelOlFeature.setProperties(localOlFeature.getProperties());
-              myLabelOlFeature.setGeometry(new OlGeom.Point(event.coordinate));
+              const labelGeom =
+              localOlFeature.getGeometry().getType() === 'Point' ? localOlFeature.getGeometry() : new OlGeom.Point(event.coordinate);
+              myLabelOlFeature.setGeometry(labelGeom);
               myLabelOlFeature.setId(localOlFeature.getId());
               myLabelOlFeature.set("_isLabel", true);
               this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
