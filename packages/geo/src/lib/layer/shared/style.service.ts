@@ -70,52 +70,6 @@ export class StyleService {
     return olCls;
   }
 
-  createHoverStyle(feature: RenderFeature | OlFeature<OlGeometry>, hoverStyle: StyleByAttribute) {
-    const localHoverStyle = {...hoverStyle};
-    let label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
-    let hasLabelStyle = hoverStyle.label?.style ? true : false;
-
-    if (!feature.get('_isLabel')) {
-      localHoverStyle.label = undefined;
-      hasLabelStyle = false;
-      label = undefined;
-    } else {
-      // clear the style for label....
-      const size = localHoverStyle.data ? localHoverStyle.data.length : 0;
-      const radius = [];
-      const stroke = [];
-      const width = [];
-      const fill = [];
-      for (let i = 0; i < size; i++) {
-        radius.push(0);
-        stroke.push('rgba(255, 255, 255, 0)');
-        width.push(0);
-        fill.push('rgba(255, 255, 255, 0)');
-      }
-      localHoverStyle.radius = radius;
-      localHoverStyle.stroke = stroke;
-      localHoverStyle.width = width;
-      localHoverStyle.fill = fill;
-    }
-    if (!hasLabelStyle && label) {
-      localHoverStyle.label.style =
-      {
-        textAlign: 'left',
-        textBaseline: 'bottom',
-        font: '12px Calibri,sans-serif',
-        fill: { color: '#000' },
-        backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-        backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
-        stroke: { color: '#fff', width: 3 },
-        overflow: true,
-        offsetX: 10,
-        offsetY: -10,
-        padding: [2.5, 2.5, 2.5, 2.5]
-      };
-    }
-    return this.createStyleByAttribute(feature, localHoverStyle);
-  }
-
   createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute) {
 
     let style;
