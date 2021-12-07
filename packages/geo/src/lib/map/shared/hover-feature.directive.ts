@@ -21,8 +21,8 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olFeature from 'ol/Feature';
-import * as olstyle from 'ol/style';
-import * as olgeom from 'ol/geom';
+import * as OlStyle from 'ol/style';
+import * as OlGeom from 'ol/geom';
 
 import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -290,6 +290,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             return;
           }
           let localOlFeature = this.handleRenderFeature(feature);
+
           this.selectionMVT[feature.getId()] = localOlFeature;
           this.selectionLayer.changed();
         });
@@ -364,7 +365,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     return summary.length >=2 ? summary.slice(0, -2) : summary;
   }
 
-  private getGeometry(feature): olgeom.Geometry {
+  private getGeometry(feature): OlGeom.Geometry {
     let geom;
     if (!feature.getOrientedFlatCoordinates) {
       geom = feature.getGeometry();
@@ -382,13 +383,13 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       // TODO: test MultiX
       switch (feature.getType()) {
         case 'Point':
-          geom = new olgeom.Point(flatCoords);
+          geom = new OlGeom.Point(flatCoords);
           break;
         case 'Polygon':
-          geom = new olgeom.Polygon([flatCoords]);
+          geom = new OlGeom.Polygon([flatCoords]);
           break;
         case 'LineString':
-          geom = new olgeom.LineString([flatCoords]);
+          geom = new OlGeom.LineString([flatCoords]);
           break;
       }
     }
@@ -412,18 +413,18 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
  * @param feature OlFeature
  * @returns OL style function
  */
-export function hoverFeatureMarker(feature: olFeature<olgeom.Geometry>, resolution: number): olstyle.Style[] {
+export function hoverFeatureMarker(feature: olFeature<OlGeom.Geometry>, resolution: number): OlStyle.Style[] {
 
-  const olStyleText = new olstyle.Style({
-    text: new olstyle.Text({
+  const olStyleText = new OlStyle.Style({
+    text: new OlStyle.Text({
       text: feature.get('hoverSummary'),
       textAlign: 'left',
       textBaseline: 'bottom',
       font: '12px Calibri,sans-serif',
-      fill: new olstyle.Fill({ color: '#000' }),
-      backgroundFill: new olstyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
-      backgroundStroke: new olstyle.Stroke({ color: 'rgba(200, 200, 200, 0.75)', width: 2 }),
-      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
+      fill: new OlStyle.Fill({ color: '#000' }),
+      backgroundFill: new OlStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+      backgroundStroke: new OlStyle.Stroke({ color: 'rgba(200, 200, 200, 0.75)', width: 2 }),
+      stroke: new OlStyle.Stroke({ color: '#fff', width: 3 }),
       overflow: true,
       offsetX: 10,
       offsetY: -10,
@@ -434,10 +435,10 @@ export function hoverFeatureMarker(feature: olFeature<olgeom.Geometry>, resoluti
   const olStyle = [olStyleText];
   switch (feature.getGeometry().getType()) {
     case 'Point':
-      olStyle.push(new olstyle.Style({
-        image: new olstyle.Circle({
+      olStyle.push(new OlStyle.Style({
+        image: new OlStyle.Circle({
           radius: 10,
-          stroke: new olstyle.Stroke({
+          stroke: new OlStyle.Stroke({
             color: 'blue',
             width: 3
           })
@@ -445,14 +446,14 @@ export function hoverFeatureMarker(feature: olFeature<olgeom.Geometry>, resoluti
       }));
       break;
     default:
-      olStyle.push(new olstyle.Style({
-        stroke: new olstyle.Stroke({
+      olStyle.push(new OlStyle.Style({
+        stroke: new OlStyle.Stroke({
           color: 'white',
           width: 5
         })
       }));
-      olStyle.push(new olstyle.Style({
-        stroke: new olstyle.Stroke({
+      olStyle.push(new OlStyle.Style({
+        stroke: new OlStyle.Stroke({
           color: 'blue',
           width: 3
         })
