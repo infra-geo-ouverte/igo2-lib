@@ -307,15 +307,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
       this.map.ol.forEachLayerAtPixel(pixel, (layerOL: olLayerVectorTile) => {
         const igoLayer = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorTileLayer;
-        if ((
-          igoLayer &&
-          igoLayer.options &&
-          igoLayer.options.styleByAttribute &&
-          !igoLayer.options.styleByAttribute.hoverStyle) && (
-            igoLayer &&
-            igoLayer.options &&
-            !igoLayer.options.hoverStyle)) {
-              return;
+        if (!this.canProcessHover(igoLayer)) {
+          return;
         }
 
         if (igoLayer?.options?.styleByAttribute?.hoverStyle) {
@@ -329,10 +322,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           if (!features.length) {
             this.selectionMVT = {};
             this.selectionLayer.changed();
+            this.clearLayer();
             return;
           }
           const feature = features[0];
           if (!feature) {
+            this.clearLayer();
             return;
           }
           let localOlFeature = this.handleRenderFeature(feature);
@@ -354,7 +349,10 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
       this.map.ol.forEachFeatureAtPixel(pixel, (feature: RenderFeature | OlFeature<OlGeometry>, layerOL: any) => {
         if (feature.get('hoverSummary') === undefined) {
-          const igoLayer = this.map.getLayerByOlUId(layerOL.ol_uid) as VectorLayer | VectorTileLayer;
+          const igoLayer = this.map.getLayerByOlUId(layerOL.ol_uid) as VectorLayer;
+          if (!this.canProcessHover(igoLayer)) {
+            return;
+          }
           let localOlFeature = this.handleRenderFeature(feature);
           this.setLayerStyleFromOptions(igoLayer, localOlFeature);
           const featuresToLoad = [localOlFeature];
@@ -373,6 +371,24 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         hitTolerance: 10, layerFilter: olLayer => olLayer instanceof olLayerVector
       });
     }, this.igoHoverFeatureDelay);
+  }
+
+  canProcessHover(igoLayer: VectorLayer | VectorTileLayer): boolean {
+    if (!igoLayer) {
+      return false;
+    }
+    if (!igoLayer.visible) {
+      return false;
+    }
+    if (!igoLayer.options) {
+      return false;
+    }
+    if (
+          (igoLayer.options.styleByAttribute && !igoLayer.options.styleByAttribute.hoverStyle) &&
+          !igoLayer.options.hoverStyle) {
+          return false;
+    }
+    return true;
   }
 
   handleRenderFeature(feature: RenderFeature | OlFeature<OlGeometry>): OlFeature<OlGeometry> {
@@ -465,6 +481,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Clear the pointer store features
    */
   private clearLayer() {
+    this.selectionMVT = {};
     if (this.store) {
       this.store.clearLayer();
     }
