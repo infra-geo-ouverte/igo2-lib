@@ -1,9 +1,8 @@
 @import '../../../../../core/src/style/partial/core.variables';
 
 .igo-initial-button-container {
-    width: $igo-icon-size;
-    background-color: #fff;
-
+  width: $igo-icon-size;
+  background-color: #fff;
   &:hover {
     background-color: #efefef;
 }

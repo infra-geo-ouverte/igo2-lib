@@ -31,33 +31,17 @@ export class InitialButtonComponent {
   public initialZoom
 
   constructor(public configService: ConfigService) {
-      this.initialExtent = this.configService.getConfig('InitialButton.initExtent');
-      this.initialCenter = this.configService.getConfig('InitialButton.initCenter');
-      this.initialZoom = this.configService.getConfig('InitialButton.initZoom');
+      this.initialExtent = this.configService.getConfig('hasInitialButton.initExtent'); // [-8000000, 5800000, -6800000, 6900000] MINX | MINY | MAXX | MAXY EPSG:3857 - WGS 84 / Pseudo-Mercator (meters)
+      this.initialCenter = this.configService.getConfig('hasInitialButton.initCenter') ; //  [-71.938087, 47.446975] 
+      this.initialZoom = this.configService.getConfig('hasInitialButton.initZoom') ; //  6
   }
-/*
+
 onToggleClick($event){
   if (this.initialExtent) {
-  this.map.viewController.zoomToExtent(this.initialExtent)
+    this.map.viewController.zoomToExtent(this.initialExtent)
+  }
+   else if (this.initialCenter && this.initialZoom)  {
+    this.map.setView({center : this.initialCenter, zoom: this.initialZoom})
+  }
 }
- else if (this.homeCenter && tihs.homeZoom)  {
-  this.map.setView({center : this.homeCenter, zoom: this.homeZoom})
-}
-
-}*/
-
-
-onToggleClick($event){
-    if (typeof this.configService.getConfig('InitialButton.extent')!==
-  'undefined') {
-    this.map.viewController.zoomToExtent(this.initialExtent);
-  }
-   else   {
-    this.map.setView({center : this.initialCenter, zoom: this.initialZoom});
-  }
-}
-/*
-onToggleClick($event){
-  this.map.setView({ center : [-70.938087, 48.446975], zoom : 6 });
-}*/
 }
