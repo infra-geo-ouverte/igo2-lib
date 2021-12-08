@@ -16,7 +16,7 @@ export class MVTDataSource extends DataSource {
     let mvtFormat;
     if (this.options.featureClass === 'feature') {
       mvtFormat = new olFormatMVT({featureClass: feature});
-    } else if (this.options.featureClass === undefined) {
+    } else {
       mvtFormat = new olFormatMVT();
     }
     this.options.format = mvtFormat;

@@ -6,6 +6,8 @@ import stylefunction from 'ol-mapbox-style/dist/stylefunction';
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
 
+import { Style } from 'ol/style';
+
 import {
   OSMDataSource,
   FeatureDataSource,
@@ -39,6 +41,7 @@ import {
   VectorTileLayerOptions
 } from './layers';
 
+import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from './style.service';
 import { LanguageService, MessageService } from '@igo2/core';
 
@@ -93,8 +96,9 @@ export class LayerService {
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
       case MVTDataSource:
+        const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
-          layerOptions as VectorTileLayerOptions
+          _layerOptions as VectorTileLayerOptions
         );
         break;
       default:
@@ -104,7 +108,8 @@ export class LayerService {
     return layer;
   }
 
-  createAsyncLayer(layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
+  createAsyncLayer(_layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
+    const layerOptions = computeMVTOptionsOnHover(_layerOptions);
     if (layerOptions.source) {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
@@ -130,8 +135,8 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style;
-    let olLayer;
+    let style: Style;
+    let igoLayer: VectorLayer;
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
     }
@@ -147,7 +152,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -160,27 +165,27 @@ export class LayerService {
           baseStyle
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
 
-    if (!olLayer) {
-      olLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+    if (!igoLayer) {
+      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
     }
 
-    this.applyMapboxStyle(olLayer, layerOptionsOl as any);
+    this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
 
-    return olLayer;
+    return igoLayer;
   }
 
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style;
-    let olLayer;
+    let style: Style;
+    let igoLayer: VectorTileLayer;
 
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
@@ -194,19 +199,19 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorTileLayer(layerOptions, this.geoNetwork, this.messageService, this.authInterceptor);
+      igoLayer = new VectorTileLayer(layerOptions, this.geoNetwork, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
 
-    if (!olLayer) {
-      olLayer = new VectorTileLayer(layerOptionsOl, this.geoNetwork, this.messageService, this.authInterceptor);
+    if (!igoLayer) {
+      igoLayer = new VectorTileLayer(layerOptionsOl, this.geoNetwork, this.messageService, this.authInterceptor);
     }
 
-    this.applyMapboxStyle(olLayer, layerOptionsOl);
-    return olLayer;
+    this.applyMapboxStyle(igoLayer, layerOptionsOl);
+    return igoLayer;
   }
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {

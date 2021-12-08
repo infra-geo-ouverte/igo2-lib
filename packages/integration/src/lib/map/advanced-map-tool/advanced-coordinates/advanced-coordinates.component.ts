@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, Input } from '@angular/core';
-import { IgoMap, InputProjections, ProjectionsLimitationsOptions } from '@igo2/geo';
+import { formatScale, IgoMap, InputProjections, ProjectionsLimitationsOptions } from '@igo2/geo';
 import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService, StorageService, StorageScope, ConfigService } from '@igo2/core';
@@ -17,6 +17,7 @@ import * as olproj from 'ol/proj';
   styleUrls: ['./advanced-coordinates.component.scss']
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
+  public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
   public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
   public form: FormGroup;
   public coordinates: string[];
@@ -70,6 +71,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.mapState$$ = combineLatest([this.map.viewController.state$.pipe(debounceTime(50)), this.form.valueChanges])
         .subscribe(() => {
+      this.setScaleValue(this.map);
       this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
       const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
       const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
@@ -112,6 +114,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     this.mapState$$.unsubscribe();
   }
 
+  setScaleValue(map: IgoMap) {
+    this.formattedScale$.next(': ~ 1 / ' + formatScale(map.viewController.getScale()));
+  }
   /**
    * Coordinates of the center of the map on the appropriate systeme of coordinates
    * @returns Array of two numbers

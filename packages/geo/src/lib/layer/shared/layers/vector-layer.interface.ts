@@ -44,6 +44,7 @@ export interface VectorLayerOptions extends LayerOptions {
   ol?: olLayerVector<olSourceVector<OlGeometry>>;
   animation?: VectorAnimation;
   styleByAttribute?: StyleByAttribute;
+  hoverStyle?: StyleByAttribute;
   clusterBaseStyle?: { [key: string]: any } | olStyle | olStyle[];
   clusterParam?: ClusterParam;
   trackFeature?: string | number;

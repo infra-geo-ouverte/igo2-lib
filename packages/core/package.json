@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@ngx-translate/core": "^13.0.0",
-    "@igo2/angular2-notifications": "^12.0.1",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
@@ -23,6 +22,7 @@
     "@angular/common": "^12.2.9",
     "@angular/core": "^12.2.9",
     "@igo2/utils": "^1.9.4",
-    "rxjs": "^6.6.7"
+    "rxjs": "^6.6.7",
+    "ngx-toastr": "^14.1.3"
   }
 }

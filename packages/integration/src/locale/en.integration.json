@@ -151,7 +151,9 @@
           "copyTitle": "Coordinates of cetre",
           "center": "Center",
           "coordSystem": "Systeme of coordinates",
-          "zoom": "Current zoom-level: "
+          "zoom": "Current zoom level: ",
+          "scale": "Current scale: ",
+          "resolution": "Current resolution: "
         }
       }
     }
