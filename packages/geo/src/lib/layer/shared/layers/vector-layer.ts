@@ -46,7 +46,7 @@ export class VectorLayer extends Layer {
   }
 
   get offlinable(): boolean {
-    return this.options.exportable !== false;
+    return this.options.exportable || false;
   }
 
   constructor(
