@@ -546,6 +546,8 @@
         "Address": "Addresses",
         "Thematics": "Thematics",
         "searchResults": "Search Results",
+        "showSearchResults": "Show search results",
+        "hideSearchResults": "Hide search results",
         "type": "Type",
         "radius": "Radius",
         "radiusAlert": "Radius must be between 0 and 100 kilometers (or 100 000 meters)",

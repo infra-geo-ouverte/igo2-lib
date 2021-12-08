@@ -1,14 +1,27 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SimpleNotificationsModule } from '@igo2/angular2-notifications';
-
-import { MessageCenterComponent } from './message-center/message-center.component';
+import { GlobalConfig, ToastrModule } from 'ngx-toastr';
 
 @NgModule({
-  imports: [CommonModule, SimpleNotificationsModule.forRoot()],
-  declarations: [MessageCenterComponent],
-  exports: [MessageCenterComponent]
+  imports: [CommonModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      timeOut: 10000,
+      extendedTimeOut: 10000,
+      messageClass: 'toast-message mat-typography',
+      closeButton: true,
+      progressBar: true,
+      enableHtml: true,
+      tapToDismiss: true,
+      maxOpened: 4,
+      preventDuplicates: true,
+      resetTimeoutOnDuplicate: true,
+      countDuplicates: true,
+      includeTitleDuplicates: true
+    } as GlobalConfig)],
+  declarations: [],
+  exports: []
 })
 export class IgoMessageModule {
   static forRoot(): ModuleWithProviders<IgoMessageModule> {

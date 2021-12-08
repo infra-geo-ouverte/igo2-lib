@@ -24,7 +24,6 @@ import {
   RouteService,
   Message,
   MessageService,
-  Notification,
   LanguageService
 } from '@igo2/core';
 
@@ -55,7 +54,6 @@ export class ContextService {
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
-  private contextMessage: Notification;
 
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
@@ -126,7 +124,8 @@ export class ContextService {
     const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http.get<DetailedContext>(url).pipe(
       catchError((res) => {
-        return this.handleError(res, id);
+        this.handleError(res, id);
+        throw res;
       })
     );
   }
@@ -240,7 +239,7 @@ export class ContextService {
     contextId: string,
     profil: string,
     type: TypePermission
-  ): Observable<ContextPermission[] | Message[]> {
+  ): Observable<ContextPermission[]> {
     const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
     const association = {
       profil,
@@ -249,7 +248,8 @@ export class ContextService {
 
     return this.http.post<ContextPermission[]>(url, association).pipe(
       catchError((res) => {
-        return [this.handleError(res, undefined, true)];
+        this.handleError(res, undefined, true);
+        throw [res]; // TODO Not sure about this.
       })
     );
   }
@@ -305,12 +305,14 @@ export class ContextService {
             return resMerge;
           }),
           catchError((err) => {
-            return this.handleError(err, uri);
+            this.handleError(err, uri);
+            throw err;
           })
         );
       }),
       catchError((err2) => {
-        return this.handleError(err2, uri);
+        this.handleError(err2, uri);
+        throw err2;
       })
     );
   }
@@ -600,9 +602,6 @@ export class ContextService {
   }
 
   private handleContextMessage(context: DetailedContext) {
-    if (this.contextMessage) {
-      this.messageService.remove(this.contextMessage.id);
-    }
     if (this.context$.value && context.uri && this.context$.value.uri !== context.uri) {
       this.messageService.removeAllAreNotError();
     }
@@ -702,7 +701,7 @@ export class ContextService {
     error: HttpErrorResponse,
     uri: string,
     permissionError?: boolean
-  ): Message[] {
+  ) {
     const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     error.error.title = this.languageService.translate.instant(
@@ -724,8 +723,7 @@ export class ContextService {
         'igo.context.contextManager.errors.addPermission'
       );
     }
-
-    throw error;
+    this.messageService.error(error.error.message, error.error.title);
   }
 
   private handleContextsChange(

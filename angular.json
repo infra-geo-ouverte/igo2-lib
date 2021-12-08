@@ -16,6 +16,7 @@
       },
       "architect": {
         "build": {
+          "defaultConfiguration": "developpement",
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "aot": true,
@@ -100,6 +101,27 @@
                 }
               ],
               "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "6mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "developpement": {
+              "optimization": false,
               "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
