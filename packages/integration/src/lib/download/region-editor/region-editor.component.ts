@@ -3,10 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import {
-  DownloadRegionService, MessageService, RegionDBData, TileDownloaderService, TileGenerationParams, TileToDownload
+  DownloadRegionService, LanguageService, MessageService, RegionDBData, TileDownloaderService, TileGenerationParams, TileToDownload
 } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
-import { TranslatePipe } from '@ngx-translate/core';
 import { Geometry } from '@turf/helpers';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
@@ -51,13 +50,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   geometries: Geometry[] = [];
 
   constructor(
-    private translate: TranslatePipe,
     private tileDownloader: TileDownloaderService,
     private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
     private state: RegionEditorState,
     private messageService: MessageService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private languageService: LanguageService
   ) {
     this.initController();
 
@@ -177,7 +176,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   sendAddTileErrorMessage(error: AddTileError) {
     const messageToTranslate = this.getAddTileErrorMessage(error);
-    const message = this.translate.transform(messageToTranslate);
+    const message = this.languageService.translate.instant(messageToTranslate);
     this.messageService.error(message);
   }
 
@@ -205,7 +204,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isDownloading = value;
         if (!value) {
           const messageToTranslate = 'igo.integration.download.messages.completion.download';
-          const message = this.translate.transform(messageToTranslate);
+          const message = this.languageService.translate.instant(messageToTranslate);
           this.messageService.success(message);
           this.clear();
         }
