@@ -90,5 +90,11 @@ export class WFSDataSource extends DataSource {
     }
   }
 
+  getCombineLayerWFSMapQuerySameAsWms(): boolean {
+    if (this.options.paramsWFS && this.options.paramsWFS.combineLayerWFSMapQuerySameAsWms) {
+      return this.options.paramsWFS.combineLayerWFSMapQuerySameAsWms;
+    }
+    else return false;
+  }
   public onUnwatch() { }
 }

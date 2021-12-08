@@ -14,6 +14,15 @@ export function layerIsQueryable(layer: AnyLayer): boolean {
   return dataSource.options.queryable === true;
 }
 
+export function getShortLayerId(layer: AnyLayer): string {
+  return layer.id.toString().split('.')[0];
+}
+
+export function setLayerQueryable(layer: AnyLayer, queryable: boolean) {
+  let dataSource = layer.dataSource as QueryableDataSource;
+  dataSource.options.queryable = queryable;
+}
+
 /**
  * Whether an OL layer is queryable
  * @param layer Layer

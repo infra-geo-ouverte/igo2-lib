@@ -82,6 +82,14 @@ export class WmsWorkspaceService {
     layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId ? layer.options.linkedLayers.linkId : wmsLinkId,
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
+    
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    };
+
     let wks;
     this.layerService
       .createAsyncLayer({
@@ -114,18 +122,23 @@ export class WmsWorkspaceService {
         map.addLayer(workspaceLayer);
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
+        
+        delete wksConfig['enabled'];
+        let wksOptions = Object.assign(wksConfig,
+          {
+            id: layer.id,
+            title: layer.title,
+            layer: workspaceLayer,
+            map,
+            entityStore: this.createFeatureStore(workspaceLayer, map),
+            actionStore: new ActionStore([]),
+            meta: {
+              tableTemplate: undefined
+            }
+          } 
+        );
+        wks = new WfsWorkspace(wksOptions);
 
-        wks = new WfsWorkspace({
-          id: layer.id,
-          title: layer.title,
-          layer: workspaceLayer,
-          map,
-          entityStore: this.createFeatureStore(workspaceLayer, map),
-          actionStore: new ActionStore([]),
-          meta: {
-            tableTemplate: undefined
-          }
-        });
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;

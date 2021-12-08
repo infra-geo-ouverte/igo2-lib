@@ -47,8 +47,14 @@ export class FeatureWorkspaceService {
     if (layer.options.workspace?.enabled === false) {
       return;
     }
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    };
+    
     layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
-
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
         enabled: true,
@@ -56,18 +62,22 @@ export class FeatureWorkspaceService {
         workspaceId: layer.id
       } as GeoWorkspaceOptions);
 
+    delete wksConfig['enabled'];
+    const wksOptions = Object.assign(wksConfig,
+      {
+        id: layer.id,
+        title: layer.title,
+        layer,
+        map,
+        entityStore: this.createFeatureStore(layer, map),
+        actionStore: new ActionStore([]),
+        meta: {
+          tableTemplate: undefined
+        }
+      });
 
-    const wks = new FeatureWorkspace({
-      id: layer.id,
-      title: layer.title,
-      layer,
-      map,
-      entityStore: this.createFeatureStore(layer, map),
-      actionStore: new ActionStore([]),
-      meta: {
-        tableTemplate: undefined
-      }
-    });
+    const wks = new FeatureWorkspace(wksOptions);
+
     this.createTableTemplate(wks, layer);
     return wks;
 

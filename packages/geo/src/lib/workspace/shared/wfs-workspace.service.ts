@@ -45,6 +45,12 @@ export class WfsWorkspaceService {
     if (layer.options.workspace?.enabled === false) {
       return;
     }
+    let wksConfig;
+    if (layer.options.workspace) {
+      wksConfig = layer.options.workspace;
+    } else {
+      wksConfig = {};
+    };
 
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
@@ -53,7 +59,9 @@ export class WfsWorkspaceService {
         workspaceId: layer.id
       } as GeoWorkspaceOptions);
 
-    const wks = new WfsWorkspace({
+    delete wksConfig['enabled'];
+    const wksOptions = Object.assign(wksConfig,
+      {
       id: layer.id,
       title: layer.title,
       layer,
@@ -64,6 +72,8 @@ export class WfsWorkspaceService {
         tableTemplate: undefined
       }
     });
+    const wks = new WfsWorkspace(wksOptions);
+
     this.createTableTemplate(wks, layer);
     return wks;
 

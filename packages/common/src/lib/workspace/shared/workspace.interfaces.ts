@@ -7,4 +7,8 @@ export interface WorkspaceOptions {
   entityStore?: EntityStore<object>;
   actionStore?: ActionStore;
   meta?: {[key: string]: any};
+  noMapQueryOnOpenTab?: boolean;
+  noQueryOnClickInTab?: boolean;
+  minResolution?: number;
+  maxResolution?: number;
 }
