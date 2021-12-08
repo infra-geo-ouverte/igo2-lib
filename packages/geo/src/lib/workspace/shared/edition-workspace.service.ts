@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
@@ -12,7 +12,7 @@ import {
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
-import { skipWhile, take } from 'rxjs/operators';
+import { catchError, map, skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -34,7 +34,7 @@ import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -277,7 +277,8 @@ export class EditionWorkspaceService {
     }
 
     columns = fields.map((field: SourceFieldsOptionsParams) => {
-      return {
+
+      let column = {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
         renderer: rendererType,
@@ -293,8 +294,21 @@ export class EditionWorkspaceService {
         visible: field.visible,
         validation: field.validation,
         valueReturn: field.valueReturn,
-        type: field.type
+        type: field.type,
+        domainValues: undefined,
+        multiple: field.multiple
       };
+
+      if (field.type === 'list') {
+        this.getDomainValues(field.relation.table).subscribe(result => { 
+          column.domainValues = result;
+        });
+         console.log('TEST');
+      }
+
+
+      return column;
+
     });
 
     relationsColumn = relations.map((relation: RelationOptions) => {
@@ -460,5 +474,19 @@ export class EditionWorkspaceService {
       }
       delete feature.original_properties;
     }
+  }
+
+  getDomainValues(table): Observable<any> {
+    let url = this.configService.getConfig('edition.url') + table;
+
+    return this.http.get<any>(url).pipe(
+      map(result => {
+        return result;
+      }),
+      catchError((err: HttpErrorResponse) => {
+        return throwError(err);
+      })
+    );
+
   }
 }

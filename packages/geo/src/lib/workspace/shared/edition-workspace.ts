@@ -112,8 +112,12 @@ export class EditionWorkspace extends Workspace {
       feature.idkey = id;
     } else {
       feature.newFeature = true;
+
+      // Only for edition with it's own geometry
+      if (workspace.layer.dataSource.options.edition.geomType) { 
       const geometryType = workspace.layer.dataSource.options.edition.geomType;
       this.onGeometryTypeChange(geometryType, feature, workspace);
+      }
     }
   }
 

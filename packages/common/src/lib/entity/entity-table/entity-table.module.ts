@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DateTimeInputModule } from '../../date-time-input/date-time-input.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 
 /**
  * @ignore
@@ -32,6 +33,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatButtonModule,
     MatCheckboxModule,
     MatPaginatorModule,
+    MatSelectModule,
     IgoStopPropagationModule,
     IgoCustomHtmlModule,
     IgoEntityTablePaginatorModule,

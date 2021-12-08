@@ -250,6 +250,24 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  onSelectValueChange(column, record, event) {
+    let value = event.target.value;
+
+
+    if(column.multiple) {
+      console.log('ICI');
+    }
+  }
+
+  ngModelChangeSelect(column, record, event) {
+    console.log('ngModelChangeSelect');
+  }
+
+  ngModelSelect(event) {
+    console.log('ngModelSelect');
+  }
+
+
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
@@ -528,7 +546,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     if (column.type === 'boolean' && !record.edition) {
       value = value ? '&#10003;' : ''; // check mark
-    }
+    } else if (column.type === 'list' && value && column.domainValues) {
+
+      if(column.multiple) {
+        let list_id = value.match(/[\w.-]+/g).map(Number);
+        let list_option = [];
+
+        column.domainValues.forEach(option => {
+
+          if (list_id.includes(option.id )) {
+
+            if (record.edition){
+              list_option.push(option.id);
+            } else {
+            list_option.push(option.value);
+            }
+          }
+        });
+        value = list_option;
+
+      } else {
+        column.domainValues.forEach(option => {
+
+          if (option.id === value) {
+          value = option.value;
+          }
+        });
+      }
+ }
 
     if (value === undefined) {
       value = '';
@@ -651,6 +696,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return errorMessages;
+  }
+
+  public compareWithSelected(optionsValue: any, selected: any): boolean {
+    return optionsValue === selected;
   }
 
 }

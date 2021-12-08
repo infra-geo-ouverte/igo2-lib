@@ -108,9 +108,16 @@ export interface EntityTableColumn {
   visible?: boolean;
   sort?: boolean;
   type?: string;
+  multiple?: boolean;
+  domainValues?: Array<SelectOption>;
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
+}
+
+export interface SelectOption {
+  id: number;
+  value: string;
 }
 
 export interface EntityTableButton {

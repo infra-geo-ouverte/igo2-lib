@@ -36,6 +36,7 @@ export interface DataSourceOptions {
 }
 
 export interface SourceFieldsOptionsParams {
+  relation: RelationOptions;
   name: any;
   alias?: any;
   values?: any;
@@ -46,6 +47,7 @@ export interface SourceFieldsOptionsParams {
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
   valueReturn?: boolean;
+  multiple?: boolean;
 }
 
 export interface EditionOptions {
@@ -57,13 +59,13 @@ export interface EditionOptions {
 }
 
 export interface RelationOptions {
-  title: string;
-  name: string;
-  alias: string;
-  icon: string;
+  title?: string;
+  name?: string;
+  alias?: string;
+  icon?: string;
   table: string;
-  parent: string;
-  parent_id: string;
+  parent?: string;
+  parent_id?: string;
 }
 
 export interface SourceFieldsValidationParams {
