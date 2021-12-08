@@ -864,7 +864,8 @@ export class IChercheReverseSearchSource extends SearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'map-marker'
+        icon: data.icon || 'map-marker',
+        pointerSummaryTitle: this.getSubtitle(data)+ ': ' + data.properties.nom
       }
     };
   }

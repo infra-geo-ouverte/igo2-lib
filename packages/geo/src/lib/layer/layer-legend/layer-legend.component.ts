@@ -75,7 +75,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * activeLegend
    */
-  public legendGraphic: string;
 
   constructor(
     private capabilitiesService: CapabilitiesService,
@@ -142,10 +141,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
           return err;
         }
       })
-    ).subscribe((legend: string) => {
-      this.legendGraphic = legend;
-      this.cdRef.detectChanges();
-    });
+      ).subscribe(obsLegGraph => {
+        const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
+        const legendGraph = obsLegGraph as string;
+        this.legendItems$.value[idx].imgGraphValue = legendGraph;
+        this.cdRef.detectChanges();
+      }
+    );
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {

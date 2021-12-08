@@ -1,5 +1,7 @@
+@import '~ngx-toastr/toastr.css';
+
 @mixin igo-core-theming($theme, $typography) {
-  @include igo-message-theming($theme);
+  @include igo-message-theming($theme, $typography);
 
   button.mat-icon-button.mat-button-base[disabled="true"] {
       color: rgba(0,0,0,.26);

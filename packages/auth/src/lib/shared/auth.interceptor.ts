@@ -11,7 +11,7 @@ import { Md5 } from 'ts-md5';
 
 import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
-import { WithCredentialsOptions } from './auth.interface';
+import { AuthByKeyOptions, WithCredentialsOptions } from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +29,10 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.config.getConfig('auth.hostsWithCredentials') || [];
   }
 
+  private get hostsWithAuthByKey(): AuthByKeyOptions[] {
+    return this.config.getConfig('auth.hostsByKey') || [];
+  }
+
   constructor(
     private config: ConfigService,
     private tokenService: TokenService,
@@ -41,6 +45,12 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const withCredentials = this.handleHostsWithCredentials(originalReq.url);
     let req = originalReq.clone();
+    const hostWithKey = this.handleHostsAuthByKey(originalReq.url);
+    if (hostWithKey) {
+      req = req.clone({
+        params: req.params.set(hostWithKey.key, hostWithKey.value)
+      });
+    }
     if (withCredentials) {
       req = originalReq.clone({
         withCredentials
@@ -102,6 +112,22 @@ export class AuthInterceptor implements HttpInterceptor {
     return true;
   }
 
+  alterUrlWithKeyAuth(url: string): string {
+    const hostWithKey = this.handleHostsAuthByKey(url);
+    let interceptedUrl = url;
+    if (hostWithKey) {
+      const urlDecomposed = interceptedUrl.split(/[?&]/);
+      let urlWithKeyAdded = urlDecomposed.shift();
+      const paramsToKeep = urlDecomposed.filter(p => p.length !== 0);
+      paramsToKeep.push(`${hostWithKey.key}=${hostWithKey.value}`);
+      if (paramsToKeep.length) {
+        urlWithKeyAdded += '?' + paramsToKeep.join('&');
+      }
+      return urlWithKeyAdded;
+    }
+    return;
+  }
+
   private handleHostsWithCredentials(reqUrl: string) {
     let withCredentials = false;
     for (const hostWithCredentials of this.hostsWithCredentials) {
@@ -112,6 +138,18 @@ export class AuthInterceptor implements HttpInterceptor {
       }
     }
     return withCredentials;
+  }
+
+  private handleHostsAuthByKey(reqUrl: string): {key: string, value: string} {
+    let hostWithKey;
+    for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
+      const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
+      if (domainRegex.test(reqUrl)) {
+        hostWithKey = {key : hostWithAuthByKey.keyProperty, value: hostWithAuthByKey.keyValue};
+        break;
+      }
+    }
+    return hostWithKey;
   }
 
   refreshToken() {

@@ -180,11 +180,8 @@ export class StoredQueriesSearchSource extends SearchSource
       options || {},
       storedqueriesParams
     );
-    if (this.options.params === null) {
-      this.options.params = { page : '1'};
-    } else {
-      this.options.params.page = options.page !== null ? String(options.page) : '1';
-    }
+    this.options.params = this.options.params ? this.options.params : {};
+    this.options.params.page = !options.page ? String(options.page) : '1';
 
     if (
       new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
