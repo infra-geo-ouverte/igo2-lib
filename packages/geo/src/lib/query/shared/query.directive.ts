@@ -345,9 +345,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private noQueryWorkspaceCondition(): boolean {
-    if (this.queryService.activeWorkspace && 
+    if (this.queryService.activeWorkspace &&
       this.queryService.workspaceIsOpen &&
-      this.queryService.activeWorkspace.inResolutionRange$.value && 
+      this.queryService.activeWorkspace.inResolutionRange$.value &&
       this.queryService.activeWorkspace.options.noMapQueryOnOpenTab) {
         return true;
     } else {

@@ -82,7 +82,7 @@ export class WmsWorkspaceService {
     layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId ? layer.options.linkedLayers.linkId : wmsLinkId,
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
-    
+
     let wksConfig;
     if (layer.options.workspace) {
       wksConfig = layer.options.workspace;
@@ -122,7 +122,7 @@ export class WmsWorkspaceService {
         map.addLayer(workspaceLayer);
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
-        
+
         delete wksConfig['enabled'];
         let wksOptions = Object.assign(wksConfig,
           {
@@ -135,7 +135,7 @@ export class WmsWorkspaceService {
             meta: {
               tableTemplate: undefined
             }
-          } 
+          }
         );
         wks = new WfsWorkspace(wksOptions);
 

@@ -53,7 +53,7 @@ export class FeatureWorkspaceService {
     } else {
       wksConfig = {};
     };
-    
+
     layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {

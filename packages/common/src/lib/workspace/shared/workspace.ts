@@ -153,7 +153,7 @@ export class Workspace<E extends object = object> {
   private onStateChange() {
     this.change.next();
   }
-  
+
   getNoQueryOnClickInTab(): boolean {
     if (this.options && this.options.noQueryOnClickInTab){
       return this.options.noQueryOnClickInTab;
