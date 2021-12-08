@@ -21,4 +21,5 @@ export interface VectorTileLayerOptions extends LayerOptions {
   declutter?: boolean;
   styleByAttribute?: StyleByAttribute;
   mapboxStyle ?: MapboxStyle;
+  exportable?: boolean;
 }

@@ -194,7 +194,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
+      olLayer = new VectorTileLayer(layerOptions, this.geoNetwork, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -202,7 +202,7 @@ export class LayerService {
     });
 
     if (!olLayer) {
-      olLayer = new VectorTileLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+      olLayer = new VectorTileLayer(layerOptionsOl, this.geoNetwork, this.messageService, this.authInterceptor);
     }
 
     this.applyMapboxStyle(olLayer, layerOptionsOl);

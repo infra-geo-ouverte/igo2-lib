@@ -45,6 +45,10 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
+  get offlinable(): boolean {
+    return this.options.exportable !== false;
+  }
+
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
