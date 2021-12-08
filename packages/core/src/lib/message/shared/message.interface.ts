@@ -16,4 +16,5 @@ export interface MessageOptions extends IndividualConfig {
   from?: Date | string;
   to?: Date | string;
   id?: number;
+  showOnEachLayerVisibility?: boolean;
 }

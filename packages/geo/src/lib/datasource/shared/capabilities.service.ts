@@ -404,8 +404,7 @@ export class CapabilitiesService {
         legendInfo,
         style,
         timeFilter,
-        timeExtent,
-        attributions
+        timeExtent
       }
     );
     const options = ObjectUtils.removeUndefined({
@@ -422,6 +421,7 @@ export class CapabilitiesService {
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
+    options.params.attributions = attributions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
@@ -473,10 +473,10 @@ export class CapabilitiesService {
       },
       legendInfo,
       timeFilter,
-      attributions,
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
+    options.attributions = attributions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
