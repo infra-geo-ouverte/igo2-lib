@@ -116,34 +116,34 @@ export class AppHoverComponent {
             stroke: ['red', 'blue'],
             fill: ['#ffffff', '#ffffff'],
             radius: [7, 7],
-            width: [2, 2],
-            hoverStyle: {
-                label: {
-                  attribute: 'Caserne: ${nom_service_incendie} \n Mun: ${ville}',
-                  style: {
-                    textAlign: 'left',
-                    textBaseline: 'bottom',
-                    font: '12px Calibri,sans-serif',
-                    fill: { color: '#000' },
-                    backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-                    backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
-                    stroke: { color: '#fff', width: 3 },
-                    overflow: true,
-                    offsetX: 10,
-                    offsetY: -10,
-                    padding: [2.5, 2.5, 2.5, 2.5]
-                  }
+            width: [2, 2]
+          },
+          hoverStyle: {
+            label: {
+              attribute: 'Caserne: ${nom_service_incendie} \n Mun: ${ville}',
+              style: {
+                textAlign: 'left',
+                textBaseline: 'top',
+                font: '12px Calibri,sans-serif',
+                fill: { color: '#000' },
+                backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
+                backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
+                stroke: { color: '#fff', width: 3 },
+                overflow: true,
+                offsetX: 20,
+                offsetY: 10,
+                padding: [2.5, 2.5, 2.5, 2.5]
+              }
+            },
+            baseStyle: {
+              circle: {
+                stroke: {
+                  color: 'orange',
+                  width: 5
                 },
-                baseStyle: {
-                  circle: {
-                    stroke: {
-                      color: 'orange',
-                      width: 5
-                    },
-                    width: [5],
-                    radius: 15
-                  }
-                }
+                width: [5],
+                radius: 15
+              }
             }
           }
         };
