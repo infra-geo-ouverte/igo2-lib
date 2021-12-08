@@ -49,6 +49,7 @@ export interface Legend {
   style?: { [key: string]: string | number };
   title?: string;
   currentStyle?: string;
+  imgGraphValue?: string;
 }
 
 // refer to https://openlayers.org/en/latest/apidoc/module-ol_tilegrid_TileGrid-TileGrid.html
