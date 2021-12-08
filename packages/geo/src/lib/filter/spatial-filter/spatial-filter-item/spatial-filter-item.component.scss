@@ -47,7 +47,7 @@
 
 .search-button {
     left: 15px;
-    width: 165px;
+    width: 46%;
 
     @include mobile {
         left: 10px;
@@ -60,7 +60,8 @@
 
 .export-button {
     left: 15px;
-    width: 165px;
+    width: 46%;
+    margin-bottom: 5px;
 
     @include mobile {
         left: 10px;
@@ -75,7 +76,7 @@
 .remove-button {
     margin-top: 12px;
     left: 5px;
-    width: 165px;
+    width: 46%;
 
     @include mobile {
         margin: 0px;
@@ -88,7 +89,7 @@
 
 .clear-form-button {
     left: 5px;
-    width: 165px;
+    width: 46%;
 
     @include mobile {
         width: 45%;
@@ -100,7 +101,7 @@
 
 .clear-search-button {
     left: 5px;
-    width: 165px;
+    width: 46%;
 
     @include mobile {
         width: 45%;
@@ -185,4 +186,13 @@
 
 .mat-header-cell {
     height: 56px;
+}
+
+.results {
+    max-height: 45%;
+    width: 98%;
+
+    igo-entity-table ::ng-deep div.table-container {
+        overflow: unset;
+    }
 }

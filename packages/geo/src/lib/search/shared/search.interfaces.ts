@@ -17,6 +17,7 @@ export interface SearchResult<T = { [key: string]: any }> {
     id: string;
     title: string;
     titleHtml?: string;
+    pointerSummaryTitle?: string;
     icon: string;
     score?: number;
     nextPage?: boolean;

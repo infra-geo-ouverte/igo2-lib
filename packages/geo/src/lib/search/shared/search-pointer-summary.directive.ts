@@ -176,10 +176,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance = closestResultByType[result.data.properties.type].distance;
           if (result.data.properties.distance < prevDistance) {
-            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+            const title = result.meta.pointerSummaryTitle || result.meta.title;
+            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
           }
         } else {
-          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+          const title = result.meta.pointerSummaryTitle || result.meta.title;
+          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
         }
       }
     });
@@ -204,7 +206,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         processedSummarizedClosestType.push(result.data.properties.type);
       } else {
         if (processedSummarizedClosestType.indexOf(result.data.properties.type) === -1) {
-          summary.push(result.meta.title);
+          summary.push(result.meta.pointerSummaryTitle || result.meta.title);
         }
       }
     });
@@ -272,6 +274,15 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     }, this.igoSearchPointerSummaryDelay);
   }
 
+    /**
+   * Sort the results by display order.
+   * @param r1 First result
+   * @param r2 Second result
+   */
+     private sortByOrder(r1: SearchResult, r2: SearchResult) {
+      return r1.source.displayOrder - r2.source.displayOrder;
+    }
+
   private onSearchCoordinate() {
     this.pointerSearchStore.clear();
     const results = this.searchService.reverseSearch(this.lonLat, { params: { geometry: 'false', icon: 'false' } }, true);
@@ -291,7 +302,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const newResults = this.pointerSearchStore.all()
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
-    this.pointerSearchStore.load(newResults);
+    this.pointerSearchStore.load(newResults.sort(this.sortByOrder));
   }
 
   /**
