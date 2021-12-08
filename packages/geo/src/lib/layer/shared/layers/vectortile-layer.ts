@@ -8,8 +8,10 @@ import { VectorTileLayerOptions } from './vectortile-layer.interface';
 import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
 import { IgoMap } from '../../../map';
-import { MessageService } from '@igo2/core';
+import { GeoNetworkService, MessageService } from '@igo2/core';
 import VectorTile from 'ol/VectorTile';
+import { first } from 'rxjs/operators';
+import Feature from 'ol/Feature';
 
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
@@ -18,8 +20,13 @@ export class VectorTileLayer extends Layer {
 
   private watcher: TileWatcher;
 
+  get offlinable(): boolean {
+    return this.options.exportable !== false;
+  }
+
   constructor(
     options: VectorTileLayerOptions,
+    private geoNetwork: GeoNetworkService,
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor) {
     super(options, messageService, authInterceptor);
@@ -36,7 +43,9 @@ export class VectorTileLayer extends Layer {
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
     vectorTileSource.setTileLoadFunction((tile: VectorTile, url: string) => {
-      const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
+      const loader = (extent, resolution, projection) => {
+        this.customLoader(tile, url, extent, resolution, projection, this.authInterceptor, tile.onLoad.bind(tile));
+      };
       if (loader) {
         tile.setLoader(loader);
       }
@@ -55,63 +64,80 @@ export class VectorTileLayer extends Layer {
    * @param success On success event action to trigger
    * @param failure On failure event action to trigger TODO
    */
-  customLoader(url, format, interceptor, success, failure?) {
-    return ((extent, resolution, projection) => {
-      const xhr = new XMLHttpRequest();
-      let modifiedUrl = url;
-      if (typeof url !== 'function') {
-        const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
-        if (alteredUrlWithKeyAuth) {
-          modifiedUrl = alteredUrlWithKeyAuth;
-        }
-      } else {
-        modifiedUrl = url(extent, resolution, projection);
+  customLoader(tile: VectorTile, url,
+    extent, resolution, projection, interceptor: AuthInterceptor, success, failure?) {
+    let modifiedUrl = url;
+    if (typeof url !== 'function') {
+      const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+      if (alteredUrlWithKeyAuth) {
+        modifiedUrl = alteredUrlWithKeyAuth;
       }
-      xhr.open( 'GET', modifiedUrl);
-      if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl);
+    } else {
+      modifiedUrl = url(extent, resolution, projection);
+    }
+    const request = this.geoNetwork.get(url);
+    request.pipe(first()).subscribe((blob) => {
+      if (!blob) {
+        return;
       }
+      const arrayBuffer = blob.arrayBuffer();
+      arrayBuffer.then((data) => {
+        const format = tile.getFormat();
+        const features = format.readFeatures(data, {
+          extent,
+          featureProjection: projection
+        });
+        tile.setFeatures(features as Feature<any>[]);
+      });
+      return;
+    });
 
-      if (format.getType() === 'arraybuffer') {
-        xhr.responseType = 'arraybuffer';
-      }
-      xhr.onload = (event) => {
-        if (!xhr.status || xhr.status >= 200 && xhr.status < 300) {
-          const type = format.getType();
-          let source;
-          if (type === 'json' || type === 'text') {
-            source = xhr.responseText;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', modifiedUrl);
+    if (interceptor) {
+      interceptor.interceptXhr(xhr, modifiedUrl);
+    }
+
+    if (tile.getFormat().getType() === 'arraybuffer') {
+      xhr.responseType = 'arraybuffer';
+    }
+    xhr.onload = (event) => {
+      if (!xhr.status || xhr.status >= 200 && xhr.status < 300) {
+        const type = tile.getFormat().getType();
+        let source;
+        if (type === 'json' || type === 'text') {
+          source = xhr.responseText;
+        }
+        else if (type === 'xml') {
+          source = xhr.responseXML;
+          if (!source) {
+            source = new DOMParser().parseFromString(xhr.responseText, 'application/xml');
           }
-          else if (type === 'xml') {
-            source = xhr.responseXML;
-            if (!source) {
-              source = new DOMParser().parseFromString(xhr.responseText, 'application/xml');
-            }
-          }
-          else if (type === 'arraybuffer') {
-            source = xhr.response;
-          }
-          if (source) {
-            success.call(this, format.readFeatures(source, {
-              extent,
-              featureProjection: projection
-            }), format.readProjection(source));
-          }
-          else {
-            // TODO
-            failure.call(this);
-          }
-        } else {
+        }
+        else if (type === 'arraybuffer') {
+          source = xhr.response;
+        }
+        if (source) {
+          success.call(this, tile.getFormat().readFeatures(source, {
+            extent,
+            featureProjection: projection
+          }), tile.getFormat().readProjection(source));
+        }
+        else {
           // TODO
           failure.call(this);
         }
-      };
-      xhr.onerror = () => {
+      } else {
         // TODO
         failure.call(this);
-      };
-      xhr.send();
-    });
+      }
+    };
+    xhr.onerror = () => {
+      // TODO
+      failure.call(this);
+    };
+    xhr.send();
+
   }
 
   public setMap(map: IgoMap | undefined) {
