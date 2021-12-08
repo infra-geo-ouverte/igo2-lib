@@ -1,6 +1,6 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { HammerModule } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
@@ -50,6 +50,7 @@ import { AppContextModule } from './context/context/context.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LanguageService } from '@igo2/core';
 
 @NgModule({
   declarations: [AppComponent],
@@ -107,6 +108,9 @@ import { AppComponent } from './app.component';
 
     HammerModule
   ],
+  providers: [
+    {provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [LanguageService], multi: true},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
@@ -117,4 +121,16 @@ export class AppModule {
       )
     );
   }
+}
+
+export function appInitializerFactory(languageService: LanguageService) {
+  return () => new Promise<any>((resolve: any) => {
+      languageService.translate.getTranslation(languageService.getLanguage()).subscribe(() => {
+        console.info(`Successfully initialized '${languageService.getLanguage()}' language.'`);
+      }, err => {
+        console.error(`Problem with '${languageService.getLanguage()}' language initialization.'`);
+      }, () => {
+        resolve(null);
+      });
+  });
 }

@@ -36,6 +36,7 @@ import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
+import { EventsKey } from 'ol/events';
 
 /**
  * Tool to apply spatial filter
@@ -91,6 +92,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
 
+  private moveendKey: EventsKey;
+
   constructor(
     private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
@@ -143,10 +146,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     this.toolState.toolbox.activateTool('importExport');
   }
 
-  activateWorkspace() {
+  activateWorkspace(record?) {
     let layerToOpenWks;
     this.workspaceState.store.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      if (this.activeLayers.length && this.workspaceState.store.all().length > 1) {
+      if (!record && this.activeLayers.length && this.workspaceState.store.all().length > 1) {
         if (this.itemType === SpatialFilterItemType.Thematics) {
             for (const thematic of this.thematics) {
               if (!thematic.zeroResults) {
@@ -167,6 +170,21 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.workspaceState.workspacePanelExpanded = true;
           this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
         }
+      } else if (record && this.activeLayers.length && this.workspaceState.store.all().length > 1) {
+        this.selectWorkspaceEntity(record);
+        this.moveendKey = this.map.ol.on('moveend', () => {
+          this.selectWorkspaceEntity(record);
+        });
+      }
+    });
+  }
+
+  private selectWorkspaceEntity(record) {
+    this.workspaceState.store.all().forEach(workspace => {
+      workspace.entityStore.state.updateAll({selected: false});
+      if (workspace.title.includes(record.added[0].meta.title)) {
+        this.workspaceState.setActiveWorkspaceById(workspace.id);
+        workspace.entityStore.state.updateMany(record.added, {selected: true});
       }
     });
   }
