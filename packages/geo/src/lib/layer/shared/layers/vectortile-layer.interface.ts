@@ -22,5 +22,5 @@ export interface VectorTileLayerOptions extends LayerOptions {
   styleByAttribute?: StyleByAttribute;
   hoverStyle?: StyleByAttribute;
   mapboxStyle ?: MapboxStyle;
-  exportable?: boolean;
+  offlinable?: boolean;
 }

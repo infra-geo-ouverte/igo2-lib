@@ -34,7 +34,7 @@ export class TileLayer extends Layer {
   private watcher: TileWatcher;
 
   get offlinable(): boolean {
-    return this.options.exportable || false;
+    return this.options.offlinable || false;
   }
 
   constructor(

@@ -33,5 +33,5 @@ export interface TileLayerOptions extends LayerOptions {
     | CartoDataSourceOptions
     | TileArcGISRestDataSourceOptions;
   ol?: olLayerTile<olSourceTile>;
-  exportable?: boolean;
+  offlinable?: boolean;
 }

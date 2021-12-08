@@ -40,7 +40,6 @@ export interface VectorLayerOptions extends LayerOptions {
   style?: olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);
   browsable?: boolean;
   exportable?: boolean;
-  offlinable?: boolean;
   ol?: olLayerVector<olSourceVector<OlGeometry>>;
   animation?: VectorAnimation;
   styleByAttribute?: StyleByAttribute;

@@ -21,7 +21,7 @@ export class VectorTileLayer extends Layer {
   private watcher: TileWatcher;
 
   get offlinable(): boolean {
-    return this.options.exportable !== false;
+    return this.options.offlinable || false;
   }
 
   constructor(
@@ -89,55 +89,7 @@ export class VectorTileLayer extends Layer {
         });
         tile.setFeatures(features as Feature<any>[]);
       });
-      return;
     });
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', modifiedUrl);
-    if (interceptor) {
-      interceptor.interceptXhr(xhr, modifiedUrl);
-    }
-
-    if (tile.getFormat().getType() === 'arraybuffer') {
-      xhr.responseType = 'arraybuffer';
-    }
-    xhr.onload = (event) => {
-      if (!xhr.status || xhr.status >= 200 && xhr.status < 300) {
-        const type = tile.getFormat().getType();
-        let source;
-        if (type === 'json' || type === 'text') {
-          source = xhr.responseText;
-        }
-        else if (type === 'xml') {
-          source = xhr.responseXML;
-          if (!source) {
-            source = new DOMParser().parseFromString(xhr.responseText, 'application/xml');
-          }
-        }
-        else if (type === 'arraybuffer') {
-          source = xhr.response;
-        }
-        if (source) {
-          success.call(this, tile.getFormat().readFeatures(source, {
-            extent,
-            featureProjection: projection
-          }), tile.getFormat().readProjection(source));
-        }
-        else {
-          // TODO
-          failure.call(this);
-        }
-      } else {
-        // TODO
-        failure.call(this);
-      }
-    };
-    xhr.onerror = () => {
-      // TODO
-      failure.call(this);
-    };
-    xhr.send();
-
   }
 
   public setMap(map: IgoMap | undefined) {
