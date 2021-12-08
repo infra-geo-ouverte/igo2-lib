@@ -74,25 +74,25 @@ export class MessageService {
     }
   }
 
-  success(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+  success(text: string, title: string = 'igo.core.message.success', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     return this.toastr.success(message, translatedTitle, options);
   }
 
-  error(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+  error(text: string, title: string = 'igo.core.message.error', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     return this.toastr.error(message, translatedTitle, options);
   }
 
-  info(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+  info(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     return this.toastr.info(message, translatedTitle, options);
   }
 
-  alert(text: string, title?: string, options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+  alert(text: string, title: string = 'igo.core.message.alert', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     return this.toastr.warning(message, translatedTitle, options);
