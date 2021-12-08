@@ -25,12 +25,15 @@ import OlPoint from 'ol/geom/Point';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
-import { EntityStore } from '@igo2/common';
-import { Layer } from '../../../layer/shared';
+import { EntityStore, EntityStoreFilterSelectionStrategy, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
+import { Layer, VectorLayer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
 import { debounceTime } from 'rxjs/operators';
+
+import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { FeatureDataSource } from '../../../datasource/shared';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -191,6 +194,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() export = new EventEmitter();
 
   @Output() openWorkspace = new EventEmitter();
+  @Output() entityChange = new EventEmitter<any>();
 
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
@@ -239,6 +243,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public zoneWithBuffer;
+
+  public listIsVisible = true;
+  public tableTemplate: EntityTableTemplate;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -375,6 +382,26 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
     });
+
+    const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const selectionStrategy = new FeatureStoreSelectionStrategy({
+      layer: new VectorLayer({
+        zIndex: 300,
+        source: new FeatureDataSource(),
+        style: undefined,
+        showInLayerList: false,
+        exportable: false,
+        browsable: false
+      }),
+      map: this.map,
+      hitTolerance: 15,
+      motion: FeatureMotion.Default,
+      many: true,
+      dragBox: true
+    });
+
+    this.store.addStrategy(selectionStrategy, true);
+    this.store.addStrategy(selectedRecordStrategy, false);
   }
 
   /**
@@ -621,9 +648,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.bufferEvent.emit(this.buffer);
     }
     this.toggleSearch.emit();
-    this.store.entities$.subscribe((value) => {
+    this.store.entities$.pipe(
+      debounceTime(500)
+    ).subscribe((value) => {
       if (value.length && this.layers.length === this.thematicLength + 1) {
         this.openWorkspace.emit();
+        this.createTableTemplate();
       }
     });
   }
@@ -645,6 +675,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
     this.loading = false;
+    this.tableTemplate = undefined;
   }
 
   clearDrawZone() {
@@ -755,5 +786,29 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.overlayStyle$.next(this.PointStyle);
       this.drawStyle$.next(this.PointStyle);
     }
+  }
+
+  toggleVisibleList() {
+    this.listIsVisible = !this.listIsVisible;
+  }
+
+  private createTableTemplate() {
+    const typeColumn = {
+      name: 'meta.title',
+      title: this.languageService.translate.instant('igo.geo.spatialFilter.type'),
+      renderer: EntityTableColumnRenderer.UnsanitizedHTML
+    };
+    const nameColumn = {
+      name: 'properties.nom',
+      title: this.languageService.translate.instant('igo.geo.spatialFilter.searchResults'),
+      renderer: EntityTableColumnRenderer.UnsanitizedHTML
+    };
+    const columns = [typeColumn, nameColumn];
+
+    this.tableTemplate = {
+      selection: true,
+      sort: true,
+      columns
+    };
   }
 }
