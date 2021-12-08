@@ -1,10 +1,7 @@
-<igo-geometry-predefined-or-draw 
-  [geometryTypes]="geometryTypes"
-  [predefinedRegionsStore]="predefinedRegionsStore" 
-  [currentRegionStore]="currentRegionStore" 
-  [predefinedTypes]="predefinedTypes"
-  [selectedPredefinedType]="selectedPredefinedType"
-  [layers]="layers"
-  [map]="mapState.map"
-  (predefinedTypeChange)="onPredefinedTypeChange($event)">
-</igo-geometry-predefined-or-draw>
+<h4 class="nameOfTool">{{'igo.integration.advanced-map-tool.advanced-swipe.swipe-tool' | translate}}</h4>
+<igo-advanced-swipe></igo-advanced-swipe>
+<mat-divider class="advanced-tool-line"></mat-divider>
+
+<h4 class="nameOfTool">{{'igo.integration.advanced-map-tool.advanced-coordinates.coordinates' | translate}}</h4>
+<igo-advanced-coordinates></igo-advanced-coordinates>
+<mat-divider class="advanced-tool-line"></mat-divider>

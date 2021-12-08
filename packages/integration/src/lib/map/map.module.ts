@@ -17,8 +17,7 @@ import {
   IgoMetadataModule,
   IgoDownloadModule,
   IgoFilterModule,
-  IgoImportExportModule,
-  IgoGeometryModule
+  IgoImportExportModule
 } from '@igo2/geo';
 import { IgoContextModule } from '@igo2/context';
 import { MapDetailsToolComponent } from './map-details-tool/map-details-tool.component';
@@ -65,8 +64,7 @@ import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coord
     MatSlideToggleModule,
     MatMenuModule,
     MatButtonModule,
-    MatTooltipModule,
-    IgoGeometryModule
+    MatTooltipModule
   ],
   declarations: [ AdvancedMapToolComponent, MapToolComponent,
     MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent, AdvancedCoordinatesComponent],
