@@ -122,6 +122,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
 
+  onSelectedOfflinableLayers(event) {
+    this.downloadState.selectedOfflinableLayers$.next(event);
+  }
+
   public onGenerationParamsChange(params: TileGenerationParams) {
     this.genParams = params;
   }
