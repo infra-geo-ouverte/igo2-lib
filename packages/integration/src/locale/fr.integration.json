@@ -75,6 +75,11 @@
         }
       },
       "download": {
+        "layers": {
+          "placeholder": "Couche(s)",
+          "other": "autre",
+          "others": "autres"
+        },
         "messages": {
           "completion": {
             "download": "Votre téléchargement est terminé."
@@ -105,6 +110,9 @@
           "newAllocatedSpace": "Taille estimée de la nouvelle allocation (MB)",
           "downloadSize": "Taille estimée du téléchargement (MB)",
           "numberOfTiles": "Nombre de tuiles à télécharger"
+        },
+        "layersSelector": {
+          "title": "Sélection de(s) couche(s)"
         },
         "regionEditor": {
           "title": "Editeur de Région",

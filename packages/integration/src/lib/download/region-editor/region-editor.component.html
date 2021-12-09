@@ -1,27 +1,6 @@
 <div>
-  <mat-carousel
-    timings="250ms ease-in"
-    [autoplay]="true"
-    interval="5000"
-    color="accent"
-    maxWidth="auto"
-    proportion="100"
-    slides="5"
-    [loop]="true"
-    [hideArrows]="true"
-    [hideIndicators]="false"
-    [useKeyboard]="true"
-    [useMouseWheel]="false"
-    orientation="ltr"
-  >
+  <igo-offlinable-layer-selector (selectedOfflinableLayers)="onSelectedOfflinableLayers($event)" [map]="mapState.map"></igo-offlinable-layer-selector>
 
-    <mat-carousel-slide
-    *ngFor="let url of parentTileUrls; let i = index"
-    [image]="url"
-    overlayColor="#00000040"
-    [hideOverlay]="false"></mat-carousel-slide>
-   
-  </mat-carousel>
   <mat-form-field appearance="legacy">
     <mat-label>{{'igo.integration.download.regionEditor.regionName' | translate}}</mat-label>
     <input matInput [(ngModel)]="regionName">

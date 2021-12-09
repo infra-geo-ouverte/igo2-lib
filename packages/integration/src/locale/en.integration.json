@@ -75,6 +75,11 @@
         }
       },
       "download": {
+        "layers": {
+          "placeholder": "Layer(s)",
+          "other": "other",
+          "others": "others"
+        },
         "messages": {
           "completion": {
             "download": "Your download is done."
@@ -103,6 +108,9 @@
         },
         "regionDraw": {
           "toggle": "Toggle draw controls"
+        },
+        "layersSelector": {
+          "title": "Layer(s) selection"
         },
         "regionEditor": {
           "title": "Region Editor",

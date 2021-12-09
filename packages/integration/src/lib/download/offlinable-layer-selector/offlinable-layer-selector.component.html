@@ -1,0 +1,20 @@
+<form class="igo-form" [formGroup]="form" *ngIf="(offlinableLayers$ | async).length > 0">
+  <div class="igo-input-container">
+    <mat-form-field>
+      <mat-label>{{'igo.integration.download.layers.placeholder' | translate}}</mat-label>
+      <mat-select [(value)]="layers" multiple>
+        <mat-select-trigger>
+          {{layers.length ? layers[0].title : ''}}
+          <span *ngIf="layers.length > 1" class="layer-select-trigger">
+            (+{{layers.length - 1}} {{(layers?.length === 2 ? 'igo.integration.download.layers.other' :
+            'igo.integration.download.layers.others') | translate }})
+          </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let layer of (offlinableLayers$ | async)" [value]="layer"
+          (click)="$event.stopPropagation()">
+          <p mat-line>{{layer.title}}</p>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>

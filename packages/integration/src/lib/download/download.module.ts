@@ -16,9 +16,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoDrawingToolModule, IgoGeometryFormFieldModule } from '@igo2/geo';
-import { MatCarouselModule } from '@ngbmodule/material-carousel';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DownloadToolComponent } from './download-tool';
+import { OfflinableLayerSelectorComponent } from './offlinable-layer-selector/offlinable-layer-selector.component';
 import { RegionDrawComponent } from './region-draw/region-draw.component';
 import { RegionDownloadEstimationComponent } from './region-editor/region-download-estimation/region-download-estimation.component';
 import { RegionEditorComponent } from './region-editor/region-editor.component';
@@ -38,7 +38,6 @@ import {
   imports: [
     BrowserAnimationsModule,
     CommonModule,
-    MatCarouselModule,
     MatCardModule,
     MatSelectModule,
     MatFormFieldModule,
@@ -63,6 +62,7 @@ import {
     RegionEditorComponent,
     RegionManagerComponent,
     RegionDrawComponent,
+    OfflinableLayerSelectorComponent,
     TileGenerationOptionComponent,
     ChildTileGenSliderComponent,
     MiddleTileGenSliderComponent,

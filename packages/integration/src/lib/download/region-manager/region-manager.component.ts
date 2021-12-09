@@ -1,7 +1,6 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { DownloadEstimator, DownloadRegionService, Region, RegionDBData, RegionDBService, RegionStatus } from '@igo2/core';
 import { Feature } from '@igo2/geo';
-import { MatCarouselComponent } from '@ngbmodule/material-carousel';
 import { BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { MapState } from '../../map';
@@ -21,7 +20,6 @@ export interface DisplayRegion extends Region {
   styleUrls: ['./region-manager.component.scss']
 })
 export class RegionManagerComponent implements OnDestroy {
-  @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
   displayedColumns = ['edit', 'delete', 'name', 'space'];
@@ -100,7 +98,6 @@ export class RegionManagerComponent implements OnDestroy {
 
   public getRegion(row: DisplayRegion) {
     this.selectRegion(row);
-    this.regionCarousel.slideTo(0);
     this.showSelectedRegionFeatures();
   }
 

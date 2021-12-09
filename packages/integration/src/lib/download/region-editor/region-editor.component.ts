@@ -9,6 +9,7 @@ import { Feature, IgoMap } from '@igo2/geo';
 import { Geometry } from '@turf/helpers';
 import { Observable, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
+import { MapState } from '../../map/map.state';
 import { DownloadState } from '../download.state';
 import { RegionDrawComponent } from '../region-draw/region-draw.component';
 import { TileGenerationOptionComponent } from '../tile-generation-option/tile-generation-option.component';
@@ -56,7 +57,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private state: RegionEditorState,
     private messageService: MessageService,
     private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    public mapState: MapState
   ) {
     this.initController();
 
