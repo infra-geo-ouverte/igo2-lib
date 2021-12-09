@@ -1,10 +1,11 @@
-<div>
-  <igo-offlinable-layer-selector (selectedOfflinableLayers)="onSelectedOfflinableLayers($event)" [map]="mapState.map"></igo-offlinable-layer-selector>
+<igo-offlinable-layer-selector (selectedOfflinableLayers)="onSelectedOfflinableLayers($event)" [map]="mapState.map"></igo-offlinable-layer-selector>
 
-  <mat-form-field appearance="legacy">
-    <mat-label>{{'igo.integration.download.regionEditor.regionName' | translate}}</mat-label>
-    <input matInput [(ngModel)]="regionName">
-  </mat-form-field>
+<mat-form-field>
+  <mat-label>{{'igo.integration.download.regionEditor.regionName' | translate}}</mat-label>
+  <input matInput [(ngModel)]="regionName">
+</mat-form-field>
+
+<div>
   <br>
   <div>
     <igo-tile-generation-option 
