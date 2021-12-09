@@ -75,9 +75,10 @@ export class VectorTileLayer extends Layer {
     } else {
       modifiedUrl = url(extent, resolution, projection);
     }
-    const request = this.geoNetwork.get(url);
+    const request = this.geoNetwork.get(modifiedUrl);
     request.pipe(first()).subscribe((blob) => {
       if (!blob) {
+        tile.setFeatures([]);
         return;
       }
       const arrayBuffer = blob.arrayBuffer();
