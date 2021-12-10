@@ -26,29 +26,30 @@ export class DownloadState {
         private styleService: StyleService,
         private mapState: MapState) {
 
-        const offlineRegionsLayer = new VectorLayer({
-            title: 'offlineRegionsLayer',
-            zIndex: 2000,
-            source: new FeatureDataSource(),
-            showInLayerList: true,
-            workspace: {
-                enabled: true,
-            },
-            exportable: true,
-            browsable: false,
-            style: this.styleService.createStyle({
-                stroke: {
-                    color: "blue",
+        this.map.ol.once('rendercomplete', () => {
+            const offlineRegionsLayer = new VectorLayer({
+                title: 'offlineRegionsLayer',
+                zIndex: 2000,
+                source: new FeatureDataSource(),
+                showInLayerList: true,
+                workspace: {
+                    enabled: true,
                 },
-                width: 5
-            }
-            )
-
+                exportable: true,
+                browsable: false,
+                style: this.styleService.createStyle({
+                    stroke: {
+                        color: "blue",
+                    },
+                    width: 5
+                }
+                )
+            });
+            tryBindStoreLayer(this.regionStore, offlineRegionsLayer);
+            tryAddLoadingStrategy(this.regionStore, new FeatureStoreLoadingStrategy({
+                motion: FeatureMotion.None
+            }));
         });
-        tryBindStoreLayer(this.regionStore, offlineRegionsLayer);
-        tryAddLoadingStrategy(this.regionStore, new FeatureStoreLoadingStrategy({
-            motion: FeatureMotion.None
-        }));
     }
     addNewTileToDownload(tile: TransferedTile) {
         if (!tile) {

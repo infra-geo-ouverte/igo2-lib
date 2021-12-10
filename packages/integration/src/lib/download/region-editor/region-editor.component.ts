@@ -31,8 +31,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progressBar') progressBar: MatProgressBar;
   @ViewChild('genParam') genParamComponent: TileGenerationOptionComponent;
   @ViewChild('regionDraw') regionDrawComponent: RegionDrawComponent;
-  @ViewChild('regionDownloadEstimation')
-    regionDownloadEstimation: RegionDownloadEstimationComponent;
+  @ViewChild('regionDownloadEstimation') regionDownloadEstimation: RegionDownloadEstimationComponent;
 
   private controller: RegionEditorController;
 
