@@ -1,7 +1,7 @@
 import { Geometry } from '@turf/helpers';
 import { Polygon } from 'geojson';
 import { Tile } from '../../Tile.interface';
-import { tileInsidePolygon } from './tile-generation-util';
+import { tileInsidePolygon } from './tile-generation.utils';
 
 
 export abstract class TileGenerationStrategy {

@@ -5,5 +5,5 @@ export * from './tile-generation-params.interface';
 export * from './tile-generation-strategies-utils';
 export * from './tile-generation-strategy';
 export * from './tile-generation-strategy.interface';
-export * from './tile-generation-util';
+export * from './tile-generation.utils';
 
