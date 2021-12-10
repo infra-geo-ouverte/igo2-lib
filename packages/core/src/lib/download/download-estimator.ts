@@ -1,6 +1,6 @@
 import { Geometry, LineString, Polygon } from '@turf/helpers';
 import { RegionDBData } from '../storage';
-import { getNumberOfTilesLineStringIntersect, getPolygonOlArea, getTileLengthFast, getTileOlArea } from './download-estimator-utils';
+import { getNumberOfTilesLineStringIntersect, getPolygonOlArea, getTileLengthFast, getTileOlArea } from './download-estimator.utils';
 import { TileToDownload } from './download.interface';
 import { findDxDyOfPolygon, getNumberOfTreeNodes, TileGenerationParams } from './tile-downloader';
 
