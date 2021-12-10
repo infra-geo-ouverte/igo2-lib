@@ -524,10 +524,20 @@
       },
       "geometryPredefinedOrDraw": {
         "bufferAlert": "La zone tampon doit être comprise entre {{sizeMin}} et {{sizeMax}} {{unit}}",
-        "Meters": "mètres",
-        "Kilometers": "kilomètres",
-        "Miles": "miles",
-        "Feet": "pieds"
+        "meters": "mètres",
+        "kilometers": "kilomètres",
+        "miles": "miles",
+        "feet": "pieds",
+        "drawPolygon": "Dessiner un polygone",
+        "drawLine": "Dessiner une ligne",
+        "drawCircle": "Dessiner un cercle",
+        "buffer": "Zone tampon",
+        "freehandControl": "À main levée",
+        "drawControl": "Activer le contrôle de dessin",
+        "listLabel": "Zone",
+        "searchLabel": "Rechercher par",
+        "predefined": "Zone Prédéfinie",
+        "draw": "Dessin"
       },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",

@@ -3,7 +3,7 @@
   (selectedIndexChange)="selectedTypeIndex.setValue($event)"
   (selectedTabChange)="onPredefinedOrDrawTypeChange()">
 
-  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
+  <mat-tab [label]="'igo.geo.geometryPredefinedOrDraw.predefined' | translate">
     <igo-geometry-predefined-list
       [reset$]="reset$"
       [predefinedTypes]="predefinedTypes"
@@ -18,7 +18,7 @@
     </igo-geometry-predefined-list>
   </mat-tab>
 
-  <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
+  <mat-tab [label]="'igo.geo.geometryPredefinedOrDraw.draw' | translate">
     <igo-geometry-draw
       [geometryTypes]="geometryTypes"
       [map]="map"

@@ -525,11 +525,20 @@
       },
       "geometryPredefinedOrDraw": {
         "bufferAlert": "Buffer must be between {{sizeMin}} and {{sizeMax}} {{unit}}",
-        "Meters": "meters",
-        "Kilometers": "kilometers",
-        "Miles": "miles",
-        "Feet": "feet"
-
+        "meters": "meters",
+        "kilometers": "kilometers",
+        "miles": "miles",
+        "feet": "feet",
+        "drawPolygon": "Draw a polygon",
+        "drawLine": "Draw a line",
+        "drawCircle": "Draw a circle",
+        "buffer": "Buffer",
+        "freehandControl": "Freehand",
+        "drawControl": "Activate draw control",
+        "listLabel": "Zone",
+        "searchLabel": "Search by",
+        "predefined": "Predefined Zone",
+        "draw": "Draw"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
