@@ -557,8 +557,17 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
     value = this.store.getProperty(entity, column.name);
 
-    if (column.type === 'boolean' && !record.edition) {
+    if (column.type === 'boolean') {
+      if (value === undefined) {
+        value = false;
+      }else if (typeof value !== 'boolean' && value !== undefined) {
+        value = JSON.parse(value.toLowerCase());
+      }
+      if (!this.isEdition(record)){
       value = value ? '&#10003;' : ''; // check mark
+      } 
+        console.log('VALUE_CHECKBOX ' + column.name, value);
+
     } else if (column.type === 'list' && value && column.domainValues) {
 
       if(column.multiple) {

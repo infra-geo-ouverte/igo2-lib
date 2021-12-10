@@ -81,7 +81,7 @@
                             <input matInput type="text" *ngIf="!column.type || column.type ==='string'" [formControlName]="column.name"
                             value="{{getValue(record, column)}}" (input)="onValueChange(column.name, record, $event)"
                             readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
-                            <mat-checkbox *ngIf="column.type === 'boolean'" [formControlName]="column.name" checked="{{getValue(record,column)}}"
+                            <mat-checkbox *ngIf="column.type === 'boolean'" [formControlName]="column.name" [checked]="getValue(record,column)"
                             (change)="onBooleanValueChange(column.name, record,$event)"></mat-checkbox>
                             <mat-select *ngIf="column.type === 'list'" required="{{getValidationAttributeValue(column, 'mandatory')}}" [compareWith]="compareWithSelected" [formControlName]="column.name" [multiple]="column.multiple" (selectionChange)="onSelectValueChange(column.name, record,$event)"
                             (ngModelChange)="ngModelChangeSelect(column, record, $event)" [(ngModel)]="record.entity">
