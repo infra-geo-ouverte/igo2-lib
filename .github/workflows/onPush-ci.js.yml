@@ -9,6 +9,7 @@ on:
   push:
     branches-ignore: 
       - master
+      - next
 jobs:
   build:
     runs-on: ubuntu-latest
