@@ -7,7 +7,7 @@ import {
 } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Geometry } from '@turf/helpers';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { map, skip } from 'rxjs/operators';
 import { MapState } from '../../map/map.state';
 import { DownloadState } from '../download.state';
@@ -34,6 +34,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('regionDownloadEstimation') regionDownloadEstimation: RegionDownloadEstimationComponent;
 
   private controller: RegionEditorController;
+  public updateEstimation$: Subject<void> = new Subject();
 
   private _progression: number = 0;
   activateDrawingTool: boolean = true;
@@ -104,7 +105,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.regionStore.entities$.subscribe((r) => console.log(r));
+    this.regionStore.entities$.subscribe((r) => {
+      this.updateEstimation$.next();
+      console.log(r);
+    });
     if (!this.editedTilesFeature) {
       this.regionStore.updateMany(this.editedTilesFeature);
     }
@@ -339,6 +343,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   set genParams(depth: TileGenerationParams) {
+      this.updateEstimation$.next();
       this.state.genParams = depth;
   }
 

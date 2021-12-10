@@ -103,8 +103,12 @@
         },
         "estimator": {
           "newAllocatedSpace": "Estimated New Allocation Size (MB)",
-          "size": "Estimated Download Size (MB)",
-          "numberOfTiles": "Number of tiles to download"
+          "downloadSize": "Estimated size",
+          "numberOfTiles": "Number of tiles to download",
+          "units": { 
+            "mb": "Mb",
+            "gb": "Gb"
+          }
         },
         "regionDraw": {
           "toggle": "Toggle draw controls"

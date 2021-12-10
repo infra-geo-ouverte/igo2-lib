@@ -4,7 +4,7 @@
     <div 
       [ngClass]="{ 
           'invalid-size': (enoughSpace$ | async) === false 
-            && _estimation.newAllocatedSize !== 0
+            && estimation.newAllocatedSize !== 0
         }"
     >{{ estimationInMB.newAllocatedSize }}</div>
   </div>
@@ -13,9 +13,9 @@
     <div
       [ngClass]="{ 
           'invalid-size': (enoughSpace$ | async) === false 
-            && _estimation.newAllocatedSize !== 0
+            && estimation.newAllocatedSize !== 0
         }"
-    >{{ estimationInMB.downloadSize }}</div>
+    >{{ estimationInBestUnit.downloadSize }}{{('igo.integration.download.estimator.units.'+ estimationInBestUnit.unit ) | translate}} </div>
   </div>
   <div>
     <mat-label>{{'igo.integration.download.estimator.numberOfTiles' | translate}} </mat-label>

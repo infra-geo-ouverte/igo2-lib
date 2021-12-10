@@ -120,7 +120,7 @@ export class RegionManagerComponent implements OnDestroy {
     if (Number.isNaN(space)) {
       return;
     }
-    return (space * 1e-06).toFixed(4);
+    return (space * 1e-06).toFixed(1);
   }
 
   public showSelectedRegionFeatures() {

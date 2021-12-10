@@ -108,8 +108,12 @@
         },
         "estimator": {
           "newAllocatedSpace": "Taille estimée de la nouvelle allocation (MB)",
-          "downloadSize": "Taille estimée du téléchargement (MB)",
-          "numberOfTiles": "Nombre de tuiles à télécharger"
+          "downloadSize": "Taille estimée",
+          "numberOfTiles": "Nombre de tuiles à télécharger",
+          "units": { 
+            "mb": "Mo",
+            "gb": "Go"
+          }
         },
         "layersSelector": {
           "title": "Sélection de(s) couche(s)"
