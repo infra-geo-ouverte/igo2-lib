@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
-import { Layer, VectorLayer } from '../../../layer';
+import { VectorLayer } from '../../../layer';
 
 import { SpatialType } from '../shared/geometry-predefined-or-draw.enum';
 import { EntityStore } from '@igo2/common';
