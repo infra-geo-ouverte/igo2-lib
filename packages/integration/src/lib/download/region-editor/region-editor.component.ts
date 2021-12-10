@@ -130,6 +130,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onGenerationParamsChange(params: TileGenerationParams) {
+    this.updateEstimation$.next();
     this.genParams = params;
   }
 

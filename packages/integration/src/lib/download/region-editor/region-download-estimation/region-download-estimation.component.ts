@@ -60,8 +60,6 @@ export class RegionDownloadEstimationComponent implements OnInit {
     this.updateEstimation$.subscribe(r => {
       this.updateEstimation();
     });
-
-  this.enoughSpace$.subscribe(r => console.log('enoughSpace',r));
   }
 
   updateEstimation() {
@@ -116,7 +114,7 @@ export class RegionDownloadEstimationComponent implements OnInit {
   }
 
   private bytesToMB(sizeInBytes: number): number {
-    return NumberUtils.roundToNDecimal((sizeInBytes * 1e-6), 1);
+    return NumberUtils.roundToNDecimal((sizeInBytes/1024/1024), 1);
   }
   private mbToGb(sizeInMb: number): number {
     return NumberUtils.roundToNDecimal(sizeInMb/1024, 2);
