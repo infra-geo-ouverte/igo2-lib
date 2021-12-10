@@ -1,0 +1,62 @@
+<div class="spatial-type-toggle">
+  <mat-button-toggle-group
+    [value]="activeDrawType"
+    (change)="onDrawTypeChange($event.value)">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Polygon)" [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
+        <mat-icon svgIcon="pentagon-outline"></mat-icon>
+    </mat-button-toggle>       
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.LineString)" [value]="spatialType.LineString" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
+      <mat-icon svgIcon="vector-polyline"></mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Point)" [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
+        <mat-icon svgIcon="record-circle-outline"></mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<igo-geometry-form-field-input
+  [formControl]="geometryformControl"
+  [map]="map"
+  [geometryType]="geometryType"
+  [drawGuide]="drawGuide$ | async"
+  [measure]="false"
+  [drawControlIsActive]="drawControlIsActive"
+  [freehandDrawIsActive]="freehandDrawIsActive"
+  [drawStyle]="drawStyle$ | async"
+  [overlayStyle]="overlayStyle$ | async"
+  [radius]="bufferOrRadiusFormControl.value">
+</igo-geometry-form-field-input>
+
+<div class="header">
+    <mat-slide-toggle *ngIf="!isPredefined()"
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onDrawControlChange()">
+      {{'igo.geo.spatialFilter.drawControl' | translate}}
+    </mat-slide-toggle>
+    <mat-slide-toggle *ngIf="!isPredefined()"
+      [checked]="freehandDrawIsActive"
+      [labelPosition]="'before'"
+      (change)="onfreehandControlChange()">
+      {{'igo.geo.spatialFilter.freehandControl' | translate}}
+    </mat-slide-toggle>
+</div>
+
+<div class="buffer-unit">
+  <form class="buffer-form">
+    <mat-form-field class="buffer">
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferOrRadiusFormControl"
+      [value]="0">
+    </mat-form-field>
+  </form>
+
+  <mat-form-field class="unit-field">
+    <mat-select
+    [value]="measureUnit$.value"
+    (selectionChange)="onMeasureUnitChange($event.value)">
+    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+    </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

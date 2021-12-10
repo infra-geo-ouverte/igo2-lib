@@ -1,0 +1,31 @@
+<mat-tab-group
+  [selectedIndex]="selectedTypeIndex.value"
+  (selectedIndexChange)="selectedTypeIndex.setValue($event)"
+  (selectedTabChange)="onPredefinedOrDrawTypeChange()">
+
+  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
+    <igo-geometry-predefined-list
+      [reset$]="reset$"
+      [predefinedTypes]="predefinedTypes"
+      [predefinedRegionsStore]="predefinedRegionsStore"
+      [currentRegionStore]="currentRegionStore"
+      [selectedPredefinedType]="selectedPredefinedType"
+      [map]="map"
+      [minBufferMeters]="minBufferMeters"
+      [maxBufferMeters]="maxBufferMeters"
+      (predefinedTypeChange)="predefinedTypeChange.emit($event)"
+      (zoneChange)="zoneChange.emit($event)">
+    </igo-geometry-predefined-list>
+  </mat-tab>
+
+  <mat-tab [label]="'igo.geo.spatialFilter.draw' | translate">
+    <igo-geometry-draw
+      [geometryTypes]="geometryTypes"
+      [map]="map"
+      [activeDrawType]="predefinedOrDrawType"
+      [currentRegionStore]="currentRegionStore">
+    </igo-geometry-draw>
+    
+  </mat-tab>
+
+</mat-tab-group>
