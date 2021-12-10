@@ -523,6 +523,23 @@
         "endYear": "End Year",
         "startYear": "Start Year"
       },
+      "geometryPredefinedOrDraw": {
+        "bufferAlert": "Buffer must be between {{sizeMin}} and {{sizeMax}} {{unit}}",
+        "meters": "meters",
+        "kilometers": "kilometers",
+        "miles": "miles",
+        "feet": "feet",
+        "drawPolygon": "Draw a polygon",
+        "drawLine": "Draw a line",
+        "drawCircle": "Draw a circle",
+        "buffer": "Buffer",
+        "freehandControl": "Freehand",
+        "drawControl": "Activate draw control",
+        "listLabel": "Zone",
+        "searchLabel": "Search by",
+        "predefined": "Predefined Zone",
+        "draw": "Draw"
+      },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
         "predefined": "Predefined Zone",

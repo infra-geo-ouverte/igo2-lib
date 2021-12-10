@@ -42,6 +42,7 @@ import { createOverlayMarkerStyle } from '../../../overlay/shared/overlay-marker
 })
 export class GeometryDrawComponent implements OnDestroy, OnInit {
 
+  @Input() drawControlIsActive$: BehaviorSubject<Boolean> = new BehaviorSubject(true);
   @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
@@ -86,7 +87,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
   public geometryType: typeof OlGeometryType | string;
 
-  public drawControlIsActive = true;
   public freehandDrawIsActive = false;
   public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
     return new olStyle.Style({
@@ -161,7 +161,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
         bufferValue: number,
         unit: MeasureLengthUnit
       ]) => {
-        console.log(bunch);
         const geometry = bunch[0];
         let bufferValue = bunch[1];
         const unit: MeasureLengthUnit = bunch[2];
@@ -175,8 +174,14 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
         if (this.bufferOrRadiusFormControl.errors) {
           const deltaMin = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.minBufferMeters);
           const deltaMax = Math.abs(this.bufferOrRadiusFormControl.value / factor - this.maxBufferMeters);
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          const unitTranslated = this.languageService.translate.instant('igo.geo.geometryPredefinedOrDraw.'+ unit );
+          const message = this.languageService.translate
+            .instant('igo.geo.geometryPredefinedOrDraw.bufferAlert', {
+              sizeMin: this.minBufferMeters / factor,
+              sizeMax: this.maxBufferMeters / factor,
+              unit: unitTranslated
+            });
+          this.messageService.alert(message);
           const bufferToApply = (deltaMax < deltaMin ? this.maxBufferMeters : this.minBufferMeters) / factor;
           this.bufferOrRadiusFormControl.setValue(bufferToApply, { emitEvent: true });
           return;
@@ -277,7 +282,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
 
   onDrawControlChange() {
-    this.drawControlIsActive = !this.drawControlIsActive;
+    this.drawControlIsActive$.next(!this.drawControlIsActive$.value);
   }
 
   onfreehandControlChange() {

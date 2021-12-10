@@ -1,5 +1,5 @@
 <mat-form-field>
-    <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
+    <mat-label>{{'igo.geo.geometryPredefinedOrDraw.searchLabel' | translate}}</mat-label>
     <mat-select (selectionChange)="onPredefinedTypeChange()" [(value)]="selectedPredefinedType">
       <mat-option *ngFor="let predefinedType of predefinedTypes" [value]="predefinedType">
         {{predefinedType | translate}}
@@ -9,7 +9,7 @@
 
 <form class="form-list">
     <mat-form-field class="zone-list">
-        <input #input type="text" placeholder="{{'igo.geo.spatialFilter.listLabel' | translate}}" matInput
+        <input #input type="text" placeholder="{{'igo.geo.geometryPredefinedOrDraw.listLabel' | translate}}" matInput
         [formControl]="regionsFormControl" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onZoneChange($event.option.value)"
         [displayWith]="displayFn">
@@ -23,7 +23,7 @@
 <div class="buffer-div">
     <form class="buffer-form">
         <mat-form-field class="buffer">
-            <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
+            <input type="number" matInput placeholder="{{'igo.geo.geometryPredefinedOrDraw.buffer' | translate}}" [formControl]="bufferFormControl"
             [value]="0">
         </mat-form-field>
     </form>

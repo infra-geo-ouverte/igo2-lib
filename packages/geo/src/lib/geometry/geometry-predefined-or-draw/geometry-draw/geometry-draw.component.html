@@ -2,13 +2,13 @@
   <mat-button-toggle-group
     [value]="activeDrawType"
     (change)="onDrawTypeChange($event.value)">
-    <mat-button-toggle *ngIf="getGeometryType(spatialType.Polygon)" [value]="spatialType.Polygon" [matTooltip]="'igo.geo.spatialFilter.drawPolygon' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Polygon)" [value]="spatialType.Polygon" [matTooltip]="'igo.geo.geometryPredefinedOrDraw.drawPolygon' | translate">
         <mat-icon svgIcon="pentagon-outline"></mat-icon>
     </mat-button-toggle>       
-    <mat-button-toggle *ngIf="getGeometryType(spatialType.LineString)" [value]="spatialType.LineString" [matTooltip]="'igo.geo.spatialFilter.drawLine' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.LineString)" [value]="spatialType.LineString" [matTooltip]="'igo.geo.geometryPredefinedOrDraw.drawLine' | translate">
       <mat-icon svgIcon="vector-polyline"></mat-icon>
     </mat-button-toggle>
-    <mat-button-toggle *ngIf="getGeometryType(spatialType.Point)" [value]="spatialType.Point" [matTooltip]="'igo.geo.spatialFilter.drawCircle' | translate">
+    <mat-button-toggle *ngIf="getGeometryType(spatialType.Point)" [value]="spatialType.Point" [matTooltip]="'igo.geo.geometryPredefinedOrDraw.drawCircle' | translate">
         <mat-icon svgIcon="record-circle-outline"></mat-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>
@@ -20,32 +20,32 @@
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="false"
-  [drawControlIsActive]="drawControlIsActive"
+  [drawControlIsActive]="drawControlIsActive$ | async"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async"
   [radius]="bufferOrRadiusFormControl.value">
 </igo-geometry-form-field-input>
 
-<div class="header">
+<div class="header mat-typography">
     <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="drawControlIsActive"
+      [checked]="drawControlIsActive$ | async"
       [labelPosition]="'before'"
       (change)="onDrawControlChange()">
-      {{'igo.geo.spatialFilter.drawControl' | translate}}
+      {{'igo.geo.geometryPredefinedOrDraw.drawControl' | translate}}
     </mat-slide-toggle>
     <mat-slide-toggle *ngIf="!isPredefined()"
       [checked]="freehandDrawIsActive"
       [labelPosition]="'before'"
       (change)="onfreehandControlChange()">
-      {{'igo.geo.spatialFilter.freehandControl' | translate}}
+      {{'igo.geo.geometryPredefinedOrDraw.freehandControl' | translate}}
     </mat-slide-toggle>
 </div>
 
 <div class="buffer-unit">
   <form class="buffer-form">
     <mat-form-field class="buffer">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferOrRadiusFormControl"
+      <input type="number" matInput placeholder="{{'igo.geo.geometryPredefinedOrDraw.buffer' | translate}}" [formControl]="bufferOrRadiusFormControl"
       [value]="0">
     </mat-form-field>
   </form>

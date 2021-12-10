@@ -22,7 +22,7 @@ import { FeatureStoreLoadingStrategy } from '../../../feature/shared/strategies/
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import { tryAddLoadingStrategy } from '../../../feature/shared/strategies.utils';
 import { FeatureStore } from '../../../feature/shared/store';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'igo-geometry-predefined-or-draw',
@@ -32,6 +32,7 @@ import { Subject } from 'rxjs';
 })
 export class GeometryPredefinedOrDrawTypeComponent implements OnInit, OnDestroy {
 
+  @Input() drawControlIsActive$: BehaviorSubject<Boolean> = new BehaviorSubject(true);
   @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
   @Input() predefinedRegionsStore: EntityStore<FeatureForPredefinedOrDrawGeometry>
   @Input() currentRegionStore: FeatureStore<FeatureForPredefinedOrDrawGeometry>
