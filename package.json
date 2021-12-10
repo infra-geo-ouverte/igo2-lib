@@ -96,7 +96,6 @@
     "@ionic/angular": "^5.2.3",
     "@mat-datetimepicker/core": "~7.0.1",
     "@mdi/angular-material": "^6.2.95",
-    "@ngbmodule/material-carousel": "^0.7.1",
     "@ngx-translate/core": "^13.0.0",
     "@turf/area": "^6.5.0",
     "@turf/boolean-point-in-polygon": "^6.5.0",
