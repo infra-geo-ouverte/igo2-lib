@@ -19,6 +19,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
+import { FeatureDataSource } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -36,6 +37,7 @@ export class EditionWorkspace extends Workspace {
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
   private olDrawingLayerSource = new OlVectorSource();
+  private olDrawingLayer: VectorLayer;
   public geometryType = GeometryType; // Reference to the GeometryType enum
 
   fillColor: string;
@@ -58,6 +60,21 @@ export class EditionWorkspace extends Workspace {
 
     this.drawControl = this.createDrawControl();
     this.drawControl.setGeometryType(this.geometryType.Point as any);
+
+    this.map.removeLayer(this.olDrawingLayer);
+
+    this.olDrawingLayer = new VectorLayer({
+      id: 'igo-draw-layer',
+      title: 'edition',
+      zIndex: 300,
+      source: new FeatureDataSource(),
+      showInLayerList: false,
+      exportable: false,
+      browsable: false,
+      workspace: {
+        enabled: false
+      },
+    });
   }
 
   private getInResolutionRange(): boolean {
@@ -98,9 +115,11 @@ export class EditionWorkspace extends Workspace {
     }, 250);
   }
 
-  editFeature(feature, workspace) {
+  editFeature(feature, workspace: EditionWorkspace) {
+    console.log(feature);
     feature.edition = true;
     let id;
+    const editionOpt = workspace.layer.dataSource.options.edition;
     outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
       for (const property in feature.properties) {
         let columnName = column.name;
@@ -117,12 +136,17 @@ export class EditionWorkspace extends Workspace {
       feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
       feature.idkey = id;
     } else {
-
       // Only for edition with it's own geometry
-      if (workspace.layer.dataSource.options.edition.geomType) { 
-      feature.newFeature = true;
-      const geometryType = workspace.layer.dataSource.options.edition.geomType;
-      this.onGeometryTypeChange(geometryType, feature, workspace);
+      if (!feature.newFeature && editionOpt.geomType) {
+        if (editionOpt.addWithDraw) {
+          feature.newFeature = true;
+          const geometryType = editionOpt.geomType;
+          this.onGeometryTypeChange(geometryType, feature, workspace);
+        } else {
+          feature.newFeature = true;
+          workspace.entityStore.insert(feature);
+          console.log(workspace.entityStore.all(), feature);
+        }
       }
     }
   }
@@ -247,12 +271,17 @@ export class EditionWorkspace extends Workspace {
 
     workspace.layer.dataSource.ol.addFeature(featureOl);
 
+    this.olDrawingLayer.dataSource.ol.clear();
+    this.olDrawingLayer.dataSource.ol.addFeature(featureOl);
+    this.map.addLayer(this.olDrawingLayer);
+
     this.deactivateDrawControl();
   }
 
   deleteDrawings(feature, workspace) {
     workspace.layer.dataSource.ol.removeFeature(feature.ol);
     workspace.entityStore.delete(feature);
+    this.map.removeLayer(this.olDrawingLayer);
     this.olDrawingLayerSource.clear();
   }
 }
