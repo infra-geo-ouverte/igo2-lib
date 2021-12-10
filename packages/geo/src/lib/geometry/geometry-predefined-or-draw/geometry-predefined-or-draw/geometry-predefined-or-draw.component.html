@@ -20,8 +20,11 @@
 
   <mat-tab [label]="'igo.geo.geometryPredefinedOrDraw.draw' | translate">
     <igo-geometry-draw
+      [drawControlIsActive$]="drawControlIsActive$"
       [geometryTypes]="geometryTypes"
       [map]="map"
+      [minBufferMeters]="minBufferMeters"
+      [maxBufferMeters]="maxBufferMeters"
       [activeDrawType]="predefinedOrDrawType"
       [currentRegionStore]="currentRegionStore">
     </igo-geometry-draw>

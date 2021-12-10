@@ -42,6 +42,7 @@ import { createOverlayMarkerStyle } from '../../../overlay/shared/overlay-marker
 })
 export class GeometryDrawComponent implements OnDestroy, OnInit {
 
+  @Input() drawControlIsActive$: BehaviorSubject<Boolean> = new BehaviorSubject(true);
   @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
@@ -86,7 +87,6 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
 
   public geometryType: typeof OlGeometryType | string;
 
-  public drawControlIsActive = true;
   public freehandDrawIsActive = false;
   public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style) = () => {
     return new olStyle.Style({
@@ -282,7 +282,7 @@ export class GeometryDrawComponent implements OnDestroy, OnInit {
   }
 
   onDrawControlChange() {
-    this.drawControlIsActive = !this.drawControlIsActive;
+    this.drawControlIsActive$.next(!this.drawControlIsActive$.value);
   }
 
   onfreehandControlChange() {

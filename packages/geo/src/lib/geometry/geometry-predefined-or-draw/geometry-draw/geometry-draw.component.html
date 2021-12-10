@@ -20,7 +20,7 @@
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="false"
-  [drawControlIsActive]="drawControlIsActive"
+  [drawControlIsActive]="drawControlIsActive$ | async"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async"
@@ -29,7 +29,7 @@
 
 <div class="header mat-typography">
     <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="drawControlIsActive"
+      [checked]="drawControlIsActive$ | async"
       [labelPosition]="'before'"
       (change)="onDrawControlChange()">
       {{'igo.geo.geometryPredefinedOrDraw.drawControl' | translate}}
