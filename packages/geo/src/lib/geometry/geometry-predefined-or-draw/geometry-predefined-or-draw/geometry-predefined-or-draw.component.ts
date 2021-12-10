@@ -39,8 +39,6 @@ export class GeometryPredefinedOrDrawTypeComponent implements OnInit, OnDestroy 
   @Input() minBufferMeters: number = 0;
   @Input() maxBufferMeters: number = 100000;
   @Input() selectedPredefinedType: string;
-
-  @Input() layers: Layer[] = [];
   @Input() map: IgoMap;
 
   public selectedTypeIndex = new FormControl(0);
