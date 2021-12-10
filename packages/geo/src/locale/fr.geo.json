@@ -522,6 +522,13 @@
         "endYear": "Année de fin",
         "startYear": "Année de début"
       },
+      "geometryPredefinedOrDraw": {
+        "bufferAlert": "La zone tampon doit être comprise entre {{sizeMin}} et {{sizeMax}} {{unit}}",
+        "Meters": "mètres",
+        "Kilometers": "kilomètres",
+        "Miles": "miles",
+        "Feet": "pieds"
+      },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",
         "predefined": "Zone Prédéfinie",

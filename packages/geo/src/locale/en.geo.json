@@ -523,6 +523,14 @@
         "endYear": "End Year",
         "startYear": "Start Year"
       },
+      "geometryPredefinedOrDraw": {
+        "bufferAlert": "Buffer must be between {{sizeMin}} and {{sizeMax}} {{unit}}",
+        "Meters": "meters",
+        "Kilometers": "kilometers",
+        "Miles": "miles",
+        "Feet": "feet"
+
+      },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
         "predefined": "Predefined Zone",
