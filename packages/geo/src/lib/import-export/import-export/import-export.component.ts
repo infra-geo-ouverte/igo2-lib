@@ -572,8 +572,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                   if (currentFeature.get('_featureStore').layer.options.title !==
                   previousFeature.get('_featureStore').layer.options.title) {
                     const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
+                    featuresCSV.push(titleEmptyRows[2]);
                     featuresCSV.push(titleEmptyRows[1]);
-                    featuresCSV.push(titleEmptyRows[0]);
                   }
                 } else {
                   const titleEmptyRows = this.createTitleEmptyRows(currentFeature, currentFeature);
@@ -633,19 +633,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private createTitleEmptyRows(previousFeature, currentFeature) {
     const titleRow = previousFeature.clone();
+    const titleRowWithArrow = previousFeature.clone();
     const emptyRow = previousFeature.clone();
     const previousFeatureKeys: Array<string> = previousFeature.getKeys();
     const firstKey: string = previousFeatureKeys[1];
     previousFeatureKeys.forEach(key => {
       if (key === firstKey) {
         titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        titleRowWithArrow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===================>", true);
         emptyRow.unset(key, true);
       } else {
         titleRow.unset(key, true);
+        titleRowWithArrow.unset(key, true);
         emptyRow.unset(key, true);
       }
     });
-    const titleEmptyRows = [titleRow, emptyRow];
+    const titleEmptyRows = [titleRow, titleRowWithArrow, emptyRow];
     return titleEmptyRows;
   }
 
