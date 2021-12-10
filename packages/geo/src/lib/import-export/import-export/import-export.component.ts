@@ -465,7 +465,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
-      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || ! data.combineLayers) {
+      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)
+      || !data.combineLayers || data.layers.length === 1) {
         filename = lay.title;
         if (data.name) {
           filename = data.name;
@@ -538,10 +539,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       geomTypes.forEach(geomType => {
         geomType.features.forEach(feature => {
-          const re = new RegExp('^\\D+');
-          feature.set('couche', lay.title.match(re)[0].trim());
           const radius: number = feature.get('rad');
-
           if (radius) {
             const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
             const circle = circular(center4326, radius, 500);
@@ -571,7 +569,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             geomType.features.forEach(currentFeature => {
               if (data.separator) {
                 if (previousFeature) {
-                  if (currentFeature.get('couche') !== previousFeature.get('couche')) {
+                  if (currentFeature.get('_featureStore').layer.options.title !==
+                  previousFeature.get('_featureStore').layer.options.title) {
                     const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
                     featuresCSV.push(titleEmptyRows[1]);
                     featuresCSV.push(titleEmptyRows[0]);
@@ -586,9 +585,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
             });
           });
         }
-        featuresCSV.forEach(feature => {
-          feature.unset('couche', true);
-        });
       }
 
       if (geomTypes.length === 0) {
@@ -639,9 +635,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const titleRow = previousFeature.clone();
     const emptyRow = previousFeature.clone();
     const previousFeatureKeys: Array<string> = previousFeature.getKeys();
+    const firstKey: string = previousFeatureKeys[1];
     previousFeatureKeys.forEach(key => {
-      if (key === 'code') {
-        titleRow.set(key, currentFeature.get('couche'), true);
+      if (key === firstKey) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
         emptyRow.unset(key, true);
       } else {
         titleRow.unset(key, true);
