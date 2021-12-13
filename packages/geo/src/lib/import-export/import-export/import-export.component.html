@@ -132,6 +132,22 @@
     </mat-form-field>
   </div>
 
+  <div class="export-combine-layers mat-typography" *ngIf="layers.length > 1 && (form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon')">
+    <mat-slide-toggle
+        formControlName="combineLayers"
+        [labelPosition]="'before'">
+          {{'igo.geo.importExportForm.exportCombineResults' | translate}}
+    </mat-slide-toggle>
+  </div>
+
+  <div class="export-separator mat-typography" *ngIf="layers.length > 1 && (form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon') && form.value.combineLayers">
+    <mat-slide-toggle
+        formControlName="separator"
+        [labelPosition]="'before'">
+          {{'igo.geo.importExportForm.exportSeparator' | translate}}
+    </mat-slide-toggle>
+  </div>
+
   <div class="export-options mat-typography" *ngIf="form.value.format !== 'URL'">
     <mat-slide-toggle
         formControlName="featureInMapExtent"
