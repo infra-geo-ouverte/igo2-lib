@@ -561,7 +561,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (value === undefined) {
         value = false;
       }else if (typeof value !== 'boolean' && value !== undefined) {
+        if(typeof value === 'number'){
+          value = Boolean(value)
+        }else {
         value = JSON.parse(value.toLowerCase());
+        }
       }
       if (!this.isEdition(record)){
       value = value ? '&#10003;' : ''; // check mark
