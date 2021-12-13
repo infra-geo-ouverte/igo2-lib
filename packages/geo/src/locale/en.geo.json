@@ -113,16 +113,18 @@
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
-        }
+        },
+        "combinedLayers": "combinedLayers"
       },
       "importExportForm": {
         "exportButton": "Export",
         "exportButtonLink": "Open the link",
         "exportButtonLinks": "Open the links",
-        "exportCircleToPolygon": "Transform Circle entities in polygons",
+        "exportCombineResults": "Combine layers into one file",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "exportSeparator": "Insert separator (empty row) between layers",
         "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
@@ -382,8 +384,8 @@
         "notification": "notification ...",
         "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "st",
           "secondAndMore": "rd"
         },
@@ -545,6 +547,8 @@
         "Address": "Addresses",
         "Thematics": "Thematics",
         "searchResults": "Search Results",
+        "showSearchResults": "Show search results",
+        "hideSearchResults": "Hide search results",
         "type": "Type",
         "radius": "Radius",
         "radiusAlert": "Radius must be between 0 and 100 kilometers (or 100 000 meters)",

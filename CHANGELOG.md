@@ -1,3 +1,24 @@
+# [1.10.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.4...1.10.0) (2021-12-13)
+
+
+### Bug Fixes
+
+* **arcgis layer:** attribution cause crash on add layer. ([#942](https://github.com/infra-geo-ouverte/igo2-lib/issues/942)) ([dbdf136](https://github.com/infra-geo-ouverte/igo2-lib/commit/dbdf1361238b6655aa124071a5568986026309c5))
+* **layer-legend-component:** problem with a layer contain many layerName into the layer-legend ([c1275dd](https://github.com/infra-geo-ouverte/igo2-lib/commit/c1275ddd3e9fdd2cbf7260aa4ea56e5f484c5a15))
+* **message:** undefined title crash of message service ([#960](https://github.com/infra-geo-ouverte/igo2-lib/issues/960)) ([01629a6](https://github.com/infra-geo-ouverte/igo2-lib/commit/01629a60e15e397e62a4bd3902f052109b2dd16b))
+
+
+### Features
+
+* **advanced-coordinates:** add the map's scale and resolution to the tool. ([#953](https://github.com/infra-geo-ouverte/igo2-lib/issues/953)) ([ba6af1d](https://github.com/infra-geo-ouverte/igo2-lib/commit/ba6af1d676ef074a845d7c56e59bbc518118c70e))
+* **core:** notification are now based on ngx-toastr ([82544c0](https://github.com/infra-geo-ouverte/igo2-lib/commit/82544c0499b841bfa66d1cc96de3a223a1eb7743))
+* **export:** added possibility of exporting merged CSV files ([#949](https://github.com/infra-geo-ouverte/igo2-lib/issues/949)) ([a24382a](https://github.com/infra-geo-ouverte/igo2-lib/commit/a24382acf4964167cbb6dd436fc0c41cd8cd65c4))
+* **hover/sba:** Style by attribute and Hover style refactor ([#951](https://github.com/infra-geo-ouverte/igo2-lib/issues/951)) ([c2b5041](https://github.com/infra-geo-ouverte/igo2-lib/commit/c2b5041e9ef81e565a66866382cb32fae9bb3783))
+* **messages:** message at the layer level, config to allow the message to be shown each time the layer is set to be visible. ([#943](https://github.com/infra-geo-ouverte/igo2-lib/issues/943)) ([3822e9c](https://github.com/infra-geo-ouverte/igo2-lib/commit/3822e9c5bb426cb73e8398466dbf2e6e123a786c))
+* **spatial-filter:** add search results entity table ([#954](https://github.com/infra-geo-ouverte/igo2-lib/issues/954)) ([94f999f](https://github.com/infra-geo-ouverte/igo2-lib/commit/94f999fb6e85a2857be5804dd86ae2d9298e99ca))
+
+
+
 ## [1.9.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.3...1.9.4) (2021-11-15)
 
 

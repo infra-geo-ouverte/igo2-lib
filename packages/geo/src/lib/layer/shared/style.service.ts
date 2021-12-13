@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import RenderFeature from 'ol/render/Feature';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +70,7 @@ export class StyleService {
     return olCls;
   }
 
-  createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
+  createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute) {
 
     let style;
     const type = styleByAttribute.type ? styleByAttribute.type : this.guessTypeFeature(feature);
@@ -82,28 +84,24 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
-    const label = styleByAttribute.label;
-    const labelStyle = label instanceof olstyle.Style ?
-      this.parseStyle('text', styleByAttribute.label) ||
-      new olstyle.Text() : undefined;
+    const label = styleByAttribute.label ? styleByAttribute.label.attribute : undefined;
+    let labelStyle = styleByAttribute.label?.style ? this.parseStyle('text', styleByAttribute.label.style) : undefined;
+    if (!labelStyle && label) {
+        labelStyle = new olstyle.Text();
+    }
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
-      const options = {
-        text: this.getLabel(feature, label)
-      };
-
-      labelStyle instanceof olstyle.Style ? labelStyle.setText(new olstyle.Text(options)) :
       labelStyle.setText(this.getLabel(feature, label));
     }
 
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined'
+          typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(data[i])) {
+        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -111,8 +109,9 @@ export class StyleService {
                   color: fill ? fill[i] : undefined,
                   src: icon[i],
                   scale: scale ? scale[i] : 1,
-                  anchor: anchor ? anchor[i] : [0.5, 0.5],
-                })
+                  anchor: anchor ? anchor[i] : [0.5, 0.5]
+                }),
+                text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
               })
             ];
             return style;
@@ -135,7 +134,7 @@ export class StyleService {
           return style;
         }
       }
-      if (!feature.getStyle()) {
+      if (!(feature as OlFeature<OlGeometry>).getStyle()) {
         if (baseStyle) {
           style = this.createStyle(baseStyle);
           if (labelStyle) {
@@ -161,10 +160,10 @@ export class StyleService {
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined'
+        typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(data[i])) {
+        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           style = [
             new olstyle.Style({
               stroke: new olstyle.Stroke({
@@ -281,6 +280,9 @@ export class StyleService {
 
   getLabel(feature, labelMatch): string {
     let label = labelMatch;
+    if (!label) {
+      return;
+    }
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
     labelToGet.forEach(v => {

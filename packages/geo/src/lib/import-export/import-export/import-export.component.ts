@@ -460,11 +460,20 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.handlePopup();
     }
 
-    data.layers.forEach((layer) => {
+    let geomTypesCSV: { geometryType: string, features: any[] }[] = [];
+    let featuresCSV: any[] = [];
+    let filename: string = "";
+
+    for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
-      let filename = lay.title;
-      if (data.name !== undefined) {
-        filename = data.name;
+      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)
+      || !data.combineLayers || data.layers.length === 1) {
+        filename = lay.title;
+        if (data.name) {
+          filename = data.name;
+        }
+      } else {
+        filename = this.languageService.translate.instant('igo.geo.export.combinedLayers');
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
       if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
@@ -532,7 +541,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       geomTypes.forEach(geomType => {
         geomType.features.forEach(feature => {
           const radius: number = feature.get('rad');
-
           if (radius) {
             const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
             const circle = circular(center4326, radius, 500);
@@ -551,6 +559,33 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           const message = translate.instant('igo.geo.export.gpx.error.poly.text');
           this.messageService.error(message, title, { timeOut: 20000 });
         }
+      } else if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
+        geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
+
+        if (layerIndex !== data.layers.length - 1) {
+          continue;
+        } else {
+          let previousFeature = undefined;
+          geomTypesCSV.forEach(geomType => {
+            geomType.features.forEach(currentFeature => {
+              if (data.separator) {
+                if (previousFeature) {
+                  if (currentFeature.get('_featureStore').layer.options.title !==
+                  previousFeature.get('_featureStore').layer.options.title) {
+                    const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
+                    featuresCSV.push(titleEmptyRows[2]);
+                    featuresCSV.push(titleEmptyRows[1]);
+                  }
+                } else {
+                  const titleEmptyRows = this.createTitleEmptyRows(currentFeature, currentFeature);
+                  featuresCSV.push(titleEmptyRows[0]);
+                }
+              }
+              featuresCSV.push(currentFeature);
+              previousFeature = currentFeature;
+            });
+          });
+        }
       }
 
       if (geomTypes.length === 0) {
@@ -560,29 +595,72 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.messageService.error(message, title, { timeOut: 20000 });
 
       } else {
-        geomTypes.map(geomType =>
-          this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
-          .subscribe(
-            () => {},
-            (error: Error) => this.onFileExportError(error),
-            () => {
-              this.onFileExportSuccess();
+        if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || !data.combineLayers) {
+          geomTypes.map(geomType =>
+            this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
+            .subscribe(
+              () => {},
+              (error: Error) => this.onFileExportError(error),
+              () => {
+                this.onFileExportSuccess();
 
-              geomType.features.forEach(feature => {
-                const radius: number = feature.get('rad');
+                geomType.features.forEach(feature => {
+                  this.circleToPoint(feature);
+                });
 
-                if (radius) {
-                  const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
-                  point.transform('EPSG:4326', feature.get('_projection'));
-                  feature.setGeometry(point);
-                }
-              });
-
-              this.loading$.next(false);
+                this.loading$.next(false);
             }
-        ));
+          ));
+        }
+      }
+    };
+    if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
+      this.exportService.export(featuresCSV, data.format, filename, data.encoding, this.map.projection)
+      .subscribe(
+        () => {},
+        (error: Error) => this.onFileExportError(error),
+        () => {
+          this.onFileExportSuccess();
+
+          featuresCSV.forEach(feature => {
+            this.circleToPoint(feature);
+          });
+
+          this.loading$.next(false);
+        }
+      );
+    }
+  }
+
+  private createTitleEmptyRows(previousFeature, currentFeature) {
+    const titleRow = previousFeature.clone();
+    const titleRowWithArrow = previousFeature.clone();
+    const emptyRow = previousFeature.clone();
+    const previousFeatureKeys: Array<string> = previousFeature.getKeys();
+    const firstKey: string = previousFeatureKeys[1];
+    previousFeatureKeys.forEach(key => {
+      if (key === firstKey) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        titleRowWithArrow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===================>", true);
+        emptyRow.unset(key, true);
+      } else {
+        titleRow.unset(key, true);
+        titleRowWithArrow.unset(key, true);
+        emptyRow.unset(key, true);
       }
     });
+    const titleEmptyRows = [titleRow, titleRowWithArrow, emptyRow];
+    return titleEmptyRows;
+  }
+
+  private circleToPoint(feature) {
+    const radius: number = feature.get('rad');
+
+    if (radius) {
+      const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+      point.transform('EPSG:4326', feature.get('_projection'));
+      feature.setGeometry(point);
+    }
   }
 
   private buildForm() {
@@ -596,6 +674,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
+        combineLayers: [true, [Validators.required]],
+        separator: [false, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
@@ -605,6 +685,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
         encoding: [EncodingFormat.UTF8, [Validators.required]],
+        combineLayers: [true, [Validators.required]],
+        separator: [false, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
       });
     }
