@@ -300,15 +300,11 @@ export class EditionWorkspaceService {
       };
 
       if (field.type === 'list') {
-        this.getDomainValues(field.relation.table).subscribe(result => { 
+        this.getDomainValues(field.relation.table).subscribe(result => {
           column.domainValues = result;
         });
-         console.log('TEST');
       }
-
-
       return column;
-
     });
 
     relationsColumn = relations.map((relation: RelationOptions) => {
@@ -344,7 +340,6 @@ export class EditionWorkspaceService {
   }
 
   public saveFeature(feature, workspace){
-    console.log('save', feature);
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl +
@@ -361,16 +356,18 @@ export class EditionWorkspaceService {
 
   public addFeature(feature, workspace, url) {
     const geom = workspace.layer.dataSource.options.edition.geomField;
-    if (geom){
-      //feature.properties[geom] = feature.geometry;
+    if (geom) {
+      //feature.properties[geom] = feature.geometry; TODO: ADJUST FOR POLYGON/LINE
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
     }
-    console.log(feature.properties);
+
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
           workspace.entityStore.delete(feature);
+          workspace.map.removeLayer(workspace.olDrawingLayer);
+          workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
           for (const layer of workspace.layer.map.layers) {
             if (
               layer.id !== workspace.layer.id &&
@@ -478,9 +475,11 @@ export class EditionWorkspaceService {
   }
 
   cancelEdit(workspace, feature, fromSave = false) {
+    console.log(feature);
     feature.edition = false;
     if (feature.newFeature) {
       workspace.deleteDrawings(feature, workspace);
+      workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
     } else {
       if (!fromSave) {
         feature.properties = feature.original_properties;

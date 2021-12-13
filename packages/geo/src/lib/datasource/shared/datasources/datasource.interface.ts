@@ -1,6 +1,7 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 
 export interface DataSourceOptions {
   type?:
@@ -56,6 +57,8 @@ export interface EditionOptions {
   addUrl: string;
   deleteUrl: string;
   modifyUrl: string;
+  geomType: typeof OlGeometryType;
+  addWithDraw: boolean;
 }
 
 export interface RelationOptions {

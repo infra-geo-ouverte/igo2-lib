@@ -264,30 +264,32 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onSelectValueChange(column, record, event) {
-    let value = event.target.value;
-
-
-    if(column.multiple) {
-      console.log('ICI');
+    if (column.includes('properties.')) {
+      record.entity.properties[column.split('.')[1]] = event.value;
+    } else {
+      record.entity.properties[column] = event.value;
     }
+    console.log(record.entity.properties);
   }
-
-  ngModelChangeSelect(column, record, event) {
-    console.log('ngModelChangeSelect');
-  }
-
-  ngModelSelect(event) {
-    console.log('ngModelSelect');
-  }
-
 
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
-      this.formGroup.setControl(column.name, this.formBuilder.control(
-        item[column.name.substring(column.name.indexOf('.') + 1,column.name.length)]
-      ));
+      if (column.name.includes('properties.')) {
+        column.type === 'list' ?
+          this.formGroup.setControl(column.name, this.formBuilder.control(
+            [item[column.name.split('.')[1]]]
+          )) :
+          this.formGroup.setControl(column.name, this.formBuilder.control(
+            item[column.name.split('.')[1]]
+          ));
+      } else {
+        this.formGroup.setControl(column.name, this.formBuilder.control(
+          item[column.name]
+        ));
+      }
     });
+    console.log(this.formGroup);
   }
 
   private handleDatasource() {
@@ -573,33 +575,31 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         console.log('VALUE_CHECKBOX ' + column.name, value);
 
     } else if (column.type === 'list' && value && column.domainValues) {
-
-      if(column.multiple) {
-        let list_id = value.match(/[\w.-]+/g).map(Number);
+      if (column.multiple) {
+        let list_id;
+        typeof value === 'string' ? list_id = value.match(/[\w.-]+/g).map(Number) : list_id = value;
         let list_option = [];
 
         column.domainValues.forEach(option => {
-
           if (list_id.includes(option.id )) {
-
-            if (record.edition){
+            if (record.edition) {
               list_option.push(option.id);
             } else {
-            list_option.push(option.value);
+              list_option.push(option.value);
             }
           }
         });
-        value = list_option;
+
+        this.isEdition(record) ? value = list_id : value = list_option;
 
       } else {
         column.domainValues.forEach(option => {
-
           if (option.id === value) {
-          value = option.value;
+            this.isEdition(record) ? value = option.id : value = option.value;
           }
         });
       }
- }
+    }
 
     if (value === undefined) {
       value = '';
@@ -727,5 +727,4 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   public compareWithSelected(optionsValue: any, selected: any): boolean {
     return optionsValue === selected;
   }
-
 }
