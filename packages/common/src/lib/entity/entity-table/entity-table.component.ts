@@ -36,10 +36,6 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { debounceTime } from 'rxjs/operators';
 
-const defaultErrors = {
-  required: 'Champ obligatoire'
-};
-
 @Component({
   selector: 'igo-entity-table',
   templateUrl: './entity-table.component.html',
@@ -264,7 +260,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = value;
-   
   }
 
   onBooleanValueChange(column, record, event) {
@@ -273,16 +268,17 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onSelectValueChange(column, record, event) {
-    const key = this.getColumnKeyWithoutPropertiesTag(column);  
+    const key = this.getColumnKeyWithoutPropertiesTag(column);
      record.entity.properties[key] = event.value;
     console.log(record.entity.properties);
   }
 
   private enableEdit(record) {
+    console.log('edit', record);
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
-        column.type === 'list' ?
+        column.type === 'list' && column.multiple ?
           this.formGroup.setControl(column.name, this.formBuilder.control(
             [item[key]]
           )) :
@@ -563,17 +559,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (column.type === 'boolean') {
       if (value === undefined) {
         value = false;
-      }else if (typeof value !== 'boolean' && value !== undefined) {
-        if(typeof value === 'number'){
+      } else if (typeof value !== 'boolean' && value !== undefined) {
+        if (typeof value === 'number'){
           value = Boolean(value)
-        }else {
-        value = JSON.parse(value.toLowerCase());
+        } else {
+          value = JSON.parse(value.toLowerCase());
         }
       }
       if (!this.isEdition(record)){
-      value = value ? '&#10003;' : ''; // check mark
-      } 
-
+        value = value ? '&#10003;' : ''; // check mark
+      }
     } else if (column.type === 'list' && value && column.domainValues) {
       if (column.multiple) {
         let list_id;
@@ -581,7 +576,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         let list_option = [];
 
         column.domainValues.forEach(option => {
-          if (list_id.includes(option.id )) {
+          if (list_id.includes(option.id)) {
             if (record.edition) {
               list_option.push(option.id);
             } else {
@@ -594,8 +589,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
       } else {
         column.domainValues.forEach(option => {
+          if (typeof value === 'string') {
+            console.log(value);
+            value = parseInt(value);
+          }
           if (option.id === value) {
             this.isEdition(record) ? value = option.id : value = option.value;
+            console.log('ICI', value);
           }
         });
       }
@@ -717,7 +717,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     if (formControl.touched && formControl.errors) {
       Object.keys(formControl.errors).forEach(error => {
-        errorMessages.push(defaultErrors[error] || formControl.errors[error]);
+        errorMessages.push(formControl.errors[error]);
       });
     }
 

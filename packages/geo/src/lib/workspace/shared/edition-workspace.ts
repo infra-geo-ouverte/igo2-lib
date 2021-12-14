@@ -138,14 +138,18 @@ export class EditionWorkspace extends Workspace {
     } else {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
+        feature.newFeature = true;
         if (editionOpt.addWithDraw) {
-          feature.newFeature = true;
           const geometryType = editionOpt.geomType;
           this.onGeometryTypeChange(geometryType, feature, workspace);
         } else {
-          feature.newFeature = true;
           workspace.entityStore.insert(feature);
-          console.log(workspace.entityStore.all(), feature);
+          console.log(workspace.entityStore.all());
+          setTimeout(() => {
+            const editionTable = document.getElementsByClassName('edition-table')[0].firstElementChild;
+            console.log(editionTable);
+            editionTable.scrollTop = editionTable.scrollHeight;
+          }, 1000);
         }
       }
     }
@@ -279,9 +283,11 @@ export class EditionWorkspace extends Workspace {
   }
 
   deleteDrawings(feature, workspace) {
-    workspace.layer.dataSource.ol.removeFeature(feature.ol);
+    if (feature.ol) {
+      workspace.layer.dataSource.ol.removeFeature(feature.ol);
+      this.map.removeLayer(this.olDrawingLayer);
+      this.olDrawingLayerSource.clear();
+    }
     workspace.entityStore.delete(feature);
-    this.map.removeLayer(this.olDrawingLayer);
-    this.olDrawingLayerSource.clear();
   }
 }
