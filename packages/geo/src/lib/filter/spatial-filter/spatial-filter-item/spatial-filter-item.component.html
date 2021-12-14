@@ -73,7 +73,7 @@
     </mat-radio-button>
 </mat-radio-group>
 
-<div class="thematics" *ngIf="selectedItemType==='Thematics'">
+<div class="thematics" *ngIf="(selectedItemType==='Thematics' && !tableTemplate) || (selectedItemType==='Thematics' && tableTemplate && !listIsVisible)">
   <mat-table>
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -155,4 +155,31 @@
     {{'igo.geo.spatialFilter.exportLayer' | translate}}
   </button>
 
+</div>
+
+<button
+  class="chevron-down"
+  *ngIf="store.all().length && tableTemplate && !listIsVisible"
+  mat-icon-button
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.spatialFilter.showSearchResults' | translate"
+  (click)="toggleVisibleList()">
+  <mat-icon svgIcon="chevron-down"></mat-icon>
+</button>
+
+<div class="results" *ngIf="store.all().length && tableTemplate && listIsVisible">
+  <button
+    *ngIf="listIsVisible"
+    mat-icon-button
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.spatialFilter.hideSearchResults' | translate"
+    (click)="toggleVisibleList()">
+  <mat-icon svgIcon="chevron-up"></mat-icon>
+  </button>
+  <igo-entity-table
+    class="results-list"
+    [template]="tableTemplate"
+    [store]="store"
+    (entitySelectChange)="entityChange.emit($event)">
+  </igo-entity-table>
 </div>

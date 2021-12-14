@@ -113,16 +113,18 @@
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
-        }
+        },
+        "combinedLayers": "couchesCombinees"
       },
       "importExportForm": {
         "exportButton": "Exporter",
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
-        "exportCircleToPolygon": "Transformer les entités de type Cercle en polygones",
+        "exportCombineResults": "Combiner les couches dans un seul fichier",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
+        "exportSeparator": "Insérer un séparateur (ligne vide) entre les couches",
         "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
@@ -381,8 +383,8 @@
         "notification": "notification ...",
         "uturnText": "Faire demi-tour et continuer en direction {{translatedDirection}} sur {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "ère",
           "secondAndMore": "e"
         },
@@ -541,10 +543,12 @@
         "removeLayer": "Retirer les résultats",
         "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
-        "clearSearch": "Réinitialiser les champs",
+        "clearSearch": "Réinitialiser",
         "Address": "Adresses",
         "Thematics": "Thématiques",
         "searchResults": "Résultats de la recherche",
+        "showSearchResults": "Afficher les résultats de la recherche",
+        "hideSearchResults": "Masquer les résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
         "radiusAlert": "Le rayon doit être compris entre 0 et 100 kilomètres (ou 100 000 mètres)",
