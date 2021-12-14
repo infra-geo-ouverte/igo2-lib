@@ -42,6 +42,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 export class EditionWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
+  public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -339,7 +340,7 @@ export class EditionWorkspaceService {
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
-  public saveFeature(feature, workspace){
+  public saveFeature(feature, workspace) {
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl +
@@ -361,13 +362,18 @@ export class EditionWorkspaceService {
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
     }
+    for (const property in feature.properties) {
+      if (feature.properties[property] === '') {
+        delete feature.properties[property];
+      }
+    }
 
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
-          workspace.entityStore.delete(feature);
           workspace.map.removeLayer(workspace.olDrawingLayer);
           workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
+          this.rowsInMapExtentCheckCondition$.next(true);
           for (const layer of workspace.layer.map.layers) {
             if (
               layer.id !== workspace.layer.id &&
@@ -401,7 +407,6 @@ export class EditionWorkspaceService {
   public deleteFeature(feature, workspace, url) {
     this.http.delete(`${url}`, {}).subscribe(
       () => {
-        workspace.entityStore.delete(feature);
         for (const layer of workspace.layer.map.layers) {
           if (
             layer.id !== workspace.layer.id &&
@@ -475,7 +480,6 @@ export class EditionWorkspaceService {
   }
 
   cancelEdit(workspace, feature, fromSave = false) {
-    console.log(feature);
     feature.edition = false;
     if (feature.newFeature) {
       workspace.deleteDrawings(feature, workspace);

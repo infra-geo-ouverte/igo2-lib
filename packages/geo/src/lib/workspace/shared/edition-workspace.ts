@@ -116,7 +116,6 @@ export class EditionWorkspace extends Workspace {
   }
 
   editFeature(feature, workspace: EditionWorkspace) {
-    console.log(feature);
     feature.edition = true;
     let id;
     const editionOpt = workspace.layer.dataSource.options.edition;
@@ -144,10 +143,8 @@ export class EditionWorkspace extends Workspace {
           this.onGeometryTypeChange(geometryType, feature, workspace);
         } else {
           workspace.entityStore.insert(feature);
-          console.log(workspace.entityStore.all());
           setTimeout(() => {
             const editionTable = document.getElementsByClassName('edition-table')[0].firstElementChild;
-            console.log(editionTable);
             editionTable.scrollTop = editionTable.scrollHeight;
           }, 1000);
         }

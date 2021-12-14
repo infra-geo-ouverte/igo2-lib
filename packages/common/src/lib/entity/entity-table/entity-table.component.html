@@ -85,7 +85,7 @@
                             (change)="onBooleanValueChange(column.name, record,$event)"></mat-checkbox>
                             <mat-select *ngIf="column.type === 'list'" required="{{getValidationAttributeValue(column, 'mandatory')}}"
                             [formControlName]="column.name" [multiple]="column.multiple" (selectionChange)="onSelectValueChange(column.name, record, $event)"
-                            ([value])="getValue(record, column)">
+                            [value]="getValue(record, column)">
                                 <mat-option *ngFor="let option of column.domainValues" [value]="option.id" [disabled]="option.disabled">
                                     {{ option.value }}
                                 </mat-option>

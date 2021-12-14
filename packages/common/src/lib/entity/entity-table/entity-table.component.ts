@@ -557,7 +557,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     value = this.store.getProperty(entity, column.name);
 
     if (column.type === 'boolean') {
-      if (value === undefined) {
+      console.log(value);
+      if (value === undefined || value === null || value === '') {
         value = false;
       } else if (typeof value !== 'boolean' && value !== undefined) {
         if (typeof value === 'number'){
@@ -589,12 +590,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
       } else {
         column.domainValues.forEach(option => {
-          if (typeof value === 'string') {
-            console.log(value);
+          if (typeof value === 'string' && /^\d+$/.test(value)) {
             value = parseInt(value);
           }
           if (option.id === value) {
-            this.isEdition(record) ? value = option.id : value = option.value;
+            value = option.value;
             console.log('ICI', value);
           }
         });

@@ -28,6 +28,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Output() changeWorkspace = new EventEmitter<string>();
+  @Output() rowsInMapExtentCheckCondition = new EventEmitter<boolean>();
 
   get workspaceStore(): WorkspaceStore {
     return this.component.store;
@@ -49,6 +50,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       );
 
     this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
+    this.editionWorkspaceService.rowsInMapExtentCheckCondition$.subscribe((condition) => { this.rowsInMapExtentCheckCondition.emit(condition); })
   }
 
   ngOnDestroy() {
