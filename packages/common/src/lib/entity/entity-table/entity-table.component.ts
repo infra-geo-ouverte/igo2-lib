@@ -224,20 +224,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
             }
           });
         });
-
-        /*             //Boolean convertion type value
-            this.template.columns.forEach(column => {
-              if (column.type === 'boolean') {
-                let key = this.getColumnKeyWithoutPropertiesTag(column.name);
-                console.log(key);
-                if (record.entity["properties"][key] === null) {
-                  record.entity["properties"][key] = false;
-                } else if (typeof record.entity["properties"][key] === 'string') {
-                record.entity["properties"][key] = JSON.parse(record.entity["properties"][key].toLowerCase());
-              }
-                console.log(record.entity["properties"][key]);
-              }
-            }); */
       }
     });
   }
@@ -278,13 +264,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
-        column.type === 'list' && column.multiple ?
+      if (column.type === 'boolean') {
+        if (!item[key] || item[key] === null) {
+          item[key] = false;
+        } else if (typeof item[key] === 'string') {
+          item[key] = JSON.parse(item[key].toLowerCase());
+        }
+        this.formGroup.setControl(column.name, this.formBuilder.control(
+          item[key]
+        ));
+      } else if (column.type === 'list') {
+        if (column.multiple) {
           this.formGroup.setControl(column.name, this.formBuilder.control(
             [item[key]]
-          )) :
+          ));
+        } else {
           this.formGroup.setControl(column.name, this.formBuilder.control(
             item[key]
           ));
+
+          typeof item[key] === 'string' ?
+            this.formGroup.controls[column.name].setValue(parseInt(item[key])) :
+            this.formGroup.controls[column.name].setValue(item[key]);
+        }
+      } else {
+        this.formGroup.setControl(column.name, this.formBuilder.control(
+          item[key]
+        ));
+      }
     });
     console.log(this.formGroup);
   }
@@ -557,7 +564,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     value = this.store.getProperty(entity, column.name);
 
     if (column.type === 'boolean') {
-      console.log(value);
       if (value === undefined || value === null || value === '') {
         value = false;
       } else if (typeof value !== 'boolean' && value !== undefined) {
@@ -587,15 +593,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         });
 
         this.isEdition(record) ? value = list_id : value = list_option;
-
       } else {
         column.domainValues.forEach(option => {
           if (typeof value === 'string' && /^\d+$/.test(value)) {
             value = parseInt(value);
           }
-          if (option.id === value) {
-            value = option.value;
-            console.log('ICI', value);
+          if (option.value === value || option.id === value) {
+            this.isEdition(record) ? value = option.id : value = option.value;
           }
         });
       }
@@ -722,10 +726,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return errorMessages;
-  }
-
-  public compareWithSelected(optionsValue: any, selected: any): boolean {
-    return optionsValue === selected;
   }
 
   //Remove properties. from Column name

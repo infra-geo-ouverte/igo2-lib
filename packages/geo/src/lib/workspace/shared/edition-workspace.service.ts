@@ -362,11 +362,6 @@ export class EditionWorkspaceService {
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
     }
-    for (const property in feature.properties) {
-      if (feature.properties[property] === '') {
-        delete feature.properties[property];
-      }
-    }
 
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
@@ -386,7 +381,7 @@ export class EditionWorkspaceService {
                 olLayer.updateParams(params);
               }
           }
-          workspace.layer.dataSource.ol.refresh();
+          this.refresh(workspace);
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.addSuccess'
@@ -419,7 +414,7 @@ export class EditionWorkspaceService {
               olLayer.updateParams(params);
             }
         }
-        workspace.layer.dataSource.ol.refresh();
+        this.refresh(workspace);
 
         const message = this.languageService.translate.instant(
           'igo.geo.workspace.deleteSuccess'
@@ -461,7 +456,7 @@ export class EditionWorkspaceService {
                 olLayer.updateParams(params);
               }
           }
-          workspace.layer.dataSource.ol.refresh();
+          this.refresh(workspace);
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
@@ -484,9 +479,12 @@ export class EditionWorkspaceService {
     if (feature.newFeature) {
       workspace.deleteDrawings(feature, workspace);
       workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
+      this.rowsInMapExtentCheckCondition$.next(true);
     } else {
       if (!fromSave) {
         feature.properties = feature.original_properties;
+      } else {
+        this.refresh(workspace);
       }
       delete feature.original_properties;
     }
@@ -503,6 +501,9 @@ export class EditionWorkspaceService {
         return throwError(err);
       })
     );
+  }
 
+  refresh(workspace: EditionWorkspace) {
+    workspace.layer.dataSource.ol.refresh();
   }
 }
