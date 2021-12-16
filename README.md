@@ -6,6 +6,8 @@
 
 # IGO2 Library
 
+SALUT KARL
+
 This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and this library are open source projects using Angular, Angular Material and OpenLayers. While IGO2 is mapping oriented, this library can easily serve other purposes as it contains many components and services that may benefit any web application.
 
 ## Description
