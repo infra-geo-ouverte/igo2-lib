@@ -116,13 +116,11 @@ export class QueryService {
     }
     features.map(feature => {
 
-      const localFeature = {
-        type: FEATURE,
-        properties: feature.getProperties(),
-      }
-      let queryTitleContent = this.getQueryTitle(localFeature, layer);
-      if (queryTitleContent) {
-        titleContent = !titleContent ? `${queryTitleContent}` : `${titleContent},${queryTitleContent}`;
+      if (queryTileField) {
+        let queryTitleContent = feature.getProperties()[queryTileField];
+        if (queryTitleContent) {
+          titleContent = !titleContent ? queryTitleContent : `${titleContent},${queryTitleContent}`;
+        }
       }
       /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
         outBboxExtent = true;
