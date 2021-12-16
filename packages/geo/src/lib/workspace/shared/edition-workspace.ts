@@ -144,12 +144,13 @@ export class EditionWorkspace extends Workspace {
       if (!feature.newFeature && editionOpt.geomType) {
         feature.newFeature = true;
         workspace.entityStore.state.updateAll({ newFeature: false });
-        workspace.entityStore.insert(feature);
-        workspace.entityStore.state.update(feature, { newFeature: true }, true);
         workspace.entityStore.stateView.filter(this.filterClauseFunc);
         if (editionOpt.addWithDraw) {
           const geometryType = editionOpt.geomType;
           this.onGeometryTypeChange(geometryType, feature, workspace);
+        } else {
+          workspace.entityStore.insert(feature);
+          workspace.entityStore.state.update(feature, { newFeature: true }, true);
         }
       }
     }
@@ -260,6 +261,8 @@ export class EditionWorkspace extends Workspace {
    * @internal
    */
   private addFeatureToStore(olGeometry, feature?, workspace?) {
+    workspace.entityStore.insert(feature);
+    workspace.entityStore.state.update(feature, { newFeature: true }, true);
     const projection = this.map.ol.getView().getProjection();
 
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
