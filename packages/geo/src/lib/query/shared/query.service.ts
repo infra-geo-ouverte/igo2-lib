@@ -111,7 +111,7 @@ export class QueryService {
       const dataSourceOptions = layer.options.source
         .options as QueryableDataSourceOptions;
       if (dataSourceOptions.queryTitle) {
-        queryTileField = dataSourceOptions.queryTitle
+        queryTileField = dataSourceOptions.queryTitle;
       }
     }
     features.map(feature => {
@@ -199,7 +199,7 @@ export class QueryService {
       imposedProperties[queryTileField] = titleContent;
     }
 
-    return [ returnGeometry, imposedProperties]
+    return [ returnGeometry, imposedProperties];
 
 
   }
