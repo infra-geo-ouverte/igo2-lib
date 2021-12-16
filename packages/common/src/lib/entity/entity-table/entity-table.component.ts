@@ -34,7 +34,6 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'igo-entity-table',
@@ -554,7 +553,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = false;
       } else if (typeof value !== 'boolean' && value !== undefined) {
         if (typeof value === 'number'){
-          value = Boolean(value)
+          value = Boolean(value);
         } else {
           value = JSON.parse(value.toLowerCase());
         }

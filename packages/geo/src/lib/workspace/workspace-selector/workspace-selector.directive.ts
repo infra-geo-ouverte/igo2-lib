@@ -50,7 +50,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       );
 
     this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
-    this.editionWorkspaceService.rowsInMapExtentCheckCondition$.subscribe((condition) => { this.rowsInMapExtentCheckCondition.emit(condition); })
+    this.editionWorkspaceService.rowsInMapExtentCheckCondition$.subscribe((condition) => {
+      this.rowsInMapExtentCheckCondition.emit(condition);
+    });
   }
 
   ngOnDestroy() {
