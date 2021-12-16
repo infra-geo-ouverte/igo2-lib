@@ -23,7 +23,7 @@ import {
   FeatureStoreInMapExtentStrategy,
   FeatureStoreInMapResolutionStrategy,
   FeatureStoreLoadingLayerStrategy,
-  FeatureStoreSelectionStrategy } from '../../feature';
+  FeatureStoreSelectionStrategy} from '../../feature';
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
@@ -366,27 +366,17 @@ export class EditionWorkspaceService {
     if (url) {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
-          workspace.map.removeLayer(workspace.olDrawingLayer);
-          workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
-          this.rowsInMapExtentCheckCondition$.next(true);
-          for (const layer of workspace.layer.map.layers) {
-            if (
-              layer.id !== workspace.layer.id &&
-              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
-              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
-              ) {
-                const olLayer = layer.dataSource.ol;
-                let params = olLayer.getParams();
-                params._t = new Date().getTime();
-                olLayer.updateParams(params);
-              }
-          }
-          this.refresh(workspace);
+          workspace.entityStore.stateView.clear();
+          workspace.deleteDrawings(feature, workspace);
+          this.refreshMap(workspace.layer, workspace.layer.map);
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.addSuccess'
           );
           this.messageService.success(message);
+
+          workspace.layer.dataSource.ol.refresh();
+          this.rowsInMapExtentCheckCondition$.next(true);
         },
         error => {
           error.error.caught = true;
@@ -399,27 +389,17 @@ export class EditionWorkspaceService {
     }
   }
 
-  public deleteFeature(feature, workspace, url) {
+  public deleteFeature(workspace, url) {
     this.http.delete(`${url}`, {}).subscribe(
       () => {
-        for (const layer of workspace.layer.map.layers) {
-          if (
-            layer.id !== workspace.layer.id &&
-            layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
-            layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
-            ) {
-              const olLayer = layer.dataSource.ol;
-              let params = olLayer.getParams();
-              params._t = new Date().getTime();
-              olLayer.updateParams(params);
-            }
-        }
-        this.refresh(workspace);
+        this.refreshMap(workspace.layer, workspace.layer.map);
 
         const message = this.languageService.translate.instant(
           'igo.geo.workspace.deleteSuccess'
         );
         this.messageService.success(message);
+
+        workspace.layer.dataSource.ol.refresh();
       },
       error => {
         error.error.caught = true;
@@ -444,24 +424,14 @@ export class EditionWorkspaceService {
       this.http.patch(`${url}`, featureProperties).subscribe(
         () => {
           this.cancelEdit(workspace, feature, true);
-          for (const layer of workspace.layer.map.layers) {
-            if (
-              layer.id !== workspace.layer.id &&
-              layer.options.linkedLayers?.linkId.includes(workspace.layer.id.substr(0, workspace.layer.id.indexOf('.') - 1)) &&
-              layer.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
-              ) {
-                const olLayer = layer.dataSource.ol;
-                let params = olLayer.getParams();
-                params._t = new Date().getTime();
-                olLayer.updateParams(params);
-              }
-          }
-          this.refresh(workspace);
+          this.refreshMap(workspace.layer, workspace.layer.map);
+
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
           this.messageService.success(message);
 
+          workspace.layer.dataSource.ol.refresh();
         },
         error => {
           error.error.caught = true;
@@ -477,14 +447,13 @@ export class EditionWorkspaceService {
   cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
     if (feature.newFeature) {
+      workspace.entityStore.stateView.clear();
+      workspace.deactivateDrawControl();
       workspace.deleteDrawings(feature, workspace);
-      workspace.entityStore.activateStrategyOfType(FeatureStoreInMapExtentStrategy);
       this.rowsInMapExtentCheckCondition$.next(true);
     } else {
       if (!fromSave) {
         feature.properties = feature.original_properties;
-      } else {
-        this.refresh(workspace);
       }
       delete feature.original_properties;
     }
@@ -503,7 +472,18 @@ export class EditionWorkspaceService {
     );
   }
 
-  refresh(workspace: EditionWorkspace) {
-    workspace.layer.dataSource.ol.refresh();
+  refreshMap(layer, map) {
+    for (const lay of map.layers) {
+      if (
+        lay.id !== layer.id &&
+        lay.options.linkedLayers?.linkId.includes(layer.id.substr(0, layer.id.indexOf('.') - 1)) &&
+        lay.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
+        ) {
+          const olLayer = lay.dataSource.ol;
+          let params = olLayer.getParams();
+          params._t = new Date().getTime();
+          olLayer.updateParams(params);
+        }
+    }
   }
 }

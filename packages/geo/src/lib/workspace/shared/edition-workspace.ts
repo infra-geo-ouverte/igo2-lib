@@ -1,7 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
 import {
   Workspace,
-  WorkspaceOptions
+  WorkspaceOptions,
+  EntityRecord
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -39,6 +40,10 @@ export class EditionWorkspace extends Workspace {
   private olDrawingLayerSource = new OlVectorSource();
   private olDrawingLayer: VectorLayer;
   public geometryType = GeometryType; // Reference to the GeometryType enum
+
+  private filterClauseFunc = (record: EntityRecord<object>) => {
+    return record.state.newFeature === true;
+  };
 
   fillColor: string;
   strokeColor: string;
@@ -108,7 +113,7 @@ export class EditionWorkspace extends Workspace {
           }
           if (url) {
             url += id;
-            this.editionWorkspaceService.deleteFeature(feature, workspace, url);
+            this.editionWorkspaceService.deleteFeature(workspace, url);
           }
         }
       });
@@ -138,15 +143,13 @@ export class EditionWorkspace extends Workspace {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
         feature.newFeature = true;
+        workspace.entityStore.state.updateAll({ newFeature: false });
+        workspace.entityStore.insert(feature);
+        workspace.entityStore.state.update(feature, { newFeature: true }, true);
+        workspace.entityStore.stateView.filter(this.filterClauseFunc);
         if (editionOpt.addWithDraw) {
           const geometryType = editionOpt.geomType;
           this.onGeometryTypeChange(geometryType, feature, workspace);
-        } else {
-          workspace.entityStore.insert(feature);
-          setTimeout(() => {
-            const editionTable = document.getElementsByClassName('edition-table')[0].firstElementChild;
-            editionTable.scrollTop = editionTable.scrollHeight;
-          }, 1000);
         }
       }
     }
@@ -207,7 +210,6 @@ export class EditionWorkspace extends Workspace {
    */
   private activateDrawControl(feature, workspace) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
-      workspace.layer.map.viewController.zoomToExtent(olGeometry.getExtent());
       this.addFeatureToStore(olGeometry, feature, workspace);
     });
 
@@ -270,8 +272,6 @@ export class EditionWorkspace extends Workspace {
 
     const featureOl = featureToOl(feature, projection.getCode());
 
-    workspace.layer.dataSource.ol.addFeature(featureOl);
-
     this.olDrawingLayer.dataSource.ol.clear();
     this.olDrawingLayer.dataSource.ol.addFeature(featureOl);
     this.map.addLayer(this.olDrawingLayer);
@@ -280,11 +280,8 @@ export class EditionWorkspace extends Workspace {
   }
 
   deleteDrawings(feature, workspace) {
-    if (feature.ol) {
-      workspace.layer.dataSource.ol.removeFeature(feature.ol);
-      this.map.removeLayer(this.olDrawingLayer);
-      this.olDrawingLayerSource.clear();
-    }
+    this.map.removeLayer(this.olDrawingLayer);
+    this.olDrawingLayerSource.clear();
     workspace.entityStore.delete(feature);
   }
 }

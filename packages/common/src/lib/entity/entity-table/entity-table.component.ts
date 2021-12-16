@@ -212,20 +212,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
-    this.store.entities$.pipe(debounceTime(500)).subscribe(entities => {
-      const editionColumn = this.template?.columns?.find(col => col.name === 'edition');
-      if (editionColumn) {
-        entities.forEach(e => {
-          const entity = e as any;
-          this.store.stateView.all().forEach(record => {
-            if (entity.newFeature && entity === record.entity) {
-              const clickFunc = editionColumn.valueAccessor(entity, record).find(value => value.icon === 'pencil').click;
-              this.onButtonClick(clickFunc, record);
-            }
-          });
-        });
-      }
-    });
   }
 
   /**
@@ -255,12 +241,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   onSelectValueChange(column, record, event) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
-     record.entity.properties[key] = event.value;
-    console.log(record.entity.properties);
+    record.entity.properties[key] = event.value;
   }
 
   private enableEdit(record) {
-    console.log('edit', record);
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
@@ -293,7 +277,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         ));
       }
     });
-    console.log(this.formGroup);
   }
 
   private handleDatasource() {
@@ -316,6 +299,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectionState$.next(this.computeSelectionState(records));
       });
     this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
+      if (all[0]) {
+        this.enableEdit(all[0]);
+      }
       this.dataSource.data = all;
     });
 

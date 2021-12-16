@@ -24,7 +24,6 @@ export interface Feature<P = { [key: string]: any }> {
   meta?: FeatureMeta;
   ol?: OlFeature<OlGeometry> | OlRenderFeature;
   sourceId?: string;
-  newFeature?: boolean;
 }
 
 export interface FeatureMeta {

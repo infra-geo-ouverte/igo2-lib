@@ -85,7 +85,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
       const entitiesInMapExtent = store.entities$.value
-        .filter((entity: Feature) => olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent));
+        .filter((entity: Feature) => entity.ol ? olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent) : undefined);
       if (entitiesInMapExtent.length > 0) {
         store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, true);
       }

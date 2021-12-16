@@ -84,10 +84,6 @@ export function featureToOl(
     olFeature.set('_sourceId', feature.sourceId, true);
   }
 
-  if (feature.newFeature) {
-    olFeature.set('_newFeature', feature.newFeature, true);
-  }
-
   return olFeature;
 }
 
@@ -222,8 +218,7 @@ export function featureFromOl(
     },
     properties,
     geometry,
-    ol: olFeature,
-    newFeature
+    ol: olFeature
   };
 }
 
