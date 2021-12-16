@@ -246,6 +246,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
+      column.title = column.validation?.mandatory && !column.title.includes('*') ? column.title + ' *' : column.title;
+
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
       if (column.type === 'boolean') {
         if (!item[key] || item[key] === null) {
