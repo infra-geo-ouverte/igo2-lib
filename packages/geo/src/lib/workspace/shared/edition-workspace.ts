@@ -123,16 +123,27 @@ export class EditionWorkspace extends Workspace {
   editFeature(feature, workspace: EditionWorkspace) {
     feature.edition = true;
     let id;
+    let find = false;
     const editionOpt = workspace.layer.dataSource.options.edition;
-    outerloop: for (const column of workspace.meta.tableTemplate.columns ) {
-      for (const property in feature.properties) {
-        let columnName = column.name;
-        if (columnName.includes('properties.')) {
-          columnName = columnName.split('.')[1];
-        }
-        if (columnName === property && column.primary === true) {
-          id = feature.properties[property];
-          break outerloop;
+    for (const column of workspace.meta.tableTemplate.columns ) {
+
+      // Update domain list
+      if (column.type === 'list') {
+        this.editionWorkspaceService.getDomainValues(column.relation.table).subscribe(result => {
+          column.domainValues = result;
+        });
+      }
+      if (find === false) {
+        for (const property in feature.properties) {
+          let columnName = column.name;
+          if (columnName.includes('properties.')) {
+            columnName = columnName.split('.')[1];
+          }
+          if (columnName === property && column.primary === true) {
+            id = feature.properties[property];
+            find = true;
+          break;
+          }
         }
       }
     }

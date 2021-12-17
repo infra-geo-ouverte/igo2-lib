@@ -297,12 +297,14 @@ export class EditionWorkspaceService {
         valueReturn: field.valueReturn,
         type: field.type,
         domainValues: undefined,
+        relation: undefined,
         multiple: field.multiple
       };
 
       if (field.type === 'list') {
         this.getDomainValues(field.relation.table).subscribe(result => {
           column.domainValues = result;
+          column.relation = field.relation;
         });
       }
       return column;
@@ -503,7 +505,7 @@ export class EditionWorkspaceService {
         Object.keys( column.validation).forEach((type) => {
           switch (type) {
             case 'mandatory': {
-              if (!feature.properties.hasOwnProperty(key) || !feature.properties[key]) {
+              if (column.validation[type] && (!feature.properties.hasOwnProperty(key) || !feature.properties[key])) {
                 valid = false;
                   message = translate.instant('igo.geo.formValidation.mandatory',
                   {

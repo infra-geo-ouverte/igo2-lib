@@ -99,6 +99,10 @@ export interface EntityTableColumnValidation {
 
 }
 
+export interface TableRelation {
+  table: string;
+}
+
 export interface EntityTableColumn {
   validation?: EntityTableColumnValidation;
   name: string;
@@ -110,6 +114,7 @@ export interface EntityTableColumn {
   type?: string;
   multiple?: boolean;
   domainValues?: Array<SelectOption>;
+  relation?: TableRelation;
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
