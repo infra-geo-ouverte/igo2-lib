@@ -1,3 +1,4 @@
+import { FeatureStoreInMapExtentStrategy } from './../../feature/shared/strategies/in-map-extent';
 import { MatDialog } from '@angular/material/dialog';
 import {
   Workspace,
