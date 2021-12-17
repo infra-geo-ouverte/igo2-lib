@@ -142,7 +142,7 @@ export class EditionWorkspace extends Workspace {
           if (columnName === property && column.primary === true) {
             id = feature.properties[property];
             find = true;
-          break;
+            break;
           }
         }
       }
