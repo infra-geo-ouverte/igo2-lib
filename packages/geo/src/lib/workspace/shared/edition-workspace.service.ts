@@ -341,6 +341,12 @@ export class EditionWorkspaceService {
   }
 
   public saveFeature(feature, workspace) {
+
+    if (!this.validateFeature(feature, workspace)){
+      return false;
+    }
+
+    
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl +
@@ -486,4 +492,92 @@ export class EditionWorkspaceService {
         }
     }
   }
+
+  validateFeature(feature, workspace) {
+    const translate = this.languageService.translate;
+    let message ;
+    let key;
+    let valid = true;
+    workspace.meta.tableTemplate.columns.forEach(column => {
+      if (column.hasOwnProperty('validation') && column.validation) {
+        key = getColumnKeyWithoutPropertiesTag(column.name);
+        Object.keys( column.validation).forEach((type) =>{
+          switch (type) {
+            case 'mandatory': {
+                if (!feature.properties.hasOwnProperty(key) || !feature.properties[key]) {
+                  valid = false;
+                    message = translate.instant('igo.geo.formValidation.mandatory',
+                    {
+                      column: column.title
+                    }
+                  );
+                  this.messageService.error(message);
+                }
+              break; 
+              }
+              case 'minValue': {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] <= column.validation[type]) {
+                valid = false;
+                message = translate.instant('igo.geo.formValidation.minValue',
+                  {
+                    column: column.title,
+                    value: column.validation[type]
+                  }
+                );
+                this.messageService.error(message);
+                }
+              break; 
+              }
+              case 'maxValue': {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] >= column.validation[type]) {
+                valid = false;
+                message = translate.instant('igo.geo.formValidation.maxValue',
+                  {
+                    column: column.title,
+                    value: column.validation[type]
+                  }
+                );
+                this.messageService.error(message);
+              }
+              break; 
+              }
+            case 'minLength': {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key].length < column.validation[type]) {
+                valid = false;
+                message = translate.instant('igo.geo.formValidation.minLength',
+                  {
+                    column: column.title,
+                    value: column.validation[type]
+                  }
+                );
+                this.messageService.error(message);                
+              }
+              break; 
+            }
+            case 'maxLength': {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key].length > column.validation[type]) {
+                valid = false;
+                message = translate.instant('igo.geo.formValidation.maxLength',
+                  {
+                    column: column.title,
+                    value: column.validation[type]
+                  }
+                );
+                this.messageService.error(message);
+              }
+            break; 
+            }
+            }
+          });
+      }
+    });
+    return valid;
+  }
+}
+
+function getColumnKeyWithoutPropertiesTag(column) {
+  if (column.includes('properties.')) {
+    return column.split('.')[1];
+  }
+  return column;
 }

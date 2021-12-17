@@ -713,6 +713,13 @@
         "cancel": "Cancel",
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+      },
+      "formValidation": {
+        "mandatory": "{{column}} is mandatory",
+        "minValue": "{{column}} is smaller than {{value}}",
+        "maxValue": "{{column}} is bigger than {{value}}",
+        "minLength": "{{column}} is shorter than {{value}} characters",
+        "maxLength": "{{column}} is longer than {{value}} characters"
       }
     }
   }
