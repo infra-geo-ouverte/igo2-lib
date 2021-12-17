@@ -346,7 +346,6 @@ export class EditionWorkspaceService {
       return false;
     }
 
-    
     let url =
       this.configService.getConfig('edition.url') +
       workspace.layer.dataSource.options.edition.baseUrl +
@@ -501,21 +500,21 @@ export class EditionWorkspaceService {
     workspace.meta.tableTemplate.columns.forEach(column => {
       if (column.hasOwnProperty('validation') && column.validation) {
         key = getColumnKeyWithoutPropertiesTag(column.name);
-        Object.keys( column.validation).forEach((type) =>{
+        Object.keys( column.validation).forEach((type) => {
           switch (type) {
             case 'mandatory': {
-                if (!feature.properties.hasOwnProperty(key) || !feature.properties[key]) {
-                  valid = false;
-                    message = translate.instant('igo.geo.formValidation.mandatory',
-                    {
-                      column: column.title
-                    }
-                  );
-                  this.messageService.error(message);
-                }
-              break; 
+              if (!feature.properties.hasOwnProperty(key) || !feature.properties[key]) {
+                valid = false;
+                  message = translate.instant('igo.geo.formValidation.mandatory',
+                  {
+                    column: column.title
+                  }
+                );
+                this.messageService.error(message);
               }
-              case 'minValue': {
+              break;
+            }
+            case 'minValue': {
               if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] <= column.validation[type]) {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.minValue',
@@ -525,10 +524,10 @@ export class EditionWorkspaceService {
                   }
                 );
                 this.messageService.error(message);
-                }
-              break; 
               }
-              case 'maxValue': {
+              break;
+            }
+            case 'maxValue': {
               if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] >= column.validation[type]) {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.maxValue',
@@ -539,10 +538,13 @@ export class EditionWorkspaceService {
                 );
                 this.messageService.error(message);
               }
-              break; 
-              }
+              break;
+            }
             case 'minLength': {
-              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key].length < column.validation[type]) {
+              if (
+                feature.properties.hasOwnProperty(key) && feature.properties[key] &&
+                feature.properties[key].length < column.validation[type])
+              {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.minLength',
                   {
@@ -550,12 +552,15 @@ export class EditionWorkspaceService {
                     value: column.validation[type]
                   }
                 );
-                this.messageService.error(message);                
+                this.messageService.error(message);
               }
-              break; 
+              break;
             }
             case 'maxLength': {
-              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key].length > column.validation[type]) {
+              if (
+                feature.properties.hasOwnProperty(key) && feature.properties[key] &&
+                feature.properties[key].length > column.validation[type])
+              {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.maxLength',
                   {
@@ -565,7 +570,7 @@ export class EditionWorkspaceService {
                 );
                 this.messageService.error(message);
               }
-            break; 
+              break;
             }
             }
           });

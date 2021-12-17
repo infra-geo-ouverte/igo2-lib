@@ -3,7 +3,7 @@ import * as olextent from 'ol/extent';
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreInMapExtentStrategyOptions, Feature } from '../feature.interfaces';
+import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
