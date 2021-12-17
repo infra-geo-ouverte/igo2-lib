@@ -407,6 +407,13 @@ export class EditionWorkspaceService {
         this.messageService.success(message);
 
         workspace.layer.dataSource.ol.refresh();
+        for (const relation of workspace.layer.options.sourceOptions.relations) {
+          workspace.map.layers.forEach((layer) => {
+            if (layer.title === relation.title) {
+              layer.dataSource.ol.refresh();
+            }
+          })
+        }
       },
       error => {
         error.error.caught = true;
