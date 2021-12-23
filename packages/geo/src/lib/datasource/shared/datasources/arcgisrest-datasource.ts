@@ -61,21 +61,15 @@ export class ArcGISRestDataSource extends DataSource {
     if (legendInfo === undefined || legend.length > 0) {
       return legend;
     }
-
-    const id = parseInt(this.options.layer, 10);
-    const lyr = legendInfo.layers.find(layer => layer.layerId === id);
-    if (!lyr) {
+    if (!legendInfo) {
       return;
     }
     let htmlString = '<table>';
 
-    for (const lyrLegend of lyr.legend) {
-      const modifiedUrl = this.options.url.replace(
-        'FeatureServer',
-        'MapServer'
-      );
-      const src = `${modifiedUrl}/${lyr.layerId}/images/${lyrLegend.url}`;
-      const label = lyrLegend.label.replace('<Null>', 'Null');
+    for (const legendElement of legendInfo.legend) {
+      const modifiedUrl = this.options.url.replace('FeatureServer', 'MapServer');
+      const src = `${modifiedUrl}/${legendInfo.layerId}/images/${legendElement.url}`;
+      const label = legendElement.label.replace('<Null>', 'Null');
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +

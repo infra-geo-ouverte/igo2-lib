@@ -89,13 +89,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     let lastlLegend = this.layer.legend;
     this.styles = this.listStyles();
     const sourceOptions = this.layer.options.source.options as any;
-    if (
-      sourceOptions &&
-      sourceOptions.params &&
-      sourceOptions.params.STYLES) {
+    if (sourceOptions && sourceOptions.params && sourceOptions.params.STYLES) {
       // if a styles is provided into the layers wms params
       this.currentStyle = this.styles.find(style => style.name === sourceOptions.params.STYLES).name;
-    } else if (!this.layer.legend) {
+    } else if (!lastlLegend) {
       // if no legend is manually provided
       if (this.styles && this.styles.length > 1) {
         this.currentStyle = this.styles[0].name;
@@ -103,16 +100,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
-    if ( typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
+    if (typeof this.layer.options.legendOptions !== 'undefined' && !this.layer.options.legendOptions.display) {
       lastlLegend = [];
     } else {
       lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     }
 
-    if (this.updateLegendOnResolutionChange === true || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
+    if (this.updateLegendOnResolutionChange || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
       const state$ = this.layer.map.viewController.state$;
-      this.state$$ = state$
-      .subscribe(() => this.onViewControllerStateChange());
+      this.state$$ = state$.subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
       for (const legend of lastlLegend) {

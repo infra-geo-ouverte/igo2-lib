@@ -370,14 +370,17 @@ export class CapabilitiesService {
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
     arcgisOptions: any,
+    legend: any,
     serviceCapabilities: any,
-    legend?: any
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
-    const legendInfo = legend.layers ? legend : undefined;
-    const styleGenerator = new EsriStyleGenerator();
-    const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
-    const style = styleGenerator.generateStyle(arcgisOptions, units);
+    const legendInfo = legend.layers && arcgisOptions.drawingInfo ? legend.layers.find(x => x.layerName === title) : undefined;
+    let style;
+    if (arcgisOptions.drawingInfo) {
+      const styleGenerator = new EsriStyleGenerator();
+      const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
+      style = styleGenerator.generateStyle(arcgisOptions, units);
+    }
     const attributions = new olAttribution({
       target: arcgisOptions.copyrightText
     });
@@ -401,10 +404,9 @@ export class CapabilitiesService {
     const params = Object.assign(
       {},
       {
-        legendInfo,
         style,
-        timeFilter,
-        timeExtent
+        LAYERS: baseOptions.layer ? 'show:' + baseOptions.layer : undefined,
+        time: timeExtent
       }
     );
     const options = ObjectUtils.removeUndefined({
@@ -418,10 +420,12 @@ export class CapabilitiesService {
           abstract: arcgisOptions.description || serviceCapabilities.serviceDescription
         },
       },
+      legendInfo,
+      timeFilter,
       sourceFields: arcgisOptions.fields,
       queryTitle: arcgisOptions.displayField
     });
-    options.params.attributions = attributions;
+    options.attributions = attributions;
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
@@ -432,7 +436,7 @@ export class CapabilitiesService {
     serviceCapabilities: any
   ): TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions {
     const title = arcgisOptions.name;
-    const legendInfo = legend.layers ? legend : undefined;
+    const legendInfo = legend.layers ? legend.layers.find(x => x.layerName === title) : undefined;
     const attributions = new olAttribution({
       target: arcgisOptions.copyrightText
     });
