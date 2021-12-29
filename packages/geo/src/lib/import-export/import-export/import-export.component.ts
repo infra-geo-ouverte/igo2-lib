@@ -573,6 +573,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                   previousFeature.get('_featureStore').layer.options.title) {
                     const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
                     featuresCSV.push(titleEmptyRows[2]);
+                    featuresCSV.push(titleEmptyRows[0]);
                     featuresCSV.push(titleEmptyRows[1]);
                   }
                 } else {
@@ -632,23 +633,37 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private createTitleEmptyRows(previousFeature, currentFeature) {
-    const titleRow = previousFeature.clone();
-    const titleRowWithArrow = previousFeature.clone();
-    const emptyRow = previousFeature.clone();
+    const titleRow = currentFeature.clone();
+    const headerRow = currentFeature.clone();
+    const emptyRow = currentFeature.clone();
     const previousFeatureKeys: Array<string> = previousFeature.getKeys();
-    const firstKey: string = previousFeatureKeys[1];
-    previousFeatureKeys.forEach(key => {
+    const currentFeatureKeys: Array<string> = currentFeature.getKeys();
+    const allKeys: Array<string> = currentFeature.getKeys();
+    previousFeatureKeys.forEach(previousKey => {
+      if (allKeys.includes(previousKey)) {
+        allKeys.push(previousKey);
+      }
+    });
+    const firstKey: string = allKeys[1];
+    allKeys.forEach(key => {
       if (key === firstKey) {
         titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
-        titleRowWithArrow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===================>", true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key !== 'geometry') {
+        titleRow.unset(key, true);
+        headerRow.set(key, key, true);
         emptyRow.unset(key, true);
       } else {
         titleRow.unset(key, true);
-        titleRowWithArrow.unset(key, true);
         emptyRow.unset(key, true);
       }
+
+      if (!(currentFeatureKeys.includes(key))) {
+        headerRow.unset(key, true);
+      }
     });
-    const titleEmptyRows = [titleRow, titleRowWithArrow, emptyRow];
+    const titleEmptyRows = [titleRow, headerRow, emptyRow];
     return titleEmptyRows;
   }
 
