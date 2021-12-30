@@ -65,17 +65,40 @@ export class ArcGISRestDataSource extends DataSource {
       return;
     }
     let htmlString = '<table>';
+    let src: string;
+    let label: string;
 
-    for (const legendElement of legendInfo.legend) {
-      const modifiedUrl = this.options.url.replace('FeatureServer', 'MapServer');
-      const src = `${modifiedUrl}/${legendInfo.layerId}/images/${legendElement.url}`;
-      const label = legendElement.label.replace('<Null>', 'Null');
+    if (legendInfo.legend) {
+      for (const legendElement of legendInfo.legend) {
+        src = `data:${legendElement.contentType};base64,${legendElement.imageData}`;
+        label = legendElement.label.replace('<Null>', 'Null');
+        htmlString +=
+          `<tr><td align='left'><img src="` +
+          src +
+          `" alt ='' /></td><td>` +
+          label +
+          '</td></tr>';
+      }
+    } else if (legendInfo.type === "uniqueValue") {
+      for (const legendElement of legendInfo.uniqueValueInfos) {
+        src = `data:${legendElement.symbol.contentType};base64,${legendElement.symbol.imageData}`;
+        label = legendElement.label.replace('<Null>', 'Null');
+        htmlString +=
+          `<tr><td align='left'><img src="` +
+          src +
+          `" alt ='' /></td><td>` +
+          label +
+          '</td></tr>';
+      }
+    } else if (legendInfo.type === "simple") {
+      src = `data:${legendInfo.symbol.contentType};base64,${legendInfo.symbol.imageData}`;
+      label = legendInfo.label.replace('<Null>', 'Null');
       htmlString +=
-        `<tr><td align='left'><img src="` +
-        src +
-        `" alt ='' /></td><td>` +
-        label +
-        '</td></tr>';
+          `<tr><td align='left'><img src="` +
+          src +
+          `" alt ='' /></td><td>` +
+          label +
+          '</td></tr>';
     }
     htmlString += '</table>';
     return [{ html: htmlString }];

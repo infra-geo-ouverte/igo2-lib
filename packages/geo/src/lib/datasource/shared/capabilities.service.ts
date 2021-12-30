@@ -374,7 +374,16 @@ export class CapabilitiesService {
     serviceCapabilities: any,
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
-    const legendInfo = legend.layers && arcgisOptions.drawingInfo ? legend.layers.find(x => x.layerName === title) : undefined;
+    let legendInfo: any;
+
+    if (legend.layers) {
+      legendInfo = legend.layers.find(x => x.layerName === title);
+    } else if (arcgisOptions.drawingInfo?.renderer) {
+      legendInfo = arcgisOptions.drawingInfo.renderer;
+    } else {
+      legendInfo = undefined;
+    }
+
     let style;
     if (arcgisOptions.drawingInfo) {
       const styleGenerator = new EsriStyleGenerator();
