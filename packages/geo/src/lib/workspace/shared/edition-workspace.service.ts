@@ -524,7 +524,7 @@ export class EditionWorkspaceService {
               break;
             }
             case 'minValue': {
-              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] <= column.validation[type]) {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] < column.validation[type]) {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.minValue',
                   {
@@ -537,7 +537,7 @@ export class EditionWorkspaceService {
               break;
             }
             case 'maxValue': {
-              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] >= column.validation[type]) {
+              if (feature.properties.hasOwnProperty(key) && feature.properties[key] && feature.properties[key] > column.validation[type]) {
                 valid = false;
                 message = translate.instant('igo.geo.formValidation.maxValue',
                   {
