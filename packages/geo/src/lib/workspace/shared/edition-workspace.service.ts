@@ -412,7 +412,7 @@ export class EditionWorkspaceService {
             if (layer.title === relation.title) {
               layer.dataSource.ol.refresh();
             }
-          })
+          });
         }
       },
       error => {
