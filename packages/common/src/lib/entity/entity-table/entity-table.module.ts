@@ -5,6 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { IgoStopPropagationModule } from '../../stop-propagation/stop-propagation.module';
 import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
@@ -28,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [
     CommonModule,
     MatTableModule,
+    MatAutocompleteModule,
     MatSortModule,
     MatIconModule,
     MatButtonModule,

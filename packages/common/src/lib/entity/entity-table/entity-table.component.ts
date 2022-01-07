@@ -14,7 +14,7 @@ import {
   Self
 } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import {
   EntityKey,
@@ -34,6 +34,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'igo-entity-table',
@@ -47,6 +48,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public formGroup: FormGroup = new FormGroup({});
+
+  public filteredOptions: Observable<any[]>;
 
   /**
    * Reference to the column renderer types
@@ -243,6 +246,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     record.entity.properties[key] = event.value;
   }
 
+  onAutocompleteValueChange(column, record, event) {
+    this.formGroup.controls[column].setValue(event.option.viewValue);
+    const key = this.getColumnKeyWithoutPropertiesTag(column);
+    record.entity.properties[key] = event.option.value;
+  }
+
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
@@ -272,6 +281,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
             this.formGroup.controls[column.name].setValue(parseInt(item[key])) :
             this.formGroup.controls[column.name].setValue(item[key]);
         }
+      } else if (column.type === 'autocomplete') {
+        this.formGroup.setControl(column.name, this.formBuilder.control(
+          item[key]
+        ));
+
+        this.filteredOptions = this.formGroup.controls[column.name].valueChanges.pipe(
+          map(value => {
+            if (value.length) {
+              return column.domainValues.filter((option) => {
+                const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return featureNameNormalized.includes(filterNormalized);
+              });
+            }
+          })
+        );
+
+        let formControlValue = item[key];
+        column.domainValues.forEach(option => {
+          if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue)) {
+            formControlValue = parseInt(formControlValue);
+          }
+          if (option.value === formControlValue || option.id === formControlValue) {
+            formControlValue = option.value;
+          }
+        });
+
+        this.formGroup.controls[column.name].setValue(formControlValue);
       } else {
         this.formGroup.setControl(column.name, this.formBuilder.control(
           item[key]
@@ -590,6 +627,15 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           }
         });
       }
+    } else if (column.type === 'autocomplete' && value && column.domainValues) {
+      column.domainValues.forEach(option => {
+        if (typeof value === 'string' && /^\d+$/.test(value)) {
+          value = parseInt(value);
+        }
+        if (option.value === value || option.id === value) {
+          value = option.value;
+        }
+      });
     }
 
     if (value === undefined) {

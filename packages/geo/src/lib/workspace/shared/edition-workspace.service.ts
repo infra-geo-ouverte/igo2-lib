@@ -301,7 +301,7 @@ export class EditionWorkspaceService {
         multiple: field.multiple
       };
 
-      if (field.type === 'list') {
+      if (field.type === 'list' || field.type === 'autocomplete') {
         this.getDomainValues(field.relation.table).subscribe(result => {
           column.domainValues = result;
           column.relation = field.relation;
@@ -343,7 +343,6 @@ export class EditionWorkspaceService {
   }
 
   public saveFeature(feature, workspace) {
-
     if (!this.validateFeature(feature, workspace)){
       return false;
     }

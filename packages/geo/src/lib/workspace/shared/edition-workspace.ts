@@ -128,7 +128,7 @@ export class EditionWorkspace extends Workspace {
     for (const column of workspace.meta.tableTemplate.columns ) {
 
       // Update domain list
-      if (column.type === 'list') {
+      if (column.type === 'list' || column.type === 'autocomplete') {
         this.editionWorkspaceService.getDomainValues(column.relation.table).subscribe(result => {
           column.domainValues = result;
         });
