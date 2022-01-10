@@ -373,7 +373,8 @@ export class EditionWorkspaceService {
       this.http.post(`${url}`, feature.properties).subscribe(
         () => {
           workspace.entityStore.stateView.clear();
-          workspace.deleteDrawings(feature, workspace);
+          workspace.deleteDrawings();
+          workspace.entityStore.delete(feature);
           this.refreshMap(workspace.layer, workspace.layer.map);
 
           const message = this.languageService.translate.instant(
@@ -459,16 +460,19 @@ export class EditionWorkspaceService {
 
   cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
+    workspace.deleteDrawings();
     if (feature.newFeature) {
       workspace.entityStore.stateView.clear();
+      workspace.entityStore.delete(feature);
       workspace.deactivateDrawControl();
-      workspace.deleteDrawings(feature, workspace);
       this.rowsInMapExtentCheckCondition$.next(true);
     } else {
       if (!fromSave) {
         feature.properties = feature.original_properties;
+        feature.geometry = feature.original_geometry;
       }
       delete feature.original_properties;
+      delete feature.original_geometry;
     }
   }
 

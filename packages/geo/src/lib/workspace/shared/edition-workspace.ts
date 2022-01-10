@@ -20,6 +20,8 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
+import OlModify from 'ol/interaction/Modify';
+import OlCollection from 'ol/Collection';
 import { FeatureDataSource } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
@@ -40,6 +42,7 @@ export class EditionWorkspace extends Workspace {
   private olDrawingLayerSource = new OlVectorSource();
   private olDrawingLayer: VectorLayer;
   public geometryType = GeometryType; // Reference to the GeometryType enum
+  public modify; // Reference to the ol interaction
 
   private filterClauseFunc = (record: EntityRecord<object>) => {
     return record.state.newFeature === true;
@@ -149,7 +152,9 @@ export class EditionWorkspace extends Workspace {
     }
     if (id) {
       feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
+      feature.original_geometry = feature.geometry;
       feature.idkey = id;
+      this.addFeatureToStore(feature, workspace);
     } else {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
@@ -222,66 +227,33 @@ export class EditionWorkspace extends Workspace {
    */
   private activateDrawControl(feature, workspace) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
-      this.addFeatureToStore(olGeometry, feature, workspace);
+      this.addFeatureToStore(feature, workspace, olGeometry);
     });
-
-    // this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
-    //   this.onModifyDraw(olGeometry, workspace);
-    // });
 
     this.drawControl.setOlMap(this.map.ol, true);
   }
-
-  // private onModifyDraw(olGeometry, workspace) {
-  //   console.log('onModify');
-  //   const primaryColumn = workspace.options.meta.tableTemplate.columns.find(col => col.primary === true);
-  //   let primaryField;
-  //   if (primaryColumn.name.includes('properties.')) {
-  //     primaryField = primaryColumn.name.slice(11);
-  //   } else {
-  //     primaryField = primaryColumn.name;
-  //   }
-
-  //   const entities = workspace.options.entityStore.all();
-
-  //   entities.forEach(entity => {
-  //     const entityId = entity.properties[primaryField];
-
-  //     const olGeometryId = olGeometry.ol_uid;
-  //     console.log(entityId);
-  //     console.log(olGeometryId);
-  //     if (entityId === olGeometryId) {
-  //       this.replaceFeatureInStore(entity, olGeometry, workspace);
-  //     }
-  //   });
-  // }
-
-  /**
-   * Replace the feature in the store
-   * @param entity the entity to replace
-   * @param olGeometry the new geometry to insert in the store
-   */
-  // private replaceFeatureInStore(entity, olGeometry: OlGeometry, workspace) {
-  //     workspace.options.entityStore.delete(entity);
-  //     this.onDrawEnd(olGeometry);
-  //   }
 
   /**
    * Add a feature to layer. The loading strategy of the layer
    * will trigger and add the feature to the workspace store.
    * @internal
    */
-  private addFeatureToStore(olGeometry, feature?, workspace?) {
-    workspace.entityStore.insert(feature);
-    workspace.entityStore.state.update(feature, { newFeature: true }, true);
+  private addFeatureToStore(feature, workspace, olGeometry?) {
     const projection = this.map.ol.getView().getProjection();
+    let geometry = feature.geometry;
 
-    const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
-      featureProjection: projection,
-      dataProjection: 'EPSG:4326'
-    }) as any;
+    // If an olGeometry is passed, it means that it is a new feature
+    if (olGeometry) {
+      workspace.entityStore.insert(feature);
+      workspace.entityStore.state.update(feature, { newFeature: true }, true);
+      geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
+        featureProjection: projection,
+        dataProjection: 'EPSG:4326'
+      }) as any;
 
-    feature.geometry = geometry;
+      feature.geometry = geometry;
+    }
+
     feature.projection = 'EPSG:4326';
 
     const featureOl = featureToOl(feature, projection.getCode());
@@ -291,11 +263,35 @@ export class EditionWorkspace extends Workspace {
     this.map.addLayer(this.olDrawingLayer);
 
     this.deactivateDrawControl();
+    this.createModifyInteraction(featureOl, feature, workspace);
   }
 
-  deleteDrawings(feature, workspace) {
+  /**
+   * Delete drawings layer and source from the map AND feature from the entity store.
+   * Layer refresh will automatically add the new feature into the store.
+   */
+  deleteDrawings() {
     this.map.removeLayer(this.olDrawingLayer);
     this.olDrawingLayerSource.clear();
-    workspace.entityStore.delete(feature);
+    this.map.ol.removeInteraction(this.modify);
+  }
+
+  /**
+   * Create a modify interaction to allow a geometry change one feature at the time (drag and drop)
+   */
+  createModifyInteraction(olFeature, feature, workspace) {
+    this.map.ol.removeInteraction(this.modify);
+    const olCollection = new OlCollection([olFeature], { unique: true });
+    this.modify = new OlModify({
+      features: olCollection
+    });
+
+    this.map.ol.addInteraction(this.modify);
+    this.modify.on('modifyend', (event) => {
+      const olGeometry = event.features.getArray()[0]?.getGeometry();
+      if (olGeometry) {
+        this.addFeatureToStore(feature, workspace, olGeometry);
+      }
+    });
   }
 }
