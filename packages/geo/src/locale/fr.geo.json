@@ -512,6 +512,8 @@
         "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
+      "targetHtmlUrlUnauthorizedTitle": "Non autorisé",
+      "targetHtmlUrlUnauthorized": "Vous n'êtes pas autorisé à ouvrir ce lien externe",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
       "seeRouting": "Voir l'itinéraire",

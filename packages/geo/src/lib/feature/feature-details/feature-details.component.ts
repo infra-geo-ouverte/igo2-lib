@@ -13,13 +13,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { userAgent } from '@igo2/utils';
-import { NetworkService, ConnectionState } from '@igo2/core';
+import { NetworkService, ConnectionState, MessageService, LanguageService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'igo-feature-details',
@@ -79,9 +80,12 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
 
   constructor(
+    private http: HttpClient,
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    private messageService: MessageService,
+    private languageService: LanguageService
   ) {
     this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
       this.state = state;
@@ -129,6 +133,34 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return typeof value === 'object';
   }
 
+  openSecureUrl(value) {
+    let url: string;
+    const regexDepot = /(\/apis\/depot).*?(.pdf|.docx|.csv|.json|.xlsx)/;
+    const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+
+    if (value.match(regexDepot)) {
+      url = value.match(regexDepot)[0];
+
+      this.http.get(url, {
+        responseType: 'blob'
+      })
+      .subscribe((docOrImage) => {
+        const fileUrl = URL.createObjectURL(docOrImage);
+        window.open(fileUrl, '_blank');
+        this.cdRef.detectChanges();
+      },
+      (error: Error) => {
+        const translate = this.languageService.translate;
+        const title = translate.instant('igo.geo.targetHtmlUrlUnauthorizedTitle');
+        const message = translate.instant('igo.geo.targetHtmlUrlUnauthorized');
+        this.messageService.error(message, title);
+      });
+    } else {
+      url = value.match(regexUrl)[0];
+      window.open(url, '_blank');
+    }
+  }
+
   isUrl(value) {
     if (typeof value === 'string') {
       return (
@@ -147,6 +179,16 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     } else {
       return false;
     }
+  }
+
+  isEmbeddedLink(value) {
+    return value.slice(0, 2) === '<a';
+  }
+
+  getLinkText(value) {
+    const regex = /(?<=>).*(?=<)/;
+    const text = value.match(regex)[0];
+    return text;
   }
 
   filterFeatureProperties(feature) {

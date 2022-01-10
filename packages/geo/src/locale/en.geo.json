@@ -513,6 +513,8 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "targetHtmlUrlUnauthorizedTitle": "Unauthorized",
+      "targetHtmlUrlUnauthorized": "You are do not have the credentials to open this external link",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
       "seeRouting": "See routing",
