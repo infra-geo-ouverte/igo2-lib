@@ -44,13 +44,33 @@ export class EditionWorkspace extends Workspace {
   public geometryType = GeometryType; // Reference to the GeometryType enum
   public modify; // Reference to the ol interaction
 
+  public modifyStyle = new OlStyle.Style({
+    stroke: new OlStyle.Stroke({
+      color: 'rgba(255,255,255,1)',
+      width: 1
+    }),
+    fill: new OlStyle.Fill({
+      color: 'rgba(0,161,222,1)'
+    }),
+    image: new OlStyle.Circle({
+      radius: 7,
+      stroke: new OlStyle.Stroke({
+        color: 'rgba(255,255,255,1)',
+        width: 1
+      }),
+      fill: new OlStyle.Fill({
+        color: 'rgba(0,161,222,1)'
+      })
+    })
+  });
+
   private filterClauseFunc = (record: EntityRecord<object>) => {
     return record.state.newFeature === true;
   };
 
-  fillColor: string;
-  strokeColor: string;
-  strokeWidth: number;
+  public fillColor: string;
+  public strokeColor: string;
+  public strokeWidth: number;
 
   constructor(
     protected options: EditionWorkspaceOptions,
@@ -287,6 +307,10 @@ export class EditionWorkspace extends Workspace {
     });
 
     this.map.ol.addInteraction(this.modify);
+    olCollection.forEach(feature => {
+      feature.setStyle(this.modifyStyle);
+    });
+
     this.modify.on('modifyend', (event) => {
       const olGeometry = event.features.getArray()[0]?.getGeometry();
       if (olGeometry) {
