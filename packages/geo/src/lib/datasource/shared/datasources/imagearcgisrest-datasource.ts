@@ -63,7 +63,7 @@ export class ImageArcGISRestDataSource extends DataSource {
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +
-        `" alt ='' /></td><td>` +
+        `" alt ='' /></td><td class="mat-typography">` +
         label +
         '</td></tr>';
     }

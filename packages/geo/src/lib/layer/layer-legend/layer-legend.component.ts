@@ -127,23 +127,25 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   getLegendGraphic(item: Legend) {
-    const secureIMG = new SecureImagePipe(this.http);
-    secureIMG.transform(item.url).pipe(
-      catchError((err) => {
-        if (err.error) {
-          err.error.caught = true;
-          this.getLegend = false;
+    if (item.url) {
+      const secureIMG = new SecureImagePipe(this.http);
+      secureIMG.transform(item.url).pipe(
+        catchError((err) => {
+          if (err.error) {
+            err.error.caught = true;
+            this.getLegend = false;
+            this.cdRef.detectChanges();
+            return err;
+          }
+        })
+        ).subscribe(obsLegGraph => {
+          const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
+          const legendGraph = obsLegGraph as string;
+          this.legendItems$.value[idx].imgGraphValue = legendGraph;
           this.cdRef.detectChanges();
-          return err;
         }
-      })
-      ).subscribe(obsLegGraph => {
-        const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
-        const legendGraph = obsLegGraph as string;
-        this.legendItems$.value[idx].imgGraphValue = legendGraph;
-        this.cdRef.detectChanges();
-      }
-    );
+      );
+    }
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {

@@ -75,7 +75,7 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td>` +
+          `" alt ='' /></td><td class="mat-typography">` +
           label +
           '</td></tr>';
       }
@@ -86,7 +86,7 @@ export class ArcGISRestDataSource extends DataSource {
         htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td>` +
+          `" alt ='' /></td><td class="mat-typography">` +
           label +
           '</td></tr>';
       }
@@ -96,7 +96,7 @@ export class ArcGISRestDataSource extends DataSource {
       htmlString +=
           `<tr><td align='left'><img src="` +
           src +
-          `" alt ='' /></td><td>` +
+          `" alt ='' /></td><td class="mat-typography">` +
           label +
           '</td></tr>';
     }
