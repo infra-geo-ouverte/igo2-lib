@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
@@ -347,21 +347,38 @@ export class EditionWorkspaceService {
       return false;
     }
 
-    let url =
-      this.configService.getConfig('edition.url') +
-      workspace.layer.dataSource.options.edition.baseUrl +
-      workspace.layer.dataSource.options.edition.addUrl;
+    this.sanitizeParameter(feature, workspace);
 
+    let url = this.configService.getConfig('edition.url');
+
+    if (workspace.layer.dataSource.options.edition.baseUrl) {
+      url+= workspace.layer.dataSource.options.edition.baseUrl;
+    }
 
     if (feature.newFeature) {
-      this.addFeature(feature, workspace, url);
+      url += workspace.layer.dataSource.options.edition.addUrl;
+
+      const addHeaders = workspace.layer.dataSource.options.edition.addHeaders;
+      const headers = new HttpHeaders(addHeaders);
+
+      this.addFeature(feature, workspace, url, headers);
     } else {
-      url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.idkey;
-      this.modifyFeature(feature, workspace, url);
+      if (workspace.layer.dataSource.options.edition.modifyProtocole !== "post") {
+        url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.idkey;
+      }
+      else {
+        url += workspace.layer.dataSource.options.edition.modifyUrl;
+      }
+
+      const protocole = workspace.layer.dataSource.options.edition.modifyProtocole;
+      const modifyHeaders = workspace.layer.dataSource.options.edition.modifyHeaders;
+      const headers = new HttpHeaders(modifyHeaders);
+
+      this.modifyFeature(feature, workspace, url, headers, protocole);
     }
   }
 
-  public addFeature(feature, workspace, url) {
+  public addFeature(feature, workspace, url, headers) {
     const geom = workspace.layer.dataSource.options.edition.geomField;
     if (geom) {
       //feature.properties[geom] = feature.geometry; TODO: ADJUST FOR POLYGON/LINE
@@ -370,7 +387,7 @@ export class EditionWorkspaceService {
     }
 
     if (url) {
-      this.http.post(`${url}`, feature.properties).subscribe(
+      this.http.post(`${url}`, feature.properties, { headers: headers}).subscribe(
         () => {
           workspace.entityStore.stateView.clear();
           workspace.deleteDrawings();
@@ -425,7 +442,8 @@ export class EditionWorkspaceService {
     );
   }
 
-  public modifyFeature(feature, workspace, url) {
+  public modifyFeature(feature, workspace, url, headers, protocole='patch' ) {
+
     const geom = workspace.layer.dataSource.options.edition.geomField;
     if (geom) {
       //feature.properties[geom] = feature.geometry;
@@ -435,7 +453,7 @@ export class EditionWorkspaceService {
     const featureProperties = JSON.parse(JSON.stringify(feature.properties));
     delete featureProperties.boundedBy;
     if (url) {
-      this.http.patch(`${url}`, featureProperties).subscribe(
+      this.http[protocole](`${url}`, featureProperties, { headers: headers }).subscribe(
         () => {
           this.cancelEdit(workspace, feature, true);
           this.refreshMap(workspace.layer, workspace.layer.map);
@@ -590,6 +608,16 @@ export class EditionWorkspaceService {
     });
     return valid;
   }
+
+  sanitizeParameter(feature, workspace) {
+    workspace.meta.tableTemplate.columns.forEach(column => {
+      if (column.type === 'list') {
+        feature.properties[getColumnKeyWithoutPropertiesTag(column.name)] = feature.properties[getColumnKeyWithoutPropertiesTag(column.name)].toString();
+      }
+
+    });
+  }
+
 }
 
 function getColumnKeyWithoutPropertiesTag(column) {
