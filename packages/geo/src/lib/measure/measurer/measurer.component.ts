@@ -718,7 +718,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawEnd(olGeometry));
     this.drawChanges$$ = drawControl.changes$
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawChanges(olGeometry));
-
+    this.drawChanges$$ = drawControl.abort$
+    .subscribe((olGeometry: OlLineString | OlPolygon) => this.clearTooltipsOfOlGeometry(olGeometry));
     drawControl.setOlMap(this.map.ol, false);
   }
 
