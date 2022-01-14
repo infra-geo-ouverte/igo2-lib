@@ -612,7 +612,8 @@ export class EditionWorkspaceService {
   sanitizeParameter(feature, workspace) {
     workspace.meta.tableTemplate.columns.forEach(column => {
       if (column.type === 'list' && feature.properties[getColumnKeyWithoutPropertiesTag(column.name)]) {
-        feature.properties[getColumnKeyWithoutPropertiesTag(column.name)] = feature.properties[getColumnKeyWithoutPropertiesTag(column.name)].toString();
+        feature.properties[getColumnKeyWithoutPropertiesTag(column.name)] =
+          feature.properties[getColumnKeyWithoutPropertiesTag(column.name)].toString();
       }
 
     });

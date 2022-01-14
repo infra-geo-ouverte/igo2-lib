@@ -92,7 +92,8 @@
                             </mat-select>
                             <input matInput type="text" [formControlName]="column.name" *ngIf="column.type === 'autocomplete'"
                             [matAutocomplete]="auto" required="{{getValidationAttributeValue(column, 'mandatory')}}" value="{{getValue(record, column)}}">
-                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteValueChange(column.name, record, $event)">
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteValueChange(column.name, record, $event)"
+                                panelWidth="430px">
                                     <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
                                         {{ option.value }}
                                     </mat-option>
