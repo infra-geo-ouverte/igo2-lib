@@ -17,12 +17,12 @@
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value) && !isEmbeddedLink(property.value)" [innerHTML]="property.value">
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && isEmbeddedLink(property.value)" [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">
-        <u>{{getLinkText(property.value)}}</u>
+      <td *ngIf="feature.properties.target === undefined && isEmbeddedLink(property.value)">
+        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ getLinkText(property.value) }}</u>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)" [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">
-        <u>{{ 'igo.geo.targetHtmlUrl' | translate }}</u>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isDoc(property.value)">
+        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ 'igo.geo.targetHtmlUrl' | translate }}</u>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && isImg(property.value)">

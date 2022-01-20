@@ -162,10 +162,14 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   isUrl(value) {
-    if (typeof value === 'string') {
-      return (
-        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
-      );
+    const regex = /^https?:\/\//;
+    return regex.test(value.toString());
+  }
+
+  isDoc(value) {
+    if (this.isUrl(value)) {
+      const regex = /(pdf|docx?|xlsx?)$/;
+      return regex.test(value.toString().toLowerCase());
     } else {
       return false;
     }
@@ -173,20 +177,20 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   isImg(value) {
     if (this.isUrl(value)) {
-      return (
-        ['jpg', 'png', 'gif'].includes(value.split('.').pop().toLowerCase())
-      );
+      const regex = /(jpe?g|png|gif)$/;
+      return regex.test(value.toString().toLowerCase());
     } else {
       return false;
     }
   }
 
   isEmbeddedLink(value) {
-    return value.slice(0, 2) === '<a';
+    const regex = /^<a/;
+    return regex.test(value.toString());
   }
 
   getLinkText(value) {
-    const regex = /(?<=>).*(?=<)/;
+    const regex = /(?<=>)(.*?)(?=<|$)/;
     const text = value.match(regex)[0];
     return text;
   }
