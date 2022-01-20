@@ -67,10 +67,12 @@
                 </ng-container>
                 <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.UnsanitizedHTML">
                     <ng-container *matCellDef="let record">
-                        <td mat-cell class="mat-cell-text edition" [formGroup]="formGroup" *ngIf="isEdition(record);else isUnsanitizedHTML" [ngClass]="getCellClass(record, column)">
+                        <td mat-cell class="mat-cell-text edition" [formGroup]="formGroup" *ngIf="isEdition(record);else isUnsanitizedHTML"
+                        [ngClass]="getCellClass(record, column)">
                             <div class="date-picker" *ngIf="column.type === 'date'">
                                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <input matInput [matDatepicker]="picker" [formControlName]="column.name">
+                                <input matInput [matDatepicker]="picker" [formControlName]="column.name" value="{{getValue(record, column)}}"
+                                (dateChange)="onDateChange(column.name, record, $event)">
                                 <mat-datepicker #picker></mat-datepicker>
                             </div>
                             <input matInput type="time" *ngIf="column.type === 'time'" [formControlName]="column.name" step="900" (focus)="column.onFocus($event)"

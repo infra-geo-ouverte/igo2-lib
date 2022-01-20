@@ -35,6 +35,8 @@ import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormG
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
+import * as moment_ from 'moment';
+const moment = moment_;
 
 @Component({
   selector: 'igo-entity-table',
@@ -252,6 +254,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     record.entity.properties[key] = event.option.value;
   }
 
+  onDateChange(column, record, event) {
+    const format = "YYYY-MM-DD";
+    const value = moment(event.value).format(format);
+    const key = this.getColumnKeyWithoutPropertiesTag(column);
+    record.entity.properties[key] = value;
+  }
+
   private enableEdit(record) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
@@ -309,6 +318,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         });
 
         this.formGroup.controls[column.name].setValue(formControlValue);
+      } else if (column.type === 'date') {
+        let date = moment(item[key]);
+        item[key] = date.utc().format('YYYY-MM-DD');
+        this.formGroup.setControl(column.name, this.formBuilder.control(
+          item[key]
+        ));
       } else {
         this.formGroup.setControl(column.name, this.formBuilder.control(
           item[key]
@@ -636,6 +651,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           value = option.value;
         }
       });
+    }
+    else if (column.type === 'date') {
+      if (this.isEdition(record) && value) {
+        let date = moment(value);
+        value = date.format();
+        this.formGroup.controls[column.name].setValue(value);
+      }
     }
 
     if (value === undefined) {
