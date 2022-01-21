@@ -33,7 +33,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
 import * as moment_ from 'moment';
 const moment = moment_;
@@ -205,8 +205,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     @Optional() @Self() public ngControl: NgControl,
     @Optional() protected _parentForm: NgForm,
     @Optional() protected _controlName: FormControlName,
-    protected _defaultErrorStateMatcher: ErrorStateMatcher
+    protected _defaultErrorStateMatcher: ErrorStateMatcher,
+    private dateAdapter: DateAdapter<Date>
   ) {
+    this.dateAdapter.setLocale('fr-CA');
   }
 
   /**
