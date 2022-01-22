@@ -12,7 +12,7 @@
     </mat-form-field>
   </div>
 
-  <button mat-raised-button type="submit">{{'igo.auth.login' | translate}}</button>
+  <button mat-raised-button type="submit || loading">{{'igo.auth.login' | translate}}</button>
   <button *ngIf="allowAnonymous" mat-raised-button class="anonymous" type="button" [disabled]="loading" (click)="loginAnonymous()">
     {{'igo.auth.accessAnonymous' | translate }}
   </button>
