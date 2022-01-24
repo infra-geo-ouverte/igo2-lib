@@ -50,7 +50,7 @@
               <ng-template #isAnUrlDefault>
                 <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                   <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
-                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
+                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" height="auto">
                     <ng-template #notImg><span>{{ 'igo.common.entity-table.targetHtmlUrl' | translate }} </span></ng-template>
                   </a>
                 </td>
@@ -66,7 +66,7 @@
               <ng-template #isAnUrlHTML>
                 <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                   <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
-                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
+                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" height="auto">
                     <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
                   </a>
                 </td>
@@ -82,7 +82,7 @@
               <ng-template #isAnUrlUnsanitizedHTML>
                 <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                   <a href="{{getValue(record, column)}}" target='_blank' rel="noopener noreferrer" (click)="$event.stopPropagation()">
-                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
+                    <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" height="auto">
                     <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
                   </a>
                 </td>

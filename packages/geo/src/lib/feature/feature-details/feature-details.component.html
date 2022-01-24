@@ -21,13 +21,13 @@
         <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ getEmbeddedLinkText(property.value) }}</u>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isDoc(property.value)">
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && (isDoc(property.value) || isUrl(property.value))">
         <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ 'igo.geo.targetHtmlUrl' | translate }}</u>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && isImg(property.value)">
         <a href="{{property.value}}" target='_blank' rel="noopener noreferrer">
-          <img src="{{(property.value | secureImage) | async}}" width="225" heigth="auto">
+          <img src="{{(property.value | secureImage) | async}}" width="225" height="auto">
         </a>
       </td>
 
