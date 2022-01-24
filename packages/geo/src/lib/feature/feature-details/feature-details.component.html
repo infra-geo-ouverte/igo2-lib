@@ -18,7 +18,7 @@
       </td>
 
       <td *ngIf="feature.properties.target === undefined && isEmbeddedLink(property.value)">
-        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ getLinkText(property.value) }}</u>
+        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ getEmbeddedLinkText(property.value) }}</u>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isDoc(property.value)">

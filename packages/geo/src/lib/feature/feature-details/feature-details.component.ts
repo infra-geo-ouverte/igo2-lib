@@ -135,10 +135,10 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   openSecureUrl(value) {
     let url: string;
-    const regexDepot = /(\/apis\/depot).*?(.pdf|.docx|.csv|.json|.xlsx)/;
+    const regexDepot = /(\/apis\/depot)(.*?)(?="|$)/;
     const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
-    if (value.match(regexDepot)) {
+    if (regexDepot.test(value)) {
       url = value.match(regexDepot)[0];
 
       this.http.get(url, {
@@ -189,7 +189,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return regex.test(value.toString());
   }
 
-  getLinkText(value) {
+  getEmbeddedLinkText(value) {
     const regex = /(?<=>)(.*?)(?=<|$)/;
     const text = value.match(regex)[0];
     return text;
