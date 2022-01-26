@@ -20,6 +20,11 @@ export class SecureImagePipe implements PipeTransform {
       activityInterceptor: 'false'
     });
 
+    const regexDepot = /(\/apis\/depot)(.*?)(?="|$)/;
+    if (regexDepot.test(url)) {
+      url = url.match(regexDepot)[0];
+    }
+
     return this.http
       .get(url, {
         headers,
