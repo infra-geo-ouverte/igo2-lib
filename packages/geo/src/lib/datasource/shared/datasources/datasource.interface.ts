@@ -37,6 +37,7 @@ export interface DataSourceOptions {
 }
 
 export interface SourceFieldsOptionsParams {
+  step: number;
   relation: RelationOptions;
   name: any;
   alias?: any;

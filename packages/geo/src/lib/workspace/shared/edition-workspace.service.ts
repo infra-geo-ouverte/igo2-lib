@@ -298,7 +298,8 @@ export class EditionWorkspaceService {
         type: field.type,
         domainValues: undefined,
         relation: undefined,
-        multiple: field.multiple
+        multiple: field.multiple,
+        step: field.step
       };
 
       if (field.type === 'list' || field.type === 'autocomplete') {
