@@ -4,7 +4,7 @@
     [matTooltip]="'igo.geo.mapButtons.geolocate' | translate"
     matTooltipPosition="left"
     [color]="color"
-    (click)="map.geolocate()">
-    <mat-icon svgIcon="crosshairs-gps"></mat-icon>
+    (click)="onGeolocationClick()">
+    <mat-icon svgIcon="{{icon$ | async}}"></mat-icon>
   </button>
 </div>

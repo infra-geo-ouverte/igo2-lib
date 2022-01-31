@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { StorageService } from '@igo2/core';
 
 import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
 // import { BehaviorSubject } from 'rxjs';
@@ -29,7 +30,8 @@ export class MapState {
 
   constructor(
     private mapService: MapService,
-    private projectionService: ProjectionService // Don't remove this or it'll never be injected
+    private projectionService: ProjectionService, // Don't remove this or it'll never be injected,
+    private storageService: StorageService
   ) {
     this._map = new IgoMap({
       controls: {
@@ -38,7 +40,8 @@ export class MapState {
           collapsed: true
         }
       }
-    });
+    },
+    this.storageService);
 
     this.mapService.setMap(this.map);
   }
