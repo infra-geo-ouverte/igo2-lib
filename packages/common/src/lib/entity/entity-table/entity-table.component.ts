@@ -301,7 +301,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           map(value => {
             if (value.length) {
               return column.domainValues.filter((option) => {
-                const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
                 const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                 return featureNameNormalized.includes(filterNormalized);
               });
