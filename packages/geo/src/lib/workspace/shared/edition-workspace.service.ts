@@ -12,6 +12,7 @@ import {
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
 import { ConfigService, LanguageService, MessageService, StorageService } from '@igo2/core';
+import { AuthInterceptor } from '@igo2/auth';
 import { catchError, map, skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -55,7 +56,8 @@ export class EditionWorkspaceService {
     private messageService: MessageService,
     private languageService: LanguageService,
     private http: HttpClient,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    public authInterceptor?: AuthInterceptor) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
     if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition.enabled !== true) {
@@ -393,14 +395,13 @@ export class EditionWorkspaceService {
           workspace.entityStore.stateView.clear();
           workspace.deleteDrawings();
           workspace.entityStore.delete(feature);
-          this.refreshMap(workspace.layer, workspace.layer.map);
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.addSuccess'
           );
           this.messageService.success(message);
 
-          workspace.layer.dataSource.ol.refresh();
+          this.refreshMap(workspace.layer, workspace.layer.map);
           this.rowsInMapExtentCheckCondition$.next(true);
         },
         error => {
@@ -417,14 +418,12 @@ export class EditionWorkspaceService {
   public deleteFeature(workspace, url) {
     this.http.delete(`${url}`, {}).subscribe(
       () => {
-        this.refreshMap(workspace.layer, workspace.layer.map);
-
         const message = this.languageService.translate.instant(
           'igo.geo.workspace.deleteSuccess'
         );
         this.messageService.success(message);
 
-        workspace.layer.dataSource.ol.refresh();
+        this.refreshMap(workspace.layer, workspace.layer.map);
         for (const relation of workspace.layer.options.sourceOptions.relations) {
           workspace.map.layers.forEach((layer) => {
             if (layer.title === relation.title) {
@@ -457,14 +456,13 @@ export class EditionWorkspaceService {
       this.http[protocole](`${url}`, featureProperties, { headers: headers }).subscribe(
         () => {
           this.cancelEdit(workspace, feature, true);
-          this.refreshMap(workspace.layer, workspace.layer.map);
 
           const message = this.languageService.translate.instant(
             'igo.geo.workspace.modifySuccess'
           );
           this.messageService.success(message);
 
-          workspace.layer.dataSource.ol.refresh();
+          this.refreshMap(workspace.layer, workspace.layer.map);
         },
         error => {
           error.error.caught = true;
@@ -508,17 +506,40 @@ export class EditionWorkspaceService {
     );
   }
 
-  refreshMap(layer, map) {
+  /*
+   * Refresh both wms and wfs layer
+   * A new wfs loader is used to ensure cache is not retrieving old data
+   * WMS params are updated to ensure layer is correctly refreshed
+   */
+  refreshMap(layer: VectorLayer, map) {
+    const wfsOlLayer = layer.dataSource.ol;
+    const loader = (extent, resolution, proj, success, failure) => {
+      layer.customWFSLoader(
+        layer.ol.getSource(),
+        layer.options.sourceOptions,
+        this.authInterceptor,
+        extent,
+        resolution,
+        proj,
+        success,
+        failure,
+        true
+      );
+    };
+    wfsOlLayer.setLoader(loader);
+    wfsOlLayer.refresh();
+
     for (const lay of map.layers) {
       if (
         lay.id !== layer.id &&
         lay.options.linkedLayers?.linkId.includes(layer.id.substr(0, layer.id.indexOf('.') - 1)) &&
         lay.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
-        ) {
-          const olLayer = lay.dataSource.ol;
-          let params = olLayer.getParams();
+      )
+        {
+          const wmsOlLayer = lay.dataSource.ol;
+          let params = wmsOlLayer.getParams();
           params._t = new Date().getTime();
-          olLayer.updateParams(params);
+          wmsOlLayer.updateParams(params);
         }
     }
   }

@@ -321,11 +321,21 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         this.formGroup.controls[column.name].setValue(formControlValue);
       } else if (column.type === 'date') {
-        let date = moment(item[key]);
-        item[key] = date.utc().format('YYYY-MM-DD');
-        this.formGroup.setControl(column.name, this.formBuilder.control(
-          item[key]
-        ));
+        if (column.visible) {
+          if (item[key]) {
+            let date = moment(item[key]);
+            item[key] = date.utc().format('YYYY-MM-DD');
+            this.formGroup.setControl(column.name, this.formBuilder.control(
+              item[key]
+            ));
+          } else {
+            const newKey = this.getColumnKeyWithoutPropertiesTag(column.name);
+            record.entity.properties[newKey] = null;
+            this.formGroup.setControl(column.name, this.formBuilder.control(
+              null
+            ));
+          }
+        }
       } else {
         this.formGroup.setControl(column.name, this.formBuilder.control(
           item[key]
@@ -655,10 +665,14 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       });
     }
     else if (column.type === 'date') {
-      if (this.isEdition(record) && value) {
-        let date = moment(value);
-        value = date.format();
-        this.formGroup.controls[column.name].setValue(value);
+      if (this.isEdition(record)) {
+        if (value) {
+          let date = moment(value);
+          value = date.format();
+          this.formGroup.controls[column.name].setValue(value);
+        }
+      } else if (!this.isEdition(record) && value === null) {
+        value = "";
       }
     }
 
@@ -786,7 +800,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   //Remove properties. from Column name
-  public getColumnKeyWithoutPropertiesTag(column) {
+  public getColumnKeyWithoutPropertiesTag(column: string) {
     if (column.includes('properties.')) {
       return column.split('.')[1];
     }
