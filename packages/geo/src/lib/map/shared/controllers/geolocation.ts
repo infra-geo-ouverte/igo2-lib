@@ -144,7 +144,7 @@ export class MapGeolocationController extends MapController {
   set tracking(value: boolean) {
     this.geolocation.setTracking(value || false);
     this.tracking$.next(value);
-    if (this.storageService && value) {
+    if (this.storageService && value !== undefined) {
       this.storageService.set('geolocation.tracking', value);
     }
   }
@@ -156,7 +156,7 @@ export class MapGeolocationController extends MapController {
     this._followPosition = value;
     this.handleFeatureCreation(this.position$.value);
     this.followPosition$.next(value);
-    if (this.storageService && value) {
+    if (this.storageService && value !== undefined) {
       this.storageService.set('geolocation.followPosition', value);
     }
   }
