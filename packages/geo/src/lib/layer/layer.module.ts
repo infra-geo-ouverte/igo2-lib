@@ -21,7 +21,8 @@ import {
   IgoCollapsibleModule,
   IgoImageModule,
   IgoPanelModule,
-  IgoMatBadgeIconModule
+  IgoMatBadgeIconModule,
+  IgoCustomHtmlModule
 } from '@igo2/common';
 
 import { LayerService } from './shared/layer.service';
@@ -59,7 +60,8 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     IgoCollapsibleModule,
     IgoImageModule,
     IgoPanelModule,
-    IgoMatBadgeIconModule
+    IgoMatBadgeIconModule,
+    IgoCustomHtmlModule
   ],
   exports: [
     LayerItemComponent,

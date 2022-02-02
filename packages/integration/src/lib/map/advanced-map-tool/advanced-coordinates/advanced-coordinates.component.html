@@ -48,4 +48,6 @@
   </mat-slide-toggle> 
 </form>
 
-<p class="igo-zoom mat-typography">{{'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate}} {{map.getZoom() }}</p>
+<p class="igo-zoom mat-typography">{{'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate}} {{map.viewController.getZoom() }}</p>
+<p class="igo-zoom mat-typography">{{'igo.integration.advanced-map-tool.advanced-coordinates.scale' | translate}} {{ formattedScale$ | async }}</p>
+<p class="igo-zoom mat-typography">{{'igo.integration.advanced-map-tool.advanced-coordinates.resolution' | translate}} {{map.viewController.getResolution() | number: '1.0-0' }}</p>

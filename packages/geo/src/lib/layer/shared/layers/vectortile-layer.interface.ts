@@ -20,5 +20,6 @@ export interface VectorTileLayerOptions extends LayerOptions {
   ol?: olLayerVectorTile;
   declutter?: boolean;
   styleByAttribute?: StyleByAttribute;
+  hoverStyle?: StyleByAttribute;
   mapboxStyle ?: MapboxStyle;
 }
