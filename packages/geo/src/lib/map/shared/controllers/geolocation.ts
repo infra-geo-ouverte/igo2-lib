@@ -147,6 +147,9 @@ export class MapGeolocationController extends MapController {
     if (this.storageService && value !== undefined) {
       this.storageService.set('geolocation.tracking', value);
     }
+    if (!value) {
+      this.position$.next(undefined);
+    }
   }
 
     /**
