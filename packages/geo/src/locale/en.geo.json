@@ -54,7 +54,7 @@
         },
         "unreadable": {
           "text": "The file '{{value}}' is unreadable",
-          "title": "Unreadable file" 
+          "title": "Unreadable file"
         },
         "tooLarge": {
           "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
@@ -675,6 +675,7 @@
         "drawing": "Draws",
         "fill": "Fill",
         "finish": "Finish current drawing",
+        "freehandMode": "Use a predefined radius",
         "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",

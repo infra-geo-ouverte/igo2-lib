@@ -104,6 +104,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsDisabled: boolean = true;
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
+  public freehandMode: boolean = false;
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
@@ -265,6 +266,10 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   onToggleDrawControl(toggleIsChecked: boolean) {
     toggleIsChecked ? this.toggleDrawControl() : this.deactivateDrawControl();
+  }
+
+  onToggleFreehandMode() {
+    this.freehandMode = !this.freehandMode;
   }
 
   /**
@@ -526,15 +531,18 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   changeRadius() {
-    let radiusMeters;
+    let radiusMeters: number;
     if (this.radiusFormControl.value) {
       this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = this.radiusFormControl.value : radiusMeters = this.radiusFormControl.value * 1000;
     } else {
       radiusMeters = undefined;
     }
-    console.log(radiusMeters);
-
-    this.drawControl.setInteractionStyle(radiusMeters)
+    if (radiusMeters >= 100000 || radiusMeters < 0) {
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'), this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+      this.radiusFormControl.reset();
+    } else {
+      console.log('ok')
+    }
   }
 
   onMeasureUnitChange(selectedMeasureUnit: MeasureLengthUnit) {

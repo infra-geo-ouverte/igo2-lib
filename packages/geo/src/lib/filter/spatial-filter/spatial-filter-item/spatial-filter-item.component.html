@@ -11,19 +11,19 @@
   [radius]="radius">
 </igo-geometry-form-field-input>
 
-<div class="header">
-    <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="drawControlIsActive"
-      [labelPosition]="'before'"
-      (change)="onDrawControlChange()">
-      {{'igo.geo.spatialFilter.drawControl' | translate}}
-    </mat-slide-toggle>
-    <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="freehandDrawIsActive"
-      [labelPosition]="'before'"
-      (change)="onfreehandControlChange()">
-      {{'igo.geo.spatialFilter.freehandControl' | translate}}
-    </mat-slide-toggle>
+<div class="header mat-typography">
+  <mat-slide-toggle *ngIf="!isPredefined()"
+    [checked]="drawControlIsActive"
+    [labelPosition]="'before'"
+    (change)="onDrawControlChange()">
+    {{'igo.geo.spatialFilter.drawControl' | translate}}
+  </mat-slide-toggle>
+  <mat-slide-toggle *ngIf="!isPredefined()"
+    [checked]="freehandDrawIsActive"
+    [labelPosition]="'before'"
+    (change)="onfreehandControlChange()">
+    {{'igo.geo.spatialFilter.freehandControl' | translate}}
+  </mat-slide-toggle>
 </div>
 
 <div class="buffer-unit" *ngIf="isPolygon()">
@@ -39,7 +39,7 @@
     [value]="measureUnit"
     (selectionChange)="onMeasureUnitChange($event.value)">
     <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
+      {{('igo.geo.measure.' + measureUnit) | translate}}
     </mat-option>
     </mat-select>
   </mat-form-field>
@@ -64,13 +64,13 @@
   </mat-form-field>
 </div>
 
-<mat-label class="title mat-typography">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
-<mat-radio-group [value]="selectedItemType">
-    <mat-radio-button *ngFor="let item of itemType"
-      [value]="item"
-      (change)="onItemTypeChange($event)">
-      {{'igo.geo.spatialFilter.' + item | translate}}
-    </mat-radio-button>
+<mat-label class="title mat-typography">{{'igo.geo.spatialFilter.search' | translate}}:</mat-label>
+<mat-radio-group class="mat-typography" [value]="selectedItemType">
+  <mat-radio-button *ngFor="let item of itemType"
+    [value]="item"
+    (change)="onItemTypeChange($event)">
+    {{'igo.geo.spatialFilter.' + item | translate}}
+  </mat-radio-button>
 </mat-radio-group>
 
 <div class="thematics" *ngIf="(selectedItemType==='Thematics' && !tableTemplate) || (selectedItemType==='Thematics' && tableTemplate && !listIsVisible)">

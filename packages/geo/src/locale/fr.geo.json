@@ -675,6 +675,7 @@
         "drawing": "Dessins",
         "fill": "Remplissage",
         "finish": "Terminer le dessin en cours",
+        "freehandMode": "Utiliser un rayon prédéfini",
         "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",

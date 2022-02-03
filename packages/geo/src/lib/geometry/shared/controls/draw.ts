@@ -195,6 +195,22 @@ export class DrawControl {
         freehand: false,
         freehandCondition: () => false
       });
+    } else {
+      if (this.olGeometryType === 'Point') {
+        olDrawInteraction = new OlDraw({
+          type: 'Circle',
+          source: this.getSource(),
+          maxPoints: this.options.maxPoints,
+          freehand: true
+        });
+      } else {
+        olDrawInteraction = new OlDraw({
+          type: this.olGeometryType,
+          source: this.getSource(),
+          maxPoints: this.options.maxPoints,
+          freehand: true
+        });
+      }
     }
 
     // Add Draw interaction to map and create listeners
