@@ -154,6 +154,7 @@ export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   sliderOptions?: SliderOptionsInterface;
   displayFormat?: string;
   calendarModeYear?: boolean;
+  alias?: string;
 }
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;
