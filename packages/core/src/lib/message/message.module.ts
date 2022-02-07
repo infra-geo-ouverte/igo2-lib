@@ -17,7 +17,7 @@ import { GlobalConfig, ToastrModule } from 'ngx-toastr';
       maxOpened: 4,
       preventDuplicates: true,
       resetTimeoutOnDuplicate: true,
-      countDuplicates: true,
+      countDuplicates: false,
       includeTitleDuplicates: true
     } as GlobalConfig)],
   declarations: [],
