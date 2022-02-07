@@ -637,16 +637,49 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const headerRow = currentFeature.clone();
     const emptyRow = currentFeature.clone();
     const previousFeatureKeys: Array<string> = previousFeature.getKeys();
+    let firstKeyPrevious: string = '';
+    for (const key in previousFeatureKeys) {
+      if (previousFeatureKeys[key] !== 'geometry') {
+        firstKeyPrevious = previousFeatureKeys[key];
+        break;
+      }
+    }
+
     const currentFeatureKeys: Array<string> = currentFeature.getKeys();
+    let firstKeyCurrent: string = '';
+    for (const key in currentFeatureKeys) {
+      if (currentFeatureKeys[key] !== 'geometry') {
+        firstKeyCurrent = currentFeatureKeys[key];
+        break;
+      }
+    }
     const allKeys: Array<string> = currentFeature.getKeys();
     previousFeatureKeys.forEach(previousKey => {
-      if (allKeys.includes(previousKey)) {
+      if (allKeys.includes(previousKey) && previousKey !== firstKeyPrevious) {
         allKeys.push(previousKey);
       }
     });
-    const firstKey: string = allKeys[1];
+    allKeys.unshift(firstKeyPrevious);
+
+    let firstKeyAll: string = '';
+    for (const key in allKeys) {
+      if (allKeys[key] !== 'geometry') {
+        firstKeyAll = allKeys[key];
+        break;
+      }
+    }
     allKeys.forEach(key => {
-      if (key === firstKey) {
+      const sameKeys: boolean = previousFeatureKeys.length === currentFeatureKeys.length &&
+      previousFeatureKeys.every((value, index) => value === currentFeatureKeys[index]);
+      if (key === firstKeyAll && !sameKeys) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===============>", true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key === firstKeyAll && sameKeys) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key === firstKeyCurrent) {
         titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
         headerRow.set(key, key, true);
         emptyRow.unset(key, true);
