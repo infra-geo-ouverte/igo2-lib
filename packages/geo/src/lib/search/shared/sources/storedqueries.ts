@@ -181,7 +181,7 @@ export class StoredQueriesSearchSource extends SearchSource
       storedqueriesParams
     );
     this.options.params = this.options.params ? this.options.params : {};
-    this.options.params.page = !options.page ? String(options.page) : '1';
+    this.options.params.page = options.page ? String(options.page) : '1';
 
     if (
       new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)

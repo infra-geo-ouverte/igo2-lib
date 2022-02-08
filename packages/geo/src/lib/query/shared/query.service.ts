@@ -14,7 +14,7 @@ import olFeature from 'ol/Feature';
 import * as olgeom from 'ol/geom';
 
 import { uuid } from '@igo2/utils';
-import { Feature } from '../../feature/shared/feature.interfaces';
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FEATURE } from '../../feature/shared/feature.enums';
 import { Layer } from '../../layer/shared/layers/layer';
 import {
@@ -66,12 +66,14 @@ export class QueryService {
       const urlGml = this.getQueryUrl(layer.dataSource, options, true);
       return this.http.get(urlGml, { responseType: 'text' }).pipe(
         mergeMap(gmlRes => {
-          const imposedGeom = this.mergeGML(gmlRes, url);
+          const mergedGML = this.mergeGML(gmlRes, url, layer);
+          const imposedGeom = mergedGML[0];
+          const imposedProperties = mergedGML[1];
           return this.http
             .get(url, { responseType: 'text' })
             .pipe(
               map(res =>
-                this.extractData(res, layer, options, url, imposedGeom)
+                this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
               )
             );
         })
@@ -82,7 +84,7 @@ export class QueryService {
     return request.pipe(map(res => this.extractData(res, layer, options, url)));
   }
 
-  private mergeGML(gmlRes, url) {
+  private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
@@ -105,7 +107,23 @@ export class QueryService {
     const bboxExtent = olextent.createEmpty();
     olextent.extend(bboxExtent, bbox);
     const outBboxExtent = false;
+    let titleContent;
+    let queryTileField;
+    if (layer.options?.source?.options) {
+      const dataSourceOptions = layer.options.source
+        .options as QueryableDataSourceOptions;
+      if (dataSourceOptions.queryTitle) {
+        queryTileField = dataSourceOptions.queryTitle;
+      }
+    }
     features.map(feature => {
+
+      if (queryTileField) {
+        let queryTitleContent = feature.getProperties()[queryTileField];
+        if (queryTitleContent) {
+          titleContent = !titleContent ? queryTitleContent : `${titleContent},${queryTitleContent}`;
+        }
+      }
       /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
@@ -157,27 +175,35 @@ export class QueryService {
       };
     }
 
+    let returnGeometry;
     switch (firstFeatureType) {
       case 'LineString':
-        return {
+        returnGeometry = {
           type: olmline.getType(),
           coordinates: olmline.getCoordinates()
         };
       case 'Point':
         return olmpts;
       case 'Polygon':
-        return {
+        returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
       case 'MultiPolygon':
-        return {
+        returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
-      default:
-        return;
     }
+    const imposedProperties = {};
+
+    if (queryTileField) {
+      imposedProperties[queryTileField] = titleContent;
+    }
+
+    return [ returnGeometry, imposedProperties];
+
+
   }
 
   cross(a, b, o) {
@@ -230,7 +256,8 @@ export class QueryService {
     layer: Layer,
     options: QueryOptions,
     url: string,
-    imposedGeometry?
+    imposedGeometry?,
+    imposedProperties?: { [key: string]: any }
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
@@ -267,7 +294,8 @@ export class QueryService {
           res,
           queryDataSource.queryHtmlTarget,
           url,
-          imposedGeometry
+          imposedGeometry,
+          imposedProperties
         );
         break;
       case QueryFormat.GML2:
@@ -455,7 +483,8 @@ export class QueryService {
     res,
     htmlTarget: QueryHtmlTarget,
     url,
-    imposedGeometry?
+    imposedGeometry?,
+    imposedProperties?: { [key: string]: any }
   ) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
@@ -481,7 +510,7 @@ export class QueryService {
       {
         type: FEATURE,
         projection,
-        properties: { target: htmlTarget, body: res, url },
+        properties: Object.assign({ target: htmlTarget, body: res, url }, imposedProperties),
         geometry: imposedGeometry || geomToAdd
       }
     ];
