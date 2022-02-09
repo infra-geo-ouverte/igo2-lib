@@ -13,6 +13,7 @@
   igoPointerPosition
   [pointerPositionDelay]="pointerCoordDelay"
   (pointerPositionCoord)="onPointerMove($event)">
+    <igo-info-section [infoContent]="pointerCoord"></igo-info-section>
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
     <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
     <igo-initial-button [map]="map" color="primary"></igo-initial-button>

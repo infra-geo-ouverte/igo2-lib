@@ -1,20 +1,20 @@
 import { TemplateRef } from '@angular/core';
 import { MessageType } from './message.enum';
-import { Notification } from '@igo2/angular2-notifications';
+import { IndividualConfig } from 'ngx-toastr';
 
 export interface Message {
   title?: string;
   text?: string;
   html?: string | TemplateRef<any>;
-  icon?: string;
   type?: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
 }
 
-export interface MessageOptions extends Notification {
+export interface MessageOptions extends IndividualConfig {
   template?: string;
   from?: Date | string;
   to?: Date | string;
-  id?: string;
+  id?: number;
+  showOnEachLayerVisibility?: boolean;
 }

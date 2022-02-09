@@ -19,6 +19,7 @@ import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { MapCenterComponent } from './map-center/map-center.component';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
+import { InfoSectionComponent } from './info-section/info-section.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     GeolocateButtonComponent,
     InitialButtonComponent,
     RotationButtonComponent,
+    InfoSectionComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
@@ -51,6 +53,7 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     GeolocateButtonComponent,
     InitialButtonComponent,
     RotationButtonComponent,
+    InfoSectionComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,

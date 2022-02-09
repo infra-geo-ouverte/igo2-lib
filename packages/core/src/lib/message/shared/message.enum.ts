@@ -1,6 +1,7 @@
 export enum MessageType {
   ERROR = 'error',
-  ALERT = 'alert',
+  ALERT = 'warning', // todo delete (transition to ngx-toastr)
+  WARNING = 'warning',
   INFO = 'info',
   SUCCESS = 'success'
 }
