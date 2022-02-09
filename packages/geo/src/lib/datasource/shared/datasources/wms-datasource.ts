@@ -117,11 +117,11 @@ export class WMSDataSource extends DataSource {
         || initOgcFilters.radioButtons || initOgcFilters.select)
         ? false
         : true;
-      if (initOgcFilters.advancedOgcFilters){  
+      if (initOgcFilters.advancedOgcFilters) {
           const filterDuring = initOgcFilters.filters as OgcFilterDuringOptions;
           if(filterDuring.calendarModeYear) {
             initOgcFilters.advancedOgcFilters = false;
-          } 
+          }
       }
       if (initOgcFilters.pushButtons){
         initOgcFilters.pushButtons.selectorType = 'pushButton';

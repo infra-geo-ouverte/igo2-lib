@@ -63,16 +63,16 @@ export class OgcFilterButtonComponent implements OnInit {
     } else if (filter && filter.filters && filter.filters.filters) {
       return filter.filters.filters.length;
     }
-    if (filter.filters && filter.filters.operator === 'During' && filter.filters.active && 
+    if (filter.filters && filter.filters.operator === 'During' && filter.filters.active &&
       filter.interfaceOgcFilters && filter.interfaceOgcFilters[0].active) {
       const filterActiveValue = filter.interfaceOgcFilters[0];
       if (filter.filters.calendarModeYear) {
         // year mode check just year
-        if ((filterActiveValue.begin.substring(0,4) !== this.options.minDate.substring(0,4) ) || 
+        if ((filterActiveValue.begin.substring(0,4) !== this.options.minDate.substring(0,4) ) ||
         (filterActiveValue.end.substring(0,4) !== this.options.maxDate.substring(0,4) )) {
           cnt += 1;
         }
-      } else if ((filterActiveValue.begin != this.options.minDate) || (filterActiveValue.end != this.options.maxDate)) {
+      } else if ((filterActiveValue.begin !== this.options.minDate) || (filterActiveValue.end !== this.options.maxDate)) {
         cnt += 1;
       }
     }

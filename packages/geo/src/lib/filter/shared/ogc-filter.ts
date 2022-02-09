@@ -851,7 +851,7 @@ export class OgcFilterWriter {
     layersOrTypenames: string
   ): string {
 
-    if (!processedFilter) {return undefined};
+    if (!processedFilter) {return undefined;};
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;

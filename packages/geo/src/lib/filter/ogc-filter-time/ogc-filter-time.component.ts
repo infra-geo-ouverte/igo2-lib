@@ -526,7 +526,7 @@ export class OgcFilterTimeComponent implements OnInit {
       this.filterStateDisable = false;
     }
     if(this.calendarType() === 'datetime') {
-      if (this.filterStateDisable == true) {
+      if (this.filterStateDisable === true) {
         this.beginHourFormControl.disable();
         this.beginMinuteFormControl.disable();
         this.endHourFormControl.disable();
@@ -541,7 +541,7 @@ export class OgcFilterTimeComponent implements OnInit {
   }
   getDateFromStringWithoutTime(stringDate: string): Date {
     // warning create date with no time make a date UTC with TZ and the date create maybe not the same year, month and day
-    // exemple: 
+    // exemple:
     // new Date('2022-01-01') -> Fri Dec 31 2021 19:00:00 GMT-0500 (heure normale de l’Est nord-américain)
     // to create same date as string, add time 00 in the creation
     // new Date('2022-01-01 00:00:00') -> Sat Jan 01 2022 00:00:00 GMT-0500 (heure normale de l’Est nord-américain)
@@ -550,7 +550,7 @@ export class OgcFilterTimeComponent implements OnInit {
     let day = '01';
     if (stringDate.length === 10) {
        const dateItems = stringDate.split('-');
-        if (dateItems.length != 3) {
+        if (dateItems.length !== 3) {
           throw new Error('Error in config date begin-end for ogcFilter: Date without time format need to be YYYY-MM-DD or YYYY');
         } else {
           year = dateItems[0];
@@ -586,7 +586,7 @@ export class OgcFilterTimeComponent implements OnInit {
       maxDefaultDate = this.getDateFromStringWithoutTime(maxDefaultISOString);
     } else {
       minDefaultDate= this.parseFilter(filterOriginConfig.begin);
-      maxDefaultDate= this.parseFilter(filterOriginConfig.end);    
+      maxDefaultDate= this.parseFilter(filterOriginConfig.end);
       minDefaultISOString = minDefaultDate.toISOString();
       maxDefaultISOString = maxDefaultDate.toISOString();
     }
