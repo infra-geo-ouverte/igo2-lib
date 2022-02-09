@@ -48,7 +48,7 @@
   }
 }
 
-:host ::ng-deep igo-initial-button {
+:host ::ng-deep igo-home-extent-button {
   position: absolute;
   bottom: calc((3 * #{$igo-icon-size}) + 5px + (2 * #{$igo-margin}));
   right: $igo-margin;
