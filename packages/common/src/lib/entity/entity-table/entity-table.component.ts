@@ -684,7 +684,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getValidationAttributeValue(column: EntityTableColumn, validationType: string): any {
-    if (column.validation !== undefined && column.validation[validationType]) {
+    if (column.validation !== undefined && column.validation[validationType] !== undefined) {
       return column.validation[validationType];
     } else {
       return false;

@@ -96,7 +96,8 @@ export interface EntityTableColumnValidation {
   mandatory?: boolean;
   maxlength?: number;
   minlength?: number;
-
+  minValue?: number;
+  maxValue?: number;
 }
 
 export interface TableRelation {

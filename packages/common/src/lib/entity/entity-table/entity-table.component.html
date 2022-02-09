@@ -79,7 +79,8 @@
                             (keypress)="column.onChange($event)" (blur)="column.onBlur($event)">
                             <input matInput type="number" class="class_number_edition" *ngIf="column.type === 'number'" [formControlName]="column.name" step="{{column.step}}"
                             value="{{getValue(record,column)}}" (input)="onValueChange(column.name, record, $event)"
-                            readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
+                            readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}"
+                            min="{{getValidationAttributeValue(column, 'minValue')}}" max="{{getValidationAttributeValue(column, 'maxValue')}}">
                             <input matInput type="text" *ngIf="!column.type || column.type ==='string'" [formControlName]="column.name"
                             value="{{getValue(record, column)}}" (input)="onValueChange(column.name, record, $event)"
                             readonly="{{getValidationAttributeValue(column, 'readonly')}}" required="{{getValidationAttributeValue(column, 'mandatory')}}">
