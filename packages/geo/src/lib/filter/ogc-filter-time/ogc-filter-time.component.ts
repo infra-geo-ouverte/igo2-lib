@@ -12,7 +12,8 @@ import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 import {
   OgcFilterableDataSourceOptions,
-  OgcFilterableDataSource
+  OgcFilterableDataSource,
+  OgcFilterDuringOptions
 } from '../shared/ogc-filter.interface';
 
 import * as moment_ from 'moment';
@@ -55,6 +56,8 @@ export class OgcFilterTimeComponent implements OnInit {
   public onlyYearBegin: number;
   public onlyYearEnd: number;
   public calendarTypeYear = false;
+  public resetIcon = 'replay';
+  public filterStateDisable: boolean;
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
@@ -115,13 +118,10 @@ export class OgcFilterTimeComponent implements OnInit {
     this.onlyYearBegin = this.beginValue.getUTCFullYear();
     this.onlyYearEnd = this.endValue.getUTCFullYear();
     this.calendarTypeYear = this.isCalendarYearMode();
-
+    this.setFilterStateDisable();
     this.updateHoursMinutesArray();
     // update value for now value
     this.updateValues();
-    if (this.currentFilter.calendarModeYear) {
-      this.beginValue.setUTCFullYear(this.beginValue.getUTCFullYear() + 1);
-    }
   }
 
   parseFilter(filter): Date {
@@ -161,11 +161,31 @@ export class OgcFilterTimeComponent implements OnInit {
       }
       return new Date();
     }
-    return filter ? new Date(filter) : new Date();
+    if (this.currentFilter.calendarModeYear) {
+      const date = this.getDateFromStringWithoutTime(filter);
+      return date;
+    } else {
+      return filter ? new Date(filter) : new Date();
+    }
   }
 
   changeTemporalProperty(value, position?, refreshFilter = true) {
     let valueTmp = this.getDateTime(value, position);
+    if (this.isCalendarYearMode()) {
+      let dateStringFromYearNotime;
+      if (position === 1) {
+        this.beginValue = value;
+        this.onlyYearBegin = this.beginValue.getFullYear();
+        dateStringFromYearNotime = `${this.onlyYearBegin}-01-01`;
+      } else {
+        this.endValue = value;
+        this.onlyYearEnd = this.endValue.getFullYear();
+        dateStringFromYearNotime = `${this.onlyYearEnd}-01-01`;
+      }
+      // call service with string date without time
+      this.changeProperty.next({ value: dateStringFromYearNotime, pos: position, refreshFilter });
+      return;
+    }
     if (position === 2 && this.calendarType() === 'date' && !this.sliderMode) {
       /* Above month: see yearSelected or monthSelected */
       valueTmp = moment(valueTmp).endOf('day').toDate();
@@ -186,6 +206,9 @@ export class OgcFilterTimeComponent implements OnInit {
   handleDate(value): Date {
     if (!value || value === '') {
       return undefined;
+    }
+    if (typeof(value) === 'string' && this.currentFilter.calendarModeYear) {
+      return this.getDateFromStringWithoutTime(value);
     }
     return new Date(value);
   }
@@ -210,9 +233,8 @@ export class OgcFilterTimeComponent implements OnInit {
 
   yearOnlyInputChange(changeEvent, datePicker?: any, property?: string) {
     const year = changeEvent.target.value;
-    const dateString = `${year}-01-01T05:00:00.000Z`;
-    const dateUtc = new Date(dateString);
-    this.yearSelected(dateUtc, datePicker, property);
+    const date = this.getDateFromStringWithoutTime(year);
+    this.yearSelected(date, datePicker, property);
   }
 
   yearSelected(year, datePicker?: any, property?: string, refreshFilter = true) {
@@ -220,29 +242,13 @@ export class OgcFilterTimeComponent implements OnInit {
       if (datePicker) {
         datePicker.close();
       }
-      const yearInt = year.getUTCFullYear();
-      if (property === 'begin' && this.currentFilter.calendarModeYear) {
-
-        this.onlyYearBegin = yearInt;
-        // in year mode, change begin date -1 to include day 1 of same year in filter
-        const yearPast = year.getUTCFullYear() - 1;
-        year = moment().set('year', yearPast).toDate();
-        year = moment(year).endOf('year').toDate();
-      }
       if (property === 'end') {
-        this.onlyYearEnd = yearInt;
         // change value 01 jan to 31 dec same year
         year = moment(year).endOf('year').toDate();
-      } else if (property === 'begin' && this.restrictedToStep()) {
+      } else if (property === 'begin' && this.restrictedToStep() && !this.calendarTypeYear) {
         this.yearSelected(year, undefined, 'end');
       }
       this.changeTemporalProperty(year, property === 'begin' ? 1 : 2, refreshFilter);
-      if (property === 'begin' && this.currentFilter.calendarModeYear) {
-        // datepicker value set to original year not year-1
-        const newMoment = moment(year).startOf('year');
-        const newDate = newMoment.set('year', year.getFullYear() + 1).toDate();
-        this.beginValue = newDate;
-      }
     }
   }
 
@@ -513,4 +519,93 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
+  setFilterStateDisable() {
+    if (this.currentFilter) {
+      this.filterStateDisable = !this.currentFilter.active;
+    } else {
+      this.filterStateDisable = false;
+    }
+    if(this.calendarType() === 'datetime') {
+      if (this.filterStateDisable == true) {
+        this.beginHourFormControl.disable();
+        this.beginMinuteFormControl.disable();
+        this.endHourFormControl.disable();
+        this.endMinuteFormControl.disable();
+      } else {
+        this.beginHourFormControl.enable();
+        this.beginMinuteFormControl.enable();
+        this.endHourFormControl.enable();
+        this.endMinuteFormControl.enable();
+      }
+    }
+  }
+  getDateFromStringWithoutTime(stringDate: string): Date {
+    // warning create date with no time make a date UTC with TZ and the date create maybe not the same year, month and day
+    // exemple: 
+    // new Date('2022-01-01') -> Fri Dec 31 2021 19:00:00 GMT-0500 (heure normale de l’Est nord-américain)
+    // to create same date as string, add time 00 in the creation
+    // new Date('2022-01-01 00:00:00') -> Sat Jan 01 2022 00:00:00 GMT-0500 (heure normale de l’Est nord-américain)
+    let year;
+    let month = '01';
+    let day = '01';
+    if (stringDate.length === 10) {
+       const dateItems = stringDate.split('-');
+        if (dateItems.length != 3) {
+          throw new Error('Error in config date begin-end for ogcFilter: Date without time format need to be YYYY-MM-DD or YYYY');
+        } else {
+          year = dateItems[0];
+          month = dateItems[1];
+          day = dateItems[2];
+        }
+    } else if (stringDate.length === 4) {
+      year = stringDate;
+    } else {
+      return new Date(stringDate);
+    }
+    return new Date(`${year}-${month}-${day} 00:00:00`);
+  }
+
+  resetFilter() {
+    debugger;
+    let filterOriginConfig = this.datasource.options.ogcFilters.filters as OgcFilterDuringOptions;
+
+    let minDefaultDate;
+    let maxDefaultDate;
+    let minDefaultISOString;
+    let maxDefaultISOString;
+
+    if (this.calendarTypeYear) {
+      if (filterOriginConfig.end === 'today') {
+        let todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
+        maxDefaultISOString = `${todayDateStringNoTime.substring(0,4)}-01-01`;
+      } else {
+        maxDefaultISOString = `${filterOriginConfig.end.substring(0,4)}-01-01`;
+      }
+      minDefaultISOString = `${filterOriginConfig.begin.substring(0,4)}-01-01`;
+      minDefaultDate = this.getDateFromStringWithoutTime(minDefaultISOString);
+      maxDefaultDate = this.getDateFromStringWithoutTime(maxDefaultISOString);
+    } else {
+      minDefaultDate= this.parseFilter(filterOriginConfig.begin);
+      maxDefaultDate= this.parseFilter(filterOriginConfig.end);    
+      minDefaultISOString = minDefaultDate.toISOString();
+      maxDefaultISOString = maxDefaultDate.toISOString();
+    }
+
+    if ((this.currentFilter.begin !== minDefaultISOString ) ||
+    (this.currentFilter.end !== maxDefaultISOString)) {
+      this.beginValue = minDefaultDate;
+      this.endValue = maxDefaultDate;
+      this.updateValues();
+    }
+  }
+
+  toggleFilterState() {
+    if (this.currentFilter.active === true) {
+      this.currentFilter.active = false;
+    } else {
+      this.currentFilter.active = true;
+    }
+    this.setFilterStateDisable();
+    this.updateValues();
+  }
 }

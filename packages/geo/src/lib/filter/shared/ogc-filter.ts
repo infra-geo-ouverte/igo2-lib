@@ -850,6 +850,8 @@ export class OgcFilterWriter {
     processedFilter: string,
     layersOrTypenames: string
   ): string {
+
+    if (!processedFilter) {return undefined};
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;
@@ -872,6 +874,8 @@ export class OgcFilterWriter {
   public parseFilterOptionDate(value: string, defaultValue?: string): string {
     if (!value) {
       return defaultValue;
+    } else if (value === 'today') {
+      return undefined;
     } else if (moment(value).isValid()) {
       return value;
     } else {
