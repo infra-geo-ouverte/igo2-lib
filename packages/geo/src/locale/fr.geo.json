@@ -187,7 +187,7 @@
         "selectField": "Choisir un champ"
       },
       "filter": {
-        "resetFilters": "réinitialiser valeurs par defaut",
+        "resetFilters": "réinitialiser valeurs par défaut",
         "addFilter": "Ajouter un filtre vide à la liste courante",
         "removeFilter": "Supprimer le présent filtre à la liste des filtres",
         "toggleFilterState": "Activer/désactiver le présent filtre",
