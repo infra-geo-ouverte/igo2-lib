@@ -322,7 +322,11 @@ export class EditionWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
-        onClick: () => { this.ws$.next(relation.title); },
+        onClick: () => {
+          if (this.adding$.getValue() === false) {
+            this.ws$.next(relation.title);
+          }
+        },
         cellClassFunc: () => {
           return { 'class_icon': true };
       }
