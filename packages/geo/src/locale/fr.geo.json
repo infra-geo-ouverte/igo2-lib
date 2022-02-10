@@ -183,6 +183,7 @@
           "Contains": "Retourne les entités complètement contenues par la géométrie fournie (Contains)"
         }
       },
+      
       "sourceFields": {
         "selectField": "Choisir un champ"
       },
