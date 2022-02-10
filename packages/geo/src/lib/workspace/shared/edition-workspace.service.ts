@@ -406,10 +406,25 @@ export class EditionWorkspaceService {
         },
         error => {
           error.error.caught = true;
-          const message = this.languageService.translate.instant(
+          const genericErrorMessage = this.languageService.translate.instant(
             'igo.geo.workspace.addError'
           );
-          this.messageService.error(message);
+          const messages = workspace.layer.dataSource.options.edition.messages;
+          if (messages) {
+            let text;
+            messages.forEach(message => {
+              const key = Object.keys(message)[0];
+              if (error.error.message.includes(key)) {
+                text = message[key];
+                this.messageService.error(text);
+              }
+            });
+            if (!text) {
+              this.messageService.error(genericErrorMessage);
+            }
+          } else {
+            this.messageService.error(genericErrorMessage);
+          }
         }
       );
     }
@@ -434,16 +449,31 @@ export class EditionWorkspaceService {
       },
       error => {
         error.error.caught = true;
-        const message = this.languageService.translate.instant(
-          'igo.geo.workspace.deleteError'
-        );
-        this.messageService.error(message);
+          const genericErrorMessage = this.languageService.translate.instant(
+            'igo.geo.workspace.addError'
+          );
+          const messages = workspace.layer.dataSource.options.edition.messages;
+          if (messages) {
+            let text;
+            messages.forEach(message => {
+              const key = Object.keys(message)[0];
+              if (error.error.message.includes(key)) {
+                text = message[key];
+                this.messageService.error(text);
+              }
+            });
+            if (!text) {
+              this.messageService.error(genericErrorMessage);
+            }
+          } else {
+            this.messageService.error(genericErrorMessage);
+          }
       }
     );
   }
 
   public modifyFeature(feature, workspace, url, headers, protocole='patch' ) {
-
+    //TODO: adapt to any kind of geometry
     const geom = workspace.layer.dataSource.options.edition.geomField;
     if (geom) {
       //feature.properties[geom] = feature.geometry;
@@ -466,10 +496,25 @@ export class EditionWorkspaceService {
         },
         error => {
           error.error.caught = true;
-          const message = this.languageService.translate.instant(
-            'igo.geo.workspace.modifyError'
+          const genericErrorMessage = this.languageService.translate.instant(
+            'igo.geo.workspace.addError'
           );
-          this.messageService.error(message);
+          const messages = workspace.layer.dataSource.options.edition.messages;
+          if (messages) {
+            let text;
+            messages.forEach(message => {
+              const key = Object.keys(message)[0];
+              if (error.error.message.includes(key)) {
+                text = message[key];
+                this.messageService.error(text);
+              }
+            });
+            if (!text) {
+              this.messageService.error(genericErrorMessage);
+            }
+          } else {
+            this.messageService.error(genericErrorMessage);
+          }
         }
       );
     }
