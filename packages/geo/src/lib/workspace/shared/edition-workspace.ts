@@ -179,6 +179,7 @@ export class EditionWorkspace extends Workspace {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
         feature.newFeature = true;
+        this.editionWorkspaceService.adding$.next(true);
         workspace.entityStore.state.updateAll({ newFeature: false });
         workspace.entityStore.stateView.filter(this.filterClauseFunc);
         if (editionOpt.addWithDraw) {

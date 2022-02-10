@@ -43,6 +43,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 export class EditionWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
+  public adding$ = new BehaviorSubject<boolean>(false);
   public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
 
   get zoomAuto(): boolean {
@@ -402,6 +403,7 @@ export class EditionWorkspaceService {
           this.messageService.success(message);
 
           this.refreshMap(workspace.layer, workspace.layer.map);
+          this.adding$.next(false);
           this.rowsInMapExtentCheckCondition$.next(true);
         },
         error => {
@@ -522,6 +524,7 @@ export class EditionWorkspaceService {
 
   cancelEdit(workspace, feature, fromSave = false) {
     feature.edition = false;
+    this.adding$.next(false);
     workspace.deleteDrawings();
     if (feature.newFeature) {
       workspace.entityStore.stateView.clear();
