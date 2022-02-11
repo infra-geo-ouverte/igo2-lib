@@ -40,6 +40,8 @@ export interface GeoWorkspaceOptions {
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;
+  pageSize?: number;
+  pageSizeOptions?: number[];
   noQueryOnClickInTab?: boolean;
   noMapQueryOnOpenTab?: boolean;
 }

@@ -73,6 +73,8 @@ export class EditionWorkspaceService {
     wksConfig.srcId = layer.id;
     wksConfig.workspaceId = layer.id;
     wksConfig.enabled = true;
+    wksConfig.pageSize = layer.options.workspace?.pageSize;
+    wksConfig.pageSizeOptions = layer.options.workspace?.pageSizeOptions;
     wksConfig.noQueryOnClickInTab = true;
     wksConfig.noMapQueryOnOpenTab = true;
 
@@ -123,6 +125,8 @@ export class EditionWorkspaceService {
           srcId: layer.id,
           workspaceId: undefined,
           enabled: false,
+          pageSize: layer.options.workspace?.pageSize,
+          pageSizeOptions: layer.options.workspace?.pageSizeOptions,
           noMapQueryOnOpenTab: true,
           noQueryOnClickInTab: true
         },

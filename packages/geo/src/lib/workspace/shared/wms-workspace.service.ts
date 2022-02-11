@@ -92,6 +92,8 @@ export class WmsWorkspaceService {
     wksConfig.srcId = layer.id;
     wksConfig.workspaceId = undefined;
     wksConfig.enabled = false;
+    wksConfig.pageSize = layer.options.workspace?.pageSize;
+    wksConfig.pageSizeOptions = layer.options.workspace?.pageSizeOptions;
     let wks;
     this.layerService
       .createAsyncLayer({
