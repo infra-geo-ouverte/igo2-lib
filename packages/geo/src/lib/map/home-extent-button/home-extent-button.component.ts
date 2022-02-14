@@ -33,12 +33,12 @@ export class HomeExtentButtonComponent {
   public homeExtentButtonZoom;
 
   constructor(public configService: ConfigService) {
-    this.homeExtentButtonExtent = this.configService.getConfig('setHomeExtentButton.homeExtButtonExtent'); // [-8000000, 5800000, -6800000, 6900000] MINX | MINY | MAXX | MAXY EPSG:3857 - WGS 84 / Pseudo-Mercator (meters)
-    this.homeExtentButtonCenter = this.configService.getConfig('setHomeExtentButton.homeExtButtonCenter'); //  [-71.938087, 47.446975]
-    this.homeExtentButtonZoom = this.configService.getConfig('setHomeExtentButton.homeExtButtonZoom'); //  6
+    this.homeExtentButtonExtent = this.configService.getConfig('homeExtentButton.homeExtButtonExtent'); // [-8000000, 5800000, -6800000, 6900000] MINX | MINY | MAXX | MAXY EPSG:3857 - WGS 84 / Pseudo-Mercator (meters)
+    this.homeExtentButtonCenter = this.configService.getConfig('homeExtentButton.homeExtButtonCenter'); //  [-71.938087, 47.446975]
+    this.homeExtentButtonZoom = this.configService.getConfig('homeExtentButton.homeExtButtonZoom'); //  6
   }
 
-  onToggleClick($event) {
+  onToggleClick() {
     if (this.homeExtentButtonExtent) {
       this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
     } else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {
