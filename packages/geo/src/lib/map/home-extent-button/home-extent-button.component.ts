@@ -18,6 +18,7 @@ export class HomeExtentButtonComponent {
     this._map = value;
   }
   private _map: IgoMap;
+
   @Input()
   get color(): string {
     return this._color;
@@ -26,9 +27,10 @@ export class HomeExtentButtonComponent {
     this._color = value;
   }
   private _color: string;
-  public homeExtentButtonExtent
-  public homeExtentButtonCenter
-  public homeExtentButtonZoom
+
+  public homeExtentButtonExtent;
+  public homeExtentButtonCenter;
+  public homeExtentButtonZoom;
 
   constructor(public configService: ConfigService) {
     this.homeExtentButtonExtent = this.configService.getConfig('setHomeExtentButton.homeExtButtonExtent'); // [-8000000, 5800000, -6800000, 6900000] MINX | MINY | MAXX | MAXY EPSG:3857 - WGS 84 / Pseudo-Mercator (meters)
@@ -36,12 +38,11 @@ export class HomeExtentButtonComponent {
     this.homeExtentButtonZoom = this.configService.getConfig('setHomeExtentButton.homeExtButtonZoom'); //  6
   }
 
-onToggleClick($event){
-  if (this.homeExtentButtonExtent) {
-    this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
+  onToggleClick($event) {
+    if (this.homeExtentButtonExtent) {
+      this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
+    } else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {
+      this.map.setView({center : this.homeExtentButtonCenter, zoom: this.homeExtentButtonZoom});
+    }
   }
-   else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {
-    this.map.setView({center : this.homeExtentButtonCenter, zoom: this.homeExtentButtonZoom});
-  }
-}
 }
