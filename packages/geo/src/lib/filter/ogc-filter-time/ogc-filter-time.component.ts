@@ -566,7 +566,6 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   resetFilter() {
-    debugger;
     let filterOriginConfig = this.datasource.options.ogcFilters.filters as OgcFilterDuringOptions;
 
     let minDefaultDate;
@@ -585,8 +584,8 @@ export class OgcFilterTimeComponent implements OnInit {
       minDefaultDate = this.getDateFromStringWithoutTime(minDefaultISOString);
       maxDefaultDate = this.getDateFromStringWithoutTime(maxDefaultISOString);
     } else {
-      minDefaultDate= this.parseFilter(filterOriginConfig.begin);
-      maxDefaultDate= this.parseFilter(filterOriginConfig.end);
+      minDefaultDate = this.parseFilter(filterOriginConfig.begin);
+      maxDefaultDate = this.parseFilter(filterOriginConfig.end);
       minDefaultISOString = minDefaultDate.toISOString();
       maxDefaultISOString = maxDefaultDate.toISOString();
     }
