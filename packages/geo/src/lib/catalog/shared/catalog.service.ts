@@ -407,7 +407,7 @@ export class CatalogService {
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
        if (catalog.Abstract === "*") { //j'aimerais faire layer.Name === car il est possible qu'il n'y ai pas de abstract dans la couche, ou retirer le if pour mettre la description au niveau du catalogue wms plutôt que la couche
-          layerDescription = property.description; 
+          layerDescription = property.description;
         }
       }
     }
@@ -578,7 +578,7 @@ export class CatalogService {
           }
         }
         //metadata
-        let forcedDescription
+        let forcedDescription;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
            if (catalog.Abstract === "*") {
