@@ -287,7 +287,7 @@ export class CatalogService {
         const outItem = Object.assign({}, item);
 
         if (item.type === CatalogItemType.Layer) {
-          // same title, same address => result: only one item is keep
+          // same title, same address => result: only one item is kept
 
           // same title, address diff
           const indicesMatchTitle = [];
@@ -399,6 +399,15 @@ export class CatalogService {
       for (const property of catalog.forcedProperties) {
         if (layer.Name === property.layerName && property.title) {
           layerTitle = property.title;
+        }
+      }
+    }
+//metadata
+    let layerDescription;
+    if (catalog.forcedProperties) {
+      for (const property of catalog.forcedProperties) {
+       if (catalog.Abstract === "*") { //j'aimerais faire layer.Name === car il est possible qu'il n'y ai pas de abstract dans la couche, ou retirer le if pour mettre la description au niveau du catalogue wms plutôt que la couche
+          layerDescription = property.description; 
         }
       }
     }
@@ -568,6 +577,15 @@ export class CatalogService {
             }
           }
         }
+        //metadata
+        let forcedDescription
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+           if (catalog.Abstract === "*") {
+              forcedDescription = property.description;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -597,6 +615,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.Title,
+          description: forcedDescription !== undefined ? forcedDescription : catalog.abstract, //metadata
           address: catalog.id,
           externalProvider: catalog.externalProvider,
           options: {
@@ -641,6 +660,15 @@ export class CatalogService {
             }
           }
         }
+        //metadata
+        let forcedDescription;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.name === property.layerName && property.description) {
+              forcedDescription = property.description;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
@@ -666,6 +694,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.name,
+          description: forcedDescription !== undefined ? forcedDescription : catalog.abstract, //metadata
           externalProvider: catalog.externalProvider,
           address: catalog.id,
           options: {
@@ -678,7 +707,8 @@ export class CatalogService {
               abstract,
               type: baseSourceOptions.type
             },
-            title: forcedTitle !== undefined ? forcedTitle : layer.name
+            title: forcedTitle !== undefined ? forcedTitle : layer.name,
+            description: forcedDescription !== undefined ? forcedDescription : catalog.abstract //metadata
           }
         } as CatalogItem);
       })
