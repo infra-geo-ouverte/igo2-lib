@@ -93,6 +93,9 @@ export class MapOfflineDirective implements AfterViewInit {
     let sourceOptions;
     const layerList = this.map.layers$.value;
     layerList.forEach(layer => {
+      if (layer.isIgoInternalLayer) {
+        return;
+      }
       if (layer.options.source instanceof MVTDataSource) {
         sourceOptions = layer.options.sourceOptions as MVTDataSourceOptions;
         layer.ol.getSource().refresh();
