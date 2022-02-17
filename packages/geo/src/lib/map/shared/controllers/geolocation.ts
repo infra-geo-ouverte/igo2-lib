@@ -1,6 +1,6 @@
 import OlMap from 'ol/Map';
 import olGeolocation from 'ol/Geolocation';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, fromEvent, Subscription } from 'rxjs';
 
 import * as olproj from 'ol/proj';
 import olFeature from 'ol/Feature';
@@ -14,6 +14,9 @@ import { Overlay } from '../../../overlay/shared/overlay';
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import { StorageService } from '@igo2/core';
 import { MapViewOptions } from '../map.interface';
+import BaseEvent from 'ol/events/Event';
+import { FromEventTarget } from 'rxjs/internal/observable/fromEvent';
+import { debounceTime } from 'rxjs/operators';
 export interface MapGeolocationControllerOptions {
   //  todo keepPositionHistory?: boolean;
   projection: olproj.ProjectionLike
@@ -51,6 +54,7 @@ enum GeolocationOverlayType {
  */
 export class MapGeolocationController extends MapController {
 
+  private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
   private positionFeatureStyle: olstyle.Style | olstyle.Style[] = new olstyle.Style({
     image: new olstyle.Circle({
@@ -214,22 +218,22 @@ export class MapGeolocationController extends MapController {
       projection: this.options.projection,
     });
 
-    this.observerKeys.push(
-      this.geolocation.on('change:position', () => {
-        this.onPositionChange(true);
-      }));
-    this.observerKeys.push(
-      this.geolocation.on('change:altitude', () => {
-        this.onPositionChange(false);
-      }));
-    this.observerKeys.push(
-      this.geolocation.on('change:accuracy', () => {
-        this.onPositionChange(false);
-      }));
-    this.observerKeys.push(
-      this.geolocation.on('change:altitudeAccuracy', () => {
-        this.onPositionChange(false);
-      }));
+    const debounce = 500;
+    this.subscriptions$$.push(fromEvent<BaseEvent>(this.geolocation as FromEventTarget<BaseEvent>, 'change:position')
+    .pipe(debounceTime(debounce))
+    .subscribe(() => this.onPositionChange(true)));
+
+    this.subscriptions$$.push(fromEvent<BaseEvent>(this.geolocation as FromEventTarget<BaseEvent>, 'change:altitude')
+    .pipe(debounceTime(debounce))
+    .subscribe(() => this.onPositionChange(false)));
+
+    this.subscriptions$$.push(fromEvent<BaseEvent>(this.geolocation as FromEventTarget<BaseEvent>, 'change:accuracy')
+    .pipe(debounceTime(debounce))
+    .subscribe(() => this.onPositionChange(false)));
+
+    this.subscriptions$$.push(fromEvent<BaseEvent>(this.geolocation as FromEventTarget<BaseEvent>, 'change:altitudeAccuracy')
+    .pipe(debounceTime(debounce))
+    .subscribe(() => this.onPositionChange(false)));
   }
 
   public updateGeolocationOptions(options: MapViewOptions) {
@@ -257,6 +261,9 @@ export class MapGeolocationController extends MapController {
    * Teardown any observers
    */
   teardownObservers() {
+    if (this.subscriptions$$.length) {
+      this.subscriptions$$.map(s => s.unsubscribe());
+    }
     super.teardownObservers();
   }
 
