@@ -674,7 +674,6 @@ export class ContextService {
       if (centerKey && params[centerKey as string]) {
         const centerParams = params[centerKey as string];
         this.mapViewFromRoute.center = centerParams.split(',').map(Number);
-        this.mapViewFromRoute.geolocate = false;
       }
 
       const projectionKey = this.route.options.projectionKey;
