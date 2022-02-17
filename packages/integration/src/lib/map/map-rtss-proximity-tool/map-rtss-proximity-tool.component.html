@@ -1,0 +1,25 @@
+<div>
+
+<igo-entity-table #table class="table-compact" [store]="proximityRtssEntityStore" [template]="tableTemplate"></igo-entity-table>
+
+<br><br>
+<div class="title-container">
+  <mat-label class="title mat-typography">{{'igo.integration.map-proximity-tool.method' | translate}}</mat-label>
+</div>
+<div class="igo-input-container mat-typography">
+  <mat-radio-group (change)="onLocationTypeChange($event)">
+    <mat-radio-button [checked]="(mapProximityState.proximitylocationType$|async)==='geolocation'" value="geolocation">{{'igo.integration.map-proximity-tool.geolocation' | translate}}</mat-radio-button>
+    <mat-radio-button [checked]="(mapProximityState.proximitylocationType$|async)==='mapCenter'" value="mapCenter">{{'igo.integration.map-proximity-tool.mapCenter' | translate}}</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<div class="radius-unit"> 
+  
+  <mat-form-field appearance="outline" class="measure-field" floatLabel="always">
+    <mat-label>{{'igo.integration.map-proximity-tool.radiusM' | translate}}</mat-label>
+    <input type="number" [(ngModel)]="maxDistance" matInput placeholder="{{'igo.integration.map-proximity-tool.radiusM' | translate}}">
+    </mat-form-field>
+
+  
+</div>
+</div>

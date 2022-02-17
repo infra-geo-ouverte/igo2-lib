@@ -39,6 +39,7 @@ import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advan
 import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coordinates/advanced-coordinates.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-tool.component';
+import { MapRtssProximityToolComponent } from './map-rtss-proximity-tool/map-rtss-proximity-tool.component';
 
 @NgModule({
   imports: [
@@ -71,9 +72,9 @@ import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-to
     MatTooltipModule,
     IgoEntityTableModule
   ],
-  declarations: [ AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
+  declarations: [ AdvancedMapToolComponent, MapProximityToolComponent, MapRtssProximityToolComponent, MapToolComponent,
     MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent, AdvancedCoordinatesComponent],
-  exports: [AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
+  exports: [AdvancedMapToolComponent, MapProximityToolComponent, MapRtssProximityToolComponent, MapToolComponent,
     MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
