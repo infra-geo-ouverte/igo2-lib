@@ -35,6 +35,8 @@ export class MapOfflineDirective implements AfterViewInit {
     return this.component.map;
   }
 
+  private previousMessageId;
+
   constructor(
     component: MapBrowserComponent,
     private networkService: NetworkService,
@@ -46,18 +48,23 @@ export class MapOfflineDirective implements AfterViewInit {
 
   ngAfterViewInit() {
     this.map.offlineButtonToggle$.subscribe((offlineButtonToggle: boolean) => {
+      if (this.previousMessageId) {
+        this.messageService.remove(this.previousMessageId);
+      }
       this.offlineButtonStatus = offlineButtonToggle;
       const translate = this.languageService.translate;
       if (this.offlineButtonStatus && this.networkState.connection) {
         const message = translate.instant('igo.geo.network.offline.message');
         const title = translate.instant('igo.geo.network.offline.title');
-        this.messageService.info(message, title);
+        const messageObj = this.messageService.info(message, title);
+        this.previousMessageId = messageObj.toastId;
         this.offlineButtonState.connection = false;
         this.changeLayer();
       } else if (!this.offlineButtonStatus && !this.networkState.connection) {
         const message = translate.instant('igo.geo.network.offline.message');
         const title = translate.instant('igo.geo.network.offline.title');
-        this.messageService.info(message, title);
+        const messageObj = this.messageService.info(message, title);
+        this.previousMessageId = messageObj.toastId;
         this.offlineButtonState.connection = false;
         this.changeLayer();
       } else if (!this.offlineButtonStatus && this.networkState.connection) {
@@ -71,7 +78,10 @@ export class MapOfflineDirective implements AfterViewInit {
         titleObs.subscribe((title1: string) => {
           title = title1;
         });
-        this.messageService.info(message, title);
+        if (message) {
+          const messageObj = this.messageService.info(message, title);
+          this.previousMessageId = messageObj.toastId;
+        }
         this.offlineButtonState.connection = true;
         this.changeLayer();
       }
@@ -131,7 +141,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          // layer.ol.getSource().setUrl(sourceOptions.pathOffline);
+          (layer.ol.getSource() as any).setUrl(sourceOptions.pathOffline);
         } else if (
           (sourceOptions.pathOffline &&
             this.networkState.connection === false) ||
@@ -144,7 +154,7 @@ export class MapOfflineDirective implements AfterViewInit {
           ) {
             return;
           }
-          // layer.ol.getSource().setUrl(sourceOptions.url);
+          (layer.ol.getSource() as any).setUrl(sourceOptions.url);
         } else {
           if (
             this.networkState.connection === false ||
