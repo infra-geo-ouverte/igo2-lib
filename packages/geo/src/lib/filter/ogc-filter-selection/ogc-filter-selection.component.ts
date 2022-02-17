@@ -14,6 +14,7 @@ import {
 
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
+import { OgcFilterOperatorType } from './../shared/ogc-filter.enum';
 import { IgoMap } from '../../map';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -64,6 +65,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   public select = new FormControl();
   public enabled$ = new BehaviorSubject(undefined);
   public enableds$ = new BehaviorSubject([]);
+
+  public timeSourceField;
 
   public applyFiltersTimeout;
 
@@ -224,6 +227,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.getSelectEnabled();
       }
       this.applyFilters();
+      this.setTimeSourceField();
     }
 
     this.form
@@ -332,6 +336,16 @@ export class OgcFilterSelectionComponent implements OnInit {
       };
     }
     return styles;
+  }
+
+  setTimeSourceField() {
+    if (this.datasource?.options?.sourceFields) {
+      this.datasource?.options?.sourceFields.forEach(sf => {
+        if (sf.allowedOperatorsType.toLowerCase() === OgcFilterOperatorType.Time && sf.alias) {
+          this.timeSourceField = sf;
+        }
+      });
+    }
   }
 
   bundleIsVertical(bundle: OgcSelectorBundle): boolean {
