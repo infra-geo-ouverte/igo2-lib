@@ -48,7 +48,6 @@ export interface SourceFieldsOptionsParams {
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
-  valueReturn?: boolean;
   multiple?: boolean;
 }
 
@@ -59,7 +58,11 @@ export interface EditionOptions {
   deleteUrl: string;
   modifyUrl: string;
   geomType: typeof OlGeometryType;
-  addWithDraw: boolean;
+  addWithDraw?: boolean;
+  messages?: any[];
+  addHeaders?: { [key: string]: any };
+  modifyHeaders?: { [key: string]: any };
+  modifyProtocol?: string;
 }
 
 export interface RelationOptions {
@@ -69,7 +72,6 @@ export interface RelationOptions {
   icon?: string;
   table: string;
   parent?: string;
-  parent_id?: string;
 }
 
 export interface SourceFieldsValidationParams {

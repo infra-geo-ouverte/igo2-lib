@@ -34,6 +34,7 @@ import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces'
 import { EditionWorkspace } from './edition-workspace';
 
 import olFeature from 'ol/Feature';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
@@ -301,7 +302,6 @@ export class EditionWorkspaceService {
         primary: field.primary === true ? true : false,
         visible: field.visible,
         validation: field.validation,
-        valueReturn: field.valueReturn,
         type: field.type,
         domainValues: undefined,
         relation: undefined,
@@ -354,7 +354,7 @@ export class EditionWorkspaceService {
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
-  public saveFeature(feature, workspace) {
+  public saveFeature(feature, workspace: EditionWorkspace) {
     if (!this.validateFeature(feature, workspace)){
       return false;
     }
@@ -375,14 +375,14 @@ export class EditionWorkspaceService {
 
       this.addFeature(feature, workspace, url, headers);
     } else {
-      if (workspace.layer.dataSource.options.edition.modifyProtocole !== "post") {
+      if (workspace.layer.dataSource.options.edition.modifyProtocol !== "post") {
         url += '?' + workspace.layer.dataSource.options.edition.modifyUrl + feature.idkey;
       }
       else {
         url += workspace.layer.dataSource.options.edition.modifyUrl;
       }
 
-      const protocole = workspace.layer.dataSource.options.edition.modifyProtocole;
+      const protocole = workspace.layer.dataSource.options.edition.modifyProtocol;
       const modifyHeaders = workspace.layer.dataSource.options.edition.modifyHeaders;
       const headers = new HttpHeaders(modifyHeaders);
 
@@ -390,16 +390,16 @@ export class EditionWorkspaceService {
     }
   }
 
-  public addFeature(feature, workspace, url, headers) {
-    const geom = workspace.layer.dataSource.options.edition.geomField;
-    if (geom) {
-      //feature.properties[geom] = feature.geometry; TODO: ADJUST FOR POLYGON/LINE
+  public addFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}) {
+    // TODO: adapt to any kind of geometry
+    if (feature.geometry) {
+      //feature.properties[geom] = feature.geometry;
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
     }
 
     if (url) {
-      this.http.post(`${url}`, feature.properties, { headers: headers}).subscribe(
+      this.http.post(`${url}`, feature.properties, { headers: headers }).subscribe(
         () => {
           workspace.entityStore.stateView.clear();
           workspace.deleteDrawings();
@@ -410,7 +410,7 @@ export class EditionWorkspaceService {
           );
           this.messageService.success(message);
 
-          this.refreshMap(workspace.layer, workspace.layer.map);
+          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
           this.adding$.next(false);
           this.rowsInMapExtentCheckCondition$.next(true);
         },
@@ -440,7 +440,7 @@ export class EditionWorkspaceService {
     }
   }
 
-  public deleteFeature(workspace, url) {
+  public deleteFeature(workspace: EditionWorkspace, url: string) {
     this.http.delete(`${url}`, {}).subscribe(
       () => {
         const message = this.languageService.translate.instant(
@@ -448,7 +448,7 @@ export class EditionWorkspaceService {
         );
         this.messageService.success(message);
 
-        this.refreshMap(workspace.layer, workspace.layer.map);
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
         for (const relation of workspace.layer.options.sourceOptions.relations) {
           workspace.map.layers.forEach((layer) => {
             if (layer.title === relation.title) {
@@ -482,10 +482,9 @@ export class EditionWorkspaceService {
     );
   }
 
-  public modifyFeature(feature, workspace, url, headers, protocole='patch' ) {
+  public modifyFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}, protocole = 'patch' ) {
     //TODO: adapt to any kind of geometry
-    const geom = workspace.layer.dataSource.options.edition.geomField;
-    if (geom) {
+    if (feature.geometry) {
       //feature.properties[geom] = feature.geometry;
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
@@ -502,7 +501,14 @@ export class EditionWorkspaceService {
           );
           this.messageService.success(message);
 
-          this.refreshMap(workspace.layer, workspace.layer.map);
+          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+          for (const relation of workspace.layer.options.sourceOptions.relations) {
+            workspace.map.layers.forEach((layer) => {
+              if (layer.title === relation.title) {
+                layer.dataSource.ol.refresh();
+              }
+            });
+          }
         },
         error => {
           error.error.caught = true;
@@ -530,14 +536,16 @@ export class EditionWorkspaceService {
     }
   }
 
-  cancelEdit(workspace, feature, fromSave = false) {
+  cancelEdit(workspace: EditionWorkspace, feature, fromSave = false) {
     feature.edition = false;
     this.adding$.next(false);
     workspace.deleteDrawings();
+
     if (feature.newFeature) {
       workspace.entityStore.stateView.clear();
       workspace.entityStore.delete(feature);
       workspace.deactivateDrawControl();
+
       this.rowsInMapExtentCheckCondition$.next(true);
     } else {
       if (!fromSave) {
@@ -549,7 +557,7 @@ export class EditionWorkspaceService {
     }
   }
 
-  getDomainValues(table): Observable<any> {
+  getDomainValues(table: string): Observable<any> {
     let url = this.configService.getConfig('edition.url') + table;
 
     return this.http.get<any>(url).pipe(
@@ -567,7 +575,7 @@ export class EditionWorkspaceService {
    * A new wfs loader is used to ensure cache is not retrieving old data
    * WMS params are updated to ensure layer is correctly refreshed
    */
-  refreshMap(layer: VectorLayer, map) {
+  refreshMap(layer: VectorLayer, map: IgoMap) {
     const wfsOlLayer = layer.dataSource.ol;
     const loader = (extent, resolution, proj, success, failure) => {
       layer.customWFSLoader(
@@ -592,7 +600,7 @@ export class EditionWorkspaceService {
         lay.options.linkedLayers?.linkId.includes('WmsWorkspaceTableSrc')
       )
         {
-          const wmsOlLayer = lay.dataSource.ol;
+          const wmsOlLayer = lay.dataSource.ol as olSourceImageWMS;
           let params = wmsOlLayer.getParams();
           params._t = new Date().getTime();
           wmsOlLayer.updateParams(params);
@@ -600,7 +608,7 @@ export class EditionWorkspaceService {
     }
   }
 
-  validateFeature(feature, workspace) {
+  validateFeature(feature, workspace: EditionWorkspace) {
     const translate = this.languageService.translate;
     let message ;
     let key;
@@ -687,7 +695,7 @@ export class EditionWorkspaceService {
     return valid;
   }
 
-  sanitizeParameter(feature, workspace) {
+  sanitizeParameter(feature, workspace: EditionWorkspace) {
     workspace.meta.tableTemplate.columns.forEach(column => {
       if (column.type === 'list' && feature.properties[getColumnKeyWithoutPropertiesTag(column.name)]) {
         feature.properties[getColumnKeyWithoutPropertiesTag(column.name)] =
@@ -699,7 +707,7 @@ export class EditionWorkspaceService {
 
 }
 
-function getColumnKeyWithoutPropertiesTag(column) {
+function getColumnKeyWithoutPropertiesTag(column: string) {
   if (column.includes('properties.')) {
     return column.split('.')[1];
   }

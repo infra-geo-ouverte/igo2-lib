@@ -101,9 +101,6 @@
                                         {{ option.value }}
                                     </mat-option>
                                 </mat-autocomplete>
-                            <ng-container *ngFor="let validation of getErrors(column.name)" ngProjectAs="mat-error">
-                                <mat-error>{{ validation }}</mat-error>
-                            </ng-container>
                         </td>
                         <ng-template #isUnsanitizedHTML>
                             <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record, column));else isAnUrlUnsanitizedHTML" [ngClass]="getCellClass(record, column)"

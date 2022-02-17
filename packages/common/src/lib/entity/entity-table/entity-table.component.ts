@@ -31,7 +31,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName, AbstractControl, FormGroup } from '@angular/forms';
+import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
@@ -230,40 +230,54 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  onValueChange(column, record, event) {
-    let value = event.target.value;
-    if (column.type === 'number') {
-      value = parseInt(value);
-    }
-
+  /**
+   * Process text or number value change (edition)
+   */
+  onValueChange(column: string, record: EntityRecord<any>, event) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = value;
+    record.entity.properties[key] = event.target.value;
   }
 
-  onBooleanValueChange(column, record, event) {
+  /**
+   * Process boolean value change (edition)
+   */
+  onBooleanValueChange(column: string, record: EntityRecord<any>, event) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = event.checked;
   }
 
-  onSelectValueChange(column, record, event) {
+  /**
+   * Process select value change (edition)
+   */
+  onSelectValueChange(column: string, record: EntityRecord<any>, event) {
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = event.value;
   }
 
-  onAutocompleteValueChange(column, record, event) {
+  /**
+   * Process autocomplete value change (edition)
+   */
+  onAutocompleteValueChange(column: string, record: EntityRecord<any>, event) {
     this.formGroup.controls[column].setValue(event.option.viewValue);
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = event.option.value;
   }
 
-  onDateChange(column, record, event) {
+  /**
+   * Process date value change (edition)
+   */
+  onDateChange(column: string, record: EntityRecord<any>, event) {
     const format = "YYYY-MM-DD";
     const value = moment(event.value).format(format);
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = value;
   }
 
-  private enableEdit(record) {
+  /**
+   * Enable edition mode for one row
+   * More than one row can be edited at the same time
+   */
+  private enableEdit(record: EntityRecord<any>) {
     const item = record.entity.properties;
     this.template.columns.forEach(column => {
       column.title = column.validation?.mandatory && !column.title.includes('*') ? column.title + ' *' : column.title;
@@ -683,6 +697,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return value;
   }
 
+  /**
+   * Method to access an entity's validation values
+   * @param column Column
+   * @param validationType string
+   * @returns Any value (false if no validation or not the one concerned)
+   * @internal
+   */
   getValidationAttributeValue(column: EntityTableColumn, validationType: string): any {
     if (column.validation !== undefined && column.validation[validationType] !== undefined) {
       return column.validation[validationType];
@@ -787,19 +808,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  public getErrors(formControl: AbstractControl): string[] {
-    const errorMessages: string[] = [];
-
-    if (formControl.touched && formControl.errors) {
-      Object.keys(formControl.errors).forEach(error => {
-        errorMessages.push(formControl.errors[error]);
-      });
-    }
-
-    return errorMessages;
-  }
-
-  //Remove properties. from Column name
+  /**
+   * Retrieve column name without his "properties" tag (useful for edition workspace properties)
+   */
   public getColumnKeyWithoutPropertiesTag(column: string) {
     if (column.includes('properties.')) {
       return column.split('.')[1];

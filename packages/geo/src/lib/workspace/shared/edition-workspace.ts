@@ -22,6 +22,7 @@ import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 import OlModify from 'ol/interaction/Modify';
 import OlCollection from 'ol/Collection';
+import OlFeature from 'ol/Feature';
 import { FeatureDataSource } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
@@ -215,7 +216,7 @@ export class EditionWorkspace extends Workspace {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: typeof OlGeometryType, feature, workspace) {
+  onGeometryTypeChange(geometryType: typeof OlGeometryType, feature, workspace: EditionWorkspace) {
       this.drawControl.setGeometryType(geometryType);
       this.toggleDrawControl(feature, workspace);
     }
@@ -223,7 +224,7 @@ export class EditionWorkspace extends Workspace {
   /**
    * Activate the correct control
    */
-  private toggleDrawControl(feature, workspace) {
+  private toggleDrawControl(feature, workspace: EditionWorkspace) {
     this.deactivateDrawControl();
     this.activateDrawControl(feature, workspace);
   }
@@ -231,7 +232,7 @@ export class EditionWorkspace extends Workspace {
   /**
    * Deactivate the active draw control
    */
-  private deactivateDrawControl() {
+  public deactivateDrawControl() {
     if (!this.drawControl) {
       return;
     }
@@ -246,7 +247,7 @@ export class EditionWorkspace extends Workspace {
   /**
    * Activate a given control
    */
-  private activateDrawControl(feature, workspace) {
+  private activateDrawControl(feature, workspace: EditionWorkspace) {
     this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
       this.addFeatureToStore(feature, workspace, olGeometry);
     });
@@ -259,7 +260,7 @@ export class EditionWorkspace extends Workspace {
    * will trigger and add the feature to the workspace store.
    * @internal
    */
-  private addFeatureToStore(feature, workspace, olGeometry?) {
+  private addFeatureToStore(feature, workspace: EditionWorkspace, olGeometry?: OlGeometry) {
     const projection = this.map.ol.getView().getProjection();
     let geometry = feature.geometry;
 
@@ -300,7 +301,7 @@ export class EditionWorkspace extends Workspace {
   /**
    * Create a modify interaction to allow a geometry change one feature at the time (drag and drop)
    */
-  createModifyInteraction(olFeature, feature, workspace) {
+  createModifyInteraction(olFeature: OlFeature<OlGeometry>, feature, workspace: EditionWorkspace) {
     this.map.ol.removeInteraction(this.modify);
     const olCollection = new OlCollection([olFeature], { unique: true });
     this.modify = new OlModify({
