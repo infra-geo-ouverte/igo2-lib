@@ -188,7 +188,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
-        "resetFilters": "(Apply no filters)",
+        "resetFilters": "Reset default values",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
