@@ -58,6 +58,7 @@ export interface EditionOptions {
   deleteUrl: string;
   modifyUrl: string;
   geomType: typeof OlGeometryType;
+  hasGeometry: boolean;
   addWithDraw?: boolean;
   messages?: any[];
   addHeaders?: { [key: string]: any };

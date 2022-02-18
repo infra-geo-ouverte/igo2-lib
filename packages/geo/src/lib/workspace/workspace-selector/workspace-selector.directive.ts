@@ -29,6 +29,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   @Output() changeWorkspace = new EventEmitter<string>();
   @Output() disableSwitch = new EventEmitter<boolean>();
+  @Output() relationLayers = new EventEmitter<ImageLayer[] | VectorLayer[]>();
   @Output() rowsInMapExtentCheckCondition = new EventEmitter<boolean>();
 
   get workspaceStore(): WorkspaceStore {
@@ -52,6 +53,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
     this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
     this.editionWorkspaceService.adding$.subscribe((adding) => { this.disableSwitch.emit(adding); });
+    this.editionWorkspaceService.relationLayers$.subscribe((layers) => { this.relationLayers.emit(layers); });
     this.editionWorkspaceService.rowsInMapExtentCheckCondition$.subscribe((condition) => {
       this.rowsInMapExtentCheckCondition.emit(condition);
     });

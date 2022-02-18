@@ -45,6 +45,7 @@ export class EditionWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);
+  public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(undefined);
   public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
 
   get zoomAuto(): boolean {
@@ -392,7 +393,7 @@ export class EditionWorkspaceService {
 
   public addFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}) {
     // TODO: adapt to any kind of geometry
-    if (feature.geometry) {
+    if (workspace.layer.dataSource.options.edition.hasGeometry) {
       //feature.properties[geom] = feature.geometry;
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
@@ -484,7 +485,7 @@ export class EditionWorkspaceService {
 
   public modifyFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}, protocole = 'patch' ) {
     //TODO: adapt to any kind of geometry
-    if (feature.geometry) {
+    if (workspace.layer.dataSource.options.edition.hasGeometry) {
       //feature.properties[geom] = feature.geometry;
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
@@ -502,13 +503,17 @@ export class EditionWorkspaceService {
           this.messageService.success(message);
 
           this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+
+          let relationLayers = [];
           for (const relation of workspace.layer.options.sourceOptions.relations) {
             workspace.map.layers.forEach((layer) => {
               if (layer.title === relation.title) {
+                relationLayers.push(layer);
                 layer.dataSource.ol.refresh();
               }
             });
           }
+          this.relationLayers$.next(relationLayers);
         },
         error => {
           error.error.caught = true;
