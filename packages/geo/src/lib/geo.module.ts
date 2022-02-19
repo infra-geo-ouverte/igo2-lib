@@ -20,9 +20,24 @@ import { IgoSearchModule } from './search/search.module';
 import { IgoToastModule } from './toast/toast.module';
 import { IgoGeoWorkspaceModule } from './workspace/workspace.module';
 import { IgoWktModule } from './wkt/wkt.module';
+import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
+
+const dbConfig: DBConfig = {
+  name: 'igo2DB',
+  version: 1,
+  objectStoresMeta: [{
+    store: 'geoData',
+    storeConfig: { keyPath: 'url', autoIncrement: false },
+    storeSchema: [
+      { name: 'regionID', keypath: 'regionID', options: { unique: false }}
+    ]
+  }]
+};
 
 @NgModule({
-  imports: [],
+  imports: [
+    NgxIndexedDBModule.forRoot(dbConfig)
+  ],
   declarations: [],
   exports: [
     IgoCatalogModule,
