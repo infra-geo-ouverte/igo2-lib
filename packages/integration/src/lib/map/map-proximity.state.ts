@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import {
-  FeatureStore, Feature, IgoMap, MapGeolocationState,
-  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, MapViewState, roundCoordTo, QueryableDataSource
+  FeatureStore, Feature, IgoMap,
+  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, roundCoordTo, QueryableDataSource
 } from '@igo2/geo';
-import { BehaviorSubject, combineLatest, Subscription, timer } from 'rxjs';
-import { debounceTime, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, interval, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
 import GeoJSON from 'ol/format/GeoJSON';
@@ -46,23 +46,24 @@ export class MapProximityState {
   subscribeProximityMonitor() {
     this.subs$$.push(combineLatest([
       this.enabled$,
-      this.map.layers$,
-      this.map.geolocationController.position$.pipe(debounceTime(2500)),
       this.proximitylocationType$,
       this.proximityRadiusValue$,
-      this.map.viewController.state$,
-      timer(1000, 1000).pipe(take(20))
+      interval(3000)
     ])
-      .pipe(debounceTime(1500))
-      .subscribe((bunch: [boolean, Layer[], MapGeolocationState, string, number, MapViewState, number]) => {
+      .pipe(debounceTime(500))
+      .subscribe((bunch: [boolean, string, number, number]) => {
+        console.log(Date.now(), bunch);
         this.proximityFeatureStore.clear();
-        if (!bunch[0]) {
+        const enabled = bunch[0];
+        const layers = this.map.layers;
+        const currentPos = this.map.geolocationController.position$.value;
+        const locationType = bunch[1];
+        const proximityRadiusValue = bunch[2];
+
+        if (!enabled) {
           return;
         }
 
-        const layers = bunch[1];
-        const currentPos = bunch[2];
-        const locationType = bunch[3];
 
         let coord: number[];
         if (locationType === 'geolocation') {
@@ -108,7 +109,7 @@ export class MapProximityState {
               const geometryClosestPoint = closestOlGeom.getClosestPoint(coord);
               const linebetween = new olLineString([coord, geometryClosestPoint]);
               const lineLength = measureOlGeometryLength(linebetween, 'EPSG:3857');
-              if (lineLength <= this.proximityRadiusValue$.value) {
+              if (lineLength <= proximityRadiusValue) {
                 let title = this.getQueryTitle(closestFeature, layerToMonitor);
                 this.addFeatureToStore(layerToMonitor, coord, closestFeature, title, lineLength);
               }
