@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, Subject } from 'rxjs';
-import { first, map, take } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { concatMap, first, map, take } from 'rxjs/operators';
 import { CompressionService } from '@igo2/core';
 import { GeoDBData } from './geoDB.interface';
 
@@ -18,71 +18,85 @@ export class GeoDBService {
     private compression: CompressionService
   ) { }
 
-  update(url: string, regionID: number, object: Blob): Observable<any> {
+  /**
+   * Only blob can be will be compressed
+   * @param url
+   * @param regionID
+   * @param object
+   * @param compress
+   * @returns
+   */
+
+  update(url: string, regionID: number, object: any): Observable<any> {
     if (!object) {
       return;
     }
+    let compress = false;
 
     const subject: Subject<GeoDBData> = new Subject();
-    const compress$ = this.compression.compressBlob(object);
-    compress$.pipe(first())
-      .subscribe((compressedObject) => {
-        const GeoDBData: GeoDBData = {
+    let object$: Observable<any> = of(object);
+    if (object instanceof Blob) {
+      object$ = this.compression.compressBlob(object);
+      compress = true;
+    }
+    let geoDBData: GeoDBData;
+    object$.pipe(
+      first(),
+      concatMap(object => {
+        geoDBData = {
           url,
           regionID,
-          object: compressedObject
+          object: object,
+          compressed: compress
         };
-        const getRequest = this.ngxIndexedDBService.getByID(this.dbName, url);
-        getRequest.subscribe((dbObject: GeoDBData) => {
-          let dbRequest: Observable<GeoDBData>;
-          if (!dbObject) {
-            this._newTiles++;
-            dbRequest = this.ngxIndexedDBService.add(this.dbName, GeoDBData);
-          } else {
-            const currentRegionID = dbObject.regionID;
-            if (currentRegionID !== regionID) {
-              const collisions = this.collisionsMap.get(currentRegionID);
-              if (collisions !== undefined) {
-                collisions.push(dbObject.url);
-                this.collisionsMap.set(currentRegionID, collisions);
-              } else {
-                this.collisionsMap.set(currentRegionID, [dbObject.url]);
-              }
+        return this.ngxIndexedDBService.getByID(this.dbName, url);
+      }),
+      concatMap((dbObject: GeoDBData) => {
+        if (!dbObject) {
+          this._newTiles++;
+          return this.ngxIndexedDBService.add(this.dbName, geoDBData);
+        } else {
+          const currentRegionID = dbObject.regionID;
+          if (currentRegionID !== regionID) {
+            const collisions = this.collisionsMap.get(currentRegionID);
+            if (collisions !== undefined) {
+              collisions.push(dbObject.url);
+              this.collisionsMap.set(currentRegionID, collisions);
+            } else {
+              this.collisionsMap.set(currentRegionID, [dbObject.url]);
             }
-            dbRequest = this.customUpdate(GeoDBData);
           }
-          dbRequest.subscribe((response) => {
-            subject.next(response);
-            subject.complete();
-          });
-        });
-      });
-    return subject;
-  }
-
-  private customUpdate(GeoDBData: GeoDBData): Observable<GeoDBData> {
-    const subject: Subject<GeoDBData> = new Subject();
-    const deleteRequest = this.ngxIndexedDBService.deleteByKey(this.dbName, GeoDBData.url);
-    deleteRequest.subscribe((isDeleted) => {
-      if (isDeleted) {
-        const addRequest = this.ngxIndexedDBService.add(this.dbName, GeoDBData);
-        addRequest.subscribe((object) => {
-          subject.next(object);
-          subject.complete();
-        });
-      } else {
-        subject.complete();
-      }
+          return this.customUpdate(geoDBData);
+        }
+      })
+    ).subscribe((response) => {
+      subject.next(response);
+      subject.complete();
     });
     return subject;
   }
 
-  get(url: string): Observable<Blob> {
+  private customUpdate(geoDBData: GeoDBData): Observable<GeoDBData> {
+    const subject: Subject<GeoDBData> = new Subject();
+    const deleteRequest = this.ngxIndexedDBService.deleteByKey(this.dbName, geoDBData.url);
+    deleteRequest.pipe(
+      concatMap(isDeleted => isDeleted ? this.ngxIndexedDBService.add(this.dbName, geoDBData) : of(undefined))
+    )
+    .subscribe(object => {
+      if (object) {
+        subject.next(object);
+      }
+      subject.complete();
+    });
+    return subject;
+  }
+
+  get(url: string): Observable<any> {
     return this.ngxIndexedDBService.getByID(this.dbName, url).pipe(
-      map((data) => {
+      map((data: GeoDBData) => {
         if (data) {
-          const object = (data as GeoDBData).object;
-          if (object instanceof Blob) {
+          const object = data.object;
+          if (!data.compressed) {
             return object;
           }
           return this.compression.decompressBlob(object);
