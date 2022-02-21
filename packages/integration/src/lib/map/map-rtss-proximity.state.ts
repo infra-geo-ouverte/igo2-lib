@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import {
-  Feature, IgoMap, MapGeolocationState,
-  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, MapViewState
+  Feature, IgoMap,
+  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE
 } from '@igo2/geo';
-import { BehaviorSubject, combineLatest, Subscription, timer } from 'rxjs';
-import { debounceTime, skipWhile, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, interval, Subscription } from 'rxjs';
+import { debounceTime, skipWhile } from 'rxjs/operators';
 import { MapState } from '../map/map.state';
 
 import { NumberUtils } from '@igo2/utils';
@@ -55,33 +55,35 @@ export class MapRtssProximityState {
 
     this.subs$$.push(combineLatest([
       this.enabled$,
-      this.map.geolocationController.position$.pipe(debounceTime(2500)),
       this.mapProximityState.proximitylocationType$,
       this.mapProximityState.proximityRadiusValue$,
-      this.map.viewController.state$,
-      timer(1000, 1000).pipe(take(20))
+      interval(3000)
     ])
-    .pipe(debounceTime(1500))
-    .subscribe((bunch: [boolean, MapGeolocationState, string, number, MapViewState, number]) => {
+    .pipe(debounceTime(500))
+    .subscribe((bunch: [boolean, string, number, number]) => {
         this.currentRTSSCh$.next(undefined);
-        if (!bunch[0]){
+        const enabled = bunch[0];
+        const layers = this.map.layers;
+        const pos = this.map.geolocationController.position$.value;
+        const locationType = bunch[1];
+        const proximityRadiusValue = bunch[2];
+
+        if (!enabled){
           return;
         }
-        const pos: MapGeolocationState = bunch[1];
-        const proximitylocationType = bunch[2];
         let coord: [number, number];
-        if (proximitylocationType === 'geolocation') {
+        if (locationType === 'geolocation') {
           if (pos && pos.position) {
             coord = pos.position as [number, number];
           } else {
             this.currentRTSSCh$.next(undefined);
           }
         }
-        if (proximitylocationType === 'mapCenter') {
+        if (locationType === 'mapCenter') {
           coord = this.map.viewController.getCenter();
         }
         if (coord) {
-          const rtssLayer = this.map.layers.find(layer => layer.id === this.rtssLayerId && layer.visible && layer.isInResolutionsRange);
+          const rtssLayer = layers.find(layer => layer.id === this.rtssLayerId && layer.visible && layer.isInResolutionsRange);
           if (rtssLayer) {
             const layerSource = rtssLayer.ol.getSource() as olVectorSource<Geometry>;
             const closestOlFeature = layerSource.getClosestFeatureToCoordinate(coord);
@@ -91,7 +93,7 @@ export class MapRtssProximityState {
               const geometryClosestPoint = closestOlGeom.getClosestPoint(coord);
               const linebetween = new olLineString([coord, geometryClosestPoint]);
               const lineLength = measureOlGeometryLength(linebetween, 'EPSG:3857');
-              const dist = this.mapProximityState.proximityRadiusValue$.value;
+              const dist = proximityRadiusValue;
               if (lineLength <= dist) {
                 const chTot = closestOlFeature.getProperties().val_longr_;
                 const percent = 100;
