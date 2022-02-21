@@ -218,7 +218,7 @@ export class MapGeolocationController extends MapController {
       projection: this.options.projection,
     });
 
-    const debounce = 500;
+    const debounce = 2000;
     this.subscriptions$$.push(fromEvent<BaseEvent>(this.geolocation as FromEventTarget<BaseEvent>, 'change:position')
     .pipe(debounceTime(debounce))
     .subscribe(() => this.onPositionChange(true)));
