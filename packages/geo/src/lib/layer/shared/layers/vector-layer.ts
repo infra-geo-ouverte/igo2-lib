@@ -25,6 +25,8 @@ import { MessageService } from '@igo2/core';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
+import { catchError, first } from 'rxjs/operators';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -48,7 +50,8 @@ export class VectorLayer extends Layer {
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    private geoNetworkService?: GeoNetworkService,
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
@@ -377,6 +380,56 @@ export class VectorLayer extends Layer {
     } else {
       modifiedUrl = url(extent, resolution, projection);
     }
+
+    if (this.geoNetworkService) {
+      const format = vectorSource.getFormat();
+      const type = format.getType();
+
+      console.log('format', format,type );
+      let responseType = type;
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+
+      const options: SimpleGetOptions = { responseType };
+      this.geoNetworkService.get(modifiedUrl, options)
+        .pipe(
+          first(),
+          catchError((res) => {
+            onError();
+            throw res;
+          })
+        )
+        .subscribe((content) => {
+          if (content) {
+            const format = vectorSource.getFormat();
+            const type = format.getType();
+            let source;
+            if (type === FormatType.JSON || type === FormatType.TEXT) {
+              source = content;
+            } else if (type === FormatType.XML) {
+              source = content;
+              if (!source) {
+                source = new DOMParser().parseFromString(
+                  content,
+                  'application/xml'
+                );
+              }
+            } else if (type === FormatType.ARRAY_BUFFER) {
+              source = content;
+            }
+            if (source) {
+              const features = format.readFeatures(source, { extent, featureProjection: projection });
+              vectorSource.addFeatures(features, format.readProjection(source));
+              success(features);
+            } else {
+              onError();
+            }
+          }
+        });
+
+    } else {
     xhr.open( 'GET', modifiedUrl);
     const format = vectorSource.getFormat();
     if (format.getType() === FormatType.ARRAY_BUFFER) {
@@ -421,5 +474,6 @@ export class VectorLayer extends Layer {
       }
     };
     xhr.send();
+  }
   }
 }
