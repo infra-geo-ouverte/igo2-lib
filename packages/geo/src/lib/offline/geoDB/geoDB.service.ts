@@ -4,6 +4,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { concatMap, first, map, take } from 'rxjs/operators';
 import { CompressionService } from '@igo2/core';
 import { GeoDBData } from './geoDB.interface';
+import { InsertSourceInsertDBEnum } from './geoDB.enums';
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +23,12 @@ export class GeoDBService {
    * Only blob can be will be compressed
    * @param url
    * @param regionID
-   * @param object
-   * @param compress
+   * @param object object to handle
+   * @param insertSource type of event user or system
+   * @param insertEvent Name of the event where the insert has been triggered
    * @returns
    */
-
-  update(url: string, regionID: number, object: any): Observable<any> {
+  update(url: string, regionID: number, object: any, insertSource: InsertSourceInsertDBEnum, insertEvent: string): Observable<any> {
     if (!object) {
       return;
     }
@@ -47,7 +48,9 @@ export class GeoDBService {
           url,
           regionID,
           object: object,
-          compressed: compress
+          compressed: compress,
+          insertSource,
+          insertEvent
         };
         return this.ngxIndexedDBService.getByID(this.dbName, url);
       }),
