@@ -4,6 +4,16 @@ import { ConnectionState, NetworkService } from '@igo2/core';
 import { Observable } from 'rxjs';
 import { GeoDBService } from '../geoDB/geoDB.service';
 
+export enum ResponseType {
+  Arraybuffer= 'arraybuffer',
+  Blob= 'blob',
+  Text= 'text',
+  Json= 'json',
+}
+export interface SimpleGetOptions {
+  responseType: ResponseType;
+  withCredentials?: boolean;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -19,18 +29,37 @@ export class GeoNetworkService {
     });
   }
 
-  get(url: string): Observable<Blob> {
+  get(url: string, simpleGetOptions: SimpleGetOptions): Observable<any> {
     if (window.navigator.onLine && this.networkOnline) {
-      return this.getOnline(url);
+      return this.getOnline(url, simpleGetOptions);
     }
     return this.getOffline(url);
   }
 
-  private getOnline(url: string): Observable<Blob> {
-    return this.http.get(url, { responseType: 'blob' });
+  private getOnline(url: string, simpleGetOptions: SimpleGetOptions): Observable<any> {
+    let request;
+    switch (simpleGetOptions.responseType) {
+      // TODO Ajuster pour autre formats
+      case 'arraybuffer':
+        request = this.http.get(url, { responseType: 'arraybuffer', withCredentials: simpleGetOptions.withCredentials });
+        break;
+      case 'blob':
+        request = this.http.get(url, { responseType: 'blob', withCredentials: simpleGetOptions.withCredentials });
+        break;
+      case 'text':
+        request = this.http.get(url, { responseType: 'text', withCredentials: simpleGetOptions.withCredentials });
+          break;
+      case 'json':
+        request = this.http.get(url, { responseType: 'json', withCredentials: simpleGetOptions.withCredentials });
+        break;
+      default:
+        request = this.http.get(url, { responseType: 'blob', withCredentials: simpleGetOptions.withCredentials });
+        break;
+    }
+    return request;
   }
 
-  private getOffline(url: string): Observable<Blob> {
+  private getOffline(url: string): Observable<any> {
     return this.geoDBService.get(url);
   }
 

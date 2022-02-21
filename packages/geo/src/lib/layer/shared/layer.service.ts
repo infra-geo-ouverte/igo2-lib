@@ -43,6 +43,7 @@ import {
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from './style.service';
 import { LanguageService, MessageService } from '@igo2/core';
+import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,7 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private geoNetwork: GeoNetworkService,
     private messageService: MessageService,
     private languageService: LanguageService,
     @Optional() private authInterceptor: AuthInterceptor
@@ -150,7 +152,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -163,7 +165,7 @@ export class LayerService {
           baseStyle
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -171,7 +173,7 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
