@@ -21,4 +21,5 @@ export interface WFSDataSourceOptionsParams {
   outputFormatDownload?: string;
   srsName?: string;
   xmlFilter?: string;
+  queryFormatAsWms?: boolean;
 }
