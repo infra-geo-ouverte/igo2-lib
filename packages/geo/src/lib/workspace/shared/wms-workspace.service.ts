@@ -97,6 +97,7 @@ export class WmsWorkspaceService {
     let wks;
     this.layerService
       .createAsyncLayer({
+        isIgoInternalLayer: true,
         id: wfsLinkId,
         linkedLayers: {
           linkId: wfsLinkId
