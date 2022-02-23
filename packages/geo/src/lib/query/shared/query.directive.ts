@@ -199,8 +199,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         event.pixel,
         (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
-          if ((layer.dataSource.options as WFSDataSourceOptions).paramsWFS &&
-          (layer.dataSource.options as WFSDataSourceOptions).paramsWFS.queryFormatAsWms) {
+          if ((layer.dataSource.options as WFSDataSourceOptions).paramsWFS?.queryFormatAsWms) {
             return;
           }
           if (featureOL) {
