@@ -80,7 +80,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     }));
   }
 
-  updateEntitiesInExtent(store) {
+  private updateEntitiesInExtent(store) {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
@@ -98,7 +98,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
       if (entitiesInMapExtent.length > 0) {
         store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, false);
       }
-      if (entitiesWithNoGeom.length > 0) { // TODO: Ajuster pour seulement si state newFeature = true
+      if (entitiesWithNoGeom.length > 0) {
         store.state.updateMany(entitiesWithNoGeom, { inMapExtent: true }, false);
       }
     }

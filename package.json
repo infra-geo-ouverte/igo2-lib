@@ -22,7 +22,7 @@
     "e2e": "ng e2e",
     "postinstall": "gulp fixLibs && ngcc --tsconfig ./tsconfig.json",
     "build.all": "npm run build.libs && npm run build.demo",
-    "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && gulp core:bundleLocale",
+    "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && gulp core:bundleLocale",
     "build.utils": "ng build utils --configuration production",
     "build.core": "ng build core --configuration production && gulp core",
     "build.common": "ng build common --configuration production && gulp common",
@@ -73,8 +73,7 @@
     "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
     "postghpages.win": "rimraf ./dist/ghpages",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\"",
-    "ghrelease.win": "gh-release -o infra-geo-ouverte -r igo2-lib -t %npm_package_version% -n %npm_package_version%",
-    "copydist": "robocopy ./dist/ ../igo2/node_modules/@igo2/ /mir"
+    "ghrelease.win": "gh-release -o infra-geo-ouverte -r igo2-lib -t %npm_package_version% -n %npm_package_version%"
   },
   "private": true,
   "dependencies": {
