@@ -122,6 +122,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const store = this.store;
 
     const layer = new VectorLayer({
+      isIgoInternalLayer: true,
       id : 'searchPointerSummaryId',
       title: 'searchPointerSummary',
       zIndex: 900,
