@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import {
   ActionStore,
   EntityRecord,
@@ -9,7 +10,7 @@ import {
   EntityTableTemplate } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
-import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -39,6 +40,8 @@ export class WmsWorkspaceService {
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
+
+  public ws$ = new BehaviorSubject<string>(undefined);
 
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
@@ -189,6 +192,8 @@ export class WmsWorkspaceService {
   private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
 
+    const relations = layer.dataSource.options.relations || [];
+
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
         skipWhile(val => val.length === 0),
@@ -223,6 +228,25 @@ export class WmsWorkspaceService {
         renderer: EntityTableColumnRenderer.UnsanitizedHTML
       };
     });
+
+    const relationsColumn = relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        onClick: () => {
+            this.ws$.next(relation.title);
+        },
+        cellClassFunc: () => {
+          return { 'class_icon': true };
+        }
+      };
+    });
+
+    columns.push(...relationsColumn);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,

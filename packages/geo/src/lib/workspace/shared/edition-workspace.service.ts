@@ -334,7 +334,7 @@ export class EditionWorkspaceService {
         },
         cellClassFunc: () => {
           return { 'class_icon': true };
-      }
+        }
       };
     });
 

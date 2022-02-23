@@ -51,6 +51,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
         this.onLayersChange(layers)
       );
 
+    this.featureWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
+    this.wmsWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
+    this.wfsWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
     this.editionWorkspaceService.ws$.subscribe((ws) => { this.changeWorkspace.emit(ws); });
     this.editionWorkspaceService.adding$.subscribe((adding) => { this.disableSwitch.emit(adding); });
     this.editionWorkspaceService.relationLayers$.subscribe((layers) => { this.relationLayers.emit(layers); });
