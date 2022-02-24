@@ -143,6 +143,7 @@ export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, lang
   });
 
   const stopsLayer = new VectorLayer({
+    isIgoInternalLayer: true,
     id: 'igo-direction-stops-layer',
     title: languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
     zIndex: 911,
@@ -177,6 +178,7 @@ export function initRoutesFeatureStore(routesFeatureStore: RoutesFeatureStore, l
   });
 
   const routeLayer = new VectorLayer({
+    isIgoInternalLayer: true,
     id: 'igo-direction-route-layer',
     title: languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
     zIndex: 910,
@@ -203,6 +205,7 @@ export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
   });
 
   const stepLayer = new VectorLayer({
+    isIgoInternalLayer: true,
     id: 'igo-direction-step-layer',
     title: '',
     zIndex: 910,

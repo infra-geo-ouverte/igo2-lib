@@ -383,6 +383,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: ('Zone ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -476,6 +477,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           }
 
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -548,6 +550,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
