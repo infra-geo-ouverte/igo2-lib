@@ -163,9 +163,9 @@ export class DirectionsButtonsComponent {
     if (!this.route) {
       return;
     }
-    let context = ''
+    let context = '';
     if (this.contextUri) {
-      context = `context=${this.contextUri}&`
+      context = `context=${this.contextUri}&`;
     }
 
     const pos = this.routesFeatureStore.all()

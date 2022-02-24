@@ -81,8 +81,8 @@ export class DirectionsToolComponent implements OnInit {
       this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
     }
     this.contextState.context$.subscribe(c => {
-      this.currentContextUri = c.uri
-    })
+      this.currentContextUri = c.uri;
+    });
   }
 
 }
