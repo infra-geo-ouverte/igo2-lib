@@ -4,6 +4,7 @@ import { ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService, StorageScope, StorageService } from '@igo2/core';
 import { IgoMap, RoutesFeatureStore, StopsFeatureStore, StopsStore, StepFeatureStore } from '@igo2/geo';
 import { Subject } from 'rxjs';
+import { ContextState } from '../../context/context.state';
 
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
@@ -18,6 +19,8 @@ import { DirectionState } from '../directions.state';
   templateUrl: './directions-tool.component.html'
 })
 export class DirectionsToolComponent implements OnInit {
+
+  public currentContextUri: string;
   /**
    * stops
    * @internal
@@ -62,7 +65,8 @@ export class DirectionsToolComponent implements OnInit {
     private mapState: MapState,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    public contextState: ContextState
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +80,9 @@ export class DirectionsToolComponent implements OnInit {
       this.messageService.info(msg, title, { timeOut: 20000 });
       this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
     }
+    this.contextState.context$.subscribe(c => {
+      this.currentContextUri = c.uri
+    })
   }
 
 }
