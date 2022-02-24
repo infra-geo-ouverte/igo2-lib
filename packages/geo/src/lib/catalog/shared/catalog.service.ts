@@ -50,10 +50,12 @@ export class CatalogService {
       if (catalogConfig.baseLayers) {
         const translate = this.languageService.translate;
         const title = translate.instant('igo.geo.catalog.baseLayers');
+        const metadataUrl = translate.instant('igo.geo.catalog.baseLayers'); //metadata
         const baseLayersCatalog = [
           {
             id: 'catalog.baselayers',
             title,
+            metadataUrl, // metadata
             url: `${apiUrl}/baselayers`,
             type: 'baselayers'
           }
@@ -107,6 +109,7 @@ export class CatalogService {
           return {
             id: generateIdFromSourceOptions(layerOptions.sourceOptions),
             title: layerOptions.title,
+            //metadataUrl: layerOptions.abstract, //metadataUrl
             type: CatalogItemType.Layer,
             externalProvider: catalog.externalProvider,
             options: layerOptions
@@ -118,6 +121,7 @@ export class CatalogService {
             type: CatalogItemType.Group,
             externalProvider: catalog.externalProvider,
             title: catalog.title,
+            //metadataUrl: catalog.metadataUrl,
             items
           }
         ];
@@ -403,28 +407,35 @@ export class CatalogService {
         }
       }
     }
-//newMetadataUrl
-    let newMetadataUrl;
-    if (catalog.forcedProperties) {
-      for (const property of catalog.forcedProperties) {
-        if (property.metadataUrl !== undefined) {
-          newMetadataUrl = property.metadataUrl;
-          }
-      }
-    }
-
+/*
+    let abstract;
+    if (layer.Abstract) {
+      abstract = layer.Abstract;
+    } else if (!layer.Abstract && catalog.abstract) {
+      abstract = catalog.abstract;
+    }*/
+//MetadataUrl
     let abstract;
     if (layer.Abstract) {
       abstract = layer.Abstract;
     } else if (!layer.Abstract && catalog.abstract) {
       abstract = catalog.abstract;
     }
+    if (catalog.forcedProperties) {
+        if (catalog.forcedProperties.metadataUrl !== undefined) {
+          console.log(catalog.forcedProperties.metadataUrl)
+          abstract = catalog.forcedProperties.metadataUrl;
+          console.log(abstract)
+      }
+    }
+
+
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
       title: layerTitle !== undefined ? layerTitle : layer.Title,
-      metadataURL: newMetadataUrl !== undefined ? newMetadataUrl : layer.MetadataUrl,
+      metadataURL: abstract !== undefined ? abstract : layer.MetadataUrl,
       address: idParent,
       externalProvider: catalog.externalProvider || false,
       options: {
@@ -583,11 +594,15 @@ export class CatalogService {
         let forcedMetadataUrl;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
+            if (layer.MetadataUrl === property.metadata && property.metadataUrl) {
+              forcedTitle = property.metadataUrl;
+            }
+            /*
            if (property.layerName && property.metadataUrl !== undefined) {
              for (property.layerName of catalog.forcedProperties) {
               forcedMetadataUrl = property.metadataUrl;
              }
-          }
+          }*/
         }
       }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
@@ -667,12 +682,15 @@ export class CatalogService {
         //newMetadataUrl
         let forcedMetadataUrl;
         if (catalog.forcedProperties) {
-            for (const property of catalog.forcedProperties) {
-             if (property.layerName && property.metadataUrl !== undefined) {
-               for (property.layerName of catalog.forcedProperties) {
-                forcedMetadataUrl = property.metadataUrl;
-               }
+          for (const property of catalog.forcedProperties) {
+            if (layer.name === property.layerName && property.title) {
+              forcedMetadataUrl = property.metadataUrl;
             }
+            /*
+             if (catalog.forcedProperties.layerName && catalog.forcedProperties.metadataUrl !== undefined) {
+               for (catalog.forcedProperties.layerName of catalog.forcedProperties) {
+                forcedMetadataUrl = catalog.forcedProperties.metadataUrl;
+            }*/
           }
         }
 
