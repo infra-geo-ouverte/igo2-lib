@@ -145,8 +145,12 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        hostWithKey = {key : hostWithAuthByKey.keyProperty, value: hostWithAuthByKey.keyValue};
-        break;
+        var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
+        var keyAdded = new RegExp(replace,"gm");
+        if (!keyAdded.test(reqUrl)) {
+          hostWithKey = {key : hostWithAuthByKey.keyProperty, value: hostWithAuthByKey.keyValue};
+          break;
+        }
       }
     }
     return hostWithKey;

@@ -1,0 +1,17 @@
+@import '../../../../../core/src/style/partial/media';
+@import '../../../../../core/src/style/partial/core.variables';
+
+.infoSection {
+    border-radius: 10px;
+    background-color: rgba(110,110,110, 0.4);
+    padding: calc(#{$igo-margin} / 2);
+	position: absolute;
+    text-align: center;
+	top: $igo-margin;
+	left: 50%;
+    text-shadow: 0 0 5px white, 0 0 10px white, 0 0 15px white;
+    @include mobile {
+        top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+        left: 10%;
+      }
+  }
