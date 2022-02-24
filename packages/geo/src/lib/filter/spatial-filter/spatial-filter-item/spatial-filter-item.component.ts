@@ -71,7 +71,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
 
     // Necessary to apply the right style when geometry type is Point
-    console.log('allo')
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
@@ -741,25 +740,30 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   getRadius() {
     let formValueRadius: number;
     if (this.formControl.value) {
-      formValueRadius = this.measureUnit === MeasureLengthUnit.Meters ? this.formControl.value.radius : this.formControl.value.radius * 1000;
+      formValueRadius = this.measureUnit === MeasureLengthUnit.Meters ? this.formControl.value.radius :
+      this.formControl.value.radius * 1000;
     } else {
       formValueRadius = undefined;
     }
 
     if (this.type === SpatialFilterType.Point) {
-      const radiusFormControlRadius: number = this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.value : this.radiusFormControl.value * 1000;
+      const radiusFormControlRadius: number = this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.value :
+      this.radiusFormControl.value * 1000;
       if (!this.freehandDrawIsActive) {
         if (radiusFormControlRadius < 0 || radiusFormControlRadius >= 100000) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'), this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+          this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           this.radius = 1000;
-          this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radius) : this.radiusFormControl.setValue(this.radius / 1000);
+          this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radius) :
+          this.radiusFormControl.setValue(this.radius / 1000);
           this.drawGuide$.next(this.radius);
           return;
         }
       } else {
         if (formValueRadius) {
           if (formValueRadius >= 100000) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'), this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
             this.formControl.reset();
             return;
           }

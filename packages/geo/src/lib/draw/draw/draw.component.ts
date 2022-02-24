@@ -31,7 +31,6 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
-import * as olproj from 'ol/proj';
 
 import * as OlStyle from 'ol/style';
 import OlVectorSource from 'ol/source/Vector';
@@ -534,15 +533,17 @@ export class DrawComponent implements OnInit, OnDestroy {
   changeRadius() {
     let radiusMeters: number;
     if (this.radiusFormControl.value) {
-      this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = this.radiusFormControl.value : radiusMeters = this.radiusFormControl.value * 1000;
+      this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = this.radiusFormControl.value :
+      radiusMeters = this.radiusFormControl.value * 1000;
     } else {
       radiusMeters = undefined;
     }
     if (radiusMeters >= 100000 || radiusMeters < 0) {
-      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'), this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+      this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radiusFormControl.reset();
     } else {
-      console.log('ok')
+      console.log('ok');
     }
   }
 
@@ -551,7 +552,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.measureUnit = selectedMeasureUnit;
-      this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) : this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+      this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
+      this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
     }
   }
 }
