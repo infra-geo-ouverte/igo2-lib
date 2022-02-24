@@ -423,13 +423,11 @@ export class CatalogService {
     }
     if (catalog.forcedProperties) {
         if (catalog.forcedProperties.metadataUrl !== undefined) {
-          console.log(catalog.forcedProperties.metadataUrl)
+          console.log(catalog.forcedProperties.metadataUrl);
           abstract = catalog.forcedProperties.metadataUrl;
-          console.log(abstract)
+          console.log(abstract);
       }
     }
-
-
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
