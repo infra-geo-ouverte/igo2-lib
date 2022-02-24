@@ -18,7 +18,7 @@ export class DirectionsButtonsComponent {
   get activeRoute() {
     return this.routesFeatureStore.all().find(route => route.properties.active);
   }
-
+  @Input() contextUri: string;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
@@ -163,6 +163,10 @@ export class DirectionsButtonsComponent {
     if (!this.route) {
       return;
     }
+    let context = ''
+    if (this.contextUri) {
+      context = `context=${this.contextUri}&`
+    }
 
     const pos = this.routesFeatureStore.all()
     .map((direction: FeatureWithDirection) => direction.properties.id).indexOf(this.activeRoute.properties.id);
@@ -176,7 +180,7 @@ export class DirectionsButtonsComponent {
     let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
-      return `${location.origin}${location.pathname}?tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
+      return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;
   }
