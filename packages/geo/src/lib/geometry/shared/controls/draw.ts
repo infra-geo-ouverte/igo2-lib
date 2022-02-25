@@ -1,7 +1,6 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
-import OlFeature from 'ol/Feature';
-import * as OlStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -23,8 +22,8 @@ export interface DrawControlOptions {
   geometryType: typeof OlGeometryType | string;
   drawingLayerSource?: OlVectorSource<OlGeometry>;
   drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
-  drawingLayerStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
-  interactionStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  drawingLayerStyle?: OlStyleLike;
+  interactionStyle?: OlStyleLike;
   maxPoints?: number;
 }
 
