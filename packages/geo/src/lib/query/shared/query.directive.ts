@@ -202,8 +202,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           if ((layer.dataSource.options as WFSDataSourceOptions).paramsWFS?.queryFormatAsWms) {
             return;
           }
-          if (layer.options.workspace?.noMapQueryOnOpenTab && 
-            layer.options.workspace?.workspaceId == this.queryService.layerIdWksActiveAndOpen) {
+          if (layer.options.workspace?.noMapQueryOnOpenTab &&
+            layer.options.workspace?.workspaceId === this.queryService.layerIdWksActiveAndOpen) {
               return;
           }
           if (featureOL) {

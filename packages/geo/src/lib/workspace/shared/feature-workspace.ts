@@ -30,7 +30,7 @@ export class FeatureWorkspace extends Workspace {
       }
     });
   }
-  
+
   public getLayerWksOptionNoQueryClickInTab(): boolean {
     if (this.options && this.options.layer?.options?.workspace?.noQueryOnClickInTab){
       return this.options.layer.options.workspace.noQueryOnClickInTab;
