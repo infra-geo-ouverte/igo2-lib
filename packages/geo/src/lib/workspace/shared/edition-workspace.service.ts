@@ -307,7 +307,8 @@ export class EditionWorkspaceService {
         domainValues: undefined,
         relation: undefined,
         multiple: field.multiple,
-        step: field.step
+        step: field.step,
+        tooltip: field.tooltip
       };
 
       if (field.type === 'list' || field.type === 'autocomplete') {
@@ -327,6 +328,7 @@ export class EditionWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
+        tooltip: relation.tooltip,
         onClick: () => {
           if (this.adding$.getValue() === false) {
             this.ws$.next(relation.title);
@@ -397,6 +399,14 @@ export class EditionWorkspaceService {
       //feature.properties[geom] = feature.geometry;
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
+    }
+
+    for (const property in feature.properties) {
+      for (const sf of workspace.layer.dataSource.options.sourceFields) {
+        if (sf.name === property && sf.validation.readonly) {
+          delete feature.properties[property];
+        }
+      }
     }
 
     if (url) {
@@ -490,10 +500,17 @@ export class EditionWorkspaceService {
       feature.properties["longitude"] = feature.geometry.coordinates[0];
       feature.properties["latitude"] = feature.geometry.coordinates[1];
     }
-    const featureProperties = JSON.parse(JSON.stringify(feature.properties));
-    delete featureProperties.boundedBy;
+
+    for (const property in feature.properties) {
+      for (const sf of workspace.layer.dataSource.options.sourceFields) {
+        if (sf.name === property && sf.validation.readonly || property === 'boundedBy') {
+          delete feature.properties[property];
+        }
+      }
+    }
+
     if (url) {
-      this.http[protocole](`${url}`, featureProperties, { headers: headers }).subscribe(
+      this.http[protocole](`${url}`, feature.properties, { headers: headers }).subscribe(
         () => {
           this.cancelEdit(workspace, feature, true);
 

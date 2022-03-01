@@ -148,7 +148,8 @@ export class FeatureWorkspaceService {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
+        tooltip: field.tooltip
       };
     });
 
@@ -160,6 +161,7 @@ export class FeatureWorkspaceService {
         icon: relation.icon,
         parent: relation.parent,
         type: 'relation',
+        tooltip: relation.tooltip,
         onClick: () => {
             this.ws$.next(relation.title);
         },

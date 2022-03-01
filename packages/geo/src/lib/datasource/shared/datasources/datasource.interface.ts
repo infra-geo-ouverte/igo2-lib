@@ -49,6 +49,7 @@ export interface SourceFieldsOptionsParams {
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
   multiple?: boolean;
+  tooltip?: string;
 }
 
 export interface EditionOptions {
@@ -73,13 +74,14 @@ export interface RelationOptions {
   icon?: string;
   table: string;
   parent?: string;
+  tooltip?: string;
 }
 
 export interface SourceFieldsValidationParams {
   mandatory?: boolean;
   maxLength?: number;
   minLength?: number;
-  readonly: boolean;
+  readonly?: boolean;
 }
 
 export interface Legend {

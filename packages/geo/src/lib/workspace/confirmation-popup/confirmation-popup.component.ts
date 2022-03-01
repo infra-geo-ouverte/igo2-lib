@@ -9,7 +9,8 @@ export interface DialogData {
 
 @Component({
     selector: 'igo-confirmation-popup-component',
-    templateUrl: './confirmation-popup.component.html'
+    templateUrl: './confirmation-popup.component.html',
+    styleUrls: ['./confirmation-popup.component.scss']
   })
   export class ConfirmationPopupComponent {
 
