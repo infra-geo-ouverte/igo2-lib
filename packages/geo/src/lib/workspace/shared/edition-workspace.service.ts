@@ -403,7 +403,7 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (sf.name === property && sf.validation.readonly) {
+        if (sf.name === property && sf.validation?.readonly) {
           delete feature.properties[property];
         }
       }
@@ -503,7 +503,7 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (sf.name === property && sf.validation.readonly || property === 'boundedBy') {
+        if ((sf.name === property && sf.validation?.readonly) || property === 'boundedBy') {
           delete feature.properties[property];
         }
       }

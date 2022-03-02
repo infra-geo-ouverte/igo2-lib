@@ -355,6 +355,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           item[key]
         ));
       }
+
+      if (this.formGroup.controls[column.name] && this.getValidationAttributeValue(column, 'readonly')) {
+        this.formGroup.controls[column.name].disable();
+      }
     });
   }
 
