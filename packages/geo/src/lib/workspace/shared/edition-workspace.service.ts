@@ -367,7 +367,7 @@ export class EditionWorkspaceService {
     let url = this.configService.getConfig('edition.url');
 
     if (workspace.layer.dataSource.options.edition.baseUrl) {
-      url+= workspace.layer.dataSource.options.edition.baseUrl;
+      url += workspace.layer.dataSource.options.edition.baseUrl;
     }
 
     if (feature.newFeature) {
