@@ -34,7 +34,7 @@ export class CatalogService {
     private config: ConfigService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private capabilitiesService: CapabilitiesService,
+    private capabilitiesService: CapabilitiesService
   ) {}
 
   loadCatalogs(): Observable<Catalog[]> {
@@ -418,7 +418,7 @@ export class CatalogService {
     } else if (!layer.Abstract && catalog.abstract) {
       abstract = catalog.abstract;
     }
-    let layerNewMetadataUrl
+    let layerNewMetadataUrl;
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
         if (layer.NewMetadataUrl === property.layerName && property.newMetadataUrl)
