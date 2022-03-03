@@ -34,7 +34,7 @@ export class CatalogService {
     private config: ConfigService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private capabilitiesService: CapabilitiesService
+    private capabilitiesService: CapabilitiesService,
   ) {}
 
   loadCatalogs(): Observable<Catalog[]> {
@@ -50,12 +50,10 @@ export class CatalogService {
       if (catalogConfig.baseLayers) {
         const translate = this.languageService.translate;
         const title = translate.instant('igo.geo.catalog.baseLayers');
-        const metadataUrl = translate.instant('igo.geo.catalog.baseLayers'); //metadata
         const baseLayersCatalog = [
           {
             id: 'catalog.baselayers',
             title,
-            metadataUrl, // metadata
             url: `${apiUrl}/baselayers`,
             type: 'baselayers'
           }
@@ -109,7 +107,6 @@ export class CatalogService {
           return {
             id: generateIdFromSourceOptions(layerOptions.sourceOptions),
             title: layerOptions.title,
-            //metadataUrl: layerOptions.abstract, //metadataUrl
             type: CatalogItemType.Layer,
             externalProvider: catalog.externalProvider,
             options: layerOptions
@@ -121,7 +118,6 @@ export class CatalogService {
             type: CatalogItemType.Group,
             externalProvider: catalog.externalProvider,
             title: catalog.title,
-            //metadataUrl: catalog.metadataUrl,
             items
           }
         ];
@@ -288,6 +284,7 @@ export class CatalogService {
     const recursiveGroupByLayerAddress = (items, keyFn) =>
       items.reduce((acc, item, idx, arr) => {
         const layerTitle = keyFn(item);
+        //const layerNewMetadataUrl = keyFn(item); //metadata
         const outItem = Object.assign({}, item);
 
         if (item.type === CatalogItemType.Layer) {
@@ -421,19 +418,23 @@ export class CatalogService {
     } else if (!layer.Abstract && catalog.abstract) {
       abstract = catalog.abstract;
     }
+    let layerNewMetadataUrl
     if (catalog.forcedProperties) {
-        if (catalog.forcedProperties.metadataUrl !== undefined) {
+      for (const property of catalog.forcedProperties) {
+        if (layer.NewMetadataUrl === property.layerName && property.newMetadataUrl)
+          layerNewMetadataUrl = property.newMetadataUrl;
+
+        /*if (catalog.forcedProperties.metadataUrl !== undefined) {
           console.log(catalog.forcedProperties.metadataUrl);
-          abstract = catalog.forcedProperties.metadataUrl;
-          console.log(abstract);
+          metadata.abstract = catalog.forcedProperties.metadataUrl;
+          console.log(abstract);*/
       }
     }
-
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
       title: layerTitle !== undefined ? layerTitle : layer.Title,
-      metadataURL: abstract !== undefined ? abstract : layer.MetadataUrl,
+      newMetadataUrl: layerNewMetadataUrl !== undefined ? layerNewMetadataUrl : abstract,
       address: idParent,
       externalProvider: catalog.externalProvider || false,
       options: {
@@ -589,20 +590,25 @@ export class CatalogService {
           }
         }
         //metadata
-        let forcedMetadataUrl;
+        let forcedNewMetadataUrl;
         if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.NewMetadataUrl === property.layerName && property.newMetadataUrl) {
+              forcedNewMetadataUrl = property.newMetadataUrl;
+            }
+          }
+        }
+        /*if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
             if (layer.MetadataUrl === property.metadata && property.metadataUrl) {
               forcedTitle = property.metadataUrl;
-            }
+            }*/
             /*
            if (property.layerName && property.metadataUrl !== undefined) {
              for (property.layerName of catalog.forcedProperties) {
               forcedMetadataUrl = property.metadataUrl;
              }
           }*/
-        }
-      }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -632,7 +638,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.Title,
-          metadataUrl: forcedMetadataUrl !== undefined ? forcedMetadataUrl : layer.MetadataUrl, //metadata
+          metadataUrl: forcedNewMetadataUrl !== undefined ? forcedNewMetadataUrl : layer.metadata, //metadata
           address: catalog.id,
           externalProvider: catalog.externalProvider,
           options: {
@@ -678,26 +684,27 @@ export class CatalogService {
           }
         }
         //newMetadataUrl
-        let forcedMetadataUrl;
+        /*let forcedNewMetadataUrl;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
-            if (layer.name === property.layerName && property.title) {
-              forcedMetadataUrl = property.metadataUrl;
+            if (layer.newMetadataUrl === property.layerName && property.title) {
+              forcedNewMetadataUrl = property.newMetadataUrl;
             }
             /*
              if (catalog.forcedProperties.layerName && catalog.forcedProperties.metadataUrl !== undefined) {
                for (catalog.forcedProperties.layerName of catalog.forcedProperties) {
                 forcedMetadataUrl = catalog.forcedProperties.metadataUrl;
             }*/
-          }
-        }
+         // }
+       // }
 
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
         const baseSourceOptions = {
           type: TypeCatalog[catalog.type],
-          url: catalog.url,
+          //url:forcedNewMetadataUrl, //metadata
+          //url: catalog.url,
           crossOrigin: catalog.setCrossOriginAnonymous
             ? 'anonymous'
             : undefined,
@@ -717,7 +724,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.name,
-          newMetadataUrl: forcedMetadataUrl !== undefined ? forcedMetadataUrl : layer.metadata, //metadata
+          //newMetadataUrl: forcedNewMetadataUrl !== undefined ? forcedNewMetadataUrl : layer.metadata, //metadata
           externalProvider: catalog.externalProvider,
           address: catalog.id,
           options: {
@@ -731,7 +738,7 @@ export class CatalogService {
               type: baseSourceOptions.type
             },
             title: forcedTitle !== undefined ? forcedTitle : layer.name,
-            metadataUrl: forcedMetadataUrl !== undefined ? forcedMetadataUrl : layer.metadata //metadata
+            //metadataUrl: forcedNewMetadataUrl !== undefined ? forcedNewMetadataUrl : layer.metadata //metadata
           }
         } as CatalogItem);
       })
