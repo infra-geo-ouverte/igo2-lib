@@ -47,6 +47,7 @@ export class EditionWorkspaceService {
   public adding$ = new BehaviorSubject<boolean>(false);
   public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(undefined);
   public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
+  public loading = false;
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -246,12 +247,14 @@ export class EditionWorkspaceService {
           editMode: true,
           icon: 'check',
           color: 'primary',
+          disabled: this.loading,
           click: (feature) => { this.saveFeature(feature, workspace); }
         },
         {
           editMode: true,
           icon: 'alpha-x',
           color: 'primary',
+          disabled: this.loading,
           click: (feature) => { this.cancelEdit(workspace, feature); }
         }] as EntityTableButton[];
       }
@@ -409,51 +412,54 @@ export class EditionWorkspaceService {
       }
     }
 
-    if (url) {
-      this.http.post(`${url}`, feature.properties, { headers: headers }).subscribe(
-        () => {
-          workspace.entityStore.stateView.clear();
-          workspace.deleteDrawings();
-          workspace.entityStore.delete(feature);
+    this.loading = true;
+    this.http.post(`${url}`, feature.properties, { headers: headers }).subscribe(
+      () => {
+        this.loading = false;
+        workspace.entityStore.stateView.clear();
+        workspace.deleteDrawings();
+        workspace.entityStore.delete(feature);
 
-          const message = this.languageService.translate.instant(
-            'igo.geo.workspace.addSuccess'
-          );
-          this.messageService.success(message);
+        const message = this.languageService.translate.instant(
+          'igo.geo.workspace.addSuccess'
+        );
+        this.messageService.success(message);
 
-          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
-          this.adding$.next(false);
-          this.rowsInMapExtentCheckCondition$.next(true);
-        },
-        error => {
-          error.error.caught = true;
-          const genericErrorMessage = this.languageService.translate.instant(
-            'igo.geo.workspace.addError'
-          );
-          const messages = workspace.layer.dataSource.options.edition.messages;
-          if (messages) {
-            let text;
-            messages.forEach(message => {
-              const key = Object.keys(message)[0];
-              if (error.error.message.includes(key)) {
-                text = message[key];
-                this.messageService.error(text);
-              }
-            });
-            if (!text) {
-              this.messageService.error(genericErrorMessage);
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+        this.adding$.next(false);
+        this.rowsInMapExtentCheckCondition$.next(true);
+      },
+      error => {
+        this.loading = false;
+        error.error.caught = true;
+        const genericErrorMessage = this.languageService.translate.instant(
+          'igo.geo.workspace.addError'
+        );
+        const messages = workspace.layer.dataSource.options.edition.messages;
+        if (messages) {
+          let text;
+          messages.forEach(message => {
+            const key = Object.keys(message)[0];
+            if (error.error.message.includes(key)) {
+              text = message[key];
+              this.messageService.error(text);
             }
-          } else {
+          });
+          if (!text) {
             this.messageService.error(genericErrorMessage);
           }
+        } else {
+          this.messageService.error(genericErrorMessage);
         }
-      );
-    }
+      }
+    );
   }
 
   public deleteFeature(workspace: EditionWorkspace, url: string) {
+    this.loading = true;
     this.http.delete(`${url}`, {}).subscribe(
       () => {
+        this.loading = false;
         const message = this.languageService.translate.instant(
           'igo.geo.workspace.deleteSuccess'
         );
@@ -469,6 +475,7 @@ export class EditionWorkspaceService {
         }
       },
       error => {
+        this.loading = false;
         error.error.caught = true;
           const genericErrorMessage = this.languageService.translate.instant(
             'igo.geo.workspace.addError'
@@ -509,53 +516,54 @@ export class EditionWorkspaceService {
       }
     }
 
-    if (url) {
-      this.http[protocole](`${url}`, feature.properties, { headers: headers }).subscribe(
-        () => {
-          this.cancelEdit(workspace, feature, true);
+    this.loading = true;
+    this.http[protocole](`${url}`, feature.properties, { headers: headers }).subscribe(
+      () => {
+        this.loading = false;
+        this.cancelEdit(workspace, feature, true);
 
-          const message = this.languageService.translate.instant(
-            'igo.geo.workspace.modifySuccess'
-          );
-          this.messageService.success(message);
+        const message = this.languageService.translate.instant(
+          'igo.geo.workspace.modifySuccess'
+        );
+        this.messageService.success(message);
 
-          this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
+        this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
 
-          let relationLayers = [];
-          for (const relation of workspace.layer.options.sourceOptions.relations) {
-            workspace.map.layers.forEach((layer) => {
-              if (layer.title === relation.title) {
-                relationLayers.push(layer);
-                layer.dataSource.ol.refresh();
-              }
-            });
-          }
-          this.relationLayers$.next(relationLayers);
-        },
-        error => {
-          error.error.caught = true;
-          const genericErrorMessage = this.languageService.translate.instant(
-            'igo.geo.workspace.addError'
-          );
-          const messages = workspace.layer.dataSource.options.edition.messages;
-          if (messages) {
-            let text;
-            messages.forEach(message => {
-              const key = Object.keys(message)[0];
-              if (error.error.message.includes(key)) {
-                text = message[key];
-                this.messageService.error(text);
-              }
-            });
-            if (!text) {
-              this.messageService.error(genericErrorMessage);
+        let relationLayers = [];
+        for (const relation of workspace.layer.options.sourceOptions.relations) {
+          workspace.map.layers.forEach((layer) => {
+            if (layer.title === relation.title) {
+              relationLayers.push(layer);
+              layer.dataSource.ol.refresh();
             }
-          } else {
+          });
+        }
+        this.relationLayers$.next(relationLayers);
+      },
+      error => {
+        this.loading = false;
+        error.error.caught = true;
+        const genericErrorMessage = this.languageService.translate.instant(
+          'igo.geo.workspace.addError'
+        );
+        const messages = workspace.layer.dataSource.options.edition.messages;
+        if (messages) {
+          let text;
+          messages.forEach(message => {
+            const key = Object.keys(message)[0];
+            if (error.error.message.includes(key)) {
+              text = message[key];
+              this.messageService.error(text);
+            }
+          });
+          if (!text) {
             this.messageService.error(genericErrorMessage);
           }
+        } else {
+          this.messageService.error(genericErrorMessage);
         }
-      );
-    }
+      }
+    );
   }
 
   cancelEdit(workspace: EditionWorkspace, feature, fromSave = false) {

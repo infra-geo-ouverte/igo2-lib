@@ -130,6 +130,7 @@ export interface EntityTableButton {
   icon: string;
   click: (entity: object, record: EntityRecord<object>) => void;
   color?: 'primary' | 'accent' | 'warn';
+  disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';
   editMode?: boolean;
 }
