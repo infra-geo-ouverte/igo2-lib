@@ -32,9 +32,12 @@ export class WfsWorkspace extends Workspace {
   }
 
   public getLayerWksOptionNoQueryClickInTab(): boolean {
-    if (this.options && this.options.layer?.options?.workspace?.noQueryOnClickInTab){
-      return this.options.layer.options.workspace.noQueryOnClickInTab;
+    if (this.layer.options.workspace?.noQueryOnClickInTab) {
+      return this.layer.options.workspace?.noQueryOnClickInTab;
     }
+    // if (this.options && this.options.layer?.options?.workspace?.noQueryOnClickInTab){
+    //   return this.options.layer.options.workspace.noQueryOnClickInTab;
+    // }
     return false;
   }
 }
