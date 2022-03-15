@@ -96,6 +96,12 @@ export const environment: Environment = {
               url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
             },
             {
+            id: 'arcgisrestcompletecatalog',
+            title: 'ArcGIS Rest complete catalog',
+            url: 'https://gisp.dfo-mpo.gc.caa/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
+            type: 'arcgisrest'
+          },
+            {
               id: 'rn_wmts',
               url:
                 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
