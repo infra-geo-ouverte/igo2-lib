@@ -1,0 +1,27 @@
+<div *ngFor="let entity of entities" #entity
+  class="entity"
+  (click)="selectElement(entity)">
+  <ng-container *ngFor="let property of attributeOrder; let propertyIndex = index">
+    <ng-container *ngIf="propertyIndex === 0 && firstAttributeIsTitle else notTitle">
+      <span class="title" *ngIf="property.description"><strong>{{ property.description }}</strong>: </span>
+      <span class="title">{{ entity.properties[property.attributeName] }}</span>
+      <br>
+    </ng-container>
+    <ng-template #notTitle>
+      <ng-container *ngIf="personalizedAttributeNames.indexOf(property.attributeName) !== -1 else notPersonalized">
+        <span *ngIf="property.description"
+          class="description"><strong>{{ property.description }}</strong>:
+        </span>
+        <span class="attribute">{{ createPersonalizedAttribute(entity, property.attributeName) }}</span>
+        <br *ngIf="property.description">
+      </ng-container>
+    </ng-template>
+    <ng-template #notPersonalized>
+      <span *ngIf="property.description && entity.properties[property.attributeName]"
+        class="description"><strong>{{ property.description }}</strong>:
+      </span>
+      <span class="attribute" [innerHTML]="checkAttributeFormatting(entity.properties[property.attributeName])"></span>
+      <br *ngIf="entity.properties[property.attributeName]">
+    </ng-template>
+  </ng-container>
+</div>
