@@ -46,7 +46,10 @@ export const environment: Environment = {
         {
           id: 'Gououvert',
           title: 'Gouvouvert',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          forcedProperties: [{
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+          }]
         },
         {
           id: 'DefiningInfoFormat',
@@ -60,25 +63,37 @@ export const environment: Environment = {
             ]
           },
           queryHtmlTarget: 'iframe',
-          count: 30
+          count: 30,
+          forcedProperties: [{
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+          }]
         },
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          regFilters: ['zpegt']
+          regFilters: ['zpegt'],
+          forcedProperties: [{
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+          }]
         },
         {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          tooltipType: 'abstract' // or title
+          tooltipType: 'abstract', // or title
+          forcedProperties: [{
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+          }]
         },
         {
           id: 'arcgisrestcompletecatalog',
           title: 'ArcGIS Rest complete catalog',
           url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
-          type: 'arcgisrest'
+          type: 'arcgisrest',
+          forcedProperties: [{
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+          }]
         },
         {
           id: 'arcgisrestcatalog',
@@ -88,9 +103,21 @@ export const environment: Environment = {
           regFilters: ['^10$'],
           forcedProperties: [{
             layerName: 'Les lits d|éponges dans la zone biogéographique du golfe - l|engin de chalutage Campelen',
-            title: 'Nouveau nom pour cette couche ArcGIS REST focus',
-            catalogAbstract: "*",
-            description: 'Nouvelle description'
+            title: "----Nouveau nom pour cette couche ArcGIS REST focus",
+            //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+            newMetadataAbstract: "Ceci est un nouveau abstract"
+          }]
+        },
+        {
+          id: 'arcgisrestcatalogmaritime',
+          title: 'ArcGIS Rest Focus Maritime catalog',
+          url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/CHS/ENC_MaritimeChartService/MapServer/exts/MaritimeChartService/MapServer',
+          type: 'arcgisrest',
+          forcedProperties: [{
+            layerName: "Information about the chart display",
+            title: "New maritime layer name",
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+            newMetadataAbstract: "Ceci est un nouveau abstract ESRI"
           }]
         },
         {
@@ -99,7 +126,10 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+              forcedProperties: [{
+              newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+              }]
             },
             {
               id: 'rn_wmts',
@@ -108,7 +138,24 @@ export const environment: Environment = {
               type: 'wmts',
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
-              version: '1.0.0'
+              version: '1.0.0',
+              forcedProperties: [{
+                //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+                layerName: "BDTQ-20K_Allegee",
+                title: "New WMTS layer name",
+                newMetadataAbstract: "Nouvel Abstract WMTS"
+              }]
+            },
+            {
+              id: 'wms',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: 'wms',
+              crossOrigin: true,
+              version: '1.3.0',
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+                newMetadataAbstract: "Nouveau Abstract WMS"
+              }]
             }
           ]
         },
@@ -121,19 +168,30 @@ export const environment: Environment = {
               id: 'tq_swtq',
               url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['zpegt'],
-              groupImpose: { id: 'zpegt', title: 'zpegt' }
+              groupImpose: { id: 'zpegt', title: 'zpegt' },
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+              }]
+            },
+            {
+              id: 'wms',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: 'wms',
+              crossOrigin: true,
+              version: '1.3.0',
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+                newMetadataAbstract: "Nouveau Abstract WMS"
+              }]
             },
             {
               id: 'Gououvert',
               url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
               regFilters: ['zpegt'],
-              groupImpose: { id: 'zpegt', title: 'zpegt' }
-            },
-            {
-              id: 'Gououvert',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-              regFilters: ['zpegt'],
-              groupImpose: { id: 'zpegt', title: 'zpegt' }
+              groupImpose: { id: 'zpegt', title: 'zpegt' },
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+              }]
             },
             {
               id: 'rn_wmts',
@@ -146,7 +204,10 @@ export const environment: Environment = {
               groupImpose: {
                 id: 'cartetopo',
                 title: 'Carte topo échelle 1/20 000'
-              }
+              },
+              forcedProperties: [{
+                //newMetadataAbstract: "New WMTS Abstract"
+              }]
             }
           ]
         },
@@ -158,13 +219,19 @@ export const environment: Environment = {
               id: 'tq_swtq',
               url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['limtn_charg'],
-              groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' }
+              groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' },
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+              }]
             },
             {
               id: 'Gououvert',
               url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
               regFilters: ['limtn_charg'],
-              groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' }
+              groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' },
+              forcedProperties: [{
+                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+              }]
             }
           ]
         }
