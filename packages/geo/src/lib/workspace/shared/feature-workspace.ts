@@ -31,9 +31,9 @@ export class FeatureWorkspace extends Workspace {
     });
   }
 
-  public getLayerWksOptionNoQueryClickInTab(): boolean {
-    if (this.layer.options.workspace?.noQueryOnClickInTab) {
-      return this.layer.options.workspace?.noQueryOnClickInTab;
+  public getLayerWksOptionTabQuery(): boolean {
+    if (this.layer.options.workspace?.queryOptions?.tabQuery) {
+      return this.layer.options.workspace?.queryOptions?.tabQuery;
     }
     return false;
   }

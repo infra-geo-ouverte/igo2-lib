@@ -57,7 +57,7 @@ export class QueryService {
     if (!url) {
       return of([]);
     }
-    if (layer.options.workspace?.noMapQueryOnOpenTab &&
+    if (!layer.options.workspace?.queryOptions?.mapQueryOnOpenTab &&
     layer.options.workspace?.workspaceId === this.layerIdWksActiveAndOpen) {
       return of([]);
     }

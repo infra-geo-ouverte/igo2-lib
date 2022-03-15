@@ -31,13 +31,10 @@ export class WfsWorkspace extends Workspace {
     });
   }
 
-  public getLayerWksOptionNoQueryClickInTab(): boolean {
-    if (this.layer.options.workspace?.noQueryOnClickInTab) {
-      return this.layer.options.workspace?.noQueryOnClickInTab;
+  public getLayerWksOptionTabQuery(): boolean {
+    if (this.layer.options.workspace?.queryOptions?.tabQuery) {
+      return this.layer.options.workspace?.queryOptions?.tabQuery;
     }
-    // if (this.options && this.options.layer?.options?.workspace?.noQueryOnClickInTab){
-    //   return this.options.layer.options.workspace.noQueryOnClickInTab;
-    // }
     return false;
   }
 }
