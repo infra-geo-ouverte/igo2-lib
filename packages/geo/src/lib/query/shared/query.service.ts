@@ -42,7 +42,6 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
-  public layerIdWksActiveAndOpen: string;
 
   constructor(private http: HttpClient) {}
 
@@ -55,10 +54,6 @@ export class QueryService {
   queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
     const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
     if (!url) {
-      return of([]);
-    }
-    if (!layer.options.workspace?.queryOptions?.mapQueryOnOpenTab &&
-    layer.options.workspace?.workspaceId === this.layerIdWksActiveAndOpen) {
       return of([]);
     }
 
