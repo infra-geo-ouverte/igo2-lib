@@ -135,7 +135,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   openSecureUrl(value) {
     let url: string;
-    const regexDepot = /(\/apis\/depot)(.*?)(?="|$)/;
+    const regexDepot = /\/apis\/depot.*?(?="|$)/;
     const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
     if (regexDepot.test(value)) {
@@ -190,7 +190,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   getEmbeddedLinkText(value) {
-    const regex = /(?<=>)(.*?)(?=<|$)/;
+    const regex = /(?<=>).*?(?=<|$)/;
     const text = value.match(regex)[0];
     return text;
   }

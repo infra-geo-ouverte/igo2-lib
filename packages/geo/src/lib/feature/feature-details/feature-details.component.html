@@ -26,7 +26,7 @@
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && isImg(property.value)">
-        <a href="{{property.value}}" target='_blank' rel="noopener noreferrer">
+        <a href="{{property.value}}" target='_blank' (click)="openSecureUrl(property.value)" rel="noopener noreferrer">
           <img src="{{(property.value | secureImage) | async}}" width="225" height="auto">
         </a>
       </td>
