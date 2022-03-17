@@ -46,7 +46,10 @@ export class WmsWorkspaceService {
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled !== true || layer.dataSource.options.edition) {
+    if (
+      !layer.options.workspace ||
+      map.layers.find(lay => lay.id === layer.id + '.WfsWorkspaceTableDest') ||
+      layer.dataSource.options.edition) {
       return;
     }
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;
@@ -105,7 +108,7 @@ export class WmsWorkspaceService {
         linkedLayers: {
           linkId: wfsLinkId
         },
-        workspace: wksConfig,
+        workspace: !layer.options.workspace.enabled ? wksConfig : undefined,
         showInLayerList: false,
         opacity: 0,
         title: layer.title,
@@ -128,6 +131,9 @@ export class WmsWorkspaceService {
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
 
+        if (!layer.options.workspace.enabled) {
+          return;
+        }
         wks = new WfsWorkspace({
           id: layer.id,
           title: layer.title,
@@ -154,6 +160,9 @@ export class WmsWorkspaceService {
 
       });
 
+    if (layer.options.workspace.enabled !== true) {
+      return;
+    }
     return wks;
   }
 
