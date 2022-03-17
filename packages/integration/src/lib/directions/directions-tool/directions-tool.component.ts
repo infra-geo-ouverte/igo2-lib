@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@igo2/auth';
 
 import { ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService, StorageScope, StorageService } from '@igo2/core';
@@ -66,7 +67,8 @@ export class DirectionsToolComponent implements OnInit {
     private languageService: LanguageService,
     private messageService: MessageService,
     private storageService: StorageService,
-    public contextState: ContextState
+    public contextState: ContextState,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +83,9 @@ export class DirectionsToolComponent implements OnInit {
       this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
     }
     this.contextState.context$.subscribe(c => {
-      this.currentContextUri = c.uri;
+      if (!this.authService.authenticated) {
+        this.currentContextUri = c.uri;
+      }
     });
   }
 
