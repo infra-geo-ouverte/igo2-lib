@@ -37,26 +37,22 @@ export class TileArcGISRestDataSource extends DataSource {
   getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || legend.length > 0) {
+    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
       return legend;
     }
 
-    const id = parseInt(this.options.layer, 10);
-    const lyr = legendInfo.layers.find(layer => layer.layerId === id);
-    if (!lyr) {
+    if (!legendInfo) {
       return;
     }
     let htmlString = '<table>';
 
-    for (const lyrLegend of lyr.legend) {
-      const src = `${this.options.url}/${lyr.layerId}/images/${
-        lyrLegend.url
-      }`;
-      const label = lyrLegend.label.replace('<Null>', 'Null');
+    for (const legendElement of legendInfo.legend) {
+      const src = `${this.options.url}/${legendInfo.layerId}/images/${legendElement.url}`;
+      const label = legendElement.label.replace('<Null>', 'Null');
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +
-        `" alt ='' /></td><td>` +
+        `" alt ='' /></td><td class="mat-typography">` +
         label +
         '</td></tr>';
     }

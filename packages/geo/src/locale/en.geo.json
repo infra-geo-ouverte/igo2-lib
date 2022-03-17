@@ -49,12 +49,12 @@
           "title": "Nothing to import"
         },
         "success": {
-          "text": "Imported file",
-          "title": "The layer '{{value}}' was added to the map"
+          "text": "The layer '{{value}}' was added to the map",
+          "title": "Imported file"
         },
         "unreadable": {
-          "text": "Unreadable file",
-          "title": "The file '{{value}}' is unreadable"
+          "text": "The file '{{value}}' is unreadable",
+          "title": "Unreadable file" 
         },
         "tooLarge": {
           "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
@@ -188,7 +188,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
-        "resetFilters": "(Apply no filters)",
+        "resetFilters": "Reset default values",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",

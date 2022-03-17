@@ -173,6 +173,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.map.removeLayer(this.olDrawingLayer);
 
     this.olDrawingLayer = new VectorLayer({
+      isIgoInternalLayer: true,
       id: 'igo-draw-layer',
       title: this.languageService.translate.instant('igo.geo.draw.drawing'),
       zIndex: 200,
