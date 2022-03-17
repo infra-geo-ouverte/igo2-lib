@@ -1,6 +1,8 @@
 import { ConfigService } from '@igo2/core';
 import { Component, Input } from '@angular/core';
 import { IgoMap } from '../shared/map';
+import { MapExtent } from '../shared/map.interface';
+import * as olproj from 'ol/proj';
 /*
 Button to center the map to the home extent
 */
@@ -10,39 +12,39 @@ Button to center the map to the home extent
   styleUrls: ['./home-extent-button.component.scss'],
 })
 export class HomeExtentButtonComponent {
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
+  @Input() color: string;
+  @Input() extentOverride?: MapExtent
+  @Input() centerOverride?: [number, number];
+  @Input() zoomOverride?: number;
 
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
+  private homeExtentButtonExtent;
+  private homeExtentButtonCenter;
+  private homeExtentButtonZoom;
 
-  public homeExtentButtonExtent;
-  public homeExtentButtonCenter;
-  public homeExtentButtonZoom;
+ constructor(public configService: ConfigService) {
+      this.computeHomeExtent();
+  }
 
-  constructor(public configService: ConfigService) {
-    this.homeExtentButtonExtent = this.configService.getConfig('homeExtentButton.homeExtButtonExtent'); // [-8000000, 5800000, -6800000, 6900000] MINX | MINY | MAXX | MAXY EPSG:3857 - WGS 84 / Pseudo-Mercator (meters)
-    this.homeExtentButtonCenter = this.configService.getConfig('homeExtentButton.homeExtButtonCenter'); //  [-71.938087, 47.446975]
-    this.homeExtentButtonZoom = this.configService.getConfig('homeExtentButton.homeExtButtonZoom'); //  6
+  computeHomeExtent() {
+    this.homeExtentButtonExtent = this.extentOverride || this.configService.getConfig('homeExtentButton.homeExtButtonExtent');
+    this.homeExtentButtonCenter = this.centerOverride || this.configService.getConfig('homeExtentButton.homeExtButtonCenter');
+    this.homeExtentButtonZoom = this.zoomOverride || this.configService.getConfig('homeExtentButton.homeExtButtonZoom');
+
+    // priority over extent if these 2 properties are defined;
+    if (this.centerOverride && this.zoomOverride) {
+      this.homeExtentButtonExtent = undefined;
+    }
   }
 
   onToggleClick() {
+    this.computeHomeExtent();
     if (this.homeExtentButtonExtent) {
       this.map.viewController.zoomToExtent(this.homeExtentButtonExtent);
     } else if (this.homeExtentButtonCenter && this.homeExtentButtonZoom) {
-      this.map.setView({center : this.homeExtentButtonCenter, zoom: this.homeExtentButtonZoom});
+      const center = olproj.fromLonLat(this.homeExtentButtonCenter, this.map.viewController.olView.getProjection().getCode());
+      this.map.viewController.olView.setCenter(center);
+      this.map.viewController.zoomTo(this.homeExtentButtonZoom);
     }
   }
 }
