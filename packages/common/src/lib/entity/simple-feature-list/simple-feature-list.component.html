@@ -1,27 +1,45 @@
 <div *ngFor="let entity of entities" #entity
   class="entity"
   (click)="selectElement(entity)">
-  <ng-container *ngFor="let property of attributeOrder; let propertyIndex = index">
-    <ng-container *ngIf="propertyIndex === 0 && firstAttributeIsTitle else notTitle">
-      <span class="title" *ngIf="property.description"><strong>{{ property.description }}</strong>: </span>
-      <span class="title">{{ entity.properties[property.attributeName] }}</span>
+  <ng-container *ngFor="let attribute of attributeOrder">
+    <ng-container *ngIf="attribute.header else notTitle">
+      <ng-container *ngIf="attribute.header === 'h1'">
+        <span class="h1" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h1">{{ entity.properties[attribute.attributeName] }}</span>
       <br>
+      </ng-container>
+      <ng-container *ngIf="attribute.header === 'h2'">
+        <span class="h2" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h2">{{ entity.properties[attribute.attributeName] }}</span>
+      <br>
+      </ng-container>
+      <ng-container *ngIf="attribute.header === 'h3'">
+        <span class="h3" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h3">{{ entity.properties[attribute.attributeName] }}</span>
+      <br>
+      </ng-container>
+      <ng-container *ngIf="attribute.header === 'h4'">
+        <span class="h4" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h4">{{ entity.properties[attribute.attributeName] }}</span>
+      <br>
+      </ng-container>
+      <ng-container *ngIf="attribute.header === 'h5'">
+        <span class="h5" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h5">{{ entity.properties[attribute.attributeName] }}</span>
+      <br>
+      </ng-container>
+      <ng-container *ngIf="attribute.header === 'h6'">
+        <span class="h6" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+        <span class="h6">{{ entity.properties[attribute.attributeName] }}</span>
+      <br>
+      </ng-container>
     </ng-container>
     <ng-template #notTitle>
-      <ng-container *ngIf="personalizedAttributeNames.indexOf(property.attributeName) !== -1 else notPersonalized">
-        <span *ngIf="property.description"
-          class="description"><strong>{{ property.description }}</strong>:
-        </span>
-        <span class="attribute">{{ createPersonalizedAttribute(entity, property.attributeName) }}</span>
-        <br *ngIf="property.description">
-      </ng-container>
-    </ng-template>
-    <ng-template #notPersonalized>
-      <span *ngIf="property.description && entity.properties[property.attributeName]"
-        class="description"><strong>{{ property.description }}</strong>:
+      <span *ngIf="attribute.description && createAttribute(entity, attribute)"
+        class="description"><strong>{{ attribute.description }}</strong>:
       </span>
-      <span class="attribute" [innerHTML]="checkAttributeFormatting(entity.properties[property.attributeName])"></span>
-      <br *ngIf="entity.properties[property.attributeName]">
+      <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
+      <br *ngIf="createAttribute(entity, attribute)">
     </ng-template>
   </ng-container>
 </div>

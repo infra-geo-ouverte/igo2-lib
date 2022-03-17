@@ -14,12 +14,9 @@ export class SimpleFeatureListComponent implements OnInit {
   @Output() listSelection = new EventEmitter();
 
   public entities: Array<Object>;
-  public simpleFeatureListConfig: {show: boolean, layerId: string, personalizedAttributeFormatting: Array<{attributeName: string, formatting: string}>, attributeOrder: Array<{attributeName: string, description: string}>, sortBy: {attributeName: string, order: string}, firstAttributeIsTitle: boolean, formatURL: boolean, formatEmail: boolean};
-  public personalizedAttributeFormatting: Array<{attributeName: string, formatting: string}>
-  public personalizedAttributeNames: Array<string> = [];
+  public simpleFeatureListConfig: {show: boolean, layerId: string, attributeOrder: Array<{attributeName: string, personalizedFormatting: string, description: string, header: string}>, sortBy: {attributeName: string, order: string}, formatURL: boolean, formatEmail: boolean};
   public sortBy: {attributeName: string, order: string};
   public attributeOrder: Array<{attributeName: string, description: string}>;
-  public firstAttributeIsTitle: boolean;
   public formatURL: boolean;
   public formatEmail: boolean;
 
@@ -36,18 +33,9 @@ export class SimpleFeatureListComponent implements OnInit {
         this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? -1 : ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
       }
     }
-    this.personalizedAttributeFormatting = this.simpleFeatureListConfig.personalizedAttributeFormatting;
     this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
-    this.firstAttributeIsTitle = this.simpleFeatureListConfig.firstAttributeIsTitle !== undefined ? this.simpleFeatureListConfig.firstAttributeIsTitle : true;
-    this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.firstAttributeIsTitle : false;
+    this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
-    this.getAttributeNames();
-  }
-
-  getAttributeNames() {
-    this.personalizedAttributeFormatting.forEach(object => {
-      this.personalizedAttributeNames.push(object.attributeName)
-    });
   }
 
   checkAttributeFormatting(attribute: any) {
@@ -56,26 +44,30 @@ export class SimpleFeatureListComponent implements OnInit {
     attribute = this.isPostalCode(attribute);
     attribute = this.isUrl(attribute);
 
-    return attribute
+    return attribute;
   }
 
-  createPersonalizedAttribute(entity: any, attributeName: string): string {
-    let personalizedAttribute: string;
+  createAttribute(entity: any, attribute: any): string {
+    let value: string;
 
-    this.personalizedAttributeFormatting.forEach(attribute => {
-      if (attribute.attributeName === attributeName) {
-        personalizedAttribute = attribute.formatting;
-      }
-    });
+    if (attribute.personalizedFormatting) {
+      value = this.createPersonalizedAttribute(entity, attribute.personalizedFormatting);
+    } else {
+      value = this.checkAttributeFormatting(entity.properties[attribute.attributeName]);
+    }
+    return value;
+  }
 
-    const attributeList: Array<string> = personalizedAttribute.match(/(?<=\[)(.*?)(?=\])/g);
+  createPersonalizedAttribute(entity: any, personalizedFormatting: string): string {
+    let personalizedAttribute = personalizedFormatting;
+
+    const attributeList: Array<string> = personalizedFormatting.match(/(?<=\[)(.*?)(?=\])/g);
 
     attributeList.forEach(attribute => {
       personalizedAttribute = personalizedAttribute.replace(attribute, this.checkAttributeFormatting(entity.properties[attribute]));
-    })
+    });
     personalizedAttribute = personalizedAttribute.replace(/[\[\]]/g, '');
     personalizedAttribute = personalizedAttribute.replace(/^([^A-zÀ-ÿ0-9])*|([^A-zÀ-ÿ0-9])*$/g, '');
-
     return personalizedAttribute;
   }
 
@@ -121,7 +113,7 @@ export class SimpleFeatureListComponent implements OnInit {
 
   selectElement(entity: any) {
     let entityCollection: {added: any[]} = {added: []};
-    entityCollection.added.push(entity)
+    entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
   }
 }
