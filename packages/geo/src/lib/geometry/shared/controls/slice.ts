@@ -1,6 +1,6 @@
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import OlStyle from 'ol/style/Style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -15,8 +15,8 @@ import { DrawControl } from './draw';
 export interface SliceControlOptions {
   source?: OlVectorSource<OlGeometry>;
   layer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
-  layerStyle?: OlStyle | ((olfeature: OlFeature<OlGeometry>) => OlStyle);
-  drawStyle?: OlStyle | ((olfeature: OlFeature<OlGeometry>) => OlStyle);
+  layerStyle?: OlStyleLike;
+  drawStyle?: OlStyleLike;
 }
 
 /**
