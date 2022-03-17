@@ -53,6 +53,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private searchs$$: Subscription[] = [];
 
+  @Input() contextUri: string;
   @Input() stopsStore: StopsStore;
   @Input() stopsFeatureStore: StopsFeatureStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
