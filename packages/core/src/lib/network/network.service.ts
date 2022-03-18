@@ -13,6 +13,7 @@ export class NetworkService implements OnDestroy {
   private stateChangeEventEmitter = new EventEmitter<ConnectionState>();
   private onlineSubscription: Subscription;
   private offlineSubscription: Subscription;
+  private previousMessageId;
 
   private state: ConnectionState = {
     connection: window.navigator.onLine
@@ -27,19 +28,27 @@ export class NetworkService implements OnDestroy {
 
   private checkNetworkState() {
     this.onlineSubscription = fromEvent(window, 'online').subscribe(() => {
+      if (this.previousMessageId) {
+        this.messageService.remove(this.previousMessageId);
+      }
       const translate = this.injector.get(LanguageService).translate;
       const message = translate.instant('igo.core.network.online.message');
       const title = translate.instant('igo.core.network.online.title');
-      this.messageService.info(message, title);
+      const messageObj = this.messageService.info(message, title);
+      this.previousMessageId = messageObj.toastId;
       this.state.connection = true;
       this.emitEvent();
     });
 
     this.offlineSubscription = fromEvent(window, 'offline').subscribe(() => {
+      if (this.previousMessageId) {
+        this.messageService.remove(this.previousMessageId);
+      }
       const translate = this.injector.get(LanguageService).translate;
       const message = translate.instant('igo.core.network.offline.message');
       const title = translate.instant('igo.core.network.offline.title');
-      this.messageService.info(message, title);
+      const messageObj = this.messageService.info(message, title);
+      this.previousMessageId = messageObj.toastId;
       this.state.connection = false;
       this.emitEvent();
     });
