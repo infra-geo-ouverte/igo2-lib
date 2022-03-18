@@ -113,12 +113,19 @@ export const environment: Environment = {
           title: 'ArcGIS Rest Focus Maritime catalog',
           url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/CHS/ENC_MaritimeChartService/MapServer/exts/MaritimeChartService/MapServer',
           type: 'arcgisrest',
-          forcedProperties: [{
+          forcedProperties: [
+          {
+            //target: "All",
+            //newMetadataUrl: "https://github.com/infra-geo-ouverte/igo2-lib/",
+            newMetadataAbstract: "Nouveau abstract ESRI All"
+          },
+          {
             layerName: "Information about the chart display",
-            title: "New maritime layer name",
+            title: "New ESRI layer name",
             newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-            newMetadataAbstract: "Ceci est un nouveau abstract ESRI"
-          }]
+            newMetadataAbstract: "Nouveau abstract ESRI",
+          }
+        ]
         },
         {
           id: 'fusion_catalog',

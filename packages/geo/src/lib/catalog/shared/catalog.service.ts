@@ -687,17 +687,34 @@ private getWMTSItems(
           }
         }
         //newMetadataUrl & newMetadataAbstract
-        let forcedNewMetadataUrl;
-        let forcedNewMetadataAbstract;
+        let forcedNewMetadataUrl: string;
+        let forcedNewMetadataAbstract: string;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
-            if (property.newMetadataUrl) {
-              forcedNewMetadataUrl = property.newMetadataUrl;
+            if (layer.name === property.layerName) {
+              for (property.layerName in catalog.forcedProperties) {
+                forcedNewMetadataUrl = property.newMetadataUrl
+                forcedNewMetadataAbstract = property.newMetadataAbstract
+              }
             }
-            else if (property.newMetadataAbstract) {
-              forcedNewMetadataAbstract = property.newMetadataAbstract;
+            /*
+            else if (layer.name === property.layerName) {
+              for (property.layerName in catalog.forcedProperties) {
+                forcedNewMetadataAbstract = property.newMetadataAbstract
+              }*/
+
+            else if (layer.name !== property.layerName && property.newMetadataAbstract) {
+//for (property.newMetadataAbstract in catalog.forcedProperties) {
+                forcedNewMetadataAbstract = property.newMetadataAbstract;
+//}
+          }
+            else if (layer.name !== property.layerName && property.newMetadataUrl ) {
+              //for (property.newMetadataUrl in catalog.forcedProperties) {
+                forcedNewMetadataUrl = "https://gitlab.forge.gouv.qc.ca/";
+//}
             }
           }
+          
         }
 
         if (this.testLayerRegexes(layer.id, regexes) === false) {
