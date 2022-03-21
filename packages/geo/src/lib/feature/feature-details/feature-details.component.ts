@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { userAgent } from '@igo2/utils';
 import { NetworkService, ConnectionState, MessageService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
 
@@ -85,7 +86,8 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private networkService: NetworkService,
     private messageService: MessageService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private configService: ConfigService
   ) {
     this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
       this.state = state;
@@ -135,7 +137,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   openSecureUrl(value) {
     let url: string;
-    const regexDepot = /\/apis\/depot.*?(?="|$)/;
+    const regexDepot = new RegExp(this.configService.getConfig('depot.url') + '.*?(?="|$)');
     const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
     if (regexDepot.test(value)) {
