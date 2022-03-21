@@ -63,8 +63,8 @@ export class AboutToolComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService) {
     this.version = configService.getConfig('version');
-    this.baseUrlProfil = configService.getConfig('context.url') + '/user/igo?';
-    this.baseUrlGuide = configService.getConfig('depot.url') + '/projects/Documentation/file/';
+    this.baseUrlProfil = configService.getConfig('storage.url');
+    this.baseUrlGuide = configService.getConfig('depot.url') + configService.getConfig('depot.guideUrl');
   }
 
   ngOnInit() {
