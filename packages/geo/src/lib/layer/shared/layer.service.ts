@@ -137,7 +137,7 @@ export class LayerService {
     let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorLayer;
     if (layerOptions.style !== undefined) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution)
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
