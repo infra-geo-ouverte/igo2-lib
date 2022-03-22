@@ -10,8 +10,14 @@ export interface StyleByAttribute {
     icon?: Array<string>;
     scale?: Array<number>;
     label?: IgoLabel;
-    baseStyle?: { [key: string]: any };
+    baseStyle?: { [key: string]: any, allo?: string };
     hoverStyle?: StyleByAttribute;
+}
+
+
+export interface CreateStyle {
+  igoLabel?: IgoLabel,
+  igoStyle?: { [key: string]: any };
 }
 
 export interface IgoLabel {

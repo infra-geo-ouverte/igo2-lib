@@ -97,16 +97,15 @@ export function addLayerAndFeaturesStyledToMap(
       layerTitle.toString() + '.distance'
     );
 
-    const baseStyle = styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')
-    );
-
-    style = feature => {
-      return styleService.createClusterStyle(feature, clusterParam, baseStyle);
+    style = (feature, resolution) => {
+      const baseStyle = styleService.createStyle(
+        styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'), feature, resolution
+      );
+      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    style = styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.style')
+    style = (feature, resolution) => styleService.createStyle(
+      styleListService.getStyleList(layerTitle.toString() + '.style'), feature, resolution
     );
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
@@ -117,16 +116,15 @@ export function addLayerAndFeaturesStyledToMap(
     );
     distance = styleListService.getStyleList('default.distance');
 
-    const baseStyle = styleService.createStyle(
-      styleListService.getStyleList('default.clusterStyle')
-    );
-
-    style = feature => {
-      return styleService.createClusterStyle(feature, clusterParam, baseStyle);
+    style = (feature, resolution) => {
+      const baseStyle = styleService.createStyle(
+        styleListService.getStyleList('default.clusterStyle'), feature, resolution
+      );
+      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
   } else {
-    style = styleService.createStyle(
-      styleListService.getStyleList('default.style')
+    style = (feature, resolution) => styleService.createStyle(
+      styleListService.getStyleList('default.style'), feature, resolution
     );
   }
 
