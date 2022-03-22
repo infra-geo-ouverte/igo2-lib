@@ -17,9 +17,9 @@ export class StyleService {
   public style: olstyle.Style;
 
   /**
-   * Create a style based on a object as         
+   * Create a style based on a object as
    * style: {
-   *       "stroke": { 
+   *       "stroke": {
    *         "color": "blue",
    *         "lineDash": [10, 5]
    *       },
@@ -30,11 +30,11 @@ export class StyleService {
    *         "maxResolution": 400,
    *         "attribute": "THE COLUMN NAME TO RETRIEVE THE LABEL VALUE",
    *         "text": "MY HARCODED TEXT",
-   *         "stroke": { 
+   *         "stroke": {
    *           "color": "blue",
    *           "width": 0.75
    *         },
-   *         "fill": { 
+   *         "fill": {
    *           "color": "black"
    *         },
    *         "font": "20px sans-serif",
@@ -45,11 +45,11 @@ export class StyleService {
    *       },
    *       "width": 5
    *     }
-   * 
-   * @param options 
+   *
+   * @param options
    * @param feature feature to apply style on
    * @param resolution current map resolution, to control label resolution range
-   * @returns 
+   * @returns
    */
   createStyle(options: { [key: string]: any }, feature?: RenderFeature | OlFeature<OlGeometry>, resolution?: number) {
 
@@ -59,16 +59,18 @@ export class StyleService {
     if (typeof options === 'function' || options instanceof olstyle.Style) {
       return options;
     }
-    const parsedStyle = this.parseStyle('style', options)
+    const parsedStyle = this.parseStyle('style', options);
     if (parsedStyle.getText()) {
       let labelMinResolution = 0;
       let labelMaxResolution = Infinity;
       if (options.text) {
-        const labelMinResolutionFromScale = options.text?.minScaleDenom ? getResolutionFromScale(Number(options.text.minScaleDenom)) : undefined;
-        const labelMaxResolutionFromScale = options.text?.maxScaleDenom ? getResolutionFromScale(Number(options.text.maxScaleDenom)) : undefined;
+        const labelMinResolutionFromScale =
+          options.text?.minScaleDenom ? getResolutionFromScale(Number(options.text.minScaleDenom)) : undefined;
+        const labelMaxResolutionFromScale =
+          options.text?.maxScaleDenom ? getResolutionFromScale(Number(options.text.maxScaleDenom)) : undefined;
         const minResolution = options.text?.minResolution ? options.text.minResolution : 0;
         const maxResolution = options.text?.maxResolution ? options.text.maxResolution : Infinity;
-    
+
         labelMinResolution = labelMinResolutionFromScale || minResolution;
         labelMaxResolution = labelMaxResolutionFromScale || maxResolution;
       }
@@ -143,8 +145,10 @@ export class StyleService {
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
     const label = styleByAttribute.label ? styleByAttribute.label.attribute : undefined;
-    const labelMinResolutionFromScale = styleByAttribute.label?.minScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.minScaleDenom)) : undefined;
-    const labelMaxResolutionFromScale = styleByAttribute.label?.maxScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.maxScaleDenom)) : undefined;
+    const labelMinResolutionFromScale =
+      styleByAttribute.label?.minScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.minScaleDenom)) : undefined;
+    const labelMaxResolutionFromScale =
+      styleByAttribute.label?.maxScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.maxScaleDenom)) : undefined;
     const minResolution = styleByAttribute.label?.minResolution ? styleByAttribute.label.minResolution : 0;
     const maxResolution = styleByAttribute.label?.maxResolution ? styleByAttribute.label.maxResolution : Infinity;
 
