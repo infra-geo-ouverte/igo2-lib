@@ -1,6 +1,7 @@
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
 import * as OlStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlModify from 'ol/interaction/Modify';
@@ -31,9 +32,8 @@ import {
 export interface ModifyControlOptions {
   source?: OlVectorSource<any>;
   layer?: OlVectorLayer<any>;
-  layerStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style);
-  drawStyle?: OlStyle.Style | ((olfeature: OlFeature<any>) => OlStyle.Style) | OlStyle.Circle |
-    ((olfeature: OlFeature<OlGeometry>) => OlStyle.Circle);
+  layerStyle?: OlStyleLike;
+  drawStyle?: OlStyleLike;
   modify?: boolean;
   translate?: boolean;
 }

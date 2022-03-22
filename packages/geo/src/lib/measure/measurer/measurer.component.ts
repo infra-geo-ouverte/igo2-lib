@@ -569,6 +569,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     const layer = new VectorLayer({
       title: this.languageService.translate.instant('igo.geo.measure.layerTitle'),
+      isIgoInternalLayer: true,
       id: `igo-measures-${uuid()}`,
       zIndex: 200,
       source: new FeatureDataSource(),

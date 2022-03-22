@@ -313,6 +313,7 @@ export class VectorLayer extends Layer {
     threshold: number,
     success, failure) {
 
+    const idAssociatedCall = (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter;
     const xhr = new XMLHttpRequest();
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
@@ -338,7 +339,11 @@ export class VectorLayer extends Layer {
         /*if (features.length === 0 || features.length < threshold ) {
           console.log('No more data to download at this resolution');
         }*/
-        vectorSource.addFeatures(features);
+        // Avoids retrieving an older call that took longer to be process
+        if (idAssociatedCall === (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter)
+        {
+            vectorSource.addFeatures(features);
+        }
         success(features);
       } else {
         onError();
