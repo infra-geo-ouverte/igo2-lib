@@ -8,6 +8,7 @@ import { StyleByAttribute } from './vector-style.interface';
 import { ClusterParam } from './clusterParam';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 import RenderFeature from 'ol/render/Feature';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +71,7 @@ export class StyleService {
     return olCls;
   }
 
-  createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute) {
+  createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute, resolution: number) {
 
     let style;
     const type = styleByAttribute.type ? styleByAttribute.type : this.guessTypeFeature(feature);
@@ -85,6 +86,14 @@ export class StyleService {
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
     const label = styleByAttribute.label ? styleByAttribute.label.attribute : undefined;
+    const labelMinResolutionFromScale = styleByAttribute.label?.minScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.minScaleDenom)) : undefined;
+    const labelMaxResolutionFromScale = styleByAttribute.label?.maxScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.maxScaleDenom)) : undefined;
+    const minResolution = styleByAttribute.label?.minResolution ? styleByAttribute.label.minResolution : 0;
+    const maxResolution = styleByAttribute.label?.maxResolution ? styleByAttribute.label.maxResolution : Infinity;
+
+    const labelMinResolution = labelMinResolutionFromScale || minResolution;
+    const labelMaxResolution = labelMaxResolutionFromScale || maxResolution;
+
     let labelStyle = styleByAttribute.label?.style ? this.parseStyle('text', styleByAttribute.label.style) : undefined;
     if (!labelStyle && label) {
         labelStyle = new olstyle.Text();
@@ -92,7 +101,11 @@ export class StyleService {
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
-      labelStyle.setText(this.getLabel(feature, label));
+      if (resolution >= labelMinResolution && resolution <= labelMaxResolution) {
+        labelStyle.setText(this.getLabel(feature, label));
+      } else {
+        labelStyle.setText('');
+      }
     }
 
     if (type === 'circle') {

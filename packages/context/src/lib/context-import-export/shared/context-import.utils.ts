@@ -226,8 +226,8 @@ export function addImportedFeaturesStyledToMap(
       layerTitle.toString() + '.styleByAttribute'
     );
 
-    style = (feature) => {
-      return styleService.createStyleByAttribute(feature, styleByAttribute);
+    style = (feature, resolution) => {
+      return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
     };
   } else if (
     styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')

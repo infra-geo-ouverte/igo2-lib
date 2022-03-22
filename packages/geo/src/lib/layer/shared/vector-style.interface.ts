@@ -17,8 +17,10 @@ export interface StyleByAttribute {
 export interface IgoLabel {
   attribute: string;
   style?: { [key: string]: any };
-  // minScaleDenom?: number; // todo
-  // maxScaleDenom?: number; // todo
+  minResolution?: number;
+  maxResolution?: number;
+  minScaleDenom?: number;
+  maxScaleDenom?: number;
 }
 
 export interface MapboxStyle {

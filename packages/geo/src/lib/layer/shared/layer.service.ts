@@ -144,10 +144,11 @@ export class LayerService {
       style = source.options.params.style;
     } else if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
       igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
@@ -191,10 +192,11 @@ export class LayerService {
 
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
       igoLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
