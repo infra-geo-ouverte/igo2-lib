@@ -142,9 +142,7 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-        if (!capabilities) {
-          return items;
-        }
+
         this.flattenWmsCapabilities(capabilities.Capability.Layer, 0, finalLayers, catalog.groupSeparator);
         const capabilitiesCapabilityLayer = Object.assign({}, capabilities.Capability.Layer);
         capabilitiesCapabilityLayer.Layer = finalLayers.filter(f => f.Layer.length !== 0);
@@ -549,6 +547,7 @@ export class CatalogService {
     if (!capabilities) {
       return [];
     }
+
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -563,9 +562,7 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        if (!capabilities) {
-          return [];
-        }
+
         let forcedTitle;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
@@ -623,14 +620,12 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
-    if (!capabilities) {
+     if (!capabilities) {
       return [];
     }
     const layers =
-    capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
-    if (!capabilities) {
-      return [];
-    }
+    !capabilities.layers ? []: capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
+
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
