@@ -107,6 +107,7 @@ export class WmsWorkspaceService {
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
+          queryFormatAsWms: (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined

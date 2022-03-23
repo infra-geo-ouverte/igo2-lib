@@ -31,7 +31,7 @@ import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { WFSDataSourceOptions } from '../../datasource';
+import { QueryableDataSourceOptions } from './query.interfaces';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -199,7 +199,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         event.pixel,
         (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
-          if ((layer.dataSource.options as WFSDataSourceOptions).paramsWFS?.queryFormatAsWms) {
+          if ((layer.dataSource.options as QueryableDataSourceOptions).queryFormatAsWms) {
             return;
           }
           if (featureOL) {
