@@ -626,7 +626,10 @@ export class CatalogService {
     const layers =
     !capabilities.layers ? [] : capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
     if (!capabilities.layers) {
-      this.messageService.error(this.languageService.translate.instant('igo.geo.catalog.someUnavailable'), this.languageService.translate.instant('igo.geo.catalog.unavailableTitle'))
+      this.messageService.error(
+        this.languageService.translate.instant('igo.geo.catalog.someUnavailable'),
+        this.languageService.translate.instant('igo.geo.catalog.unavailableTitle')
+      );
     }
 
     const regexes = (catalog.regFilters || []).map(
