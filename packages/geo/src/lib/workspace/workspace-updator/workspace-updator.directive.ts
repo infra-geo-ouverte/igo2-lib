@@ -7,7 +7,7 @@ import { Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
-import { WFSDataSource, WMSDataSource, FeatureDataSource, WFSDataSourceOptions } from '../../datasource';
+import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
