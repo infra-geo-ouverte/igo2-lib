@@ -7,7 +7,7 @@ import { Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
-import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
+import { WFSDataSource, WMSDataSource, FeatureDataSource, WFSDataSourceOptions } from '../../datasource';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
@@ -90,6 +90,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       if (!layer.dataSource.options.paramsWFS) { return; }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
+        if ((layer.dataSource.options as QueryableDataSourceOptions)?.queryFormatAsWms) {
+          (wmsWks.layer.dataSource.options as QueryableDataSourceOptions).queryable = true;
+          return wmsWks;
+        }
         (layer.dataSource.options as QueryableDataSourceOptions).queryable = !inResolutionRange;
         (wmsWks.layer.dataSource.options as QueryableDataSourceOptions).queryable = inResolutionRange;
       });

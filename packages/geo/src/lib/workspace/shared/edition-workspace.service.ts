@@ -78,8 +78,6 @@ export class EditionWorkspaceService {
     wksConfig.enabled = true;
     wksConfig.pageSize = layer.options.workspace?.pageSize;
     wksConfig.pageSizeOptions = layer.options.workspace?.pageSizeOptions;
-    wksConfig.noQueryOnClickInTab = true;
-    wksConfig.noMapQueryOnOpenTab = true;
 
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;
     const wmsLinkId = layer.id + '.WmsWorkspaceTableSrc';
@@ -128,10 +126,12 @@ export class EditionWorkspaceService {
           srcId: layer.id,
           workspaceId: undefined,
           enabled: false,
+          queryOptions: {
+            mapQueryOnOpenTab: layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+            tabQuery: false
+          },
           pageSize: layer.options.workspace?.pageSize,
-          pageSizeOptions: layer.options.workspace?.pageSizeOptions,
-          noMapQueryOnOpenTab: true,
-          noQueryOnClickInTab: true
+          pageSizeOptions: layer.options.workspace?.pageSizeOptions
         },
         showInLayerList: false,
         opacity: 0,

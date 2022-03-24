@@ -121,6 +121,7 @@ export class WmsWorkspaceService {
           queryable: true,
           relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
+          queryFormatAsWms: (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined

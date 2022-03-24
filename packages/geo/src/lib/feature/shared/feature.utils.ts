@@ -415,10 +415,6 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
     store.map.addLayer(store.layer);
   }
 }
-export function getFeatureLayerId(feature: Feature): string {
-  let featureStore = feature.ol.get('_featureStore');
-  return featureStore.layer.id;
-}
 
 /**
  * Compute a diff between a source array of Ol features and a target array

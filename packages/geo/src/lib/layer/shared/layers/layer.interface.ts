@@ -41,10 +41,14 @@ export interface GeoWorkspaceOptions {
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;
+  queryOptions?: GeoWorkspaceQueryOptions;
   pageSize?: number;
   pageSizeOptions?: number[];
-  noQueryOnClickInTab?: boolean;
-  noMapQueryOnOpenTab?: boolean;
+}
+
+export interface GeoWorkspaceQueryOptions {
+  mapQueryOnOpenTab?: boolean;
+  tabQuery?: boolean;
 }
 
 export interface LayersLink {
