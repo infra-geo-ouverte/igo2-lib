@@ -101,6 +101,12 @@ export class WmsWorkspaceService {
     wksConfig.pageSize = layer.options.workspace?.pageSize;
     wksConfig.pageSizeOptions = layer.options.workspace?.pageSizeOptions;
     let wks;
+    let wksLayerOption = Object.assign(layer.options.workspace,{
+      srcId: layer.id,
+      workspaceId: undefined,
+      enabled: false,
+    });
+
     this.layerService
       .createAsyncLayer({
         isIgoInternalLayer: true,
@@ -108,7 +114,7 @@ export class WmsWorkspaceService {
         linkedLayers: {
           linkId: wfsLinkId
         },
-        workspace: !layer.options.workspace.enabled ? wksConfig : undefined,
+        workspace: wksLayerOption,
         showInLayerList: false,
         opacity: 0,
         title: layer.title,
