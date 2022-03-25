@@ -104,7 +104,7 @@ export const environment: Environment = {
           forcedProperties: [{
             layerName: 'Les lits d|éponges dans la zone biogéographique du golfe - l|engin de chalutage Campelen',
             title: "----Nouveau nom pour cette couche ArcGIS REST focus",
-            //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
             newMetadataAbstract: "Ceci est un nouveau abstract"
           }]
         },
@@ -114,18 +114,24 @@ export const environment: Environment = {
           url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/CHS/ENC_MaritimeChartService/MapServer/exts/MaritimeChartService/MapServer',
           type: 'arcgisrest',
           forcedProperties: [
-          {
-            //target: "All",
-            //newMetadataUrl: "https://github.com/infra-geo-ouverte/igo2-lib/",
-            newMetadataAbstract: "Nouveau abstract ESRI All"
-          },
-          {
-            layerName: "Information about the chart display",
-            title: "New ESRI layer name",
-            newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-            newMetadataAbstract: "Nouveau abstract ESRI",
-          }
-        ]
+            {
+              layerName: "Information about the chart display",
+              title: "New ESRI layer name",
+              newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+              //newMetadataAbstract: "New ESRI abstract",
+            },
+            {
+              layerName: "Natural and man-made features, port features",
+              title: "New 2nd ESRI layer name",
+              newMetadataUrl: "https://gitlab.com/",
+              //newMetadataAbstract: "New 2nd ESRI abstract",
+            },
+            {
+              layerName: "All",
+              //newMetadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
+              newMetadataAbstractAll: "New abstract to all other layers"
+            }
+          ]
         },
         {
           id: 'fusion_catalog',
@@ -146,12 +152,25 @@ export const environment: Environment = {
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
               version: '1.0.0',
-              forcedProperties: [{
-                //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-                layerName: "BDTQ-20K_Allegee",
-                title: "New WMTS layer name",
-                newMetadataAbstract: "Nouvel Abstract WMTS"
-              }]
+              forcedProperties: [
+                {
+                  layerName: "BDTQ-20K_Allegee",
+                  title: "New WMTS layer name",
+                  newMetadataAbstract: "Nouvel Abstract WMTS",
+                  //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/"
+                },
+                {
+                  layerName: "BDTQ-20K",
+                  title: "New 2nd WMTS layer name",
+                  //newMetadataAbstract: "New WMTS Abstract",
+                  newMetadataUrl: "https://gitlab.com/"
+                },
+                {
+                  layerName: "All",
+                  newMetadataAbstractAll: "New WMTS Abstract to all other layers",
+                  //newMetadataUrlAll: "https://quebec.ca/" // overrides newMetadataUrl
+                }
+            ]
             },
             {
               id: 'wms',
@@ -159,10 +178,25 @@ export const environment: Environment = {
               type: 'wms',
               crossOrigin: true,
               version: '1.3.0',
-              forcedProperties: [{
-                newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-                newMetadataAbstract: "Nouveau Abstract WMS"
-              }]
+              forcedProperties: [
+                {
+                  layerName: "atlas_named_feature_polygon_large",
+                  title: "New WMS name",
+                  newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
+                  newMetadataAbstract: "New WMS Abstract"
+                },
+                {
+                  layerName: "woodedarea_50k",
+                  title: "New 2nd WMS name",
+                  //newMetadataUrl: "https://gitlab.com/",
+                  newMetadataAbstract: "New 2nd WMS abstract"
+                },
+                {
+                  layerName: "All",
+                  //newMetadataUrlAll: "https://quebec.ca/",
+                  //newMetadataAbstractAll: "New WMS abstract to all other layers"
+                }
+            ]
             }
           ]
         },

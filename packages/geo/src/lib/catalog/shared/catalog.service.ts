@@ -303,13 +303,6 @@ export class CatalogService {
               }
               indicesMatchTitle.push(i);
             }
-            //metadata
-            if (x.title === layerNewMetadataUrl && x.type === CatalogItemType.Layer) {  //metadata
-              if (i !== idx && x.address !== item.address) {
-                bInd = true;
-              }
-              indicesMatchNewMetadataUrl.push(i);
-            }
             return bInd;
           }); // $& i !== idx
 
@@ -381,7 +374,7 @@ export class CatalogService {
     );
 
     // WMS
-    let metadata = layer.DataURL ? layer.DataURL[0] : undefined; //metadata info
+    let metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const legendOptions =
       catalog.showLegend && layer.Style
         ? this.capabilitiesService.getStyle(layer.Style)
@@ -412,6 +405,13 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
+    let abstract;
+    if (layer.Abstract) {
+      abstract = layer.Abstract;
+    } else if (!layer.Abstract && catalog.abstract) {
+      abstract = catalog.abstract;
+    }
+
     let layerTitle;
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
@@ -421,25 +421,24 @@ export class CatalogService {
       }
     }
 
-    let layerNewMetadataUrl: string;
+    let forcedNewMetadataUrl: string;
     let forcedNewMetadataAbstract: string;
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
         if (layer.Name === property.layerName && property.newMetadataUrl) {
-          layerNewMetadataUrl = property.newMetadataUrl;
+            forcedNewMetadataUrl = property.newMetadataUrl;
         }
-        else if (property.newMetadataAbstract) {
-          forcedNewMetadataAbstract = property.newMetadataAbstract;
+        else if (layer.Name === property.layerName && property.newMetadataAbstract) {
+            forcedNewMetadataAbstract = property.newMetadataAbstract;
         }
-      }
+        else if (layer.Name !== property.layerName && property.newMetadataAbstractAll) {
+            forcedNewMetadataAbstract = property.newMetadataAbstractAll;
+        } // when we set this property it overrides property.newMetadataAbstract
+        else if (layer.Name !== property.layerName && property.newMetadataUrlAll) {
+              forcedNewMetadataUrl = property.newMetadataUrlAll;
+        } // when we set this property it overrides property.newMetadataUrl and property.newMetadataAbstract
     }
-
-    let abstract;
-    if (layer.Abstract) {
-      abstract = layer.Abstract;
-    } else if (!layer.Abstract && catalog.abstract) {
-      abstract = catalog.abstract;
-    }
+  }
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
@@ -451,8 +450,8 @@ export class CatalogService {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
-          url: layerNewMetadataUrl ? layerNewMetadataUrl : (metadata ? metadata.OnlineResource : undefined),
-          extern: metadata || layerNewMetadataUrl ? true : undefined,
+          url: forcedNewMetadataUrl ? forcedNewMetadataUrl : undefined,
+          extern: forcedNewMetadataUrl ? true : undefined,
           abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
           type: baseSourceOptions.type
         },
@@ -601,18 +600,26 @@ private getWMTSItems(
         }
       }
 
-      let forcedNewMetadataUrl: string;
-      let forcedNewMetadataAbstract: string;
-      if (catalog.forcedProperties) {
-        for (const property of catalog.forcedProperties) {
-          if (property.newMetadataUrl) {
-            forcedNewMetadataUrl = property.newMetadataUrl;
-          }
-          else if (property.layerName && property.newMetadataAbstract) {
-            forcedNewMetadataAbstract = property.newMetadataAbstract;
-          }
+        //newMetadataUrl & newMetadataAbstract
+        let forcedNewMetadataUrl: string;
+        let forcedNewMetadataAbstract: string;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.Title === property.layerName && property.newMetadataUrl) {
+                forcedNewMetadataUrl = property.newMetadataUrl;
+            }
+            else if (layer.Title === property.layerName && property.newMetadataAbstract) {
+                forcedNewMetadataAbstract = property.newMetadataAbstract;
+            }
+            else if (layer.Title !== property.layerName && property.newMetadataAbstractAll) {
+                forcedNewMetadataAbstract = property.newMetadataAbstractAll;
+            }
+            else if (layer.Title !== property.layerName && property.newMetadataUrlAll) {
+                  forcedNewMetadataUrl = property.newMetadataUrlAll;
+            } // when we set this property it overrides property.newMetadataUrl
         }
       }
+
       if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
         return undefined;
       }
@@ -642,7 +649,6 @@ private getWMTSItems(
         id: generateIdFromSourceOptions(sourceOptions),
         type: CatalogItemType.Layer,
         title: forcedTitle !== undefined ? forcedTitle : layer.Title,
-        //newMetadataAbstract: forcedNewMetadataAbstract !== undefined ? forcedNewMetadataAbstract : layer.NewMetadataAbstract,
         address: catalog.id,
         externalProvider: catalog.externalProvider,
         options: {
@@ -691,31 +697,20 @@ private getWMTSItems(
         let forcedNewMetadataAbstract: string;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
-            if (layer.name === property.layerName) {
-              for (property.layerName in catalog.forcedProperties) {
-                forcedNewMetadataUrl = property.newMetadataUrl
-                forcedNewMetadataAbstract = property.newMetadataAbstract
-              }
+            if (layer.name === property.layerName && property.newMetadataUrl) {
+                forcedNewMetadataUrl = property.newMetadataUrl;
             }
-            /*
-            else if (layer.name === property.layerName) {
-              for (property.layerName in catalog.forcedProperties) {
-                forcedNewMetadataAbstract = property.newMetadataAbstract
-              }*/
-
-            else if (layer.name !== property.layerName && property.newMetadataAbstract) {
-//for (property.newMetadataAbstract in catalog.forcedProperties) {
+            else if (layer.name === property.layerName && property.newMetadataAbstract) {
                 forcedNewMetadataAbstract = property.newMetadataAbstract;
-//}
-          }
-            else if (layer.name !== property.layerName && property.newMetadataUrl ) {
-              //for (property.newMetadataUrl in catalog.forcedProperties) {
-                forcedNewMetadataUrl = "https://gitlab.forge.gouv.qc.ca/";
-//}
             }
-          }
-          
+            else if (layer.name !== property.layerName && property.newMetadataAbstractAll) {
+                forcedNewMetadataAbstract = property.newMetadataAbstractAll;
+            }
+            else if (layer.name !== property.layerName && property.newMetadataUrlAll) {
+                  forcedNewMetadataUrl = property.newMetadataUrlAll;
+            } // when we set this property it overrides property.newMetadataUrl
         }
+      }
 
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
@@ -750,7 +745,7 @@ private getWMTSItems(
             maxResolution: getResolutionFromScale(layer.minScale),
             metadata: {
               url: forcedNewMetadataUrl? forcedNewMetadataUrl : undefined,
-              extern: forcedNewMetadataUrl? external : undefined,
+              extern: forcedNewMetadataUrl ? external : undefined,
               abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
               type: baseSourceOptions.type
             },
