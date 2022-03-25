@@ -35,8 +35,10 @@ export class FormService {
       control.addControl(field.name, field.control);
     });
 
-    const validators = this.getValidators(options.validator); // convert string to actual validator
-    control.setValidators(validators);
+    if (options.validator) {
+      const validators = this.getValidators(options.validator); // convert string to actual validator
+      control.setValidators(validators);
+    }
 
     return Object.assign({}, config, {fields, control}) as FormFieldGroup;
   }
@@ -49,8 +51,10 @@ export class FormService {
     };
     const control = this.formBuilder.control(state);
 
-    const validators = this.getValidators(options.validator); // convert string to actual validator
-    control.setValidators(validators);
+    if (options.validator) {
+      const validators = this.getValidators(options.validator); // convert string to actual validator
+      control.setValidators(validators);
+    }
 
     return Object.assign({type: 'text'}, config, {control}) as FormField;
   }
