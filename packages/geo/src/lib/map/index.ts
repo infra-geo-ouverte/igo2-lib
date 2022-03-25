@@ -9,3 +9,4 @@ export * from './baselayers-switcher';
 export * from './rotation-button';
 export * from './swipe-control';
 export * from './map-center';
+export * from './info-section';

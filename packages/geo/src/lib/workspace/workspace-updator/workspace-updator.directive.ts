@@ -88,6 +88,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
       if (!layer.dataSource.options.paramsWFS) { return; }
       const wmsWks = this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
       wmsWks?.inResolutionRange$.subscribe((inResolutionRange) => {
+        if ((layer.dataSource.options as QueryableDataSourceOptions)?.queryFormatAsWms) {
+          (wmsWks.layer.dataSource.options as QueryableDataSourceOptions).queryable = true;
+          return wmsWks;
+        }
         (layer.dataSource.options as QueryableDataSourceOptions).queryable = !inResolutionRange;
         (wmsWks.layer.dataSource.options as QueryableDataSourceOptions).queryable = inResolutionRange;
       });

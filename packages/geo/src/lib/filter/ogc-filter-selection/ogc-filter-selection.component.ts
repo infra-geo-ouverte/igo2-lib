@@ -426,7 +426,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         });
       }
     }
-    if (this.isTemporalOperator()) {
+    if (this.isTemporalOperator() && this._currentFilter.active) {
       conditions.push(this.datasource.options.ogcFilters.interfaceOgcFilters[0]);
     }
     if (conditions.length >= 1) {

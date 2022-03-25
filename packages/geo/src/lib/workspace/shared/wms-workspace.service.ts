@@ -83,17 +83,20 @@ export class WmsWorkspaceService {
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
     let wks;
+    let wksLayerOption = Object.assign(layer.options.workspace,{
+      srcId: layer.id,
+      workspaceId: undefined,
+      enabled: false,
+    });
+
     this.layerService
       .createAsyncLayer({
+        isIgoInternalLayer: true,
         id: wfsLinkId,
         linkedLayers: {
           linkId: wfsLinkId
         },
-        workspace: {
-          srcId: layer.id,
-          workspaceId: undefined,
-          enabled: false,
-        },
+        workspace: wksLayerOption,
         showInLayerList: false,
         opacity: 0,
         title: layer.title,
@@ -105,6 +108,7 @@ export class WmsWorkspaceService {
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
+          queryFormatAsWms: (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined
