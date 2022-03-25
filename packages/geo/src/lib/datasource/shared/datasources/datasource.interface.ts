@@ -37,13 +37,13 @@ export interface DataSourceOptions {
 }
 
 export interface SourceFieldsOptionsParams {
-  step: number;
-  relation: RelationOptions;
   name: any;
   alias?: any;
   values?: any;
   excludeFromOgcFilters?: boolean;
   allowedOperatorsType?: OgcFilterOperatorType;
+  step?: number;
+  relation?: RelationOptions;
   type?: number | number[] | string | string[] | boolean | Date;
   primary?: boolean;
   visible?: boolean;
@@ -68,8 +68,8 @@ export interface EditionOptions {
 }
 
 export interface RelationOptions {
-  title?: string;
-  name?: string;
+  title: string;
+  name: string;
   alias?: string;
   icon?: string;
   table: string;
