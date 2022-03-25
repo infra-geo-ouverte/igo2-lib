@@ -2,11 +2,27 @@ import { ConfigService } from '@igo2/core';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { EntityStore } from '../shared';
 
+export interface SimpleFeatureListConfig {
+  show: boolean,
+  layerId: string,
+  attributeOrder: AttributeOrder,
+  sortBy: {attributeName: string, order: string},
+  formatURL: boolean,
+  formatEmail: boolean
+}
+
+export interface AttributeOrder {
+  attributeName: string,
+  personalizedFormatting: string,
+  description: string,
+  header: string
+}
 @Component({
   selector: 'igo-simple-feature-list',
   templateUrl: './simple-feature-list.component.html',
   styleUrls: ['./simple-feature-list.component.scss']
 })
+
 export class SimpleFeatureListComponent implements OnInit {
 
   @Input() entityStore: EntityStore<object>;
@@ -14,9 +30,9 @@ export class SimpleFeatureListComponent implements OnInit {
   @Output() listSelection = new EventEmitter();
 
   public entities: Array<Object>;
-  public simpleFeatureListConfig: {show: boolean, layerId: string, attributeOrder: Array<{attributeName: string, personalizedFormatting: string, description: string, header: string}>, sortBy: {attributeName: string, order: string}, formatURL: boolean, formatEmail: boolean};
+  public simpleFeatureListConfig: SimpleFeatureListConfig;
   public sortBy: {attributeName: string, order: string};
-  public attributeOrder: Array<{attributeName: string, description: string}>;
+  public attributeOrder: AttributeOrder;
   public formatURL: boolean;
   public formatEmail: boolean;
 
@@ -28,9 +44,11 @@ export class SimpleFeatureListComponent implements OnInit {
     this.sortBy = this.simpleFeatureListConfig.sortBy;
     if (this.sortBy) {
       if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
-        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? 1 : ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? -1 : 0));
+        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? 1 :
+        ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? -1 : 0));
       } else if (this.sortBy.order === 'descending') {
-        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? -1 : ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
+        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? -1 :
+        ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
       }
     }
     this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
