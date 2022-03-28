@@ -343,8 +343,11 @@ export class VectorLayer extends Layer {
         if (idAssociatedCall === (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter)
         {
             vectorSource.addFeatures(features);
+            success(features);
         }
-        success(features);
+        else {
+            success([]);
+        }
       } else {
         onError();
       }
