@@ -264,6 +264,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
