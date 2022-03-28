@@ -152,39 +152,34 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     .getCapabilities(addedCatalog.type as any, addedCatalog.url, addedCatalog.version)
       .pipe(
         catchError((e) => {
-          const title = this.languageService.translate.instant(
-            'igo.geo.catalog.unavailableTitle'
-          );
+          const title = this.languageService.translate.instant('igo.geo.catalog.unavailableTitle');
           if (e.error) {
             this.addCatalogDialog(true, addedCatalog);
             e.error.caught = true;
             return e;
           }
-          const message = this.languageService.translate.instant(
-            'igo.geo.catalog.unavailable',
-            { value: addedCatalog.url }
-          );
+          const message = this.languageService.translate.instant('igo.geo.catalog.unavailable', { value: addedCatalog.url });
           this.messageService.error(message, title);
           throw e;
         })
       )
-      .subscribe((capabilies) => {
+      .subscribe((capabilities) => {
         let title;
         let version;
         switch (addedCatalog.type) {
           case 'wms':
-            title = addedCatalog.title || capabilies.Service.Title;
-            version = addedCatalog.version || capabilies.version;
+            title = addedCatalog.title || capabilities.Service.Title;
+            version = addedCatalog.version || capabilities.version;
             break;
           case 'arcgisrest':
           case 'imagearcgisrest':
           case 'tilearcgisrest':
-            title = addedCatalog.title || capabilies.mapName;
+            title = addedCatalog.title || capabilities.mapName;
             break;
           case 'wmts':
             title =
               addedCatalog.title ||
-              capabilies.ServiceIdentification.ServiceType;
+              capabilities.ServiceIdentification.ServiceType;
             break;
           default:
             title = addedCatalog.title;
