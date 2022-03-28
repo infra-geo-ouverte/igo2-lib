@@ -47,15 +47,7 @@ export class WfsWorkspaceService {
     if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
       return;
     }
-    let wksConfig;
-    if (layer.options.workspace) {
-      wksConfig = layer.options.workspace;
-    } else {
-      wksConfig = {};
-    }
-    wksConfig.srcId = layer.id;
-    wksConfig.workspaceId = layer.id;
-    wksConfig.enabled = true;
+
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
         srcId: layer.id,

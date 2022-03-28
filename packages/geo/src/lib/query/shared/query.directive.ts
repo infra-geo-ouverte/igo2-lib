@@ -156,7 +156,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
 
     const resolution = this.map.ol.getView().getResolution();
-
     const queryLayers = this.map.layers.filter(layerIsQueryable);
     queries$.push(
       ...this.queryService.query(queryLayers, {

@@ -89,25 +89,18 @@ export class WmsWorkspaceService {
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
 
-    let wksConfig;
-    if (layer.options.workspace) {
-      wksConfig = layer.options.workspace;
-    } else {
-      wksConfig = {};
-    }
-    wksConfig.srcId = layer.id;
-    wksConfig.workspaceId = undefined;
-    wksConfig.enabled = false;
-    wksConfig.pageSize = layer.options.workspace?.pageSize;
-    wksConfig.pageSizeOptions = layer.options.workspace?.pageSizeOptions;
     let wks;
-    let wksLayerOption = Object.assign(layer.options.workspace,{
+    let wksLayerOption = {
       srcId: layer.id,
       workspaceId: undefined,
       enabled: false,
-      pageSize: wksConfig.pageSize,
-      pageSizeOptions: wksConfig.pageSizeOptions
-    });
+      queryOptions: {
+        mapQueryOnOpenTab: layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+        tabQuery: layer.options.workspace?.queryOptions?.tabQuery
+      },
+      pageSize: layer.options.workspace?.pageSize,
+      pageSizeOptions: layer.options.workspace?.pageSizeOptions
+    };
 
     this.layerService
       .createAsyncLayer({
@@ -140,7 +133,7 @@ export class WmsWorkspaceService {
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
 
-        if (!layer.options.workspace.enabled) {
+        if (!layer.options.workspace?.enabled) {
           return;
         }
         wks = new WfsWorkspace({
@@ -161,7 +154,13 @@ export class WmsWorkspaceService {
           {
             enabled: true,
             srcId: layer.id,
-            workspaceId: workspaceLayer.id
+            workspaceId: workspaceLayer.id,
+            queryOptions: {
+              mapQueryOnOpenTab: layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+              tabQuery: layer.options.workspace?.queryOptions?.tabQuery
+            },
+            pageSize: layer.options.workspace?.pageSize,
+            pageSizeOptions: layer.options.workspace?.pageSizeOptions
           } as GeoWorkspaceOptions);
 
         delete dataSource.options.download;
@@ -169,9 +168,6 @@ export class WmsWorkspaceService {
 
       });
 
-    if (layer.options.workspace.enabled !== true) {
-      return;
-    }
     return wks;
   }
 
