@@ -142,7 +142,6 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-
         this.flattenWmsCapabilities(capabilities.Capability.Layer, 0, finalLayers, catalog.groupSeparator);
         const capabilitiesCapabilityLayer = Object.assign({}, capabilities.Capability.Layer);
         capabilitiesCapabilityLayer.Layer = finalLayers.filter(f => f.Layer.length !== 0);
