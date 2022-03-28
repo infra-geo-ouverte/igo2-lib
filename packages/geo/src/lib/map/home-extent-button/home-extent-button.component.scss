@@ -1,0 +1,13 @@
+@import '../../../../../core/src/style/partial/core.variables';
+
+.igo-home-extent-button-container {
+  width: $igo-icon-size;
+  background-color: #fff;
+  &:hover {
+    background-color: #efefef;
+}
+}
+button,
+:host ::ng-deep button .mat-button-ripple-round {
+    border-radius: 0;
+}

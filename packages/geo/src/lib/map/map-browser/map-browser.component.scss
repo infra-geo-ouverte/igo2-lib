@@ -14,7 +14,7 @@
 
 :host ::ng-deep igo-zoom-button {
   position: absolute;
-  bottom: $igo-margin;
+  bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   right: $igo-margin;
   @include mobile {
     display: none;
@@ -44,7 +44,17 @@
   top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   right: $igo-margin;
   @include mobile {
-    top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+    bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  }
+}
+
+:host ::ng-deep igo-home-extent-button {
+  position: absolute;
+  bottom: calc((3 * #{$igo-icon-size}) + 5px + (2 * #{$igo-margin}));
+  right: $igo-margin;
+  @include mobile {
+    bottom: $igo-margin;
+    right: calc((2 * #{$igo-icon-size}) +  (3 * #{$igo-margin}));
   }
 }
 
@@ -53,7 +63,7 @@
   bottom: $igo-margin;
   right: calc(#{$igo-margin} + 50px);
   @include mobile {
-    right: calc(#{$igo-margin} + 90px);
+    right: calc((2 * #{$igo-icon-size}) + (2 * #{$igo-margin}));
   }
 }
 
