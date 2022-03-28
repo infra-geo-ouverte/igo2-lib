@@ -547,7 +547,6 @@ export class CatalogService {
     if (!capabilities) {
       return [];
     }
-
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -562,7 +561,6 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-
         let forcedTitle;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
@@ -620,7 +618,7 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
-     if (!capabilities) {
+    if (!capabilities) {
       return [];
     }
     const layers =
