@@ -105,6 +105,8 @@ export class WmsWorkspaceService {
       srcId: layer.id,
       workspaceId: undefined,
       enabled: false,
+      pageSize: wksConfig.pageSize,
+      pageSizeOptions: wksConfig.pageSizeOptions
     });
 
     this.layerService

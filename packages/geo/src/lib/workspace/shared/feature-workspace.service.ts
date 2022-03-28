@@ -60,7 +60,9 @@ export class FeatureWorkspaceService {
 
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
-        wksConfig
+        srcId: layer.id,
+        workspaceId: layer.id,
+        enabled: true
       } as GeoWorkspaceOptions);
 
 

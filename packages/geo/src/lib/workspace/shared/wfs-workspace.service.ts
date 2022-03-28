@@ -58,7 +58,9 @@ export class WfsWorkspaceService {
     wksConfig.enabled = true;
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
-        wksConfig
+        srcId: layer.id,
+        workspaceId: layer.id,
+        enabled: true
       } as GeoWorkspaceOptions);
 
     const wks = new WfsWorkspace({

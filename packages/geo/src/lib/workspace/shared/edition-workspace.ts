@@ -21,7 +21,7 @@ import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 import OlModify from 'ol/interaction/Modify';
-import OlCollection from 'ol/Collection';
+import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
 import { FeatureDataSource } from '../../datasource/shared';
 
@@ -308,7 +308,7 @@ export class EditionWorkspace extends Workspace {
    */
   createModifyInteraction(olFeature: OlFeature<OlGeometry>, feature, workspace: EditionWorkspace) {
     this.map.ol.removeInteraction(this.modify);
-    const olCollection = new OlCollection([olFeature], { unique: true });
+    const olCollection = new Collection([olFeature], { unique: true });
     this.modify = new OlModify({
       features: olCollection
     });
