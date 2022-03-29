@@ -356,7 +356,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public getLayerTitleById(id): string {
-    return this.map.getLayerById(id).title;
+    return this.map.getLayerById(id)?.title;
   }
 
 
