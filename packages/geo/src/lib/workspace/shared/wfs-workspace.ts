@@ -44,4 +44,8 @@ export class WfsWorkspace extends Workspace {
     }
     return true;
   }
+
+  private getInResolutionRange(): boolean {
+    return this.inResolutionRange$.value;
+  }
 }

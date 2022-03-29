@@ -42,12 +42,14 @@ export interface GeoWorkspaceOptions {
   maxResolution?: number;
   enabled?: boolean;
   queryOptions?: GeoWorkspaceQueryOptions;
+  pageSize?: number;
+  pageSizeOptions?: number[];
 }
 
 export interface GeoWorkspaceQueryOptions {
   mapQueryOnOpenTab?: boolean;
   tabQuery?: boolean;
-  }
+}
 
 export interface LayersLink {
   linkId: string;
