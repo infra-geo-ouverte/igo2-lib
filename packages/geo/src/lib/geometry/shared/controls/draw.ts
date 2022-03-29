@@ -1,6 +1,7 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import OlStyle from 'ol/style/Style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -69,6 +70,7 @@ export class DrawControl {
   private keyDown$$: Subscription;
 
   private olGeometryType: typeof OlGeometryType | undefined | string;
+  private olInteractionStyle: OlStyleLike;
   private olMap: OlMap;
   private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
@@ -99,6 +101,7 @@ export class DrawControl {
   constructor(private options: DrawControlOptions) {
     this.olDrawingLayer = options.drawingLayer ? options.drawingLayer : this.createOlInnerOverlayLayer();
     this.olGeometryType = this.options.geometryType;
+    this.olInteractionStyle = this.options.interactionStyle;
   }
 
   /**
@@ -126,6 +129,14 @@ export class DrawControl {
     return this.olDrawingLayerSource;
   }
 
+  setRadiusInteractionStyle(radius: number) {
+    let olStyle = this.olInteractionStyle as OlStyle;
+    const imageStyle: any = olStyle.getImage();
+    imageStyle.setRadius(radius);
+    olStyle.setImage(imageStyle);
+    this.olInteractionStyle = olStyle;
+
+  }
   /**
    * Set the current geometry type
    * @param geometryType the geometry type
@@ -140,11 +151,6 @@ export class DrawControl {
    getGeometryType() {
     return this.olGeometryType;
   }
-
-  setInteractionStyle(radius: number) {
-    this.olMap.removeInteraction(this.olDrawInteraction);
-  }
-
 
   /**
    * Create a drawing source if none is defined in the options
@@ -195,7 +201,7 @@ export class DrawControl {
         type: this.olGeometryType,
         source: this.getSource(),
         stopClick: true,
-        style: this.options.interactionStyle,
+        style: this.olInteractionStyle,
         maxPoints: this.options.maxPoints,
         freehand: false,
         freehandCondition: () => false

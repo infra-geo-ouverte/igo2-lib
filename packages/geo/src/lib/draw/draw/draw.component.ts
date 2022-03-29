@@ -543,7 +543,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radiusFormControl.reset();
     } else {
-      console.log('ok');
+      this.drawControl.setRadiusInteractionStyle(radiusMeters);
+      this.toggleDrawControl();
     }
   }
 
