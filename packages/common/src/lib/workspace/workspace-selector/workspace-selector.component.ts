@@ -27,6 +27,11 @@ export class WorkspaceSelectorComponent {
   @Input() store: WorkspaceStore;
 
   /**
+   * Wheither the selector must be disabled or not.
+   */
+  @Input() disabled: boolean;
+
+  /**
    * Event emitted when an workspace is selected or unselected
    */
   @Output() selectedChange = new EventEmitter<{
