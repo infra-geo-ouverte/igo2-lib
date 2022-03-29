@@ -100,7 +100,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
-    if (typeof this.layer.options.legendOptions !== 'undefined' && !this.layer.options.legendOptions.display) {
+    if (typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
       lastlLegend = [];
     } else {
       lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.view);
