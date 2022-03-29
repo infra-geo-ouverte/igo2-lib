@@ -172,7 +172,9 @@ export class LayerSyncWatcher extends Watcher {
                         const layerType = layerToApply.ol.getProperties().sourceOptions.type;
                         (layerToApply.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, false);
                         if (layerType === 'wfs') {
-                            layerToApply.ol.getSource().refresh();
+                            if (ogcFilters !== (layerToApply.dataSource as OgcFilterableDataSource).ogcFilters$.value) {
+                                layerToApply.ol.getSource().refresh();
+                            }
                         }
                         if (layerType === 'wms') {
                             let appliedOgcFilter;
@@ -200,8 +202,10 @@ export class LayerSyncWatcher extends Watcher {
                             l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
                             const layerType = layer.ol.getProperties().sourceOptions.type;
                             if (layerType === 'wfs') {
-                                (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
-                                layer.ol.getSource().refresh();
+                                if (ogcFilters !== (layer.dataSource as OgcFilterableDataSource).ogcFilters$.value) {
+                                    (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
+                                    layer.ol.getSource().refresh();
+                                }
                             }
                             if (layerType === 'wms') {
                                 let appliedOgcFilter;
