@@ -1,0 +1,16 @@
+<div mat-dialog-content>
+  <p class="mat-typography">{{data.type === 'add' ?
+    languageService.translate.instant('igo.geo.workspace.addConfirmation') :
+    languageService.translate.instant('igo.geo.workspace.deleteConfirmation')}}</p>
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="confirmedAction()">Ok
+  </button>
+  <button
+    mat-raised-button
+    (click)="cancelAction()">{{languageService.translate.instant('igo.geo.workspace.cancel')}}
+  </button>
+</div>

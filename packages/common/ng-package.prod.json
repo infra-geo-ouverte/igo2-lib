@@ -10,7 +10,8 @@
       "typy" : "typy",
       "@ngx-translate/core" : "ngxt-core",
       "ts-cacheable": "tsCacheable",
-      "angular-shepherd": "angularShepherd"
+      "angular-shepherd": "angularShepherd",
+      "moment": "moment"
     }
   },
   "allowedNonPeerDependencies": [
