@@ -620,7 +620,15 @@ export class CatalogService {
     if (!capabilities) {
       return [];
     }
-    const layers = capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
+    const layers =
+    !capabilities.layers ? [] : capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
+    if (!capabilities.layers) {
+      this.messageService.error(
+        this.languageService.translate.instant('igo.geo.catalog.someUnavailable'),
+        this.languageService.translate.instant('igo.geo.catalog.unavailableTitle')
+      );
+    }
+
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
