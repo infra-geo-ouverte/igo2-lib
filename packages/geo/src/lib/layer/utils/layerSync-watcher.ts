@@ -205,7 +205,7 @@ export class LayerSyncWatcher extends Watcher {
                                 if (ogcFilters !== (layer.dataSource as OgcFilterableDataSource).ogcFilters$.value) {
                                     (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
                                     layer.ol.getSource().refresh();
-                                }                                
+                                }
                             }
                             if (layerType === 'wms') {
                                 let appliedOgcFilter;
