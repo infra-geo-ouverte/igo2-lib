@@ -254,8 +254,9 @@ export class VectorLayer extends Layer {
    * @param proj the projection to retrieve the data
    * @param success success callback
    * @param failure failure callback
+   * @param randomParam random parameter to ensure cache is not causing problems in retrieving new data
    */
-  private customWFSLoader(
+  public customWFSLoader(
     vectorSource,
     options,
     interceptor,
@@ -263,7 +264,8 @@ export class VectorLayer extends Layer {
     resolution,
     proj,
     success,
-    failure
+    failure,
+    randomParam?: boolean
   ) {
     {
       const paramsWFS = options.paramsWFS;
@@ -274,7 +276,8 @@ export class VectorLayer extends Layer {
         options,
         currentExtent,
         wfsProj,
-        (options as OgcFilterableDataSourceOptions).ogcFilters);
+        (options as OgcFilterableDataSourceOptions).ogcFilters,
+        randomParam);
       let startIndex = 0;
       if (paramsWFS.version === '2.0.0' && paramsWFS.maxFeatures > defaultMaxFeatures) {
         const nbOfFeature = 1000;
@@ -346,8 +349,11 @@ export class VectorLayer extends Layer {
         if (idAssociatedCall === (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter)
         {
             vectorSource.addFeatures(features);
+            success(features);
         }
-        success(features);
+        else {
+            success([]);
+        }
       } else {
         onError();
       }

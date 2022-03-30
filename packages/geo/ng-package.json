@@ -42,6 +42,7 @@
       "ol/geom/Circle": "olCircle",
       "ol/layer/Image": "olLayerImage",
       "ol/layer/Tile": "olLayerTile",
+      "ol/Collection": "Collection",
       "ol/color": "color",
       "ol/layer/VectorTile": "olLayerVectorTile",
       "ol/easing": "oleasing",

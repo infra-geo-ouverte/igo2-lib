@@ -8,4 +8,5 @@
   @include igo-map-theming($theme, $typography);
   @include igo-measure-theming($theme, $typography);
   @include igo-directions-theming($theme);
+  @include igo-workspace-theming($theme, $typography);
 }
