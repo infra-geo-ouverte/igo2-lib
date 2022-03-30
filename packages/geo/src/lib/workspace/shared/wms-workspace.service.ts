@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import {
   ActionStore,
   EntityRecord,
@@ -9,7 +10,7 @@ import {
   EntityTableTemplate } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
-import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -40,10 +41,15 @@ export class WmsWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
+  public ws$ = new BehaviorSubject<string>(undefined);
+
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled !== true) {
+    if (
+      !layer.options.workspace ||
+      map.layers.find(lay => lay.id === layer.id + '.WfsWorkspaceTableDest') ||
+      layer.dataSource.options.edition) {
       return;
     }
     const dataSource: WMSDataSource = layer.dataSource as WMSDataSource ;
@@ -82,18 +88,28 @@ export class WmsWorkspaceService {
     layer.options.linkedLayers.linkId = layer.options.linkedLayers.linkId ? layer.options.linkedLayers.linkId : wmsLinkId,
       layer.options.linkedLayers.links = clonedLinks;
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
+
     let wks;
+    let wksLayerOption = {
+      srcId: layer.id,
+      workspaceId: undefined,
+      enabled: false,
+      queryOptions: {
+        mapQueryOnOpenTab: layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+        tabQuery: layer.options.workspace?.queryOptions?.tabQuery
+      },
+      pageSize: layer.options.workspace?.pageSize,
+      pageSizeOptions: layer.options.workspace?.pageSizeOptions
+    };
+
     this.layerService
       .createAsyncLayer({
+        isIgoInternalLayer: true,
         id: wfsLinkId,
         linkedLayers: {
           linkId: wfsLinkId
         },
-        workspace: {
-          srcId: layer.id,
-          workspaceId: undefined,
-          enabled: false,
-        },
+        workspace: wksLayerOption,
         showInLayerList: false,
         opacity: 0,
         title: layer.title,
@@ -104,7 +120,9 @@ export class WmsWorkspaceService {
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,
           queryable: true,
+          relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
+          queryFormatAsWms: (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined
@@ -115,6 +133,9 @@ export class WmsWorkspaceService {
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
 
+        if (!layer.options.workspace?.enabled) {
+          return;
+        }
         wks = new WfsWorkspace({
           id: layer.id,
           title: layer.title,
@@ -133,7 +154,13 @@ export class WmsWorkspaceService {
           {
             enabled: true,
             srcId: layer.id,
-            workspaceId: workspaceLayer.id
+            workspaceId: workspaceLayer.id,
+            queryOptions: {
+              mapQueryOnOpenTab: layer.options.workspace?.queryOptions?.mapQueryOnOpenTab,
+              tabQuery: layer.options.workspace?.queryOptions?.tabQuery
+            },
+            pageSize: layer.options.workspace?.pageSize,
+            pageSizeOptions: layer.options.workspace?.pageSizeOptions
           } as GeoWorkspaceOptions);
 
         delete dataSource.options.download;
@@ -179,6 +206,8 @@ export class WmsWorkspaceService {
   private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
 
+    const relations = layer.dataSource.options.relations || [];
+
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
         skipWhile(val => val.length === 0),
@@ -210,9 +239,30 @@ export class WmsWorkspaceService {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
+        tooltip: field.tooltip
       };
     });
+
+    const relationsColumn = relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        tooltip: relation.tooltip,
+        onClick: () => {
+            this.ws$.next(relation.title);
+        },
+        cellClassFunc: () => {
+          return { 'class_icon': true };
+        }
+      };
+    });
+
+    columns.push(...relationsColumn);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,

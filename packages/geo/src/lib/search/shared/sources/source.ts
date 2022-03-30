@@ -206,7 +206,7 @@ export class SearchSource {
             hashtagsValid.push(types[index]);
           }
         }
-        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey) !== -1) {
+        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey.toLowerCase()) !== -1) {
           hashtagsValid.push(conf.value);
         }
       });

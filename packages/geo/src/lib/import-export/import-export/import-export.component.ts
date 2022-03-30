@@ -46,6 +46,7 @@ import { skipWhile } from 'rxjs/operators';
 import { EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
+import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
@@ -348,7 +349,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private getWorkspaceByLayerId(id: string): Workspace {
     const wksFromLayerId = this.store
       .all()
-      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
+      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace).layer.id === id);
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
@@ -356,7 +357,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public getLayerTitleById(id): string {
-    return this.map.getLayerById(id).title;
+    return this.map.getLayerById(id)?.title;
   }
 
 
@@ -573,6 +574,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
                   previousFeature.get('_featureStore').layer.options.title) {
                     const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
                     featuresCSV.push(titleEmptyRows[2]);
+                    featuresCSV.push(titleEmptyRows[0]);
                     featuresCSV.push(titleEmptyRows[1]);
                   }
                 } else {
@@ -632,23 +634,70 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private createTitleEmptyRows(previousFeature, currentFeature) {
-    const titleRow = previousFeature.clone();
-    const titleRowWithArrow = previousFeature.clone();
-    const emptyRow = previousFeature.clone();
+    const titleRow = currentFeature.clone();
+    const headerRow = currentFeature.clone();
+    const emptyRow = currentFeature.clone();
     const previousFeatureKeys: Array<string> = previousFeature.getKeys();
-    const firstKey: string = previousFeatureKeys[1];
-    previousFeatureKeys.forEach(key => {
-      if (key === firstKey) {
+    let firstKeyPrevious: string = '';
+    for (const key in previousFeatureKeys) {
+      if (previousFeatureKeys[key] !== 'geometry') {
+        firstKeyPrevious = previousFeatureKeys[key];
+        break;
+      }
+    }
+
+    const currentFeatureKeys: Array<string> = currentFeature.getKeys();
+    let firstKeyCurrent: string = '';
+    for (const key in currentFeatureKeys) {
+      if (currentFeatureKeys[key] !== 'geometry') {
+        firstKeyCurrent = currentFeatureKeys[key];
+        break;
+      }
+    }
+    const allKeys: Array<string> = currentFeature.getKeys();
+    previousFeatureKeys.forEach(previousKey => {
+      if (allKeys.includes(previousKey) && previousKey !== firstKeyPrevious) {
+        allKeys.push(previousKey);
+      }
+    });
+    allKeys.unshift(firstKeyPrevious);
+
+    let firstKeyAll: string = '';
+    for (const key in allKeys) {
+      if (allKeys[key] !== 'geometry') {
+        firstKeyAll = allKeys[key];
+        break;
+      }
+    }
+    allKeys.forEach(key => {
+      const sameKeys: boolean = previousFeatureKeys.length === currentFeatureKeys.length &&
+      previousFeatureKeys.every((value, index) => value === currentFeatureKeys[index]);
+      if (key === firstKeyAll && !sameKeys) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===============>", true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key === firstKeyAll && sameKeys) {
         titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
-        titleRowWithArrow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===================>", true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key === firstKeyCurrent) {
+        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        headerRow.set(key, key, true);
+        emptyRow.unset(key, true);
+      } else if (key !== 'geometry') {
+        titleRow.unset(key, true);
+        headerRow.set(key, key, true);
         emptyRow.unset(key, true);
       } else {
         titleRow.unset(key, true);
-        titleRowWithArrow.unset(key, true);
         emptyRow.unset(key, true);
       }
+
+      if (!(currentFeatureKeys.includes(key))) {
+        headerRow.unset(key, true);
+      }
     });
-    const titleEmptyRows = [titleRow, titleRowWithArrow, emptyRow];
+    const titleEmptyRows = [titleRow, headerRow, emptyRow];
     return titleEmptyRows;
   }
 
