@@ -8,6 +8,7 @@ export enum EntityTableColumnRenderer {
   Default = 'Default',
   HTML = 'HTML',
   UnsanitizedHTML = 'UnsanitizedHTML',
+  Editable = 'Editable',
   Icon = 'Icon',
   ButtonGroup = 'ButtonGroup'
 }

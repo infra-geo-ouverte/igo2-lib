@@ -1,7 +1,6 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
-import OlFeature from 'ol/Feature';
-import * as OlStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -23,8 +22,8 @@ export interface DrawControlOptions {
   geometryType: typeof OlGeometryType | string;
   drawingLayerSource?: OlVectorSource<OlGeometry>;
   drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
-  drawingLayerStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
-  interactionStyle?: OlStyle.Style | ((olFeature: OlFeature<OlGeometry>) => OlStyle.Style);
+  drawingLayerStyle?: OlStyleLike;
+  interactionStyle?: OlStyleLike;
   maxPoints?: number;
 }
 
@@ -58,6 +57,11 @@ export class DrawControl {
   public select$: Subject<any> = new Subject();
 
   /**
+   * Draw abort observable (abort drawn features)
+   */
+     public abort$: Subject<any> = new Subject();
+
+  /**
    * Freehand mode observable (defaults to false)
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -72,6 +76,7 @@ export class DrawControl {
   private olModifyInteraction: OlModify;
   private onDrawStartKey: EventsKey;
   private onDrawEndKey: EventsKey;
+  private onDrawAbortKey: EventsKey;
   private onDrawKey: EventsKey;
 
   private mousePosition: [number, number];
@@ -209,6 +214,7 @@ export class DrawControl {
 
     this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
     this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
+    this.onDrawAbortKey = olDrawInteraction.on('drawabort', (event: OlDrawEvent) => this.abort$.next(event.feature.getGeometry()));
 
     if (activateModifyAndSelect) {
       // Create a Modify interaction, add it to map and create a listener
@@ -238,7 +244,7 @@ export class DrawControl {
    */
   private removeOlInteractions() {
     this.unsubscribeKeyDown();
-    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey]);
+    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey, this.onDrawAbortKey]);
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);

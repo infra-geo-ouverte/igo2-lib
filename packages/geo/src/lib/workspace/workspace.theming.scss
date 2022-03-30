@@ -1,0 +1,3 @@
+@mixin igo-workspace-theming($theme, $typography) {
+  @include igo-confirmation-popup-theming($theme, $typography);
+}

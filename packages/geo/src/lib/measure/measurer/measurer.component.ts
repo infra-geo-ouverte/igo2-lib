@@ -569,6 +569,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     const layer = new VectorLayer({
       title: this.languageService.translate.instant('igo.geo.measure.layerTitle'),
+      isIgoInternalLayer: true,
       id: `igo-measures-${uuid()}`,
       zIndex: 200,
       source: new FeatureDataSource(),
@@ -718,7 +719,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawEnd(olGeometry));
     this.drawChanges$$ = drawControl.changes$
       .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawChanges(olGeometry));
-
+    this.drawChanges$$ = drawControl.abort$
+      .subscribe((olGeometry: OlLineString | OlPolygon) => {
+        this.clearTooltipsOfOlGeometry(olGeometry);
+        this.clearMeasures();
+      });
     drawControl.setOlMap(this.map.ol, false);
   }
 

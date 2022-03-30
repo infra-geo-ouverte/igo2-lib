@@ -8,6 +8,7 @@ import { IgoConfirmDialogModule } from '@igo2/common';
 import { MapBrowserComponent } from './map-browser/map-browser.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.component';
+import { HomeExtentButtonComponent } from './home-extent-button/home-extent-button.component';
 import { RotationButtonComponent } from './rotation-button/rotation-button.component';
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
@@ -18,6 +19,7 @@ import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { MapCenterComponent } from './map-center/map-center.component';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
+import { InfoSectionComponent } from './info-section/info-section.component';
 
 @NgModule({
   imports: [
@@ -32,7 +34,9 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     MapBrowserComponent,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    HomeExtentButtonComponent,
     RotationButtonComponent,
+    InfoSectionComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
@@ -47,7 +51,9 @@ import { MenuButtonComponent } from './menu-button/menu-button.component';
     MapBrowserComponent,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    HomeExtentButtonComponent,
     RotationButtonComponent,
+    InfoSectionComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
