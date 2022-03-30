@@ -135,8 +135,11 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   activateExportTool() {
     const ids = [];
+    const re = new RegExp('^Zone \\d+');
     for (const layer of this.layers) {
-      ids.push(layer.id);
+      if (!layer.title.match(re)) {
+        ids.push(layer.id);
+      }
     }
     this.importExportState.setMode(ImportExportMode.export);
     this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);
@@ -380,6 +383,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: ('Zone ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -473,6 +477,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           }
 
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -545,6 +550,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,

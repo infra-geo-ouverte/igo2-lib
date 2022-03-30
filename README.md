@@ -1,7 +1,6 @@
 [![Angular Style Guide](https://mgechev.github.io/angular2-style-guide/images/badge.svg)](https://angular.io/styleguide)
 [![master Status](https://github.com/infra-geo-ouverte/igo2-lib/workflows/complete/badge.svg)](https://github.com/infra-geo-ouverte/igo2-lib/actions?query=workflow/complete)
-[![Dependencies Status](https://david-dm.org/infra-geo-ouverte/igo2-lib.svg)](https://david-dm.org/infra-geo-ouverte/igo2-lib)
-[![devDependencies Status](https://david-dm.org/infra-geo-ouverte/igo2-lib/dev-status.svg)](https://david-dm.org/infra-geo-ouverte/igo2-lib?type=dev)
+[![join chat https://gitter.im/igo2/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/igo2/Lobby)
 [![Known Vulnerabilities](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib/badge.svg)](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib)
 
 # IGO2 Library

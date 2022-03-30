@@ -22,6 +22,7 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
   ol?: olSourceVector<OlGeometry> | olSource;
+  queryFormatAsWms?: boolean;
 }
 
 export interface QueryableDataSource extends DataSource {

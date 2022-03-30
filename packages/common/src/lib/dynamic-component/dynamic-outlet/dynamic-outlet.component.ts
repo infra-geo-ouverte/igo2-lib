@@ -66,7 +66,11 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
     const subscribers = changes.subscribers;
     const eq = ObjectUtils.objectsAreEquivalent;
 
-    if (component && component.currentValue !== component.previousValue) {
+    if (!component || !component.currentValue) {
+      return;
+    }
+
+    if (component.currentValue !== component.previousValue) {
       this.createComponent(component.currentValue);
     } else {
       const inputsAreEquivalents =

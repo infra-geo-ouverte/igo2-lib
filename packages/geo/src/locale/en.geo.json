@@ -49,12 +49,12 @@
           "title": "Nothing to import"
         },
         "success": {
-          "text": "Imported file",
-          "title": "The layer '{{value}}' was added to the map"
+          "text": "The layer '{{value}}' was added to the map",
+          "title": "Imported file"
         },
         "unreadable": {
-          "text": "Unreadable file",
-          "title": "The file '{{value}}' is unreadable"
+          "text": "The file '{{value}}' is unreadable",
+          "title": "Unreadable file" 
         },
         "tooLarge": {
           "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
@@ -113,16 +113,18 @@
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
-        }
+        },
+        "combinedLayers": "combinedLayers"
       },
       "importExportForm": {
         "exportButton": "Export",
         "exportButtonLink": "Open the link",
         "exportButtonLinks": "Open the links",
-        "exportCircleToPolygon": "Transform Circle entities in polygons",
+        "exportCombineResults": "Combine layers into one file",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "exportSeparator": "Insert separator (empty row) between layers",
         "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
@@ -186,7 +188,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
-        "resetFilters": "(Apply no filters)",
+        "resetFilters": "Reset default values",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -263,6 +265,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
+        "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
@@ -382,8 +385,8 @@
         "notification": "notification ...",
         "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
         "unknown": "???",
-    
-        "cntSuffix": { 
+
+        "cntSuffix": {
           "first": "st",
           "secondAndMore": "rd"
         },
@@ -717,8 +720,25 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Do you really want to delete this entity?",
+        "addConfirmation": "Do you really wish to add an entity?",
+        "modifyConfirmation": "Do you really wish to modify this entity?",
+        "deleteSuccess": "Entity has been deleted.",
+        "addSuccess": "Entity has been added.",
+        "modifySuccess": "Entity has been modified.",
+        "deleteError": "An error has occured. Entity could not be deleted.",
+        "addError": "An error has occured. Entity could not be added.",
+        "modifyError": "An error has occured. Entity could not be modified.",
+        "cancel": "Cancel",
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+      },
+      "formValidation": {
+        "mandatory": "{{column}} is mandatory",
+        "minValue": "{{column}} is smaller than {{value}}",
+        "maxValue": "{{column}} is bigger than {{value}}",
+        "minLength": "{{column}} is shorter than {{value}} characters",
+        "maxLength": "{{column}} is longer than {{value}} characters"
       }
     }
   }
