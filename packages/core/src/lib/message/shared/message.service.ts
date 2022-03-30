@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,11 +18,15 @@ export class MessageService {
   private options: MessageOptions;
 
   constructor(
+    @Inject(Injector) private injector: Injector,
     private configService: ConfigService,
-    private toastr: ToastrService,
     private languageService: LanguageService
   ) {
     this.options = this.configService.getConfig('message') || {};
+  }
+
+  private get toastr(): ToastrService {
+    return this.injector.get(ToastrService);
   }
 
   showError(httpError: HttpErrorResponse) {
