@@ -1,18 +1,52 @@
-<div *ngFor="let entity of entities" #entity
-  class="entity"
-  (click)="selectElement(entity)">
-  <ng-container *ngFor="let attribute of attributeOrder">
-    <ng-container *ngIf="attribute.header else notHeader">
-      <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-      <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
-      <br>
-    </ng-container>
-    <ng-template #notHeader>
-      <span *ngIf="attribute.description && createAttribute(entity, attribute)"
-        class="description"><strong>{{ attribute.description }}</strong>:
-      </span>
-      <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
-      <br *ngIf="createAttribute(entity, attribute)">
-    </ng-template>
-  </ng-container>
-</div>
+<ng-container *ngIf="(entityIsSelected$ | async) === false; else entitySelected">
+  <div *ngFor="let entity of entities" #entity
+    class="entity"
+    (click)="selectEntity(entity)">
+    <div class="attributes">
+      <ng-container *ngFor="let attribute of attributeOrder">
+        <ng-container *ngIf="attribute.header; else notHeader">
+          <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+          <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
+          <br>
+        </ng-container>
+        <ng-template #notHeader>
+          <span *ngIf="attribute.description && createAttribute(entity, attribute)"
+            class="description"><strong>{{ attribute.description }}</strong>:
+          </span>
+          <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
+          <br *ngIf="createAttribute(entity, attribute)">
+        </ng-template>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<ng-template #entitySelected>
+  <div class="selectedEntity">
+    <div class="attributes">
+      <ng-container *ngFor="let attribute of attributeOrder">
+        <ng-container *ngIf="attribute.header; else notHeader">
+          <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong> {{ attribute.description }}</strong>: </span>
+          <span [ngClass]="attribute.header">{{ (selectedEntity$.value).properties[attribute.attributeName] }}</span>
+          <br>
+        </ng-container>
+        <ng-template #notHeader>
+          <span *ngIf="attribute.description && createAttribute(selectedEntity$.value, attribute)"
+            class="description"><strong>{{ attribute.description }}</strong>:
+          </span>
+          <span class="attribute" [innerHTML]="createAttribute(selectedEntity$.value, attribute)"></span>
+          <br *ngIf="createAttribute(selectedEntity$.value, attribute)">
+        </ng-template>
+      </ng-container>
+    </div>
+    <div class="unselectButton">
+      <button mat-mini-fab
+        class="mat-elevation-z0"
+        color="warn">
+        <mat-icon
+          svgIcon="close"
+          (click)="unselectEntity()">
+        </mat-icon>
+      </button>
+    </div>
+  </div>
+</ng-template>

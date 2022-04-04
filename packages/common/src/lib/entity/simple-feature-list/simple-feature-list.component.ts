@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '@igo2/core';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { EntityStore } from '../shared';
@@ -35,6 +36,8 @@ export class SimpleFeatureListComponent implements OnInit {
   public attributeOrder: AttributeOrder;
   public formatURL: boolean;
   public formatEmail: boolean;
+  public entityIsSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public selectedEntity$: BehaviorSubject<any> = new BehaviorSubject(undefined);
 
   constructor(private configService: ConfigService) {}
 
@@ -129,9 +132,16 @@ export class SimpleFeatureListComponent implements OnInit {
     return attribute;
   }
 
-  selectElement(entity: any) {
+  selectEntity(entity: any) {
+    this.entityIsSelected$.next(true);
+    this.selectedEntity$.next(entity);
     let entityCollection: {added: any[]} = {added: []};
     entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
+  }
+
+  unselectEntity() {
+    this.entityIsSelected$.next(false);
+    this.selectedEntity$.next(undefined);
   }
 }
