@@ -26,7 +26,9 @@ import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs
 import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
-import { catchError, first } from 'rxjs/operators';
+import { catchError, concatMap, first } from 'rxjs/operators';
+import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { of } from 'rxjs';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -52,6 +54,7 @@ export class VectorLayer extends Layer {
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
     private geoNetworkService?: GeoNetworkService,
+    private geoDBService?: GeoDBService
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
@@ -385,7 +388,6 @@ export class VectorLayer extends Layer {
       const format = vectorSource.getFormat();
       const type = format.getType();
 
-      console.log('format', format,type );
       let responseType = type;
       const onError = () => {
         vectorSource.removeLoadedExtent(extent);
@@ -393,15 +395,17 @@ export class VectorLayer extends Layer {
       };
 
       const options: SimpleGetOptions = { responseType };
-      this.geoNetworkService.get(modifiedUrl, options)
-        .pipe(
-          first(),
-          catchError((res) => {
-            onError();
-            throw res;
-          })
-        )
-        .subscribe((content) => {
+      this.geoNetworkService.geoDBService.get(url).pipe(concatMap(r =>
+        r ? of(r) : this.geoNetworkService.get(modifiedUrl, options)
+          .pipe(
+            first(),
+            catchError((res) => {
+              onError();
+              throw res;
+            })
+          )
+      ))
+      .subscribe((content) => {
           if (content) {
             const format = vectorSource.getFormat();
             const type = format.getType();
