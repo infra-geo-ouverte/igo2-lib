@@ -49,6 +49,7 @@ mat-checkbox ::ng-deep .mat-checkbox-inner-container {
   align-items: center;
   flex-direction: row-reverse;
   overflow-x: auto;
+  overflow-y: hidden;
 
   &::-webkit-scrollbar {
     height: 4px;
