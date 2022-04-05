@@ -21,7 +21,7 @@ export class GeoNetworkService {
   private networkOnline: boolean = true;
   constructor(
     private http: HttpClient,
-    private geoDBService: GeoDBService,
+    public geoDBService: GeoDBService,
     private networkService: NetworkService,
   ) {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
