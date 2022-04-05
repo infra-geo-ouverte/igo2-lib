@@ -82,7 +82,7 @@ export class MapGeolocationController extends MapController {
    * Observable of the current emission interval of the position. In seconds
    */
    public readonly emissionIntervalSeconds$: BehaviorSubject<number> = new BehaviorSubject(5);
-  
+
   /**
    * Observable of the current position
    */
