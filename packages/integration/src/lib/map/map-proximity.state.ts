@@ -48,11 +48,10 @@ export class MapProximityState {
       this.enabled$,
       this.proximitylocationType$,
       this.proximityRadiusValue$,
-      interval(3000)
+      interval(5000)
     ])
       .pipe(debounceTime(500))
       .subscribe((bunch: [boolean, string, number, number]) => {
-        console.log(Date.now(), bunch);
         this.proximityFeatureStore.clear();
         const enabled = bunch[0];
         const layers = this.map.layers;
