@@ -278,7 +278,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * More than one row can be edited at the same time
    */
   private enableEdit(record: EntityRecord<any>) {
-    const item = record.entity.properties;
+    const item = record.entity.properties || record.entity;
     this.template.columns.forEach(column => {
       column.title = column.validation?.mandatory && !column.title.includes('*') ? column.title + ' *' : column.title;
 
