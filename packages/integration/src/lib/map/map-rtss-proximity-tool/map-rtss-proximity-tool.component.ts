@@ -84,9 +84,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
     this.subs$$.push(this.mapProximityState.proximitylocationType$.subscribe(v => {
       this.map.mapCenter$.next(v !== 'geolocation');
       if (v === 'geolocation') {
-        if (this.map.geolocationController.followPosition !== this.userDefinedFollowPosition) {
-          this.map.geolocationController.followPosition = this.userDefinedFollowPosition;
-        }
+        this.map.geolocationController.followPosition = true;
       } else {
         this.map.geolocationController.followPosition = false;
       }
@@ -130,11 +128,9 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
         tronc = rtss.properties?.num_tronc ? rtss.properties.num_tronc : '';
         sect = rtss.properties?.num_sectn ? rtss.properties.num_sectn : '';
         srte = rtss.properties?.num_rts ? rtss.properties.num_rts.substring(rtss.properties.num_rts.length - 4) : '';
-        chain = rtss.properties?.chainage ? rtss.properties.chainage : '';
+        chain = rtss.properties?.chainage >= 0 ? rtss.properties.chainage : '';
         dist = rtss.properties?.distance ? rtss.properties.distance : '';
-
       }
-
 
       const rtssInfo = [
         { id: 1, title: 'X', value: x },
@@ -143,10 +139,10 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
         { id: 4, title: 'Route', value: route },
         { id: 5, title: 'Tronçon', value: tronc },
         { id: 6, title: 'Section', value: sect },
-        { id: 7, title: 'Srte', value: srte },
-        { id: 8, title: 'Chainage', value: chain },
+        { id: 7, title: 'Sous-route', value: srte },
+        { id: 8, title: 'Chaînage', value: chain },
         { id: 9, title: 'Distance', value: dist },
-        { id: 10, title: 'Muni', value: mun },
+        { id: 10, title: 'Municipalité', value: mun },
         { id: 11, title: 'CS', value: cs },
       ];
       this.proximityRtssEntityStore.updateMany(rtssInfo);

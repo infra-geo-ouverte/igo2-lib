@@ -57,7 +57,7 @@ export class MapRtssProximityState {
       this.enabled$,
       this.mapProximityState.proximitylocationType$,
       this.mapProximityState.proximityRadiusValue$,
-      interval(3000)
+      interval(5000)
     ])
     .pipe(debounceTime(500))
     .subscribe((bunch: [boolean, string, number, number]) => {
