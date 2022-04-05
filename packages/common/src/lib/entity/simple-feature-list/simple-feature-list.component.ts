@@ -63,7 +63,8 @@ export class SimpleFeatureListComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.clickedEntity.currentValue !== changes.clickedEntity.previousValue && changes.clickedEntity.currentValue !== undefined && changes.clickedEntity.currentValue.length === 1) {
+    if (changes.clickedEntity.currentValue !== changes.clickedEntity.previousValue &&
+      changes.clickedEntity.currentValue !== undefined && changes.clickedEntity.currentValue.length === 1) {
       this.selectedEntity$.next(changes.clickedEntity.currentValue[0]);
       this.entityIsSelected$.next(true);
     } else {
