@@ -9,6 +9,7 @@
     text-align: center;
 	top: $igo-margin;
 	left: 50%;
+    text-shadow: 0 0 5px white, 0 0 10px white, 0 0 15px white;
     @include mobile {
         top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
         left: 10%;

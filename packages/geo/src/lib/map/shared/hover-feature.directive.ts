@@ -131,6 +131,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     const store = this.store;
 
     const layer = new VectorLayer({
+      isIgoInternalLayer: true,
       id: 'hoverFeatureId',
       title: 'hoverFeature',
       zIndex: 900,

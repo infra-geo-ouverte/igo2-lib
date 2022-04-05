@@ -78,7 +78,7 @@
         "lon": "Longitude",
         "lat": "Latitude",
         "method": "Méthode de localisation",
-        "radiusM": "Rayon de recherche (mêtres)",
+        "radiusM": "Rayon de recherche (mètres)",
         "geolocation": "Votre position",
         "mapCenter": "Centre de la carte (croix noire)",
         "copyMsg": "Coordonnées copiées",

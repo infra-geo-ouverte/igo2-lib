@@ -26,7 +26,12 @@ export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
  * @param ogcFilters  OgcFiltersOptions
  * @returns A string representing the datasource options, based on filter and views
  */
-export function buildUrl(options: WFSDataSourceOptions, extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
+export function buildUrl(
+  options: WFSDataSourceOptions,
+  extent,
+  proj: olProjection,
+  ogcFilters: OgcFiltersOptions,
+  randomParam?: boolean): string {
   const paramsWFS = options.paramsWFS;
   const queryStringValues = formatWFSQueryString(options, undefined, options.paramsWFS.srsName);
   let igoFilters;
@@ -48,6 +53,9 @@ export function buildUrl(options: WFSDataSourceOptions, extent, proj: olProjecti
   const patternFilter = /(filter|bbox)=.*/gi;
   baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
   options.download = Object.assign({}, options.download, { dynamicUrl: baseUrl });
+  if (randomParam) {
+    baseUrl += `$&_t${new Date().getTime()}`;
+  }
   return baseUrl.replace(/&&/g, '&');
 }
 
