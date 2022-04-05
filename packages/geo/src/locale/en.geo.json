@@ -703,8 +703,25 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Do you really want to delete this entity?",
+        "addConfirmation": "Do you really wish to add an entity?",
+        "modifyConfirmation": "Do you really wish to modify this entity?",
+        "deleteSuccess": "Entity has been deleted.",
+        "addSuccess": "Entity has been added.",
+        "modifySuccess": "Entity has been modified.",
+        "deleteError": "An error has occured. Entity could not be deleted.",
+        "addError": "An error has occured. Entity could not be added.",
+        "modifyError": "An error has occured. Entity could not be modified.",
+        "cancel": "Cancel",
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+      },
+      "formValidation": {
+        "mandatory": "{{column}} is mandatory",
+        "minValue": "{{column}} is smaller than {{value}}",
+        "maxValue": "{{column}} is bigger than {{value}}",
+        "minLength": "{{column}} is shorter than {{value}} characters",
+        "maxLength": "{{column}} is longer than {{value}} characters"
       }
     }
   }
