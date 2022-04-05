@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '@igo2/core';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Feature } from '@igo2/geo';
+import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../shared';
 
 export interface SimpleFeatureListConfig {
@@ -26,18 +27,20 @@ export interface AttributeOrder {
 
 export class SimpleFeatureListComponent implements OnInit {
 
-  @Input() entityStore: EntityStore<object>;
+  @Input() entityStore: EntityStore<Feature[]>;
+
+  @Input() clickedEntity: Feature;
 
   @Output() listSelection = new EventEmitter();
 
-  public entities: Array<Object>;
+  public entities: Array<Feature[]>;
   public simpleFeatureListConfig: SimpleFeatureListConfig;
   public sortBy: {attributeName: string, order: string};
   public attributeOrder: AttributeOrder;
   public formatURL: boolean;
   public formatEmail: boolean;
   public entityIsSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public selectedEntity$: BehaviorSubject<any> = new BehaviorSubject(undefined);
+  public selectedEntity$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
   constructor(private configService: ConfigService) {}
 
@@ -59,6 +62,16 @@ export class SimpleFeatureListComponent implements OnInit {
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.clickedEntity.currentValue !== changes.clickedEntity.previousValue && changes.clickedEntity.currentValue !== undefined && changes.clickedEntity.currentValue.length === 1) {
+      this.selectedEntity$.next(changes.clickedEntity.currentValue[0]);
+      this.entityIsSelected$.next(true);
+    } else {
+      this.selectedEntity$.next(undefined);
+      this.entityIsSelected$.next(false);
+    }
+  }
+
   checkAttributeFormatting(attribute: any) {
     attribute = this.isPhoneNumber(attribute);
     attribute = this.isEmail(attribute);
@@ -68,7 +81,7 @@ export class SimpleFeatureListComponent implements OnInit {
     return attribute;
   }
 
-  createAttribute(entity: any, attribute: any): string {
+  createAttribute(entity: Feature, attribute: any): string {
     let value: string;
 
     if (attribute.personalizedFormatting) {
@@ -79,7 +92,7 @@ export class SimpleFeatureListComponent implements OnInit {
     return value;
   }
 
-  createPersonalizedAttribute(entity: any, personalizedFormatting: string): string {
+  createPersonalizedAttribute(entity: Feature, personalizedFormatting: string): string {
     let personalizedAttribute = personalizedFormatting;
 
     const attributeList: Array<string> = personalizedFormatting.match(/(?<=\[)(.*?)(?=\])/g);
@@ -132,7 +145,7 @@ export class SimpleFeatureListComponent implements OnInit {
     return attribute;
   }
 
-  selectEntity(entity: any) {
+  selectEntity(entity: Feature) {
     this.entityIsSelected$.next(true);
     this.selectedEntity$.next(entity);
     let entityCollection: {added: any[]} = {added: []};

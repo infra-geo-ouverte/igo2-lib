@@ -1,5 +1,5 @@
-.unselectButton {
-    padding-right: 16px;
+.selectButton, .unselectButton {
+    padding-right: 32px;
 }
 
 .entity, .selectedEntity {
@@ -16,11 +16,6 @@
 
 .entity, .selectedEntity {
     background-color: #f2f1f1;
-}
-
-.entity:hover{
-    background-color: #dae6f0;
-    cursor: pointer;
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6 {

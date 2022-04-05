@@ -37,6 +37,10 @@
         "nextPageLabel": "Next page",
         "previousPageLabel": "Previous page",
         "of": "of"
+      },
+      "simpleFeatureList": {
+        "selectEntity": "Zoom on element",
+        "unselectEntity": "Unselect element"
       }
     }
   }

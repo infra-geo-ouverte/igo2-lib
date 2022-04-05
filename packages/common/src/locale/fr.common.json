@@ -37,6 +37,10 @@
         "nextPageLabel": "Page suivante",
         "previousPageLabel": "Page précédente",
         "of": "de"
+      },
+      "simpleFeatureList": {
+        "selectEntity": "Cadrer sur l'élément",
+        "unselectEntity": "Désélectionner l'élément"
       }
     }
   }

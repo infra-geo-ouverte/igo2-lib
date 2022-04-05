@@ -1,7 +1,5 @@
 <ng-container *ngIf="(entityIsSelected$ | async) === false; else entitySelected">
-  <div *ngFor="let entity of entities" #entity
-    class="entity"
-    (click)="selectEntity(entity)">
+  <div class="entity" *ngFor="let entity of entities" #entity>
     <div class="attributes">
       <ng-container *ngFor="let attribute of attributeOrder">
         <ng-container *ngIf="attribute.header; else notHeader">
@@ -17,6 +15,19 @@
           <br *ngIf="createAttribute(entity, attribute)">
         </ng-template>
       </ng-container>
+    </div>
+    <div class="selectButton">
+      <button mat-mini-fab
+        class="mat-elevation-z0"
+        color="primary"
+        [matTooltip]="'igo.common.simpleFeatureList.selectEntity' | translate"
+        tooltip-position="below"
+        matTooltipShowDelay="500">
+        <mat-icon
+          svgIcon="magnify-plus-outline"
+          (click)="selectEntity(entity)">
+        </mat-icon>
+      </button>
     </div>
   </div>
 </ng-container>
@@ -41,7 +52,10 @@
     <div class="unselectButton">
       <button mat-mini-fab
         class="mat-elevation-z0"
-        color="warn">
+        color="warn"
+        [matTooltip]="'igo.common.simpleFeatureList.unselectEntity' | translate"
+        tooltip-position="below"
+        matTooltipShowDelay="500">
         <mat-icon
           svgIcon="close"
           (click)="unselectEntity()">
