@@ -166,7 +166,8 @@
 
 <div *ngIf="isTemporalOperator()">
   <mat-divider></mat-divider>
-  <h4>{{ 'igo.geo.filter.reportingDate' | translate }}</h4>
+  <h4 *ngIf="!currentFilter.title">{{ 'igo.geo.filter.reportingDate' | translate }}</h4>
+  <h4 *ngIf="currentFilter.title">{{ currentFilter.title }}</h4>
   <igo-ogc-filter-time
     [(datasource)]="datasource"
     [(currentFilter)]="currentFilter"

@@ -46,6 +46,7 @@ import { skipWhile } from 'rxjs/operators';
 import { EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
+import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
@@ -348,7 +349,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private getWorkspaceByLayerId(id: string): Workspace {
     const wksFromLayerId = this.store
       .all()
-      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
+      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace).layer.id === id);
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
@@ -356,7 +357,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public getLayerTitleById(id): string {
-    return this.map.getLayerById(id).title;
+    return this.map.getLayerById(id)?.title;
   }
 
 
