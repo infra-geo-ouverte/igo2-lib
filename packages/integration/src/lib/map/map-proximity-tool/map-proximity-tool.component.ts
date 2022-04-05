@@ -81,9 +81,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
     this.subs$$.push(this.mapProximityState.proximitylocationType$.subscribe(v => {
       this.map.mapCenter$.next(v !== 'geolocation');
       if (v === 'geolocation') {
-        if (this.map.geolocationController.followPosition !== this.userDefinedFollowPosition) {
-          this.map.geolocationController.followPosition = this.userDefinedFollowPosition;
-        }
+        this.map.geolocationController.followPosition = true;
       } else {
         this.map.geolocationController.followPosition = false;
       }
