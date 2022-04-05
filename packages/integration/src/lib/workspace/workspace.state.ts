@@ -3,12 +3,17 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
-  EntityRecord,Workspace, WorkspaceStore, Widget,
-  EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
+  EntityRecord,
+  Workspace,
+  WorkspaceStore,
+  Widget,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { WfsWorkspace, FeatureWorkspace, EditionWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
 import { StorageService } from '@igo2/core';
+import { EditionActionsService } from './shared/edition-actions.service';
 
 /**
  * Service that holds the state of the workspace module
@@ -55,6 +60,7 @@ export class WorkspaceState implements OnDestroy {
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
+    private editionActionsService: EditionActionsService,
     private storageService: StorageService
   ) {
     this.initWorkspaces();
@@ -88,6 +94,11 @@ export class WorkspaceState implements OnDestroy {
               wks.entity,
               this.rowsInMapExtentCheckCondition$,
               this.selectOnlyCheckCondition$);
+          } else if (wks.entity instanceof EditionWorkspace) {
+            this.editionActionsService.loadActions(
+              wks.entity,
+              this.rowsInMapExtentCheckCondition$,
+              this.selectOnlyCheckCondition$);
           }
         }
 
@@ -99,6 +110,10 @@ export class WorkspaceState implements OnDestroy {
     }));
 
     this.actionMaximize$$.push(this.wfsActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
+    }));
+
+    this.actionMaximize$$.push(this.editionActionsService.maximize$.subscribe(maximized => {
       this.setWorkspaceIsMaximized(maximized);
     }));
 
@@ -157,6 +172,15 @@ export class WorkspaceState implements OnDestroy {
     .find(workspace => workspace.id === id);
     if (wksFromId) {
       this.store.activateWorkspace(wksFromId);
+    }
+  }
+
+  public setActiveWorkspaceByTitle(title: string) {
+    const wksFromTitle = this.store
+      .all()
+      .find(workspace => workspace.title === title);
+    if (wksFromTitle) {
+      this.store.activateWorkspace(wksFromTitle);
     }
   }
 

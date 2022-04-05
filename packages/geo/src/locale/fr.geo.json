@@ -704,8 +704,25 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Voulez-vous vraiment supprimer cette entité?",
+        "addConfirmation": "Voulez-vous vraiment ajouter une entité?",
+        "modifyConfirmation": "Voulez-vous vraiment modifier une entité?",
+        "deleteSuccess": "L'entité a été supprimée.",
+        "addSuccess": "L'entité a été ajoutée.",
+        "modifySuccess": "L'entité a été modifiée.",
+        "deleteError": "Un problème est survenu. L'entité n'a pas pu être supprimée.",
+        "addError": "Un problème est survenu. L'entité n'a pas pu être ajoutée.",
+        "modifyError": "Un problème est survenu. L'entité n'a pas pu être modifiée.",
+        "cancel": "Annuler",
         "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+      },
+      "formValidation": {
+        "mandatory": "{{column}}est un champ obligatoire",
+        "minValue": "{{column}} doit être plus grand que {{value}}",
+        "maxValue": "{{column}}doit être plus petit que {{value}}",
+        "minLength": "{{column}} doit être plus long que {{value}} caractères",
+        "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       }
     }
   }
