@@ -23,7 +23,7 @@ export class SecureImagePipe implements PipeTransform {
       activityInterceptor: 'false'
     });
 
-    const regexDepot = new RegExp(this.configService.getConfig('depot.url') + '.*?(?="|$)');
+    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
     if (regexDepot.test(url)) {
       url = url.match(regexDepot)[0];
     }

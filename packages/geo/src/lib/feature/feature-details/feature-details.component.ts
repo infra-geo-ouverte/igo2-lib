@@ -137,7 +137,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   openSecureUrl(value) {
     let url: string;
-    const regexDepot = new RegExp(this.configService.getConfig('depot.url') + '.*?(?="|$)');
+    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
     const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
     if (regexDepot.test(value)) {
