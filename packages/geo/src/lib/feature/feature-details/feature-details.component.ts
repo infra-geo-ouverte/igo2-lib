@@ -164,31 +164,39 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   isUrl(value) {
-    const regex = /^https?:\/\//;
-    return regex.test(value.toString());
+    if (typeof value === 'string') {
+      const regex = /^https?:\/\//;
+      return regex.test(value);
+    }
   }
 
   isDoc(value) {
-    if (this.isUrl(value)) {
-      const regex = /(pdf|docx?|xlsx?)$/;
-      return regex.test(value.toString().toLowerCase());
-    } else {
-      return false;
+    if (typeof value === 'string') {
+      if (this.isUrl(value)) {
+        const regex = /(pdf|docx?|xlsx?)$/;
+        return regex.test(value.toLowerCase());
+      } else {
+        return false;
+      }
     }
   }
 
   isImg(value) {
-    if (this.isUrl(value)) {
-      const regex = /(jpe?g|png|gif)$/;
-      return regex.test(value.toString().toLowerCase());
-    } else {
-      return false;
+    if (typeof value ==='string') {
+      if (this.isUrl(value)) {
+        const regex = /(jpe?g|png|gif)$/;
+        return regex.test(value.toLowerCase());
+      } else {
+        return false;
+      }
     }
   }
 
   isEmbeddedLink(value) {
-    const regex = /^<a/;
-    return regex.test(value.toString());
+    if (typeof value === 'string') {
+      const regex = /^<a/;
+      return regex.test(value);
+    }
   }
 
   getEmbeddedLinkText(value) {
