@@ -21,6 +21,7 @@
   }
 }
 
+
 :host ::ng-deep igo-offline-button {
   position: absolute;
   bottom:15px;
@@ -42,6 +43,15 @@
 :host ::ng-deep igo-rotation-button {
   position: absolute;
   top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  right: $igo-margin;
+  @include mobile {
+    bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  }
+}
+
+:host ::ng-deep igo-wake-lock-button {
+  position: absolute;
+  top: calc(2 * #{$igo-icon-size} + 2 * 5px + #{$igo-margin});
   right: $igo-margin;
   @include mobile {
     bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
