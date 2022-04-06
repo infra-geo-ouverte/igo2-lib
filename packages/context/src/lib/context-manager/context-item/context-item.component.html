@@ -13,7 +13,7 @@
     <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
   <button mat-list-avatar
-    *ngIf="!auth.authenticated"
+    *ngIf="!auth.authenticated && showFavorite"
     mat-icon-button
     igoStopPropagation
     [matTooltip]="'igo.context.contextManager.favorite' | translate"

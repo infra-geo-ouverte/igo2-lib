@@ -22,24 +22,9 @@ export class ContextItemComponent {
   public color = 'primary';
   public collapsed = true;
 
-  @Input()
-  get context(): DetailedContext {
-    return this._context;
-  }
-  set context(value: DetailedContext) {
-    this._context = value;
-  }
-  private _context: DetailedContext;
-
-  @Input()
-  get default(): boolean {
-    return this._default;
-  }
-  set default(value: boolean) {
-    this._default = value;
-  }
-  private _default = false;
-
+  @Input() showFavorite: boolean = true;
+  @Input() context: DetailedContext;
+  @Input() default: boolean;
   @Input() selected: boolean;
 
   @Output() edit = new EventEmitter<DetailedContext>();

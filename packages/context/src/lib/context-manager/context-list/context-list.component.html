@@ -135,6 +135,7 @@
       <igo-context-item
         igoListItem
         color="accent"
+        [showFavorite]="configService.getConfig('favoriteContext4NonAuthenticated')"
         [selected]="selectedContext && selectedContext.uri === context.uri"
         [context]="context"
         [default]="defaultContextId === context.uri"
