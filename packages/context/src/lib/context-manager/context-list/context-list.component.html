@@ -137,7 +137,8 @@
         color="accent"
         [selected]="selectedContext && selectedContext.uri === context.uri"
         [context]="context"
-        [default]="this.defaultContextId === context.id"
+        [default]="defaultContextId === context.uri"
+        (favorite)="favorite.emit(context)"
         (select)="select.emit(context)"
         (unselect)="unselect.emit(context)">
       </igo-context-item>

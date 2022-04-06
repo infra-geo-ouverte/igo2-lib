@@ -12,6 +12,16 @@
     <mat-icon *ngIf="!context.iconImage" svgIcon="{{context.icon ? context.icon : context.scope === 'public' ? 'earth' : 'star'}}"></mat-icon>
     <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
+  <button mat-list-avatar
+    *ngIf="!auth.authenticated"
+    mat-icon-button
+    igoStopPropagation
+    [matTooltip]="'igo.context.contextManager.favorite' | translate"
+    matTooltipShowDelay="500"
+    [color]="default ? 'primary' : 'default'"
+    (click)="favoriteClick(context)">
+    <mat-icon svgIcon="star"></mat-icon>
+  </button>
   <h4 matLine>{{context.title}}</h4>
 
   <div *ngIf="auth.authenticated"

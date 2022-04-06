@@ -83,7 +83,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   @Input()
   get defaultContextId(): string {
-    return this._defaultContextId;
+    return this.storageService.get('favorite.context.uri') as string || this._defaultContextId;
   }
   set defaultContextId(value: string) {
     this._defaultContextId = value;

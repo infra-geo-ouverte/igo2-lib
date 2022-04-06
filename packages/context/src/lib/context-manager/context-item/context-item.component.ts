@@ -65,9 +65,7 @@ export class ContextItemComponent {
     private storageService: StorageService
   ) {}
 
-  favoriteClick(context) {
-    if (this.auth.authenticated) {
-      this.favorite.emit(context);
-    }
+  favoriteClick(context: DetailedContext) {
+    this.favorite.emit(context);
   }
 }
