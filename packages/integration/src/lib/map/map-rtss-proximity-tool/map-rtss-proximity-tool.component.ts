@@ -57,13 +57,21 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
     columns: [
       {
         name: 'title',
-        title: 'Titre', // this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
+        title: '', // this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
         valueAccessor: (item: any) => item.title
+        ,
+        cellClassFunc: () => {
+          return { 'titleRtssInfo': true };
+        }
       },
       {
         name: 'value',
-        title: 'Valeur', // this.languageService.translate.instant('igo.geo.measure.areaHeader'),
+        title: '', // this.languageService.translate.instant('igo.geo.measure.areaHeader'),
         valueAccessor: (item: any) => item.value
+        ,
+        cellClassFunc: () => {
+          return { 'valueRtssInfo': true };
+        }
       }
     ]
   };
@@ -77,7 +85,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
+    this.map.ol.once('rendercomplete', () => {
     this.userDefinedFollowPosition = this.map.geolocationController.followPosition === true;
     this.userDefinedMapCenter = this.map.mapCenter$.value === true;
 
@@ -99,6 +107,9 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
 
 
       if (position) {
+        if (!position.position && !position.accuracy) {
+          return;
+        }
         const coordLonLat = olProj.transform(position.position, this.map.projection, 'EPSG:4269');
         this.currentPositionCoordinate = roundCoordTo(coordLonLat as [number, number], 6);
         precision = NumberUtils.roundToNDecimal(position.accuracy,1).toString();
@@ -115,6 +126,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
       let route = "";
       let tronc = "";
       let sect = "";
+      let tr_sect = "";
       let srte = "";
       let chain = "";
       let dist = "";
@@ -127,26 +139,26 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
         route = rtss.properties?.num_route ? rtss.properties.num_route : '';
         tronc = rtss.properties?.num_tronc ? rtss.properties.num_tronc : '';
         sect = rtss.properties?.num_sectn ? rtss.properties.num_sectn : '';
+        tr_sect = `${tronc}-${sect}`;
         srte = rtss.properties?.num_rts ? rtss.properties.num_rts.substring(rtss.properties.num_rts.length - 4) : '';
         chain = rtss.properties?.chainage >= 0 ? rtss.properties.chainage : '';
         dist = rtss.properties?.distance ? rtss.properties.distance : '';
+
+        if (typeof chain === 'number') {
+          chain = `${Math.floor(chain/1000)}+${String(chain%1000).padStart(3, '0')}`;
+        }
       }
 
       const rtssInfo = [
-        { id: 1, title: 'X', value: x },
-        { id: 2, title: 'Y', value: y },
-        { id: 3, title: 'Précision', value: precision },
-        { id: 4, title: 'Route', value: route },
-        { id: 5, title: 'Tronçon', value: tronc },
-        { id: 6, title: 'Section', value: sect },
-        { id: 7, title: 'Sous-route', value: srte },
-        { id: 8, title: 'Chaînage', value: chain },
-        { id: 9, title: 'Distance', value: dist },
-        { id: 10, title: 'Municipalité', value: mun },
-        { id: 11, title: 'CS', value: cs },
+        { id: 4, title: 'Rte', value: route },
+        { id: 5, title: 'Tr-Se', value: tr_sect },
+        { id: 6, title: 'Srte', value: srte },
+        { id: 8, title: 'Chn', value: chain },
+        { id: 9, title: 'Dist', value: dist },
       ];
       this.proximityRtssEntityStore.updateMany(rtssInfo);
     });
+  });
   }
 
   ngOnDestroy(): void {

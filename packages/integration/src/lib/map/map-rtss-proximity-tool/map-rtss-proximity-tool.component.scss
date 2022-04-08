@@ -6,6 +6,19 @@
   width: 52px;
 }
 
+igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell.valueRtssInfo {
+    font-size: 4em;
+    text-align: right;
+    font-weight: bold
+}
+igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell.titleRtssInfo {
+  font-size: 1.5em;
+}
+
+igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell {
+  height: 1em;
+}
+
 textarea { resize: none; };
 
 mat-form-field  { padding: 10px 15px;  };
