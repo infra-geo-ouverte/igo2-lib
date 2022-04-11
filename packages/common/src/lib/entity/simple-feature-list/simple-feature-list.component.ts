@@ -29,7 +29,7 @@ export class SimpleFeatureListComponent implements OnInit {
 
   @Input() entityStore: EntityStore<Feature[]>;
 
-  @Input() clickedEntity: Feature;
+  @Input() clickedEntities: Feature[];
 
   @Output() listSelection = new EventEmitter();
 
@@ -40,6 +40,8 @@ export class SimpleFeatureListComponent implements OnInit {
   public formatURL: boolean;
   public formatEmail: boolean;
   public entityIsSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public entitiesAreSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public selectedEntities$: BehaviorSubject<Feature[]> = new BehaviorSubject(undefined);
   public selectedEntity$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
   constructor(private configService: ConfigService) {}
@@ -57,18 +59,28 @@ export class SimpleFeatureListComponent implements OnInit {
         ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
       }
     }
-    this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
+  this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
     this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.clickedEntity.currentValue !== changes.clickedEntity.previousValue &&
-      changes.clickedEntity.currentValue !== undefined && changes.clickedEntity.currentValue.length === 1) {
-      this.selectedEntity$.next(changes.clickedEntity.currentValue[0]);
-      this.entityIsSelected$.next(true);
+    if (changes.clickedEntities.currentValue?.length > 0 && changes.clickedEntities.currentValue !== undefined) {
+      if (changes.clickedEntities.currentValue.length > 1) {
+        this.selectedEntities$.next(changes.clickedEntities.currentValue);
+        this.selectedEntity$.next(undefined);
+        this.entitiesAreSelected$.next(true);
+        this.entityIsSelected$.next(false);
+      } else {
+        this.selectedEntities$.next(undefined);
+        this.selectedEntity$.next(changes.clickedEntities.currentValue[0]);
+        this.entitiesAreSelected$.next(false);
+        this.entityIsSelected$.next(true);
+      }
     } else {
+      this.selectedEntities$.next(undefined);
       this.selectedEntity$.next(undefined);
+      this.entitiesAreSelected$.next(false);
       this.entityIsSelected$.next(false);
     }
   }
@@ -147,15 +159,20 @@ export class SimpleFeatureListComponent implements OnInit {
   }
 
   selectEntity(entity: Feature) {
+    this.entitiesAreSelected$.next(false);
     this.entityIsSelected$.next(true);
+    this.selectedEntities$.next(undefined);
     this.selectedEntity$.next(entity);
+
     let entityCollection: {added: any[]} = {added: []};
     entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
   }
 
   unselectEntity() {
+    this.entitiesAreSelected$.next(false);
     this.entityIsSelected$.next(false);
+    this.selectedEntities$.next(undefined);
     this.selectedEntity$.next(undefined);
   }
 }
