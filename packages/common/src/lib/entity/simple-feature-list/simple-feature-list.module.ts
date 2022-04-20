@@ -1,3 +1,4 @@
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { SimpleFeatureListComponent } from './simple-feature-list.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,6 +21,7 @@ import { IgoLanguageModule } from '@igo2/core';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
+    MatPaginatorModule,
     IgoStopPropagationModule,
     IgoCustomHtmlModule,
     IgoEntityTablePaginatorModule,

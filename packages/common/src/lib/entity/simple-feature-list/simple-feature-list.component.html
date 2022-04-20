@@ -1,39 +1,66 @@
-<ng-container *ngIf="(entityIsSelected$ | async) === false && (entitiesAreSelected$ | async) === false; else entitiesSelected">
-  <div class="entity" *ngFor="let entity of entities" #entity>
-    <div class="attributes">
-      <ng-container *ngFor="let attribute of attributeOrder">
-        <ng-container *ngIf="attribute.header; else notHeader">
-          <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-          <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
-          <br>
-        </ng-container>
-        <ng-template #notHeader>
-          <span *ngIf="attribute.description && createAttribute(entity, attribute)"
-            class="description"><strong>{{ attribute.description }}</strong>:
-          </span>
-          <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
-          <br *ngIf="createAttribute(entity, attribute)">
-        </ng-template>
-      </ng-container>
-    </div>
-    <div class="selectButton">
-      <button mat-mini-fab
-        class="mat-elevation-z0"
-        color="primary"
-        [matTooltip]="'igo.common.simpleFeatureList.selectEntity' | translate"
-        tooltip-position="below"
-        matTooltipShowDelay="500">
-        <mat-icon
-          svgIcon="magnify-plus-outline"
-          (click)="selectEntity(entity)">
-        </mat-icon>
-      </button>
-    </div>
+<div class="paginator">
+  <div class="numberOfElements">
+    <span>{{ entities.length }} {{ 'igo.common.paginator.elementsLowercase' | translate }}</span>
   </div>
-</ng-container>
-<ng-template #entitiesSelected>
-  <ng-container *ngIf="(selectedEntities$ | async) !== undefined; else entitySelected">
-    <div class="entity" *ngFor="let entity of selectedEntities$.value" #entity>
+
+  <div class="pages" *ngIf="simpleFeatureListConfig.paginator">
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="currentPageIsFirst"
+      [matTooltip]="'igo.common.paginator.firstPageLabel' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="goToFirstPage()">
+      <mat-icon svgIcon="page-first"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="currentPageIsFirst"
+      [matTooltip]="'igo.common.paginator.previousPageLabel' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="goToPreviousPage()">
+      <mat-icon svgIcon="chevron-left"></mat-icon>
+    </button>
+    <span *ngFor="let page of [].constructor(numberOfPages); let i = index"
+      [ngClass]="i + 1 === currentPage$.value ? 'pageButtonBold' : 'pageButton'"
+      mat-button
+      color="primary"
+      (click)="goToPage($event)">
+      {{ i + 1 }}
+    </span>
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="currentPageIsLast"
+      [matTooltip]="'igo.common.paginator.nextPageLabel' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="goToNextPage()">
+      <mat-icon svgIcon="chevron-right"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="currentPageIsLast"
+      [matTooltip]="'igo.common.paginator.lastPageLabel' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="goToLastPage()">
+      <mat-icon svgIcon="page-last"></mat-icon>
+    </button>
+  </div>
+
+  <div class="currentElements">
+    <span>{{ 'igo.common.paginator.elementsUppercase' | translate }}  {{ elementsLowerBound }} {{ 'igo.common.paginator.to' | translate }} {{ elementsUpperBound }}</span>
+  </div>
+</div>
+
+<div class="entities">
+  <ng-container *ngIf="!entityIsSelected && !entitiesAreSelected; else entitiesSelected">
+    <div class="entity" *ngFor="let entity of entitiesToShow" #entity>
       <div class="attributes">
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
@@ -65,37 +92,72 @@
       </div>
     </div>
   </ng-container>
-</ng-template>
-<ng-template #entitySelected>
-  <div class="selectedEntity">
-    <div class="attributes">
-      <ng-container *ngFor="let attribute of attributeOrder">
-        <ng-container *ngIf="attribute.header; else notHeader">
-          <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong> {{ attribute.description }}</strong>: </span>
-          <span [ngClass]="attribute.header">{{ (selectedEntity$.value).properties[attribute.attributeName] }}</span>
-          <br>
+  <ng-template #entitiesSelected>
+    <ng-container *ngIf="selectedEntities !== undefined; else entitySelected">
+      <div class="entity" *ngFor="let entity of selectedEntities" #entity>
+        <div class="attributes">
+          <ng-container *ngFor="let attribute of attributeOrder">
+            <ng-container *ngIf="attribute.header; else notHeader">
+              <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
+              <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
+              <br>
+            </ng-container>
+            <ng-template #notHeader>
+              <span *ngIf="attribute.description && createAttribute(entity, attribute)"
+                class="description"><strong>{{ attribute.description }}</strong>:
+              </span>
+              <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
+              <br *ngIf="createAttribute(entity, attribute)">
+            </ng-template>
+          </ng-container>
+        </div>
+        <div class="selectButton">
+          <button mat-mini-fab
+            class="mat-elevation-z0"
+            color="primary"
+            [matTooltip]="'igo.common.simpleFeatureList.selectEntity' | translate"
+            tooltip-position="below"
+            matTooltipShowDelay="500">
+            <mat-icon
+              svgIcon="magnify-plus-outline"
+              (click)="selectEntity(entity)">
+            </mat-icon>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-template>
+  <ng-template #entitySelected>
+    <div class="selectedEntity">
+      <div class="attributes">
+        <ng-container *ngFor="let attribute of attributeOrder">
+          <ng-container *ngIf="attribute.header; else notHeader">
+            <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong> {{ attribute.description }}</strong>: </span>
+            <span [ngClass]="attribute.header">{{ selectedEntity.properties[attribute.attributeName] }}</span>
+            <br>
+          </ng-container>
+          <ng-template #notHeader>
+            <span *ngIf="attribute.description && createAttribute(selectedEntity, attribute)"
+              class="description"><strong>{{ attribute.description }}</strong>:
+            </span>
+            <span class="attribute" [innerHTML]="createAttribute(selectedEntity, attribute)"></span>
+            <br *ngIf="createAttribute(selectedEntity, attribute)">
+          </ng-template>
         </ng-container>
-        <ng-template #notHeader>
-          <span *ngIf="attribute.description && createAttribute(selectedEntity$.value, attribute)"
-            class="description"><strong>{{ attribute.description }}</strong>:
-          </span>
-          <span class="attribute" [innerHTML]="createAttribute(selectedEntity$.value, attribute)"></span>
-          <br *ngIf="createAttribute(selectedEntity$.value, attribute)">
-        </ng-template>
-      </ng-container>
+      </div>
+      <div class="unselectButton">
+        <button mat-mini-fab
+          class="mat-elevation-z0"
+          color="warn"
+          [matTooltip]="'igo.common.simpleFeatureList.unselectEntity' | translate"
+          tooltip-position="below"
+          matTooltipShowDelay="500">
+          <mat-icon
+            svgIcon="close"
+            (click)="unselectEntity()">
+          </mat-icon>
+        </button>
+      </div>
     </div>
-    <div class="unselectButton">
-      <button mat-mini-fab
-        class="mat-elevation-z0"
-        color="warn"
-        [matTooltip]="'igo.common.simpleFeatureList.unselectEntity' | translate"
-        tooltip-position="below"
-        matTooltipShowDelay="500">
-        <mat-icon
-          svgIcon="close"
-          (click)="unselectEntity()">
-        </mat-icon>
-      </button>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>
+</div>

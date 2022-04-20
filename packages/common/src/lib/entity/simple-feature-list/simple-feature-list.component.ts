@@ -1,16 +1,16 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ConfigService } from '@igo2/core';
 import { Feature } from '@igo2/geo';
-import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../shared';
 
 export interface SimpleFeatureListConfig {
-  show: boolean,
   layerId: string,
   attributeOrder: AttributeOrder,
-  sortBy: {attributeName: string, order: string},
+  sortBy: SortBy,
   formatURL: boolean,
-  formatEmail: boolean
+  formatEmail: boolean,
+  paginator: Paginator
 }
 
 export interface AttributeOrder {
@@ -19,36 +19,57 @@ export interface AttributeOrder {
   description: string,
   header: string
 }
+
+export interface SortBy {
+  attributeName: string,
+  order: string
+}
+
+export interface Paginator {
+  pageSize: number
+}
 @Component({
   selector: 'igo-simple-feature-list',
   templateUrl: './simple-feature-list.component.html',
   styleUrls: ['./simple-feature-list.component.scss']
 })
 
-export class SimpleFeatureListComponent implements OnInit {
-
+export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() entityStore: EntityStore<Feature[]>;
-
   @Input() clickedEntities: Feature[];
-
   @Output() listSelection = new EventEmitter();
 
   public entities: Array<Feature[]>;
+  public entitiesToShow: Array<Feature[]>;
+
   public simpleFeatureListConfig: SimpleFeatureListConfig;
-  public sortBy: {attributeName: string, order: string};
   public attributeOrder: AttributeOrder;
+  public sortBy: SortBy;
   public formatURL: boolean;
   public formatEmail: boolean;
-  public entityIsSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public entitiesAreSelected$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public selectedEntities$: BehaviorSubject<Feature[]> = new BehaviorSubject(undefined);
-  public selectedEntity$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
+  public paginator: Paginator;
+
+  public pageSize: number;
+  public entityIsSelected: boolean = false;
+  public entitiesAreSelected: boolean = false;
+  public selectedEntities: Feature[] = undefined;
+  public selectedEntity: Feature = undefined;
+
+  public numberOfPages: number;
+  public pageChange$$: Subscription;
+  public currentPage$: BehaviorSubject<number> = new BehaviorSubject(1);
+  public currentPageIsFirst: boolean = true;
+  public currentPageIsLast: boolean = false;
+  public elementsLowerBound: number;
+  public elementsUpperBound: number;
 
   constructor(private configService: ConfigService) {}
 
   ngOnInit(): void {
     this.entities = this.entityStore.entities$.value;
+
     this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
+    this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
     this.sortBy = this.simpleFeatureListConfig.sortBy;
     if (this.sortBy) {
       if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
@@ -59,30 +80,61 @@ export class SimpleFeatureListComponent implements OnInit {
         ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
       }
     }
-  this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
     this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
+    this.paginator = this.simpleFeatureListConfig.paginator;
+    if (this.paginator) {
+      this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
+      this.entitiesToShow = this.entities.slice(0, this.pageSize);
+      this.numberOfPages = Math.ceil(this.entities.length / this.pageSize);
+      this.elementsLowerBound = 1;
+      this.elementsUpperBound = this.pageSize;
+
+      this.pageChange$$ = this.currentPage$.subscribe(() => {
+        if (this.currentPage$.value === this.numberOfPages) {
+          this.currentPageIsFirst = false;
+          this.currentPageIsLast = true;
+        } else if (this.currentPage$.value === 1) {
+          this.currentPageIsFirst = true;
+          this.currentPageIsLast = false;
+        } else {
+          this.currentPageIsFirst = false;
+          this.currentPageIsLast = false;
+        }
+
+        this.elementsLowerBound = (this.currentPage$.value - 1) * this.pageSize + 1;
+        this.elementsUpperBound = this.currentPage$.value * this.pageSize > this.entities.length ?
+          this.entities.length : this.currentPage$.value * this.pageSize;
+        this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+      });
+    } else {
+      this.entitiesToShow = this.entities;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.clickedEntities.currentValue?.length > 0 && changes.clickedEntities.currentValue !== undefined) {
       if (changes.clickedEntities.currentValue.length > 1) {
-        this.selectedEntities$.next(changes.clickedEntities.currentValue);
-        this.selectedEntity$.next(undefined);
-        this.entitiesAreSelected$.next(true);
-        this.entityIsSelected$.next(false);
+        this.selectedEntities = changes.clickedEntities.currentValue;
+        this.selectedEntity = undefined;
+        this.entitiesAreSelected = true;
+        this.entityIsSelected = false;
       } else {
-        this.selectedEntities$.next(undefined);
-        this.selectedEntity$.next(changes.clickedEntities.currentValue[0]);
-        this.entitiesAreSelected$.next(false);
-        this.entityIsSelected$.next(true);
+        this.selectedEntities = undefined;
+        this.selectedEntity = changes.clickedEntities.currentValue[0];
+        this.entitiesAreSelected = false;
+        this.entityIsSelected = true;
       }
     } else {
-      this.selectedEntities$.next(undefined);
-      this.selectedEntity$.next(undefined);
-      this.entitiesAreSelected$.next(false);
-      this.entityIsSelected$.next(false);
+      this.selectedEntities = undefined;
+      this.selectedEntity = undefined;
+      this.entitiesAreSelected = false;
+      this.entityIsSelected = false;
     }
+  }
+
+  ngOnDestroy() {
+    this.pageChange$$.unsubscribe();
   }
 
   checkAttributeFormatting(attribute: any) {
@@ -158,21 +210,42 @@ export class SimpleFeatureListComponent implements OnInit {
     return attribute;
   }
 
-  selectEntity(entity: Feature) {
-    this.entitiesAreSelected$.next(false);
-    this.entityIsSelected$.next(true);
-    this.selectedEntities$.next(undefined);
-    this.selectedEntity$.next(entity);
+  selectEntity(entity: any) {
+    this.entitiesAreSelected = false;
+    this.entityIsSelected = true;
+    this.selectedEntities = undefined;
+    this.selectedEntity = entity;
 
+    this.entityStore.state.update(entity, {selected: true}, true);
     let entityCollection: {added: any[]} = {added: []};
     entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
   }
 
   unselectEntity() {
-    this.entitiesAreSelected$.next(false);
-    this.entityIsSelected$.next(false);
-    this.selectedEntities$.next(undefined);
-    this.selectedEntity$.next(undefined);
+    this.entitiesAreSelected = false;
+    this.entityIsSelected = false;
+    this.selectedEntities = undefined;
+    this.selectedEntity = undefined;
+  }
+
+  goToFirstPage() {
+    this.currentPage$.next(1);
+  }
+
+  goToPreviousPage() {
+    this.currentPage$.next(this.currentPage$.value - 1);
+  }
+
+  goToPage(event: any) {
+    this.currentPage$.next(parseInt(event.target.innerText));
+  }
+
+  goToNextPage() {
+    this.currentPage$.next(this.currentPage$.value + 1);
+  }
+
+  goToLastPage() {
+    this.currentPage$.next(this.numberOfPages);
   }
 }

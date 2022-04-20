@@ -31,12 +31,15 @@
         "nextButton": "Suivant"
       },
       "paginator": {
+        "elementsLowercase": "éléments",
+        "elementsUppercase": "Éléments",
         "firstPageLabel": "Première page",
         "itemsPerPageLabel": "Entités par page:",
         "lastPageLabel": "Dernière page",
         "nextPageLabel": "Page suivante",
         "previousPageLabel": "Page précédente",
-        "of": "de"
+        "of": "de",
+        "to": "à"
       },
       "simpleFeatureList": {
         "selectEntity": "Cadrer sur l'élément",

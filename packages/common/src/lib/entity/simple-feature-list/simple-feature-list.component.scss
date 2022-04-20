@@ -2,6 +2,25 @@
     padding-right: 32px;
 }
 
+.paginator {
+    display: flex;
+    align-items: center;
+}
+
+.pageButton {
+    color: #095797;
+}
+
+.pageButton:hover {
+    cursor: pointer;
+}
+
+.entities {
+    overflow-y: auto;
+    height: 200px;
+    width: 100%
+}
+
 .entity, .selectedEntity {
     padding-top: 8px;
     padding-bottom: 8px;
@@ -18,7 +37,7 @@
     background-color: #f2f1f1;
 }
 
-.h1, .h2, .h3, .h4, .h5, .h6 {
+.currentElements, .numberOfElements, .pageButtonBold, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: "Roboto", sans-serif;
     font-weight: bold;
     color: #223654;
@@ -66,7 +85,7 @@
     margin-bottom: 0px;
 }
 
-.attribute,.description {
+.numberOfElements, .currentElements, .pageButton, .attribute, .description {
     font-family: "Open Sans", sans-serif;
     font-size: 16px;
     line-height: 24px;

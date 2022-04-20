@@ -31,12 +31,15 @@
         "nextButton": "Next"
       },
       "paginator": {
+        "elementsLowercase": "elements",
+        "elementsUppercase": "Elements",
         "firstPageLabel": "First page",
         "itemsPerPageLabel": "Items per page:",
         "lastPageLabel": "Last page",
         "nextPageLabel": "Next page",
         "previousPageLabel": "Previous page",
-        "of": "of"
+        "of": "of",
+        "to": "to"
       },
       "simpleFeatureList": {
         "selectEntity": "Zoom on element",
