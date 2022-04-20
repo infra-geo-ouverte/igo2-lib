@@ -66,6 +66,8 @@ export class DrawControl {
    * Freehand mode observable (defaults to false)
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  /** style of point  */
+
 
   private keyDown$$: Subscription;
 
@@ -137,6 +139,11 @@ export class DrawControl {
     this.olInteractionStyle = olStyle;
 
   }
+
+setOlInteractionStyle (style:OlStyleLike){
+  this.olInteractionStyle = style;
+}
+
   /**
    * Set the current geometry type
    * @param geometryType the geometry type
@@ -196,7 +203,9 @@ export class DrawControl {
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
+    console.log(this.olInteractionStyle);
     if (!this.freehand$.getValue()) {
+      console.log("if not frehand ");
       olDrawInteraction = new OlDraw({
         type: this.olGeometryType,
         source: this.getSource(),

@@ -11,6 +11,7 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { TimeFilterableDataSource } from '../../filter/shared/time-filter.interface';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 
 export class LayerSyncWatcher extends Watcher {
     private ogcFilters$$: Subscription;
@@ -246,7 +247,7 @@ export class LayerSyncWatcher extends Watcher {
                         layer.options.linkedLayers?.linkId === linkedId);
                     if (childLayer) {
                         (childLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, false);
-                        const appliedTimeFilter = this.ol.get('values_').source.getParams().TIME;
+                        const appliedTimeFilter = (this.ol.getSource() as olSourceImageWMS).getParams().TIME;
                         (childLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
                     }
                 });
@@ -260,7 +261,7 @@ export class LayerSyncWatcher extends Watcher {
                         parentLayer.options.linkedLayers.links.map(l => {
                             if (l.properties && l.properties.indexOf(LinkedProperties.TIMEFILTER) !== -1 &&
                                 l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
-                                const appliedTimeFilter = this.ol.get('values_').source.getParams().TIME;
+                                const appliedTimeFilter = (this.ol.getSource() as olSourceImageWMS).getParams().TIME;
                                 (parentLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
                                 (parentLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, true);
                             }

@@ -9,7 +9,7 @@ import {
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
-  WfsWorkspace,
+  EditionWorkspace,
   mapExtentStrategyActiveToolTip,
   noElementSelected,
   ExportOptions,
@@ -25,14 +25,12 @@ import { handleZoomAuto } from './workspace.utils';
 @Injectable({
   providedIn: 'root'
 })
-export class WfsActionsService implements OnDestroy {
+export class EditionActionsService implements OnDestroy {
 
   public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
     this.storageService.get('workspaceMaximize') as boolean
   );
 
-  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -58,7 +56,7 @@ export class WfsActionsService implements OnDestroy {
   }
 
   loadActions(
-    workspace: WfsWorkspace,
+    workspace: EditionWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
     ) {
@@ -71,7 +69,7 @@ export class WfsActionsService implements OnDestroy {
   }
 
   buildActions(
-    workspace: WfsWorkspace,
+    workspace: EditionWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
     ): Action[] {
@@ -116,18 +114,18 @@ export class WfsActionsService implements OnDestroy {
         icon: 'select-off',
         title: 'igo.integration.workspace.clearSelection.title',
         tooltip: 'igo.integration.workspace.clearSelection.tooltip',
-        handler: (ws: WfsWorkspace) => {
+        handler: (ws: EditionWorkspace) => {
           ws.entityStore.state.updateMany(ws.entityStore.view.all(), { selected: false });
         },
         args: [workspace],
-        availability: (ws: WfsWorkspace) => noElementSelected(ws)
+        availability: (ws: EditionWorkspace) => noElementSelected(ws)
       },
       {
         id: 'wfsDownload',
         icon: 'file-export',
         title: 'igo.integration.workspace.download.title',
         tooltip: 'igo.integration.workspace.download.tooltip',
-        handler: (ws: WfsWorkspace) => {
+        handler: (ws: EditionWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
           const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
@@ -143,7 +141,7 @@ export class WfsActionsService implements OnDestroy {
         icon: 'filter',
         title: 'igo.integration.workspace.ogcFilter.title',
         tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
-        handler: (widget: Widget, ws: WfsWorkspace) => {
+        handler: (widget: Widget, ws: EditionWorkspace) => {
           ws.activateWidget(widget, {
             map: ws.map,
             layer: ws.layer

@@ -3,7 +3,7 @@ import * as olextent from 'ol/extent';
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreInMapExtentStrategyOptions, Feature } from '../feature.interfaces';
+import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -84,10 +84,22 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
-      const entitiesInMapExtent = store.entities$.value
-        .filter((entity: Feature) => olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent));
+      let entitiesInMapExtent = [];
+      let entitiesWithNoGeom = [];
+      for (const entity of store.entities$.value) {
+        if (entity.ol) {
+          if (olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent)) {
+            entitiesInMapExtent.push(entity);
+          }
+        } else {
+          entitiesWithNoGeom.push(entity);
+        }
+      }
       if (entitiesInMapExtent.length > 0) {
-        store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, true);
+        store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, false);
+      }
+      if (entitiesWithNoGeom.length > 0) {
+        store.state.updateMany(entitiesWithNoGeom, { inMapExtent: true }, false);
       }
     }
   }
