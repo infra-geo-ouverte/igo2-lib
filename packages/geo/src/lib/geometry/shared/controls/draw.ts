@@ -190,8 +190,10 @@ setOlInteractionStyle(style: OlStyleLike){
    */
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
+    console.log(this.olInteractionStyle)
     let olDrawInteraction;
     if (!this.freehand$.getValue()) {
+      console.log('if not freehand')
       olDrawInteraction = new OlDraw({
         type: this.olGeometryType,
         source: this.getSource(),
@@ -203,6 +205,7 @@ setOlInteractionStyle(style: OlStyleLike){
       });
     } else {
       if (this.olGeometryType === 'Point') {
+        console.log('if freehand Point')
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
@@ -211,6 +214,7 @@ setOlInteractionStyle(style: OlStyleLike){
           freehand: true
         });
       } else {
+        console.log('if freehand line and polygon')
         olDrawInteraction = new OlDraw({
           type: this.olGeometryType,
           source: this.getSource(),
