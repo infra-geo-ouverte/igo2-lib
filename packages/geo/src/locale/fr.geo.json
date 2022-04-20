@@ -678,6 +678,7 @@
         "finish": "Terminer le dessin en cours",
         "freehandMode": "Utiliser un rayon prédéfini",
         "icon": "Icônes",
+        "InsertvalueRadius": "Ajouter un rayon prédéfini",
         "labels": "Étiquettes",
         "LineString": "Ligne",
         "move": "Centrer la vue sur le curseur",

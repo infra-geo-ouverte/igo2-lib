@@ -33,6 +33,7 @@ import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 
 import * as OlStyle from 'ol/style';
+import * as olproj from 'ol/proj';
 import OlVectorSource from 'ol/source/Vector';
 import OlCircle from 'ol/geom/Circle';
 import OlPoint from 'ol/geom/Point';
@@ -103,7 +104,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsDisabled: boolean = true;
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
-  public freehandMode: boolean = false;
+  public freehandMode= false;
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
@@ -113,7 +114,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public radiusFormControl = new FormControl();
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-
+  public radiusStyle:number;
   /**
    * Available measure units for the measure type given
    * @internal
@@ -543,7 +544,24 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radiusFormControl.reset();
     } else {
-      this.drawControl.setRadiusInteractionStyle(radiusMeters);
+      this.PointStyle= (feature:OlFeature<OlGeometry>, resolution:number) => {
+        const geom = feature.getGeometry() as OlPoint;
+        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+        return new OlStyle.Style({
+          image: new OlStyle.Circle ({
+            radius: radiusMeters/(Math.cos((Math.PI/180) * coordinates[1])) / resolution,
+            stroke: new OlStyle.Stroke({
+              width:2,
+              color: 'rgba(143,7,7,1)'
+            }),
+            fill: new OlStyle.Fill({
+              color: 'rgba(255,255,255,0.4)'
+            })
+          })
+        });
+      };
+
+      this.drawControl.setOlInteractionStyle(this.PointStyle);
       this.toggleDrawControl();
     }
   }

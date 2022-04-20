@@ -678,6 +678,7 @@
         "finish": "Finish current drawing",
         "freehandMode": "Use a predefined radius",
         "icon": "Icons",
+        "InsertvalueRadius": "Insert predefined radius",
         "labels": "Labels",
         "LineString": "Line",
         "move": "Center view on cursor",
