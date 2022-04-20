@@ -36,15 +36,13 @@
       {{'igo.geo.draw.toggleMapTooltips' | translate}}
     </mat-slide-toggle>
 
-    <mat-slide-toggle *ngIf="isCircle()"
+    <mat-slide-toggle *ngIf="!isPoint()"
       [checked]="freehandMode"
       [labelPosition]="'before'"
       (change)="onToggleFreehandMode()">
-      {{'igo.geo.draw.InsertvalueRadius' | translate}}
+      {{ (isLineString() || isPolygon()) ? ('igo.geo.draw.freehandMode' | translate) : ('igo.geo.draw.insertvalueRadius' | translate) }}
     </mat-slide-toggle>
-  </div>
 
- 
   <div class="radius-unit" *ngIf="isCircle()">
     <form class="radius-form">
       <mat-form-field class="radius">

@@ -1,7 +1,6 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import OlStyle from 'ol/style/Style';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -60,14 +59,12 @@ export class DrawControl {
   /**
    * Draw abort observable (abort drawn features)
    */
-     public abort$: Subject<any> = new Subject();
+  public abort$: Subject<any> = new Subject();
 
   /**
    * Freehand mode observable (defaults to false)
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  /** style of point  */
-
 
   private keyDown$$: Subscription;
 
@@ -131,16 +128,7 @@ export class DrawControl {
     return this.olDrawingLayerSource;
   }
 
-  setRadiusInteractionStyle(radius: number) {
-    let olStyle = this.olInteractionStyle as OlStyle;
-    const imageStyle: any = olStyle.getImage();
-    imageStyle.setRadius(radius);
-    olStyle.setImage(imageStyle);
-    this.olInteractionStyle = olStyle;
-
-  }
-
-setOlInteractionStyle (style:OlStyleLike){
+setOlInteractionStyle(style: OlStyleLike){
   this.olInteractionStyle = style;
 }
 
@@ -203,9 +191,7 @@ setOlInteractionStyle (style:OlStyleLike){
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
-    console.log(this.olInteractionStyle);
     if (!this.freehand$.getValue()) {
-      console.log("if not frehand ");
       olDrawInteraction = new OlDraw({
         type: this.olGeometryType,
         source: this.getSource(),
@@ -220,6 +206,7 @@ setOlInteractionStyle (style:OlStyleLike){
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
+          style: this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });
@@ -227,6 +214,7 @@ setOlInteractionStyle (style:OlStyleLike){
         olDrawInteraction = new OlDraw({
           type: this.olGeometryType,
           source: this.getSource(),
+          style: this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });

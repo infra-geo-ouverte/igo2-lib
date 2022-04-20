@@ -91,8 +91,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
 
-  public PointStyle: OlStyle.Style | ((feature, resolution) => OlStyle.Style);
-
   private olDrawingLayerSource = new OlVectorSource();
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
@@ -104,7 +102,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsDisabled: boolean = true;
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
-  public freehandMode= false;
+  public freehandMode = false;
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
@@ -145,6 +143,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.initStore();
     this.drawControl = this.createDrawControl(this.fillColor, this.strokeColor, this.strokeWidth);
     this.drawControl.setGeometryType(this.geometryType.Point as any);
+    this.drawControl.freehand$.next(this.freehandMode);
     this.toggleDrawControl();
   }
 
@@ -271,6 +270,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   onToggleFreehandMode() {
     this.freehandMode = !this.freehandMode;
+    this.drawControl.freehand$.next(this.freehandMode);
+    this.toggleDrawControl();
   }
 
   /**
@@ -523,12 +524,20 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.dialog.open(DrawShorcutsComponent);
   }
 
-  isCircle() {
-    return this.drawControl.getGeometryType() === this.geometryType.Circle;
-  }
-
   isPoint() {
     return this.drawControl.getGeometryType() === this.geometryType.Point;
+  }
+
+  isLineString() {
+    return this.drawControl.getGeometryType() === this.geometryType.LineString;
+  }
+
+  isPolygon() {
+    return this.drawControl.getGeometryType() === this.geometryType.Polygon;
+  }
+
+  isCircle() {
+    return this.drawControl.getGeometryType() === this.geometryType.Circle;
   }
 
   changeRadius() {
@@ -544,7 +553,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radiusFormControl.reset();
     } else {
-      this.PointStyle= (feature:OlFeature<OlGeometry>, resolution:number) => {
+      const pointStyle = (feature:OlFeature<OlGeometry>, resolution:number) => {
         const geom = feature.getGeometry() as OlPoint;
         const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
         return new OlStyle.Style({
@@ -561,7 +570,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         });
       };
 
-      this.drawControl.setOlInteractionStyle(this.PointStyle);
+      this.drawControl.setOlInteractionStyle(pointStyle);
       this.toggleDrawControl();
     }
   }
