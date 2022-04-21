@@ -1,5 +1,5 @@
 
-export interface GeoServiceDefinition  {
+export interface GeoServiceDefinition {
   url: string;
   type:
   | 'wms'

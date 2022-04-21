@@ -26,7 +26,7 @@ export class PropertyTypeDetectorService {
 
   isGeoService(value) {
     let isGeoService = false;
-    if (!this.isUrl)  {
+    if (!this.isUrl) {
       return;
     }
     for (const geoServiceRegex of this.geoServiceRegexes) {

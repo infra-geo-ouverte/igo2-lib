@@ -21,6 +21,6 @@ export class RegexService {
     if (this.options) {
       return this.options[key];
     }
-    return
+    return;
   }
 }
