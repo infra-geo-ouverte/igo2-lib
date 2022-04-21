@@ -26,3 +26,4 @@ export * from './lib/message';
 export * from './lib/request';
 export * from './lib/storage';
 export * from './lib/network';
+export * from './lib/regex';
