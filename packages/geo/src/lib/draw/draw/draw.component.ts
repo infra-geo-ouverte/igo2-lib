@@ -103,6 +103,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
   public freehandMode = false;
+  public usePredefinedRadius = false;
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
@@ -144,6 +145,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawControl = this.createDrawControl(this.fillColor, this.strokeColor, this.strokeWidth);
     this.drawControl.setGeometryType(this.geometryType.Point as any);
     this.drawControl.freehand$.next(this.freehandMode);
+    this.drawControl.predefinedRadius$.next(this.usePredefinedRadius);
     this.toggleDrawControl();
   }
 
@@ -180,6 +182,11 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   onGeometryTypeChange(geometryType: typeof OlGeometryType) {
     this.drawControl.setGeometryType(geometryType);
+
+    if (this.drawControl.getGeometryType() === this.geometryType.Circle) {
+      this.freehandMode = true;
+      this.drawControl.freehand$.next(this.freehandMode);
+    }
     this.toggleDrawControl();
   }
 
@@ -268,9 +275,15 @@ export class DrawComponent implements OnInit, OnDestroy {
     toggleIsChecked ? this.toggleDrawControl() : this.deactivateDrawControl();
   }
 
-  onToggleFreehandMode() {
-    this.freehandMode = !this.freehandMode;
-    this.drawControl.freehand$.next(this.freehandMode);
+  onToggleFreehandMode(event: any) {
+    if (this.isCircle()) {
+      this.usePredefinedRadius = event.checked;
+      this.drawControl.predefinedRadius$.next(this.usePredefinedRadius);
+
+    } else {
+      this.freehandMode = event.checked;
+      this.drawControl.freehand$.next(this.freehandMode);
+    }
     this.toggleDrawControl();
   }
 
@@ -560,7 +573,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           image: new OlStyle.Circle ({
             radius: radiusMeters/(Math.cos((Math.PI/180) * coordinates[1])) / resolution,
             stroke: new OlStyle.Stroke({
-              width:2,
+              width: 1,
               color: 'rgba(143,7,7,1)'
             }),
             fill: new OlStyle.Fill({
