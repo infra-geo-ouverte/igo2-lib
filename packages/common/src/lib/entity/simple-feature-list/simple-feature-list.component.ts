@@ -26,7 +26,9 @@ export interface SortBy {
 }
 
 export interface Paginator {
-  pageSize: number
+  pageSize: number,
+  showFirstLastPageButtons: boolean,
+  showPreviousNextPageButtons: boolean
 }
 @Component({
   selector: 'igo-simple-feature-list',
@@ -50,6 +52,8 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   public paginator: Paginator;
 
   public pageSize: number;
+  public showFirstLastPageButtons: boolean;
+  public showPreviousNextPageButtons: boolean;
   public entityIsSelected: boolean = false;
   public entitiesAreSelected: boolean = false;
   public selectedEntities: Feature[] = undefined;
@@ -85,6 +89,8 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.paginator = this.simpleFeatureListConfig.paginator;
     if (this.paginator) {
       this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
+      this.showFirstLastPageButtons = this.paginator.showFirstLastPageButtons !== undefined ? this.paginator.showFirstLastPageButtons : true;
+      this.showPreviousNextPageButtons = this.paginator.showPreviousNextPageButtons !== undefined ? this.paginator.showPreviousNextPageButtons : true;
       this.entitiesToShow = this.entities.slice(0, this.pageSize);
       this.numberOfPages = Math.ceil(this.entities.length / this.pageSize);
       this.elementsLowerBound = 1;

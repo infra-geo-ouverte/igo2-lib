@@ -2,9 +2,21 @@
     padding-right: 32px;
 }
 
+.elements {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .paginator {
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.pageButton, .pageButtonBold {
+    margin-left: 6px;
+    margin-right: 6px;
 }
 
 .pageButton {
@@ -15,25 +27,27 @@
     cursor: pointer;
 }
 
+.pageButtonBold:hover, .numberOfElements:hover, .currentElements:hover {
+    cursor: default;
+}
+
 .entities {
     overflow-y: auto;
     height: 200px;
     width: 100%
 }
 
-.entity, .selectedEntity {
+.entityGrey, .entityWhite, .selectedEntity {
     padding-top: 8px;
     padding-bottom: 8px;
     padding-left: 8px;
-    margin-top: 4px;
-    margin-bottom: 4px;
     overflow: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.entity, .selectedEntity {
+.entityGrey, .selectedEntity {
     background-color: #f2f1f1;
 }
 
@@ -90,5 +104,8 @@
     font-size: 16px;
     line-height: 24px;
     margin-top: 12px;
+}
+
+.pageButton, .attribute, .description {
     margin-bottom: 12px;
 }

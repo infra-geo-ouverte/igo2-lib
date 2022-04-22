@@ -1,56 +1,6 @@
-<div class="paginator">
+<div class="elements">
   <div class="numberOfElements">
     <span>{{ entities.length }} {{ 'igo.common.paginator.elementsLowercase' | translate }}</span>
-  </div>
-
-  <div class="pages" *ngIf="simpleFeatureListConfig.paginator">
-    <button
-      mat-icon-button
-      color="primary"
-      [disabled]="currentPageIsFirst"
-      [matTooltip]="'igo.common.paginator.firstPageLabel' | translate"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      (click)="goToFirstPage()">
-      <mat-icon svgIcon="page-first"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      color="primary"
-      [disabled]="currentPageIsFirst"
-      [matTooltip]="'igo.common.paginator.previousPageLabel' | translate"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      (click)="goToPreviousPage()">
-      <mat-icon svgIcon="chevron-left"></mat-icon>
-    </button>
-    <span *ngFor="let page of [].constructor(numberOfPages); let i = index"
-      [ngClass]="i + 1 === currentPage$.value ? 'pageButtonBold' : 'pageButton'"
-      mat-button
-      color="primary"
-      (click)="goToPage($event)">
-      {{ i + 1 }}
-    </span>
-    <button
-      mat-icon-button
-      color="primary"
-      [disabled]="currentPageIsLast"
-      [matTooltip]="'igo.common.paginator.nextPageLabel' | translate"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      (click)="goToNextPage()">
-      <mat-icon svgIcon="chevron-right"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      color="primary"
-      [disabled]="currentPageIsLast"
-      [matTooltip]="'igo.common.paginator.lastPageLabel' | translate"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      (click)="goToLastPage()">
-      <mat-icon svgIcon="page-last"></mat-icon>
-    </button>
   </div>
 
   <div class="currentElements">
@@ -60,7 +10,8 @@
 
 <div class="entities">
   <ng-container *ngIf="!entityIsSelected && !entitiesAreSelected; else entitiesSelected">
-    <div class="entity" *ngFor="let entity of entitiesToShow" #entity>
+    <div *ngFor="let entity of entitiesToShow; let i = index" #entity
+      [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
       <div class="attributes">
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
@@ -94,7 +45,8 @@
   </ng-container>
   <ng-template #entitiesSelected>
     <ng-container *ngIf="selectedEntities !== undefined; else entitySelected">
-      <div class="entity" *ngFor="let entity of selectedEntities" #entity>
+      <div *ngFor="let entity of selectedEntities; let i = index" #entity
+      [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
         <div class="attributes">
           <ng-container *ngFor="let attribute of attributeOrder">
             <ng-container *ngIf="attribute.header; else notHeader">
@@ -160,4 +112,55 @@
       </div>
     </div>
   </ng-template>
+</div>
+
+
+<div class="paginator" *ngIf="simpleFeatureListConfig.paginator">
+  <button *ngIf="showFirstLastPageButtons"
+    mat-icon-button
+    color="primary"
+    [disabled]="currentPageIsFirst"
+    [matTooltip]="'igo.common.paginator.firstPageLabel' | translate"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    (click)="goToFirstPage()">
+    <mat-icon svgIcon="page-first"></mat-icon>
+  </button>
+  <button *ngIf="showPreviousNextPageButtons"
+    mat-icon-button
+    color="primary"
+    [disabled]="currentPageIsFirst"
+    [matTooltip]="'igo.common.paginator.previousPageLabel' | translate"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    (click)="goToPreviousPage()">
+    <mat-icon svgIcon="chevron-left"></mat-icon>
+  </button>
+  <span *ngFor="let page of [].constructor(numberOfPages); let i = index"
+    [ngClass]="i + 1 === currentPage$.value ? 'pageButtonBold' : 'pageButton'"
+    mat-button
+    color="primary"
+    (click)="goToPage($event)">
+    {{ i + 1 }}
+  </span>
+  <button *ngIf="showPreviousNextPageButtons"
+    mat-icon-button
+    color="primary"
+    [disabled]="currentPageIsLast"
+    [matTooltip]="'igo.common.paginator.nextPageLabel' | translate"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    (click)="goToNextPage()">
+    <mat-icon svgIcon="chevron-right"></mat-icon>
+  </button>
+  <button *ngIf="showFirstLastPageButtons"
+    mat-icon-button
+    color="primary"
+    [disabled]="currentPageIsLast"
+    [matTooltip]="'igo.common.paginator.lastPageLabel' | translate"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    (click)="goToLastPage()">
+    <mat-icon svgIcon="page-last"></mat-icon>
+  </button>
 </div>
