@@ -8,6 +8,7 @@ import { Observable, Observer } from 'rxjs';
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import {encode} from 'windows-1252';
 
 import { ExportFormat, EncodingFormat } from './export.type';
 
@@ -168,7 +169,7 @@ export class ExportService {
     projectionIn: string,
     projectionOut: string
   ) {
-    const featuresText: string = new olformat.GeoJSON().writeFeatures(
+    let featuresText: string = new olformat.GeoJSON().writeFeatures(
       olFeatures,
       {
         dataProjection: projectionOut,
@@ -189,6 +190,12 @@ export class ExportService {
       form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
     } else if (encodingType === EncodingFormat.LATIN1) {
       const enctype = 'ISO-8859-1';
+      const featuresJson = JSON.parse(featuresText);
+      featuresJson.features.map(f => {
+          const encodedProperties = String.fromCharCode.apply(null, encode(JSON.stringify(f.properties), { mode: 'replacement' }));
+          f.properties = JSON.parse(encodedProperties);
+      })
+      featuresText = JSON.stringify(featuresJson);
       const encoding = document.createElement('input');
       encoding.setAttribute('type', 'hidden');
       encoding.setAttribute('name', 'encoding');
