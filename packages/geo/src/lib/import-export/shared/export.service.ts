@@ -192,9 +192,10 @@ export class ExportService {
       const enctype = 'ISO-8859-1';
       const featuresJson = JSON.parse(featuresText);
       featuresJson.features.map(f => {
-          const encodedProperties = String.fromCharCode.apply(null, encode(JSON.stringify(f.properties), { mode: 'replacement' }));
-          f.properties = JSON.parse(encodedProperties);
-      })
+        const encodedProperties = String.fromCharCode
+          .apply(null, encode(JSON.stringify(f.properties), { mode: 'replacement' }));
+        f.properties = JSON.parse(encodedProperties);
+      });
       featuresText = JSON.stringify(featuresJson);
       const encoding = document.createElement('input');
       encoding.setAttribute('type', 'hidden');
