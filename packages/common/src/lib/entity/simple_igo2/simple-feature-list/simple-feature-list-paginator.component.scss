@@ -1,0 +1,33 @@
+.paginator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navigationButton {
+    width: 24px !important;
+}
+
+.pageButton, .pageButtonBold {
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    margin: 8px;
+}
+
+.pageButton {
+    color: #095797;
+}
+
+.pageButton:hover {
+    cursor: pointer;
+}
+
+.pageButtonBold {
+    font-weight: bold;
+    color: #223654;
+}
+
+.pageButtonBold:hover {
+    cursor: default;
+}

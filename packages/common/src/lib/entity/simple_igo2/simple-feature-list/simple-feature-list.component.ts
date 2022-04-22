@@ -1,42 +1,16 @@
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { ConfigService } from '@igo2/core';
 import { Feature } from '@igo2/geo';
-import { Component, Input, OnInit, OnChanges, OnDestroy, Output, EventEmitter, SimpleChanges } from '@angular/core';
-import { EntityStore } from '../shared';
+import { Component, Input, OnInit, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { EntityStore } from '../../shared';
+import { SimpleFeatureListConfig, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
 
-export interface SimpleFeatureListConfig {
-  layerId: string,
-  attributeOrder: AttributeOrder,
-  sortBy: SortBy,
-  formatURL: boolean,
-  formatEmail: boolean,
-  paginator: Paginator
-}
-
-export interface AttributeOrder {
-  attributeName: string,
-  personalizedFormatting: string,
-  description: string,
-  header: string
-}
-
-export interface SortBy {
-  attributeName: string,
-  order: string
-}
-
-export interface Paginator {
-  pageSize: number,
-  showFirstLastPageButtons: boolean,
-  showPreviousNextPageButtons: boolean
-}
 @Component({
   selector: 'igo-simple-feature-list',
   templateUrl: './simple-feature-list.component.html',
   styleUrls: ['./simple-feature-list.component.scss']
 })
 
-export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy {
+export class SimpleFeatureListComponent implements OnInit, OnChanges {
   @Input() entityStore: EntityStore<Feature[]>;
   @Input() clickedEntities: Feature[];
   @Output() listSelection = new EventEmitter();
@@ -60,10 +34,6 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   public selectedEntity: Feature = undefined;
 
   public numberOfPages: number;
-  public pageChange$$: Subscription;
-  public currentPage$: BehaviorSubject<number> = new BehaviorSubject(1);
-  public currentPageIsFirst: boolean = true;
-  public currentPageIsLast: boolean = false;
   public elementsLowerBound: number;
   public elementsUpperBound: number;
 
@@ -89,30 +59,14 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.paginator = this.simpleFeatureListConfig.paginator;
     if (this.paginator) {
       this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
-      this.showFirstLastPageButtons = this.paginator.showFirstLastPageButtons !== undefined ? this.paginator.showFirstLastPageButtons : true;
-      this.showPreviousNextPageButtons = this.paginator.showPreviousNextPageButtons !== undefined ? this.paginator.showPreviousNextPageButtons : true;
+      this.showFirstLastPageButtons = this.paginator.showFirstLastPageButtons !== undefined ?
+        this.paginator.showFirstLastPageButtons : true;
+      this.showPreviousNextPageButtons = this.paginator.showPreviousNextPageButtons !== undefined ?
+        this.paginator.showPreviousNextPageButtons : true;
       this.entitiesToShow = this.entities.slice(0, this.pageSize);
       this.numberOfPages = Math.ceil(this.entities.length / this.pageSize);
       this.elementsLowerBound = 1;
-      this.elementsUpperBound = this.pageSize;
-
-      this.pageChange$$ = this.currentPage$.subscribe(() => {
-        if (this.currentPage$.value === this.numberOfPages) {
-          this.currentPageIsFirst = false;
-          this.currentPageIsLast = true;
-        } else if (this.currentPage$.value === 1) {
-          this.currentPageIsFirst = true;
-          this.currentPageIsLast = false;
-        } else {
-          this.currentPageIsFirst = false;
-          this.currentPageIsLast = false;
-        }
-
-        this.elementsLowerBound = (this.currentPage$.value - 1) * this.pageSize + 1;
-        this.elementsUpperBound = this.currentPage$.value * this.pageSize > this.entities.length ?
-          this.entities.length : this.currentPage$.value * this.pageSize;
-        this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
-      });
+      this.elementsUpperBound = this.pageSize > this.entities.length ? this.entities.length : this.pageSize;
     } else {
       this.entitiesToShow = this.entities;
     }
@@ -137,10 +91,6 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
       this.entitiesAreSelected = false;
       this.entityIsSelected = false;
     }
-  }
-
-  ngOnDestroy() {
-    this.pageChange$$.unsubscribe();
   }
 
   checkAttributeFormatting(attribute: any) {
@@ -235,23 +185,9 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.selectedEntity = undefined;
   }
 
-  goToFirstPage() {
-    this.currentPage$.next(1);
-  }
-
-  goToPreviousPage() {
-    this.currentPage$.next(this.currentPage$.value - 1);
-  }
-
-  goToPage(event: any) {
-    this.currentPage$.next(parseInt(event.target.innerText));
-  }
-
-  goToNextPage() {
-    this.currentPage$.next(this.currentPage$.value + 1);
-  }
-
-  goToLastPage() {
-    this.currentPage$.next(this.numberOfPages);
+  onPageChange(currentPage: number) {
+    this.elementsLowerBound = (currentPage - 1) * this.pageSize + 1;
+    this.elementsUpperBound = currentPage * this.pageSize > this.entities.length ? this.entities.length : currentPage * this.pageSize;
+    this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
   }
 }

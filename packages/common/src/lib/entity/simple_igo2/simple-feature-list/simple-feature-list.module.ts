@@ -6,11 +6,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoStopPropagationModule } from '../../stop-propagation/stop-propagation.module';
-import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
-import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
-import { IgoImageModule } from '../../image/image.module';
+import { IgoStopPropagationModule } from '../../../stop-propagation/stop-propagation.module';
+import { IgoCustomHtmlModule } from '../../../custom-html/custom-html.module';
+import { IgoEntityTablePaginatorModule } from '../../entity-table-paginator/entity-table-paginator.module';
+import { IgoImageModule } from '../../../image/image.module';
 import { IgoLanguageModule } from '@igo2/core';
+import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-paginator.component';
 
 /**
  * @ignore
@@ -32,7 +33,8 @@ import { IgoLanguageModule } from '@igo2/core';
     SimpleFeatureListComponent
   ],
   declarations: [
-    SimpleFeatureListComponent
+    SimpleFeatureListComponent,
+    SimpleFeatureListPaginatorComponent
   ]
 })
 export class IgoSimpleFeatureListModule {}

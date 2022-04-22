@@ -8,6 +8,8 @@
   </div>
 </div>
 
+<div class="title"></div>
+
 <div class="entities">
   <ng-container *ngIf="!entityIsSelected && !entitiesAreSelected; else entitiesSelected">
     <div *ngFor="let entity of entitiesToShow; let i = index" #entity
@@ -114,53 +116,10 @@
   </ng-template>
 </div>
 
-
-<div class="paginator" *ngIf="simpleFeatureListConfig.paginator">
-  <button *ngIf="showFirstLastPageButtons"
-    mat-icon-button
-    color="primary"
-    [disabled]="currentPageIsFirst"
-    [matTooltip]="'igo.common.paginator.firstPageLabel' | translate"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    (click)="goToFirstPage()">
-    <mat-icon svgIcon="page-first"></mat-icon>
-  </button>
-  <button *ngIf="showPreviousNextPageButtons"
-    mat-icon-button
-    color="primary"
-    [disabled]="currentPageIsFirst"
-    [matTooltip]="'igo.common.paginator.previousPageLabel' | translate"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    (click)="goToPreviousPage()">
-    <mat-icon svgIcon="chevron-left"></mat-icon>
-  </button>
-  <span *ngFor="let page of [].constructor(numberOfPages); let i = index"
-    [ngClass]="i + 1 === currentPage$.value ? 'pageButtonBold' : 'pageButton'"
-    mat-button
-    color="primary"
-    (click)="goToPage($event)">
-    {{ i + 1 }}
-  </span>
-  <button *ngIf="showPreviousNextPageButtons"
-    mat-icon-button
-    color="primary"
-    [disabled]="currentPageIsLast"
-    [matTooltip]="'igo.common.paginator.nextPageLabel' | translate"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    (click)="goToNextPage()">
-    <mat-icon svgIcon="chevron-right"></mat-icon>
-  </button>
-  <button *ngIf="showFirstLastPageButtons"
-    mat-icon-button
-    color="primary"
-    [disabled]="currentPageIsLast"
-    [matTooltip]="'igo.common.paginator.lastPageLabel' | translate"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    (click)="goToLastPage()">
-    <mat-icon svgIcon="page-last"></mat-icon>
-  </button>
-</div>
+<igo-simple-feature-list-paginator *ngIf="simpleFeatureListConfig.paginator"
+  [pageSize]="pageSize"
+  [numberOfPages]="numberOfPages"
+  [showFirstLastPageButtons]="showFirstLastPageButtons"
+  [showPreviousNextPageButtons]="showPreviousNextPageButtons"
+  (pageChange)="onPageChange($event)">
+</igo-simple-feature-list-paginator>
