@@ -22,7 +22,7 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { IgoMap } from '../../map';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, map } from 'rxjs/operators';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { MatSelect } from '@angular/material/select';
@@ -396,7 +396,7 @@ export class OgcFilterSelectionComponent implements OnInit {
               url: domOptions.url,
               name: domOptions.name,
               value: domOptions.value
-            }
+            };
           }
         }
         let domValues;
@@ -417,7 +417,7 @@ export class OgcFilterSelectionComponent implements OnInit {
                 propertyName: domSelector.propertyName,
                 expression: value.id,
               }
-            }
+            };
             newBundle.selectors.push(selector);
           }
 
@@ -439,7 +439,7 @@ export class OgcFilterSelectionComponent implements OnInit {
               url: domOptions.url,
               name: domOptions.name,
               value: domOptions.value
-            }
+            };
           }
         }
         filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
@@ -459,7 +459,7 @@ export class OgcFilterSelectionComponent implements OnInit {
                 propertyName: domSelector.propertyName,
                 expression: value.id,
               }
-            }
+            };
             newBundle.selectors.push(selector);
           }
           this.getAutocompleteGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
@@ -597,7 +597,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   displayFn(dom): string {
     return dom ? dom.value : undefined;
   }
-
 
   private applyFilters() {
     let filterQueryString = '';
