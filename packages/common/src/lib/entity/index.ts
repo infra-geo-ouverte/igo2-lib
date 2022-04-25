@@ -4,3 +4,4 @@ export * from './entity-table/entity-table.component';
 export * from './entity-table-paginator/entity-table-paginator.component';
 export * from './entity-table-paginator/entity-table-paginator.interface';
 export * from './simple_igo2/simple-feature-list/simple-feature-list.component';
+export * from './simple_igo2/simple-filters/simple-filters.component';
