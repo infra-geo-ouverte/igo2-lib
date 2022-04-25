@@ -18,7 +18,7 @@
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
             <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-            <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
+            <span [ngClass]="attribute.header" [innerHTML]="createAttribute(entity, attribute)"></span>
             <br>
           </ng-container>
           <ng-template #notHeader>
@@ -53,7 +53,7 @@
           <ng-container *ngFor="let attribute of attributeOrder">
             <ng-container *ngIf="attribute.header; else notHeader">
               <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-              <span [ngClass]="attribute.header">{{ entity.properties[attribute.attributeName] }}</span>
+              <span [ngClass]="attribute.header" [innerHTML]="createAttribute(entity, attribute)"></span>
               <br>
             </ng-container>
             <ng-template #notHeader>
@@ -87,7 +87,7 @@
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
             <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong> {{ attribute.description }}</strong>: </span>
-            <span [ngClass]="attribute.header">{{ selectedEntity.properties[attribute.attributeName] }}</span>
+            <span [ngClass]="attribute.header" [innerHTML]="createAttribute(selectedEntity, attribute)"></span>
             <br>
           </ng-container>
           <ng-template #notHeader>

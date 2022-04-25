@@ -95,16 +95,15 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
 
   checkAttributeFormatting(attribute: any) {
     attribute = this.isPhoneNumber(attribute);
-    attribute = this.isEmail(attribute);
     attribute = this.isPostalCode(attribute);
     attribute = this.isUrl(attribute);
+    attribute = this.isEmail(attribute);
 
     return attribute;
   }
 
   createAttribute(entity: Feature, attribute: any): string {
     let value: string;
-
     if (attribute.personalizedFormatting) {
       value = this.createPersonalizedAttribute(entity, attribute.personalizedFormatting);
     } else {
