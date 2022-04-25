@@ -5,6 +5,6 @@ export interface DOMOptions {
 }
 
 export interface DOMValue {
-  id: number;
+  id: number | string;
   value: string;
 }

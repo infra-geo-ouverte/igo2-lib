@@ -388,41 +388,43 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   async getSelectDomValues() {
     for (const bundle of this.datasource.options.ogcFilters.select.bundles) {
-      for (const domSelector of bundle.domSelectors) {
-        let filterDOM;
-        for (const domOptions of this.configService.getConfig('dom')) {
-          if (domSelector.name === domOptions.name) {
-            filterDOM = {
-              url: domOptions.url,
-              name: domOptions.name,
-              value: domOptions.value
-            };
+      if (bundle.domSelectors) {
+        for (const domSelector of bundle.domSelectors) {
+          let filterDOM;
+          for (const domOptions of this.configService.getConfig('dom')) {
+            if (domSelector.name === domOptions.name) {
+              filterDOM = {
+                url: domOptions.url,
+                name: domOptions.name,
+                value: domOptions.value
+              };
+            }
           }
-        }
-        let domValues;
-        filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-          domValues = filterDOM.value;
+          let domValues;
+          filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
+            domValues = filterDOM.value;
 
-        if (domValues) {
-          let newBundle = bundle;
-          if (!bundle.selectors) {
-            newBundle.selectors = [];
-          }
-          let selector;
-          for (const value of domValues) {
-            selector = {
-              title: value.value,
-              filters: {
-                operator: domSelector.operator,
-                propertyName: domSelector.propertyName,
-                expression: value.id,
-              }
-            };
-            newBundle.selectors.push(selector);
-          }
+          if (domValues) {
+            let newBundle = bundle;
+            if (!bundle.selectors) {
+              newBundle.selectors = [];
+            }
+            let selector;
+            for (const value of domValues) {
+              selector = {
+                title: value.value,
+                filters: {
+                  operator: domSelector.operator,
+                  propertyName: domSelector.propertyName,
+                  expression: value.id,
+                }
+              };
+              newBundle.selectors.push(selector);
+            }
 
-          this.getSelectGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
-            .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
+            this.getSelectGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
+              .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
+          }
         }
       }
     }
@@ -430,56 +432,58 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   async getAutocompleteDomValues() {
     for (const bundle of this.datasource.options.ogcFilters.autocomplete.bundles) {
-      let domValues;
-      for (const domSelector of bundle.domSelectors) {
-        let filterDOM;
-        for (const domOptions of this.configService.getConfig('dom')) {
-          if (domSelector.name === domOptions.name) {
-            filterDOM = {
-              url: domOptions.url,
-              name: domOptions.name,
-              value: domOptions.value
-            };
+      if (bundle.domSelectors) {
+        let domValues;
+        for (const domSelector of bundle.domSelectors) {
+          let filterDOM;
+          for (const domOptions of this.configService.getConfig('dom')) {
+            if (domSelector.name === domOptions.name) {
+              filterDOM = {
+                url: domOptions.url,
+                name: domOptions.name,
+                value: domOptions.value
+              };
+            }
           }
-        }
-        filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-          domValues = filterDOM.value;
+          filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
+            domValues = filterDOM.value;
 
-        if (domValues) {
-          let newBundle = bundle;
-          if (!bundle.selectors) {
-            newBundle.selectors = [];
+          if (domValues) {
+            let newBundle = bundle;
+            if (!bundle.selectors) {
+              newBundle.selectors = [];
+            }
+            let selector;
+            for (const value of domValues) {
+              selector = {
+                title: value.value,
+                filters: {
+                  operator: domSelector.operator,
+                  propertyName: domSelector.propertyName,
+                  expression: value.id,
+                }
+              };
+              newBundle.selectors.push(selector);
+            }
+            this.getAutocompleteGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
+              .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
           }
-          let selector;
-          for (const value of domValues) {
-            selector = {
-              title: value.value,
-              filters: {
-                operator: domSelector.operator,
-                propertyName: domSelector.propertyName,
-                expression: value.id,
-              }
-            };
-            newBundle.selectors.push(selector);
-          }
-          this.getAutocompleteGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
-            .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
         }
+
+        this.filteredOgcAutocomplete[bundle.id] = new Observable<any[]>();
+        this.cdRef.detectChanges();
+        this.filteredOgcAutocomplete[bundle.id] = this.form.controls['autocomplete'].valueChanges.pipe(
+          map(value => {
+            if (value.length) {
+              return domValues?.filter((option) => {
+                const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+                const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return featureNameNormalized.includes(filterNormalized);
+              });
+            }
+          })
+        );
       }
-
-      this.filteredOgcAutocomplete[bundle.id] = new Observable<any[]>();
-      this.cdRef.detectChanges();
-      this.filteredOgcAutocomplete[bundle.id] = this.form.controls['autocomplete'].valueChanges.pipe(
-        map(value => {
-          if (value.length) {
-            return domValues?.filter((option) => {
-              const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-              const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-              return featureNameNormalized.includes(filterNormalized);
-            });
-          }
-        })
-      );
     }
   }
 
