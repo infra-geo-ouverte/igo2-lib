@@ -6,19 +6,50 @@
   width: 52px;
 }
 
+igo-entity-table {
+  padding-top: 5px;
+}
+
 igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell.valueRtssInfo {
-    font-size: 4em;
+    font-size: 3em;
     text-align: right;
     font-weight: bold
 }
 igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell.titleRtssInfo {
-  font-size: 1.5em;
+  font-size: 1em;
 }
 
 igo-entity-table ::ng-deep .table-container > table > tbody > .mat-row .mat-cell {
   height: 1em;
 }
 
+.rtss-filter-toggle {
+  padding: 10px;
+  text-align: center;
+
+  mat-button-toggle-group {
+    width: 100%;
+    flex-wrap: wrap;
+    mat-button-toggle {
+      width: 33%;
+      font-size: 1.25em;
+    }
+  }
+}
+.rtss-method-toggle {
+  padding: 10px;
+  text-align: center;
+
+  mat-button-toggle-group {
+    width: 100%;
+    flex-wrap: wrap;
+    mat-button-toggle {
+      width: 50%;
+      font-size: 1.25em;
+      white-space: pre-wrap;
+    }
+  }
+}
 textarea { resize: none; };
 
 mat-form-field  { padding: 10px 15px;  };
@@ -29,17 +60,16 @@ mat-form-field.igo-input-container { width: 60%; padding: 0px 15px; };
 
 .radius-unit {
   display: flex;
-  width: 90%;
-  margin-left: 2px;
   padding: 5px;
+
+  mat-form-field.radius-field {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 60%;
+    font-size: 1.25em;
+  }
 }
 
-.radius-field {
-
-  display: flex;
-  flex-flow: column nowrap;
-  width: 60%;
-}
 .title-container {
   padding: 10px;
 }
@@ -47,6 +77,17 @@ mat-form-field.igo-input-container { width: 60%; padding: 0px 15px; };
 .title {
   margin-left: 5px;
   font-size: initial;
+}
+
+.igo-rtss-button-group {
+  padding: 10px;
+  button {
+    font-size: 1.5em;
+    width: 100%;
+    white-space: pre-wrap;
+    height: auto;
+    padding: 10px;
+  }
 }
 
 .mat-radio-group {
