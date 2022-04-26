@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import {
   FeatureStore, Feature, IgoMap,
-  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, roundCoordTo, QueryableDataSource
+  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, roundCoordTo, QueryableDataSource, MapGeolocationState
 } from '@igo2/geo';
 import { BehaviorSubject, combineLatest, interval, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -48,10 +48,11 @@ export class MapProximityState {
       this.enabled$,
       this.proximitylocationType$,
       this.proximityRadiusValue$,
-      interval(5000)
+      interval(5000),
+      this.map.geolocationController.position$
     ])
-      .pipe(debounceTime(500))
-      .subscribe((bunch: [boolean, string, number, number]) => {
+      .pipe(debounceTime(750))
+      .subscribe((bunch: [boolean, string, number, number, MapGeolocationState]) => {
         this.proximityFeatureStore.clear();
         const enabled = bunch[0];
         const layers = this.map.layers;
