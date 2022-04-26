@@ -10,6 +10,7 @@ import { MapProximityState } from '../map-proximity.state';
 import { MapRtssProximityState } from '../map-rtss-proximity.state';
 import { MapState } from '../map.state';
 import { NumberUtils } from '@igo2/utils';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 @ToolComponent({
   name: 'map-rtss-proximity',
   title: 'igo.integration.tools.closestFeature',
@@ -38,6 +39,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
   }
 
   public proximityRtssEntityStore: EntityStore<{}> = new EntityStore<Feature>([]);
+  public rtssForCopyPaste: string = '';
 
   get map(): IgoMap {
     return this.mapState.map;
@@ -54,6 +56,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
     selectMany: false,
     selectionCheckbox: false,
     sort: false,
+    headerClassFunc: () => {return { 'class_display_none': true };},
     columns: [
       {
         name: 'title',
@@ -82,6 +85,10 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
     public mapRtssProximityState: MapRtssProximityState,
     private languageService: LanguageService,
     private messageService: MessageService) {
+  }
+
+  onRtssFilterChange(e: MatButtonToggleChange) {
+    this.mapRtssProximityState.activeRtssFilter$.next(e.value);
   }
 
   ngOnInit(): void {
@@ -131,7 +138,8 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
       let chain = "";
       let dist = "";
       let mun = proximityMunFeature ? proximityMunFeature.properties.MUS_NM_MUN : '';
-      let cs = proximityCsFeature ? proximityCsFeature.properties.nom_unite_ : '';
+      let cs = proximityCsFeature ? proximityCsFeature.properties.nom_unite : '';
+      this.rtssForCopyPaste = undefined;
 
       if (!rtss) {
         this.proximityRtssEntityStore.clear();
@@ -147,6 +155,16 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
         if (typeof chain === 'number') {
           chain = `${Math.floor(chain/1000)}+${String(chain%1000).padStart(3, '0')}`;
         }
+
+        this.rtssForCopyPaste =
+`RTSS: ${route}-${tronc}-${sect}-${srte}
+Chaînage: ${chain}
+Distance entre la position GPS et le RTSS-Ch: ${rtss.properties.distance} m
+Latitude: ${y}
+Longitude: ${x}
+Précision GPS: ${precision} m
+Municipalité: ${mun}
+Centre de services: ${cs}`;
       }
 
       const rtssInfo = [
@@ -155,6 +173,8 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
         { id: 6, title: 'Srte', value: srte },
         { id: 8, title: 'Chn', value: chain },
         { id: 9, title: 'Dist', value: dist },
+        { id: 10, title: 'GPS(m)', value: precision }
+
       ];
       this.proximityRtssEntityStore.updateMany(rtssInfo);
     });
@@ -167,7 +187,7 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
     this.map.geolocationController.followPosition = this.userDefinedFollowPosition;
   }
 
-  onLocationTypeChange(e: MatRadioChange) {
+  onLocationTypeChange(e: MatRadioChange | MatButtonToggleChange ) {
     this.mapProximityState.proximitylocationType$.next(e.value);
   }
 
@@ -176,14 +196,14 @@ export class MapRtssProximityToolComponent implements OnInit, OnDestroy {
    */
   copyTextToClipboard(): void {
 
-    const successful = Clipboard.copy(this.currentPositionCoordinate.toString());
+    const successful = Clipboard.copy(this.rtssForCopyPaste);
     if (successful) {
       const translate = this.languageService.translate;
       const title = translate.instant(
-        'igo.integration.advanced-map-tool.advanced-coordinates.copyTitle'
+        'Info RTSS'
       );
-      const msg = translate.instant('igo.integration.advanced-map-tool.advanced-coordinates.copyMsg');
-      this.messageService.success(msg, title);
+      const msg = `L'information de votre position réseau a été copiée dans le presse-papier.`;
+      this.messageService.success(msg, title,{timeOut: 5000});
     }
   }
 }

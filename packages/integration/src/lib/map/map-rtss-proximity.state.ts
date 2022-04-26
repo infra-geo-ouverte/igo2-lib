@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-
+import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import {
   Feature, IgoMap,
-  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE
+  featureFromOl, measureOlGeometryLength, Layer, QueryableDataSourceOptions, FEATURE, MapGeolocationState
 } from '@igo2/geo';
 import { BehaviorSubject, combineLatest, interval, Subscription } from 'rxjs';
 import { debounceTime, skipWhile } from 'rxjs/operators';
@@ -15,6 +16,7 @@ import Geometry from 'ol/geom/Geometry';
 import olLineString from 'ol/geom/LineString';
 import * as olProj from 'ol/proj';
 import { MapProximityState } from './map-proximity.state';
+import { StorageService } from '@igo2/core';
 /**
  * Service that holds the state of the direction module
  */
@@ -25,6 +27,7 @@ export class MapRtssProximityState {
 
   public enabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private subs$$: Subscription[] = [];
+  public activeRtssFilter$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   public currentRTSSCh$: BehaviorSubject<Feature> = new BehaviorSubject<Feature>(undefined);
 
   get map(): IgoMap {
@@ -35,11 +38,19 @@ export class MapRtssProximityState {
 
   constructor(
     private mapState: MapState,
-    private mapProximityState: MapProximityState) {
+    private mapProximityState: MapProximityState,
+    private storageService: StorageService) {
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.mapProximityState.enabled$.next(true);
       this.subscribeRTSSCH();
+    });
+    const storedRtssFilter = this.storageService.get("rtss.filter") as string[];
+    if (storedRtssFilter) {
+      this.activeRtssFilter$.next(storedRtssFilter);
+    }
+    this.activeRtssFilter$.subscribe(activeRtssFilter => {
+      this.storageService.set("rtss.filter", activeRtssFilter);
     });
   }
 
@@ -57,16 +68,19 @@ export class MapRtssProximityState {
       this.enabled$,
       this.mapProximityState.proximitylocationType$,
       this.mapProximityState.proximityRadiusValue$,
-      interval(5000)
+      interval(5000),
+      this.map.geolocationController.position$,
+      this.activeRtssFilter$
     ])
-    .pipe(debounceTime(500))
-    .subscribe((bunch: [boolean, string, number, number]) => {
+    .pipe(debounceTime(750))
+    .subscribe((bunch: [boolean, string, number, number, MapGeolocationState, string[]]) => {
         this.currentRTSSCh$.next(undefined);
         const enabled = bunch[0];
         const layers = this.map.layers;
-        const pos = this.map.geolocationController.position$.value;
+        const pos = bunch[4];
         const locationType = bunch[1];
         const proximityRadiusValue = bunch[2];
+        const activeRtssFilters = bunch[5] && bunch[5].length > 0 ? bunch[5]: undefined;
 
         if (!enabled){
           return;
@@ -86,7 +100,8 @@ export class MapRtssProximityState {
           const rtssLayer = layers.find(layer => layer.id === this.rtssLayerId && layer.visible && layer.isInResolutionsRange);
           if (rtssLayer) {
             const layerSource = rtssLayer.ol.getSource() as olVectorSource<Geometry>;
-            const closestOlFeature = layerSource.getClosestFeatureToCoordinate(coord);
+            const closestOlFeature =
+              layerSource.getClosestFeatureToCoordinate(coord, (feature) => filterOlFeatureByRTSSSpecs(feature, activeRtssFilters));
             if (closestOlFeature) {
               const closestOlGeom = closestOlFeature.getGeometry() as olLineString;
               const closestFeature = featureFromOl(closestOlFeature, this.map.projection);
@@ -223,5 +238,20 @@ export class MapRtssProximityState {
     return { delta: closestIdx, object: fractionsInfo[closestIdx] };
 
   }
+
+}
+
+export function filterOlFeatureByRTSSSpecs(olFeature: OlFeature<OlGeometry>, filterOptions?: string[]) {
+  const rtss = olFeature.get('num_rts');
+  let someTrue = true;
+  if (rtss && filterOptions?.length > 0) {
+    return filterOptions.some(re => {
+      const regex = new RegExp(re, "gi");
+      const rtssMatch = rtss.match(regex);
+      //console.log('iui', rtss.match(regex));
+      return rtssMatch?.find(m => m === rtss) ? true : false;
+    });
+  }
+  return true;
 
 }
