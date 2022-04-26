@@ -8,7 +8,7 @@ import {
   EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate } from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -31,6 +31,8 @@ import { WfsWorkspace } from './wfs-workspace';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import {Circle, Fill, Stroke, Style} from 'ol/style';
+import {asArray as ColorAsArray } from 'ol/color';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +45,7 @@ export class WmsWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(private layerService: LayerService, private storageService: StorageService) { }
+  constructor(private layerService: LayerService, private storageService: StorageService, private configService: ConfigService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
@@ -179,11 +181,36 @@ export class WmsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    let styles = undefined;
+    const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
+    if (confQueryOverlayStyle.selection) {
+      let colorArray = ColorAsArray(confQueryOverlayStyle.selection.fillColor);
+      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity
+      debugger;
+      const fill = new Fill({
+        color: colorArray
+      });
+      const stroke = new Stroke({
+        color: confQueryOverlayStyle.selection.strokeColor,
+        width: confQueryOverlayStyle.selection.strokeWidth,
+      });
+      styles = [
+        new Style({
+          image: new Circle({ // need for point feature with wks noQuery
+            fill: fill,
+            stroke: stroke,
+            radius: 5,
+          }),
+          fill: fill,
+          stroke: stroke,
+        }),
+      ];
+    }
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: undefined,
+        style: styles,
         showInLayerList: false,
         exportable: false,
         browsable: false
