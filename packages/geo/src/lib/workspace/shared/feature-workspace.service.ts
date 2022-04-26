@@ -87,8 +87,7 @@ export class FeatureWorkspaceService {
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
     if (confQueryOverlayStyle.selection) {
       let colorArray = ColorAsArray(confQueryOverlayStyle.selection.fillColor);
-      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity
-      debugger;
+      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity;
       const fill = new Fill({
         color: colorArray
       });
@@ -98,7 +97,7 @@ export class FeatureWorkspaceService {
       });
       styles = [
         new Style({
-          image: new Circle({ 
+          image: new Circle({
             fill: fill,
             stroke: stroke,
             radius: 5,

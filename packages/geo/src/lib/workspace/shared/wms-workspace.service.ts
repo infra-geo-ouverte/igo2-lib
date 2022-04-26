@@ -185,8 +185,7 @@ export class WmsWorkspaceService {
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
     if (confQueryOverlayStyle.selection) {
       let colorArray = ColorAsArray(confQueryOverlayStyle.selection.fillColor);
-      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity
-      debugger;
+      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity;
       const fill = new Fill({
         color: colorArray
       });
