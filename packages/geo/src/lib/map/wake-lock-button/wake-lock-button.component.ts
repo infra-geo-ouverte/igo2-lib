@@ -1,8 +1,9 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ConfigService, StorageService } from '@igo2/core';
 import { BehaviorSubject } from 'rxjs';
 import NoSleep from 'nosleep.js';
 import { IgoMap } from '../shared/map';
+import { userAgent } from '@igo2/utils';
 
 @Component({
   selector: 'igo-wake-lock-button',
@@ -19,7 +20,7 @@ import { IgoMap } from '../shared/map';
  * TODO: When the API will be supported by every browser, We should remove the NoSleep.js dependency
  * and replace it by a WakeLock API implementation.
  */
-export class WakeLockButtonComponent implements AfterViewInit {
+export class WakeLockButtonComponent {
 
   @Input() color: string = 'primary';
   @Input() map: IgoMap;
@@ -31,7 +32,7 @@ export class WakeLockButtonComponent implements AfterViewInit {
     this.storageService.set('wakeLockEnabled', value);
   }
 
-  private noSleep = new NoSleep();
+  private noSleep: NoSleep;
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject('sleep');
   public visible = false;
 
@@ -39,14 +40,25 @@ export class WakeLockButtonComponent implements AfterViewInit {
     private config: ConfigService,
     private storageService: StorageService
   ) {
-   this.visible = this.config.getConfig('wakeLockApiButton') ? true : false;
-  }
-  ngAfterViewInit(): void {
-    if (this.enabled) {
-      this.map.ol.once('precompose', () => {
-        this.enableWakeLock();
-      });
+    this.visible = this.config.getConfig('wakeLockApiButton') ? true : false;
+    this.noSleep = new NoSleep();
+    const nonWakeLockApiBrowser = userAgent.satisfies({
+      ie: '>0',
+      edge: '<84',
+      chrome: '<84',
+      firefox: '>0',
+      opera: '<70',
+      safari: '>0'
+    });
+    if (nonWakeLockApiBrowser) {
+      this.disableWakeLock();
+      this.enabled = false;
+      window.onblur = () => {
+        this.disableWakeLock();
+        this.enabled = false;
+    };
     }
+    this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }
 
   /**
