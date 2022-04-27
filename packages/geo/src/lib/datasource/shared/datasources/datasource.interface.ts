@@ -70,9 +70,10 @@ export interface EditionOptions {
 export interface RelationOptions {
   title: string;
   name: string;
+  table?: string;
+  url?: string;
   alias?: string;
   icon?: string;
-  table: string;
   parent?: string;
   tooltip?: string;
 }
@@ -82,6 +83,7 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
+  send?: boolean;
 }
 
 export interface Legend {

@@ -315,7 +315,7 @@ export class EditionWorkspaceService {
       };
 
       if (field.type === 'list' || field.type === 'autocomplete') {
-        this.getDomainValues(field.relation.table).subscribe(result => {
+        this.getDomainValues(field.relation).subscribe(result => {
           column.domainValues = result;
           column.relation = field.relation;
         });
@@ -406,7 +406,7 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (sf.name === property && sf.validation?.readonly) {
+        if ((sf.name === property && sf.validation?.readonly) || (sf.name === property && sf.validation?.send === false)) {
           delete feature.properties[property];
         }
       }
@@ -510,7 +510,8 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if ((sf.name === property && sf.validation?.readonly) || property === 'boundedBy') {
+        if ((sf.name === property && sf.validation?.readonly) || (sf.name === property && sf.validation?.send === false)
+          || property === 'boundedBy') {
           delete feature.properties[property];
         }
       }
@@ -587,14 +588,18 @@ export class EditionWorkspaceService {
     }
   }
 
-  getDomainValues(table: string): Observable<any> {
-    let url = this.configService.getConfig('edition.url') + table;
+  getDomainValues(relation: RelationOptions): Observable<any> {
+    let url = relation.url;
+    if (!url) {
+      url = this.configService.getConfig('edition.url') + relation.table;
+    }
 
     return this.http.get<any>(url).pipe(
       map(result => {
         return result;
       }),
       catchError((err: HttpErrorResponse) => {
+        err.error.caught = true;
         return throwError(err);
       })
     );
