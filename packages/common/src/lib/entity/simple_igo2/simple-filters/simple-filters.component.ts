@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SimpleFilter } from './simple-filters.interface';
+import { ConfigService } from '@igo2/core'
 
 @Component({
   selector: 'igo-simple-filters',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SimpleFiltersComponent implements OnInit {
 
-  constructor() { }
+  public filters: Array<SimpleFilter>;
+
+  constructor(private configService: ConfigService) { }
 
   ngOnInit(): void {
+    this.filters = this.configService.getConfig('simpleFilters');
+  }
+
+  resetFilters() {
+    console.log('reset filters')
   }
 
 }

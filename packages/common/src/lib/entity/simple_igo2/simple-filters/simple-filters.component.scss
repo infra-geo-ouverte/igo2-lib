@@ -1,0 +1,62 @@
+.filters {
+    background-color: #f2f1f1;
+}
+.title-reset {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filters:hover {
+    cursor: default;
+}
+
+.filters-title {
+    font-family: "Open Sans", sans-serif;
+    font-weight: bold;
+    color: #223654;
+    font-size: 19px;
+    line-height: 24px;
+    margin-top: 24px;
+    margin-left: 16px;
+    margin-bottom: 0px;
+}
+
+.reset-filters {
+    font-family: "Open Sans", sans-serif;
+    font-weight: bold;
+    color: #095797;
+    font-size: 16px;
+    line-height: 24px;
+    margin-top: 24px;
+    margin-right: 16px;
+    margin-bottom: 0px;
+}
+
+.reset-filters:hover {
+    cursor: pointer;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: white;
+    border-radius: 5px;
+}
+
+.filter-description {
+    font-family: "Open Sans", sans-serif;
+    font-weight: bold;
+    color: #095797;
+    font-size: 16px;
+    line-height: 24px;
+    display: inline-block;
+}
+
+::ng-deep .mat-select-arrow {
+    opacity: 0
+}
+
+.filter-description, .filter-select {
+    margin-left: 16px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}

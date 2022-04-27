@@ -1,3 +1,4 @@
+import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { SimpleFeatureListComponent } from './simple-feature-list.component';
 import { NgModule } from '@angular/core';
@@ -20,6 +21,7 @@ import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-pagin
   imports: [
     CommonModule,
     MatIconModule,
+    MatDividerModule,
     MatButtonModule,
     MatTooltipModule,
     MatPaginatorModule,

@@ -1,1 +1,31 @@
-<p>simple-filters works!</p>
+<div class="filters">
+  <div class="title-reset">
+    <span class="filters-title">{{ 'igo.common.simpleFilters.filters' | translate }}</span>
+    <span
+      class="reset-filters"
+      [matTooltip]="'igo.common.simpleFilters.resetFilters' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="resetFilters()">{{ 'igo.common.simpleFilters.resetFilters' | translate }}
+    </span>
+  </div>
+  <div *ngFor="let filter of filters"
+    class="filter">
+    <p class="filter-description">{{ filter.description }}</p>
+    <mat-form-field
+      class="filter-select"
+      appearance="outline">
+      <mat-select
+        disableOptionCentering
+        placeholder="{{ 'igo.common.simpleFilters.placeholder' | translate }}">
+        <mat-option value="test">Test</mat-option>
+      </mat-select>
+      <mat-icon
+        color="primary"
+        matSuffix
+        svgIcon="chevron-down"></mat-icon>
+    </mat-form-field>
+  </div>
+</div>
+<br>
+<mat-divider></mat-divider>
