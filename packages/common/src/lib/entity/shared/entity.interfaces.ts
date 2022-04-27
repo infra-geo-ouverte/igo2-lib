@@ -101,7 +101,8 @@ export interface EntityTableColumnValidation {
 }
 
 export interface TableRelation {
-  table: string;
+  table?: string;
+  url?: string;
 }
 
 export interface EntityTableColumn {
@@ -119,6 +120,7 @@ export interface EntityTableColumn {
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
+  tooltip?: string;
 }
 
 export interface SelectOption {

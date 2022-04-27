@@ -13,8 +13,9 @@ import {
   Optional,
   Self
 } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
 
 import {
   EntityKey,
@@ -34,9 +35,11 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import * as moment_ from 'moment';
 const moment = moment_;
+
+import { LanguageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-entity-table',
@@ -51,7 +54,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   public formGroup: FormGroup = new FormGroup({});
 
-  public filteredOptions: Observable<any[]>;
+  public filteredOptions = {};
 
   /**
    * Reference to the column renderer types
@@ -206,7 +209,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     @Optional() protected _parentForm: NgForm,
     @Optional() protected _controlName: FormControlName,
     protected _defaultErrorStateMatcher: ErrorStateMatcher,
-    private dateAdapter: DateAdapter<Date>
+    private dateAdapter: DateAdapter<Date>,
+    private http: HttpClient
   ) {
     this.dateAdapter.setLocale('fr-CA');
   }
@@ -257,10 +261,31 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process autocomplete value change (edition)
    */
-  onAutocompleteValueChange(column: string, record: EntityRecord<any>, event) {
-    this.formGroup.controls[column].setValue(event.option.viewValue);
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
+  onAutocompleteValueChange(column: EntityTableColumn, record: EntityRecord<any>, event) {
+    this.formGroup.controls[column.name].setValue(event.option.viewValue);
+    const key = this.getColumnKeyWithoutPropertiesTag(column.name);
     record.entity.properties[key] = event.option.value;
+    for (const col of this.template.columns) {
+      if (column.name !== col.name && col.relation?.url?.includes('/terrapi/municipalites')) {
+        col.tooltip = '';
+        this.formGroup.controls[col.name]?.setValue('');
+        record.entity.properties['code_territoire'] = undefined;
+
+        let dom = [];
+        this.http.get<any>(col.relation.url + '?mrcCode=' + record.entity.properties.code_mrc).subscribe(result => {
+          result.features.map(feature => {
+            const id = feature.properties.code;
+            const value = feature.properties.nom;
+            dom.push({id, value});
+          });
+          col.domainValues = dom,
+          catchError((err: HttpErrorResponse) => {
+            err.error.caught = true;
+            return throwError(err);
+          });
+        });
+      }
+    }
   }
 
   /**
@@ -279,7 +304,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   private enableEdit(record: EntityRecord<any>) {
     const item = record.entity.properties || record.entity;
-    this.template.columns.forEach(column => {
+    for (const column of this.template.columns) {
       column.title = column.validation?.mandatory && !column.title.includes('*') ? column.title + ' *' : column.title;
 
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
@@ -311,28 +336,43 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           item[key]
         ));
 
-        this.filteredOptions = this.formGroup.controls[column.name].valueChanges.pipe(
-          map(value => {
-            if (value.length) {
-              return column.domainValues.filter((option) => {
-                const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-                const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                return featureNameNormalized.includes(filterNormalized);
-              });
-            }
-          })
-        );
-
         let formControlValue = item[key];
-        column.domainValues.forEach(option => {
-          if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue)) {
-            formControlValue = parseInt(formControlValue);
-          }
-          if (option.value === formControlValue || option.id === formControlValue) {
-            formControlValue = option.value;
-          }
-        });
+        const domain = column.domainValues as any;
+        if (domain?.features) {
+          let response = domain.features as any;
+          let dom = [];
+          response.map(feature => {
+            const id = feature.properties.code;
+            const value = feature.properties.nom;
+            dom.push({id, value});
+          });
+          column.domainValues = dom;
+        }
 
+        this.filteredOptions[column.name] = new Observable<any[]>();
+        this.filteredOptions[column.name] =
+          this.formGroup.controls[column.name].valueChanges.pipe(
+            map(value => {
+              if (value?.length) {
+                return column.domainValues?.filter((option) => {
+                  const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+                  const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                  return featureNameNormalized.includes(filterNormalized);
+                });
+              }
+            })
+          );
+
+        if (!domain.features) {
+          column.domainValues.forEach(option => {
+            if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue)) {
+              formControlValue = parseInt(formControlValue);
+            }
+            if (option.value === formControlValue || option.id === formControlValue) {
+              formControlValue = option.value;
+            }
+          });
+        }
         this.formGroup.controls[column.name].setValue(formControlValue);
       } else if (column.type === 'date') {
         if (column.visible) {
@@ -359,7 +399,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (this.formGroup.controls[column.name] && this.getValidationAttributeValue(column, 'readonly')) {
         this.formGroup.controls[column.name].disable();
       }
-    });
+    };
   }
 
   private handleDatasource() {
