@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SimpleFilter } from './simple-filters.interface';
-import { ConfigService } from '@igo2/core'
+import { ConfigService } from '@igo2/core';
 
 @Component({
   selector: 'igo-simple-filters',
@@ -18,7 +18,7 @@ export class SimpleFiltersComponent implements OnInit {
   }
 
   resetFilters() {
-    console.log('reset filters')
+    console.log('reset filters');
   }
 
 }
