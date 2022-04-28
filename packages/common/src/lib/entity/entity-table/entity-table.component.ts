@@ -39,8 +39,6 @@ import { catchError, map } from 'rxjs/operators';
 import * as moment_ from 'moment';
 const moment = moment_;
 
-import { LanguageService } from '@igo2/core';
-
 @Component({
   selector: 'igo-entity-table',
   templateUrl: './entity-table.component.html',
