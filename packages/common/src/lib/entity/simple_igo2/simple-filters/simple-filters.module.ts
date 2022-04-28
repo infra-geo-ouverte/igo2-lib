@@ -8,6 +8,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { IgoStopPropagationModule } from '../../../stop-propagation/stop-propagation.module';
 import { IgoCustomHtmlModule } from '../../../custom-html/custom-html.module';
@@ -26,6 +30,10 @@ import { IgoLanguageModule } from '@igo2/core';
     MatSelectModule,
     MatOptionModule,
     MatTooltipModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
     MatPaginatorModule,
     IgoStopPropagationModule,
     IgoCustomHtmlModule,

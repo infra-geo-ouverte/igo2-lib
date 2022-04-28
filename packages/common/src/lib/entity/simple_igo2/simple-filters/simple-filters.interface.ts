@@ -1,5 +1,4 @@
 export interface SimpleFilter {
-    filter: string;
+    type: string;
     description: string;
-    multiple?: boolean;
 }
