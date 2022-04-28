@@ -466,13 +466,13 @@ export class EditionWorkspaceService {
         this.messageService.success(message);
 
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
-        for (const relation of workspace.layer.options.sourceOptions.relations) {
+        workspace.layer.options.sourceOptions.relations?.forEach(relation => {
           workspace.map.layers.forEach((layer) => {
             if (layer.title === relation.title) {
               layer.dataSource.ol.refresh();
             }
           });
-        }
+        })
       },
       error => {
         this.loading = false;
@@ -531,14 +531,14 @@ export class EditionWorkspaceService {
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
 
         let relationLayers = [];
-        for (const relation of workspace.layer.options.sourceOptions.relations) {
+        workspace.layer.options.sourceOptions.relations?.forEach(relation => {
           workspace.map.layers.forEach((layer) => {
             if (layer.title === relation.title) {
               relationLayers.push(layer);
               layer.dataSource.ol.refresh();
             }
           });
-        }
+        });
         this.relationLayers$.next(relationLayers);
       },
       error => {

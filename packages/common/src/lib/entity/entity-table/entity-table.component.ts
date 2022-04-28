@@ -333,19 +333,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         this.formGroup.setControl(column.name, this.formBuilder.control(
           item[key]
         ));
-
         let formControlValue = item[key];
-        const domain = column.domainValues as any;
-        if (domain?.features) {
-          let response = domain.features as any;
-          let dom = [];
-          response.map(feature => {
-            const id = feature.properties.code;
-            const value = feature.properties.nom;
-            dom.push({id, value});
-          });
-          column.domainValues = dom;
-        }
 
         this.filteredOptions[column.name] = new Observable<any[]>();
         this.filteredOptions[column.name] =
@@ -361,8 +349,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
             })
           );
 
-        if (!domain.features) {
-          column.domainValues.forEach(option => {
+        const domain = column.domainValues as any;
+        if (!domain?.features) {
+          column.domainValues?.forEach(option => {
             if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue)) {
               formControlValue = parseInt(formControlValue);
             }
@@ -684,41 +673,49 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = value ? '&#10003;' : ''; // check mark
       }
     } else if (column.type === 'list' && value && column.domainValues) {
+      const domain = column.domainValues as any;
       if (column.multiple) {
         let list_id;
         typeof value === 'string' ? list_id = value.match(/[\w.-]+/g).map(Number) : list_id = value;
         let list_option = [];
 
-        column.domainValues.forEach(option => {
-          if (list_id.includes(option.id)) {
-            if (record.edition) {
-              list_option.push(option.id);
-            } else {
-              list_option.push(option.value);
+        if (!domain?.features) {
+          column.domainValues.forEach(option => {
+            if (list_id.includes(option.id)) {
+              if (record.edition) {
+                list_option.push(option.id);
+              } else {
+                list_option.push(option.value);
+              }
             }
-          }
-        });
+          });
+        }
 
         this.isEdition(record) ? value = list_id : value = list_option;
       } else {
+        if (!domain?.features) {
+          column.domainValues.forEach(option => {
+            if (typeof value === 'string' && /^\d+$/.test(value)) {
+              value = parseInt(value);
+            }
+            if (option.value === value || option.id === value) {
+              this.isEdition(record) ? value = option.id : value = option.value;
+            }
+          });
+        }
+      }
+    } else if (column.type === 'autocomplete' && value && column.domainValues) {
+      const domain = column.domainValues as any;
+      if (!domain?.features) {
         column.domainValues.forEach(option => {
           if (typeof value === 'string' && /^\d+$/.test(value)) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
-            this.isEdition(record) ? value = option.id : value = option.value;
+            value = option.value;
           }
         });
       }
-    } else if (column.type === 'autocomplete' && value && column.domainValues) {
-      column.domainValues.forEach(option => {
-        if (typeof value === 'string' && /^\d+$/.test(value)) {
-          value = parseInt(value);
-        }
-        if (option.value === value || option.id === value) {
-          value = option.value;
-        }
-      });
     }
     else if (column.type === 'date') {
       if (this.isEdition(record)) {
