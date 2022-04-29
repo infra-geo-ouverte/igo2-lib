@@ -36,7 +36,7 @@
     
     <mat-form-field appearance="outline" class="radius-field" floatLabel="always">
       <mat-label>{{'igo.integration.map-proximity-tool.radiusM' | translate}}</mat-label>
-      <input type="number" [(ngModel)]="maxDistance" matInput placeholder="{{'igo.integration.map-proximity-tool.radiusM' | translate}}">
+      <input type="number" pattern="[0-9]*" [(ngModel)]="maxDistance" matInput placeholder="{{'igo.integration.map-proximity-tool.radiusM' | translate}}">
       </mat-form-field>
   
     
