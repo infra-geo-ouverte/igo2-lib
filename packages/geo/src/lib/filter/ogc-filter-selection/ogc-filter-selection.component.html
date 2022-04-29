@@ -133,7 +133,7 @@
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
                 #selection [multiple]="bundle.multiple" [placeholder]="bundle.title"
-                formControlName="select" [(ngModel)]="selectEnableds">
+                [formControl]="select" [(ngModel)]="selectEnableds">
                 <div class="checkboxes mat-typography">
                   <mat-checkbox *ngIf="bundle.multiple"
                     [(ngModel)]="selectAllSelected" [ngModelOptions]="{standalone: true}"
@@ -150,7 +150,7 @@
             <ng-template #notMulti>
               <mat-select
                 [placeholder]="bundle.title"
-                formControlName="select" [(ngModel)]="selectEnabled">
+                [formControl]="select" [(ngModel)]="selectEnabled">
                 <mat-option *ngFor="let ogcSelect of bundle.selectors"
                   [matTooltip]="getToolTip(ogcSelect)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
                   [value]="ogcSelect">{{ogcSelect.title}}

@@ -61,12 +61,12 @@ export class OgcFilterButtonComponent implements OnInit {
       if (filter.autocomplete) {
         const autocomplete = filter.autocomplete as IgoOgcSelector;
         const currentAutocompleteGroup = autocomplete.groups.find(gr => gr.enabled);
-        let cntSelect = 0;
+        let cntAutocomplete = 0;
         if (currentAutocompleteGroup) {
-          currentAutocompleteGroup.computedSelectors?.map(cb => cntSelect += (cb.selectors as any)?.filter(
-            multi => multi.enabled).length);
+          currentAutocompleteGroup.computedSelectors?.map(cb => cntAutocomplete += (cb.selectors as any)?.filter(
+            autocomplete => autocomplete.enabled).length);
         }
-        cnt += cntSelect;
+        cnt += cntAutocomplete;
       }
     } else if (filter && filter.filters && !filter.filters.filters) {
       return 1;
