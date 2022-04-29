@@ -98,6 +98,7 @@ export class MapProximityState {
             olFeaturesAtCoordinate.map(olFeatureAtCoordinate => {
               const featureAtThisPosition = featureFromOl(olFeatureAtCoordinate, this.map.projection);
               let title = this.getQueryTitle(featureAtThisPosition, layerToMonitor);
+              // todo handle imported layers without querytitle? prompt title or detect first column?
               this.addFeatureToStore(layerToMonitor, coord, featureAtThisPosition, title, 0);
             });
           } else {
@@ -111,6 +112,7 @@ export class MapProximityState {
               const lineLength = measureOlGeometryLength(linebetween, 'EPSG:3857');
               if (lineLength <= proximityRadiusValue) {
                 let title = this.getQueryTitle(closestFeature, layerToMonitor);
+                // todo handle imported layers without querytitle? prompt title or detect first column?
                 this.addFeatureToStore(layerToMonitor, coord, closestFeature, title, lineLength);
               }
             }
