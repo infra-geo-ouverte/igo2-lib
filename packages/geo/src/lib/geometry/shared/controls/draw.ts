@@ -295,6 +295,8 @@ setOlInteractionStyle(style: OlStyleLike){
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
+    console.log(event);
+    console.log("event dans onDrawStart draw.ts");
     this.subscribeKeyDown();
   }
 
@@ -310,6 +312,8 @@ setOlInteractionStyle(style: OlStyleLike){
       this.modify$.next(olGeometry);
     });
     this.end$.next(olGeometry);
+    console.log(event);
+    console.log("event dans onDrawEnd draw.ts");
   }
 
   /**

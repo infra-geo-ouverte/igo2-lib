@@ -368,9 +368,17 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param olGeometry Ol linestring or polygon
    */
   private onDrawEnd(olGeometry: OlGeometry, radius?: number) {
+    console.log(olGeometry);
+    console.log("olGeometry from onDrawEnd from drawcomponent");
     this.addFeatureToStore(olGeometry, radius);
+     console.log(radius);
+     console.log ("radius onDrawEnd from drawcomponent");
     this.clearLabelsOfOlGeometry(olGeometry);
+    console.log(olGeometry);
+
     this.store.layer.ol.getSource().refresh();
+    console.log(this.store);
+    console.log ("store onDrawEnd from drawcomponent");
   }
 
   private onModifyDraw(olGeometry) {
@@ -419,6 +427,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     let point4326: Array<number>;
     let lon4326: number;
     let lat4326: number;
+    let radDef: number;
+    let radiusMeters: number;
+
     const featureId = feature ? feature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
 
@@ -426,10 +437,15 @@ export class DrawComponent implements OnInit, OnDestroy {
       featureProjection: projection,
       dataProjection: projection
     }) as any;
+    console.log(olGeometry);
+    console.log("olGeometry et radius dans addfeatureToStore");
+
 
     if (olGeometry instanceof OlCircle || radius) {
       if (radius) {
         rad = radius;
+        console.log(radius);
+    console.log("condition IF radius dans addfeatureToStore from draw.component");
       } else {
         geometry.type = 'Point';
         geometry.coordinates = olGeometry.getCenter();
@@ -438,6 +454,19 @@ export class DrawComponent implements OnInit, OnDestroy {
         lon4326 = center4326[0];
         lat4326 = center4326[1];
         rad = getDistance(center4326, extent4326);
+        console.log(rad);
+        console.log("condition else radius dans addfeatureToStore from draw.component.ts");
+      }
+      if (radius){
+        radDef = radius;
+      }else {
+        let resolution:number;
+        geometry.type = 'Point';
+        const geom = feature.getGeometry() === this.geometryType.Circle;
+        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+        radDef = (radiusMeters/(Math.cos((Math.PI/180) * coordinates[1])) / resolution);
+
+        console.log("radDef condition from draw.component.ts");
       }
     }
 
@@ -445,6 +474,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       point4326 = transform(olGeometry.getFlatCoordinates(), projection, 'EPSG:4326');
       lon4326 = point4326[0];
       lat4326 = point4326[1];
+      console.log("olgeometry instanceof OlPoint");
     }
 
     this.store.update({
@@ -456,12 +486,14 @@ export class DrawComponent implements OnInit, OnDestroy {
         draw: olGeometry.get('_label'),
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
-        rad: rad ? rad : null
+        rad: rad ? rad : radDef
       },
       meta: {
        id: featureId
       }
     });
+    console.log(this.store);
+    console.log("store.update dans addfeatureToStore");
   }
 
   /**
@@ -472,6 +504,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number) {
     this.store.delete(entity);
     this.onDrawEnd(olGeometry, radius);
+    console.log(" private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number)");
   }
 
   private buildForm() {
