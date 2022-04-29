@@ -76,7 +76,7 @@ export class EditionActionsService implements OnDestroy {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
       .pipe(skipWhile((storageChange: StorageServiceEvent) =>
-        storageChange.key !== 'zoomAuto' || storageChange.event === StorageServiceEventEnum.CLEARED))
+        storageChange?.key !== 'zoomAuto' || storageChange?.event === StorageServiceEventEnum.CLEARED))
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
         handleZoomAuto(workspace, this.storageService);

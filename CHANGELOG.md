@@ -1,3 +1,19 @@
+## [1.11.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.0...1.11.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **context/layer-list-tool:** fix CSS overflow with Chrome 100 ([#1031](https://github.com/infra-geo-ouverte/igo2-lib/issues/1031)) ([6b48062](https://github.com/infra-geo-ouverte/igo2-lib/commit/6b48062a14cddc97aaf81cf66e34f0b1f4f0532f))
+* **entity-table:** fix formControl with no properties entity ([#1032](https://github.com/infra-geo-ouverte/igo2-lib/issues/1032)) ([b52ee5c](https://github.com/infra-geo-ouverte/igo2-lib/commit/b52ee5ca3b350bb677513536f3d9e5eadfa38cef))
+* **workspace:** fix wfs-actions workspace demo ([#1034](https://github.com/infra-geo-ouverte/igo2-lib/issues/1034)) ([46c9fd6](https://github.com/infra-geo-ouverte/igo2-lib/commit/46c9fd6c3241f9fcbb3fcb27e49c349fd83eb7d0))
+
+
+### Reverts
+
+* Revert "feat(layerSync): prevent refresh of linked layer if applied OGC filters are the same (#1027)" (#1033) ([7ae2b2b](https://github.com/infra-geo-ouverte/igo2-lib/commit/7ae2b2bdfa82d5801cfc9c052b5db0f0d2e4e6bb)), closes [#1027](https://github.com/infra-geo-ouverte/igo2-lib/issues/1027) [#1033](https://github.com/infra-geo-ouverte/igo2-lib/issues/1033)
+
+
+
 # [1.11.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.10.0...1.11.0) (2022-03-30)
 
 
