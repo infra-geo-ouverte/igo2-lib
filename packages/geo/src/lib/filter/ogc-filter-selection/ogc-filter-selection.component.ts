@@ -21,7 +21,7 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { IgoMap } from '../../map';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, map } from 'rxjs/operators';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { MatSelect } from '@angular/material/select';
@@ -65,7 +65,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
-  public select = new FormControl();
   public selectAllSelected = false;
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
@@ -146,6 +145,9 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   set selectEnabled(value) {
     this.selectEnabled$.next(value);
+    if (this.form.controls['select'].value !== value) {
+      this.form.controls['select'].setValue(value);
+    }
     clearTimeout(this.applyFiltersTimeout);
     this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors?.forEach(selector => {
@@ -213,6 +215,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       checkboxesGroup: ['', [Validators.required]],
       radioButtonsGroup: ['', [Validators.required]],
       selectGroup: ['', [Validators.required]],
+      select: ['', [Validators.required]],
       autocompleteGroup: ['', [Validators.required]],
       autocomplete: ['', [Validators.required]]
     });
@@ -343,22 +346,19 @@ export class OgcFilterSelectionComponent implements OnInit {
     let enabled;
     this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       if (compSelect.multiple) {
-        console.log(compSelect.selectors);
         compSelect.selectors?.forEach(selector => {
-          console.log(selector.enabled);
           if (selector.enabled) {
             enableds.push(selector);
           }
         });
-        console.log(enableds);
         this.selectEnableds = enableds;
+        this.form.controls['select'].setValue(enableds);
       } else {
         compSelect.selectors?.forEach(selector => {
           if (selector.enabled) {
             enabled = selector;
           }
         });
-        console.log(enabled);
         this.selectEnabled = enabled;
       }
     });
@@ -601,20 +601,53 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   toggleAllSelection() {
     if (this.selectAllSelected) {
+      const enableds = [];
+      this.currentSelectGroup.computedSelectors.forEach(compSelect => {
+        compSelect.selectors?.forEach(selector => {
+          enableds.push(selector);
+        });
+      });
       this.sel.options.forEach((item: MatOption) => item.select());
+      this.selectEnableds = enableds;
     } else {
       this.sel.options.forEach((item: MatOption) => item.deselect());
+      this.selectEnableds = [];
     }
   }
 
-  optionClick() {
-    let newStatus = true;
-    this.sel.options.forEach((item: MatOption) => {
-      if (!item.selected) {
-        newStatus = false;
+  selectOptionClick(value, bundle, event?) {
+    if (bundle.multiple) {
+      const enableds = this.selectEnableds;
+      let newStatus = true;
+      this.sel.options.forEach((item: MatOption) => {
+        if (!item.selected) {
+          newStatus = false;
+        }
+      });
+      this.selectAllSelected = newStatus;
+      if (event.isUserInput || this.selectAllSelected) {
+        if (enableds.length) {
+          for (const enabled of enableds) {
+            if (enabled.title === value.title) {
+              if (enabled.enabled && value.enabled) {
+                enableds.splice(enableds.indexOf(enabled), 1);
+                this.selectEnableds = enableds;
+                break;
+              }
+            } else if (enableds.indexOf(enabled) === enableds.length - 1) {
+              enableds.push(value);
+              this.selectEnableds = enableds;
+              break;
+            }
+          }
+        } else {
+          enableds.push(value);
+          this.selectEnableds = enableds;
+        }
       }
-    });
-    this.selectAllSelected = newStatus;
+    } else {
+      this.selectEnabled = value;
+    }
   }
 
   autocompleteOptionClick(value) {
