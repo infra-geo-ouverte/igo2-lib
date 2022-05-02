@@ -472,7 +472,7 @@ export class EditionWorkspaceService {
               layer.dataSource.ol.refresh();
             }
           });
-        })
+        });
       },
       error => {
         this.loading = false;
