@@ -463,7 +463,8 @@
             "km": "Mileage mark",
             "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "dessertes": "Police services (CSAU)"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",

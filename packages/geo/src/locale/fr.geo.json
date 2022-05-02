@@ -462,7 +462,8 @@
             "km": "Repère kilométrique",
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "dessertes": "Dessertes de police (CSAU)"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",

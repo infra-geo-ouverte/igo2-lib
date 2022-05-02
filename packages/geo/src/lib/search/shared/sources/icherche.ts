@@ -710,6 +710,11 @@ export class IChercheReverseSearchSource extends SearchSource
               title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
               enabled: types.indexOf('regadmin') !== -1
+            },
+            {
+              title: 'igo.geo.search.icherche.type.dessertes',
+              value: 'dessertes-test',
+              enabled: types.indexOf('dessertes-test') !== -1
             }
           ]
         },
