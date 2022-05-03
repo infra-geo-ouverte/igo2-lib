@@ -3,9 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { SimpleFilter, TypeValues, Values } from './simple-filters.interface';
 import { ConfigService } from '@igo2/core';
-import { map, startWith } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'igo-simple-filters',
@@ -23,26 +23,24 @@ export class SimpleFiltersComponent implements OnInit {
 
   constructor(private configService: ConfigService, private http: HttpClient, private formBuilder: FormBuilder) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.filtersConfig = this.configService.getConfig('simpleFilters');
 
     this.spatialFiltersForm = this.formBuilder.group({});
 
-    this.filtersConfig.forEach(filter => {
+    for (let filter of this.filtersConfig) {
       if (filter.type) {
-        this.getValues(filter).then((typeValues: TypeValues) => {
+        const typeValues: TypeValues = await this.getValues(filter);
+
+        if (typeValues) {
           this.typesValues.push(typeValues)
-        });
+        }
       }
-    });
-    console.log(this.typesValues)
-    console.log(this.typesValues.length)
-
-
-    for (let typeValues of this.typesValues) {
-      console.log('for loop')
-      this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''))
     }
+
+    this.typesValues.forEach((typeValues: TypeValues) => {
+      this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''))
+    });
 
     console.log(this.spatialFiltersForm)
   }
@@ -53,7 +51,7 @@ export class SimpleFiltersComponent implements OnInit {
   }
 
   async getValues(filter: SimpleFilter): Promise<TypeValues> {
-    const featureCollection = await this.createFilterList(filter.type);
+    const featureCollection: FeatureCollection = await this.createFilterList(filter.type);
 
     if (featureCollection) {
       let values: Array<Values> = [];
@@ -61,7 +59,7 @@ export class SimpleFiltersComponent implements OnInit {
         values.push({code: feature.properties.code, nom: feature.properties.nom});
       });
       const typeValues: TypeValues = {type: filter.type, description: filter.description, values: values};
-      console.log('typeValues', typeValues);
+
       return typeValues;
     };
   }
