@@ -9,30 +9,24 @@
       (click)="resetFilters()">{{ 'igo.common.simpleFilters.resetFilters' | translate }}
     </span>
   </div>
-  <div *ngFor="let filter of filters"
-    class="filter">
-    <p class="filter-description">{{ filter.description }}</p>
-    <form>
-      <mat-form-field class="filter-select" appearance="outline">
-        <mat-label>{{ filter.description }}</mat-label>
+  <form [formGroup]="spatialFiltersForm">
+    <div *ngFor="let spatialFilter of spatialFiltersForm.controls">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ spatialFilter.key }}</mat-label>
         <input
-          matInput
-          [formControl]="myControl"
-          [matAutocomplete]="auto">
-        <mat-autocomplete
-          #auto="matAutocomplete">
+        matInput
+        type="text"
+        [formControlName]="spatialFilter.key"
+        [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of filteredValues$ | async" [value]="value">
             {{ value }}
           </mat-option>
         </mat-autocomplete>
-        <mat-icon
-          matSuffix
-          color="primary"
-          svgIcon="chevron-down">
-        </mat-icon>
       </mat-form-field>
-    </form>
-  </div>
+    </div>
+  </form>
+  {{spatialFiltersForm.value | json}}
 </div>
 <br>
 <mat-divider></mat-divider>

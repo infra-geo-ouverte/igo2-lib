@@ -1,11 +1,11 @@
 import { FeatureCollection } from 'geojson';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { SimpleFilter } from './simple-filters.interface';
+import { SimpleFilter, TypeValues, Values } from './simple-filters.interface';
 import { ConfigService } from '@igo2/core';
 import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'igo-simple-filters',
@@ -13,27 +13,38 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./simple-filters.component.scss']
 })
 export class SimpleFiltersComponent implements OnInit {
-  public myControl = new FormControl();
   public terrapiBaseURL: string = "https://geoegl.msp.gouv.qc.ca/apis/terrapi/";
-  public filters: Array<SimpleFilter>;
+  public filtersConfig: Array<SimpleFilter>;
+  public typesValues: Array<TypeValues> = [];
   public values: Array<string> = [];
   public filteredValues$: Observable<Array<string>>;
 
-  constructor(private configService: ConfigService, private http: HttpClient) { }
+  public spatialFiltersForm: FormGroup;
+
+  constructor(private configService: ConfigService, private http: HttpClient, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.filters = this.configService.getConfig('simpleFilters');
-    this.filteredValues$ = this.myControl.valueChanges.pipe(startWith(''), map(value => this.filter(value)));
+    this.filtersConfig = this.configService.getConfig('simpleFilters');
 
-    this.filters.forEach(filter => {
+    this.spatialFiltersForm = this.formBuilder.group({});
+
+    this.filtersConfig.forEach(filter => {
       if (filter.type) {
-        this.createFilterList(filter.type).subscribe((featureCollection: FeatureCollection) => {
-          featureCollection.features.forEach(feature => {
-            this.values.push(feature.properties.nom);
-          });
+        this.getValues(filter).then((typeValues: TypeValues) => {
+          this.typesValues.push(typeValues)
         });
       }
     });
+    console.log(this.typesValues)
+    console.log(this.typesValues.length)
+
+
+    for (let typeValues of this.typesValues) {
+      console.log('for loop')
+      this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''))
+    }
+
+    console.log(this.spatialFiltersForm)
   }
 
   filter(value: string): Array<string> {
@@ -41,12 +52,31 @@ export class SimpleFiltersComponent implements OnInit {
     return this.values.filter(option => option.toLocaleLowerCase().includes(filterValue));
   }
 
-  createFilterList(type: string): Observable<FeatureCollection> {
+  async getValues(filter: SimpleFilter): Promise<TypeValues> {
+    const featureCollection = await this.createFilterList(filter.type);
+
+    if (featureCollection) {
+      let values: Array<Values> = [];
+      featureCollection.features.forEach(feature => {
+        values.push({code: feature.properties.code, nom: feature.properties.nom});
+      });
+      const typeValues: TypeValues = {type: filter.type, description: filter.description, values: values};
+      console.log('typeValues', typeValues);
+      return typeValues;
+    };
+  }
+
+  async createFilterList(type: string): Promise<FeatureCollection> {
     const url: string = this.terrapiBaseURL + type;
     const params = new HttpParams().set('sort', 'nom');
-    return this.http.get<FeatureCollection>(url, {params}).pipe(map(featureCollection => {
+    let response: FeatureCollection;
+
+    await this.http.get<FeatureCollection>(url, {params}).pipe(map((featureCollection: FeatureCollection) => {
+      response = featureCollection;
       return featureCollection;
-    }));
+    })).toPromise();
+
+    return response;
   }
 
   resetFilters() {
