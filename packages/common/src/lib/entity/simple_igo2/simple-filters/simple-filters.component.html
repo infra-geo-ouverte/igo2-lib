@@ -10,22 +10,30 @@
     </span>
   </div>
   <form [formGroup]="spatialFiltersForm">
-    <div *ngFor="let spatialFilter of spatialFiltersForm.controls">
+    <div *ngFor="let spatialFilter of spatialFiltersForm.controls | keyvalue">
       <mat-form-field appearance="outline">
-        <mat-label>{{ spatialFilter.key }}</mat-label>
+        <mat-label>{{ getDescription(spatialFilter.key) }}</mat-label>
         <input
         matInput
         type="text"
         [formControlName]="spatialFilter.key"
         [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of filteredValues$ | async" [value]="value">
-            {{ value }}
+          <mat-option>
+            Un
+          </mat-option>
+          <mat-option>
+            Deux
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </div>
   </form>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onFilter()">{{ 'igo.common.simpleFilters.submit' | translate }}
+  </button>
   {{spatialFiltersForm.value | json}}
 </div>
 <br>

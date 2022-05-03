@@ -48,7 +48,8 @@
       "simpleFilters": {
         "filters": "Filters",
         "placeholder": "Show filters",
-        "resetFilters": "Reset filters"
+        "resetFilters": "Reset filters",
+        "submit": "Filter"
       }
     }
   }

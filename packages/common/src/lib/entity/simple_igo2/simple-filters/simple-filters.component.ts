@@ -77,6 +77,15 @@ export class SimpleFiltersComponent implements OnInit {
     return response;
   }
 
+  getDescription(formControlName: string): string {
+    console.log('formControlName', formControlName);
+    return
+  }
+
+  onFilter() {
+    console.log('filter')
+  }
+
   resetFilters() {
     console.log('reset filters');
   }
