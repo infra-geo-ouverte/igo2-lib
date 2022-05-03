@@ -129,34 +129,70 @@
             (click)="emptySelect()">
             <mat-icon svgIcon="filter-remove"></mat-icon>
           </mat-button>
-          <mat-form-field>
+          <mat-form-field [style.width.%]="bundle.width ? bundle.width : undefined">
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
-                #selection [multiple]="bundle.multiple" [placeholder]="bundle.title"
-                [formControl]="select" [(ngModel)]="enableds">
+                #selection [multiple]="bundle.multiple" [placeholder]="bundle.title" formControlName="select">
                 <div class="checkboxes mat-typography">
                   <mat-checkbox *ngIf="bundle.multiple"
-                    [(ngModel)]="allSelected" [ngModelOptions]="{standalone: true}"
+                    [(ngModel)]="selectAllSelected" [ngModelOptions]="{standalone: true}"
                     (change)="toggleAllSelection()">Tous
                   </mat-checkbox>
                 </div>
                 <mat-option *ngFor="let ogcSelect of bundle.selectors"
                   [matTooltip]="getToolTip(ogcSelect)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
-                  (onSelectionChange)="optionClick()"
+                  (onSelectionChange)="selectOptionClick($event.source.value, bundle, $event)"
                   [value]="ogcSelect">{{ogcSelect.title}}
                 </mat-option>
               </mat-select>
             </div>
             <ng-template #notMulti>
               <mat-select
-                [placeholder]="bundle.title"
-                [formControl]="select" [(ngModel)]="enabled">
+                [placeholder]="bundle.title" formControlName="select">
                 <mat-option *ngFor="let ogcSelect of bundle.selectors"
                   [matTooltip]="getToolTip(ogcSelect)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
-                  [value]="ogcSelect">{{ogcSelect.title}}
+                  [value]="ogcSelect" (onSelectionChange)="selectOptionClick($event.source.value, bundle)">{{ogcSelect.title}}
                 </mat-option>
               </mat-select>
             </ng-template>
+          </mat-form-field>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="autocompleteGroups" *ngIf="selector.selectorType === 'autocomplete'">
+      <mat-divider></mat-divider>
+      <div class="groupsSelector" *ngIf="getAutocompleteGroups().length > 1">
+        <mat-form-field>
+          <mat-select
+            formControlName="autocompleteGroup"
+            [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" tooltip-position="below" matTooltipShowDelay="500"
+            [(value)]="currentAutocompleteGroup">
+            <mat-option *ngFor="let autocompleteGroup of getAutocompleteGroups()"
+              [value]="autocompleteGroup">{{autocompleteGroup.title}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <ng-container *ngFor="let bundle of currentAutocompleteGroup.computedSelectors">
+        <h4>{{bundle.title}}</h4>
+        <div class="groupsSelector">
+          <mat-button *ngIf="bundle.unfiltered"
+            mat-icon-button
+            color="warn"
+            [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+            (click)="emptyAutocomplete()">
+            <mat-icon svgIcon="filter-remove"></mat-icon>
+          </mat-button>
+          <mat-form-field *ngIf="filteredOgcAutocomplete[bundle.id]" [style.width.%]="bundle.width ? bundle.width : undefined">
+            <input matInput type="text" formControlName="autocomplete" #autocomplete class="autocomplete"
+              [matAutocomplete]="auto" [placeholder]="bundle.title">
+              <mat-autocomplete #auto="matAutocomplete" #autocomplete (optionSelected)="autocompleteOptionClick($event.option.value)"
+              [displayWith]="displayFn">
+                <mat-option *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async" [value]="ogcAutocomplete">
+                  {{ ogcAutocomplete.value }}
+                </mat-option>
+              </mat-autocomplete>
           </mat-form-field>
         </div>
       </ng-container>
