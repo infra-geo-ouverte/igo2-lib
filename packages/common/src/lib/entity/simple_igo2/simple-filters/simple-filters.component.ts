@@ -33,16 +33,16 @@ export class SimpleFiltersComponent implements OnInit {
         const typeValues: TypeValues = await this.getValues(filter);
 
         if (typeValues) {
-          this.typesValues.push(typeValues)
+          this.typesValues.push(typeValues);
         }
       }
     }
 
     this.typesValues.forEach((typeValues: TypeValues) => {
-      this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''))
+      this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''));
     });
 
-    console.log(this.spatialFiltersForm)
+    console.log(this.spatialFiltersForm);
   }
 
   filter(value: string): Array<string> {
