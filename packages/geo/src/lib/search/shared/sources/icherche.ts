@@ -713,8 +713,8 @@ export class IChercheReverseSearchSource extends SearchSource
             },
             {
               title: 'igo.geo.search.icherche.type.dessertes',
-              value: 'dessertes-test',
-              enabled: types.indexOf('dessertes-test') !== -1
+              value: 'dessertes-csau',
+              enabled: types.indexOf('dessertes-csau') !== -1
             }
           ]
         },
