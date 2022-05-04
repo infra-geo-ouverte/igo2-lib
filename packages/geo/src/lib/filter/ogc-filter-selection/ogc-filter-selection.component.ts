@@ -145,9 +145,6 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   set selectEnabled(value) {
     this.selectEnabled$.next(value);
-    if (this.form.controls['select'].value !== value) {
-      this.form.controls['select'].setValue(value);
-    }
     clearTimeout(this.applyFiltersTimeout);
     this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors?.forEach(selector => {
@@ -216,6 +213,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       radioButtonsGroup: ['', [Validators.required]],
       selectGroup: ['', [Validators.required]],
       select: ['', [Validators.required]],
+      selectMulti: ['', [Validators.required]],
       autocompleteGroup: ['', [Validators.required]],
       autocomplete: ['', [Validators.required]]
     });
@@ -352,13 +350,15 @@ export class OgcFilterSelectionComponent implements OnInit {
           }
         });
         this.selectEnableds = enableds;
-        this.form.controls['select'].setValue(enableds);
+        this.form.controls['selectMulti'].setValue(enableds);
       } else {
         compSelect.selectors?.forEach(selector => {
           if (selector.enabled) {
             enabled = selector;
           }
         });
+        this.form.controls['select'].reset(enabled);
+        this.selectEnabled$.subscribe((value) => this.form.controls['select'].setValue(value));
         this.selectEnabled = enabled;
       }
     });
@@ -450,6 +450,7 @@ export class OgcFilterSelectionComponent implements OnInit {
               .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
           }
         }
+        this.getSelectEnabled();
       }
     }
   }
