@@ -132,7 +132,7 @@
           <mat-form-field [style.width.%]="bundle.width ? bundle.width : undefined">
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
-                #selection [multiple]="bundle.multiple" [placeholder]="bundle.title" formControlName="select">
+                #selection [multiple]="bundle.multiple" [placeholder]="bundle.title" formControlName="selectMulti">
                 <div class="checkboxes mat-typography">
                   <mat-checkbox *ngIf="bundle.multiple"
                     [(ngModel)]="selectAllSelected" [ngModelOptions]="{standalone: true}"
