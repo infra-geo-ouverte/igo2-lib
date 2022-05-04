@@ -6,24 +6,21 @@
       [matTooltip]="'igo.common.simpleFilters.resetFilters' | translate"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      (click)="resetFilters()">{{ 'igo.common.simpleFilters.resetFilters' | translate }}
+      (click)="onResetFilters()">{{ 'igo.common.simpleFilters.resetFilters' | translate }}
     </span>
   </div>
   <form [formGroup]="spatialFiltersForm">
-    <div *ngFor="let spatialFilter of spatialFiltersForm.controls | keyvalue">
+    <div *ngFor="let spatialFilterControl of spatialFiltersForm.controls | keyvalue">
       <mat-form-field appearance="outline">
-        <mat-label>{{ getDescription(spatialFilter.key) }}</mat-label>
+        <mat-label>{{ getDescription(spatialFilterControl.key) }}</mat-label>
         <input
-        matInput
-        type="text"
-        [formControlName]="spatialFilter.key"
-        [matAutocomplete]="auto">
+          matInput
+          type="text"
+          [formControlName]="spatialFilterControl.key"
+          [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option>
-            Un
-          </mat-option>
-          <mat-option>
-            Deux
+          <mat-option *ngFor="let value of getOptions(spatialFilterControl.key)" [value]="value">
+            {{ value.nom }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>

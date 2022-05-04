@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { SimpleFilter, TypeValues, Values } from './simple-filters.interface';
 import { ConfigService } from '@igo2/core';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -16,8 +16,7 @@ export class SimpleFiltersComponent implements OnInit {
   public terrapiBaseURL: string = "https://geoegl.msp.gouv.qc.ca/apis/terrapi/";
   public filtersConfig: Array<SimpleFilter>;
   public typesValues: Array<TypeValues> = [];
-  public values: Array<string> = [];
-  public filteredValues$: Observable<Array<string>>;
+  public filteredTypesValues$: Observable<Array<TypeValues>>;
 
   public spatialFiltersForm: FormGroup;
 
@@ -41,13 +40,6 @@ export class SimpleFiltersComponent implements OnInit {
     this.typesValues.forEach((typeValues: TypeValues) => {
       this.spatialFiltersForm.addControl(typeValues.type, this.formBuilder.control(''));
     });
-
-    console.log(this.spatialFiltersForm);
-  }
-
-  filter(value: string): Array<string> {
-    const filterValue = value.toLowerCase();
-    return this.values.filter(option => option.toLocaleLowerCase().includes(filterValue));
   }
 
   async getValues(filter: SimpleFilter): Promise<TypeValues> {
@@ -78,15 +70,19 @@ export class SimpleFiltersComponent implements OnInit {
   }
 
   getDescription(formControlName: string): string {
-    console.log('formControlName', formControlName);
-    return
+    const typeValuesFiltered: TypeValues = this.typesValues.find((typeValues: TypeValues) => typeValues.type === formControlName);
+    return typeValuesFiltered.description;
+  }
+
+  getOptions(formControlName: string): Array<Values> {
+    return this.typesValues.find(typeValues => typeValues.type === formControlName).values;
   }
 
   onFilter() {
-    console.log('filter')
+    console.log('filter');
   }
 
-  resetFilters() {
+  onResetFilters() {
     console.log('reset filters');
   }
 }
