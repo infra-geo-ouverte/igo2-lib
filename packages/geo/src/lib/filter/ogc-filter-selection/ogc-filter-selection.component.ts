@@ -358,7 +358,11 @@ export class OgcFilterSelectionComponent implements OnInit {
           }
         });
         this.form.controls['select'].reset(enabled);
-        this.selectEnabled$.subscribe((value) => this.form.controls['select'].setValue(value));
+        this.selectEnabled$.subscribe((value) => {
+          if (this.form.controls['select'].value !== value) {
+            this.form.controls['select'].setValue(value)
+          }
+        });
         this.selectEnabled = enabled;
       }
     });
@@ -418,11 +422,7 @@ export class OgcFilterSelectionComponent implements OnInit {
             for (const value of domValues) {
               if (bundle.multiple) {
                 let enabled;
-                this.selectEnableds?.forEach(sel => {
-                  if (sel.title === value.value) {
-                    enabled = true;
-                  }
-                });
+                this.selectEnableds?.find(sel => sel.title === value.value) ? enabled = true : enabled = false;
                 selector = {
                   title: value.value,
                   enabled,
@@ -626,7 +626,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         }
       });
       this.selectAllSelected = newStatus;
-      if (event.isUserInput || this.selectAllSelected) {
+      if (event.isUserInput) {
         if (enableds.length) {
           for (const enabled of enableds) {
             if (enabled.title === value.title) {
