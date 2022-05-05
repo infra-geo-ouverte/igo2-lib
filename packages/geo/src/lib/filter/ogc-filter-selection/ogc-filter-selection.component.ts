@@ -360,7 +360,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.form.controls['select'].reset(enabled);
         this.selectEnabled$.subscribe((value) => {
           if (this.form.controls['select'].value !== value) {
-            this.form.controls['select'].setValue(value)
+            this.form.controls['select'].setValue(value);
           }
         });
         this.selectEnabled = enabled;
