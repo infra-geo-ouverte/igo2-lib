@@ -6,10 +6,11 @@ export interface SimpleFilter {
 export interface TypeValues {
     type: string;
     description: string;
-    values: Array<Values>;
+    values: Array<Value>;
 }
 
-export interface Values {
+export interface Value {
+    type: string;
     code: string;
     nom: string;
 }

@@ -18,7 +18,7 @@
           type="text"
           [formControlName]="spatialFilterControl.key"
           [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
           <mat-option *ngFor="let value of getOptions(spatialFilterControl.key)" [value]="value">
             {{ value.nom }}
           </mat-option>
