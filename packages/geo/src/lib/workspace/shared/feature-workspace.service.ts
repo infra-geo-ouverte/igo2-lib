@@ -23,6 +23,7 @@ import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
+import { getCommonVectorSelectedStyle} from '../../utils'
 
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
@@ -30,8 +31,6 @@ import { ConfigService, StorageService } from '@igo2/core';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import {Circle, Fill, Stroke, Style} from 'ol/style';
-import {asArray as ColorAsArray } from 'ol/color';
 
 @Injectable({
   providedIn: 'root'
@@ -83,36 +82,15 @@ export class FeatureWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    let styles = undefined;
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
-    if (confQueryOverlayStyle.selection) {
-      let colorArray = ColorAsArray(confQueryOverlayStyle.selection.fillColor);
-      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity;
-      const fill = new Fill({
-        color: colorArray
-      });
-      const stroke = new Stroke({
-        color: confQueryOverlayStyle.selection.strokeColor,
-        width: confQueryOverlayStyle.selection.strokeWidth,
-      });
-      styles = [
-        new Style({
-          image: new Circle({
-            fill: fill,
-            stroke: stroke,
-            radius: 5,
-          }),
-          fill: fill,
-          stroke: stroke,
-        }),
-      ];
-    }
-
+ 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: styles,
+        style: (feature) => {
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}))
+        },
         showInLayerList: false,
         exportable: false,
         browsable: false

@@ -28,11 +28,10 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
+import { getCommonVectorSelectedStyle} from '../../utils'
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import {Circle, Fill, Stroke, Style} from 'ol/style';
-import {asArray as ColorAsArray } from 'ol/color';
 
 @Injectable({
   providedIn: 'root'
@@ -181,35 +180,15 @@ export class WmsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    let styles = undefined;
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
-    if (confQueryOverlayStyle.selection) {
-      let colorArray = ColorAsArray(confQueryOverlayStyle.selection.fillColor);
-      colorArray[3] = confQueryOverlayStyle.selection.fillOpacity;
-      const fill = new Fill({
-        color: colorArray
-      });
-      const stroke = new Stroke({
-        color: confQueryOverlayStyle.selection.strokeColor,
-        width: confQueryOverlayStyle.selection.strokeWidth,
-      });
-      styles = [
-        new Style({
-          image: new Circle({ // need for point feature with wks noQuery
-            fill: fill,
-            stroke: stroke,
-            radius: 5,
-          }),
-          fill: fill,
-          stroke: stroke,
-        }),
-      ];
-    }
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: styles,
+        style: (feature) => {
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}))
+        },
         showInLayerList: false,
         exportable: false,
         browsable: false
