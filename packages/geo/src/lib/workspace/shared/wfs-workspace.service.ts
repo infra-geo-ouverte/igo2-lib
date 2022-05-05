@@ -23,7 +23,7 @@ import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
-import { getCommonVectorSelectedStyle} from '../../utils'
+import { getCommonVectorSelectedStyle} from '../../utils';
 
 import { WfsWorkspace } from './wfs-workspace';
 import { skipWhile, take } from 'rxjs/operators';
@@ -85,7 +85,7 @@ export class WfsWorkspaceService {
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {
-          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}))
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
         },
         showInLayerList: false,
         exportable: false,
