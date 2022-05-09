@@ -39,6 +39,7 @@ export function addLayerAndFeaturesToMap(
   source.ol.addFeatures(olFeatures);
   const layer = new VectorLayer({
     title: layerTitle,
+    isIgoInternalLayer: true,
     source,
     style: createImportedLayerRandomStyle()
   });
@@ -161,6 +162,7 @@ export function addLayerAndFeaturesStyledToMap(
     Object.assign({
       title: layerTitle,
       id: layerId || uuid(),
+      isIgoInternalLayer: true,
       source,
       style
     }, imposedLayerOptions));
