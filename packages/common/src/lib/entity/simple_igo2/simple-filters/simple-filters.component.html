@@ -18,7 +18,7 @@
           type="text"
           [formControlName]="spatialFilterControl.key"
           [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName" (optionSelected)="onSelection($event)">
           <mat-option *ngFor="let value of getOptions(spatialFilterControl.key)" [value]="value">
             {{ value.nom }}
           </mat-option>
@@ -31,7 +31,6 @@
     color="primary"
     (click)="onFilter()">{{ 'igo.common.simpleFilters.submit' | translate }}
   </button>
-  {{spatialFiltersForm.value | json}}
 </div>
 <br>
 <mat-divider></mat-divider>
