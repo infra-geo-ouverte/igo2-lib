@@ -40,7 +40,7 @@ export function addLayerAndFeaturesToMap(
   const layer = new VectorLayer({
     title: layerTitle,
     source,
-    style: createImportedLayerStyle()
+    style: createImportedLayerRandomStyle()
   });
   map.addLayer(layer);
   moveToOlFeatures(map, olFeatures);
@@ -325,7 +325,7 @@ export function getFileExtension(file: File): string {
 export function computeLayerTitleFromFile(file: File): string {
   return file.name.substr(0, file.name.lastIndexOf('.'));
 }
-function createImportedLayerStyle(): (olFeature: OlFeature<OlGeometry>) => olStyle.Style {
+function createImportedLayerRandomStyle(): (olFeature: OlFeature<OlGeometry>) => olStyle.Style {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
