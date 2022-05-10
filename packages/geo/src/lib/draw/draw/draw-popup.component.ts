@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface DialogData {
@@ -12,11 +12,14 @@ export interface DialogData {
   })
   export class DrawPopupComponent {
 
+    @Input() cancel: boolean = false;
+
     constructor(
       public dialogRef: MatDialogRef<DrawPopupComponent>,
       @Inject(MAT_DIALOG_DATA) public data: {currentLabel: string}) {}
 
     noLabel() {
+      this.cancel = true;
       this.dialogRef.close();
     }
   }

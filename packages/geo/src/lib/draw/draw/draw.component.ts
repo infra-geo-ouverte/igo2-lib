@@ -273,17 +273,22 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
 
       // when dialog box is closed, get label and set it to geometry
-      dialogRef.afterClosed().subscribe((label: string) => {
-        this.updateLabelOfOlGeometry(olGeometryFeature, label);
-
-        // if event was fired at draw end
-        if (isDrawEnd) {
-          this.onDrawEnd(olGeometryFeature);
-
-        // if event was fired at select
-        } else {
-          this.onSelectDraw(olGeometryFeature, label);
+      dialogRef.afterClosed().subscribe((label: string) =>{
+        if (!(dialogRef.componentInstance.cancel)){
+          this.updateLabelOfOlGeometry(olGeometryFeature, label);
+          // if event was fired at draw end
+          if (isDrawEnd) {
+            this.onDrawEnd(olGeometryFeature);
+  
+          // if event was fired at select
+          } else {
+            this.onSelectDraw(olGeometryFeature, label);
+          }
         }
+        else{
+          this.olDrawingLayerSource.removeFeature(olGeometryFeature);
+        }
+
       });
     }, 250);
   }
