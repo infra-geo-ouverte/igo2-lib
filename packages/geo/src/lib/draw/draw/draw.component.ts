@@ -15,7 +15,8 @@ import {
     tryAddLoadingStrategy,
     tryAddSelectionStrategy,
     FeatureMotion,
-    FeatureStoreLoadingStrategy
+    FeatureStoreLoadingStrategy,
+    featureToOl
   } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
@@ -39,7 +40,7 @@ import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
@@ -49,6 +50,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+
 
 @Component ({
   selector: 'igo-draw',
@@ -74,6 +76,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         return feature.properties.draw;
       }
     }]
+    
   };
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
@@ -265,6 +268,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param drawEnd event fired at drawEnd?
    */
   private openDialog(olGeometryFeature, isDrawEnd: boolean) {
+    console.log(olGeometryFeature);
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -276,6 +280,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         console.log(dialogRef.componentInstance.confirmFlag);
         if (dialogRef.componentInstance.confirmFlag){
+          console.log("hit")
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           // if event was fired at draw end
           if (isDrawEnd) {
@@ -510,5 +515,25 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   openShorcutsDialog() {
     this.dialog.open(DrawShorcutsComponent);
+  }
+
+  editDrawing(){
+    console.log("start");
+
+    let olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.projection);
+    console.log(this.selectedFeatures$.value[0]);
+    console.log(olGeometry.getGeometry());
+    // olGeometry.setProperties({
+
+    // })
+
+    this.openDialog(olGeometry.getGeometry(), true);
+    this.onModifyDraw(olGeometry);
+    this.drawControl.setOlMap(this.map.ol, true);
+
+    // this.onModifyDraw(olGeometry.getGeometry());
+
+    console.log("end");
+
   }
 }
