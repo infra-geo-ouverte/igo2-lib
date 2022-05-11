@@ -274,7 +274,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
-        if (!(dialogRef.componentInstance.cancel)){
+        console.log(dialogRef.componentInstance.confirmFlag);
+        if (dialogRef.componentInstance.confirmFlag){
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           // if event was fired at draw end
           if (isDrawEnd) {
@@ -284,8 +285,15 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometryFeature, label);
           }
         }
-        else{
-          this.olDrawingLayerSource.removeFeature(olGeometryFeature);
+        else {
+          // this.store.delete(olGeometryFeature.value);
+          // this.olDrawingLayerSource.removeFeature(olGeometryFeature);
+          this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
+            const geometry = drawingLayerFeature.getGeometry() as any;
+            if (olGeometryFeature === geometry) {
+              this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
+            }
+          })
         }
       });
     }, 250);

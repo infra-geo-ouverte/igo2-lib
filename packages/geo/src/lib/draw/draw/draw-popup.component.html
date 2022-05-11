@@ -16,6 +16,7 @@
   <button
     mat-raised-button
     color="primary"
-    [mat-dialog-close]="input.value">OK
+    (click)="confirm(input.value)">OK
+    <!-- [mat-dialog-close]="input.value">OK -->
   </button>
 </div>
