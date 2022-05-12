@@ -1,36 +1,56 @@
-<div class="filters">
-  <div class="title-reset">
-    <span class="filters-title">{{ 'igo.common.simpleFilters.filters' | translate }}</span>
-    <span
-      class="reset-filters"
+<div class="filters-header">
+  <span class="filters-title">{{ 'igo.common.simpleFilters.filtersTitle' | translate }}</span>
+</div>
+
+<div class="filters-container">
+  <div class="filters">
+    <form [formGroup]="filtersFormGroup">
+      <div *ngFor="let control of controls | keyvalue"
+        class="filter">
+        <span class="filter-description">{{ getLabelOrPlaceholder(control.key, "label") }}</span>
+        <mat-form-field
+          class="filter-field"
+          appearance="outline"
+          floatLabel="auto">
+          <mat-label>{{ getLabelOrPlaceholder(control.key, "placeholder") }}</mat-label>
+          <input
+            matInput
+            type="text"
+            [formControlName]="control.key"
+            [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName" (optionSelected)="onSelection($event)">
+            <mat-option *ngFor="let option of getOptions(control.key)" [value]="option">
+              {{ option.nom }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-icon
+            matSuffix
+            color="primary"
+            [svgIcon]="auto.isOpen ? 'chevron-up' : 'chevron-down'">
+          </mat-icon>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+
+  <div class="filters-buttons">
+    <button
+      [ngClass]="areButtonsDisabled() ? 'filters-buttons-disabled filter-button-disabled' : 'filters-buttons-abled filter-button-abled'"
+      [disabled]="areButtonsDisabled()"
+      [matTooltip]="'igo.common.simpleFilters.submit' | translate"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      (click)="onFilter()">{{ 'igo.common.simpleFilters.submit' | translate }}
+    </button>
+    <button
+      [ngClass]="areButtonsDisabled() ? 'filters-buttons-disabled reset-button-disabled' : 'filters-buttons-abled reset-button-abled'"
+      [disabled]="areButtonsDisabled()"
       [matTooltip]="'igo.common.simpleFilters.resetFilters' | translate"
       tooltip-position="below"
       matTooltipShowDelay="500"
       (click)="onResetFilters()">{{ 'igo.common.simpleFilters.resetFilters' | translate }}
-    </span>
+    </button>
   </div>
-  <form [formGroup]="spatialFiltersForm">
-    <div *ngFor="let spatialFilterControl of spatialFiltersForm.controls | keyvalue">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ getDescription(spatialFilterControl.key) }}</mat-label>
-        <input
-          matInput
-          type="text"
-          [formControlName]="spatialFilterControl.key"
-          [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName" (optionSelected)="onSelection($event)">
-          <mat-option *ngFor="let value of getOptions(spatialFilterControl.key)" [value]="value">
-            {{ value.nom }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-  </form>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="onFilter()">{{ 'igo.common.simpleFilters.submit' | translate }}
-  </button>
 </div>
 <br>
 <mat-divider></mat-divider>

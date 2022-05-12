@@ -3,13 +3,13 @@ export interface SimpleFilter {
     description: string;
 }
 
-export interface TypeValues {
+export interface TypeOptions {
     type: string;
     description: string;
-    values: Array<Value>;
+    options: Array<Option>;
 }
 
-export interface Value {
+export interface Option {
     type: string;
     code: string;
     nom: string;

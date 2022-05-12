@@ -46,7 +46,8 @@
         "unselectEntity": "Unselect element"
       },
       "simpleFilters": {
-        "filters": "Filters",
+        "enter": "Enter or select a(n) ",
+        "filtersTitle": "Filters",
         "placeholder": "Show filters",
         "resetFilters": "Reset filters",
         "submit": "Filter"

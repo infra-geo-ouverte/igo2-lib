@@ -46,7 +46,8 @@
         "unselectEntity": "Désélectionner l'élément"
       },
       "simpleFilters": {
-        "filters": "Filtres",
+        "enter": "Entrez ou sélectionnez un(e) ",
+        "filtersTitle": "Filtres",
         "placeholder": "Afficher les filtres",
         "resetFilters": "Réinitialiser les filtres",
         "submit": "Filtrer"
