@@ -286,6 +286,8 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometryFeature, label);
           }
+          console.log(olGeometryFeature);
+          console.log(olGeometryFeature.style.font);
         }
         else {
           // this.store.delete(olGeometryFeature.value);

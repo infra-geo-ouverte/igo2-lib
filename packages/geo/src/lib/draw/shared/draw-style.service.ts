@@ -15,6 +15,8 @@ export class DrawStyleService {
   private strokeWidth: number = 1;
   private labelsAreShown = true;
   private icon: string;
+  private fontSize: string = '20';
+  private fontStyle: string = 'sans-serif';
 
   constructor(
     private mapService: MapService
@@ -56,11 +58,29 @@ export class DrawStyleService {
     return this.icon;
   }
 
+  // To edit the label of drawing
+  getFontSize(){
+    return this.fontSize;
+  }
+
+  setFontSize(fontSize: string){
+    this.fontSize = fontSize
+  }
+
+  getFontStyle(){
+    return this.fontSize;
+  }
+
+  setFontStyle(fontStyle: string){
+    this.fontStyle = fontStyle
+  }
+
   createDrawingLayerStyle(feature, resolution, labelsAreShown?: boolean, icon?: string): OlStyle.Style {
     let style;
     let labelsAreOffset: boolean = false;
     const proj = this.mapService.getMap().projection;
     const geom = feature.getGeometry();
+    const fontSizeAndStyle = `${this.fontSize}px ${this.fontStyle}`
 
     if (geom instanceof OlPoint) {
       labelsAreOffset = !labelsAreOffset;
@@ -80,7 +100,8 @@ export class DrawStyleService {
           fill: new OlStyle.Fill({
             color: 'black'
           }),
-          font: '20px sans-serif',
+          
+          font: fontSizeAndStyle,
           overflow: true
         }),
 
@@ -110,7 +131,7 @@ export class DrawStyleService {
           fill: new OlStyle.Fill({
             color: 'black'
           }),
-          font: '20px sans-serif',
+          font: fontSizeAndStyle,
           overflow: true
         }),
 
@@ -131,6 +152,7 @@ export class DrawStyleService {
 
     // if feature is a point, a linestring or a polygon
     } else {
+      console.log(fontSizeAndStyle)
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',
@@ -141,7 +163,7 @@ export class DrawStyleService {
           fill: new OlStyle.Fill({
             color: 'black'
           }),
-          font: '20px sans-serif',
+          font: fontSizeAndStyle,
           overflow: true,
           offsetY: labelsAreOffset ? -15 : 0
         }),
