@@ -531,25 +531,25 @@ export class DrawComponent implements OnInit, OnDestroy {
    * 
    */
 
-  onColorChange(labelsAreShown: boolean, isAnIcon: boolean) {
-    this.fillForm = this.fillColor;
-    this.strokeForm = this.strokeColor;
-    this.drawStyleService.setFillColor(this.fillColor);
-    this.drawStyleService.setStrokeColor(this.strokeColor);
+  // onColorChange(labelsAreShown: boolean, isAnIcon: boolean) {
+  //   this.fillForm = this.fillColor;
+  //   this.strokeForm = this.strokeColor;
+  //   this.drawStyleService.setFillColor(this.fillColor);
+  //   this.drawStyleService.setStrokeColor(this.strokeColor);
 
-    if (isAnIcon) {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
-      });
-      this.icon = undefined;
+  //   if (isAnIcon) {
+  //     this.store.layer.ol.setStyle((feature, resolution) => {
+  //       return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
+  //     });
+  //     this.icon = undefined;
 
-    } else {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
-      });
-    }
-    this.createDrawControl();
-  }
+  //   } else {
+  //     this.store.layer.ol.setStyle((feature, resolution) => {
+  //       return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
+  //     });
+  //   }
+  //   this.createDrawControl();
+  // }
 
 
 
