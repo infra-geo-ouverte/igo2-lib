@@ -268,7 +268,6 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param drawEnd event fired at drawEnd?
    */
   private openDialog(olGeometryFeature, isDrawEnd: boolean) {
-    console.log(olGeometryFeature);
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -278,9 +277,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
-        console.log(dialogRef.componentInstance.confirmFlag);
         if (dialogRef.componentInstance.confirmFlag){
-          console.log("hit")
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           // if event was fired at draw end
           if (isDrawEnd) {
@@ -357,6 +354,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     const entities = this.store.all();
 
     entities.forEach(entity => {
+
       const entityId = entity.properties.id;
 
       const olGeometryId = olGeometry.ol_uid;
@@ -377,13 +375,14 @@ export class DrawComponent implements OnInit, OnDestroy {
     const olGeometryCoordinates = JSON.stringify(olGeometry.getCoordinates()[0]);
 
     entities.forEach(entity => {
+
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
         const rad: number = entity.properties.rad ? entity.properties.rad : undefined;
-
         this.updateLabelOfOlGeometry(olGeometry, label);
         this.replaceFeatureInStore(entity, olGeometry, rad);
+
       }
     });
   }
@@ -518,22 +517,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   editDrawing(){
-    console.log("start");
-
-    let olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.projection);
-    console.log(this.selectedFeatures$.value[0]);
-    console.log(olGeometry.getGeometry());
-    // olGeometry.setProperties({
-
-    // })
-
-    this.openDialog(olGeometry.getGeometry(), true);
-    this.onModifyDraw(olGeometry);
-    this.drawControl.setOlMap(this.map.ol, true);
-
-    // this.onModifyDraw(olGeometry.getGeometry());
-
-    console.log("end");
-
+    const olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.ol.getView().getProjection().getCode());
+    this.openDialog(olGeometry, false);
   }
 }
