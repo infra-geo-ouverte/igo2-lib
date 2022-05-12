@@ -287,7 +287,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometryFeature, label);
           }
           console.log(olGeometryFeature);
-          console.log(olGeometryFeature.style.font);
+          console.log(olGeometryFeature.getFontSize);
         }
         else {
           // this.store.delete(olGeometryFeature.value);
@@ -522,4 +522,35 @@ export class DrawComponent implements OnInit, OnDestroy {
     const olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.ol.getView().getProjection().getCode());
     this.openDialog(olGeometry, false);
   }
+
+  /**
+   * 1. Need to edit this function to change the label
+   * 2. In createDrawingLayerStyle, need to change the inputs to
+   * add the font size and the font style
+   * 3. Make the frontend interface to interact with the data
+   * 
+   */
+
+  onColorChange(labelsAreShown: boolean, isAnIcon: boolean) {
+    this.fillForm = this.fillColor;
+    this.strokeForm = this.strokeColor;
+    this.drawStyleService.setFillColor(this.fillColor);
+    this.drawStyleService.setStrokeColor(this.strokeColor);
+
+    if (isAnIcon) {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
+      });
+      this.icon = undefined;
+
+    } else {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
+      });
+    }
+    this.createDrawControl();
+  }
+
+
+
 }
