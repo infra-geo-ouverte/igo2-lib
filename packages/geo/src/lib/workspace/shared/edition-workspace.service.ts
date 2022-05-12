@@ -235,12 +235,14 @@ export class EditionWorkspaceService {
           editMode: false,
           icon: 'pencil',
           color: 'primary',
+          disabled: layer.dataSource.options.edition.modifyButton === false ? true : false,
           click: (feature) => { workspace.editFeature(feature, workspace); }
         },
         {
           editMode: false,
           icon: 'delete',
           color: 'warn',
+          disabled: layer.dataSource.options.edition.deleteButton === false ? true : false,
           click: (feature) => { workspace.deleteFeature(feature, workspace); }
         },
         {
