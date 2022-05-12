@@ -65,6 +65,9 @@ export interface EditionOptions {
   addHeaders?: { [key: string]: any };
   modifyHeaders?: { [key: string]: any };
   modifyProtocol?: string;
+  addButton?: boolean;
+  modifyButton?: boolean;
+  deleteButton?: boolean;
 }
 
 export interface RelationOptions {
