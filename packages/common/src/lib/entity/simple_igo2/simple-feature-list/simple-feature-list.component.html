@@ -1,39 +1,45 @@
 <mat-divider></mat-divider>
 
 <div class="elements">
-  <div class="numberOfElements">
-    <span>{{ entities.length }} {{ 'igo.common.paginator.elementsLowercase' | translate }}</span>
-  </div>
-
-  <div class="currentElements">
-    <span>{{ 'igo.common.paginator.elementsUppercase' | translate }}  {{ elementsLowerBound }} {{ 'igo.common.paginator.to' | translate }} {{ elementsUpperBound }}</span>
-  </div>
+  <span class="numberOfElements">{{ entities.length }} {{ 'igo.common.paginator.elementsLowercase' | translate }}</span>
+  <span class="currentElements">{{ 'igo.common.paginator.elementsUppercase' | translate }}  {{ elementsLowerBound }} {{ 'igo.common.paginator.to' | translate }} {{ elementsUpperBound }}</span>
 </div>
 
-<div class="title"></div>
+<div class="header"></div>
 
-<div class="entities">
+<div class="entities-container">
   <ng-container *ngIf="!entityIsSelected && !entitiesAreSelected; else entitiesSelected">
     <div *ngFor="let entity of entitiesToShow; let i = index" #entity
       [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
       <div class="attributes">
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
-            <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-            <span [ngClass]="attribute.header" [innerHTML]="createAttribute(entity, attribute)"></span>
+            <span *ngIf="attribute.description"
+              [ngClass]="attribute.header">
+              <strong>{{ attribute.description }}</strong>:
+            </span>
+            <span
+              [ngClass]="attribute.header"
+              [innerHTML]="createAttribute(entity, attribute)">
+            </span>
             <br>
           </ng-container>
           <ng-template #notHeader>
             <span *ngIf="attribute.description && createAttribute(entity, attribute)"
-              class="description"><strong>{{ attribute.description }}</strong>:
+              class="description">
+              <strong>{{ attribute.description }}</strong>:
             </span>
-            <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
+            <span
+              class="attribute"
+              [innerHTML]="createAttribute(entity, attribute)">
+            </span>
             <br *ngIf="createAttribute(entity, attribute)">
           </ng-template>
         </ng-container>
       </div>
       <div class="selectButton">
-        <button mat-mini-fab
+        <button
+          mat-mini-fab
           class="mat-elevation-z0"
           color="primary"
           [matTooltip]="'igo.common.simpleFeatureList.selectEntity' | translate"
@@ -50,25 +56,36 @@
   <ng-template #entitiesSelected>
     <ng-container *ngIf="selectedEntities !== undefined; else entitySelected">
       <div *ngFor="let entity of selectedEntities; let i = index" #entity
-      [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
+        [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
         <div class="attributes">
           <ng-container *ngFor="let attribute of attributeOrder">
             <ng-container *ngIf="attribute.header; else notHeader">
-              <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong>{{ attribute.description }}</strong>: </span>
-              <span [ngClass]="attribute.header" [innerHTML]="createAttribute(entity, attribute)"></span>
+              <span *ngIf="attribute.description"
+                [ngClass]="attribute.header">
+                <strong>{{ attribute.description }}</strong>:
+              </span>
+              <span
+                [ngClass]="attribute.header"
+                [innerHTML]="createAttribute(entity, attribute)">
+              </span>
               <br>
             </ng-container>
             <ng-template #notHeader>
               <span *ngIf="attribute.description && createAttribute(entity, attribute)"
-                class="description"><strong>{{ attribute.description }}</strong>:
+                class="description">
+                <strong>{{ attribute.description }}</strong>:
               </span>
-              <span class="attribute" [innerHTML]="createAttribute(entity, attribute)"></span>
+              <span
+                class="attribute"
+                [innerHTML]="createAttribute(entity, attribute)">
+              </span>
               <br *ngIf="createAttribute(entity, attribute)">
             </ng-template>
           </ng-container>
         </div>
         <div class="selectButton">
-          <button mat-mini-fab
+          <button
+            mat-mini-fab
             class="mat-elevation-z0"
             color="primary"
             [matTooltip]="'igo.common.simpleFeatureList.selectEntity' | translate"
@@ -88,21 +105,32 @@
       <div class="attributes">
         <ng-container *ngFor="let attribute of attributeOrder">
           <ng-container *ngIf="attribute.header; else notHeader">
-            <span [ngClass]="attribute.header" *ngIf="attribute.description"><strong> {{ attribute.description }}</strong>: </span>
-            <span [ngClass]="attribute.header" [innerHTML]="createAttribute(selectedEntity, attribute)"></span>
+            <span *ngIf="attribute.description"
+              [ngClass]="attribute.header">
+              <strong>{{ attribute.description }}</strong>:
+            </span>
+            <span
+              [ngClass]="attribute.header"
+              [innerHTML]="createAttribute(selectedEntity, attribute)">
+            </span>
             <br>
           </ng-container>
           <ng-template #notHeader>
             <span *ngIf="attribute.description && createAttribute(selectedEntity, attribute)"
-              class="description"><strong>{{ attribute.description }}</strong>:
+              class="description">
+              <strong>{{ attribute.description }}</strong>:
             </span>
-            <span class="attribute" [innerHTML]="createAttribute(selectedEntity, attribute)"></span>
+            <span
+              class="attribute"
+              [innerHTML]="createAttribute(selectedEntity, attribute)">
+            </span>
             <br *ngIf="createAttribute(selectedEntity, attribute)">
           </ng-template>
         </ng-container>
       </div>
       <div class="unselectButton">
-        <button mat-mini-fab
+        <button
+          mat-mini-fab
           class="mat-elevation-z0"
           color="warn"
           [matTooltip]="'igo.common.simpleFeatureList.unselectEntity' | translate"

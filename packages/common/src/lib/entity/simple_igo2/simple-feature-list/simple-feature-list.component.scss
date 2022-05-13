@@ -1,4 +1,4 @@
-.title {
+.header {
     background-color: #223654;
     height: 54px;
 }
@@ -17,7 +17,7 @@
     cursor: default;
 }
 
-.entities {
+.entities-container {
     overflow-y: auto;
     height: 200px;
     width: 100%

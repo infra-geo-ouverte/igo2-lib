@@ -1,4 +1,4 @@
-export interface SimpleFeatureListConfig {
+export interface SimpleFeatureList {
   layerId: string; // the layerId from which the entities are extracted
   attributeOrder: AttributeOrder; // the order in which the attributes are shown in the list (see AttributeOrder)
   sortBy?: SortBy; // sort the entities by a given attribute (see SortBy)

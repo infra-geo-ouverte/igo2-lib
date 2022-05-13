@@ -1,8 +1,8 @@
+import { Feature } from 'geojson';
 import { ConfigService } from '@igo2/core';
-import { Feature } from '@igo2/geo';
 import { Component, Input, OnInit, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../../shared';
-import { SimpleFeatureListConfig, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
+import { SimpleFeatureList, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
 
 @Component({
   selector: 'igo-simple-feature-list',
@@ -11,38 +11,42 @@ import { SimpleFeatureListConfig, AttributeOrder, SortBy, Paginator } from './si
 })
 
 export class SimpleFeatureListComponent implements OnInit, OnChanges {
-  @Input() entityStore: EntityStore<Feature[]>;
-  @Input() clickedEntities: Feature[];
-  @Output() listSelection = new EventEmitter();
+  @Input() entityStore: EntityStore<Array<Feature>>; // a store that contains all the entities
+  @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
+  @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
-  public entities: Array<Feature[]>;
-  public entitiesToShow: Array<Feature[]>;
+  public entities: Array<Array<Feature>>;
+  public entitiesToShow: Array<Array<Feature>>;
 
-  public simpleFeatureListConfig: SimpleFeatureListConfig;
-  public attributeOrder: AttributeOrder;
-  public sortBy: SortBy;
-  public formatURL: boolean;
-  public formatEmail: boolean;
-  public paginator: Paginator;
+  public simpleFeatureListConfig: SimpleFeatureList; // the config input by the user
+  public attributeOrder: AttributeOrder; // the attribute order specified by the user in the config
+  public sortBy: SortBy; // the sorting to use input by the user in the config
+  public formatURL: boolean; // whether to format an URL or not (input by the user in the config)
+  public formatEmail: boolean; // whether to format an email or not (input by the user in the config)
+  public paginator: Paginator; // the paginator config input by the user
 
-  public pageSize: number;
-  public showFirstLastPageButtons: boolean;
-  public showPreviousNextPageButtons: boolean;
-  public entityIsSelected: boolean = false;
-  public entitiesAreSelected: boolean = false;
-  public selectedEntities: Feature[] = undefined;
-  public selectedEntity: Feature = undefined;
+  public pageSize: number; // the number of elements in a page, input by the user
+  public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input by the user
+  public showPreviousNextPageButtons: boolean; // whether to show the Previous page and Next Page buttons or not, input by the user
+  public entityIsSelected: boolean = false; // whether a single entity is selected or not
+  public entitiesAreSelected: boolean = false; // wheter multiple entities are selected or not
+  public selectedEntities: Array<Feature> = undefined; // an array containing the selected entities
+  public selectedEntity: Feature = undefined; // the selected entity
 
-  public numberOfPages: number;
-  public elementsLowerBound: number;
-  public elementsUpperBound: number;
+  public numberOfPages: number; // calculated number of pages
+  public elementsLowerBound: number; // the index of the lowest element in the current page
+  public elementsUpperBound: number; // the index of the highest element in the current page
 
   constructor(private configService: ConfigService) {}
 
   ngOnInit(): void {
+    // get the entities from the layer/store
     this.entities = this.entityStore.entities$.value;
 
+    // get the config input by the user
     this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
+
+    // get the attribute order to use to display the elements in the list
     this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
     this.sortBy = this.simpleFeatureListConfig.sortBy;
     if (this.sortBy) {
@@ -54,8 +58,12 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
         ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
       }
     }
+
+    // get the formmating configs for URLs and emails
     this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
+
+    // get the paginator config, including the page size, the buttons options and calculate the number of pages to use
     this.paginator = this.simpleFeatureListConfig.paginator;
     if (this.paginator) {
       this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
