@@ -4,6 +4,7 @@ import * as OlStyle from 'ol/style';
 import OlPoint from 'ol/geom/Point';
 import { transform } from 'ol/proj';
 import { MapService } from '../../map/shared/map.service';
+import { FontType } from './draw.enum';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +17,7 @@ export class DrawStyleService {
   private labelsAreShown = true;
   private icon: string;
   private fontSize: string = '20';
-  private fontStyle: string = 'sans-serif';
+  private fontStyle: string = FontType.Arial.toString();
 
   constructor(
     private mapService: MapService
@@ -68,14 +69,14 @@ export class DrawStyleService {
   }
 
   getFontStyle(){
-    return this.fontSize;
+    return this.fontStyle;
   }
 
   setFontStyle(fontStyle: string){
     this.fontStyle = fontStyle
   }
 
-  createDrawingLayerStyle(feature, resolution, labelsAreShown?: boolean, icon?: string): OlStyle.Style {
+  createDrawingLayerStyle(feature, resolution, labelsAreShown?: boolean, icon?: string ): OlStyle.Style {
     let style;
     let labelsAreOffset: boolean = false;
     const proj = this.mapService.getMap().projection;

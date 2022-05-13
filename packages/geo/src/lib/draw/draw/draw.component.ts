@@ -21,7 +21,7 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GeometryType } from '../shared/draw.enum';
+import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -85,6 +85,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() strokeColor: string;
   @Output() strokeWidth: number;
 
+  @Output() fontSize: string;
+  @Output() fontStyle: string;
+  @Input() fontType: FontType;
+
   @Input() map: IgoMap; // Map to draw on
 
   @Input() store: FeatureStore<FeatureWithDraw>; // Drawing store
@@ -103,6 +107,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
   private subscriptions$$: Subscription[] = [];
+
+  public fontSizeForm: string;
+  public fontStyleForm: string;
 
   public position: string = 'bottom';
   public form: FormGroup;
@@ -123,6 +130,10 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.labelsAreShown = this.drawStyleService.getLabelsAreShown();
     this.icons = this.drawIconService.getIcons();
     this.icon = this.drawStyleService.getIcon();
+
+    this.fontSize = this.drawStyleService.getFontSize();
+    this.fontStyle = this.drawStyleService.getFontStyle();
+
   }
 
   // Initialize the store that will contain the entities and create the Draw control
@@ -286,8 +297,6 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometryFeature, label);
           }
-          console.log(olGeometryFeature);
-          console.log(olGeometryFeature.getFontSize);
         }
         else {
           // this.store.delete(olGeometryFeature.value);
@@ -531,26 +540,28 @@ export class DrawComponent implements OnInit, OnDestroy {
    * 
    */
 
-  // onColorChange(labelsAreShown: boolean, isAnIcon: boolean) {
-  //   this.fillForm = this.fillColor;
-  //   this.strokeForm = this.strokeColor;
-  //   this.drawStyleService.setFillColor(this.fillColor);
-  //   this.drawStyleService.setStrokeColor(this.strokeColor);
+  onFontChange(labelsAreShown: boolean, isAnIcon: boolean, size?: string, style?: FontType) {
 
-  //   if (isAnIcon) {
-  //     this.store.layer.ol.setStyle((feature, resolution) => {
-  //       return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
-  //     });
-  //     this.icon = undefined;
+    this.drawStyleService.setFontSize(size);
+    this.drawStyleService.setFontStyle(style);
 
-  //   } else {
-  //     this.store.layer.ol.setStyle((feature, resolution) => {
-  //       return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
-  //     });
-  //   }
-  //   this.createDrawControl();
-  // }
+    if (isAnIcon) {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
+      });
+      this.icon = undefined;
 
+    } else {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
+      });
+    }
+    this.createDrawControl();
+  }
+
+  get allFontStyles(): string[]{
+    return Object.values(FontType);
+  }
 
 
 }
