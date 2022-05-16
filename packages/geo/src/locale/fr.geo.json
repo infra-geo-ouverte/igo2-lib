@@ -668,7 +668,7 @@
       },
       "draw": {
         "abort": "Annuler le dessin en cours",
-        "cancelColorPicker": "Annuler",
+        "cancel": "Annuler",
         "Circle": "Cercle",
         "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",

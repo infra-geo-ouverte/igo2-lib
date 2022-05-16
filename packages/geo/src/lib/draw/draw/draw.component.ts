@@ -527,36 +527,24 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.dialog.open(DrawShorcutsComponent);
   }
 
-  editDrawing(){
+  editLabelDrawing(){
     const olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.ol.getView().getProjection().getCode());
     this.openDialog(olGeometry, false);
   }
 
-  onFontChange(labelsAreShown: boolean, isAnIcon: boolean, size?: string, style?: FontType) {
+  onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
     this.drawStyleService.setFontSize(size);
     this.drawStyleService.setFontStyle(style);
 
-    if (isAnIcon) {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown, this.icon);
-      });
-      this.icon = undefined;
 
-    } else {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
-      });
-    }
+    this.store.layer.ol.setStyle((feature, resolution) => {
+      return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
+    });
     this.createDrawControl();
   }
 
   get allFontStyles(): string[]{
     return Object.values(FontType);
-  }
-
-  isString(stringInput: string): boolean{
-    const result = isNaN(parseInt(stringInput));
-    return !(result);
   }
 
 

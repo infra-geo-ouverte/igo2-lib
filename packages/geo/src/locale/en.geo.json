@@ -668,7 +668,7 @@
       },
       "draw": {
         "abort": "Abort current drawing",
-        "cancelColorPicker": "Cancel",
+        "cancel": "Cancel",
         "Circle": "Circle",
         "colorPicker": "Click to open the color picker",
         "dialogInstruction": "Enter your draw's label",

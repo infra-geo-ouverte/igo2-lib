@@ -29,16 +29,12 @@
         matInput
         #testFontSize
         type="number"
-        placeholder="20"
+        placeholder="10"
         min="10"
+        onkeydown="return event.keyCode !== 69"
         [value]="fontSize"
         (input)="
-          onFontChange(
-            labelsAreShown,
-            false,
-            $event.target.value,
-            testFontStyle.value
-          )
+          onFontChange(labelsAreShown, $event.target.value, testFontStyle.value)
         "
       />
       <span matSuffix>px</span>
@@ -50,7 +46,7 @@
         #testFontStyle
         [value]="fontStyle"
         (selectionChange)="
-          onFontChange(labelsAreShown, false, testFontSize.value, $event.value)
+          onFontChange(labelsAreShown, testFontSize.value, $event.value)
         "
       >
         <mat-option
@@ -112,7 +108,7 @@
           [cpPosition]="'bottom'"
           [cpPositionOffset]="'-75%'"
           [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
           [cpOKButton]="true"
           (colorPickerChange)="onColorChange(labelsAreShown, false)"
         />
@@ -151,7 +147,7 @@
           [cpPositionOffset]="'-75%'"
           [cpOutputFormat]="'rgba'"
           [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
           [cpOKButton]="true"
           (colorPickerChange)="onColorChange(labelsAreShown, false)"
         />
@@ -206,7 +202,7 @@
       class="table-compact"
       [store]="store"
       [template]="tableTemplate"
-      (dblclick)="editDrawing()"
+      (dblclick)="editLabelDrawing()"
     >
     </igo-entity-table>
   </div>
