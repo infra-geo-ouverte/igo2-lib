@@ -65,7 +65,7 @@ export class DrawStyleService {
   }
 
   setFontSize(fontSize: string){
-    this.fontSize = fontSize
+    this.fontSize = fontSize;
   }
 
   getFontStyle(){
@@ -73,7 +73,7 @@ export class DrawStyleService {
   }
 
   setFontStyle(fontStyle: string){
-    this.fontStyle = fontStyle
+    this.fontStyle = fontStyle;
   }
 
   createDrawingLayerStyle(feature, resolution, labelsAreShown?: boolean, icon?: string ): OlStyle.Style {
@@ -81,7 +81,7 @@ export class DrawStyleService {
     let labelsAreOffset: boolean = false;
     const proj = this.mapService.getMap().projection;
     const geom = feature.getGeometry();
-    const fontSizeAndStyle = `${this.fontSize}px ${this.fontStyle}`
+    const fontSizeAndStyle = `${this.fontSize}px ${this.fontStyle}`;
 
     if (geom instanceof OlPoint) {
       labelsAreOffset = !labelsAreOffset;
@@ -101,7 +101,7 @@ export class DrawStyleService {
           fill: new OlStyle.Fill({
             color: 'black'
           }),
-          
+
           font: fontSizeAndStyle,
           overflow: true
         }),
@@ -153,7 +153,7 @@ export class DrawStyleService {
 
     // if feature is a point, a linestring or a polygon
     } else {
-      console.log(fontSizeAndStyle)
+      console.log(fontSizeAndStyle);
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',

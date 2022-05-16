@@ -76,7 +76,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         return feature.properties.draw;
       }
     }]
-    
+
   };
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
@@ -285,7 +285,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         disableClose: false,
         data: {currentLabel: olGeometryFeature.get('draw')}
       });
-      
+
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         if (dialogRef.componentInstance.confirmFlag){
@@ -306,7 +306,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             if (olGeometryFeature === geometry) {
               this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
             }
-          })
+          });
         }
       });
     }, 250);
@@ -537,11 +537,11 @@ export class DrawComponent implements OnInit, OnDestroy {
    * 2. In createDrawingLayerStyle, need to change the inputs to
    * add the font size and the font style
    * 3. Make the frontend interface to interact with the data
-   * 
+   *
    */
 
   onFontChange(labelsAreShown: boolean, isAnIcon: boolean, size?: string, style?: FontType) {
-
+    console.log(size);
     this.drawStyleService.setFontSize(size);
     this.drawStyleService.setFontStyle(style);
 
@@ -562,6 +562,16 @@ export class DrawComponent implements OnInit, OnDestroy {
   get allFontStyles(): string[]{
     return Object.values(FontType);
   }
+
+  isString(stringInput: string): boolean{
+    const result = isNaN(parseInt(stringInput));
+    return !(result);
+  }
+
+
+  /**
+   * 4. Either implement it in the dialog or in the page itself
+   */
 
 
 }

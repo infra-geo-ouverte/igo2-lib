@@ -12,7 +12,7 @@ export interface DialogData {
   })
   export class DrawPopupComponent {
 
-    @Input() confirmFlag: boolean = false; 
+    @Input() confirmFlag: boolean = false;
 
     constructor(
       public dialogRef: MatDialogRef<DrawPopupComponent>,

@@ -24,21 +24,35 @@
 
   <form class="example-container">
     <mat-form-field appearance="fill">
-      <mat-label>Font size</mat-label>
+      <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
       <input
         matInput
         #testFontSize
         type="number"
         placeholder="20"
         min="10"
-        value="{{ fontSize }}"
+        [value]="fontSize"
+        (input)="
+          onFontChange(
+            labelsAreShown,
+            false,
+            $event.target.value,
+            testFontStyle.value
+          )
+        "
       />
       <span matSuffix>px</span>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Font style</mat-label>
-      <mat-select #testFontStyle value="{{ fontStyle }}">
+      <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
+      <mat-select
+        #testFontStyle
+        [value]="fontStyle"
+        (selectionChange)="
+          onFontChange(labelsAreShown, false, testFontSize.value, $event.value)
+        "
+      >
         <mat-option
           *ngFor="let fontSelect of allFontStyles"
           [value]="fontSelect"
@@ -48,43 +62,6 @@
       </mat-select>
     </mat-form-field>
   </form>
-
-  <button
-    mat-raised-button
-    (click)="
-      onFontChange(
-        labelsAreShown,
-        false,
-        testFontSize.value,
-        testFontStyle.value
-      )
-    "
-  >
-    OK
-  </button>
-
-  <!-- <mat-form-field class="example-full-width">
-    <input #testFontSize value="{{ fontSize }}" />
-    <mat-select #testFontStyle style="float: left" value="{{ fontStyle }}">
-      <mat-option *ngFor="let fontSelect of allFontStyles" [value]="fontSelect">
-        {{ fontSelect }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <button
-    mat-raised-button
-    (click)="
-      onFontChange(
-        labelsAreShown,
-        false,
-        testFontSize.value,
-        testFontStyle.value
-      )
-    "
-  >
-    OK
-  </button> -->
 
   <div class="draw-options mat-typography">
     <mat-slide-toggle
