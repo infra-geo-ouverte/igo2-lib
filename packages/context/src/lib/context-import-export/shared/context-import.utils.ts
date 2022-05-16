@@ -193,6 +193,7 @@ export function addImportedFeaturesToMap(
   source.ol.addFeatures(olFeatures);
   const layer = new VectorLayer({
     title: layerTitle,
+    isIgoInternalLayer: true,
     source,
     style: new olStyle.Style({
       stroke,
@@ -278,6 +279,7 @@ export function addImportedFeaturesStyledToMap(
 
   const layer = new VectorLayer({
     title: layerTitle,
+    isIgoInternalLayer: true,
     source,
     style
   });
