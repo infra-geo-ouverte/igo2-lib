@@ -15,8 +15,8 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
   @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
-  public entities: Array<Array<Feature>>;
-  public entitiesToShow: Array<Array<Feature>>;
+  public entities: Array<Array<Feature>>; // an array containing all the entities in the store
+  public entitiesToShow: Array<Array<Feature>>; // an array containing the entities to show in a specific page
 
   public simpleFeatureListConfig: SimpleFeatureList; // the config input by the user
   public attributeOrder: AttributeOrder; // the attribute order specified by the user in the config
@@ -41,13 +41,15 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     // get the entities from the layer/store
-    this.entities = this.entityStore.entities$.value;
+    this.entities = this.entityStore.entities$.getValue();
 
     // get the config input by the user
     this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
 
-    // get the attribute order to use to display the elements in the list
+    // get the attribute order input by the user to use to display the elements in the list
     this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
+
+    // get the sorting config input by the user and sort the entities accordingly (sort ascending by default)
     this.sortBy = this.simpleFeatureListConfig.sortBy;
     if (this.sortBy) {
       if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
@@ -81,18 +83,22 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // when a user clicks on entities on the map, if an entity or entities have been clicked...
     if (changes.clickedEntities.currentValue?.length > 0 && changes.clickedEntities.currentValue !== undefined) {
+      // ...if more than one entity has been clicked...
       if (changes.clickedEntities.currentValue.length > 1) {
         this.selectedEntities = changes.clickedEntities.currentValue;
         this.selectedEntity = undefined;
         this.entitiesAreSelected = true;
         this.entityIsSelected = false;
+      // ... if one entity has been selected...
       } else {
         this.selectedEntities = undefined;
         this.selectedEntity = changes.clickedEntities.currentValue[0];
         this.entitiesAreSelected = false;
         this.entityIsSelected = true;
       }
+    // if no entity has been clicked...
     } else {
       this.selectedEntities = undefined;
       this.selectedEntity = undefined;
@@ -101,38 +107,67 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * @description Checks if an attribute has to be formatted and formats it if necessary
+   * @param attribute A raw attributed from an entity
+   * @returns A formatted attribute
+   */
   checkAttributeFormatting(attribute: any) {
     attribute = this.isPhoneNumber(attribute);
     attribute = this.isPostalCode(attribute);
-    attribute = this.isUrl(attribute);
+    attribute = this.isURL(attribute);
     attribute = this.isEmail(attribute);
 
     return attribute;
   }
 
+  /**
+   * @description Creates a personnalized attribute or a formatted attribute
+   * @param entity An entity
+   * @param attribute The attribute to get or to create
+   * @returns The attribute as a string
+   */
   createAttribute(entity: Feature, attribute: any): string {
-    let value: string;
+    let newAttribute: string;
+    // if the attribute has a personnalized attribute input by the user in the config...
     if (attribute.personalizedFormatting) {
-      value = this.createPersonalizedAttribute(entity, attribute.personalizedFormatting);
+      newAttribute = this.createPersonalizedAttribute(entity, attribute.personalizedFormatting);
+    // if the attribute is not personnalized...
     } else {
-      value = this.checkAttributeFormatting(entity.properties[attribute.attributeName]);
+      newAttribute = this.checkAttributeFormatting(entity.properties[attribute.attributeName]);
     }
-    return value;
+    return newAttribute;
   }
 
+  /**
+   * @description Creates a personnalized attribute
+   * @param entity The entity containing the attribute
+   * @param personalizedFormatting The personnalized formatting specified by the user in the config
+   * @returns A personnalized attribute
+   */
   createPersonalizedAttribute(entity: Feature, personalizedFormatting: string): string {
-    let personalizedAttribute = personalizedFormatting;
+    let personalizedAttribute: string = personalizedFormatting;
 
+    // get the attributes for the personnalized attribute
     const attributeList: Array<string> = personalizedFormatting.match(/(?<=\[)(.*?)(?=\])/g);
 
+    // for each attribute in the list...
     attributeList.forEach(attribute => {
+      // ...get the attibute value, format it if needed and replace it in the string
       personalizedAttribute = personalizedAttribute.replace(attribute, this.checkAttributeFormatting(entity.properties[attribute]));
     });
+    // remove the square brackets surrounding the attributes
     personalizedAttribute = personalizedAttribute.replace(/[\[\]]/g, '');
     personalizedAttribute = personalizedAttribute.replace(/^([^A-zÀ-ÿ0-9])*|([^A-zÀ-ÿ0-9])*$/g, '');
+
     return personalizedAttribute;
   }
 
+  /**
+   * @description Formats an attribute representing a phone number if the string matches the given pattern
+   * @param attribute The attribute to format
+   * @returns A formatted string representing a phone number or the original attribute
+   */
   isPhoneNumber(attribute: any): any {
     let possiblePhoneNumber: string = ('' + attribute).replace(/\D/g, '');
     const match: Array<string> = possiblePhoneNumber.match(/^(\d{3})(\d{3})(\d{4})$/);
@@ -142,6 +177,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     return attribute;
   }
 
+  /**
+   * @description Formats an attribute representing an email address if the string matches the given pattern
+   * @param attribute The attribute to format
+   * @returns A formatted string representing an email address or the original attribute
+   */
   isEmail(attribute: any): any {
     let possibleEmail: string = '' + attribute;
     const match: Array<string> = possibleEmail.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/);
@@ -153,6 +193,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     return attribute;
   }
 
+  /**
+   * @description Formats an attribute representing a postal code if the string matches the given pattern
+   * @param attribute The attribute to format
+   * @returns A formatted string representing a postal code or the original attribute
+   */
   isPostalCode(attribute: any): any {
     let possiblePostalCode: string = '' + attribute;
     const match: Array<string> = possiblePostalCode.match(/^([A-CEGHJ-NPR-TVXY]\d[A-CEGHJ-NPR-TV-Z])[ -]?(\d[A-CEGHJ-NPR-TV-Z]\d)$/i);
@@ -162,7 +207,12 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     return attribute;
   }
 
-  isUrl(attribute: any): any {
+  /**
+   * @description Formats an attribute representing an URL if the string matches the given pattern
+   * @param attribute The attribute to format
+   * @returns A formatted string representing an URL or the original attribute
+   */
+  isURL(attribute: any): any {
     let possibleURL: string = '' + attribute;
     const match: Array<string> = possibleURL.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     if (match && this.formatURL) {
@@ -173,28 +223,45 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     return attribute;
   }
 
+  /**
+   * @description Fired when the user select an entity in the list
+   * @param entity
+   */
   selectEntity(entity: any) {
+    // set the variables
     this.entitiesAreSelected = false;
     this.entityIsSelected = true;
     this.selectedEntities = undefined;
     this.selectedEntity = entity;
 
+    // update the store and emit the entity to parent
     this.entityStore.state.update(entity, {selected: true}, true);
     let entityCollection: {added: any[]} = {added: []};
     entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
   }
 
+  /**
+   * @description Fired when the user unselects an entity
+   */
   unselectEntity() {
+    // set the variables
     this.entitiesAreSelected = false;
     this.entityIsSelected = false;
     this.selectedEntities = undefined;
     this.selectedEntity = undefined;
   }
 
+  /**
+   * @description Fired when the user changes the page
+   * @param currentPage The current page number
+   */
   onPageChange(currentPage: number) {
+    // calculate the new lower and upper bounds to display
     this.elementsLowerBound = (currentPage - 1) * this.pageSize + 1;
     this.elementsUpperBound = currentPage * this.pageSize > this.entities.length ? this.entities.length : currentPage * this.pageSize;
+
+    // slice the entities to show the current ones
     this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
   }
 }

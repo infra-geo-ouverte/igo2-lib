@@ -13,6 +13,7 @@ import { IgoEntityTablePaginatorModule } from '../../entity-table-paginator/enti
 import { IgoImageModule } from '../../../image/image.module';
 import { IgoLanguageModule } from '@igo2/core';
 import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-paginator.component';
+import { SimpleFeatureListHeaderComponent } from './simple-feature-list-header.component';
 
 /**
  * @ignore
@@ -36,7 +37,8 @@ import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-pagin
   ],
   declarations: [
     SimpleFeatureListComponent,
-    SimpleFeatureListPaginatorComponent
+    SimpleFeatureListPaginatorComponent,
+    SimpleFeatureListHeaderComponent
   ]
 })
 export class IgoSimpleFeatureListModule {}

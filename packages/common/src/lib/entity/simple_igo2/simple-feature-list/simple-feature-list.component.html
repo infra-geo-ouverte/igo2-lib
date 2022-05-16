@@ -1,11 +1,8 @@
-<mat-divider></mat-divider>
-
-<div class="elements">
-  <span class="numberOfElements">{{ entities.length }} {{ 'igo.common.paginator.elementsLowercase' | translate }}</span>
-  <span class="currentElements">{{ 'igo.common.paginator.elementsUppercase' | translate }}  {{ elementsLowerBound }} {{ 'igo.common.paginator.to' | translate }} {{ elementsUpperBound }}</span>
-</div>
-
-<div class="header"></div>
+<igo-simple-feature-list-header
+  [entities]="entities"
+  [elementsLowerBound]="elementsLowerBound"
+  [elementsUpperBound]="elementsUpperBound">
+</igo-simple-feature-list-header>
 
 <div class="entities-container">
   <ng-container *ngIf="!entityIsSelected && !entitiesAreSelected; else entitiesSelected">

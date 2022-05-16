@@ -7,33 +7,37 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styleUrls: ['./simple-feature-list-paginator.component.scss']
 })
 export class SimpleFeatureListPaginatorComponent implements OnInit, OnDestroy {
-  @Input() pageSize: number;
-  @Input() numberOfPages: number;
-  @Input() showFirstLastPageButtons: boolean;
-  @Input() showPreviousNextPageButtons: boolean;
-  @Output() pageChange = new EventEmitter();
+  @Input() pageSize: number; // the number of elements per page
+  @Input() numberOfPages: number; // the calculated number of pages necessary to display all the elements
+  @Input() showFirstLastPageButtons: boolean; // whether to display the First page and Last page buttons or not
+  @Input() showPreviousNextPageButtons: boolean; // whether to display the Previous page and Next page buttons or not
+  @Output() pageChange = new EventEmitter(); // an event emitted when the user changes the page
 
-  public currentPage$: BehaviorSubject<number> = new BehaviorSubject(1);
-  public pageChange$$: Subscription;
-  public currentPageIsFirst: boolean = true;
-  public currentPageIsLast: boolean = false;
+  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // an observable containing the current page number
+  public pageChange$$: Subscription; // a subscription to a page change
+  public currentPageIsFirst: boolean = true; // whether the current page is the first one or not
+  public currentPageIsLast: boolean = false; // whether the current page is the last one or not
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.pageChange$$ = this.currentPage$.subscribe(() => {
-      if (this.currentPage$.getValue() === this.numberOfPages) {
+    // subscribe to a page change made by the user
+    this.pageChange$$ = this.currentPageNumber$.subscribe((currentPageNumber: number) => {
+      // if current page is the last one...
+      if (currentPageNumber === this.numberOfPages) {
         this.currentPageIsFirst = false;
         this.currentPageIsLast = true;
-      } else if (this.currentPage$.getValue() === 1) {
+      // if current page is the first one...
+      } else if (currentPageNumber === 1) {
         this.currentPageIsFirst = true;
         this.currentPageIsLast = false;
+      // if current page is neither the first nor the last one...
       } else {
         this.currentPageIsFirst = false;
         this.currentPageIsLast = false;
       }
-
-      this.pageChange.emit(this.currentPage$.getValue());
+      // emit the current page number to parent
+      this.pageChange.emit(currentPageNumber);
     });
   }
 
@@ -41,23 +45,44 @@ export class SimpleFeatureListPaginatorComponent implements OnInit, OnDestroy {
     this.pageChange$$.unsubscribe();
   }
 
+  /**
+   * @description Fired when the First page button is clicked
+   */
   goToFirstPage() {
-    this.currentPage$.next(1);
+    // set current page number to first (1)
+    this.currentPageNumber$.next(1);
   }
 
+  /**
+   * @description Fired when the Previous page button is clicked
+   */
   goToPreviousPage() {
-    this.currentPage$.next(this.currentPage$.getValue() - 1);
+    // set current page number to previous (- 1)
+    this.currentPageNumber$.next(this.currentPageNumber$.getValue() - 1);
   }
 
+  /**
+   * @description Fired when a specific page is selected
+   * @param event
+   */
   goToPage(event: any) {
-    this.currentPage$.next(parseInt(event.target.innerText));
+    // set current page number to selected button
+    this.currentPageNumber$.next(parseInt(event.target.innerText));
   }
 
+  /**
+   * @description Fired when the Next page button is clicked
+   */
   goToNextPage() {
-    this.currentPage$.next(this.currentPage$.getValue() + 1);
+    // set current page number to next (+ 1)
+    this.currentPageNumber$.next(this.currentPageNumber$.getValue() + 1);
   }
 
+  /**
+   * @description Fired when the Last page button is clicked
+   */
   goToLastPage() {
-    this.currentPage$.next(this.numberOfPages);
+    // set current page number to last
+    this.currentPageNumber$.next(this.numberOfPages);
   }
 }

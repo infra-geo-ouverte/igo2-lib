@@ -130,8 +130,6 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
    */
   public getLabelOrPlaceholder(controlName: string, type: string): string {
     // find the correct description
-    console.log(controlName);
-    console.log(type);
     const description: string = this.filtersConfig.find((filter: SimpleFilter) => filter.type === controlName).description;
 
     // create the string for the label or the placeholder

@@ -24,7 +24,7 @@
   <mat-icon svgIcon="chevron-left"></mat-icon>
   </button>
   <span *ngFor="let page of [].constructor(numberOfPages); let i = index"
-    [ngClass]="i + 1 === currentPage$.getValue() ? 'pageButtonBold' : 'pageButton'"
+    [ngClass]="i + 1 === currentPageNumber$.getValue() ? 'pageButtonBold' : 'pageButton'"
     mat-button
     color="primary"
     (click)="goToPage($event)">
