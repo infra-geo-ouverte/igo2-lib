@@ -153,7 +153,6 @@ export class DrawStyleService {
 
     // if feature is a point, a linestring or a polygon
     } else {
-      console.log(fontSizeAndStyle);
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',

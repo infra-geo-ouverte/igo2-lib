@@ -532,16 +532,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.openDialog(olGeometry, false);
   }
 
-  /**
-   * 1. Need to edit this function to change the label
-   * 2. In createDrawingLayerStyle, need to change the inputs to
-   * add the font size and the font style
-   * 3. Make the frontend interface to interact with the data
-   *
-   */
-
   onFontChange(labelsAreShown: boolean, isAnIcon: boolean, size?: string, style?: FontType) {
-    console.log(size);
     this.drawStyleService.setFontSize(size);
     this.drawStyleService.setFontStyle(style);
 
