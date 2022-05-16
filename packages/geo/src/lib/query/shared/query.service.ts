@@ -181,7 +181,7 @@ export class QueryService {
           coordinates: olmline.getCoordinates()
         };
       case 'Point':
-        return olmpts;
+        returnGeometry = olmpts;
       case 'Polygon':
         returnGeometry = {
           type: olmpoly.getType(),
