@@ -299,7 +299,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometryFeature, label);
           }
         }
-        // deletes the feature 
+        // deletes the feature
         else {
           this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
             const geometry = drawingLayerFeature.getGeometry() as any;
