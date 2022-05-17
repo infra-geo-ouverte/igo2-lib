@@ -288,6 +288,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
+        // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag){
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           // if event was fired at draw end
@@ -298,9 +299,8 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometryFeature, label);
           }
         }
+        // deletes the feature 
         else {
-          // this.store.delete(olGeometryFeature.value);
-          // this.olDrawingLayerSource.removeFeature(olGeometryFeature);
           this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
             const geometry = drawingLayerFeature.getGeometry() as any;
             if (olGeometryFeature === geometry) {
@@ -527,10 +527,20 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.dialog.open(DrawShorcutsComponent);
   }
 
+  /**
+   * Called when the user double-clicks the selected drawing
+   */
   editLabelDrawing(){
     const olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.ol.getView().getProjection().getCode());
     this.openDialog(olGeometry, false);
   }
+
+  /**
+   * Called when the user changes the font size or/and style
+   * @param labelsAreShown wheter the labels are shown or not
+   * @param size the size of the font
+   * @param style the style of the font
+   */
 
   onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
     this.drawStyleService.setFontSize(size);
@@ -546,11 +556,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   get allFontStyles(): string[]{
     return Object.values(FontType);
   }
-
-
-  /**
-   * 4. Either implement it in the dialog or in the page itself
-   */
 
 
 }
