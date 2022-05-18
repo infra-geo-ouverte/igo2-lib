@@ -13,6 +13,7 @@ import olFormatEsriJSON from 'ol/format/EsriJSON';
 import olFeature from 'ol/Feature';
 import * as olgeom from 'ol/geom';
 
+import { LanguageService, MessageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FEATURE } from '../../feature/shared/feature.enums';
@@ -42,8 +43,12 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
+  public featureCount = 20; // default feature count
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    private languageService: LanguageService) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     return layers
@@ -308,6 +313,13 @@ export class QueryService {
       for (const feature of features) {
         feature.geometry = geomToAdd;
       }
+    }
+
+    const featureCount = new RegExp('FEATURE_COUNT=' + this.featureCount);
+    if (featureCount.test(url) && features.length === this.featureCount) {
+      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: this.featureCount}).subscribe(message => {
+        this.messageService.info(message);
+      });
     }
 
     return features.map((feature: Feature, index: number) => {
@@ -586,8 +598,12 @@ export class QueryService {
             wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
-          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || '5'
+          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.featureCount
         };
+
+        if (wmsDatasource.params.FEATURE_COUNT) {
+          this.featureCount = wmsDatasource.params.FEATURE_COUNT;
+        }
 
         if (forceGML2) {
           WMSGetFeatureInfoOptions.INFO_FORMAT = this.getMimeInfoFormat(

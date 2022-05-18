@@ -723,6 +723,9 @@
         "maxValue": "{{column}} is bigger than {{value}}",
         "minLength": "{{column}} is shorter than {{value}} characters",
         "maxLength": "{{column}} is longer than {{value}} characters"
+      },
+      "query": {
+        "featureCountMax": "Number of query features exceed the one set on the service ({{value}})"
       }
     }
   }

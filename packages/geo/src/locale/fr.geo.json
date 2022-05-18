@@ -723,6 +723,9 @@
         "maxValue": "{{column}}doit être plus petit que {{value}}",
         "minLength": "{{column}} doit être plus long que {{value}} caractères",
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
+      },
+      "query": {
+        "featureCountMax": "Le nombre d'entités interrogées dépasse le nombre maximal défini par le service ({{value}})"
       }
     }
   }
