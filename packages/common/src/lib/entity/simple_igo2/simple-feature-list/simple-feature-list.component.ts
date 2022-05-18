@@ -93,10 +93,12 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.entityStore.state.updateAll({selected: false});
+    const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
     // when a user clicks on entities on the map, if an entity or entities have been clicked...
-    if (changes.clickedEntities.currentValue?.length > 0 && changes.clickedEntities.currentValue !== undefined) {
+    if (clickedEntities.length > 0 && clickedEntities !== undefined) {
       // ...show current entities in list
-      this.entitiesToShow = changes.clickedEntities.currentValue;
+      this.entityStore.state.updateMany(clickedEntities, {selected: true});
     // else show all entities in list
     } else {
       this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
@@ -224,12 +226,12 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
    * @description Fired when the user selects an entity in the list
    * @param entity
    */
-  selectEntity(entity: any) {
+  selectEntity(entity: Feature) {
     this.entitiesToShow = [entity];
 
     // update the store and emit the entity to parent
     this.entityStore.state.update(entity, {selected: true}, true);
-    let entityCollection: {added: any[]} = {added: []};
+    let entityCollection: {added: Array<Feature>} = {added: []};
     entityCollection.added.push(entity);
     this.listSelection.emit(entityCollection);
   }
@@ -237,10 +239,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   /**
    * @description Fired when the user unselects the entity in the list
    */
-  unselectEntity() {
+  unselectEntity(entity: Feature) {
     // show all entities
     this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
+    this.entityStore.state.update(entity, {selected: false}, true);
   }
 
   /**
