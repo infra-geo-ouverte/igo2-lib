@@ -11,7 +11,7 @@ import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';
-import { MessageService, ActivityService, LanguageService } from '@igo2/core';
+import { MessageService, ActivityService, LanguageService, ConfigService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
@@ -31,7 +31,8 @@ export class PrintService {
     private http: HttpClient,
     private messageService: MessageService,
     private activityService: ActivityService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private configService: ConfigService
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -196,7 +197,7 @@ export class PrintService {
   }
 
   getDataImage(url: string): Observable<string> {
-    const secureIMG = new SecureImagePipe(this.http);
+    const secureIMG = new SecureImagePipe(this.http, this.configService);
     return secureIMG.transform(url);
   }
 
