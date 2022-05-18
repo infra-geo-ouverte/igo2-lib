@@ -214,13 +214,20 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+        if (res.sprite){
+          this.getStuff(res.sprite+'.json').subscribe(res2 => {
+            stylefunction(layer.ol, res, layerOptions.mapboxStyle.source, undefined, res2,
+                res.sprite+'.png');
+          });
+        } else {
+          stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+        }
       });
     }
   }
 
-  public getMapboxGlStyle(url: string) {
+  public getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
       catchError(err => {
