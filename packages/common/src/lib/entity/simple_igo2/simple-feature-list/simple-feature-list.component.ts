@@ -3,6 +3,7 @@ import { ConfigService } from '@igo2/core';
 import { Component, Input, OnInit, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../../shared';
 import { SimpleFeatureList, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-simple-feature-list',
@@ -11,14 +12,14 @@ import { SimpleFeatureList, AttributeOrder, SortBy, Paginator } from './simple-f
 })
 
 export class SimpleFeatureListComponent implements OnInit, OnChanges {
-  @Input() entityStore: EntityStore<Array<Feature>>; // a store that contains all the entities
+  @Input() entityStore: EntityStore; // a store that contains all the entities
   @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
   @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
-  public entities: Array<Array<Feature>>; // an array containing all the entities in the store
-  public entitiesToShow: Array<Array<Feature>>; // an array containing the entities to show in a specific page
+  public entities: Array<Feature>; // an array containing all the entities in the store
+  public entitiesToShow: Array<Feature>; // an array containing the entities to show in a specific page
 
-  public simpleFeatureListConfig: SimpleFeatureList; // the config input by the user
+  public simpleFeatureListConfig: SimpleFeatureList; // the simpleFeatureList config input by the user
   public attributeOrder: AttributeOrder; // the attribute order specified by the user in the config
   public sortBy: SortBy; // the sorting to use input by the user in the config
   public formatURL: boolean; // whether to format an URL or not (input by the user in the config)
@@ -28,20 +29,18 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   public pageSize: number; // the number of elements in a page, input by the user
   public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input by the user
   public showPreviousNextPageButtons: boolean; // whether to show the Previous page and Next Page buttons or not, input by the user
-  public entityIsSelected: boolean = false; // whether a single entity is selected or not
-  public entitiesAreSelected: boolean = false; // wheter multiple entities are selected or not
-  public selectedEntities: Array<Feature> = undefined; // an array containing the selected entities
-  public selectedEntity: Feature = undefined; // the selected entity
 
+  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // observalbe of current page number
+  public currentPageNumber$$: Subscription; // subscription to current page number
   public numberOfPages: number; // calculated number of pages
-  public elementsLowerBound: number; // the index of the lowest element in the current page
-  public elementsUpperBound: number; // the index of the highest element in the current page
+  public elementsLowerBound: number; // the lowest index (+ 1) of an element in the current page
+  public elementsUpperBound: number; /// the highest index (+ 1) of an element in the current page
 
   constructor(private configService: ConfigService) {}
 
   ngOnInit(): void {
     // get the entities from the layer/store
-    this.entities = this.entityStore.entities$.getValue();
+    this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
 
     // get the config input by the user
     this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
@@ -80,30 +79,28 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
     } else {
       this.entitiesToShow = this.entities;
     }
+
+    // suscribe to the current page number
+    this.currentPageNumber$$ = this.currentPageNumber$.subscribe((currentPageNumber: number) => {
+      // calculate the new lower and upper bounds to display
+      this.elementsLowerBound = (currentPageNumber - 1) * this.pageSize + 1;
+      this.elementsUpperBound = currentPageNumber * this.pageSize > this.entities.length ? this.entities.length :
+        currentPageNumber * this.pageSize;
+
+      // slice the entities to show the current ones
+      this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // when a user clicks on entities on the map, if an entity or entities have been clicked...
     if (changes.clickedEntities.currentValue?.length > 0 && changes.clickedEntities.currentValue !== undefined) {
-      // ...if more than one entity has been clicked...
-      if (changes.clickedEntities.currentValue.length > 1) {
-        this.selectedEntities = changes.clickedEntities.currentValue;
-        this.selectedEntity = undefined;
-        this.entitiesAreSelected = true;
-        this.entityIsSelected = false;
-      // ... if one entity has been selected...
-      } else {
-        this.selectedEntities = undefined;
-        this.selectedEntity = changes.clickedEntities.currentValue[0];
-        this.entitiesAreSelected = false;
-        this.entityIsSelected = true;
-      }
-    // if no entity has been clicked...
+      // ...show current entities in list
+      this.entitiesToShow = changes.clickedEntities.currentValue;
+    // else show all entities in list
     } else {
-      this.selectedEntities = undefined;
-      this.selectedEntity = undefined;
-      this.entitiesAreSelected = false;
-      this.entityIsSelected = false;
+      this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+      this.currentPageNumber$.next(this.currentPageNumber$.getValue());
     }
   }
 
@@ -224,15 +221,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * @description Fired when the user select an entity in the list
+   * @description Fired when the user selects an entity in the list
    * @param entity
    */
   selectEntity(entity: any) {
-    // set the variables
-    this.entitiesAreSelected = false;
-    this.entityIsSelected = true;
-    this.selectedEntities = undefined;
-    this.selectedEntity = entity;
+    this.entitiesToShow = [entity];
 
     // update the store and emit the entity to parent
     this.entityStore.state.update(entity, {selected: true}, true);
@@ -242,26 +235,20 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * @description Fired when the user unselects an entity
+   * @description Fired when the user unselects the entity in the list
    */
   unselectEntity() {
-    // set the variables
-    this.entitiesAreSelected = false;
-    this.entityIsSelected = false;
-    this.selectedEntities = undefined;
-    this.selectedEntity = undefined;
+    // show all entities
+    this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+    this.currentPageNumber$.next(this.currentPageNumber$.getValue());
   }
 
   /**
    * @description Fired when the user changes the page
-   * @param currentPage The current page number
+   * @param currentPageNumber The current page number
    */
-  onPageChange(currentPage: number) {
-    // calculate the new lower and upper bounds to display
-    this.elementsLowerBound = (currentPage - 1) * this.pageSize + 1;
-    this.elementsUpperBound = currentPage * this.pageSize > this.entities.length ? this.entities.length : currentPage * this.pageSize;
-
-    // slice the entities to show the current ones
-    this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+  onPageChange(currentPageNumber: number) {
+    // update the current page number
+    this.currentPageNumber$.next(currentPageNumber);
   }
 }

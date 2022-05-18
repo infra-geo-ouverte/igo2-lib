@@ -8,8 +8,8 @@ import { Feature } from 'geojson';
 })
 export class SimpleFeatureListHeaderComponent implements OnInit {
   @Input() entities: Array<Array<Feature>>; // an array containing all the entities in the store
-  @Input() elementsLowerBound: number; // the index (+ 1) of the lowest element in the current page
-  @Input() elementsUpperBound: number; // the index (+ 1) of the highest element in the current page
+  @Input() elementsLowerBound: number; // the lowest index (+ 1) of an element in the current page
+  @Input() elementsUpperBound: number; // the highest index (+ 1) of an element in the current page
 
   public entitiesLength: number;
 

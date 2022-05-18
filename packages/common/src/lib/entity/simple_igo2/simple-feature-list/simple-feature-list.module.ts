@@ -12,8 +12,8 @@ import { IgoCustomHtmlModule } from '../../../custom-html/custom-html.module';
 import { IgoEntityTablePaginatorModule } from '../../entity-table-paginator/entity-table-paginator.module';
 import { IgoImageModule } from '../../../image/image.module';
 import { IgoLanguageModule } from '@igo2/core';
-import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-paginator.component';
-import { SimpleFeatureListHeaderComponent } from './simple-feature-list-header.component';
+import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-paginator/simple-feature-list-paginator.component';
+import { SimpleFeatureListHeaderComponent } from './simple-feature-list-header/simple-feature-list-header.component';
 
 /**
  * @ignore

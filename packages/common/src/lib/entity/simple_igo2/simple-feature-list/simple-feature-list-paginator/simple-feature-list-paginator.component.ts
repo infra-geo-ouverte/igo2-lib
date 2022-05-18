@@ -9,14 +9,14 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 export class SimpleFeatureListPaginatorComponent implements OnInit, OnDestroy {
   @Input() pageSize: number; // the number of elements per page
   @Input() numberOfPages: number; // the calculated number of pages necessary to display all the elements
-  @Input() showFirstLastPageButtons: boolean; // whether to display the First page and Last page buttons or not
-  @Input() showPreviousNextPageButtons: boolean; // whether to display the Previous page and Next page buttons or not
+  @Input() showFirstLastPageButtons: boolean; // boolean representing whether to display the First page and Last page buttons or not
+  @Input() showPreviousNextPageButtons: boolean; // boolean representing whether to display the Previous page and Next page buttons or not
   @Output() pageChange = new EventEmitter(); // an event emitted when the user changes the page
 
   public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // an observable containing the current page number
   public pageChange$$: Subscription; // a subscription to a page change
-  public currentPageIsFirst: boolean = true; // whether the current page is the first one or not
-  public currentPageIsLast: boolean = false; // whether the current page is the last one or not
+  public currentPageIsFirst: boolean = true; // boolean representing whether the current page is the first one or not
+  public currentPageIsLast: boolean = false; // boolean representingwhether the current page is the last one or not
 
   constructor() {}
 
@@ -36,7 +36,7 @@ export class SimpleFeatureListPaginatorComponent implements OnInit, OnDestroy {
         this.currentPageIsFirst = false;
         this.currentPageIsLast = false;
       }
-      // emit the current page number to parent
+      // emit the current page number to parent component
       this.pageChange.emit(currentPageNumber);
     });
   }

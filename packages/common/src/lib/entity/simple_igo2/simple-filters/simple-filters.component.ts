@@ -15,13 +15,13 @@ import { Subscription } from 'rxjs';
 })
 export class SimpleFiltersComponent implements OnInit, OnDestroy {
   public terrAPIBaseURL: string = "https://geoegl.msp.gouv.qc.ca/apis/terrapi/"; // base URL of the terrAPI API
-  public filtersConfig: Array<SimpleFilter>; // simpleFilters config input by the user in the config file
+  public simpleFiltersConfig: Array<SimpleFilter>; // simpleFilters config input by the user in the config file
   public allTypesOptions: Array<TypeOptions> = []; // array that contains all the options for each filter
   public filteredTypesOptions: Array<TypeOptions> = []; // array that contains the filtered options for each filter
 
   public filtersFormGroup: FormGroup; // form group containing the controls (one control per filter)
   public previousFiltersFormGroupValue: object; // object representing the previous value held in each control
-  public filtersFormGroupValueChange$$: Subscription; // subscription to the form group value changes
+  public filtersFormGroupValueChange$$: Subscription; // subscription to form group value changes
 
   constructor(private configService: ConfigService,
     private languageService: LanguageService,
@@ -35,13 +35,13 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
 
   public async ngOnInit(): Promise<void> {
     // get the simpleFilters config input by the user in the config file
-    this.filtersConfig = this.configService.getConfig('simpleFilters');
+    this.simpleFiltersConfig = this.configService.getConfig('simpleFilters');
 
     // create a form group used to hold various controls
     this.filtersFormGroup = this.formBuilder.group({});
 
     // for each filter input by the user...
-    for (let filter of this.filtersConfig) {
+    for (let filter of this.simpleFiltersConfig) {
       if (filter.type) {
         // ...get the options from terrAPI and push them in the array containing all the options and add a control in the form group
         await this.getOptionsOfFilter(filter).then((typeOptions: TypeOptions) => {
@@ -98,7 +98,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     };
   }
   /**
-   * @description Get all of some options from a call to terrAPI
+   * @description Get all or some options from a call to terrAPI
    * @param returnAll A boolean representing if the call should return all of the options or if the options should be filtered
    * @param sType A string representing the source 'type' parameter from terrAPI
    * @param sCode A string representing the source 'code' parameter from terrAPI
@@ -130,7 +130,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
    */
   public getLabelOrPlaceholder(controlName: string, type: string): string {
     // find the correct description
-    const description: string = this.filtersConfig.find((filter: SimpleFilter) => filter.type === controlName).description;
+    const description: string = this.simpleFiltersConfig.find((filter: SimpleFilter) => filter.type === controlName).description;
 
     // create the string for the label or the placeholder
     const labelOrPlaceholder: string = type === 'label' ? description :
@@ -185,7 +185,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @description Filter options as the user types letters in a field
+   * @description Filter options as the user types characters in a field
    * @param currentFormGroupValue An object representing the current value of the form (and its controls)
    */
   private filterOptions(currentFormGroupValue: object) {
@@ -238,7 +238,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     this.filtersFormGroup.reset();
 
     // reset all of the options for every filter
-    for (let filter of this.filtersConfig) {
+    for (let filter of this.simpleFiltersConfig) {
       if (filter.type) {
         // ...get the options from terrAPI and replace them in the array containing all the options
         await this.getOptionsOfFilter(filter).then((typeOptions: TypeOptions) => {
