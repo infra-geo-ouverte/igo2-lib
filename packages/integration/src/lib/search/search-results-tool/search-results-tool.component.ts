@@ -82,7 +82,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
-  public debouncedEmpty$ :BehaviorSubject<boolean> = new BehaviorSubject(true);;
+  public debouncedEmpty$ :BehaviorSubject<boolean> = new BehaviorSubject(true);
   private debouncedEmpty$$: Subscription;
 
   /**
@@ -249,10 +249,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }
       });
     });
-    
-    this.debouncedEmpty$$ = this.store.stateView.empty$.pipe(debounceTime(1500)).subscribe(empty =>
-      this.debouncedEmpty$.next(empty)
-      )
+
+    this.debouncedEmpty$$ = this.store.stateView.empty$.pipe(debounceTime(1500)).subscribe(empty => this.debouncedEmpty$.next(empty));
   }
 
   private monitorResultOutOfView() {
