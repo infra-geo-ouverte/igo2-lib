@@ -43,7 +43,8 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
-  public featureCount = 20; // default feature count
+  public defaultFeatureCount = 20; // default feature count
+  public featureCount = 20; // feature count
 
   constructor(
     private http: HttpClient,
@@ -315,9 +316,16 @@ export class QueryService {
       }
     }
 
-    const featureCount = new RegExp('FEATURE_COUNT=' + this.featureCount);
-    if (featureCount.test(url) && features.length === this.featureCount) {
-      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: this.featureCount}).subscribe(message => {
+    const wmsDatasource = layer.dataSource as WMSDataSource;
+    const featureCount =  wmsDatasource.params?.FEATURE_COUNT ?
+      new RegExp('FEATURE_COUNT=' + this.featureCount) :
+      new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
+
+    if (
+      featureCount.test(url) &&
+      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
+      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
         this.messageService.info(message);
       });
     }
@@ -598,7 +606,7 @@ export class QueryService {
             wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
-          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.featureCount
+          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
         };
 
         if (wmsDatasource.params.FEATURE_COUNT) {

@@ -725,7 +725,7 @@
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       },
       "query": {
-        "featureCountMax": "Le nombre d'entités interrogées dépasse le nombre maximal défini par le service ({{value}})"
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
       }
     }
   }

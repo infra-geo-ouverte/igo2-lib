@@ -725,7 +725,7 @@
         "maxLength": "{{column}} is longer than {{value}} characters"
       },
       "query": {
-        "featureCountMax": "Number of query features exceed the one set on the service ({{value}})"
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
       }
     }
   }
