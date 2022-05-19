@@ -216,6 +216,7 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "hideSelectedLayers": "Hide selected layers",
+        "notInResolution": "Layer isn't visible at the active scale. Zoom in or out to display.",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",

@@ -214,6 +214,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "hideSelectedLayers": "Masquer les couches sélectionnées",
+        "notInResolution": "La couche n'est pas visible à l'échelle active. Veuillez zoomer ou dézoomer pour la visualiser.",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
