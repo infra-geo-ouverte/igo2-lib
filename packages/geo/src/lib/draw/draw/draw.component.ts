@@ -15,12 +15,13 @@ import {
     tryAddLoadingStrategy,
     tryAddSelectionStrategy,
     FeatureMotion,
-    FeatureStoreLoadingStrategy
+    FeatureStoreLoadingStrategy,
+    featureToOl
   } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GeometryType } from '../shared/draw.enum';
+import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -39,7 +40,7 @@ import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
@@ -49,6 +50,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+
 
 @Component ({
   selector: 'igo-draw',
@@ -74,6 +76,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         return feature.properties.draw;
       }
     }]
+
   };
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
@@ -81,6 +84,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fillColor: string;
   @Output() strokeColor: string;
   @Output() strokeWidth: number;
+
+  @Output() fontSize: string;
+  @Output() fontStyle: string;
+  @Input() fontType: FontType;
 
   @Input() map: IgoMap; // Map to draw on
 
@@ -101,6 +108,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   public labelsAreShown: boolean;
   private subscriptions$$: Subscription[] = [];
 
+  public fontSizeForm: string;
+  public fontStyleForm: string;
+
   public position: string = 'bottom';
   public form: FormGroup;
   public icons: Array<string>;
@@ -120,6 +130,10 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.labelsAreShown = this.drawStyleService.getLabelsAreShown();
     this.icons = this.drawIconService.getIcons();
     this.icon = this.drawStyleService.getIcon();
+
+    this.fontSize = this.drawStyleService.getFontSize();
+    this.fontStyle = this.drawStyleService.getFontStyle();
+
   }
 
   // Initialize the store that will contain the entities and create the Draw control
@@ -274,15 +288,25 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
-        this.updateLabelOfOlGeometry(olGeometryFeature, label);
-
-        // if event was fired at draw end
-        if (isDrawEnd) {
-          this.onDrawEnd(olGeometryFeature);
-
-        // if event was fired at select
-        } else {
-          this.onSelectDraw(olGeometryFeature, label);
+        // checks if the user clicked ok
+        if (dialogRef.componentInstance.confirmFlag){
+          this.updateLabelOfOlGeometry(olGeometryFeature, label);
+          // if event was fired at draw end
+          if (isDrawEnd) {
+            this.onDrawEnd(olGeometryFeature);
+          // if event was fired at select
+          } else {
+            this.onSelectDraw(olGeometryFeature, label);
+          }
+        }
+        // deletes the feature
+        else {
+          this.olDrawingLayerSource.getFeatures().forEach(drawingLayerFeature => {
+            const geometry = drawingLayerFeature.getGeometry() as any;
+            if (olGeometryFeature === geometry) {
+              this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
+            }
+          });
         }
       });
     }, 250);
@@ -341,6 +365,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     const entities = this.store.all();
 
     entities.forEach(entity => {
+
       const entityId = entity.properties.id;
 
       const olGeometryId = olGeometry.ol_uid;
@@ -361,13 +386,14 @@ export class DrawComponent implements OnInit, OnDestroy {
     const olGeometryCoordinates = JSON.stringify(olGeometry.getCoordinates()[0]);
 
     entities.forEach(entity => {
+
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
         const rad: number = entity.properties.rad ? entity.properties.rad : undefined;
-
         this.updateLabelOfOlGeometry(olGeometry, label);
         this.replaceFeatureInStore(entity, olGeometry, rad);
+
       }
     });
   }
@@ -500,4 +526,36 @@ export class DrawComponent implements OnInit, OnDestroy {
   openShorcutsDialog() {
     this.dialog.open(DrawShorcutsComponent);
   }
+
+  /**
+   * Called when the user double-clicks the selected drawing
+   */
+  editLabelDrawing(){
+    const olGeometry = featureToOl(this.selectedFeatures$.value[0], this.map.ol.getView().getProjection().getCode());
+    this.openDialog(olGeometry, false);
+  }
+
+  /**
+   * Called when the user changes the font size or/and style
+   * @param labelsAreShown wheter the labels are shown or not
+   * @param size the size of the font
+   * @param style the style of the font
+   */
+
+  onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
+    this.drawStyleService.setFontSize(size);
+    this.drawStyleService.setFontStyle(style);
+
+
+    this.store.layer.ol.setStyle((feature, resolution) => {
+      return this.drawStyleService.createDrawingLayerStyle(feature, resolution, labelsAreShown);
+    });
+    this.createDrawControl();
+  }
+
+  get allFontStyles(): string[]{
+    return Object.values(FontType);
+  }
+
+
 }

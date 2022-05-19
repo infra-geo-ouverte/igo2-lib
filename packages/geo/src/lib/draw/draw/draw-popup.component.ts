@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface DialogData {
@@ -12,11 +12,17 @@ export interface DialogData {
   })
   export class DrawPopupComponent {
 
+    @Input() confirmFlag: boolean = false;
+
     constructor(
       public dialogRef: MatDialogRef<DrawPopupComponent>,
       @Inject(MAT_DIALOG_DATA) public data: {currentLabel: string}) {}
 
     noLabel() {
       this.dialogRef.close();
+    }
+    confirm(labelString: string){
+      this.confirmFlag = true;
+      this.dialogRef.close(labelString);
     }
   }
