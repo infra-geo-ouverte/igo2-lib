@@ -24,7 +24,6 @@ import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
 import { generateIdFromSourceOptions } from '../../utils';
-import { external } from 'jszip';
 
 @Injectable({
   providedIn: 'root'
@@ -131,7 +130,6 @@ export class CatalogService {
   ): Observable<LayerOptions[]> {
     return this.http.get<LayerOptions[]>(catalog.url);
   }
-
 
   loadCatalogWMSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
@@ -286,7 +284,6 @@ export class CatalogService {
     const recursiveGroupByLayerAddress = (items, keyFn) =>
       items.reduce((acc, item, idx, arr) => {
         const layerTitle = keyFn(item);
-        const layerNewMetadataUrl = keyFn(item); //metadata
         const outItem = Object.assign({}, item);
 
         if (item.type === CatalogItemType.Layer) {
@@ -306,14 +303,10 @@ export class CatalogService {
             return bInd;
           }); // $& i !== idx
 
-
           if (diffAddress.length > 0) {
-            const nPosition = indicesMatchTitle.findIndex((x) => x === idx) + 1;
+            let nPosition = indicesMatchTitle.findIndex((x) => x === idx) + 1;
             outItem.title = `${item.title} (${nPosition})`; // source: ${item.address.split('.')[0]}
-          }
-
-          if (diffAddress.length > 0) {
-            const nPosition = indicesMatchNewMetadataUrl.findIndex((x) => x === idx) + 1;
+            nPosition = indicesMatchNewMetadataUrl.findIndex((x) => x === idx) + 1;
             outItem.newMetadataUrl = `${item.newMetadataUrl} (${nPosition})`; // source: ${item.address.split('.')[0]}
           }
 
@@ -373,8 +366,6 @@ export class CatalogService {
       layersQueryFormat
     );
 
-    // WMS
-    let metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const legendOptions =
       catalog.showLegend && layer.Style
         ? this.capabilitiesService.getStyle(layer.Style)
@@ -405,13 +396,6 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
-    let abstract;
-    if (layer.Abstract) {
-      abstract = layer.Abstract;
-    } else if (!layer.Abstract && catalog.abstract) {
-      abstract = catalog.abstract;
-    }
-
     let layerTitle;
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
@@ -419,6 +403,13 @@ export class CatalogService {
           layerTitle = property.title;
         }
       }
+    }
+
+    let abstract;
+    if (layer.Abstract) {
+      abstract = layer.Abstract;
+    } else if (!layer.Abstract && catalog.abstract) {
+      abstract = catalog.abstract;
     }
 
     let forcedNewMetadataUrl: string;
@@ -437,8 +428,15 @@ export class CatalogService {
         else if (layer.Name !== property.layerName && property.newMetadataUrlAll) {
               forcedNewMetadataUrl = property.newMetadataUrlAll;
         } // when we set this property it overrides property.newMetadataUrl and property.newMetadataAbstract
+      }
     }
-  }
+
+    let metadataUrl;
+    if (forcedNewMetadataUrl) {
+      metadataUrl = forcedNewMetadataUrl;
+    } else {
+      metadataUrl = layer.DataURL ? layer.DataURL[0] : undefined;
+    }
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
@@ -450,8 +448,8 @@ export class CatalogService {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
-          url: forcedNewMetadataUrl ? forcedNewMetadataUrl : undefined,
-          extern: forcedNewMetadataUrl ? true : undefined,
+          url: metadataUrl === forcedNewMetadataUrl ? metadataUrl : metadataUrl?.OnlineResource,
+          extern: metadataUrl ? true : undefined,
           abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
           type: baseSourceOptions.type
         },
@@ -569,36 +567,38 @@ export class CatalogService {
     }
   }
 
-//   WMTS
-private getWMTSItems(
-  catalog,
-  capabilities: { [key: string]: any }
-): CatalogItemLayer[] {
-  const layers = capabilities.Contents.Layer;
-  const regexes = (catalog.regFilters || []).map(
-    (pattern: string) => new RegExp(pattern)
-  );
+  private getWMTSItems(
+    catalog,
+    capabilities: { [key: string]: any }
+  ): CatalogItemLayer[] {
+    if (!capabilities) {
+      return [];
+    }
+    const layers = capabilities.Contents.Layer;
+    const regexes = (catalog.regFilters || []).map(
+      (pattern: string) => new RegExp(pattern)
+    );
 
-  if (
-    capabilities.ServiceIdentification &&
-    capabilities.ServiceIdentification.Abstract &&
-    capabilities.ServiceIdentification.Abstract.length) {
-    catalog.abstract = capabilities.ServiceIdentification.Abstract;
-  }
+    if (
+      capabilities.ServiceIdentification &&
+      capabilities.ServiceIdentification.Abstract &&
+      capabilities.ServiceIdentification.Abstract.length) {
+      catalog.abstract = capabilities.ServiceIdentification.Abstract;
+    }
 
-  return layers
-    .map((layer: any) => {
-      if (!capabilities) {
-        return [];
-      }
-      let forcedTitle;
-      if (catalog.forcedProperties) {
-        for (const property of catalog.forcedProperties) {
-          if (layer.Title === property.layerName && property.title) {
-            forcedTitle = property.title;
+    return layers
+      .map((layer: any) => {
+        if (!capabilities) {
+          return [];
+        }
+        let forcedTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.Title === property.layerName && property.title) {
+              forcedTitle = property.title;
+            }
           }
         }
-      }
 
         //newMetadataUrl & newMetadataAbstract
         let forcedNewMetadataUrl: string;
@@ -617,8 +617,8 @@ private getWMTSItems(
             else if (layer.Title !== property.layerName && property.newMetadataUrlAll) {
                   forcedNewMetadataUrl = property.newMetadataUrlAll;
             } // when we set this property it overrides property.newMetadataUrl
+          }
         }
-      }
 
       if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
         return undefined;
@@ -665,7 +665,6 @@ private getWMTSItems(
     .filter((item: CatalogItemLayer | undefined) => item !== undefined);
 }
 
-// ArcGIS ESRI
   private getArcGISRESTItems(
     catalog,
     capabilities
@@ -694,7 +693,6 @@ private getWMTSItems(
 
     return layers
       .map((layer: any) => {
-
         let forcedTitle;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
@@ -756,7 +754,7 @@ private getWMTSItems(
             maxResolution: getResolutionFromScale(layer.minScale),
             metadata: {
               url: forcedNewMetadataUrl? forcedNewMetadataUrl : undefined,
-              extern: forcedNewMetadataUrl ? external : undefined,
+              extern: forcedNewMetadataUrl ? true : undefined,
               abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
               type: baseSourceOptions.type
             },
