@@ -331,6 +331,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
+        console.log(olGeometryFeature);
         if (dialogRef.componentInstance.confirmFlag) {
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           if (!olGeometryFeature.values_.style_) {
