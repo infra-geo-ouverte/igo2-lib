@@ -1,3 +1,52 @@
+## [1.11.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.0...1.11.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **context/layer-list-tool:** fix CSS overflow with Chrome 100 ([#1031](https://github.com/infra-geo-ouverte/igo2-lib/issues/1031)) ([6b48062](https://github.com/infra-geo-ouverte/igo2-lib/commit/6b48062a14cddc97aaf81cf66e34f0b1f4f0532f))
+* **entity-table:** fix formControl with no properties entity ([#1032](https://github.com/infra-geo-ouverte/igo2-lib/issues/1032)) ([b52ee5c](https://github.com/infra-geo-ouverte/igo2-lib/commit/b52ee5ca3b350bb677513536f3d9e5eadfa38cef))
+* **workspace:** fix wfs-actions workspace demo ([#1034](https://github.com/infra-geo-ouverte/igo2-lib/issues/1034)) ([46c9fd6](https://github.com/infra-geo-ouverte/igo2-lib/commit/46c9fd6c3241f9fcbb3fcb27e49c349fd83eb7d0))
+
+
+### Reverts
+
+* Revert "feat(layerSync): prevent refresh of linked layer if applied OGC filters are the same (#1027)" (#1033) ([7ae2b2b](https://github.com/infra-geo-ouverte/igo2-lib/commit/7ae2b2bdfa82d5801cfc9c052b5db0f0d2e4e6bb)), closes [#1027](https://github.com/infra-geo-ouverte/igo2-lib/issues/1027) [#1033](https://github.com/infra-geo-ouverte/igo2-lib/issues/1033)
+
+
+
+# [1.11.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.10.0...1.11.0) (2022-03-30)
+
+
+### Bug Fixes
+
+* **about:** fix depot url ([#1009](https://github.com/infra-geo-ouverte/igo2-lib/issues/1009)) ([c168667](https://github.com/infra-geo-ouverte/igo2-lib/commit/c168667e0ddb8bec339d4ad85aa7f627a9b66119))
+* **auth:** Fix disabled login button with autocomplete form ([#1003](https://github.com/infra-geo-ouverte/igo2-lib/issues/1003)) ([e726b0b](https://github.com/infra-geo-ouverte/igo2-lib/commit/e726b0bd24257c56c90d0696ff099eec0cad452d))
+* Circular dependency with toastr ([#1005](https://github.com/infra-geo-ouverte/igo2-lib/issues/1005)) ([ebe4585](https://github.com/infra-geo-ouverte/igo2-lib/commit/ebe4585eee6f00afc3dee00d97d0941baf01350a))
+* Don't fail when creating form fields or groups without validator ([#1006](https://github.com/infra-geo-ouverte/igo2-lib/issues/1006)) ([7cb159f](https://github.com/infra-geo-ouverte/igo2-lib/commit/7cb159f16b19a8cf8210146f6dfe5f1aa1acf041))
+* **export:** fix layers error when export tool is aleardy selected ([#1025](https://github.com/infra-geo-ouverte/igo2-lib/issues/1025)) ([0a0fba1](https://github.com/infra-geo-ouverte/igo2-lib/commit/0a0fba10ee173ddf1207497e9c14942c31494c1f))
+* **icherche:** fix icherche hashtags caps lock comparison ([0f71795](https://github.com/infra-geo-ouverte/igo2-lib/commit/0f71795a1051093647a6dcecd1381fd3940d48b8))
+* **layer-legend:** fix arcgisrest and imagearcgisrest legend ([#966](https://github.com/infra-geo-ouverte/igo2-lib/issues/966)) ([5ca2e4a](https://github.com/infra-geo-ouverte/igo2-lib/commit/5ca2e4a4f8ad7ad033f83b369adbb6e73ecce553))
+* **layer-legend:** fix layer-legend display ([#1026](https://github.com/infra-geo-ouverte/igo2-lib/issues/1026)) ([55b864e](https://github.com/infra-geo-ouverte/igo2-lib/commit/55b864e8fa06fd75a4f6e9a28ff66266cb897d75))
+* **layerSync:** error on time property transfer ([#1028](https://github.com/infra-geo-ouverte/igo2-lib/issues/1028)) ([70c613b](https://github.com/infra-geo-ouverte/igo2-lib/commit/70c613bb3a47df93c172cf17c6026c06aac00ea6))
+* Make sure the dynamic component outlet doesn,t raise an error when the component is undefined ([#1007](https://github.com/infra-geo-ouverte/igo2-lib/issues/1007)) ([2170f16](https://github.com/infra-geo-ouverte/igo2-lib/commit/2170f16ee0c50f2a1528cb53d6f98fd10ce1108c))
+* **ogcFilters:** fix advancedOgcFilters when filters not defined ([#1018](https://github.com/infra-geo-ouverte/igo2-lib/issues/1018)) ([df4078e](https://github.com/infra-geo-ouverte/igo2-lib/commit/df4078e1b616494eef4b76dafd8e6977985ee8b1))
+* **search bar:** fix an issue with the search bar when the store is null ([#1000](https://github.com/infra-geo-ouverte/igo2-lib/issues/1000)) ([d54f580](https://github.com/infra-geo-ouverte/igo2-lib/commit/d54f580daf69d6fc27623f35de7f98afd6045e83))
+* **typing:** Fix typing issues in geometry controls ([#999](https://github.com/infra-geo-ouverte/igo2-lib/issues/999)) ([c167a77](https://github.com/infra-geo-ouverte/igo2-lib/commit/c167a770cc48c2f1e99bb33fb348b07f63db52cc))
+
+
+### Features
+
+* **edition-workspace:** allow layer edition from new edition workspace ([#996](https://github.com/infra-geo-ouverte/igo2-lib/issues/996)) ([c4ddfc6](https://github.com/infra-geo-ouverte/igo2-lib/commit/c4ddfc670be476b772b25a32531003ead1b6a185))
+* **export:** added headers in separators ([#967](https://github.com/infra-geo-ouverte/igo2-lib/issues/967)) ([2f87eed](https://github.com/infra-geo-ouverte/igo2-lib/commit/2f87eed3d0ad90519d275084d5d4d7409946d89c))
+* **geo:** adding initial button component files ([#957](https://github.com/infra-geo-ouverte/igo2-lib/issues/957)) ([81f0ace](https://github.com/infra-geo-ouverte/igo2-lib/commit/81f0aceb9eb87be471416579947cda3bef04ec94))
+* **geo:** info content on map ([#979](https://github.com/infra-geo-ouverte/igo2-lib/issues/979)) ([8e88f41](https://github.com/infra-geo-ouverte/igo2-lib/commit/8e88f41806265440d79e55218bee76227620eb06))
+* **layerSync:** prevent refresh of linked layer if applied OGC filters are the same ([#1027](https://github.com/infra-geo-ouverte/igo2-lib/issues/1027)) ([f4affea](https://github.com/infra-geo-ouverte/igo2-lib/commit/f4affea0d597eda5ac27066181d377acb5af2756))
+* **network:** prevent showing 2 different network state simultaneously ([#992](https://github.com/infra-geo-ouverte/igo2-lib/issues/992)) ([7d8633c](https://github.com/infra-geo-ouverte/igo2-lib/commit/7d8633c028945a54686c035c0b7e5eb80f51e4bc))
+* **ogc-time:** allow alias to ogc-filter-time section ([#981](https://github.com/infra-geo-ouverte/igo2-lib/issues/981)) ([55c634a](https://github.com/infra-geo-ouverte/igo2-lib/commit/55c634a96ffc42f0eb87bd8f9c775344394d9b3c))
+* **query:** provide a way to show the querytitle in htmlgml2 queryformat ([#963](https://github.com/infra-geo-ouverte/igo2-lib/issues/963)) ([2304568](https://github.com/infra-geo-ouverte/igo2-lib/commit/23045680a3318efe29c741a51049b0102339e968))
+
+
+
 # [1.10.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.9.4...1.10.0) (2021-12-13)
 
 

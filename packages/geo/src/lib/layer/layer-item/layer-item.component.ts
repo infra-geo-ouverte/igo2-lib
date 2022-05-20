@@ -107,6 +107,14 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.layer.opacity = opacity / 100;
   }
 
+  get eyeTooltip() {
+    if (this.inResolutionRange$.getValue() === false) {
+      return 'igo.geo.layer.notInResolution';
+    } else {
+      return this.layer.visible ? 'igo.geo.layer.hideLayer' : 'igo.geo.layer.showLayer';
+    }
+  }
+
   @Output() action: EventEmitter<Layer> = new EventEmitter<Layer>(undefined);
   @Output() checkbox = new EventEmitter<{
     layer: Layer;

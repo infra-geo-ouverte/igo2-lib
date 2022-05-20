@@ -145,9 +145,24 @@ export const environment: Environment = {
               }]
             },
             {
-              id: 'rn_wmts',
+            id: 'arcgisrestcompletecatalog',
+            title: 'ArcGIS Rest complete catalog',
+            url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
+            type: 'arcgisrest',
+            regFilters: ["^0$"]
+            },
+            { // dead ESRI link
+              id: "38",
+              externalProvider: true,
+              url: "https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/Canadas_Marine_Conservation_Targets_FR/MapServer",
+              type: "imagearcgisrest",
+              groupImpose: {"id": "conserve", "title": "Conservation"},
+              regFilters: ["^0$"]
+            },
+            {// wmts regFilters error link
+              id: 'wmts_error',
               url:
-                'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
+                'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Elevation?SERVICE=WMTS&REQUEST=GetCapabilities',
               type: 'wmts',
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
@@ -196,7 +211,21 @@ export const environment: Environment = {
                   //newMetadataUrlAll: "https://quebec.ca/",
                   //newMetadataAbstractAll: "New WMS abstract to all other layers"
                 }
-            ]
+              ]
+              //regFilters: ["^100$"]
+            },
+            {// wms CORS error link
+              id: 'wms_cors_error',
+              url: 'https://daata.chs-shc.ca/geoserver/wms',
+              type: "wms",
+              version: "1.3.0"
+            },
+            {// wms working link
+              id: 'wms_cors_error',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: "wms",
+              version: "1.3.0",
+              regFilters: ["hydro_obstacle_polygon_50k"]
             }
           ]
         },
@@ -235,7 +264,7 @@ export const environment: Environment = {
               }]
             },
             {
-              id: 'rn_wmts',
+              id: 'rn_wmts_1',
               url:
                 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
               type: 'wmts',
@@ -245,10 +274,15 @@ export const environment: Environment = {
               groupImpose: {
                 id: 'cartetopo',
                 title: 'Carte topo échelle 1/20 000'
+<<<<<<< HEAD
               },
               forcedProperties: [{
                 //newMetadataAbstract: "New WMTS Abstract"
               }]
+=======
+              }
+              //regFilters: ["^100$"]
+>>>>>>> origin/next
             }
           ]
         },

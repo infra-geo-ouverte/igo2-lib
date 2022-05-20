@@ -214,6 +214,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "hideSelectedLayers": "Masquer les couches sélectionnées",
+        "notInResolution": "La couche n'est pas visible à l'échelle active. Veuillez zoomer ou dézoomer pour la visualiser.",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
@@ -264,6 +265,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
@@ -512,6 +514,8 @@
         "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
+      "targetHtmlUrlUnauthorizedTitle": "Non autorisé",
+      "targetHtmlUrlUnauthorized": "Vous n'êtes pas autorisé à ouvrir ce lien externe.",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
       "seeRouting": "Voir l'itinéraire",
@@ -701,8 +705,25 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Voulez-vous vraiment supprimer cette entité?",
+        "addConfirmation": "Voulez-vous vraiment ajouter une entité?",
+        "modifyConfirmation": "Voulez-vous vraiment modifier une entité?",
+        "deleteSuccess": "L'entité a été supprimée.",
+        "addSuccess": "L'entité a été ajoutée.",
+        "modifySuccess": "L'entité a été modifiée.",
+        "deleteError": "Un problème est survenu. L'entité n'a pas pu être supprimée.",
+        "addError": "Un problème est survenu. L'entité n'a pas pu être ajoutée.",
+        "modifyError": "Un problème est survenu. L'entité n'a pas pu être modifiée.",
+        "cancel": "Annuler",
         "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+      },
+      "formValidation": {
+        "mandatory": "{{column}}est un champ obligatoire",
+        "minValue": "{{column}} doit être plus grand que {{value}}",
+        "maxValue": "{{column}}doit être plus petit que {{value}}",
+        "minLength": "{{column}} doit être plus long que {{value}} caractères",
+        "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       }
     }
   }
