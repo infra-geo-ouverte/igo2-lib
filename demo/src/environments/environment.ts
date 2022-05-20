@@ -274,15 +274,10 @@ export const environment: Environment = {
               groupImpose: {
                 id: 'cartetopo',
                 title: 'Carte topo échelle 1/20 000'
-<<<<<<< HEAD
               },
               forcedProperties: [{
                 //newMetadataAbstract: "New WMTS Abstract"
               }]
-=======
-              }
-              //regFilters: ["^100$"]
->>>>>>> origin/next
             }
           ]
         },
