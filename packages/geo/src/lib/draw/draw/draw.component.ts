@@ -643,6 +643,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
     let selectedFeaturesByUser = [];
+    console.log(this.selectedFeatures$.value[0]);
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
         const olFeature = featureToOl(
@@ -654,34 +655,21 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       selectedFeaturesByUser.forEach((feature) => {
         this.updateFontSizeAndStyle(feature, size, style);
-        console.log(feature);
         const entity = this.store.all().find((e) => e.meta.id === feature.id_);
         entity.properties.fontStyle = feature.values_.style_;
         this.store.update(entity);
-
-        // this.replaceFeatureInStore(entity, feature);
+        this.store.layer.ol.getSource().refresh();
       });
-      console.log(this.store.all());
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        console.log(feature.get('fontStyle'));
-        console.log(feature);
 
+      this.fontSize = size;
+      this.fontStyle = style;
+      this.store.layer.ol.setStyle((feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
           feature,
           resolution,
           labelsAreShown,
           feature.get('fontStyle')
         );
-
-        // else {
-        //   console.log(feature);
-        //   return this.drawStyleService.createIndividualElementStyle(
-        //     feature,
-        //     resolution,
-        //     labelsAreShown,
-        //     feature.get('style_')
-        //   );
-        // }
       });
     }
   }
@@ -703,6 +691,34 @@ export class DrawComponent implements OnInit, OnDestroy {
       },
       true
     );
+  }
+
+  updateFrontendFontSize() {
+    if (this.selectedFeatures$.value.length > 1) {
+      let allFontSizes = [];
+      this.selectedFeatures$.value.forEach((selectedFeature) => {
+        allFontSizes.push(
+          Number(
+            selectedFeature.properties.fontStyle.split(' ')[0].replace('px', '')
+          )
+        );
+      });
+      return Math.min(...allFontSizes).toString();
+    } else {
+      return this.selectedFeatures$.value[0]
+        ? this.selectedFeatures$.value[0].properties.fontStyle
+            .split(' ')[0]
+            .replace('px', '')
+        : '20';
+    }
+  }
+
+  updateFrontendFontStyle() {
+    return this.selectedFeatures$.value[0]
+      ? this.selectedFeatures$.value[0].properties.fontStyle.substring(
+          this.selectedFeatures$.value[0].properties.fontStyle.indexOf(' ') + 1
+        )
+      : FontType.Arial;
   }
 
   /**
