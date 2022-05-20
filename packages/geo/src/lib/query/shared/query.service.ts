@@ -317,7 +317,7 @@ export class QueryService {
     }
 
     const wmsDatasource = layer.dataSource as WMSDataSource;
-    const featureCount =  wmsDatasource.params?.FEATURE_COUNT ?
+    const featureCount = wmsDatasource.params?.FEATURE_COUNT ?
       new RegExp('FEATURE_COUNT=' + this.featureCount) :
       new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
 
