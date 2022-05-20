@@ -588,9 +588,6 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        if (!capabilities) {
-          return [];
-        }
         let forcedTitle;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {

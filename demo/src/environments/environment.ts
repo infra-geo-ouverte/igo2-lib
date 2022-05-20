@@ -75,7 +75,7 @@ export const environment: Environment = {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          tooltipType: 'abstract', // or title
+          tooltipType: 'abstract' // or title
         },
         {
           id: 'arcgisrestcompletecatalog',
@@ -127,10 +127,7 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-              forcedProperties: [{
-              newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-              }]
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
             },
             {
             id: 'arcgisrestcompletecatalog',
