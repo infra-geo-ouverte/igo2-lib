@@ -9,7 +9,7 @@
       "maxZoom": 22
     }
   },
-  "sprite": "/assets/mapboxStyleSprite",
+  "sprite": "/../mapboxStyleSprite",
   "layers": [
     {
       "id": "labelling",

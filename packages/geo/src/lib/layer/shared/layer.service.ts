@@ -216,9 +216,10 @@ export class LayerService {
     if (layerOptions.mapboxStyle) {
       this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
         if (res.sprite){
-          this.getStuff(res.sprite+'.json').subscribe(res2 => {
+          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          this.getStuff(url+'.json').subscribe(res2 => {
             stylefunction(layer.ol, res, layerOptions.mapboxStyle.source, undefined, res2,
-                res.sprite+'.png');
+              url+'.png');
           });
         } else {
           stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
@@ -227,7 +228,7 @@ export class LayerService {
     }
   }
 
-  public getStuff(url: string) {
+  private getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
       catchError(err => {
@@ -235,5 +236,15 @@ export class LayerService {
         return of(err);
       })
     );
+  }
+
+  private getAbsoluteUrl(source, url) {
+    var r = new RegExp('^http|\/\/', 'i');
+    if(r.test(url)){
+      return url;
+    } else {
+      return source + url;
+    }
+
   }
 }
