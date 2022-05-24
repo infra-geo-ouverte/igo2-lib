@@ -50,6 +50,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'igo-draw',
@@ -204,10 +205,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       zIndex: 200,
       source: new FeatureDataSource(),
       style: (feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(
+        return this.drawStyleService.createIndividualElementStyle(
           feature,
           resolution,
           this.labelsAreShown,
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke,
           this.icon
         );
       },
@@ -271,32 +275,94 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param labelsAreShown wheter the labels are shown or not
    * @param isAnIcon wheter the feature is an icon or not
    */
-  onColorChange(labelsAreShown: boolean, isAnIcon: boolean) {
-    this.fillForm = this.fillColor;
-    this.strokeForm = this.strokeColor;
-    this.drawStyleService.setFillColor(this.fillColor);
-    this.drawStyleService.setStrokeColor(this.strokeColor);
+  onColorChange(
+    labelsAreShown: boolean,
+    isAnIcon: boolean,
+    fillColor: string,
+    strokeColor: string
+  ) {
+    let selectedFeaturesByUser = [];
+    if (this.selectedFeatures$.value.length > 0) {
+      this.selectedFeatures$.value.forEach((feature) => {
+        const olFeature = featureToOl(
+          feature,
+          this.map.ol.getView().getProjection().getCode()
+        );
+        selectedFeaturesByUser.push(olFeature);
+      });
 
-    if (isAnIcon) {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(
-          feature,
-          resolution,
-          labelsAreShown,
-          this.icon
-        );
+      selectedFeaturesByUser.forEach((feature) => {
+        this.updateFillAndStrokeColor(feature, fillColor, strokeColor);
+        const entity = this.store.all().find((e) => e.meta.id === feature.id_);
+        entity.properties.drawingStyle.fill = feature.values_.fillColor_;
+        entity.properties.drawingStyle.stroke = feature.values_.strokeColor_;
+        this.store.update(entity);
+        this.store.layer.ol.getSource().refresh();
       });
-      this.icon = undefined;
+
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor;
+
+      if (isAnIcon) {
+        this.store.layer.ol.setStyle((feature, resolution) => {
+          return this.drawStyleService.createIndividualElementStyle(
+            feature,
+            resolution,
+            labelsAreShown,
+            feature.get('fontStyle'),
+            feature.get('drawingStyle').fill,
+            feature.get('drawingStyle').stroke,
+            this.icon
+          );
+        });
+        this.icon = undefined;
+      } else {
+        this.store.layer.ol.setStyle((feature, resolution) => {
+          return this.drawStyleService.createIndividualElementStyle(
+            feature,
+            resolution,
+            labelsAreShown,
+            feature.get('fontStyle'),
+            feature.get('drawingStyle').fill,
+            feature.get('drawingStyle').stroke
+          );
+        });
+      }
+
+      this.createDrawControl();
     } else {
-      this.store.layer.ol.setStyle((feature, resolution) => {
-        return this.drawStyleService.createDrawingLayerStyle(
-          feature,
-          resolution,
-          labelsAreShown
-        );
-      });
+      this.fillForm = this.fillColor;
+      this.strokeForm = this.strokeColor;
+      this.drawStyleService.setFillColor(this.fillColor);
+      this.drawStyleService.setStrokeColor(this.strokeColor);
+
+      if (isAnIcon) {
+        this.store.layer.ol.setStyle((feature, resolution) => {
+          return this.drawStyleService.createIndividualElementStyle(
+            feature,
+            resolution,
+            labelsAreShown,
+            feature.get('fontStyle'),
+            this.fillColor,
+            this.strokeColor,
+            this.icon
+          );
+        });
+        this.icon = undefined;
+      } else {
+        this.store.layer.ol.setStyle((feature, resolution) => {
+          return this.drawStyleService.createIndividualElementStyle(
+            feature,
+            resolution,
+            labelsAreShown,
+            feature.get('fontStyle'),
+            this.fillColor,
+            this.strokeColor
+          );
+        });
+      }
+      this.createDrawControl();
     }
-    this.createDrawControl();
   }
 
   /**
@@ -331,7 +397,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
-        console.log(olGeometryFeature);
+        // console.log(olGeometryFeature);
         if (dialogRef.componentInstance.confirmFlag) {
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
           if (!olGeometryFeature.values_.style_) {
@@ -339,6 +405,14 @@ export class DrawComponent implements OnInit, OnDestroy {
               olGeometryFeature,
               '20',
               FontType.Arial
+            );
+          }
+          if (!olGeometryFeature.values_.fillColor_) {
+            console.log('hit');
+            this.updateFillAndStrokeColor(
+              olGeometryFeature,
+              this.fillColor,
+              this.strokeColor
             );
           }
 
@@ -527,7 +601,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
         rad: rad ? rad : null,
-        fontStyle: olGeometry.get('style_')
+        fontStyle: olGeometry.get('style_'),
+        drawingStyle: {
+          fill: olGeometry.get('fillColor_'),
+          stroke: olGeometry.get('strokeColor_')
+        }
       },
       meta: {
         id: featureId
@@ -589,8 +667,18 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawStyleService.toggleLabelsAreShown();
     this.labelsAreShown = !this.labelsAreShown;
     this.icon
-      ? this.onColorChange(this.labelsAreShown, true)
-      : this.onColorChange(this.labelsAreShown, false);
+      ? this.onColorChange(
+          this.labelsAreShown,
+          true,
+          this.fillColor,
+          this.strokeColor
+        )
+      : this.onColorChange(
+          this.labelsAreShown,
+          false,
+          this.fillColor,
+          this.strokeColor
+        );
   }
 
   /**
@@ -611,10 +699,13 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.icon = event;
     this.drawStyleService.setIcon(this.icon);
     this.store.layer.ol.setStyle((feature, resolution) => {
-      return this.drawStyleService.createDrawingLayerStyle(
+      return this.drawStyleService.createIndividualElementStyle(
         feature,
         resolution,
         true,
+        feature.get('fontStyle'),
+        feature.get('drawingStyle').fill,
+        feature.get('drawingStyle').stroke,
         this.icon
       );
     });
@@ -644,7 +735,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
     let selectedFeaturesByUser = [];
-    console.log(this.selectedFeatures$.value[0]);
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
         const olFeature = featureToOl(
@@ -669,7 +759,9 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature,
           resolution,
           labelsAreShown,
-          feature.get('fontStyle')
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke
         );
       });
     }
@@ -694,8 +786,22 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
+  private updateFillAndStrokeColor(
+    olFeature: OlFeature<OlGeometry>,
+    fillColor: string,
+    strokeColor: string
+  ) {
+    olFeature.setProperties(
+      {
+        fillColor_: fillColor,
+        strokeColor_: strokeColor
+      },
+      true
+    );
+  }
+
   updateFrontendFontSize() {
-    if (this.selectedFeatures$.value.length > 1) {
+    if (this.selectedFeatures$.value) {
       let allFontSizes = [];
       this.selectedFeatures$.value.forEach((selectedFeature) => {
         allFontSizes.push(
@@ -706,34 +812,16 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
       return Math.min(...allFontSizes).toString();
     } else {
-      return this.selectedFeatures$.value[0]
-        ? this.selectedFeatures$.value[0].properties.fontStyle
-            .split(' ')[0]
-            .replace('px', '')
-        : '20';
+      return '20';
     }
+    // return '123';
   }
 
   updateFrontendFontStyle() {
-    return this.selectedFeatures$.value[0]
+    return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.fontStyle.substring(
           this.selectedFeatures$.value[0].properties.fontStyle.indexOf(' ') + 1
         )
       : FontType.Arial;
   }
-
-  /**
-   * In the store, each entities have their own style, but when applying the style,
-   * the setStyle function does not recognize each entities
-   *
-   * TODO:
-   *  Either redo the setStyle function to take in entities or find a
-   *  way to change the features inside the store
-   *
-   *  When changing the label, set the style to the original style
-   *
-   *  Repeat this for all colors
-   *
-   *  Remove any useless things and add comments
-   */
 }

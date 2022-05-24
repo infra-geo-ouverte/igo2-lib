@@ -206,7 +206,8 @@ export class DrawStyleService {
     resolution,
     labelsAreShown: boolean,
     fontSizeAndStyle: string,
-
+    fillColor: string,
+    strokeColor: string,
     icon?: string
   ): OlStyle.Style {
     let style;
@@ -247,11 +248,11 @@ export class DrawStyleService {
             Math.cos((Math.PI / 180) * coordinates[1]) /
             resolution,
           stroke: new OlStyle.Stroke({
-            color: this.strokeColor,
+            color: strokeColor ? strokeColor : this.strokeColor,
             width: this.strokeWidth
           }),
           fill: new OlStyle.Fill({
-            color: this.fillColor
+            color: fillColor
           })
         })
       });
@@ -275,12 +276,12 @@ export class DrawStyleService {
         }),
 
         stroke: new OlStyle.Stroke({
-          color: this.strokeColor,
+          color: strokeColor,
           width: this.strokeWidth
         }),
 
         fill: new OlStyle.Fill({
-          color: this.fillColor
+          color: fillColor
         }),
 
         image: new OlStyle.Icon({
@@ -307,22 +308,22 @@ export class DrawStyleService {
         }),
 
         stroke: new OlStyle.Stroke({
-          color: this.strokeColor,
+          color: strokeColor,
           width: this.strokeWidth
         }),
 
         fill: new OlStyle.Fill({
-          color: this.fillColor
+          color: fillColor
         }),
 
         image: new OlStyle.Circle({
           radius: 5,
           stroke: new OlStyle.Stroke({
-            color: this.strokeColor,
+            color: strokeColor,
             width: this.strokeWidth
           }),
           fill: new OlStyle.Fill({
-            color: this.fillColor
+            color: fillColor
           })
         })
       });

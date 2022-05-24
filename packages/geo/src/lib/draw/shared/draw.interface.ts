@@ -25,7 +25,7 @@ export interface FeatureWithDrawProperties {
   latitude: number;
   rad: number;
   fontStyle: string;
-  // drawingStyle: DrawingStyle;
+  drawingStyle: DrawingStyle;
 }
 
 export interface FeatureStoreDrawStrategyOptions {
