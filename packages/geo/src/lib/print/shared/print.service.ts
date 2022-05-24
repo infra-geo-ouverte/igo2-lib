@@ -177,7 +177,7 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
-      const images$ = legends.map((legend) =>
+      const images$ = legends.filter(l => l.display).map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
