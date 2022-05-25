@@ -14,7 +14,7 @@ import olPoint from 'ol/geom/Point';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import pointOnFeature from '@turf/point-on-feature';
-
+import * as olProj from 'ol/proj';
 import { ConfigService } from '@igo2/core';
 
 import {
@@ -40,7 +40,8 @@ import {
   getCommonVectorStyle,
   getCommonVectorSelectedStyle,
   computeOlFeaturesExtent,
-  featuresAreOutOfView
+  featuresAreOutOfView,
+  roundCoordTo
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -592,6 +593,16 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           stop.text = this.featureTitle;
           stop.coordinates = coord;
           this.directionState.stopsStore.update(stop);
+          if (this.map.geolocationController.position$.value) {
+            const currentPos = this.map.geolocationController.position$.value;
+            const stop = this.directionState.stopsStore.all().find((e) => e.position === 0);
+            const currentCoord = olProj.transform(currentPos.position, currentPos.projection, 'EPSG:4326');
+            const coord: [number,number] = roundCoordTo([currentCoord[0], currentCoord[1]], 6);
+            stop.text = coord.join(',');
+            stop.coordinates = coord;
+            this.directionState.stopsStore.update(stop);
+          }
+
         }
       });
     }, 250);

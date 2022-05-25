@@ -74,6 +74,11 @@
         }
       },
       "advanced-map-tool": {
+        "geolocation": {
+          "title": "Geolocation",
+          "tracking": "Activate/show the geolocation",
+          "follow": "Follow your position on map"
+         },
         "advanced-swipe": {
           "swipe-select":  "select the layers for swiping",
           "selectAll": "Select all",
