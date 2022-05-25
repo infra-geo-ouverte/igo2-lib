@@ -1,3 +1,5 @@
+$slide-toggle-width: 60px;
+
 .nameOfTool{
     text-align: center;
     font-weight: bold;
@@ -8,4 +10,23 @@
 .advanced-tool-line {
   height: 2px;
   background-color: gray;
+}
+
+.geolocation-slide-toggle-container {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
+}
+
+.geolocation-option {
+  display: block;
+  margin-right: 10px;
+  margin-bottom: 15px;
 }
