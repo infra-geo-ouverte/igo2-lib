@@ -239,12 +239,16 @@ export class LayerService {
   }
 
   private getAbsoluteUrl(source, url) {
-    var r = new RegExp('^http|\/\/', 'i');
+    const r = new RegExp('^http|\/\/', 'i');
     if(r.test(url)){
       return url;
     } else {
-      return source + url;
+      if ( source.substr(source.length -1) === "/"){
+        return source + url;
+      } else{
+        return source + "/" + url;
+      }
     }
-
   }
+
 }
