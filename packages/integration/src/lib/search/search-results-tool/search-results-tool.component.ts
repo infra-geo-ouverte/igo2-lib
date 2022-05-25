@@ -83,6 +83,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
+  public debouncedEmpty$ :BehaviorSubject<boolean> = new BehaviorSubject(true);
+  private debouncedEmpty$$: Subscription;
+
   /**
    * Store holding the search results
    * @internal
@@ -247,6 +250,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }
       });
     });
+
+    this.debouncedEmpty$$ = this.store.stateView.empty$.pipe(debounceTime(1500)).subscribe(empty => this.debouncedEmpty$.next(empty));
   }
 
   private monitorResultOutOfView() {
@@ -368,6 +373,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     if (this.getRoute$$) {
       this.getRoute$$.unsubscribe();
+    }
+    if (this.debouncedEmpty$$) {
+      this.debouncedEmpty$$.unsubscribe();
     }
   }
 
