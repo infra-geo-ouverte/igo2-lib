@@ -50,7 +50,6 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
-import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'igo-draw',
@@ -108,9 +107,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
   private subscriptions$$: Subscription[] = [];
-
-  public fontSizeForm: string;
-  public fontStyleForm: string;
 
   public position: string = 'bottom';
   public form: FormGroup;
@@ -274,6 +270,8 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Called when the user changes the color in a color picker
    * @param labelsAreShown wheter the labels are shown or not
    * @param isAnIcon wheter the feature is an icon or not
+   * @param fillColor which is the filling color
+   * @param strokeColor which is the stroke color
    */
   onColorChange(
     labelsAreShown: boolean,
@@ -386,12 +384,12 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param olGeometry geometry at draw end or selected geometry
    * @param drawEnd event fired at drawEnd?
    */
-  private openDialog(olGeometryFeature, isDrawEnd: boolean) {
+  private openDialog(olGeometry, isDrawEnd: boolean) {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
-        data: { currentLabel: olGeometryFeature.get('draw') }
+        data: { currentLabel: olGeometry.get('draw') }
       });
 
       // when dialog box is closed, get label and set it to geometry
@@ -399,29 +397,25 @@ export class DrawComponent implements OnInit, OnDestroy {
         // checks if the user clicked ok
         // console.log(olGeometryFeature);
         if (dialogRef.componentInstance.confirmFlag) {
-          this.updateLabelOfOlGeometry(olGeometryFeature, label);
-          if (!olGeometryFeature.values_.style_) {
-            this.updateFontSizeAndStyle(
-              olGeometryFeature,
-              '20',
-              FontType.Arial
-            );
+          this.updateLabelOfOlGeometry(olGeometry, label);
+          if (!olGeometry.values_.fontStyle) {
+            this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
           }
-          if (!olGeometryFeature.values_.fillColor_) {
+          if (!olGeometry.values_.drawingStyle) {
             console.log('hit');
             this.updateFillAndStrokeColor(
-              olGeometryFeature,
-              this.fillColor,
-              this.strokeColor
+              olGeometry,
+              'rgba(255,255,255,0.4)',
+              'rgba(143,7,7,1)'
             );
           }
 
           // if event was fired at draw end
           if (isDrawEnd) {
-            this.onDrawEnd(olGeometryFeature);
+            this.onDrawEnd(olGeometry);
             // if event was fired at select
           } else {
-            this.onSelectDraw(olGeometryFeature, label);
+            this.onSelectDraw(olGeometry, label);
           }
         }
         // deletes the feature
@@ -430,7 +424,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             .getFeatures()
             .forEach((drawingLayerFeature) => {
               const geometry = drawingLayerFeature.getGeometry() as any;
-              if (olGeometryFeature === geometry) {
+              if (olGeometry === geometry) {
                 this.olDrawingLayerSource.removeFeature(drawingLayerFeature);
               }
             });
@@ -502,6 +496,18 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       if (entityId === olGeometryId) {
         this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
+        this.updateFontSizeAndStyle(
+          olGeometry,
+          entity.properties.fontStyle.split(' ')[0].replace('px', ''),
+          entity.properties.fontStyle.substring(
+            entity.properties.fontStyle.indexOf(' ') + 1
+          )
+        );
+        this.updateFillAndStrokeColor(
+          olGeometry,
+          entity.properties.drawingStyle.fill,
+          entity.properties.drawingStyle.stroke
+        );
         this.replaceFeatureInStore(entity, olGeometry);
       }
     });
@@ -521,10 +527,23 @@ export class DrawComponent implements OnInit, OnDestroy {
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
 
       if (olGeometryCoordinates === entityCoordinates) {
+        const fontSize = olFeature
+          .get('fontStyle')
+          .split(' ')[0]
+          .replace('px', '');
+        const fontStyle = olFeature
+          .get('fontStyle')
+          .substring(olFeature.get('fontStyle').indexOf(' ') + 1);
+
+        const fillColor = olFeature.get('drawingStyle').fill;
+        const strokeColor = olFeature.get('drawingStyle').stroke;
+
         const rad: number = entity.properties.rad
           ? entity.properties.rad
           : undefined;
         this.updateLabelOfOlGeometry(olGeometry, label);
+        this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
+        this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -754,6 +773,10 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       this.fontSize = size;
       this.fontStyle = style;
+
+      this.drawStyleService.setFontSize(size);
+      this.drawStyleService.setFontStyle(style);
+
       this.store.layer.ol.setStyle((feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
           feature,
@@ -776,7 +799,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private updateFontSizeAndStyle(
     olFeature: OlFeature<OlGeometry>,
     fontSize: string,
-    fontStyle: FontType
+    fontStyle: string
   ) {
     olFeature.setProperties(
       {
@@ -800,21 +823,21 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateFrontendFontSize() {
-    if (this.selectedFeatures$.value) {
-      let allFontSizes = [];
-      this.selectedFeatures$.value.forEach((selectedFeature) => {
-        allFontSizes.push(
-          Number(
-            selectedFeature.properties.fontStyle.split(' ')[0].replace('px', '')
-          )
-        );
-      });
-      return Math.min(...allFontSizes).toString();
-    } else {
+  updateFrontendFontSize(): string {
+    if (this.selectedFeatures$.value.length === 0) {
       return '20';
     }
-    // return '123';
+
+    let allFontSizes = [];
+
+    this.selectedFeatures$.value.forEach((selectedFeature) => {
+      allFontSizes.push(
+        Number(
+          selectedFeature.properties.fontStyle.split(' ')[0].replace('px', '')
+        )
+      );
+    });
+    return Math.min(...allFontSizes).toString();
   }
 
   updateFrontendFontStyle() {

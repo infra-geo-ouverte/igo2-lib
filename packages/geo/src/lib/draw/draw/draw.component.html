@@ -177,7 +177,7 @@
         <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
         <mat-select
           #testFontStyle
-          [value]="fontStyle"
+          [value]="updateFrontendFontStyle()"
           (selectionChange)="
             onFontChange(labelsAreShown, testFontSize.value, $event.value)
           "
