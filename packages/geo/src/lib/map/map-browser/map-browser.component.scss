@@ -48,6 +48,15 @@
   }
 }
 
+:host ::ng-deep igo-wake-lock-button {
+  position: absolute;
+  top: calc(2 * #{$igo-icon-size} + 2 * 5px + #{$igo-margin});
+  right: $igo-margin;
+  @include mobile {
+    bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  }
+}
+
 :host ::ng-deep igo-home-extent-button {
   position: absolute;
   bottom: calc((3 * #{$igo-icon-size}) + 5px + (2 * #{$igo-margin}));

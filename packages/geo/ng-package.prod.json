@@ -5,6 +5,7 @@
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
       "ngx-color-picker": "ngxColorPicker",
+      "nosleep.js": "NoSleep",
       "ol-mapbox-style/dist/stylefunction": "stylefunction",
       "ol/source/OSM": "olSourceOSM",
       "ol/source/XYZ": "olSourceXYZ",
