@@ -5,7 +5,6 @@ import { IgoEntitySelectorModule } from './entity-selector/entity-selector.modul
 import { IgoEntityTableModule } from './entity-table/entity-table.module';
 import { IgoEntityTablePaginatorModule } from './entity-table-paginator/entity-table-paginator.module';
 import { IgoSimpleFeatureListModule } from './simple_igo2/simple-feature-list/simple-feature-list.module';
-import { IgoSimpleFiltersModule } from './simple_igo2/simple-filters/simple-filters.module';
 
 @NgModule({
   imports: [
@@ -15,8 +14,7 @@ import { IgoSimpleFiltersModule } from './simple_igo2/simple-filters/simple-filt
     IgoEntitySelectorModule,
     IgoEntityTableModule,
     IgoEntityTablePaginatorModule,
-    IgoSimpleFeatureListModule,
-    IgoSimpleFiltersModule
+    IgoSimpleFeatureListModule
   ],
   declarations: []
 })

@@ -44,13 +44,6 @@
       "simpleFeatureList": {
         "selectEntity": "Cadrer sur l'élément",
         "unselectEntity": "Désélectionner l'élément"
-      },
-      "simpleFilters": {
-        "enter": "Entrez ou sélectionnez un(e) ",
-        "filtersTitle": "Filtres",
-        "placeholder": "Afficher les filtres",
-        "resetFilters": "Réinitialiser les filtres",
-        "submit": "Filtrer"
       }
     }
   }

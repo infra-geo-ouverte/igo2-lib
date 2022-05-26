@@ -44,13 +44,6 @@
       "simpleFeatureList": {
         "selectEntity": "Zoom on element",
         "unselectEntity": "Unselect element"
-      },
-      "simpleFilters": {
-        "enter": "Enter or select a(n) ",
-        "filtersTitle": "Filters",
-        "placeholder": "Show filters",
-        "resetFilters": "Reset filters",
-        "submit": "Filter"
       }
     }
   }
