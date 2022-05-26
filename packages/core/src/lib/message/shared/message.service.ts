@@ -1,6 +1,6 @@
 import { Injectable, Inject, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 
 import { ConfigService } from '../../config/config.service';
 
@@ -8,14 +8,20 @@ import { Message, MessageOptions } from './message.interface';
 import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
 import { MessageType } from './message.enum';
 import { LanguageService } from '../../language/shared/language.service';
+import { debounceTime, first } from 'rxjs/operators';
 
-
+interface ActiveMessageTranslation {
+  id: number;
+  titleKey: string;
+  messageKey: string;
+}
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
   public messages$ = new BehaviorSubject<Message[]>([]);
   private options: MessageOptions;
+  private activeMessageTranslations: ActiveMessageTranslation[]
 
   constructor(
     @Inject(Injector) private injector: Injector,
@@ -23,6 +29,23 @@ export class MessageService {
     private languageService: LanguageService
   ) {
     this.options = this.configService.getConfig('message') || {};
+    this.languageService.language$.pipe(debounceTime(500)).subscribe(r => {
+      if (this.toastr.toasts.length === 0) {
+        this.activeMessageTranslations = [];
+      }
+      this.toastr.toasts.map(toast => {
+        const activeMessageTranslation = this.activeMessageTranslations.find(amt => amt.id === toast.toastId);
+        if (activeMessageTranslation) {
+          forkJoin([
+          this.languageService.translate.get(activeMessageTranslation.messageKey),
+          this.languageService.translate.get(activeMessageTranslation.titleKey)
+        ]).pipe(first()).subscribe((res: [string, string]) => {
+          toast.toastRef.componentInstance.message = res[0];
+          toast.toastRef.componentInstance.title = res[1];
+        });
+        }
+      });
+    });
   }
 
   private get toastr(): ToastrService {
@@ -81,25 +104,33 @@ export class MessageService {
   success(text: string, title: string = 'igo.core.message.success', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.success(message, translatedTitle, options);
+    const activeToast = this.toastr.success(message, translatedTitle, options);
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    return activeToast;
   }
 
   error(text: string, title: string = 'igo.core.message.error', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.error(message, translatedTitle, options);
+    const activeToast = this.toastr.error(message, translatedTitle, options);
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    return activeToast;
   }
 
   info(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.info(message, translatedTitle, options);
+    const activeToast = this.toastr.info(message, translatedTitle, options);
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    return activeToast;
   }
 
   alert(text: string, title: string = 'igo.core.message.alert', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.warning(message, translatedTitle, options);
+    const activeToast = this.toastr.warning(message, translatedTitle, options);
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    return activeToast;
   }
 
   remove(id?: number) {
