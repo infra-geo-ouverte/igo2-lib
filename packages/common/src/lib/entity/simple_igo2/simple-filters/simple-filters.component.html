@@ -7,12 +7,12 @@
     <form [formGroup]="filtersFormGroup">
       <div *ngFor="let control of controls | keyvalue"
         class="filter">
-        <span class="filter-description">{{ getLabelOrPlaceholder(control.key, "label") }}</span>
+        <span class="filter-description">{{ getLabel(control.key) }}</span>
         <mat-form-field
           class="filter-field"
           appearance="outline"
           floatLabel="auto">
-          <mat-label>{{ getLabelOrPlaceholder(control.key, "placeholder") }}</mat-label>
+          <mat-label>{{ getLabel(control.key) }}</mat-label>
           <input
             matInput
             type="text"
@@ -23,7 +23,7 @@
               {{ option.nom }}
             </mat-option>
           </mat-autocomplete>
-          <mat-icon
+          <mat-icon *ngIf="getOptions(control.key)"
             matSuffix
             color="primary"
             [svgIcon]="auto.isOpen ? 'chevron-up' : 'chevron-down'">

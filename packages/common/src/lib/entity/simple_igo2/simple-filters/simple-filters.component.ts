@@ -1,8 +1,8 @@
 import { FeatureCollection } from 'geojson';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SimpleFilter, TypeOptions, Option } from './simple-filters.interface';
-import { ConfigService, LanguageService } from '@igo2/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { SimpleFilters, SimpleFilter, TypeOptions, Option } from './simple-filters.interface';
+import { ConfigService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 import { FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -14,8 +14,12 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./simple-filters.component.scss']
 })
 export class SimpleFiltersComponent implements OnInit, OnDestroy {
+  @Output() filterSelection = new EventEmitter();
+
   public terrAPIBaseURL: string = "https://geoegl.msp.gouv.qc.ca/apis/terrapi/"; // base URL of the terrAPI API
-  public simpleFiltersConfig: Array<SimpleFilter>; // simpleFilters config input by the user in the config file
+  public terrAPITypes: Array<string>; // an array of strings containing the types from terrAPI
+  public simpleFiltersConfig: SimpleFilters; // simpleFilters config input by the user in the config file
+  public filteringType: string; // the type of filtering to apply to the elements
   public allTypesOptions: Array<TypeOptions> = []; // array that contains all the options for each filter
   public filteredTypesOptions: Array<TypeOptions> = []; // array that contains the filtered options for each filter
 
@@ -24,7 +28,6 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
   public filtersFormGroupValueChange$$: Subscription; // subscription to form group value changes
 
   constructor(private configService: ConfigService,
-    private languageService: LanguageService,
     private http: HttpClient,
     private formBuilder: FormBuilder) {}
 
@@ -37,17 +40,28 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     // get the simpleFilters config input by the user in the config file
     this.simpleFiltersConfig = this.configService.getConfig('simpleFilters');
 
+    this.filteringType = this.simpleFiltersConfig.type;
+
     // create a form group used to hold various controls
     this.filtersFormGroup = this.formBuilder.group({});
 
+    // get all the types in terrAPI
+    const types: Array<string> = await this.getTerrAPITypes();
+
+    if (types) {
+      this.terrAPITypes = types;
+    }
+
     // for each filter input by the user...
-    for (let filter of this.simpleFiltersConfig) {
+    for (let filter of this.simpleFiltersConfig.filters) {
       if (filter.type) {
         // ...get the options from terrAPI and push them in the array containing all the options and add a control in the form group
-        await this.getOptionsOfFilter(filter).then((typeOptions: TypeOptions) => {
+        const typeOptions: TypeOptions = await this.getOptionsOfFilter(filter);
+
+        if (typeOptions) {
           this.allTypesOptions.push(typeOptions);
           this.filtersFormGroup.addControl(typeOptions.type, this.formBuilder.control(''));
-        });
+        };
       }
     }
     // deep-copy the array containing all the options to the one that will contain the filtered options (same at the start)
@@ -59,6 +73,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     // when the user types in a field, filter the options of the filter
     this.filtersFormGroupValueChange$$ = this.filtersFormGroup.valueChanges.subscribe((spatialFiltersFormCurrentValue: object) => {
       this.filterOptions(spatialFiltersFormCurrentValue);
+      this.filterSelection.emit(this.filtersFormGroup.value);
     });
   }
 
@@ -77,25 +92,49 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * @description Get an array containg all the types from terrAPI
+   * @returns An array of string containing the types of terrAPI
+   */
+
+  private async getTerrAPITypes(): Promise<Array<string>> {
+    const url: string = this.terrAPIBaseURL + "types";
+
+    let response: Array<string>;
+
+    await this.http.get<Array<string>>(url).pipe(map((types: Array<string>) => {
+      response = types;
+      return types;
+    })).toPromise();
+
+    return response;
+  }
+
+  /**
    * @description Get all the options for a given filter
    * @param filter A SimpleFilter object representing the filter
    * @returns The options for the given filter in the TypeOptions format
    */
   private async getOptionsOfFilter(filter: SimpleFilter): Promise<TypeOptions> {
-    // get options from terrAPI
-    const featureCollection: FeatureCollection = await this.getOptionsFromTerrAPI(true, filter.type);
+    if (this.terrAPITypes.includes(filter.type)) {
+      // get options from terrAPI
+      const featureCollection: FeatureCollection = await this.getOptionsFromTerrAPI(true, filter.type);
 
-    // when options (feature collection) are returned...
-    if (featureCollection) {
-      let options: Array<Option> = [];
-      featureCollection.features.forEach(feature => {
-        // ...push type, code and name of each option
-        options.push({type: filter.type, code: feature.properties.code, nom: feature.properties.nom});
-      });
-      const typeOptions: TypeOptions = {type: filter.type, description: filter.description, options: options};
+      // when options (feature collection) are returned...
+      if (featureCollection) {
+        let options: Array<Option> = [];
+        featureCollection.features.forEach(feature => {
+          // ...push type, code and name of each option
+          options.push({type: filter.type, code: feature.properties.code, nom: feature.properties.nom});
+        });
+        const typeOptions: TypeOptions = {type: filter.type, description: filter.description, options: options};
+
+        return typeOptions;
+      }
+    } else {
+      const typeOptions: TypeOptions = {type: filter.type, description: filter.description};
 
       return typeOptions;
-    };
+    }
   }
   /**
    * @description Get all or some options from a call to terrAPI
@@ -123,20 +162,13 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @description Get the label or placeholder of a given field
+   * @description Get the label of a given field
    * @param controlName A string representing the name of a control
-   * @param type A string representing wheter to extract the label or the placeholder
-   * @returns A string representing the label or the placeholder of a filter
+   * @returns A string representing the label of a filter
    */
-  public getLabelOrPlaceholder(controlName: string, type: string): string {
-    // find the correct description
-    const description: string = this.simpleFiltersConfig.find((filter: SimpleFilter) => filter.type === controlName).description;
-
-    // create the string for the label or the placeholder
-    const labelOrPlaceholder: string = type === 'label' ? description :
-      this.languageService.translate.instant('igo.common.simpleFilters.enter') + description;
-
-    return labelOrPlaceholder;
+  public getLabel(controlName: string): string {
+    // find and return the correct description
+    return this.simpleFiltersConfig.filters.find((filter: SimpleFilter) => filter.type === controlName).description;
   }
 
   /**
@@ -159,7 +191,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     // for every type of filter...
     for (let typeOptions of this.filteredTypesOptions) {
       // ...if the selected option type is not equal to the filter type
-      if (selectedOption.type !== typeOptions.type) {
+      if (selectedOption.type !== typeOptions.type && typeOptions.options) {
         // extract types and code
         const sourceType: string = selectedOption.type;
         const sourceCode: string = selectedOption.code;
@@ -199,10 +231,12 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
         const options: Array<Option> = this.allTypesOptions.find((typeOptions: TypeOptions) =>
           typeOptions.type === control
         ).options;
-        const filteredOptions: Array<Option> = options.filter((option: Option) =>
-          option.nom.toLowerCase().includes(currentControlValue.toLowerCase())
-        );
-        this.filteredTypesOptions.find((typeOptions: TypeOptions) => typeOptions.type === control).options = filteredOptions;
+        if (options) {
+          const filteredOptions: Array<Option> = options.filter((option: Option) =>
+            option.nom.toLowerCase().includes(currentControlValue.toLowerCase())
+          );
+          this.filteredTypesOptions.find((typeOptions: TypeOptions) => typeOptions.type === control).options = filteredOptions;
+        }
       }
     }
     this.previousFiltersFormGroupValue = currentFormGroupValue;
@@ -238,7 +272,7 @@ export class SimpleFiltersComponent implements OnInit, OnDestroy {
     this.filtersFormGroup.reset();
 
     // reset all of the options for every filter
-    for (let filter of this.simpleFiltersConfig) {
+    for (let filter of this.simpleFiltersConfig.filters) {
       if (filter.type) {
         // ...get the options from terrAPI and replace them in the array containing all the options
         await this.getOptionsOfFilter(filter).then((typeOptions: TypeOptions) => {

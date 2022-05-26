@@ -37,13 +37,13 @@
       <button
         mat-mini-fab
         class="mat-elevation-z0"
-        [color]="entitiesToShow.length > 1 ? 'primary' : 'warn'"
-        [matTooltip]="entitiesToShow.length > 1 ? ('igo.common.simpleFeatureList.selectEntity' | translate) : ('igo.common.simpleFeatureList.unselectEntity' | translate)"
+        [color]="!entityIsSelected ? 'primary' : 'warn'"
+        [matTooltip]="!entityIsSelected ? ('igo.common.simpleFeatureList.selectEntity' | translate) : ('igo.common.simpleFeatureList.unselectEntity' | translate)"
         tooltip-position="below"
         matTooltipShowDelay="500">
         <mat-icon
-          [svgIcon]="entitiesToShow.length > 1 ? 'magnify-plus-outline' : 'close'"
-          (click)="entitiesToShow.length > 1 ? selectEntity(entity) : unselectEntity(entity)">
+          [svgIcon]="!entityIsSelected ? 'magnify-plus-outline' : 'close'"
+          (click)="!entityIsSelected ? selectEntity(entity) : unselectEntity(entity)">
         </mat-icon>
       </button>
     </div>

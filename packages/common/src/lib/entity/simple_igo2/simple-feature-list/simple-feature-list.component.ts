@@ -1,6 +1,6 @@
 import { Feature } from 'geojson';
 import { ConfigService } from '@igo2/core';
-import { Component, Input, OnInit, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../../shared';
 import { SimpleFeatureList, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -11,13 +11,17 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styleUrls: ['./simple-feature-list.component.scss']
 })
 
-export class SimpleFeatureListComponent implements OnInit, OnChanges {
+export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() entityStore: EntityStore; // a store that contains all the entities
   @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
+  @Input() simpleFiltersValue: object; // The value of the filters in the simple-filters component
   @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
   public entities: Array<Feature>; // an array containing all the entities in the store
   public entitiesToShow: Array<Feature>; // an array containing the entities to show in a specific page
+  public filteredEntities$: BehaviorSubject<Array<Feature>> = new BehaviorSubject([]); // an observable of an array of filtered entities
+  public filteredEntities$$: Subscription; // subscription to filtered list
+  public entityIsSelected: boolean; // whether an entity has been selected in the list or not
 
   public simpleFeatureListConfig: SimpleFeatureList; // the simpleFeatureList config input by the user
   public attributeOrder: AttributeOrder; // the attribute order specified by the user in the config
@@ -30,7 +34,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input by the user
   public showPreviousNextPageButtons: boolean; // whether to show the Previous page and Next Page buttons or not, input by the user
 
-  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // observalbe of current page number
+  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // observable of current page number
   public currentPageNumber$$: Subscription; // subscription to current page number
   public numberOfPages: number; // calculated number of pages
   public elementsLowerBound: number; // the lowest index (+ 1) of an element in the current page
@@ -80,7 +84,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
       this.entitiesToShow = this.entities;
     }
 
-    // suscribe to the current page number
+    // subscribe to the current page number
     this.currentPageNumber$$ = this.currentPageNumber$.subscribe((currentPageNumber: number) => {
       // calculate the new lower and upper bounds to display
       this.elementsLowerBound = (currentPageNumber - 1) * this.pageSize + 1;
@@ -90,20 +94,56 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
       // slice the entities to show the current ones
       this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
     });
+
+    this.filteredEntities$$ = this.filteredEntities$.subscribe((filteredEntities: Array<Feature>) => {
+      this.numberOfPages = Math.ceil(filteredEntities.length);
+      console.log(this.numberOfPages);
+      this.elementsLowerBound = (this.currentPageNumber$.getValue() - 1) * this.pageSize + 1;
+      console.log(this.elementsLowerBound);
+      this.elementsUpperBound = this.currentPageNumber$.getValue() * this.pageSize > this.entities.length ? this.entities.length :
+      this.currentPageNumber$.getValue() * this.pageSize;
+      console.log(this.elementsUpperBound);
+      this.entitiesToShow = filteredEntities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+      console.log(this.entitiesToShow);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.entityStore.state.updateAll({selected: false});
-    const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
-    // when a user clicks on entities on the map, if an entity or entities have been clicked...
-    if (clickedEntities.length > 0 && clickedEntities !== undefined) {
-      // ...show current entities in list
-      this.entityStore.state.updateMany(clickedEntities, {selected: true});
-    // else show all entities in list
-    } else {
-      this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
-      this.currentPageNumber$.next(this.currentPageNumber$.getValue());
+    // if the most recent change is a click on entities on the map...
+    if (!changes.clickedEntities.firstChange) {
+      console.log('clicked entities');
+      this.entityStore.state.updateAll({selected: false});
+      const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
+      // when a user clicks on entities on the map, if an entity or entities have been clicked...
+      if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
+        // ...show current entities in list
+        this.entityStore.state.updateMany(clickedEntities, {selected: true});
+      // else show all entities in list
+      } else {
+        this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+        this.currentPageNumber$.next(this.currentPageNumber$.getValue());
+      }
+    // if the most recent change is a filter change...
+    } else if (!changes.simpleFiltersValue.firstChange) {
+      console.log('simpleFilters');
+      const currentFiltersValue: object = changes.simpleFiltersValue.currentValue;
+      let nonNullFiltersValue: Array<object> = [];
+
+      for (let filter in currentFiltersValue) {
+        const currentFilterValue: any = currentFiltersValue[filter];
+        if (currentFilterValue !== "" && currentFilterValue !== null) {
+          const filterValue: object = {};
+          filterValue[filter] = currentFilterValue;
+          nonNullFiltersValue.push(filterValue);
+        }
+      }
+      this.filterEntities(nonNullFiltersValue);
     }
+  }
+
+  ngOnDestroy() {
+    this.currentPageNumber$$.unsubscribe();
+    this.filteredEntities$$.unsubscribe();
   }
 
   /**
@@ -228,6 +268,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
    */
   selectEntity(entity: Feature) {
     this.entitiesToShow = [entity];
+    this.entityIsSelected = true;
 
     // update the store and emit the entity to parent
     this.entityStore.state.update(entity, {selected: true}, true);
@@ -242,6 +283,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   unselectEntity(entity: Feature) {
     // show all entities
     this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+    this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
     this.entityStore.state.update(entity, {selected: false}, true);
   }
@@ -253,5 +295,34 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges {
   onPageChange(currentPageNumber: number) {
     // update the current page number
     this.currentPageNumber$.next(currentPageNumber);
+  }
+
+  filterEntities(currentFiltersValue: Array<object>) {
+    if (currentFiltersValue.length > 0) {
+      let filteredEntities: Array<Feature> = [];
+      for (let currentFilterValue of currentFiltersValue) {
+        const currentFilterValueKeys: Array<string> = Object.keys(currentFilterValue);
+        for (let currentFilterValueKey of currentFilterValueKeys) {
+          const currentFilterValueValue: any = currentFilterValue[currentFilterValueKey];
+          if (typeof currentFilterValueValue === 'string') {
+            for (let entity of this.entities) {
+              const entityProperties: Array<string> = Object.keys(entity.properties);
+              if (entityProperties.includes(currentFilterValueKey)) {
+                if (entity.properties[currentFilterValueKey].toLowerCase()
+                  .includes(currentFilterValueValue.toLowerCase())) {
+                  filteredEntities.push(entity);
+                }
+              }
+            }
+          } else {
+            // if object
+          }
+        }
+      }
+      this.filteredEntities$.next(filteredEntities);
+
+    } else {
+      this.entitiesToShow = this.entities;
+    }
   }
 }

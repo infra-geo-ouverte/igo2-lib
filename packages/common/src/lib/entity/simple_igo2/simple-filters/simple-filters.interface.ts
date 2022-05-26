@@ -1,3 +1,8 @@
+export interface SimpleFilters {
+    type: "attribute" | "spatial";
+    filters: Array<SimpleFilter>;
+}
+
 export interface SimpleFilter {
     type: string;
     description: string;
@@ -6,7 +11,7 @@ export interface SimpleFilter {
 export interface TypeOptions {
     type: string;
     description: string;
-    options: Array<Option>;
+    options?: Array<Option>;
 }
 
 export interface Option {
