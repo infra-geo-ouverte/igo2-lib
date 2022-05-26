@@ -279,88 +279,57 @@ export class DrawComponent implements OnInit, OnDestroy {
     fillColor: string,
     strokeColor: string
   ) {
-    let selectedFeaturesByUser = [];
+    console.log('fillColor:' + fillColor);
+    console.log('strokeColor:' + strokeColor);
+    console.log(this.selectedFeatures$.value);
+
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
-        const olFeature = featureToOl(
+        let olFeature = featureToOl(
           feature,
           this.map.ol.getView().getProjection().getCode()
         );
-        selectedFeaturesByUser.push(olFeature);
-      });
+        this.updateFillAndStrokeColor(olFeature, fillColor, strokeColor);
 
-      selectedFeaturesByUser.forEach((feature) => {
-        this.updateFillAndStrokeColor(feature, fillColor, strokeColor);
-        const entity = this.store.all().find((e) => e.meta.id === feature.id_);
-        entity.properties.drawingStyle.fill = feature.values_.fillColor_;
-        entity.properties.drawingStyle.stroke = feature.values_.strokeColor_;
+        const entity = this.store
+          .all()
+          .find((e) => e.meta.id === olFeature.getId());
+        entity.properties.drawingStyle.fill = olFeature.get('fillColor_');
+        entity.properties.drawingStyle.stroke = olFeature.get('strokeColor_');
         this.store.update(entity);
         this.store.layer.ol.getSource().refresh();
       });
-
-      this.fillColor = fillColor;
-      this.strokeColor = strokeColor;
-
-      if (isAnIcon) {
-        this.store.layer.ol.setStyle((feature, resolution) => {
-          return this.drawStyleService.createIndividualElementStyle(
-            feature,
-            resolution,
-            labelsAreShown,
-            feature.get('fontStyle'),
-            feature.get('drawingStyle').fill,
-            feature.get('drawingStyle').stroke,
-            this.icon
-          );
-        });
-        this.icon = undefined;
-      } else {
-        this.store.layer.ol.setStyle((feature, resolution) => {
-          return this.drawStyleService.createIndividualElementStyle(
-            feature,
-            resolution,
-            labelsAreShown,
-            feature.get('fontStyle'),
-            feature.get('drawingStyle').fill,
-            feature.get('drawingStyle').stroke
-          );
-        });
-      }
-
-      this.createDrawControl();
-    } else {
-      this.fillForm = this.fillColor;
-      this.strokeForm = this.strokeColor;
-      this.drawStyleService.setFillColor(this.fillColor);
-      this.drawStyleService.setStrokeColor(this.strokeColor);
-
-      if (isAnIcon) {
-        this.store.layer.ol.setStyle((feature, resolution) => {
-          return this.drawStyleService.createIndividualElementStyle(
-            feature,
-            resolution,
-            labelsAreShown,
-            feature.get('fontStyle'),
-            this.fillColor,
-            this.strokeColor,
-            this.icon
-          );
-        });
-        this.icon = undefined;
-      } else {
-        this.store.layer.ol.setStyle((feature, resolution) => {
-          return this.drawStyleService.createIndividualElementStyle(
-            feature,
-            resolution,
-            labelsAreShown,
-            feature.get('fontStyle'),
-            this.fillColor,
-            this.strokeColor
-          );
-        });
-      }
-      this.createDrawControl();
     }
+    this.fillColor = fillColor;
+    this.strokeColor = strokeColor;
+
+    if (isAnIcon) {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createIndividualElementStyle(
+          feature,
+          resolution,
+          labelsAreShown,
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke,
+          this.icon
+        );
+      });
+      this.icon = undefined;
+    } else {
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createIndividualElementStyle(
+          feature,
+          resolution,
+          labelsAreShown,
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke
+        );
+      });
+    }
+
+    this.createDrawControl();
   }
 
   /**
@@ -738,11 +707,13 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Called when the user double-clicks the selected drawing
    */
   editLabelDrawing() {
-    const olGeometry = featureToOl(
-      this.selectedFeatures$.value[0],
-      this.map.ol.getView().getProjection().getCode()
-    );
-    this.openDialog(olGeometry, false);
+    if (this.selectedFeatures$.value.length) {
+      const olGeometry = featureToOl(
+        this.selectedFeatures$.value[0],
+        this.map.ol.getView().getProjection().getCode()
+      );
+      this.openDialog(olGeometry, false);
+    }
   }
 
   /**
@@ -761,12 +732,11 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.map.ol.getView().getProjection().getCode()
         );
         selectedFeaturesByUser.push(olFeature);
-      });
-
-      selectedFeaturesByUser.forEach((feature) => {
-        this.updateFontSizeAndStyle(feature, size, style);
-        const entity = this.store.all().find((e) => e.meta.id === feature.id_);
-        entity.properties.fontStyle = feature.values_.style_;
+        this.updateFontSizeAndStyle(olFeature, size, style);
+        const entity = this.store
+          .all()
+          .find((e) => e.meta.id === olFeature.getId());
+        entity.properties.fontStyle = olFeature.get('style_');
         this.store.update(entity);
         this.store.layer.ol.getSource().refresh();
       });
@@ -824,20 +794,11 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   updateFrontendFontSize(): string {
-    if (this.selectedFeatures$.value.length === 0) {
-      return '20';
-    }
-
-    let allFontSizes = [];
-
-    this.selectedFeatures$.value.forEach((selectedFeature) => {
-      allFontSizes.push(
-        Number(
-          selectedFeature.properties.fontStyle.split(' ')[0].replace('px', '')
-        )
-      );
-    });
-    return Math.min(...allFontSizes).toString();
+    return this.selectedFeatures$.value.length > 0
+      ? this.selectedFeatures$.value[0].properties.fontStyle
+          .split(' ')[0]
+          .replace('px', '')
+      : '20';
   }
 
   updateFrontendFontStyle() {
@@ -846,5 +807,17 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.selectedFeatures$.value[0].properties.fontStyle.indexOf(' ') + 1
         )
       : FontType.Arial;
+  }
+
+  updateFrontendFillColor(event?) {
+    return this.selectedFeatures$.value.length > 0
+      ? this.selectedFeatures$.value[0].properties.drawingStyle.fill
+      : 'rgba(255,255,255,0.4)';
+  }
+
+  updateFrontendStrokeColor(event?) {
+    return this.selectedFeatures$.value.length > 0
+      ? this.selectedFeatures$.value[0].properties.drawingStyle.stroke
+      : 'rgba(143,7,7,1)';
   }
 }
