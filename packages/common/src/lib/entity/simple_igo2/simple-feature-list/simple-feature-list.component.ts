@@ -17,22 +17,22 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
   public entities: Array<Feature>; // an array containing all the entities in the store
-  public entitiesToShow: Array<Feature>; // an array containing the entities to show in a specific page
-  public entityIsSelected: boolean; // whether an entity has been selected in the list or not
+  public entitiesToShow: Array<Feature>; // an array containing the entities currently shown
+  public entityIsSelected: boolean; // a boolean stating whether an entity has been selected in the list or not
 
   public simpleFeatureListConfig: SimpleFeatureList; // the simpleFeatureList config input by the user
-  public attributeOrder: AttributeOrder; // the attribute order specified by the user in the config
-  public sortBy: SortBy; // the sorting to use input by the user in the config
-  public formatURL: boolean; // whether to format an URL or not (input by the user in the config)
-  public formatEmail: boolean; // whether to format an email or not (input by the user in the config)
-  public paginator: Paginator; // the paginator config input by the user
+  public attributeOrder: AttributeOrder; // the attribute order specified in the simpleFeatureList config
+  public sortBy: SortBy; // the sorting to use, input in the SimpleFeatureList config
+  public formatURL: boolean; // whether to format an URL or not, input in the SimpleFeature List config
+  public formatEmail: boolean; // whether to format an email or not, input in the SimpleFeatureList config
+  public paginator: Paginator; // the paginator config input, in the SimpleFeatureList Config
 
-  public pageSize: number; // the number of elements in a page, input by the user
-  public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input by the user
-  public showPreviousNextPageButtons: boolean; // whether to show the Previous page and Next Page buttons or not, input by the user
+  public pageSize: number; // the number of elements in a page, input in the paginator config
+  public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input in the paginator config
+  public showPreviousNextPageButtons: boolean; // whether to show the Previous page and Next Page buttons or not, input in the paginator config
 
-  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // observable of current page number
-  public currentPageNumber$$: Subscription; // subscription to current page number
+  public currentPageNumber$: BehaviorSubject<number> = new BehaviorSubject(1); // observable of the current page number
+  public currentPageNumber$$: Subscription; // subscription to the current page number
   public numberOfPages: number; // calculated number of pages
   public elementsLowerBound: number; // the lowest index (+ 1) of an element in the current page
   public elementsUpperBound: number; /// the highest index (+ 1) of an element in the current page
@@ -46,10 +46,10 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     // get the config input by the user
     this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
 
-    // get the attribute order input by the user to use to display the elements in the list
+    // get the attribute order to use to display the elements in the list
     this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
 
-    // get the sorting config input by the user and sort the entities accordingly (sort ascending by default)
+    // get the sorting config and sort the entities accordingly (sort ascending by default)
     this.sortBy = this.simpleFeatureListConfig.sortBy;
     if (this.sortBy) {
       if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
@@ -61,19 +61,23 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
       }
     }
 
-    // get the formmating configs for URLs and emails
+    // get the formatting configs for URLs and emails (not formatted by default)
     this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
     this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
 
     // get the paginator config, including the page size, the buttons options and calculate the number of pages to use
     this.paginator = this.simpleFeatureListConfig.paginator;
     if (this.paginator) {
+      // 5 elements displayed by default
       this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
+      // buttons shown by default
       this.showFirstLastPageButtons = this.paginator.showFirstLastPageButtons !== undefined ?
         this.paginator.showFirstLastPageButtons : true;
       this.showPreviousNextPageButtons = this.paginator.showPreviousNextPageButtons !== undefined ?
         this.paginator.showPreviousNextPageButtons : true;
+      // slice entities accroding to page size
       this.entitiesToShow = this.entities.slice(0, this.pageSize);
+      // calculate number of pages and indexes
       this.numberOfPages = Math.ceil(this.entities.length / this.pageSize);
       this.elementsLowerBound = 1;
       this.elementsUpperBound = this.pageSize > this.entities.length ? this.entities.length : this.pageSize;
@@ -95,15 +99,19 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
 
   ngOnChanges(changes: SimpleChanges) {
     // if the most recent change is a click on entities on the map...
+    console.log(changes);
     if (!changes.clickedEntities.firstChange) {
-      console.log('clicked entities');
+      // change selected state to false for all entities
       this.entityStore.state.updateAll({selected: false});
+      // get array of clicked entities
       const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
-      // when a user clicks on entities on the map, if an entity or entities have been clicked...
+      console.log(clickedEntities);
+      // if an entity or entities have been clicked...
       if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
         // ...show current entities in list
         this.entityStore.state.updateMany(clickedEntities, {selected: true});
-      // else show all entities in list
+        this.entitiesToShow = clickedEntities;
+      // ...else show all entities in list
       } else {
         this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
         this.currentPageNumber$.next(this.currentPageNumber$.getValue());
@@ -116,9 +124,9 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Checks if an attribute has to be formatted and formats it if necessary
-   * @param attribute A raw attributed from an entity
-   * @returns A formatted attribute
+   * @description Check if an attribute has to be formatted and format it if necessary
+   * @param attribute A "raw" attribute from an entity
+   * @returns A potentially formatted attribute
    */
   checkAttributeFormatting(attribute: any) {
     attribute = this.isPhoneNumber(attribute);
@@ -130,10 +138,10 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Creates a personnalized attribute or a formatted attribute
-   * @param entity An entity
+   * @description Create a personnalized attribute or a formatted attribute
+   * @param entity An entity (feature)
    * @param attribute The attribute to get or to create
-   * @returns The attribute as a string
+   * @returns The personnalized or formatted attribute as a string
    */
   createAttribute(entity: Feature, attribute: any): string {
     let newAttribute: string;
@@ -148,7 +156,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Creates a personnalized attribute
+   * @description Create a personnalized attribute
    * @param entity The entity containing the attribute
    * @param personalizedFormatting The personnalized formatting specified by the user in the config
    * @returns A personnalized attribute
@@ -172,7 +180,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Formats an attribute representing a phone number if the string matches the given pattern
+   * @description Format an attribute representing a phone number if the string matches the given pattern
    * @param attribute The attribute to format
    * @returns A formatted string representing a phone number or the original attribute
    */
@@ -186,7 +194,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Formats an attribute representing an email address if the string matches the given pattern
+   * @description Format an attribute representing an email address if the string matches the given pattern
    * @param attribute The attribute to format
    * @returns A formatted string representing an email address or the original attribute
    */
@@ -202,7 +210,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Formats an attribute representing a postal code if the string matches the given pattern
+   * @description Format an attribute representing a postal code if the string matches the given pattern
    * @param attribute The attribute to format
    * @returns A formatted string representing a postal code or the original attribute
    */
@@ -216,7 +224,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Formats an attribute representing an URL if the string matches the given pattern
+   * @description Format an attribute representing an URL if the string matches the given pattern
    * @param attribute The attribute to format
    * @returns A formatted string representing an URL or the original attribute
    */
