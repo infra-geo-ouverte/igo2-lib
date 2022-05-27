@@ -99,13 +99,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
 
   ngOnChanges(changes: SimpleChanges) {
     // if the most recent change is a click on entities on the map...
-    console.log(changes);
     if (!changes.clickedEntities.firstChange) {
       // change selected state to false for all entities
       this.entityStore.state.updateAll({selected: false});
       // get array of clicked entities
       const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
-      console.log(clickedEntities);
       // if an entity or entities have been clicked...
       if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
         // ...show current entities in list
@@ -248,6 +246,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.entityIsSelected = true;
 
     // update the store and emit the entity to parent
+    this.entityStore.state.updateAll({selected: false});
     this.entityStore.state.update(entity, {selected: true}, true);
     let entityCollection: {added: Array<Feature>} = {added: []};
     entityCollection.added.push(entity);
@@ -262,7 +261,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
     this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
-    this.entityStore.state.update(entity, {selected: false}, true);
+    this.entityStore.state.updateAll({selected: false});
   }
 
   /**
