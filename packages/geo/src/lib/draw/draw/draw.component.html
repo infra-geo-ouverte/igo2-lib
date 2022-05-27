@@ -41,170 +41,6 @@
     </mat-slide-toggle>
   </div>
 
-  <!-- <form class="igo-form" [formGroup]="form">
-    <div class="fill-color-picker mat-typography">
-      <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
-        {{ 'igo.geo.draw.fill' | translate }}
-      </span>
-
-      <mat-form-field
-        class="fill-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate"
-      >
-        <mat-label>{{ updateFrontendFillColor() }}</mat-label>
-
-        <input
-          #fillColorInput
-          formControlName="fill"
-          matInput
-          type="text"
-          [style.background]="updateFrontendFillColor()"
-          [readonly]="true"
-          [colorPicker]="updateFrontendFillColor()"
-          [cpWidth]="'200px'"
-          [cpOutputFormat]="'rgba'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="
-            onColorChange(
-              labelsAreShown,
-              false,
-              $event,
-              updateFrontendStrokeColor()
-            )
-          "
-        />
-      </mat-form-field>
-    </div>
-
-    <div class="stroke-color-picker mat-typography">
-      <span>
-        <mat-icon
-          class="stroke-palette-icon"
-          svgIcon="square-outline"
-        ></mat-icon>
-        {{ 'igo.geo.draw.stroke' | translate }}
-      </span>
-
-      <mat-form-field
-        class="stroke-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate"
-      >
-        <mat-label>{{ updateFrontendStrokeColor() }}</mat-label>
-
-        <input
-          #strokeColorInput
-          formControlName="stroke"
-          matInput
-          type="text"
-          [style.background]="updateFrontendStrokeColor()"
-          [readonly]="true"
-          [colorPicker]="updateFrontendStrokeColor()"
-          [cpWidth]="'200px'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpOutputFormat]="'rgba'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="
-            onColorChange(
-              labelsAreShown,
-              false,
-              updateFrontendFillColor(),
-              $event
-            )
-          "
-        />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field *ngIf="icons.length >= 1">
-        <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
-        <mat-select>
-          <mat-select-trigger>
-            <div *ngIf="icon" class="box">
-              <img src="{{ icon }}" />
-            </div>
-          </mat-select-trigger>
-          <mat-option value="" (click)="onIconChange()">{{
-            'igo.geo.draw.noIcon' | translate
-          }}</mat-option>
-          <mat-option
-            *ngFor="let icon_html of icons"
-            [value]="icon_html"
-            (click)="onIconChange(icon_html)"
-          >
-            <div class="box">
-              <img src="{{ icon_html }}" />
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form>
-
-  <form class="igo-form">
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
-        <input
-          matInput
-          #testFontSize
-          type="number"
-          placeholder="10"
-          min="10"
-          onkeydown="return event.keyCode !== 69"
-          [value]="updateFrontendFontSize()"
-          (input)="
-            onFontChange(
-              labelsAreShown,
-              $event.target.value,
-              testFontStyle.value
-            )
-          "
-        />
-
-        <span matSuffix>px</span>
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
-        <mat-select
-          #testFontStyle
-          [value]="updateFrontendFontStyle()"
-          (selectionChange)="
-            onFontChange(labelsAreShown, testFontSize.value, $event.value)
-          "
-        >
-          <mat-option
-            *ngFor="let fontSelect of allFontStyles"
-            [value]="fontSelect"
-          >
-            {{ fontSelect }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form> -->
-
-  <mat-divider></mat-divider>
-
   <div>
     <button
       *ngIf="store.count$.getValue() > 0"
@@ -230,173 +66,217 @@
     </igo-entity-table>
   </div>
 
-  <mat-divider></mat-divider>
+  <!-- [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'" -->
+  <div>
+    <form
+      class="igo-form"
+      [formGroup]="form"
+      [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'"
+    >
+      <div class="fill-color-picker mat-typography">
+        <span>
+          <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
+          {{ 'igo.geo.draw.fill' | translate }}
+        </span>
 
-  <form
-    class="igo-form"
-    [formGroup]="form"
-    *ngIf="(selectedFeatures$ | async).length != 0"
-  >
-    <div class="fill-color-picker mat-typography">
-      <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
-        {{ 'igo.geo.draw.fill' | translate }}
-      </span>
-
-      <mat-form-field
-        class="fill-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate"
-      >
-        <mat-label>{{ updateFrontendFillColor() }}</mat-label>
-
-        <input
-          #fillColorInput
-          formControlName="fill"
-          matInput
-          type="text"
-          [style.background]="updateFrontendFillColor()"
-          [readonly]="true"
-          [colorPicker]="updateFrontendFillColor()"
-          [cpWidth]="'200px'"
-          [cpOutputFormat]="'rgba'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="
-            onColorChange(
-              labelsAreShown,
-              false,
-              $event,
-              updateFrontendStrokeColor()
-            )
-          "
-        />
-      </mat-form-field>
-    </div>
-
-    <div class="stroke-color-picker mat-typography">
-      <span>
-        <mat-icon
-          class="stroke-palette-icon"
-          svgIcon="square-outline"
-        ></mat-icon>
-        {{ 'igo.geo.draw.stroke' | translate }}
-      </span>
-
-      <mat-form-field
-        class="stroke-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate"
-      >
-        <mat-label>{{ updateFrontendStrokeColor() }}</mat-label>
-
-        <input
-          #strokeColorInput
-          formControlName="stroke"
-          matInput
-          type="text"
-          [style.background]="updateFrontendStrokeColor()"
-          [readonly]="true"
-          [colorPicker]="updateFrontendStrokeColor()"
-          [cpWidth]="'200px'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpOutputFormat]="'rgba'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="
-            onColorChange(
-              labelsAreShown,
-              false,
-              updateFrontendFillColor(),
-              $event
-            )
-          "
-        />
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field *ngIf="icons.length >= 1">
-        <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
-        <mat-select>
-          <mat-select-trigger>
-            <div *ngIf="icon" class="box">
-              <img src="{{ icon }}" />
-            </div>
-          </mat-select-trigger>
-          <mat-option value="" (click)="onIconChange()">{{
-            'igo.geo.draw.noIcon' | translate
-          }}</mat-option>
-          <mat-option
-            *ngFor="let icon_html of icons"
-            [value]="icon_html"
-            (click)="onIconChange(icon_html)"
-          >
-            <div class="box">
-              <img src="{{ icon_html }}" />
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form>
-
-  <form class="igo-form" *ngIf="(selectedFeatures$ | async).length != 0">
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
-        <input
-          matInput
-          #testFontSize
-          type="number"
-          placeholder="10"
-          min="10"
-          onkeydown="return event.keyCode !== 69"
-          [value]="updateFrontendFontSize()"
-          (input)="
-            onFontChange(
-              labelsAreShown,
-              $event.target.value,
-              testFontStyle.value
-            )
-          "
-        />
-
-        <span matSuffix>px</span>
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
-        <mat-select
-          #testFontStyle
-          [value]="updateFrontendFontStyle()"
-          (selectionChange)="
-            onFontChange(labelsAreShown, testFontSize.value, $event.value)
-          "
+        <mat-form-field
+          class="fill-field"
+          appearance="outline"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.draw.colorPicker' | translate"
         >
-          <mat-option
-            *ngFor="let fontSelect of allFontStyles"
-            [value]="fontSelect"
+          <mat-label>{{ updateFrontendFillColor() }}</mat-label>
+
+          <input
+            #fillColorInput
+            formControlName="fill"
+            matInput
+            type="text"
+            [style.background]="updateFrontendFillColor()"
+            [readonly]="true"
+            [colorPicker]="updateFrontendFillColor()"
+            [cpWidth]="'200px'"
+            [cpOutputFormat]="'rgba'"
+            [cpPosition]="'bottom'"
+            [cpPositionOffset]="'-75%'"
+            [cpCancelButton]="true"
+            [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
+            [cpOKButton]="true"
+            (colorPickerChange)="
+              onColorChange(
+                labelsAreShown,
+                false,
+                $event,
+                updateFrontendStrokeColor()
+              )
+            "
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="stroke-color-picker mat-typography">
+        <span>
+          <mat-icon
+            class="stroke-palette-icon"
+            svgIcon="square-outline"
+          ></mat-icon>
+          {{ 'igo.geo.draw.stroke' | translate }}
+        </span>
+
+        <mat-form-field
+          class="stroke-field"
+          appearance="outline"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.draw.colorPicker' | translate"
+        >
+          <mat-label>{{ updateFrontendStrokeColor() }}</mat-label>
+
+          <input
+            #strokeColorInput
+            formControlName="stroke"
+            matInput
+            type="text"
+            [style.background]="updateFrontendStrokeColor()"
+            [readonly]="true"
+            [colorPicker]="updateFrontendStrokeColor()"
+            [cpWidth]="'200px'"
+            [cpPosition]="'bottom'"
+            [cpPositionOffset]="'-75%'"
+            [cpOutputFormat]="'rgba'"
+            [cpCancelButton]="true"
+            [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
+            [cpOKButton]="true"
+            (colorPickerChange)="
+              onColorChange(
+                labelsAreShown,
+                false,
+                updateFrontendFillColor(),
+                $event
+              )
+            "
+          />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field *ngIf="icons.length >= 1">
+          <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
+          <mat-select>
+            <mat-select-trigger>
+              <div *ngIf="icon" class="box">
+                <img src="{{ icon }}" />
+              </div>
+            </mat-select-trigger>
+            <mat-option value="" (click)="onIconChange()">{{
+              'igo.geo.draw.noIcon' | translate
+            }}</mat-option>
+            <mat-option
+              *ngFor="let icon_html of icons"
+              [value]="icon_html"
+              (click)="onIconChange(icon_html)"
+            >
+              <div class="box">
+                <img src="{{ icon_html }}" />
+              </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- </form> -->
+
+      <!-- <form
+      class="igo-form"
+      [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'"
+    > -->
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <input
+            matInput
+            #testFontSize
+            type="number"
+            placeholder="10"
+            min="10"
+            onkeydown="return event.keyCode !== 69"
+            [value]="updateFrontendFontSize()"
+            (input)="
+              onFontChange(
+                labelsAreShown,
+                $event.target.value,
+                testFontStyle.value
+              )
+            "
+          />
+
+          <span matSuffix>px</span>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
+          <mat-select
+            #testFontStyle
+            [value]="updateFrontendFontStyle()"
+            (selectionChange)="
+              onFontChange(labelsAreShown, testFontSize.value, $event.value)
+            "
           >
-            {{ fontSelect }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form>
+            <mat-option
+              *ngFor="let fontSelect of allFontStyles"
+              [value]="fontSelect"
+            >
+              {{ fontSelect }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <input
+            matInput
+            #offsetXInput
+            type="number"
+            onkeydown="return event.keyCode !== 69"
+            [value]="updateFrontendOffsetX()"
+            (input)="
+              onOffsetLabelChange(
+                labelsAreShown,
+                $event.target.value,
+                offsetYInput.value
+              )
+            "
+          />
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <input
+            matInput
+            #offsetYInput
+            type="number"
+            onkeydown="return event.keyCode !== 69"
+            [value]="updateFrontendOffsetY()"
+            (input)="
+              onOffsetLabelChange(
+                labelsAreShown,
+                offsetXInput.value,
+                $event.target.value
+              )
+            "
+          />
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
 
   <button
     mat-icon-button

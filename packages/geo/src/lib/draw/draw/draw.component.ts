@@ -4,7 +4,8 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy,
-  Output
+  Output,
+  HostBinding
 } from '@angular/core';
 
 import {
@@ -51,8 +52,37 @@ import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
 
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition
+  // ...
+} from '@angular/animations';
+import Point from 'ol/geom/Point';
+
 @Component({
   selector: 'igo-draw',
+  animations: [
+    trigger('openClose', [
+      state(
+        'open',
+        style({
+          opacity: 1
+        })
+      ),
+      state(
+        'closed',
+        style({
+          height: '0px',
+          opacity: 0.0
+        })
+      ),
+      transition('open => closed', [animate('600ms ease')]),
+      transition('closed => open', [animate('800ms ease')])
+    ])
+  ],
   templateUrl: './draw.component.html',
   styleUrls: ['./draw.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -208,6 +238,8 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('fontStyle'),
           feature.get('drawingStyle').fill,
           feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY'),
           this.icon
         );
       },
@@ -279,10 +311,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     fillColor: string,
     strokeColor: string
   ) {
-    console.log('fillColor:' + fillColor);
-    console.log('strokeColor:' + strokeColor);
-    console.log(this.selectedFeatures$.value);
-
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
         let olFeature = featureToOl(
@@ -312,6 +340,8 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('fontStyle'),
           feature.get('drawingStyle').fill,
           feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY'),
           this.icon
         );
       });
@@ -324,7 +354,9 @@ export class DrawComponent implements OnInit, OnDestroy {
           labelsAreShown,
           feature.get('fontStyle'),
           feature.get('drawingStyle').fill,
-          feature.get('drawingStyle').stroke
+          feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY')
         );
       });
     }
@@ -354,6 +386,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param drawEnd event fired at drawEnd?
    */
   private openDialog(olGeometry, isDrawEnd: boolean) {
+    console.log(olGeometry);
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -364,18 +397,23 @@ export class DrawComponent implements OnInit, OnDestroy {
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
-        // console.log(olGeometryFeature);
         if (dialogRef.componentInstance.confirmFlag) {
           this.updateLabelOfOlGeometry(olGeometry, label);
           if (!olGeometry.values_.fontStyle) {
             this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
           }
           if (!olGeometry.values_.drawingStyle) {
-            console.log('hit');
             this.updateFillAndStrokeColor(
               olGeometry,
               'rgba(255,255,255,0.4)',
               'rgba(143,7,7,1)'
+            );
+          }
+          if (!(olGeometry.values_.offsetX || olGeometry.values_.offsetY)) {
+            this.updateOffset(
+              olGeometry,
+              0,
+              olGeometry instanceof Point ? -15 : 0
             );
           }
 
@@ -477,6 +515,11 @@ export class DrawComponent implements OnInit, OnDestroy {
           entity.properties.drawingStyle.fill,
           entity.properties.drawingStyle.stroke
         );
+        this.updateOffset(
+          olGeometry,
+          entity.properties.offsetX,
+          entity.properties.offsetY
+        );
         this.replaceFeatureInStore(entity, olGeometry);
       }
     });
@@ -507,12 +550,16 @@ export class DrawComponent implements OnInit, OnDestroy {
         const fillColor = olFeature.get('drawingStyle').fill;
         const strokeColor = olFeature.get('drawingStyle').stroke;
 
+        const offsetX = olFeature.get('offsetX');
+        const offsetY = olFeature.get('offsetY');
+
         const rad: number = entity.properties.rad
           ? entity.properties.rad
           : undefined;
         this.updateLabelOfOlGeometry(olGeometry, label);
         this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
         this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
+        this.updateOffset(olGeometry, offsetX, offsetY);
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -593,7 +640,9 @@ export class DrawComponent implements OnInit, OnDestroy {
         drawingStyle: {
           fill: olGeometry.get('fillColor_'),
           stroke: olGeometry.get('strokeColor_')
-        }
+        },
+        offsetX: olGeometry.get('offsetX_'),
+        offsetY: olGeometry.get('offsetY_')
       },
       meta: {
         id: featureId
@@ -694,6 +743,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         feature.get('fontStyle'),
         feature.get('drawingStyle').fill,
         feature.get('drawingStyle').stroke,
+        feature.get('offsetX'),
+        feature.get('offsetY'),
         this.icon
       );
     });
@@ -724,14 +775,12 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
 
   onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
-    let selectedFeaturesByUser = [];
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
         const olFeature = featureToOl(
           feature,
           this.map.ol.getView().getProjection().getCode()
         );
-        selectedFeaturesByUser.push(olFeature);
         this.updateFontSizeAndStyle(olFeature, size, style);
         const entity = this.store
           .all()
@@ -754,7 +803,9 @@ export class DrawComponent implements OnInit, OnDestroy {
           labelsAreShown,
           feature.get('fontStyle'),
           feature.get('drawingStyle').fill,
-          feature.get('drawingStyle').stroke
+          feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY')
         );
       });
     }
@@ -793,6 +844,20 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
+  private updateOffset(
+    olFeature: OlFeature<OlGeometry>,
+    offsetX: number,
+    offsetY: number
+  ) {
+    olFeature.setProperties(
+      {
+        offsetX_: offsetX,
+        offsetY_: offsetY
+      },
+      true
+    );
+  }
+
   updateFrontendFontSize(): string {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.fontStyle
@@ -809,15 +874,63 @@ export class DrawComponent implements OnInit, OnDestroy {
       : FontType.Arial;
   }
 
-  updateFrontendFillColor(event?) {
+  updateFrontendFillColor() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.drawingStyle.fill
       : 'rgba(255,255,255,0.4)';
   }
 
-  updateFrontendStrokeColor(event?) {
+  updateFrontendStrokeColor() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.drawingStyle.stroke
       : 'rgba(143,7,7,1)';
+  }
+
+  updateFrontendOffsetX() {
+    return this.selectedFeatures$.value.length > 0
+      ? this.selectedFeatures$.value[0].properties.offsetX
+      : this.drawStyleService.getOffsetX();
+  }
+
+  updateFrontendOffsetY() {
+    return this.selectedFeatures$.value.length > 0
+      ? this.selectedFeatures$.value[0].properties.offsetY
+      : '0';
+  }
+
+  onOffsetLabelChange(
+    labelsAreShown: boolean,
+    offsetX: number,
+    offsetY: number
+  ) {
+    if (this.selectedFeatures$.value.length > 0) {
+      this.selectedFeatures$.value.forEach((feature) => {
+        const olFeature = featureToOl(
+          feature,
+          this.map.ol.getView().getProjection().getCode()
+        );
+        this.updateOffset(olFeature, offsetX, offsetY);
+        const entity = this.store
+          .all()
+          .find((e) => e.meta.id === olFeature.getId());
+        entity.properties.offsetX = olFeature.get('offsetX_');
+        entity.properties.offsetY = olFeature.get('offsetY_');
+        this.store.update(entity);
+        this.store.layer.ol.getSource().refresh();
+      });
+
+      this.store.layer.ol.setStyle((feature, resolution) => {
+        return this.drawStyleService.createIndividualElementStyle(
+          feature,
+          resolution,
+          labelsAreShown,
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY')
+        );
+      });
+    }
   }
 }

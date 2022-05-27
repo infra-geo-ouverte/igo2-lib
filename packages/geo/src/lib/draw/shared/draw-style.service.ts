@@ -17,6 +17,8 @@ export class DrawStyleService {
   private icon: string;
   private fontSize: string = '20';
   private fontStyle: string = FontType.Arial.toString();
+  private offsetX: number = 0;
+  private offsetY: number = 0;
 
   constructor(private mapService: MapService) {}
 
@@ -71,6 +73,22 @@ export class DrawStyleService {
 
   setFontStyle(fontStyle: string) {
     this.fontStyle = fontStyle;
+  }
+
+  getOffsetX() {
+    return this.offsetX;
+  }
+
+  setOffsetX(offsetX: number) {
+    this.offsetX = offsetX;
+  }
+
+  getOffsetY() {
+    return this.offsetY;
+  }
+
+  setOffsetY(offsetY: number) {
+    this.offsetY = offsetY;
   }
 
   createDrawingLayerStyle(
@@ -208,6 +226,8 @@ export class DrawStyleService {
     fontSizeAndStyle: string,
     fillColor: string,
     strokeColor: string,
+    offsetX: number,
+    offsetY: number,
     icon?: string
   ): OlStyle.Style {
     let style;
@@ -239,7 +259,9 @@ export class DrawStyleService {
           }),
 
           font: fontSizeAndStyle,
-          overflow: true
+          overflow: true,
+          offsetX: offsetX,
+          offsetY: offsetY ? offsetY : this.offsetY
         }),
 
         image: new OlStyle.Circle({
@@ -260,10 +282,10 @@ export class DrawStyleService {
 
       // if feature is an icon
     } else if (icon) {
+      this.offsetY = -26;
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',
-          offsetY: -26,
           stroke: new OlStyle.Stroke({
             color: 'white',
             width: 0.75
@@ -272,7 +294,9 @@ export class DrawStyleService {
             color: 'black'
           }),
           font: fontSizeAndStyle,
-          overflow: true
+          overflow: true,
+          offsetX: offsetX,
+          offsetY: offsetY ? offsetY : this.offsetY
         }),
 
         stroke: new OlStyle.Stroke({
@@ -292,6 +316,7 @@ export class DrawStyleService {
 
       // if feature is a point, a linestring or a polygon
     } else {
+      this.offsetY = labelsAreOffset ? -15 : 0;
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',
@@ -304,7 +329,9 @@ export class DrawStyleService {
           }),
           font: fontSizeAndStyle,
           overflow: true,
-          offsetY: labelsAreOffset ? -15 : 0
+
+          offsetX: offsetX,
+          offsetY: offsetY ? offsetY : this.offsetY
         }),
 
         stroke: new OlStyle.Stroke({

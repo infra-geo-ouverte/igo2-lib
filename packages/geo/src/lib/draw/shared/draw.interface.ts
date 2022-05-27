@@ -26,6 +26,8 @@ export interface FeatureWithDrawProperties {
   rad: number;
   fontStyle: string;
   drawingStyle: DrawingStyle;
+  offsetX: number;
+  offsetY: number;
 }
 
 export interface FeatureStoreDrawStrategyOptions {
