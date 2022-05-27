@@ -13,7 +13,9 @@ import { debounceTime, first } from 'rxjs/operators';
 interface ActiveMessageTranslation {
   id: number;
   titleKey: string;
-  messageKey: string;
+  textKey: string;
+  textInterpolateParams?: Object
+  titleInterpolateParams?: Object
 }
 @Injectable({
   providedIn: 'root'
@@ -37,8 +39,8 @@ export class MessageService {
         const activeMessageTranslation = this.activeMessageTranslations.find(amt => amt.id === toast.toastId);
         if (activeMessageTranslation) {
           forkJoin([
-          this.languageService.translate.get(activeMessageTranslation.messageKey),
-          this.languageService.translate.get(activeMessageTranslation.titleKey)
+          this.languageService.translate.get(activeMessageTranslation.textKey, activeMessageTranslation.textInterpolateParams),
+          this.languageService.translate.get(activeMessageTranslation.titleKey, activeMessageTranslation.titleInterpolateParams)
         ]).pipe(first()).subscribe((res: [string, string]) => {
           toast.toastRef.componentInstance.message = res[0];
           toast.toastRef.componentInstance.title = res[1];
@@ -101,11 +103,16 @@ export class MessageService {
     }
   }
 
-  success(text: string, title: string = 'igo.core.message.success', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
-    const message = this.languageService.translate.instant(text);
-    const translatedTitle = this.languageService.translate.instant(title);
+  success(
+    text: string,
+    title: string = 'igo.core.message.success',
+    options: Partial<IndividualConfig> = {},
+    textInterpolateParams?: Object,
+    titleInterpolateParams?: Object): ActiveToast<any> {
+    const message = this.languageService.translate.instant(text, textInterpolateParams);
+    const translatedTitle = this.languageService.translate.instant(title, titleInterpolateParams);
     const activeToast = this.toastr.success(message, translatedTitle, options);
-    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    this.activeMessageTranslations.push({ id: activeToast.toastId, titleKey: title, textKey: text, textInterpolateParams, titleInterpolateParams });
     return activeToast;
   }
 
@@ -113,7 +120,7 @@ export class MessageService {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     const activeToast = this.toastr.error(message, translatedTitle, options);
-    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, textKey: text});
     return activeToast;
   }
 
@@ -121,7 +128,7 @@ export class MessageService {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     const activeToast = this.toastr.info(message, translatedTitle, options);
-    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, textKey: text});
     return activeToast;
   }
 
@@ -129,7 +136,7 @@ export class MessageService {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
     const activeToast = this.toastr.warning(message, translatedTitle, options);
-    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, messageKey: text});
+    this.activeMessageTranslations.push({id: activeToast.toastId, titleKey: title, textKey: text});
     return activeToast;
   }
 
