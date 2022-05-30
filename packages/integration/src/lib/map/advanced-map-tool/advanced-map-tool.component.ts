@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
+import { MapState } from '../map.state';
 
 @ToolComponent({
   name: 'advancedMap',
@@ -18,4 +19,21 @@ import { ToolComponent } from '@igo2/common';
 
 export class AdvancedMapToolComponent {
 
+  get tracking$() {
+    return this.mapState.map.geolocationController.tracking$;
+  }
+  get followPosition$() {
+    return this.mapState.map.geolocationController.followPosition$;
+  }
+
+  constructor(
+    public mapState: MapState) {}
+
+  toggleTracking(value) {
+    this.mapState.map.geolocationController.tracking = value;
+  }
+
+  toggleFollow(value) {
+    this.mapState.map.geolocationController.followPosition = value;
+  }
 }
