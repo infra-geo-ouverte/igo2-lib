@@ -44,6 +44,7 @@ import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from './style.service';
 import { LanguageService, MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 @Injectable({
   providedIn: 'root'
@@ -135,10 +136,10 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style;
+    let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorLayer;
     if (layerOptions.style !== undefined) {
-      style = this.styleService.createStyle(layerOptions.style);
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
@@ -146,10 +147,11 @@ export class LayerService {
       style = source.options.params.style;
     } else if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
       igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
@@ -158,9 +160,10 @@ export class LayerService {
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
       const baseStyle = layerOptions.clusterBaseStyle;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createClusterStyle(
           feature,
+          resolution,
           layerOptions.clusterParam,
           baseStyle
         );
@@ -184,19 +187,20 @@ export class LayerService {
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style;
+    let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorTileLayer;
 
     if (layerOptions.style !== undefined) {
-      style = this.styleService.createStyle(layerOptions.style);
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
       igoLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);

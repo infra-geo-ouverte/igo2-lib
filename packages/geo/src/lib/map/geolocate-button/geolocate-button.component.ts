@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
 
@@ -7,7 +8,11 @@ import { IgoMap } from '../shared/map';
   templateUrl: './geolocate-button.component.html',
   styleUrls: ['./geolocate-button.component.scss']
 })
-export class GeolocateButtonComponent {
+export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
+
+  private tracking$$: Subscription;
+  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('crosshairs-gps');
+
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -27,4 +32,26 @@ export class GeolocateButtonComponent {
   private _color: string;
 
   constructor() {}
+  ngAfterContentInit(): void {
+    this.map.ol.once('rendercomplete', () => {
+      this.tracking$$ =this.map.geolocationController.tracking$.subscribe(tracking => {
+        if (tracking) {
+          this.icon$.next('crosshairs-gps');
+        } else {
+          this.icon$.next('crosshairs');
+        }
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.tracking$$) {
+      this.tracking$$.unsubscribe();
+    }
+  }
+
+  onGeolocationClick() {
+    const tracking = this.map.geolocationController.tracking;
+    this.map.geolocationController.tracking = tracking ? false : true;
+  }
 }

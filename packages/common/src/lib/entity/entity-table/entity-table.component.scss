@@ -45,6 +45,12 @@ entity-table table.igo-entity-table-with-selection tr:hover {
 table button {
     margin: 7px;
 }
+.class_hidden {
+    visibility: hidden;
+}
+.class_display_none {
+    display: none;
+}
 
 .class_boolean,
 .class_icon,

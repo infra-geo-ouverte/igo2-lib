@@ -12,6 +12,7 @@ interface Environment {
 export const environment: Environment = {
   production: false,
   igo: {
+    wakeLockApiButton: true,
     importWithStyle: true,
     projections: [
       {
