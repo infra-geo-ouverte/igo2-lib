@@ -9,7 +9,7 @@ import { Layer, ItemStyleOptions } from '../shared/layers';
 import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { catchError, map } from 'rxjs/operators';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, ConfigService } from '@igo2/core';
 import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
 import { SecureImagePipe } from '@igo2/common';
 
@@ -79,6 +79,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   constructor(
     private capabilitiesService: CapabilitiesService,
     private languageService: LanguageService,
+    private configService: ConfigService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef) {}
 
@@ -128,7 +129,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   getLegendGraphic(item: Legend) {
     if (item.url) {
-      const secureIMG = new SecureImagePipe(this.http);
+      const secureIMG = new SecureImagePipe(this.http, this.configService);
       secureIMG.transform(item.url).pipe(
         catchError((err) => {
           if (err.error) {

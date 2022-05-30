@@ -27,22 +27,32 @@ export function createOverlayLayer(): VectorLayer {
  * combination for lines and polygons
  * @returns Style function
  */
-function createOverlayLayerStyle(): (olFeature: OlFeature<OlGeometry>) => olstyle.Style {
+function createOverlayLayerStyle(): (olFeature: OlFeature<OlGeometry>, resolution: number) => olstyle.Style {
   const defaultStyle = createOverlayDefaultStyle();
   const markerStyle = createOverlayMarkerStyle();
 
   let style;
 
-  return (olFeature: OlFeature<OlGeometry>) => {
+  return (olFeature: OlFeature<OlGeometry>, resolution) => {
+    if (olFeature.getId() === 'bufferFeature') {
+      style = createBufferStyle(
+        olFeature.get('bufferStroke'),
+        2,
+        olFeature.get('bufferFill'),
+        olFeature.get('bufferText')
+      );
+      return style;
+    } else {
       const customStyle = olFeature.get('_style');
       if (customStyle) {
         const styleService = new StyleService();
-        return styleService.createStyle(customStyle);
+        return styleService.createStyle(customStyle, olFeature, resolution);
       }
       const geometryType = olFeature.getGeometry().getType();
       style = geometryType === 'Point' ? markerStyle : defaultStyle;
       style.getText().setText(olFeature.get('_mapTitle'));
       return style;
+    }
   };
 }
 
@@ -84,6 +94,39 @@ export function createOverlayDefaultStyle({
     text: new olstyle.Text({
       text,
       font: '12px Calibri,sans-serif',
+      fill: new olstyle.Fill({ color: '#000' }),
+      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
+      overflow: true
+    })
+  });
+}
+
+function createBufferStyle(
+  strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
+  strokeWidth: number = 2,
+  fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
+  bufferRadius?
+): olstyle.Style {
+  const stroke = new olstyle.Stroke({
+    width: strokeWidth,
+    color: strokeRGBA
+  });
+
+  const fill = new olstyle.Fill({
+    color: fillRGBA
+  });
+
+  return new olstyle.Style({
+    stroke,
+    fill,
+    image: new olstyle.Circle({
+      radius: 5,
+      stroke,
+      fill
+    }),
+    text: new olstyle.Text({
+      font: '12px Calibri,sans-serif',
+      text: bufferRadius,
       fill: new olstyle.Fill({ color: '#000' }),
       stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
       overflow: true
