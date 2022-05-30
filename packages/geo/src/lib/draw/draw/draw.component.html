@@ -66,12 +66,13 @@
     </igo-entity-table>
   </div>
 
-  <!-- [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'" -->
   <div>
     <form
       class="igo-form"
       [formGroup]="form"
-      [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'"
+      [@openClose]="
+        (selectedFeatures$ | async).length !== 0 ? 'open' : 'closed'
+      "
     >
       <div class="fill-color-picker mat-typography">
         <span>
@@ -186,12 +187,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <!-- </form> -->
 
-      <!-- <form
-      class="igo-form"
-      [@openClose]="(selectedFeatures$ | async).length != 0 ? 'open' : 'closed'"
-    > -->
       <div>
         <mat-form-field appearance="outline">
           <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
@@ -238,7 +234,7 @@
 
       <div>
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.draw.offsetX' | translate }}</mat-label>
           <input
             matInput
             #offsetXInput
@@ -258,7 +254,7 @@
 
       <div>
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.draw.offsetY' | translate }}</mat-label>
           <input
             matInput
             #offsetYInput

@@ -693,7 +693,9 @@
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
         "fontSize": "Taille de police",
-        "fontStyle": "Style de police"
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical"
       },
       "network": {
         "online": {

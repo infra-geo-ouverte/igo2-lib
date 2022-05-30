@@ -693,7 +693,9 @@
         "toggleMapTooltips": "Show map tooltips",
         "undo": "Remove last vertex",
         "fontSize": "Font size",
-        "fontStyle": "Font style"
+        "fontStyle": "Font style",
+        "offsetX": "Horizontal offset",
+        "offsetY": "Vertical offset"
       },
       "network": {
         "online": {
