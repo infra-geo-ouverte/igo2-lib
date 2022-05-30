@@ -11,7 +11,7 @@ import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';
-import { MessageService, ActivityService, LanguageService } from '@igo2/core';
+import { MessageService, ActivityService, LanguageService, ConfigService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
@@ -31,7 +31,8 @@ export class PrintService {
     private http: HttpClient,
     private messageService: MessageService,
     private activityService: ActivityService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private configService: ConfigService
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -176,7 +177,7 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
-      const images$ = legends.map((legend) =>
+      const images$ = legends.filter(l => l.display).map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
@@ -196,7 +197,7 @@ export class PrintService {
   }
 
   getDataImage(url: string): Observable<string> {
-    const secureIMG = new SecureImagePipe(this.http);
+    const secureIMG = new SecureImagePipe(this.http, this.configService);
     return secureIMG.transform(url);
   }
 
@@ -794,19 +795,21 @@ export class PrintService {
       newContext.drawImage(oldCanvas, 0, positionHCanvas);
 
       let status = SubjectStatus.Done;
+      let fileNameWithExt = 'map.' + format;
+      if (format.toLowerCase() === 'tiff') {
+        fileNameWithExt = 'map' + map.projection.replace(':', '_') + '.' + format;
+      }
+
       try {
         // Save the canvas as file
         if (!doZipFile) {
-          this.saveCanvasImageAsFile(newCanvas, 'map', format);
+          this.saveCanvasImageAsFile(newCanvas, fileNameWithExt, format);
         } else if (format.toLowerCase() === 'tiff') {
           // Add the canvas to zip
-          this.generateCanvaFileToZip(
-            newCanvas,
-            'map' + map.projection.replace(':', '_') + '.' + format
-          );
+          this.generateCanvaFileToZip(newCanvas, fileNameWithExt);
         } else {
           // Add the canvas to zip
-          this.generateCanvaFileToZip(newCanvas, 'map' + '.' + format);
+          this.generateCanvaFileToZip(newCanvas, fileNameWithExt);
         }
       } catch (err) {
         status = SubjectStatus.Error;
@@ -815,20 +818,18 @@ export class PrintService {
       status$.next(status);
 
       if (format.toLowerCase() === 'tiff') {
+        const tfwFileNameWithExt = fileNameWithExt.substring(0, fileNameWithExt.toLowerCase().indexOf('.tiff')) + '.tfw';
         const tiwContent = this.getWorldFileInformation(map);
         const blob = new Blob([tiwContent], {
           type: 'text/plain;charset=utf-8'
         });
         if (!doZipFile) {
           // saveAs automaticly replace ':' for '_'
-          saveAs(blob, 'map' + map.projection + '.tfw');
+          saveAs(blob, tfwFileNameWithExt);
           this.saveFileProcessing();
         } else {
           // Add the canvas to zip
-          this.addFileToZip(
-            'map' + map.projection.replace(':', '_') + '.tfw',
-            blob
-          );
+          this.addFileToZip(tfwFileNameWithExt,blob);
         }
       }
     });
@@ -896,7 +897,7 @@ export class PrintService {
    * @param name - Name of the file
    * @param format - file format
    */
-  private saveCanvasImageAsFile(canvas, name, format) {
+  private saveCanvasImageAsFile(canvas, nameWithExt, format) {
     const blobFormat = 'image/' + format;
     const that = this;
 
@@ -904,12 +905,12 @@ export class PrintService {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
       // If navigator is Internet Explorer
       if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
+        navigator.msSaveBlob(canvas.msToBlob(), nameWithExt);
         this.saveFileProcessing();
       } else {
         canvas.toBlob((blob) => {
           // download image
-          saveAs(blob, name + '.' + format);
+          saveAs(blob, nameWithExt);
           that.saveFileProcessing();
         }, blobFormat);
       }

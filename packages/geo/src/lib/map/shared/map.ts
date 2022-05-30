@@ -27,7 +27,7 @@ import {
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
-import { StorageService } from '@igo2/core/public_api';
+import { StorageService } from '@igo2/core';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
