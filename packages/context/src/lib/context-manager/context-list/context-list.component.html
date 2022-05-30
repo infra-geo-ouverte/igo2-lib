@@ -138,7 +138,7 @@
         [showFavorite]="configService.getConfig('favoriteContext4NonAuthenticated')"
         [selected]="selectedContext && selectedContext.uri === context.uri"
         [context]="context"
-        [default]="defaultContextId === context.uri"
+        [default]="configService.getConfig('context') ? defaultContextId === context.id : defaultContextId === context.uri"
         (favorite)="favorite.emit(context)"
         (select)="select.emit(context)"
         (unselect)="unselect.emit(context)">
