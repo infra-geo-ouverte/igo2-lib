@@ -112,7 +112,12 @@ export class MessageService {
     const message = this.languageService.translate.instant(text, textInterpolateParams);
     const translatedTitle = this.languageService.translate.instant(title, titleInterpolateParams);
     const activeToast = this.toastr.success(message, translatedTitle, options);
-    this.activeMessageTranslations.push({ id: activeToast.toastId, titleKey: title, textKey: text, textInterpolateParams, titleInterpolateParams });
+    this.activeMessageTranslations.push({
+      id: activeToast.toastId,
+      titleKey: title,
+      textKey: text,
+      textInterpolateParams,
+      titleInterpolateParams });
     return activeToast;
   }
 
