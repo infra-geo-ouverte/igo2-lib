@@ -86,6 +86,10 @@ export class MapViewController extends MapController {
     super();
   }
 
+  setPaddingTop(nbPixel: number) {
+    this.padding[2] = nbPixel;
+  }
+
   /**
    * Add or remove this controller to/from a map.
    * @param map OL Map

@@ -219,4 +219,14 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     this.change$.next();
   }
 
+
+  getFeaturesSelected() {
+    let featuresSelected = [];
+    for (const [key, value] of this.index) {
+      if(value.selected) {
+        featuresSelected.push(this.store.get(key)); 
+      }
+  }
+  return featuresSelected;
+  }
 }
