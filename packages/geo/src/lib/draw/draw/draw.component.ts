@@ -884,6 +884,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawControl.setOlMap(this.map.ol, true);
   }
 
+  /**
+   * Recreates the style of the feature stored
+   */
   private elementStyle(labelsAreShown: boolean, isAnIcon?) {
     if (isAnIcon) {
       this.store.layer.ol.setStyle((feature, resolution) => {
