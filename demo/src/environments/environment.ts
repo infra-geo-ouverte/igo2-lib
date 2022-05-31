@@ -66,10 +66,7 @@ export const environment: Environment = {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          regFilters: ['zpegt'],
-          forcedProperties: [{
-            newMetadataUrlAll: "https://gitlab.forge.gouv.qc.ca/"
-          }]
+          regFilters: ['zpegt']
         },
         {
           id: 'catalogwithtooltipcontrol',
@@ -91,9 +88,7 @@ export const environment: Environment = {
           regFilters: ['^10$'],
           forcedProperties: [{
             layerName: 'Les lits d|éponges dans la zone biogéographique du golfe - l|engin de chalutage Campelen',
-            title: "----Nouveau nom pour cette couche ArcGIS REST focus",
-            //newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-            newMetadataAbstract: "Ceci est un nouveau abstract"
+            title: "----Nouveau nom pour cette couche ArcGIS REST focus"
           }]
         },
         {
@@ -105,19 +100,19 @@ export const environment: Environment = {
             {
               layerName: "Information about the chart display",
               title: "New ESRI layer name",
-              newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-              //newMetadataAbstract: "New ESRI abstract",
+              metadataUrl: "https://www.igouverte.org/demo/",
+              //metadataAbstract: "New ESRI abstract",
             },
             {
               layerName: "Natural and man-made features, port features",
               title: "New 2nd ESRI layer name",
-              newMetadataUrl: "https://gitlab.com/",
-              //newMetadataAbstract: "New 2nd ESRI abstract",
+              //metadataUrl: "https://gitlab.com/",
+              metadataAbstract: "New 2nd ESRI abstract",
             },
             {
               layerName: "All",
-              //newMetadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
-              newMetadataAbstractAll: "New abstract to all other layers"
+              //metadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
+              metadataAbstractAll: "New abstract to all layers"
             }
           ]
         },
@@ -160,11 +155,6 @@ export const environment: Environment = {
                 {
                   layerName: "BDTQ-20K",
                   title: "New 2nd WMTS layer name",
-                },
-                {
-                  layerName: "All",
-                  newMetadataAbstractAll: "New WMTS Abstract to all other layers",
-                  //newMetadataUrlAll: "https://quebec.ca/" // overrides newMetadataUrl
                 }
             ]
             },
@@ -175,22 +165,22 @@ export const environment: Environment = {
               crossOrigin: true,
               version: '1.3.0',
               forcedProperties: [
-                {
+                { // le dernier de Entités toponymiques
                   layerName: "atlas_named_feature_polygon_large",
                   title: "New WMS name",
-                  newMetadataUrl: "https://gitlab.forge.gouv.qc.ca/",
-                  newMetadataAbstract: "New WMS Abstract"
+                  metadataUrl: "https://gitlab.com/",
+                  //metadataAbstract: "New WMS Abstract"
                 },
-                {
+                { //voir dans Toutes les entités de la terre
                   layerName: "woodedarea_50k",
-                  title: "New 2nd WMS name",
-                  //newMetadataUrl: "https://gitlab.com/",
-                  newMetadataAbstract: "New 2nd WMS abstract"
+                  title: "New WMS name with new abstract",
+                  //metadataUrl: "https://www.quebec.ca/",
+                  //metadataAbstract: "New 2nd WMS abstract"
                 },
                 {
                   layerName: "All",
-                  //newMetadataUrlAll: "https://quebec.ca/",
-                  //newMetadataAbstractAll: "New WMS abstract to all other layers"
+                  //metadataUrlAll: "https://quebec.ca/",
+                  //metadataAbstractAll: "New WMS abstract to all layers"
                 }
               ]
               //regFilters: ["^100$"]
@@ -235,6 +225,7 @@ export const environment: Environment = {
               groupImpose: { id: 'zpegt', title: 'zpegt' }
             },
             {
+              // Carte topo échelle 1/20 000
               id: 'rn_wmts_1',
               url:
                 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
@@ -242,6 +233,23 @@ export const environment: Environment = {
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
               version: '1.0.0',
+              forcedProperties: [
+                { // le dernier de Entités toponymiques
+                  layerName: "BDTQ-20K_Allegee",
+                  title: "New WMTS name with new metadata URL",
+                  metadataUrl: "https://gitlab.com/",
+                },
+                { //voir dans Toutes les entités de la terre
+                  layerName: "BDTQ-20K",
+                  title: "New WMTS name with new abstract",
+                  metadataAbstract: "New WMTS abstract"
+                },
+                {
+                  layerName: "All",
+                  //metadataUrlAll: "https://www.donneesquebec.ca/",
+                  //metadataAbstractAll: "New WMTS abstract to all layers"
+                }
+              ],
               groupImpose: {
                 id: 'cartetopo',
                 title: 'Carte topo échelle 1/20 000'

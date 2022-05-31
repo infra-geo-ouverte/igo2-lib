@@ -416,18 +416,18 @@ export class CatalogService {
     let forcedNewMetadataAbstract: string;
     if (catalog.forcedProperties) {
       for (const property of catalog.forcedProperties) {
-        if (layer.Name === property.layerName && property.newMetadataUrl) {
-            forcedNewMetadataUrl = property.newMetadataUrl;
+        if (layer.Name === property.layerName && property.metadataUrl) {
+            forcedNewMetadataUrl = property.metadataUrl;
         }
-        else if (layer.Name === property.layerName && property.newMetadataAbstract) {
-            forcedNewMetadataAbstract = property.newMetadataAbstract;
+        else if (layer.Name === property.layerName && property.metadataAbstract) {
+            forcedNewMetadataAbstract = property.metadataAbstract;
         }
-        else if (layer.Name !== property.layerName && property.newMetadataAbstractAll) {
-            forcedNewMetadataAbstract = property.newMetadataAbstractAll;
-        } // when we set this property it overrides property.newMetadataAbstract
-        else if (layer.Name !== property.layerName && property.newMetadataUrlAll) {
-              forcedNewMetadataUrl = property.newMetadataUrlAll;
-        } // when we set this property it overrides property.newMetadataUrl and property.newMetadataAbstract
+        else if (layer.Name !== property.layerName && property.metadataAbstractAll) {
+            forcedNewMetadataAbstract = property.metadataAbstractAll;
+        } // when we set this property it overrides property.metadataAbstract
+        else if (layer.Name !== property.layerName && property.metadataUrlAll) {
+              forcedNewMetadataUrl = property.metadataUrlAll;
+        } // when we set this property it overrides property.metadataUrl and property.metadataAbstract
       }
     }
 
@@ -597,23 +597,23 @@ export class CatalogService {
           }
         }
 
-        //newMetadataUrl & newMetadataAbstract
+        //metadataUrl & metadataAbstract
         let forcedNewMetadataUrl: string;
         let forcedNewMetadataAbstract: string;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
-            if (layer.Title === property.layerName && property.newMetadataUrl) {
-                forcedNewMetadataUrl = property.newMetadataUrl;
+            if (layer.Title === property.layerName && property.metadataUrl) {
+                forcedNewMetadataUrl = property.metadataUrl;
             }
-            else if (layer.Title === property.layerName && property.newMetadataAbstract) {
-                forcedNewMetadataAbstract = property.newMetadataAbstract;
+            else if (layer.Title === property.layerName && property.metadataAbstract) {
+                forcedNewMetadataAbstract = property.metadataAbstract;
             }
-            else if (layer.Title !== property.layerName && property.newMetadataAbstractAll) {
-                forcedNewMetadataAbstract = property.newMetadataAbstractAll;
+            else if (layer.Title !== property.layerName && property.metadataAbstractAll) {
+                forcedNewMetadataAbstract = property.metadataAbstractAll;
             }
-            else if (layer.Title !== property.layerName && property.newMetadataUrlAll) {
-                  forcedNewMetadataUrl = property.newMetadataUrlAll;
-            } // when we set this property it overrides property.newMetadataUrl
+            else if (layer.Title !== property.layerName && property.metadataUrlAll) {
+                  forcedNewMetadataUrl = property.metadataUrlAll;
+            } // when we set this property it overrides property.metadataUrl
           }
         }
 
@@ -698,23 +698,23 @@ export class CatalogService {
             }
           }
         }
-        //newMetadataUrl & newMetadataAbstract
+        //metadataUrl & metadataAbstract
         let forcedNewMetadataUrl: string;
         let forcedNewMetadataAbstract: string;
         if (catalog.forcedProperties) {
           for (const property of catalog.forcedProperties) {
-            if (layer.name === property.layerName && property.newMetadataUrl) {
-                forcedNewMetadataUrl = property.newMetadataUrl;
+            if (layer.name === property.layerName && property.metadataUrl) {
+                forcedNewMetadataUrl = property.metadataUrl;
             }
-            else if (layer.name === property.layerName && property.newMetadataAbstract) {
-                forcedNewMetadataAbstract = property.newMetadataAbstract;
+            else if (layer.name === property.layerName && property.metadataAbstract) {
+                forcedNewMetadataAbstract = property.metadataAbstract;
             }
-            else if (layer.name !== property.layerName && property.newMetadataAbstractAll) {
-                forcedNewMetadataAbstract = property.newMetadataAbstractAll;
+            else if (layer.name !== property.layerName && property.metadataAbstractAll) {
+                forcedNewMetadataAbstract = property.metadataAbstractAll;
             }
-            else if (layer.name !== property.layerName && property.newMetadataUrlAll) {
-                  forcedNewMetadataUrl = property.newMetadataUrlAll;
-            } // when we set this property it overrides property.newMetadataUrl
+            else if (layer.name !== property.layerName && property.metadataUrlAll) {
+                  forcedNewMetadataUrl = property.metadataUrlAll;
+            } // when we set this property it overrides property.metadataUrl
         }
       }
 
