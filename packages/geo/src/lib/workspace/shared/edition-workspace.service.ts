@@ -573,9 +573,9 @@ export class EditionWorkspaceService {
     feature.edition = false;
     this.adding$.next(false);
     workspace.deleteDrawings();
+    workspace.entityStore.stateView.clear();
 
     if (feature.newFeature) {
-      workspace.entityStore.stateView.clear();
       workspace.entityStore.delete(feature);
       workspace.deactivateDrawControl();
 
