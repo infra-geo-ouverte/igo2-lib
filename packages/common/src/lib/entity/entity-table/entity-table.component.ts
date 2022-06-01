@@ -265,18 +265,18 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     record.entity.properties[key] = event.option.value;
     for (const col of this.template.columns) {
       if (column.name !== col.name && col.relation?.url?.includes('/terrapi/municipalites')) {
-        col.tooltip = '';
         this.formGroup.controls[col.name]?.setValue('');
         record.entity.properties['code_territoire'] = undefined;
 
         let dom = [];
         this.http.get<any>(col.relation.url + '?mrcCode=' + record.entity.properties.code_mrc).subscribe(result => {
           result.features.map(feature => {
-            const id = feature.properties.code;
+            const id = parseInt(feature.properties.code);
             const value = feature.properties.nom;
             dom.push({id, value});
           });
-          col.domainValues = dom,
+          col.domainValues = dom
+          this.refresh(),
           catchError((err: HttpErrorResponse) => {
             err.error.caught = true;
             return throwError(err);

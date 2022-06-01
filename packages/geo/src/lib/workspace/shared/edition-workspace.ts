@@ -162,21 +162,9 @@ export class EditionWorkspace extends Workspace {
 
       // Update domain list
       if (column.type === 'list' || column.type === 'autocomplete') {
-        const domain = column.domainValues as any;
-        if (domain?.features) {
-          let response = domain.features as any;
-          let dom = [];
-          response.map(feature => {
-            const id = feature.properties.code;
-            const value = feature.properties.nom;
-            dom.push({id, value});
-          });
-          column.domainValues = dom;
-        } else {
-          this.editionWorkspaceService.getDomainValues(column.relation).subscribe(result => {
-            column.domainValues = result;
-          });
-        }
+        this.editionWorkspaceService.getDomainValues(column.relation, feature).subscribe(result => {
+          column.domainValues = result;
+        });
       }
       if (find === false) {
         for (const property in feature.properties) {

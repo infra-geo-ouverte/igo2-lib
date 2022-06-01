@@ -584,20 +584,50 @@ export class EditionWorkspaceService {
       if (!fromSave) {
         feature.properties = feature.original_properties;
         feature.geometry = feature.original_geometry;
+        workspace.meta.tableTemplate.columns.forEach(column => {
+          if (column.relation?.url?.includes('/terrapi/municipalites')) {
+            let dom = [];
+            this.http.get<any>(column.relation.url + '?mrcCode=' + feature.properties.code_mrc).subscribe(result => {
+              result.features.map(feature => {
+                const id = parseInt(feature.properties.code);
+                const value = feature.properties.nom;
+                dom.push({id, value});
+              });
+              column.domainValues = dom,
+              catchError((err: HttpErrorResponse) => {
+                err.error.caught = true;
+                return throwError(err);
+              });
+            });
+          }
+        });
       }
       delete feature.original_properties;
       delete feature.original_geometry;
     }
   }
 
-  getDomainValues(relation: RelationOptions): Observable<any> {
+  getDomainValues(relation: RelationOptions, feature?: Feature): Observable<any> {
     let url = relation.url;
     if (!url) {
       url = this.configService.getConfig('edition.url') + relation.table;
     }
 
+    if (feature?.properties.code_mrc && url.includes('/apis/terrapi/municipalites')) {
+      url += '?mrcCode=' + feature?.properties.code_mrc;
+    }
+
     return this.http.get<any>(url).pipe(
       map(result => {
+        if (result.features) {
+          let dom = [];
+          result.features.map(feature => {
+            const id = parseInt(feature.properties.code);
+            const value = feature.properties.nom;
+            dom.push({id, value});
+          });
+          return dom;
+        }
         return result;
       }),
       catchError((err: HttpErrorResponse) => {
