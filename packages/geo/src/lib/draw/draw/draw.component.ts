@@ -74,8 +74,7 @@ import Point from 'ol/geom/Point';
       state(
         'closed',
         style({
-          height: '0px',
-          opacity: 0.0
+          opacity: 0
         })
       ),
       transition('open => closed', [animate('600ms ease')]),
@@ -213,6 +212,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private initStore() {
     this.map.removeLayer(this.olDrawingLayer);
 
+    // this.map.addLayer()
     this.olDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
       id: 'igo-draw-layer',
