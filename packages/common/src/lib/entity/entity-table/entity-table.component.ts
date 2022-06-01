@@ -275,7 +275,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
             const value = feature.properties.nom;
             dom.push({id, value});
           });
-          col.domainValues = dom
+          col.domainValues = dom;
           this.refresh(),
           catchError((err: HttpErrorResponse) => {
             err.error.caught = true;
