@@ -65,8 +65,12 @@ export class EditionWorkspace extends Workspace {
     })
   });
 
-  private filterClauseFunc = (record: EntityRecord<object>) => {
+  private newFeaturefilterClauseFunc = (record: EntityRecord<object>) => {
     return record.state.newFeature === true;
+  };
+
+  private editFeaturefilterClauseFunc = (record: EntityRecord<object>) => {
+    return record.state.edit === true;
   };
 
   public fillColor: string;
@@ -192,6 +196,8 @@ export class EditionWorkspace extends Workspace {
       feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
       feature.original_geometry = feature.geometry;
       feature.idkey = id;
+      workspace.entityStore.state.updateAll({ edit: false });
+      workspace.entityStore.stateView.filter(this.editFeaturefilterClauseFunc);
       this.addFeatureToStore(feature, workspace);
     } else {
       // Only for edition with it's own geometry
@@ -199,7 +205,7 @@ export class EditionWorkspace extends Workspace {
         feature.newFeature = true;
         this.editionWorkspaceService.adding$.next(true);
         workspace.entityStore.state.updateAll({ newFeature: false });
-        workspace.entityStore.stateView.filter(this.filterClauseFunc);
+        workspace.entityStore.stateView.filter(this.newFeaturefilterClauseFunc);
         if (editionOpt.addWithDraw) {
           const geometryType = editionOpt.geomType;
           this.onGeometryTypeChange(geometryType, feature, workspace);
@@ -291,6 +297,8 @@ export class EditionWorkspace extends Workspace {
       }) as any;
 
       feature.geometry = geometry;
+    } else {
+      workspace.entityStore.state.update(feature, { edit: true }, true);
     }
 
     feature.projection = 'EPSG:4326';
