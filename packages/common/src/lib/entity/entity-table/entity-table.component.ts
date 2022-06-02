@@ -646,6 +646,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = value ? '&#10003;' : ''; // check mark
       }
     } else if (column.type === 'list' && value && column.domainValues) {
+      const entity = record.entity as any;
       if (column.multiple) {
         let list_id;
         typeof value === 'string' ? list_id = value.match(/[\w.-]+/g).map(Number) : list_id = value;
@@ -663,26 +664,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         this.isEdition(record) ? value = list_id : value = list_option;
       } else {
+        if (!this.isEdition(record) && column.linkColumnForce) {
+          value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+        } else {
+          column.domainValues.forEach(option => {
+            if (typeof value === 'string' && /^\d+$/.test(value)) {
+              value = parseInt(value);
+            }
+            if (option.value === value || option.id === value) {
+              this.isEdition(record) ? value = option.id : value = option.value;
+            }
+          });
+        }
+      }
+    } else if (column.type === 'autocomplete' && value && column.domainValues) {
+      const entity = record.entity as any;
+      if (!this.isEdition(record) && column.linkColumnForce) {
+        value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+      } else {
         column.domainValues.forEach(option => {
           if (typeof value === 'string' && /^\d+$/.test(value)) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
-            this.isEdition(record) ? value = option.id : value = option.value;
+            value = option.value;
           }
         });
       }
-    } else if (column.type === 'autocomplete' && value && column.domainValues) {
-      column.domainValues.forEach(option => {
-        if (typeof value === 'string' && /^\d+$/.test(value)) {
-          value = parseInt(value);
-        }
-        if (option.value === value || option.id === value) {
-          value = option.value;
-        }
-      });
-    }
-    else if (column.type === 'date') {
+    } else if (column.type === 'date') {
       if (this.isEdition(record)) {
         if (value) {
           let date = moment(value);
