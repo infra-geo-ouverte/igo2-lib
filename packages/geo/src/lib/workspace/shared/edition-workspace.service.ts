@@ -308,6 +308,7 @@ export class EditionWorkspaceService {
         primary: field.primary === true ? true : false,
         visible: field.visible,
         validation: field.validation,
+        linkColumnForce: field.linkColumnForce,
         type: field.type,
         domainValues: undefined,
         relation: undefined,

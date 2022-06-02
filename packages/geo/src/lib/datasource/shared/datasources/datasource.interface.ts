@@ -48,6 +48,7 @@ export interface SourceFieldsOptionsParams {
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
+  linkColumnForce?: string;
   multiple?: boolean;
   tooltip?: string;
 }
