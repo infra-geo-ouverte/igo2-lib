@@ -51,7 +51,6 @@ import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
 
-
 @Component ({
   selector: 'igo-draw',
   templateUrl: './draw.component.html',
@@ -76,7 +75,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         return feature.properties.draw;
       }
     }]
-
   };
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
