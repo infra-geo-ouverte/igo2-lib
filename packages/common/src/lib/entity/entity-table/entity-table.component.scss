@@ -4,13 +4,16 @@
     display: block;
 }
 
+
 :host.table-compact {
-    max-height: 150px;
-    overflow-y: auto;
+    height: auto ;
+    max-height: 150px !important;
+    overflow: auto !important;
+
     tr.mat-header-row,
      ::ng-deep .mat-checkbox .mat-checkbox-ripple {
         height: 36px;
-        position:sticky;
+        // position: relative;
     }
     tr.mat-row,
      ::ng-deep .mat-checkbox .mat-checkbox-ripple {

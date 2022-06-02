@@ -25,12 +25,16 @@ import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, NumberValueAccessor } from '@angular/forms';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { DrawControl } from '../../geometry/shared/controls/draw';
-import { EntityRecord, EntityTableTemplate } from '@igo2/common';
+import {
+  EntityRecord,
+  EntityTableScrollBehavior,
+  EntityTableTemplate
+} from '@igo2/common';
 
 import * as OlStyle from 'ol/style';
 import OlVectorSource from 'ol/source/Vector';
@@ -95,6 +99,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     selectMany: true,
     selectionCheckbox: true,
     sort: true,
+    fixedHeader: true,
     columns: [
       {
         name: 'Drawing',
@@ -114,9 +119,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   @Output() fontSize: string;
   @Output() fontStyle: string;
-
   @Input() map: IgoMap; // Map to draw on
-
   @Input() store: FeatureStore<FeatureWithDraw>; // Drawing store
 
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
@@ -802,6 +805,10 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   get allFontStyles(): string[] {
     return Object.values(FontType);
+  }
+
+  updateHeightTable() {
+    return this.store.count$.getValue() > 5 ? '150px' : 'auto';
   }
 
   // Helper methods

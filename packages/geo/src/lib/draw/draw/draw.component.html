@@ -56,14 +56,16 @@
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
 
-    <igo-entity-table
-      #table
-      class="table-compact"
-      [store]="store"
-      [template]="tableTemplate"
-      (dblclick)="editLabelDrawing()"
-    >
-    </igo-entity-table>
+    <div>
+      <igo-entity-table
+        #table
+        class="table-compact"
+        [store]="store"
+        [template]="tableTemplate"
+        (dblclick)="editLabelDrawing()"
+      >
+      </igo-entity-table>
+    </div>
   </div>
 
   <div
