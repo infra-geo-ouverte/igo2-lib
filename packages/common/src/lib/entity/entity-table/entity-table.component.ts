@@ -361,6 +361,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           });
         }
         this.formGroup.controls[column.name].setValue(formControlValue);
+        if (this.isEdition(record) && column.linkColumnForce) {
+          const entity = record.entity as any;
+          this.formGroup.controls[column.name].setValue(
+            entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)]
+          );
+        }
       } else if (column.type === 'date') {
         if (column.visible) {
           if (item[key]) {
