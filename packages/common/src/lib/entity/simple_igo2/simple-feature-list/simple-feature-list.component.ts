@@ -129,8 +129,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   checkAttributeFormatting(attribute: any) {
     attribute = this.isPhoneNumber(attribute);
     attribute = this.isPostalCode(attribute);
-    attribute = this.isURL(attribute);
-    attribute = this.isEmail(attribute);
+    attribute = this.isURLOrEmail(attribute);
 
     return attribute;
   }
@@ -192,22 +191,6 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Format an attribute representing an email address if the string matches the given pattern
-   * @param attribute The attribute to format
-   * @returns A formatted string representing an email address or the original attribute
-   */
-  isEmail(attribute: any): any {
-    let possibleEmail: string = '' + attribute;
-    const match: Array<string> = possibleEmail.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/);
-    if (match && this.formatEmail) {
-      return `<a href="mailto:${match[0]}">Courriel</a>`;
-    } else if (match && !this.formatEmail) {
-      return `<a href="mailto:${match[0]}">${match[0]}</a>`;
-    }
-    return attribute;
-  }
-
-  /**
    * @description Format an attribute representing a postal code if the string matches the given pattern
    * @param attribute The attribute to format
    * @returns A formatted string representing a postal code or the original attribute
@@ -222,17 +205,25 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   /**
-   * @description Format an attribute representing an URL if the string matches the given pattern
+   * @description Format an attribute representing an URL or an email address if the string matches the given pattern
    * @param attribute The attribute to format
-   * @returns A formatted string representing an URL or the original attribute
+   * @returns A formatted string representing an URL or an email address or the original attribute
    */
-  isURL(attribute: any): any {
+  isURLOrEmail(attribute: any): any {
     let possibleURL: string = '' + attribute;
-    const match: Array<string> = possibleURL.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-    if (match && this.formatURL) {
-      return `<a href="${match[0]}" target="_blank">Site Web</a>`;
-    } else if (match && !this.formatURL) {
-      return `<a href="${match[0]}" target="_blank">${match[0]}</a>`;
+    const matchURL: Array<string> = possibleURL.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if (matchURL) {
+      let possibleEmail: string = '' + attribute;
+      const matchEmail: Array<string> = possibleEmail.match(/^\S+@\S+\.\S+$/);
+      if (matchEmail && this.formatEmail) {
+        return `<a href="mailto:${matchEmail[0]}">Courriel</a>`;
+      } else if (matchEmail && !this.formatEmail) {
+        return `<a href="mailto:${matchEmail[0]}">${matchEmail[0]}</a>`;
+      } else if (this.formatURL) {
+        return `<a href="${matchURL[0]}" target="_blank">Site Web</a>`;
+      } else if (!this.formatURL) {
+        return `<a href="${matchURL[0]}" target="_blank">${matchURL[0]}</a>`;
+      }
     }
     return attribute;
   }
