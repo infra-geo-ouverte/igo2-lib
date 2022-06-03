@@ -332,6 +332,9 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometry, label);
           }
+
+          // Possible solution for header
+          //document.getElementsByClassName('table')[0]
         }
         // deletes the feature
         else {
