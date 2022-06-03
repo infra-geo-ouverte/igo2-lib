@@ -1,6 +1,7 @@
 <div>
   <div class="geometry-type-toggle mat-typography">
     <mat-button-toggle-group (change)="onGeometryTypeChange($event.value)" [value]="geometryType.Point">
+
       <mat-button-toggle [value]="geometryType.Point">
         {{ 'igo.geo.draw.' + geometryType.Point | translate }}
       </mat-button-toggle>
@@ -20,16 +21,18 @@
   </div>
 
   <div class="draw-options mat-typography">
-    <mat-slide-toggle 
-    [disabled]="drawControlIsDisabled" 
-    [checked]="drawControlIsActive" 
-    [labelPosition]="'before'" 
-    (change)="onToggleDrawControl($event.checked)">
+    <mat-slide-toggle
+      [disabled]="drawControlIsDisabled"
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onToggleDrawControl($event.checked)">
       {{ 'igo.geo.spatialFilter.drawControl' | translate }}
     </mat-slide-toggle>
 
-    <mat-slide-toggle [checked]="labelsAreShown" [labelPosition]="'before'" (change)="onToggleLabels()"
-    >
+    <mat-slide-toggle
+      [checked]="labelsAreShown"
+      [labelPosition]="'before'"
+      (change)="onToggleLabels()">
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
   </div>
@@ -47,8 +50,7 @@
         floatLabel="always"
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate"
-      >
+        [matTooltip]="'igo.geo.draw.colorPicker' | translate">
         <mat-label>{{ fillColor }}</mat-label>
 
         <input
@@ -72,10 +74,8 @@
 
     <div class="stroke-color-picker mat-typography">
       <span>
-        <mat-icon
-          class="stroke-palette-icon"
-          svgIcon="square-outline"
-        ></mat-icon>
+        <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
+        </mat-icon>
         {{ 'igo.geo.draw.stroke' | translate }}
       </span>
 
@@ -86,6 +86,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.draw.colorPicker' | translate">
+
         <mat-label>{{ strokeColor }}</mat-label>
 
         <input
@@ -103,7 +104,8 @@
           [cpCancelButton]="true"
           [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
           [cpOKButton]="true"
-          (colorPickerChange)="onColorChange(labelsAreShown, false)"/>
+          (colorPickerChange)="onColorChange(labelsAreShown, false)"
+        />
       </mat-form-field>
     </div>
 
@@ -116,9 +118,9 @@
               <img src="{{ icon }}" />
             </div>
           </mat-select-trigger>
-          <mat-option value="" (click)="onIconChange()">{{
-            'igo.geo.draw.noIcon' | translate
-          }}</mat-option>
+          <mat-option value="" (click)="onIconChange()"
+            >{{ 'igo.geo.draw.noIcon' | translate }}
+          </mat-option>
           <mat-option
             *ngFor="let icon_html of icons"
             [value]="icon_html"
@@ -132,43 +134,42 @@
     </div>
   </form>
 
-  <form class="igo-form">
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
-        <input
-          matInput
-          #testFontSize
-          type="number"
-          placeholder="10"
-          min="10"
-          onkeydown="return event.keyCode !== 69"
-          [value]="fontSize"
-          (input)="
-            onFontChange(
-              labelsAreShown,
-              $event.target.value,
-              testFontStyle.value)"/>
-        <span matSuffix>px</span>
-      </mat-form-field>
-    </div>
 
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
-        <mat-select
-          #testFontStyle
-          [value]="fontStyle"
-          (selectionChange)="onFontChange(labelsAreShown, testFontSize.value, $event.value)">
-          <mat-option
-            *ngFor="let fontSelect of allFontStyles"
-            [value]="fontSelect">
-            {{ fontSelect }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form>
+  <div class="igo-form-font">
+    <mat-form-field appearance="outline" class="igo-form-fontSize">
+      <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+      <input
+        matInput
+        #testFontSize
+        type="number"
+        placeholder="10"
+        min="10"
+        onkeydown="return event.keyCode !== 69"
+        [value]="fontSize"
+        (input)="
+          onFontChange(
+            labelsAreShown,
+            $event.target.value,
+            testFontStyle.value
+          )"
+      />
+      <span matSuffix>px</span>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="igo-form-fontStyle">
+      <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
+      <mat-select
+        #testFontStyle
+        [value]="fontStyle"
+        (selectionChange)="onFontChange(labelsAreShown, testFontSize.value, $event.value)">
+        <mat-option
+          *ngFor="let fontSelect of allFontStyles"
+          [value]="fontSelect">
+          {{ fontSelect }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   <mat-divider></mat-divider>
   <div>
     <button
@@ -189,8 +190,7 @@
       class="table-compact"
       [store]="store"
       [template]="tableTemplate"
-      (dblclick)="editLabelDrawing()"
-    >
+      (dblclick)="editLabelDrawing()">
     </igo-entity-table>
   </div>
 
