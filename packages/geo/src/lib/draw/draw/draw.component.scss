@@ -77,15 +77,10 @@ img {
   max-height: 100px;
 }
 
-.igo-form-font .mat-form-field + .mat-form-field{
+.igo-input-container .mat-form-field + .mat-form-field{
   margin-left: 8px;
 }
 
-.igo-form-fontSize{
-  // left: 10px !important;
+.igo-form-input-box{
   width: 150px;
 }
-.igo-form-fontStyle{
-  width: 150px;
-}
-

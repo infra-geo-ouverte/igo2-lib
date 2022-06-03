@@ -193,8 +193,8 @@
         </mat-form-field>
       </div>
 
-      <div class="igo-form-font">
-        <mat-form-field appearance="outline" class="igo-form-fontSize">
+      <div class="igo-input-container">
+        <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
           <input
             matInput
@@ -214,7 +214,7 @@
           />
           <span matSuffix>px</span>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="igo-form-fontStyle">
+        <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
           <mat-select
             #testFontStyle
@@ -233,8 +233,8 @@
         </mat-form-field>
       </div>
 
-      <div>
-        <mat-form-field appearance="outline">
+      <div class="igo-input-container">
+        <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.offsetX' | translate }}</mat-label>
           <input
             matInput
@@ -251,10 +251,7 @@
             "
           />
         </mat-form-field>
-      </div>
-
-      <div>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.offsetY' | translate }}</mat-label>
           <input
             matInput

@@ -25,14 +25,13 @@ import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
-import { FormGroup, FormBuilder, NumberValueAccessor } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import {
   EntityRecord,
-  EntityTableScrollBehavior,
   EntityTableTemplate
 } from '@igo2/common';
 
