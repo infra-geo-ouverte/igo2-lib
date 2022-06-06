@@ -8,7 +8,7 @@ import {
   EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate } from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -29,6 +29,7 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
+import { getCommonVectorSelectedStyle} from '../../utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -47,7 +48,8 @@ export class WmsWorkspaceService {
   constructor(
     private layerService: LayerService,
     private storageService: StorageService,
-    private styleService: StyleService) { }
+    private styleService: StyleService,
+    private configService: ConfigService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
@@ -201,11 +203,15 @@ export class WmsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: undefined,
+        style: (feature) => {
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+        },
         showInLayerList: false,
         exportable: false,
         browsable: false
