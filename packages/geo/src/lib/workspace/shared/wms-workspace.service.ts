@@ -24,6 +24,7 @@ import {
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { StyleService } from '../../layer/shared/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
@@ -44,7 +45,11 @@ export class WmsWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(private layerService: LayerService, private storageService: StorageService, private configService: ConfigService) { }
+  constructor(
+    private layerService: LayerService,
+    private storageService: StorageService,
+    private styleService: StyleService,
+    private configService: ConfigService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
@@ -116,6 +121,24 @@ export class WmsWorkspaceService {
         title: layer.title,
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
+        style: this.styleService.createStyle(
+          {
+            fill: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            stroke: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            circle: {
+              fill: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              stroke: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              radius: 5
+            }
+          }),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
