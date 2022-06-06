@@ -60,6 +60,7 @@
       <igo-entity-table
         #table
         class="table-compact"
+        id="storeElements"
         [store]="store"
         [template]="tableTemplate"
         (dblclick)="editLabelDrawing()"
@@ -75,9 +76,7 @@
     <form
       class="igo-form"
       [formGroup]="form"
-      [@openClose]="
-        (selectedFeatures$ | async).length !== 0 ? 'open' : 'closed'
-      "
+      [@openClose]="(selectedFeatures$ | async).length !== 0 ? 'open' : 'closed'"
     >
       <div class="fill-color-picker mat-typography">
         <span>
@@ -116,9 +115,7 @@
                 false,
                 $event,
                 updateFrontendStrokeColor()
-              )
-            "
-          />
+              )"/>
         </mat-form-field>
       </div>
 
@@ -140,7 +137,6 @@
           [matTooltip]="'igo.geo.draw.colorPicker' | translate"
         >
           <mat-label>{{ updateFrontendStrokeColor() }}</mat-label>
-
           <input
             #strokeColorInput
             formControlName="stroke"
@@ -162,9 +158,7 @@
                 false,
                 updateFrontendFillColor(),
                 $event
-              )
-            "
-          />
+              )"/>
         </mat-form-field>
       </div>
 
@@ -209,8 +203,7 @@
                 labelsAreShown,
                 $event.target.value,
                 testFontStyle.value
-              )
-            "
+              )"
           />
           <span matSuffix>px</span>
         </mat-form-field>
@@ -219,9 +212,7 @@
           <mat-select
             #testFontStyle
             [value]="updateFrontendFontStyle()"
-            (selectionChange)="
-              onFontChange(labelsAreShown, testFontSize.value, $event.value)
-            "
+            (selectionChange)="onFontChange(labelsAreShown, testFontSize.value, $event.value)"
           >
             <mat-option
               *ngFor="let fontSelect of allFontStyles"
@@ -247,9 +238,7 @@
                 labelsAreShown,
                 $event.target.value,
                 offsetYInput.value
-              )
-            "
-          />
+              )"/>
         </mat-form-field>
         <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.offsetY' | translate }}</mat-label>
@@ -264,8 +253,7 @@
                 labelsAreShown,
                 offsetXInput.value,
                 $event.target.value
-              )
-            "
+              )"
           />
         </mat-form-field>
       </div>

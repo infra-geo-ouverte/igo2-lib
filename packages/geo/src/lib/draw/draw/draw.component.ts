@@ -99,6 +99,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     selectionCheckbox: true,
     sort: true,
     fixedHeader: true,
+    tableHeight: 'auto',
     columns: [
       {
         name: 'Drawing',
@@ -141,6 +142,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   public form: FormGroup;
   public icons: Array<string>;
   public icon: string;
+
+  private numberOfDrawings: number;
+
+  // public numberOfDrawings: number;
 
   constructor(
     private languageService: LanguageService,
@@ -333,8 +338,11 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometry, label);
           }
 
-          // Possible solution for header
-          //document.getElementsByClassName('table')[0]
+          // Activates 
+          this.updateHeightTable();
+          // this.numberOfDrawings = this.store.count$.getValue();
+          // this.numberOfDrawings > 1 ? this.tableTemplate.tableHeight = '23vh':
+          // this.tableTemplate.tableHeight = 'auto';
         }
         // deletes the feature
         else {
@@ -554,6 +562,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         }
       });
     });
+    this.updateHeightTable()
   }
 
   /**
@@ -810,7 +819,19 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   updateHeightTable() {
-    return this.store.count$.getValue() > 5 ? '150px' : 'auto';
+
+    // let numberOfRowsPx: HTMLTableElement = (document.getElementById('storeElements'));
+    // console.log(numberOfRowsPx);
+
+    
+    // // 120 corresponds to 5 rows
+    // numberOfRowsPx > 120 ? this.tableTemplate.tableHeight = '20vh': this.tableTemplate.tableHeight = 'auto';
+
+
+
+    this.numberOfDrawings = this.store.count$.getValue();
+    this.numberOfDrawings > 4 ? this.tableTemplate.tableHeight = '23vh':
+    this.tableTemplate.tableHeight = 'auto';
   }
 
   // Helper methods
