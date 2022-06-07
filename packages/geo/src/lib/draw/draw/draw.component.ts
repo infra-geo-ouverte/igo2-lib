@@ -338,7 +338,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onSelectDraw(olGeometry, label);
           }
 
-          // Activates 
+          // Activates
           this.updateHeightTable();
           // this.numberOfDrawings = this.store.count$.getValue();
           // this.numberOfDrawings > 1 ? this.tableTemplate.tableHeight = '23vh':
@@ -562,7 +562,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         }
       });
     });
-    this.updateHeightTable()
+    this.updateHeightTable();
   }
 
   /**
@@ -820,18 +820,10 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   updateHeightTable() {
 
-    // let numberOfRowsPx: HTMLTableElement = (document.getElementById('storeElements'));
-    // console.log(numberOfRowsPx);
-
-    
-    // // 120 corresponds to 5 rows
-    // numberOfRowsPx > 120 ? this.tableTemplate.tableHeight = '20vh': this.tableTemplate.tableHeight = 'auto';
-
-
+    // Check the amount of rows as a possible alternative
 
     this.numberOfDrawings = this.store.count$.getValue();
-    this.numberOfDrawings > 4 ? this.tableTemplate.tableHeight = '23vh':
-    this.tableTemplate.tableHeight = 'auto';
+    this.numberOfDrawings > 6 ? this.tableTemplate.tableHeight = '23vh': this.tableTemplate.tableHeight = 'auto';
   }
 
   // Helper methods
