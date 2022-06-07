@@ -43,7 +43,7 @@
         matTooltipShowDelay="500">
         <mat-icon
           [svgIcon]="!entityIsSelected ? 'magnify-plus-outline' : 'close'"
-          (click)="!entityIsSelected ? selectEntity(entity) : unselectEntity(entity)">
+          (click)="!entityIsSelected ? selectEntity(entity) : unselectEntity()">
         </mat-icon>
       </button>
     </div>

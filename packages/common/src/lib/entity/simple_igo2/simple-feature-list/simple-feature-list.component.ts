@@ -100,17 +100,26 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   ngOnChanges(changes: SimpleChanges) {
     // if the most recent change is a click on entities on the map...
     if (!changes.clickedEntities.firstChange) {
-      // change selected state to false for all entities
       this.entityStore.state.updateAll({selected: false});
-      // get array of clicked entities
+      // ...get array of clicked entities
       const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
       // if an entity or entities have been clicked...
       if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
-        // ...show current entities in list
+        // ...update the state of the entities accordingly
         this.entityStore.state.updateMany(clickedEntities, {selected: true});
         this.entitiesToShow = clickedEntities;
-      // ...else show all entities in list
+        // ... if one entity has been selected, change status for button in list
+        if (clickedEntities.length === 1) {
+          this.entityIsSelected = true;
+        } else {
+          this.entityIsSelected = false;
+        }
+        // emit to parent for zoom
+        this.listSelection.emit();
+      // if no entity has been clicked...
       } else {
+        // ...show all entities and reset status
+        this.entityIsSelected = false;
         this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
         this.currentPageNumber$.next(this.currentPageNumber$.getValue());
       }
@@ -232,27 +241,26 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
    * @description Fired when the user selects an entity in the list
    * @param entity
    */
-  selectEntity(entity: Feature) {
+  selectEntity(entity: Feature): void {
     this.entitiesToShow = [entity];
     this.entityIsSelected = true;
 
-    // update the store and emit the entity to parent
+    // update status of entity and emit to parent for zoom
     this.entityStore.state.updateAll({selected: false});
     this.entityStore.state.update(entity, {selected: true}, true);
-    let entityCollection: {added: Array<Feature>} = {added: []};
-    entityCollection.added.push(entity);
-    this.listSelection.emit(entityCollection);
+    this.listSelection.emit();
   }
 
   /**
    * @description Fired when the user unselects the entity in the list
    */
-  unselectEntity(entity: Feature) {
-    // show all entities
+  unselectEntity(): void {
+    // show all entities and update their status
+    this.entityStore.state.updateAll({selected: false});
     this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
     this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
-    this.entityStore.state.updateAll({selected: false});
+
   }
 
   /**
