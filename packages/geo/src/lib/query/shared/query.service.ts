@@ -57,7 +57,7 @@ export class QueryService {
     if (this.previousMessageIds.length) {
       this.previousMessageIds.forEach(id => {
         this.messageService.remove(id);
-      })
+      });
     }
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
