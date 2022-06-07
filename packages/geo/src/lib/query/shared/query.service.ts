@@ -46,12 +46,19 @@ export class QueryService {
   public defaultFeatureCount = 20; // default feature count
   public featureCount = 20; // feature count
 
+  private previousMessageIds = [];
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
     private languageService: LanguageService) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
+    if (this.previousMessageIds.length) {
+      this.previousMessageIds.forEach(id => {
+        this.messageService.remove(id);
+      })
+    }
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) => this.queryLayer(layer, options));
@@ -326,7 +333,8 @@ export class QueryService {
       ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
       (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
       this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
-        this.messageService.info(message);
+        const messageObj = this.messageService.info(message);
+        this.previousMessageIds.push(messageObj.toastId);
       });
     }
 
