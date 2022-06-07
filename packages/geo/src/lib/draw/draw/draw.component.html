@@ -74,8 +74,7 @@
 
     <div class="stroke-color-picker mat-typography">
       <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
-        </mat-icon>
+        <mat-icon class="stroke-palette-icon" svgIcon="square-outline"></mat-icon>
         {{ 'igo.geo.draw.stroke' | translate }}
       </span>
 
@@ -86,9 +85,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.draw.colorPicker' | translate">
-
         <mat-label>{{ strokeColor }}</mat-label>
-
         <input
           formControlName="stroke"
           matInput
@@ -104,8 +101,7 @@
           [cpCancelButton]="true"
           [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
           [cpOKButton]="true"
-          (colorPickerChange)="onColorChange(labelsAreShown, false)"
-        />
+          (colorPickerChange)="onColorChange(labelsAreShown, false)">
       </mat-form-field>
     </div>
 
@@ -115,18 +111,16 @@
         <mat-select>
           <mat-select-trigger>
             <div *ngIf="icon" class="box">
-              <img src="{{ icon }}" />
+              <img src="{{ icon }}">
             </div>
           </mat-select-trigger>
-          <mat-option value="" (click)="onIconChange()"
-            >{{ 'igo.geo.draw.noIcon' | translate }}
-          </mat-option>
+          <mat-option value="" (click)="onIconChange()">{{ 'igo.geo.draw.noIcon' | translate }}</mat-option>
           <mat-option
             *ngFor="let icon_html of icons"
             [value]="icon_html"
             (click)="onIconChange(icon_html)">
             <div class="box">
-              <img src="{{ icon_html }}" />
+              <img src="{{ icon_html }}">
             </div>
           </mat-option>
         </mat-select>
