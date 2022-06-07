@@ -227,8 +227,8 @@ export function addImportedFeaturesStyledToMap(
       layerTitle.toString() + '.styleByAttribute'
     );
 
-    style = (feature) => {
-      return styleService.createStyleByAttribute(feature, styleByAttribute);
+    style = (feature, resolution) => {
+      return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
     };
   } else if (
     styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')
@@ -240,20 +240,19 @@ export function addImportedFeaturesStyledToMap(
       layerTitle.toString() + '.distance'
     );
 
-    const baseStyle = styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')
-    );
-
-    style = (feature) => {
-      return styleService.createClusterStyle(feature, clusterParam, baseStyle);
+    style = (feature, resolution) => {
+      const baseStyle = styleService.createStyle(
+        styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'), feature, resolution
+      );
+      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    style = styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.style')
+    style = (feature, resolution) => styleService.createStyle(
+      styleListService.getStyleList(layerTitle.toString() + '.style'), feature, resolution
     );
   } else {
-    style = styleService.createStyle(
-      styleListService.getStyleList('default.style')
+    style = (feature, resolution) => styleService.createStyle(
+      styleListService.getStyleList('default.style'), feature, resolution
     );
   }
   let source;

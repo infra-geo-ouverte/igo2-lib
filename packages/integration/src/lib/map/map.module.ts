@@ -33,10 +33,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { IgoSpinnerModule } from '@igo2/common';
+import { IgoEntityTableModule, IgoSpinnerModule } from '@igo2/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advanced-swipe.component';
 import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coordinates/advanced-coordinates.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-tool.component';
+
 @NgModule({
   imports: [
     FormsModule,
@@ -59,16 +62,19 @@ import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coord
     IgoDownloadModule,
     IgoImportExportModule,
     IgoFilterModule,
+    MatRadioModule,
     IgoContextModule,
     IgoAppWorkspaceModule,
     MatSlideToggleModule,
     MatMenuModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    IgoEntityTableModule
   ],
-  declarations: [ AdvancedMapToolComponent, MapToolComponent,
+  declarations: [ AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
     MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent, AdvancedCoordinatesComponent],
-  exports: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
+  exports: [AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
+    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMapModule {
