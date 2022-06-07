@@ -145,8 +145,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private numberOfDrawings: number;
 
-  // public numberOfDrawings: number;
-
   constructor(
     private languageService: LanguageService,
     private formBuilder: FormBuilder,
@@ -337,12 +335,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometry, label);
           }
-
-          // Activates
           this.updateHeightTable();
-          // this.numberOfDrawings = this.store.count$.getValue();
-          // this.numberOfDrawings > 1 ? this.tableTemplate.tableHeight = '23vh':
-          // this.tableTemplate.tableHeight = 'auto';
         }
         // deletes the feature
         else {
