@@ -218,13 +218,21 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+        if (res.sprite){
+          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          this.getStuff(url+'.json').subscribe(res2 => {
+            stylefunction(layer.ol, res, layerOptions.mapboxStyle.source, undefined, res2,
+              url+'.png');
+          });
+        } else {
+          stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+        }
       });
     }
   }
 
-  public getMapboxGlStyle(url: string) {
+  private getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
       catchError(err => {
@@ -233,4 +241,18 @@ export class LayerService {
       })
     );
   }
+
+  private getAbsoluteUrl(source, url) {
+    const r = new RegExp('^http|\/\/', 'i');
+    if(r.test(url)){
+      return url;
+    } else {
+      if ( source.substr(source.length -1) === "/"){
+        return source + url;
+      } else{
+        return source + "/" + url;
+      }
+    }
+  }
+
 }
