@@ -149,15 +149,15 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       renderMode: "vector",
       declutter: true,
       source: new olVectorTileSource({}),
-      style: (feature) => {
+      style: (feature, resolution) => {
         if (this.mvtStyleOptions && feature.getId() in this.selectionMVT) {
-          return this.createHoverStyle(feature, this.mvtStyleOptions);
+          return this.createHoverStyle(feature, this.mvtStyleOptions, resolution);
         }
       }
     });
   }
 
-  createHoverStyle(feature: RenderFeature | OlFeature<OlGeometry>, hoverStyle: StyleByAttribute) {
+  createHoverStyle(feature: RenderFeature | OlFeature<OlGeometry>, hoverStyle: StyleByAttribute, resolution: number) {
     const localHoverStyle = { ...hoverStyle };
     let label = hoverStyle.label ? hoverStyle.label.attribute : undefined;
     let hasLabelStyle = hoverStyle.label?.style ? true : false;
@@ -200,7 +200,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         padding: [2.5, 2.5, 2.5, 2.5]
       };
     }
-    return this.styleService.createStyleByAttribute(feature, localHoverStyle);
+    return this.styleService.createStyleByAttribute(feature, localHoverStyle, resolution);
   }
 
   /**
@@ -458,12 +458,13 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   }
 
   private setLayerStyleFromOptions(igoLayer: VectorLayer | VectorTileLayer, feature: OlFeature<OlGeometry>) {
+    const resolution = this.store.layer.map.viewController.getResolution();
     if (igoLayer?.options?.styleByAttribute?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.styleByAttribute.hoverStyle));
+      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.styleByAttribute.hoverStyle, resolution));
       return;
     }
     if (igoLayer?.options?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.hoverStyle));
+      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.hoverStyle, resolution));
     }
   }
 

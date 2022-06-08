@@ -271,7 +271,9 @@
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
-        "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte"
+        "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
+        "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
+        "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
       },
       "metadata": {
         "show": "Montrer les métadonnées"
@@ -724,6 +726,9 @@
         "maxValue": "{{column}}doit être plus petit que {{value}}",
         "minLength": "{{column}} doit être plus long que {{value}} caractères",
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
+      },
+      "query": {
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
       }
     }
   }
