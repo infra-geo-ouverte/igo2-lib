@@ -69,7 +69,7 @@ export class WorkspaceState implements OnDestroy {
       return undefined;
     }
   }
-  
+
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
