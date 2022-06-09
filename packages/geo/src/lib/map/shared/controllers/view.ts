@@ -86,7 +86,7 @@ export class MapViewController extends MapController {
     super();
   }
 
-  setPaddingTop(nbPixel: number) {
+  setPaddingBottom(nbPixel: number) {
     this.padding[2] = nbPixel;
   }
 

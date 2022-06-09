@@ -72,3 +72,14 @@ const subscribtionToSelectedBook = store
   })
   .subscribe((record: Book) => {console.log(record));})
 ```
+
+### manyBy exemple with wks
+
+```typescript
+  get workspaceSelection() {
+    return this.workspaceState.workspace$.value.entityStore.stateView.manyBy((r) => r.state.selected === true)
+  }
+  get workspaceSelection$(): Observable<EntityRecord<object, EntityState>[]> {
+    return this.workspaceState.workspace$.value.entityStore.stateView.manyBy$((r) => r.state.selected === true)
+  }
+```
