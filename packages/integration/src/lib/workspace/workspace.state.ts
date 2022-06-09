@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 
 import {
   EntityRecord,
@@ -8,7 +8,8 @@ import {
   WorkspaceStore,
   Widget,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy } from '@igo2/common';
+  EntityStoreFilterSelectionStrategy,
+  EntityState } from '@igo2/common';
 import { WfsWorkspace, FeatureWorkspace, EditionWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
@@ -57,6 +58,18 @@ export class WorkspaceState implements OnDestroy {
   get store(): WorkspaceStore { return this._store; }
   private _store: WorkspaceStore;
 
+  get workspaceSelection() {
+    return this.workspace$.value?.entityStore.stateView.manyBy((r) => r.state.selected === true);
+  }
+
+  get workspaceSelection$(): Observable<EntityRecord<object, EntityState>[]> {
+    if (this.workspace$.value) {
+      return this.workspace$.value?.entityStore?.stateView.manyBy$((r) => r.state.selected === true);
+    } else {
+      return undefined;
+    }
+  }
+  
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
