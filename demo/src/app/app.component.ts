@@ -19,7 +19,7 @@ export class AppComponent implements OnDestroy {
 
   public title = 'IGO';
   public version = version;
-  private themeClass = 'deeppurple-theme';
+  private themeClass = 'qcca-theme';
   private _mobileQueryListener: () => void;
 
   constructor(

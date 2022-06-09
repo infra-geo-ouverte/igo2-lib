@@ -207,14 +207,15 @@ gulp.task('core:concatStyles', done => {
       './packages/core/src/style/themes/indigo.theme.scss',
       './packages/core/src/style/themes/orange.theme.scss',
       './packages/core/src/style/themes/dark.theme.scss',
-      './packages/core/src/style/themes/teal.theme.scss'
+      './packages/core/src/style/themes/teal.theme.scss',
+      './packages/core/src/style/themes/qcca.theme.scss'
     ])
     .pipe(concat('index.theming.scss'))
     .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
     .pipe(exec(
       'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
     ))
-    .pipe(wait(500)).on('end', function() { 
+    .pipe(wait(500)).on('end', function() {
       del(['packages/core/src/style/index.theming.scss'], { force: true });
     })
 
