@@ -726,6 +726,9 @@
         "maxValue": "{{column}} is bigger than {{value}}",
         "minLength": "{{column}} is shorter than {{value}} characters",
         "maxLength": "{{column}} is longer than {{value}} characters"
+      },
+      "query": {
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
       }
     }
   }
