@@ -43,13 +43,15 @@ export class MessageService {
 
           if (activeMessageTranslation.textInterpolateParams) {
             Object.keys(activeMessageTranslation.textInterpolateParams).map(k => {
-              translatedTextInterpolateParams[k] = this.languageService.translate.instant(activeMessageTranslation.textInterpolateParams[k]);
-            })
+              translatedTextInterpolateParams[k] =
+                this.languageService.translate.instant(activeMessageTranslation.textInterpolateParams[k]);
+            });
           }
           if (activeMessageTranslation.titleInterpolateParams) {
             Object.keys(activeMessageTranslation.titleInterpolateParams).map(k => {
-              translatedTitleInterpolateParams[k] = this.languageService.translate.instant(activeMessageTranslation.titleInterpolateParams[k]);
-            })
+              translatedTitleInterpolateParams[k] =
+                this.languageService.translate.instant(activeMessageTranslation.titleInterpolateParams[k]);
+            });
           }
 
 
@@ -185,20 +187,22 @@ export class MessageService {
     title: string,
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any>  {
+    titleInterpolateParams?: Object): ActiveToast<any> {
 
     const translatedTextInterpolateParams = {...textInterpolateParams};
     const translatedTitlenterpolateParams = {...titleInterpolateParams};
 
     if (textInterpolateParams) {
       Object.keys(textInterpolateParams).map(k => {
-        translatedTextInterpolateParams[k] = this.languageService.translate.instant(textInterpolateParams[k]);
-      })
+        translatedTextInterpolateParams[k] =
+          this.languageService.translate.instant(textInterpolateParams[k]);
+      });
     }
     if (titleInterpolateParams) {
       Object.keys(titleInterpolateParams).map(k => {
-        translatedTitlenterpolateParams[k] = this.languageService.translate.instant(titleInterpolateParams[k]);
-      })
+        translatedTitlenterpolateParams[k] =
+          this.languageService.translate.instant(titleInterpolateParams[k]);
+      });
     }
 
 
