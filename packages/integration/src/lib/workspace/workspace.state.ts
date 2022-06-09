@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable, of } from 'rxjs';
 
 import {
   EntityRecord,
@@ -59,14 +59,18 @@ export class WorkspaceState implements OnDestroy {
   private _store: WorkspaceStore;
 
   get workspaceSelection() {
+    if (this.workspace$.value) {
     return this.workspace$.value?.entityStore.stateView.manyBy((r) => r.state.selected === true);
+    } else {
+      return [];
+    }
   }
 
   get workspaceSelection$(): Observable<EntityRecord<object, EntityState>[]> {
     if (this.workspace$.value) {
       return this.workspace$.value?.entityStore?.stateView.manyBy$((r) => r.state.selected === true);
     } else {
-      return undefined;
+      return of([]);
     }
   }
 
