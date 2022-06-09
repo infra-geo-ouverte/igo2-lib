@@ -244,8 +244,8 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsBetween.toLowerCase():
         return olfilter.between(
           wfsPropertyName,
-          wfsLowerBoundary,
-          wfsUpperBoundary
+          wfsLowerBoundary || 1e40*-1,
+          wfsUpperBoundary || 1e40
         );
       case OgcFilterOperator.Contains.toLowerCase():
         return olfilter.contains(wfsGeometryName, geometry, wfsSrsName);
