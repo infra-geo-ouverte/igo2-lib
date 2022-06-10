@@ -25,6 +25,10 @@ import { MessageService } from '@igo2/core';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
+import { catchError, concatMap, first } from 'rxjs/operators';
+import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { of } from 'rxjs';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -48,7 +52,9 @@ export class VectorLayer extends Layer {
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    private geoNetworkService?: GeoNetworkService,
+    private geoDBService?: GeoDBService
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
@@ -392,6 +398,57 @@ export class VectorLayer extends Layer {
     } else {
       modifiedUrl = url(extent, resolution, projection);
     }
+
+    if (this.geoNetworkService && typeof url !== 'function') {
+      const format = vectorSource.getFormat();
+      const type = format.getType();
+
+      let responseType = type;
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+
+      const options: SimpleGetOptions = { responseType };
+      this.geoNetworkService.geoDBService.get(url).pipe(concatMap(r =>
+        r ? of(r) : this.geoNetworkService.get(modifiedUrl, options)
+          .pipe(
+            first(),
+            catchError((res) => {
+              onError();
+              throw res;
+            })
+          )
+      ))
+      .subscribe((content) => {
+          if (content) {
+            const format = vectorSource.getFormat();
+            const type = format.getType();
+            let source;
+            if (type === FormatType.JSON || type === FormatType.TEXT) {
+              source = content;
+            } else if (type === FormatType.XML) {
+              source = content;
+              if (!source) {
+                source = new DOMParser().parseFromString(
+                  content,
+                  'application/xml'
+                );
+              }
+            } else if (type === FormatType.ARRAY_BUFFER) {
+              source = content;
+            }
+            if (source) {
+              const features = format.readFeatures(source, { extent, featureProjection: projection });
+              vectorSource.addFeatures(features, format.readProjection(source));
+              success(features);
+            } else {
+              onError();
+            }
+          }
+        });
+
+    } else {
     xhr.open( 'GET', modifiedUrl);
     const format = vectorSource.getFormat();
     if (format.getType() === FormatType.ARRAY_BUFFER) {
@@ -436,5 +493,6 @@ export class VectorLayer extends Layer {
       }
     };
     xhr.send();
+  }
   }
 }
