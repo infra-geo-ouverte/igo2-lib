@@ -1,7 +1,7 @@
 .qcca-theme {
     $qcca-palette: (
         100 : #095797,
-        200 : #fff,
+        200 : rgb(255, 255, 255),
         201 : #fff,
         300 : #dae6f0,
         301 : #f2f1f1,
@@ -9,21 +9,24 @@
         303 : #c5cad2,
         400 : #cb381f,
         401 : #4f813d,
+        500 : #f09686,
         contrast: (
             100 : #fff,
-            200 : #1479cc,
+            200 : #095797,
             201 : #fff,
             300 : #095797,
             301 : #095797,
             302 : #fff,
             303 : #095797,
-            400 : #f09686,
-            401 : #f09686,
+            400 : #fff,
+            401 : #fff,
+            501 : #fff
         )
     );
 
-    $primary: mat.define-palette($qcca-palette, 100);
-    $accent: mat.define-palette($qcca-palette, 200);
+    $basic: mat.define-palette($qcca-palette, 100);
+    $primary: mat.define-palette($qcca-palette, 200);
+    $accent: mat.define-palette($qcca-palette, 500);
     $warn: mat.define-palette($qcca-palette, 400);
     $disabled: mat.define-palette($qcca-palette, 303);
     $success: mat.define-palette($qcca-palette, 401);
