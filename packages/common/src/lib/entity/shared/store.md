@@ -66,20 +66,29 @@ A custom observable can be created using the store views' `firstBy$()` and `many
 accept a filtering function.
 
 ```typescript
-const subscribtionToSelectedBook = store
+const subscribtionToFirstSelectedBook = store
   .stateView.firstBy$(({entity: Book, state: EntityState}) => {
+    return record.state.selected === true;
+  })
+  .subscribe((record: Book) => {console.log(record));})
+
+
+const subscribtionToSelectedBook = store
+  .stateView.manyBy$(({entity: Book, state: EntityState}) => {
     return record.state.selected === true;
   })
   .subscribe((record: Book) => {console.log(record));})
 ```
 
-### manyBy exemple with wks
+### StateView runtime query
+
+Query the stateView at runtime,  `firstBy()` and `manyBy()` methods. These method
+accept a filtering function.
 
 ```typescript
-  get workspaceSelection() {
-    return this.workspaceState.workspace$.value.entityStore.stateView.manyBy((r) => r.state.selected === true)
-  }
-  get workspaceSelection$(): Observable<EntityRecord<object, EntityState>[]> {
-    return this.workspaceState.workspace$.value.entityStore.stateView.manyBy$((r) => r.state.selected === true)
-  }
+
+    store.stateView.firstBy((r) => r.state.selected === true)
+    
+    store.stateView.manyBy((r) => r.state.selected === true)
+
 ```
