@@ -145,10 +145,14 @@ export class VectorLayer extends Layer {
 
       switch (feature.getGeometry().getType()) {
         case 'Point':
-          const radius =
+          if(styleClone.getImage() !== null &&
+            typeof styleClone.getImage().getRadius === 'function'){
+            const radius =
             easeOut(elapsedRatio) * (styleClone.getImage().getRadius() * 3);
-          styleClone.getImage().setRadius(radius);
-          styleClone.getImage().setOpacity(opacity);
+            styleClone.getImage().setRadius(radius);
+            styleClone.getImage().setOpacity(opacity);
+          }
+
           break;
         case 'LineString':
           // TODO
