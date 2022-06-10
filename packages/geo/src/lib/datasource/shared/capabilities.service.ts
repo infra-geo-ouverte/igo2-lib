@@ -114,8 +114,7 @@ export class CapabilitiesService {
     baseOptions: ArcGISRestDataSourceOptions
   ): Observable<ArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-    const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
-    const legendUrl = modifiedUrl + '/legend?f=json';
+    const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities('arcgisrest', baseOptions.url);
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
@@ -136,8 +135,7 @@ export class CapabilitiesService {
     baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
   ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-    const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
-    const legendUrl = modifiedUrl + '/legend?f=json';
+    const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities('imagearcgisrest', baseOptions.url);
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
