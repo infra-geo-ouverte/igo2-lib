@@ -395,7 +395,7 @@ export class VectorLayer extends Layer {
       modifiedUrl = url(extent, resolution, projection);
     }
 
-    if (this.geoNetworkService) {
+    if (this.geoNetworkService && typeof url !== 'function') {
       const format = vectorSource.getFormat();
       const type = format.getType();
 
