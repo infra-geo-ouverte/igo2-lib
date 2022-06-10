@@ -672,7 +672,7 @@
       },
       "draw": {
         "abort": "Abort current drawing",
-        "cancelColorPicker": "Cancel",
+        "cancel": "Cancel",
         "Circle": "Circle",
         "colorPicker": "Click to open the color picker",
         "dialogInstruction": "Enter your draw's label",
@@ -694,7 +694,9 @@
         "stroke": "Stroke",
         "styleSelect": "Select style",
         "toggleMapTooltips": "Show map tooltips",
-        "undo": "Remove last vertex"
+        "undo": "Remove last vertex",
+        "fontSize": "Font size",
+        "fontStyle": "Font style"
       },
       "network": {
         "online": {
