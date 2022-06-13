@@ -404,7 +404,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
           for (const domOptions of this.configService.getConfig('dom')) {
-            if (domSelector.name === domOptions.name) {
+            if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
                 url: domOptions.url,
                 name: domOptions.name,
@@ -462,7 +462,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
           for (const domOptions of this.configService.getConfig('dom')) {
-            if (domSelector.name === domOptions.name) {
+            if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
                 url: domOptions.url,
                 name: domOptions.name,
