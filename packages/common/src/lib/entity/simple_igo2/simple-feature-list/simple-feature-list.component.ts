@@ -106,8 +106,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
       // if an entity or entities have been clicked...
       if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
         // ...update the state of the entities accordingly
-        this.entityStore.state.updateMany(clickedEntities, {selected: true});
-        this.entitiesToShow = clickedEntities;
+        this.checkEquality(clickedEntities);
         // ... if one entity has been selected, change status for button in list
         if (clickedEntities.length === 1) {
           this.entityIsSelected = true;
@@ -120,7 +119,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
       } else {
         // ...show all entities and reset status
         this.entityIsSelected = false;
-        this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+        this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
         this.currentPageNumber$.next(this.currentPageNumber$.getValue());
       }
     }
@@ -257,7 +256,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   unselectEntity(): void {
     // show all entities and update their status
     this.entityStore.state.updateAll({selected: false});
-    this.entitiesToShow = this.entityStore.entities$.getValue() as Array<Feature>;
+    this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
     this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
 
@@ -270,5 +269,20 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   onPageChange(currentPageNumber: number) {
     // update the current page number
     this.currentPageNumber$.next(currentPageNumber);
+  }
+
+  checkEquality(clickedEntities: Array<Feature>) {
+    console.log('this.entities', this.entities);
+    let entitiesToShow: Array<Feature> = [];
+    for (let entity of this.entities) {
+      for (let clickedEntity of clickedEntities) {
+        if (JSON.stringify(entity.properties) === JSON.stringify(clickedEntity.properties)) {
+          console.log('entity', entity);
+          this.entityStore.state.update(entity, {selected: true}, true);
+          entitiesToShow.push(entity);
+        }
+      }
+    }
+    this.entitiesToShow = entitiesToShow;
   }
 }
