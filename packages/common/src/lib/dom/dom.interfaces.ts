@@ -2,7 +2,7 @@ export interface DOMOptions {
   id?: number;
   name?: string;
   url?: string;
-  value?: DOMValue[];
+  values?: DOMValue[];
 }
 
 export interface DOMValue {
