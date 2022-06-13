@@ -18,7 +18,8 @@
         "timeFilter": "Time Filter",
         "about": "About",
         "spatialFilter": "Spatial Filter",
-        "advancedMap": "Advanced map tools"
+        "advancedMap": "Advanced map tools",
+        "closestFeature": "Closest feature tool"
       },
       "searchResultsTool": {
         "noResults": "No results",
@@ -73,7 +74,24 @@
           "message": "The route proposed in this tool does not take into account current road conditions, road congestion, obstacles present on the network and ferry schedules (daily and seasonal opening)."
         }
       },
+      "map-proximity-tool": {
+        "lon": "Longitude",
+        "lat": "Latitude",
+        "method": "Location method",
+        "radiusM": "Search radius (meters)",
+        "geolocation": "Your current location",
+        "mapCenter": "Map center (black cross)",
+        "copyMsg": "Coordinates copied to clipboard",
+        "copyTitle": "Center's coordinate",
+        "feature": "Feature",
+        "distance": "Distance"
+      },
       "advanced-map-tool": {
+        "geolocation": {
+          "title": "Geolocation",
+          "tracking": "Activate/show the geolocation",
+          "follow": "Follow your position on map"
+         },
         "advanced-swipe": {
           "swipe-select":  "select the layers for swiping",
           "selectAll": "Select all",
