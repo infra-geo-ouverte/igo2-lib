@@ -73,7 +73,7 @@ const subscribtionToFirstSelectedBook = store
   .subscribe((record: Book) => {console.log(record));})
 
 
-const subscribtionToSelectedBook = store
+const subscribtionToSelectedBooks = store
   .stateView.manyBy$(({entity: Book, state: EntityState}) => {
     return record.state.selected === true;
   })
