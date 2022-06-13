@@ -157,7 +157,7 @@ export class PrintService {
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-      if (legends.length === 0) {
+      if (legends.filter(l => l.display).length === 0) {
         observer.next(html);
         observer.complete();
         return;

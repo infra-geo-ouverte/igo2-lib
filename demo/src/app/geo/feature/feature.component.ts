@@ -85,6 +85,33 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         }
       },
       {
+        meta: { id: 4 },
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [-71, 46.8]
+        },
+        projection: 'EPSG:4326',
+        properties: {
+          id: 4,
+          name: 'Name 4',
+          description: 'Description 4'
+        }
+      },{
+        meta: { id: 5 },
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [-73, 45.8]
+        },
+        projection: 'EPSG:4326',
+        properties: {
+          id: 5,
+          name: 'Name 5',
+          description: 'Description 5'
+        }
+      },
+      {
         meta: { id: 2 },
         type: 'Feature',
         geometry: {
