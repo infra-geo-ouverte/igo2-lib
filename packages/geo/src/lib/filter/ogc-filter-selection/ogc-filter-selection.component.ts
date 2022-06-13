@@ -406,14 +406,15 @@ export class OgcFilterSelectionComponent implements OnInit {
           for (const domOptions of this.configService.getConfig('dom')) {
             if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
+                id: domOptions.id,
                 url: domOptions.url,
                 name: domOptions.name,
-                value: domOptions.value
+                values: domOptions.values
               };
             }
           }
           filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-            domValues = filterDOM.value;
+            domValues = filterDOM.values;
 
           if (domValues) {
             let newBundle = bundle;
@@ -464,14 +465,15 @@ export class OgcFilterSelectionComponent implements OnInit {
           for (const domOptions of this.configService.getConfig('dom')) {
             if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
+                id: domOptions.id,
                 url: domOptions.url,
                 name: domOptions.name,
-                value: domOptions.value
+                values: domOptions.values
               };
             }
           }
           filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-            domValues = filterDOM.value;
+            domValues = filterDOM.values;
 
           if (domValues) {
             let newBundle = bundle;
