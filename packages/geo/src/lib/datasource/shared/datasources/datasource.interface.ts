@@ -48,6 +48,7 @@ export interface SourceFieldsOptionsParams {
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
+  linkColumnForce?: string;
   multiple?: boolean;
   tooltip?: string;
 }
@@ -65,14 +66,18 @@ export interface EditionOptions {
   addHeaders?: { [key: string]: any };
   modifyHeaders?: { [key: string]: any };
   modifyProtocol?: string;
+  addButton?: boolean;
+  modifyButton?: boolean;
+  deleteButton?: boolean;
 }
 
 export interface RelationOptions {
   title: string;
   name: string;
+  table?: string;
+  url?: string;
   alias?: string;
   icon?: string;
-  table: string;
   parent?: string;
   tooltip?: string;
 }
@@ -82,6 +87,7 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
+  send?: boolean;
 }
 
 export interface Legend {
