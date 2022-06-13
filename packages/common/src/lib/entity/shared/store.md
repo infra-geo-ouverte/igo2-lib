@@ -77,7 +77,7 @@ const subscribtionToSelectedBook = store
   .stateView.manyBy$(({entity: Book, state: EntityState}) => {
     return record.state.selected === true;
   })
-  .subscribe((record: Book) => {console.log(record));})
+  .subscribe((records: Book[]) => {console.log(records));})
 ```
 
 ### StateView runtime query
