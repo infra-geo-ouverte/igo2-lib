@@ -23,7 +23,7 @@ export class OgcFilterButtonComponent implements OnInit {
         const currentPushButtonGroup = pushButtons.groups.find(gr => gr.enabled);
         let cntPushButtons = 0;
         if (currentPushButtonGroup) {
-          currentPushButtonGroup.computedSelectors.map(cb => cntPushButtons += (cb.selectors as any).filter(
+          currentPushButtonGroup.computedSelectors?.map(cb => cntPushButtons += (cb.selectors as any)?.filter(
             button => button.enabled).length);
         }
         cnt += cntPushButtons;
@@ -33,7 +33,7 @@ export class OgcFilterButtonComponent implements OnInit {
         const currentCheckboxGroup = checkboxes.groups.find(gr => gr.enabled);
         let cntCheckboxes = 0;
         if (currentCheckboxGroup) {
-          currentCheckboxGroup.computedSelectors.map(cb => cntCheckboxes += (cb.selectors as any).filter(
+          currentCheckboxGroup.computedSelectors?.map(cb => cntCheckboxes += (cb.selectors as any)?.filter(
             checkbox => checkbox.enabled).length);
         }
         cnt += cntCheckboxes;
@@ -43,7 +43,7 @@ export class OgcFilterButtonComponent implements OnInit {
         const currentRadioButtonsGroup = radioButtons.groups.find(gr => gr.enabled);
         let cntRadioButtons = 0;
         if (currentRadioButtonsGroup) {
-          currentRadioButtonsGroup.computedSelectors.map(cb => cntRadioButtons += (cb.selectors as any).filter(
+          currentRadioButtonsGroup.computedSelectors?.map(cb => cntRadioButtons += (cb.selectors as any)?.filter(
             radio => radio.enabled).length);
         }
         cnt += cntRadioButtons;
@@ -53,10 +53,20 @@ export class OgcFilterButtonComponent implements OnInit {
         const currentSelectGroup = select.groups.find(gr => gr.enabled);
         let cntSelect = 0;
         if (currentSelectGroup) {
-          currentSelectGroup.computedSelectors.map(cb => cntSelect += (cb.selectors as any).filter(
+          currentSelectGroup.computedSelectors?.map(cb => cntSelect += (cb.selectors as any)?.filter(
             multi => multi.enabled).length);
         }
         cnt += cntSelect;
+      }
+      if (filter.autocomplete) {
+        const autocomplete = filter.autocomplete as IgoOgcSelector;
+        const currentAutocompleteGroup = autocomplete.groups.find(gr => gr.enabled);
+        let cntAutocomplete = 0;
+        if (currentAutocompleteGroup) {
+          currentAutocompleteGroup.computedSelectors?.map(cb => cntAutocomplete += (cb.selectors as any)?.filter(
+            autocomplete => autocomplete.enabled).length);
+        }
+        cnt += cntAutocomplete;
       }
     } else if (filter && filter.filters && !filter.filters.filters) {
       return 1;
