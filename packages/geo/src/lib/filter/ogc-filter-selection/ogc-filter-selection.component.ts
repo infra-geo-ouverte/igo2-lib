@@ -600,6 +600,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   emptyAutocomplete() {
     this.autocompleteEnabled = undefined;
     this.form.controls['autocomplete'].setValue('');
+    this.form.controls['autocomplete'].markAsUntouched();
   }
 
   toggleAllSelection() {
