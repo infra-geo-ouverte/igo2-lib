@@ -13,6 +13,7 @@ import olFormatEsriJSON from 'ol/format/EsriJSON';
 import olFeature from 'ol/Feature';
 import * as olgeom from 'ol/geom';
 
+import { LanguageService, MessageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FEATURE } from '../../feature/shared/feature.enums';
@@ -42,10 +43,22 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
+  public defaultFeatureCount = 20; // default feature count
+  public featureCount = 20; // feature count
 
-  constructor(private http: HttpClient) {}
+  private previousMessageIds = [];
+
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    private languageService: LanguageService) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
+    if (this.previousMessageIds.length) {
+      this.previousMessageIds.forEach(id => {
+        this.messageService.remove(id);
+      });
+    }
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) => this.queryLayer(layer, options));
@@ -308,6 +321,21 @@ export class QueryService {
       for (const feature of features) {
         feature.geometry = geomToAdd;
       }
+    }
+
+    const wmsDatasource = layer.dataSource as WMSDataSource;
+    const featureCount = wmsDatasource.params?.FEATURE_COUNT ?
+      new RegExp('FEATURE_COUNT=' + this.featureCount) :
+      new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
+
+    if (
+      featureCount.test(url) &&
+      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
+      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
+        const messageObj = this.messageService.info(message);
+        this.previousMessageIds.push(messageObj.toastId);
+      });
     }
 
     return features.map((feature: Feature, index: number) => {
@@ -586,8 +614,12 @@ export class QueryService {
             wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
-          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || '5'
+          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
         };
+
+        if (wmsDatasource.params.FEATURE_COUNT) {
+          this.featureCount = wmsDatasource.params.FEATURE_COUNT;
+        }
 
         if (forceGML2) {
           WMSGetFeatureInfoOptions.INFO_FORMAT = this.getMimeInfoFormat(
