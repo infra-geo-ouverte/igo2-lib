@@ -89,16 +89,16 @@ export class MapViewController extends MapController {
 
   setPadding(padding: { top?: number, bottom?: number, left?: number, right?: number }) {
     // Values in the array are top, right, bottom and left padding.
-    if (padding.top) {
+    if (padding.top || padding.top === 0) {
       this.padding[0] = padding.top;
     }
-    if (padding.right) {
+    if (padding.right || padding.right === 0) {
       this.padding[1] = padding.right;
     }
-    if (padding.bottom) {
+    if (padding.bottom || padding.bottom === 0) {
       this.padding[2] = padding.bottom;
     }
-    if (padding.left) {
+    if (padding.left || padding.left === 0) {
       this.padding[3] = padding.left;
     }
   }
