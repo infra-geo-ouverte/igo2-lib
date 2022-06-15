@@ -66,9 +66,29 @@ A custom observable can be created using the store views' `firstBy$()` and `many
 accept a filtering function.
 
 ```typescript
-const subscribtionToSelectedBook = store
+const subscribtionToFirstSelectedBook = store
   .stateView.firstBy$(({entity: Book, state: EntityState}) => {
     return record.state.selected === true;
   })
   .subscribe((record: Book) => {console.log(record));})
+
+
+const subscribtionToSelectedBooks = store
+  .stateView.manyBy$(({entity: Book, state: EntityState}) => {
+    return record.state.selected === true;
+  })
+  .subscribe((records: Book[]) => {console.log(records));})
+```
+
+### StateView runtime query
+
+Query the stateView at runtime,  `firstBy()` and `manyBy()` methods. These method
+accept a filtering function.
+
+```typescript
+
+    store.stateView.firstBy((r) => r.state.selected === true)
+    
+    store.stateView.manyBy((r) => r.state.selected === true)
+
 ```
