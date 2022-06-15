@@ -45,6 +45,7 @@ import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
 import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
 import { AppSpatialFilterModule } from './geo/spatial-filter/spatial-filter.module';
 import { AppWorkspaceModule } from './geo/workspace/workspace.module';
+import { AppSimpleListModule } from './geo/simple-list/simple-list.module';
 
 import { AppContextModule } from './context/context/context.module';
 
@@ -101,6 +102,7 @@ import { LanguageService } from '@igo2/core';
     AppOgcFilterModule,
     AppSpatialFilterModule,
     AppWorkspaceModule,
+    AppSimpleListModule,
 
     AppContextModule,
 
