@@ -111,7 +111,7 @@ export const environment: Environment = {
               metadataAbstract: "New 2nd ESRI abstract",
             },
             {
-              layerName: "All",
+              layerName: "*",
               //metadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
               metadataAbstractAll: "New abstract to all layers"
             }
