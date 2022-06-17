@@ -40,12 +40,12 @@
         )
     ));
 
-    //@include igo-all-theming($theme);
-    //@include mat.all-component-colors($theme);
-
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+/*
     .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button, .md-button {
         border-radius: 0!important;
-    }
+    }*/
 }
 
 //@import '~@angular/material/theming';
