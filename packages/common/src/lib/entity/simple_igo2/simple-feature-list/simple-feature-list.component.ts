@@ -16,7 +16,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
   @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
 
-  public entities: Array<Feature>; // an array containing all the entities in the store
+  public entities: Array<any>; // an array containing all the entities in the store
   public entitiesToShow: Array<Feature>; // an array containing the entities currently shown
   public entityIsSelected: boolean; // a boolean stating whether an entity has been selected in the list or not
 
@@ -101,18 +101,13 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     // if the most recent change is a click on entities on the map...
     if (!changes.clickedEntities.firstChange) {
       this.entityStore.state.updateAll({selected: false});
-      // ...get array of clicked entities
       const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
-      // if an entity or entities have been clicked...
+      // if at least one entity has been clicked...
       if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
-        // ...update the state of the entities accordingly
-        this.checkEquality(clickedEntities);
+        // strip ids and update status
+        this.stripIdsUpdateStatus(clickedEntities);
         // ... if one entity has been selected, change status for button in list
-        if (clickedEntities.length === 1) {
-          this.entityIsSelected = true;
-        } else {
-          this.entityIsSelected = false;
-        }
+        this.entityIsSelected = clickedEntities.length === 1 ? true : false;
         // emit to parent for zoom
         this.listSelection.emit();
       // if no entity has been clicked...
@@ -241,6 +236,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
    * @param entity
    */
   selectEntity(entity: Feature): void {
+    // update entities shown in list
     this.entitiesToShow = [entity];
     this.entityIsSelected = true;
 
@@ -259,30 +255,41 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
     this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
     this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
-
   }
 
   /**
-   * @description Fired when the user changes the page
+   * @description Fired when the user changes the page and update the current page number
    * @param currentPageNumber The current page number
    */
   onPageChange(currentPageNumber: number) {
-    // update the current page number
     this.currentPageNumber$.next(currentPageNumber);
   }
 
-  checkEquality(clickedEntities: Array<Feature>) {
-    console.log('this.entities', this.entities);
-    let entitiesToShow: Array<Feature> = [];
-    for (let entity of this.entities) {
-      for (let clickedEntity of clickedEntities) {
-        if (JSON.stringify(entity.properties) === JSON.stringify(clickedEntity.properties)) {
-          console.log('entity', entity);
-          this.entityStore.state.update(entity, {selected: true}, true);
-          entitiesToShow.push(entity);
+  /**
+   * @description Extract ids and update 'selected' status of clicked entities
+   * @param clickedEntities The entities clicked in the map
+   */
+  stripIdsUpdateStatus(clickedEntities: Array<any>) {
+    let entities = [];
+    // for every clicked entity...
+    for (let clickedEntity of clickedEntities) {
+      if (clickedEntity.meta?.id) {
+        //... strip the id
+        const id: string = clickedEntity.meta.id;
+        const match: Array<string> = id.match(/[^.]*$/);
+        if (match) {
+          const strippedId = parseInt(match[0]);
+          for (let entity of this.entities) {
+            //... and update status of corresponding entity in list
+            if (entity.meta.id === strippedId) {
+              entities.push(entity);
+              this.entityStore.state.update(entity, {selected: true}, true);
+            }
+          }
         }
       }
     }
-    this.entitiesToShow = entitiesToShow;
+    // update entities shown in list
+    this.entitiesToShow = entities;
   }
 }
