@@ -179,7 +179,7 @@ export const environment: Environment = {
                   //metadataAbstract: "New 2nd WMS abstract"
                 },
                 {
-                  layerName: "All",
+                  layerName: "*",
                   //metadataUrlAll: "https://quebec.ca/",
                   metadataAbstractAll: "New WMS abstract to all layers"
                 }
@@ -246,7 +246,7 @@ export const environment: Environment = {
                   metadataAbstract: "New WMTS abstract"
                 },
                 {
-                  layerName: "All",
+                  layerName: "*",
                   //metadataUrlAll: "https://www.donneesquebec.ca/",
                   //metadataAbstractAll: "New WMTS abstract to all layers"
                 }
