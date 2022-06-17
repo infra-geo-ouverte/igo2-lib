@@ -360,6 +360,8 @@ export class CatalogService {
       );
   }
 
+  /// WMS
+
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
     const configuredQueryFormat = this.retrieveLayerInfoFormat(
       layer.Name,
@@ -423,8 +425,8 @@ export class CatalogService {
             forcedNewMetadataAbstract = property.metadataAbstract;
         }
         else if (layer.Name !== property.layerName && property.metadataAbstractAll) {
-            forcedNewMetadataAbstract = property.metadataAbstractAll;
-        } // when we set this property it overrides property.metadataAbstract
+          forcedNewMetadataAbstract = property.metadataAbstractAll;
+    } // when we set this property it overrides property.metadataAbstract
         else if (layer.Name !== property.layerName && property.metadataUrlAll) {
               forcedNewMetadataUrl = property.metadataUrlAll;
         } // when we set this property it overrides property.metadataUrl and property.metadataAbstract
@@ -567,6 +569,8 @@ export class CatalogService {
     }
   }
 
+  /// WMTS
+
   private getWMTSItems(
     catalog,
     capabilities: { [key: string]: any }
@@ -661,6 +665,8 @@ export class CatalogService {
     })
     .filter((item: CatalogItemLayer | undefined) => item !== undefined);
 }
+
+/// ERSI
 
   private getArcGISRESTItems(
     catalog,

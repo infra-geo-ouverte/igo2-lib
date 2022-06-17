@@ -181,7 +181,7 @@ export const environment: Environment = {
                 {
                   layerName: "All",
                   //metadataUrlAll: "https://quebec.ca/",
-                  //metadataAbstractAll: "New WMS abstract to all layers"
+                  metadataAbstractAll: "New WMS abstract to all layers"
                 }
               ]
               //regFilters: ["^100$"]
