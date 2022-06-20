@@ -375,22 +375,22 @@ export class CatalogService {
       metadataAbstract: undefined,
       metadataAbstractAll: undefined,
       metadataUrlAll: undefined
-    }
+    };
     //process wildcard before
-    // if there is a * wildcard 
-    const forcedPropertiesForAllLayers = forcedProperties.find(f => f.layerName === '*')
+    // if there is a * wildcard
+    const forcedPropertiesForAllLayers = forcedProperties.find(f => f.layerName === '*');
     if (forcedPropertiesForAllLayers) {
       // metadataAbstractAll
       if (forcedPropertiesForAllLayers.metadataAbstractAll) {
-        returnProperty.metadataAbstractAll = forcedPropertiesForAllLayers.metadataAbstractAll
+        returnProperty.metadataAbstractAll = forcedPropertiesForAllLayers.metadataAbstractAll;
       }
       // metadataUrlAll
       if (forcedPropertiesForAllLayers.metadataUrlAll) {
-        returnProperty.metadataUrlAll = forcedPropertiesForAllLayers.metadataUrlAll
+        returnProperty.metadataUrlAll = forcedPropertiesForAllLayers.metadataUrlAll;
       }
     }
     forcedProperties.map(forcedProperty => {
-      // if match found 
+      // if match found
       if (layerNameFromCatalog === forcedProperty.layerName) {
         // title
         if (forcedProperty.title) {
@@ -405,7 +405,7 @@ export class CatalogService {
           returnProperty.metadataAbstract = forcedProperty.metadataAbstract;
         }
       }
-    })
+    });
     return returnProperty;
   }
 
@@ -630,7 +630,7 @@ export class CatalogService {
 
         let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
         let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || catalog.abstract;
-    
+
         if (
           !propertiesToForce?.metadataUrl &&
           !propertiesToForce?.metadataUrlAll &&
@@ -731,7 +731,7 @@ export class CatalogService {
 
         let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
         let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || baseAbstract;
-    
+
         if (
           !propertiesToForce?.metadataUrl &&
           !propertiesToForce?.metadataUrlAll &&
