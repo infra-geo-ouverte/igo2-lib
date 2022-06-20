@@ -18,7 +18,8 @@ import { getResolutionFromScale } from '../../map';
 import {
   CatalogItem,
   CatalogItemLayer,
-  CatalogItemGroup
+  CatalogItemGroup,
+  ForcedProperty
 } from './catalog.interface';
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
@@ -360,6 +361,54 @@ export class CatalogService {
       );
   }
 
+  private computeForcedProperties(
+    layerNameFromCatalog: string,
+    forcedProperties: ForcedProperty[]): ForcedProperty {
+
+    if (!forcedProperties || forcedProperties.length === 0) {
+      return;
+    }
+    const returnProperty: ForcedProperty = {
+      layerName: layerNameFromCatalog,
+      title: undefined,
+      metadataUrl: undefined,
+      metadataAbstract: undefined,
+      metadataAbstractAll: undefined,
+      metadataUrlAll: undefined
+    }
+    //process wildcard before
+    // if there is a * wildcard 
+    const forcedPropertiesForAllLayers = forcedProperties.find(f => f.layerName === '*')
+    if (forcedPropertiesForAllLayers) {
+      // metadataAbstractAll
+      if (forcedPropertiesForAllLayers.metadataAbstractAll) {
+        returnProperty.metadataAbstractAll = forcedPropertiesForAllLayers.metadataAbstractAll
+      }
+      // metadataUrlAll
+      if (forcedPropertiesForAllLayers.metadataUrlAll) {
+        returnProperty.metadataUrlAll = forcedPropertiesForAllLayers.metadataUrlAll
+      }
+    }
+    forcedProperties.map(forcedProperty => {
+      // if match found 
+      if (layerNameFromCatalog === forcedProperty.layerName) {
+        // title
+        if (forcedProperty.title) {
+          returnProperty.title = forcedProperty.title;
+        }
+        // metadataUrl
+        if (forcedProperty.metadataUrl) {
+          returnProperty.metadataUrl = forcedProperty.metadataUrl;
+        }
+        // metadataAbstract
+        if (forcedProperty.metadataAbstract) {
+          returnProperty.metadataAbstract = forcedProperty.metadataAbstract;
+        }
+      }
+    })
+    return returnProperty;
+  }
+
   /// WMS
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
@@ -398,61 +447,44 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
-    let layerTitle;
-    if (catalog.forcedProperties) {
-      for (const property of catalog.forcedProperties) {
-        if (layer.Name === property.layerName && property.title) {
-          layerTitle = property.title;
-        }
-      }
-    }
-
-    let abstract;
+    const propertiesToForce = this.computeForcedProperties(layer.Name, catalog.forcedProperties);
+    let baseAbstract;
+    let extern = true;
     if (layer.Abstract) {
-      abstract = layer.Abstract;
+      baseAbstract = layer.Abstract;
     } else if (!layer.Abstract && catalog.abstract) {
-      abstract = catalog.abstract;
+      baseAbstract = catalog.abstract;
     }
+    const layerOnlineResource = layer?.DataURL && layer?.DataURL.length >0 ? layer?.DataURL[0].OnlineResource : undefined;
 
-    let forcedNewMetadataUrl: string;
-    let forcedNewMetadataAbstract: string;
-    if (catalog.forcedProperties) {
-      for (const property of catalog.forcedProperties) {
-        if (layer.Name === property.layerName && property.metadataUrl) {
-            forcedNewMetadataUrl = property.metadataUrl;
-        }
-        else if (layer.Name === property.layerName && property.metadataAbstract) {
-            forcedNewMetadataAbstract = property.metadataAbstract;
-        }
-        else if (layer.Name !== property.layerName && property.metadataAbstractAll) {
-          forcedNewMetadataAbstract = property.metadataAbstractAll;
-    } // when we set this property it overrides property.metadataAbstract
-        else if (layer.Name !== property.layerName && property.metadataUrlAll) {
-              forcedNewMetadataUrl = property.metadataUrlAll;
-        } // when we set this property it overrides property.metadataUrl and property.metadataAbstract
-      }
+    let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll || layerOnlineResource;
+    let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || baseAbstract;
+
+    if (
+      !propertiesToForce?.metadataUrl &&
+      !propertiesToForce?.metadataUrlAll &&
+      (propertiesToForce?.metadataAbstract ||
+        propertiesToForce?.metadataAbstractAll)
+    ) {
+      extern = false;
     }
-
-    let metadataUrl;
-    if (forcedNewMetadataUrl) {
-      metadataUrl = forcedNewMetadataUrl;
-    } else {
-      metadataUrl = layer.DataURL ? layer.DataURL[0] : undefined;
+    if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+      extern = false;
     }
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
-      title: layerTitle !== undefined ? layerTitle : layer.Title,
+      title: propertiesToForce?.title ? propertiesToForce.title : layer.Title,
       address: idParent,
       externalProvider: catalog.externalProvider || false,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
-          url: metadataUrl === forcedNewMetadataUrl ? metadataUrl : metadataUrl?.OnlineResource,
-          extern: metadataUrl ? true : undefined,
-          abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
+          url: metadataUrl,
+          extern,
+          abstract: metadataAbstract,
           type: baseSourceOptions.type
         },
         legendOptions,
@@ -592,34 +624,25 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let forcedTitle;
-        if (catalog.forcedProperties) {
-          for (const property of catalog.forcedProperties) {
-            if (layer.Title === property.layerName && property.title) {
-              forcedTitle = property.title;
-            }
-          }
+
+        const propertiesToForce = this.computeForcedProperties(layer.Title, catalog.forcedProperties);
+        let extern = true;
+
+        let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
+        let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || catalog.abstract;
+    
+        if (
+          !propertiesToForce?.metadataUrl &&
+          !propertiesToForce?.metadataUrlAll &&
+          (propertiesToForce?.metadataAbstract ||
+            propertiesToForce?.metadataAbstractAll)
+        ) {
+          extern = false;
+        }
+        if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+          extern = false;
         }
 
-        //metadataUrl & metadataAbstract
-        let forcedNewMetadataUrl: string;
-        let forcedNewMetadataAbstract: string;
-        if (catalog.forcedProperties) {
-          for (const property of catalog.forcedProperties) {
-            if (layer.Title === property.layerName && property.metadataUrl) {
-                forcedNewMetadataUrl = property.metadataUrl;
-            }
-            else if (layer.Title === property.layerName && property.metadataAbstract) {
-                forcedNewMetadataAbstract = property.metadataAbstract;
-            }
-            else if (layer.Title !== property.layerName && property.metadataAbstractAll) {
-                forcedNewMetadataAbstract = property.metadataAbstractAll;
-            }
-            else if (layer.Title !== property.layerName && property.metadataUrlAll) {
-                  forcedNewMetadataUrl = property.metadataUrlAll;
-            } // when we set this property it overrides property.metadataUrl
-          }
-        }
 
       if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
         return undefined;
@@ -649,15 +672,15 @@ export class CatalogService {
       return ObjectUtils.removeUndefined({
         id: generateIdFromSourceOptions(sourceOptions),
         type: CatalogItemType.Layer,
-        title: forcedTitle !== undefined ? forcedTitle : layer.Title,
+        title: propertiesToForce?.title ? propertiesToForce.title : layer.Title,
         address: catalog.id,
         externalProvider: catalog.externalProvider,
         options: {
           sourceOptions,
           metadata: {
-            url: forcedNewMetadataUrl? forcedNewMetadataUrl : undefined,
-            extern: forcedNewMetadataUrl ? true : undefined,
-            abstract: forcedNewMetadataAbstract? forcedNewMetadataAbstract : catalog.abstract,
+            url: metadataUrl,
+            extern,
+            abstract: metadataAbstract,
             type: baseSourceOptions.type
           }
         }
@@ -696,33 +719,30 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let forcedTitle;
-        if (catalog.forcedProperties) {
-          for (const property of catalog.forcedProperties) {
-            if (layer.name === property.layerName && property.title) {
-              forcedTitle = property.title;
-            }
-          }
+
+        const propertiesToForce = this.computeForcedProperties(layer.name, catalog.forcedProperties);
+        let baseAbstract;
+        let extern = true;
+        if (layer.Abstract) {
+          baseAbstract = layer.Abstract;
+        } else if (!layer.Abstract && catalog.abstract) {
+          baseAbstract = catalog.abstract;
         }
-        //metadataUrl & metadataAbstract
-        let forcedNewMetadataUrl: string;
-        let forcedNewMetadataAbstract: string;
-        if (catalog.forcedProperties) {
-          for (const property of catalog.forcedProperties) {
-            if (layer.name === property.layerName && property.metadataUrl) {
-                forcedNewMetadataUrl = property.metadataUrl;
-            }
-            else if (layer.name === property.layerName && property.metadataAbstract) {
-                forcedNewMetadataAbstract = property.metadataAbstract;
-            }
-            else if (layer.name !== property.layerName && property.metadataAbstractAll) {
-                forcedNewMetadataAbstract = property.metadataAbstractAll;
-            }
-            else if (layer.name !== property.layerName && property.metadataUrlAll) {
-                  forcedNewMetadataUrl = property.metadataUrlAll;
-            } // when we set this property it overrides property.metadataUrl
+
+        let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
+        let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || baseAbstract;
+    
+        if (
+          !propertiesToForce?.metadataUrl &&
+          !propertiesToForce?.metadataUrlAll &&
+          (propertiesToForce?.metadataAbstract ||
+            propertiesToForce?.metadataAbstractAll)
+        ) {
+          extern = false;
         }
-      }
+        if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+          extern = false;
+        }
 
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
@@ -748,7 +768,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: forcedTitle !== undefined ? forcedTitle : layer.name,
+          title: propertiesToForce?.title ? propertiesToForce.title : layer.name,
           externalProvider: catalog.externalProvider,
           address: catalog.id,
           options: {
@@ -756,9 +776,9 @@ export class CatalogService {
             minResolution: getResolutionFromScale(layer.maxScale),
             maxResolution: getResolutionFromScale(layer.minScale),
             metadata: {
-              url: forcedNewMetadataUrl? forcedNewMetadataUrl : undefined,
-              extern: forcedNewMetadataUrl ? true : undefined,
-              abstract: forcedNewMetadataAbstract ? forcedNewMetadataAbstract : abstract,
+              url: metadataUrl,
+              extern,
+              abstract: metadataAbstract,
               type: baseSourceOptions.type
             },
           }
