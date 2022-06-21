@@ -68,20 +68,15 @@ img {
   margin-left: 12px;
 }
 
-.radius {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 110%;
+.igo-form-font .mat-form-field + .mat-form-field{
+  margin-left: 18px;
 }
 
-.unit-field {
-  width: 110px;
-  margin-left: 30px;
+.igo-form-fontSize{
+  left: 10px !important;
+  width: 150px;
+}
+.igo-form-fontStyle{
+  width: 150px;
 }
 
-.radius-unit {
-  display: flex;
-  width: 100%;
-  margin-left: 2px;
-  padding: 5px;
-}

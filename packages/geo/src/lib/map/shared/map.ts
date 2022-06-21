@@ -1,20 +1,14 @@
 import olMap from 'ol/Map';
 import olView from 'ol/View';
-import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import olGeolocation from 'ol/Geolocation';
 import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
-import olPoint from 'ol/geom/Point';
 import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
-import olCircle from 'ol/geom/Circle';
-import * as olstyle from 'ol/style';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -32,7 +26,8 @@ import {
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { FeatureMotion } from '../../feature/shared/feature.enums';
+import { MapGeolocationController } from './controllers/geolocation';
+import { StorageService } from '@igo2/core';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -41,18 +36,11 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
-  public alwaysTracking: boolean;
-  public positionFollower: boolean = true;
-  public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
-  public geolocationPositionFeature: olFeature<OlGeometry>;
-  public geolocationAccuracyFeature: olFeature<OlGeometry>;
-  public bufferGeom: olCircle;
-  public bufferFeature: olFeature<OlGeometry>;
-  public buffer: Overlay;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
   public viewController: MapViewController;
+  public geolocationController: MapGeolocationController;
   public swipeEnabled$ = new BehaviorSubject<boolean>(false);
   public mapCenter$ = new BehaviorSubject<boolean>(false);
   public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
@@ -60,10 +48,9 @@ export class IgoMap {
   public bufferDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
-  private geolocation: olGeolocation;
-  private geolocation$$: Subscription;
 
   private options: MapOptions;
+  private mapViewOptions: MapViewOptions;
   private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
@@ -76,7 +63,9 @@ export class IgoMap {
     return this.viewController.getOlProjection().getCode();
   }
 
-  constructor(options?: MapOptions) {
+  constructor(
+    options?: MapOptions,
+    private storageService?: StorageService) {
     this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
@@ -127,7 +116,18 @@ export class IgoMap {
     this.overlay = new Overlay(this);
     this.queryResultsOverlay = new Overlay(this);
     this.searchResultsOverlay = new Overlay(this);
-    this.buffer = new Overlay(this);
+    this.ol.once('rendercomplete', () => {
+      this.geolocationController = new MapGeolocationController(
+        this,
+        {
+          projection: this.viewController.getOlProjection()
+        },
+        this.storageService);
+      this.geolocationController.setOlMap(this.ol);
+      if (this.geolocationController) {
+        this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
+      }
+  });
   }
 
   setTarget(id: string) {
@@ -152,6 +152,7 @@ export class IgoMap {
     if (options.maxZoomOnExtent) {
       this.viewController.maxZoomOnExtent = options.maxZoomOnExtent;
     }
+    this.mapViewOptions = options;
   }
 
   /**
@@ -167,7 +168,6 @@ export class IgoMap {
     const view = new olView(options);
     this.ol.setView(view);
 
-    this.unsubscribeGeolocate();
     if (options) {
       if (options.maxLayerZoomExtent) {
         this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
@@ -177,14 +177,6 @@ export class IgoMap {
         const projection = view.getProjection().getCode();
         const center = olproj.fromLonLat(options.center, projection);
         view.setCenter(center);
-      }
-
-      if (options.geolocate) {
-        this.geolocate(true);
-      }
-
-      if (options.alwaysTracking) {
-        this.alwaysTracking = true;
       }
     }
   }
@@ -519,142 +511,6 @@ export class IgoMap {
    */
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex((_layer: Layer) => _layer === layer);
-  }
-
-  // TODO: Create a GeolocationController with everything below
-  geolocate(track = false) {
-    let first = true;
-    if (this.geolocation$$) {
-      track = this.geolocation.getTracking();
-      this.unsubscribeGeolocate();
-    }
-    this.startGeolocation();
-
-    this.geolocation$$ = this.geolocation$.subscribe((geolocation) => {
-      if (!geolocation) {
-        return;
-      }
-      const accuracy = geolocation.getAccuracy();
-      const coordinates = geolocation.getPosition();
-      if (accuracy < 10000) {
-        const positionGeometry = coordinates ? new olPoint(coordinates) : null;
-
-        const accuracyGeometry = geolocation.getAccuracyGeometry();
-        const accuracyExtent = accuracyGeometry.getExtent();
-
-        [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
-          if (feature && this.overlay.dataSource.ol.getFeatureById(feature.getId())) {
-            this.overlay.dataSource.ol.removeFeature(feature);
-          }
-        });
-
-        if (this.bufferFeature) {
-          this.buffer.dataSource.ol.removeFeature(this.bufferFeature);
-        }
-
-        this.geolocationPositionFeature = new olFeature({ geometry: positionGeometry });
-        this.geolocationPositionFeature.setId('geolocationPositionFeature');
-
-        this.geolocationPositionFeature.setStyle(
-          new olstyle.Style({
-            image: new olstyle.Circle({
-              radius: 6,
-              fill: new olstyle.Fill({
-                color: '#3399CC',
-              }),
-              stroke: new olstyle.Stroke({
-                color: '#fff',
-                width: 2,
-              }),
-            }),
-          })
-        );
-
-
-        this.geolocationAccuracyFeature = new olFeature({ geometry: accuracyGeometry });
-        this.geolocationAccuracyFeature.setId('geolocationAccuracyFeature');
-        if (this.alwaysTracking) {
-          [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
-            this.overlay.addOlFeature(
-              feature,
-              this.positionFollower ? FeatureMotion.Move : FeatureMotion.None
-            );
-          });
-
-        } else {
-          [this.geolocationPositionFeature, this.geolocationAccuracyFeature].map(feature => {
-            this.overlay.addOlFeature(
-              feature
-            );
-          });
-        }
-
-        if (this.ol.getView().get('options_')?.buffer) {
-          const bufferRadius = this.ol.getView().get('options_').buffer.bufferRadius;
-          this.bufferGeom = new olCircle(coordinates, bufferRadius);
-          const bufferStroke = this.ol.getView().get('options_').buffer.bufferStroke;
-          const bufferFill = this.ol.getView().get('options_').buffer.bufferFill;
-
-          let bufferText;
-          if (this.ol.getView().get('options_').buffer.showBufferRadius) {
-            bufferText = bufferRadius.toString() + 'm';
-          } else {
-            bufferText = '';
-          }
-
-          this.bufferFeature = new olFeature(this.bufferGeom);
-          this.bufferFeature.setId('bufferFeature');
-          this.bufferFeature.set('bufferStroke', bufferStroke);
-          this.bufferFeature.set('bufferFill', bufferFill);
-          this.bufferFeature.set('bufferText', bufferText);
-          this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
-        }
-        if (first) {
-          this.viewController.zoomToExtent(accuracyExtent as [number, number, number, number]);
-          this.positionFollower = !this.positionFollower;
-        }
-      } else if (first) {
-        const view = this.ol.getView();
-        view.setCenter(coordinates);
-        view.setZoom(14);
-      }
-      if (track !== true && this.alwaysTracking !== true) {
-        this.unsubscribeGeolocate();
-      }
-      first = false;
-    });
-  }
-
-  unsubscribeGeolocate() {
-    this.stopGeolocation();
-    if (this.geolocation$$) {
-      this.geolocation$$.unsubscribe();
-      this.geolocation$$ = undefined;
-    }
-  }
-
-  private startGeolocation() {
-    if (!this.geolocation) {
-      this.geolocation = new olGeolocation({
-        trackingOptions: {
-          enableHighAccuracy: true
-        },
-        projection: this.projection,
-        tracking: true
-      });
-
-      this.geolocation.on('change', (evt) => {
-        this.geolocation$.next(this.geolocation);
-      });
-    } else {
-      this.geolocation.setTracking(true);
-    }
-  }
-
-  private stopGeolocation() {
-    if (this.geolocation) {
-      this.geolocation.setTracking(false);
-    }
   }
 
   onOfflineToggle(offline: boolean) {

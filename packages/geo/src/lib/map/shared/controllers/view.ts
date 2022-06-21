@@ -35,6 +35,7 @@ export class MapViewController extends MapController {
 
   /**
    * View Padding
+   * Values in the array are top, right, bottom and left padding.
    */
   padding = [0, 0, 0, 0];
 
@@ -84,6 +85,22 @@ export class MapViewController extends MapController {
 
   constructor(private options?: MapViewControllerOptions) {
     super();
+  }
+
+  setPadding(padding: { top?: number, bottom?: number, left?: number, right?: number }) {
+    // Values in the array are top, right, bottom and left padding.
+    if (padding.top || padding.top === 0) {
+      this.padding[0] = padding.top;
+    }
+    if (padding.right || padding.right === 0) {
+      this.padding[1] = padding.right;
+    }
+    if (padding.bottom || padding.bottom === 0) {
+      this.padding[2] = padding.bottom;
+    }
+    if (padding.left || padding.left === 0) {
+      this.padding[3] = padding.left;
+    }
   }
 
   /**

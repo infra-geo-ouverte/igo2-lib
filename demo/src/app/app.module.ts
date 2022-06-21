@@ -50,11 +50,12 @@ import { AppContextModule } from './context/context/context.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LanguageService } from '@igo2/core';
+import { IgoCoreModule, LanguageService } from '@igo2/core';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    IgoCoreModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatSidenavModule,

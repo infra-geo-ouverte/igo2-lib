@@ -14,6 +14,7 @@ import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-sw
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
 import { OfflineButtonComponent } from './offline-button/offline-button.component';
+import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.component';
 import { PointerPositionDirective } from './shared/map-pointer-position.directive';
 import { HoverFeatureDirective } from './shared/hover-feature.directive';
 import { SwipeControlComponent } from './swipe-control/swipe-control.component';
@@ -41,6 +42,7 @@ import { InfoSectionComponent } from './info-section/info-section.component';
     MiniBaseMapComponent,
     MapOfflineDirective,
     OfflineButtonComponent,
+    WakeLockButtonComponent,
     PointerPositionDirective,
     HoverFeatureDirective,
     SwipeControlComponent,
@@ -58,6 +60,7 @@ import { InfoSectionComponent } from './info-section/info-section.component';
     MiniBaseMapComponent,
     MapOfflineDirective,
     OfflineButtonComponent,
+    WakeLockButtonComponent,
     PointerPositionDirective,
     HoverFeatureDirective,
     SwipeControlComponent,
