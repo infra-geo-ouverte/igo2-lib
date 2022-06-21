@@ -1,6 +1,6 @@
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { SimpleFeatureListComponent } from './simple-feature-list.component';
+import { SimpleEntityListComponent } from './simple-entity-list.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,8 +12,8 @@ import { IgoCustomHtmlModule } from '../../../custom-html/custom-html.module';
 import { IgoEntityTablePaginatorModule } from '../../entity-table-paginator/entity-table-paginator.module';
 import { IgoImageModule } from '../../../image/image.module';
 import { IgoLanguageModule } from '@igo2/core';
-import { SimpleFeatureListPaginatorComponent } from './simple-feature-list-paginator/simple-feature-list-paginator.component';
-import { SimpleFeatureListHeaderComponent } from './simple-feature-list-header/simple-feature-list-header.component';
+import { SimpleEntityListPaginatorComponent } from './simple-entity-list-paginator/simple-entity-list-paginator.component';
+import { SimpleEntityListHeaderComponent } from './simple-entity-list-header/simple-entity-list-header.component';
 
 /**
  * @ignore
@@ -33,12 +33,12 @@ import { SimpleFeatureListHeaderComponent } from './simple-feature-list-header/s
     IgoLanguageModule
   ],
   exports: [
-    SimpleFeatureListComponent
+    SimpleEntityListComponent
   ],
   declarations: [
-    SimpleFeatureListComponent,
-    SimpleFeatureListPaginatorComponent,
-    SimpleFeatureListHeaderComponent
+    SimpleEntityListComponent,
+    SimpleEntityListPaginatorComponent,
+    SimpleEntityListHeaderComponent
   ]
 })
 export class IgoSimpleFeatureListModule {}

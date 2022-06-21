@@ -2,30 +2,30 @@ import { Feature } from 'geojson';
 import { ConfigService } from '@igo2/core';
 import { Component, Input, OnInit, OnChanges, OnDestroy, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { EntityStore } from '../../shared';
-import { SimpleFeatureList, AttributeOrder, SortBy, Paginator } from './simple-feature-list.interface';
+import { SimpleEntityList, AttributeOrder, SortBy, Paginator } from './simple-entity-list.interface';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'igo-simple-feature-list',
-  templateUrl: './simple-feature-list.component.html',
-  styleUrls: ['./simple-feature-list.component.scss']
+  selector: 'igo-simple-entity-list',
+  templateUrl: './simple-entity-list.component.html',
+  styleUrls: ['./simple-entity-list.component.scss']
 })
 
-export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() entityStore: EntityStore; // a store that contains all the entities
-  @Input() clickedEntities: Array<Feature>; // an array that contains the entities clicked in the map
-  @Output() listSelection = new EventEmitter(); // an event emitter that outputs the entity selected in the list
+export class SimpleEntityListComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() entityStore: EntityStore; // store that contains all the entities
+  @Input() clickedFeatures: Array<Feature>; // an array that contains the features clicked in the map
+  @Output() selection = new EventEmitter(); // an event emitter that outputs to the parent on a selection
 
-  public entities: Array<any>; // an array containing all the entities in the store
-  public entitiesToShow: Array<Feature>; // an array containing the entities currently shown
+  public entitiesAll: Array<any>; // an array containing all the entities in the store
+  public entitiesShown: Array<object>; // an array containing the entities currently shown
   public entityIsSelected: boolean; // a boolean stating whether an entity has been selected in the list or not
 
-  public simpleFeatureListConfig: SimpleFeatureList; // the simpleFeatureList config input by the user
-  public attributeOrder: AttributeOrder; // the attribute order specified in the simpleFeatureList config
-  public sortBy: SortBy; // the sorting to use, input in the SimpleFeatureList config
-  public formatURL: boolean; // whether to format an URL or not, input in the SimpleFeature List config
-  public formatEmail: boolean; // whether to format an email or not, input in the SimpleFeatureList config
-  public paginator: Paginator; // the paginator config input, in the SimpleFeatureList Config
+  public simpleEntityListConfig: SimpleEntityList; // the simpleEntityList config input by the user
+  public attributeOrder: AttributeOrder; // the attribute order specified in the simpleEntityList config
+  public sortBy: SortBy; // the sorting to use, input in the SimpleEntityList config
+  public formatURL: boolean; // whether to format an URL or not, input in the SimpleEntityList config
+  public formatEmail: boolean; // whether to format an email or not, input in the SimpleEntityList config
+  public paginator: Paginator; // the paginator config input, in the SimpleEntityList Config
 
   public pageSize: number; // the number of elements in a page, input in the paginator config
   public showFirstLastPageButtons: boolean; // whether to show the First page and Last page buttons or not, input in the paginator config
@@ -40,81 +40,80 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   constructor(private configService: ConfigService) {}
 
   ngOnInit(): void {
-    // get the entities from the layer/store
-    this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
+    // get the entities from the store
+    this.entitiesAll = this.entityStore.all();
 
     // get the config input by the user
-    this.simpleFeatureListConfig = this.configService.getConfig('simpleFeatureList');
+    this.simpleEntityListConfig = this.configService.getConfig('simpleEntityList');
 
     // get the attribute order to use to display the elements in the list
-    this.attributeOrder = this.simpleFeatureListConfig.attributeOrder;
+    this.attributeOrder = this.simpleEntityListConfig.attributeOrder;
 
     // get the sorting config and sort the entities accordingly (sort ascending by default)
-    this.sortBy = this.simpleFeatureListConfig.sortBy;
+    this.sortBy = this.simpleEntityListConfig.sortBy;
+
     if (this.sortBy) {
-      if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
-        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? 1 :
-        ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? -1 : 0));
-      } else if (this.sortBy.order === 'descending') {
-        this.entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? -1 :
-        ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
-      }
+      this.sortEntities(this.entitiesAll);
     }
 
     // get the formatting configs for URLs and emails (not formatted by default)
-    this.formatURL = this.simpleFeatureListConfig.formatURL !== undefined ? this.simpleFeatureListConfig.formatURL : false;
-    this.formatEmail = this.simpleFeatureListConfig.formatEmail !== undefined ? this.simpleFeatureListConfig.formatEmail : false;
+    this.formatURL = this.simpleEntityListConfig.formatURL !== undefined ? this.simpleEntityListConfig.formatURL : false;
+    this.formatEmail = this.simpleEntityListConfig.formatEmail !== undefined ? this.simpleEntityListConfig.formatEmail : false;
 
     // get the paginator config, including the page size, the buttons options and calculate the number of pages to use
-    this.paginator = this.simpleFeatureListConfig.paginator;
+    this.paginator = this.simpleEntityListConfig.paginator;
+
     if (this.paginator) {
       // 5 elements displayed by default
       this.pageSize = this.paginator.pageSize !== undefined ? this.paginator.pageSize : 5;
-      // buttons shown by default
+      // all buttons shown by default
       this.showFirstLastPageButtons = this.paginator.showFirstLastPageButtons !== undefined ?
         this.paginator.showFirstLastPageButtons : true;
       this.showPreviousNextPageButtons = this.paginator.showPreviousNextPageButtons !== undefined ?
         this.paginator.showPreviousNextPageButtons : true;
-      // slice entities accroding to page size
-      this.entitiesToShow = this.entities.slice(0, this.pageSize);
       // calculate number of pages and indexes
-      this.numberOfPages = Math.ceil(this.entities.length / this.pageSize);
-      this.elementsLowerBound = 1;
-      this.elementsUpperBound = this.pageSize > this.entities.length ? this.entities.length : this.pageSize;
-    } else {
-      this.entitiesToShow = this.entities;
+      this.numberOfPages = Math.ceil(this.entitiesAll.length / this.pageSize);
     }
 
     // subscribe to the current page number
     this.currentPageNumber$$ = this.currentPageNumber$.subscribe((currentPageNumber: number) => {
-      // calculate the new lower and upper bounds to display
-      this.elementsLowerBound = (currentPageNumber - 1) * this.pageSize + 1;
-      this.elementsUpperBound = currentPageNumber * this.pageSize > this.entities.length ? this.entities.length :
-        currentPageNumber * this.pageSize;
+      // if there is a paginator...
+      if (this.paginator) {
+        // ...calculate the new lower and upper bounds to display
+        this.elementsLowerBound = (currentPageNumber - 1) * this.pageSize + 1;
+        this.elementsUpperBound = currentPageNumber * this.pageSize > this.entitiesAll.length ? this.entitiesAll.length :
+          currentPageNumber * this.pageSize;
 
-      // slice the entities to show the current ones
-      this.entitiesToShow = this.entities.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+        // slice the entities to show the current ones
+        this.entitiesShown = this.entitiesAll.slice(this.elementsLowerBound - 1, this.elementsUpperBound);
+      // if no paginator is present...
+      } else {
+        // bounds are fixed by number of entities
+        this.elementsLowerBound = 1;
+        this.elementsUpperBound = this.entitiesAll.length;
+        this.entitiesShown = this.entitiesAll;
+      }
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // if the most recent change is a click on entities on the map...
-    if (!changes.clickedEntities.firstChange) {
+    if (!changes.clickedFeatures.firstChange) {
       this.entityStore.state.updateAll({selected: false});
-      const clickedEntities: Array<Feature> = changes.clickedEntities.currentValue as Array<Feature>;
+      const clickedFeatures: Array<Feature> = changes.clickedFeatures.currentValue as Array<Feature>;
       // if at least one entity has been clicked...
-      if (clickedEntities?.length > 0 && clickedEntities !== undefined) {
+      if (clickedFeatures?.length > 0 && clickedFeatures !== undefined) {
         // strip ids and update status
-        this.stripIdsUpdateStatus(clickedEntities);
+        this.stripIdsUpdateStatus(clickedFeatures);
         // ... if one entity has been selected, change status for button in list
-        this.entityIsSelected = clickedEntities.length === 1 ? true : false;
+        this.entityIsSelected = clickedFeatures.length === 1 ? true : false;
         // emit to parent for zoom
-        this.listSelection.emit();
+        this.selection.emit();
       // if no entity has been clicked...
       } else {
         // ...show all entities and reset status
         this.entityIsSelected = false;
-        this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
+        this.entitiesAll = this.entityStore.all() as Array<object>;
         this.currentPageNumber$.next(this.currentPageNumber$.getValue());
       }
     }
@@ -122,6 +121,20 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
 
   ngOnDestroy() {
     this.currentPageNumber$$.unsubscribe();
+  }
+
+  /**
+   * @description Sort entities according to an attribute
+   * @param entities The entities to sort
+   */
+   sortEntities(entities: Array<object>) {
+    if (this.sortBy.order === undefined || this.sortBy.order === 'ascending') {
+      entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? 1 :
+      ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? -1 : 0));
+    } else if (this.sortBy.order === 'descending') {
+      entities.sort((a, b) => (a['properties'][this.sortBy.attributeName] > b['properties'][this.sortBy.attributeName]) ? -1 :
+      ((b['properties'][this.sortBy.attributeName] > a['properties'][this.sortBy.attributeName]) ? 1 : 0));
+    }
   }
 
   /**
@@ -139,11 +152,11 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
 
   /**
    * @description Create a personnalized attribute or a formatted attribute
-   * @param entity An entity (feature)
+   * @param entity An entity
    * @param attribute The attribute to get or to create
    * @returns The personnalized or formatted attribute as a string
    */
-  createAttribute(entity: Feature, attribute: any): string {
+  createAttribute(entity: any, attribute: any): string {
     let newAttribute: string;
     // if the attribute has a personnalized attribute input by the user in the config...
     if (attribute.personalizedFormatting) {
@@ -161,7 +174,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
    * @param personalizedFormatting The personnalized formatting specified by the user in the config
    * @returns A personnalized attribute
    */
-  createPersonalizedAttribute(entity: Feature, personalizedFormatting: string): string {
+  createPersonalizedAttribute(entity: any, personalizedFormatting: string): string {
     let personalizedAttribute: string = personalizedFormatting;
 
     // get the attributes for the personnalized attribute
@@ -235,15 +248,15 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
    * @description Fired when the user selects an entity in the list
    * @param entity
    */
-  selectEntity(entity: Feature): void {
+  selectEntity(entity: object): void {
     // update entities shown in list
-    this.entitiesToShow = [entity];
+    this.entitiesShown = [entity];
     this.entityIsSelected = true;
 
     // update status of entity and emit to parent for zoom
     this.entityStore.state.updateAll({selected: false});
     this.entityStore.state.update(entity, {selected: true}, true);
-    this.listSelection.emit();
+    this.selection.emit();
   }
 
   /**
@@ -252,7 +265,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
   unselectEntity(): void {
     // show all entities and update their status
     this.entityStore.state.updateAll({selected: false});
-    this.entities = this.entityStore.entities$.getValue() as Array<Feature>;
+    this.entitiesAll = this.entityStore.all() as Array<object>;
     this.entityIsSelected = false;
     this.currentPageNumber$.next(this.currentPageNumber$.getValue());
   }
@@ -279,7 +292,7 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
         const match: Array<string> = id.match(/[^.]*$/);
         if (match) {
           const strippedId = parseInt(match[0]);
-          for (let entity of this.entities) {
+          for (let entity of this.entitiesAll) {
             //... and update status of corresponding entity in list
             if (entity.meta.id === strippedId) {
               entities.push(entity);
@@ -290,6 +303,6 @@ export class SimpleFeatureListComponent implements OnInit, OnChanges, OnDestroy 
       }
     }
     // update entities shown in list
-    this.entitiesToShow = entities;
+    this.entitiesShown = entities;
   }
 }

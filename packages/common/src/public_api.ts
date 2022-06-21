@@ -26,7 +26,7 @@ export * from './lib/entity/entity.module';
 export * from './lib/entity/entity-selector/entity-selector.module';
 export * from './lib/entity/entity-table/entity-table.module';
 export * from './lib/entity/entity-table-paginator/entity-table-paginator.module';
-export * from './lib/entity/simple_igo2/simple-feature-list/simple-feature-list.module';
+export * from './lib/entity/simple_igo2/simple-entity-list/simple-entity-list.module';
 export * from './lib/image/image.module';
 export * from './lib/interactive-tour/interactive-tour.module';
 export * from './lib/json-dialog/json-dialog.module';

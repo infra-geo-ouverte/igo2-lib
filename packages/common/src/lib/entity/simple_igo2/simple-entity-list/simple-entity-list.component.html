@@ -1,11 +1,11 @@
-<igo-simple-feature-list-header
-  [entities]="entities"
+<igo-simple-entity-list-header
+  [entitiesAll]="entitiesAll"
   [elementsLowerBound]="elementsLowerBound"
   [elementsUpperBound]="elementsUpperBound">
-</igo-simple-feature-list-header>
+</igo-simple-entity-list-header>
 
 <div class="entities-container">
-  <div *ngFor="let entity of entitiesToShow; let i = index" #entity
+  <div *ngFor="let entity of entitiesShown; let i = index" #entity
     [ngClass]="i % 2 === 0 ? 'entityGrey' : 'entityWhite'">
     <div class="attributes">
       <ng-container *ngFor="let attribute of attributeOrder">
@@ -52,10 +52,10 @@
 
 <mat-divider></mat-divider>
 
-<igo-simple-feature-list-paginator *ngIf="simpleFeatureListConfig.paginator"
+<igo-simple-entity-list-paginator *ngIf="simpleEntityListConfig.paginator"
   [pageSize]="pageSize"
   [numberOfPages]="numberOfPages"
   [showFirstLastPageButtons]="showFirstLastPageButtons"
   [showPreviousNextPageButtons]="showPreviousNextPageButtons"
   (pageChange)="onPageChange($event)">
-</igo-simple-feature-list-paginator>
+</igo-simple-entity-list-paginator>

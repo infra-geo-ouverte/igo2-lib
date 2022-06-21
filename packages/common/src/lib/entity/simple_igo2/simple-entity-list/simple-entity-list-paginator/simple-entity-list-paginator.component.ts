@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angu
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
-  selector: 'igo-simple-feature-list-paginator',
-  templateUrl: './simple-feature-list-paginator.component.html',
-  styleUrls: ['./simple-feature-list-paginator.component.scss']
+  selector: 'igo-simple-entity-list-paginator',
+  templateUrl: './simple-entity-list-paginator.component.html',
+  styleUrls: ['./simple-entity-list-paginator.component.scss']
 })
-export class SimpleFeatureListPaginatorComponent implements OnInit, OnDestroy {
+export class SimpleEntityListPaginatorComponent implements OnInit, OnDestroy {
   @Input() pageSize: number; // the number of elements per page
   @Input() numberOfPages: number; // the calculated number of pages necessary to display all the elements
   @Input() showFirstLastPageButtons: boolean; // boolean representing whether to display the First page and Last page buttons or not
