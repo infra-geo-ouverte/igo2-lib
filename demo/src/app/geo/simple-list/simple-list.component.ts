@@ -1,6 +1,7 @@
+import OlFeature from 'ol/Feature';
 import { Component, OnInit } from '@angular/core';
-import { DataSourceService, FeatureStore, IgoMap, LayerService, WFSDataSourceOptions } from '@igo2/geo';
-import { WorkspaceState } from '@igo2/integration';
+import { DataSourceService, VectorLayer, IgoMap, LayerService, WFSDataSourceOptions } from '@igo2/geo';
+import { Geometry } from 'ol/geom';
 
 
 @Component({
@@ -23,12 +24,11 @@ export class AppSimpleListComponent implements OnInit {
     zoom: 6
   };
 
-  public store = new FeatureStore([], { map: this.map });
+  public features: Array<OlFeature<Geometry>>;
 
   constructor(
     private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    public workspaceState: WorkspaceState) { }
+    private layerService: LayerService) { }
 
   ngOnInit(): void {
     this.dataSourceService.createAsyncDataSource({type: 'osm'}).subscribe(dataSource => {
@@ -49,11 +49,12 @@ export class AppSimpleListComponent implements OnInit {
     };
 
     this.dataSourceService.createAsyncDataSource(wfsDataSourceOptions).subscribe(dataSource => {
-      const layer = {
+      const layer = this.layerService.createLayer({
         title: "Simple WFS",
+        id: "Simple WFS",
         source: dataSource
-      };
-      this.map.addLayer(this.layerService.createLayer(layer));
+      }) as VectorLayer;
+      this.map.addLayer(layer);
     });
   }
 }
