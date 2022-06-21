@@ -215,7 +215,7 @@ gulp.task('core:concatStyles', done => {
     .pipe(exec(
       'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
     ))
-    .pipe(wait(500)).on('end', function() {
+    .pipe(wait(500)).on('end', function() { 
       del(['packages/core/src/style/index.theming.scss'], { force: true });
     })
 
