@@ -5,6 +5,7 @@
 }
 
 :host.table-compact {
+    overflow: auto;
     tr.mat-header-row,
      ::ng-deep .mat-checkbox .mat-checkbox-ripple {
         height: 36px;

@@ -21,6 +21,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+
+
 /**
  * @ignore
  */
@@ -43,15 +49,12 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     MatDialogModule,
     IgoLanguageModule,
     IgoEntityTableModule,
-    ColorPickerModule
+    ColorPickerModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatAutocompleteModule
   ],
-  declarations: [
-    DrawComponent,
-    DrawPopupComponent,
-    DrawShorcutsComponent
-  ],
-  exports: [
-    DrawComponent
-  ]
+  declarations: [DrawComponent, DrawPopupComponent, DrawShorcutsComponent],
+  exports: [DrawComponent]
 })
 export class IgoDrawModule {}

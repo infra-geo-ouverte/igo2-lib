@@ -59,6 +59,10 @@ $slide-toggle-width: 60px;
   height: 25px;
 }
 
+.edition-drawing{
+  padding: 10px 0;
+}
+
 img {
   width: 100%;
   height: 100%;
@@ -68,15 +72,29 @@ img {
   margin-left: 12px;
 }
 
-.igo-form-font .mat-form-field + .mat-form-field{
-  margin-left: 18px;
+.storeTable{
+  height:auto !important;
+  // max-height: 100px;
 }
 
-.igo-form-fontSize{
-  left: 10px !important;
-  width: 150px;
+.igo-input-container .mat-form-field + .mat-form-field{
+  margin-left: 8px;
 }
-.igo-form-fontStyle{
+
+.igo-form-input-box{
   width: 150px;
 }
 
+.layer-select{
+  width: 100%;
+}
+
+.input-button-container{
+  mat-form-field {
+    width: 75%;
+  }
+  button{
+    left: 8px;
+    width: 25%;
+  }
+}
