@@ -92,12 +92,11 @@
       </mat-select>
     </mat-form-field>
   </div>
-  
   <div *ngIf="isCreatingNewLayer" class="input-button-container">
     <mat-form-field>
       <input #input matInput placeholder="test">
     </mat-form-field>
-    <button mat-raised-button (click)="setupLayer(input.value, true)">Create Layer</button>
+    <button mat-stroked-button (click)="setupLayer(input.value, true)">Create Layer</button>
   </div>
 
   <mat-divider></mat-divider>

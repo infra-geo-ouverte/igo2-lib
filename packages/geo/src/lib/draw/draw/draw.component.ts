@@ -536,9 +536,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawingLayer.id,
       currStoreAndCurrDControl
     );
-    // console.log(this.layerWithStore);
+    this.isCreatingNewLayer = false;
 
-    // this.onLayerChange(this.activeDrawingLayer, true);
   }
 
   // HTML user interactions
@@ -627,7 +626,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         storeAndDrawControl.drawControl.olDrawingLayerSource;
 
       if (!isNewLayer){
-        this.toggleDrawControl();
+        this.activateDrawControl();
       }
 
       /**

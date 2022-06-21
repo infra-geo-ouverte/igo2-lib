@@ -87,14 +87,18 @@ img {
 
 .layer-select{
   width: 100%;
+  padding: 10px;
 }
 
 .input-button-container{
+  padding: 10px;
+  top: 7px;
+
   mat-form-field {
-    width: 75%;
+    width: 50%;
   }
   button{
     left: 8px;
-    width: 25%;
+    top:5px;
   }
 }
