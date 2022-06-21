@@ -111,6 +111,7 @@ export interface EntityTableColumn {
   renderer?: EntityTableColumnRenderer;
   valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
   visible?: boolean;
+  linkColumnForce?: string;
   sort?: boolean;
   type?: string;
   multiple?: boolean;
