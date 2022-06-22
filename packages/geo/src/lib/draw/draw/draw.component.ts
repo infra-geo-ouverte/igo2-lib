@@ -241,9 +241,9 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
 
   // Reminder: private
-  private initStore(newTitle?: string) {
+  private initStore(newTitle?: string, isNewLayer?: boolean) {
     // this.map.removeLayer(this.activeDrawingLayer);
-    this.createLayer(newTitle);
+    this.createLayer(newTitle, isNewLayer);
 
     // When changing between layers
 
@@ -518,7 +518,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.deactivateDrawControl();
     }
 
-    this.initStore(newTitle);
+    this.initStore(newTitle, isNewLayer);
     this.drawControl = this.createDrawControl(
       this.fillColor,
       this.strokeColor,
@@ -611,6 +611,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public onLayerChange(currLayer?: VectorLayer, isNewLayer?: boolean) {
     if (currLayer) {
+      console.log();
       this.isCreatingNewLayer = false;
       this.activeDrawingLayer.opacity = 0;
       this.activeDrawingLayer = currLayer;
@@ -639,13 +640,13 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
   }
 
-  public createLayer(newTitle?) {
+  public createLayer(newTitle?, isNewLayer?) {
     // this.map.removeLayer(this.activeDrawingLayer);
     // console.log(this.map);
     this.activeDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
       id: 'igo-draw-layer' + this.layerCounterID++,
-      title: newTitle
+      title: isNewLayer
         ? newTitle
         : this.languageService.translate.instant('igo.geo.draw.drawing'),
       zIndex: 200,
@@ -940,7 +941,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   updateActiveLayer(){
-    return this.allLayers.find(layer => layer.title === this.activeDrawingLayer.title);
+    let currLayer = this.allLayers.find(layer => layer.title === this.activeDrawingLayer.title);
+    return currLayer ? currLayer : 'Create Layer'   
   }
 
   // Helper methods
