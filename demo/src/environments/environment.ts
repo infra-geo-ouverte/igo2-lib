@@ -101,19 +101,19 @@ export const environment: Environment = {
             {
               layerName: "Information about the chart display",
               title: "New ESRI layer name",
-              metadataUrl: "https://www.igouverte.org/demo/",
-              //metadataAbstract: "New ESRI abstract",
+              //metadataUrl: "https://www.igouverte.org/demo/",
+              metadataAbstract: "New ESRI abstract",
             },
             {
               layerName: "Natural and man-made features, port features",
               title: "New 2nd ESRI layer name",
-              //metadataUrl: "https://gitlab.com/",
-              metadataAbstract: "New 2nd ESRI abstract",
+              metadataUrl: "https://gitlab.com/",
+              //metadataAbstract: "New 2nd ESRI abstract",
             },
             {
               layerName: "*",
               //metadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
-              metadataAbstractAll: "New abstract to all layers"
+              //metadataAbstractAll: "New abstract to all layers"
             }
           ]
         },
@@ -166,22 +166,22 @@ export const environment: Environment = {
               crossOrigin: true,
               version: '1.3.0',
               forcedProperties: [
-                { // le dernier de Entités toponymiques
+                { // le dernier en bas dans Entités toponymiques
                   layerName: "atlas_named_feature_polygon_large",
-                  title: "New WMS name",
+                  title: "New WMS name with new URL",
                   metadataUrl: "https://gitlab.com/",
                   //metadataAbstract: "New WMS Abstract"
                 },
-                { //voir dans Toutes les entités de la terre
+                { //premier dans Toutes les entités de la terre
                   layerName: "woodedarea_50k",
                   title: "New WMS name with new abstract",
                   //metadataUrl: "https://www.quebec.ca/",
-                  //metadataAbstract: "New 2nd WMS abstract"
+                  metadataAbstract: "New 2nd WMS abstract"
                 },
                 {
                   layerName: "*",
                   //metadataUrlAll: "https://quebec.ca/",
-                  metadataAbstractAll: "New WMS abstract to all layers"
+                  //metadataAbstractAll: "New WMS abstract to all layers"
                 }
               ]
               //regFilters: ["^100$"]
