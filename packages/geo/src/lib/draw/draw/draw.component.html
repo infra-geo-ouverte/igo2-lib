@@ -41,65 +41,20 @@
     </mat-slide-toggle>
   </div>
 
-  <!-- <div>
-    <mat-form-field class="example-full-width">
-      <input #input matInput placeholder="{{ 'igo.geo.draw.dialogTitle' | translate }}">
-    </mat-form-field>
-    <button mat-raised-button (click)="setupLayer(input.value, true)">Create Layer</button>
-    <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)">
-      <mat-option *ngFor="let layer of allLayers" [value]="layer">
-        {{ layer.title }}
-      </mat-option>
-      <mat-option>
-        <input>
-        Create New Drawing Layer
-      </mat-option>
-    </mat-select>
-
-    <form class="example-form">
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Layer</mat-label>
-        <input
-          type="text"
-          #input
-          placeholder="Pick one"
-          aria-label="Layer"
-          matInput
-          [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onLayerChange($event.option.value)" [displayWith]="getLayerTitle">
-          <mat-option *ngFor="let layer of allLayers" [value]="layer" >
-            {{layer.title}}
-          </mat-option>
-          <mat-option id="newLayer">
-            Create new layer 
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </form>
-
-  </div> -->
   <mat-divider></mat-divider>
 
   <div>
-    <div>
-      <mat-form-field appearance="outline" class="layer-select">
-        <mat-label>Title of the layer</mat-label>
-        <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)" [value]="updateActiveLayer()">
-          <mat-option *ngFor="let layer of allLayers" [value]="layer">
-            {{ layer.title }}
-          </mat-option>
-          <mat-option id="createNewLayer" >
-            Create New Drawing Layer
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div *ngIf="isCreatingNewLayer" class="input-button-container">
-      <mat-form-field>
-        <input #input matInput placeholder="Title">
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="setupLayer(input.value, true)">Create Layer</button>
-    </div>
+    <mat-form-field appearance="outline" class="layer-select">
+      <mat-label>Title of the layer</mat-label>
+      <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)" [value]="updateActiveLayer()">
+        <mat-option *ngFor="let layer of allLayers" [value]="layer">
+          {{ layer.title }}
+        </mat-option>
+        <mat-option id="createNewLayer" >
+          Create New Drawing Layer
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
 

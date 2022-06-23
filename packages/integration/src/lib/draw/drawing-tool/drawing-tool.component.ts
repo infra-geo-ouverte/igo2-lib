@@ -35,6 +35,10 @@ get store(): FeatureStore<Feature> { return this.drawState.store; }
  */
 get map(): IgoMap { return this.mapState.map; }
 
+get drawLayersId(): string[]{
+    return this.drawState.drawLayersId;
+}
+
 constructor(
     private drawState: DrawState,
     private mapState: MapState

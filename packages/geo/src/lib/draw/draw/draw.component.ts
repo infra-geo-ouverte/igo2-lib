@@ -63,6 +63,7 @@ import {
   // ...
 } from '@angular/animations';
 import Point from 'ol/geom/Point';
+import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
 @Component({
   selector: 'igo-draw',
@@ -120,7 +121,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fontSize: string;
   @Output() fontStyle: string;
   @Input() map: IgoMap; // Map to draw on
-
   @Input()
   get store(): FeatureStore<FeatureWithDraw> {
     return this._store;
@@ -130,7 +130,16 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
   private _store;
 
-  private layerWithStore = new Map<string, StoreAndDrawControl>();
+  @Input() 
+  get drawLayersId(): string[] {
+    return this._drawLayersId;
+  }
+  set drawLayersId(drawLayersId: string[]){
+    this._drawLayersId = drawLayersId;
+  }
+  private _drawLayersId;
+
+  private layerWithSAndDC = new Map<string, StoreAndDrawControl>();
   private layerCounterID: number = 0;
 
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
@@ -192,11 +201,11 @@ export class DrawComponent implements OnInit, OnDestroy {
       store: this.store,
       drawControl: this.drawControl
     };
-    this.layerWithStore.set(
+    this.layerWithSAndDC.set(
       this.activeDrawingLayer.id,
       currStoreAndCurrDControl
     );
-    // console.log(this.layerWithStore);
+    // console.log(this.layerWithSAndDC);
 
     this.onLayerChange(this.activeDrawingLayer);
   }
@@ -510,33 +519,54 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
   }
 
-  public setupLayer(newTitle?: string, isNewLayer?: boolean) {
+  public setupLayer(isNewLayer?: boolean) {
     if (isNewLayer) {
-      this.store = new FeatureStore<FeatureWithDraw>([], { map: this.map });
+      this._store.state.updateAll({selected: false});
+      this._store = new FeatureStore<FeatureWithDraw>([], { map: this.map });
       this.activeDrawingLayerSource = new OlVectorSource();
       this.activeDrawingLayer.opacity = 0;
       this.deactivateDrawControl();
     }
 
-    this.initStore(newTitle, isNewLayer);
-    this.drawControl = this.createDrawControl(
-      this.fillColor,
-      this.strokeColor,
-      this.strokeWidth
-    );
-    this.drawControl.setGeometryType(this.geometryType.Point as any);
-    this.toggleDrawControl();
+    setTimeout(() => {
+      // open the dialog box used to enter label
+      const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
+        disableClose: false,
+        // data: { currentLabel: olGeometry.get('draw') }
+      });
 
-    // Adds to the Map (data struc)
-    let currStoreAndCurrDControl = {
-      store: this.store,
-      drawControl: this.drawControl
-    };
-    this.layerWithStore.set(
-      this.activeDrawingLayer.id,
-      currStoreAndCurrDControl
-    );
-    this.isCreatingNewLayer = false;
+      // when dialog box is closed, get label and set it to geometry
+      dialogRef.afterClosed().subscribe((label: string) => {
+        // checks if the user clicked ok
+        if (dialogRef.componentInstance.confirmFlag) {
+          this.initStore(label, isNewLayer);
+          this.drawControl = this.createDrawControl(
+            this.fillColor,
+            this.strokeColor,
+            this.strokeWidth
+          );
+          this.drawControl.setGeometryType(this.geometryType.Point as any);
+          this.toggleDrawControl();
+      
+          // Adds to the Map (data struc)
+          let currStoreAndCurrDControl = {
+            store: this.store,
+            drawControl: this.drawControl
+          };
+          this.layerWithSAndDC.set(
+            this.activeDrawingLayer.id,
+            currStoreAndCurrDControl
+          );
+          this.isCreatingNewLayer = false;
+        }
+      });
+    }, 250);
+
+
+
+
+
+
 
   }
 
@@ -612,6 +642,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   public onLayerChange(currLayer?: VectorLayer, isNewLayer?: boolean) {
     if (currLayer) {
       console.log();
+      this._store.state.updateAll({selected: false});
       this.isCreatingNewLayer = false;
       this.activeDrawingLayer.opacity = 0;
       this.activeDrawingLayer = currLayer;
@@ -619,24 +650,23 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       this.deactivateDrawControl();
 
-      let storeAndDrawControl = this.layerWithStore.get(currLayer.id);
+      let storeAndDrawControl = this.layerWithSAndDC.get(currLayer.id);
 
       this._store = storeAndDrawControl.store;
       this.drawControl = storeAndDrawControl.drawControl;
       this.activeDrawingLayerSource =
         storeAndDrawControl.drawControl.olDrawingLayerSource;
 
-      if (!isNewLayer){
-        this.activateDrawControl();
-      }
+      // if (!isNewLayer){
+      //   this.activateDrawControl();
+      // }
+      this.activateDrawControl();
 
-      /**
-       * Unselect selected features
-       */
 
     }
     else {
-      this.isCreatingNewLayer = true;
+      this.setupLayer(true);
+      // this.isCreatingNewLayer = true;
     }
   }
 
