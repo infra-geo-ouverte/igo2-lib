@@ -23,6 +23,7 @@
     "@angular/core": "^12.2.9",
     "@igo2/utils": "^1.11.1",
     "rxjs": "^6.6.7",
+    "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^14.1.3"
   }
 }

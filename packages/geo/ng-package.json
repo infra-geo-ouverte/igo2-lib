@@ -97,6 +97,7 @@
       "@igo2/utils": "utils",
       "@igo2/core": "core",
       "@ngx-translate/core": "ngxt-core",
+      "ngx-indexed-db": "nIdb",
       "windows-1252": "windows1252"
     }
   },
