@@ -252,7 +252,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Reminder: private
   private initStore(newTitle?: string, isNewLayer?: boolean) {
-    this.map.removeLayer(this.activeDrawingLayer);
+    // this.map.removeLayer(this.activeDrawingLayer);
     this.createLayer(newTitle, isNewLayer);
 
     // When changing between layers
