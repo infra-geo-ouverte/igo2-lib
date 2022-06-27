@@ -216,6 +216,7 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "hideSelectedLayers": "Hide selected layers",
+        "notInResolution": "Layer isn't visible at the active scale. Zoom in or out to display.",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -271,7 +272,9 @@
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
         "resetRotation": "Set map to north",
-        "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map."
+        "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map.",
+        "preventSreenLock": "Prevent the screen to enter in lock mode.",
+        "letScreenLock": "Allow the screen to enter in lock mode."
       },
       "metadata": {
         "show": "Show metadata"
@@ -515,6 +518,8 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "targetHtmlUrlUnauthorizedTitle": "Unauthorized",
+      "targetHtmlUrlUnauthorized": "You do not have the credentials to open this external link.",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
       "seeRouting": "See routing",
@@ -668,7 +673,7 @@
       },
       "draw": {
         "abort": "Abort current drawing",
-        "cancelColorPicker": "Cancel",
+        "cancel": "Cancel",
         "Circle": "Circle",
         "colorPicker": "Click to open the color picker",
         "dialogInstruction": "Enter your draw's label",
@@ -690,7 +695,9 @@
         "stroke": "Stroke",
         "styleSelect": "Select style",
         "toggleMapTooltips": "Show map tooltips",
-        "undo": "Remove last vertex"
+        "undo": "Remove last vertex",
+        "fontSize": "Font size",
+        "fontStyle": "Font style"
       },
       "network": {
         "online": {
@@ -722,6 +729,9 @@
         "maxValue": "{{column}} is bigger than {{value}}",
         "minLength": "{{column}} is shorter than {{value}} characters",
         "maxLength": "{{column}} is longer than {{value}} characters"
+      },
+      "query": {
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
       }
     }
   }

@@ -404,16 +404,17 @@ export class OgcFilterSelectionComponent implements OnInit {
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
           for (const domOptions of this.configService.getConfig('dom')) {
-            if (domSelector.name === domOptions.name) {
+            if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
+                id: domOptions.id,
                 url: domOptions.url,
                 name: domOptions.name,
-                value: domOptions.value
+                values: domOptions.values
               };
             }
           }
           filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-            domValues = filterDOM.value;
+            domValues = filterDOM.values;
 
           if (domValues) {
             let newBundle = bundle;
@@ -462,16 +463,17 @@ export class OgcFilterSelectionComponent implements OnInit {
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
           for (const domOptions of this.configService.getConfig('dom')) {
-            if (domSelector.name === domOptions.name) {
+            if (domSelector.id === domOptions.id || domSelector.name === domOptions.name) {
               filterDOM = {
+                id: domOptions.id,
                 url: domOptions.url,
                 name: domOptions.name,
-                value: domOptions.value
+                values: domOptions.values
               };
             }
           }
           filterDOM.url ? domValues = await this.domService.getDom(filterDOM) as DOMValue[] :
-            domValues = filterDOM.value;
+            domValues = filterDOM.values;
 
           if (domValues) {
             let newBundle = bundle;
@@ -598,6 +600,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   emptyAutocomplete() {
     this.autocompleteEnabled = undefined;
     this.form.controls['autocomplete'].setValue('');
+    this.form.controls['autocomplete'].markAsUntouched();
   }
 
   toggleAllSelection() {

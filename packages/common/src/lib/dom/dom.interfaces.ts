@@ -1,7 +1,8 @@
 export interface DOMOptions {
-  name: string;
+  id?: number;
+  name?: string;
   url?: string;
-  value?: DOMValue[];
+  values?: DOMValue[];
 }
 
 export interface DOMValue {

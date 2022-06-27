@@ -24,7 +24,8 @@ import {
   RouteService,
   Message,
   MessageService,
-  LanguageService
+  LanguageService,
+  StorageService
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
@@ -61,7 +62,7 @@ export class ContextService {
   private toolbar: string[];
 
   get defaultContextUri(): string {
-    return this._defaultContextUri || this.options.defaultContextUri;
+    return this.storageService.get('favorite.context.uri') as string || this._defaultContextUri || this.options.defaultContextUri;
   }
   set defaultContextUri(uri: string) {
     this._defaultContextUri = uri;
@@ -74,6 +75,7 @@ export class ContextService {
     private languageService: LanguageService,
     private config: ConfigService,
     private messageService: MessageService,
+    private storageService: StorageService,
     @Optional() private route: RouteService
   ) {
     this.options = Object.assign(
@@ -131,12 +133,19 @@ export class ContextService {
   }
 
   getDefault(): Observable<DetailedContext> {
-    const url = this.baseUrl + '/contexts/default';
-    return this.http.get<DetailedContext>(url).pipe(
-      tap((context) => {
-        this.defaultContextId$.next(context.id);
-      })
-    );
+    if (this.authService.authenticated) {
+      const url = this.baseUrl + '/contexts/default';
+      return this.http.get<DetailedContext>(url).pipe(
+        tap((context) => {
+          this.defaultContextId$.next(context.id);
+        })
+      );
+    } else {
+      const uri = this.storageService.get('favorite.context.uri') as string;
+      this.defaultContextId$.next(uri);
+      return this.getContextByUri(uri);
+    }
+
   }
 
   getProfilByUser(): Observable<ContextProfils[]> {
@@ -148,8 +157,13 @@ export class ContextService {
   }
 
   setDefault(id: string): Observable<any> {
-    const url = this.baseUrl + '/contexts/default';
-    return this.http.post(url, { defaultContextId: id });
+    if (this.authService.authenticated) {
+      const url = this.baseUrl + '/contexts/default';
+      return this.http.post(url, { defaultContextId: id });
+    } else {
+      this.storageService.set('favorite.context.uri', id);
+      return of(undefined);
+    }
   }
 
   hideContext(id: string) {
@@ -674,7 +688,6 @@ export class ContextService {
       if (centerKey && params[centerKey as string]) {
         const centerParams = params[centerKey as string];
         this.mapViewFromRoute.center = centerParams.split(',').map(Number);
-        this.mapViewFromRoute.geolocate = false;
       }
 
       const projectionKey = this.route.options.projectionKey;

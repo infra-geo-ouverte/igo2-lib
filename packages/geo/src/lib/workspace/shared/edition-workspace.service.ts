@@ -28,6 +28,7 @@ import {
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { StyleService } from '../../layer/shared/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
@@ -61,6 +62,7 @@ export class EditionWorkspaceService {
     private languageService: LanguageService,
     private http: HttpClient,
     private dialog: MatDialog,
+    private styleService: StyleService,
     public authInterceptor?: AuthInterceptor) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
@@ -138,7 +140,25 @@ export class EditionWorkspaceService {
         title: layer.title,
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
-        sourceOptions: {
+        style: this.styleService.createStyle(
+          {
+            fill: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            stroke: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            circle: {
+              fill: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              stroke: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              radius: 5
+            }
+          }),
+          sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,

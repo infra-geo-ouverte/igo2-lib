@@ -138,6 +138,7 @@ export interface IgoLogicalArrayOptions {
 }
 
 export interface IgoDomSelector {
+  id: number;
   name: string;
   operator: string;
   propertyName: string;
