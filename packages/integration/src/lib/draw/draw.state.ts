@@ -23,11 +23,7 @@ export class DrawState {
   constructor(private mapState: MapState) {
 
     this.mapState.map.layers$.subscribe(() => {
-      console.log(this.mapState.map.layers.find(layer => layer.id.includes('igo-draw-layer')));
-      // if (!this.mapState.map.layers.find(layer => layer.id.includes('igo-draw-layer'))){
-      //   this.store.deleteMany(this.store.all());
-      // }
-      console.log(this.mapState.map.getLayerById('igo-draw-layer'));
+
       if (!this.mapState.map.layers.find(layer => layer.id.includes('igo-draw-layer'))) {
         this.store.deleteMany(this.store.all());
       }

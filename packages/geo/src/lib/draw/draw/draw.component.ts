@@ -187,6 +187,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Initialize the store that will contain the entities and create the Draw control
   ngOnInit() {
+    console.log(this.layerWithSAndDC);
     this.initStore();
     this.drawControl = this.createDrawControl(
       this.fillColor,
@@ -205,7 +206,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawingLayer.id,
       currStoreAndCurrDControl
     );
-    // console.log(this.layerWithSAndDC);
 
     this.onLayerChange(this.activeDrawingLayer);
   }
@@ -217,6 +217,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.drawControl.setOlMap(undefined);
     this.subscriptions$$.map((s) => s.unsubscribe());
+    this.layerWithSAndDC.clear();
   }
 
   /**
@@ -251,7 +252,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Reminder: private
   private initStore(newTitle?: string, isNewLayer?: boolean) {
-    // this.map.removeLayer(this.activeDrawingLayer);
+    this.map.removeLayer(this.activeDrawingLayer);
     this.createLayer(newTitle, isNewLayer);
 
     // When changing between layers
@@ -324,9 +325,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
           // Activates
           this.updateHeightTable();
-          // this.numberOfDrawings = this.store.count$.getValue();
-          // this.numberOfDrawings > 1 ? this.tableTemplate.tableHeight = '23vh':
-          // this.tableTemplate.tableHeight = 'auto';
         }
         // deletes the feature
         else {
@@ -520,14 +518,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public setupLayer(isNewLayer?: boolean) {
-    if (isNewLayer) {
-      this._store.state.updateAll({selected: false});
-      this._store = new FeatureStore<FeatureWithDraw>([], { map: this.map });
-      this.activeDrawingLayerSource = new OlVectorSource();
-      this.activeDrawingLayer.opacity = 0;
-      this.deactivateDrawControl();
-    }
-
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
@@ -539,6 +529,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
+          
+          this._store.state.updateAll({selected: false});
+          this._store = new FeatureStore<FeatureWithDraw>([], { map: this.map });
+          this.activeDrawingLayerSource = new OlVectorSource();
+          this.activeDrawingLayer.opacity = 0;
+          this.deactivateDrawControl();
+          
           this.initStore(label, isNewLayer);
           this.drawControl = this.createDrawControl(
             this.fillColor,
@@ -559,15 +556,12 @@ export class DrawComponent implements OnInit, OnDestroy {
           );
           this.isCreatingNewLayer = false;
         }
+        // else{
+        //   // this.onLayerChange(this.activeDrawingLayer);
+        //   this.updateActiveLayer();
+        // }
       });
     }, 250);
-
-
-
-
-
-
-
   }
 
   // HTML user interactions
@@ -966,13 +960,9 @@ export class DrawComponent implements OnInit, OnDestroy {
       : (this.tableTemplate.tableHeight = 'auto');
   }
 
-  getLayerTitle(layer) {
-    return layer ? layer.title : '';
-  }
-
   updateActiveLayer(){
     let currLayer = this.allLayers.find(layer => layer.title === this.activeDrawingLayer.title);
-    return currLayer ? currLayer : 'Create Layer'   
+    return currLayer ? currLayer : this.allLayers[0];
   }
 
   // Helper methods
