@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { FeatureStore, Feature } from '@igo2/geo';
+import { FeatureStore, Feature, DrawControl } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -14,20 +14,20 @@ export class DrawState {
   /**
    * Store that holds the measures
    */
-  public store: FeatureStore<Feature> = new FeatureStore<Feature>([], {
-    map: this.mapState.map
-  });
+  public stores: FeatureStore<Feature>[] = [];
 
-  public drawLayersId: string[];
+  public drawControls: DrawControl[];
+
+
 
   constructor(private mapState: MapState) {
 
-    this.mapState.map.layers$.subscribe(() => {
+    // this.mapState.map.layers$.subscribe(() => {
 
-      if (!this.mapState.map.layers.find(layer => layer.id.includes('igo-draw-layer'))) {
-        this.store.deleteMany(this.store.all());
-      }
-    });
+    //   if (!this.mapState.map.layers.find(layer => layer.id.includes('igo-draw-layer'))) {
+    //     this.store.deleteMany(this.store.all());
+    //   }
+    // });
   }
 
 }

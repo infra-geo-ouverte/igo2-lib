@@ -122,22 +122,22 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fontStyle: string;
   @Input() map: IgoMap; // Map to draw on
   @Input()
-  get store(): FeatureStore<FeatureWithDraw> {
-    return this._store;
+  get stores(): Array<FeatureStore<FeatureWithDraw>> {
+    return this._stores;
   }
-  set store(store: FeatureStore<FeatureWithDraw>) {
-    this._store = store;
+  set stores(stores: Array<FeatureStore<FeatureWithDraw>>) {
+    this._stores = stores;
   }
-  private _store;
+  private _stores = [];
 
-  @Input() 
-  get drawLayersId(): string[] {
-    return this._drawLayersId;
+  @Input()
+  get drawControls(): Array<DrawControl>{
+    return this._drawControls;
   }
-  set drawLayersId(drawLayersId: string[]){
-    this._drawLayersId = drawLayersId;
+  set drawControls(drawControls:  Array<DrawControl>){
+    this._drawControls = drawControls;
   }
-  private _drawLayersId;
+  private _drawControls;
 
   private layerWithSAndDC = new Map<string, StoreAndDrawControl>();
   private layerCounterID: number = 0;
@@ -165,6 +165,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private numberOfDrawings: number;
   public isCreatingNewLayer: boolean = false;
+  public activeStore: FeatureStore<FeatureWithDraw>;
 
   constructor(
     private languageService: LanguageService,
@@ -187,7 +188,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Initialize the store that will contain the entities and create the Draw control
   ngOnInit() {
-    console.log(this.layerWithSAndDC);
+    this.activeStore = new FeatureStore<FeatureWithDraw>([],{map: this.map})
     this.initStore();
     this.drawControl = this.createDrawControl(
       this.fillColor,
@@ -197,15 +198,18 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawControl.setGeometryType(this.geometryType.Point as any);
     this.toggleDrawControl();
 
-    // Adds to the Map (data struc)
-    let currStoreAndCurrDControl = {
-      store: this.store,
-      drawControl: this.drawControl
-    };
-    this.layerWithSAndDC.set(
-      this.activeDrawingLayer.id,
-      currStoreAndCurrDControl
-    );
+
+    let tempStores:Array<FeatureStore<FeatureWithDraw>> = this.stores;
+    tempStores.push(this.activeStore);
+    this.stores = tempStores;
+    let tempDrawControl = [];
+    tempDrawControl.push(this.drawControl);
+    this.drawControls = tempDrawControl;
+
+    console.log(this.activeDrawingLayer);
+    console.log(this.activeStore);
+    console.log(this.drawControl);
+    
 
     this.onLayerChange(this.activeDrawingLayer);
   }
@@ -258,7 +262,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     // When changing between layers
 
     this.subscriptions$$.push(
-      this.store.stateView
+      this.activeStore.stateView
         .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
           return record.state.selected === true;
         })
@@ -271,10 +275,10 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions$$.push(
-      this.store.count$.subscribe((cnt) => {
+      this.activeStore.count$.subscribe((cnt) => {
         cnt >= 1
-          ? (this.store.layer.options.showInLayerList = true)
-          : (this.store.layer.options.showInLayerList = false);
+          ? (this.activeStore.layer.options.showInLayerList = true)
+          : (this.activeStore.layer.options.showInLayerList = false);
       })
     );
   }
@@ -350,11 +354,11 @@ export class DrawComponent implements OnInit, OnDestroy {
   private onDrawEnd(olGeometry: OlGeometry, radius?: number) {
     this.addFeatureToStore(olGeometry, radius);
     this.clearLabelsOfOlGeometry(olGeometry);
-    this.store.layer.ol.getSource().refresh();
+    this.activeStore.layer.ol.getSource().refresh();
   }
 
   private onModifyDraw(olGeometry) {
-    const entities = this.store.all();
+    const entities = this.activeStore.all();
 
     entities.forEach((entity) => {
       const entityId = entity.properties.id;
@@ -386,7 +390,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string) {
-    const entities = this.store.all();
+    const entities = this.activeStore.all();
 
     const olGeometry = olFeature.getGeometry() as any;
     olGeometry.ol_uid = olFeature.get('id');
@@ -486,7 +490,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       lat4326 = point4326[1];
     }
 
-    this.store.update({
+    this.activeStore.update({
       type: FEATURE,
       geometry,
       projection: projection.getCode(),
@@ -530,8 +534,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
           
-          this._store.state.updateAll({selected: false});
-          this._store = new FeatureStore<FeatureWithDraw>([], { map: this.map });
+          this.activeStore.state.updateAll({selected: false});
+          this.activeStore = new FeatureStore<FeatureWithDraw>([], { map: this.map });
           this.activeDrawingLayerSource = new OlVectorSource();
           this.activeDrawingLayer.opacity = 0;
           this.deactivateDrawControl();
@@ -547,7 +551,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       
           // Adds to the Map (data struc)
           let currStoreAndCurrDControl = {
-            store: this.store,
+            store: this.activeStore,
             drawControl: this.drawControl
           };
           this.layerWithSAndDC.set(
@@ -584,7 +588,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   deleteDrawings() {
-    this.store.deleteMany(this.selectedFeatures$.value);
+    this.activeStore.deleteMany(this.selectedFeatures$.value);
     this.selectedFeatures$.value.forEach((selectedFeature) => {
       this.activeDrawingLayerSource
         .getFeatures()
@@ -635,8 +639,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public onLayerChange(currLayer?: VectorLayer, isNewLayer?: boolean) {
     if (currLayer) {
-      console.log();
-      this._store.state.updateAll({selected: false});
+      this.activeStore.state.updateAll({selected: false});
       this.isCreatingNewLayer = false;
       this.activeDrawingLayer.opacity = 0;
       this.activeDrawingLayer = currLayer;
@@ -644,16 +647,17 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       this.deactivateDrawControl();
 
-      let storeAndDrawControl = this.layerWithSAndDC.get(currLayer.id);
+      // let storeAndDrawControl = this.layerWithSAndDC.get(currLayer.id);
 
-      this._store = storeAndDrawControl.store;
-      this.drawControl = storeAndDrawControl.drawControl;
-      this.activeDrawingLayerSource =
-        storeAndDrawControl.drawControl.olDrawingLayerSource;
+      // this.activeStore = storeAndDrawControl.store;
+      // this.drawControl = storeAndDrawControl.drawControl;
+      // this.activeDrawingLayerSource =
+      //   storeAndDrawControl.drawControl.olDrawingLayerSource;
 
-      // if (!isNewLayer){
-      //   this.activateDrawControl();
-      // }
+      
+      this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
+      // .find(store => store.layer.id === currLayer.id);
+      // this.drawControl = this.drawControls.find(DC => DC.olDrawingLayer.getLayerState(). )
       this.activateDrawControl();
 
 
@@ -696,25 +700,25 @@ export class DrawComponent implements OnInit, OnDestroy {
       }
     });
 
-    tryBindStoreLayer(this.store, this.activeDrawingLayer);
+    tryBindStoreLayer(this.activeStore, this.activeDrawingLayer);
 
     tryAddLoadingStrategy(
-      this.store,
+      this.activeStore,
       new FeatureStoreLoadingStrategy({
         motion: FeatureMotion.None
       })
     );
 
     tryAddSelectionStrategy(
-      this.store,
+      this.activeStore,
       new FeatureStoreSelectionStrategy({
         map: this.map,
         motion: FeatureMotion.None,
         many: true
       })
     );
-    this.store.layer.visible = true;
-    this.store.source.ol.on(
+    this.activeStore.layer.visible = true;
+    this.activeStore.source.ol.on(
       'removefeature',
       (event: OlVectorSourceEvent<OlGeometry>) => {
         const olGeometry = event.feature.getGeometry();
@@ -744,13 +748,13 @@ export class DrawComponent implements OnInit, OnDestroy {
         );
         this.updateFillAndStrokeColor(olFeature, fillColor, strokeColor);
 
-        const entity = this.store
+        const entity = this.activeStore
           .all()
           .find((e) => e.meta.id === olFeature.getId());
         entity.properties.drawingStyle.fill = olFeature.get('fillColor_');
         entity.properties.drawingStyle.stroke = olFeature.get('strokeColor_');
-        this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
+        this.activeStore.update(entity);
+        this.activeStore.layer.ol.getSource().refresh();
       });
     }
     this.fillColor = fillColor;
@@ -778,12 +782,12 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.map.ol.getView().getProjection().getCode()
         );
         this.updateFontSizeAndStyle(olFeature, size, style);
-        const entity = this.store
+        const entity = this.activeStore
           .all()
           .find((e) => e.meta.id === olFeature.getId());
         entity.properties.fontStyle = olFeature.get('style_');
-        this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
+        this.activeStore.update(entity);
+        this.activeStore.layer.ol.getSource().refresh();
       });
 
       this.fontSize = size;
@@ -815,13 +819,13 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.map.ol.getView().getProjection().getCode()
         );
         this.updateOffset(olFeature, offsetX, offsetY);
-        const entity = this.store
+        const entity = this.activeStore
           .all()
           .find((e) => e.meta.id === olFeature.getId());
         entity.properties.offsetX = olFeature.get('offsetX_');
         entity.properties.offsetY = olFeature.get('offsetY_');
-        this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
+        this.activeStore.update(entity);
+        this.activeStore.layer.ol.getSource().refresh();
       });
       this.elementStyle(labelsAreShown);
     }
@@ -954,7 +958,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   updateHeightTable() {
     // Check the amount of rows as a possible alternative
 
-    this.numberOfDrawings = this.store.count$.getValue();
+    this.numberOfDrawings = this.activeStore.count$.getValue();
     this.numberOfDrawings > 6
       ? (this.tableTemplate.tableHeight = '23vh')
       : (this.tableTemplate.tableHeight = 'auto');
@@ -998,7 +1002,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     olGeometry: OlGeometry,
     radius?: number
   ) {
-    this.store.delete(entity);
+    this.activeStore.delete(entity);
     this.onDrawEnd(olGeometry, radius);
   }
 
@@ -1050,7 +1054,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private elementStyle(labelsAreShown: boolean, isAnIcon?) {
     if (isAnIcon) {
-      this.store.layer.ol.setStyle((feature, resolution) => {
+      this.activeStore.layer.ol.setStyle((feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
           feature,
           resolution,
@@ -1065,7 +1069,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
       // this.icon = undefined;
     } else {
-      this.store.layer.ol.setStyle((feature, resolution) => {
+      this.activeStore.layer.ol.setStyle((feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
           feature,
           resolution,

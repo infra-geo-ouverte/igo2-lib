@@ -59,7 +59,7 @@
   <mat-divider></mat-divider>
   <div>
     <button
-      *ngIf="store.count$.getValue() > 0"
+      *ngIf="activeStore.count$.getValue() > 0"
       class="deleteBtn"
       mat-icon-button
       color="warn"
@@ -76,7 +76,7 @@
       <igo-entity-table
         #table
         class="table-compact"
-        [store]="store"
+        [store]="activeStore"
         [template]="tableTemplate"
         (dblclick)="editLabelDrawing()"
       >

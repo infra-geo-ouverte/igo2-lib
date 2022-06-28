@@ -4,7 +4,7 @@ import {
   } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { FeatureStore, Feature, IgoMap } from '@igo2/geo';
+import { FeatureStore, Feature, IgoMap, DrawControl} from '@igo2/geo';
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
 
@@ -27,7 +27,7 @@ export class DrawingToolComponent {
  * Map to measure on
  * @internal
  */
-get store(): FeatureStore<Feature> { return this.drawState.store; }
+get stores(): FeatureStore<Feature>[] { return this.drawState.stores; }
 
 /**
  * Map to measure on
@@ -35,9 +35,7 @@ get store(): FeatureStore<Feature> { return this.drawState.store; }
  */
 get map(): IgoMap { return this.mapState.map; }
 
-get drawLayersId(): string[]{
-    return this.drawState.drawLayersId;
-}
+get drawControls(): DrawControl[] { return this.drawState.drawControls}
 
 constructor(
     private drawState: DrawState,
