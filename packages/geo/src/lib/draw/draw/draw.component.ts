@@ -4,7 +4,8 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy,
-  Output
+  Output,
+  EventEmitter
 } from '@angular/core';
 
 import {
@@ -122,22 +123,24 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fontStyle: string;
   @Input() map: IgoMap; // Map to draw on
   @Input()
-  get stores(): Array<FeatureStore<FeatureWithDraw>> {
+  get stores(): FeatureStore<FeatureWithDraw>[] {
     return this._stores;
   }
-  set stores(stores: Array<FeatureStore<FeatureWithDraw>>) {
+  set stores(stores: FeatureStore<FeatureWithDraw>[]) {
     this._stores = stores;
   }
-  private _stores = [];
+  private _stores;
+  @Output() storesChange = new EventEmitter<FeatureStore<FeatureWithDraw>[]>();
 
   @Input()
-  get drawControls(): Array<DrawControl>{
+  get drawControls(): [string, DrawControl][]{
     return this._drawControls;
   }
-  set drawControls(drawControls:  Array<DrawControl>){
+  set drawControls(drawControls:  [string, DrawControl][]){
     this._drawControls = drawControls;
   }
   private _drawControls;
+  @Output() drawControlsChange = new EventEmitter<[string, DrawControl][]>();
 
   private layerWithSAndDC = new Map<string, StoreAndDrawControl>();
   private layerCounterID: number = 0;
@@ -188,30 +191,54 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Initialize the store that will contain the entities and create the Draw control
   ngOnInit() {
-    this.activeStore = new FeatureStore<FeatureWithDraw>([],{map: this.map})
-    this.initStore();
-    this.drawControl = this.createDrawControl(
-      this.fillColor,
-      this.strokeColor,
-      this.strokeWidth
-    );
-    this.drawControl.setGeometryType(this.geometryType.Point as any);
-    this.toggleDrawControl();
 
-
-    let tempStores:Array<FeatureStore<FeatureWithDraw>> = this.stores;
-    tempStores.push(this.activeStore);
-    this.stores = tempStores;
-    let tempDrawControl = [];
-    tempDrawControl.push(this.drawControl);
-    this.drawControls = tempDrawControl;
-
-    console.log(this.activeDrawingLayer);
-    console.log(this.activeStore);
-    console.log(this.drawControl);
+    console.log(this.map);
+    console.log(this.stores);
+    console.log(this.drawControls);
     
-
-    this.onLayerChange(this.activeDrawingLayer);
+    if(!Array.isArray(this.stores) || !Array.isArray(this.drawControls)){
+      this.activeStore = new FeatureStore<FeatureWithDraw>([],{map: this.map})
+      this.initStore();
+      this.drawControl = this.createDrawControl(
+        this.fillColor,
+        this.strokeColor,
+        this.strokeWidth
+      );
+      this.drawControl.setGeometryType(this.geometryType.Point as any);
+      this.toggleDrawControl();
+      this.stores = [];
+      this.drawControls = [];      
+      this.stores.push(this.activeStore);
+      this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
+      this.storesChange.emit(this.stores);
+      this.drawControlsChange.emit(this.drawControls);
+      
+      this.onLayerChange(this.activeDrawingLayer);
+    }
+    else{
+      this.activeDrawingLayer = this.stores[0].layer;
+      this.onLayerChange(this.activeDrawingLayer);
+      this.subscriptions$$.push(
+        this.activeStore.stateView
+          .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+            return record.state.selected === true;
+          })
+          .pipe(
+            skip(1) // Skip initial emission
+          )
+          .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
+            this.selectedFeatures$.next(records.map((record) => record.entity));
+          })
+      );
+  
+      this.subscriptions$$.push(
+        this.activeStore.count$.subscribe((cnt) => {
+          cnt >= 1
+            ? (this.activeStore.layer.options.showInLayerList = true)
+            : (this.activeStore.layer.options.showInLayerList = false);
+        })
+      );
+    }
   }
 
   /**
@@ -526,7 +553,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
         disableClose: false,
-        // data: { currentLabel: olGeometry.get('draw') }
       });
 
       // when dialog box is closed, get label and set it to geometry
@@ -548,22 +574,13 @@ export class DrawComponent implements OnInit, OnDestroy {
           );
           this.drawControl.setGeometryType(this.geometryType.Point as any);
           this.toggleDrawControl();
-      
-          // Adds to the Map (data struc)
-          let currStoreAndCurrDControl = {
-            store: this.activeStore,
-            drawControl: this.drawControl
-          };
-          this.layerWithSAndDC.set(
-            this.activeDrawingLayer.id,
-            currStoreAndCurrDControl
-          );
+    
+          this.stores.push(this.activeStore);
+          this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
+          this.storesChange.emit(this.stores);
+          this.drawControlsChange.emit(this.drawControls);
           this.isCreatingNewLayer = false;
         }
-        // else{
-        //   // this.onLayerChange(this.activeDrawingLayer);
-        //   this.updateActiveLayer();
-        // }
       });
     }, 250);
   }
@@ -645,32 +662,18 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawingLayer = currLayer;
       this.activeDrawingLayer.opacity = 1;
 
-      this.deactivateDrawControl();
-
-      // let storeAndDrawControl = this.layerWithSAndDC.get(currLayer.id);
-
-      // this.activeStore = storeAndDrawControl.store;
-      // this.drawControl = storeAndDrawControl.drawControl;
-      // this.activeDrawingLayerSource =
-      //   storeAndDrawControl.drawControl.olDrawingLayerSource;
-
-      
+      this.deactivateDrawControl();      
       this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
-      // .find(store => store.layer.id === currLayer.id);
-      // this.drawControl = this.drawControls.find(DC => DC.olDrawingLayer.getLayerState(). )
+      this.drawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
+      this.activeDrawingLayerSource = this.drawControl.olDrawingLayerSource;
       this.activateDrawControl();
-
-
     }
     else {
       this.setupLayer(true);
-      // this.isCreatingNewLayer = true;
     }
   }
 
   public createLayer(newTitle?, isNewLayer?) {
-    // this.map.removeLayer(this.activeDrawingLayer);
-    // console.log(this.map);
     this.activeDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
       id: 'igo-draw-layer' + this.layerCounterID++,

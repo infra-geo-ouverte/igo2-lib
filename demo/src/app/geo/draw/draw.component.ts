@@ -7,7 +7,8 @@ import {
   LayerService,
   FeatureStore,
   FeatureWithDraw,
-  MapService
+  MapService,
+  DrawControl
 } from '@igo2/geo';
 
 @Component({
@@ -32,7 +33,8 @@ export class AppDrawComponent {
     projection: 'EPSG:3857'
   };
 
-  public store = new FeatureStore<FeatureWithDraw>([], {map: this.map});
+  public stores = new FeatureStore<FeatureWithDraw>([], {map: this.map});
+  public drawControls: [string, DrawControl][] = [];
 
   constructor(
     private languageService: LanguageService,
