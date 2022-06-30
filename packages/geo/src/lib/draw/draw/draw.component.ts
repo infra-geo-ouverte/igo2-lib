@@ -130,17 +130,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     this._stores = stores;
   }
   private _stores;
-  @Output() storesChange = new EventEmitter<FeatureStore<FeatureWithDraw>[]>();
+  @Output() layersIDEvent = new EventEmitter<string>();
 
-  @Input()
-  get drawControls(): [string, DrawControl][]{
-    return this._drawControls;
-  }
-  set drawControls(drawControls:  [string, DrawControl][]){
-    this._drawControls = drawControls;
-  }
-  private _drawControls;
-  @Output() drawControlsChange = new EventEmitter<[string, DrawControl][]>();
+  private drawControls: [string, DrawControl][] = [];
 
   private layerWithSAndDC = new Map<string, StoreAndDrawControl>();
   private layerCounterID: number = 0;
@@ -190,14 +182,12 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   // Initialize the store that will contain the entities and create the Draw control
-  ngOnInit() {
-
-    console.log(this.map);
+  ngOnInit() {    
     console.log(this.stores);
-    console.log(this.drawControls);
-    
-    if(!Array.isArray(this.stores) || !Array.isArray(this.drawControls)){
-      this.activeStore = new FeatureStore<FeatureWithDraw>([],{map: this.map})
+    if (this.stores.length === 0) {
+      this.activeStore = new FeatureStore<FeatureWithDraw>([], {
+        map: this.map
+      });
       this.initStore();
       this.drawControl = this.createDrawControl(
         this.fillColor,
@@ -206,17 +196,23 @@ export class DrawComponent implements OnInit, OnDestroy {
       );
       this.drawControl.setGeometryType(this.geometryType.Point as any);
       this.toggleDrawControl();
-      this.stores = [];
-      this.drawControls = [];      
       this.stores.push(this.activeStore);
       this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
-      this.storesChange.emit(this.stores);
-      this.drawControlsChange.emit(this.drawControls);
-      
+      this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
-    }
-    else{
+    } else {
       this.activeDrawingLayer = this.stores[0].layer;
+      this.activeStore = this.stores[0];
+      this.drawControl = this.createDrawControl(
+        this.fillColor,
+        this.strokeColor,
+        this.strokeWidth
+      );
+      this.drawControl.setGeometryType(this.geometryType.Point as any);
+      this.deactivateDrawControl();
+      for (const layer of this.allLayers){
+        this.drawControls.push([layer.id, this.drawControl])
+      }
       this.onLayerChange(this.activeDrawingLayer);
       this.subscriptions$$.push(
         this.activeStore.stateView
@@ -230,7 +226,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.selectedFeatures$.next(records.map((record) => record.entity));
           })
       );
-  
+
       this.subscriptions$$.push(
         this.activeStore.count$.subscribe((cnt) => {
           cnt >= 1
@@ -577,8 +573,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     
           this.stores.push(this.activeStore);
           this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
-          this.storesChange.emit(this.stores);
-          this.drawControlsChange.emit(this.drawControls);
+          this.layersIDEvent.emit(this.activeDrawingLayer.id);
           this.isCreatingNewLayer = false;
         }
       });

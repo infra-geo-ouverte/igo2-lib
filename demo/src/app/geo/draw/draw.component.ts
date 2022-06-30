@@ -34,7 +34,6 @@ export class AppDrawComponent {
   };
 
   public stores = new FeatureStore<FeatureWithDraw>([], {map: this.map});
-  public drawControls: [string, DrawControl][] = [];
 
   constructor(
     private languageService: LanguageService,
