@@ -42,9 +42,20 @@ export class DrawingToolComponent {
     return this.drawState.layersID;
   }
 
+  get drawControls(): [string, DrawControl][] {
+    return this.drawState.drawControls;
+  }
+  set drawControls(dc:[string, DrawControl][]){
+    this.drawState.drawControls = dc;
+  }
+
   public addLayersID(layerID:string){
     this.layersID.push(layerID);
-    console.log(this.layersID);
+  }
+
+  public addDrawControls(dc:[string, DrawControl][]){
+    this.drawControls = dc;
+    console.log(this.drawControls);
   }
 
   constructor(private drawState: DrawState, private mapState: MapState) {}
