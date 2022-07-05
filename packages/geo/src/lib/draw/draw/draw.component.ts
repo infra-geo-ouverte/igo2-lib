@@ -187,8 +187,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Initialize the store that will contain the entities and create the Draw control
   ngOnInit() {    
-    console.log(this.stores);
-    console.log(this._stores);
     if (this.stores.length === 0 || !(Array.isArray(this.stores))) {
       if (!(Array.isArray(this.stores))){
         this.stores = [];
@@ -233,6 +231,10 @@ export class DrawComponent implements OnInit, OnDestroy {
             : (this.activeStore.layer.options.showInLayerList = false);
         })
       );
+      this.allLayers.forEach(layer => {
+        if(layer.id !== this.activeDrawingLayer.id){
+          layer.opacity = 0;
+      }});
     }
   }
 
@@ -241,6 +243,10 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    this.allLayers.forEach(layer => layer.opacity = 1);
+    this.stores.forEach(store => {
+      store.state.updateAll({selected: false});
+    });
     this.drawControl.setOlMap(undefined);
     this.subscriptions$$.map((s) => s.unsubscribe());
   }
@@ -649,7 +655,6 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
 
   public onLayerChange(currLayer?: VectorLayer) {
-    console.log(this.map);
     if (currLayer) {
       this.activeStore.state.updateAll({selected: false});
       this.isCreatingNewLayer = false;
@@ -669,9 +674,13 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public createLayer(newTitle?, isNewLayer?) {
+    for (const layer of this.allLayers){
+      let numberId = Number(layer.id.replace('igo-draw-layer',''));
+      this.layerCounterID = Math.max(numberId,this.layerCounterID);
+    }
     this.activeDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
-      id: 'igo-draw-layer' + this.layerCounterID++,
+      id: 'igo-draw-layer' + ++this.layerCounterID,
       title: isNewLayer
         ? newTitle
         : this.languageService.translate.instant('igo.geo.draw.drawing'),

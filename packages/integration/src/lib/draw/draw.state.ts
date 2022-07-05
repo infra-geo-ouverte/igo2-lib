@@ -17,15 +17,19 @@ export class DrawState {
 
   constructor(private mapState: MapState) {
     this.mapState.map.layers$.subscribe(() => {
-      for(const layer of this.mapState.map.layers.filter(layer => layer.id.includes('igo-draw-layer'))){
-        if (!this.layersID.includes(layer.id)){
-          console.log(layer.id);
-          
-          // this.stores = this.stores.filter(store => store.layer.id !== layer.id);
-          // this.layersID = this.layersID.filter(layerID => layerID !== layer.id);
-          // this.drawControls = this.drawControls.filter(dc => dc[0] !== layer.id);
+      this.layersID.forEach(layerId => {
+        if (!this.mapState.map.getLayerById(layerId)){
+          console.log(layerId);
+          console.log(this.stores);
+          let deletedStore = this.stores.find(store => store.layer.id === layerId);
+          deletedStore.deleteMany(deletedStore.all());
+          this.stores.splice(this.stores.indexOf(deletedStore,0), 1);
+          this.layersID.splice(this.layersID.indexOf(layerId,0), 1);
+          let drawControlIndex = this.drawControls.findIndex(dc => dc[0] === layerId);
+          this.drawControls.splice(drawControlIndex, 1);
         }
-      }
+      })
+
     });
 
     for (let store of this.stores){
