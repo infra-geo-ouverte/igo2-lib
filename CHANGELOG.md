@@ -1,3 +1,34 @@
+# [1.12.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.1...1.12.0) (2022-06-23)
+
+
+### Bug Fixes
+
+* **demo:** missing import for indexeddb service ([4530872](https://github.com/infra-geo-ouverte/igo2-lib/commit/453087216b8f15978832db54e7048a5a7f73589b))
+* **entity-table:** fix entity-table buttons ([#1041](https://github.com/infra-geo-ouverte/igo2-lib/issues/1041)) ([a671b53](https://github.com/infra-geo-ouverte/igo2-lib/commit/a671b53edb7af9f0b00b67d724f10986b9d6db7c))
+* **export:** export to latin1 with no latin1 equivalent characters ([#1042](https://github.com/infra-geo-ouverte/igo2-lib/issues/1042)) ([9d9e8c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/9d9e8c6c3f0fc129661e697328955be76f1cf7d7))
+* **import:** imported layers are disabled when offline ([#1047](https://github.com/infra-geo-ouverte/igo2-lib/issues/1047)) ([2e916e3](https://github.com/infra-geo-ouverte/igo2-lib/commit/2e916e3548c304a0726351c43cd3c038b448f53d))
+* **ogcfilter:** between operator crash with undefined values for lower and upper boundary ([#1070](https://github.com/infra-geo-ouverte/igo2-lib/issues/1070)) ([f807de4](https://github.com/infra-geo-ouverte/igo2-lib/commit/f807de4ba5669a9fe3534f75abfb93dec02e57a2))
+* **ogcfilter:** propertyislike operator crash with undefined values ([#1069](https://github.com/infra-geo-ouverte/igo2-lib/issues/1069)) ([3e8151e](https://github.com/infra-geo-ouverte/igo2-lib/commit/3e8151e56a6d067180c030ad050af67fe8971d15))
+* **print:** handle display of legend ([#1051](https://github.com/infra-geo-ouverte/igo2-lib/issues/1051)) ([fd259f3](https://github.com/infra-geo-ouverte/igo2-lib/commit/fd259f399f731f0abafd5aeb3eef02f6691c35ac))
+* **print:** tfw filename was different than the tiff file ([#1050](https://github.com/infra-geo-ouverte/igo2-lib/issues/1050)) ([3d73b08](https://github.com/infra-geo-ouverte/igo2-lib/commit/3d73b081b8675ffdf08927ecb150c48960bc2e8e))
+* **search-results:** prevent empty message to be shown during typing ([#1061](https://github.com/infra-geo-ouverte/igo2-lib/issues/1061)) ([fcbd5e0](https://github.com/infra-geo-ouverte/igo2-lib/commit/fcbd5e0d50370c404343b35c3d74166b6175cdf4))
+* **wms-workspace:** duplicated query on non exposed workspace ([#1039](https://github.com/infra-geo-ouverte/igo2-lib/issues/1039)) ([6a48351](https://github.com/infra-geo-ouverte/igo2-lib/commit/6a48351619bf9e0989050d037631209f0aff2113))
+
+
+### Features
+
+* **draw:** Management of the editing of the labels ([#1059](https://github.com/infra-geo-ouverte/igo2-lib/issues/1059)) ([2c039e2](https://github.com/infra-geo-ouverte/igo2-lib/commit/2c039e2ed104e3b352c9627ad30b56e69c94fb6a))
+* **edition:** allow send config option / url call for dom / add, modify, delete disabled button config ([#1048](https://github.com/infra-geo-ouverte/igo2-lib/issues/1048)) ([31c57f8](https://github.com/infra-geo-ouverte/igo2-lib/commit/31c57f8e083c1a68e5f5aa4571caf5bd081dc229))
+* **entity-table:** add css class to hide content ([#1046](https://github.com/infra-geo-ouverte/igo2-lib/issues/1046)) ([ac9e019](https://github.com/infra-geo-ouverte/igo2-lib/commit/ac9e01948f3bdcd77687d0be788c77f1220902e0))
+* **feature-details:** open secure docs and images from depot API ([#1015](https://github.com/infra-geo-ouverte/igo2-lib/issues/1015)) ([05cb02e](https://github.com/infra-geo-ouverte/igo2-lib/commit/05cb02e9335c3598df6bb125768a72b0d0d64e54))
+* **icherche:** allow + hashtags to be read ([#1056](https://github.com/infra-geo-ouverte/igo2-lib/issues/1056)) ([a1c40a4](https://github.com/infra-geo-ouverte/igo2-lib/commit/a1c40a4d09a9537214b5e4e86b179d7b0905f711))
+* **integration:** tool for vector source closest feature ([#994](https://github.com/infra-geo-ouverte/igo2-lib/issues/994)) ([5c4f0a0](https://github.com/infra-geo-ouverte/igo2-lib/commit/5c4f0a0ad531a55438d130f310dc6d9b1cd0f7ff))
+* **ogc-filter/dom:** allow domain of values to fill ogc-filter selec… ([#1044](https://github.com/infra-geo-ouverte/igo2-lib/issues/1044)) ([5b52199](https://github.com/infra-geo-ouverte/igo2-lib/commit/5b521994a97b2e17ccb886354d2f9587d95744b8))
+* **search-results:** Top panel state default options in config ([#1054](https://github.com/infra-geo-ouverte/igo2-lib/issues/1054)) ([5b90527](https://github.com/infra-geo-ouverte/igo2-lib/commit/5b90527b4ac0024293efe8fcb6f74f0b8491b374))
+* **wakeLockApi:** button to prevent the screen lock ([#1036](https://github.com/infra-geo-ouverte/igo2-lib/issues/1036)) ([ec0cae3](https://github.com/infra-geo-ouverte/igo2-lib/commit/ec0cae30b3c9781d4cea90f9e30868dfaf9921c8))
+
+
+
 ## [1.11.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.0...1.11.1) (2022-04-07)
 
 

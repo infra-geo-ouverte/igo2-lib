@@ -207,7 +207,8 @@ gulp.task('core:concatStyles', done => {
       './packages/core/src/style/themes/indigo.theme.scss',
       './packages/core/src/style/themes/orange.theme.scss',
       './packages/core/src/style/themes/dark.theme.scss',
-      './packages/core/src/style/themes/teal.theme.scss'
+      './packages/core/src/style/themes/teal.theme.scss',
+      './packages/core/src/style/themes/qcca.theme.scss'
     ])
     .pipe(concat('index.theming.scss'))
     .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
