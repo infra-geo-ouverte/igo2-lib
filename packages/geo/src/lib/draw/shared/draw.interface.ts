@@ -37,6 +37,6 @@ export interface FeatureStoreDrawStrategyOptions {
 }
 
 export interface StoreAndDrawControl {
-  store: FeatureStore<FeatureWithDraw>; 
+  store: FeatureStore<FeatureWithDraw>;
   drawControl: DrawControl;
 }

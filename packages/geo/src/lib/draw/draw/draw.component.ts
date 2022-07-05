@@ -25,7 +25,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { Draw, FeatureWithDraw, StoreAndDrawControl } from '../shared/draw.interface';
+import { Draw, FeatureWithDraw } from '../shared/draw.interface';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -130,7 +130,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this._stores = value;
   }
   private _stores:FeatureStore<FeatureWithDraw>[] = [];
-  @Input() 
+  @Input()
   get drawControls(): [string, DrawControl][]{
     return this._drawControls;
   }
@@ -141,10 +141,11 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() drawControlsEvent = new EventEmitter<[string, DrawControl][]>();
   @Output() layersIDEvent = new EventEmitter<string>();
 
+  public activeStore: FeatureStore<FeatureWithDraw>;
   private layerCounterID: number = 0;
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
   private activeDrawingLayerSource = new OlVectorSource();
-  private drawControl: DrawControl;
+  private activeDrawControl: DrawControl;
   private drawEnd$$: Subscription;
   private drawSelect$$: Subscription;
   private activeDrawingLayer: VectorLayer;
@@ -164,7 +165,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private numberOfDrawings: number;
   public isCreatingNewLayer: boolean = false;
-  public activeStore: FeatureStore<FeatureWithDraw>;
 
   constructor(
     private languageService: LanguageService,
@@ -186,7 +186,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   // Initialize the store that will contain the entities and create the Draw control
-  ngOnInit() {    
+  ngOnInit() {
     if (this.stores.length === 0 || !(Array.isArray(this.stores))) {
       if (!(Array.isArray(this.stores))){
         this.stores = [];
@@ -195,15 +195,16 @@ export class DrawComponent implements OnInit, OnDestroy {
         map: this.map
       });
       this.initStore();
-      this.drawControl = this.createDrawControl(
+      this.activeDrawControl = this.createDrawControl(
         this.fillColor,
         this.strokeColor,
         this.strokeWidth
       );
-      this.drawControl.setGeometryType(this.geometryType.Point as any);
+      this.activeDrawControl.setGeometryType(this.geometryType.Point as any);
       this.toggleDrawControl();
+
       this.stores.push(this.activeStore);
-      this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
+      this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
       this.drawControlsEvent.emit(this.drawControls);
       this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
@@ -244,10 +245,8 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.allLayers.forEach(layer => layer.opacity = 1);
-    this.stores.forEach(store => {
-      store.state.updateAll({selected: false});
-    });
-    this.drawControl.setOlMap(undefined);
+    this.activeStore.state.updateAll({selected: false});
+    this.activeDrawControl.setOlMap(undefined);
     this.subscriptions$$.map((s) => s.unsubscribe());
   }
 
@@ -263,7 +262,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     strokeColor?: string,
     strokeWidth?: number
   ) {
-    const drawControl = new DrawControl({
+    const activeDrawControl = new DrawControl({
       geometryType: undefined,
       drawingLayerSource: this.activeDrawingLayerSource,
       drawingLayerStyle: new OlStyle.Style({}),
@@ -273,21 +272,15 @@ export class DrawComponent implements OnInit, OnDestroy {
         strokeWidth
       )
     });
-
-    return drawControl;
+    return activeDrawControl;
   }
 
   /**
    * Store initialization, including drawing layer creation
    */
 
-  // Reminder: private
   private initStore(newTitle?: string, isNewLayer?: boolean) {
-    // this.map.removeLayer(this.activeDrawingLayer);
     this.createLayer(newTitle, isNewLayer);
-
-    // When changing between layers
-
     this.subscriptions$$.push(
       this.activeStore.stateView
         .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
@@ -550,33 +543,26 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public setupLayer(isNewLayer?: boolean) {
     setTimeout(() => {
-      // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
         disableClose: false,
       });
-
-      // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
-        // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          
           this.activeStore.state.updateAll({selected: false});
           this.activeStore = new FeatureStore<FeatureWithDraw>([], { map: this.map });
           this.activeDrawingLayerSource = new OlVectorSource();
           this.activeDrawingLayer.opacity = 0;
           this.deactivateDrawControl();
-          
           this.initStore(label, isNewLayer);
-          this.drawControl = this.createDrawControl(
+          this.activeDrawControl = this.createDrawControl(
             this.fillColor,
             this.strokeColor,
             this.strokeWidth
           );
-          this.drawControl.setGeometryType(this.geometryType.Point as any);
+          this.activeDrawControl.setGeometryType(this.geometryType.Point as any);
           this.toggleDrawControl();
-    
           this.stores.push(this.activeStore);
-          this.drawControls.push([this.activeDrawingLayer.id, this.drawControl]);
+          this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
           this.drawControlsEvent.emit(this.drawControls);
           this.layersIDEvent.emit(this.activeDrawingLayer.id);
           this.isCreatingNewLayer = false;
@@ -661,11 +647,10 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawingLayer.opacity = 0;
       this.activeDrawingLayer = currLayer;
       this.activeDrawingLayer.opacity = 1;
-
-      this.deactivateDrawControl();      
+      this.deactivateDrawControl();
       this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
-      this.drawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
-      this.activeDrawingLayerSource = this.drawControl.olDrawingLayerSource;
+      this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
+      this.activeDrawingLayerSource = this.activeDrawControl.olDrawingLayerSource;
       this.activateDrawControl();
     }
     else {
@@ -849,7 +834,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param geometryType the geometry type selected by the user
    */
   onGeometryTypeChange(geometryType: typeof OlGeometryType) {
-    this.drawControl.setGeometryType(geometryType);
+    this.activeDrawControl.setGeometryType(geometryType);
     this.toggleDrawControl();
   }
 
@@ -1017,7 +1002,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Deactivate the active draw control
    */
   private deactivateDrawControl() {
-    if (!this.drawControl) {
+    if (!this.activeDrawControl) {
       return;
     }
 
@@ -1025,7 +1010,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.drawEnd$$.unsubscribe();
     }
 
-    this.drawControl.setOlMap(undefined);
+    this.activeDrawControl.setOlMap(undefined);
     this.drawControlIsActive = false;
   }
 
@@ -1035,25 +1020,25 @@ export class DrawComponent implements OnInit, OnDestroy {
   private activateDrawControl() {
     this.drawControlIsDisabled = false;
     this.drawControlIsActive = true;
-    this.drawEnd$$ = this.drawControl.end$.subscribe(
+    this.drawEnd$$ = this.activeDrawControl.end$.subscribe(
       (olGeometry: OlGeometry) => {
         this.openDialog(olGeometry, true);
       }
     );
 
-    this.drawControl.modify$.subscribe((olGeometry: OlGeometry) => {
+    this.activeDrawControl.modify$.subscribe((olGeometry: OlGeometry) => {
       this.onModifyDraw(olGeometry);
     });
 
     if (!this.drawSelect$$) {
-      this.drawSelect$$ = this.drawControl.select$.subscribe(
+      this.drawSelect$$ = this.activeDrawControl.select$.subscribe(
         (olFeature: OlFeature<OlGeometry>) => {
           this.openDialog(olFeature, false);
         }
       );
     }
 
-    this.drawControl.setOlMap(this.map.ol, true);
+    this.activeDrawControl.setOlMap(this.map.ol, true);
   }
 
   /**

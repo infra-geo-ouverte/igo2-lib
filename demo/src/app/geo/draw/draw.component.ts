@@ -7,8 +7,7 @@ import {
   LayerService,
   FeatureStore,
   FeatureWithDraw,
-  MapService,
-  DrawControl
+  MapService
 } from '@igo2/geo';
 
 @Component({

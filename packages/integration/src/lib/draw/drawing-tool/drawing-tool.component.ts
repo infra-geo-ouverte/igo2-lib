@@ -4,7 +4,7 @@ import {
   } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { FeatureStore, Feature, IgoMap, DrawControl, FeatureWithDraw} from '@igo2/geo';
+import { FeatureStore, IgoMap, DrawControl, FeatureWithDraw} from '@igo2/geo';
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
 
@@ -55,7 +55,6 @@ export class DrawingToolComponent {
 
   public addDrawControls(dc:[string, DrawControl][]){
     this.drawControls = dc;
-    console.log(this.drawControls);
   }
 
   constructor(private drawState: DrawState, private mapState: MapState) {}

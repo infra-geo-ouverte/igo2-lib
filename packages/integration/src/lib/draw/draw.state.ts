@@ -19,8 +19,6 @@ export class DrawState {
     this.mapState.map.layers$.subscribe(() => {
       this.layersID.forEach(layerId => {
         if (!this.mapState.map.getLayerById(layerId)){
-          console.log(layerId);
-          console.log(this.stores);
           let deletedStore = this.stores.find(store => store.layer.id === layerId);
           deletedStore.deleteMany(deletedStore.all());
           this.stores.splice(this.stores.indexOf(deletedStore,0), 1);
@@ -28,15 +26,14 @@ export class DrawState {
           let drawControlIndex = this.drawControls.findIndex(dc => dc[0] === layerId);
           this.drawControls.splice(drawControlIndex, 1);
         }
-      })
-
+      });
     });
 
     for (let store of this.stores){
-      store = new FeatureStore<FeatureWithDraw>([], {map: this.mapState.map}); 
+      store = new FeatureStore<FeatureWithDraw>([], {map: this.mapState.map});
     }
-    
-                
+
+
   }
 
 }
