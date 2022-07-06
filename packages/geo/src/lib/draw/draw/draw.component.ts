@@ -546,6 +546,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public setupLayer(isNewLayer?: boolean) {
+    console.log('Create new layer');
     setTimeout(() => {
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
         disableClose: false,
@@ -1033,6 +1034,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.onModifyDraw(olGeometry);
     });
 
+    console.log(this.drawSelect$$);
     if (!this.drawSelect$$) {
       this.drawSelect$$ = this.activeDrawControl.select$.subscribe(
         (olFeature: OlFeature<OlGeometry>) => {
