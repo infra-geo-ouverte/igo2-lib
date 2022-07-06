@@ -209,33 +209,37 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
     } else {
+      console.log(this.subscriptions$$);
       this.activeDrawingLayer = this.stores[0].layer;
       this.activeStore = this.stores[0];
-      this.onLayerChange(this.activeDrawingLayer);
-      this.subscriptions$$.push(
-        this.activeStore.stateView
-          .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
-            return record.state.selected === true;
-          })
-          .pipe(
-            skip(1) // Skip initial emission
-          )
-          .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
-            this.selectedFeatures$.next(records.map((record) => record.entity));
-          })
-      );
-
-      this.subscriptions$$.push(
-        this.activeStore.count$.subscribe((cnt) => {
-          cnt >= 1
-            ? (this.activeStore.layer.options.showInLayerList = true)
-            : (this.activeStore.layer.options.showInLayerList = false);
-        })
-      );
+      this.onLayerChange(this.activeDrawingLayer);      
       this.allLayers.forEach(layer => {
         if(layer.id !== this.activeDrawingLayer.id){
           layer.opacity = 0;
-      }});
+        }
+        let store = this.stores.find(s => s.layer.id === layer.id)
+
+        this.subscriptions$$.push(
+          store.stateView
+            .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+              return record.state.selected === true;
+            })
+            .pipe(
+              skip(1) // Skip initial emission
+            )
+            .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
+              this.selectedFeatures$.next(records.map((record) => record.entity));
+            })
+        );
+  
+        this.subscriptions$$.push(
+          store.count$.subscribe((cnt) => {
+            cnt >= 1
+              ? (this.activeStore.layer.options.showInLayerList = true)
+              : (this.activeStore.layer.options.showInLayerList = false);
+          })
+        );
+      });
     }
   }
 
@@ -309,6 +313,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param drawEnd event fired at drawEnd?
    */
   private openDialog(olGeometry, isDrawEnd: boolean) {
+    console.log("openDialog");
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -421,7 +426,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     entities.forEach((entity) => {
       const entityCoordinates = JSON.stringify(entity.geometry.coordinates[0]);
-
       if (olGeometryCoordinates === entityCoordinates) {
         const fontSize = olFeature
           .get('fontStyle')
@@ -652,8 +656,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
       this.activeDrawingLayerSource = this.activeDrawControl.olDrawingLayerSource;
       this.activateDrawControl();
-    }
-    else {
+    } else {
       this.setupLayer(true);
     }
   }
