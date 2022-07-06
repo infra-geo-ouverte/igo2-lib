@@ -82,15 +82,15 @@
           tooltip-position="below"
           matTooltipShowDelay="500"
           [matTooltip]="'igo.geo.draw.colorPicker' | translate">
-          <mat-label>{{updateFrontendFillColor()}}</mat-label>
+          <mat-label>{{getFeatureFillColor()}}</mat-label>
           <input
             #fillColorInput
             formControlName="fill"
             matInput
             type="text"
-            [style.background]="updateFrontendFillColor()"
+            [style.background]="getFeatureFillColor()"
             [readonly]="true"
-            [colorPicker]="updateFrontendFillColor()"
+            [colorPicker]="getFeatureFillColor()"
             [cpWidth]="'200px'"
             [cpOutputFormat]="'rgba'"
             [cpPosition]="'bottom'"
@@ -103,7 +103,7 @@
                 labelsAreShown,
                 false,
                 $event,
-                updateFrontendStrokeColor()
+                getFeatureStrokeColor()
               )">
         </mat-form-field>
       </div>
@@ -124,15 +124,15 @@
           tooltip-position="below"
           matTooltipShowDelay="500"
           [matTooltip]="'igo.geo.draw.colorPicker' | translate">
-          <mat-label>{{ updateFrontendStrokeColor() }}</mat-label>
+          <mat-label>{{ getFeatureStrokeColor() }}</mat-label>
           <input
             #strokeColorInput
             formControlName="stroke"
             matInput
             type="text"
-            [style.background]="updateFrontendStrokeColor()"
+            [style.background]="getFeatureStrokeColor()"
             [readonly]="true"
-            [colorPicker]="updateFrontendStrokeColor()"
+            [colorPicker]="getFeatureStrokeColor()"
             [cpWidth]="'200px'"
             [cpPosition]="'bottom'"
             [cpPositionOffset]="'-75%'"
@@ -144,7 +144,7 @@
               onColorChange(
                 labelsAreShown,
                 false,
-                updateFrontendFillColor(),
+                getFeatureFillColor(),
                 $event
               )">
         </mat-form-field>
@@ -184,7 +184,7 @@
             placeholder="10"
             min="10"
             onkeydown="return event.keyCode !== 69"
-            [value]="updateFrontendFontSize()"
+            [value]="getFeatureFontSize()"
             (input)="
               onFontChange(
                 labelsAreShown,
@@ -197,7 +197,7 @@
           <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
           <mat-select
             #testFontStyle
-            [value]="updateFrontendFontStyle()"
+            [value]="getFeatureFontStyle()"
             (selectionChange)="onFontChange(labelsAreShown, testFontSize.value, $event.value)">
             <mat-option
               *ngFor="let fontSelect of allFontStyles"
@@ -216,7 +216,7 @@
             #offsetXInput
             type="number"
             onkeydown="return event.keyCode !== 69"
-            [value]="updateFrontendOffsetX()"
+            [value]="getFeatureOffsetX()"
             (input)="
               onOffsetLabelChange(
                 labelsAreShown,
@@ -231,7 +231,7 @@
             #offsetYInput
             type="number"
             onkeydown="return event.keyCode !== 69"
-            [value]="updateFrontendOffsetY()"
+            [value]="getFeatureOffsetY()"
             (input)="
               onOffsetLabelChange(
                 labelsAreShown,
