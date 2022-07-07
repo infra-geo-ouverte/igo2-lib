@@ -165,6 +165,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private numberOfDrawings: number;
   public isCreatingNewLayer: boolean = false;
+  private currGeometryType = this.geometryType.Point as any;
 
   constructor(
     private languageService: LanguageService,
@@ -562,13 +563,16 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.strokeColor,
             this.strokeWidth
           );
-          this.activeDrawControl.setGeometryType(this.geometryType.Point as any);
+          this.activeDrawControl.setGeometryType(this.currGeometryType);
           this.toggleDrawControl();
           this.stores.push(this.activeStore);
           this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
           this.drawControlsEvent.emit(this.drawControls);
           this.layersIDEvent.emit(this.activeDrawingLayer.id);
           this.isCreatingNewLayer = false;
+          if (!this.labelsAreShown){
+            this.onToggleLabels();
+          }
         }
       });
     }, 250);
@@ -651,9 +655,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawingLayer = currLayer;
       this.activeDrawingLayer.opacity = 1;
       this.deactivateDrawControl();
+      if (!this.labelsAreShown){
+        this.onToggleLabels();
+      }
       this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
       this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
       this.activeDrawingLayerSource = this.activeDrawControl.olDrawingLayerSource;
+      this.activeDrawControl.setGeometryType(this.currGeometryType);
       this.toggleDrawControl();
     } else {
       this.setupLayer(true);
@@ -836,6 +844,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param geometryType the geometry type selected by the user
    */
   onGeometryTypeChange(geometryType: typeof OlGeometryType) {
+    this.currGeometryType = geometryType;
     this.activeDrawControl.setGeometryType(geometryType);
     this.toggleDrawControl();
   }
