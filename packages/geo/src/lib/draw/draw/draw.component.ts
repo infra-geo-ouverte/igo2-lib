@@ -202,22 +202,21 @@ export class DrawComponent implements OnInit, OnDestroy {
       );
       this.activeDrawControl.setGeometryType(this.geometryType.Point as any);
       this.toggleDrawControl();
-
       this.stores.push(this.activeStore);
       this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
       this.drawControlsEvent.emit(this.drawControls);
       this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
     } else {
-      console.log(this.subscriptions$$);
       this.activeDrawingLayer = this.stores[0].layer;
       this.activeStore = this.stores[0];
-      this.onLayerChange(this.activeDrawingLayer);      
+      this.activeDrawControl = this.drawControls[0][1];
+      this.deactivateDrawControl();
       this.allLayers.forEach(layer => {
         if(layer.id !== this.activeDrawingLayer.id){
           layer.opacity = 0;
         }
-        let store = this.stores.find(s => s.layer.id === layer.id)
+        let store = this.stores.find(s => s.layer.id === layer.id);
 
         this.subscriptions$$.push(
           store.stateView
@@ -231,7 +230,7 @@ export class DrawComponent implements OnInit, OnDestroy {
               this.selectedFeatures$.next(records.map((record) => record.entity));
             })
         );
-  
+
         this.subscriptions$$.push(
           store.count$.subscribe((cnt) => {
             cnt >= 1
@@ -240,6 +239,8 @@ export class DrawComponent implements OnInit, OnDestroy {
           })
         );
       });
+      this.onLayerChange(this.activeDrawingLayer);
+
     }
   }
 
@@ -250,7 +251,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.allLayers.forEach(layer => layer.opacity = 1);
     this.activeStore.state.updateAll({selected: false});
-    this.activeDrawControl.setOlMap(undefined);
+    this.deactivateDrawControl();
+    // this.activeDrawControl.setOlMap(undefined);
     this.subscriptions$$.map((s) => s.unsubscribe());
   }
 
@@ -313,7 +315,6 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param drawEnd event fired at drawEnd?
    */
   private openDialog(olGeometry, isDrawEnd: boolean) {
-    console.log("openDialog");
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -546,7 +547,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public setupLayer(isNewLayer?: boolean) {
-    console.log('Create new layer');
     setTimeout(() => {
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
         disableClose: false,
@@ -656,7 +656,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
       this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
       this.activeDrawingLayerSource = this.activeDrawControl.olDrawingLayerSource;
-      this.activateDrawControl();
+      this.toggleDrawControl();
     } else {
       this.setupLayer(true);
     }
@@ -1034,7 +1034,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.onModifyDraw(olGeometry);
     });
 
-    console.log(this.drawSelect$$);
     if (!this.drawSelect$$) {
       this.drawSelect$$ = this.activeDrawControl.select$.subscribe(
         (olFeature: OlFeature<OlGeometry>) => {
