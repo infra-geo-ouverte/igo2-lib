@@ -352,8 +352,6 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometry, label);
           }
-
-          // Activates
           this.updateHeightTable();
         }
         // deletes the feature
@@ -901,7 +899,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Updates values of the selected element on the HTML view
 
-  updateFrontendFontSize(): string {
+  getFeatureFontSize(): string {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.fontStyle
           .split(' ')[0]
@@ -909,7 +907,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       : '20';
   }
 
-  updateFrontendFontStyle() {
+  getFeatureFontStyle() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.fontStyle.substring(
           this.selectedFeatures$.value[0].properties.fontStyle.indexOf(' ') + 1
@@ -917,25 +915,25 @@ export class DrawComponent implements OnInit, OnDestroy {
       : FontType.Arial;
   }
 
-  updateFrontendFillColor() {
+  getFeatureFillColor() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.drawingStyle.fill
       : 'rgba(255,255,255,0.4)';
   }
 
-  updateFrontendStrokeColor() {
+  getFeatureStrokeColor() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.drawingStyle.stroke
       : 'rgba(143,7,7,1)';
   }
 
-  updateFrontendOffsetX() {
+  getFeatureOffsetX() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.offsetX
       : this.drawStyleService.getOffsetX();
   }
 
-  updateFrontendOffsetY() {
+  getFeatureOffsetY() {
     return this.selectedFeatures$.value.length > 0
       ? this.selectedFeatures$.value[0].properties.offsetY
       : '0';

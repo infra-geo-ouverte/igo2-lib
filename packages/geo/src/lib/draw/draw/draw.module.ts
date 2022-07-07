@@ -26,8 +26,6 @@ import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-
 
 /**
  * @ignore
@@ -53,10 +51,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     IgoEntityTableModule,
     ColorPickerModule,
     BrowserModule,
-    BrowserAnimationsModule,
-    MatAutocompleteModule
+    BrowserAnimationsModule
   ],
-  declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
+  declarations: [DrawComponent, DrawPopupComponent, DrawShorcutsComponent],
   exports: [DrawComponent]
 })
 export class IgoDrawModule {}

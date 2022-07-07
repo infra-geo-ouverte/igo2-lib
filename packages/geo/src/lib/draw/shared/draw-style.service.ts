@@ -20,7 +20,9 @@ export class DrawStyleService {
   private offsetX: number = 0;
   private offsetY: number = 0;
 
-  constructor(private mapService: MapService) {}
+  constructor(
+    private mapService: MapService
+  ) {}
 
   getFillColor(): string {
     return this.fillColor;
@@ -113,11 +115,7 @@ export class DrawStyleService {
 
     // if feature is a circle
     if (feature.get('rad')) {
-      const coordinates = transform(
-        feature.getGeometry().flatCoordinates,
-        proj,
-        'EPSG:4326'
-      );
+      const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
 
       style = new OlStyle.Style({
         text: new OlStyle.Text({
@@ -137,10 +135,7 @@ export class DrawStyleService {
         }),
 
         image: new OlStyle.Circle({
-          radius:
-            feature.get('rad') /
-            Math.cos((Math.PI / 180) * coordinates[1]) /
-            resolution,
+          radius: feature.get('rad') / Math.cos((Math.PI / 180) * coordinates[1]) / resolution,
           stroke: new OlStyle.Stroke({
             color: strokeColor ? strokeColor : this.strokeColor,
             width: this.strokeWidth
