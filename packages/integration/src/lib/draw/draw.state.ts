@@ -28,12 +28,8 @@ export class DrawState {
         }
       });
     });
-
     for (let store of this.stores){
       store = new FeatureStore<FeatureWithDraw>([], {map: this.mapState.map});
     }
-
-
   }
-
 }

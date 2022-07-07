@@ -70,7 +70,7 @@ export class DrawControl {
 
   private olGeometryType: typeof OlGeometryType | undefined | string;
   private olMap: OlMap;
-  public olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
   private olSelectInteraction: OlSelect;
   private olModifyInteraction: OlModify;
