@@ -313,6 +313,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private openDialog(olGeometryFeature, isDrawEnd: boolean) {
     setTimeout(() => {
+      
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
@@ -324,6 +325,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
+          
+
           // if event was fired at draw end
           if (isDrawEnd) {
             this.onDrawEnd(olGeometryFeature);
@@ -401,6 +404,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   private onModifyDraw(olGeometry) {
+    console.log("hit");
+
     const entities = this.store.all();
 
     entities.forEach((entity) => {
@@ -409,13 +414,16 @@ export class DrawComponent implements OnInit, OnDestroy {
       const olGeometryId = olGeometry.ol_uid;
 
       if (entityId === olGeometryId) {
-        this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
+        if ()
+        let stringCoordinates = entity.properties.latitude + ', ' + entity.properties.longitude;
+        this.updateLabelOfOlGeometry(olGeometry, stringCoordinates);
         this.replaceFeatureInStore(entity, olGeometry);
       }
     });
   }
 
   private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string) {
+    
     const entities = this.store.all();
 
     const olGeometry = olFeature.getGeometry() as any;
@@ -508,7 +516,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         draw: olGeometry.get('_label'),
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
-        rad: rad ? rad : null
+        rad: rad ? rad : null,
+        coordinateLabel: true
       },
       meta: {
         id: featureId

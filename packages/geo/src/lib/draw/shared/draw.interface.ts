@@ -24,6 +24,7 @@ export interface FeatureWithDrawProperties {
   longitude: number;
   latitude: number;
   rad: number;
+  coordinateLabel?: boolean;
 }
 
 export interface FeatureStoreDrawStrategyOptions {
