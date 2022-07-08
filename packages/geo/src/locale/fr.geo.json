@@ -730,6 +730,9 @@
         "maxValue": "{{column}}doit être plus petit que {{value}}",
         "minLength": "{{column}} doit être plus long que {{value}} caractères",
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
+      },
+      "query": {
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
       }
     }
   }
