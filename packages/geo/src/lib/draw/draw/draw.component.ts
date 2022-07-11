@@ -4,7 +4,8 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy,
-  Output
+  Output,
+  EventEmitter
 } from '@angular/core';
 
 import {
@@ -85,9 +86,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   @Output() fontSize: string;
   @Output() fontStyle: string;
   @Input() fontType: FontType;
-
   @Input() map: IgoMap; // Map to draw on
-
   @Input() store: FeatureStore<FeatureWithDraw>; // Drawing store
 
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
@@ -313,20 +312,20 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private openDialog(olGeometryFeature, isDrawEnd: boolean) {
     setTimeout(() => {
-      
+
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
         data: { currentLabel: olGeometryFeature.get('draw') }
       });
 
+      // if (olGeometryFeature.geometryType){}
+
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
           this.updateLabelOfOlGeometry(olGeometryFeature, label);
-          
-
           // if event was fired at draw end
           if (isDrawEnd) {
             this.onDrawEnd(olGeometryFeature);
@@ -334,6 +333,28 @@ export class DrawComponent implements OnInit, OnDestroy {
           } else {
             this.onSelectDraw(olGeometryFeature, label);
           }
+        }
+
+        else if (dialogRef.componentInstance.coordinatesFlag){
+          let coordinateLabel;
+          if (olGeometryFeature.getFlatCoordinates()){
+            const projection = this.map.ol.getView().getProjection();
+            let point4326 = transform(
+              olGeometryFeature.getFlatCoordinates(),
+              projection,
+              'EPSG:4326'
+            );
+            coordinateLabel = '('+point4326[1].toFixed(3) + ', ' + point4326[0].toFixed(3) +')';
+          }
+          this.updateLabelOfOlGeometry(olGeometryFeature, coordinateLabel);
+          // if event was fired at draw end
+          if (isDrawEnd) {
+            this.onDrawEnd(olGeometryFeature);
+            // if event was fired at select
+          } else {
+            this.onSelectDraw(olGeometryFeature, coordinateLabel);
+          }
+
         }
         // deletes the feature
         else {
@@ -404,8 +425,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   private onModifyDraw(olGeometry) {
-    console.log("hit");
-
     const entities = this.store.all();
 
     entities.forEach((entity) => {
@@ -414,16 +433,17 @@ export class DrawComponent implements OnInit, OnDestroy {
       const olGeometryId = olGeometry.ol_uid;
 
       if (entityId === olGeometryId) {
-        if ()
-        let stringCoordinates = entity.properties.latitude + ', ' + entity.properties.longitude;
-        this.updateLabelOfOlGeometry(olGeometry, stringCoordinates);
+
+        entity.properties.coordinateLabel ?
+          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(3) + ', ' + entity.properties.longitude.toFixed(3)+')') :
+          this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
         this.replaceFeatureInStore(entity, olGeometry);
       }
     });
   }
 
-  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string) {
-    
+  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string, coordinateLabel?: boolean) {
+
     const entities = this.store.all();
 
     const olGeometry = olFeature.getGeometry() as any;
@@ -454,7 +474,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private addFeatureToStore(
     olGeometry,
     radius?: number,
-    feature?: FeatureWithDraw
+    feature?: FeatureWithDraw,
   ) {
     let rad: number;
     let center4326: Array<number>;
@@ -517,7 +537,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
         rad: rad ? rad : null,
-        coordinateLabel: true
+        coordinateLabel: lon4326 ? true : false
       },
       meta: {
         id: featureId
@@ -533,7 +553,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private replaceFeatureInStore(
     entity,
     olGeometry: OlGeometry,
-    radius?: number
+    radius?: number,
   ) {
     this.store.delete(entity);
     this.onDrawEnd(olGeometry, radius);
@@ -649,4 +669,5 @@ export class DrawComponent implements OnInit, OnDestroy {
   get allFontStyles(): string[] {
     return Object.values(FontType);
   }
+
 }

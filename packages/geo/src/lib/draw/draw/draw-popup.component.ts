@@ -18,6 +18,7 @@ export class DrawPopupComponent {
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string }
   ) {}
+  
 
   cancelDrawing() {
     this.dialogRef.close();
@@ -27,7 +28,6 @@ export class DrawPopupComponent {
     this.dialogRef.close(labelString);
   }
   confirmCoordinatesLabel(){
-    this.confirmFlag = true;
     this.coordinatesFlag = true;
     this.dialogRef.close();
   }
