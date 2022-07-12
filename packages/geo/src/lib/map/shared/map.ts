@@ -27,7 +27,7 @@ import {
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -65,7 +65,8 @@ export class IgoMap {
 
   constructor(
     options?: MapOptions,
-    private storageService?: StorageService) {
+    private storageService?: StorageService,
+    private configService?: ConfigService) {
     this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
@@ -122,7 +123,8 @@ export class IgoMap {
         {
           projection: this.viewController.getOlProjection()
         },
-        this.storageService);
+        this.storageService,
+        this.configService);
       this.geolocationController.setOlMap(this.ol);
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
