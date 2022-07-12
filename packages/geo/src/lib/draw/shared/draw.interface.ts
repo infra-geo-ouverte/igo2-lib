@@ -1,14 +1,16 @@
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
+import { DrawControl } from '../../geometry/shared/controls/draw';
+import { FeatureStore } from '../../feature';
 
 export interface DrawOptions {
   icons?: string[];
 }
 
 export interface Draw {
-    area?: number;
-    length?: number;
-    lengths?: number[];
+  area?: number;
+  length?: number;
+  lengths?: number[];
 }
 
 export interface DrawingStyle {
@@ -25,8 +27,17 @@ export interface FeatureWithDrawProperties {
   latitude: number;
   rad: number;
   coordinateLabel?: boolean;
+  fontStyle: string;
+  drawingStyle: DrawingStyle;
+  offsetX: number;
+  offsetY: number;
 }
 
 export interface FeatureStoreDrawStrategyOptions {
   map: IgoMap;
+}
+
+export interface StoreAndDrawControl {
+  store: FeatureStore<FeatureWithDraw>;
+  drawControl: DrawControl;
 }

@@ -696,7 +696,14 @@
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
         "fontSize": "Taille de police",
-        "fontStyle": "Style de police"
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical",
+        "layer": {
+          "title": "Titre",
+          "createNewLayer": "Créer une nouvelle couche de dessin",
+          "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
+        }
       },
       "network": {
         "online": {

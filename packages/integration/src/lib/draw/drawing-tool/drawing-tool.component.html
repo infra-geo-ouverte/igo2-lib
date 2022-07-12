@@ -1,1 +1,1 @@
-<igo-draw [store]="store" [map]="map"></igo-draw>
+<igo-draw [stores]="stores" [map]="map" (layersIDEvent)="addLayersID($event)" [drawControls]="drawControls" (drawControlsEvent)="addDrawControls($event)"></igo-draw>

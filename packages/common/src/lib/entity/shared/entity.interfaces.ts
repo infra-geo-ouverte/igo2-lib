@@ -79,6 +79,7 @@ export interface EntityTableTemplate {
   selectMany?: boolean;
   sort?: boolean;
   fixedHeader?: boolean;
+  tableHeight?:string;
   valueAccessor?: (entity: object, property: string, record: EntityRecord<object>) => any;
   headerClassFunc?: () => {
     [key: string]: boolean;
