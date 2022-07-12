@@ -13,21 +13,23 @@ export interface DialogData {
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() coordinatesFlag: boolean = false;
-
+    
   constructor(
     public dialogRef: MatDialogRef<DrawPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string }){}
+    @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string, canUseCoordinateLabel?: boolean}
+    ){}
 
   cancelDrawing() {
     this.dialogRef.close();
   }
-
   confirm(labelString: string) {
     this.confirmFlag = true;
     this.dialogRef.close(labelString);
   }
   confirmCoordinatesLabel(){
+    this.confirmFlag = true;
     this.coordinatesFlag = true;
     this.dialogRef.close();
   }
+
 }

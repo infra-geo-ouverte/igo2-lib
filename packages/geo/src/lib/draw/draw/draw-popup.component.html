@@ -9,8 +9,11 @@
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button (click)="confirmCoordinatesLabel()">
+  <button *ngIf="data.canUseCoordinateLabel" mat-raised-button (click)="confirmCoordinatesLabel()">
     Coordinates
+  </button>
+  <button *ngIf="!(data.canUseCoordinateLabel)" mat-raised-button (click)="cancelDrawing()" >
+    {{'igo.geo.draw.cancel' | translate}}
   </button>
   <button 
     mat-raised-button 
