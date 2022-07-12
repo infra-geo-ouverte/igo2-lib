@@ -1,17 +1,19 @@
 .qcca-theme {
     $qcca-palette: (
         50: #f2f1f1,
-        100: #dae6f0,
-        200: #c5cad2,
-        300: #1479cc,
-        400: #1479cc,
-        500: #095797,
-        600: #223654,
-        700: #1479cc,
+        100: #dae6f0, //lighter ex: list on focus
+        200: #dae6f0,
+        300: #509FDF,
+        400: #0D7DD9,
+        500: #095797, //default
+        600: #0A60A6,
+        700: #223654, // darker 
         800: #cb381f,
         900: #4f813d,
-        A500: #1479cc,
-        A600: #f09686,
+        A100: #1479cc,
+        A200: #1479cc,
+        A400: #dae6f0,
+        A700: #f2f1f1,
         contrast: (
            50: #223654,
            100: #223654,
@@ -23,30 +25,55 @@
            700: #fff,
            800: #fff,
            900: #fff,
-           A500: #fff,
-           A600: #223654
+           A100: #fff,
+           A200: #fff,
+           A400: #223654,
+           A700: #223654,
         )
        );
 
-    $basic: mat.define-palette($qcca-palette, 400);
-    $primary: mat.define-palette($qcca-palette, 500);
-    $accent: mat.define-palette($qcca-palette, A500);
+    $primary: mat.define-palette($qcca-palette, 500, 400, 700);
+    $accent: mat.define-palette($qcca-palette, 400, 100, 700);
     $warn: mat.define-palette($qcca-palette, 800);
     $success: mat.define-palette($qcca-palette, 900);
+    $background: mat.define-palette($qcca-palette, 100, 100, 100);
+    $foreground: mat.define-palette($qcca-palette, 700, 700, 700);
 
-    $theme: mat.define-light-theme((
+    $temp-theme: mat.define-light-theme((
         color: (
-            basic: $basic,
             primary: $primary,
             accent: $accent,
             warn: $warn,
-            success: $success
+            success: $success,
+            background: $background
         )
     ));
+
+    $theme-foreground: (
+        base:              #223654,
+        divider:           #f2f1f1,
+        dividers:          #f2f1f1,
+        disabled:          #f2f1f1,
+        disabled-button:   #f2f1f1,
+        disabled-text:     #f2f1f1,
+        hint-text:         #f2f1f1,
+        secondary-text:    #f2f1f1,
+        icon:              #f2f1f1,
+        icons:             #f2f1f1,
+        text:              #223654,
+        slider-min:        #f2f1f1,
+        slider-off:        #f2f1f1,
+        slider-off-active: #f2f1f1,
+      );
+
+    $foreground: theme-foreground(mat.define-palette($qcca-palette, 500, 100, 700));
+    $theme: map-merge($temp-theme, (foreground: $foreground));
 
     @include mat.core($theme);
     @include igo-all-theming($theme);
     @include mat.all-component-colors($theme);
+    @include mat.all-component-themes($theme);
+    @include mat.strong-focus-indicators-theme($theme);
 }
 
 //@import '~@angular/material/theming';
@@ -65,3 +92,18 @@
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 //@include angular-material-theme($theme);
+
+@mixin igo-panel-theming($theme) {
+    $primary: map-get($theme, primary);
+  
+    igo-panel > div.igo-panel-header {
+      background-color: mat.get-color-from-palette($primary);
+      color: mat.get-color-from-palette(50);
+    }
+  
+  }
+
+/* For the non-Angular Material items */
+body {
+    color: #223654;
+}
