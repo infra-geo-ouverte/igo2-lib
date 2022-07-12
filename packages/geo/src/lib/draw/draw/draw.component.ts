@@ -330,7 +330,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          console.log(olGeometry);
           let coordinateLabel = undefined;
           if (dialogRef.componentInstance.coordinatesFlag){
             const projection = this.map.ol.getView().getProjection();
@@ -1115,7 +1114,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   isPointOrCircle(olGeometry: OlGeometry){
-    console.log(olGeometry instanceof OlPoint || olGeometry instanceof OlCircle);
     return (olGeometry instanceof OlPoint || olGeometry instanceof OlCircle);
   }
 }
