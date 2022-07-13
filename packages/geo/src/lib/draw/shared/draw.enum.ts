@@ -20,3 +20,8 @@ export enum FontType {
     BrushScriptMT = 'Brush Script MT',
     ComicSansMS = 'Comic Sans MS'
 }
+
+export enum LabelType{
+    Coordinates = 'Coordinates',
+    Custom = 'Custom'
+}

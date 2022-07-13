@@ -1,23 +1,58 @@
-<div mat-dialog-content>
-  <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
-  <mat-form-field class="example-full-width">
-    <input
-      #input
-      matInput
-      placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
-      value="{{data.currentLabel}}"/>
-  </mat-form-field>
+<div *ngIf="data.canUseCoordinateLabel" class="geometry-type-toggle mat-typography">
+  <mat-button-toggle-group
+    (change)="onLabelTypeChange($event.value)" [value]="labelType.Custom">
+    <mat-button-toggle [value]="labelType.Custom" >
+      Custom
+    </mat-button-toggle>
+    <mat-button-toggle [value]="labelType.Coordinates">
+      Coordinates
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 </div>
-<div mat-dialog-actions>
-  <button *ngIf="data.canUseCoordinateLabel" mat-raised-button (click)="confirmCoordinatesLabel()">
-    Coordinates
-  </button>
-  <button *ngIf="!(data.canUseCoordinateLabel)" mat-raised-button (click)="cancelDrawing()" >
-    {{'igo.geo.draw.cancel' | translate}}
-  </button>
-  <button 
-    mat-raised-button 
-    color="primary" 
-    (click)="confirm(input.value)">OK
-  </button>
+
+<div *ngIf="coordinatesFlag === labelType.Coordinates">
+  <div mat-dialog-content>
+    <mat-form-field class="example-full-width">
+      <input
+        #input
+        matInput
+        placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
+        value="{{data.coordinates}}" readonly>
+    </mat-form-field>
+  </div>
+  
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="cancelDrawing()" >
+      {{'igo.geo.draw.cancel' | translate}}
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirm(input.value)">OK
+    </button>
+  </div>
+</div>
+
+<div *ngIf="coordinatesFlag !== labelType.Coordinates">
+  <div mat-dialog-content>
+    <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
+    <mat-form-field class="example-full-width">
+      <input
+        #input
+        matInput
+        placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
+        value="{{ data.currentLabel}}"/>
+    </mat-form-field>
+  </div>
+  
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="cancelDrawing()" >
+      {{'igo.geo.draw.cancel' | translate}}
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirm(input.value)">OK
+    </button>
+  </div>
 </div>

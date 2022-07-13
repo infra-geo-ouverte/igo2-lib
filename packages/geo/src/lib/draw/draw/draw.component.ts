@@ -22,7 +22,7 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FontType, GeometryType } from '../shared/draw.enum';
+import { FontType, GeometryType, LabelType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -318,10 +318,18 @@ export class DrawComponent implements OnInit, OnDestroy {
   private openDialog(olGeometry, isDrawEnd: boolean) {
     setTimeout(() => {
 
+      const projection = this.map.ol.getView().getProjection();
+      let point4326 = transform(
+        olGeometry.getFlatCoordinates(),
+        projection,
+        'EPSG:4326'
+      );
+      let coordinateLabel = '('+point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) +')';
+
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
-        data: { currentLabel: olGeometry.get('draw'), canUseCoordinateLabel: this.isPointOrCircle(olGeometry)}
+        data: { currentLabel: olGeometry.get('draw'), canUseCoordinateLabel: this.isPointOrCircle(olGeometry), coordinates: coordinateLabel}
       });
 
       // if (olGeometryFeature.geometryType){}
@@ -330,15 +338,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          let coordinateLabel = undefined;
-          if (dialogRef.componentInstance.coordinatesFlag){
-            const projection = this.map.ol.getView().getProjection();
-            let point4326 = transform(
-              olGeometry.getFlatCoordinates(),
-              projection,
-              'EPSG:4326'
-            );
-            coordinateLabel = '('+point4326[1].toFixed(3) + ', ' + point4326[0].toFixed(3) +')';
+          if (dialogRef.componentInstance.coordinatesFlag === LabelType.Coordinates){
+
             this.updateLabelOfOlGeometry(olGeometry, coordinateLabel);
             olGeometry.setProperties(
               {
@@ -373,7 +374,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onDrawEnd(olGeometry);
             // if event was fired at select
           } else {
-            coordinateLabel ? this.onSelectDraw(olGeometry, coordinateLabel):this.onSelectDraw(olGeometry, label) ;
+            olGeometry.properties.isCoordinatesLabel_ ? this.onSelectDraw(olGeometry, coordinateLabel):this.onSelectDraw(olGeometry, label) ;
           }
           this.updateHeightTable();
         }
@@ -415,7 +416,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       if (entityId === olGeometryId) {
 
         entity.properties.coordinateLabel ?
-          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(3) + ', ' + entity.properties.longitude.toFixed(3)+')') :
+          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4) + ', ' + entity.properties.longitude.toFixed(4)+')') :
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
         this.updateFontSizeAndStyle(
           olGeometry,
