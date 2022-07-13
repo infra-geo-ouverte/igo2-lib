@@ -72,7 +72,6 @@
     @include mat.core($theme);
     @include igo-all-theming($theme);
     @include mat.all-component-colors($theme);
-    @include mat.all-component-themes($theme);
     @include mat.strong-focus-indicators-theme($theme);
 }
 
