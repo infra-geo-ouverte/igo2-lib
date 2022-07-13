@@ -700,7 +700,7 @@
         "offsetX": "Horizontal offset",
         "offsetY": "Vertical offset",
         "layer": {
-          "title": "Title",
+          "title": "Layer",
           "createNewLayer": "Create new drawing layer",
           "layerDialogInstruction": "Enter your drawing layer's title"
         }

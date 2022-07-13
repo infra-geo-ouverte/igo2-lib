@@ -700,7 +700,7 @@
         "offsetX": "Décalage horizontal",
         "offsetY": "Décalage vertical",
         "layer": {
-          "title": "Titre",
+          "title": "Couche",
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
         }
