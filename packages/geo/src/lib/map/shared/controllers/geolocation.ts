@@ -165,7 +165,7 @@ export class MapGeolocationController extends MapController {
   set followPosition(value: boolean) {
     this._followPosition = value;
     this.followPosition$.next(value);
-    if (this.configService.getConfig('geolocate.followPosition') === false) {
+    if (this.configService?.getConfig('geolocate.followPosition') === false) {
       this._followPosition = false;
       this.followPosition$.next(false);
     }
