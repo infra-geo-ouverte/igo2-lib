@@ -36,7 +36,7 @@
       },
       "mapTool": {
         "empty": "La carte ne contient aucune couche de données.",
-        "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+        "customize": "Personnalisez-la en ajoutant des couches à partir des outils suivants : ",
         "search-tool": "Recherche",
         "catalog-tool": "Catalogue de données",
         "context-tool": "Gestionnaire de contextes",
@@ -96,7 +96,7 @@
           "swipe-select": "Choisir les couches à comparer",
           "selectAll": "Tout sélectionner",
           "empty": "La carte ne contient aucune couche de données.",
-          "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+          "customize": "Personnalisez-la en ajoutant des couches à partir des outils suivants : ",
           "search-tool": "Recherche",
           "catalog-tool": "Catalogue de données",
           "context-tool": "Gestionnaire de contextes",
