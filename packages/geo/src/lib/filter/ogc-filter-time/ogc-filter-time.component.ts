@@ -16,8 +16,7 @@ import {
   OgcFilterDuringOptions
 } from '../shared/ogc-filter.interface';
 
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-ogc-filter-time',

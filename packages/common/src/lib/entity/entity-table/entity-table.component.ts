@@ -35,8 +35,7 @@ import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@ang
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-entity-table',

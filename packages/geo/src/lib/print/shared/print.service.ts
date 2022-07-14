@@ -7,7 +7,7 @@ import { map as rxMap } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
 import jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as JSZip from 'jszip';
+import { default as JSZip } from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';

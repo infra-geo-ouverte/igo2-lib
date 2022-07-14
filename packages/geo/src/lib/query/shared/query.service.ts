@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
-import * as striptags_ from 'striptags';
+import { default as striptags } from 'striptags';
 
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
@@ -526,7 +526,6 @@ export class QueryService {
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
     // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
-    const striptags = striptags_;
     const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
     if (body === '' || res === '') {
       return [];
