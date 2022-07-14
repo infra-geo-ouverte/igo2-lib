@@ -13,7 +13,7 @@ export interface DialogData {
   })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
-  @Input() coordinatesFlag: LabelType = LabelType.Custom;
+  @Input() coordinatesFlag: LabelType = LabelType.Coordinates;
   public labelType = LabelType;
     
   constructor(

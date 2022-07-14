@@ -317,14 +317,21 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private openDialog(olGeometry, isDrawEnd: boolean) {
     setTimeout(() => {
+      let coordinateLabel = undefined;
+      if (olGeometry instanceof OlFeature){
+        coordinateLabel = '(' + olGeometry.get('latitude').toFixed(4) + ', ' + olGeometry.get('longitude').toFixed(4) + ')';
+      }
+      else{
+        const projection = this.map.ol.getView().getProjection();
+        let point4326 = transform(
+          olGeometry.getFlatCoordinates(),
+          projection,
+          'EPSG:4326'
+        );
+        coordinateLabel =
+          '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
+      }
 
-      const projection = this.map.ol.getView().getProjection();
-      let point4326 = transform(
-        olGeometry.getFlatCoordinates(),
-        projection,
-        'EPSG:4326'
-      );
-      let coordinateLabel = '('+point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) +')';
 
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -339,17 +346,12 @@ export class DrawComponent implements OnInit, OnDestroy {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
           if (dialogRef.componentInstance.coordinatesFlag === LabelType.Coordinates){
-
             this.updateLabelOfOlGeometry(olGeometry, coordinateLabel);
-            olGeometry.setProperties(
-              {
-                isCoordinatesLabel_: true
-              },
-              true
-            );
+            this.updateIsCoordinatesLabel(olGeometry, true);
           }
           else{
             this.updateLabelOfOlGeometry(olGeometry, label);
+            this.updateIsCoordinatesLabel(olGeometry, false);
           }
           if (!olGeometry.values_.fontStyle) {
             this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
@@ -374,7 +376,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onDrawEnd(olGeometry);
             // if event was fired at select
           } else {
-            olGeometry.properties.isCoordinatesLabel_ ? this.onSelectDraw(olGeometry, coordinateLabel):this.onSelectDraw(olGeometry, label) ;
+            olGeometry.values_.isCoordinatesLabel_ ? this.onSelectDraw(olGeometry, coordinateLabel):this.onSelectDraw(olGeometry, label) ;
           }
           this.updateHeightTable();
         }
@@ -407,7 +409,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private onModifyDraw(olGeometry) {
     const entities = this.activeStore.all();
-
+    console.log(entities);
+    
     entities.forEach((entity) => {
       const entityId = entity.properties.id;
 
@@ -418,6 +421,10 @@ export class DrawComponent implements OnInit, OnDestroy {
         entity.properties.coordinateLabel ?
           this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4) + ', ' + entity.properties.longitude.toFixed(4)+')') :
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
+        this.updateIsCoordinatesLabel(
+          olGeometry,
+          entity.properties.coordinateLabel
+        )
         this.updateFontSizeAndStyle(
           olGeometry,
           entity.properties.fontStyle.split(' ')[0].replace('px', ''),
@@ -467,6 +474,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         const offsetX = olFeature.get('offsetX');
         const offsetY = olFeature.get('offsetY');
 
+        const isCoordinatesLabel = olFeature.get('isCoordinatesLabel_');
+
         const rad: number = entity.properties.rad
           ? entity.properties.rad
           : undefined;
@@ -474,6 +483,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
         this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
         this.updateOffset(olGeometry, offsetX, offsetY);
+        this.updateIsCoordinatesLabel(olGeometry, isCoordinatesLabel)
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -539,6 +549,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       lon4326 = point4326[0];
       lat4326 = point4326[1];
     }
+
+    console.log(olGeometry);
 
     this.activeStore.update({
       type: FEATURE,
@@ -612,11 +624,11 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   editLabelDrawing() {
     if (this.selectedFeatures$.value.length) {
-      const olGeometry = featureToOl(
+      const olGeometryFeature = featureToOl(
         this.selectedFeatures$.value[0],
         this.map.ol.getView().getProjection().getCode()
-      );
-      this.openDialog(olGeometry, false);
+      );      
+      this.openDialog(olGeometryFeature, false);
     }
   }
 
@@ -880,11 +892,11 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   /**
    * Update the label of a geometry when a label is entered in a dialog box
-   * @param olGeometry the geometry
+   * @param OlFeature the feature
    * @param label the label
    */
-  private updateLabelOfOlGeometry(olGeometry: OlGeometry, label: string) {
-    olGeometry.setProperties(
+  private updateLabelOfOlGeometry(OlFeature: OlFeature<OlGeometry>, label: string) {
+    OlFeature.setProperties(
       {
         _label: label
       },
@@ -931,6 +943,19 @@ export class DrawComponent implements OnInit, OnDestroy {
       },
       true
     );
+  }
+
+  private updateIsCoordinatesLabel(
+    olFeature: OlFeature<OlGeometry>,
+    isCoordinatesLabel: boolean
+  ){    
+    olFeature.setProperties(
+      {
+        isCoordinatesLabel_: isCoordinatesLabel
+      },
+      true
+    );
+
   }
 
   // Updates values of the selected element on the HTML view
@@ -1114,7 +1139,11 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
   }
 
-  isPointOrCircle(olGeometry: OlGeometry){
-    return (olGeometry instanceof OlPoint || olGeometry instanceof OlCircle);
+  isPointOrCircle(olGeometry){
+    let tempOlGeometry = olGeometry;
+    if (olGeometry instanceof OlFeature){      
+      tempOlGeometry = olGeometry.getGeometry();
+    }
+    return (tempOlGeometry instanceof OlPoint || tempOlGeometry instanceof OlCircle);
   }
 }

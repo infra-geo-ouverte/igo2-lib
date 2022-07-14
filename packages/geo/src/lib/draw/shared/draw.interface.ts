@@ -26,7 +26,7 @@ export interface FeatureWithDrawProperties {
   longitude: number;
   latitude: number;
   rad: number;
-  coordinateLabel?: boolean;
+  coordinateLabel: boolean;
   fontStyle: string;
   drawingStyle: DrawingStyle;
   offsetX: number;

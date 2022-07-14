@@ -1,11 +1,11 @@
 <div *ngIf="data.canUseCoordinateLabel" class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
-    (change)="onLabelTypeChange($event.value)" [value]="labelType.Custom">
+    (change)="onLabelTypeChange($event.value)" [value]="labelType.Coordinates">
+    <mat-button-toggle [value]="labelType.Coordinates">
+      General
+    </mat-button-toggle>
     <mat-button-toggle [value]="labelType.Custom" >
       Custom
-    </mat-button-toggle>
-    <mat-button-toggle [value]="labelType.Coordinates">
-      Coordinates
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>
@@ -16,7 +16,7 @@
       <input
         #input
         matInput
-        placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
+        placeholder="(Latitude, Longitude)"
         value="{{data.coordinates}}" readonly>
     </mat-form-field>
   </div>
