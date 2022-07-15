@@ -215,7 +215,7 @@ gulp.task('core:concatStyles', done => {
     .pipe(exec(
       'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
     ))
-    .pipe(wait(500)).on('end', function() { 
+    .pipe(wait(500)).on('end', function() {
       del(['packages/core/src/style/index.theming.scss'], { force: true });
     })
 
@@ -301,6 +301,14 @@ gulp.task('core:copyBundleLocale', done => {
   done();
 });
 
+gulp.task('copyBundleLocaleToDemo', done => {
+  gulp
+    .src('./dist/core/locale/@(fr|en).json', { "allowEmpty": true })
+    .pipe(gulp.dest('./demo/src/locale/libs_locale'));
+
+  done(); //
+}); //
+
 gulp.task('sleep', done => {
   setTimeout(() => done(), 1000);
 });
@@ -310,7 +318,8 @@ gulp.task(
   gulp.series(
     gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
     'sleep',
-    'core:copyBundleLocale'
+    'core:copyBundleLocale',
+    'copyBundleLocaleToDemo'
   )
 );
 
