@@ -1,0 +1,850 @@
+@use './node_modules/@angular/material/_index.scss' as mat;
+@mixin igo-all-theming($theme, $typography: $igo-typography) {
+  @include igo-theming($theme, $typography);
+  @include igo-common-theming($theme, $typography);
+  @include igo-geo-theming($theme, $typography);
+}
+
+$igo-typography: mat.define-typography-config(
+  $display-4:     mat.define-typography-level(110px, 110px, 300),
+  $display-3:     mat.define-typography-level(54px, 54px, 400),
+  $display-2:     mat.define-typography-level(43px, 46px, 400),
+  $display-1:     mat.define-typography-level(32px, 38px, 400),
+  $headline:      mat.define-typography-level(22px, 30px, 400),
+  $title:         mat.define-typography-level(18px, 30px, 500),
+  $subheading-2:  mat.define-typography-level(14px, 26px, 400),
+  $subheading-1:  mat.define-typography-level(13px, 22px, 400),
+  $body-2:        mat.define-typography-level(12px, 22px, 500),
+  $body-1:        mat.define-typography-level(12px, 18px, 400),
+  $caption:       mat.define-typography-level(12px, 18px, 400),
+  $button:        mat.define-typography-level(13px, 13px, 500),
+  $input:         mat.define-typography-level(14px, 1.25, 400)
+);
+
+@function theme-foreground($palette) {
+    $color: mat.get-color-from-palette($palette, 500);
+    @return (
+        base:              $color,
+        divider:           rgba($color, 0.12),
+        dividers:          rgba($color, 0.12),
+        disabled:          rgba($color, 0.38),
+        disabled-button:   rgba($color, 0.26),
+        disabled-text:     rgba($color, 0.38),
+        elevation:         $color,
+        hint-text:         rgba($color, 0.38),
+        secondary-text:    rgba($color, 0.54),
+        icon:              rgba($color, 0.54),
+        icons:             rgba($color, 0.54),
+        text:              rgba($color, 0.87),
+        slider-min:        rgba($color, 0.87),
+        slider-off:        rgba($color, 0.26),
+        slider-off-active: rgba($color, 0.38)
+    );
+};
+
+@import './material.font';
+
+@mixin igo-theming($theme, $typography) {
+  @include mat.core($typography);
+
+  @include igo-core-theming($theme, $typography);
+}
+
+@import '~ngx-toastr/toastr.css';
+
+@mixin igo-core-theming($theme, $typography) {
+  @include igo-message-theming($theme, $typography);
+
+  button.mat-icon-button.mat-button-base[disabled="true"] {
+      color: rgba(0,0,0,.26);
+  }
+}
+
+@mixin igo-message-theming($theme, $typography) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .toast-error {
+    background-color: mat.get-color-from-palette($warn);
+  }
+  .toast-info {
+    background-color: mat.get-color-from-palette($primary);
+  }
+  .toast-title {
+    line-height: 23px;
+    font-size: 15px;
+    font-weight: bold;
+    font-family:  Roboto, "Helvetica Neue", sans-serif;
+  }
+  .toast-message {
+    line-height: 18px;
+    font-size: mat.font-size($typography, subheading-2);
+    font-family:  Roboto, "Helvetica Neue", sans-serif;
+  }
+}
+
+@import '~shepherd.js/dist/css/shepherd.css';
+
+@mixin igo-common-theming($theme, $typography) {
+  @include igo-action-theming($theme);
+  @include igo-collapsible-theming($theme);
+  @include igo-entity-theming($theme);
+  @include igo-list-theming($theme);
+  @include igo-panel-theming($theme);
+  @include igo-tool-theming($theme);
+  @include igo-tour-theming($theme);
+  @include igo-home-button-theming($theme);
+}
+
+@mixin igo-action-theming($theme) {
+  @include igo-actionbar-theming($theme);
+}
+
+@mixin igo-actionbar-theming($theme) {  
+  .igo-actionbar-overlay {
+    min-width: inherit !important;
+    padding-top: 0;
+    padding-bottom: 0;
+  
+    .mat-list {
+      padding-top: 0
+    }
+  
+    .mat-list .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text {
+      padding-right: 16px;
+    }
+  
+    .mat-menu-content:not(:empty) {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+@mixin igo-collapsible-theming($theme) {
+  mat-icon[mat-list-avatar][igocollapse] {
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.igo-chevron {
+      width: auto !important;
+      transform: rotateZ(0deg);
+      transition: 300ms ease-in-out;
+
+      &.collapsed {
+        transform: rotateZ(180deg);
+        transition: 300ms ease-in-out;
+      }
+    }
+  }
+
+  div.igo-collapsed {
+    display: none !important;
+  }
+
+}
+
+@mixin igo-entity-theming($theme) {
+  @include igo-entity-table-theming($theme);
+}
+
+@mixin igo-entity-table-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  igo-entity-table table.igo-entity-table-with-selection tr.igo-entity-table-row-highlighted {
+    background-color: mat.get-color-from-palette($primary, A100);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+}
+
+@mixin igo-home-button-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+
+  igo-home-button > #homeButton {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+
+    &:hover {
+      background-color: mat.get-color-from-palette($accent, lighter);
+      color: black;
+    }
+  }
+}
+
+
+@mixin igo-list-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  igo-list [igolistitem][color="primary"].igo-list-item-selected > mat-list-item {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+  igo-list [igolistitem][color="accent"].igo-list-item-selected > mat-list-item {
+    background-color: mat.get-color-from-palette($accent);
+    color: mat.get-color-from-palette($accent, default-contrast);
+  }
+
+  igo-list [igolistitem].igo-list-item-disabled > mat-list-item {
+    color: rgba(0, 0, 0, 0.38);
+  }
+
+  igo-list [igolistitem][color="primary"]:not(.igo-list-item-disabled):hover > mat-list-item,
+  igo-list [igolistitem][color="primary"].igo-list-item-focused > mat-list-item {
+    background-color: mat.get-color-from-palette($primary, lighter);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+  igo-list [igolistitem][color="accent"]:not(.igo-list-item-disabled):hover > mat-list-item,
+  igo-list [igolistitem][color="accent"].igo-list-item-focused > mat-list-item {
+    background-color: mat.get-color-from-palette($accent, lighter);
+    color: mat.get-color-from-palette($accent, default-contrast);
+  }
+}
+
+@mixin igo-panel-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  igo-panel > div.igo-panel-header {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+}
+
+@mixin igo-tool-theming($theme) {
+  @include igo-toolbox-theming($theme);
+}
+
+@mixin igo-toolbox-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+
+  igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
+    &:hover {
+      background-color: mat.get-color-from-palette($accent, lighter);
+    }
+
+    &.tool-activated,
+    &.children-tool-activated {
+      background-color: mat.get-color-from-palette($accent);
+      cursor: default;
+      button {
+        cursor: default;
+      }
+    }
+  }
+
+  igo-toolbox > igo-actionbar:not(.with-title) > mat-list {
+    & > #lowChevron,
+    & > #topChevron {
+      &:hover {
+        background-color: mat.get-color-from-palette($accent, lighter);
+        color: black;
+      }
+    }
+  }
+
+  igo-toolbox.color-primary > igo-actionbar:not(.with-title) {
+    box-shadow: unset;
+    background-color: mat.get-color-from-palette($primary);
+    #lowChevron,
+    #topChevron {
+      background-color: mat.get-color-from-palette($primary);
+      color: white;
+    }
+  }
+
+  igo-toolbox.color-grey > igo-actionbar:not(.with-title) {
+    box-shadow: unset;
+    background-color: #737475;
+    #lowChevron,
+    #topChevron {
+      background-color: #737475;
+      color: white;
+    }
+  }
+
+  igo-toolbox.color-primary,
+  igo-toolbox.color-grey {
+    & > igo-actionbar:not(.with-title) mat-list.mat-list-base {
+      .mat-list-item.mat-list-item-with-avatar {
+        color: white;
+        &:hover {
+          color: black;
+        }
+
+        &.tool-activated,
+        &.children-tool-activated {
+          background-color: white;
+          color: black;
+        }
+      }
+    }
+  }
+
+}
+
+@mixin igo-tour-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  igo-interactive-tour > button.mat-raised-button.tour-button-tool-icon {
+    box-shadow: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+
+    box-shadow: none;
+    border:none;
+    border-radius: 50%;
+    padding: 0;
+    min-width: 0;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    line-height: 40px;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon span.interactive-tour-button-title {
+    display: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+    border: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon:hover {
+    background-color: mat.get-color-from-palette($primary, default-contrast);
+    color: mat.get-color-from-palette($primary);
+    cursor: pointer;
+  }
+}
+
+@import '~ol/ol.css';
+
+@mixin igo-geo-theming($theme, $typography) {
+  @include igo-drawingTool-theming($theme, $typography);
+  @include igo-feature-theming($theme);
+  @include igo-filter-theming($theme, $typography);
+  @include igo-layer-theming($theme);
+  @include igo-map-theming($theme, $typography);
+  @include igo-measure-theming($theme, $typography);
+  @include igo-directions-theming($theme);
+  @include igo-workspace-theming($theme, $typography);
+}
+
+@mixin igo-directions-theming($theme) {
+  @include igo-directions-results-theming($theme);
+}
+
+@mixin igo-directions-results-theming($theme) {
+  $accent: map-get($theme, accent);
+
+  igo-directions-results mat-list-item.igo-steps:hover {
+    background-color: mat.get-color-from-palette($accent, lighter);
+  }
+}
+
+@mixin igo-drawingTool-theming($theme, $typography) {
+  @include igo-draw-theming($theme, $typography);
+}
+
+@mixin igo-draw-theming($theme, $typography) {
+    $foreground: map-get($theme, foreground);
+  
+    .igo-map-tooltip {
+      position: relative;
+      border-radius: 4px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+  
+    .igo-map-tooltip-draw {
+      color: mat.get-color-from-palette($foreground, text);
+      font-weight: bold;
+      font-size: mat.font-size($typography, subheading-2);
+    }
+    
+    igo-draw-popup-component {
+      h1 {
+        font-size: mat.font-size($typography, display-1);
+        font-family:  Roboto, "Helvetica Neue", sans-serif;
+      }
+    }
+ }
+
+@mixin igo-feature-theming($theme) {
+  @include igo-feature-details-theming($theme);
+}
+
+@mixin igo-feature-details-theming($theme) {
+  $is-dark: map-get($theme, is-dark);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+
+  igo-feature-details > table.igo-striped tbody tr:nth-child(odd) {
+    background-color: mat.get-color-from-palette($background, if($is-dark, app-bar, status-bar));
+    color: black;
+  }
+
+}
+
+@mixin igo-filter-theming($theme, $typography) {
+  @include igo-time-filter-form-theming($theme);
+  @include igo-ogc-filter-time-slider-theming($theme);
+  @include igo-ogc-filter-selection-theming($theme);
+}
+
+@mixin igo-ogc-filter-selection-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
+
+  mat-button-toggle.mat-button-toggle-checked {
+    background-color: mat.get-color-from-palette($accent);
+    color: mat.get-color-from-palette($dark);
+  }
+
+  mat-button-toggle {
+    color: black !important;
+  }
+}
+
+@mixin igo-ogc-filter-time-slider-theming($theme) {
+    $primary: map-get($theme, primary);    
+    $color: mat.define-palette(mat.$yellow-palette);
+
+    .mat-slider-thumb-label {
+        transform: rotate(45deg) !important;
+        border-radius: 50% 50% 0 !important;
+      }
+  }
+
+@mixin igo-time-filter-form-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-header {
+    color: mat.get-color-from-palette($primary);
+  }
+
+  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-content .mat-datetimepicker-calendar-body-active {
+    background-color: mat.get-color-from-palette($primary, lighter);
+    border-radius: 100%;
+  }
+}
+
+@mixin igo-layer-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  @include igo-layer-legend-theming($theme);
+
+  igo-layer-item.igo-layer-item-focused > mat-list-item {
+    background-color: mat.get-color-from-palette($accent, lighter);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+  .mat-menu-opacity-slider{
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.5), 0 4px 5px 0 rgba(0,0,0,.15), 0 1px 10px 0 rgba(0,0,0,.4)
+  }
+}
+
+@mixin igo-layer-legend-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  igo-layer-legend img:after {
+    border-top-color: mat.get-color-from-palette($primary);
+  }
+}
+
+@mixin igo-map-theming($theme, $typography) {
+  @include igo-map-browser-theming($theme, $typography);
+  @include igo-zoom-button-theming($theme);
+  @include igo-menu-button-theming($theme);
+}
+
+@mixin igo-map-browser-theming($theme, $typography) {
+  $primary: map-get($theme, primary);
+  $is-dark: map-get($theme, is-dark);
+
+  igo-map-browser div.ol-attribution > button {
+    color: mat.get-color-from-palette($primary, if($is-dark, default-contrast, default));
+    background-color: mat.get-color-from-palette(
+      $primary,
+      if($is-dark, default, default-contrast)
+    );
+  }
+
+  igo-map-browser div.ol-attribution > ul {
+    font-size: mat.font-size($typography, body-1);
+  }
+}
+
+@mixin igo-zoom-button-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $is-dark: map-get($theme, is-dark);
+
+  igo-zoom-button > div.igo-zoom-button-container > button {
+    &.mat-primary {
+      color: mat.get-color-from-palette($primary, if($is-dark, default-contrast, default));
+      background-color: mat.get-color-from-palette($primary, if($is-dark, default, default-contrast));
+    }
+
+    &.mat-accent {
+      color: mat.get-color-from-palette($accent, if($is-dark, default-contrast, default));
+      background-color: mat.get-color-from-palette($accent, if($is-dark, default, default-contrast));
+    }
+  }
+
+}
+
+@mixin igo-menu-button-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  igo-menu-button > #menu-button {
+    color: mat.get-color-from-palette($primary);
+  }
+
+  igo-menu-button > #menu-button.menu-button-reverse-color-close {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+
+  igo-menu-button > #menu-button.menu-button-reverse-color {
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
+  }
+}
+
+
+@mixin igo-measure-theming($theme, $typography) {
+  @include igo-measurer-theming($theme, $typography);
+}
+
+@mixin igo-measurer-theming($theme, $typography) {
+  $foreground: map-get($theme, foreground);
+
+  .igo-map-tooltip {
+    position: relative;
+    border-radius: 4px;
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+
+  .igo-map-tooltip-measure {
+    background-color: rgba(255, 204, 51, 0.7);
+    border: 1px solid rgb(255, 205, 51);
+    color: black;
+    font-weight: bold;
+    font-size: mat.font-size($typography, subheading-2);
+  }
+  .igo-map-tooltip-hidden {
+    display: none;
+  }
+  .igo-map-tooltip-measure-by-display{
+    display: none;
+  }
+}
+
+@mixin igo-workspace-theming($theme, $typography) {
+  @include igo-confirmation-popup-theming($theme, $typography);
+}
+
+@mixin igo-confirmation-popup-theming($theme, $typography) {
+    $foreground: map-get($theme, foreground);
+
+    igo-confirmation-popup-component {
+      h1 {
+        font-size: mat.font-size($typography, display-1);
+        font-family:  Roboto, "Helvetica Neue", sans-serif;
+      }
+    }
+ }
+
+.blue-theme {
+    $primary: mat.define-palette(mat.$blue-palette, 700, 400, 900);
+    $accent: mat.define-palette(mat.$blue-palette, 200);
+    $warn: mat.define-palette(mat.$red-palette);
+
+    $temp-theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    $foreground: theme-foreground(mat.define-palette(mat.$grey-palette, 900));
+    $theme: map-merge($temp-theme, (foreground: $foreground));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.bluedq-theme {
+    $dq-palette: (
+        50 : #e3eaec,
+        100 : #b9cad0,
+        200 : #8ba7b1,
+        300 : #5c8391,
+        400 : #39697a,
+        500 : #164e62,
+        600 : #13475a,
+        700 : #103d50,
+        800 : #0c3546,
+        900 : #062534,
+        A100 : #6dc6ff,
+        A200 : #3ab2ff,
+        A400 : #079eff,
+        A700 : #0090ec,
+        contrast: (
+            50 : #000000,
+            100 : #000000,
+            200 : #000000,
+            300 : #ffffff,
+            400 : #ffffff,
+            500 : #ffffff,
+            600 : #ffffff,
+            700 : #ffffff,
+            800 : #ffffff,
+            900 : #ffffff,
+            A100 : #000000,
+            A200 : #000000,
+            A400 : #ffffff,
+            A700 : #ffffff,
+        )
+    );
+
+    $primary: mat.define-palette($dq-palette, 500);
+    $accent: mat.define-palette($dq-palette, 200);
+    $warn: mat.define-palette(mat.$red-palette);
+
+    $temp-theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    $foreground: theme-foreground(mat.define-palette(mat.$grey-palette, 900));
+    $theme: map-merge($temp-theme, (foreground: $foreground));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.bluegrey-theme {
+    $primary: mat.define-palette(mat.$blue-grey-palette);
+    $accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+    $warn: mat.define-palette(mat.$deep-orange-palette);
+
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.deeppurple-theme {
+    $primary: mat.define-palette(mat.$deep-purple-palette);
+    $accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+    $warn: mat.define-palette(mat.$red-palette);
+
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.indigo-theme {
+    $primary: mat.define-palette(mat.$indigo-palette);
+    $accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+    $warn: mat.define-palette(mat.$red-palette);
+
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.orange-theme {
+    $primary: mat.define-palette(mat.$orange-palette, 800);
+    $accent: mat.define-palette(mat.$light-blue-palette, 600, 100, 800);
+    $warn: mat.define-palette(mat.$red-palette, 600);
+
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.dark-theme {
+    $primary: mat.define-palette(mat.$blue-grey-palette);
+    $accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+    $warn: mat.define-palette(mat.$deep-orange-palette);
+
+    $theme: mat.define-dark-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.teal-theme {
+    $primary: mat.define-palette(mat.$teal-palette, 600, 400, 900);
+    $accent: mat.define-palette(mat.$teal-palette, 400);
+    $warn: mat.define-palette(mat.$red-palette);
+
+    $theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn
+        )
+    ));
+
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+}
+
+.qcca-theme {
+    $qcca-palette: (
+        50: #f2f1f1,
+        100: #dae6f0, //lighter ex: list on focus
+        200: #dae6f0,
+        300: #509FDF,
+        400: #0D7DD9,
+        500: #095797, //default
+        600: #0A60A6,
+        700: #223654, // darker
+        800: #cb381f,
+        900: #4f813d,
+        A100: #1479cc,
+        A200: #1479cc,
+        A400: #dae6f0,
+        A700: #f2f1f1,
+        contrast: (
+           50: #223654,
+           100: #223654,
+           200: #223654,
+           300: #fff,
+           400: #fff,
+           500: #fff,
+           600: #fff,
+           700: #fff,
+           800: #fff,
+           900: #fff,
+           A100: #fff,
+           A200: #fff,
+           A400: #223654,
+           A700: #223654,
+        )
+       );
+
+    $primary: mat.define-palette($qcca-palette, 500, 400, 700);
+    $accent: mat.define-palette($qcca-palette, 400, 100, 700);
+    $warn: mat.define-palette($qcca-palette, 800);
+    $success: mat.define-palette($qcca-palette, 900);
+    $background: mat.define-palette($qcca-palette, 100, 100, 100);
+    $foreground: mat.define-palette($qcca-palette, 700, 700, 700);
+
+    $temp-theme: mat.define-light-theme((
+        color: (
+            primary: $primary,
+            accent: $accent,
+            warn: $warn,
+            success: $success,
+            background: $background
+        )
+    ));
+
+    $theme-foreground: (
+        base:              #223654,
+        divider:           #f2f1f1,
+        dividers:          #f2f1f1,
+        disabled:          #f2f1f1,
+        disabled-button:   #f2f1f1,
+        disabled-text:     #f2f1f1,
+        hint-text:         #f2f1f1,
+        secondary-text:    #f2f1f1,
+        icon:              #f2f1f1,
+        icons:             #f2f1f1,
+        text:              #223654,
+        slider-min:        #f2f1f1,
+        slider-off:        #f2f1f1,
+        slider-off-active: #f2f1f1,
+      );
+
+    $foreground: theme-foreground(mat.define-palette($qcca-palette, 500, 100, 700));
+    $theme: map-merge($temp-theme, (foreground: $foreground));
+
+    @include mat.core($theme);
+    @include igo-all-theming($theme);
+    @include mat.all-component-colors($theme);
+    @include mat.strong-focus-indicators-theme($theme);
+}
+
+//@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+//@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+//@include angular-material-theme($theme);
+
+/* For the non-Angular Material items */
+body {
+    color: #223654;
+}
