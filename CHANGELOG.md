@@ -1,3 +1,13 @@
+## [1.12.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.12.0...1.12.1) (2022-07-13)
+
+
+### Bug Fixes
+
+* **catalog/spatial-filter:** 1.12.0 fix ([#1080](https://github.com/infra-geo-ouverte/igo2-lib/issues/1080)) ([25444d1](https://github.com/infra-geo-ouverte/igo2-lib/commit/25444d1ea7304c684ed24943e0be146663427c70))
+* **geolocation:** fix missing config service ([b9c6ffe](https://github.com/infra-geo-ouverte/igo2-lib/commit/b9c6ffeca14d550ba2219221c78a63ac945d9738))
+
+
+
 # [1.12.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.1...1.12.0) (2022-06-23)
 
 
