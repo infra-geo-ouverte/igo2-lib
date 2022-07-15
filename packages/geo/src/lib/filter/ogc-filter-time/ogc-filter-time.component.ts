@@ -7,7 +7,7 @@ import {
   EventEmitter,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 import {
@@ -36,10 +36,10 @@ export class OgcFilterTimeComponent implements OnInit {
   endHours: number[];
   beginMinutes: number[];
   endMinutes: number[];
-  beginHourFormControl = new FormControl();
-  beginMinuteFormControl = new FormControl();
-  endHourFormControl = new FormControl();
-  endMinuteFormControl = new FormControl();
+  beginHourFormControl = new UntypedFormControl();
+  beginMinuteFormControl = new UntypedFormControl();
+  endHourFormControl = new UntypedFormControl();
+  endMinuteFormControl = new UntypedFormControl();
   _beginValue: Date;
   _endValue: Date;
   readonly _defaultMin: string = '1900-01-01';

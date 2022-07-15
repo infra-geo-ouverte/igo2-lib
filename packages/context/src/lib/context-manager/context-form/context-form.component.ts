@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 import { ObjectUtils, Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService } from '@igo2/core';
@@ -11,7 +11,7 @@ import { Context } from '../shared/context.interface';
   styleUrls: ['./context-form.component.scss']
 })
 export class ContextFormComponent implements OnInit {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public prefix: string;
 
   @Input()
@@ -48,7 +48,7 @@ export class ContextFormComponent implements OnInit {
   @Output() delete: EventEmitter<any> = new EventEmitter();
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private languageService: LanguageService,
     private messageService: MessageService
   ) {}

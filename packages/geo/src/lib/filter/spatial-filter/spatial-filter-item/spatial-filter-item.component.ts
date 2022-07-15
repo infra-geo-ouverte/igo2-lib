@@ -14,7 +14,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { IgoMap } from '../../../map';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -220,7 +220,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private radiusChanges$$: Subscription;
   private bufferChanges$$: Subscription;
 
-  public formControl = new FormControl();
+  public formControl = new UntypedFormControl();
   public geometryType: typeof OlGeometryType | string;
   public geometryTypeField = false;
   public geometryTypes: string[] = ['Point', 'Polygon'];
@@ -238,8 +238,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   public radius: number;
   public buffer: number = 0;
-  public radiusFormControl = new FormControl();
-  public bufferFormControl = new FormControl();
+  public radiusFormControl = new UntypedFormControl();
+  public bufferFormControl = new UntypedFormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public zoneWithBuffer;

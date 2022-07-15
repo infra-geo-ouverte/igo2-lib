@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef, Component,
   Input, OnDestroy, OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { IgoFormFieldComponent } from '@igo2/common';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import * as OlStyle from 'ol/style';
@@ -51,7 +51,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * The field's form control
    */
-  @Input() formControl: FormControl;
+  @Input() formControl: UntypedFormControl;
 
   /**
    * The map to draw the geometry on

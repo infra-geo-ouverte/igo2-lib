@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -24,7 +24,7 @@ import { DetailedContext } from '../../context-manager/shared/context.interface'
   styleUrls: ['./context-import-export.component.scss']
 })
 export class ContextImportExportComponent implements OnInit {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
@@ -43,7 +43,7 @@ export class ContextImportExportComponent implements OnInit {
     private contextExportService: ContextExportService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private config: ConfigService,
     private contextService: ContextService
   ) {
