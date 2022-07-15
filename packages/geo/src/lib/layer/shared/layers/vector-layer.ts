@@ -236,7 +236,7 @@ export class VectorLayer extends Layer {
   public centerMapOnFeature(id: string | number) {
     const feat = this.dataSource.ol.getFeatureById(id);
     if (feat) {
-      this.map.ol.getView().setCenter(feat.getGeometry().getCoordinates());
+      this.map.ol.getView().setCenter((feat.getGeometry() as any).getCoordinates());
     }
   }
 

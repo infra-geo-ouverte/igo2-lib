@@ -139,7 +139,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     });
     return {
       type: feature.getGeometry().getType(),
-      coordinates: feature.getGeometry().getCoordinates()
+      coordinates: (feature.getGeometry() as any).getCoordinates()
     };
   }
 }

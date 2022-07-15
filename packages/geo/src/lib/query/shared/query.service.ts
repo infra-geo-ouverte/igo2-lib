@@ -139,7 +139,7 @@ export class QueryService {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
       }*/
-      const featureGeometryCoordinates = feature.getGeometry().getCoordinates();
+      const featureGeometryCoordinates = (feature.getGeometry() as any).getCoordinates();
       const featureGeometryType = feature.getGeometry().getType();
 
       if (!firstFeatureType && !outBboxExtent) {
