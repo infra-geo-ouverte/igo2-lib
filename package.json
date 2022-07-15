@@ -101,6 +101,7 @@
     "@turf/helpers": "^6.5.0",
     "@turf/line-intersect": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
+    "ajv": "^8.8.2",
     "angular-shepherd": "13.0.1",
     "bowser": "^2.10.0",
     "core-js": "^3.6.5",
