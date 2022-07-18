@@ -2,16 +2,17 @@
   <mat-button-toggle-group
     (change)="onLabelTypeChange($event.value)" [value]="labelType.Coordinates">
     <mat-button-toggle [value]="labelType.Coordinates">
-      General
+      {{ 'igo.geo.draw.built-in' | translate }}
     </mat-button-toggle>
     <mat-button-toggle [value]="labelType.Custom" >
-      Custom
+      {{ 'igo.geo.draw.custom' | translate }}
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>
 
 <div *ngIf="coordinatesFlag === labelType.Coordinates">
   <div mat-dialog-content>
+    <p class="mat-typography"></p>
     <mat-form-field class="example-full-width">
       <input
         #input

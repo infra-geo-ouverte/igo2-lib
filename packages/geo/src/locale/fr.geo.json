@@ -703,7 +703,9 @@
           "title": "Titre",
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
-        }
+        },
+        "built-in": "Intégré",
+        "custom": "Personnalisé"
       },
       "network": {
         "online": {

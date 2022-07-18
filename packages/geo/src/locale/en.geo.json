@@ -703,7 +703,9 @@
           "title": "Title",
           "createNewLayer": "Create new drawing layer",
           "layerDialogInstruction": "Enter your drawing layer's title"
-        }
+        },
+        "built-in": "Built-in",
+        "custom": "Custom"
       },
       "network": {
         "online": {
