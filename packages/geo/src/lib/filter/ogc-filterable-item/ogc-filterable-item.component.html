@@ -1,49 +1,50 @@
-<mat-list-item>
+<div class="separate-item">
+  <mat-list-item>
+    <mat-icon
+      *ngIf="header"
+      class="igo-chevron"
+      mat-list-avatar
+      igoCollapse [target]="ogcFilters"
+      [collapsed]="filtersCollapsed"
+      (click)="toggleFiltersCollapsed()"
+      svgIcon="chevron-up">
+    </mat-icon>
+    <h4 (click)="toggleLegendOnClick()" *ngIf="header" [ngStyle]="{'cursor': filtersCollapsed ? 'default' : 'pointer'}" matLine [matTooltip]="layer.title" matTooltipShowDelay="500">{{layer.title}}</h4>
+      <button *ngIf="isAdvancedOgcFilters() && filtersAreEditable" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
+        <mat-icon svgIcon="plus"></mat-icon>
+      </button>
+      <button *ngIf="header"
+        mat-icon-button
+        [color]="layer.visible ? 'primary' : 'default'"
+        collapsibleButton
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="layer.visible ?
+                      ('igo.geo.layer.hideLayer' | translate) :
+                      ('igo.geo.layer.showLayer' | translate)"
+        (click)="layer.visible = !layer.visible">
+        <mat-icon
+          [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
+          [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
+        </mat-icon>
+      </button>
+  </mat-list-item>
 
-  <mat-icon
-    *ngIf="header"
-    class="igo-chevron"
-    mat-list-avatar
-    igoCollapse [target]="ogcFilters"
-    [collapsed]="filtersCollapsed"
-    (click)="toggleFiltersCollapsed()"
-    svgIcon="chevron-up">
-  </mat-icon>
-  <h4 (click)="toggleLegendOnClick()" *ngIf="header" [ngStyle]="{'cursor': filtersCollapsed ? 'default' : 'pointer'}" matLine [matTooltip]="layer.title" matTooltipShowDelay="500">{{layer.title}}</h4>
-    <button *ngIf="isAdvancedOgcFilters() && filtersAreEditable" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
-      <mat-icon svgIcon="plus"></mat-icon>
-    </button>
-    <button *ngIf="header"
-      mat-icon-button
-      [color]="layer.visible ? 'primary' : 'default'"
-      collapsibleButton
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="layer.visible ?
-                    ('igo.geo.layer.hideLayer' | translate) :
-                    ('igo.geo.layer.showLayer' | translate)"
-      (click)="layer.visible = !layer.visible">
-      <mat-icon
-        [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
-        [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
-      </mat-icon>
-    </button>
-</mat-list-item>
+  <div #ogcFilters>
+      <div *ngIf="header" #legend class="igo-layer-legend-container">
+        <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
+        </igo-layer-legend>
+      </div>
+    <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
+    </igo-ogc-filterable-form>
 
-<div #ogcFilters>
-    <div *ngIf="header" #legend class="igo-layer-legend-container">
-      <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
-      </igo-layer-legend>
-    </div>
-  <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
-  </igo-ogc-filterable-form>
-
-  <section *ngIf="hasSelector && filtersAreEditable" class="mat-typography advancedOgcFilters">
-    <mat-divider></mat-divider>
-    <mat-checkbox labelPosition='before' (change)="changeOgcFilterType($event)"
-      [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
-      {{'igo.geo.filter.advancedOgcFilters' | translate}}
-    </mat-checkbox>
-  </section>
+    <section *ngIf="hasSelector && filtersAreEditable" class="mat-typography advancedOgcFilters">
+      <mat-divider></mat-divider>
+      <mat-checkbox labelPosition='before' (change)="changeOgcFilterType($event)"
+        [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
+        {{'igo.geo.filter.advancedOgcFilters' | translate}}
+      </mat-checkbox>
+    </section>
+  </div>
 </div>

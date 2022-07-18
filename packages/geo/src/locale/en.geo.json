@@ -203,7 +203,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
         "sliderModeTitle": "Time slider",
-        "reportingDate": "Reporting date"
+        "reportingDate": "Reporting date",
+        "noFilterableLayer": "No layer can be filtered in the current map"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -265,7 +266,8 @@
       },
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
-        "geolocate": "Geolocate",
+        "geolocate": "Show geolocation",
+        "geolocateInactive": "Hide geolocation",
         "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",

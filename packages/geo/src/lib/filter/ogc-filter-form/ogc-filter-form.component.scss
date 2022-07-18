@@ -49,7 +49,7 @@
 
 .field {
   width: 20%;
-  margin-left: 5px;
+  // margin-left: 5px;
 }
 
 ::ng-deep .field .mat-select-arrow {
@@ -78,6 +78,9 @@
 .singleInput {
   width: 30%;
   margin-left: 5px;
+  @include mobile {
+    width: 27%;
+  }
 }
 
 .snrc {

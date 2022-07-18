@@ -202,7 +202,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
         "sliderModeTitle": "Curseur temporel",
-        "reportingDate": "Date de signalement"
+        "reportingDate": "Date de signalement",
+        "noFilterableLayer": "Aucune couche ne peut être filtrée dans la carte actuelle"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -265,6 +266,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "geolocateInactive": "Masquer votre position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
