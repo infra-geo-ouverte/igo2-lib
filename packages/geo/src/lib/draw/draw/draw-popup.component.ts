@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LabelType } from '../shared/draw.enum'
+import { LabelType } from '../shared/draw.enum';
 
 export interface DialogData {
   label: string;
@@ -15,7 +15,7 @@ export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() coordinatesFlag: LabelType = LabelType.Coordinates;
   public labelType = LabelType;
-    
+
   constructor(
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string, canUseCoordinateLabel: boolean, coordinates: string}
@@ -29,12 +29,11 @@ export class DrawPopupComponent {
     this.dialogRef.close(labelString);
   }
   onLabelTypeChange(labelType: LabelType){
-    console.log(labelType);
     this.coordinatesFlag = labelType;
   }
 
   getLabel(){
-    if (this.coordinatesFlag == LabelType.Coordinates){
+    if (this.coordinatesFlag === LabelType.Coordinates){
       return this.data.coordinates;
     }
     else{

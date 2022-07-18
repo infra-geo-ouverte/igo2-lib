@@ -166,7 +166,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private numberOfDrawings: number;
   public isCreatingNewLayer: boolean = false;
   private currGeometryType = this.geometryType.Point as any;
-  
+
   constructor(
     private languageService: LanguageService,
     private formBuilder: FormBuilder,
@@ -409,8 +409,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private onModifyDraw(olGeometry) {
     const entities = this.activeStore.all();
-    console.log(entities);
-    
+
     entities.forEach((entity) => {
       const entityId = entity.properties.id;
 
@@ -419,12 +418,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       if (entityId === olGeometryId) {
 
         entity.properties.coordinateLabel ?
-          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4) + ', ' + entity.properties.longitude.toFixed(4)+')') :
+          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4)
+            + ', ' + entity.properties.longitude.toFixed(4)+')') :
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
         this.updateIsCoordinatesLabel(
           olGeometry,
           entity.properties.coordinateLabel
-        )
+        );
         this.updateFontSizeAndStyle(
           olGeometry,
           entity.properties.fontStyle.split(' ')[0].replace('px', ''),
@@ -483,7 +483,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
         this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
         this.updateOffset(olGeometry, offsetX, offsetY);
-        this.updateIsCoordinatesLabel(olGeometry, isCoordinatesLabel)
+        this.updateIsCoordinatesLabel(olGeometry, isCoordinatesLabel);
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -549,8 +549,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       lon4326 = point4326[0];
       lat4326 = point4326[1];
     }
-
-    console.log(olGeometry);
 
     this.activeStore.update({
       type: FEATURE,
@@ -627,7 +625,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       const olGeometryFeature = featureToOl(
         this.selectedFeatures$.value[0],
         this.map.ol.getView().getProjection().getCode()
-      );      
+      );
       this.openDialog(olGeometryFeature, false);
     }
   }
@@ -948,7 +946,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private updateIsCoordinatesLabel(
     olFeature: OlFeature<OlGeometry>,
     isCoordinatesLabel: boolean
-  ){    
+  ){
     olFeature.setProperties(
       {
         isCoordinatesLabel_: isCoordinatesLabel
@@ -1141,7 +1139,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   isPointOrCircle(olGeometry){
     let tempOlGeometry = olGeometry;
-    if (olGeometry instanceof OlFeature){      
+    if (olGeometry instanceof OlFeature){
       tempOlGeometry = olGeometry.getGeometry();
     }
     return (tempOlGeometry instanceof OlPoint || tempOlGeometry instanceof OlCircle);
