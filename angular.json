@@ -92,7 +92,8 @@
               "pako/lib/inflate",
               "txml",
               "lru-cache",
-              "striptags"
+              "striptags",
+              "nosleep.js"
             ]
           },
           "configurations": {
@@ -114,8 +115,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -135,8 +136,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
