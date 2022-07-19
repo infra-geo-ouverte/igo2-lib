@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import {stylefunction} from "ol-mapbox-style"
+import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
 
