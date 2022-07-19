@@ -24,7 +24,7 @@
     "@angular/common": "^13.3.11",
     "@angular/core": "^13.3.11",
     "@angular/forms": "^13.3.11",
-    "@angular/material": "^12.2.9",
+    "@angular/material": "^13.3.9",
     "@igo2/core": "^1.12.1",
     "@igo2/utils": "^1.12.1",
     "rxjs": "^6.6.7",
