@@ -19,11 +19,11 @@
   },
   "peerDependencies": {
     "@angular/cdk": "^14.0.5",
-    "@angular/common": "^14.0.5",
-    "@angular/core": "^14.0.5",
+    "@angular/common": "^14.0.6",
+    "@angular/core": "^14.0.6",
     "@igo2/utils": "^1.13.0-alpha.0",
     "rxjs": "^6.6.7",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^14.1.3"
+    "ngx-toastr": "^15.0.0"
   }
 }
