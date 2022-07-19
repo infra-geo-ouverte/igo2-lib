@@ -54,13 +54,11 @@
     <form class="radius-form">
       <mat-form-field class="radius">
         <input
-        matInput
-        type="number"
-        min="0"
-        placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
-        [formControl]="radiusFormControl"
-        [readonly]="!usePredefinedRadius"
-        (input)="changeRadius()">
+        matInput type="number" min="0" placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
+        [formControl]="radiusFormControl" [(ngModel)]="form2.valrayon"
+        [value]="1000" (input)="changeRadius()"
+        [readonly]="this.freehandMode && !usePredefinedRadius ===null"
+        >
       </mat-form-field>
     </form>
 

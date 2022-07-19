@@ -1,3 +1,4 @@
+import { GeometryType } from './../../../draw/shared/draw.enum';
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
@@ -66,7 +67,9 @@ export class DrawControl {
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  predefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  radiusDrawEnd$: BehaviorSubject<number>=new BehaviorSubject(undefined);
 
   private keyDown$$: Subscription;
 
@@ -81,8 +84,22 @@ export class DrawControl {
   private onDrawEndKey: EventsKey;
   private onDrawAbortKey: EventsKey;
   private onDrawKey: EventsKey;
+  public radius:number;
 
   private mousePosition: [number, number];
+  /**
+   * take the radius from radius meters
+   */
+  get radiusVal():number{
+    return this.predefinedRadius$.getValue();
+    console.log("get radiusVal$ depuis predefinedRadius draw.ts 91");
+  }
+  set radiusValData(radiusCercle:number){
+  this.predefinedRadius$.next(radiusCercle);
+  console.log(radiusCercle);
+  console.log("setradius depuis predefinedRadius draw.ts 95");
+  }
+
 
   /**
    * Wheter the control is active
@@ -128,10 +145,11 @@ export class DrawControl {
    */
   getSource(): OlVectorSource<OlGeometry> {
     return this.olDrawingLayerSource;
-  }
 
-setOlInteractionStyle(style: OlStyleLike){
+  }
+ setOlInteractionStyle(style: OlStyleLike){
   this.olInteractionStyle = style;
+  console.log("setOlInteractionStyle draw.ts 149", style);
 }
 
   /**
@@ -140,6 +158,7 @@ setOlInteractionStyle(style: OlStyleLike){
    */
   setGeometryType(geometryType: typeof OlGeometryType) {
     this.olGeometryType = geometryType;
+    console.log("setGeometryType draw.ts 157", geometryType);
   }
 
   /**
@@ -185,6 +204,7 @@ setOlInteractionStyle(style: OlStyleLike){
     if (!this.options.drawingLayer && !this.options.drawingLayerSource) {
       this.olDrawingLayerSource.clear(true);
     }
+    console.log("clearOlInnerOverlaySource  draw.ts 202", this.clearOlInnerOverlaySource);
   }
 
   /**
@@ -193,7 +213,9 @@ setOlInteractionStyle(style: OlStyleLike){
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
-    if (!this.freehand$.getValue() || this.predefinedRadius$.getValue()) {
+    console.log("frehand$ get value", this.freehand$.getValue());
+    console.log("ispredefinedRadius$ get value", this.ispredefinedRadius$.getValue());
+    if (!this.freehand$.getValue() || this.ispredefinedRadius$.getValue()) {
       if (!this.freehand$.getValue()) {
         olDrawInteraction = new OlDraw({
           type: this.olGeometryType,
@@ -272,15 +294,20 @@ setOlInteractionStyle(style: OlStyleLike){
    */
   private removeOlInteractions() {
     this.unsubscribeKeyDown();
+    console.log("removeOlInteractions this unsubscribeKeyDown 292 draw.ts",this.unsubscribeKeyDown);
     unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey, this.onDrawAbortKey]);
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
       this.olMap.removeInteraction(this.olModifyInteraction);
+      console.log("removeOlInteractions condition if olmap 296 draw.ts",this.olMap );
     }
 
     this.olDrawInteraction = undefined;
+    console.log("removeOlInteractions olDrawInteraction 302 draw.ts",this.olDrawInteraction);
     this.olModifyInteraction = undefined;
+    console.log("removeOlInteractions olModifyInteraction 304 draw.ts",this.olModifyInteraction);
+    console.log("removeOlInteractions fonction 291 draw.ts",this.removeOlInteractions );
   }
 
   /**
@@ -296,7 +323,7 @@ setOlInteractionStyle(style: OlStyleLike){
       this.changes$.next(olGeometryEvent.target);
     });
     console.log(event);
-    console.log("event dans onDrawStart draw.ts");
+    console.log("event dans onDrawStart draw.ts 304");
     this.subscribeKeyDown();
   }
 
@@ -305,15 +332,20 @@ setOlInteractionStyle(style: OlStyleLike){
    * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
+    console.log("ondrawend eventfeature.getgeometry() type",event.feature.getGeometry().getType());
+    if (event.feature.getGeometry().getType() === 'Point'){
+      this.radiusDrawEnd$.next(this.predefinedRadius$.getValue());
+    }
+
     this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
     const olGeometry = event.feature.getGeometry();
     olGeometry.on('change', () => {
       this.modify$.next(olGeometry);
     });
-    this.end$.next(olGeometry);
-    console.log(event);
-    console.log("event dans onDrawEnd draw.ts");
+    this.end$.next(olGeometry);//*********aqui se queda  */
+        console.log(event);
+    console.log("event dans onDrawEnd draw.ts 328");
   }
 
   /**

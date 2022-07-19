@@ -53,6 +53,8 @@ import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
 import { MeasureLengthUnit } from './../../measure/shared/measure.enum';
 
+interface form2 {"valrayon":number }
+
 @Component({
   selector: 'igo-draw',
   templateUrl: './draw.component.html',
@@ -60,6 +62,9 @@ import { MeasureLengthUnit } from './../../measure/shared/measure.enum';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DrawComponent implements OnInit, OnDestroy {
+  form2= {
+    valrayon:"rad"
+  }
   /**
    * Table template
    * @internal
@@ -92,6 +97,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   @Input() store: FeatureStore<FeatureWithDraw>; // Drawing store
 
+
   public draw$: BehaviorSubject<Draw> = new BehaviorSubject({}); // Observable of draw
 
   private olDrawingLayerSource = new OlVectorSource();
@@ -120,6 +126,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   public radiusFormControl = new FormControl();
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public radiusStyle:number;
+  public radiusCercle:number;
+  public predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  public radiusDrawEnd$: BehaviorSubject<number>=new BehaviorSubject(undefined);
+  public radiusMetersdef:number;
   /**
    * Available measure units for the measure type given
    * @internal
@@ -134,7 +144,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
     private drawIconService: DrawIconService,
-    private messageService: MessageService,
+    private messageService: MessageService
+
   ) {
     this.buildForm();
     this.fillColor = this.drawStyleService.getFillColor();
@@ -158,7 +169,10 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
     this.drawControl.setGeometryType(this.geometryType.Point as any);
     this.drawControl.freehand$.next(this.freehandMode);
-    this.drawControl.predefinedRadius$.next(this.usePredefinedRadius);
+    console.log("freehanddd mode init", this.freehandMode);
+    this.drawControl.ispredefinedRadius$.next(this.usePredefinedRadius);
+    /**this.drawControl.radiusVal.subscribe(this.predefinedRadius$);*/
+    this.drawControl.radiusDrawEnd$.next(this.radiusCercle);
     this.toggleDrawControl();
   }
 
@@ -202,10 +216,14 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   onGeometryTypeChange(geometryType: typeof OlGeometryType) {
     this.drawControl.setGeometryType(geometryType);
-
+    console.log("ongeometrytypechange on draw.component.ts 213",this.drawControl.getGeometryType());
     if (this.drawControl.getGeometryType() === this.geometryType.Circle) {
       this.freehandMode = true;
       this.drawControl.freehand$.next(this.freehandMode);
+    } else {
+      this.freehandMode=false;
+      this.drawControl.freehand$.next(this.freehandMode);
+      this.drawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor,this.strokeColor,this.strokeWidth));
     }
     this.toggleDrawControl();
   }
@@ -324,7 +342,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   onToggleFreehandMode(event: any) {
     if (this.isCircle()) {
       this.usePredefinedRadius = event.checked;
-      this.drawControl.predefinedRadius$.next(this.usePredefinedRadius);
+      this.drawControl.ispredefinedRadius$.next(this.usePredefinedRadius);
 
     } else {
       this.freehandMode = event.checked;
@@ -431,16 +449,19 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private onDrawEnd(olGeometry: OlGeometry, radius?: number) {
     console.log(olGeometry);
-    console.log("olGeometry from onDrawEnd from drawcomponent");
+    console.log(radius);
+    console.log("olGeometry from onDrawEnd from drawcomponent 442");
+
+
     this.addFeatureToStore(olGeometry, radius);
      console.log(radius);
-     console.log ("radius onDrawEnd from drawcomponent");
+     console.log ("radius onDrawEnd from drawcomponent 384");
     this.clearLabelsOfOlGeometry(olGeometry);
     console.log(olGeometry);
 
     this.store.layer.ol.getSource().refresh();
     console.log(this.store);
-    console.log ("store onDrawEnd from drawcomponent");
+    console.log ("store.layer.ol onDrawEnd from drawcomponent 462");
   }
 
   private onModifyDraw(olGeometry) {
@@ -499,6 +520,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     let radDef: number;
     let radiusMeters: number;
 
+
     const featureId = feature ? feature.properties.id : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
 
@@ -506,15 +528,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       featureProjection: projection,
       dataProjection: projection
     }) as any;
-    console.log(olGeometry);
-    console.log("olGeometry et radius dans addfeatureToStore");
+    console.log(geometry);
+    console.log("value of geometry dans addfeatureToStore 519 draw.component.ts");
 
 
     if (olGeometry instanceof OlCircle || radius) {
-      if (radius) {
-        rad = radius;
-        console.log(radius);
-    console.log("condition IF radius dans addfeatureToStore from draw.component");
+      if (radius ) {
+        rad=radius;
       } else {
         geometry.type = 'Point';
         geometry.coordinates = olGeometry.getCenter();
@@ -538,20 +558,18 @@ export class DrawComponent implements OnInit, OnDestroy {
         lat4326 = center4326[1];
         rad = getDistance(center4326, extent4326);
         console.log(rad);
-        console.log("condition else radius dans addfeatureToStore from draw.component.ts");
+        console.log("condition else 538 radius dans addfeatureToStore from draw.component.ts");
+        /**this.formControl[radiusFormControl].setValue(rad);*/
+        this.radiusFormControl.setValue(Math.round(rad));
+        console.log("value of radius on draw.component.ts 596",rad);
       }
-      if (radius){
-        radDef = radius;
-      }else {
-        let resolution:number;
-        geometry.type = 'Point';
-        const geom = feature.getGeometry() === this.geometryType.Circle;
-        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-        radDef = (radiusMeters/(Math.cos((Math.PI/180) * coordinates[1])) / resolution);
 
-        console.log("radDef condition from draw.component.ts");
-      }
     }
+    if (this.drawControl.radiusDrawEnd$.getValue()){
+      rad=this.drawControl.radiusDrawEnd$.getValue();
+      console.log("rayon ",this.drawControl.radiusDrawEnd$.getValue());
+    }
+
 
     if (olGeometry instanceof OlPoint) {
       point4326 = transform(
@@ -561,7 +579,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       );
       lon4326 = point4326[0];
       lat4326 = point4326[1];
-      console.log("olgeometry instanceof OlPoint");
+      console.log("olgeometry instanceof OlPoint 473 draw.component.ts");
     }
 
     this.store.update({
@@ -579,8 +597,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         id: featureId
       }
     });
+    this.drawControl.predefinedRadius$.next(undefined);
+    this.drawControl.radiusDrawEnd$.next(undefined);
+
     console.log(this.store);
-    console.log("store.update dans addfeatureToStore");
+    console.log("store.update dans addfeatureToStore 478 draw.component.ts");
   }
 
   /**
@@ -594,8 +615,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     radius?: number
   ) {
     this.store.delete(entity);
+    console.log("this.store.delete in replaceFeatureInStore 601 draw.component.ts", entity);
     this.onDrawEnd(olGeometry, radius);
-    console.log(" private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number)");
+    console.log(" private replaceFeatureInStore(entity, olGeometry: OlGeometry, radius?: number) 504 draw.component.ts");
   }
 
   private buildForm() {
@@ -704,8 +726,75 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
     this.createDrawControl();
   }
-
   get allFontStyles(): string[] {
     return Object.values(FontType);
+  }
+  isPoint() {
+    return this.drawControl.getGeometryType() === this.geometryType.Point;
+  }
+
+  isLineString() {
+    return this.drawControl.getGeometryType() === this.geometryType.LineString;
+  }
+
+  isPolygon() {
+    return this.drawControl.getGeometryType() === this.geometryType.Polygon;
+  }
+
+  isCircle() {
+    return this.drawControl.getGeometryType() === this.geometryType.Circle;
+  }
+
+  changeRadius() {
+    let radiusMeters: number;
+
+
+    if (this.radiusFormControl.value) {
+      this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = this.radiusFormControl.value :
+      radiusMeters = this.radiusFormControl.value * 1000;
+    } else {
+      radiusMeters = undefined;
+    }
+    if (radiusMeters >= 100000 || radiusMeters < 0) {
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+      this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+      //this.radiusFormControl.reset();
+      this.radiusMetersdef = 1000;
+      this.radiusFormControl.setValue(this.radiusMetersdef);
+    } else {
+      const pointStyle = (feature:OlFeature<OlGeometry>, resolution:number) => {
+        const geom = feature.getGeometry() as OlPoint;
+        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+        const radius = radiusMeters/(Math.cos((Math.PI/180) * coordinates[1])) / resolution;
+        this.drawControl.predefinedRadius$.next(radiusMeters);
+        return new OlStyle.Style({
+          image: new OlStyle.Circle ({
+            radius: radius,
+            stroke: new OlStyle.Stroke({
+              width: 1,
+              color: 'rgba(143,7,7,1)'
+            }),
+            fill: new OlStyle.Fill({
+              color: 'rgba(255,255,255,0.4)'
+            })
+          })
+        });
+      };
+
+      this.drawControl.setOlInteractionStyle(pointStyle);
+      this.toggleDrawControl();
+
+      console.log(radiusMeters);
+    }
+  }
+
+  onMeasureUnitChange(selectedMeasureUnit: MeasureLengthUnit) {
+    if (selectedMeasureUnit === this.measureUnit) {
+      return;
+    } else {
+      this.measureUnit = selectedMeasureUnit;
+      this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
+      this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+    }
   }
 }
