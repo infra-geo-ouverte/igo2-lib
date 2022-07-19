@@ -63,7 +63,6 @@ import {
   transition
   // ...
 } from '@angular/animations';
-// import Point from 'ol/geom/Point';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
 @Component({
@@ -317,42 +316,21 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
   private openDialog(olGeometry, isDrawEnd: boolean) {
     setTimeout(() => {
-      let coordinateLabel = undefined;
-      if (olGeometry instanceof OlFeature){
-        coordinateLabel = '(' + olGeometry.get('latitude').toFixed(4) + ', ' + olGeometry.get('longitude').toFixed(4) + ')';
-      }
-      else{
-        const projection = this.map.ol.getView().getProjection();
-        let point4326 = transform(
-          olGeometry.getFlatCoordinates(),
-          projection,
-          'EPSG:4326'
-        );
-        coordinateLabel =
-          '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
-      }
-
-
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
-        data: { currentLabel: olGeometry.get('draw'), canUseCoordinateLabel: this.isPointOrCircle(olGeometry), coordinates: coordinateLabel}
+        data: {olGeometry: olGeometry, map: this.map}
       });
-
-      // if (olGeometryFeature.geometryType){}
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          if (dialogRef.componentInstance.coordinatesFlag === LabelType.Coordinates){
-            this.updateLabelOfOlGeometry(olGeometry, coordinateLabel);
-            this.updateIsCoordinatesLabel(olGeometry, true);
-          }
-          else{
-            this.updateLabelOfOlGeometry(olGeometry, label);
-            this.updateIsCoordinatesLabel(olGeometry, false);
-          }
+          dialogRef.componentInstance.labelFlag === LabelType.BuiltIn ? 
+            this.updateIsCoordinatesLabel(olGeometry, true): this.updateIsCoordinatesLabel(olGeometry, false);
+
+          this.updateLabelOfOlGeometry(olGeometry, label);
+
           if (!olGeometry.values_.fontStyle) {
             this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
           }
@@ -376,7 +354,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.onDrawEnd(olGeometry);
             // if event was fired at select
           } else {
-            olGeometry.values_.isCoordinatesLabel_ ? this.onSelectDraw(olGeometry, coordinateLabel):this.onSelectDraw(olGeometry, label) ;
+            this.onSelectDraw(olGeometry, label) ;
           }
           this.updateHeightTable();
         }
@@ -1137,11 +1115,5 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
   }
 
-  isPointOrCircle(olGeometry){
-    let tempOlGeometry = olGeometry;
-    if (olGeometry instanceof OlFeature){
-      tempOlGeometry = olGeometry.getGeometry();
-    }
-    return (tempOlGeometry instanceof OlPoint || tempOlGeometry instanceof OlCircle);
-  }
+
 }

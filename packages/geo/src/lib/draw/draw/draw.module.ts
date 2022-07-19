@@ -25,6 +25,8 @@ import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import {MatRadioModule} from '@angular/material/radio';
+
 
 /**
  * @ignore
@@ -50,7 +52,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     IgoEntityTableModule,
     ColorPickerModule,
     BrowserModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatRadioModule
   ],
   declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
   exports: [DrawComponent]

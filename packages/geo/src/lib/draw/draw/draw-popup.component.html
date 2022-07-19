@@ -1,7 +1,7 @@
-<div *ngIf="data.canUseCoordinateLabel" class="geometry-type-toggle mat-typography">
+<div class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
-    (change)="onLabelTypeChange($event.value)" [value]="labelType.Coordinates">
-    <mat-button-toggle [value]="labelType.Coordinates">
+    (change)="onLabelTypeChange($event.value)" [value]="labelType.BuiltIn">
+    <mat-button-toggle [value]="labelType.BuiltIn">
       {{ 'igo.geo.draw.built-in' | translate }}
     </mat-button-toggle>
     <mat-button-toggle [value]="labelType.Custom" >
@@ -10,8 +10,8 @@
   </mat-button-toggle-group>
 </div>
 
-<div *ngIf="coordinatesFlag === labelType.Coordinates">
-  <div mat-dialog-content>
+<div *ngIf="labelFlag === labelType.BuiltIn">
+  <!-- <div mat-dialog-content>
     <p class="mat-typography"></p>
     <mat-form-field class="example-full-width">
       <input
@@ -20,8 +20,29 @@
         placeholder="(Latitude, Longitude)"
         value="{{data.coordinates}}" readonly>
     </mat-form-field>
+  </div> -->
+
+  <div>
+    <p class="mat-typography">Select an option</p>
+    <mat-radio-group>
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" (change)="onBuiltInLabelChange($event.value)">
+        {{option}}
+      </mat-radio-button>
+    </mat-radio-group>
+    <div>
+      <mat-form-field *ngIf="builtInLabelType === builtInType.Coordinates" class="readOnly-Input">
+        <input
+          #input
+          matInput
+          placeholder="(Latitude, Longitude)"
+          value="{{coordinates}}" readonly>
+      </mat-form-field>
+    </div>
+
+
   </div>
-  
+
+
   <div mat-dialog-actions>
     <button mat-raised-button (click)="cancelDrawing()" >
       {{'igo.geo.draw.cancel' | translate}}
@@ -29,12 +50,13 @@
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="confirm(input.value)">OK
+      (click)="confirm(coordinates)"
+      [disabled]="builtInLabelType === undefined">OK
     </button>
   </div>
 </div>
 
-<div *ngIf="coordinatesFlag !== labelType.Coordinates">
+<div *ngIf="labelFlag !== labelType.BuiltIn">
   <div mat-dialog-content>
     <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
     <mat-form-field class="example-full-width">
@@ -42,7 +64,7 @@
         #input
         matInput
         placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
-        value="{{ data.currentLabel}}"/>
+        value="{{ currentLabel }}"/>
     </mat-form-field>
   </div>
   

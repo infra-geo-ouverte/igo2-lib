@@ -22,6 +22,12 @@ export enum FontType {
 }
 
 export enum LabelType{
-    Coordinates = 'Coordinates',
+    BuiltIn = 'Built-In',
     Custom = 'Custom'
+}
+
+export enum BuiltInLabelType{
+    Coordinates = 'Coordinates',
+    Length = 'Length',
+    Perimeter = 'Perimeter'
 }
