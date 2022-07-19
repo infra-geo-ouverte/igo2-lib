@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "1.13.0-alpha.1",
+  "version": "1.13.0-alpha.2",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -16,8 +16,8 @@
   "peerDependencies": {
     "@angular/common": "^13.3.11",
     "@angular/core": "^13.3.11",
-    "@igo2/geo": "1.13.0-alpha.1",
-    "@igo2/context": "1.13.0-alpha.1",
+    "@igo2/geo": "1.13.0-alpha.2",
+    "@igo2/context": "1.13.0-alpha.2",
     "rxjs": "^6.6.7"
   },
   "dependencies": {
