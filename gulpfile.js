@@ -157,6 +157,18 @@ gulp.task('prepublishOnly', done => {
 
 // ==========================================================
 
+// https://github.com/stylus/stylus/pull/2538
+gulp.task('libs:fixUseAngularMaterialCDK', done => {
+  gulp.src(['./node_modules/@angular/material/core/style/_menu-common.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/style/'));
+  gulp.src(['./node_modules/@angular/material/core/_core.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/'));
+  gulp.src(['./node_modules/@angular/material/core/ripple/_ripple.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/ripple'));
+  gulp.src(['./node_modules/@angular/material/badge/_badge-theme.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/badge'));
+
+  done();
+});
+
+
+
 gulp.task('core:concatStyles', done => {
   gulp
     .src([
@@ -484,7 +496,7 @@ exports.filename = null;`
 });
 
 
-gulp.task('fixLibs', gulp.parallel(['libs:fixStylus']));
+gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixUseAngularMaterialCDK']));
 
 // ==========================================================
 
