@@ -22,7 +22,7 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BuiltInLabelType, FontType, GeometryType, LabelType } from '../shared/draw.enum';
+import { FontType, GeometryType, LabelType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -326,10 +326,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          if (dialogRef.componentInstance.labelFlag === LabelType.Predefined){
-            if(dialogRef.componentInstance.builtInLabelType === BuiltInLabelType.Coordinates){
-              this.updateIsCoordinatesLabel(olGeometry, true);
-            }
+          if (dialogRef.componentInstance.labelFlag === LabelType.Coordinates){
+            this.updateIsCoordinatesLabel(olGeometry, true);
           }
           else {
             this.updateIsCoordinatesLabel(olGeometry, false);
@@ -1075,7 +1073,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         }
       );
     }
-
     this.activeDrawControl.setOlMap(this.map.ol, true);
   }
 

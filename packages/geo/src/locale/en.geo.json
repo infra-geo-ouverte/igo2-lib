@@ -704,9 +704,14 @@
           "createNewLayer": "Create new drawing layer",
           "layerDialogInstruction": "Enter your drawing layer's title"
         },
-        "predefined": "Predefined",
-        "custom": "Custom",
-        "builtInInstructions": "Select an option"
+        "builtInInstructions": "Select an option",
+        "labelType": {
+          "Coordinates": "Coordinates",
+          "Length": "Length",
+          "Area": "Area",
+          "predefined": "Predefined",
+          "custom": "Custom"
+        }
 
       },
       "network": {

@@ -2,24 +2,24 @@
   <mat-button-toggle-group
     (change)="onLabelTypeChange($event.value)" [value]="labelType.Predefined">
     <mat-button-toggle [value]="labelType.Predefined">
-      {{ 'igo.geo.draw.predefined' | translate }}
+      {{ 'igo.geo.draw.labelType.predefined' | translate }}
     </mat-button-toggle>
     <mat-button-toggle [value]="labelType.Custom" >
-      {{ 'igo.geo.draw.custom' | translate }}
+      {{ 'igo.geo.draw.labelType.custom' | translate }}
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>
 
-<div *ngIf="labelFlag === labelType.Predefined">
+<div *ngIf="labelFlag !== labelType.Custom">
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
     <mat-radio-group>
-      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onBuiltInLabelChange($event.value)">
-        {{option}}
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onLabelTypeChange($event.value)">
+        {{ 'igo.geo.draw.labelType.' + option | translate }}
       </mat-radio-button>
     </mat-radio-group>
-    <div>
-      <mat-form-field *ngIf="builtInLabelType === builtInType.Coordinates" class="readOnly-Input">
+    <div *ngIf="labelFlag === labelType.Coordinates">
+      <mat-form-field class="readOnly-Input">
         <input
           #input
           matInput
@@ -37,12 +37,13 @@
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="confirm(coordinates)">OK
+      (click)="confirm(coordinates)"> 
+      {{noLabelButton()}} 
     </button>
   </div>
 </div>
 
-<div *ngIf="labelFlag !== labelType.Predefined">
+<div *ngIf="labelFlag === labelType.Custom">
   <div mat-dialog-content>
     <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
     <mat-form-field class="example-full-width">

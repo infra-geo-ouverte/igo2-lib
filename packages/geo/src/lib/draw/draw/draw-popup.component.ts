@@ -1,9 +1,11 @@
 import { Component, Inject, Input } from '@angular/core';
+import { LanguageService } from '@igo2/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LabelType, GeometryType, BuiltInLabelType } from '../shared/draw.enum';
+import { GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
 import { IgoMap } from '../../map/shared';
 import OlFeature from 'ol/Feature';
+import { measureOlGeometryLength } from '../../measure/shared/measure.utils';
 
 
 export interface DialogData {
@@ -18,22 +20,20 @@ export interface DialogData {
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() labelFlag: LabelType = LabelType.Predefined;
-  @Input() builtInLabelType: BuiltInLabelType
-  public labelType = LabelType;
+  
   public geometryType = GeometryType;
-
-  public builtInType = BuiltInLabelType;
+  public labelType = LabelType;
   public currentLabel: string;
   public coordinates: string;
   public olGeometryType: GeometryType = undefined;
 
+
   constructor(
+    private languageService: LanguageService,
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
     ){
-      
       this.currentLabel = this.data.olGeometry.get('draw');
-
       if (this.data.olGeometry instanceof OlFeature){
         this.olGeometryType = this.data.olGeometry.getGeometry().getType();
         this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', ' 
@@ -56,8 +56,7 @@ export class DrawPopupComponent {
   }
   confirm(labelString: string) {
     this.confirmFlag = true;
-    console.log(this.builtInLabelType);
-    if(this.builtInLabelType === undefined && this.labelFlag === LabelType.Predefined){
+    if(this.labelFlag === LabelType.Predefined){
       this.dialogRef.close();
     }
     else{
@@ -66,12 +65,7 @@ export class DrawPopupComponent {
   }
   onLabelTypeChange(labelType: LabelType){
     this.labelFlag = labelType;
-    this.builtInLabelType = undefined;
   }
-  onBuiltInLabelChange(builtInLabelType: BuiltInLabelType){
-    this.builtInLabelType = builtInLabelType;
-  }
-
   getLabel(){
     if (this.labelFlag === LabelType.Predefined){
       return this.coordinates;
@@ -80,29 +74,48 @@ export class DrawPopupComponent {
       return this.currentLabel? this.currentLabel: '';
     }
   }
+  
   get arrayBuiltInType(): string[]{
-    return Object.values(BuiltInLabelType);
+    let arrayBILabels = [];
+    for (const labelType of Object.values(LabelType)){
+      if (labelType !== LabelType.Custom && labelType !== LabelType.Predefined){
+        arrayBILabels.push(labelType);
+      }
+    }
+    return arrayBILabels;
   }
 
-  optionAvailable(currentOption: BuiltInLabelType){
+  noLabelButton(){
+    if (this.labelFlag === LabelType.Predefined){
+      return this.languageService.translate.instant('igo.geo.draw.noLabel');
+    }
+    return 'OK'
+  }
+
+  optionAvailable(currentOption: LabelType){
     switch(this.olGeometryType){
       case GeometryType.Point:
-        if (currentOption === BuiltInLabelType.Coordinates){
+        if (currentOption === LabelType.Coordinates){
           return false;
         }
         return true;
       case GeometryType.LineString:
-        if (currentOption === BuiltInLabelType.Length){
+        if (currentOption === LabelType.Length){
           return false;
         }
         return true;
       case GeometryType.Polygon:
-        if (currentOption === BuiltInLabelType.Coordinates){
+        if (currentOption === LabelType.Coordinates){
           return true;
         }
         return false;
       default:
         return false;
     }
+  }
+
+
+  getLengthOfLine(olGeometry:any){
+    measureOlGeometryLength(olGeometry, this.data.map.ol.getView().getProjection().getCode())
   }
 }

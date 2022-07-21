@@ -704,9 +704,15 @@
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
         },
-        "predefined": "Prédéfini",
-        "custom": "Personnalisé",
-        "builtInInstructions": "Sélectionnez une option"
+
+        "builtInInstructions": "Sélectionnez une option",
+        "labelType": {
+          "Coordinates": "Coordonnées",
+          "Length": "Longueur",
+          "Area": "Superficie",
+          "predefined": "Prédéfini",
+          "custom": "Personnalisé"
+        }
 
       },
       "network": {
