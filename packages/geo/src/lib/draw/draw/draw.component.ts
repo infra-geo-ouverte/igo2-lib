@@ -22,7 +22,7 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FontType, GeometryType, LabelType } from '../shared/draw.enum';
+import { BuiltInLabelType, FontType, GeometryType, LabelType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -326,9 +326,14 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          dialogRef.componentInstance.labelFlag === LabelType.BuiltIn ? 
-            this.updateIsCoordinatesLabel(olGeometry, true): this.updateIsCoordinatesLabel(olGeometry, false);
-
+          if (dialogRef.componentInstance.labelFlag === LabelType.Predefined){
+            if(dialogRef.componentInstance.builtInLabelType === BuiltInLabelType.Coordinates){
+              this.updateIsCoordinatesLabel(olGeometry, true);
+            }
+          }
+          else {
+            this.updateIsCoordinatesLabel(olGeometry, false);
+          }
           this.updateLabelOfOlGeometry(olGeometry, label);
 
           if (!olGeometry.values_.fontStyle) {
@@ -349,13 +354,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             );
           }
 
-          // if event was fired at draw end
-          if (isDrawEnd) {
-            this.onDrawEnd(olGeometry);
-            // if event was fired at select
-          } else {
-            this.onSelectDraw(olGeometry, label) ;
-          }
+          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label);
           this.updateHeightTable();
         }
         // deletes the feature

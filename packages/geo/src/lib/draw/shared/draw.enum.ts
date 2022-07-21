@@ -22,7 +22,7 @@ export enum FontType {
 }
 
 export enum LabelType{
-    BuiltIn = 'Built-In',
+    Predefined = 'Predefined',
     Custom = 'Custom'
 }
 

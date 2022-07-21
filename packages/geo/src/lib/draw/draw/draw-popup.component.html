@@ -1,8 +1,8 @@
 <div class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
-    (change)="onLabelTypeChange($event.value)" [value]="labelType.BuiltIn">
-    <mat-button-toggle [value]="labelType.BuiltIn">
-      {{ 'igo.geo.draw.built-in' | translate }}
+    (change)="onLabelTypeChange($event.value)" [value]="labelType.Predefined">
+    <mat-button-toggle [value]="labelType.Predefined">
+      {{ 'igo.geo.draw.predefined' | translate }}
     </mat-button-toggle>
     <mat-button-toggle [value]="labelType.Custom" >
       {{ 'igo.geo.draw.custom' | translate }}
@@ -10,22 +10,11 @@
   </mat-button-toggle-group>
 </div>
 
-<div *ngIf="labelFlag === labelType.BuiltIn">
-  <!-- <div mat-dialog-content>
-    <p class="mat-typography"></p>
-    <mat-form-field class="example-full-width">
-      <input
-        #input
-        matInput
-        placeholder="(Latitude, Longitude)"
-        value="{{data.coordinates}}" readonly>
-    </mat-form-field>
-  </div> -->
-
+<div *ngIf="labelFlag === labelType.Predefined">
   <div>
-    <p class="mat-typography">Select an option</p>
+    <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
     <mat-radio-group>
-      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" (change)="onBuiltInLabelChange($event.value)">
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onBuiltInLabelChange($event.value)">
         {{option}}
       </mat-radio-button>
     </mat-radio-group>
@@ -38,8 +27,6 @@
           value="{{coordinates}}" readonly>
       </mat-form-field>
     </div>
-
-
   </div>
 
 
@@ -50,13 +37,12 @@
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="confirm(coordinates)"
-      [disabled]="builtInLabelType === undefined">OK
+      (click)="confirm(coordinates)">OK
     </button>
   </div>
 </div>
 
-<div *ngIf="labelFlag !== labelType.BuiltIn">
+<div *ngIf="labelFlag !== labelType.Predefined">
   <div mat-dialog-content>
     <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
     <mat-form-field class="example-full-width">

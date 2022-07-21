@@ -704,8 +704,10 @@
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
         },
-        "built-in": "Intégré",
-        "custom": "Personnalisé"
+        "predefined": "Prédéfini",
+        "custom": "Personnalisé",
+        "builtInInstructions": "Sélectionnez une option"
+
       },
       "network": {
         "online": {

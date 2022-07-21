@@ -704,8 +704,10 @@
           "createNewLayer": "Create new drawing layer",
           "layerDialogInstruction": "Enter your drawing layer's title"
         },
-        "built-in": "Built-in",
-        "custom": "Custom"
+        "predefined": "Predefined",
+        "custom": "Custom",
+        "builtInInstructions": "Select an option"
+
       },
       "network": {
         "online": {

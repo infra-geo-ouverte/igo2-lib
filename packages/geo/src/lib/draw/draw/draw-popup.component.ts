@@ -17,7 +17,7 @@ export interface DialogData {
   })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
-  @Input() labelFlag: LabelType = LabelType.BuiltIn;
+  @Input() labelFlag: LabelType = LabelType.Predefined;
   @Input() builtInLabelType: BuiltInLabelType
   public labelType = LabelType;
   public geometryType = GeometryType;
@@ -31,14 +31,16 @@ export class DrawPopupComponent {
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
     ){
-      this.olGeometryType = this.data.olGeometry.getType();
+      
       this.currentLabel = this.data.olGeometry.get('draw');
 
       if (this.data.olGeometry instanceof OlFeature){
+        this.olGeometryType = this.data.olGeometry.getGeometry().getType();
         this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', ' 
           + this.data.olGeometry.get('longitude').toFixed(4) + ')';
       }
       else{
+        this.olGeometryType = this.data.olGeometry.getType();
         const projection = this.data.map.ol.getView().getProjection();
         let point4326 = transform(
           this.data.olGeometry.getFlatCoordinates(),
@@ -54,17 +56,24 @@ export class DrawPopupComponent {
   }
   confirm(labelString: string) {
     this.confirmFlag = true;
-    this.dialogRef.close(labelString);
+    console.log(this.builtInLabelType);
+    if(this.builtInLabelType === undefined && this.labelFlag === LabelType.Predefined){
+      this.dialogRef.close();
+    }
+    else{
+      this.dialogRef.close(labelString);
+    }
   }
   onLabelTypeChange(labelType: LabelType){
     this.labelFlag = labelType;
+    this.builtInLabelType = undefined;
   }
   onBuiltInLabelChange(builtInLabelType: BuiltInLabelType){
     this.builtInLabelType = builtInLabelType;
   }
 
   getLabel(){
-    if (this.labelFlag === LabelType.BuiltIn){
+    if (this.labelFlag === LabelType.Predefined){
       return this.coordinates;
     }
     else{
@@ -73,5 +82,27 @@ export class DrawPopupComponent {
   }
   get arrayBuiltInType(): string[]{
     return Object.values(BuiltInLabelType);
+  }
+
+  optionAvailable(currentOption: BuiltInLabelType){
+    switch(this.olGeometryType){
+      case GeometryType.Point:
+        if (currentOption === BuiltInLabelType.Coordinates){
+          return false;
+        }
+        return true;
+      case GeometryType.LineString:
+        if (currentOption === BuiltInLabelType.Length){
+          return false;
+        }
+        return true;
+      case GeometryType.Polygon:
+        if (currentOption === BuiltInLabelType.Coordinates){
+          return true;
+        }
+        return false;
+      default:
+        return false;
+    }
   }
 }
