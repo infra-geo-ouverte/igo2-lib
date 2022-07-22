@@ -5,7 +5,10 @@ import { GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
 import { IgoMap } from '../../map/shared';
 import OlFeature from 'ol/Feature';
-import { measureOlGeometryLength } from '../../measure/shared/measure.utils';
+import { 
+  measureOlGeometryLength,
+  measureOlGeometryArea 
+} from '../../measure/shared/measure.utils';
 
 
 export interface DialogData {
@@ -26,6 +29,8 @@ export class DrawPopupComponent {
   public currentLabel: string;
   public coordinates: string;
   public olGeometryType: GeometryType = undefined;
+  public length: string;
+  public area: string;
 
 
   constructor(
@@ -41,26 +46,45 @@ export class DrawPopupComponent {
       }
       else{
         this.olGeometryType = this.data.olGeometry.getType();
-        const projection = this.data.map.ol.getView().getProjection();
-        let point4326 = transform(
-          this.data.olGeometry.getFlatCoordinates(),
-          projection,
-          'EPSG:4326'
-        );
-        this.coordinates =
-          '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
+        if(this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
+          const projection = this.data.map.ol.getView().getProjection();
+          let point4326 = transform(
+            this.data.olGeometry.getFlatCoordinates(),
+            projection,
+            'EPSG:4326'
+          );
+          this.coordinates =
+            '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
+        }
+        else if (this.olGeometryType === GeometryType.LineString){
+          this.length = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+        }
+        else if (this.olGeometryType === GeometryType.Polygon){
+          this.length = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.area = measureOlGeometryArea(this.data.olGeometry,this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+        }
+
       }
     }
   cancelDrawing() {
     this.dialogRef.close();
   }
-  confirm(labelString: string) {
+  confirm(input?: string) {
     this.confirmFlag = true;
     if(this.labelFlag === LabelType.Predefined){
       this.dialogRef.close();
     }
-    else{
-      this.dialogRef.close(labelString);
+    else if(this.labelFlag === LabelType.Coordinates){
+      this.dialogRef.close(this.coordinates);
+    }
+    else if (this.labelFlag === LabelType.Length){
+      this.dialogRef.close(this.length);
+    }
+    else if (this.labelFlag === LabelType.Area){
+      this.dialogRef.close(this.area);
+    }
+    else if (this.labelFlag === LabelType.Custom){
+      this.dialogRef.close(input);
     }
   }
   onLabelTypeChange(labelType: LabelType){
@@ -69,6 +93,12 @@ export class DrawPopupComponent {
   getLabel(){
     if (this.labelFlag === LabelType.Predefined){
       return this.coordinates;
+    }
+    else if (this.labelFlag === LabelType.Length){
+      return this.length;
+    }
+    else if (this.labelFlag === LabelType.Area){
+      return this.area;
     }
     else{
       return this.currentLabel? this.currentLabel: '';
@@ -115,7 +145,7 @@ export class DrawPopupComponent {
   }
 
 
-  getLengthOfLine(olGeometry:any){
-    measureOlGeometryLength(olGeometry, this.data.map.ol.getView().getProjection().getCode())
+  onChangeLengthUnit(){
+
   }
 }

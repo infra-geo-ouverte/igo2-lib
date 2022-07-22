@@ -27,6 +27,28 @@
           value="{{coordinates}}" readonly>
       </mat-form-field>
     </div>
+    <div *ngIf="labelFlag === labelType.Length">
+      <mat-form-field class="readOnly-Input">
+        <input
+          #input
+          matInput
+          value="{{length}}" readonly>
+        <!-- <mat-select>
+
+        </mat-select>   -->
+      </mat-form-field>
+    </div>
+    <div *ngIf="labelFlag === labelType.Area">
+      <mat-form-field class="readOnly-Input">
+        <input
+          #input
+          matInput
+          value="{{area}}" readonly>
+        <!-- <mat-select>
+
+        </mat-select>   -->
+      </mat-form-field>
+    </div>
   </div>
 
 
@@ -37,7 +59,7 @@
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="confirm(coordinates)"> 
+      (click)="confirm()"> 
       {{noLabelButton()}} 
     </button>
   </div>
