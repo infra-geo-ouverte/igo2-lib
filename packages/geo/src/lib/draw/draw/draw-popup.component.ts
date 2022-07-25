@@ -9,7 +9,12 @@ import {
   measureOlGeometryLength,
   measureOlGeometryArea 
 } from '../../measure/shared/measure.utils';
-
+import {
+  MeasureLengthUnit,
+  MeasureLengthUnitAbbreviation,
+  MeasureAreaUnit,
+  MeasureAreaUnitAbbreviation
+} from '../../measure/shared/measure.enum'
 
 export interface DialogData {
   label: string;
@@ -31,6 +36,8 @@ export class DrawPopupComponent {
   public olGeometryType: GeometryType = undefined;
   public length: string;
   public area: string;
+  public currMeasureLengthUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+  public currMeasureAreaUnit: MeasureAreaUnit = MeasureAreaUnit.SquareMeters;
 
 
   constructor(
@@ -148,4 +155,21 @@ export class DrawPopupComponent {
   onChangeLengthUnit(){
 
   }
+
+  get allLengthUnits(): string[]{
+    return Object.values(MeasureLengthUnit);
+  }
+
+  getLengthUnitEnum(lengthUnit: MeasureLengthUnit){
+    return MeasureLengthUnitAbbreviation[lengthUnit];
+  }
+
+  get allAreaUnits(): string[]{
+    return Object.values(MeasureAreaUnit);
+  }
+
+  getAreaUnitEnum(areaUnit: MeasureAreaUnit){
+    return MeasureAreaUnitAbbreviation[areaUnit];
+  }
+
 }

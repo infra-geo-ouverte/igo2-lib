@@ -33,9 +33,14 @@
           #input
           matInput
           value="{{length}}" readonly>
-        <!-- <mat-select>
+      </mat-form-field>
 
-        </mat-select>   -->
+      <mat-form-field class="unit-field">
+        <mat-select [value]="currMeasureLengthUnit">
+          <mat-option *ngFor="let unit of allLengthUnits" [value]="unit">
+            {{getLengthUnitEnum(unit)}}
+          </mat-option>
+        </mat-select>  
       </mat-form-field>
     </div>
     <div *ngIf="labelFlag === labelType.Area">
@@ -44,9 +49,13 @@
           #input
           matInput
           value="{{area}}" readonly>
-        <!-- <mat-select>
-
-        </mat-select>   -->
+      </mat-form-field>
+      <mat-form-field class="unit-field">
+        <mat-select [value]="currMeasureAreaUnit">
+          <mat-option *ngFor="let unit of allAreaUnits" [value]="unit">
+            {{getAreaUnitEnum(unit)}}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
   </div>
