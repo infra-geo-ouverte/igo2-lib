@@ -65,6 +65,19 @@ import {
 } from '@angular/animations';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
+import { 
+  measureOlGeometryLength,
+  measureOlGeometryArea,
+  metersToUnit,
+  squareMetersToUnit
+} from '../../measure/shared/measure.utils';
+import {
+  MeasureLengthUnit,
+  MeasureLengthUnitAbbreviation,
+  MeasureAreaUnit,
+  MeasureAreaUnitAbbreviation,
+} from '../../measure/shared/measure.enum'
+
 @Component({
   selector: 'igo-draw',
   animations: [
@@ -326,12 +339,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          if (dialogRef.componentInstance.labelFlag === LabelType.Coordinates){
-            this.updateIsCoordinatesLabel(olGeometry, true);
-          }
-          else {
-            this.updateIsCoordinatesLabel(olGeometry, false);
-          }
+          this.updateLabelType(olGeometry, dialogRef.componentInstance.labelFlag);
+          this.updateMeasureUnit(olGeometry, dialogRef.componentInstance.measureUnit);
           this.updateLabelOfOlGeometry(olGeometry, label);
 
           if (!olGeometry.values_.fontStyle) {
@@ -392,14 +401,38 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       if (entityId === olGeometryId) {
 
-        entity.properties.coordinateLabel ?
+        if (entity.properties.labelType === LabelType.Coordinates){
           this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4)
-            + ', ' + entity.properties.longitude.toFixed(4)+')') :
+          + ', ' + entity.properties.longitude.toFixed(4)+')'); 
+        } 
+        else if (entity.properties.labelType === LabelType.Length){
+
+          let olGeometryLengthArea = measureOlGeometryLength(olGeometry, this.map.ol.getView().getProjection().getCode());
+          let measureUnit: any;
+          const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
+          measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
+          olGeometryLengthArea = metersToUnit(olGeometryLengthArea, temp);
+          const lengthLabel = olGeometryLengthArea.toFixed(2).toString() + ' ' + measureUnit;
+          this.updateLabelOfOlGeometry(olGeometry, lengthLabel)
+        }
+        else if (entity.properties.labelType === LabelType.Area){
+          let olGeometryArea = measureOlGeometryArea(olGeometry, this.map.ol.getView().getProjection().getCode());
+          let measureUnit: any;
+          const temp: MeasureAreaUnit =  entity.properties.measureUnit as MeasureAreaUnit;
+          measureUnit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
+          olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
+          const lengthLabel = olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
+          this.updateLabelOfOlGeometry(olGeometry, lengthLabel)
+        }
+        else{
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
-        this.updateIsCoordinatesLabel(
+        }
+
+        this.updateLabelType(
           olGeometry,
-          entity.properties.coordinateLabel
+          entity.properties.labelType
         );
+        this.updateMeasureUnit(olGeometry, entity.properties.measureUnit);
         this.updateFontSizeAndStyle(
           olGeometry,
           entity.properties.fontStyle.split(' ')[0].replace('px', ''),
@@ -449,7 +482,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         const offsetX = olFeature.get('offsetX');
         const offsetY = olFeature.get('offsetY');
 
-        const isCoordinatesLabel = olFeature.get('isCoordinatesLabel_');
+        const labelType = olFeature.get('labelType_');
+        const measureUnit = olFeature.get('measureUnit_');
 
         const rad: number = entity.properties.rad
           ? entity.properties.rad
@@ -458,7 +492,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
         this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
         this.updateOffset(olGeometry, offsetX, offsetY);
-        this.updateIsCoordinatesLabel(olGeometry, isCoordinatesLabel);
+        this.updateLabelType(olGeometry, labelType);
+        this.updateMeasureUnit(olGeometry, measureUnit);
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -535,14 +570,15 @@ export class DrawComponent implements OnInit, OnDestroy {
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
         rad: rad ? rad : null,
-        coordinateLabel: olGeometry.get('isCoordinatesLabel_'),
         fontStyle: olGeometry.get('style_'),
         drawingStyle: {
           fill: olGeometry.get('fillColor_'),
           stroke: olGeometry.get('strokeColor_')
         },
         offsetX: olGeometry.get('offsetX_'),
-        offsetY: olGeometry.get('offsetY_')
+        offsetY: olGeometry.get('offsetY_'),
+        labelType: olGeometry.get('labelType_'),
+        measureUnit: olGeometry.get('measureUnit_')
       },
       meta: {
         id: featureId
@@ -918,13 +954,25 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
-  private updateIsCoordinatesLabel(
+  private updateLabelType(
     olFeature: OlFeature<OlGeometry>,
-    isCoordinatesLabel: boolean
+    typeOfLabel: LabelType
   ){
     olFeature.setProperties(
       {
-        isCoordinatesLabel_: isCoordinatesLabel
+        labelType_:typeOfLabel
+      },
+      true
+    );
+  }
+
+  private updateMeasureUnit(
+    olFeature: OlFeature<OlGeometry>,
+    measureUnit: MeasureLengthUnit | MeasureAreaUnit
+  ){
+    olFeature.setProperties(
+      {
+        measureUnit_:measureUnit
       },
       true
     );
@@ -1110,6 +1158,5 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
     }
   }
-
 
 }

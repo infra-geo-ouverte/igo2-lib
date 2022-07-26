@@ -7,13 +7,15 @@ import { IgoMap } from '../../map/shared';
 import OlFeature from 'ol/Feature';
 import { 
   measureOlGeometryLength,
-  measureOlGeometryArea 
+  measureOlGeometryArea,
+  metersToUnit,
+  squareMetersToUnit
 } from '../../measure/shared/measure.utils';
 import {
   MeasureLengthUnit,
   MeasureLengthUnitAbbreviation,
   MeasureAreaUnit,
-  MeasureAreaUnitAbbreviation
+  MeasureAreaUnitAbbreviation,
 } from '../../measure/shared/measure.enum'
 
 export interface DialogData {
@@ -28,17 +30,17 @@ export interface DialogData {
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() labelFlag: LabelType = LabelType.Predefined;
+  @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit;
   
   public geometryType = GeometryType;
   public labelType = LabelType;
   public currentLabel: string;
   public coordinates: string;
   public olGeometryType: GeometryType = undefined;
-  public length: string;
-  public area: string;
-  public currMeasureLengthUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
-  public currMeasureAreaUnit: MeasureAreaUnit = MeasureAreaUnit.SquareMeters;
-
+  public lengthInMeters: string;
+  public currentLength: string;
+  public areaInMetersSquare: string;
+  public currentArea: string;
 
   constructor(
     private languageService: LanguageService,
@@ -64,11 +66,14 @@ export class DrawPopupComponent {
             '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
         }
         else if (this.olGeometryType === GeometryType.LineString){
-          this.length = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.lengthInMeters = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.currentLength = this.lengthInMeters;
         }
         else if (this.olGeometryType === GeometryType.Polygon){
-          this.length = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
-          this.area = measureOlGeometryArea(this.data.olGeometry,this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.lengthInMeters = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.currentLength = this.lengthInMeters;
+          this.areaInMetersSquare = measureOlGeometryArea(this.data.olGeometry,this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+          this.currentArea = this.areaInMetersSquare;
         }
 
       }
@@ -85,10 +90,10 @@ export class DrawPopupComponent {
       this.dialogRef.close(this.coordinates);
     }
     else if (this.labelFlag === LabelType.Length){
-      this.dialogRef.close(this.length);
+      this.dialogRef.close(this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
     }
     else if (this.labelFlag === LabelType.Area){
-      this.dialogRef.close(this.area);
+      this.dialogRef.close(this.currentArea + ' ' + MeasureAreaUnitAbbreviation[this.measureUnit]);
     }
     else if (this.labelFlag === LabelType.Custom){
       this.dialogRef.close(input);
@@ -96,16 +101,22 @@ export class DrawPopupComponent {
   }
   onLabelTypeChange(labelType: LabelType){
     this.labelFlag = labelType;
+    if (labelType === LabelType.Area){
+      this.measureUnit = MeasureAreaUnit.SquareMeters;
+    }
+    else{
+      this.measureUnit = MeasureLengthUnit.Meters;
+    }
   }
   getLabel(){
     if (this.labelFlag === LabelType.Predefined){
       return this.coordinates;
     }
     else if (this.labelFlag === LabelType.Length){
-      return this.length;
+      return this.currentLength;
     }
     else if (this.labelFlag === LabelType.Area){
-      return this.area;
+      return this.currentArea;
     }
     else{
       return this.currentLabel? this.currentLabel: '';
@@ -152,8 +163,14 @@ export class DrawPopupComponent {
   }
 
 
-  onChangeLengthUnit(){
+  onChangeLengthUnit(lengthUnit: MeasureLengthUnit){
+    this.measureUnit = lengthUnit;
+    this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2).toString();
+  }
 
+  onChangeAreaUnit(areaUnit: MeasureAreaUnit){
+    this.measureUnit = areaUnit;
+    this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2).toString();
   }
 
   get allLengthUnits(): string[]{

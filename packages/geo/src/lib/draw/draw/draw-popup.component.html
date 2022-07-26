@@ -32,11 +32,10 @@
         <input
           #input
           matInput
-          value="{{length}}" readonly>
+          value="{{currentLength}}" readonly>
       </mat-form-field>
-
       <mat-form-field class="unit-field">
-        <mat-select [value]="currMeasureLengthUnit">
+        <mat-select [value]="measureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
           <mat-option *ngFor="let unit of allLengthUnits" [value]="unit">
             {{getLengthUnitEnum(unit)}}
           </mat-option>
@@ -48,10 +47,10 @@
         <input
           #input
           matInput
-          value="{{area}}" readonly>
+          value="{{currentArea}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
-        <mat-select [value]="currMeasureAreaUnit">
+        <mat-select [value]="measureUnit" (selectionChange)="onChangeAreaUnit($event.value)">
           <mat-option *ngFor="let unit of allAreaUnits" [value]="unit">
             {{getAreaUnitEnum(unit)}}
           </mat-option>

@@ -2,6 +2,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { FeatureStore } from '../../feature';
+import { LabelType, MeasureAreaUnit, MeasureLengthUnit } from 'packages/geo/src/public_api';
 
 export interface DrawOptions {
   icons?: string[];
@@ -26,11 +27,12 @@ export interface FeatureWithDrawProperties {
   longitude: number;
   latitude: number;
   rad: number;
-  coordinateLabel: boolean;
   fontStyle: string;
   drawingStyle: DrawingStyle;
   offsetX: number;
   offsetY: number;
+  labelType: LabelType;
+  measureUnit: MeasureLengthUnit | MeasureAreaUnit;
 }
 
 export interface FeatureStoreDrawStrategyOptions {
