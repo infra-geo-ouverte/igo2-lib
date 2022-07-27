@@ -65,7 +65,7 @@ import {
 } from '@angular/animations';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
-import { 
+import {
   measureOlGeometryLength,
   measureOlGeometryArea,
   metersToUnit,
@@ -76,7 +76,7 @@ import {
   MeasureLengthUnitAbbreviation,
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
-} from '../../measure/shared/measure.enum'
+} from '../../measure/shared/measure.enum';
 
 @Component({
   selector: 'igo-draw',
@@ -403,8 +403,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
         if (entity.properties.labelType === LabelType.Coordinates){
           this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4)
-          + ', ' + entity.properties.longitude.toFixed(4)+')'); 
-        } 
+          + ', ' + entity.properties.longitude.toFixed(4)+')');
+        }
         else if (entity.properties.labelType === LabelType.Length){
 
           let olGeometryLengthArea = measureOlGeometryLength(olGeometry, this.map.ol.getView().getProjection().getCode());
@@ -413,16 +413,16 @@ export class DrawComponent implements OnInit, OnDestroy {
           measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
           olGeometryLengthArea = metersToUnit(olGeometryLengthArea, temp);
           const lengthLabel = olGeometryLengthArea.toFixed(2).toString() + ' ' + measureUnit;
-          this.updateLabelOfOlGeometry(olGeometry, lengthLabel)
+          this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
         }
         else if (entity.properties.labelType === LabelType.Area){
           let olGeometryArea = measureOlGeometryArea(olGeometry, this.map.ol.getView().getProjection().getCode());
           let measureUnit: any;
-          const temp: MeasureAreaUnit =  entity.properties.measureUnit as MeasureAreaUnit;
+          const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
           measureUnit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
           olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
           const lengthLabel = olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
-          this.updateLabelOfOlGeometry(olGeometry, lengthLabel)
+          this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
         }
         else{
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);

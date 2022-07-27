@@ -5,7 +5,7 @@ import { GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
 import { IgoMap } from '../../map/shared';
 import OlFeature from 'ol/Feature';
-import { 
+import {
   measureOlGeometryLength,
   measureOlGeometryArea,
   metersToUnit,
@@ -16,7 +16,7 @@ import {
   MeasureLengthUnitAbbreviation,
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
-} from '../../measure/shared/measure.enum'
+} from '../../measure/shared/measure.enum';
 
 export interface DialogData {
   label: string;
@@ -31,7 +31,7 @@ export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() labelFlag: LabelType = LabelType.Predefined;
   @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit;
-  
+
   public geometryType = GeometryType;
   public labelType = LabelType;
   public currentLabel: string;
@@ -50,7 +50,7 @@ export class DrawPopupComponent {
       this.currentLabel = this.data.olGeometry.get('draw');
       if (this.data.olGeometry instanceof OlFeature){
         this.olGeometryType = this.data.olGeometry.getGeometry().getType();
-        this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', ' 
+        this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', '
           + this.data.olGeometry.get('longitude').toFixed(4) + ')';
       }
       else{
@@ -122,7 +122,7 @@ export class DrawPopupComponent {
       return this.currentLabel? this.currentLabel: '';
     }
   }
-  
+
   get arrayBuiltInType(): string[]{
     let arrayBILabels = [];
     for (const labelType of Object.values(LabelType)){
@@ -137,7 +137,7 @@ export class DrawPopupComponent {
     if (this.labelFlag === LabelType.Predefined){
       return this.languageService.translate.instant('igo.geo.draw.noLabel');
     }
-    return 'OK'
+    return 'OK';
   }
 
   optionAvailable(currentOption: LabelType){
