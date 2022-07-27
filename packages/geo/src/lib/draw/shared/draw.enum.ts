@@ -21,11 +21,6 @@ export enum FontType {
     ComicSansMS = 'Comic Sans MS'
 }
 
-// export enum LabelType{
-//     Predefined = 'Predefined',
-//     Custom = 'Custom'
-// }
-
 export enum LabelType{
     Coordinates = 'Coordinates',
     Length = 'Length',

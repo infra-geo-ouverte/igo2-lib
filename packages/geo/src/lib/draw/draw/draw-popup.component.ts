@@ -34,6 +34,7 @@ export class DrawPopupComponent {
 
   public geometryType = GeometryType;
   public labelType = LabelType;
+
   public currentLabel: string;
   public coordinates: string;
   public olGeometryType: GeometryType = undefined;
@@ -47,15 +48,29 @@ export class DrawPopupComponent {
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
     ){
+      console.log(this.data.olGeometry);
+      
       this.currentLabel = this.data.olGeometry.get('draw');
-      if (this.data.olGeometry instanceof OlFeature){
+
+      let olGeometry;
+
+      if(this.data.olGeometry instanceof OlFeature) {
         this.olGeometryType = this.data.olGeometry.getGeometry().getType();
-        this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', '
-          + this.data.olGeometry.get('longitude').toFixed(4) + ')';
+        this.measureUnit = this.data.olGeometry.get('measureUnit');
+        olGeometry = this.data.olGeometry.get('geometry');
+      
       }
       else{
         this.olGeometryType = this.data.olGeometry.getType();
-        if(this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
+        olGeometry = this.data.olGeometry;
+      }
+    
+      if (this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
+        if(olGeometry instanceof OlFeature){
+          this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', '
+          + this.data.olGeometry.get('longitude').toFixed(4) + ')';
+        }
+        else {
           const projection = this.data.map.ol.getView().getProjection();
           let point4326 = transform(
             this.data.olGeometry.getFlatCoordinates(),
@@ -65,17 +80,19 @@ export class DrawPopupComponent {
           this.coordinates =
             '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
         }
-        else if (this.olGeometryType === GeometryType.LineString){
-          this.lengthInMeters = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
-          this.currentLength = this.lengthInMeters;
-        }
-        else if (this.olGeometryType === GeometryType.Polygon){
-          this.lengthInMeters = measureOlGeometryLength(this.data.olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
-          this.currentLength = this.lengthInMeters;
-          this.areaInMetersSquare = measureOlGeometryArea(this.data.olGeometry,this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
-          this.currentArea = this.areaInMetersSquare;
-        }
-
+      }
+      if (this.olGeometryType === GeometryType.LineString){
+        this.lengthInMeters = measureOlGeometryLength(olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+        this.currentLength = this.lengthInMeters;
+      }
+      else if (this.olGeometryType === GeometryType.Polygon){
+        this.lengthInMeters = measureOlGeometryLength(olGeometry, this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+        this.currentLength = this.lengthInMeters;
+        this.areaInMetersSquare = measureOlGeometryArea(olGeometry,this.data.map.ol.getView().getProjection().getCode()).toFixed(2).toString();
+        this.currentArea = this.areaInMetersSquare;
+      }
+      else if(this.olGeometryType === GeometryType.Circle){
+        console.log(olGeometry.getRadius());
       }
     }
   cancelDrawing() {
