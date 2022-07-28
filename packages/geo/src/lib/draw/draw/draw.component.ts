@@ -45,7 +45,7 @@ import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
 import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { default as OlGeometry } from 'ol/geom/Geometry';
-import { getDistance } from 'ol/sphere';
+import { getDistance, getLength } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
@@ -77,6 +77,8 @@ import {
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
 } from '../../measure/shared/measure.enum';
+import {fromCircle} from 'ol/geom/Polygon';
+
 
 @Component({
   selector: 'igo-draw',
@@ -400,29 +402,48 @@ export class DrawComponent implements OnInit, OnDestroy {
       const olGeometryId = olGeometry.ol_uid;
 
       if (entityId === olGeometryId) {
-
         if (entity.properties.labelType === LabelType.Coordinates){
           this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4)
           + ', ' + entity.properties.longitude.toFixed(4)+')');
         }
         else if (entity.properties.labelType === LabelType.Length){
 
-          let olGeometryLengthArea = measureOlGeometryLength(olGeometry, this.map.ol.getView().getProjection().getCode());
-          let measureUnit: any;
-          const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
-          measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
-          olGeometryLengthArea = metersToUnit(olGeometryLengthArea, temp);
-          const lengthLabel = olGeometryLengthArea.toFixed(2).toString() + ' ' + measureUnit;
-          this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
+          if (olGeometry instanceof OlCircle){
+            let circularPolygon = fromCircle(olGeometry, 100);
+            const radius = metersToUnit(this.getRadius(circularPolygon), entity.properties.measureUnit as MeasureLengthUnit);
+            const unit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
+            const radiusLabel = 'R: ' + radius.toFixed(2).toString() + ' ' + unit;
+            this.updateLabelOfOlGeometry(olGeometry, radiusLabel);
+          }
+          else{
+            let olGeometryLength = measureOlGeometryLength(olGeometry, this.map.ol.getView().getProjection().getCode());
+            let measureUnit: any;
+            const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
+            measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
+            olGeometryLength = metersToUnit(olGeometryLength, temp);
+            const lengthLabel = olGeometryLength.toFixed(2).toString() + ' ' + measureUnit;
+            this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
+          }
         }
         else if (entity.properties.labelType === LabelType.Area){
-          let olGeometryArea = measureOlGeometryArea(olGeometry, this.map.ol.getView().getProjection().getCode());
-          let measureUnit: any;
-          const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
-          measureUnit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
-          olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
-          const lengthLabel = olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
-          this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
+          if (olGeometry instanceof OlCircle){
+            let circularPolygon = fromCircle(olGeometry, 100);
+            let circleArea = measureOlGeometryArea(circularPolygon, this.map.ol.getView().getProjection().getCode());
+            const unit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
+            const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
+            circleArea = squareMetersToUnit(circleArea, temp);
+            const areaLabel = circleArea.toFixed(2).toString() + ' ' + unit;
+            this.updateLabelOfOlGeometry(olGeometry, areaLabel);
+          }
+          else{
+            let olGeometryArea = measureOlGeometryArea(olGeometry, this.map.ol.getView().getProjection().getCode());
+            let measureUnit: any;
+            const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
+            measureUnit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
+            olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
+            const lengthLabel = olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
+            this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
+          }
         }
         else{
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
@@ -904,7 +925,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @param OlFeature the feature
    * @param label the label
    */
-  private updateLabelOfOlGeometry(OlFeature: OlFeature<OlGeometry>, label: string) {
+  private updateLabelOfOlGeometry(OlFeature, label: string) {
     OlFeature.setProperties(
       {
         _label: label
@@ -1157,6 +1178,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         );
       });
     }
+  }
+
+  private getRadius(olGeometry): number{
+    const length = getLength(olGeometry);
+    return Number(length / (2 * Math.PI));
   }
 
 }
