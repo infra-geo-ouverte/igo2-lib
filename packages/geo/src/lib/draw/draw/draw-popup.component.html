@@ -26,6 +26,13 @@
           placeholder="(Latitude, Longitude)"
           value="{{coordinates}}" readonly>
       </mat-form-field>
+      <mat-form-field class="unit-field">
+        <mat-select [value]="measureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
+          <mat-option *ngFor="let unit of allCoordinatesUnits" [value]="unit">
+            {{unit}}
+          </mat-option>
+        </mat-select>  
+      </mat-form-field>
     </div>
     <div *ngIf="labelFlag === labelType.Length">
       <mat-form-field class="readOnly-Input">

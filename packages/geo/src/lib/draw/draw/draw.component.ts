@@ -22,7 +22,7 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FontType, GeometryType, LabelType } from '../shared/draw.enum';
+import { CoordinatesUnit, FontType, GeometryType, LabelType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -409,7 +409,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         else if (entity.properties.labelType === LabelType.Length){
 
           if (olGeometry instanceof OlCircle){
-            let circularPolygon = fromCircle(olGeometry, 100);
+            let circularPolygon = fromCircle(olGeometry, 10000);
             const radius = metersToUnit(this.getRadius(circularPolygon), entity.properties.measureUnit as MeasureLengthUnit);
             const unit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             const radiusLabel = 'R: ' + radius.toFixed(2).toString() + ' ' + unit;
@@ -427,7 +427,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         }
         else if (entity.properties.labelType === LabelType.Area){
           if (olGeometry instanceof OlCircle){
-            let circularPolygon = fromCircle(olGeometry, 100);
+            let circularPolygon = fromCircle(olGeometry, 10000);
             let circleArea = measureOlGeometryArea(circularPolygon, this.map.ol.getView().getProjection().getCode());
             const unit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
             const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
@@ -989,7 +989,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private updateMeasureUnit(
     olFeature: OlFeature<OlGeometry>,
-    measureUnit: MeasureLengthUnit | MeasureAreaUnit
+    measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit
   ){
     olFeature.setProperties(
       {

@@ -1,7 +1,7 @@
 import { Component, Inject, Input } from '@angular/core';
 import { LanguageService } from '@igo2/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GeometryType, LabelType } from '../shared/draw.enum';
+import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
 import { IgoMap } from '../../map/shared';
 import OlFeature from 'ol/Feature';
@@ -20,6 +20,8 @@ import {
 
 import {fromCircle} from 'ol/geom/Polygon';
 import { getDistance, getLength } from 'ol/sphere';
+import Circle from 'ol/geom/Circle';
+
 
 
 
@@ -35,7 +37,7 @@ export interface DialogData {
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
   @Input() labelFlag: LabelType = LabelType.Predefined;
-  @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit;
+  @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit;
 
   public geometryType = GeometryType;
   public labelType = LabelType;
@@ -47,6 +49,7 @@ export class DrawPopupComponent {
   public currentLength: string;
   public areaInMetersSquare: string;
   public currentArea: string;
+  public currentCoordinatesUnit: string;
 
   constructor(
     private languageService: LanguageService,
@@ -61,13 +64,16 @@ export class DrawPopupComponent {
 
       if(this.data.olGeometry instanceof OlFeature) {
         if (this.data.olGeometry.get('rad')){
+          const longitudeLatitude = [this.data.olGeometry.get('longitude'), this.data.olGeometry.get('latitude')];
           this.olGeometryType = GeometryType.Circle;
+          olGeometry = new Circle(longitudeLatitude, this.data.olGeometry.get('rad'));
         }
         else{
           this.olGeometryType = this.data.olGeometry.getGeometry().getType();
+          olGeometry = this.data.olGeometry.get('geometry');
         }
         this.measureUnit = this.data.olGeometry.get('measureUnit');
-        olGeometry = this.data.olGeometry.get('geometry');
+
       }
       else{
         this.olGeometryType = this.data.olGeometry.getType();
@@ -90,21 +96,21 @@ export class DrawPopupComponent {
         }
       }
       if (this.olGeometryType === GeometryType.LineString){
-        this.lengthInMeters = measureOlGeometryLength(olGeometry, projection.getCode()).toFixed(2).toString();
+        this.lengthInMeters = measureOlGeometryLength(olGeometry, projection.getCode()).toFixed(2);
         this.currentLength = this.lengthInMeters;
       }
       else if (this.olGeometryType === GeometryType.Polygon){
-        this.lengthInMeters = measureOlGeometryLength(olGeometry, projection.getCode()).toFixed(2).toString();
+        this.lengthInMeters = measureOlGeometryLength(olGeometry, projection.getCode()).toFixed(2);
         this.currentLength = this.lengthInMeters;
-        this.areaInMetersSquare = measureOlGeometryArea(olGeometry,projection.getCode()).toFixed(2).toString();
+        this.areaInMetersSquare = measureOlGeometryArea(olGeometry,projection.getCode()).toFixed(2);
         this.currentArea = this.areaInMetersSquare;
       }
       else if(this.olGeometryType === GeometryType.Circle){
-        let circularPolygon = fromCircle(olGeometry, 100);
-        const radius = this.getRadius(circularPolygon).toFixed(2);
-        this.lengthInMeters = radius.toString();
+        let circularPolygon = fromCircle(olGeometry, 10000);
+        const radius = this.getRadius(circularPolygon);
+        this.lengthInMeters = radius.toFixed(2);
         this.currentLength = this.lengthInMeters;
-        this.areaInMetersSquare = measureOlGeometryArea(circularPolygon,projection.getCode()).toFixed(2).toString(); 
+        this.areaInMetersSquare = measureOlGeometryArea(circularPolygon,projection.getCode()).toFixed(2); 
         this.currentArea = this.areaInMetersSquare;
       }
     }
@@ -202,12 +208,17 @@ export class DrawPopupComponent {
 
   onChangeLengthUnit(lengthUnit: MeasureLengthUnit){
     this.measureUnit = lengthUnit;
-    this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2).toString();
+    this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2);
   }
 
   onChangeAreaUnit(areaUnit: MeasureAreaUnit){
     this.measureUnit = areaUnit;
-    this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2).toString();
+    this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2);
+  }
+
+  onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
+    this.measureUnit = coordinatesUnit;
+
   }
 
   get allLengthUnits(): string[]{
@@ -220,6 +231,10 @@ export class DrawPopupComponent {
 
   get allAreaUnits(): string[]{
     return Object.values(MeasureAreaUnit);
+  }
+
+  get allCoordinatesUnits(): string[]{
+    return Object.values(CoordinatesUnit);
   }
 
   getAreaUnitEnum(areaUnit: MeasureAreaUnit){

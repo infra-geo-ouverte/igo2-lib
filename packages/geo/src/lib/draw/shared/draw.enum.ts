@@ -28,3 +28,9 @@ export enum LabelType{
     Predefined = 'Predefined',
     Custom = 'Custom'
 }
+
+export enum CoordinatesUnit {
+    DecimalDegree = 'DD',
+    DegreesMinutesSeconds = 'DMS'
+
+}
