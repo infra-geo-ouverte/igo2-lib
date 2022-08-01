@@ -4,8 +4,8 @@
 
 .readOnly-Input {
   top: 10px !important;
-  padding-top: 17.500px;
-  padding-top: 17.500px;
+  // padding-top: 17.500px;
+  width: fit-content !important;
 }  
 
 .unit-field {
@@ -19,4 +19,8 @@
 }
 .coordinatesInputView {
   top: 5em !important;
+}
+
+::ng-deep .mat-form-field-wrapper{
+  margin-bottom: -1.25em;
 }

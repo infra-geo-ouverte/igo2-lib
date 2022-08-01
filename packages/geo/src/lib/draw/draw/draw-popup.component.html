@@ -24,10 +24,10 @@
           #input
           matInput
           placeholder="(Latitude, Longitude)"
-          value="{{coordinates}}" readonly>
+          value="{{currentCoordinates}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
-        <mat-select [value]="measureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
+        <mat-select [value]="measureUnit" (selectionChange)="onChangeCoordinateUnit($event.value)">
           <mat-option *ngFor="let unit of allCoordinatesUnits" [value]="unit">
             {{unit}}
           </mat-option>
@@ -39,6 +39,7 @@
         <input
           #input
           matInput
+          placeholder={{lengthLabelT}}
           value="{{currentLength}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
@@ -54,6 +55,7 @@
         <input
           #input
           matInput
+          placeholder="Area"
           value="{{currentArea}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">

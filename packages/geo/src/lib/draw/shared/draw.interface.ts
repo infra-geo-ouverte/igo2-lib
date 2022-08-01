@@ -2,7 +2,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { FeatureStore } from '../../feature';
-import { LabelType } from '../shared/draw.enum';
+import { CoordinatesUnit, LabelType } from '../shared/draw.enum';
 import { MeasureAreaUnit, MeasureLengthUnit } from '../../measure/shared/measure.enum'
 
 export interface DrawOptions {
@@ -33,7 +33,7 @@ export interface FeatureWithDrawProperties {
   offsetX: number;
   offsetY: number;
   labelType: LabelType;
-  measureUnit: MeasureLengthUnit | MeasureAreaUnit;
+  measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit;
 }
 
 export interface FeatureStoreDrawStrategyOptions {

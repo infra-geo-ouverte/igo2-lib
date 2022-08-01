@@ -8,6 +8,8 @@ import {
   updateOlGeometryMidpoints,
   updateOlGeometryCenter
 } from '../../measure/shared/measure.utils';
+import { CoordinatesUnit } from './draw.enum';
+import { convertDDToDMS } from '../../map/shared/map.utils';
 
 
 /**
@@ -108,3 +110,16 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
 
   return olTooltip;
 }
+
+
+export function DDtoDMS(value: [number, number], unit: CoordinatesUnit): string[] | undefined {
+  const conversionMapper = new Map([
+    [CoordinatesUnit.DecimalDegree, (val: [number, number]) => [val[0].toFixed(4).toString(), val[1].toFixed(4).toString()]],
+    [CoordinatesUnit.DegreesMinutesSeconds, (val: [number, number]) => convertDDToDMS(val, 2)]
+  ]);
+  let conversion = conversionMapper.get(unit);
+
+  return conversion ? conversion(value) : undefined;
+}
+
+

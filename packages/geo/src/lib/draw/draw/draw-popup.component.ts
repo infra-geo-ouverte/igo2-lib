@@ -19,9 +19,9 @@ import {
 } from '../../measure/shared/measure.enum';
 
 import {fromCircle} from 'ol/geom/Polygon';
-import { getDistance, getLength } from 'ol/sphere';
+import { getLength } from 'ol/sphere';
 import Circle from 'ol/geom/Circle';
-
+import { DDtoDMS } from '../shared/draw.utils';
 
 
 
@@ -43,13 +43,17 @@ export class DrawPopupComponent {
   public labelType = LabelType;
 
   public currentLabel: string;
-  public coordinates: string;
+  public currentCoordinates: string;
+  public currentArea: string;
+  public currentLength: string;
+
   public olGeometryType: GeometryType = undefined;
   public lengthInMeters: string;
-  public currentLength: string;
   public areaInMetersSquare: string;
-  public currentArea: string;
+  public coordinatesInDD: string;
   public currentCoordinatesUnit: string;
+
+  private longlatDD: [number, number];
 
   constructor(
     private languageService: LanguageService,
@@ -82,8 +86,11 @@ export class DrawPopupComponent {
     
       if (this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
         if(this.data.olGeometry instanceof OlFeature){
-          this.coordinates = '(' + this.data.olGeometry.get('latitude').toFixed(4) + ', '
-          + this.data.olGeometry.get('longitude').toFixed(4) + ')';
+          let longitude = this.data.olGeometry.get('longitude').toFixed(4);
+          let latitude = this.data.olGeometry.get('latitude').toFixed(4);
+          this.longlatDD = [longitude, latitude]
+          this.coordinatesInDD = '(' + latitude + ', '
+          + longitude + ')';
         }
         else {
           let point4326 = transform(
@@ -91,9 +98,11 @@ export class DrawPopupComponent {
             projection,
             'EPSG:4326'
           );
-          this.coordinates =
+          this.longlatDD = [Number(point4326[0].toFixed(4)), Number(point4326[1].toFixed(4))]
+          this.coordinatesInDD =
             '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
         }
+        this.currentCoordinates = this.coordinatesInDD;
       }
       if (this.olGeometryType === GeometryType.LineString){
         this.lengthInMeters = measureOlGeometryLength(olGeometry, projection.getCode()).toFixed(2);
@@ -123,7 +132,7 @@ export class DrawPopupComponent {
       this.dialogRef.close();
     }
     else if(this.labelFlag === LabelType.Coordinates){
-      this.dialogRef.close(this.coordinates);
+      this.dialogRef.close(this.currentCoordinates);
     }
     else if (this.labelFlag === LabelType.Length){
       if (this.olGeometryType === GeometryType.Circle){
@@ -146,23 +155,13 @@ export class DrawPopupComponent {
       this.currentArea = this.areaInMetersSquare;
       this.measureUnit = MeasureAreaUnit.SquareMeters;
     }
-    else{
+    else if (this.labelFlag === LabelType.Length){
       this.currentLength = this.lengthInMeters;
       this.measureUnit = MeasureLengthUnit.Meters;
     }
-  }
-  getLabel(){
-    if (this.labelFlag === LabelType.Predefined){
-      return this.coordinates;
-    }
-    else if (this.labelFlag === LabelType.Length){
-      return this.currentLength;
-    }
-    else if (this.labelFlag === LabelType.Area){
-      return this.currentArea;
-    }
-    else{
-      return this.currentLabel? this.currentLabel: '';
+    else if (this.labelFlag === LabelType.Coordinates){
+      this.currentCoordinates = this.coordinatesInDD;
+      this.measureUnit = CoordinatesUnit.DecimalDegree;
     }
   }
 
@@ -218,7 +217,8 @@ export class DrawPopupComponent {
 
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
     this.measureUnit = coordinatesUnit;
-
+    let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
+    this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')'
   }
 
   get allLengthUnits(): string[]{
@@ -245,5 +245,15 @@ export class DrawPopupComponent {
     const length = getLength(olGeometry);
     return Number(length / (2 * Math.PI));
   }
+
+  get lengthLabelT(){
+    if (this.olGeometryType === GeometryType.Polygon){
+      return this.languageService.translate.instant('igo.geo.measure.perimeter');
+    }
+    if (this.olGeometryType === GeometryType.Circle){
+      return this.languageService.translate.instant('igo.geo.search.coordinates.radius');
+    }
+  }
+
 
 }

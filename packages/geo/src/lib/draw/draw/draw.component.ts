@@ -51,7 +51,7 @@ import { skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
-import { createInteractionStyle } from '../shared/draw.utils';
+import { createInteractionStyle, DDtoDMS } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
 
@@ -398,16 +398,14 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     entities.forEach((entity) => {
       const entityId = entity.properties.id;
-
       const olGeometryId = olGeometry.ol_uid;
 
       if (entityId === olGeometryId) {
         if (entity.properties.labelType === LabelType.Coordinates){
-          this.updateLabelOfOlGeometry(olGeometry, '('+entity.properties.latitude.toFixed(4)
-          + ', ' + entity.properties.longitude.toFixed(4)+')');
+          let longLat = DDtoDMS([entity.properties.longitude, entity.properties.latitude], entity.properties.measureUnit as CoordinatesUnit);
+          this.updateLabelOfOlGeometry(olGeometry, '(' + longLat[1] + ', ' + longLat[0] + ')');
         }
         else if (entity.properties.labelType === LabelType.Length){
-
           if (olGeometry instanceof OlCircle){
             let circularPolygon = fromCircle(olGeometry, 10000);
             const radius = metersToUnit(this.getRadius(circularPolygon), entity.properties.measureUnit as MeasureLengthUnit);
