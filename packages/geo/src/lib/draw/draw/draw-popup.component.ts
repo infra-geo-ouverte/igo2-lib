@@ -138,6 +138,9 @@ export class DrawPopupComponent {
       if (this.olGeometryType === GeometryType.Circle){
         this.dialogRef.close('R: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
       }
+      else if (this.olGeometryType === GeometryType.Polygon){
+        this.dialogRef.close('P: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
+      }
       else{
         this.dialogRef.close(this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
       }

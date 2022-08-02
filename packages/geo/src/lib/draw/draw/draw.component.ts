@@ -77,7 +77,7 @@ import {
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
 } from '../../measure/shared/measure.enum';
-import {fromCircle} from 'ol/geom/Polygon';
+import Polygon, {fromCircle} from 'ol/geom/Polygon';
 
 
 @Component({
@@ -419,7 +419,9 @@ export class DrawComponent implements OnInit, OnDestroy {
             const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
             measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             olGeometryLength = metersToUnit(olGeometryLength, temp);
-            const lengthLabel = olGeometryLength.toFixed(2).toString() + ' ' + measureUnit;
+            let lengthLabel = olGeometry instanceof Polygon ? 
+              'P: ' + olGeometryLength.toFixed(2).toString() + ' ' + measureUnit 
+              : olGeometryLength.toFixed(2).toString() + ' ' + measureUnit
             this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
           }
         }
