@@ -402,7 +402,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
       if (entityId === olGeometryId) {
         if (entity.properties.labelType === LabelType.Coordinates){
-          let longLat = DDtoDMS([entity.properties.longitude, entity.properties.latitude], entity.properties.measureUnit as CoordinatesUnit);
+          let longLat = DDtoDMS([entity.properties.longitude, entity.properties.latitude],
+            entity.properties.measureUnit as CoordinatesUnit);
           this.updateLabelOfOlGeometry(olGeometry, '(' + longLat[1] + ', ' + longLat[0] + ')');
         }
         else if (entity.properties.labelType === LabelType.Length){
@@ -419,9 +420,9 @@ export class DrawComponent implements OnInit, OnDestroy {
             const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
             measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             olGeometryLength = metersToUnit(olGeometryLength, temp);
-            let lengthLabel = olGeometry instanceof Polygon ? 
-              'P: ' + olGeometryLength.toFixed(2).toString() + ' ' + measureUnit 
-              : olGeometryLength.toFixed(2).toString() + ' ' + measureUnit
+            let lengthLabel = olGeometry instanceof Polygon ?
+              'P: ' + olGeometryLength.toFixed(2).toString() + ' ' + measureUnit
+              : olGeometryLength.toFixed(2).toString() + ' ' + measureUnit;
             this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
           }
         }

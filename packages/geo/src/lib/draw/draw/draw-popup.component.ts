@@ -24,7 +24,6 @@ import Circle from 'ol/geom/Circle';
 import { DDtoDMS } from '../shared/draw.utils';
 
 
-
 export interface DialogData {
   label: string;
 }
@@ -59,7 +58,7 @@ export class DrawPopupComponent {
     private languageService: LanguageService,
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
-    ){      
+    ){
       this.currentLabel = this.data.olGeometry.get('draw');
 
       let olGeometry;
@@ -83,12 +82,12 @@ export class DrawPopupComponent {
         this.olGeometryType = this.data.olGeometry.getType();
         olGeometry = this.data.olGeometry;
       }
-    
+
       if (this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
         if(this.data.olGeometry instanceof OlFeature){
           let longitude = this.data.olGeometry.get('longitude').toFixed(4);
           let latitude = this.data.olGeometry.get('latitude').toFixed(4);
-          this.longlatDD = [longitude, latitude]
+          this.longlatDD = [longitude, latitude];
           this.coordinatesInDD = '(' + latitude + ', '
           + longitude + ')';
         }
@@ -98,7 +97,7 @@ export class DrawPopupComponent {
             projection,
             'EPSG:4326'
           );
-          this.longlatDD = [Number(point4326[0].toFixed(4)), Number(point4326[1].toFixed(4))]
+          this.longlatDD = [Number(point4326[0].toFixed(4)), Number(point4326[1].toFixed(4))];
           this.coordinatesInDD =
             '(' + point4326[1].toFixed(4) + ', ' + point4326[0].toFixed(4) + ')';
         }
@@ -119,7 +118,7 @@ export class DrawPopupComponent {
         const radius = this.getRadius(circularPolygon);
         this.lengthInMeters = radius.toFixed(2);
         this.currentLength = this.lengthInMeters;
-        this.areaInMetersSquare = measureOlGeometryArea(circularPolygon,projection.getCode()).toFixed(2); 
+        this.areaInMetersSquare = measureOlGeometryArea(circularPolygon,projection.getCode()).toFixed(2);
         this.currentArea = this.areaInMetersSquare;
       }
     }
@@ -221,7 +220,7 @@ export class DrawPopupComponent {
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
     this.measureUnit = coordinatesUnit;
     let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
-    this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')'
+    this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')';
   }
 
   get allLengthUnits(): string[]{
