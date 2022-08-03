@@ -1,4 +1,3 @@
-import { GeometryType } from './../../../draw/shared/draw.enum';
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
@@ -69,7 +68,7 @@ export class DrawControl {
 
   ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
-  radiusDrawEnd$: BehaviorSubject<number>=new BehaviorSubject(undefined);
+  radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
 
   private keyDown$$: Subscription;
 
@@ -84,20 +83,18 @@ export class DrawControl {
   private onDrawEndKey: EventsKey;
   private onDrawAbortKey: EventsKey;
   private onDrawKey: EventsKey;
-  public radius:number;
+  public radius: number;
 
   private mousePosition: [number, number];
+
   /**
    * take the radius from radius meters
    */
-  get radiusVal():number{
+  get radiusVal(): number {
     return this.predefinedRadius$.getValue();
-    console.log("get radiusVal$ depuis predefinedRadius draw.ts 91");
   }
-  set radiusValData(radiusCercle:number){
-  this.predefinedRadius$.next(radiusCercle);
-  console.log(radiusCercle);
-  console.log("setradius depuis predefinedRadius draw.ts 95");
+  set radiusValData(radiusCercle: number) {
+    this.predefinedRadius$.next(radiusCercle);
   }
 
 
@@ -147,10 +144,9 @@ export class DrawControl {
     return this.olDrawingLayerSource;
 
   }
- setOlInteractionStyle(style: OlStyleLike){
-  this.olInteractionStyle = style;
-  console.log("setOlInteractionStyle draw.ts 149", style);
-}
+  setOlInteractionStyle(style: OlStyleLike) {
+    this.olInteractionStyle = style;
+  }
 
   /**
    * Set the current geometry type
@@ -158,13 +154,12 @@ export class DrawControl {
    */
   setGeometryType(geometryType: typeof OlGeometryType) {
     this.olGeometryType = geometryType;
-    console.log("setGeometryType draw.ts 157", geometryType);
   }
 
   /**
    * Get the current geometry type
    */
-   getGeometryType() {
+  getGeometryType() {
     return this.olGeometryType;
   }
 
@@ -204,7 +199,6 @@ export class DrawControl {
     if (!this.options.drawingLayer && !this.options.drawingLayerSource) {
       this.olDrawingLayerSource.clear(true);
     }
-    console.log("clearOlInnerOverlaySource  draw.ts 202", this.clearOlInnerOverlaySource);
   }
 
   /**
@@ -213,8 +207,6 @@ export class DrawControl {
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
-    console.log("frehand$ get value", this.freehand$.getValue());
-    console.log("ispredefinedRadius$ get value", this.ispredefinedRadius$.getValue());
     if (!this.freehand$.getValue() || this.ispredefinedRadius$.getValue()) {
       if (!this.freehand$.getValue()) {
         olDrawInteraction = new OlDraw({
@@ -261,7 +253,6 @@ export class DrawControl {
     // Add Draw interaction to map and create listeners
     this.olMap.addInteraction(olDrawInteraction);
     this.olDrawInteraction = olDrawInteraction;
-
     this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
     this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
     this.onDrawAbortKey = olDrawInteraction.on('drawabort', (event: OlDrawEvent) => this.abort$.next(event.feature.getGeometry()));
@@ -294,20 +285,15 @@ export class DrawControl {
    */
   private removeOlInteractions() {
     this.unsubscribeKeyDown();
-    console.log("removeOlInteractions this unsubscribeKeyDown 292 draw.ts",this.unsubscribeKeyDown);
     unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey, this.onDrawAbortKey]);
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
       this.olMap.removeInteraction(this.olModifyInteraction);
-      console.log("removeOlInteractions condition if olmap 296 draw.ts",this.olMap );
     }
 
     this.olDrawInteraction = undefined;
-    console.log("removeOlInteractions olDrawInteraction 302 draw.ts",this.olDrawInteraction);
     this.olModifyInteraction = undefined;
-    console.log("removeOlInteractions olModifyInteraction 304 draw.ts",this.olModifyInteraction);
-    console.log("removeOlInteractions fonction 291 draw.ts",this.removeOlInteractions );
   }
 
   /**
@@ -322,8 +308,6 @@ export class DrawControl {
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
-    console.log(event);
-    console.log("event dans onDrawStart draw.ts 304");
     this.subscribeKeyDown();
   }
 
@@ -332,20 +316,16 @@ export class DrawControl {
    * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
-    console.log("ondrawend eventfeature.getgeometry() type",event.feature.getGeometry().getType());
-    if (event.feature.getGeometry().getType() === 'Point'){
+    if (event.feature.getGeometry().getType() === 'Point') {
       this.radiusDrawEnd$.next(this.predefinedRadius$.getValue());
     }
-
     this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
     const olGeometry = event.feature.getGeometry();
     olGeometry.on('change', () => {
       this.modify$.next(olGeometry);
     });
-    this.end$.next(olGeometry);//*********aqui se queda  */
-        console.log(event);
-    console.log("event dans onDrawEnd draw.ts 328");
+    this.end$.next(olGeometry);
   }
 
   /**
