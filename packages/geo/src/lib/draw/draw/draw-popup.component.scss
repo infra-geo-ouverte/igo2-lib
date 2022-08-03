@@ -4,7 +4,6 @@
 
 .readOnly-Input {
   top: 10px !important;
-  // padding-top: 17.500px;
   width: fit-content !important;
 }  
 
@@ -23,4 +22,16 @@
 
 ::ng-deep .mat-form-field-wrapper{
   margin-bottom: -1.25em;
+  margin-top: 0.25em;
+}
+
+.geometry-type-toggle{
+  display: flex !important;
+  justify-content: center;
+}
+
+
+.mat-dialog-actions{
+  display: flex !important;
+  justify-content: center;
 }

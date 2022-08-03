@@ -35,7 +35,7 @@ export interface DialogData {
   })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
-  @Input() labelFlag: LabelType = LabelType.Predefined;
+  @Input() labelFlag: LabelType = LabelType.Custom;
   @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit;
 
   public geometryType = GeometryType;
@@ -53,6 +53,7 @@ export class DrawPopupComponent {
   public currentCoordinatesUnit: string;
 
   private longlatDD: [number, number];
+  private labelLength: number;
 
   constructor(
     private languageService: LanguageService,
@@ -60,6 +61,7 @@ export class DrawPopupComponent {
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
     ){
       this.currentLabel = this.data.olGeometry.get('draw');
+      this.labelLength = this.currentLabel ? this.currentLabel.length: 0;
 
       let olGeometry;
 
@@ -153,7 +155,20 @@ export class DrawPopupComponent {
   }
   onLabelTypeChange(labelType: LabelType){
     this.labelFlag = labelType;
-    if (labelType === LabelType.Area){
+
+    if (labelType === LabelType.Predefined){
+      if (this.olGeometryType === GeometryType.Point ){
+        this.labelFlag = LabelType.Coordinates;
+        this.currentCoordinates = this.coordinatesInDD;
+        this.measureUnit = CoordinatesUnit.DecimalDegree;
+      }
+      else if (this.olGeometryType === GeometryType.LineString){
+        this.labelFlag = LabelType.Length;
+        this.currentLength = this.lengthInMeters;
+        this.measureUnit = MeasureLengthUnit.Meters;
+      }
+    }
+    else if (labelType === LabelType.Area){
       this.currentArea = this.areaInMetersSquare;
       this.measureUnit = MeasureAreaUnit.SquareMeters;
     }
@@ -165,6 +180,7 @@ export class DrawPopupComponent {
       this.currentCoordinates = this.coordinatesInDD;
       this.measureUnit = CoordinatesUnit.DecimalDegree;
     }
+
   }
 
   get arrayBuiltInType(): string[]{
@@ -178,9 +194,10 @@ export class DrawPopupComponent {
   }
 
   noLabelButton(){
-    if (this.labelFlag === LabelType.Predefined){
+    if (this.labelFlag === LabelType.Predefined || (this.labelFlag === LabelType.Custom && this.labelLength === 0)){
       return this.languageService.translate.instant('igo.geo.draw.noLabel');
     }
+
     return 'OK';
   }
 
@@ -254,6 +271,21 @@ export class DrawPopupComponent {
     }
     if (this.olGeometryType === GeometryType.Circle){
       return this.languageService.translate.instant('igo.geo.search.coordinates.radius');
+    }
+    return this.languageService.translate.instant('igo.geo.draw.labelType.Length');
+  }
+
+  getLabelLength(event?){
+    console.log(event);
+    this.labelLength = event.length;
+  }
+
+  selectOptions(option){
+    if (this.olGeometryType === GeometryType.Point){
+      return option === LabelType.Coordinates;
+    }
+    if (this.olGeometryType === GeometryType.LineString){
+      return option === LabelType.Length;
     }
   }
 

@@ -1,11 +1,11 @@
 <div class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
-    (change)="onLabelTypeChange($event.value)" [value]="labelType.Predefined">
-    <mat-button-toggle [value]="labelType.Predefined">
-      {{ 'igo.geo.draw.labelType.predefined' | translate }}
-    </mat-button-toggle>
+    (change)="onLabelTypeChange($event.value)" [value]="labelType.Custom">
     <mat-button-toggle [value]="labelType.Custom" >
       {{ 'igo.geo.draw.labelType.custom' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="labelType.Predefined">
+      {{ 'igo.geo.draw.labelType.predefined' | translate }}
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>
@@ -14,7 +14,7 @@
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
     <mat-radio-group>
-      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onLabelTypeChange($event.value)">
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
         {{ 'igo.geo.draw.labelType.' + option | translate }}
       </mat-radio-button>
     </mat-radio-group>
@@ -55,7 +55,7 @@
         <input
           #input
           matInput
-          placeholder="Area"
+          placeholder="{{ 'igo.geo.draw.labelType.Area' | translate }}"
           value="{{currentArea}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
@@ -83,12 +83,14 @@
 </div>
 
 <div *ngIf="labelFlag === labelType.Custom">
-  <div mat-dialog-content>
+  <div>
     <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
-    <mat-form-field class="example-full-width">
+    <mat-form-field class="readOnly-Input">
       <input
         #input
         matInput
+        (select)="true"
+        (input)="getLabelLength($event.target.value)"
         placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
         value="{{ currentLabel }}"/>
     </mat-form-field>
@@ -101,7 +103,8 @@
     <button 
       mat-raised-button 
       color="primary" 
-      (click)="confirm(input.value)">OK
+      (click)="confirm(input.value)">
+      {{noLabelButton()}}
     </button>
   </div>
 </div>
