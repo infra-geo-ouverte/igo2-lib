@@ -65,7 +65,9 @@ export class DrawControl {
    * Freehand mode observable (defaults to false)
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  /**
+   * Observables from predefined radius (defaults to false and undefined)
+   */
   ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
   radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
@@ -88,7 +90,7 @@ export class DrawControl {
   private mousePosition: [number, number];
 
   /**
-   * take the radius from radius meters
+   * take the value of radius
    */
   get radiusVal(): number {
     return this.predefinedRadius$.getValue();

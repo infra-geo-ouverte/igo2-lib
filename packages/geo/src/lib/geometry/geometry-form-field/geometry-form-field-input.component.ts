@@ -459,9 +459,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (olGeometry.get('radius')) {
       value.radius = olGeometry.get('radius');
       olGeometry.set('radius', value.radius);
-    console.log(value.radius);
-    console.log(" condition ifolgeometrygetradius geometryformfieldinput");
-
     }
     this.writeValue(value);
   }
@@ -470,8 +467,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     const center = olGeometry.getCenter();
     const coordinates = olproj.transform(center, this.map.projection, 'EPSG:4326');
     const radius = Math.round(olGeometry.getRadius() * (Math.cos((Math.PI / 180) * coordinates[1])));
-    console.log(radius);
-        console.log(" circletopoint geometryformfieldinput");
+
     // Convert it to a point object
     olGeometry = new Point(center);
     olGeometry.set('radius', radius, true);
