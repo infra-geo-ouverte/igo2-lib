@@ -675,7 +675,7 @@
         "cancel": "Cancel",
         "Circle": "Circle",
         "colorPicker": "Click to open the color picker",
-        "dialogInstruction": "Enter your draw's label",
+        "dialogInstruction": "Enter your drawing's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
@@ -711,7 +711,9 @@
           "Area": "Area",
           "predefined": "Predefined",
           "custom": "Custom"
-        }
+        },
+        "popupTitle": "Drawing's label"
+
 
       },
       "network": {

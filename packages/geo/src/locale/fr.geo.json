@@ -710,9 +710,10 @@
           "Coordinates": "Coordonnées",
           "Length": "Longueur",
           "Area": "Superficie",
-          "predefined": "Prédéfini",
-          "custom": "Personnalisé"
-        }
+          "predefined": "Prédéfinie",
+          "custom": "Personnalisée"
+        },
+        "popupTitle": "Étiquette du dessin"
 
       },
       "network": {

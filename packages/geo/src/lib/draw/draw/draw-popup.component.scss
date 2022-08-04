@@ -3,8 +3,7 @@
   }
 
 .readOnly-Input {
-  top: 10px !important;
-  width: fit-content !important;
+  width: 200px !important;
 }  
 
 .unit-field {
@@ -30,8 +29,11 @@
   justify-content: center;
 }
 
-
 .mat-dialog-actions{
   display: flex !important;
   justify-content: center;
+}
+
+.input{
+  width: auto !important;
 }

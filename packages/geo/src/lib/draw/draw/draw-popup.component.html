@@ -1,3 +1,10 @@
+<div>
+  <h2 mat-dialog-title>
+    {{ 'igo.geo.draw.popupTitle' | translate }}
+  </h2>
+</div>
+
+
 <div class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
     (change)="onLabelTypeChange($event.value)" [value]="labelType.Custom">
@@ -14,7 +21,8 @@
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
     <mat-radio-group>
-      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" 
+      (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
         {{ 'igo.geo.draw.labelType.' + option | translate }}
       </mat-radio-button>
     </mat-radio-group>
@@ -85,14 +93,15 @@
 <div *ngIf="labelFlag === labelType.Custom">
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
-    <mat-form-field class="readOnly-Input">
+    <mat-form-field class="input">
       <input
         #input
         matInput
         (select)="true"
         (input)="getLabelLength($event.target.value)"
         placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
-        value="{{ currentLabel }}"/>
+        value="{{ currentLabel }}"
+        cdkFocusInitial/>
     </mat-form-field>
   </div>
   
