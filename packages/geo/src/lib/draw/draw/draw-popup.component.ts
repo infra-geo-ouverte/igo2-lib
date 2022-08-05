@@ -62,7 +62,6 @@ export class DrawPopupComponent {
     ){
       this.currentLabel = this.data.olGeometry.get('draw');
       this.labelLength = this.currentLabel ? this.currentLabel.length: 0;
-
       let olGeometry;
 
       const projection = this.data.map.ol.getView().getProjection();
@@ -77,8 +76,8 @@ export class DrawPopupComponent {
           this.olGeometryType = this.data.olGeometry.getGeometry().getType();
           olGeometry = this.data.olGeometry.get('geometry');
         }
+        this.labelFlag = this.data.olGeometry.get('labelType');
         this.measureUnit = this.data.olGeometry.get('measureUnit');
-
       }
       else{
         this.olGeometryType = this.data.olGeometry.getType();
@@ -276,7 +275,6 @@ export class DrawPopupComponent {
   }
 
   getLabelLength(event?){
-    console.log(event);
     this.labelLength = event.length;
   }
 
@@ -287,6 +285,13 @@ export class DrawPopupComponent {
     if (this.olGeometryType === GeometryType.LineString){
       return option === LabelType.Length;
     }
+  }
+
+  get customOrPredefined(){
+    if (this.labelFlag === LabelType.Custom){
+      return LabelType.Custom;
+    }
+    return LabelType.Predefined;
   }
 
 

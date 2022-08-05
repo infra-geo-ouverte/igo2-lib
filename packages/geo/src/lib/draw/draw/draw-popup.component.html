@@ -7,7 +7,7 @@
 
 <div class="geometry-type-toggle mat-typography">
   <mat-button-toggle-group
-    (change)="onLabelTypeChange($event.value)" [value]="labelType.Custom">
+    (change)="onLabelTypeChange($event.value)" [value]="customOrPredefined">
     <mat-button-toggle [value]="labelType.Custom" >
       {{ 'igo.geo.draw.labelType.custom' | translate }}
     </mat-button-toggle>

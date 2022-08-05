@@ -301,6 +301,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
 
   private initStore(newTitle?: string, isNewLayer?: boolean) {
+
     this.createLayer(newTitle, isNewLayer);
     this.subscriptions$$.push(
       this.activeStore.stateView
@@ -341,29 +342,28 @@ export class DrawComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((label: string) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
+
+          this.updateLabelOfOlGeometry(olGeometry, label);
           this.updateLabelType(olGeometry, dialogRef.componentInstance.labelFlag);
           this.updateMeasureUnit(olGeometry, dialogRef.componentInstance.measureUnit);
-          this.updateLabelOfOlGeometry(olGeometry, label);
 
-          if (!olGeometry.values_.fontStyle) {
+          if (!(olGeometry instanceof OlFeature)){
             this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
-          }
-          if (!olGeometry.values_.drawingStyle) {
             this.updateFillAndStrokeColor(
               olGeometry,
               'rgba(255,255,255,0.4)',
               'rgba(143,7,7,1)'
             );
-          }
-          if (!(olGeometry.values_.offsetX || olGeometry.values_.offsetY)) {
             this.updateOffset(
               olGeometry,
               0,
-              olGeometry instanceof OlPoint ? -15 : 0
+              (olGeometry instanceof OlPoint || olGeometry instanceof OlCircle) ? -15 : 0
             );
           }
-
-          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label);
+          else{
+          }
+          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label, 
+            [dialogRef.componentInstance.labelFlag, dialogRef.componentInstance.measureUnit]);
           this.updateHeightTable();
         }
         // deletes the feature
@@ -477,7 +477,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
   }
 
-  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string) {
+  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string, labelTypeAndUnit?) {
     const entities = this.activeStore.all();
 
     const olGeometry = olFeature.getGeometry() as any;
@@ -504,9 +504,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         const offsetX = olFeature.get('offsetX');
         const offsetY = olFeature.get('offsetY');
 
-        const labelType = olFeature.get('labelType_');
-        const measureUnit = olFeature.get('measureUnit_');
-
         const rad: number = entity.properties.rad
           ? entity.properties.rad
           : undefined;
@@ -514,8 +511,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.updateFontSizeAndStyle(olGeometry, fontSize, fontStyle);
         this.updateFillAndStrokeColor(olGeometry, fillColor, strokeColor);
         this.updateOffset(olGeometry, offsetX, offsetY);
-        this.updateLabelType(olGeometry, labelType);
-        this.updateMeasureUnit(olGeometry, measureUnit);
+        this.updateLabelType(olGeometry, labelTypeAndUnit[0]);
+        this.updateMeasureUnit(olGeometry, labelTypeAndUnit[1]);
         this.replaceFeatureInStore(entity, olGeometry, rad);
       }
     });
@@ -659,6 +656,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.selectedFeatures$.value[0],
         this.map.ol.getView().getProjection().getCode()
       );
+      console.log(olGeometryFeature);
       this.openDialog(olGeometryFeature, false);
     }
   }
