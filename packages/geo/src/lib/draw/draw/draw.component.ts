@@ -78,6 +78,8 @@ import {
   MeasureAreaUnitAbbreviation,
 } from '../../measure/shared/measure.enum';
 import Polygon, {fromCircle} from 'ol/geom/Polygon';
+import { SpatialFilterService } from '../../filter/shared/spatial-filter.service';
+import { SpatialFilterType } from '../../filter';
 
 
 @Component({
@@ -186,7 +188,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
-    private drawIconService: DrawIconService
+    private drawIconService: DrawIconService,
+    private spatialFilterService: SpatialFilterService
   ) {
     this.buildForm();
     this.fillColor = this.drawStyleService.getFillColor();
@@ -255,7 +258,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         );
       });
       this.onLayerChange(this.activeDrawingLayer);
-
     }
   }
 
@@ -357,12 +359,11 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.updateOffset(
               olGeometry,
               0,
-              (olGeometry instanceof OlPoint || olGeometry instanceof OlCircle) ? -15 : 0
+              (olGeometry instanceof OlPoint) ? -15 : 0
             );
           }
-          else{
-          }
-          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label, 
+
+          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label,
             [dialogRef.componentInstance.labelFlag, dialogRef.componentInstance.measureUnit]);
           this.updateHeightTable();
         }
@@ -656,7 +657,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.selectedFeatures$.value[0],
         this.map.ol.getView().getProjection().getCode()
       );
-      console.log(olGeometryFeature);
+
+      this.spatialFilterService.loadBufferGeometry(this.selectedFeatures$.value[0], SpatialFilterType.Polygon, 1000);
       this.openDialog(olGeometryFeature, false);
     }
   }

@@ -123,9 +123,15 @@ export class DrawPopupComponent {
         this.currentArea = this.areaInMetersSquare;
       }
     }
+
+  /**
+   * HTML Interactions
+   */
+
   cancelDrawing() {
     this.dialogRef.close();
   }
+
   confirm(input?: string) {
     this.confirmFlag = true;
     if(this.labelFlag === LabelType.Predefined){
@@ -152,9 +158,9 @@ export class DrawPopupComponent {
       this.dialogRef.close(input);
     }
   }
+
   onLabelTypeChange(labelType: LabelType){
     this.labelFlag = labelType;
-
     if (labelType === LabelType.Predefined){
       if (this.olGeometryType === GeometryType.Point ){
         this.labelFlag = LabelType.Coordinates;
@@ -182,6 +188,26 @@ export class DrawPopupComponent {
 
   }
 
+  onChangeLengthUnit(lengthUnit: MeasureLengthUnit){
+    this.measureUnit = lengthUnit;
+    this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2);
+  }
+
+  onChangeAreaUnit(areaUnit: MeasureAreaUnit){
+    this.measureUnit = areaUnit;
+    this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2);
+  }
+
+  onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
+    this.measureUnit = coordinatesUnit;
+    let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
+    this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')';
+  }
+
+
+  /**
+   * HTML Getters
+   */
   get arrayBuiltInType(): string[]{
     let arrayBILabels = [];
     for (const labelType of Object.values(LabelType)){
@@ -198,6 +224,13 @@ export class DrawPopupComponent {
     }
 
     return 'OK';
+  }
+
+  get customOrPredefined(){
+    if (this.labelFlag === LabelType.Custom){
+      return LabelType.Custom;
+    }
+    return LabelType.Predefined;
   }
 
   optionAvailable(currentOption: LabelType){
@@ -220,23 +253,6 @@ export class DrawPopupComponent {
       default:
         return false;
     }
-  }
-
-
-  onChangeLengthUnit(lengthUnit: MeasureLengthUnit){
-    this.measureUnit = lengthUnit;
-    this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2);
-  }
-
-  onChangeAreaUnit(areaUnit: MeasureAreaUnit){
-    this.measureUnit = areaUnit;
-    this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2);
-  }
-
-  onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
-    this.measureUnit = coordinatesUnit;
-    let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
-    this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')';
   }
 
   get allLengthUnits(): string[]{
@@ -285,13 +301,6 @@ export class DrawPopupComponent {
     if (this.olGeometryType === GeometryType.LineString){
       return option === LabelType.Length;
     }
-  }
-
-  get customOrPredefined(){
-    if (this.labelFlag === LabelType.Custom){
-      return LabelType.Custom;
-    }
-    return LabelType.Predefined;
   }
 
 
