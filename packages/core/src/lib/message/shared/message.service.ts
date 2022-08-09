@@ -54,7 +54,7 @@ export class MessageService {
     if (currentDate > message.options.from && currentDate < message.options.to) {
       if (message.noIcon) {
         this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType} toast-no-icon`;
-      } 
+      }
       message = this.handleTemplate(message);
 
       if (message.text) {
@@ -99,7 +99,7 @@ export class MessageService {
   info(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.info(message, translatedTitle, options)
+    return this.toastr.info(message, translatedTitle, options);
   }
 
   show(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
