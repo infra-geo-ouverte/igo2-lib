@@ -35,6 +35,9 @@ export class MessageService {
   }
 
   message(message: Message) {
+    const messageType = message.type;
+    this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType}`;
+
     this.messages$.next(this.messages$.value.concat([message]));
 
     message.options = message.options || {} as MessageOptions;
@@ -48,9 +51,10 @@ export class MessageService {
     if (typeof message.options.to === 'string') {
       message.options.to = new Date(Date.parse(message.options.to.replace(/-/g, ' ')));
     }
-    if (
-      currentDate > message.options.from && currentDate < message.options.to) {
-
+    if (currentDate > message.options.from && currentDate < message.options.to) {
+      if (message.noIcon) {
+        this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType} toast-no-icon`;
+      } 
       message = this.handleTemplate(message);
 
       if (message.text) {
@@ -64,6 +68,9 @@ export class MessageService {
             break;
           case MessageType.INFO:
             messageShown = this.info(message.text, message.title, message.options);
+            break;
+          case MessageType.SHOW:
+            messageShown = this.show(message.text, message.title, message.options);
             break;
           case MessageType.ALERT:
           case MessageType.WARNING:
@@ -83,7 +90,6 @@ export class MessageService {
     const translatedTitle = this.languageService.translate.instant(title);
     return this.toastr.success(message, translatedTitle, options);
   }
-
   error(text: string, title: string = 'igo.core.message.error', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
@@ -93,7 +99,13 @@ export class MessageService {
   info(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
     const message = this.languageService.translate.instant(text);
     const translatedTitle = this.languageService.translate.instant(title);
-    return this.toastr.info(message, translatedTitle, options);
+    return this.toastr.info(message, translatedTitle, options)
+  }
+
+  show(text: string, title: string = 'igo.core.message.info', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
+    const message = this.languageService.translate.instant(text);
+    const translatedTitle = this.languageService.translate.instant(title);
+    return this.toastr.show(message, translatedTitle, options);
   }
 
   alert(text: string, title: string = 'igo.core.message.alert', options: Partial<IndividualConfig> = {}): ActiveToast<any> {
