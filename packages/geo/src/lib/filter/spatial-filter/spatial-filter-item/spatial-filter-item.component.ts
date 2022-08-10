@@ -16,7 +16,7 @@ import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { UntypedFormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import * as olStyle from 'ol/style';
@@ -221,7 +221,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private bufferChanges$$: Subscription;
 
   public formControl = new UntypedFormControl();
-  public geometryType: typeof OlGeometryType | string;
+  public geometryType: Type | string;
   public geometryTypeField = false;
   public geometryTypes: string[] = ['Point', 'Polygon'];
   public drawGuideField = false;

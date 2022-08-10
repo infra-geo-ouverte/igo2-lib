@@ -39,7 +39,7 @@ import OlPoint from 'ol/geom/Point';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
@@ -182,7 +182,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: typeof OlGeometryType) {
+  onGeometryTypeChange(geometryType: Type) {
     this.drawControl.setGeometryType(geometryType);
     this.toggleDrawControl();
   }

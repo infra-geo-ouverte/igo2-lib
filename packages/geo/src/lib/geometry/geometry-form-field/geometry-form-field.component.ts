@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { IgoFormFieldComponent } from '@igo2/common';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import * as OlStyle from 'ol/style';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IgoMap } from '../../map';
@@ -59,9 +59,9 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Input()
-  set geometryType(value: typeof OlGeometryType) { this.geometryType$.next(value); }
-  get geometryType(): typeof OlGeometryType { return this.geometryType$.value; }
-  readonly geometryType$: BehaviorSubject<typeof OlGeometryType> = new BehaviorSubject(undefined);
+  set geometryType(value: Type) { this.geometryType$.next(value); }
+  get geometryType(): Type { return this.geometryType$.value; }
+  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
