@@ -33,6 +33,9 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import {
   EntityRecord,
+  EntityTableButton,
+  EntityTableColumn,
+  EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
 
@@ -123,6 +126,21 @@ export class DrawComponent implements OnInit, OnDestroy {
         valueAccessor: (feature: FeatureWithDraw) => {
           return feature.properties.draw;
         }
+      },
+      {
+        name: 'Edition',
+        title: '',
+        sort: false,
+        valueAccessor: (feature: FeatureWithDraw) => {
+          return [{
+            editMode: false,
+            icon: 'pencil',
+            color: 'primary',
+            click: () => { this.editLabelDrawing(feature);},
+            style: 'mat-icon-button'
+          }] as EntityTableButton[];
+        },
+        renderer: EntityTableColumnRenderer.ButtonGroup,
       }
     ]
   };
@@ -648,14 +666,13 @@ export class DrawComponent implements OnInit, OnDestroy {
   /**
    * Called when the user double-clicks the selected drawing
    */
-  editLabelDrawing() {
-    if (this.selectedFeatures$.value.length) {
-      const olGeometryFeature = featureToOl(
-        this.selectedFeatures$.value[0],
-        this.map.ol.getView().getProjection().getCode()
-      );
-      this.openDialog(olGeometryFeature, false);
-    }
+  editLabelDrawing(feature) {
+    const olGeometryFeature = featureToOl(
+      feature,
+      this.map.ol.getView().getProjection().getCode()
+    );
+    this.openDialog(olGeometryFeature, false);
+    
   }
 
   openShorcutsDialog() {
@@ -1052,7 +1069,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     // Check the amount of rows as a possible alternative
 
     this.numberOfDrawings = this.activeStore.count$.getValue();
-    this.numberOfDrawings > 6
+    this.numberOfDrawings > 4
       ? (this.tableTemplate.tableHeight = '23vh')
       : (this.tableTemplate.tableHeight = 'auto');
   }

@@ -23,7 +23,7 @@
     <mat-radio-group>
       <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" 
       (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
-        {{ 'igo.geo.draw.labelType.' + option | translate }}
+        {{getProperLengthLabel(option)}}
       </mat-radio-button>
     </mat-radio-group>
     <div *ngIf="labelFlag === labelType.Coordinates">

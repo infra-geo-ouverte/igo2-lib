@@ -21,6 +21,9 @@
     height: 100%;
     overflow: auto;
     flex: 1 1 auto;
+    td:last-child{
+        text-align: right;
+      }
 }
 
 .mat-cell-text {
@@ -72,3 +75,5 @@ td.edition {
 input {
     border-bottom: 1px solid darkgrey;
 }
+
+  

@@ -303,5 +303,18 @@ export class DrawPopupComponent {
     }
   }
 
+  getProperLengthLabel(option){
+    if (option === LabelType.Length){
+      if (this.olGeometryType === GeometryType.Polygon){
+        return this.languageService.translate.instant('igo.geo.measure.perimeter');
+      }
+      if (this.olGeometryType === GeometryType.Circle){
+        return this.languageService.translate.instant('igo.geo.search.coordinates.radius');
+      }
+      return this.languageService.translate.instant('igo.geo.draw.labelType.Length');
+    }
+    return this.languageService.translate.instant('igo.geo.draw.labelType.' + option);
+  }
+
 
 }
