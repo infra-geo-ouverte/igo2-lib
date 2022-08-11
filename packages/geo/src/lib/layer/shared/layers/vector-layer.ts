@@ -5,7 +5,6 @@ import { unByKey } from 'ol/Observable';
 import { easeOut } from 'ol/easing';
 import { asArray as ColorAsArray } from 'ol/color';
 import { getVectorContext } from 'ol/render';
-import type { Type } from 'ol/format/Feature';
 import olFeature from 'ol/Feature';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
