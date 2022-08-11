@@ -74,7 +74,6 @@ img {
 
 .storeTable{
   height:auto !important;
-  // max-height: 100px;
 }
 
 .igo-input-container .mat-form-field + .mat-form-field{
@@ -102,7 +101,18 @@ img {
   }
 }
 
-
 .igo-form-input-box{
   width: 150px;
 }
+
+::ng-deep igo-entity-table{
+    td:last-child{
+      text-align: right !important;
+      button{
+        margin: 0% !important;
+      }
+    }
+}
+
+
+// /html/body/app-root/div/mat-sidenav-container/mat-sidenav-content/app-draw/mat-card/igo-draw/div/div[4]/div/igo-entity-table/div

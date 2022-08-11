@@ -34,7 +34,6 @@ import { DrawControl } from '../../geometry/shared/controls/draw';
 import {
   EntityRecord,
   EntityTableButton,
-  EntityTableColumn,
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
@@ -672,7 +671,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.map.ol.getView().getProjection().getCode()
     );
     this.openDialog(olGeometryFeature, false);
-    
+
   }
 
   openShorcutsDialog() {
