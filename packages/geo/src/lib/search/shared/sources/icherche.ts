@@ -215,6 +215,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['mrc']
             },
             {
+              title: 'igo.geo.search.icherche.type.matricule',
+              value: 'matricules-fonciers',
+              enabled: types.indexOf('matricules-fonciers') !== -1,
+              hashtags: ['matricule, matricules-fonciers']
+            },
+            {
               title: 'igo.geo.search.icherche.type.city',
               value: 'municipalites',
               enabled: types.indexOf('municipalites') !== -1,

@@ -466,7 +466,8 @@
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
-            "dessertes": "Desserte de police (CSAU)"
+            "dessertes": "Desserte de police (CSAU)",
+            "matricule": "Matricules fonciers"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
