@@ -38,6 +38,10 @@ export class MsalServiceb2c implements IMsalService {
         this.instance.initializeWrapperLibrary(WrapperSKU.Angular, this.version);
     }
 
+    initialize(): Observable<void> {
+        return from(this.instance.initialize());
+    }
+
     acquireTokenPopup(request: PopupRequest): Observable<AuthenticationResult> {
         return from(this.instance.acquireTokenPopup(request));
     }
