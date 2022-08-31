@@ -2,17 +2,7 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/common",
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/core" : "core",
-      "@igo2/utils" : "utils",
-      "scroll-into-view-if-needed" : "scrollIntoView",
-      "typy" : "typy",
-      "@ngx-translate/core" : "ngxt-core",
-      "ts-cacheable": "tsCacheable",
-      "angular-shepherd": "angularShepherd",
-      "moment": "moment"
-    }
+    "entryFile": "src/public_api.ts"
   },
   "allowedNonPeerDependencies": [
     "ts-cacheable"
