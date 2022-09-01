@@ -32,12 +32,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, NgControl, NgForm, FormControlName, UntypedFormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { catchError, map } from 'rxjs/operators';
-import * as moment_ from 'moment';
-const moment = moment_;
+import { map } from 'rxjs/operators';
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-entity-table',
@@ -50,7 +49,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  public formGroup: FormGroup = new FormGroup({});
+  public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   public filteredOptions = {};
 
@@ -200,7 +199,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
 
   constructor(private cdRef: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     protected _focusMonitor: FocusMonitor,
     protected _elementRef: ElementRef<HTMLElement>,
     @Optional() @Self() public ngControl: NgControl,
