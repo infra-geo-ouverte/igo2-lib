@@ -40,7 +40,17 @@ export class MetadataButtonComponent {
 
   openMetadata(metadata: MetadataOptions) {
     if (metadata.extern) {
-      this.metadataService.open(metadata);
+      if (!metadata.url && metadata.abstract) {
+        this.dialog.open(MetadataAbstractComponent, {
+          data: {
+            layerTitle: this.layer.title,
+            abstract: metadata.abstract,
+            type: metadata.type
+          }
+        });
+      } else if (metadata.url) {
+        this.metadataService.open(metadata);
+      }
     } else if (!metadata.extern && metadata.abstract) {
       this.dialog.open(MetadataAbstractComponent, {
         data: {

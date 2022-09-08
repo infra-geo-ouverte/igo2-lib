@@ -153,11 +153,11 @@ export class PrintService {
           resolution: map.viewController.getResolution(),
           extent: map.viewController.getExtent(),
           projection: map.viewController.getOlProjection().getCode(),
-          scale: map.viewController.getScale(resolution),
+          // scale: map.viewController.getScale(resolution),
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-      if (legends.length === 0) {
+      if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
         return;

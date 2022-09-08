@@ -1,21 +1,20 @@
 <div mat-dialog-content>
-  <p class="mat-typography">{{'igo.geo.draw.dialogInstruction' | translate}}</p>
+  <p class="mat-typography">
+    {{ 'igo.geo.draw.dialogInstruction' | translate }}
+  </p>
   <mat-form-field class="example-full-width">
     <input
       #input
       matInput
-      placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
-      value="{{data.currentLabel}}">
+      placeholder="{{ 'igo.geo.draw.dialogTitle' | translate }}"
+      value="{{ data.currentLabel }}"/>
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button
-    mat-raised-button
-    (click)="noLabel()">{{'igo.geo.draw.noLabel' | translate}}
+  <button mat-raised-button (click)="cancelDrawing()">
+    {{ 'igo.geo.draw.cancel' | translate }}
   </button>
-  <button
-    mat-raised-button
-    color="primary"
-    [mat-dialog-close]="input.value">OK
+  <button mat-raised-button color="primary" (click)="confirm(input.value)">
+    OK
   </button>
 </div>
