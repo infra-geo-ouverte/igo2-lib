@@ -65,7 +65,7 @@ export class MapGeolocationController extends MapController {
         width: 2,
       }),
     }),
-  })
+  });
   private accuracyFeatureStyle: olstyle.Style | olstyle.Style[] = new olstyle.Style({
     stroke: new olstyle.Stroke({
       color: 'rgba(120, 120, 120, 0.4)',
@@ -74,7 +74,7 @@ export class MapGeolocationController extends MapController {
     fill: new olstyle.Fill({
       color: 'rgba(120, 120, 120, 0.4)',
     }),
-  })
+  });
 
   private geolocation: olGeolocation;
 

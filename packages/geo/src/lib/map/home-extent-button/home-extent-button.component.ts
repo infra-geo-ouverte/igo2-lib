@@ -14,7 +14,7 @@ Button to center the map to the home extent
 export class HomeExtentButtonComponent {
   @Input() map: IgoMap;
   @Input() color: string;
-  @Input() extentOverride?: MapExtent
+  @Input() extentOverride?: MapExtent;
   @Input() centerOverride?: [number, number];
   @Input() zoomOverride?: number;
 
