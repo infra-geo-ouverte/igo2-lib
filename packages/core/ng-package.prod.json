@@ -6,6 +6,7 @@
     "umdModuleIds": {
       "@igo2/utils" : "utils",
       "@ngx-translate/core" : "ngxt-core",
+      "ngx-indexed-db": "nIdb",
       "ngx-toastr": "ngxToastr"
     }
   },

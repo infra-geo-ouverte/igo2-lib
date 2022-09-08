@@ -18,7 +18,8 @@
         "timeFilter": "Filtre temporel",
         "about": "À propos",
         "spatialFilter": "Filtre spatial",
-        "advancedMap": "Outils avancés"
+        "advancedMap": "Outils avancés",
+        "closestFeature": "Entités à proximité"
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
@@ -35,7 +36,7 @@
       },
       "mapTool": {
         "empty": "La carte ne contient aucune couche de données.",
-        "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+        "customize": "Personnalisez-la en ajoutant des couches à partir des outils suivants : ",
         "search-tool": "Recherche",
         "catalog-tool": "Catalogue de données",
         "context-tool": "Gestionnaire de contextes",
@@ -73,6 +74,18 @@
           "message": "L'itinéraire proposé dans cet outil ne tient pas compte des conditions routières actuelles, de la congestion routière, des entraves présente sur le réseau et des horaires de traversiers (ouverture quotidienne et saisonnière)."
         }
       },
+      "map-proximity-tool": {
+        "lon": "Longitude",
+        "lat": "Latitude",
+        "method": "Méthode de localisation",
+        "radiusM": "Rayon de recherche (mètres)",
+        "geolocation": "Votre position",
+        "mapCenter": "Centre de la carte (croix noire)",
+        "copyMsg": "Coordonnées copiées",
+        "copyTitle": "Coordonnées du centre",
+        "feature": "Entité",
+        "distance": "Distance"
+      },
       "advanced-map-tool": {        
         "geolocation": { 
           "title": "Géolocalisation",
@@ -83,7 +96,7 @@
           "swipe-select": "Choisir les couches à comparer",
           "selectAll": "Tout sélectionner",
           "empty": "La carte ne contient aucune couche de données.",
-          "customize": "Personnalisez-là en ajoutant des couches à partir des outils suivants : ",
+          "customize": "Personnalisez-la en ajoutant des couches à partir des outils suivants : ",
           "search-tool": "Recherche",
           "catalog-tool": "Catalogue de données",
           "context-tool": "Gestionnaire de contextes",

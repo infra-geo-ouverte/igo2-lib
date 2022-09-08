@@ -12,7 +12,7 @@ import { IgoMap } from '../map';
 import * as olstyle from 'ol/style';
 import { Overlay } from '../../../overlay/shared/overlay';
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
 import { MapViewOptions } from '../map.interface';
 import { switchMap } from 'rxjs/operators';
 export interface MapGeolocationControllerOptions {
@@ -164,8 +164,12 @@ export class MapGeolocationController extends MapController {
    */
   set followPosition(value: boolean) {
     this._followPosition = value;
-    this.handleFeatureCreation(this.position$.value);
     this.followPosition$.next(value);
+    if (this.configService?.getConfig('geolocate.followPosition') === false) {
+      this._followPosition = false;
+      this.followPosition$.next(false);
+    }
+    this.handleFeatureCreation(this.position$.value);
     if (this.storageService && value !== undefined) {
       this.storageService.set('geolocation.followPosition', value);
     }
@@ -182,7 +186,8 @@ export class MapGeolocationController extends MapController {
   constructor(
     private map: IgoMap,
     private options?: MapGeolocationControllerOptions,
-    private storageService?: StorageService) {
+    private storageService?: StorageService,
+    private configService?: ConfigService) {
     super();
     this.geolocationOverlay = new Overlay(this.map);
   }
@@ -220,10 +225,17 @@ export class MapGeolocationController extends MapController {
       },
       projection: this.options.projection,
     });
-
+    let tracking = false;
     this.subscriptions$$.push(this.emissionIntervalSeconds$
       .pipe(switchMap(value => interval(value * 1000)))
-      .subscribe(() => this.onPositionChange(true)));
+      .subscribe(() => {
+        if (tracking === this.tracking) {
+          this.onPositionChange(true);
+        } else {
+          tracking = this.tracking;
+          this.onPositionChange(true, true);
+        }
+      }));
   }
 
   public updateGeolocationOptions(options: MapViewOptions) {

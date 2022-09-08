@@ -95,10 +95,14 @@
       "ol/format": "olformat",
       "@igo2/utils": "utils",
       "@igo2/core": "core",
-      "@ngx-translate/core": "ngxt-core"
+      "@ngx-translate/core": "ngxt-core",
+      "ngx-indexed-db": "nIdb",
+      "windows-1252": "windows1252"
     }
   },
   "allowedNonPeerDependencies": [
+    "nosleep.js",
+    "windows-1252",
     "ts-cacheable",
     "ts-md5",
     "@turf/helpers",
