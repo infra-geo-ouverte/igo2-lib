@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, Validators, ValidatorFn } from '@angular/forms';
+import { UntypedFormBuilder, Validators, ValidatorFn } from '@angular/forms';
 
 import {
   Form,
@@ -14,7 +14,7 @@ import {
 })
 export class FormService {
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: UntypedFormBuilder) {}
 
   form(fields: FormField[], groups: FormFieldGroup[]): Form {
     const control = this.formBuilder.group({});

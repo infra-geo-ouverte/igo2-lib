@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 import { uuid, Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService } from '@igo2/core';
@@ -14,7 +14,7 @@ import { ShareMapService } from '../shared/share-map.service';
   styleUrls: ['./share-map-api.component.scss']
 })
 export class ShareMapApiComponent implements OnInit {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
 
   @Input() map: IgoMap;
 
@@ -27,7 +27,7 @@ export class ShareMapApiComponent implements OnInit {
     private messageService: MessageService,
     private auth: AuthService,
     private shareMapService: ShareMapService,
-    private formBuilder: FormBuilder
+    private formBuilder: UntypedFormBuilder
   ) {}
 
   ngOnInit(): void {

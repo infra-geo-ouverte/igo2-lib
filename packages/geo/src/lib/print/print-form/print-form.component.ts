@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder,
-  FormControl,
+  UntypedFormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
   Validators
 } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
@@ -24,7 +24,7 @@ import {
   styleUrls: ['./print-form.component.scss']
 })
 export class PrintFormComponent implements OnInit {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
@@ -147,60 +147,60 @@ export class PrintFormComponent implements OnInit {
   }
 
   get outputFormatField() {
-    return (this.form.controls as any).outputFormat as FormControl;
+    return (this.form.controls as any).outputFormat as UntypedFormControl;
   }
 
   get paperFormatField() {
-    return (this.form.controls as any).paperFormat as FormControl;
+    return (this.form.controls as any).paperFormat as UntypedFormControl;
   }
 
   get imageFormatField() {
-    return (this.form.controls as any).imageFormat as FormControl;
+    return (this.form.controls as any).imageFormat as UntypedFormControl;
   }
 
   get orientationField() {
-    return (this.form.controls as any).orientation as FormControl;
+    return (this.form.controls as any).orientation as UntypedFormControl;
   }
 
   get resolutionField() {
-    return (this.form.controls as any).resolution as FormControl;
+    return (this.form.controls as any).resolution as UntypedFormControl;
   }
 
   get commentField() {
-    return (this.form.controls as any).comment as FormControl;
+    return (this.form.controls as any).comment as UntypedFormControl;
   }
 
   get showProjectionField() {
-    return (this.form.controls as any).showProjection as FormControl;
+    return (this.form.controls as any).showProjection as UntypedFormControl;
   }
 
   get showScaleField() {
-    return (this.form.controls as any).showScale as FormControl;
+    return (this.form.controls as any).showScale as UntypedFormControl;
   }
 
   get showLegendField() {
-    return (this.form.controls as any).showLegend as FormControl;
+    return (this.form.controls as any).showLegend as UntypedFormControl;
   }
 
   get doZipFileField() {
-    return (this.form.controls as any).doZipFile as FormControl;
+    return (this.form.controls as any).doZipFile as UntypedFormControl;
   }
 
   get titleField() {
-    return (this.form.controls as any).title as FormControl;
+    return (this.form.controls as any).title as UntypedFormControl;
   }
 
   get subtitleField() {
-    return (this.form.controls as any).subtitle as FormControl;
+    return (this.form.controls as any).subtitle as UntypedFormControl;
   }
 
   get legendPositionField() {
-    return (this.form.controls as any).legendPosition as FormControl;
+    return (this.form.controls as any).legendPosition as UntypedFormControl;
   }
 
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: UntypedFormBuilder) {
     this.form = this.formBuilder.group({
       title: ['', []],
       subtitle: ['', []],

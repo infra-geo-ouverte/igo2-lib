@@ -1,5 +1,5 @@
 import OlRenderFeature from 'ol/render/Feature';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 import { GeoJsonGeometryTypes } from 'geojson';
 
@@ -89,7 +89,7 @@ export interface FeatureStoreSelectionStrategyOptions
 }
 
 export interface FeatureFormSubmitEvent {
-  form: FormGroup;
+  form: UntypedFormGroup;
   feature: Feature | undefined;
   data: Feature;
 }

@@ -1,10 +1,10 @@
-import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 export interface Form {
   fields: FormField[];
   groups: FormFieldGroup[];
-  control: FormGroup;
+  control: UntypedFormGroup;
 }
 
 export interface FormFieldGroupConfig {
@@ -15,7 +15,7 @@ export interface FormFieldGroupConfig {
 
 export interface FormFieldGroup extends FormFieldGroupConfig {
   fields: FormField[];
-  control: FormGroup;
+  control: UntypedFormGroup;
 }
 
 export interface FormFieldGroupOptions {
@@ -34,7 +34,7 @@ export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
 }
 
 export interface FormField<T extends FormFieldInputs = FormFieldInputs> extends FormFieldConfig<T> {
-  control: FormControl;
+  control: UntypedFormControl;
 }
 
 export interface FormFieldOptions {
