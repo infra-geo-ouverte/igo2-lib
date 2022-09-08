@@ -7,7 +7,7 @@ import {
   EventEmitter
 } from '@angular/core';
 import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-filter.enum';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { EntityStore } from '@igo2/common';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure';
@@ -34,7 +34,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   private _store: EntityStore<Feature>;
 
   public queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
-  public selectedTypeIndex = new FormControl(0);
+  public selectedTypeIndex = new UntypedFormControl(0);
 
   /**
    * Reference to the SpatialFIlterType enum

@@ -119,14 +119,15 @@
               </ng-container>
               <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
                   <td mat-cell *matCellDef="let record" class="mat-cell-text" [ngClass]="getCellClass(record, column)">
-                      <mat-icon svgIcon="{{getValue(record, column)|| column.icon}}" (click)="column.onClick($event)"></mat-icon>
+                      <mat-icon *ngIf="column.onClick" svgIcon="{{getValue(record, column)|| column.icon}}" (click)="column.onClick($event)"></mat-icon>
+                      <mat-icon *ngIf="!column.onClick" svgIcon="{{getValue(record, column)|| column.icon}}"></mat-icon>
                   </td>
               </ng-container>
               <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup">
                   <ng-container *matCellDef="let record">
                       <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                           <span *ngFor="let button of getValue(record, column)">
-                              <ng-container *ngIf="isEdition(record) === button.editMode">
+                              <ng-container *ngIf="isEdition(record) === button.editMode || button.editMode === undefined">
                                   <button *ngIf="button.style === 'mat-icon-button'" igoStopPropagation mat-icon-button
                                       [color]="button.color" (mousedown)="onButtonClick(button.click, record)" [disabled]="button.disabled">
                                       <mat-icon svgIcon="{{button.icon}}"></mat-icon>
