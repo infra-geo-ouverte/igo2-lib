@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import * as OlStyle from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlGeometry from 'ol/geom/Geometry';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import OlFeature from 'ol/Feature';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -78,7 +78,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * The geometry type
    */
   @Input()
-  set geometryType(value: typeof OlGeometryType) {
+  set geometryType(value: Type) {
     this._geometryType = value;
     if (this.ready === false) {
       return;
@@ -89,8 +89,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
-  get geometryType(): typeof OlGeometryType { return this._geometryType; }
-  private _geometryType: typeof OlGeometryType;
+  get geometryType(): Type { return this._geometryType; }
+  private _geometryType: Type;
 
   /**
    * The drawGuide around the mouse pointer to help drawing
