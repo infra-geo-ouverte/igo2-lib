@@ -3,7 +3,8 @@ import {
   Self,
   OnInit,
   OnDestroy,
-  HostListener
+  HostListener,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -105,6 +106,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       );
       const messageObj = this.messageService.success(message, title);
       this.previousMessageId = messageObj.toastId;
+      this.cdRef.detectChanges();
     });
   }
 
@@ -228,7 +230,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     private confirmDialogService: ConfirmDialogService,
     private messageService: MessageService,
     private auth: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.component = component;
   }
@@ -250,7 +253,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       }
     );
     const storedContextUri = this.storageService.get('favorite.context.uri') as string;
-    if (storedContextUri) {
+    if (storedContextUri && !this.auth.authenticated) {
       this.contextService.defaultContextId$.next(storedContextUri);
     }
 

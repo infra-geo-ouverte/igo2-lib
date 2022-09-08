@@ -9,6 +9,7 @@ export function getLayersLegends(layers: Layer[], view?: LegendMapViewOptions): 
   const legends = [];
 
   for (const layer of layers) {
+    const legendOptions = layer.options.legendOptions;
     if (layer.visible === false) { continue; }
 
     const legendUrls = layer.dataSource.getLegend(undefined, view) || [];
@@ -17,8 +18,9 @@ export function getLayersLegends(layers: Layer[], view?: LegendMapViewOptions): 
 
       // Add legend info to the list
       legends.push({
-        title: layer.title,
-        url: legendUrl.url
+        title: layer.title || '',
+        url: legendUrl.url,
+        display: legendOptions?.display === undefined ? true : legendOptions.display
       });
     }
   }
