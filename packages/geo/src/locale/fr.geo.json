@@ -672,7 +672,7 @@
       },
       "draw": {
         "abort": "Annuler le dessin en cours",
-        "cancelColorPicker": "Annuler",
+        "cancel": "Annuler",
         "Circle": "Cercle",
         "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
@@ -694,7 +694,9 @@
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
-        "undo": "Retirer le dernier sommet"
+        "undo": "Retirer le dernier sommet",
+        "fontSize": "Taille de police",
+        "fontStyle": "Style de police"
       },
       "network": {
         "online": {
@@ -726,6 +728,9 @@
         "maxValue": "{{column}}doit être plus petit que {{value}}",
         "minLength": "{{column}} doit être plus long que {{value}} caractères",
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
+      },
+      "query": {
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
       }
     }
   }
