@@ -25,5 +25,6 @@ export * from './lib/media';
 export * from './lib/message';
 export * from './lib/request';
 export * from './lib/storage';
+export * from './lib/compression';
 export * from './lib/download';
 export * from './lib/network';

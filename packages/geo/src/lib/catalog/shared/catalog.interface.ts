@@ -16,7 +16,7 @@ export interface ICatalog {
   type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;
-  forcedProperties?: any[];
+  forcedProperties?: ForcedProperty[];
   requestEncoding?: string;
   regFilters?: string[];
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id, title, sortDirection?)
@@ -28,6 +28,15 @@ export interface ICatalog {
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
   showLegend?: boolean;
+}
+
+export interface ForcedProperty {
+  layerName: any;
+  title?: string;
+  metadataUrl?: string;
+  metadataAbstract?: string;
+  metadataAbstractAll?: string;
+  metadataUrlAll?: string;
 }
 
 export interface ICompositeCatalog extends ICatalog {

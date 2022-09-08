@@ -28,6 +28,7 @@ import {
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { StyleService } from '../../layer/shared/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
@@ -61,6 +62,7 @@ export class EditionWorkspaceService {
     private languageService: LanguageService,
     private http: HttpClient,
     private dialog: MatDialog,
+    private styleService: StyleService,
     public authInterceptor?: AuthInterceptor) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): EditionWorkspace {
@@ -138,7 +140,25 @@ export class EditionWorkspaceService {
         title: layer.title,
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
-        sourceOptions: {
+        style: this.styleService.createStyle(
+          {
+            fill: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            stroke: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            circle: {
+              fill: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              stroke: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              radius: 5
+            }
+          }),
+          sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
           url: dataSource.options.urlWfs || dataSource.options.url,
@@ -235,12 +255,14 @@ export class EditionWorkspaceService {
           editMode: false,
           icon: 'pencil',
           color: 'primary',
+          disabled: layer.dataSource.options.edition.modifyButton === false ? true : false,
           click: (feature) => { workspace.editFeature(feature, workspace); }
         },
         {
           editMode: false,
           icon: 'delete',
           color: 'warn',
+          disabled: layer.dataSource.options.edition.deleteButton === false ? true : false,
           click: (feature) => { workspace.deleteFeature(feature, workspace); }
         },
         {
@@ -306,6 +328,7 @@ export class EditionWorkspaceService {
         primary: field.primary === true ? true : false,
         visible: field.visible,
         validation: field.validation,
+        linkColumnForce: field.linkColumnForce,
         type: field.type,
         domainValues: undefined,
         relation: undefined,
@@ -315,7 +338,7 @@ export class EditionWorkspaceService {
       };
 
       if (field.type === 'list' || field.type === 'autocomplete') {
-        this.getDomainValues(field.relation.table).subscribe(result => {
+        this.getDomainValues(field.relation).subscribe(result => {
           column.domainValues = result;
           column.relation = field.relation;
         });
@@ -406,7 +429,7 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if (sf.name === property && sf.validation?.readonly) {
+        if ((sf.name === property && sf.validation?.readonly) || (sf.name === property && sf.validation?.send === false)) {
           delete feature.properties[property];
         }
       }
@@ -510,7 +533,8 @@ export class EditionWorkspaceService {
 
     for (const property in feature.properties) {
       for (const sf of workspace.layer.dataSource.options.sourceFields) {
-        if ((sf.name === property && sf.validation?.readonly) || property === 'boundedBy') {
+        if ((sf.name === property && sf.validation?.readonly) || (sf.name === property && sf.validation?.send === false)
+          || property === 'boundedBy') {
           delete feature.properties[property];
         }
       }
@@ -570,9 +594,9 @@ export class EditionWorkspaceService {
     feature.edition = false;
     this.adding$.next(false);
     workspace.deleteDrawings();
+    workspace.entityStore.stateView.clear();
 
     if (feature.newFeature) {
-      workspace.entityStore.stateView.clear();
       workspace.entityStore.delete(feature);
       workspace.deactivateDrawControl();
 
@@ -587,14 +611,18 @@ export class EditionWorkspaceService {
     }
   }
 
-  getDomainValues(table: string): Observable<any> {
-    let url = this.configService.getConfig('edition.url') + table;
+  getDomainValues(relation: RelationOptions): Observable<any> {
+    let url = relation.url;
+    if (!url) {
+      url = this.configService.getConfig('edition.url') + relation.table;
+    }
 
     return this.http.get<any>(url).pipe(
       map(result => {
         return result;
       }),
       catchError((err: HttpErrorResponse) => {
+        err.error.caught = true;
         return throwError(err);
       })
     );

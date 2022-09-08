@@ -10,15 +10,23 @@ export interface StyleByAttribute {
     icon?: Array<string>;
     scale?: Array<number>;
     label?: IgoLabel;
-    baseStyle?: { [key: string]: any };
+    baseStyle?: { [key: string]: any, allo?: string };
     hoverStyle?: StyleByAttribute;
+}
+
+
+export interface CreateStyle {
+  igoLabel?: IgoLabel,
+  igoStyle?: { [key: string]: any };
 }
 
 export interface IgoLabel {
   attribute: string;
   style?: { [key: string]: any };
-  // minScaleDenom?: number; // todo
-  // maxScaleDenom?: number; // todo
+  minResolution?: number;
+  maxResolution?: number;
+  minScaleDenom?: number;
+  maxScaleDenom?: number;
 }
 
 export interface MapboxStyle {

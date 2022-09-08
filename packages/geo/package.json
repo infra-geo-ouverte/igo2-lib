@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "1.11.1",
+  "version": "1.12.1",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -19,7 +19,9 @@
     "@turf/helpers": "^6.5.0",
     "@turf/line-intersect": "^6.5.0",
     "@turf/point-on-feature": "^6.5.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "nosleep.js": "^0.12.0",
+    "windows-1252": "^3.0.4"
   },
   "peerDependencies": {
     "@angular/animations": "^12.2.9",
@@ -27,9 +29,9 @@
     "@angular/core": "^12.2.9",
     "@angular/forms": "^12.2.9",
     "@angular/material": "^12.2.9",
-    "@igo2/common": "^1.11.1",
-    "@igo2/core": "^1.11.1",
-    "@igo2/utils": "^1.11.1",
+    "@igo2/common": "^1.12.1",
+    "@igo2/core": "^1.12.1",
+    "@igo2/utils": "^1.12.1",
     "@turf/buffer": "^6.5.0",
     "ol": "^6.8.1",
     "proj4": "^2.7.5",

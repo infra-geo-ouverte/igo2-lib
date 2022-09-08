@@ -214,6 +214,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "hideSelectedLayers": "Masquer les couches sélectionnées",
+        "notInResolution": "La couche n'est pas visible à l'échelle active. Veuillez zoomer ou dézoomer pour la visualiser.",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
@@ -270,7 +271,9 @@
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
-        "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte"
+        "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
+        "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
+        "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
       },
       "metadata": {
         "show": "Montrer les métadonnées"
@@ -513,6 +516,8 @@
         "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
+      "targetHtmlUrlUnauthorizedTitle": "Non autorisé",
+      "targetHtmlUrlUnauthorized": "Vous n'êtes pas autorisé à ouvrir ce lien externe.",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
       "seeRouting": "Voir l'itinéraire",
@@ -685,7 +690,7 @@
       },
       "draw": {
         "abort": "Annuler le dessin en cours",
-        "cancelColorPicker": "Annuler",
+        "cancel": "Annuler",
         "Circle": "Cercle",
         "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
@@ -707,7 +712,9 @@
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
-        "undo": "Retirer le dernier sommet"
+        "undo": "Retirer le dernier sommet",
+        "fontSize": "Taille de police",
+        "fontStyle": "Style de police"
       },
       "network": {
         "online": {
@@ -739,6 +746,9 @@
         "maxValue": "{{column}}doit être plus petit que {{value}}",
         "minLength": "{{column}} doit être plus long que {{value}} caractères",
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
+      },
+      "query": {
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
       }
     }
   }

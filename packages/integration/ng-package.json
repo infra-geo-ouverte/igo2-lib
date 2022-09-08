@@ -11,6 +11,8 @@
       "ol/Feature": "olFeature",
       "ol/geom/Point": "olPoint",
       "ol/format/GeoJSON": "olFormatGeoJSON",
+      "ol/geom/LineString": "olGeomLineString",
+      "ol/layer/Vector": "olLayerVector",
       "ol/style": "olstyle",
       "ol/proj": "olProj",
       "@igo2/core": "core",

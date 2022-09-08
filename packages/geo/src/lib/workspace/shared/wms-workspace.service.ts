@@ -8,7 +8,7 @@ import {
   EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate } from '@igo2/common';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -24,10 +24,12 @@ import {
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { StyleService } from '../../layer/shared/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
+import { getCommonVectorSelectedStyle} from '../../utils';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -43,7 +45,11 @@ export class WmsWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(private layerService: LayerService, private storageService: StorageService) { }
+  constructor(
+    private layerService: LayerService,
+    private storageService: StorageService,
+    private styleService: StyleService,
+    private configService: ConfigService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
     if (
@@ -115,6 +121,24 @@ export class WmsWorkspaceService {
         title: layer.title,
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
+        style: this.styleService.createStyle(
+          {
+            fill: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            stroke: {
+              "color": "rgba(255, 255, 255, 0.01)"
+            },
+            circle: {
+              fill: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              stroke: {
+                color: "rgba(255, 255, 255, 0.01)"
+              },
+              radius: 5
+            }
+          }),
         sourceOptions: {
           download: dataSource.options.download,
           type: 'wfs',
@@ -122,7 +146,7 @@ export class WmsWorkspaceService {
           queryable: true,
           relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
-          queryFormatAsWms: (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms,
+          queryFormatAsWms: layer.options.workspace?.enabled ? (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms : true,
           params: dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined
@@ -179,11 +203,15 @@ export class WmsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: undefined,
+        style: (feature) => {
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+        },
         showInLayerList: false,
         exportable: false,
         browsable: false

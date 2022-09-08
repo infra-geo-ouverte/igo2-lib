@@ -1,0 +1,12 @@
+<div *ngIf="visible" class="igo-wake-lock-button-container">
+  <div>
+    <button 
+      [color]="color"
+      mat-icon-button
+      [matTooltip]="enabled ? ('igo.geo.mapButtons.preventSreenLock' | translate): ('igo.geo.mapButtons.letScreenLock' | translate)"
+      matTooltipPosition="left"
+      (click)="toggleWakeLock()">
+      <mat-icon svgIcon="{{icon$ | async}}"></mat-icon>
+    </button>
+  </div>
+</div>

@@ -10,6 +10,7 @@ import { DownloadRegionService, TileDownloaderService } from './download';
 import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
+import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
 
 const dbConfig: DBConfig = {
   name: 'igo2DB',
@@ -20,15 +21,8 @@ const dbConfig: DBConfig = {
     storeSchema: [
       { name: 'regionID', keypath: 'regionID', options: { unique: false }}
     ]
-  }, {
-    store: 'regionData',
-    storeConfig: { keyPath: 'id', autoIncrement: true },
-    storeSchema: [
-      { name: 'name', keypath: 'name', options: { unique: false }}
-    ]
   }]
 };
-
 @NgModule({
   imports: [
     CommonModule,
