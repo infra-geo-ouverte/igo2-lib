@@ -54,3 +54,4 @@ export * from './lib/toast';
 export * from './lib/utils';
 export * from './lib/wkt';
 export * from './lib/workspace';
+export * from './lib/offline';
