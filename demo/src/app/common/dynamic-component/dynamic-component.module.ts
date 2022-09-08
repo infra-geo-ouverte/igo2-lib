@@ -12,21 +12,17 @@ import {
 import { AppDynamicComponentRoutingModule } from './dynamic-component-routing.module';
 
 @NgModule({
-  declarations: [
-    AppSalutationComponent,
-    AppDynamicComponentComponent,
-    AppExplanationComponent
-  ],
-  imports: [
-    AppDynamicComponentRoutingModule,
-    MatButtonModule,
-    MatCardModule,
-    IgoDynamicComponentModule
-  ],
-  exports: [AppDynamicComponentComponent],
-  entryComponents: [
-    AppSalutationComponent,
-    AppExplanationComponent
-  ]
+    declarations: [
+        AppSalutationComponent,
+        AppDynamicComponentComponent,
+        AppExplanationComponent
+    ],
+    imports: [
+        AppDynamicComponentRoutingModule,
+        MatButtonModule,
+        MatCardModule,
+        IgoDynamicComponentModule
+    ],
+    exports: [AppDynamicComponentComponent]
 })
 export class AppDynamicComponentModule {}

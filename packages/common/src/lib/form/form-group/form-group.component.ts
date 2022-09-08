@@ -3,7 +3,7 @@ import {
   Input,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 import { getControlErrorMessage } from '../shared/form.utils';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
@@ -34,7 +34,7 @@ export class FormGroupComponent {
   /**
    * Form group control
    */
-  get formControl(): FormGroup { return this.group.control; }
+  get formControl(): UntypedFormGroup { return this.group.control; }
 
   constructor() {}
 

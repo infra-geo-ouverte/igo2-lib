@@ -2,9 +2,10 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import stylefunction from 'ol-mapbox-style/dist/stylefunction';
+import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
+import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { Style } from 'ol/style';
 
@@ -225,11 +226,11 @@ export class LayerService {
         if (res.sprite){
           const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
           this.getStuff(url+'.json').subscribe(res2 => {
-            stylefunction(layer.ol, res, layerOptions.mapboxStyle.source, undefined, res2,
+            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source, undefined, res2,
               url+'.png');
           });
         } else {
-          stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source);
         }
       });
     }
