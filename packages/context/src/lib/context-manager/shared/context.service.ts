@@ -624,12 +624,6 @@ export class ContextService {
     context.messages.push(context.message);
     context.messages.map(message => {
       if (message) {
-        message.title = message.title
-          ? this.languageService.translate.instant(message.title)
-          : undefined;
-        message.text = message.text
-          ? this.languageService.translate.instant(message.text)
-          : undefined;
         this.messageService.message(message as Message);
       }
     });
