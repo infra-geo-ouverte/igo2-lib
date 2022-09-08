@@ -89,7 +89,15 @@
               "pako/lib/inflate",
               "txml",
               "lru-cache",
-              "striptags"
+              "striptags",
+              "nosleep.js",
+              "ts-md5",
+              "moment",
+              "html2canvas",
+              "jszip",
+              "bowser",
+              "rgbcolor",
+              "rbush"
             ]
           },
           "configurations": {
@@ -111,8 +119,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -122,7 +130,6 @@
             },
             "developpement": {
               "optimization": false,
-              "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
@@ -132,8 +139,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -495,6 +502,5 @@
         }
       }
     }
-  },
-  "defaultProject": "demo"
+  }
 }

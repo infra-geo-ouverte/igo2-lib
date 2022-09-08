@@ -2,9 +2,10 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import stylefunction from 'ol-mapbox-style/dist/stylefunction';
+import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
+import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { Style } from 'ol/style';
 
@@ -43,6 +44,7 @@ import {
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from './style.service';
 import { LanguageService, MessageService } from '@igo2/core';
+import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 @Injectable({
@@ -53,6 +55,7 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private geoNetwork: GeoNetworkService,
     private messageService: MessageService,
     private languageService: LanguageService,
     @Optional() private authInterceptor: AuthInterceptor
@@ -152,7 +155,7 @@ export class LayerService {
           resolution
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -166,7 +169,7 @@ export class LayerService {
           baseStyle
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -174,7 +177,7 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
@@ -218,13 +221,21 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+        if (res.sprite){
+          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          this.getStuff(url+'.json').subscribe(res2 => {
+            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source, undefined, res2,
+              url+'.png');
+          });
+        } else {
+          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source);
+        }
       });
     }
   }
 
-  public getMapboxGlStyle(url: string) {
+  private getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
       catchError(err => {
@@ -233,4 +244,18 @@ export class LayerService {
       })
     );
   }
+
+  private getAbsoluteUrl(source, url) {
+    const r = new RegExp('^http|\/\/', 'i');
+    if(r.test(url)){
+      return url;
+    } else {
+      if ( source.substr(source.length -1) === "/"){
+        return source + url;
+      } else{
+        return source + "/" + url;
+      }
+    }
+  }
+
 }

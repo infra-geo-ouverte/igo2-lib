@@ -1,7 +1,7 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 
 export interface DataSourceOptions {
   type?:
@@ -48,6 +48,7 @@ export interface SourceFieldsOptionsParams {
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
+  linkColumnForce?: string;
   multiple?: boolean;
   tooltip?: string;
 }
@@ -58,21 +59,25 @@ export interface EditionOptions {
   addUrl: string;
   deleteUrl: string;
   modifyUrl: string;
-  geomType: typeof OlGeometryType;
+  geomType: Type;
   hasGeometry: boolean;
   addWithDraw?: boolean;
   messages?: any[];
   addHeaders?: { [key: string]: any };
   modifyHeaders?: { [key: string]: any };
   modifyProtocol?: string;
+  addButton?: boolean;
+  modifyButton?: boolean;
+  deleteButton?: boolean;
 }
 
 export interface RelationOptions {
   title: string;
   name: string;
+  table?: string;
+  url?: string;
   alias?: string;
   icon?: string;
-  table: string;
   parent?: string;
   tooltip?: string;
 }
@@ -82,6 +87,7 @@ export interface SourceFieldsValidationParams {
   maxLength?: number;
   minLength?: number;
   readonly?: boolean;
+  send?: boolean;
 }
 
 export interface Legend {

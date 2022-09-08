@@ -5,7 +5,6 @@ import { unByKey } from 'ol/Observable';
 import { easeOut } from 'ol/easing';
 import { asArray as ColorAsArray } from 'ol/color';
 import { getVectorContext } from 'ol/render';
-import FormatType from 'ol/format/FormatType';
 import olFeature from 'ol/Feature';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
@@ -25,6 +24,10 @@ import { MessageService } from '@igo2/core';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
+import { catchError, concatMap, first } from 'rxjs/operators';
+import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { of } from 'rxjs';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -48,7 +51,9 @@ export class VectorLayer extends Layer {
   constructor(
     options: VectorLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    private geoNetworkService?: GeoNetworkService,
+    private geoDBService?: GeoDBService
   ) {
     super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
@@ -139,10 +144,14 @@ export class VectorLayer extends Layer {
 
       switch (feature.getGeometry().getType()) {
         case 'Point':
-          const radius =
+          if(styleClone.getImage() !== null &&
+            typeof styleClone.getImage().getRadius === 'function'){
+            const radius =
             easeOut(elapsedRatio) * (styleClone.getImage().getRadius() * 3);
-          styleClone.getImage().setRadius(radius);
-          styleClone.getImage().setOpacity(opacity);
+            styleClone.getImage().setRadius(radius);
+            styleClone.getImage().setOpacity(opacity);
+          }
+
           break;
         case 'LineString':
           // TODO
@@ -226,7 +235,7 @@ export class VectorLayer extends Layer {
   public centerMapOnFeature(id: string | number) {
     const feat = this.dataSource.ol.getFeatureById(id);
     if (feat) {
-      this.map.ol.getView().setCenter(feat.getGeometry().getCoordinates());
+      this.map.ol.getView().setCenter((feat.getGeometry() as any).getCoordinates());
     }
   }
 
@@ -388,9 +397,60 @@ export class VectorLayer extends Layer {
     } else {
       modifiedUrl = url(extent, resolution, projection);
     }
+
+    if (this.geoNetworkService && typeof url !== 'function') {
+      const format = vectorSource.getFormat();
+      const type = format.getType();
+
+      let responseType = type;
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+
+      const options: SimpleGetOptions = { responseType };
+      this.geoNetworkService.geoDBService.get(url).pipe(concatMap(r =>
+        r ? of(r) : this.geoNetworkService.get(modifiedUrl, options)
+          .pipe(
+            first(),
+            catchError((res) => {
+              onError();
+              throw res;
+            })
+          )
+      ))
+      .subscribe((content) => {
+          if (content) {
+            const format = vectorSource.getFormat();
+            const type = format.getType();
+            let source;
+            if (type === 'json' || type === 'text') {
+              source = content;
+            } else if (type === 'xml') {
+              source = content;
+              if (!source) {
+                source = new DOMParser().parseFromString(
+                  content,
+                  'application/xml'
+                );
+              }
+            } else if (type === 'arraybuffer') {
+              source = content;
+            }
+            if (source) {
+              const features = format.readFeatures(source, { extent, featureProjection: projection });
+              vectorSource.addFeatures(features, format.readProjection(source));
+              success(features);
+            } else {
+              onError();
+            }
+          }
+        });
+
+    } else {
     xhr.open( 'GET', modifiedUrl);
     const format = vectorSource.getFormat();
-    if (format.getType() === FormatType.ARRAY_BUFFER) {
+    if (format.getType() === 'arraybuffer') {
       xhr.responseType = 'arraybuffer';
     }
     if (interceptor) {
@@ -407,9 +467,9 @@ export class VectorLayer extends Layer {
       if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
         const type = format.getType();
         let source;
-        if (type === FormatType.JSON || type === FormatType.TEXT) {
+        if (type === 'json' || type === 'text') {
           source = xhr.responseText;
-        } else if (type === FormatType.XML) {
+        } else if (type === 'xml') {
           source = xhr.responseXML;
           if (!source) {
             source = new DOMParser().parseFromString(
@@ -417,7 +477,7 @@ export class VectorLayer extends Layer {
               'application/xml'
             );
           }
-        } else if (type === FormatType.ARRAY_BUFFER) {
+        } else if (type === 'arraybuffer') {
           source = xhr.response;
         }
         if (source) {
@@ -432,5 +492,6 @@ export class VectorLayer extends Layer {
       }
     };
     xhr.send();
+  }
   }
 }

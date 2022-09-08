@@ -7,7 +7,7 @@ import { map as rxMap } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
 import jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as JSZip from 'jszip';
+import { default as JSZip } from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';
@@ -19,6 +19,12 @@ import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface'
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
+
+declare global {
+  interface Navigator {
+    msSaveBlob?: (blob: any, defaultName?: string) => boolean
+  }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -153,11 +159,11 @@ export class PrintService {
           resolution: map.viewController.getResolution(),
           extent: map.viewController.getExtent(),
           projection: map.viewController.getOlProjection().getCode(),
-          scale: map.viewController.getScale(resolution),
+          // scale: map.viewController.getScale(resolution),
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-      if (legends.length === 0) {
+      if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
         return;

@@ -31,12 +31,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, NgControl, NgForm, FormControlName, UntypedFormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-entity-table',
@@ -49,7 +48,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  public formGroup: FormGroup = new FormGroup({});
+  public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
   public filteredOptions: Observable<any[]>;
 
@@ -199,7 +198,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
 
   constructor(private cdRef: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     protected _focusMonitor: FocusMonitor,
     protected _elementRef: ElementRef<HTMLElement>,
     @Optional() @Self() public ngControl: NgControl,
@@ -334,6 +333,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         });
 
         this.formGroup.controls[column.name].setValue(formControlValue);
+        if (this.isEdition(record) && column.linkColumnForce) {
+          const entity = record.entity as any;
+          this.formGroup.controls[column.name].setValue(
+            entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)]
+          );
+        }
       } else if (column.type === 'date') {
         if (column.visible) {
           if (item[key]) {
@@ -646,6 +651,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = value ? '&#10003;' : ''; // check mark
       }
     } else if (column.type === 'list' && value && column.domainValues) {
+      const entity = record.entity as any;
       if (column.multiple) {
         let list_id;
         typeof value === 'string' ? list_id = value.match(/[\w.-]+/g).map(Number) : list_id = value;
@@ -663,26 +669,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         this.isEdition(record) ? value = list_id : value = list_option;
       } else {
+        if (!this.isEdition(record) && column.linkColumnForce) {
+          value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+        } else {
+          column.domainValues.forEach(option => {
+            if (typeof value === 'string' && /^\d+$/.test(value)) {
+              value = parseInt(value);
+            }
+            if (option.value === value || option.id === value) {
+              this.isEdition(record) ? value = option.id : value = option.value;
+            }
+          });
+        }
+      }
+    } else if (column.type === 'autocomplete' && value && column.domainValues) {
+      const entity = record.entity as any;
+      if (!this.isEdition(record) && column.linkColumnForce) {
+        value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+      } else {
         column.domainValues.forEach(option => {
           if (typeof value === 'string' && /^\d+$/.test(value)) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
-            this.isEdition(record) ? value = option.id : value = option.value;
+            value = option.value;
           }
         });
       }
-    } else if (column.type === 'autocomplete' && value && column.domainValues) {
-      column.domainValues.forEach(option => {
-        if (typeof value === 'string' && /^\d+$/.test(value)) {
-          value = parseInt(value);
-        }
-        if (option.value === value || option.id === value) {
-          value = option.value;
-        }
-      });
-    }
-    else if (column.type === 'date') {
+    } else if (column.type === 'date') {
       if (this.isEdition(record)) {
         if (value) {
           let date = moment(value);

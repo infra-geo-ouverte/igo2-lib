@@ -2,21 +2,6 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/integration",
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/auth": "igoAuth",
-      "@igo2/geo": "igoGeo",
-      "@igo2/utils": "igoUtils",
-      "ol/Feature": "olFeature",
-      "ol/geom/Point": "olPoint",
-      "ol/format/GeoJSON": "olFormatGeoJSON",
-      "ol/style": "olstyle",
-      "ol/proj": "olProj",
-      "@igo2/core": "igoCore",
-      "@igo2/context": "igoContext",
-      "@igo2/common": "igoCommon",
-      "@ngx-translate/core" : "ngxt-core",
-      "@turf/point-on-feature":"pointOnFeature"
-    }
+    "entryFile": "src/public_api.ts"
   }
 }

@@ -20,9 +20,7 @@ import {
 } from './ogc-filter.interface';
 import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
-import * as moment_ from 'moment';
-const moment = moment_;
-
+import { default as moment } from 'moment';
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {
@@ -94,7 +92,7 @@ export class OgcFilterWriter {
 
     ogcFiltersOptions.advancedOgcFilters = true;
     if (ogcFiltersOptions.enabled && (ogcFiltersOptions.pushButtons || ogcFiltersOptions.checkboxes
-      || ogcFiltersOptions.radioButtons || ogcFiltersOptions.select)) {
+      || ogcFiltersOptions.radioButtons || ogcFiltersOptions.select || ogcFiltersOptions.autocomplete)) {
       ogcFiltersOptions.advancedOgcFilters = false;
     }
     return ogcFiltersOptions;
@@ -244,8 +242,8 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsBetween.toLowerCase():
         return olfilter.between(
           wfsPropertyName,
-          wfsLowerBoundary,
-          wfsUpperBoundary
+          wfsLowerBoundary || 1e40*-1,
+          wfsUpperBoundary || 1e40
         );
       case OgcFilterOperator.Contains.toLowerCase():
         return olfilter.contains(wfsGeometryName, geometry, wfsSrsName);
@@ -268,7 +266,7 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsLike.toLowerCase():
         return olfilter.like(
           wfsPropertyName,
-          wfsPattern.replace(/[()_]/gi, wfsSingleChar),
+          wfsPattern ? wfsPattern.replace(/[()_]/gi, wfsSingleChar): wfsWildCard,
           wfsWildCard,
           wfsSingleChar,
           wfsEscapeChar,
@@ -717,7 +715,8 @@ export class OgcFilterWriter {
     const conditions = [];
     let filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
-    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons || ogcFilters.select)) {
+    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons || ogcFilters.select
+      || ogcFilters.autocomplete)) {
       let selectors;
       if (ogcFilters.pushButtons) {
         selectors = ogcFilters.pushButtons;
@@ -745,6 +744,13 @@ export class OgcFilterWriter {
         selectors = ogcFilters.select;
         const selectorsCorr = this.verifyMultipleEnableds(selectors);
         const selectConditions = this.formatGroupAndFilter(ogcFilters, selectorsCorr);
+        for (const condition of selectConditions) {
+          conditions.push(condition);
+        }
+      }
+      if (ogcFilters.autocomplete) {
+        selectors = ogcFilters.autocomplete;
+        const selectConditions = this.formatGroupAndFilter(ogcFilters, selectors);
         for (const condition of selectConditions) {
           conditions.push(condition);
         }
@@ -794,7 +800,7 @@ export class OgcFilterWriter {
 
   public verifyMultipleEnableds(selectors) {
     selectors.bundles.forEach(bundle => {
-      if (!bundle.multiple) {
+      if (!bundle.multiple && bundle.selectors) {
         const enableds = bundle.selectors.reduce((list, filter, index) => (filter.enabled) === true ? list.concat(index) : list, []);
         if (enableds.length > 1) {
           enableds.splice(0, 1);
@@ -842,6 +848,8 @@ export class OgcFilterWriter {
       ogcFilters.radioButtons = selectors;
     } else if (selectors.selectorType === 'select') {
       ogcFilters.select = selectors;
+    } else if (selectors.selectorType === 'autocomplete') {
+      ogcFilters.autocomplete = selectors;
     }
     return conditions;
   }
