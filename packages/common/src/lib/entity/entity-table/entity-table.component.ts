@@ -35,7 +35,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { UntypedFormBuilder, NgControl, NgForm, FormControlName, UntypedFormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { default as moment } from 'moment';
 
 @Component({
