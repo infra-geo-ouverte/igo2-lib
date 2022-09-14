@@ -34,7 +34,7 @@ export class MapRtssProximityState {
     return this.mapState.map;
   }
 
-  public rtssLayerId = 'rtssCalculCh'
+  public rtssLayerId = 'rtssCalculCh';
 
   constructor(
     private mapState: MapState,
