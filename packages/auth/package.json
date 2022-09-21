@@ -27,7 +27,7 @@
     "@angular/material": "^14.0.5",
     "@igo2/core": "^1.13.0-alpha.0",
     "@igo2/utils": "^1.13.0-alpha.0",
-    "rxjs": "^6.6.7",
+    "rxjs": "^7.5.6",
     "@azure/msal-angular": "^2.0.0",
     "@azure/msal-browser": "^2.14.2"
   }

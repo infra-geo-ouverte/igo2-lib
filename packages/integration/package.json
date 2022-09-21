@@ -18,7 +18,7 @@
     "@angular/core": "^14.0.6",
     "@igo2/geo": "1.13.0-alpha.0",
     "@igo2/context": "1.13.0-alpha.0",
-    "rxjs": "^6.6.7"
+    "rxjs": "^7.5.6"
   },
   "dependencies": {
     "tslib": "^2.0.0"
