@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@ngx-translate/core": "^14.0.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "@angular/cdk": "^14.1.1",
