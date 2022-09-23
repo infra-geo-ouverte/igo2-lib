@@ -16,7 +16,7 @@
   "peerDependencies": {
     "@angular/common": "^14.1.2",
     "@angular/core": "^14.1.2",
-    "@angular/material": "^14.1.1",
+    "@angular/material": "^14.1.2",
     "@igo2/core": "^1.13.0-alpha.0",
     "@igo2/utils": "^1.13.0-alpha.0",
     "scroll-into-view-if-needed": "^2.2.20",
