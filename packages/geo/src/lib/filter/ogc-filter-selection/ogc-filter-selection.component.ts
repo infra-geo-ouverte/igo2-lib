@@ -21,7 +21,7 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { IgoMap } from '../../map';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { debounceTime, map } from 'rxjs/operators';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { MatSelect } from '@angular/material/select';
@@ -62,7 +62,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   public ogcFilterOperator = OgcFilterOperator;
 
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
   public selectAllSelected = false;
@@ -195,7 +195,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   constructor(
     private ogcFilterService: OGCFilterService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private domService: DOMService,
     private configService: ConfigService,
     private cdRef: ChangeDetectorRef

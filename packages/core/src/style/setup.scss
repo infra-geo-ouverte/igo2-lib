@@ -1,1 +1,2 @@
-@use '~@angular/material/_index.scss' as mat;
+@use './node_modules/@angular/material/_index.scss' as mat;
+@use './node_modules/@angular/cdk' as cdk;

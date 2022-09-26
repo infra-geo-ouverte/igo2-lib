@@ -3,23 +3,6 @@
   "dest": "../../dist/integration",
   "deleteDestPath": false,
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/auth": "igoAuth",
-      "@igo2/geo": "igoGeo",
-      "@igo2/utils": "igoUtils",
-      "ol/Feature": "olFeature",
-      "ol/geom/Point": "olPoint",
-      "ol/format/GeoJSON": "olFormatGeoJSON",
-      "ol/geom/LineString": "olGeomLineString",
-      "ol/layer/Vector": "olLayerVector",
-      "ol/style": "olstyle",
-      "ol/proj": "olProj",
-      "@igo2/core": "core",
-      "@igo2/context": "context",
-      "@igo2/common": "common",
-      "@ngx-translate/core" : "ngxt-core",
-      "@turf/point-on-feature":"pointOnFeature"
-    }
+    "entryFile": "src/public_api.ts"
   }
 }

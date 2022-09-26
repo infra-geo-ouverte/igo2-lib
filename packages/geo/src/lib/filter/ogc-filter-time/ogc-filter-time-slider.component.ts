@@ -8,9 +8,8 @@ import {
 } from '@angular/core';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 
-import * as moment_ from 'moment';
+import { default as moment } from 'moment';
 import { MatSlider } from '@angular/material/slider';
-const moment = moment_;
 
 @Component({
   selector: 'igo-ogc-filter-time-slider',

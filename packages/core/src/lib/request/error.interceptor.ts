@@ -11,14 +11,12 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 import { MessageService } from '../message/shared/message.service';
-import { LanguageService } from '../language/shared/language.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
-    private messageService: MessageService,
     private injector: Injector
   ) {}
 
@@ -62,7 +60,8 @@ export class ErrorInterceptor implements HttpInterceptor {
     const httpError = errorContainer.httpError;
     if (httpError && httpError.error.toDisplay) {
       httpError.error.caught = true;
-      this.messageService.error(httpError.error.message, httpError.error.title);
+      const messageService = this.injector.get(MessageService);
+       messageService.error(httpError.error.message, httpError.error.title);
     }
   }
 
@@ -71,11 +70,9 @@ export class ErrorInterceptor implements HttpInterceptor {
   }) {
     const httpError = errorContainer.httpError;
     if (httpError && !httpError.error.caught) {
-      const translate = this.injector.get(LanguageService).translate;
-      const message = translate.instant('igo.core.errors.uncaught.message');
-      const title = translate.instant('igo.core.errors.uncaught.title');
+      const messageService = this.injector.get(MessageService);
       httpError.error.caught = true;
-      this.messageService.error(message, title);
+      messageService.error('igo.core.errors.uncaught.message', 'igo.core.errors.uncaught.title');
     }
   }
 }
