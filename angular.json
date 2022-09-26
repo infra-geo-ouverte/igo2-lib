@@ -90,7 +90,14 @@
               "txml",
               "lru-cache",
               "striptags",
-              "nosleep.js"
+              "nosleep.js",
+              "ts-md5",
+              "moment",
+              "html2canvas",
+              "jszip",
+              "bowser",
+              "rgbcolor",
+              "rbush"
             ]
           },
           "configurations": {
@@ -123,7 +130,6 @@
             },
             "developpement": {
               "optimization": false,
-              "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
@@ -496,6 +502,5 @@
         }
       }
     }
-  },
-  "defaultProject": "demo"
+  }
 }

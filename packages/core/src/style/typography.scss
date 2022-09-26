@@ -13,3 +13,5 @@ $igo-typography: mat.define-typography-config(
   $button:        mat.define-typography-level(13px, 13px, 500),
   $input:         mat.define-typography-level(14px, 1.25, 400)
 );
+
+@include mat.core($igo-typography);

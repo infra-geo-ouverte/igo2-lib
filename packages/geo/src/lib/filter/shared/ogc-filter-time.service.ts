@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 import {
     OgcFilterableDataSource

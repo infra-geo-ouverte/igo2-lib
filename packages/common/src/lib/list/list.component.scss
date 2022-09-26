@@ -30,13 +30,13 @@ mat-list {
   -webkit-line-clamp: 2;
 }
 
-:host ::ng-deep .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
+:host ::ng-deep .mat-list .mat-list-item.mat-list-item-with-avatar .mat-list-item-content {
   display: -webkit-flex;
   height: $igo-list-item-height;
   padding: $igo-list-item-padding;
 }
 
-:host ::ng-deep .mat-list .mat-list-item.mat-list-item-avatar {
+:host ::ng-deep .mat-list .mat-list-item.mat-list-item-with-avatar {
   height: $igo-list-item-height;
 }
 
@@ -47,7 +47,7 @@ mat-list {
 
 :host
   ::ng-deep .mat-list
-  .mat-list-item.mat-list-item-avatar
+  .mat-list-item.mat-list-item-with-avatar
   .mat-list-item-content
   > mat-icon {
   padding: $igo-list-item-icon-padding;
