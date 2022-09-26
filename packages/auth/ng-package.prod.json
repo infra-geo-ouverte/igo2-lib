@@ -2,17 +2,7 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/auth",
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/core": "core",
-      "@igo2/utils": "utils",
-      "jwt-decode": "jwt",
-      "ts-cacheable": "tsCacheable",
-      "ts-md5": "tsMd5",
-      "@ngx-translate/core": "ngxt-core",
-      "@azure/msal-angular": "msal-angular",
-      "@azure/msal-browser": "msal-browser"
-    }
+    "entryFile": "src/public_api.ts"
   },
   "allowedNonPeerDependencies": ["jwt-decode", "ts-cacheable", "ts-md5"]
 }

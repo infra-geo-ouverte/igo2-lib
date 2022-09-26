@@ -10,7 +10,7 @@ import {
   ElementRef
 } from '@angular/core';
 
-import t from 'typy';
+import { t } from 'typy';
 
 import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
 import { getAllFormFields } from '../shared/form.utils';

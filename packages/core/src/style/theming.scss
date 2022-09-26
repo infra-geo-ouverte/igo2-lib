@@ -1,7 +1,5 @@
 @import './material.font';
 
 @mixin igo-theming($theme, $typography) {
-  @include mat.core($typography);
-
   @include igo-core-theming($theme, $typography);
 }

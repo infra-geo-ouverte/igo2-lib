@@ -7,7 +7,7 @@ import {
   EventEmitter,
   ChangeDetectorRef
 } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import {
@@ -63,8 +63,8 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
   styleUrls: ['./import-export.component.scss']
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
-  public form: FormGroup;
-  public importForm: FormGroup;
+  public form: UntypedFormGroup;
+  public importForm: UntypedFormGroup;
   public formats$ = new BehaviorSubject(undefined);
   public encodings$ = new BehaviorSubject(undefined);
   public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
@@ -160,7 +160,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private messageService: MessageService,
     private styleListService: StyleListService,
     private styleService: StyleService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private config: ConfigService,
     private cdRef: ChangeDetectorRef,
     private storageService: StorageService,

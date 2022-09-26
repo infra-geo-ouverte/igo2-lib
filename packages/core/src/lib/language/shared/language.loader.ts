@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { of, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { TranslateLoader } from '@ngx-translate/core';
@@ -20,8 +20,7 @@ export class LanguageLoader implements TranslateLoader {
   ) {}
 
   public getTranslation(lang: string): any {
-    const translation = require(`../locale/${lang}.json`);
-    const igoLocale$ = of(translation);
+    const igoLocale$ = this.http.get(`locale/libs_locale/${lang}.json`);
 
     if (this.config && !this.prefix) {
       const prefix = this.config.getConfig('language.prefix');
