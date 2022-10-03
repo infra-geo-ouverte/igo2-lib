@@ -1,10 +1,14 @@
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 import { Watcher, SubjectStatus } from '@igo2/utils';
-import { Layer } from '../../layer/shared/layers';
+import { Layer, LinkedProperties } from '../../layer/shared/layers';
+import { ObjectEvent } from 'ol/Object';
+import { OgcFilterableDataSource } from '../../filter/shared/ogc-filter.interface';
+import { layerIsQueryable } from '../../query';
 
 export class LayerWatcher extends Watcher {
+  public propertyChange$: BehaviorSubject<ObjectEvent> = new BehaviorSubject(undefined);
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];
@@ -20,11 +24,33 @@ export class LayerWatcher extends Watcher {
     this.layers.forEach(layer => this.unwatchLayer(layer), this);
   }
 
+  setPropertyChange(layerChange: ObjectEvent) {
+    console.log('a', layerChange)
+    if (![
+      LinkedProperties.VISIBLE,
+      LinkedProperties.OPACITY,
+      LinkedProperties.MINRESOLUTION,
+      LinkedProperties.MAXRESOLUTION]
+      .includes(layerChange.key as any)) {
+      return;
+  }
+    this.propertyChange$.next(layerChange);
+  }
+
   watchLayer(layer: Layer) {
     if (layer.status$ === undefined) {
       return;
     }
-
+    layer.ol.on('propertychange', evt => this.setPropertyChange(evt));
+    console.log('layer', layer)
+    layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt));
+  /*  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
+    if (ogcFilters$?.value) {
+      ogcFilters$.subscribe(o => {
+        layer.ol.set('_ogcFilters', o)
+      })
+    }*/
+  
     this.layers.push(layer);
 
     const layer$$ = layer.status$
@@ -52,6 +78,7 @@ export class LayerWatcher extends Watcher {
   }
 
   unwatchLayer(layer: Layer) {
+    layer.ol.un('propertychange', evt => this.setPropertyChange(evt));
     layer.status$.next(SubjectStatus.Done);
     const index = this.layers.indexOf(layer);
     if (index >= 0) {

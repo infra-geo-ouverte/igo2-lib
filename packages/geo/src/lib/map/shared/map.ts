@@ -6,13 +6,16 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
+import {getUid} from 'ol/util';
+import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer } from '../../layer/shared/layers';
+import { Layer, LinkedProperties } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
@@ -28,6 +31,8 @@ import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
 import { StorageService, ConfigService } from '@igo2/core';
+import { ObjectEvent } from 'ol/Object';
+import { getDirectChildLayers, getDirectChildLayersByLink, getDirectParentLayer, getLinkedLayersOptions } from './linkedLayers.utils';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -36,6 +41,7 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
+  public propertyChange$: Subject<ObjectEvent>;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
@@ -70,6 +76,7 @@ export class IgoMap {
     this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
+    this.propertyChange$ = this.layerWatcher.propertyChange$;
     olproj4.register(proj4);
     this.init();
   }
@@ -130,6 +137,60 @@ export class IgoMap {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
   });
+  this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p))
+  }
+
+  private handleLayerPropertyChange(propertyChange: ObjectEvent) {
+    if (!propertyChange) {
+      return;
+    }
+    const key = propertyChange.key;
+    const olLayer = propertyChange.target;
+    const oldValue = propertyChange.oldValue;
+    const newValue = olLayer.get(key);
+    const initiatorIgoLayer = this.getLayerByOlLayer(olLayer);
+    const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
+    if (initiatorLinkedLayersOptions) {
+      const initiatorLinkId  = initiatorLinkedLayersOptions.linkId;
+      console.log('softtown-6', initiatorIgoLayer.title, initiatorLinkedLayersOptions);
+      // todo process all relations once.. plutot que de tout recalculer et placer des conditions... 
+
+      const links = initiatorLinkedLayersOptions.links;
+
+      const directParent = getDirectParentLayer(this, initiatorIgoLayer)
+      const directChilds = getDirectChildLayers(this, initiatorIgoLayer)
+
+      console.log('cg', directParent, directChilds);
+
+      if (directParent && directChilds.length>0) { // i'm a child and i have child too
+        console.log('im a child and i have child too')
+
+      } else if (directParent && directChilds.length === 0 ) { // i'm a child
+        console.log('im a child')
+
+      } else if (!directParent && directChilds ){ // i'm a parent only
+        console.log('im a parent only')
+
+        Object.keys(LinkedProperties).map(lp => {
+          console.log('jlloup', lp, LinkedProperties[lp]);
+        })
+
+        if (links) {
+          links.map(l => {
+            console.log(getDirectChildLayersByLink(this, initiatorIgoLayer, l))
+          })
+        }
+
+
+
+
+
+      }
+
+      
+
+
+    }
   }
 
   setTarget(id: string) {
@@ -267,8 +328,13 @@ export class IgoMap {
 
   getLayerByOlUId(olUId: string): Layer {
     return this.layers.find(
-      (layer: Layer) => (layer.ol as any).ol_uid && (layer.ol as any).ol_uid === olUId
+      (layer: Layer) => getUid(layer.ol) && getUid(layer.ol) === olUId
     );
+  }
+
+  getLayerByOlLayer(olLayer: olLayer<olSource>): Layer {
+    const olUId = getUid(olLayer);
+    return this.getLayerByOlUId(olUId);
   }
 
   /**
