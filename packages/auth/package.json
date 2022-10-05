@@ -17,18 +17,18 @@
     "jwt-decode": "^2.2.0",
     "ts-cacheable": "^1.0.5",
     "ts-md5": "^1.2.4",
-    "tslib": "^2.0.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.0.5",
-    "@angular/common": "^14.0.6",
-    "@angular/core": "^14.0.6",
-    "@angular/forms": "^14.0.6",
-    "@angular/material": "^14.0.5",
+    "@angular/cdk": "^14.1.2",
+    "@angular/common": "^14.1.2",
+    "@angular/core": "^14.1.2",
+    "@angular/forms": "^14.1.2",
+    "@angular/material": "^14.1.2",
     "@igo2/core": "^1.13.0-alpha.0",
     "@igo2/utils": "^1.13.0-alpha.0",
-    "rxjs": "^6.6.7",
-    "@azure/msal-angular": "^2.0.0",
-    "@azure/msal-browser": "^2.14.2"
+    "rxjs": "^7.5.6",
+    "@azure/msal-angular": "^2.4.1",
+    "@azure/msal-browser": "^2.28.1"
   }
 }
