@@ -10,9 +10,7 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { TimeFilterableDataSource } from '../../filter/shared/time-filter.interface';
 import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
 import olSourceImageWMS from 'ol/source/ImageWMS';
-import BaseEvent from 'ol/events/Event';
 import { ObjectEvent } from 'ol/Object';
 
 export class LayerSyncWatcher extends Watcher {
@@ -36,7 +34,7 @@ export class LayerSyncWatcher extends Watcher {
     }
 
     protected watch() {
-        
+
 
     /*    this.ol.on('propertychange', evt => this.transferCommonProperties(evt));
         if ((this.dataSource as OgcFilterableDataSource).ogcFilters$) {
@@ -68,7 +66,7 @@ export class LayerSyncWatcher extends Watcher {
         let linkedIds = [];
         if (layerToUse.options.linkedLayers.links) {
             layerToUse.options.linkedLayers.links.map(link => {
-                linkedIds = linkedIds.concat(link.linkedIds)});
+                linkedIds = linkedIds.concat(link.linkedIds);});
         }
         return linkedIds.map(lid => this.getIgoLayerByLinkId(lid));
     }
@@ -103,12 +101,12 @@ export class LayerSyncWatcher extends Watcher {
         let childLayers = this.getDirectChildLayers(layerToUse);
         childLayers.map(cl => {
             knownChildLayers.push(cl);
-            const directChildLayers =  this.getDirectChildLayers(cl);
+            const directChildLayers = this.getDirectChildLayers(cl);
             if (directChildLayers) {
                 this.getAllChildLayers(cl, knownChildLayers);
             }
 
-        })
+        });
         return knownChildLayers;
     }
 
@@ -120,13 +118,13 @@ export class LayerSyncWatcher extends Watcher {
         }
 
 
-       const linkedLayers = this.layer?.options.linkedLayers
+       const linkedLayers = this.layer?.options.linkedLayers;
         if (linkedLayers) {
             const rootParent =this.getRootParent();
-            console.log('Moi, ',this.layer.title, 'mon parent est :', rootParent.title);     
+            console.log('Moi, ',this.layer.title, 'mon parent est :', rootParent.title);
             const knownChildLayers = [];
             const allChildLayers = this.getAllChildLayers(rootParent, knownChildLayers);
-            console.log('Moi rootParent, ',rootParent.title, 'mes enfants sont :', allChildLayers.map(m => m.title));      
+            console.log('Moi rootParent, ',rootParent.title, 'mes enfants sont :', allChildLayers.map(m => m.title));
         }
 
 
@@ -159,7 +157,7 @@ export class LayerSyncWatcher extends Watcher {
 
     private transferCommonProperties(layerChange: ObjectEvent) {
         if (LinkedProperties.OGCFILTERS === layerChange.key) {
-            console.log('comment yéyéyélsjkksjdj', layerChange, LinkedProperties[layerChange.key])
+            console.log('comment yéyéyélsjkksjdj', layerChange, LinkedProperties[layerChange.key]);
             this.transferOgcFiltersProperties(layerChange.target.get(layerChange.key));
             return;
         }
@@ -205,9 +203,9 @@ export class LayerSyncWatcher extends Watcher {
             // search for parent layer
             const silent = false;
             const parentLayers = this.map.layers
-                .filter(l => l.options.linkedLayers?.links)
+                .filter(l => l.options.linkedLayers?.links);
             parentLayers.map(parentLayer => {
-                    
+
                 parentLayer.options.linkedLayers.links.map(l => {
                         if (l.properties && l.properties.indexOf(LinkedProperties[key]) !== -1 &&
                             l.bidirectionnal !== false && l.linkedIds.includes(currentLinkedId)) {

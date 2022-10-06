@@ -137,7 +137,7 @@ export class IgoMap {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
   });
-  this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p))
+  this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p));
   }
 
   private handleLayerPropertyChange(propertyChange: ObjectEvent) {
@@ -151,43 +151,38 @@ export class IgoMap {
     const initiatorIgoLayer = this.getLayerByOlLayer(olLayer);
     const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
     if (initiatorLinkedLayersOptions) {
-      const initiatorLinkId  = initiatorLinkedLayersOptions.linkId;
+      const initiatorLinkId = initiatorLinkedLayersOptions.linkId;
       console.log('softtown-6', initiatorIgoLayer.title, initiatorLinkedLayersOptions);
-      // todo process all relations once.. plutot que de tout recalculer et placer des conditions... 
+      // todo process all relations once.. plutot que de tout recalculer et placer des conditions...
 
       const links = initiatorLinkedLayersOptions.links;
 
-      const directParent = getDirectParentLayer(this, initiatorIgoLayer)
-      const directChilds = getDirectChildLayers(this, initiatorIgoLayer)
+      const directParent = getDirectParentLayer(this, initiatorIgoLayer);
+      const directChilds = getDirectChildLayers(this, initiatorIgoLayer);
 
       console.log('cg', directParent, directChilds);
 
       if (directParent && directChilds.length>0) { // i'm a child and i have child too
-        console.log('im a child and i have child too')
+        console.log('im a child and i have child too');
 
       } else if (directParent && directChilds.length === 0 ) { // i'm a child
-        console.log('im a child')
+        console.log('im a child');
 
       } else if (!directParent && directChilds ){ // i'm a parent only
-        console.log('im a parent only')
+        console.log('im a parent only');
 
         Object.keys(LinkedProperties).map(lp => {
           console.log('jlloup', lp, LinkedProperties[lp]);
-        })
+        });
 
         if (links) {
           links.map(l => {
-            console.log(getDirectChildLayersByLink(this, initiatorIgoLayer, l))
-          })
+            console.log(getDirectChildLayersByLink(this, initiatorIgoLayer, l));
+          });
         }
 
 
-
-
-
       }
-
-      
 
 
     }

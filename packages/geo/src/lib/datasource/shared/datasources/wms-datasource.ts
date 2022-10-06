@@ -1,4 +1,4 @@
-import ImageWMS from 'ol/source/ImageWMS';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
@@ -20,7 +20,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 
 export class WMSDataSource extends DataSource {
-  public ol: ImageWMS;
+  public ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;
@@ -189,20 +189,15 @@ export class WMSDataSource extends DataSource {
     return downloadUrl;
   }
 
-  protected createOlSource(): ImageWMS {
-    return new ImageWMS(Object.assign({ratio: 1}, this.options));
+  protected createOlSource(): olSourceImageWMS {
+    return new olSourceImageWMS(Object.assign({ratio: 1}, this.options));
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
-     
     }
-    this.ol.setProperties({ogcFilters:this.ogcFilters }, false )
-    console.log('suggere2', this.ol.getProperties(), this.ol);
-    
-
   }
 
   setTimeFilter(timeFilter: TimeFilterOptions, triggerEvent: boolean = false) {

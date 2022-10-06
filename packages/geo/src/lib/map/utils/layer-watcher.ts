@@ -4,8 +4,6 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { Watcher, SubjectStatus } from '@igo2/utils';
 import { Layer, LinkedProperties } from '../../layer/shared/layers';
 import { ObjectEvent } from 'ol/Object';
-import { OgcFilterableDataSource } from '../../filter/shared/ogc-filter.interface';
-import { layerIsQueryable } from '../../query';
 
 export class LayerWatcher extends Watcher {
   public propertyChange$: BehaviorSubject<ObjectEvent> = new BehaviorSubject(undefined);
@@ -25,7 +23,6 @@ export class LayerWatcher extends Watcher {
   }
 
   setPropertyChange(layerChange: ObjectEvent) {
-    console.log('a', layerChange)
     if (![
       LinkedProperties.VISIBLE,
       LinkedProperties.OPACITY,
@@ -42,7 +39,7 @@ export class LayerWatcher extends Watcher {
       return;
     }
     layer.ol.on('propertychange', evt => this.setPropertyChange(evt));
-    console.log('layer', layer)
+    console.log('layer', layer);
     layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt));
   /*  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
     if (ogcFilters$?.value) {
@@ -50,7 +47,7 @@ export class LayerWatcher extends Watcher {
         layer.ol.set('_ogcFilters', o)
       })
     }*/
-  
+
     this.layers.push(layer);
 
     const layer$$ = layer.status$

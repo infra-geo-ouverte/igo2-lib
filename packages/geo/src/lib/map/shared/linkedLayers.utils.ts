@@ -2,7 +2,7 @@ import { Layer, LayersLinkProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
 
 export function getLinkedLayersOptions(layer: Layer) {
-    return layer.options.linkedLayers
+    return layer.options.linkedLayers;
 }
 
 export function getIgoLayerByLinkId(map: IgoMap, id: string) {
@@ -13,7 +13,7 @@ export function getDirectChildLayers(map: IgoMap, layer: Layer): Layer[] {
     let linkedIds = [];
     if (layer.options.linkedLayers.links) {
         layer.options.linkedLayers.links.map(link => {
-            linkedIds = linkedIds.concat(link.linkedIds)});
+            linkedIds = linkedIds.concat(link.linkedIds);});
     }
     return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
 }
@@ -22,7 +22,7 @@ export function getDirectChildLayersByLink(map: IgoMap, layer: Layer, link: Laye
     let linkedIds = [];
     if (layer.options.linkedLayers.links) {
         layer.options.linkedLayers.links.filter(l => l === link).map(link => {
-            linkedIds = linkedIds.concat(link.linkedIds)});
+            linkedIds = linkedIds.concat(link.linkedIds);});
     }
     return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
 }
@@ -55,11 +55,11 @@ export function getAllChildLayers(map: IgoMap, layer: Layer, knownChildLayers: L
     let childLayers = this.getDirectChildLayers(map, layer);
     childLayers.map(cl => {
         knownChildLayers.push(cl);
-        const directChildLayers =  this.getDirectChildLayers(map, cl);
+        const directChildLayers = this.getDirectChildLayers(map, cl);
         if (directChildLayers) {
             this.getAllChildLayers(map, cl, knownChildLayers);
         }
 
-    })
+    });
     return knownChildLayers;
 }
