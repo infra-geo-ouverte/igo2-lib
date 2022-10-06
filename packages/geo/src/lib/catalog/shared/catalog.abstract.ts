@@ -36,6 +36,7 @@ export abstract class Catalog implements ICatalog {
     sortDirection?: 'asc' | 'desc';
     setCrossOriginAnonymous?: boolean;
     showLegend?: boolean;
+    profils?: string[];
     // ICatalog -----------------------------
 
     protected catalogService: CatalogService;
