@@ -612,7 +612,7 @@ export class ModifyControl {
     const olGeometry = event.feature.getGeometry();
     this.olOuterGeometry = this.getOlGeometry().clone();
 
-    const linearRingCoordinates = olGeometry.getLinearRing().getCoordinates();
+    const linearRingCoordinates = ((olGeometry as any).getLinearRing() as any).getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
     this.start$.next(this.getOlGeometry());
 
@@ -641,9 +641,9 @@ export class ModifyControl {
     unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
-    const linearRingCoordinates = event.feature
-      .getGeometry()
-      .getLinearRing()
+    const linearRingCoordinates = ((event.feature
+      .getGeometry() as any)
+      .getLinearRing() as any)
       .getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
 import { MapState } from '../../map.state';
@@ -15,7 +15,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe: boolean = false;
   public layerList: Layer[];
   public userControlledLayerList: Layer[];
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public res: DetailedContext;
   public listForSwipe: Layer[];
@@ -30,7 +30,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   constructor(
     public mapState: MapState,
     private contextService: ContextService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private toolState: ToolState) {
       this.buildForm();
   }

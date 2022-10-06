@@ -15,6 +15,8 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { LanguageService, StorageService } from '@igo2/core';
 import { computeTermSimilarity } from '../search.utils';
 import { Cacheable } from 'ts-cacheable';
+import { GeoJsonGeometryTypes } from 'geojson';
+
 /**
  * Cadastre search source
  */
@@ -138,8 +140,8 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       featureProjection: 'EPSG:4326'
     });
     return {
-      type: feature.getGeometry().getType(),
-      coordinates: feature.getGeometry().getCoordinates()
+      type: feature.getGeometry().getType() as GeoJsonGeometryTypes,
+      coordinates: (feature.getGeometry() as any).getCoordinates()
     };
   }
 }

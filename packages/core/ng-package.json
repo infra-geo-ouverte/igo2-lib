@@ -3,13 +3,7 @@
   "dest": "../../dist/core",
   "deleteDestPath": false,
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/utils" : "utils",
-      "@ngx-translate/core" : "ngxt-core",
-      "ngx-indexed-db": "nIdb",
-      "ngx-toastr": "ngxToastr"
-    }
+    "entryFile": "src/public_api.ts"
   },
   "allowedNonPeerDependencies": ["@ngx-translate"]
 }
