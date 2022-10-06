@@ -32,7 +32,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { MapGeolocationController } from './controllers/geolocation';
 import { StorageService, ConfigService } from '@igo2/core';
 import { ObjectEvent } from 'ol/Object';
-import { getDirectChildLayers, getDirectChildLayersByLink, getDirectParentLayer, getLinkedLayersOptions } from './linkedLayers.utils';
+import { getAllChildLayersByProperty, getLinkedLayersOptions, getRootParentByProperty } from './linkedLayers.utils';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -136,14 +136,46 @@ export class IgoMap {
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
+      setTimeout(() => {
+        this.initLayerSyncFromRootParentLayers();
+      }, 500);
+      // A REVOIR 
+      
   });
   this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p));
+  }
+
+  initLayerSyncFromRootParentLayers() {
+    const rootLayersByProperty = {};
+    const keys = Object.keys(LinkedProperties);
+    keys.map(k => {
+      rootLayersByProperty[LinkedProperties[k]] = [];
+    })
+    this.layers
+      .filter(l => getLinkedLayersOptions(l))
+      .map(l => {
+        const currentId = l.id;
+        keys.map(key => {
+          const k = LinkedProperties[key];
+          const plbp = getRootParentByProperty(this, l, k as LinkedProperties);
+          const layers = rootLayersByProperty[k];
+          const layersId = layers.map(l => l.id);
+          if (!layersId.includes(currentId)) {
+            rootLayersByProperty[k].push(plbp);
+          }
+        })
+      })
+    Object.keys(rootLayersByProperty).map(k => {
+      const layers = rootLayersByProperty[k];
+      layers.map((l: Layer) => l.ol.notify(k, undefined))
+    })
   }
 
   private handleLayerPropertyChange(propertyChange: ObjectEvent) {
     if (!propertyChange) {
       return;
     }
+    console.log('propertyChange',propertyChange);
     const key = propertyChange.key;
     const olLayer = propertyChange.target;
     const oldValue = propertyChange.oldValue;
@@ -152,37 +184,28 @@ export class IgoMap {
     const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
     if (initiatorLinkedLayersOptions) {
       const initiatorLinkId = initiatorLinkedLayersOptions.linkId;
-      console.log('softtown-6', initiatorIgoLayer.title, initiatorLinkedLayersOptions);
-      // todo process all relations once.. plutot que de tout recalculer et placer des conditions...
+     
+      const rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties)
+      console.log('Key', key);
+      console.log('Initiator', initiatorIgoLayer.title);
+      console.log('Parent___', rootParentByProperty.title);
 
-      const links = initiatorLinkedLayersOptions.links;
+      const clbp = [rootParentByProperty];
+      getAllChildLayersByProperty(this, rootParentByProperty, clbp, key as LinkedProperties)
 
-      const directParent = getDirectParentLayer(this, initiatorIgoLayer);
-      const directChilds = getDirectChildLayers(this, initiatorIgoLayer);
-
-      console.log('cg', directParent, directChilds);
-
-      if (directParent && directChilds.length>0) { // i'm a child and i have child too
-        console.log('im a child and i have child too');
-
-      } else if (directParent && directChilds.length === 0 ) { // i'm a child
-        console.log('im a child');
-
-      } else if (!directParent && directChilds ){ // i'm a parent only
-        console.log('im a parent only');
-
-        Object.keys(LinkedProperties).map(lp => {
-          console.log('jlloup', lp, LinkedProperties[lp]);
-        });
-
-        if (links) {
-          links.map(l => {
-            console.log(getDirectChildLayersByLink(this, initiatorIgoLayer, l));
-          });
+      clbp.map(l => {
+        if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
+          console.log(l.title)
+          l.ol.set(key, newValue, true);
+          if (key === 'visible') {
+            l.visible$.next(newValue);
+          }
         }
+      })
 
 
-      }
+
+
 
 
     }

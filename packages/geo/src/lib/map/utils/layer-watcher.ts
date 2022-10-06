@@ -39,8 +39,7 @@ export class LayerWatcher extends Watcher {
       return;
     }
     layer.ol.on('propertychange', evt => this.setPropertyChange(evt));
-    console.log('layer', layer);
-    layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt));
+    // layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt));
   /*  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
     if (ogcFilters$?.value) {
       ogcFilters$.subscribe(o => {

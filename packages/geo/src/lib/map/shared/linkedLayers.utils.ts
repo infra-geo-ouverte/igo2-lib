@@ -1,4 +1,4 @@
-import { Layer, LayersLinkProperties } from "../../layer/shared/layers";
+import { Layer, LayersLinkProperties, LinkedProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
 
 export function getLinkedLayersOptions(layer: Layer) {
@@ -9,34 +9,27 @@ export function getIgoLayerByLinkId(map: IgoMap, id: string) {
     return map.layers.find(l => l.options.linkedLayers?.linkId === id);
 }
 
-export function getDirectChildLayers(map: IgoMap, layer: Layer): Layer[] {
-    let linkedIds = [];
-    if (layer.options.linkedLayers.links) {
-        layer.options.linkedLayers.links.map(link => {
-            linkedIds = linkedIds.concat(link.linkedIds);});
-    }
-    return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
-}
-
-export function getDirectChildLayersByLink(map: IgoMap, layer: Layer, link: LayersLinkProperties): Layer[] {
-    let linkedIds = [];
-    if (layer.options.linkedLayers.links) {
-        layer.options.linkedLayers.links.filter(l => l === link).map(link => {
-            linkedIds = linkedIds.concat(link.linkedIds);});
-    }
-    return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
-}
-
-export function getRootParent(map: IgoMap, layer: Layer): Layer {
+export function getRootParent(map: IgoMap, layer: Layer, property?: LinkedProperties): Layer {
     let layerToUse = layer;
     let parentLayer = layerToUse;
     let hasParentLayer = true;
     while (hasParentLayer) {
         layerToUse = parentLayer;
-        parentLayer = this.getDirectParentLayer(map, layerToUse);
+        parentLayer = getDirectParentLayer(map, layerToUse);
+        if (parentLayer) {
+            const parentLinkedLayersOptions = getLinkedLayersOptions(parentLayer)
+            if (property && parentLinkedLayersOptions.links) {
+                const some = parentLinkedLayersOptions.links.some(l => l.properties.includes(property))
+                parentLayer = some ? parentLayer : undefined;
+            }
+        }
         hasParentLayer = parentLayer ? true : false;
     }
     return hasParentLayer ? parentLayer : layerToUse;
+}
+
+export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer { 
+    return getRootParent(map, layer, property)
 }
 
 export function getDirectParentLayer(map: IgoMap, layer: Layer): Layer {
@@ -51,13 +44,24 @@ export function getDirectParentLayer(map: IgoMap, layer: Layer): Layer {
     }
 }
 
-export function getAllChildLayers(map: IgoMap, layer: Layer, knownChildLayers: Layer[]): Layer[] {
-    let childLayers = this.getDirectChildLayers(map, layer);
+export function getDirectChildLayersByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer[] {
+    let linkedIds = [];
+    if (layer.options.linkedLayers.links) {
+        layer.options.linkedLayers.links
+        .filter(l => l.properties.includes(property))
+        .map(link => {
+            linkedIds = linkedIds.concat(link.linkedIds);});
+    }
+    return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
+}
+
+export function getAllChildLayersByProperty(map: IgoMap, layer: Layer, knownChildLayers: Layer[], property: LinkedProperties): Layer[] {
+    let childLayers = getDirectChildLayersByProperty(map, layer,property);
     childLayers.map(cl => {
         knownChildLayers.push(cl);
-        const directChildLayers = this.getDirectChildLayers(map, cl);
+        const directChildLayers = getDirectChildLayersByProperty(map, cl, property);
         if (directChildLayers) {
-            this.getAllChildLayers(map, cl, knownChildLayers);
+            getAllChildLayersByProperty(map, cl, knownChildLayers, property);
         }
 
     });
