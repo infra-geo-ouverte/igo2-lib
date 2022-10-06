@@ -1,4 +1,4 @@
-import { Layer, LayersLinkProperties, LinkedProperties } from "../../layer/shared/layers";
+import { Layer, LinkedProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
 
 export function getLinkedLayersOptions(layer: Layer) {
@@ -17,9 +17,9 @@ export function getRootParent(map: IgoMap, layer: Layer, property?: LinkedProper
         layerToUse = parentLayer;
         parentLayer = getDirectParentLayer(map, layerToUse);
         if (parentLayer) {
-            const parentLinkedLayersOptions = getLinkedLayersOptions(parentLayer)
+            const parentLinkedLayersOptions = getLinkedLayersOptions(parentLayer);
             if (property && parentLinkedLayersOptions.links) {
-                const some = parentLinkedLayersOptions.links.some(l => l.properties.includes(property))
+                const some = parentLinkedLayersOptions.links.some(l => l.properties.includes(property));
                 parentLayer = some ? parentLayer : undefined;
             }
         }
@@ -28,8 +28,8 @@ export function getRootParent(map: IgoMap, layer: Layer, property?: LinkedProper
     return hasParentLayer ? parentLayer : layerToUse;
 }
 
-export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer { 
-    return getRootParent(map, layer, property)
+export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
+    return getRootParent(map, layer, property);
 }
 
 export function getDirectParentLayer(map: IgoMap, layer: Layer): Layer {

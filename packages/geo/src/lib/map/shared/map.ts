@@ -139,8 +139,7 @@ export class IgoMap {
       setTimeout(() => {
         this.initLayerSyncFromRootParentLayers();
       }, 500);
-      // A REVOIR 
-      
+      // A REVOIR
   });
   this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p));
   }
@@ -150,7 +149,7 @@ export class IgoMap {
     const keys = Object.keys(LinkedProperties);
     keys.map(k => {
       rootLayersByProperty[LinkedProperties[k]] = [];
-    })
+    });
     this.layers
       .filter(l => getLinkedLayersOptions(l))
       .map(l => {
@@ -163,12 +162,12 @@ export class IgoMap {
           if (!layersId.includes(currentId)) {
             rootLayersByProperty[k].push(plbp);
           }
-        })
-      })
+        });
+      });
     Object.keys(rootLayersByProperty).map(k => {
       const layers = rootLayersByProperty[k];
-      layers.map((l: Layer) => l.ol.notify(k, undefined))
-    })
+      layers.map((l: Layer) => l.ol.notify(k, undefined));
+    });
   }
 
   private handleLayerPropertyChange(propertyChange: ObjectEvent) {
@@ -184,28 +183,23 @@ export class IgoMap {
     const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
     if (initiatorLinkedLayersOptions) {
       const initiatorLinkId = initiatorLinkedLayersOptions.linkId;
-     
-      const rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties)
+      const rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties);
       console.log('Key', key);
       console.log('Initiator', initiatorIgoLayer.title);
       console.log('Parent___', rootParentByProperty.title);
 
       const clbp = [rootParentByProperty];
-      getAllChildLayersByProperty(this, rootParentByProperty, clbp, key as LinkedProperties)
+      getAllChildLayersByProperty(this, rootParentByProperty, clbp, key as LinkedProperties);
 
       clbp.map(l => {
         if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
-          console.log(l.title)
+          console.log(l.title);
           l.ol.set(key, newValue, true);
           if (key === 'visible') {
             l.visible$.next(newValue);
           }
         }
-      })
-
-
-
-
+      });
 
 
     }
