@@ -110,7 +110,7 @@ export function initLayerSyncFromRootParentLayers(map: IgoMap, layers: Layer[]) 
     });
   }
 
-  export function  handleLayerPropertyChange(map: IgoMap, propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
+  export function handleLayerPropertyChange(map: IgoMap, propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
     if (!propertyChange) {
       return;
     }
