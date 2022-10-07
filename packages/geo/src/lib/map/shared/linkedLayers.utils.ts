@@ -1,5 +1,12 @@
+import { ObjectEvent } from "ol/Object";
+import { getUid } from "ol/util";
+import { WMSDataSource } from "../../datasource/shared/datasources/wms-datasource";
+import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from "../../filter/shared/ogc-filter.interface";
+import { TimeFilterableDataSource, TimeFilterableDataSourceOptions } from "../../filter/shared/time-filter.interface";
 import { Layer, LinkedProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
+import olSourceImageWMS from 'ol/source/ImageWMS';
+import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 
 export function getLinkedLayersOptions(layer: Layer) {
     return layer.options.linkedLayers;
@@ -20,8 +27,6 @@ export function layerHasLinkWithProperty(layer: Layer, property: LinkedPropertie
 }
 
 export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
-    const layerLLOptions = getLinkedLayersOptions(layer);
-    const layerLinkId = layerLLOptions.linkId;
     let layerToUse = layer;
     let parentLayer = layerToUse;
     let hasParentLayer = true;
@@ -79,3 +84,115 @@ export function getAllChildLayersByProperty(map: IgoMap, layer: Layer, knownChil
     });
     return knownChildLayers;
 }
+
+export function initLayerSyncFromRootParentLayers(map: IgoMap, layers: Layer[]) {
+    const rootLayersByProperty = {};
+    const keys = Object.keys(LinkedProperties);
+    keys.map(k => {
+      rootLayersByProperty[LinkedProperties[k]] = [];
+    });
+    layers
+      .filter(l => getLinkedLayersOptions(l))
+      .map(l => {
+        keys.map(key => {
+          const k = LinkedProperties[key];
+          const plbp = getRootParentByProperty(map, l, k as LinkedProperties);
+          const layers = rootLayersByProperty[k];
+          const layersId = layers.map(l => l.id);
+          if (plbp && !layersId.includes(plbp.id)) {
+            rootLayersByProperty[k].push(plbp);
+          }
+        });
+      });
+    Object.keys(rootLayersByProperty).map(k => {
+      const layers = rootLayersByProperty[k];
+      layers.map((l: Layer) => l.ol.notify(k, undefined));
+    });
+  }
+
+  export function  handleLayerPropertyChange(map: IgoMap, propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
+    if (!propertyChange) {
+      return;
+    }
+    const ogcFilterWriter = new OgcFilterWriter();
+    let isLayerProperty = true;
+    let isDatasourceProperty = true;
+    const key = propertyChange.key;
+    let newValue;
+    if (key === 'ogcFilters') {
+      isLayerProperty = false;
+      isDatasourceProperty = true;
+      newValue = (initiatorIgoLayer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
+    } else if (key === 'timeFilter') {
+      isLayerProperty = false;
+      isDatasourceProperty = true;
+      newValue = (initiatorIgoLayer.dataSource.options as TimeFilterableDataSourceOptions).timeFilter;
+    } else {
+      isLayerProperty = true;
+      isDatasourceProperty = false;
+      newValue = initiatorIgoLayer.ol.get(key);
+    }
+
+    const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
+    if (initiatorLinkedLayersOptions) {
+      let rootParentByProperty = getRootParentByProperty(map,initiatorIgoLayer, key as LinkedProperties);
+      if (!rootParentByProperty) {
+        rootParentByProperty = initiatorIgoLayer;
+      }
+      // console.log('Key', key);
+      // console.log('Initiator', initiatorIgoLayer.title);
+      // console.log('Parent___', rootParentByProperty.title);
+
+      const clbp = [rootParentByProperty];
+      getAllChildLayersByProperty(map, rootParentByProperty, clbp, key as LinkedProperties);
+
+      let resolutionPropertyHasChanged = false;
+      const initiatorIgoLayerSourceType = initiatorIgoLayer.options.source.options.type;
+      const initiatorIgoLayerOgcFilterableDataSourceOptions = initiatorIgoLayer.dataSource.options as OgcFilterableDataSourceOptions;
+      clbp.map(l => {
+        if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
+          // console.log('Applying property to: ', l.title);
+          const lLayerType = l.options.source.options.type;
+          if (isLayerProperty) {
+          l.ol.set(key, newValue, true);
+          if (key === 'visible') {
+            l.visible$.next(newValue);
+          }
+          if (key === 'minResolution' || key === 'maxResolution') {
+            resolutionPropertyHasChanged = true;
+          }
+          } else if (isDatasourceProperty) {
+            if (key === 'ogcFilters') {
+              (l.dataSource as OgcFilterableDataSource).setOgcFilters(newValue, false);
+              if (lLayerType === 'wfs') {
+                l.ol.getSource().refresh();
+              }
+              if (lLayerType === 'wms') {
+                let appliedOgcFilter;
+                if (initiatorIgoLayerSourceType === 'wfs') {
+                  appliedOgcFilter = ogcFilterWriter.handleOgcFiltersAppliedValue(
+                    initiatorIgoLayerOgcFilterableDataSourceOptions,
+                    (initiatorIgoLayer.dataSource.options as any).fieldNameGeometry,
+                    undefined,
+                    map.viewController.getOlProjection()
+                  );
+                } else if (initiatorIgoLayerSourceType === 'wms') {
+                  appliedOgcFilter = (initiatorIgoLayer.dataSource as WMSDataSource).ol.getParams().FILTER;
+                }
+                (l.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
+              }
+            } else if (l.dataSource instanceof WMSDataSource && key === 'timeFilter') {
+              (l.dataSource as TimeFilterableDataSource).setTimeFilter(newValue, false);
+              const appliedTimeFilter = (initiatorIgoLayer.ol.getSource() as olSourceImageWMS).getParams().TIME;
+              l.dataSource.ol.updateParams({ TIME: appliedTimeFilter });
+            }
+          }
+        }
+      });
+      if (resolutionPropertyHasChanged) {
+        map.viewController.resolution$.next(map.viewController.resolution$.value);
+      }
+
+
+    }
+  }
