@@ -341,7 +341,6 @@ export class IgoMap {
         newLayers.splice(index, 1);
         this.handleLinkedLayersDeletion(layer, layersToRemove);
         layersToRemove.map(linkedLayer => {
-          layersToRemove.push(linkedLayer);
           const linkedIndex = newLayers.indexOf(linkedLayer);
           if (linkedIndex >= 0) {
             newLayers.splice(linkedIndex, 1);
