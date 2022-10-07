@@ -153,13 +153,12 @@ export class IgoMap {
     this.layers
       .filter(l => getLinkedLayersOptions(l))
       .map(l => {
-        const currentId = l.id;
         keys.map(key => {
           const k = LinkedProperties[key];
           const plbp = getRootParentByProperty(this, l, k as LinkedProperties);
           const layers = rootLayersByProperty[k];
           const layersId = layers.map(l => l.id);
-          if (!layersId.includes(currentId)) {
+          if (plbp && !layersId.includes(plbp.id)) {
             rootLayersByProperty[k].push(plbp);
           }
         });
@@ -177,13 +176,14 @@ export class IgoMap {
     console.log('propertyChange',propertyChange);
     const key = propertyChange.key;
     const olLayer = propertyChange.target;
-    const oldValue = propertyChange.oldValue;
     const newValue = olLayer.get(key);
     const initiatorIgoLayer = this.getLayerByOlLayer(olLayer);
     const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
     if (initiatorLinkedLayersOptions) {
-      const initiatorLinkId = initiatorLinkedLayersOptions.linkId;
-      const rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties);
+      let rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties);
+      if (!rootParentByProperty) {
+        rootParentByProperty = initiatorIgoLayer;
+      }
       console.log('Key', key);
       console.log('Initiator', initiatorIgoLayer.title);
       console.log('Parent___', rootParentByProperty.title);
@@ -197,6 +197,9 @@ export class IgoMap {
           l.ol.set(key, newValue, true);
           if (key === 'visible') {
             l.visible$.next(newValue);
+          }
+          if (key === 'minResolution' || key === 'maxResolution') {
+            this.viewController.resolution$.next(this.viewController.resolution$.value);
           }
         }
       });

@@ -9,33 +9,45 @@ export function getIgoLayerByLinkId(map: IgoMap, id: string) {
     return map.layers.find(l => l.options.linkedLayers?.linkId === id);
 }
 
-export function getRootParent(map: IgoMap, layer: Layer, property?: LinkedProperties): Layer {
+export function layerHasLinkWithProperty(layer: Layer, property: LinkedProperties): boolean {
+    let hasLinkWithProperty = false;
+    const layerLLOptions = getLinkedLayersOptions(layer);
+    if (layerLLOptions.links) {
+        const link = layerLLOptions.links.find(l => l.properties.includes(property));
+        hasLinkWithProperty = link ? true : false;
+    }
+    return hasLinkWithProperty;
+}
+
+export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
+    const layerLLOptions = getLinkedLayersOptions(layer);
+    const layerLinkId = layerLLOptions.linkId;
     let layerToUse = layer;
     let parentLayer = layerToUse;
     let hasParentLayer = true;
     while (hasParentLayer) {
         layerToUse = parentLayer;
-        parentLayer = getDirectParentLayer(map, layerToUse);
-        if (parentLayer) {
-            const parentLinkedLayersOptions = getLinkedLayersOptions(parentLayer);
-            if (property && parentLinkedLayersOptions.links) {
-                const some = parentLinkedLayersOptions.links.some(l => l.properties.includes(property));
-                parentLayer = some ? parentLayer : undefined;
-            }
-        }
+        parentLayer = getDirectParentLayerByProperty(map, layerToUse, property);
         hasParentLayer = parentLayer ? true : false;
+    }
+    if (!hasParentLayer) {
+        if (!layerHasLinkWithProperty(layerToUse,property)) {
+            layerToUse = undefined;
+        }
     }
     return hasParentLayer ? parentLayer : layerToUse;
 }
 
-export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
-    return getRootParent(map, layer, property);
-}
-
-export function getDirectParentLayer(map: IgoMap, layer: Layer): Layer {
+export function getDirectParentLayerByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
     if (layer.options.linkedLayers?.linkId) {
         const currentLinkId = layer.options.linkedLayers.linkId;
-        let parents = map.layers.filter(pl => pl.options.linkedLayers?.links?.some(l => l.linkedIds.includes(currentLinkId)));
+        let parents = map.layers.filter(pl => {
+            const linkedLayers = pl.options.linkedLayers;
+            if (linkedLayers && linkedLayers.links) {
+                const a = linkedLayers.links.find(l => l.linkedIds.includes(currentLinkId) && l.properties.includes(property));
+                return a;
+            }
+        });
         if (parents.length > 1) {
             console.warn(`Your layer ${layer.title || layer.id} must only have 1 parent (${parents.map(p => p.title || p.id)})
             , The first parent (${parents[0].title || parents[0].id}) will be use to sync properties`);
