@@ -191,18 +191,22 @@ export class IgoMap {
       const clbp = [rootParentByProperty];
       getAllChildLayersByProperty(this, rootParentByProperty, clbp, key as LinkedProperties);
 
+      let resolutionPropertyHasChanged = false;
       clbp.map(l => {
         if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
-          console.log(l.title);
+          console.log('Applying property to: ', l.title);
           l.ol.set(key, newValue, true);
           if (key === 'visible') {
             l.visible$.next(newValue);
           }
           if (key === 'minResolution' || key === 'maxResolution') {
-            this.viewController.resolution$.next(this.viewController.resolution$.value);
+            resolutionPropertyHasChanged = true;
           }
         }
       });
+      if (resolutionPropertyHasChanged) {
+        this.viewController.resolution$.next(this.viewController.resolution$.value);
+      }
 
 
     }
