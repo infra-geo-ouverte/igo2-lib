@@ -6,7 +6,7 @@ import { Layer, LinkedProperties } from '../../layer/shared/layers';
 import { ObjectEvent } from 'ol/Object';
 
 export class LayerWatcher extends Watcher {
-  public propertyChange$: BehaviorSubject<ObjectEvent> = new BehaviorSubject(undefined);
+  public propertyChange$: BehaviorSubject<{event:ObjectEvent, layer: Layer}> = new BehaviorSubject(undefined);
   private loaded = 0;
   private loading = 0;
   private layers: Layer[] = [];
@@ -22,30 +22,28 @@ export class LayerWatcher extends Watcher {
     this.layers.forEach(layer => this.unwatchLayer(layer), this);
   }
 
-  setPropertyChange(layerChange: ObjectEvent) {
+  setPropertyChange(change: ObjectEvent, layer: Layer) {
+
     if (![
+      LinkedProperties.TIMEFILTER,
+      LinkedProperties.OGCFILTERS,
       LinkedProperties.VISIBLE,
       LinkedProperties.OPACITY,
       LinkedProperties.MINRESOLUTION,
       LinkedProperties.MAXRESOLUTION]
-      .includes(layerChange.key as any)) {
+      .includes(change.key as any)) {
       return;
   }
-    this.propertyChange$.next(layerChange);
+  this.propertyChange$.next({event: change, layer});
   }
 
   watchLayer(layer: Layer) {
     if (layer.status$ === undefined) {
       return;
     }
-    layer.ol.on('propertychange', evt => this.setPropertyChange(evt));
-    // layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt));
-  /*  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
-    if (ogcFilters$?.value) {
-      ogcFilters$.subscribe(o => {
-        layer.ol.set('_ogcFilters', o)
-      })
-    }*/
+    layer.ol.on('propertychange', evt => this.setPropertyChange(evt, layer));
+    layer.dataSource.ol.on('propertychange', evt => this.setPropertyChange(evt, layer));
+
 
     this.layers.push(layer);
 
@@ -74,7 +72,8 @@ export class LayerWatcher extends Watcher {
   }
 
   unwatchLayer(layer: Layer) {
-    layer.ol.un('propertychange', evt => this.setPropertyChange(evt));
+    layer.ol.un('propertychange', evt => this.setPropertyChange(evt,layer));
+    layer.dataSource.ol.un('propertychange', evt => this.setPropertyChange(evt, layer));
     layer.status$.next(SubjectStatus.Done);
     const index = this.layers.indexOf(layer);
     if (index >= 0) {

@@ -11,7 +11,8 @@ import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -33,6 +34,10 @@ import { MapGeolocationController } from './controllers/geolocation';
 import { StorageService, ConfigService } from '@igo2/core';
 import { ObjectEvent } from 'ol/Object';
 import { getAllChildLayersByProperty, getLinkedLayersOptions, getRootParentByProperty } from './linkedLayers.utils';
+import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
+import { TimeFilterableDataSource, TimeFilterableDataSourceOptions } from '../../filter/shared/time-filter.interface';
+import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -41,7 +46,7 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
-  public propertyChange$: Subject<ObjectEvent>;
+  public propertyChange$: Subject<{event:ObjectEvent, layer: Layer}>;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
@@ -54,7 +59,7 @@ export class IgoMap {
   public bufferDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
-
+  private ogcFilterWriter: OgcFilterWriter;
   private options: MapOptions;
   private mapViewOptions: MapViewOptions;
   private defaultOptions: Partial<MapOptions> = {
@@ -77,6 +82,7 @@ export class IgoMap {
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
     this.propertyChange$ = this.layerWatcher.propertyChange$;
+    this.ogcFilterWriter = new OgcFilterWriter();
     olproj4.register(proj4);
     this.init();
   }
@@ -141,7 +147,7 @@ export class IgoMap {
       }, 500);
       // A REVOIR
   });
-  this.propertyChange$.subscribe(p => this.handleLayerPropertyChange(p));
+  this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => this.handleLayerPropertyChange(p.event, p.layer));
   }
 
   initLayerSyncFromRootParentLayers() {
@@ -169,38 +175,81 @@ export class IgoMap {
     });
   }
 
-  private handleLayerPropertyChange(propertyChange: ObjectEvent) {
+  private handleLayerPropertyChange(propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
     if (!propertyChange) {
       return;
     }
-    console.log('propertyChange',propertyChange);
+    let isLayerProperty = true;
+    let isDatasourceProperty = true;
     const key = propertyChange.key;
-    const olLayer = propertyChange.target;
-    const newValue = olLayer.get(key);
-    const initiatorIgoLayer = this.getLayerByOlLayer(olLayer);
+    let newValue;
+    if (key === 'ogcFilters') {
+      isLayerProperty = false;
+      isDatasourceProperty = true;
+      newValue = (initiatorIgoLayer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
+    } else if (key === 'timeFilter') {
+      isLayerProperty = false;
+      isDatasourceProperty = true;
+      newValue = (initiatorIgoLayer.dataSource.options as TimeFilterableDataSourceOptions).timeFilter;
+    } else {
+      isLayerProperty = true;
+      isDatasourceProperty = false;
+      newValue = initiatorIgoLayer.ol.get(key);
+    }
+
     const initiatorLinkedLayersOptions = getLinkedLayersOptions(initiatorIgoLayer);
     if (initiatorLinkedLayersOptions) {
       let rootParentByProperty = getRootParentByProperty(this,initiatorIgoLayer, key as LinkedProperties);
       if (!rootParentByProperty) {
         rootParentByProperty = initiatorIgoLayer;
       }
-      console.log('Key', key);
-      console.log('Initiator', initiatorIgoLayer.title);
-      console.log('Parent___', rootParentByProperty.title);
+      // console.log('Key', key);
+      // console.log('Initiator', initiatorIgoLayer.title);
+      // console.log('Parent___', rootParentByProperty.title);
 
       const clbp = [rootParentByProperty];
       getAllChildLayersByProperty(this, rootParentByProperty, clbp, key as LinkedProperties);
 
       let resolutionPropertyHasChanged = false;
+      const initiatorIgoLayerSourceType = initiatorIgoLayer.options.source.options.type;
+      const initiatorIgoLayerOgcFilterableDataSourceOptions = initiatorIgoLayer.dataSource.options as OgcFilterableDataSourceOptions;
       clbp.map(l => {
         if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
-          console.log('Applying property to: ', l.title);
+          // console.log('Applying property to: ', l.title);
+          const lLayerType = l.options.source.options.type;
+          if (isLayerProperty) {
           l.ol.set(key, newValue, true);
           if (key === 'visible') {
             l.visible$.next(newValue);
           }
           if (key === 'minResolution' || key === 'maxResolution') {
             resolutionPropertyHasChanged = true;
+          }
+          } else if (isDatasourceProperty) {
+            if (key === 'ogcFilters') {
+              (l.dataSource as OgcFilterableDataSource).setOgcFilters(newValue, false);
+              if (lLayerType === 'wfs') {
+                l.ol.getSource().refresh();
+              }
+              if (lLayerType === 'wms') {
+                let appliedOgcFilter;
+                if (initiatorIgoLayerSourceType === 'wfs') {
+                  appliedOgcFilter = this.ogcFilterWriter.handleOgcFiltersAppliedValue(
+                    initiatorIgoLayerOgcFilterableDataSourceOptions,
+                    (initiatorIgoLayer.dataSource.options as any).fieldNameGeometry,
+                    undefined,
+                    this.viewController.getOlProjection()
+                  );
+                } else if (initiatorIgoLayerSourceType === 'wms') {
+                  appliedOgcFilter = (initiatorIgoLayer.dataSource as WMSDataSource).ol.getParams().FILTER;
+                }
+                (l.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
+              }
+            } else if (l.dataSource instanceof WMSDataSource && key === 'timeFilter') {
+              (l.dataSource as TimeFilterableDataSource).setTimeFilter(newValue, false);
+              const appliedTimeFilter = (initiatorIgoLayer.ol.getSource() as olSourceImageWMS).getParams().TIME;
+              l.dataSource.ol.updateParams({ TIME: appliedTimeFilter });
+            }
           }
         }
       });

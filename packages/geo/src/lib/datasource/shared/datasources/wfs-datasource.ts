@@ -92,6 +92,7 @@ export class WFSDataSource extends DataSource {
     this.mostRecentIdCallOGCFilter += 1;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
+      this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 

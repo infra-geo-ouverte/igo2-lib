@@ -197,6 +197,7 @@ export class WMSDataSource extends DataSource {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
+      this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
@@ -204,6 +205,7 @@ export class WMSDataSource extends DataSource {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
+      this.ol.notify('timeFilter', this.ogcFilters);
     }
   }
 
