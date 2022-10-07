@@ -138,7 +138,7 @@ export class IgoMap {
       setTimeout(() => {
         initLayerSyncFromRootParentLayers(this, this.layers);
       }, 500);
-      // A REVOIR
+      /// PHIL TODO*** Meilleur méthode qu'un timeout? 
   });
   this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }
@@ -359,6 +359,9 @@ export class IgoMap {
    * @param layersToRemove list to append the layer to delete into
    */
   handleLinkedLayersDeletion(srcLayer: Layer, layersToRemove: Layer[]) {
+    /// PHIL TODO*** Revoir avec une function a créer dans linkedLayers.utils comment trouver les linkedlayers
+    /// Reprende la logique de handleLayerPropertyChange (trouver le parent et trouver les enfants après.....)
+    /// On flush aussi le bidirectionnal
     const linkedLayers = srcLayer.options.linkedLayers;
     if (!linkedLayers) {
       return;

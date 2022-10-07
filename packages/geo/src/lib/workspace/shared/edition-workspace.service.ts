@@ -166,6 +166,8 @@ export class EditionWorkspaceService {
           relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
+          /// PHIL TODO*** Revoir comment acceder au filtre ogc, je crois que ceci serait ok
+          /// ogcFilters: Object.assign({}, dataSource.ogcFilters, {enabled: hasOgcFilters}),
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined,
           edition: dataSource.options.edition

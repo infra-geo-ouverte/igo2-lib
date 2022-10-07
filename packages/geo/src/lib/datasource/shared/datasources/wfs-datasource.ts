@@ -31,6 +31,7 @@ export class WFSDataSource extends DataSource {
   }
 
   readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
+  /// PHIL TODO*** PAS CONVAINCU QUE CE SOIT UTILE.... PERSO, je supprimerais
 
   constructor(
     public options: WFSDataSourceOptions,
@@ -91,7 +92,7 @@ export class WFSDataSource extends DataSource {
     this.ogcFilters = ogcFilters;
     this.mostRecentIdCallOGCFilter += 1;
     if (triggerEvent) {
-      this.ogcFilters$.next(this.ogcFilters);
+      this.ogcFilters$.next(this.ogcFilters); /// PHIL TODO*** Plus necessaire si le reste est revu
       this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }

@@ -148,6 +148,8 @@ export class WmsWorkspaceService {
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           queryFormatAsWms: layer.options.workspace?.enabled ? (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms : true,
           params: dataSource.options.paramsWFS,
+          /// PHIL TODO*** Revoir comment acceder au filtre ogc, je crois que ceci serait ok
+          /// ogcFilters: Object.assign({}, dataSource.ogcFilters, {enabled: hasOgcFilters}),
           ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined
         } as WFSoptions

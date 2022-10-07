@@ -418,6 +418,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   private getLinkedLayers(activeLayer: Layer, layersList: Layer[]) {
+    /// PHIL TODO*** Revoir avec une function a créer dans linkedLayers.utils comment trouver les linkedlayers
+    /// Reprende la logique de handleLayerPropertyChange (trouver le parent et trouver les enfants après.....)
+    /// On flush aussi le bidirectionnal
     const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
     if (!linkedLayers) {
       return;

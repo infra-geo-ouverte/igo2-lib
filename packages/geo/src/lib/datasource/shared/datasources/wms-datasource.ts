@@ -50,6 +50,7 @@ export class WMSDataSource extends DataSource {
   }
 
   readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
+  /// PHIL TODO*** PAS CONVAINCU QUE CE SOIT UTILE.... PERSO, je supprimerais
 
   set timeFilter(value: TimeFilterOptions ) {
     (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
@@ -196,7 +197,7 @@ export class WMSDataSource extends DataSource {
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
-      this.ogcFilters$.next(this.ogcFilters);
+      this.ogcFilters$.next(this.ogcFilters); /// PHIL TODO*** Plus necessaire si le reste est revu
       this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
