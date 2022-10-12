@@ -15,7 +15,7 @@ import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer } from '../../layer/shared/layers';
+import { Layer, LinkedProperties } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
@@ -32,7 +32,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { MapGeolocationController } from './controllers/geolocation';
 import { StorageService, ConfigService } from '@igo2/core';
 import { ObjectEvent } from 'ol/Object';
-import { handleLayerPropertyChange, initLayerSyncFromRootParentLayers } from './linkedLayers.utils';
+import { getAllChildLayersByDeletion, getRootParentByDeletion, handleLayerPropertyChange, initLayerSyncFromRootParentLayers } from './linkedLayers.utils';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -364,43 +364,13 @@ export class IgoMap {
    * @param layersToRemove list to append the layer to delete into
    */
   handleLinkedLayersDeletion(srcLayer: Layer, layersToRemove: Layer[]) {
-    /// PHIL TODO*** Revoir avec une function a créer dans linkedLayers.utils comment trouver les linkedlayers
-    /// Reprende la logique de handleLayerPropertyChange (trouver le parent et trouver les enfants après.....)
-    /// On flush aussi le bidirectionnal
-    const linkedLayers = srcLayer.options.linkedLayers;
-    if (!linkedLayers) {
-      return;
+    let rootParentByDeletion = getRootParentByDeletion(this, srcLayer);
+    if (!rootParentByDeletion) {
+      rootParentByDeletion = srcLayer;
     }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-    if (isParentLayer) {
-      // search for child layers
-      currentLinks.map(link => {
-        if (!link.syncedDelete) {
-          return;
-        }
-        link.linkedIds.map(linkedId => {
-          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
-          if (layerToApply) {
-            layersToRemove.push(layerToApply);
-          }
-        });
-      });
-    } else {
-      // search for parent layer
-      this.layers.map(layer => {
-        if (layer.options.linkedLayers?.links) {
-          layer.options.linkedLayers.links.map(l => {
-            if (
-              l.syncedDelete && l.bidirectionnal !== false &&
-              l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layersToRemove.push(layer);
-              this.handleLinkedLayersDeletion(layer, layersToRemove);
-            }
-          });
-        }
-      });
+    const clbd =  getAllChildLayersByDeletion(this, rootParentByDeletion, [rootParentByDeletion]);
+    for (const layer of clbd) {
+      layersToRemove.push(layer);
     }
   }
 

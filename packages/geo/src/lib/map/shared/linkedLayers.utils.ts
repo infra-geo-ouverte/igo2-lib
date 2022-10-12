@@ -3,7 +3,7 @@ import { getUid } from "ol/util";
 import { WMSDataSource } from "../../datasource/shared/datasources/wms-datasource";
 import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from "../../filter/shared/ogc-filter.interface";
 import { TimeFilterableDataSource, TimeFilterableDataSourceOptions } from "../../filter/shared/time-filter.interface";
-import { Layer, LinkedProperties } from "../../layer/shared/layers";
+import { Layer, LayersLinkProperties, LinkedProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
@@ -19,11 +19,21 @@ export function getIgoLayerByLinkId(map: IgoMap, id: string) {
 export function layerHasLinkWithProperty(layer: Layer, property: LinkedProperties): boolean {
     let hasLinkWithProperty = false;
     const layerLLOptions = getLinkedLayersOptions(layer);
-    if (layerLLOptions.links) {
+    if (layerLLOptions?.links) {
         const link = layerLLOptions.links.find(l => l.properties.includes(property));
         hasLinkWithProperty = link ? true : false;
     }
     return hasLinkWithProperty;
+}
+
+export function layerHasLinkDeletion(layer: Layer): boolean {
+  let hasLinkWithSyncedDelete = false;
+  const layerLLOptions = getLinkedLayersOptions(layer);
+  if (layerLLOptions?.links) {
+      const link = layerLLOptions.links.find(l => l.syncedDelete);
+      hasLinkWithSyncedDelete = link ? true : false;
+  }
+  return hasLinkWithSyncedDelete;
 }
 
 export function getRootParentByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
@@ -44,7 +54,7 @@ export function getRootParentByProperty(map: IgoMap, layer: Layer, property: Lin
 }
 
 export function getDirectParentLayerByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer {
-    if (layer.options.linkedLayers?.linkId) {
+    if (layer?.options.linkedLayers?.linkId) {
         const currentLinkId = layer.options.linkedLayers.linkId;
         let parents = map.layers.filter(pl => {
             const linkedLayers = pl.options.linkedLayers;
@@ -63,7 +73,7 @@ export function getDirectParentLayerByProperty(map: IgoMap, layer: Layer, proper
 
 export function getDirectChildLayersByProperty(map: IgoMap, layer: Layer, property: LinkedProperties): Layer[] {
     let linkedIds = [];
-    if (layer.options.linkedLayers.links) {
+    if (layer?.options.linkedLayers?.links) {
         layer.options.linkedLayers.links
         .filter(l => l.properties.includes(property))
         .map(link => {
@@ -83,6 +93,65 @@ export function getAllChildLayersByProperty(map: IgoMap, layer: Layer, knownChil
 
     });
     return knownChildLayers;
+}
+
+export function getRootParentByDeletion(map: IgoMap, layer: Layer): Layer {
+  let layerToUse = layer;
+  let parentLayer = layerToUse;
+  let hasParentLayer = true;
+  while (hasParentLayer) {
+      layerToUse = parentLayer;
+      parentLayer = getDirectParentLayerByDeletion(map, layerToUse);
+      hasParentLayer = parentLayer ? true : false;
+  }
+  if (!hasParentLayer) {
+    if (!layerHasLinkDeletion(layerToUse)) {
+      layerToUse = undefined;
+    }
+  }
+  return hasParentLayer ? parentLayer : layerToUse;
+}
+
+export function getDirectParentLayerByDeletion(map: IgoMap, layer: Layer): Layer {
+  if (layer.options.linkedLayers?.linkId) {
+      const currentLinkId = layer.options.linkedLayers.linkId;
+      let parents = map.layers.filter(pl => {
+          const linkedLayers = pl.options.linkedLayers;
+          if (linkedLayers && linkedLayers.links) {
+              const a = linkedLayers.links.find(l => (l.linkedIds.includes(currentLinkId) && l.syncedDelete));
+              return a;
+          }
+      });
+      if (parents.length > 1) {
+          console.warn(`Your layer ${layer.title || layer.id} must only have 1 parent (${parents.map(p => p.title || p.id)})
+          , The first parent (${parents[0].title || parents[0].id}) will be use to sync properties`);
+      }
+      return parents[0];
+  }
+}
+
+export function getDirectChildLayersByDeletion(map: IgoMap, layer: Layer): Layer[] {
+  let linkedIds = [];
+  if (layer?.options.linkedLayers?.links) {
+      layer.options.linkedLayers.links
+      .filter(l => l.syncedDelete)
+      .map(link => {
+          linkedIds = linkedIds.concat(link.linkedIds);});
+  }
+  return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
+}
+
+export function getAllChildLayersByDeletion(map: IgoMap, layer: Layer, knownChildLayers: Layer[]): Layer[] {
+  let childLayers = getDirectChildLayersByDeletion(map, layer);
+  childLayers.map(cl => {
+      knownChildLayers.push(cl);
+      const directChildLayers = getDirectChildLayersByDeletion(map, cl);
+      if (directChildLayers) {
+        getAllChildLayersByDeletion(map, cl, knownChildLayers);
+      }
+
+  });
+  return knownChildLayers;
 }
 
 export function initLayerSyncFromRootParentLayers(map: IgoMap, layers: Layer[]) {
@@ -139,9 +208,6 @@ export function initLayerSyncFromRootParentLayers(map: IgoMap, layers: Layer[]) 
       if (!rootParentByProperty) {
         rootParentByProperty = initiatorIgoLayer;
       }
-      // console.log('Key', key);
-      // console.log('Initiator', initiatorIgoLayer.title);
-      // console.log('Parent___', rootParentByProperty.title);
 
       const clbp = [rootParentByProperty];
       getAllChildLayersByProperty(map, rootParentByProperty, clbp, key as LinkedProperties);
@@ -150,8 +216,7 @@ export function initLayerSyncFromRootParentLayers(map: IgoMap, layers: Layer[]) 
       const initiatorIgoLayerSourceType = initiatorIgoLayer.options.source.options.type;
       const initiatorIgoLayerOgcFilterableDataSourceOptions = initiatorIgoLayer.dataSource.options as OgcFilterableDataSourceOptions;
       clbp.map(l => {
-        if (getUid(initiatorIgoLayer.ol) !== getUid(l.ol)) {
-          // console.log('Applying property to: ', l.title);
+        if (initiatorIgoLayer && l && getUid(initiatorIgoLayer.ol) !== getUid(l?.ol)) {
           const lLayerType = l.options.source.options.type;
           if (isLayerProperty) {
           l.ol.set(key, newValue, true);
