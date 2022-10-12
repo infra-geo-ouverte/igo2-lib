@@ -9,7 +9,6 @@ import { DOMValue } from '@igo2/common';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperatorType } from './ogc-filter.enum';
-import { BehaviorSubject } from 'rxjs';
 
 export interface OgcFilter extends olFormatFilter {}
 

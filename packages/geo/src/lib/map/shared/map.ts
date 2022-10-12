@@ -140,10 +140,10 @@ export class IgoMap {
           if (layer.options.linkedLayers) {
             layer.ol.once('postrender', () => {
               initLayerSyncFromRootParentLayers(this, this.layers);
-            })
+            });
           }
         }
-      })
+      });
   });
   this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }
