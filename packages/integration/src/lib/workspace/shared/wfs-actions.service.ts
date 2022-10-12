@@ -184,9 +184,7 @@ export class WfsActionsService implements OnDestroy {
         }
       }
     ];
-    /// PHIL TODO*** Revoir comment acceder au filtre ogc, je crois que ceci serait ok
-    /// return (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
-    return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
+    return (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
     actions : actions.filter(action => action.id !== 'ogcFilter');
   }
 }

@@ -135,10 +135,15 @@ export class IgoMap {
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
-      setTimeout(() => {
-        initLayerSyncFromRootParentLayers(this, this.layers);
-      }, 500);
-      /// PHIL TODO*** Meilleur méthode qu'un timeout? 
+      this.layers$.subscribe((layers) => {
+        for (const layer of layers) {
+          if (layer.options.linkedLayers) {
+            layer.ol.once('postrender', () => {
+              initLayerSyncFromRootParentLayers(this, this.layers);
+            })
+          }
+        }
+      })
   });
   this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }

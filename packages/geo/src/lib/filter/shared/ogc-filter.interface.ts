@@ -128,7 +128,6 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
-  ogcFilters$?: BehaviorSubject<OgcFiltersOptions>; /// PHIL TODO*** PAS CONVAINCU QUE CE SOIT UTILE.... PERSO, je supprimerais
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean );
 }
 
