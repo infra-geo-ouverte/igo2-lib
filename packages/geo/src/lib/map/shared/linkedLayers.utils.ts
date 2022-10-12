@@ -3,7 +3,7 @@ import { getUid } from "ol/util";
 import { WMSDataSource } from "../../datasource/shared/datasources/wms-datasource";
 import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from "../../filter/shared/ogc-filter.interface";
 import { TimeFilterableDataSource, TimeFilterableDataSourceOptions } from "../../filter/shared/time-filter.interface";
-import { Layer, LayersLinkProperties, LinkedProperties } from "../../layer/shared/layers";
+import { Layer, LinkedProperties } from "../../layer/shared/layers";
 import { IgoMap } from "./map";
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';

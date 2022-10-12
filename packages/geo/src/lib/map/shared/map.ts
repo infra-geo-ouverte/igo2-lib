@@ -15,7 +15,7 @@ import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer, LinkedProperties } from '../../layer/shared/layers';
+import { Layer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
@@ -32,7 +32,12 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { MapGeolocationController } from './controllers/geolocation';
 import { StorageService, ConfigService } from '@igo2/core';
 import { ObjectEvent } from 'ol/Object';
-import { getAllChildLayersByDeletion, getRootParentByDeletion, handleLayerPropertyChange, initLayerSyncFromRootParentLayers } from './linkedLayers.utils';
+import {
+  getAllChildLayersByDeletion,
+  getRootParentByDeletion,
+  handleLayerPropertyChange,
+  initLayerSyncFromRootParentLayers
+} from './linkedLayers.utils';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -368,7 +373,7 @@ export class IgoMap {
     if (!rootParentByDeletion) {
       rootParentByDeletion = srcLayer;
     }
-    const clbd =  getAllChildLayersByDeletion(this, rootParentByDeletion, [rootParentByDeletion]);
+    const clbd = getAllChildLayersByDeletion(this, rootParentByDeletion, [rootParentByDeletion]);
     for (const layer of clbd) {
       layersToRemove.push(layer);
     }
