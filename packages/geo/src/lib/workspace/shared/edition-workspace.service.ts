@@ -88,7 +88,6 @@ export class EditionWorkspaceService {
       layer.options.linkedLayers = { linkId: wmsLinkId, links: [] };
     }
     const linkProperties = {
-      bidirectionnal: true,
       syncedDelete: true,
       linkedIds: [wfsLinkId],
       properties: [

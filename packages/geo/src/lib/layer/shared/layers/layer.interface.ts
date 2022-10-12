@@ -56,7 +56,6 @@ export interface LayersLink {
   links?: LayersLinkProperties[];
 }
 export interface LayersLinkProperties {
-  bidirectionnal?: boolean; /// PHIL TODO*** A flusher.
   linkedIds: string[];
   syncedDelete: boolean;
   properties: LinkedProperties[];
