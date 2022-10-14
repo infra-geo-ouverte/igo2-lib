@@ -1,41 +1,23 @@
-@mixin igo-message-theming($theme) {
+@mixin igo-message-theming($theme, $typography) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
 
-  div.simple-notification {
-    &.info {
-      color: mat-color($primary, default-contrast);
-      background-color: mat-color($primary);
-      .sn-progress-loader span {
-        background-color: mat-color($primary, darker);
-      }
-      svg {
-        fill: mat-color($primary, default-contrast);
-      }
-    }
-
-    &.alert {
-      color: mat-color($accent, default-contrast);
-      background-color: mat-color($accent);
-      .sn-progress-loader span {
-        background-color: mat-color($accent, darker);
-      }
-      svg {
-        fill: mat-color($accent, default-contrast);
-      }
-    }
-
-    &.error {
-      color: mat-color($warn, default-contrast);
-      background-color: mat-color($warn);
-      .sn-progress-loader span {
-        background-color: mat-color($warn, darker);
-      }
-      svg {
-        fill: mat-color($warn, default-contrast);
-      }
-    }
+  .toast-error {
+    background-color: mat.get-color-from-palette($warn);
   }
-
+  .toast-info {
+    background-color: mat.get-color-from-palette($primary);
+  }
+  .toast-title {
+    line-height: 23px;
+    font-size: 15px;
+    font-weight: bold;
+    font-family:  Roboto, "Helvetica Neue", sans-serif;
+  }
+  .toast-message {
+    line-height: 18px;
+    font-size: mat.font-size($typography, subheading-2);
+    font-family:  Roboto, "Helvetica Neue", sans-serif;
+  }
 }

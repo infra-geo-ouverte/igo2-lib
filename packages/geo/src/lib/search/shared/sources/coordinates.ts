@@ -16,6 +16,7 @@ import { GoogleLinks } from '../../../utils/googleLinks';
 import { Projection } from '../../../map/shared/projection.interfaces';
 import { lonLatConversion, roundCoordTo, convertDDToDMS } from '../../../map/shared/map.utils';
 import { OsmLinks } from '../../../utils';
+import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -77,6 +78,9 @@ export class CoordinatesReverseSearchSource extends SearchSource
    * @param options options of ReverseSearchOptions (distance, conf, zoom, params)
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
@@ -101,7 +105,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
     const properties = {};
     let subtitleHtml = '';
     if (options.distance) {
-      const radiusKey =  this.languageService.translate.instant('igo.geo.search.coordinates.radius');
+      const radiusKey = this.languageService.translate.instant('igo.geo.search.coordinates.radius');
       properties[radiusKey] = options.distance;
       subtitleHtml = '<br><small>Rayon: ' + options.distance + ' m</small>';
 
@@ -114,13 +118,13 @@ export class CoordinatesReverseSearchSource extends SearchSource
     }
 
     if (options.conf) {
-      const confKey =  this.languageService.translate.instant('igo.geo.search.coordinates.conf');
+      const confKey = this.languageService.translate.instant('igo.geo.search.coordinates.conf');
       properties[confKey] = options.conf;
       subtitleHtml += subtitleHtml === '' ? '<br>' : '<small> - </small>';
       subtitleHtml += '<small>Confiance: ' + options.conf + '%</small>';
     }
 
-    const coordKey =  this.languageService.translate.instant('igo.geo.search.coordinates.coord');
+    const coordKey = this.languageService.translate.instant('igo.geo.search.coordinates.coord');
     properties[coordKey] = roundedCoordString;
 
     const coordKeyDMS = this.languageService.translate.instant('igo.geo.search.coordinates.coordDMS');

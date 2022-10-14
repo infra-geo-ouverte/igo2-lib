@@ -1,12 +1,4 @@
-@import '~ol/ol';
-
-@import '../lib/draw/drawingTool.theming';
-@import '../lib/feature/feature.theming';
-@import '../lib/filter/filter.theming';
-@import '../lib/layer/layer.theming';
-@import '../lib/map/map.theming';
-@import '../lib/measure/measure.theming';
-@import '../lib/directions/directions.theming';
+@import '~ol/ol.css';
 
 @mixin igo-geo-theming($theme, $typography) {
   @include igo-drawingTool-theming($theme, $typography);
@@ -16,4 +8,5 @@
   @include igo-map-theming($theme, $typography);
   @include igo-measure-theming($theme, $typography);
   @include igo-directions-theming($theme);
+  @include igo-workspace-theming($theme, $typography);
 }

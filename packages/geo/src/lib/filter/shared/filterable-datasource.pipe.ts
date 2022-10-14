@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { DataSource } from '../../datasource/shared/datasources/datasource';
 
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 import { TimeFilterableDataSource } from './time-filter.interface';
@@ -55,7 +54,8 @@ export class FilterableDataSourcePipe implements PipeTransform {
         dataSource.options.ogcFilters.pushButtons ||
         dataSource.options.ogcFilters.checkboxes ||
         dataSource.options.ogcFilters.radioButtons ||
-        dataSource.options.ogcFilters.select)) {
+        dataSource.options.ogcFilters.select ||
+        dataSource.options.ogcFilters.autocomplete)) {
         isOgcFilterable = true;
     }
     return isOgcFilterable;

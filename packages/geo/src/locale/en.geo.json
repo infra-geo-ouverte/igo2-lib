@@ -11,8 +11,10 @@
         "baseLayers": "Baselayers",
         "unavailableTitle": "Catalog unavailable",
         "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "someUnavailable": "Some of the layers from the current catalog are unavailable at the moment or you don't have the required permissions.",
         "externalProvider": {
            "catalog": "This catalog comes from an external organization.",
+           "group": "This layers comes from an external organization.",
            "layer": "This layer comes from an external organization.",
            "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
         },
@@ -47,12 +49,12 @@
           "title": "Nothing to import"
         },
         "success": {
-          "text": "Imported file",
-          "title": "The layer '{{value}}' was added to the map"
+          "text": "The layer '{{value}}' was added to the map",
+          "title": "Imported file"
         },
         "unreadable": {
-          "text": "Unreadable file",
-          "title": "The file '{{value}}' is unreadable"
+          "text": "The file '{{value}}' is unreadable",
+          "title": "Unreadable file" 
         },
         "tooLarge": {
           "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
@@ -61,6 +63,10 @@
         "invalidSRS": {
           "text": "The projection is valid. It must start with EPSG:",
           "title": "Invalid projection"
+        },
+        "ogreServer": {
+          "title": "Ogre server error 500",
+          "text": "Error in convert to geojson. Maybe file is too big, try to import that file in geojson format"
         }
       },
       "export": {
@@ -97,7 +103,7 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (semicolon delimited)",
+          "CSVsemicolon": "CSV (Excel compatible)",
           "URL": "External link"
         },
         "gpx.error.poly": {
@@ -107,15 +113,18 @@
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
-        }
+        },
+        "combinedLayers": "combinedLayers"
       },
       "importExportForm": {
         "exportButton": "Export",
         "exportButtonLink": "Open the link",
         "exportButtonLinks": "Open the links",
+        "exportCombineResults": "Combine layers into one file",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "exportSeparator": "Insert separator (empty row) between layers",
         "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
@@ -179,7 +188,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
-        "resetFilters": "(Apply no filters)",
+        "resetFilters": "Reset default values",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -207,6 +216,7 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "hideSelectedLayers": "Hide selected layers",
+        "notInResolution": "Layer isn't visible at the active scale. Zoom in or out to display.",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -256,12 +266,15 @@
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
+        "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
         "resetRotation": "Set map to north",
-        "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map."
+        "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map.",
+        "preventSreenLock": "Prevent the screen to enter in lock mode.",
+        "letScreenLock": "Allow the screen to enter in lock mode."
       },
       "metadata": {
         "show": "Show metadata"
@@ -319,6 +332,8 @@
         "raiseStop": "Raise stop's priority",
         "lowerStop": "Lower stop's priority",
         "addStop": "Add a stop",
+        "clearStop": "Clear this stop",
+        "moveStop": "Move this stop",
         "removeStop": "Remove this stop",
         "drivingOptions": "Options",
         "summary": "Direction's summary",
@@ -341,7 +356,46 @@
         "sharp left": "sharp left",
         "left": "left",
         "slight left": "slightly on left",
-        "straight": "forward"
+        "straight": "forward",
+        "turn": {
+          "straight": "Continue on {{route}}",
+          "uturn": "Make u-turn on {{route}}",
+          "else": "Turn {{translatedModifier}} onto {{route}}"
+        },
+        "new name": "Head {{translatedDirection}} on {{route}}",
+        "depart": "Head {{translatedDirection}} on {{route}}",
+        "arrive": {
+          "lastStep" : "You have reached your destination {{coma}} {{aggregatedDirection}}",
+          "intermediate" : "You have reached the intermediate stop onto {{route}}"
+        },
+        "merge": "Continue on {{route}}",
+        "on ramp": "Take the ramp {{aggregatedDirection}}",
+        "off ramp": "Take exit {{aggregatedDirection}}",
+        "fork": {
+          "left" : "Merge left onto {{route}}",
+          "right" : "Merge right onto {{route}}",
+          "else" : "Continue on {{route}}"
+        },
+        "end of road": "At the end of the road, turn {{translatedModifier}} onto {{route}}",
+        "use lane": "Take the lane ...",
+        "continue": {
+          "notUturn": "Continue on {{route}}"
+        },
+        "roundabout": "At the roundabout, take the {{exit}}{{cntSuffix}} exit towards {{route}}",
+        "rotary": "Roundabout rotary ...",
+        "roundabout turn": "Roundabout, take the ...",
+        "exit roundabout": "Continue to {{route}}",
+        "notification": "notification ...",
+        "uturnText": "Make u-turn and head {{translatedDirection}} on {{route}}",
+        "unknown": "???",
+
+        "cntSuffix": {
+          "first": "st",
+          "secondAndMore": "rd"
+        },
+        "modifier": {
+          "prefix": "on the "
+        }
       },
       "cardinalPoints": {
         "n": "north",
@@ -463,6 +517,8 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "targetHtmlUrlUnauthorizedTitle": "Unauthorized",
+      "targetHtmlUrlUnauthorized": "You do not have the credentials to open this external link.",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
       "seeRouting": "See routing",
@@ -471,7 +527,9 @@
         "endDate": "End Date",
         "startDate": "Start Date",
         "hour": "Hour",
-        "minute": "Minute"
+        "minute": "Minute",
+        "endYear": "End Year",
+        "startYear": "Start Year"
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
@@ -495,6 +553,8 @@
         "Address": "Addresses",
         "Thematics": "Thematics",
         "searchResults": "Search Results",
+        "showSearchResults": "Show search results",
+        "hideSearchResults": "Hide search results",
         "type": "Type",
         "radius": "Radius",
         "radiusAlert": "Radius must be between 0 and 100 kilometers (or 100 000 meters)",
@@ -562,15 +622,15 @@
           "title": "Sum of the selection",
           "length.title": "Length",
           "area.title": "Area",
-          "lengthInMeters": "Meters",
-          "lengthInKilometers": "Kilometers",
-          "lengthInMiles": "Miles",
-          "lengthInFeet": "Feet",
-          "areaInSquareMeters": "Meters²",
-          "areaInSquareKilometers": "Kilometers²",
-          "areaInSquareMiles": "Miles²",
-          "areaInHectares": "Hectares",
-          "areaInAcres": "Acres",
+          "lengthInMeters": "m",
+          "lengthInKilometers": "km",
+          "lengthInMiles": "mi",
+          "lengthInFeet": "ft",
+          "areaInSquareMeters": "m²",
+          "areaInSquareKilometers": "km²",
+          "areaInSquareMiles": "mi²",
+          "areaInHectares": "ha",
+          "areaInAcres": "ac",
           "perimeterInMeters": "Perimeter in meters"
         },
         "layerTitle": "Measure on map",
@@ -579,56 +639,64 @@
         "length": "Length",
         "lengthHeader": "Length / Perimeter",
         "perimeter": "Perimeter",
-        "meters": "Meters",
+        "meters": "m",
         "m": "m",
-        "kilometers": "Kilometers",
+        "kilometers": "km",
         "km": "km",
-        "miles": "Miles",
+        "miles": "mi",
         "mi": "mi",
-        "feet": "Feet",
+        "feet": "ft",
         "ft": "ft",
-        "squareMeters": "Meters²",
+        "squareMeters": "m²",
         "m²": "m²",
-        "squareKilometers": "Kilometers²",
+        "squareKilometers": "km²",
         "km²": "km²",
-        "squareMiles": "Miles²",
+        "squareMiles": "mi²",
         "mi²": "mi²",
-        "squareFeet": "Feet²",
+        "squareFeet": "ft²",
         "ft²": "ft²",
-        "hectares": "Hectares",
+        "hectares": "ha",
         "ha": "ha",
-        "acres": "Acres",
+        "acres": "ac",
         "ac": "ac",
         "toggleActive": "Activate measures",
-        "toggleDisplayLines": "Display distances for the lines",
-        "toggleDisplayDistance": "Display distances for the areas",
+        "toggleDisplayLines": "Display distances of lines",
+        "toggleDisplayDistance": "Display distances of areas",
         "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
-          "calculate.tooltip": "Calculate",
+          "calculate.tooltip": "Totals & Conversions",
           "delete.tooltip": "Delete",
           "modify.tooltip": "Modify"
         }
       },
       "draw": {
-        "cancelColorPicker": "Cancel",
+        "abort": "Abort current drawing",
+        "cancel": "Cancel",
         "Circle": "Circle",
+        "colorPicker": "Click to open the color picker",
         "dialogInstruction": "Enter your draw's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
         "fill": "Fill",
+        "finish": "Finish current drawing",
         "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",
-        "okColorPicker": "OK",
+        "move": "Center view on cursor",
+        "noIcon": "No icon",
+        "noLabel": "No label",
         "Point": "Point",
         "Polygon": "Polygon",
         "radius": "Radius",
+        "shortcuts": "Keyboard shortcuts",
         "stroke": "Stroke",
         "styleSelect": "Select style",
         "toggleMapTooltips": "Show map tooltips",
-        "noIcon": "No icon"
+        "undo": "Remove last vertex",
+        "fontSize": "Font size",
+        "fontStyle": "Font style"
       },
       "network": {
         "online": {
@@ -641,8 +709,28 @@
         }
       },
       "workspace": {
+        "deleteConfirmation": "Do you really want to delete this entity?",
+        "addConfirmation": "Do you really wish to add an entity?",
+        "modifyConfirmation": "Do you really wish to modify this entity?",
+        "deleteSuccess": "Entity has been deleted.",
+        "addSuccess": "Entity has been added.",
+        "modifySuccess": "Entity has been modified.",
+        "deleteError": "An error has occured. Entity could not be deleted.",
+        "addError": "An error has occured. Entity could not be added.",
+        "modifyError": "An error has occured. Entity could not be modified.",
+        "cancel": "Cancel",
         "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les entités"
+      },
+      "formValidation": {
+        "mandatory": "{{column}} is mandatory",
+        "minValue": "{{column}} is smaller than {{value}}",
+        "maxValue": "{{column}} is bigger than {{value}}",
+        "minLength": "{{column}} is shorter than {{value}} characters",
+        "maxLength": "{{column}} is longer than {{value}} characters"
+      },
+      "query": {
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
       }
     }
   }

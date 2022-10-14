@@ -1,4 +1,5 @@
 import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
 import { Message } from '@igo2/core';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
@@ -6,6 +7,7 @@ import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any
 import { MapExtent, MapViewOptions } from '../../../map/shared/map.interface';
 
 export interface LayerOptions {
+  isIgoInternalLayer?: boolean; // useful when mapOffline directive set the resolution of the layers.
   source?: DataSource;
   sourceOptions?: AnyDataSourceOptions;
   title?: string;
@@ -25,7 +27,7 @@ export interface LayerOptions {
   removable?: boolean;
   workspace?: GeoWorkspaceOptions;
   legendOptions?: LegendOptions;
-  ol?: olLayer;
+  ol?: olLayer<olSource>;
   tooltip?: TooltipContent;
   _internal?: { [key: string]: string };
   active?: boolean;
@@ -39,6 +41,14 @@ export interface GeoWorkspaceOptions {
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;
+  queryOptions?: GeoWorkspaceQueryOptions;
+  pageSize?: number;
+  pageSizeOptions?: number[];
+}
+
+export interface GeoWorkspaceQueryOptions {
+  mapQueryOnOpenTab?: boolean;
+  tabQuery?: boolean;
 }
 
 export interface LayersLink {
@@ -46,7 +56,6 @@ export interface LayersLink {
   links?: LayersLinkProperties[];
 }
 export interface LayersLinkProperties {
-  bidirectionnal?: boolean;
   linkedIds: string[];
   syncedDelete: boolean;
   properties: LinkedProperties[];
@@ -99,4 +108,5 @@ export interface ItemStyleOptions {
 export interface OutputLayerLegend {
   title: string;
   url: string;
+  display: boolean;
 }

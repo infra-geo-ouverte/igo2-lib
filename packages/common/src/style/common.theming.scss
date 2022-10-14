@@ -1,12 +1,4 @@
-@import '~shepherd.js/dist/css/shepherd';
-
-@import '../lib/action/action.theming';
-@import '../lib/collapsible/collapsible.theming';
-@import '../lib/entity/entity.theming';
-@import '../lib/list/list.theming';
-@import '../lib/panel/panel.theming';
-@import '../lib/interactive-tour/interactive-tour.theming';
-@import '../lib/tool/tool.theming';
+@import '~shepherd.js/dist/css/shepherd.css';
 
 @mixin igo-common-theming($theme, $typography) {
   @include igo-action-theming($theme);
@@ -16,4 +8,5 @@
   @include igo-panel-theming($theme);
   @include igo-tool-theming($theme);
   @include igo-tour-theming($theme);
+  @include igo-home-button-theming($theme);
 }

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
 import { IgoMap, DataSourceService, LayerService, WFSDataSourceOptions, VectorLayerOptions, WFSDataSource } from '@igo2/geo';
-import { transform } from 'ol/proj';
 
 @Component({
   selector: 'app-hover',
@@ -48,7 +47,7 @@ export class AppHoverComponent {
     this.dataSourceService
     .createAsyncDataSource({
       type: 'wmts',
-      url: 'https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
       layer: 'carte_gouv_qc_public',
       matrixSet: 'EPSG_3857',
       version: '1.3.0'
@@ -69,7 +68,7 @@ export class AppHoverComponent {
 
     const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'adn_bassin_n1_public_v',
         fieldNameGeometry: 'geometry',
@@ -93,12 +92,12 @@ export class AppHoverComponent {
 
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'CASERNE',
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
-        version: '3.0.0',
+        version: '2.0.0',
         outputFormat: undefined,
         outputFormatDownload: 'shp'
       }
@@ -117,34 +116,34 @@ export class AppHoverComponent {
             stroke: ['red', 'blue'],
             fill: ['#ffffff', '#ffffff'],
             radius: [7, 7],
-            width: [2, 2],
-            hoverStyle: {
-                label: {
-                  attribute: 'Caserne: ${nom_service_incendie} \n Mun: ${ville}',
-                  style: {
-                    textAlign: 'left',
-                    textBaseline: 'bottom',
-                    font: '12px Calibri,sans-serif',
-                    fill: { color: '#000' },
-                    backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-                    backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
-                    stroke: { color: '#fff', width: 3 },
-                    overflow: true,
-                    offsetX: 10,
-                    offsetY: -10,
-                    padding: [2.5, 2.5, 2.5, 2.5]
-                  }
+            width: [2, 2]
+          },
+          hoverStyle: {
+            label: {
+              attribute: 'Caserne: ${nom_service_incendie} \n Mun: ${ville}',
+              style: {
+                textAlign: 'left',
+                textBaseline: 'top',
+                font: '12px Calibri,sans-serif',
+                fill: { color: '#000' },
+                backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
+                backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
+                stroke: { color: '#fff', width: 3 },
+                overflow: true,
+                offsetX: 20,
+                offsetY: 10,
+                padding: [2.5, 2.5, 2.5, 2.5]
+              }
+            },
+            baseStyle: {
+              circle: {
+                stroke: {
+                  color: 'orange',
+                  width: 5
                 },
-                baseStyle: {
-                  circle: {
-                    stroke: {
-                      color: 'orange',
-                      width: 5
-                    },
-                    width: [5],
-                    radius: 15
-                  }
-                }
+                width: [5],
+                radius: 15
+              }
             }
           }
         };

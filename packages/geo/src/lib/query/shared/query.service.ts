@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
+import { default as striptags } from 'striptags';
+
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
 import olFormatGML2 from 'ol/format/GML2';
@@ -11,8 +13,9 @@ import olFormatEsriJSON from 'ol/format/EsriJSON';
 import olFeature from 'ol/Feature';
 import * as olgeom from 'ol/geom';
 
+import { LanguageService, MessageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
-import { Feature } from '../../feature/shared/feature.interfaces';
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { FEATURE } from '../../feature/shared/feature.enums';
 import { Layer } from '../../layer/shared/layers/layer';
 import {
@@ -40,10 +43,22 @@ import { MapExtent } from '../../map/shared/map.interface';
 })
 export class QueryService {
   public queryEnabled = true;
+  public defaultFeatureCount = 20; // default feature count
+  public featureCount = 20; // feature count
 
-  constructor(private http: HttpClient) {}
+  private previousMessageIds = [];
+
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    private languageService: LanguageService) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
+    if (this.previousMessageIds.length) {
+      this.previousMessageIds.forEach(id => {
+        this.messageService.remove(id);
+      });
+    }
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) => this.queryLayer(layer, options));
@@ -62,12 +77,14 @@ export class QueryService {
       const urlGml = this.getQueryUrl(layer.dataSource, options, true);
       return this.http.get(urlGml, { responseType: 'text' }).pipe(
         mergeMap(gmlRes => {
-          const imposedGeom = this.mergeGML(gmlRes, url);
+          const mergedGML = this.mergeGML(gmlRes, url, layer);
+          const imposedGeom = mergedGML[0];
+          const imposedProperties = mergedGML[1];
           return this.http
             .get(url, { responseType: 'text' })
             .pipe(
               map(res =>
-                this.extractData(res, layer, options, url, imposedGeom)
+                this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
               )
             );
         })
@@ -78,13 +95,13 @@ export class QueryService {
     return request.pipe(map(res => this.extractData(res, layer, options, url)));
   }
 
-  private mergeGML(gmlRes, url) {
-    let parser = new olFormatGML2();
+  private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
-      features = parser.readFeatures(gmlRes);
+      const wmsParser = new olformat.WMSGetFeatureInfo();
+      features = wmsParser.readFeatures(gmlRes);
     }
     const olmline = new olgeom.MultiLineString([]);
     let pts;
@@ -101,12 +118,28 @@ export class QueryService {
     const bboxExtent = olextent.createEmpty();
     olextent.extend(bboxExtent, bbox);
     const outBboxExtent = false;
+    let titleContent;
+    let queryTileField;
+    if (layer.options?.source?.options) {
+      const dataSourceOptions = layer.options.source
+        .options as QueryableDataSourceOptions;
+      if (dataSourceOptions.queryTitle) {
+        queryTileField = dataSourceOptions.queryTitle;
+      }
+    }
     features.map(feature => {
+
+      if (queryTileField) {
+        let queryTitleContent = feature.getProperties()[queryTileField];
+        if (queryTitleContent) {
+          titleContent = !titleContent ? queryTitleContent : `${titleContent},${queryTitleContent}`;
+        }
+      }
       /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
       }*/
-      const featureGeometryCoordinates = feature.getGeometry().getCoordinates();
+      const featureGeometryCoordinates = (feature.getGeometry() as any).getCoordinates();
       const featureGeometryType = feature.getGeometry().getType();
 
       if (!firstFeatureType && !outBboxExtent) {
@@ -153,27 +186,35 @@ export class QueryService {
       };
     }
 
+    let returnGeometry;
     switch (firstFeatureType) {
       case 'LineString':
-        return {
+        returnGeometry = {
           type: olmline.getType(),
           coordinates: olmline.getCoordinates()
         };
       case 'Point':
-        return olmpts;
+        returnGeometry = olmpts;
       case 'Polygon':
-        return {
+        returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
       case 'MultiPolygon':
-        return {
+        returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
-      default:
-        return;
     }
+    const imposedProperties = {};
+
+    if (queryTileField) {
+      imposedProperties[queryTileField] = titleContent;
+    }
+
+    return [ returnGeometry, imposedProperties];
+
+
   }
 
   cross(a, b, o) {
@@ -226,7 +267,8 @@ export class QueryService {
     layer: Layer,
     options: QueryOptions,
     url: string,
-    imposedGeometry?
+    imposedGeometry?,
+    imposedProperties?: { [key: string]: any }
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
@@ -263,7 +305,8 @@ export class QueryService {
           res,
           queryDataSource.queryHtmlTarget,
           url,
-          imposedGeometry
+          imposedGeometry,
+          imposedProperties
         );
         break;
       case QueryFormat.GML2:
@@ -272,7 +315,7 @@ export class QueryService {
         break;
     }
 
-    if (features.length > 0 && features[0].geometry == null) {
+    if (features.length > 0 && features[0].geometry === null) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
       for (const feature of features) {
@@ -280,11 +323,26 @@ export class QueryService {
       }
     }
 
+    const wmsDatasource = layer.dataSource as WMSDataSource;
+    const featureCount = wmsDatasource.params?.FEATURE_COUNT ?
+      new RegExp('FEATURE_COUNT=' + this.featureCount) :
+      new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
+
+    if (
+      featureCount.test(url) &&
+      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
+      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
+        const messageObj = this.messageService.info(message);
+        this.previousMessageIds.push(messageObj.toastId);
+      });
+    }
+
     return features.map((feature: Feature, index: number) => {
       const mapLabel = feature.properties[queryDataSource.mapLabel];
 
       let exclude;
-      if (layer.options.sourceOptions.type === 'wms') {
+      if (layer.options.sourceOptions?.type === 'wms') {
         const sourceOptions = layer.options
           .sourceOptions as WMSDataSourceOptions;
         exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
@@ -381,13 +439,13 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
-    let parser = new olFormatGML2();
+    const parser = new olFormatGML2();
     let features = parser.readFeatures(res);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
+      const wmsParser = new olformat.WMSGetFeatureInfo();
       try {
-        features = parser.readFeatures(res);
+        features = wmsParser.readFeatures(res);
       } catch (e) {
         console.warn(
           'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
@@ -416,7 +474,7 @@ export class QueryService {
   private extractGeoJSONData(res, zIndex, allowedFieldsAndAlias?) {
     let features = [];
     try {
-      features = JSON.parse(res).features;
+      features = JSON.parse(res.replace(/(\r|\n)/g, ' ')).features;
     } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
@@ -451,7 +509,8 @@ export class QueryService {
     res,
     htmlTarget: QueryHtmlTarget,
     url,
-    imposedGeometry?
+    imposedGeometry?,
+    imposedProperties?: { [key: string]: any }
   ) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
@@ -466,9 +525,9 @@ export class QueryService {
 
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
-    // replace \r \n  and ' ' with '' to validate if the body is really empty.
-    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '');
-    if (body === '<body></body>' || res === '') {
+    // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
+    const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
+    if (body === '' || res === '') {
       return [];
     }
 
@@ -476,7 +535,7 @@ export class QueryService {
       {
         type: FEATURE,
         projection,
-        properties: { target: htmlTarget, body: res, url },
+        properties: Object.assign({ target: htmlTarget, body: res, url }, imposedProperties),
         geometry: imposedGeometry || geomToAdd
       }
     ];
@@ -498,7 +557,7 @@ export class QueryService {
   }
 
   public featureToResult(
-    featureOL: olFeature,
+    featureOL: olFeature<olgeom.Geometry>,
     zIndex: number,
     allowedFieldsAndAlias?
   ): Feature {
@@ -543,6 +602,11 @@ export class QueryService {
     mapExtent?: MapExtent
   ): string {
     let url;
+
+    if (datasource.options.queryUrl) {
+      return this.getCustomQueryUrl(datasource, options, mapExtent);
+    }
+
     switch (datasource.constructor) {
       case WMSDataSource:
         const wmsDatasource = datasource as WMSDataSource;
@@ -552,8 +616,12 @@ export class QueryService {
             wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
-          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || '5'
+          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
         };
+
+        if (wmsDatasource.params.FEATURE_COUNT) {
+          this.featureCount = wmsDatasource.params.FEATURE_COUNT;
+        }
 
         if (forceGML2) {
           WMSGetFeatureInfoOptions.INFO_FORMAT = this.getMimeInfoFormat(
@@ -702,4 +770,28 @@ export class QueryService {
 
     return label;
   }
+
+  /**
+   * @param datasource QueryableDataSource
+   * @param options QueryOptions
+   * @mapExtent extent of the map when click event
+   *
+   */
+
+  getCustomQueryUrl(
+    datasource: QueryableDataSource,
+    options: QueryOptions,
+    mapExtent?: MapExtent): string {
+
+      let url = datasource.options.queryUrl.replace(/\{xmin\}/g, mapExtent[0].toString())
+      .replace(/\{ymin\}/g, mapExtent[1].toString())
+      .replace(/\{xmax\}/g, mapExtent[2].toString())
+      .replace(/\{ymax\}/g, mapExtent[3].toString())
+      .replace(/\{x\}/g, options.coordinates[0].toString())
+      .replace(/\{y\}/g, options.coordinates[1].toString())
+      .replace(/\{resolution\}/g, options.resolution.toString())
+      .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+
+      return url;
+    }
 }

@@ -15,7 +15,7 @@ import { ObjectUtils } from '@igo2/utils';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
-import { CapabilitiesService, TypeCapabilities } from '../../datasource';
+import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
@@ -87,6 +87,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       c.id = Md5.hashStr(
         (c.type || 'wms') + standardizeUrl(c.url)
       ) as string;
+      c.title = c.title === '' || !c.title ? c.url : c.title;
       return c;
     });
   }
@@ -148,41 +149,37 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.unsubscribeAddingCatalog();
 
     this.addingCatalog$$ = this.capabilitiesService
-    .getCapabilities(TypeCapabilities[addedCatalog.type], addedCatalog.url, addedCatalog.version)
+    .getCapabilities(addedCatalog.type as any, addedCatalog.url, addedCatalog.version)
       .pipe(
         catchError((e) => {
-          const title = this.languageService.translate.instant(
-            'igo.geo.catalog.unavailableTitle'
-          );
+          const title = this.languageService.translate.instant('igo.geo.catalog.unavailableTitle');
           if (e.error) {
             this.addCatalogDialog(true, addedCatalog);
             e.error.caught = true;
             return e;
           }
-          const message = this.languageService.translate.instant(
-            'igo.geo.catalog.unavailable',
-            { value: addedCatalog.url }
-          );
+          const message = this.languageService.translate.instant('igo.geo.catalog.unavailable', { value: addedCatalog.url });
           this.messageService.error(message, title);
           throw e;
         })
       )
-      .subscribe((capabilies) => {
+      .subscribe((capabilities) => {
         let title;
-
+        let version;
         switch (addedCatalog.type) {
           case 'wms':
-            title = addedCatalog.title || capabilies.Service.Title;
+            title = addedCatalog.title || capabilities.Service.Title;
+            version = addedCatalog.version || capabilities.version;
             break;
           case 'arcgisrest':
           case 'imagearcgisrest':
           case 'tilearcgisrest':
-            title = addedCatalog.title || capabilies.mapName;
+            title = addedCatalog.title || capabilities.mapName;
             break;
           case 'wmts':
             title =
               addedCatalog.title ||
-              capabilies.ServiceIdentification.ServiceType;
+              capabilities.ServiceIdentification.ServiceType;
             break;
           default:
             title = addedCatalog.title;
@@ -197,7 +194,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
               url: addedCatalog.url,
               type: addedCatalog.type || 'wms',
               externalProvider: addedCatalog.externalProvider || false,
-              removable: true
+              removable: true,
+              version
             })) as Catalog);
         this.store.insert(catalogToAdd);
         const newCatalogs = this.addedCatalogs.slice(0);

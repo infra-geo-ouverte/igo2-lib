@@ -1,11 +1,12 @@
 /*jshint esversion: 6 */
 const gulp = require('gulp');
 const del = require('del');
-const babel = require('gulp-babel');
 const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
+wait = require('gulp-wait')
 const jeditor = require('gulp-json-editor');
 const replace = require('gulp-replace');
+const concat = require('gulp-concat');
 
 const package = require('./package.json');
 const version = package.version;
@@ -143,50 +144,97 @@ gulp.task('geo:copyStyles', done => {
   done();
 });
 
+gulp.task('prepublishOnly', done => {
+  gulp.src('./dist/auth/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/auth'));
+  gulp.src('./dist/common/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/common'));
+  gulp.src('./dist/context/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/context'));
+  gulp.src('./dist/core/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/core'));
+  gulp.src('./dist/geo/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/geo'));
+  gulp.src('./dist/integration/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/integration'));
+  gulp.src('./dist/utils/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/utils'));
+  done();
+});
+
 // ==========================================================
 
-gulp.task('core:bundleStyles', done => {
-  return gulp
-    .src('.')
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/core.theming.scss -o ./dist/core/style/core.theming.scss'
-      )
-    )
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/theming.scss -o ./dist/core/style/theming.scss'
-      )
-    )
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/all.theming.scss -o ./dist/core/style/all.theming.scss'
-      )
-    )
-    .pipe(exec.reporter());
+// https://github.com/stylus/stylus/pull/2538
+gulp.task('libs:fixUseAngularMaterialCDK', done => {
+  gulp.src(['./node_modules/@angular/material/core/focus-indicators/_private.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/focus-indicators/'));
+  gulp.src(['./node_modules/@angular/material/core/style/_menu-common.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/style/'));
+  gulp.src(['./node_modules/@angular/material/core/_core.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/'));
+  gulp.src(['./node_modules/@angular/material/core/ripple/_ripple.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/ripple'));
+  gulp.src(['./node_modules/@angular/material/badge/_badge-theme.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/badge'));
+
+  done();
 });
 
-gulp.task('common:bundleStyles', done => {
-  return gulp
-    .src('.')
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/common/src/style/common.theming.scss -o ./dist/common/style/common.theming.scss'
-      )
-    )
-    .pipe(exec.reporter());
+
+
+gulp.task('core:concatStyles', done => {
+  gulp
+    .src([
+      './packages/core/src/style/setup.scss',
+      './packages/core/src/style/typography.scss',
+      './packages/core/src/style/all.theming.scss',
+      './packages/core/src/style/foreground.scss',
+      './packages/core/src/style/theming.scss',
+      './packages/core/src/style/core.theming.scss',
+      './packages/core/src/lib/message/message.theming.scss',
+      './packages/common/src/style/common.theming.scss',
+      './packages/common/src/lib/action/action.theming.scss',
+      './packages/common/src/lib/action/actionbar/actionbar.theming.scss',
+      './packages/common/src/lib/collapsible/collapsible.theming.scss',
+      './packages/common/src/lib/entity/entity.theming.scss',
+      './packages/common/src/lib/entity/entity-table/entity-table.theming.scss',
+      './packages/common/src/lib/home-button/home-button.theming.scss',
+      './packages/common/src/lib/list/list.theming.scss',
+      './packages/common/src/lib/panel/panel.theming.scss',
+      './packages/common/src/lib/tool/tool.theming.scss',
+      './packages/common/src/lib/tool/toolbox/toolbox.theming.scss',
+      './packages/common/src/lib/interactive-tour/interactive-tour.theming.scss',
+      './packages/geo/src/style/geo.theming.scss',
+      './packages/geo/src/lib/directions/directions.theming.scss',
+      './packages/geo/src/lib/directions/directions-results/directions-results.theming.scss',
+      './packages/geo/src/lib/draw/drawingTool.theming.scss',
+      './packages/geo/src/lib/draw/draw/draw.theming.scss',
+      './packages/geo/src/lib/feature/feature.theming.scss',
+      './packages/geo/src/lib/feature/feature-details/feature-details.theming.scss',
+      './packages/geo/src/lib/filter/filter.theming.scss',
+      './packages/geo/src/lib/filter/ogc-filter-selection/ogc-filter-selection.theming.scss',
+      './packages/geo/src/lib/filter/ogc-filter-time/ogc-filter-time-slider.theming.scss',
+      './packages/geo/src/lib/filter/time-filter-form/time-filter-form.theming.scss',
+      './packages/geo/src/lib/layer/layer.theming.scss',
+      './packages/geo/src/lib/layer/layer-legend/layer-legend.theming.scss',
+      './packages/geo/src/lib/map/map.theming.scss',
+      './packages/geo/src/lib/map/map-browser/map-browser.theming.scss',
+      './packages/geo/src/lib/map/zoom-button/zoom-button.theming.scss',
+      './packages/geo/src/lib/map/menu-button/menu-button.theming.scss',
+      './packages/geo/src/lib/measure/measure.theming.scss',
+      './packages/geo/src/lib/measure/measurer/measurer.theming.scss',
+      './packages/geo/src/lib/workspace/workspace.theming.scss',
+      './packages/geo/src/lib/workspace/confirmation-popup/confirmation-popup.theming.scss',
+      './packages/core/src/style/themes/blue.theme.scss',
+      './packages/core/src/style/themes/bluedq.theme.scss',
+      './packages/core/src/style/themes/bluegrey.theme.scss',
+      './packages/core/src/style/themes/deeppurple.theme.scss',
+      './packages/core/src/style/themes/indigo.theme.scss',
+      './packages/core/src/style/themes/orange.theme.scss',
+      './packages/core/src/style/themes/dark.theme.scss',
+      './packages/core/src/style/themes/teal.theme.scss',
+      './packages/core/src/style/themes/qcca.theme.scss'
+    ])
+    .pipe(concat('index.theming.scss'))
+    .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
+    .pipe(exec(
+      'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
+    ))
+    .pipe(wait(500)).on('end', function() {
+      del(['packages/core/src/style/index.theming.scss'], { force: true });
+    })
+
+  done();
 });
 
-gulp.task('geo:bundleStyles', done => {
-  return gulp
-    .src('.')
-    .pipe(
-      exec(
-        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/geo/src/style/geo.theming.scss -o ./dist/geo/style/geo.theming.scss'
-      )
-    )
-    .pipe(exec.reporter());
-});
 
 // ==========================================================
 
@@ -266,6 +314,14 @@ gulp.task('core:copyBundleLocale', done => {
   done();
 });
 
+gulp.task('copyBundleLocaleToDemo', done => {
+  gulp
+    .src('./dist/core/locale/@(fr|en).json', { "allowEmpty": true })
+    .pipe(gulp.dest('./demo/src/locale/libs_locale'));
+
+  done(); //
+}); //
+
 gulp.task('sleep', done => {
   setTimeout(() => done(), 1000);
 });
@@ -275,7 +331,8 @@ gulp.task(
   gulp.series(
     gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
     'sleep',
-    'core:copyBundleLocale'
+    'core:copyBundleLocale',
+    'copyBundleLocaleToDemo'
   )
 );
 
@@ -310,7 +367,7 @@ gulp.task('core:bumpVersion', done => {
   gulp
     .src(['./packages/core/src/lib/config/version.ts'])
     .pipe(replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`))
-    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))   
+    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))
     .pipe(gulp.dest('./packages/core/src/lib/config/.'));
 
   done();
@@ -439,20 +496,8 @@ exports.filename = null;`
   done();
 });
 
-gulp.task('libs:fixOL', done => {
-  gulp
-    .src(['./node_modules/ol/package.json'])
-    .pipe(
-      jeditor({
-        sideEffects: true
-      })
-    )
-    .pipe(gulp.dest('./node_modules/ol/'));
 
-  done();
-});
-
-gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixOL']));
+gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixUseAngularMaterialCDK']));
 
 // ==========================================================
 
@@ -461,7 +506,8 @@ gulp.task(
   gulp.series(
     'core:clean',
     gulp.parallel(['core:copyAssets', 'core:copyStyles', 'core:copyLocale']),
-    gulp.parallel(['core:copyIcons', 'core:bundleStyles']),
+    'core:concatStyles',
+    gulp.parallel(['core:copyIcons']),
     'core:bundleLocale'
   )
 );
@@ -475,8 +521,8 @@ gulp.task(
       'common:copyStyles',
       'common:copyLocale'
     ]),
-    gulp.parallel(['common:bundleStyles']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -485,7 +531,8 @@ gulp.task(
   gulp.series(
     'auth:clean',
     gulp.parallel(['auth:copyAssets', 'auth:copyStyles', 'auth:copyLocale']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -499,8 +546,8 @@ gulp.task(
       'geo:copyLocale',
       'geo:copyNGCC'
     ]),
-    gulp.parallel(['geo:bundleStyles']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -508,7 +555,8 @@ gulp.task(
   'context',
   gulp.series(
     gulp.parallel(['context:copyLocale', 'context:copyNGCC']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 
@@ -516,7 +564,8 @@ gulp.task(
   'integration',
   gulp.series(
     gulp.parallel(['integration:copyLocale', 'integration:copyNGCC']),
-    'core:bundleLocale'
+    'core:bundleLocale',
+    'core:concatStyles'
   )
 );
 

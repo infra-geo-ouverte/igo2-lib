@@ -8,9 +8,11 @@ import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-dataso
 import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt-datasource.interface';
 
 import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
+import RenderFeature from 'ol/render/Feature';
+import Feature from 'ol/Feature';
 
 export interface VectorTileLayerOptions extends LayerOptions {
-  style?: { [key: string]: any } | olStyle | olStyle[];
+  style?: olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);
   source?:
     | MVTDataSource;
   sourceOptions?:
@@ -18,5 +20,6 @@ export interface VectorTileLayerOptions extends LayerOptions {
   ol?: olLayerVectorTile;
   declutter?: boolean;
   styleByAttribute?: StyleByAttribute;
+  hoverStyle?: StyleByAttribute;
   mapboxStyle ?: MapboxStyle;
 }

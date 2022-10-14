@@ -29,9 +29,10 @@ import {
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
-import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
+import { LinkedProperties } from '../shared/layers/layer.interface';
 import { MatSliderChange } from '@angular/material/slider';
 import * as olextent from 'ol/extent';
+import { getAllChildLayersByProperty, getRootParentByProperty } from '../../map/shared/linkedLayers.utils';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -82,7 +83,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input()
   set layers(value: Layer[]) {
-    this._layers = value;
+    this._layers = this.removeProblemLayerInList(value);
     this.next();
   }
   get layers(): Layer[] {
@@ -254,6 +255,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (this.layers) {
         let checks = 0;
         for (const layer of this.layers) {
+          layer.status$.subscribe(valStatus => {
+            if (valStatus === 0) {
+              this.map.removeLayer(layer);
+            }
+          });
           if (layer.options.active) {
             this.activeLayer = layer;
             this.layerTool = true;
@@ -329,7 +335,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   zoomLayersExtents(layers: Layer[]) {
-    const layersExtent = olextent.createEmpty();
+    const layersExtent = olextent.createEmpty() as [number, number, number, number];
 
     for (const layer of layers) {
       const layerExtent = layer.options.extent;
@@ -396,9 +402,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
-    const layersToMove = [activeLayer];
     const sortedLayersToMove = [];
-    this.getLinkedLayers(activeLayer, layersToMove);
+    getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
+    let rootParentByProperty = getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
+    if (!rootParentByProperty) {
+      rootParentByProperty = activeLayer;
+    }
+    const layersToMove = [rootParentByProperty];
+    getAllChildLayersByProperty(this.map, rootParentByProperty, layersToMove, LinkedProperties.ZINDEX);
+
     this.layers.map(layer => {
       if (layersToMove.indexOf(layer) !== -1) {
         sortedLayersToMove.push(layer);
@@ -409,48 +421,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
       this.raiseLayers(sortedLayersToMove, false);
     } else if (actiontype === LayerListDisplacement.Lower) {
       this.lowerLayers(sortedLayersToMove, false);
-    }
-  }
-
-  private getLinkedLayers(activeLayer: Layer, layersList: Layer[]) {
-    const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
-    if (!linkedLayers) {
-      return;
-    }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-
-    if (isParentLayer) {
-      // search for child layers
-      currentLinks.map(link => {
-        if (!link.properties || link.properties.indexOf(LinkedProperties.ZINDEX) === -1) {
-          return;
-        }
-        link.linkedIds.map(linkedId => {
-          const childLayer = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
-          if (childLayer) {
-            if (!layersList.includes(childLayer)) {
-              layersList.push(childLayer);
-            }
-          }
-        });
-      });
-    } else {
-      // search for parent layer
-      this.layers.map(parentLayer => {
-        if (parentLayer.options.linkedLayers?.links) {
-          parentLayer.options.linkedLayers.links.map(l => {
-            if (
-              l.properties?.indexOf(LinkedProperties.ZINDEX) !== -1 &&
-              l.bidirectionnal !== false &&
-              l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layersList.push(parentLayer);
-              this.getLinkedLayers(parentLayer, layersList);
-            }
-          });
-        }
-      });
     }
   }
 
@@ -939,5 +909,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
     )[0];
 
     return [igoList, checkItem];
+  }
+
+  removeProblemLayerInList(layersList: Layer[]): Layer[] {
+    for (const layer of layersList) {
+      if (layer.olLoadingProblem === true) {
+        this.map.removeLayer(layer);
+      }
+    }
+    return layersList;
   }
 }

@@ -6,7 +6,7 @@ import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, OgcFiltersOptions, OgcFilterDuringOptions } from '../../../filter/shared/ogc-filter.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import {
   formatWFSQueryString,
@@ -48,8 +48,6 @@ export class WMSDataSource extends DataSource {
   get ogcFilters(): OgcFiltersOptions {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
-
-  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
 
   set timeFilter(value: TimeFilterOptions ) {
     (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
@@ -114,9 +112,15 @@ export class WMSDataSource extends DataSource {
       );
     } else {
       initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes
-        || initOgcFilters.radioButtons || initOgcFilters.select)
+        || initOgcFilters.radioButtons || initOgcFilters.select || initOgcFilters.autocomplete)
         ? false
         : true;
+      if (initOgcFilters.advancedOgcFilters && initOgcFilters.filters) {
+          const filterDuring = initOgcFilters.filters as OgcFilterDuringOptions;
+          if(filterDuring.calendarModeYear) {
+            initOgcFilters.advancedOgcFilters = false;
+          }
+      }
       if (initOgcFilters.pushButtons){
         initOgcFilters.pushButtons.selectorType = 'pushButton';
       }
@@ -128,6 +132,9 @@ export class WMSDataSource extends DataSource {
       }
       if (initOgcFilters.select){
         initOgcFilters.select.selectorType = 'select';
+      }
+      if (initOgcFilters.autocomplete){
+        initOgcFilters.autocomplete.selectorType = 'autocomplete';
       }
     }
 
@@ -187,7 +194,7 @@ export class WMSDataSource extends DataSource {
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
-      this.ogcFilters$.next(this.ogcFilters);
+      this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
@@ -195,6 +202,7 @@ export class WMSDataSource extends DataSource {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
+      this.ol.notify('timeFilter', this.ogcFilters);
     }
   }
 

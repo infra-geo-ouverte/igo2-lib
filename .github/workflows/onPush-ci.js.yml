@@ -9,12 +9,13 @@ on:
   push:
     branches-ignore: 
       - master
+      - next
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x] # [12.x, 13.x, 14.x]
+        node-version: [14.x, 16.x] # [12.x, 14.x]
 
     steps:
     - name: The branch or tag ref that triggered the workflow run.
@@ -26,5 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g gulp-cli
     - run: npm ci
+    - run: npm run lint
     - run: npm run build.libs --if-present
     - run: npm run test

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-
+import { BehaviorSubject } from 'rxjs';
 import {
   ActionStore,
   EntityTableTemplate,
@@ -22,13 +22,14 @@ import {
 import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
+import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
+import { getCommonVectorSelectedStyle} from '../../utils';
 
 import { WfsWorkspace } from './wfs-workspace';
 import { skipWhile, take } from 'rxjs/operators';
-import { StorageService } from '@igo2/core';
-import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
-
+import { StorageService, ConfigService } from '@igo2/core';
+import olFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 @Injectable({
   providedIn: 'root'
 })
@@ -38,18 +39,20 @@ export class WfsWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(private storageService: StorageService) {}
+  public ws$ = new BehaviorSubject<string>(undefined);
+
+  constructor(private storageService: StorageService, private configService: ConfigService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled === false) {
+    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
       return;
     }
 
     layer.options.workspace = Object.assign({}, layer.options.workspace,
       {
-        enabled: true,
         srcId: layer.id,
-        workspaceId: layer.id
+        workspaceId: layer.id,
+        enabled: true
       } as GeoWorkspaceOptions);
 
     const wks = new WfsWorkspace({
@@ -65,7 +68,6 @@ export class WfsWorkspaceService {
     });
     this.createTableTemplate(wks, layer);
     return wks;
-
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
@@ -76,11 +78,15 @@ export class WfsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
+
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: undefined,
+        style: (feature) => {
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+        },
         showInLayerList: false,
         exportable: false,
         browsable: false
@@ -100,19 +106,22 @@ export class WfsWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(workspace: WfsWorkspace,  layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
+
+    const relations = layer.dataSource.options.relations || [];
 
     if (fields.length === 0) {
       workspace.entityStore.entities$.pipe(
         skipWhile(val => val.length === 0),
         take(1)
       ).subscribe(entities => {
-        const columnsFromFeatures = (entities[0] as Feature).ol.getKeys()
+        const ol = (entities[0] as Feature).ol as olFeature<OlGeometry>;
+        const columnsFromFeatures = ol.getKeys()
         .filter(
           col => !col.startsWith('_') &&
           col !== 'geometry' &&
-          col !== (entities[0] as Feature).ol.getGeometryName() &&
+          col !== ol.getGeometryName() &&
           !col.match(/boundedby/gi))
         .map(key => {
           return {
@@ -133,9 +142,30 @@ export class WfsWorkspaceService {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
+        tooltip: field.tooltip
       };
     });
+
+    const relationsColumn = relations.map((relation: RelationOptions) => {
+      return {
+        name: `properties.${relation.name}`,
+        title: relation.alias ? relation.alias : relation.name,
+        renderer: EntityTableColumnRenderer.Icon,
+        icon: relation.icon,
+        parent: relation.parent,
+        type: 'relation',
+        tooltip: relation.tooltip,
+        onClick: () => {
+            this.ws$.next(relation.title);
+        },
+        cellClassFunc: () => {
+          return { 'class_icon': true };
+        }
+      };
+    });
+
+    columns.push(...relationsColumn);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,

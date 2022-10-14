@@ -13,9 +13,7 @@
     collapsibleButton
     tooltip-position="below"
     matTooltipShowDelay="500"
-    [matTooltip]="layer.visible ?
-                  ('igo.geo.layer.hideLayer' | translate) :
-                  ('igo.geo.layer.showLayer' | translate)"
+    [matTooltip]="eyeTooltip | translate"
     (click)="toggleVisibility()">
     <mat-icon
       matBadge="?"
@@ -23,7 +21,7 @@
       matBadgeSize="small"
       matBadgePosition="after"
       [matBadgeHidden]="queryBadgeHidden$ | async"
-      [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+      [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
       [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'">
     </mat-icon>
   </button>
@@ -44,7 +42,7 @@
     matBadgeSize="small"
     matBadgePosition="after"
     [matBadgeHidden]="queryBadgeHidden$ | async"
-    [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+    [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
     [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
   </mat-icon>
 </button>

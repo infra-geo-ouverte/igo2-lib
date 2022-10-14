@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "1.8.1",
+  "version": "1.13.0-alpha.0",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -14,33 +14,36 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-    "ngx-cacheable": "^1.0.9",
+    "ts-cacheable": "^1.0.5",
     "ts-md5": "^1.2.4",
-    "@turf/helpers": "^6.1.4",
-    "@turf/line-intersect": "^6.0.2",
-    "@turf/point-on-feature": "^5.1.5",
-    "tslib": "^2.0.0"
+    "@turf/helpers": "^6.5.0",
+    "@turf/line-intersect": "^6.5.0",
+    "@turf/point-on-feature": "^6.5.0",
+    "tslib": "^2.4.0",
+    "nosleep.js": "^0.12.0",
+    "windows-1252": "^3.0.4"
   },
   "peerDependencies": {
-    "@angular/animations": "^10.0.3",
-    "@angular/common": "^10.0.3",
-    "@angular/core": "^10.0.3",
-    "@angular/forms": "^10.0.3",
-    "@angular/material": "^10.0.1",
-    "@igo2/common": "^1.8.1",
-    "@igo2/core": "^1.8.1",
-    "@igo2/utils": "^1.8.1",
-    "ol": "^6.3.1",
-    "proj4": "^2.6.2",
-    "rxjs": "^6.6.0",
-    "ol-mapbox-style": "^6.1.2"
+    "@angular/animations": "^14.1.2",
+    "@angular/common": "^14.1.2",
+    "@angular/core": "^14.1.2",
+    "@angular/forms": "^14.1.2",
+    "@angular/material": "^14.1.2",
+    "@igo2/common": "^1.13.0-alpha.0",
+    "@igo2/core": "^1.13.0-alpha.0",
+    "@igo2/utils": "^1.13.0-alpha.0",
+    "ol": "^6.15.1",
+    "proj4": "^2.8.0",
+    "rxjs": "^7.5.6",
+    "ol-mapbox-style": "^8.2.1",
+    "striptags": "^3.2.0"
   },
   "optionalDependencies": {
     "file-saver": "^2.0.2",
-    "html2canvas": "^1.0.0-rc.5",
-    "jspdf": "^1.5.3",
-    "jszip": "^3.1.5",
-    "moment": "^2.24.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "jszip": "^3.10.1",
+    "moment": "^2.29.4",
     "stream": "^0.0.2"
   }
 }

@@ -5,20 +5,26 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
-import * as jsPDF from 'jspdf';
+import jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as JSZip from 'jszip';
+import { default as JSZip } from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';
-import { MessageService, ActivityService, LanguageService } from '@igo2/core';
+import { MessageService, ActivityService, LanguageService, ConfigService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { LegendMapViewOptions, OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
+
+declare global {
+  interface Navigator {
+    msSaveBlob?: (blob: any, defaultName?: string) => boolean
+  }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +37,8 @@ export class PrintService {
     private http: HttpClient,
     private messageService: MessageService,
     private activityService: ActivityService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private configService: ConfigService
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -43,7 +50,7 @@ export class PrintService {
     const legendPostion = options.legendPosition;
 
     this.activityId = this.activityService.register();
-    const doc = new jsPDF({
+    const doc = new jspdf({
       orientation,
       format: paperFormat.toLowerCase()
     });
@@ -116,7 +123,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async handleMeasureLayer(
-    doc: jsPDF,
+    doc: jspdf,
     map: IgoMap,
     margins: Array<number>
   ) {
@@ -152,11 +159,11 @@ export class PrintService {
           resolution: map.viewController.getResolution(),
           extent: map.viewController.getExtent(),
           projection: map.viewController.getOlProjection().getCode(),
-          scale: map.viewController.getScale(resolution),
+          // scale: map.viewController.getScale(resolution),
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-      if (legends.length === 0) {
+      if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
         return;
@@ -176,11 +183,11 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
-      const images$ = legends.map((legend) =>
+      const images$ = legends.filter(l => l.display).map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
-            htmlImg  += '<tr><td><img src="' + dataImage + '"></td></tr>';
+            htmlImg += '<tr><td><img src="' + dataImage + '"></td></tr>';
             return htmlImg;
           })
         )
@@ -196,7 +203,7 @@ export class PrintService {
   }
 
   getDataImage(url: string): Observable<string> {
-    const secureIMG = new SecureImagePipe(this.http);
+    const secureIMG = new SecureImagePipe(this.http, this.configService);
     return secureIMG.transform(url);
   }
 
@@ -260,11 +267,10 @@ export class PrintService {
     return status$;
   }
 
-  getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
+  getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jspdf) {
     const pdfResolution = 96;
     const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
-    doc.setFont('Times');
-    doc.setFontType('Bold');
+    doc.setFont('Times', 'bold');
     const width = doc.getTextWidth(title);
 
     const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
@@ -286,11 +292,10 @@ export class PrintService {
     return [titleFontSize, titleMarginLeft];
   }
 
-  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
+  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jspdf) {
     const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% of the title's font size
 
-    doc.setFont('Times');
-    doc.setFontType('Bold');
+    doc.setFont('Times', 'bold');
 
     const subtitleWidth = doc.getStringUnitWidth(subtitle) * subtitleSize / doc.internal.scaleFactor;
 
@@ -303,16 +308,14 @@ export class PrintService {
     return subtitleMarginLeft;
   }
 
-  private addTitle(doc: jsPDF, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
-    doc.setFont('Times');
-    doc.setFontType('Bold');
+  private addTitle(doc: jspdf, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
+    doc.setFont('Times', 'bold');
     doc.setFontSize(titleFontSize);
     doc.text(title, titleMarginLeft, titleMarginTop);
   }
 
-  private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
-    doc.setFont('Times');
-    doc.setFontType();
+  private addSubTitle(doc: jspdf, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
+    doc.setFont('Times', 'bold');
     doc.setFontSize(subtitleFontSize);
     doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop);
   }
@@ -322,7 +325,7 @@ export class PrintService {
    * * @param  comment - Comment to add in the document
    * * @param  size - Size of the document
    */
-  private addComment(doc: jsPDF, comment: string) {
+  private addComment(doc: jspdf, comment: string) {
     const commentSize = 16;
     const commentMarginLeft = 20;
     const marginBottom = 5;
@@ -341,7 +344,7 @@ export class PrintService {
    * @param  scale - Bool to indicate if scale need to be added
    */
   private addProjScale(
-    doc: jsPDF,
+    doc: jspdf,
     map: IgoMap,
     dpi: number,
     projection: boolean,
@@ -378,7 +381,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async addLegend(
-    doc: jsPDF,
+    doc: jspdf,
     map: IgoMap,
     margins: Array<number>,
     resolution: number
@@ -431,7 +434,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
      private async addLegendSamePage(
-      doc: jsPDF,
+      doc: jspdf,
       map: IgoMap,
       margins: Array<number>,
       resolution: number,
@@ -493,7 +496,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async addScale(
-    doc: jsPDF,
+    doc: jspdf,
     map: IgoMap,
     margins: Array<number>
     ) {
@@ -504,9 +507,10 @@ export class PrintService {
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
       // Remove the UI buttons from the nodes
-      const OverlayHTMLButton = mapOverlayHTML.getElementsByTagName('button');
-      for (const but of OverlayHTMLButton) {
-        but.setAttribute('data-html2canvas-ignore', 'true');
+      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
+      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
+        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
@@ -534,7 +538,7 @@ export class PrintService {
   }
 
   private addCanvas(
-    doc: jsPDF,
+    doc: jspdf,
     canvas: HTMLCanvasElement,
     margins: Array<number>
   ) {
@@ -559,7 +563,7 @@ export class PrintService {
 
   // TODO fix printing with image resolution
   private addMap(
-    doc: jsPDF,
+    doc: jspdf,
     map: IgoMap,
     resolution: number,
     size: Array<number>,
@@ -797,19 +801,21 @@ export class PrintService {
       newContext.drawImage(oldCanvas, 0, positionHCanvas);
 
       let status = SubjectStatus.Done;
+      let fileNameWithExt = 'map.' + format;
+      if (format.toLowerCase() === 'tiff') {
+        fileNameWithExt = 'map' + map.projection.replace(':', '_') + '.' + format;
+      }
+
       try {
         // Save the canvas as file
         if (!doZipFile) {
-          this.saveCanvasImageAsFile(newCanvas, 'map', format);
+          this.saveCanvasImageAsFile(newCanvas, fileNameWithExt, format);
         } else if (format.toLowerCase() === 'tiff') {
           // Add the canvas to zip
-          this.generateCanvaFileToZip(
-            newCanvas,
-            'map' + map.projection.replace(':', '_') + '.' + format
-          );
+          this.generateCanvaFileToZip(newCanvas, fileNameWithExt);
         } else {
           // Add the canvas to zip
-          this.generateCanvaFileToZip(newCanvas, 'map' + '.' + format);
+          this.generateCanvaFileToZip(newCanvas, fileNameWithExt);
         }
       } catch (err) {
         status = SubjectStatus.Error;
@@ -818,20 +824,18 @@ export class PrintService {
       status$.next(status);
 
       if (format.toLowerCase() === 'tiff') {
+        const tfwFileNameWithExt = fileNameWithExt.substring(0, fileNameWithExt.toLowerCase().indexOf('.tiff')) + '.tfw';
         const tiwContent = this.getWorldFileInformation(map);
         const blob = new Blob([tiwContent], {
           type: 'text/plain;charset=utf-8'
         });
         if (!doZipFile) {
           // saveAs automaticly replace ':' for '_'
-          saveAs(blob, 'map' + map.projection + '.tfw');
+          saveAs(blob, tfwFileNameWithExt);
           this.saveFileProcessing();
         } else {
           // Add the canvas to zip
-          this.addFileToZip(
-            'map' + map.projection.replace(':', '_') + '.tfw',
-            blob
-          );
+          this.addFileToZip(tfwFileNameWithExt,blob);
         }
       }
     });
@@ -849,7 +853,7 @@ export class PrintService {
    * Save document
    * @param  doc - Document to save
    */
-  protected async saveDoc(doc: jsPDF) {
+  protected async saveDoc(doc: jspdf) {
     await doc.save('map.pdf', { returnPromise: true });
   }
 
@@ -899,7 +903,7 @@ export class PrintService {
    * @param name - Name of the file
    * @param format - file format
    */
-  private saveCanvasImageAsFile(canvas, name, format) {
+  private saveCanvasImageAsFile(canvas, nameWithExt, format) {
     const blobFormat = 'image/' + format;
     const that = this;
 
@@ -907,12 +911,12 @@ export class PrintService {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
       // If navigator is Internet Explorer
       if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
+        navigator.msSaveBlob(canvas.msToBlob(), nameWithExt);
         this.saveFileProcessing();
       } else {
         canvas.toBlob((blob) => {
           // download image
-          saveAs(blob, name + '.' + format);
+          saveAs(blob, nameWithExt);
           that.saveFileProcessing();
         }, blobFormat);
       }

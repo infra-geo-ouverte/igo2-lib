@@ -3,6 +3,23 @@ export enum DirectionsFormat {
   JSON
 }
 export enum SourceDirectionsType {
-  Route = 'Route',
-  Trip = 'Trip'
+  Route = 'route',
+  Trip = 'trip'
+}
+
+export enum ProposalType {
+  Coord = 'coord',
+  Text = 'text'
+}
+
+export enum DirectionType {
+  Stop = 'stop',
+  Route = 'route',
+  Vertex = 'vertex'
+}
+
+export enum DirectionRelativePositionType {
+  Start = 'start',
+  Intermediate = 'intermediate',
+  End = 'end'
 }

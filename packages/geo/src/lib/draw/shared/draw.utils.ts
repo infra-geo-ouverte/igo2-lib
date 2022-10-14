@@ -1,4 +1,4 @@
-import * as olstyle from 'ol/style';
+import * as Olstyle from 'ol/style';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
@@ -11,31 +11,33 @@ import {
 
 
 /**
- * Create a default style for a drawO interaction
+ * Create a default style
+ * @param fillColor the fill color
+ * @param strokeColor the stroke color
+ * @param strokeWidth the stroke width
+ * @param label a label
  * @returns OL style
  */
-export function createDrawingInteractionStyle(fill?: string, stroke?: string, text?: string): olstyle.Style {
-    return new olstyle.Style({
-      stroke: new olstyle.Stroke({
-        color: stroke ? stroke : '#3399CC',
-        width: 2
+export function createInteractionStyle(fillColor?: string, strokeColor?: string, strokeWidth?: number, label?: string): Olstyle.Style {
+  return new Olstyle.Style({
+    stroke: new Olstyle.Stroke({
+      color: strokeColor ? strokeColor : 'rgba(143,7,7,1)',
+      width: strokeWidth ? strokeWidth : 1
+    }),
+    fill: new Olstyle.Fill({
+      color: fillColor ? fillColor : 'rgba(255,255,255,0.4)'
+    }),
+    image: new Olstyle.Circle({
+      radius: 5,
+      stroke: new Olstyle.Stroke({
+        color: strokeColor ? strokeColor : 'rgba(143,7,7,1)',
+        width: strokeWidth ? strokeWidth : 1
       }),
-      fill: new olstyle.Fill({
-        color: fill ? fill : 'rgba(255,255,255,0.4)'
-      }),
-      text: new olstyle.Text({
-        text: text ? text : ''
-      }),
-      image: new olstyle.Circle({
-        radius: 5,
-        stroke: new olstyle.Stroke({
-          color: stroke ? stroke : '#3399CC',
-        }),
-        fill: new olstyle.Fill({
-          color: fill ? fill : 'rgba(255,255,255,0.4)'
-        })
+      fill: new Olstyle.Fill({
+        color: fillColor ? fillColor : 'rgba(255,255,255,0.4)'
       })
-    });
+    })
+  });
 }
 
 /**
@@ -46,7 +48,7 @@ export function createDrawingInteractionStyle(fill?: string, stroke?: string, te
 export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
-    const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
+    const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
     olGeometry.setProperties({_midpoints: olMidpoints}, true);
@@ -55,7 +57,7 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
     olGeometry.setProperties({_midpoints: olMidpoints}, true);
-  } else  {
+  } else {
     olMidpoints = updateOlGeometryMidpoints(olGeometry);
   }
   const olTooltips = olMidpoints.map((olMidpoint: OlPoint) => {
@@ -63,7 +65,7 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
     if (olTooltip === undefined) {
       olTooltip = createOlTooltipDrawAtPoint(olMidpoint);
     } else {
-      olTooltip.setPosition(olMidpoint.flatCoordinates);
+      olTooltip.setPosition(olMidpoint.getFlatCoordinates());
     }
     return olTooltip;
   });
@@ -81,7 +83,7 @@ export function updateOlTooltipDrawAtCenter(olGeometry: OlLineString | OlPolygon
   if (olTooltip === undefined) {
     olTooltip = createOlTooltipDrawAtPoint(olCenter);
   } else {
-    olTooltip.setPosition(olCenter.flatCoordinates);
+    olTooltip.setPosition(olCenter.getFlatCoordinates());
   }
   return olTooltip;
 }
@@ -101,7 +103,7 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
     ].join(' '),
     stopEvent: false
   });
-  olTooltip.setPosition(olPoint.flatCoordinates);
+  olTooltip.setPosition(olPoint.getFlatCoordinates());
   olPoint.set('_tooltip', olTooltip);
 
   return olTooltip;

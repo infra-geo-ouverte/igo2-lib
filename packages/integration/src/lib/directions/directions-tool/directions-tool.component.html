@@ -1,8 +1,9 @@
-<igo-directions-form
-    igoDirectionsFormBinding
+<igo-directions
+    [contextUri]="currentContextUri"
+    [debounceTime]="debounceTime"
     [stopsStore]="stopsStore"
-    [routeStore]="routeStore"
-    [map]="map"
-    [routeFromFeatureDetail]="routeFromFeatureDetail"
-    (activeRouteDescription)="onActiveRouteDescriptionChange($event)">
-</igo-directions-form>
+    [stopsFeatureStore]="stopsFeatureStore"
+    [stepFeatureStore]="stepFeatureStore"
+    [routesFeatureStore]="routesFeatureStore"
+    [zoomToActiveRoute$]="zoomToActiveRoute$">  
+</igo-directions>

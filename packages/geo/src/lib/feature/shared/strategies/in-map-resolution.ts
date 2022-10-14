@@ -1,11 +1,9 @@
-import { unByKey } from 'ol/Observable';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreInMapResolutionStrategyOptions, Feature } from '../feature.interfaces';
+import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
-import { skipWhile } from 'rxjs/operators';
+
 
 /**
  * This strategy maintain the store features updated while the map is scrolled.
@@ -94,7 +92,6 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
   private unwatchStore(store: FeatureStore) {
     const key = this.stores$$.get(store);
     if (key !== undefined) {
-      unByKey(key);
       this.stores$$.delete(store);
     }
   }
@@ -103,9 +100,6 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach((entries: [FeatureStore, string]) => {
-      unByKey(entries[1]);
-    });
     this.stores$$.clear();
     this.resolution$$.map(state => state.unsubscribe());
     if (this.empty$$) { this.empty$$.unsubscribe(); }

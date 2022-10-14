@@ -20,12 +20,16 @@ import {
   SpatialFilterQueryType,
   SpatialFilterThematic,
   Layer,
+  VectorLayer,
   createOverlayMarkerStyle,
   ExportOptions,
   MeasureLengthUnit
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
+import olSourceVector from 'ol/source/Vector';
+import olSourceCluster from 'ol/source/Cluster';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject } from 'rxjs';
 import { MapState } from '../../map/map.state';
 import { ImportExportMode, ImportExportState } from './../../import-export/import-export.state';
@@ -33,6 +37,7 @@ import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
+import { EventsKey } from 'ol/events';
 
 /**
  * Tool to apply spatial filter
@@ -88,6 +93,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
 
+  private moveendKey: EventsKey;
+
+  public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
+
   constructor(
     private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
@@ -129,18 +138,21 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   activateExportTool() {
     const ids = [];
+    const re = new RegExp('^Zone \\d+');
     for (const layer of this.layers) {
-      ids.push(layer.id);
+      if (!layer.title.match(re)) {
+        ids.push(layer.id);
+      }
     }
     this.importExportState.setMode(ImportExportMode.export);
     this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
   }
 
-  activateWorkspace() {
+  activateWorkspace(record?) {
     let layerToOpenWks;
     this.workspaceState.store.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-      if (this.activeLayers.length && this.workspaceState.store.all().length > 1) {
+      if (!record && this.activeLayers.length && this.workspaceState.store.all().length > 1) {
         if (this.itemType === SpatialFilterItemType.Thematics) {
             for (const thematic of this.thematics) {
               if (!thematic.zeroResults) {
@@ -161,6 +173,21 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           this.workspaceState.workspacePanelExpanded = true;
           this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
         }
+      } else if (record && this.activeLayers.length && this.workspaceState.store.all().length > 1) {
+        this.selectWorkspaceEntity(record);
+        this.moveendKey = this.map.ol.on('moveend', () => {
+          this.selectWorkspaceEntity(record);
+        });
+      }
+    });
+  }
+
+  private selectWorkspaceEntity(record) {
+    this.workspaceState.store.all().forEach(workspace => {
+      workspace.entityStore.state.updateAll({selected: false});
+      if (workspace.title.includes(record.added[0].meta.title)) {
+        this.workspaceState.setActiveWorkspaceById(workspace.id);
+        workspace.entityStore.state.updateMany(record.added, {selected: true});
       }
     });
   }
@@ -351,6 +378,32 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           i++;
         }
       }
+      this.defaultStyle = (_feature, resolution) => {
+        const coordinates = (features[0] as any).coordinates;
+        return new olstyle.Style({
+          image: new olstyle.Circle({
+            radius: coordinates
+              ? this.buffer /
+                Math.cos((Math.PI / 180) * coordinates[1]) /
+                resolution
+              : undefined,
+            fill: new olstyle.Fill({
+              color: 'rgba(200, 200, 20, 0.2)'
+            }),
+            stroke: new olstyle.Stroke({
+              width: 1,
+              color: 'orange'
+            })
+          }),
+          stroke: new olstyle.Stroke({
+            width: 1,
+            color: 'orange'
+          }),
+          fill: new olstyle.Fill({
+            color: 'rgba(200, 200, 20, 0.2)'
+          })
+        });
+      };
       this.dataSourceService
         .createAsyncDataSource({
           type: 'vector',
@@ -359,6 +412,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: ('Zone ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -370,34 +424,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
                   : undefined
             },
             source: dataSource,
-            visible: true,
-            style: (_feature, resolution) => {
-              const coordinates = (features[0] as any).coordinates;
-              return new olstyle.Style({
-                image: new olstyle.Circle({
-                  radius: coordinates
-                    ? this.buffer /
-                      Math.cos((Math.PI / 180) * coordinates[1]) /
-                      resolution
-                    : undefined,
-                  fill: new olstyle.Fill({
-                    color: 'rgba(200, 200, 20, 0.2)'
-                  }),
-                  stroke: new olstyle.Stroke({
-                    width: 1,
-                    color: 'orange'
-                  })
-                }),
-                stroke: new olstyle.Stroke({
-                  width: 1,
-                  color: 'orange'
-                }),
-                fill: new olstyle.Fill({
-                  color: 'rgba(200, 200, 20, 0.2)'
-                })
-              });
-            }
-          });
+            visible: true
+          }) as VectorLayer;
           const featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
@@ -406,7 +434,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             featuresOl[0].set('nom', 'Zone', true);
             featuresOl[0].set('type', type, true);
           }
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry> | olSourceCluster;
+          ol.addFeatures(featuresOl);
+          olLayer.ol.setStyle(this.defaultStyle);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
@@ -451,6 +481,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           }
 
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -462,7 +493,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.source.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceCluster;
+          ol.getSource().addFeatures(featuresOl);
           if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.layers.find(layer => layer.id === olLayer.id)
@@ -482,7 +514,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createSvgIcon(icon) {
+  private createSvgIcon(icon): olstyle.Style {
     let style: olstyle.Style;
     this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
       const xmlSerializer = new XMLSerializer();
@@ -522,6 +554,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
+            isIgoInternalLayer: true,
             title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
               'igo.geo.spatialFilter.spatialFilter'
             )) as string,
@@ -531,7 +564,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-          dataSource.ol.addFeatures(featuresOl);
+          const ol = dataSource.ol as olSourceVector<OlGeometry>;
+          ol.addFeatures(featuresOl);
           if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
               this.layers.find(layer => layer.id === olLayer.id)

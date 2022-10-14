@@ -1,5 +1,4 @@
 <div class="datetime-container">
-
   <mat-slide-toggle 
     *ngIf="this.currentFilter.sliderOptions?.enabled"
     [(ngModel)]="sliderMode"
@@ -20,92 +19,197 @@
   </div>
 
   <div *ngIf="!sliderMode">
-    <div class="datetime-input">
-      <mat-form-field class="date-input">
-        <mat-datepicker-toggle matSuffix [for]="beginDatepicker"></mat-datepicker-toggle>
-        <input #begin
+
+    <div class="year-input-container" *ngIf="calendarTypeYear">
+      <!-- to emulate a year-picker, 2 input: first input to show user just year and second input hiden and bind 
+        with the datepicker  -->
+      <mat-form-field  class="year-input">
+        <mat-label>{{'igo.geo.timeFilter.startYear'| translate}}</mat-label>
+        <input
           matInput
-          [matDatepicker]="beginDatepicker"
-          [placeholder]="'igo.geo.timeFilter.startDate' | translate"
-          [attr.disabled]="!currentFilter.active"
-          (dateChange)="changeTemporalProperty(begin.value, 1)"
-          [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
-          [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
-          [min]="handleDate(datasource.options.minDate)"
-          [max]="(endValue && (!restrictedToStep()))?endValue:handleDate(datasource.options.maxDate)" >
-        <span class="filler"></span>
+          class="year-input-only-year"
+          value="{{onlyYearBegin}}"
+          (change)= "yearOnlyInputChange($event, beginDatepicker, 'begin')"
+          [disabled]= "filterStateDisable"
+          >
+        <mat-datepicker-toggle matSuffix [for]="beginDatepicker" [disabled]="filterStateDisable"></mat-datepicker-toggle>
+  
         <mat-datepicker
+          panelClass="datepicker-year"
           #beginDatepicker
           [startView]="calendarView()"
           [startAt]="beginValue"
           (yearSelected)="yearSelected($event, beginDatepicker, 'begin')"
-          (monthSelected)="monthSelected($event, beginDatepicker, 'begin')">
+          >
         </mat-datepicker>
+
+        <input #beginYear
+          class= "year-input-hide"
+          matInput
+          [matDatepicker]="beginDatepicker"
+          enabled= false
+          readonly= true
+          [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+          [min]="handleDate(datasource.options.minDate)"
+          [max]="(endValue && (!restrictedToStep()))?endValue:handleDate(datasource.options.maxDate)"
+          >
       </mat-form-field>
-      <div class="time-input">
-        <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'">
-          <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
-          <mat-select
-            [formControl]="beginHourFormControl"
-            [attr.disabled]="!currentFilter.active"
-            (selectionChange)="changeTemporalProperty(begin.value, 1)">
-            <mat-option *ngFor="let hour of beginHours" [value]="hour">{{hour}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
-          <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
-          <mat-select
-            [formControl]="beginMinuteFormControl"
-            [attr.disabled]="!currentFilter.active"
-            (selectionChange)="changeTemporalProperty(begin.value, 1)">
-            <mat-option *ngFor="let minute of beginMinutes" [value]="minute">{{minute}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+
+      <mat-form-field  class="year-input">
+        <mat-label>{{'igo.geo.timeFilter.endYear'| translate}}</mat-label>
+        <input
+          matInput
+          class="year-input-only-year"
+          value="{{onlyYearEnd}}"
+          (change)= "yearOnlyInputChange($event, endDatepicker, 'end')"
+          [disabled] = "filterStateDisable">
+        <mat-datepicker-toggle matSuffix [for]="endDatepicker" [disabled]="filterStateDisable"></mat-datepicker-toggle>
+        <mat-datepicker
+          panelClass="datepicker-year"
+          #endDatepicker
+          [startView]="calendarView()"
+          [startAt]="endValue"
+          (yearSelected)="yearSelected($event, endDatepicker, 'end')"
+          >
+        </mat-datepicker>
+
+        <input #endYear
+          class= "year-input-hide"
+          matInput
+          [matDatepicker]="endDatepicker"
+          enabled= false
+          readonly= true
+          [value]="endValue?endValue:handleDate(datasource.options.maxDate)"
+          [min]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+          [max]="handleDate(datasource.options.maxDate)"
+          >
+      </mat-form-field>
+      <button class="reset-button" 
+        mat-icon-button
+        color="primary" 
+        (click)="resetFilter()" 
+        [matTooltip]="'igo.geo.filter.resetFilters' | translate" 
+        [disabled]= "filterStateDisable">
+        <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+      </button>
+      <mat-slide-toggle 
+        class='toggle-filter-state' 
+        (change)="toggleFilterState()" 
+        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" 
+        tooltip-position="below" 
+        matTooltipShowDelay="500"
+        [checked]="!filterStateDisable">
+      </mat-slide-toggle>
+
     </div>
 
-    <div class="datetime-input" *ngIf="!restrictedToStep()">
-      <mat-form-field class="date-input">
-        <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
-          <input #end
+    <div class="datetime-input-container" *ngIf="calendarType()!=='year'">
+      <div class="datetime-input">
+        <mat-form-field class="date-input">
+          <mat-datepicker-toggle matSuffix [for]="beginDatepicker" [disabled]= "filterStateDisable"></mat-datepicker-toggle>
+          <input #begin
             matInput
-            [matDatepicker]="endDatepicker"
-            [placeholder]="'igo.geo.timeFilter.endDate' | translate"
+            [matDatepicker]="beginDatepicker"
+            [placeholder]="'igo.geo.timeFilter.startDate' | translate"
             [attr.disabled]="!currentFilter.active"
-            (dateChange)="changeTemporalProperty(end.value, 2)"
-            [matDatepickerFilter]="dateFilter.bind(this, 'end')"
-            [value]="endValue?endValue:handleDate(datasource.options.maxDate)"
-            [min]="beginValue?beginValue:handleDate(datasource.options.minDate)"
-            [max]="handleDate(datasource.options.maxDate)" >
+            (dateChange)="changeTemporalProperty(begin.value, 1)"
+            [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
+            [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+            [min]="handleDate(datasource.options.minDate)"
+            [max]="(endValue && (!restrictedToStep()))?endValue:handleDate(datasource.options.maxDate)" 
+            [disabled]= "filterStateDisable">
           <span class="filler"></span>
-          <mat-datepicker #endDatepicker
+          <mat-datepicker
+            #beginDatepicker
             [startView]="calendarView()"
-            [startAt]="endValue"
-            (yearSelected)="yearSelected($event, endDatepicker, 'end')"
-            (monthSelected)="monthSelected($event, endDatepicker, 'end')">
-        </mat-datepicker>
-      </mat-form-field>
-      <div class="time-input">
-        <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'" >
-          <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
-          <mat-select
-            [formControl]="endHourFormControl"
-            [attr.disabled]="!currentFilter.active"
-            (selectionChange)="changeTemporalProperty(end.value, 2)">
-            <mat-option *ngFor="let hour of endHours" [value]="hour">{{hour}}</mat-option>
-          </mat-select>
+            [startAt]="beginValue"
+            (yearSelected)="yearSelected($event, beginDatepicker, 'begin')"
+            (monthSelected)="monthSelected($event, beginDatepicker, 'begin')">
+          </mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
-          <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
-          <mat-select
-            [formControl]="endMinuteFormControl"
-            [attr.disabled]="!currentFilter.active"
-            (selectionChange)="changeTemporalProperty(end.value, 2)">
-            <mat-option *ngFor="let minute of endMinutes" [value]="minute">{{minute}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+
+        <div class="time-input">
+          <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'">
+            <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
+            <mat-select
+              [formControl]="beginHourFormControl"
+              [attr.disabled]="!currentFilter.active"
+              (selectionChange)="changeTemporalProperty(begin.value, 1)">
+              <mat-option *ngFor="let hour of beginHours" [value]="hour">{{hour}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
+            <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
+            <mat-select
+              [formControl]="beginMinuteFormControl"
+              [attr.disabled]="!currentFilter.active"
+              (selectionChange)="changeTemporalProperty(begin.value, 1)">
+              <mat-option *ngFor="let minute of beginMinutes" [value]="minute">{{minute}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
+
+      <div class="datetime-input" *ngIf="!restrictedToStep()">
+        <mat-form-field class="date-input">
+          <mat-datepicker-toggle matSuffix [for]="endDatepicker" [disabled]= "filterStateDisable"></mat-datepicker-toggle>
+            <input #end
+              matInput
+              [matDatepicker]="endDatepicker"
+              [placeholder]="'igo.geo.timeFilter.endDate' | translate"
+              [attr.disabled]="!currentFilter.active"
+              (dateChange)="changeTemporalProperty(end.value, 2)"
+              [matDatepickerFilter]="dateFilter.bind(this, 'end')"
+              [value]="endValue?endValue:handleDate(datasource.options.maxDate)"
+              [min]="beginValue?beginValue:handleDate(datasource.options.minDate)"
+              [max]="handleDate(datasource.options.maxDate)" 
+              [disabled]= "filterStateDisable">
+            <span class="filler"></span>
+            <mat-datepicker #endDatepicker
+              [startView]="calendarView()"
+              [startAt]="endValue"
+              (yearSelected)="yearSelected($event, endDatepicker, 'end')"
+              (monthSelected)="monthSelected($event, endDatepicker, 'end')">
+          </mat-datepicker>
+        </mat-form-field>
+
+        <div class="time-input">
+          <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'" >
+            <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
+            <mat-select
+              [formControl]="endHourFormControl"
+              [attr.disabled]="!currentFilter.active"
+              (selectionChange)="changeTemporalProperty(end.value, 2)">
+              <mat-option *ngFor="let hour of endHours" [value]="hour">{{hour}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
+            <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
+            <mat-select
+              [formControl]="endMinuteFormControl"
+              [attr.disabled]="!currentFilter.active"
+              (selectionChange)="changeTemporalProperty(end.value, 2)">
+              <mat-option *ngFor="let minute of endMinutes" [value]="minute">{{minute}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <button class="reset-button" 
+        mat-icon-button color="primary"
+        (click)="resetFilter()" 
+        [matTooltip]="'igo.geo.filter.resetFilters' | translate" 
+        [disabled]= "filterStateDisable">
+        <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+      </button>
+      <mat-slide-toggle 
+        class="toggle-filter-state" 
+        (change)="toggleFilterState()" 
+        tooltip-position="below" 
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" 
+        [checked]= "!filterStateDisable">
+      </mat-slide-toggle>
     </div>
   </div>
-
 </div>

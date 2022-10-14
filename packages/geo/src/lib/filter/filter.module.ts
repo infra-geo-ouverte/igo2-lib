@@ -31,7 +31,9 @@ import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoCollapsibleModule,
   IgoListModule,
-  IgoKeyValueModule
+  IgoKeyValueModule,
+  IgoEntityModule,
+  IgoDOMModule
 } from '@igo2/common';
 import { IgoGeometryModule } from './../geometry/geometry.module';
 
@@ -92,6 +94,8 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-
     IgoLayerModule,
     IgoCollapsibleModule,
     IgoListModule,
+    IgoEntityModule,
+    IgoDOMModule,
     IgoKeyValueModule,
     IgoGeometryModule,
     MatBadgeModule

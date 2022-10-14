@@ -1,6 +1,11 @@
 import { Observable } from 'rxjs';
 
-import { ArcGISRestDataSourceOptions, ArcGISRestImageDataSourceOptions, TileArcGISRestDataSourceOptions, WMSDataSourceOptions } from '../datasources';
+import {
+  ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  TileArcGISRestDataSourceOptions,
+  WMSDataSourceOptions
+} from '../datasources';
 
 export abstract class OptionsService {
   abstract getWMSOptions(
@@ -10,5 +15,5 @@ export abstract class OptionsService {
   abstract getArcgisRestOptions(
     _baseOptions: ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions,
     detailedContextUri?: string
-  ): Observable<ArcGISRestImageDataSourceOptions>;
+  ): Observable<ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions>;
 }

@@ -6,7 +6,8 @@ import {
   DataSourceService,
   LayerService,
   FeatureStore,
-  FeatureWithDraw
+  FeatureWithDraw,
+  MapService
 } from '@igo2/geo';
 
 @Component({
@@ -36,8 +37,10 @@ export class AppDrawComponent {
   constructor(
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private mapService: MapService
   ) {
+    this.mapService.setMap(this.map);
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

@@ -1,3 +1,4 @@
+import OlFeature from 'ol/Feature';
 import {
   Component,
   Input,
@@ -13,23 +14,26 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { IgoMap } from '../../../map';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import { Style as OlStyle } from 'ol/style';
-import * as olstyle from 'ol/style';
+import * as olStyle from 'ol/style';
 import * as olproj from 'ol/proj';
-import { olFeature } from 'ol/Feature';
+import OlPoint from 'ol/geom/Point';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
-import { EntityStore } from '@igo2/common';
-import { Layer } from '../../../layer/shared';
+import { EntityStore, EntityStoreFilterSelectionStrategy, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
+import { Layer, VectorLayer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
 import { debounceTime } from 'rxjs/operators';
+
+import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { FeatureDataSource } from '../../../datasource/shared';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -70,16 +74,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
-      this.PointStyle = (feature: olFeature, resolution: number) => {
-        const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), this.map.projection, 'EPSG:4326');
-        return new olstyle.Style ({
-          image: new olstyle.Circle ({
+      this.PointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
+        const geom = feature.getGeometry() as OlPoint;
+        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+        return new olStyle.Style ({
+          image: new olStyle.Circle ({
             radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
-            stroke: new olstyle.Stroke({
+            stroke: new olStyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
             }),
-            fill: new olstyle.Fill({
+            fill: new olStyle.Fill({
               color: 'rgba(0, 153, 255, 0.2)'
             })
           })
@@ -90,18 +95,41 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     } else {
       // If geometry types is Polygon
       this.radius = undefined;
-      this.PolyStyle = (feature, resolution) => {
-        return new olstyle.Style ({
-          stroke: new olstyle.Stroke({
+      this.PolyStyle = () => {
+        return new olStyle.Style ({
+          stroke: new olStyle.Stroke({
             width: 2,
             color: 'rgba(0, 153, 255)'
           }),
-          fill: new olstyle.Fill({
+          fill: new olStyle.Fill({
             color: 'rgba(0, 153, 255, 0.2)'
           })
         });
       };
+      const color = [0, 153, 255];
+      const drawStyle = () => {
+        return new olStyle.Style({
+          image: new olStyle.Circle ({
+            radius: 8,
+            stroke: new olStyle.Stroke({
+              width: 2,
+              color: 'rgba(0, 153, 255)'
+            }),
+            fill: new olStyle.Fill({
+              color: 'rgba(0, 153, 255, 0.2)'
+            })
+          }),
+          stroke: new olStyle.Stroke({
+            color: color.concat([1]),
+            width: 2
+          }),
+          fill:  new olStyle.Fill({
+            color: color.concat([0.2])
+          })
+        });
+      };
       this.overlayStyle = this.PolyStyle;
+      this.drawStyle$.next(drawStyle);
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
@@ -166,6 +194,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() export = new EventEmitter();
 
   @Output() openWorkspace = new EventEmitter();
+  @Output() entityChange = new EventEmitter<any>();
 
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
@@ -184,15 +213,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
+  overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
+  drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
   private bufferChanges$$: Subscription;
 
-  public formControl = new FormControl();
-  public geometryType: OlGeometryType;
+  public formControl = new UntypedFormControl();
+  public geometryType: Type | string;
   public geometryTypeField = false;
   public geometryTypes: string[] = ['Point', 'Polygon'];
   public drawGuideField = false;
@@ -201,19 +230,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public measure = false;
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
-  public drawStyle: OlStyle;
+  public drawStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
   public drawZone;
-  public overlayStyle: OlStyle;
-  public PointStyle: OlStyle;
-  public PolyStyle: OlStyle;
+  public overlayStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
+  public PointStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
+  public PolyStyle: olStyle.Style | ((feature, resolution) => olStyle.Style);
 
   public radius: number;
   public buffer: number = 0;
-  public radiusFormControl = new FormControl();
-  public bufferFormControl = new FormControl();
+  public radiusFormControl = new UntypedFormControl();
+  public bufferFormControl = new UntypedFormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public zoneWithBuffer;
+
+  public listIsVisible = true;
+  public tableTemplate: EntityTableTemplate;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -350,6 +382,26 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
     });
+
+    const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
+    const selectionStrategy = new FeatureStoreSelectionStrategy({
+      layer: new VectorLayer({
+        zIndex: 300,
+        source: new FeatureDataSource(),
+        style: undefined,
+        showInLayerList: false,
+        exportable: false,
+        browsable: false
+      }),
+      map: this.map,
+      hitTolerance: 15,
+      motion: FeatureMotion.Default,
+      many: true,
+      dragBox: true
+    });
+
+    this.store.addStrategy(selectionStrategy, true);
+    this.store.addStrategy(selectedRecordStrategy, false);
   }
 
   /**
@@ -596,9 +648,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.bufferEvent.emit(this.buffer);
     }
     this.toggleSearch.emit();
-    this.store.entities$.subscribe((value) => {
+    this.store.entities$.pipe(
+      debounceTime(500)
+    ).subscribe((value) => {
       if (value.length && this.layers.length === this.thematicLength + 1) {
         this.openWorkspace.emit();
+        this.createTableTemplate();
       }
     });
   }
@@ -620,6 +675,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
     this.loading = false;
+    this.tableTemplate = undefined;
   }
 
   clearDrawZone() {
@@ -730,5 +786,29 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.overlayStyle$.next(this.PointStyle);
       this.drawStyle$.next(this.PointStyle);
     }
+  }
+
+  toggleVisibleList() {
+    this.listIsVisible = !this.listIsVisible;
+  }
+
+  private createTableTemplate() {
+    const typeColumn = {
+      name: 'meta.title',
+      title: this.languageService.translate.instant('igo.geo.spatialFilter.type'),
+      renderer: EntityTableColumnRenderer.UnsanitizedHTML
+    };
+    const nameColumn = {
+      name: 'properties.nom',
+      title: this.languageService.translate.instant('igo.geo.spatialFilter.searchResults'),
+      renderer: EntityTableColumnRenderer.UnsanitizedHTML
+    };
+    const columns = [typeColumn, nameColumn];
+
+    this.tableTemplate = {
+      selection: true,
+      sort: true,
+      columns
+    };
   }
 }

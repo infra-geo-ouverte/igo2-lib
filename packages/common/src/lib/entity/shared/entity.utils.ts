@@ -1,4 +1,4 @@
-import t from 'typy';
+import { t } from 'typy';
 
 import { EntityKey } from './entity.interfaces';
 

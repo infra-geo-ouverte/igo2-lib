@@ -97,7 +97,7 @@ export function computeTermSimilarity(from, to, caseSensitive: boolean = false):
 
   let delta = 0;
   if (totalDiff.length) {
-    delta =  totalDiff.length / termFrom.length * 100;
+    delta = totalDiff.length / termFrom.length * 100;
   }
 
   return 100 - Math.floor(delta);

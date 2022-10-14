@@ -1,17 +1,16 @@
+import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import {
   Directive,
   Input,
   OnDestroy,
   Self,
   OnInit,
-  HostListener,
   AfterContentChecked
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
-import { ListenerFunction } from 'ol/events';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -23,6 +22,7 @@ import { transform } from 'ol/proj';
 import * as olstyle from 'ol/style';
 import * as olgeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { SearchResult, Research } from './search.interfaces';
 import { EntityStore } from '@igo2/common';
@@ -35,6 +35,7 @@ import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 import { SearchSourceService } from './search-source.service';
 import { sourceCanReverseSearchAsSummary } from './search.utils';
 import { MediaService } from '@igo2/core';
+import { unByKey } from 'ol/Observable';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -54,12 +55,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   private store$$: Subscription;
   private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
-  private hasPointerReverseSearchSource: boolean =  false;
+  private hasPointerReverseSearchSource: boolean = false;
 
   /**
    * Listener to the pointer move event
    */
-  private pointerMoveListener: ListenerFunction;
+  private pointerMoveListener;
 
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
@@ -121,6 +122,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const store = this.store;
 
     const layer = new VectorLayer({
+      isIgoInternalLayer: true,
       id : 'searchPointerSummaryId',
       title: 'searchPointerSummary',
       zIndex: 900,
@@ -175,10 +177,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance = closestResultByType[result.data.properties.type].distance;
           if (result.data.properties.distance < prevDistance) {
-            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+            const title = result.meta.pointerSummaryTitle || result.meta.title;
+            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
           }
         } else {
-          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+          const title = result.meta.pointerSummaryTitle || result.meta.title;
+          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title };
         }
       }
     });
@@ -203,7 +207,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
         processedSummarizedClosestType.push(result.data.properties.type);
       } else {
         if (processedSummarizedClosestType.indexOf(result.data.properties.type) === -1) {
-          summary.push(result.meta.title);
+          summary.push(result.meta.pointerSummaryTitle || result.meta.title);
         }
       }
     });
@@ -218,7 +222,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+      (event: MapBrowserPointerEvent<any>) => this.onMapEvent(event)
     );
   }
 
@@ -243,7 +247,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @internal
    */
   private unlistenToMapPointerMove() {
-    this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    unByKey(this.pointerMoveListener);
     this.pointerMoveListener = undefined;
   }
 
@@ -251,7 +255,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * Trigger reverse search when the mouse is motionless during the defined delay (pointerMoveDelay).
    * @param event OL map browser pointer event
    */
-  private onMapEvent(event: OlMapBrowserPointerEvent) {
+  private onMapEvent(event: MapBrowserPointerEvent<any>) {
     if (
       event.dragging || !this.igoSearchPointerSummaryEnabled ||
       !this.hasPointerReverseSearchSource || this.mediaService.isTouchScreen()) {
@@ -264,12 +268,21 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
       this.unsubscribeReverseSearch();
     }
 
-    this.lonLat = transform(event.coordinate, this.mapProjection, 'EPSG:4326');
+    this.lonLat = transform(event.coordinate, this.mapProjection, 'EPSG:4326') as [number, number];
 
     this.lastTimeoutRequest = setTimeout(() => {
       this.onSearchCoordinate();
     }, this.igoSearchPointerSummaryDelay);
   }
+
+    /**
+   * Sort the results by display order.
+   * @param r1 First result
+   * @param r2 Second result
+   */
+     private sortByOrder(r1: SearchResult, r2: SearchResult) {
+      return r1.source.displayOrder - r2.source.displayOrder;
+    }
 
   private onSearchCoordinate() {
     this.pointerSearchStore.clear();
@@ -290,7 +303,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const newResults = this.pointerSearchStore.all()
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
-    this.pointerSearchStore.load(newResults);
+    this.pointerSearchStore.load(newResults.sort(this.sortByOrder));
   }
 
   /**
@@ -307,7 +320,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.mapProjection,
       dataProjection: this.mapProjection
-    });
+    }) as FeatureGeometry;
 
     const f: Feature = {
       type: FEATURE,
@@ -341,7 +354,7 @@ private clearLayer() {
  * @param feature OlFeature
  * @returns OL style function
  */
-export function pointerPositionSummaryMarker(feature: olFeature, resolution: number): olstyle.Style {
+export function pointerPositionSummaryMarker(feature: olFeature<OlGeometry>, resolution: number): olstyle.Style {
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/cross_black_18px.svg',

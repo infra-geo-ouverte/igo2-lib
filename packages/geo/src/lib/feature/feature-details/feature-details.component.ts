@@ -13,13 +13,15 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { userAgent } from '@igo2/utils';
-import { NetworkService, ConnectionState } from '@igo2/core';
+import { NetworkService, ConnectionState, MessageService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'igo-feature-details',
@@ -79,9 +81,13 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
 
   constructor(
+    private http: HttpClient,
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    private messageService: MessageService,
+    private languageService: LanguageService,
+    private configService: ConfigService
   ) {
     this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
       this.state = state;
@@ -118,7 +124,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     }
     const regexBase = /<base href="[\w:\/\.]+">/;
     if (!regexBase.test(value.body)) {
-      const url = new URL(value.url);
+      const url = new URL(value.url, window.location.origin);
       value.body = value.body.replace('<head>', `<head><base href="${url.origin}">`);
     }
 
@@ -129,24 +135,75 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return typeof value === 'object';
   }
 
+  openSecureUrl(value) {
+    let url: string;
+    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
+    const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+
+    if (regexDepot.test(value)) {
+      url = value.match(regexDepot)[0];
+
+      this.http.get(url, {
+        responseType: 'blob'
+      })
+      .subscribe((docOrImage) => {
+        const fileUrl = URL.createObjectURL(docOrImage);
+        window.open(fileUrl, '_blank');
+        this.cdRef.detectChanges();
+      },
+      (error: Error) => {
+        const translate = this.languageService.translate;
+        const title = translate.instant('igo.geo.targetHtmlUrlUnauthorizedTitle');
+        const message = translate.instant('igo.geo.targetHtmlUrlUnauthorized');
+        this.messageService.error(message, title);
+      });
+    } else {
+      url = value.match(regexUrl)[0];
+      window.open(url, '_blank');
+    }
+  }
+
   isUrl(value) {
     if (typeof value === 'string') {
-      return (
-        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
-      );
-    } else {
-      return false;
+      const regex = /^https?:\/\//;
+      return regex.test(value);
+    }
+  }
+
+  isDoc(value) {
+    if (typeof value === 'string') {
+      if (this.isUrl(value)) {
+        const regex = /(pdf|docx?|xlsx?)$/;
+        return regex.test(value.toLowerCase());
+      } else {
+        return false;
+      }
     }
   }
 
   isImg(value) {
-    if (this.isUrl(value)) {
-      return (
-        ['jpg', 'png', 'gif'].includes(value.split('.').pop().toLowerCase())
-      );
-    } else {
-      return false;
+    if (typeof value ==='string') {
+      if (this.isUrl(value)) {
+        const regex = /(jpe?g|png|gif)$/;
+        return regex.test(value.toLowerCase());
+      } else {
+        return false;
+      }
     }
+  }
+
+  isEmbeddedLink(value) {
+    if (typeof value === 'string') {
+      const regex = /^<a/;
+      return regex.test(value);
+    }
+  }
+
+  getEmbeddedLinkText(value) {
+    const regex = /(?:>).*?(?=<|$)/;
+    let text = value.match(regex)[0] as string;
+    text = text.replace(/>/g, '');
+    return text;
   }
 
   filterFeatureProperties(feature) {

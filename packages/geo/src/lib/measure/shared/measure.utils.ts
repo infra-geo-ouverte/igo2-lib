@@ -1,6 +1,5 @@
 import { LanguageService } from '@igo2/core';
 import * as olstyle from 'ol/style';
-import OlGeometry from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
 import OlPolygon from 'ol/geom/Polygon';
@@ -257,7 +256,7 @@ export function createMeasureLayerStyle(): olstyle.Style {
  * @param projection olGeometry's projection
  * @returns Length in meters
  */
-export function measureOlGeometryLength(olGeometry: OlGeometry, projection: string): number | undefined {
+export function measureOlGeometryLength(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): number | undefined {
   if (olGeometry instanceof OlPoint) {
     return undefined;
   }
@@ -273,7 +272,7 @@ export function measureOlGeometryLength(olGeometry: OlGeometry, projection: stri
  * @param projection olGeometry's projection
  * @returns Area in square meters
  */
-export function measureOlGeometryArea(olGeometry: OlGeometry, projection: string): number | undefined {
+export function measureOlGeometryArea(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): number | undefined {
   if (olGeometry instanceof OlPoint || olGeometry instanceof OlLineString) {
     return undefined;
   }
@@ -290,12 +289,12 @@ export function measureOlGeometryArea(olGeometry: OlGeometry, projection: string
  * @param projection olGeometry's projection
  * @returns Computed measure
  */
-export function measureOlGeometry(olGeometry: OlGeometry, projection: string): Measure {
+export function measureOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): Measure {
   const length = measureOlGeometryLength(olGeometry, projection);
   const area = measureOlGeometryArea(olGeometry, projection);
 
   const lengths = [];
-  const coordinates = olGeometry.flatCoordinates;
+  const coordinates = olGeometry.getFlatCoordinates();
   const coordinatesLength = coordinates.length;
   for (let i = 0; i <= coordinatesLength - 4; i += 2) {
     const olSegment = new OlLineString([
@@ -321,13 +320,13 @@ export function measureOlGeometry(olGeometry: OlGeometry, projection: string): M
 export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
-    const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
+    const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
-  } else  {
+  } else {
     olMidpoints = getOlGeometryMidpoints(olGeometry);
     // TODO: handle multi geometries
-    const coordinates = olGeometry.flatCoordinates;
+    const coordinates = olGeometry.getFlatCoordinates();
     const midpointsLength = olMidpoints.length;
     for (let i = 0; i < midpointsLength; i++) {
       const j = i * 2;
@@ -379,7 +378,7 @@ function getOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon |
   if (olGeometry instanceof OlCircle) {
     expectedNumber = 0;
   } else {
-    expectedNumber = Math.max((olGeometry.flatCoordinates.length / 2) - 1, 0);
+    expectedNumber = Math.max((olGeometry.getFlatCoordinates().length / 2) - 1, 0);
   }
   // TODO: This works but it's quite messy. If time permits,
   // clean this. Maybe a Tooltip class could handle that
@@ -451,7 +450,7 @@ export function updateOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString |
     if (olTooltip === undefined) {
       olTooltip = createOlTooltipAtPoint(olMidpoint, false, typeGeom);
     } else {
-      olTooltip.setPosition(olMidpoint.flatCoordinates);
+      olTooltip.setPosition(olMidpoint.getFlatCoordinates());
     }
     return olTooltip;
   });
@@ -499,7 +498,7 @@ export function updateOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlP
   if (olTooltip === undefined) {
     olTooltip = createOlTooltipAtPoint(olCenter, true);
   } else {
-    olTooltip.setPosition(olCenter.flatCoordinates);
+    olTooltip.setPosition(olCenter.getFlatCoordinates());
   }
   return olTooltip;
 }
@@ -543,7 +542,7 @@ export function createOlTooltipAtPoint(olPoint: OlPoint, center: boolean = false
       `igo-map-tooltip-measure-${srcGeomType}segments`]).join(' '),
     stopEvent: false
   });
-  olTooltip.setPosition(olPoint.flatCoordinates);
+  olTooltip.setPosition(olPoint.getFlatCoordinates());
   olPoint.set('_tooltip', olTooltip);
 
   return olTooltip;

@@ -16,6 +16,7 @@
       },
       "architect": {
         "build": {
+          "defaultConfiguration": "developpement",
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "aot": true,
@@ -41,7 +42,9 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": ["demo/src/styles.scss"],
+            "styles": [
+              "demo/src/styles.scss"
+            ],
             "scripts": [],
             "allowedCommonJsDependencies": [
               "hammerjs",
@@ -49,6 +52,28 @@
               "jspdf",
               "file-saver",
               "jwt-decode",
+              "canvg",
+              "core-js-pure/features/array/from",
+              "core-js-pure/features/array/is-array",
+              "core-js-pure/features/instance/slice",
+              "core-js-pure/features/object/create",
+              "core-js-pure/features/object/define-property",
+              "core-js-pure/features/object/get-own-property-descriptor",
+              "core-js-pure/features/object/get-prototype-of",
+              "core-js-pure/features/object/set-prototype-of",
+              "core-js-pure/features/promise",
+              "core-js-pure/features/reflect/get",
+              "core-js-pure/features/symbol",
+              "core-js-pure/features/symbol/iterator",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "core-js/modules/web.dom-collections.iterator.js",
+              "canvg/lib/index.es.js",
+              "html-entities",
               "@turf/helpers",
               "@turf/line-segment",
               "@turf/meta",
@@ -59,7 +84,20 @@
               "minimatch",
               "path",
               "pixelworks",
-              "brace-expansion"
+              "brace-expansion",
+              "raf",
+              "pako/lib/inflate",
+              "txml",
+              "lru-cache",
+              "striptags",
+              "nosleep.js",
+              "ts-md5",
+              "moment",
+              "html2canvas",
+              "jszip",
+              "bowser",
+              "rgbcolor",
+              "rbush"
             ]
           },
           "configurations": {
@@ -73,7 +111,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": true,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -82,8 +119,28 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "developpement": {
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -117,19 +174,23 @@
             "polyfills": "demo/src/polyfills.ts",
             "tsConfig": "demo/src/tsconfig.spec.json",
             "karmaConfig": "demo/src/karma.conf.js",
-            "styles": ["demo/src/styles.scss"],
+            "styles": [
+              "demo/src/styles.scss"
+            ],
             "scripts": [],
-            "assets": ["demo/src/favicon.ico", "demo/src/assets"]
+            "assets": [
+              "demo/src/favicon.ico",
+              "demo/src/assets"
+            ]
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "demo/src/tsconfig.app.json",
-              "demo/src/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "demo/src/**/*.ts",
+              "demo/src/**/*.html"
+            ]
           }
         }
       }
@@ -146,10 +207,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "e2e/**/*.ts"
+            ]
           }
         }
       }
@@ -167,7 +229,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/auth/tsconfig.lib.json",
             "project": "packages/auth/ng-package.json"
@@ -188,13 +250,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/auth/tsconfig.lib.json",
-              "packages/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/auth/**/*.ts",
+              "packages/auth/**/*.html"
+            ]
           }
         }
       }
@@ -212,7 +273,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/common/tsconfig.lib.json",
             "project": "packages/common/ng-package.json"
@@ -233,13 +294,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/common/tsconfig.lib.json",
-              "packages/common/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/common/**/*.ts",
+              "packages/common/**/*.html"
+            ]
           }
         }
       }
@@ -257,7 +317,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/core/tsconfig.lib.json",
             "project": "packages/core/ng-package.json"
@@ -278,13 +338,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/core/tsconfig.lib.json",
-              "packages/core/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/core/**/*.ts",
+              "packages/core/**/*.html"
+            ]
           }
         }
       }
@@ -302,7 +361,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/geo/tsconfig.lib.json",
             "project": "packages/geo/ng-package.json"
@@ -323,13 +382,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/geo/tsconfig.lib.json",
-              "packages/geo/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/geo/**/*.ts",
+              "packages/geo/**/*.html"
+            ]
           }
         }
       }
@@ -341,7 +399,7 @@
       "prefix": "igo",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/utils/tsconfig.lib.json",
             "project": "packages/utils/ng-package.json"
@@ -354,13 +412,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/utils/tsconfig.lib.json",
-              "packages/utils/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/utils/**/*.ts",
+              "packages/utils/**/*.html"
+            ]
           }
         }
       }
@@ -378,7 +435,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/context/tsconfig.lib.json",
             "project": "packages/context/ng-package.json"
@@ -399,13 +456,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "packages/context/tsconfig.lib.json",
-              "packages/context/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/context/**/*.ts",
+              "packages/context/**/*.html"
+            ]
           }
         }
       }
@@ -423,7 +479,7 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "packages/integration/tsconfig.lib.json",
             "project": "packages/integration/ng-package.json"
@@ -436,14 +492,24 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["packages/integration/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "packages/integration/**/*.ts",
+              "packages/integration/**/*.html"
+            ]
           }
         }
       }
     }
-  },
-  "defaultProject": "demo"
+  }
+,"cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "cache": {
+      "enabled": false,
+      "environment": "all"
+    }
+  }
 }

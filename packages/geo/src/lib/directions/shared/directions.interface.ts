@@ -1,21 +1,70 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { DirectionsFormat, SourceDirectionsType } from './directions.enum';
+import { DirectionRelativePositionType, DirectionsFormat, DirectionType, ProposalType, SourceDirectionsType } from './directions.enum';
 
-export interface DirectionsOptions {
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { SearchSource } from '../../search/shared/sources/source';
+
+export interface DirectionOptions {
   overview?: boolean;
   steps?: boolean;
   geometries?: string;
   alternatives?: boolean;
+  continue_straight?: boolean;
+}
+
+export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
+export interface FeatureWithDirection extends Feature<FeatureWithDirectionProperties> { }
+export interface FeatureWithStep extends Feature<FeatureWithStepProperties> {}
+
+export interface FeatureWithStepProperties {
+  id: string;
+  step: IgoStep;
+  type: DirectionType;
+}
+export interface FeatureWithDirectionProperties {
+  id: string;
+  direction: Direction;
+  type: DirectionType;
+  active: boolean;
+}
+export interface FeatureWithStopProperties {
+  id: string;
+  stop: Stop;
+  type: DirectionType;
+  stopText: string;
+  stopColor: string;
+  stopOpacity: 1;
 }
 
 export interface Stop {
+  id: string;
+  text?: string;
+  searchProposals?: SourceProposal[];
+  coordinates?: [number, number];
+  position: number;
+  relativePosition: DirectionRelativePositionType;
   stopPoint?: string;
   stopProposals?: [];
   directionsText?: string;
   stopCoordinates?: [number, number];
 }
 
-export interface Directions {
+export interface SourceProposal {
+  type: ProposalType;
+  source: SearchSource;
+  results: { [key: string]: any }[];
+  meta: {
+    dataType: string;
+    id: string;
+    title: string;
+    titleHtml?: string;
+    icon: string;
+    score?: number;
+    nextPage?: boolean;
+  };
+}
+
+export interface Direction {
   id: string;
   source: string;
   sourceType?: SourceDirectionsType;

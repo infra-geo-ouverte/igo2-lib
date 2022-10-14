@@ -1,3 +1,4 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
@@ -5,6 +6,7 @@ import { asArray as ColorAsArray } from 'ol/color';
 import { createOverlayMarkerStyle } from '../overlay/shared/overlay-marker-style.utils';
 import { createOverlayDefaultStyle } from '../overlay/shared/overlay.utils';
 import { FeatureCommonVectorStyleOptions } from './commonVectorStyle.interface';
+import { Feature } from '../feature';
 
 
 /**
@@ -57,7 +59,16 @@ export function getCommonVectorStyle(
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
   const isOlFeature = feature instanceof olFeature;
-  const geometry = isOlFeature ? feature.getGeometry() : feature.geometry;
+  let geometry;
+  let text;
+  if (isOlFeature) {
+    feature = feature as olFeature<OlGeometry>;
+    geometry = feature.getGeometry();
+  } else {
+    feature = feature as Feature;
+    geometry = feature.geometry;
+    text = feature.meta.mapTitle;
+  }
   const geometryType = isOlFeature ? geometry.getType() : geometry.type;
 
   if (!geometry || geometryType === 'Point') {
@@ -70,7 +81,7 @@ export function getCommonVectorStyle(
     }
 
     return createOverlayMarkerStyle({
-      text: isOlFeature ? undefined : feature.meta.mapTitle,
+      text,
       opacity: markerOpacity,
       markerOutlineColor,
       markerColor: markerColorRGB
@@ -90,7 +101,7 @@ export function getCommonVectorStyle(
     }
 
     return createOverlayDefaultStyle({
-      text: isOlFeature ? undefined : feature.meta.mapTitle,
+      text,
       strokeWidth,
       strokeColor: strokeWithOpacity,
       fillColor: fillWithOpacity

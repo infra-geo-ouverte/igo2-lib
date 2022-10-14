@@ -16,10 +16,10 @@ export interface ICatalog {
   type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;
-  forcedProperties?: any[];
+  forcedProperties?: ForcedProperty[];
   requestEncoding?: string;
   regFilters?: string[];
-  groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id and title)
+  groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id, title, sortDirection?)
   groupSeparator?: string;
   queryFormat?: QueryFormat;
   queryParams?: { [key: string]: string };
@@ -28,6 +28,15 @@ export interface ICatalog {
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
   showLegend?: boolean;
+}
+
+export interface ForcedProperty {
+  layerName: any;
+  title?: string;
+  metadataUrl?: string;
+  metadataAbstract?: string;
+  metadataAbstractAll?: string;
+  metadataUrlAll?: string;
 }
 
 export interface ICompositeCatalog extends ICatalog {
@@ -49,6 +58,7 @@ export interface CatalogItemLayer<L = MetadataLayerOptions>
 
 export interface CatalogItemGroup extends CatalogItem {
   items?: CatalogItem[];
+  sortDirection?: 'asc' | 'desc'; // use with groupImpose and ICompositeCatalog
 }
 
 export interface CatalogItemState extends EntityState {

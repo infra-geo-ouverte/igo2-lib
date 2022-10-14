@@ -1,0 +1,62 @@
+<div cdkDropList class="stops-list" (cdkDropListDropped)="drop($event)">
+  <div touchleave  
+  (touchenter)="onStopEnter(stop)"
+  (touchleave)="onStopLeave()"
+  (mouseover)="onStopEnter(stop)"
+  (mouseleave)="onStopLeave()"
+  (cdkDragStarted)="stopIsDragged=true"
+  (cdkDragEnded)="stopIsDragged=false"
+  cdkDragLockAxis="y" class="stop-box mat-typography" *ngFor="let stop of stopsStore.view.all$() | async; let i = index;" cdkDrag>
+    <div [ngClass]="getNgClass(stop)">
+      <mat-form-field>
+        <input id="{{stop.id}}" type="text"
+            [placeholder]="getPlaceholder(stop)"
+            matTooltipShowDelay="500"
+            [matTooltip]="stop.text"
+            aria-label="Number"
+            matInput
+            (focus)="onInputFocus(stop)"
+            [(ngModel)]="stop.text"
+            (keyup)="setStopText($event,stop)"
+            (keydown.enter)="$event.preventDefault()"
+            [matAutocomplete]="auto">
+        <button 
+            mat-button 
+            *ngIf="(stop.text || stop.coordinates) && stopWithHover && stop.id===stopWithHover.id"
+            matTooltipShowDelay="500"
+            [matTooltip]="'igo.geo.directionsForm.clearStop' | translate"
+            matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(stop)">
+            <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      
+        <mat-autocomplete [displayWith]="getOptionText" #auto="matAutocomplete" (optionSelected)="chooseProposal($event,stop)">
+          <mat-optgroup *ngFor="let source of stop.searchProposals" [label]="source.source.title" [disabled]="source.source.enabled === false">
+          <mat-option *ngFor="let result of source.results" [value]="result" 
+          matTooltipShowDelay="500" [matTooltip]="result.meta ? result.meta.title : ''">
+            {{ result.meta ? result.meta.title : '' }}
+          </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+
+
+
+    <div class="igo-form-button-group" *ngIf="!stopIsDragged && stopWithHover && stop.id === stopWithHover.id">
+      <button class="swipe-vertical" cdkDragHandle mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.moveStop' | translate" color="primary">
+        <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
+      </button>
+
+      <button *ngIf="(stopsStore.count$ | async)> 2" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn" (click)="removeStop(stop)">
+        <mat-icon svgIcon="delete"></mat-icon>
+      </button>
+      <button *ngIf="(stopsStore.count$ | async)<= 2" disabled="true" mat-icon-button tooltip-position="below"
+        matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.removeStop' | translate" color="warn">
+        <mat-icon svgIcon="blank"></mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

@@ -7,16 +7,16 @@ import {
   EventEmitter,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 import {
   OgcFilterableDataSourceOptions,
-  OgcFilterableDataSource
+  OgcFilterableDataSource,
+  OgcFilterDuringOptions
 } from '../shared/ogc-filter.interface';
 
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-ogc-filter-time',
@@ -36,10 +36,10 @@ export class OgcFilterTimeComponent implements OnInit {
   endHours: number[];
   beginMinutes: number[];
   endMinutes: number[];
-  beginHourFormControl = new FormControl();
-  beginMinuteFormControl = new FormControl();
-  endHourFormControl = new FormControl();
-  endMinuteFormControl = new FormControl();
+  beginHourFormControl = new UntypedFormControl();
+  beginMinuteFormControl = new UntypedFormControl();
+  endHourFormControl = new UntypedFormControl();
+  endMinuteFormControl = new UntypedFormControl();
   _beginValue: Date;
   _endValue: Date;
   readonly _defaultMin: string = '1900-01-01';
@@ -51,6 +51,12 @@ export class OgcFilterTimeComponent implements OnInit {
 
   readonly defaultStepMillisecond = 60000;
   public options: OgcFilterableDataSourceOptions;
+
+  public onlyYearBegin: number;
+  public onlyYearEnd: number;
+  public calendarTypeYear = false;
+  public resetIcon = 'replay';
+  public filterStateDisable: boolean;
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
@@ -98,7 +104,6 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.displayFormat ? this.currentFilter.displayFormat : this._defaultDisplayFormat;
   }
 
-
   constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit(){
@@ -108,6 +113,11 @@ export class OgcFilterTimeComponent implements OnInit {
     }
     this.beginValue = this.parseFilter(this.handleMin());
     this.endValue = this.parseFilter(this.handleMax());
+
+    this.onlyYearBegin = this.beginValue.getUTCFullYear();
+    this.onlyYearEnd = this.endValue.getUTCFullYear();
+    this.calendarTypeYear = this.isCalendarYearMode();
+    this.setFilterStateDisable();
     this.updateHoursMinutesArray();
     // update value for now value
     this.updateValues();
@@ -150,11 +160,31 @@ export class OgcFilterTimeComponent implements OnInit {
       }
       return new Date();
     }
-    return filter ? new Date(filter) : new Date();
+    if (this.currentFilter.calendarModeYear) {
+      const date = this.getDateFromStringWithoutTime(filter);
+      return date;
+    } else {
+      return filter ? new Date(filter) : new Date();
+    }
   }
 
   changeTemporalProperty(value, position?, refreshFilter = true) {
     let valueTmp = this.getDateTime(value, position);
+    if (this.isCalendarYearMode()) {
+      let dateStringFromYearNotime;
+      if (position === 1) {
+        this.beginValue = value;
+        this.onlyYearBegin = this.beginValue.getFullYear();
+        dateStringFromYearNotime = `${this.onlyYearBegin}-01-01`;
+      } else {
+        this.endValue = value;
+        this.onlyYearEnd = this.endValue.getFullYear();
+        dateStringFromYearNotime = `${this.onlyYearEnd}-01-01`;
+      }
+      // call service with string date without time
+      this.changeProperty.next({ value: dateStringFromYearNotime, pos: position, refreshFilter });
+      return;
+    }
     if (position === 2 && this.calendarType() === 'date' && !this.sliderMode) {
       /* Above month: see yearSelected or monthSelected */
       valueTmp = moment(valueTmp).endOf('day').toDate();
@@ -176,14 +206,34 @@ export class OgcFilterTimeComponent implements OnInit {
     if (!value || value === '') {
       return undefined;
     }
+    if (typeof(value) === 'string' && this.currentFilter.calendarModeYear) {
+      return this.getDateFromStringWithoutTime(value);
+    }
     return new Date(value);
   }
 
   calendarType() {
+    if (this.currentFilter.calendarModeYear) {
+      return 'year';
+    }
     if (this.stepMilliseconds < 86400000) {
       return 'datetime';
     }
     return 'date';
+  }
+
+  isCalendarYearMode(): boolean {
+    if (this.calendarType() === 'year') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  yearOnlyInputChange(changeEvent, datePicker?: any, property?: string) {
+    const year = changeEvent.target.value;
+    const date = this.getDateFromStringWithoutTime(year);
+    this.yearSelected(date, datePicker, property);
   }
 
   yearSelected(year, datePicker?: any, property?: string, refreshFilter = true) {
@@ -192,8 +242,9 @@ export class OgcFilterTimeComponent implements OnInit {
         datePicker.close();
       }
       if (property === 'end') {
+        // change value 01 jan to 31 dec same year
         year = moment(year).endOf('year').toDate();
-      } else if (property === 'begin' && this.restrictedToStep()) {
+      } else if (property === 'begin' && this.restrictedToStep() && !this.calendarTypeYear) {
         this.yearSelected(year, undefined, 'end');
       }
       this.changeTemporalProperty(year, property === 'begin' ? 1 : 2, refreshFilter);
@@ -239,7 +290,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'years', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
         return (monthDiffPlus1 % moment.duration(this.step).asYears()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asYears()) === 0;
@@ -249,7 +300,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'months', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
+        const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
         return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
       } else if ( type === 'begin' ) {
         return (monthDiff % moment.duration(this.step).asMonths()) === 0;
@@ -258,7 +309,7 @@ export class OgcFilterTimeComponent implements OnInit {
       const weekDiff = moment(dateValue).diff(moment(this.handleMin()), 'weeks', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const weekDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
+        const weekDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
         return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
       } else if ( type === 'begin' ) {
         return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
@@ -267,9 +318,9 @@ export class OgcFilterTimeComponent implements OnInit {
       const dayDiff = moment(dateValue).diff(moment(this.handleMin()), 'days', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const dayDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
+        const dayDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
         const _mod = (dayDiffPlus1 % moment.duration(this.step).asDays());
-        return  (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+        return (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
       } else if ( type === 'begin' ) {
         const _mod = ((dayDiff % moment.duration(this.step).asDays()) + 1);
         return (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8
@@ -288,21 +339,32 @@ export class OgcFilterTimeComponent implements OnInit {
   getDateTime(date, pos) {
     const valuetmp = new Date(date);
     let valuetmp2;
-
     if (!this.sliderMode) {
       switch (pos) {
-        case 1:
-          valuetmp2 = valuetmp.setHours(
+        case 1: {
+          if (this.currentFilter.calendarModeYear) {
+            valuetmp2 = valuetmp.setHours(0, 0);
+            break;
+          } else {
+            valuetmp2 = valuetmp.setHours(
             this.beginHourFormControl.value,
             this.beginMinuteFormControl.value
-          );
-          break;
-        case 2:
-          valuetmp2 = valuetmp.setHours(
-            this.endHourFormControl.value,
-            this.endMinuteFormControl.value
-          );
-          break;
+            );
+            break;
+          }
+        }
+        case 2: {
+          if (this.currentFilter.calendarModeYear) {
+            valuetmp2 = valuetmp.setHours(0, 0);
+            break;
+          } else {
+            valuetmp2 = valuetmp.setHours(
+              this.endHourFormControl.value,
+              this.endMinuteFormControl.value
+            );
+            break;
+          }
+        }
       }
     }
     return new Date(valuetmp2 ? valuetmp2 : valuetmp);
@@ -456,4 +518,92 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
+  setFilterStateDisable() {
+    if (this.currentFilter) {
+      this.filterStateDisable = !this.currentFilter.active;
+    } else {
+      this.filterStateDisable = false;
+    }
+    if(this.calendarType() === 'datetime') {
+      if (this.filterStateDisable === true) {
+        this.beginHourFormControl.disable();
+        this.beginMinuteFormControl.disable();
+        this.endHourFormControl.disable();
+        this.endMinuteFormControl.disable();
+      } else {
+        this.beginHourFormControl.enable();
+        this.beginMinuteFormControl.enable();
+        this.endHourFormControl.enable();
+        this.endMinuteFormControl.enable();
+      }
+    }
+  }
+  getDateFromStringWithoutTime(stringDate: string): Date {
+    // warning create date with no time make a date UTC with TZ and the date create maybe not the same year, month and day
+    // exemple:
+    // new Date('2022-01-01') -> Fri Dec 31 2021 19:00:00 GMT-0500 (heure normale de l’Est nord-américain)
+    // to create same date as string, add time 00 in the creation
+    // new Date('2022-01-01 00:00:00') -> Sat Jan 01 2022 00:00:00 GMT-0500 (heure normale de l’Est nord-américain)
+    let year;
+    let month = '01';
+    let day = '01';
+    if (stringDate.length === 10) {
+       const dateItems = stringDate.split('-');
+        if (dateItems.length !== 3) {
+          throw new Error('Error in config date begin-end for ogcFilter: Date without time format need to be YYYY-MM-DD or YYYY');
+        } else {
+          year = dateItems[0];
+          month = dateItems[1];
+          day = dateItems[2];
+        }
+    } else if (stringDate.length === 4) {
+      year = stringDate;
+    } else {
+      return new Date(stringDate);
+    }
+    return new Date(`${year}-${month}-${day} 00:00:00`);
+  }
+
+  resetFilter() {
+    let filterOriginConfig = this.datasource.options.ogcFilters.filters as OgcFilterDuringOptions;
+
+    let minDefaultDate;
+    let maxDefaultDate;
+    let minDefaultISOString;
+    let maxDefaultISOString;
+
+    if (this.calendarTypeYear) {
+      if (filterOriginConfig.end === 'today') {
+        let todayDateStringNoTime = new Date().toLocaleDateString('en-CA'); // '2022-02-13'
+        maxDefaultISOString = `${todayDateStringNoTime.substring(0,4)}-01-01`;
+      } else {
+        maxDefaultISOString = `${filterOriginConfig.end.substring(0,4)}-01-01`;
+      }
+      minDefaultISOString = `${filterOriginConfig.begin.substring(0,4)}-01-01`;
+      minDefaultDate = this.getDateFromStringWithoutTime(minDefaultISOString);
+      maxDefaultDate = this.getDateFromStringWithoutTime(maxDefaultISOString);
+    } else {
+      minDefaultDate = this.parseFilter(filterOriginConfig.begin);
+      maxDefaultDate = this.parseFilter(filterOriginConfig.end);
+      minDefaultISOString = minDefaultDate.toISOString();
+      maxDefaultISOString = maxDefaultDate.toISOString();
+    }
+
+    if ((this.currentFilter.begin !== minDefaultISOString ) ||
+    (this.currentFilter.end !== maxDefaultISOString)) {
+      this.beginValue = minDefaultDate;
+      this.endValue = maxDefaultDate;
+      this.updateValues();
+    }
+  }
+
+  toggleFilterState() {
+    if (this.currentFilter.active === true) {
+      this.currentFilter.active = false;
+    } else {
+      this.currentFilter.active = true;
+    }
+    this.setFilterStateDisable();
+    this.updateValues();
+  }
 }

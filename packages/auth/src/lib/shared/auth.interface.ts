@@ -67,6 +67,13 @@ export interface AuthOptions {
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
+  hostsByKey?: AuthByKeyOptions[];
+}
+export interface AuthByKeyOptions {
+  domainRegFilters?: string;
+  keyProperty?: string;
+  keyValue?: string;
+
 }
 export interface WithCredentialsOptions {
   withCredentials?: boolean;

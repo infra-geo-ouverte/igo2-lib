@@ -1,20 +1,21 @@
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import OlStyle from 'ol/style';
+import * as OlStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlModify from 'ol/interaction/Modify';
 import OlTranslate from 'ol/interaction/Translate';
 import OlDraw from 'ol/interaction/Draw';
 import OlPolygon from 'ol/geom/Polygon';
+import OlLineString from 'ol/geom/LineString';
+import OlCircle from 'ol/geom/Circle';
 import OlLinearRing from 'ol/geom/LinearRing';
 import OlInteraction from 'ol/interaction/Interaction';
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
-import { MapBrowserEvent as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
-import {
-  Geometry as OlGeometry,
-  GeometryEvent as OlGeometryEvent
-} from 'ol/geom/Geometry';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import BasicEvent from 'ol/events/Event';
 import { ModifyEvent as OlModifyEvent } from 'ol/interaction/Modify';
 import { TranslateEvent as OlTranslateEvent } from 'ol/interaction/Translate';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
@@ -29,10 +30,10 @@ import {
 } from '../geometry.utils';
 
 export interface ModifyControlOptions {
-  source?: OlVectorSource;
-  layer?: OlVectorLayer;
-  layerStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
-  drawStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
+  source?: OlVectorSource<any>;
+  layer?: OlVectorLayer<any>;
+  layerStyle?: OlStyleLike;
+  drawStyle?: OlStyleLike;
   modify?: boolean;
   translate?: boolean;
 }
@@ -57,21 +58,21 @@ export class ModifyControl {
   public changes$: Subject<OlGeometry> = new Subject();
 
   private olMap: OlMap;
-  private olOverlayLayer: OlVectorLayer;
+  private olOverlayLayer: OlVectorLayer<any>;
   public olModifyInteraction: OlModify;
-  private onModifyStartKey: string;
-  private onModifyEndKey: string;
-  private onModifyKey: string;
+  private onModifyStartKey: any;
+  private onModifyEndKey: any;
+  private onModifyKey: any;
   private olModifyInteractionIsActive: boolean = false;
   private olTranslateInteraction: OlTranslate;
-  private onTranslateStartKey: string;
-  private onTranslateEndKey: string;
-  private onTranslateKey: string;
+  private onTranslateStartKey: any;
+  private onTranslateEndKey: any;
+  private onTranslateKey: any;
   private olTranslateInteractionIsActive: boolean = false;
-  private olDrawInteraction: OlTranslate;
-  private onDrawStartKey: string;
-  private onDrawEndKey: string;
-  private onDrawKey: string;
+  private olDrawInteraction: OlDraw;
+  private onDrawStartKey: any;
+  private onDrawEndKey: any;
+  private onDrawKey: any;
   private olDrawInteractionIsActive: boolean = false;
 
   private mousePosition: [number, number];
@@ -81,7 +82,7 @@ export class ModifyControl {
   private drawKeyDown$$: Subscription;
 
   private removedOlInteractions: OlInteraction[] = [];
-  private olLinearRingsLayer: OlVectorLayer;
+  private olLinearRingsLayer: OlVectorLayer<any>;
 
   // This is the geometry to test against when drawing holes
   private olOuterGeometry: OlGeometry;
@@ -97,7 +98,7 @@ export class ModifyControl {
    * OL overlay source
    * @internal
    */
-  get olOverlaySource(): OlVectorSource {
+  get olOverlaySource(): OlVectorSource<any> {
     return this.olOverlayLayer.getSource();
   }
 
@@ -105,7 +106,7 @@ export class ModifyControl {
    * OL linear rings source
    * @internal
    */
-  get olLinearRingsSource(): OlVectorSource {
+  get olLinearRingsSource(): OlVectorSource<any> {
     return this.olLinearRingsLayer.getSource();
   }
 
@@ -173,7 +174,7 @@ export class ModifyControl {
   /**
    * Return the overlay source
    */
-  getSource(): OlVectorSource {
+  getSource(): OlVectorSource<any> {
     return this.olOverlaySource;
   }
 
@@ -190,7 +191,7 @@ export class ModifyControl {
   /**
    * Create an overlay source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer {
+  private createOlInnerOverlayLayer(): OlVectorLayer<any> {
     return new OlVectorLayer({
       source: this.options.source ? this.options.source : new OlVectorSource(),
       style: this.options.layerStyle,
@@ -201,7 +202,7 @@ export class ModifyControl {
   /**
    * Add the overlay layer if it wasn't defined in the options
    */
-  private addOlInnerOverlayLayer(): OlVectorLayer {
+  private addOlInnerOverlayLayer() {
     if (this.options.layer === undefined) {
       this.olMap.addLayer(this.olOverlayLayer);
     }
@@ -225,7 +226,7 @@ export class ModifyControl {
     }
   }
 
-  private createOlLinearRingsLayer(): OlVectorLayer {
+  private createOlLinearRingsLayer(): OlVectorLayer<any> {
     return new OlVectorLayer({
       source: new OlVectorSource(),
       style: createDrawHoleInteractionStyle(),
@@ -260,7 +261,7 @@ export class ModifyControl {
   private addOlModifyInteraction() {
     const olModifyInteraction = new OlModify({
       source: this.olOverlaySource,
-      style: this.options.drawStyle
+      style: this.options.drawStyle as OlStyle.Style
     });
     this.olModifyInteraction = olModifyInteraction;
   }
@@ -312,15 +313,15 @@ export class ModifyControl {
    * @param event Modify start event
    */
   private onModifyStart(event: OlModifyEvent) {
-    const olGeometry = event.features.item(0).getGeometry();
+    const olGeometry = event.features.item(0).getGeometry() as OlGeometry;
     this.start$.next(olGeometry);
     this.onModifyKey = olGeometry.on(
       'change',
-      (olGeometryEvent: OlGeometryEvent) => {
+      (olGeometryEvent: BasicEvent) => {
         this.mousePosition = getMousePositionFromOlGeometryEvent(
           olGeometryEvent
         );
-        this.changes$.next(olGeometryEvent.target);
+        this.changes$.next(olGeometryEvent.target as OlLineString | OlCircle | OlPolygon);
       }
     );
     this.subscribeToKeyDown();
@@ -332,7 +333,7 @@ export class ModifyControl {
    */
   private onModifyEnd(event: OlModifyEvent) {
     unByKey(this.onModifyKey);
-    this.end$.next(event.features.item(0).getGeometry());
+    this.end$.next(event.features.item(0).getGeometry() as OlGeometry);
     this.unsubscribeToKeyDown();
   }
 
@@ -423,12 +424,12 @@ export class ModifyControl {
    * @param event Translate start event
    */
   private onTranslateStart(event: OlTranslateEvent) {
-    const olGeometry = event.features.item(0).getGeometry();
+    const olGeometry = event.features.item(0).getGeometry() as OlGeometry;
     this.start$.next(olGeometry);
     this.onTranslateKey = olGeometry.on(
       'change',
-      (olGeometryEvent: OlGeometryEvent) => {
-        this.changes$.next(olGeometryEvent.target);
+      (olGeometryEvent: BasicEvent) => {
+        // this.changes$.next(olGeometryEvent.target);
       }
     );
   }
@@ -439,7 +440,7 @@ export class ModifyControl {
    */
   private onTranslateEnd(event: OlTranslateEvent) {
     unByKey(this.onTranslateKey);
-    this.end$.next(event.features.item(0).getGeometry());
+    this.end$.next(event.features.item(0).getGeometry() as OlGeometry);
   }
 
   /**
@@ -451,7 +452,7 @@ export class ModifyControl {
       source: this.olLinearRingsSource,
       stopClick: true,
       style: createDrawHoleInteractionStyle(),
-      condition: (event: OlMapBrowserEvent) => {
+      condition: (event: MapBrowserEvent<any>) => {
         const olOuterGeometry = this.olOuterGeometry || this.getOlGeometry();
         const intersects = olOuterGeometry.intersectsCoordinate(
           event.coordinate
@@ -611,18 +612,19 @@ export class ModifyControl {
     const olGeometry = event.feature.getGeometry();
     this.olOuterGeometry = this.getOlGeometry().clone();
 
-    const linearRingCoordinates = olGeometry.getLinearRing().getCoordinates();
+    const linearRingCoordinates = ((olGeometry as any).getLinearRing() as any).getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
     this.start$.next(this.getOlGeometry());
 
     this.onDrawKey = olGeometry.on(
       'change',
-      (olGeometryEvent: OlGeometryEvent) => {
+      (olGeometryEvent: BasicEvent) => {
         this.mousePosition = getMousePositionFromOlGeometryEvent(
           olGeometryEvent
         );
-        const _linearRingCoordinates = olGeometryEvent.target
-          .getLinearRing()
+        const olGeometryTarget = olGeometryEvent.target as OlPolygon;
+        const _linearRingCoordinates = olGeometryTarget
+          .getLinearRing(0)
           .getCoordinates();
         this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
         this.changes$.next(this.getOlGeometry());
@@ -639,9 +641,9 @@ export class ModifyControl {
     unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
-    const linearRingCoordinates = event.feature
-      .getGeometry()
-      .getLinearRing()
+    const linearRingCoordinates = ((event.feature
+      .getGeometry() as any)
+      .getLinearRing() as any)
       .getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();
@@ -654,7 +656,7 @@ export class ModifyControl {
    * @param coordinates Linear ring coordinates
    */
   private addLinearRingToOlGeometry(coordinates: number[]) {
-    const olGeometry = this.getOlGeometry();
+    const olGeometry = this.getOlGeometry() as OlPolygon;
     const olLinearRing = new OlLinearRing(coordinates);
     addLinearRingToOlPolygon(olGeometry, olLinearRing);
   }
@@ -663,8 +665,8 @@ export class ModifyControl {
    * Update the last linear ring of the geometry being modified
    * @param coordinates Linear ring coordinates
    */
-  private updateLinearRingOfOlGeometry(coordinates: number[]) {
-    const olGeometry = this.getOlGeometry();
+  private updateLinearRingOfOlGeometry(coordinates: number[][]) {
+    const olGeometry = this.getOlGeometry() as OlPolygon;
     // Remove the last linear ring (the one we are updating)
     const olLinearRings = olGeometry.getLinearRings().slice(0, -1);
     const newCoordinates = olLinearRings.map((olLinearRing: OlLinearRing) => {

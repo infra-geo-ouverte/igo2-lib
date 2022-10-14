@@ -2,11 +2,11 @@
   $primary: map-get($theme, primary);
 
   mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-header {
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
   }
 
   mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-content .mat-datetimepicker-calendar-body-active {
-    background-color: mat-color($primary, lighter);
+    background-color: mat.get-color-from-palette($primary, lighter);
     border-radius: 100%;
   }
 }

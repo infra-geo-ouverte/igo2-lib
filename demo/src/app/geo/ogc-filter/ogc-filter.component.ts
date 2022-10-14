@@ -14,6 +14,8 @@ import {
   OgcFilterDuringOptions
 } from '@igo2/geo';
 
+import {Fill, Stroke, Circle, Style} from 'ol/style';
+
 @Component({
   selector: 'app-ogc-filter',
   templateUrl: './ogc-filter.component.html',
@@ -112,18 +114,18 @@ export class AppOgcFilterComponent {
           this.layerService.createLayer({
             title: 'Embâcle (PropertyIsEqualTo OR Intersects)',
             source: dataSource,
-            style: {
-              circle : {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'orange',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -164,18 +166,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, Step: P2D)',
             id: '1',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'red',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -220,18 +222,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, Step: PT4H)',
             id: '2',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'blue',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -276,18 +278,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, Step: P1M)',
             id: '3',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'yellow',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -336,18 +338,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, Step: P1Y)',
             id: '4',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'green',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -391,18 +393,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, Interval from Now, Step: P1D)',
             id: '5',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'white'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'black',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -446,18 +448,18 @@ export class AppOgcFilterComponent {
             title: 'Embâcle (During, RestrictToStep, Step: P1M)',
             id: '6',
             source: dataSource,
-            style: {
-              circle: {
+            style: new Style({
+              image: new Circle({
                 radius: 5,
-                fill: {
+                fill: new Fill({
                   color: 'black'
-                },
-                stroke: {
+                }),
+                stroke: new Stroke({
                   color: 'red',
                   width: 1
-                }
-              }
-            }
+                })
+              })
+            })
           })
         );
       });
@@ -502,8 +504,8 @@ export class AppOgcFilterComponent {
 
     const filterableWMSwithPushButtons: WMSoptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-      urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+      url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
       params: {
         LAYERS: 'radars_photos',
         VERSION: '1.3.0'
@@ -651,8 +653,8 @@ export class AppOgcFilterComponent {
 
     // const datasourceWmsWith2Layers: WMSoptions = {
     //   type: 'wms',
-    //   url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-    //   urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+    //   url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+    //   urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
     //   params: {
     //     layers: 'stations_meteoroutieres,histo_stations_meteoroutieres',
     //     version: '1.3.0'

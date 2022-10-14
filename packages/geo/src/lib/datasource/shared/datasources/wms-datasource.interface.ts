@@ -1,4 +1,7 @@
-import olSourceImageWMS from 'ol/source/ImageWMS';
+import olSource from 'ol/source/Source';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import type { ServerType } from 'ol/source/wms';
 
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
@@ -12,9 +15,9 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   crossOrigin?: string;
   projection?: string;
   resolutions?: number[];
-  serverType?: string;
+  serverType?: ServerType;
   ratio?: number;
-  ol?: olSourceImageWMS;
+  ol?: olSourceVector<OlGeometry> | olSource;
   refreshIntervalSec?: number;
   contentDependentLegend?: boolean;
   excludeAttribute?: Array<string>;

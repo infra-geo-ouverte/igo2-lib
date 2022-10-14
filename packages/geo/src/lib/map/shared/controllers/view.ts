@@ -13,6 +13,7 @@ import { MapViewAction } from '../map.enums';
 import { MapExtent, MapViewState } from '../map.interface';
 import { getScaleFromResolution, viewStatesAreEqual } from '../map.utils';
 import { MapController } from './controller';
+import { EventsKey } from 'ol/events';
 
 export interface MapViewControllerOptions {
   stateHistory: boolean;
@@ -34,6 +35,7 @@ export class MapViewController extends MapController {
 
   /**
    * View Padding
+   * Values in the array are top, right, bottom and left padding.
    */
   padding = [0, 0, 0, 0];
 
@@ -85,6 +87,22 @@ export class MapViewController extends MapController {
     super();
   }
 
+  setPadding(padding: { top?: number, bottom?: number, left?: number, right?: number }) {
+    // Values in the array are top, right, bottom and left padding.
+    if (padding.top || padding.top === 0) {
+      this.padding[0] = padding.top;
+    }
+    if (padding.right || padding.right === 0) {
+      this.padding[1] = padding.right;
+    }
+    if (padding.bottom || padding.bottom === 0) {
+      this.padding[2] = padding.bottom;
+    }
+    if (padding.left || padding.left === 0) {
+      this.padding[3] = padding.left;
+    }
+  }
+
   /**
    * Add or remove this controller to/from a map.
    * @param map OL Map
@@ -100,7 +118,7 @@ export class MapViewController extends MapController {
   setupObservers() {
     if (this.stateHistory === true) {
       this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) => this.onMoveEnd(event))
+        this.olMap.on('moveend', (event: OlMapEvent) => this.onMoveEnd(event)) as EventsKey
       );
     }
 
@@ -136,9 +154,9 @@ export class MapViewController extends MapController {
    * @returns Center
    */
   getCenter(projection?: string | OlProjection): [number, number] {
-    let center = this.olView.getCenter();
+    let center = this.olView.getCenter() as [number, number];
     if (projection && center) {
-      center = olproj.transform(center, this.getOlProjection(), projection);
+      center = olproj.transform(center, this.getOlProjection(), projection) as [number, number];
     }
     return center;
   }
@@ -157,7 +175,7 @@ export class MapViewController extends MapController {
         projection
       );
     }
-    return extent;
+    return extent as [number, number, number, number];
   }
 
   /**

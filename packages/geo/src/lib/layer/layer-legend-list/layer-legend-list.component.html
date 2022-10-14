@@ -1,35 +1,37 @@
 
-<mat-slide-toggle 
-tooltip-position="above"
-matTooltipShowDelay="500"
-[matTooltip]="'igo.geo.layer.legend.showAll' | translate"
-[checked]="showAllLegendsValue" class="mat-typography" 
-*ngIf="(layersInUi$ | async).length && allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
-  {{'igo.geo.layer.legend.showAll' | translate}}
-</mat-slide-toggle>
-<mat-divider *ngIf="(layersInUi$ | async).length && allowShowAllLegends"></mat-divider>
-<igo-list [navigation]="false" [selection]="false">
-  <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
-    <igo-layer-legend-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
-        igoListItem [layer]="layer"
-        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
-    </igo-layer-legend-item>
-  </ng-template>
-</igo-list>
+<div class="layer-legend-list-container">
+  <mat-slide-toggle 
+  tooltip-position="above"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.layer.legend.showAll' | translate"
+  [checked]="showAllLegendsValue" class="mat-typography" 
+  *ngIf="(layersInUi$ | async).length && allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
+    {{'igo.geo.layer.legend.showAll' | translate}}
+  </mat-slide-toggle>
+  <mat-divider *ngIf="(layersInUi$ | async).length && allowShowAllLegends"></mat-divider>
+  <igo-list [navigation]="false" [selection]="false">
+    <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
+      <igo-layer-legend-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
+          igoListItem [layer]="layer"
+          [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
+      </igo-layer-legend-item>
+    </ng-template>
+  </igo-list>
+  <p class="layers-empty mat-typography" 
+    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async)===false && allowShowAllLegends">
+    {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate}} 
+  </p>
+  <p class="layers-empty mat-typography" 
+    *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
+    {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButtonButZoom' | translate}} 
+  </p>
+  <p class="layers-empty mat-typography"
+    *ngIf="(layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async)===false && !allowShowAllLegends">
+    {{'igo.geo.layer.legend.noLayersVisible' | translate}} 
+  </p>
+  <p class="layers-empty mat-typography"
+    *ngIf="(layersInUi$ | async).length && (hasVisibleOrInRangeLayers$ | async)===false && (hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
+    {{'igo.geo.layer.legend.noLayersVisibleButZoom' | translate}} 
+  </p>
 
-<p class="layers-empty mat-typography" 
-  *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
-  {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate}} 
-</p>
-<p class="layers-empty mat-typography" 
-  *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
-  {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButtonButZoom' | translate}} 
-</p>
-<p class="layers-empty mat-typography"
-  *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
-  {{'igo.geo.layer.legend.noLayersVisible' | translate}} 
-</p>
-<p class="layers-empty mat-typography"
-  *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && !allowShowAllLegends">
-  {{'igo.geo.layer.legend.noLayersVisibleButZoom' | translate}} 
-</p>
+</div>

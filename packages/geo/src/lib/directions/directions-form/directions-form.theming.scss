@@ -1,7 +1,0 @@
-@mixin igo-directions-form-theming($theme) {
-  $accent: map-get($theme, accent);
-
-  igo-directions-form mat-list-item.igo-steps:hover {
-    background-color: mat-color($accent, lighter);
-  }
-}

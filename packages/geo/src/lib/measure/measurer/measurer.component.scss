@@ -28,9 +28,7 @@ $slide-toggle-width: 60px;
 }
 
 .measure-store-buttons {
-  width: 100%;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  margin-left: -2px;
 }
 
 .measure-store-buttons button:first-of-type {
@@ -47,28 +45,28 @@ $slide-toggle-width: 60px;
   .igo-map-tooltip-measure {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
-    color: mat-color($foreground, text);
+    color: black;
     font-weight: bold;
     font-size: mat-font-size($typography, subheading-2);
   }
   .igo-map-tooltip-measure-area {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
-    color: mat-color($foreground, text);
+    color: black;
     font-weight: bold;
     font-size: mat-font-size($typography, subheading-2);
   }
   .igo-map-tooltip-measure-line-segments {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
-    color: mat-color($foreground, text);
+    color: black;
     font-weight: bold;
     font-size: mat-font-size($typography, subheading-2);
   }
   .igo-map-tooltip-measure-polygone-segments {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
-    color: mat-color($foreground, text);
+    color: black;
     font-weight: bold;
     font-size: mat-font-size($typography, subheading-2);
   }

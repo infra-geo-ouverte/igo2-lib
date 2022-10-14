@@ -238,7 +238,7 @@ export class EntityView<E extends object, V extends object = E> {
 
     this.values$$ = combineLatest(observables$)
       .pipe(skip(1), debounceTime(5))
-      .subscribe((bunch: [V[],  EntityFilterClause[], EntityFilterClause, EntitySortClause, (V) => EntityKey]) => {
+      .subscribe((bunch: any[]) => {
         const [_values, filters, filter, sort, getKey] = bunch;
         const values = this.processValues(_values, filters, filter, sort);
         const generateIndex = getKey !== undefined;
@@ -301,7 +301,7 @@ export class EntityView<E extends object, V extends object = E> {
    * @returns Filtered and sorted values
    */
   private processValues(
-    values: V[], filters: EntityFilterClause[],  filter: EntityFilterClause, sort: EntitySortClause
+    values: V[], filters: EntityFilterClause[], filter: EntityFilterClause, sort: EntitySortClause
   ): V[] {
     values = values.slice(0);
     values = this.filterValues(values, filters.concat([filter]));

@@ -9,6 +9,7 @@ import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
 import { IgoMap } from '../../../map';
 import { MessageService } from '@igo2/core';
+import VectorTile from 'ol/VectorTile';
 
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
@@ -34,7 +35,7 @@ export class VectorTileLayer extends Layer {
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    vectorTileSource.setTileLoadFunction((tile, url) => {
+    vectorTileSource.setTileLoadFunction((tile: VectorTile, url: string) => {
       const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
       if (loader) {
         tile.setLoader(loader);
@@ -57,9 +58,18 @@ export class VectorTileLayer extends Layer {
   customLoader(url, format, interceptor, success, failure?) {
     return ((extent, resolution, projection) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', typeof url === 'function' ? url = url(extent, resolution, projection) : url);
+      let modifiedUrl = url;
+      if (typeof url !== 'function') {
+        const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
+        if (alteredUrlWithKeyAuth) {
+          modifiedUrl = alteredUrlWithKeyAuth;
+        }
+      } else {
+        modifiedUrl = url(extent, resolution, projection);
+      }
+      xhr.open( 'GET', modifiedUrl);
       if (interceptor) {
-        interceptor.interceptXhr(xhr, url);
+        interceptor.interceptXhr(xhr, modifiedUrl);
       }
 
       if (format.getType() === 'arraybuffer') {

@@ -180,7 +180,7 @@ export class SearchSource {
    * @param hashtag hashtag from query
    */
   getHashtagsValid(term: string, settingsName: string): string[] {
-    const hashtags = term.match(/(#[A-Za-z]+)/g);
+    const hashtags = term.match(/(#[A-Za-z+]+)/g);
     if (!hashtags) {
       return undefined;
     }
@@ -206,7 +206,7 @@ export class SearchSource {
             hashtagsValid.push(types[index]);
           }
         }
-        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey) !== -1) {
+        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey.toLowerCase()) !== -1) {
           hashtagsValid.push(conf.value);
         }
       });

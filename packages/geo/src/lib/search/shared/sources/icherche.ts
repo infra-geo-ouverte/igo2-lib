@@ -27,6 +27,7 @@ import {
   IChercheReverseResponse
 } from './icherche.interfaces';
 import { computeTermSimilarity } from '../search.utils';
+import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -341,6 +342,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   search(
     term: string,
     options?: TextSearchOptions
@@ -465,7 +469,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
-        score: data.score ||  computeTermSimilarity(term.trim(), data.properties.nom),
+        score: data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
@@ -751,6 +755,9 @@ export class IChercheReverseSearchSource extends SearchSource
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
+  @Cacheable({
+    maxCacheCount: 20
+  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
@@ -857,7 +864,8 @@ export class IChercheReverseSearchSource extends SearchSource
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.icon || 'map-marker'
+        icon: data.icon || 'map-marker',
+        pointerSummaryTitle: this.getSubtitle(data)+ ': ' + data.properties.nom
       }
     };
   }

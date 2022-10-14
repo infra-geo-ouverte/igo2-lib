@@ -5,12 +5,12 @@
 
   igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
     &:hover {
-      background-color: mat-color($accent, lighter);
+      background-color: mat.get-color-from-palette($accent, lighter);
     }
 
     &.tool-activated,
     &.children-tool-activated {
-      background-color: mat-color($accent);
+      background-color: mat.get-color-from-palette($accent);
       cursor: default;
       button {
         cursor: default;
@@ -22,18 +22,18 @@
     & > #lowChevron,
     & > #topChevron {
       &:hover {
-        background-color: mat-color($accent, lighter);
-        color: mat-color($foreground, text);
+        background-color: mat.get-color-from-palette($accent, lighter);
+        color: black;
       }
     }
   }
 
   igo-toolbox.color-primary > igo-actionbar:not(.with-title) {
     box-shadow: unset;
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
     #lowChevron,
     #topChevron {
-      background-color: mat-color($primary);
+      background-color: mat.get-color-from-palette($primary);
       color: white;
     }
   }
@@ -54,13 +54,13 @@
       .mat-list-item.mat-list-item-with-avatar {
         color: white;
         &:hover {
-          color: mat-color($foreground, text);
+          color: black;
         }
 
         &.tool-activated,
         &.children-tool-activated {
           background-color: white;
-          color: mat-color($foreground, text);
+          color: black;
         }
       }
     }

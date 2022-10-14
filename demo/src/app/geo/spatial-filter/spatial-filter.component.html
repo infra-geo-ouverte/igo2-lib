@@ -1,33 +1,35 @@
 <mat-card>
   <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Spatial filter</mat-card-title>
+  <mat-card-title>Query</mat-card-title>
   <mat-card-content>
-    <li>npm install --save moment@2.22.2</li>
-    <li>npm install --save @mat-datetimepicker/core@3.0.0-beta.0</li>
     <li>Dependencies: LanguageService</li>
 
     <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/spatial-filter">code of this example</a>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/query">code of this example</a>
     <hr>
   </mat-card-content>
 
   <igo-map-browser
     [map]="map"
     [view]="view"
-    igoOverlay igoQuery
-    (query)="handleQueryResults($event)"
+    igoOverlay
+    igoQuery
     [queryFeatures]="true">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
-  <igo-panel title="Spatial Filter">
+  <igo-panel>
     <igo-spatial-filter-type
       [store]="spatialListStore"
       [selectedQueryType]="queryType"
       [zone]="zone"
+      [layers]="activeLayers"
       (eventType)="getOutputType($event)"
       (eventQueryType)="getOutputQueryType($event)"
-      (zoneChange)="onZoneChange($event)">
+      (zoneChange)="onZoneChange($event)"
+      (zoneWithBufferChange)="onZoneChange($event, true)"
+      (bufferChange)="buffer = $event"
+      (measureUnitChange)="measureUnit = $event">
     </igo-spatial-filter-type>
 
     <igo-spatial-filter-item
@@ -37,24 +39,26 @@
       [zone]="zone"
       [loading]="loading"
       [store]="store"
-      [layers]="layers"
-      (radiusEvent)="radius = $event"
+      [layers]="activeLayers"
+      [allLayers]="layers"
+      [thematicLength]="thematicLength"
+      (radiusEvent)="buffer = $event"
+      (bufferEvent)="buffer = $event"
+      (measureUnitChange)="measureUnit = $event"
       (freehandControl)="freehandDrawIsActive = $event"
       (drawZoneEvent)="zone = $event"
+      (zoneWithBufferChange)="onZoneChange($event, true)"
       (itemTypeChange)="itemType = $event"
       (thematicChange)="thematics = $event"
       (toggleSearch)="getOutputToggleSearch()"
-      (clearButtonEvent)="layers = $event"
+      (clearButtonEvent)="clearMap()"
       (clearSearchEvent)="getOutputClearSearch()">
     </igo-spatial-filter-item>
   </igo-panel>
 
-  <igo-panel title="Details">
+  <igo-panel>
     <ng-container *ngIf="selectedFeature$ | async as feature">
       <igo-feature-details [feature]="feature"></igo-feature-details>
     </ng-container>
   </igo-panel>
-
-  <igo-message-center></igo-message-center>
-
 </mat-card>

@@ -2,12 +2,6 @@
   <mat-card-subtitle>Geo</mat-card-subtitle>
   <mat-card-title>Print</mat-card-title>
   <mat-card-content>
-    <li>npm install --save html2canvas@1.0.0-alpha.12</li>
-    <li>npm install --save jspdf@1.4.1</li>
-    <li>npm install --save file-saver@1.3.8</li>
-    <li>npm install --save jszip@3.1.5</li>
-    <li>npm install --save stream@0.0.2</li>
-
     <li>Dependencies: LanguageService</li>
 
     <br>
@@ -18,6 +12,7 @@
   <igo-map-browser [map]="map" [view]="view">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
     <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
+    <igo-home-extent-button [map]="map" color="primary"></igo-home-extent-button>
     <igo-rotation-button [map]="map" [showIfNoRotation]="false" color="primary"></igo-rotation-button>
   </igo-map-browser>
 
@@ -25,4 +20,3 @@
 
 </mat-card>
 
-<igo-message-center></igo-message-center>

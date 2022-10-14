@@ -16,7 +16,7 @@ import { LanguageService, MessageService } from '@igo2/core';
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
   public options: ImageLayerOptions;
-  public ol: olLayerImage;
+  public ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 
@@ -27,11 +27,16 @@ export class ImageLayer extends Layer {
     public authInterceptor?: AuthInterceptor
   ) {
     super(options, messageService, authInterceptor);
-    this.watcher = new ImageWatcher(this);
+    this.watcher = new ImageWatcher(this, this.messageService, this.languageService);
     this.status$ = this.watcher.status$;
+    this.status$.subscribe(valStatus => {
+      if (valStatus === 0) {
+        this.olLoadingProblem = true;
+      }
+    });
   }
 
-  protected createOlLayer(): olLayerImage {
+  protected createOlLayer(): olLayerImage<olSourceImage> {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceImage
     });
@@ -55,14 +60,19 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src, interceptor, messageService, languageService) {
+  private customLoader(tile, src: string, interceptor: AuthInterceptor, messageService: MessageService, languageService: LanguageService) {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', src);
 
-    const intercepted = interceptor.interceptXhr(xhr, src);
+    const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(src);
+    let url = src;
+    if (alteredUrlWithKeyAuth) {
+      url = alteredUrlWithKeyAuth;
+    }
+    xhr.open('GET', url);
+    const intercepted = interceptor.interceptXhr(xhr, url);
     if (!intercepted) {
       xhr.abort();
-      tile.getImage().src = src;
+      tile.getImage().src = url;
       return;
     }
 

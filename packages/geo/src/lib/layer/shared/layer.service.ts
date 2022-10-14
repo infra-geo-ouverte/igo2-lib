@@ -2,9 +2,12 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import stylefunction from 'ol-mapbox-style/dist/stylefunction';
+import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
+import olLayerVectorTile from 'ol/layer/VectorTile';
+
+import { Style } from 'ol/style';
 
 import {
   OSMDataSource,
@@ -38,8 +41,11 @@ import {
   VectorTileLayerOptions
 } from './layers';
 
+import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from './style.service';
 import { LanguageService, MessageService } from '@igo2/core';
+import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +55,7 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private geoNetwork: GeoNetworkService,
     private messageService: MessageService,
     private languageService: LanguageService,
     @Optional() private authInterceptor: AuthInterceptor
@@ -91,8 +98,9 @@ export class LayerService {
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
       case MVTDataSource:
+        const _layerOptions = computeMVTOptionsOnHover(layerOptions);
         layer = this.createVectorTileLayer(
-          layerOptions as VectorTileLayerOptions
+          _layerOptions as VectorTileLayerOptions
         );
         break;
       default:
@@ -102,7 +110,8 @@ export class LayerService {
     return layer;
   }
 
-  createAsyncLayer(layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
+  createAsyncLayer(_layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
+    const layerOptions = computeMVTOptionsOnHover(_layerOptions);
     if (layerOptions.source) {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
@@ -124,14 +133,14 @@ export class LayerService {
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(layerOptions, this.messageService);
+    return new TileLayer(layerOptions, this.messageService, this.authInterceptor);
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style;
-    let olLayer;
+    let style: Style[] | Style | OlStyleLike;
+    let igoLayer: VectorLayer;
     if (layerOptions.style !== undefined) {
-      style = this.styleService.createStyle(layerOptions.style);
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
@@ -139,83 +148,94 @@ export class LayerService {
       style = source.options.params.style;
     } else if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
       const baseStyle = layerOptions.clusterBaseStyle;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createClusterStyle(
           feature,
+          resolution,
           layerOptions.clusterParam,
           baseStyle
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
 
-    if (!olLayer) {
-      olLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+    if (!igoLayer) {
+      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork);
     }
 
-    this.applyMapboxStyle(olLayer, layerOptionsOl as any);
+    this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
 
-    return olLayer;
+    return igoLayer;
   }
 
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style;
-    let olLayer;
+    let style: Style[] | Style | OlStyleLike;
+    let igoLayer: VectorTileLayer;
 
     if (layerOptions.style !== undefined) {
-      style = this.styleService.createStyle(layerOptions.style);
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      layerOptions.style = feature => {
+      layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute
+          layerOptions.styleByAttribute,
+          resolution
         );
       };
-      olLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
 
-    if (!olLayer) {
-      olLayer = new VectorTileLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+    if (!igoLayer) {
+      igoLayer = new VectorTileLayer(layerOptionsOl, this.messageService, this.authInterceptor);
     }
 
-    this.applyMapboxStyle(olLayer, layerOptionsOl);
-    return olLayer;
+    this.applyMapboxStyle(igoLayer, layerOptionsOl);
+    return igoLayer;
   }
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+        if (res.sprite){
+          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          this.getStuff(url+'.json').subscribe(res2 => {
+            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source, undefined, res2,
+              url+'.png');
+          });
+        } else {
+          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source);
+        }
       });
     }
   }
 
-  public getMapboxGlStyle(url: string) {
+  private getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
       catchError(err => {
@@ -224,4 +244,18 @@ export class LayerService {
       })
     );
   }
+
+  private getAbsoluteUrl(source, url) {
+    const r = new RegExp('^http|\/\/', 'i');
+    if(r.test(url)){
+      return url;
+    } else {
+      if ( source.substr(source.length -1) === "/"){
+        return source + url;
+      } else{
+        return source + "/" + url;
+      }
+    }
+  }
+
 }

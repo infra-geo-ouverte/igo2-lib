@@ -1,5 +1,3 @@
-import olAttribution from 'ol/control/Attribution';
-
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export interface ArcGISRestDataSourceOptions extends FeatureDataSourceOptions {
@@ -15,5 +13,5 @@ export interface ArcGISRestDataSourceOptionsParams {
   style?: any;
   timefilter?: any;
   timeExtent?: string;
-  attributions?: olAttribution;
+  attributions?: string | string[];
 }

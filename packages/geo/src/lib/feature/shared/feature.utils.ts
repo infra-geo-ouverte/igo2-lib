@@ -9,6 +9,8 @@ import OlLineString from 'ol/geom/LineString';
 import OlRenderFeature from 'ol/render/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlLayer from 'ol/layer/Layer';
+import OlSource from 'ol/source/Source';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { uuid } from '@igo2/utils';
 
 import {
@@ -24,7 +26,7 @@ import { IgoMap } from '../../map';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
 import { FEATURE, FeatureMotion } from './feature.enums';
-import { Feature } from './feature.interfaces';
+import { Feature, FeatureGeometry } from './feature.interfaces';
 import { FeatureStore } from './store';
 
 /**
@@ -38,7 +40,7 @@ export function featureToOl(
   feature: Feature,
   projectionOut: string,
   getId?: (Feature) => EntityKey
-): OlFeature {
+): OlFeature<OlGeometry> {
   getId = getId ? getId : getEntityId;
 
   const olFormat = new OlFormatGeoJSON();
@@ -88,7 +90,7 @@ export function featureToOl(
 export function renderFeatureFromOl(
   olRenderFeature: OlRenderFeature,
   projectionIn: string,
-  olLayer?: OlLayer,
+  olLayer?: OlLayer<OlSource>,
   projectionOut = 'EPSG:4326'
 ): Feature {
   let geom;
@@ -111,17 +113,17 @@ export function renderFeatureFromOl(
   const geometryType = olRenderFeature.getType();
 
   if (geometryType === 'Polygon') {
-    const ends = olRenderFeature.ends_;
+    const ends = olRenderFeature.getEnds() as number[];
     geom = new OlPolygon(
-      olRenderFeature.flatCoordinates_,
+      olRenderFeature.getFlatCoordinates(),
       OlGeometryLayout.XY,
       ends
     );
   } else if (geometryType === 'Point') {
-    geom = new OlPoint(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
+    geom = new OlPoint(olRenderFeature.getFlatCoordinates(), OlGeometryLayout.XY);
   } else if (geometryType === 'LineString') {
     geom = new OlLineString(
-      olRenderFeature.flatCoordinates_,
+      olRenderFeature.getFlatCoordinates(),
       OlGeometryLayout.XY
     );
   }
@@ -129,11 +131,11 @@ export function renderFeatureFromOl(
   const geometry = olFormat.writeGeometryObject(geom, {
     dataProjection: projectionOut,
     featureProjection: projectionIn
-  });
+  }) as FeatureGeometry;
 
   const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
   const mapTitle = olRenderFeature.get('_mapTitle');
-  const extent = olproj.transformExtent(olRenderFeature.getExtent(), projectionIn, projectionOut);
+  const extent = olproj.transformExtent(olRenderFeature.getExtent(), projectionIn, projectionOut) as [number, number, number, number];
   return {
     type: FEATURE,
     projection: projectionOut,
@@ -160,9 +162,9 @@ export function renderFeatureFromOl(
  * @returns Feature
  */
 export function featureFromOl(
-  olFeature: OlFeature,
+  olFeature: OlFeature<OlGeometry>,
   projectionIn: string,
-  olLayer?: OlLayer,
+  olLayer?: OlLayer<OlSource>,
   projectionOut = 'EPSG:4326'
 ): Feature {
   let title;
@@ -182,7 +184,7 @@ export function featureFromOl(
   const geometry = olFormat.writeGeometryObject(olFeature.getGeometry(), {
     dataProjection: projectionOut,
     featureProjection: projectionIn
-  });
+  }) as FeatureGeometry;
 
   if (olLayer) {
     title = olLayer.get('title');
@@ -199,6 +201,7 @@ export function featureFromOl(
   }
   const mapTitle = olFeature.get('_mapTitle');
   const id = olFeature.getId() ? olFeature.getId() : olFeature.get(idColumn) ? olFeature.get(idColumn) : uuid();
+  const newFeature = olFeature.get('_newFeature');
 
   return {
     type: FEATURE,
@@ -227,7 +230,7 @@ export function featureFromOl(
  */
 export function computeOlFeatureExtent(
   map: IgoMap,
-  olFeature: OlFeature
+  olFeature: OlFeature<OlGeometry>
 ): [number, number, number, number] {
   let olExtent = olextent.createEmpty();
 
@@ -246,7 +249,7 @@ export function computeOlFeatureExtent(
     }
   }
 
-  return olExtent;
+  return olExtent as [number, number, number, number];
 }
 
 /**
@@ -257,16 +260,16 @@ export function computeOlFeatureExtent(
  */
 export function computeOlFeaturesExtent(
   map: IgoMap,
-  olFeatures: OlFeature[]
+  olFeatures: OlFeature<OlGeometry>[]
 ): [number, number, number, number] {
   const extent = olextent.createEmpty();
 
-  olFeatures.forEach((olFeature: OlFeature) => {
+  olFeatures.forEach((olFeature: OlFeature<OlGeometry>) => {
     const featureExtent = computeOlFeatureExtent(map, olFeature);
     olextent.extend(extent, featureExtent);
   });
 
-  return extent;
+  return extent as [number, number, number, number];
 }
 
 /**
@@ -354,7 +357,7 @@ export function featuresAreTooDeepInView(
  */
 export function moveToOlFeatures(
   map: IgoMap,
-  olFeatures: OlFeature[],
+  olFeatures: OlFeature<OlGeometry>[],
   motion: FeatureMotion = FeatureMotion.Default,
   scale?: [number, number, number, number],
   areaRatio?: number
@@ -383,7 +386,7 @@ export function moveToOlFeatures(
  * Hide an OL feature
  * @param olFeature OL feature
  */
-export function hideOlFeature(olFeature: OlFeature) {
+export function hideOlFeature(olFeature: OlFeature<OlGeometry>) {
   olFeature.setStyle(new olstyle.Style({}));
 }
 
@@ -420,19 +423,19 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
  * @returns Features to add and remove
  */
 export function computeOlFeaturesDiff(
-  source: OlFeature[],
-  target: OlFeature[]
+  source: OlFeature<OlGeometry>[],
+  target: OlFeature<OlGeometry>[]
 ): {
-  add: OlFeature[];
-  remove: OlFeature;
+  add: OlFeature<OlGeometry>[];
+  remove: OlFeature<OlGeometry>[];
 } {
   const olFeaturesMap = new Map();
-  target.forEach((olFeature: OlFeature) => {
+  target.forEach((olFeature: OlFeature<OlGeometry>) => {
     olFeaturesMap.set(olFeature.getId(), olFeature);
   });
 
   const olFeaturesToRemove = [];
-  source.forEach((olFeature: OlFeature) => {
+  source.forEach((olFeature: OlFeature<OlGeometry>) => {
     const newOlFeature = olFeaturesMap.get(olFeature.getId());
     if (newOlFeature === undefined) {
       olFeaturesToRemove.push(olFeature);
@@ -446,7 +449,7 @@ export function computeOlFeaturesDiff(
   });
 
   const olFeaturesToAddIds = Array.from(olFeaturesMap.keys());
-  const olFeaturesToAdd = target.filter((olFeature: OlFeature) => {
+  const olFeaturesToAdd = target.filter((olFeature: OlFeature<OlGeometry>) => {
     return olFeaturesToAddIds.indexOf(olFeature.getId()) >= 0;
   });
 

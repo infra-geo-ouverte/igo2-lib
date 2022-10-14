@@ -3,6 +3,10 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 
 import { QueryFormat, QueryHtmlTarget } from './query.enums';
 
+import olSource from 'ol/source/Source';
+import olSourceVector from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
 export interface QueryOptions {
   coordinates: [number, number];
   projection: string;
@@ -13,8 +17,12 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
+  queryUrl?: string;
+  queryLayerFeatures?: boolean;
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
+  ol?: olSourceVector<OlGeometry> | olSource;
+  queryFormatAsWms?: boolean;
 }
 
 export interface QueryableDataSource extends DataSource {

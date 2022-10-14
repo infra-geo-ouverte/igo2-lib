@@ -1,20 +1,13 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef, Component,
+  Input, OnDestroy, OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
-
-import { BehaviorSubject, Subscription } from 'rxjs';
-
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
-import { Style as OlStyle } from 'ol/style';
-
+import { UntypedFormControl } from '@angular/forms';
 import { IgoFormFieldComponent } from '@igo2/common';
-
+import type { Type } from 'ol/geom/Geometry';
+import * as OlStyle from 'ol/style';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { IgoMap } from '../../map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 
@@ -35,13 +28,30 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
 
   private value$$: Subscription;
 
-  public drawControlIsActive = true;
-  public freehandDrawIsActive = false;
+  set drawControlIsActive(value: boolean) {
+    this._drawControlIsActive = value;
+    this.cdRef.detectChanges();
+  }
+
+  get drawControlIsActive(): boolean {
+    return this._drawControlIsActive;
+  }
+  private _drawControlIsActive = true;
+
+  set freehandDrawIsActive(value: boolean) {
+    this._freehandDrawIsActive = value;
+    this.cdRef.detectChanges();
+  }
+
+  get freehandDrawIsActive(): boolean {
+    return this._freehandDrawIsActive;
+  }
+  private _freehandDrawIsActive = false;
 
   /**
    * The field's form control
    */
-  @Input() formControl: FormControl;
+  @Input() formControl: UntypedFormControl;
 
   /**
    * The map to draw the geometry on
@@ -49,9 +59,9 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Input()
-  set geometryType(value: OlGeometryType) { this.geometryType$.next(value); }
-  get geometryType(): OlGeometryType { return this.geometryType$.value; }
-  readonly geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
+  set geometryType(value: Type) { this.geometryType$.next(value); }
+  get geometryType(): Type { return this.geometryType$.value; }
+  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
@@ -94,13 +104,13 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() drawStyle: OlStyle;
+  @Input() drawStyle: OlStyle.Style;
 
   /**
    * Style for the overlay layer (applies once the geometry is added to the map)
    * If not specified, drawStyle applies
    */
-  @Input() overlayStyle: OlStyle;
+  @Input() overlayStyle: OlStyle.Style;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

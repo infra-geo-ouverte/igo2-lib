@@ -25,7 +25,7 @@ import { handleZoomAuto } from './workspace.utils';
 @Injectable({
   providedIn: 'root'
 })
-export class WfsActionsService implements OnDestroy  {
+export class WfsActionsService implements OnDestroy {
 
   public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
     this.storageService.get('workspaceMaximize') as boolean
@@ -78,7 +78,7 @@ export class WfsActionsService implements OnDestroy  {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
       .pipe(skipWhile((storageChange: StorageServiceEvent) =>
-        storageChange.key !== 'zoomAuto' || storageChange.event === StorageServiceEventEnum.CLEARED))
+        storageChange?.key !== 'zoomAuto' || storageChange?.event === StorageServiceEventEnum.CLEARED))
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
         handleZoomAuto(workspace, this.storageService);
@@ -184,7 +184,7 @@ export class WfsActionsService implements OnDestroy  {
         }
       }
     ];
-    return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
+    return (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
     actions : actions.filter(action => action.id !== 'ogcFilter');
   }
 }

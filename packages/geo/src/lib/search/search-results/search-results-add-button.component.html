@@ -1,4 +1,5 @@
 <button
+igoStopPropagation
 (mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)"
 *ngIf="layer.meta.dataType === 'Layer'"
 mat-icon-button
@@ -8,7 +9,7 @@ matTooltipShowDelay="500"
 [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="onToggleClick($event)">
 <mat-icon
-  matBadge
+  matBadge="icon"
   igoMatBadgeIcon="eye-off"
   igoMatBadgeInverseColor="true"
   [matBadgeHidden]="(inRange$ | async)"

@@ -1,6 +1,12 @@
 {
   "igo": {
     "core": {
+      "message": {
+        "success": "Success",
+        "error": "Error",
+        "info": "Info",
+        "alert": "Alert"
+      },
       "errors": {
         "uncaught": {
           "message":

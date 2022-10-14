@@ -17,6 +17,7 @@ export interface EntityRecord<E extends object, S extends EntityState = EntitySt
   state: S;
   revision: number;
   ref: string;
+  edition?: boolean;
 }
 
 export interface EntityStoreOptions {
@@ -90,21 +91,47 @@ export interface EntityTableTemplate {
   };
 }
 
+export interface EntityTableColumnValidation {
+  readonly?: boolean;
+  mandatory?: boolean;
+  maxlength?: number;
+  minlength?: number;
+  minValue?: number;
+  maxValue?: number;
+}
+
+export interface TableRelation {
+  table: string;
+}
+
 export interface EntityTableColumn {
+  validation?: EntityTableColumnValidation;
   name: string;
   title: string;
   renderer?: EntityTableColumnRenderer;
   valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
   visible?: boolean;
+  linkColumnForce?: string;
   sort?: boolean;
+  type?: string;
+  multiple?: boolean;
+  domainValues?: Array<SelectOption>;
+  relation?: TableRelation;
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
+}
+
+export interface SelectOption {
+  id: number;
+  value: string;
 }
 
 export interface EntityTableButton {
   icon: string;
   click: (entity: object, record: EntityRecord<object>) => void;
   color?: 'primary' | 'accent' | 'warn';
+  disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';
+  editMode?: boolean;
 }

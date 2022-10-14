@@ -52,7 +52,7 @@ export class DownloadService {
         );
         const outputFormatDownload =
           wfsOptions.outputFormatDownload === undefined
-            ? wfsOptions.outputFormat === undefined  ? '' : 'outputformat=' + wfsOptions.outputFormat
+            ? wfsOptions.outputFormat === undefined ? '' : 'outputformat=' + wfsOptions.outputFormat
             : 'outputformat=' + wfsOptions.outputFormatDownload;
 
         const baseurl = DSOptions.download.dynamicUrl
@@ -67,13 +67,13 @@ export class DownloadService {
         .handleOgcFiltersAppliedValue(
           layer.dataSource.options,
           ogcFilters.geometryName,
-          currentExtent,
+          currentExtent as [number, number, number, number],
           currentProj);
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
-            currentExtent,
+            currentExtent as [number, number, number, number],
             currentProj,
             ogcFilters.geometryName
           );

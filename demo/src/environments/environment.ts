@@ -1,5 +1,5 @@
 // This file can be replaced during build by using the `fileReplacements` array.
-// `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
+// `ng build ---configuration production` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 // import { IgoEnvironment } from '@igo2/core';
@@ -12,6 +12,7 @@ interface Environment {
 export const environment: Environment = {
   production: false,
   igo: {
+    wakeLockApiButton: true,
     importWithStyle: true,
     projections: [
       {
@@ -51,7 +52,7 @@ export const environment: Environment = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
             'application/json': [
@@ -65,7 +66,7 @@ export const environment: Environment = {
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           regFilters: ['zpegt']
         },
         {
@@ -82,10 +83,39 @@ export const environment: Environment = {
         },
         {
           id: 'arcgisrestcatalog',
-          title: 'ArcGIS Rest focus catalog',
+          title: 'ArcGIS Rest Focus catalog',
           url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
           type: 'arcgisrest',
-          regFilters: ['^10$']
+          regFilters: ['^10$'],
+          forcedProperties: [{
+            layerName: 'Les lits d|éponges dans la zone biogéographique du golfe - l|engin de chalutage Campelen',
+            title: "----Nouveau nom pour cette couche ArcGIS REST focus"
+          }]
+        },
+        {
+          id: 'arcgisrestcatalogmaritime',
+          title: 'ArcGIS Rest Focus Maritime catalog',
+          url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/CHS/ENC_MaritimeChartService/MapServer/exts/MaritimeChartService/MapServer',
+          type: 'arcgisrest',
+          forcedProperties: [
+            {
+              layerName: "Information about the chart display",
+              title: "New ESRI layer name",
+              metadataUrl: "https://www.igouverte.org/demo/",
+              //metadataAbstract: "New ESRI abstract",
+            },
+            {
+              layerName: "Natural and man-made features, port features",
+              title: "New 2nd ESRI layer name",
+              //metadataUrl: "https://gitlab.com/",
+              metadataAbstract: "New 2nd ESRI abstract",
+            },
+            {
+              layerName: "*",
+              //metadataUrlAll: "https://github.com/infra-geo-ouverte/igo2-lib/", // when we set this property it applies to all layers
+              metadataAbstractAll: "New abstract to all layers"
+            }
+          ]
         },
         {
           id: 'fusion_catalog',
@@ -93,16 +123,81 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
             },
             {
-              id: 'rn_wmts',
+            id: 'arcgisrestcompletecatalog',
+            title: 'ArcGIS Rest complete catalog',
+            url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
+            type: 'arcgisrest',
+            regFilters: ["^0$"]
+            },
+            { // dead ESRI link
+              id: "38",
+              externalProvider: true,
+              url: "https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/Canadas_Marine_Conservation_Targets_FR/MapServer",
+              type: "imagearcgisrest",
+              groupImpose: {"id": "conserve", "title": "Conservation"},
+              regFilters: ["^0$"]
+            },
+            {// wmts regFilters error link
+              id: 'wmts_error',
               url:
-                'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
+                'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Elevation?SERVICE=WMTS&REQUEST=GetCapabilities',
               type: 'wmts',
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
-              version: '1.0.0'
+              version: '1.0.0',
+              forcedProperties: [
+                {
+                  layerName: "BDTQ-20K_Allegee",
+                  title: "New WMTS layer name"
+                },
+                {
+                  layerName: "BDTQ-20K",
+                  title: "New 2nd WMTS layer name",
+                }
+            ]
+            },
+            {
+              id: 'wms',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: 'wms',
+              crossOrigin: true,
+              version: '1.3.0',
+              forcedProperties: [
+                { // le dernier de Entités toponymiques
+                  layerName: "atlas_named_feature_polygon_large",
+                  title: "New WMS name",
+                  metadataUrl: "https://gitlab.com/",
+                  //metadataAbstract: "New WMS Abstract"
+                },
+                { //voir dans Toutes les entités de la terre
+                  layerName: "woodedarea_50k",
+                  title: "New WMS name with new abstract",
+                  //metadataUrl: "https://www.quebec.ca/",
+                  //metadataAbstract: "New 2nd WMS abstract"
+                },
+                {
+                  layerName: "*",
+                  //metadataUrlAll: "https://quebec.ca/",
+                  metadataAbstractAll: "New WMS abstract to all layers"
+                }
+              ]
+              //regFilters: ["^100$"]
+            },
+            {// wms CORS error link
+              id: 'wms_cors_error',
+              url: 'https://daata.chs-shc.ca/geoserver/wms',
+              type: "wms",
+              version: "1.3.0"
+            },
+            {// wms working link
+              id: 'wms_cors_error',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: "wms",
+              version: "1.3.0",
+              regFilters: ["hydro_obstacle_polygon_50k"]
             }
           ]
         },
@@ -113,9 +208,16 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['zpegt'],
               groupImpose: { id: 'zpegt', title: 'zpegt' }
+            },
+            {
+              id: 'wms',
+              url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
+              type: 'wms',
+              crossOrigin: true,
+              version: '1.3.0'
             },
             {
               id: 'Gououvert',
@@ -124,19 +226,31 @@ export const environment: Environment = {
               groupImpose: { id: 'zpegt', title: 'zpegt' }
             },
             {
-              id: 'Gououvert',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-              regFilters: ['zpegt'],
-              groupImpose: { id: 'zpegt', title: 'zpegt' }
-            },
-            {
-              id: 'rn_wmts',
+              // Carte topo échelle 1/20 000
+              id: 'rn_wmts_1',
               url:
                 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
               type: 'wmts',
               crossOrigin: true,
               matrixSet: 'EPSG_3857',
               version: '1.0.0',
+              forcedProperties: [
+                { // le dernier de Entités toponymiques
+                  layerName: "BDTQ-20K_Allegee",
+                  title: "New WMTS name with new metadata URL",
+                  metadataUrl: "https://gitlab.com/",
+                },
+                { //voir dans Toutes les entités de la terre
+                  layerName: "BDTQ-20K",
+                  title: "New WMTS name with new abstract",
+                  metadataAbstract: "New WMTS abstract"
+                },
+                {
+                  layerName: "*",
+                  //metadataUrlAll: "https://www.donneesquebec.ca/",
+                  //metadataAbstractAll: "New WMTS abstract to all layers"
+                }
+              ],
               groupImpose: {
                 id: 'cartetopo',
                 title: 'Carte topo échelle 1/20 000'
@@ -150,7 +264,7 @@ export const environment: Environment = {
           composite: [
             {
               id: 'tq_swtq',
-              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
               regFilters: ['limtn_charg'],
               groupImpose: { id: 'mix_swtq_gouv', title: 'mix same name layer' }
             },

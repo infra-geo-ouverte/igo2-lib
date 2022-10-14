@@ -12,7 +12,7 @@ import {
   EventEmitter
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import { LanguageService, MessageService } from '@igo2/core';
@@ -65,9 +65,9 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
-  public formControl = new FormControl();
+  public formControl = new UntypedFormControl();
 
-  public bufferFormControl = new FormControl();
+  public bufferFormControl = new UntypedFormControl();
 
   /**
    * Available measure units for the measure type given

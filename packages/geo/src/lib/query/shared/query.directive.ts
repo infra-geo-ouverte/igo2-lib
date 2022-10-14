@@ -1,4 +1,3 @@
-
 import {
   Directive,
   Input,
@@ -15,9 +14,12 @@ import { unByKey } from 'ol/Observable';
 import OlFeature from 'ol/Feature';
 import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
+import OlSource from 'ol/source/Source';
+import olVectorSource from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
-import { ListenerFunction } from 'ol/events';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { EventsKey } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -25,10 +27,11 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
+import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { QueryableDataSourceOptions } from './query.interfaces';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -47,7 +50,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Listener to the map click event
    */
-  private mapClickListener: ListenerFunction;
+  private mapClickListener;
 
   /**
    * OL drag box interaction
@@ -57,7 +60,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Ol drag box "end" event key
    */
-  private olDragSelectInteractionEndKey: string;
+  private olDragSelectInteractionEndKey: EventsKey | EventsKey[];
 
   /**
    * Whter to query features or not
@@ -72,7 +75,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesCondition: (olLayer: OlLayer) => boolean;
+  @Input() queryFeaturesCondition: (olLayer: OlLayer<OlSource>) => boolean;
 
   /**
    * Whether all query should complete before emitting an event
@@ -84,7 +87,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    */
   @Output() query = new EventEmitter<{
     features: Feature[] | Feature[][];
-    event: OlMapBrowserPointerEvent;
+    event: MapBrowserPointerEvent<any>;
   }>();
 
   /**
@@ -125,7 +128,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private listenToMapClick() {
     this.mapClickListener = this.map.ol.on(
       'singleclick',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+      (event: MapBrowserPointerEvent<any>) => this.onMapEvent(event)
     );
   }
 
@@ -133,7 +136,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * Stop listening for map clicks
    */
   private unlistenToMapClick() {
-    this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
+    unByKey(this.mapClickListener);
     this.mapClickListener = undefined;
   }
 
@@ -141,7 +144,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * Issue queries from a map event and emit events with the results
    * @param event OL map browser pointer event
    */
-  private onMapEvent(event: OlMapBrowserPointerEvent) {
+  private onMapEvent(event: MapBrowserPointerEvent<any>) {
     this.cancelOngoingQueries();
     if (!this.queryService.queryEnabled) {
       return;
@@ -156,7 +159,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     const queryLayers = this.map.layers.filter(layerIsQueryable);
     queries$.push(
       ...this.queryService.query(queryLayers, {
-        coordinates: event.coordinate,
+        coordinates: event.coordinate as [number, number],
         projection: this.map.projection,
         resolution
       })
@@ -187,15 +190,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private doQueryFeatures(
-    event: OlMapBrowserPointerEvent
+    event: MapBrowserPointerEvent<any>
   ): Observable<Feature[]> {
     const clickedFeatures = [];
 
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: OlFeature, layerOL: OlLayer) => {
+        (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
+          if ((layer.dataSource.options as QueryableDataSourceOptions).queryFormatAsWms) {
+            return;
+          }
           if (featureOL) {
             if (featureOL.get('features')) {
               for (const feature of featureOL.get('features')) {
@@ -243,20 +249,21 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           hitTolerance: this.queryFeaturesHitTolerance || 0,
           layerFilter: this.queryFeaturesCondition
             ? this.queryFeaturesCondition
-            : olLayerIsQueryable
+            : olLayerFeatureIsQueryable
         }
       );
     } else if (event.type === 'boxend') {
-      const dragExtent = event.target.getGeometry().getExtent();
+      const target = event.target as any;
+      const dragExtent = target.getGeometry().getExtent();
       this.map.layers
         .filter(layerIsQueryable)
         .filter(layer => layer instanceof VectorLayer && layer.visible)
         .map(layer => {
-          const featuresOL = layer.dataSource.ol;
-          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
+          const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
+          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: any) => {
             const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
             newFeature.meta = {
-              id: layer.id + '.' + olFeature.id_,
+              id: layer.id + '.' + olFeature.getId(),
               icon: olFeature.values_._icon,
               sourceTitle: layer.title,
               alias: this.queryService.getAllowedFieldsAndAlias(layer),
@@ -306,7 +313,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
     this.olDragSelectInteractionEndKey = olDragSelectInteractionOnQuery.on(
       'boxend',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+      (event: MapBrowserPointerEvent<any>) => this.onMapEvent(event)
     );
   }
 

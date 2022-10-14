@@ -1,4 +1,4 @@
-<div *ngIf="!store || store.stateView.empty" style="margin: 10px;">
+<div *ngIf="(!store || store.stateView.empty) && (debouncedEmpty$ | async) " style="margin: 10px;">
   <section class="mat-typography">
     <h4><strong>{{ 'igo.integration.searchResultsTool.noResults' | translate }}</strong></h4>
     <p><strong>{{ 'igo.integration.searchResultsTool.doSearch' | translate }}</strong></p>
@@ -7,7 +7,7 @@
 </div>
 
 <igo-flexible
-  *ngIf="store && !(store.stateView.empty$ | async)"
+  *ngIf="store && (store.stateView.empty$ | async)===false"
   #topPanel
   initial="100%"
   initialMobile="100%"
@@ -63,7 +63,7 @@
         [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
         matBadgeColor="accent"
         matBadgeSize="small"
-        [matBadgeHidden]="!(isSelectedResultOutOfView$ | async)"     
+        [matBadgeHidden]="(isSelectedResultOutOfView$ | async)===false"     
         svgIcon="magnify-plus-outline"></mat-icon>
       </button>
 
@@ -72,7 +72,7 @@
         [feature]="feature$ | async"
         [map]="map"
         [toolbox]="toolState.toolbox"
-        (routingEvent)="getRoute($event)">
+        (routingEvent)="getRoute()">
       </igo-feature-details>
     </igo-panel>
   </div>

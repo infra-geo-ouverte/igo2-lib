@@ -9,8 +9,8 @@ import { Layer, ItemStyleOptions } from '../shared/layers';
 import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { catchError, map } from 'rxjs/operators';
-import { LanguageService } from '@igo2/core';
-import { WMSDataSourceOptions } from '../../datasource';
+import { LanguageService, ConfigService } from '@igo2/core';
+import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
 import { SecureImagePipe } from '@igo2/common';
 
 @Component({
@@ -51,7 +51,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * The extent used to make the legend
    */
-  private view: LegendMapViewOptions  = undefined;
+  private view: LegendMapViewOptions = undefined;
   /**
    * Get list of images display
    */
@@ -75,11 +75,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * activeLegend
    */
-  public legendGraphic: string;
 
   constructor(
     private capabilitiesService: CapabilitiesService,
     private languageService: LanguageService,
+    private configService: ConfigService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef) {}
 
@@ -90,13 +90,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     let lastlLegend = this.layer.legend;
     this.styles = this.listStyles();
     const sourceOptions = this.layer.options.source.options as any;
-    if (
-      sourceOptions &&
-      sourceOptions.params &&
-      sourceOptions.params.STYLES) {
+    if (sourceOptions && sourceOptions.params && sourceOptions.params.STYLES) {
       // if a styles is provided into the layers wms params
       this.currentStyle = this.styles.find(style => style.name === sourceOptions.params.STYLES).name;
-    } else if (!this.layer.legend) {
+    } else if (!lastlLegend) {
       // if no legend is manually provided
       if (this.styles && this.styles.length > 1) {
         this.currentStyle = this.styles[0].name;
@@ -104,16 +101,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
-    if ( typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
+    if (typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
       lastlLegend = [];
     } else {
       lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     }
 
-    if (this.updateLegendOnResolutionChange === true || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
+    if (this.updateLegendOnResolutionChange || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
       const state$ = this.layer.map.viewController.state$;
-      this.state$$ = state$
-      .subscribe(() => this.onViewControllerStateChange());
+      this.state$$ = state$.subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
       for (const legend of lastlLegend) {
@@ -132,20 +128,25 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   getLegendGraphic(item: Legend) {
-    const secureIMG = new SecureImagePipe(this.http);
-    secureIMG.transform(item.url).pipe(
-      catchError((err) => {
-        if (err.error) {
-          err.error.caught = true;
-          this.getLegend = false;
+    if (item.url) {
+      const secureIMG = new SecureImagePipe(this.http, this.configService);
+      secureIMG.transform(item.url).pipe(
+        catchError((err) => {
+          if (err.error) {
+            err.error.caught = true;
+            this.getLegend = false;
+            this.cdRef.detectChanges();
+            return err;
+          }
+        })
+        ).subscribe(obsLegGraph => {
+          const idx = this.legendItems$.value.findIndex(leg => leg.title === item.title);
+          const legendGraph = obsLegGraph as string;
+          this.legendItems$.value[idx].imgGraphValue = legendGraph;
           this.cdRef.detectChanges();
-          return err;
         }
-      })
-    ).subscribe((legend: string) => {
-      this.legendGraphic = legend;
-      this.cdRef.detectChanges();
-    });
+      );
+    }
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
@@ -215,7 +216,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
-      let stylesAvailable =  [{ name: '', title } as ItemStyleOptions];
+      let stylesAvailable = [{ name: '', title } as ItemStyleOptions];
       if (layerOptions.legendOptions.stylesAvailable) {
         stylesAvailable = stylesAvailable.concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
@@ -231,11 +232,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     let STYLES = '';
-    this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
-      STYLES += this.currentStyle + ','
-    );
-    STYLES = STYLES.slice(0, -1);
-    this.layer.dataSource.ol.updateParams({STYLES});
+    if (this.layer.dataSource instanceof WMSDataSource) {
+      this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
+        STYLES += this.currentStyle + ','
+      );
+      STYLES = STYLES.slice(0, -1);
+      this.layer.dataSource.ol.updateParams({ STYLES });
+    }
   }
 
   onLoadImage(id: string) {

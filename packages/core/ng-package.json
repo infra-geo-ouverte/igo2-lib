@@ -3,12 +3,7 @@
   "dest": "../../dist/core",
   "deleteDestPath": false,
   "lib": {
-    "entryFile": "src/public_api.ts",
-    "umdModuleIds": {
-      "@igo2/utils" : "utils",
-      "angular2-notifications" : "ng2notify",
-      "@ngx-translate/core" : "ngxt-core"
-    }
+    "entryFile": "src/public_api.ts"
   },
-  "whitelistedNonPeerDependencies": ["@ngx-translate", "angular2-notifications"]
+  "allowedNonPeerDependencies": ["@ngx-translate"]
 }

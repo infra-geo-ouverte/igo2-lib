@@ -15,9 +15,9 @@
   <div class="igo-input-container">
     <mat-form-field>
       <mat-label>{{'igo.geo.importExportForm.importProjPlaceholder' | translate}}</mat-label>
-      <mat-select 
-        [(value)]="inputProj">     
-        <mat-option 
+      <mat-select
+        [(value)]="inputProj">
+        <mat-option
           *ngFor="let projection of (projections$ | async)"
           [value]="projection"
           (click)="$event.stopPropagation()">
@@ -28,12 +28,12 @@
     </mat-form-field>
   </div>
 
-  <div 
-    tooltip-position="below" 
+  <div
+    tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="importForm.invalid ? ('igo.geo.importExportForm.projections.choose' | translate) : ('igo.geo.importExportForm.importButton' | translate)"
     class="igo-form-button-group">
-    <button 
+    <button
       [disabled]="importForm.invalid || (loading$ | async)"
       mat-raised-button
       type="button"
@@ -67,28 +67,27 @@
   <div class="igo-input-container">
     <mat-form-field>
       <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
-      <mat-select 
+      <mat-select
         [(value)]="layers" multiple>
         <mat-select-trigger>
           {{layers.length ? getLayerTitleById(layers[0]) : ''}}
           <span *ngIf="layers.length > 1" class="export-select-trigger">
             (+{{layers.length - 1}} {{(layers?.length === 2 ? 'igo.geo.importExportForm.other' : 'igo.geo.importExportForm.others') | translate }})
           </span>
-        </mat-select-trigger>        
-        <mat-option 
+        </mat-select-trigger>
+        <mat-option
           *ngFor="let layer of (exportableLayers$ | async)"
           [ngClass]="{'igo-export-layer-mat-option': layerHasSelectedFeatures(layer)}"
           [value]="layer.id"
           (click)="$event.stopPropagation()">
           <p mat-line>{{layer.title}}</p>
           <p mat-line>
-            <mat-slide-toggle
-              *ngIf="layerHasSelectedFeatures(layer)"
-                [labelPosition]="'after'"
-                (click)="onlySelectedClick($event,layer.id)"
-                (checked)="inLayersIdToExportSelectionOnly(layer)"
-                (change)="onlySelected($event,layer.id)">
-                <small>{{'igo.geo.importExportForm.exportSelectedFeature' | translate}}</small>
+            <mat-slide-toggle *ngIf="layerHasSelectedFeatures(layer)"
+              [labelPosition]="'after'"
+              (click)="onlySelectedClick($event,layer.id)"
+              (checked)="inLayersIdToExportSelectionOnly(layer)"
+              (change)="onlySelected($event,layer.id)">
+              <small>{{'igo.geo.importExportForm.exportSelectedFeature' | translate}}</small>
             </mat-slide-toggle>
           </p>
         </mat-option>
@@ -131,6 +130,22 @@
         </ng-container>
       </mat-select>
     </mat-form-field>
+  </div>
+
+  <div class="export-combine-layers mat-typography" *ngIf="layers.length > 1 && (form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon')">
+    <mat-slide-toggle
+        formControlName="combineLayers"
+        [labelPosition]="'before'">
+          {{'igo.geo.importExportForm.exportCombineResults' | translate}}
+    </mat-slide-toggle>
+  </div>
+
+  <div class="export-separator mat-typography" *ngIf="layers.length > 1 && (form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon') && form.value.combineLayers">
+    <mat-slide-toggle
+        formControlName="separator"
+        [labelPosition]="'before'">
+          {{'igo.geo.importExportForm.exportSeparator' | translate}}
+    </mat-slide-toggle>
   </div>
 
   <div class="export-options mat-typography" *ngIf="form.value.format !== 'URL'">

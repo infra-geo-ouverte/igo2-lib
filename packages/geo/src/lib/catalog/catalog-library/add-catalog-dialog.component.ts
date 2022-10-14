@@ -1,7 +1,7 @@
 import { LanguageService, ConfigService } from '@igo2/core';
 import { Component, OnInit, OnDestroy, Optional, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { EntityStore } from '@igo2/common';
@@ -14,7 +14,7 @@ import { Catalog } from '../shared/catalog.abstract';
   styleUrls: ['./add-catalog-dialog.component.scss']
 })
 export class AddCatalogDialogComponent implements OnInit, OnDestroy {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   private defaultAddedCatalogType = 'wms';
   private addedCatalogType$$: Subscription;
   public predefinedCatalogsList$ = new BehaviorSubject<Catalog[]>([]);
@@ -27,7 +27,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
   private storeViewAll$$: Subscription;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public languageService: LanguageService,
     private configService: ConfigService,
     public dialogRef: MatDialogRef<AddCatalogDialogComponent>,
@@ -75,7 +75,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     this.storeViewAll$$.unsubscribe();
   }
 
-  changeUrl(catalog: Catalog) {
+  changeUrlOrTitle(catalog: Catalog) {
     this.form.patchValue(catalog);
     this.error = false;
     this.computePredefinedCatalogList();

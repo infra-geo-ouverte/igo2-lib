@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
-import { Layer, VectorLayer } from '../shared/layers';
+import { VectorLayer } from '../shared/layers';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({

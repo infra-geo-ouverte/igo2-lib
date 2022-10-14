@@ -3,7 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ArcGISRestDataSourceOptions, ArcGISRestImageDataSourceOptions, TileArcGISRestDataSourceOptions, WMSDataSourceOptions } from '../datasources';
+import {
+  ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  TileArcGISRestDataSourceOptions,
+  WMSDataSourceOptions
+} from '../datasources';
 import { OptionsService } from './options.service';
 import { OptionsApiOptions } from './options-api.interface';
 
