@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatSlider } from '@angular/material/slider';
-import * as moment from 'moment';
+import { default as moment } from 'moment';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { Layer } from '../../layer/shared/layers/layer';

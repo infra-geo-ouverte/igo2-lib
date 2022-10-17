@@ -1,3 +1,29 @@
+# [1.13.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.12.1...1.13.0) (2022-10-14)
+
+
+### Bug Fixes
+
+* **entity-table:** fix edition autocomplete ([#1098](https://github.com/infra-geo-ouverte/igo2-lib/issues/1098)) ([5a0e410](https://github.com/infra-geo-ouverte/igo2-lib/commit/5a0e410ddeca44603bfff02fdbb00e70a826dffe))
+* **regex:** fix iphone regex (lookbehind expression) ([#1093](https://github.com/infra-geo-ouverte/igo2-lib/issues/1093)) ([a4c8664](https://github.com/infra-geo-ouverte/igo2-lib/commit/a4c866423def6e1889d2c4d6d383590609bd1455)), closes [#2](https://github.com/infra-geo-ouverte/igo2-lib/issues/2)
+* **theming:** fix global core import ([#1103](https://github.com/infra-geo-ouverte/igo2-lib/issues/1103)) ([88b0b96](https://github.com/infra-geo-ouverte/igo2-lib/commit/88b0b9679a14dc31008b4492789e7643cefad434))
+
+
+### Features
+
+* **app:** upgrade libs + angular14 ([#1094](https://github.com/infra-geo-ouverte/igo2-lib/issues/1094)) ([089e993](https://github.com/infra-geo-ouverte/igo2-lib/commit/089e9931760782ae1a6b12e068fb80223e5e08a3))
+
+
+
+## [1.12.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.12.0...1.12.1) (2022-07-13)
+
+
+### Bug Fixes
+
+* **catalog/spatial-filter:** 1.12.0 fix ([#1080](https://github.com/infra-geo-ouverte/igo2-lib/issues/1080)) ([25444d1](https://github.com/infra-geo-ouverte/igo2-lib/commit/25444d1ea7304c684ed24943e0be146663427c70))
+* **geolocation:** fix missing config service ([b9c6ffe](https://github.com/infra-geo-ouverte/igo2-lib/commit/b9c6ffeca14d550ba2219221c78a63ac945d9738))
+
+
+
 # [1.12.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.11.1...1.12.0) (2022-06-23)
 
 

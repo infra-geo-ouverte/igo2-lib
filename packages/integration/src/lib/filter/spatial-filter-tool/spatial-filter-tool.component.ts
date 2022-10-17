@@ -20,6 +20,7 @@ import {
   SpatialFilterQueryType,
   SpatialFilterThematic,
   Layer,
+  VectorLayer,
   createOverlayMarkerStyle,
   ExportOptions,
   MeasureLengthUnit
@@ -93,6 +94,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   private moveendKey: EventsKey;
+
+  public defaultStyle: olstyle.Style | ((feature, resolution) => olstyle.Style);
 
   constructor(
     private matIconRegistry: MatIconRegistry,
@@ -375,6 +378,32 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           i++;
         }
       }
+      this.defaultStyle = (_feature, resolution) => {
+        const coordinates = (features[0] as any).coordinates;
+        return new olstyle.Style({
+          image: new olstyle.Circle({
+            radius: coordinates
+              ? this.buffer /
+                Math.cos((Math.PI / 180) * coordinates[1]) /
+                resolution
+              : undefined,
+            fill: new olstyle.Fill({
+              color: 'rgba(200, 200, 20, 0.2)'
+            }),
+            stroke: new olstyle.Stroke({
+              width: 1,
+              color: 'orange'
+            })
+          }),
+          stroke: new olstyle.Stroke({
+            width: 1,
+            color: 'orange'
+          }),
+          fill: new olstyle.Fill({
+            color: 'rgba(200, 200, 20, 0.2)'
+          })
+        });
+      };
       this.dataSourceService
         .createAsyncDataSource({
           type: 'vector',
@@ -395,34 +424,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
                   : undefined
             },
             source: dataSource,
-            visible: true,
-            style: (_feature, resolution) => {
-              const coordinates = (features[0] as any).coordinates;
-              return new olstyle.Style({
-                image: new olstyle.Circle({
-                  radius: coordinates
-                    ? this.buffer /
-                      Math.cos((Math.PI / 180) * coordinates[1]) /
-                      resolution
-                    : undefined,
-                  fill: new olstyle.Fill({
-                    color: 'rgba(200, 200, 20, 0.2)'
-                  }),
-                  stroke: new olstyle.Stroke({
-                    width: 1,
-                    color: 'orange'
-                  })
-                }),
-                stroke: new olstyle.Stroke({
-                  width: 1,
-                  color: 'orange'
-                }),
-                fill: new olstyle.Fill({
-                  color: 'rgba(200, 200, 20, 0.2)'
-                })
-              });
-            }
-          });
+            visible: true
+          }) as VectorLayer;
           const featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
@@ -433,6 +436,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
           }
           const ol = dataSource.ol as olSourceVector<OlGeometry> | olSourceCluster;
           ol.addFeatures(featuresOl);
+          olLayer.ol.setStyle(this.defaultStyle);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);

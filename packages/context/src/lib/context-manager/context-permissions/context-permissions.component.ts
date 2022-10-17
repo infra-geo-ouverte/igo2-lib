@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 
 import {
   Context,
@@ -21,7 +21,7 @@ import { ConfigService } from '@igo2/core';
   styleUrls: ['./context-permissions.component.scss']
 })
 export class ContextPermissionsComponent implements OnInit {
-  public form: FormGroup;
+  public form: UntypedFormGroup;
 
   @Input()
   get context(): Context {
@@ -58,14 +58,14 @@ export class ContextPermissionsComponent implements OnInit {
 
   private baseUrlProfils;
 
-  public formControl = new FormControl();
+  public formControl = new UntypedFormControl();
   formValueChanges$$: Subscription;
 
   @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() removePermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
               private cd: ChangeDetectorRef,
               private http: HttpClient,
               public authService: AuthService,

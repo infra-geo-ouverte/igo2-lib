@@ -25,7 +25,7 @@ import { FontType, GeometryType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -42,7 +42,7 @@ import OlPoint from 'ol/geom/Point';
 import OlFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
@@ -139,7 +139,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public icons: Array<string>;
   public icon: string;
 
@@ -147,7 +147,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
     private drawIconService: DrawIconService

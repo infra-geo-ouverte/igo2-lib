@@ -4,7 +4,7 @@ import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
 import { MessageService, LanguageService, StorageService, StorageScope, ConfigService } from '@igo2/core';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { zoneMtm, zoneUtm, computeProjectionsConstraints } from '@igo2/geo';
 import * as olproj from 'ol/proj';
@@ -19,7 +19,7 @@ import * as olproj from 'ol/proj';
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
   public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
   public center: boolean = this.storageService.get('centerToggle') as boolean;
@@ -60,7 +60,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
     private config: ConfigService,
-    private formBuilder: FormBuilder) {
+    private formBuilder: UntypedFormBuilder) {
       this.computeProjections();
       this.buildForm();
     }
