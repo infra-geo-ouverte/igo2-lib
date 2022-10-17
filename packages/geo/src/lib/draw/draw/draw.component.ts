@@ -703,7 +703,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: typeof OlGeometryType) {
+  onGeometryTypeChange(geometryType: Type) {
     this.drawControl.setGeometryType(geometryType);
     this.toggleDrawControl();
   }
