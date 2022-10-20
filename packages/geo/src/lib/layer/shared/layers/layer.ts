@@ -18,7 +18,6 @@ import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions } from './layer.interface';
-import { LayerSyncWatcher } from '../../utils/layerSync-watcher';
 import { Message, MessageService } from '@igo2/core';
 
 export abstract class Layer {
@@ -141,7 +140,6 @@ export abstract class Layer {
     return this.options.showInLayerList !== false;
   }
 
-  private layerSyncWatcher: LayerSyncWatcher;
 
   constructor(
     public options: LayerOptions,
@@ -189,8 +187,6 @@ export abstract class Layer {
     this.unobserveResolution();
     if (igoMap !== undefined) {
       this.observeResolution();
-      this.layerSyncWatcher = new LayerSyncWatcher(this, this.map);
-      this.layerSyncWatcher.subscribe(() => {});
       this.hasBeenVisible$$ = this.hasBeenVisible$.subscribe(() => {
         if (this.options.messages && this.visible) {
           this.options.messages.map(message => {
@@ -198,8 +194,6 @@ export abstract class Layer {
           });
         }
       });
-    } else {
-      this.layerSyncWatcher.unsubscribe();
     }
   }
 
