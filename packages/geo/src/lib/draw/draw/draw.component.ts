@@ -616,7 +616,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         entity.properties.drawingStyle.fill = olFeature.get('fillColor_');
         entity.properties.drawingStyle.stroke = olFeature.get('strokeColor_');
         this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
       });
     }
     this.fillColor = fillColor;
