@@ -110,27 +110,25 @@ export class CapabilitiesService {
       );
   }
 
+  @Cacheable({
+    maxCacheCount: 20
+  })
   getArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions
   ): Observable<ArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-    const legendUrl = baseOptions.url + '/legend?f=json';
     const serviceCapabilities = this.getCapabilities('arcgisrest', baseOptions.url);
     const arcgisOptions = this.http.get(baseUrl);
-    const legend = this.http.get(legendUrl).pipe(
-      map((res: any) => res),
-      catchError((err) => {
-        console.log('No legend associated with this Feature Service');
-        return of(err);
-      })
-    );
-    return forkJoin([arcgisOptions, legend, serviceCapabilities]).pipe(
+    return forkJoin([arcgisOptions, serviceCapabilities]).pipe(
       map((res: any) => {
-        return this.parseArcgisOptions(baseOptions, res[0], res[1], res[2]);
+        return this.parseArcgisOptions(baseOptions, res[0], res[1]);
       })
     );
   }
 
+  @Cacheable({
+    maxCacheCount: 20
+  })
   getImageArcgisOptions(
     baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
   ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
@@ -152,6 +150,9 @@ export class CapabilitiesService {
     );
   }
 
+  @Cacheable({
+    maxCacheCount: 20
+  })
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
   ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
@@ -368,15 +369,12 @@ export class CapabilitiesService {
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
     arcgisOptions: any,
-    legend: any,
     serviceCapabilities: any,
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
     let legendInfo: any;
 
-    if (legend.layers) {
-      legendInfo = legend.layers.find(x => x.layerName === title);
-    } else if (arcgisOptions.drawingInfo?.renderer) {
+    if (arcgisOptions.drawingInfo?.renderer) {
       legendInfo = arcgisOptions.drawingInfo.renderer;
     } else {
       legendInfo = undefined;
