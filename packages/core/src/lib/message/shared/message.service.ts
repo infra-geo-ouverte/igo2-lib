@@ -52,7 +52,7 @@ export class MessageService {
       message.options.to = new Date(Date.parse(message.options.to.replace(/-/g, ' ')));
     }
     if (currentDate > message.options.from && currentDate < message.options.to) {
-      if (message.noIcon) {
+      if (message.showIcon === false) {
         this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType} toast-no-icon`;
       }
       message = this.handleTemplate(message);

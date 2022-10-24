@@ -9,7 +9,7 @@ export interface Message {
   type?: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
-  noIcon?: boolean
+  showIcon?: boolean
 }
 
 export interface MessageOptions extends IndividualConfig {
