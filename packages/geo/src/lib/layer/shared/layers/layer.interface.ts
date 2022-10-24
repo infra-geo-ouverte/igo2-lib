@@ -34,6 +34,7 @@ export interface LayerOptions {
   active?: boolean;
   check?: boolean;
   linkedLayers?: LayersLink;
+  showButtonZoomToExtent?: boolean;
 }
 
 export interface LayerSecurityOptions {
