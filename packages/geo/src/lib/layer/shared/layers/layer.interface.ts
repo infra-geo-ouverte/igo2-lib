@@ -33,6 +33,7 @@ export interface LayerOptions {
   active?: boolean;
   check?: boolean;
   linkedLayers?: LayersLink;
+  notShowOptionButtonZoomToExtent?: boolean;
 }
 
 export interface GeoWorkspaceOptions {
