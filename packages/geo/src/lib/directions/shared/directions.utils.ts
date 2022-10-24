@@ -156,7 +156,6 @@ export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, lang
       linkId: 'igo-direction-stops-layer',
       links: [
         {
-          bidirectionnal: false,
           syncedDelete: true,
           linkedIds: ['igo-direction-route-layer'],
           properties: []

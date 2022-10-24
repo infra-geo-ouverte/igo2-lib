@@ -49,8 +49,6 @@ export class WMSDataSource extends DataSource {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
-  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
-
   set timeFilter(value: TimeFilterOptions ) {
     (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
   }
@@ -196,7 +194,7 @@ export class WMSDataSource extends DataSource {
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
-      this.ogcFilters$.next(this.ogcFilters);
+      this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
@@ -204,6 +202,7 @@ export class WMSDataSource extends DataSource {
     this.timeFilter = timeFilter;
     if (triggerEvent) {
       this.timeFilter$.next(this.timeFilter);
+      this.ol.notify('timeFilter', this.ogcFilters);
     }
   }
 
