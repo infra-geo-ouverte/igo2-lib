@@ -1,7 +1,7 @@
 <div class="igo-geolocate-button-container" *ngIf="map.geolocationController">
   <button
     mat-icon-button
-    [matTooltip]="'igo.geo.mapButtons.geolocate' | translate"
+    [matTooltip]="map.geolocationController.tracking ? ('igo.geo.mapButtons.geolocateInactive' | translate) :('igo.geo.mapButtons.geolocate' | translate)"
     matTooltipPosition="left"
     [color]="color"
     (click)="onGeolocationClick()">

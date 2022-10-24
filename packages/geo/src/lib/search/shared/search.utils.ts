@@ -41,6 +41,18 @@ export function featureToSearchResult(
   feature: Feature,
   source: SearchSource
 ): SearchResult<Feature> {
+  if (feature.properties) {
+    delete feature.properties.geometry;
+    delete feature.properties.GEOMETRIE;
+    delete feature.properties.boundedBy;
+    delete feature.properties.shape;
+    delete feature.properties.SHAPE;
+    delete feature.properties.SHAPE_S;
+    delete feature.properties.SHAPE_L;
+    delete feature.properties.SHAPE_P;
+    delete feature.properties.the_geom;
+    delete feature.properties.geom;
+  }
   feature.sourceId = source.getId();
   return {
     source,
