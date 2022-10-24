@@ -77,6 +77,9 @@ export class MessageService {
   }
 
   message(message: Message) {
+    const messageType = message.type;
+    this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType}`;
+
     this.messages$.next(this.messages$.value.concat([message]));
 
     message.options = message.options || {} as MessageOptions;
@@ -90,9 +93,10 @@ export class MessageService {
     if (typeof message.options.to === 'string') {
       message.options.to = new Date(Date.parse(message.options.to.replace(/-/g, ' ')));
     }
-    if (
-      currentDate > message.options.from && currentDate < message.options.to) {
-
+    if (currentDate > message.options.from && currentDate < message.options.to) {
+      if (message.showIcon === false) {
+        this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType} toast-no-icon`;
+      }
       message = this.handleTemplate(message);
 
       if (message.text) {
@@ -116,6 +120,14 @@ export class MessageService {
             break;
           case MessageType.INFO:
             messageShown = this.info(
+              message.text,
+              message.title,
+              message.options,
+              message.textInterpolateParams,
+              message.titleInterpolateParams);
+            break;
+          case MessageType.SHOW:
+            messageShown = this.show(
               message.text,
               message.title,
               message.options,
@@ -181,8 +193,17 @@ export class MessageService {
     return this.handleNgxToastr('alert', text, title, options, textInterpolateParams, titleInterpolateParams);
   }
 
+  show(
+    text: string,
+    title: string = 'igo.core.message.info',
+    options: Partial<IndividualConfig> = {},
+    textInterpolateParams?: Object,
+    titleInterpolateParams?: Object): ActiveToast<any> {
+    return this.handleNgxToastr('show', text, title, options, textInterpolateParams, titleInterpolateParams);
+  }
+
   private handleNgxToastr(
-    type: 'alert' | 'info' | 'error' | 'success',
+    type: 'alert' | 'info' | 'error' | 'success' | 'show',
     text: string,
     title: string,
     options: Partial<IndividualConfig> = {},
@@ -217,6 +238,7 @@ export class MessageService {
       case 'error':
         activeToast = this.toastr.error(message, translatedTitle, options);
         break;
+      case 'show':
       case 'info':
         activeToast = this.toastr.info(message, translatedTitle, options);
         break;

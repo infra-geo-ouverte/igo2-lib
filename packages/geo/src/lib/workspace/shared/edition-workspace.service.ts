@@ -88,7 +88,6 @@ export class EditionWorkspaceService {
       layer.options.linkedLayers = { linkId: wmsLinkId, links: [] };
     }
     const linkProperties = {
-      bidirectionnal: true,
       syncedDelete: true,
       linkedIds: [wfsLinkId],
       properties: [
@@ -166,7 +165,7 @@ export class EditionWorkspaceService {
           relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
-          ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
+          ogcFilters: Object.assign({}, dataSource.ogcFilters, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined,
           edition: dataSource.options.edition
         } as WFSoptions
