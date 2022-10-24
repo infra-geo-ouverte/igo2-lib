@@ -137,6 +137,8 @@
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés) ET leurs géométries doivent être en coordonnées Latitude Longitude (EPSG:4326/WGS84)",
+        "importHtmlClarifications": "",
+        "exportHtmlClarifications": "",
         "other": "autre",
         "others": "autres",
         "projections": {
@@ -265,6 +267,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "geolocateInactive": "Masquer votre position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
