@@ -137,6 +137,8 @@
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Shapefiles must be zipped AND geometries stored in Latitude Longitude coordinate (EPSG:4326/WGS:84)",
+        "importHtmlClarifications": "",
+        "exportHtmlClarifications": "",
         "other": "other",
         "others": "others",
         "projections": {
@@ -265,7 +267,8 @@
       },
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
-        "geolocate": "Geolocate",
+        "geolocate": "Show geolocation",
+        "geolocateInactive": "Hide geolocation",
         "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",

@@ -14,7 +14,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule } from '@igo2/common';
+import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule, IgoCustomHtmlModule } from '@igo2/common';
 
 import { ExportButtonComponent } from './export-button/export-button.component';
 import { ImportExportComponent } from './import-export/import-export.component';
@@ -40,6 +40,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
     IgoSpinnerModule,
     IgoKeyValueModule,
     IgoDrapDropModule,
+    IgoCustomHtmlModule,
     IgoStyleListModule.forRoot()
   ],
   exports: [ImportExportComponent, DropGeoFileDirective, IgoStyleListModule, ExportButtonComponent],

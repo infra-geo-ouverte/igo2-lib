@@ -50,7 +50,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
-  public filteredOptions: Observable<any[]>;
+  public filteredOptions = {};
 
   /**
    * Reference to the column renderer types
@@ -256,9 +256,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process autocomplete value change (edition)
    */
-  onAutocompleteValueChange(column: string, record: EntityRecord<any>, event) {
-    this.formGroup.controls[column].setValue(event.option.viewValue);
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
+  onAutocompleteValueChange(column: EntityTableColumn, record: EntityRecord<any>, event) {
+    this.formGroup.controls[column.name].setValue(event.option.viewValue);
+    const key = this.getColumnKeyWithoutPropertiesTag(column.name);
     record.entity.properties[key] = event.option.value;
   }
 
@@ -310,17 +310,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           item[key]
         ));
 
-        this.filteredOptions = this.formGroup.controls[column.name].valueChanges.pipe(
-          map(value => {
-            if (value.length) {
-              return column.domainValues.filter((option) => {
-                const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-                const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                return featureNameNormalized.includes(filterNormalized);
-              });
-            }
-          })
-        );
+        this.filteredOptions[column.name] = new Observable<any[]>();
+        this.filteredOptions[column.name] =
+          this.formGroup.controls[column.name].valueChanges.pipe(
+            map(value => {
+              if (value?.length) {
+                return column.domainValues?.filter((option) => {
+                  const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+                  const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                  return featureNameNormalized.includes(filterNormalized);
+                });
+              }
+            })
+          );
 
         let formControlValue = item[key];
         column.domainValues.forEach(option => {

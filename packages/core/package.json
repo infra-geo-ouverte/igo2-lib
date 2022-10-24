@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "1.13.0-alpha.0",
+  "version": "1.13.0",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "@ngx-translate/core": "^14.0.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.0.5",
-    "@angular/common": "^14.0.6",
-    "@angular/core": "^14.0.6",
-    "@igo2/utils": "^1.13.0-alpha.0",
-    "rxjs": "^6.6.7",
+    "@angular/cdk": "^14.1.2",
+    "@angular/common": "^14.1.2",
+    "@angular/core": "^14.1.2",
+    "@igo2/utils": "^1.13.0",
+    "rxjs": "^7.5.6",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^15.0.0"
   }

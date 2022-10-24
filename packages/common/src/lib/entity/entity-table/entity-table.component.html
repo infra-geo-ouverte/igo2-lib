@@ -93,14 +93,16 @@
                                   {{ option.value }}
                               </mat-option>
                           </mat-select>
-                          <input matInput type="text" [formControlName]="column.name" *ngIf="column.type === 'autocomplete'"
-                          [matAutocomplete]="auto" required="{{getValidationAttributeValue(column, 'mandatory')}}" value="{{getValue(record, column)}}">
-                              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteValueChange(column.name, record, $event)"
-                              panelWidth="430px">
-                                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
-                                      {{ option.value }}
-                                  </mat-option>
-                              </mat-autocomplete>
+                          <input matInput type="text" [formControlName]="column.name" *ngIf="column.type === 'autocomplete'" [matAutocomplete]="auto"
+                            required="{{getValidationAttributeValue(column, 'mandatory')}}" value="{{getValue(record, column)}}"
+                            readonly="{{getValidationAttributeValue(column, 'readonly')}}">
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteValueChange(column, record, $event)"
+                                panelWidth="430px">
+                                    <mat-option *ngFor="let option of filteredOptions[column.name] | async"
+                                        [value]="option.id">
+                                        {{ option.value }}
+                                    </mat-option>
+                                </mat-autocomplete>
                       </td>
                       <ng-template #isUnsanitizedHTML>
                           <td mat-cell class="mat-cell-text" *ngIf="!isUrl(getValue(record, column));else isAnUrlUnsanitizedHTML" [ngClass]="getCellClass(record, column)"

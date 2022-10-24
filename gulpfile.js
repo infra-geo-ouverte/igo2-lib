@@ -174,8 +174,8 @@ gulp.task('core:concatStyles', done => {
   gulp
     .src([
       './packages/core/src/style/setup.scss',
-      './packages/core/src/style/all.theming.scss',
       './packages/core/src/style/typography.scss',
+      './packages/core/src/style/all.theming.scss',
       './packages/core/src/style/foreground.scss',
       './packages/core/src/style/theming.scss',
       './packages/core/src/style/core.theming.scss',

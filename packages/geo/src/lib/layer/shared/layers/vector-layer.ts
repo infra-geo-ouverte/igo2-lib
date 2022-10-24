@@ -16,7 +16,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { VectorWatcher } from '../../utils';
-import { IgoMap } from '../../../map';
+import { IgoMap, MapExtent } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
@@ -208,6 +208,10 @@ export class VectorLayer extends Layer {
       this.watcher.subscribe(() => {});
     }
     super.setMap(map);
+  }
+
+  public setExtent(extent: MapExtent): void {
+    this.options.extent = extent;
   }
 
   public onUnwatch() {

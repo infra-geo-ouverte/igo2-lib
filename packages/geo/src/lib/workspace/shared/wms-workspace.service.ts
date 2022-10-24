@@ -65,7 +65,6 @@ export class WmsWorkspaceService {
       layer.options.linkedLayers = { linkId: wmsLinkId, links: [] };
     }
     const linkProperties = {
-      bidirectionnal: true,
       syncedDelete: true,
       linkedIds: [wfsLinkId],
       properties: [
@@ -148,7 +147,7 @@ export class WmsWorkspaceService {
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           queryFormatAsWms: layer.options.workspace?.enabled ? (dataSource.options as QueryableDataSourceOptions).queryFormatAsWms : true,
           params: dataSource.options.paramsWFS,
-          ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
+          ogcFilters: Object.assign({}, dataSource.ogcFilters, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined
         } as WFSoptions
       })
