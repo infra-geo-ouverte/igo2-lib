@@ -292,8 +292,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.layers$$.unsubscribe();
   }
 
-  activeLayerIsValid(layer: Layer): boolean {
+  activeLayerExtentIsValid(layer: Layer): boolean {
     let valid = false;
+    if (layer.options.showButtonZoomToExtent === false) {
+      return false;
+    }
     const layerExtent = layer.options.extent;
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
 
@@ -307,7 +310,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return valid;
   }
 
-  activeLayersAreValid(layers: Layer[]): boolean {
+  activeLayersExtentAreValid(layers: Layer[]): boolean {
     let valid = false;
     const layersExtent = olextent.createEmpty();
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;

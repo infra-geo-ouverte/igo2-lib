@@ -117,7 +117,7 @@
     </mat-menu>
 
     <button
-      *ngIf="activeLayerIsValid(activeLayer)"
+      *ngIf="activeLayerExtentIsValid(activeLayer)"
       class="zoomLayer-button"
       color="primary"
       mat-icon-button
@@ -222,7 +222,7 @@
     </mat-menu>
 
     <button
-      *ngIf="layersChecked.length !== 0 && activeLayersAreValid(layersChecked)"
+    *ngIf="layersChecked.length !== 0 && activeLayersExtentAreValid(layersChecked)"
       class="zoomLayer-button"
       color="primary"
       mat-icon-button

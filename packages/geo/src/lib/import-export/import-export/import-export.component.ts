@@ -81,6 +81,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
 
+  public importHtmlClarifications: string;
+  public exportHtmlClarifications: string;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
@@ -167,6 +169,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.loadConfig();
     this.buildForm();
     this.computeProjections();
+    this.importHtmlClarifications = this.languageService.translate.instant('igo.geo.importExportForm.importHtmlClarifications');
+    this.exportHtmlClarifications = this.languageService.translate.instant('igo.geo.importExportForm.exportHtmlClarifications');
   }
 
   ngOnInit() {
