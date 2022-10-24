@@ -200,8 +200,9 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   getEmbeddedLinkText(value) {
-    const regex = /(?<=>).*?(?=<|$)/;
-    const text = value.match(regex)[0];
+    const regex = /(?:>).*?(?=<|$)/;
+    let text = value.match(regex)[0] as string;
+    text = text.replace(/>/g, '');
     return text;
   }
 

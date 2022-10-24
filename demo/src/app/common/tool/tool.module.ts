@@ -15,25 +15,21 @@ import {
 import { AppToolRoutingModule } from './tool-routing.module';
 
 @NgModule({
-  declarations: [
-    AppToolComponent,
-    AppSalutationToolComponent,
-    AppAboutToolComponent
-  ],
-  imports: [
-    CommonModule,
-    AppToolRoutingModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    IgoLanguageModule,
-    IgoPanelModule,
-    IgoToolModule.forRoot()
-  ],
-  exports: [AppToolComponent],
-  entryComponents: [
-    AppSalutationToolComponent,
-    AppAboutToolComponent
-  ]
+    declarations: [
+        AppToolComponent,
+        AppSalutationToolComponent,
+        AppAboutToolComponent
+    ],
+    imports: [
+        CommonModule,
+        AppToolRoutingModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        IgoLanguageModule,
+        IgoPanelModule,
+        IgoToolModule.forRoot()
+    ],
+    exports: [AppToolComponent]
 })
 export class AppToolModule {}

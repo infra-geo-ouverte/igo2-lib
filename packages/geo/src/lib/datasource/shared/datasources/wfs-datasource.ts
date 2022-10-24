@@ -16,7 +16,6 @@ import {
   getFormatFromOptions,
   buildUrl
 } from './wms-wfs.utils';
-import { BehaviorSubject } from 'rxjs';
 import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
@@ -29,8 +28,6 @@ export class WFSDataSource extends DataSource {
   get ogcFilters(): OgcFiltersOptions {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
-
-  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WFSDataSourceOptions,
@@ -91,7 +88,7 @@ export class WFSDataSource extends DataSource {
     this.ogcFilters = ogcFilters;
     this.mostRecentIdCallOGCFilter += 1;
     if (triggerEvent) {
-      this.ogcFilters$.next(this.ogcFilters);
+      this.ol.notify('ogcFilters', this.ogcFilters);
     }
   }
 
