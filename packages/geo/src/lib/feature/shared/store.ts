@@ -1,5 +1,6 @@
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olextent from 'ol/extent';
 
 import {
   getEntityId,
@@ -9,11 +10,11 @@ import {
 
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { IgoMap, MapExtent } from '../../map';
 
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
-import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures } from './feature.utils';
+import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures, computeOlFeaturesExtent } from './feature.utils';
 
 /**
  * The class is a specialized version of an EntityStore that stores
@@ -136,6 +137,18 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     }
   }
 
+  setLayerExtent(): void {
+    let features = this.entities$.getValue();
+    let extent = olextent.createEmpty() as MapExtent;
+    let olFeatures = [];
+
+    features.forEach((feature) => {
+      olFeatures.push(featureToOl(feature, this.map.projection));
+    });
+    const featuresExtent = computeOlFeaturesExtent(this.map, olFeatures);
+    olextent.extend(extent, featuresExtent);
+    this.layer.setExtent(extent);
+  }
   /**
    * Add features to the the layer
    * @param features Openlayers feature objects
