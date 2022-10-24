@@ -1,4 +1,4 @@
-<div class="separate-item">
+<div [ngClass]="{'separate-item' : header === true}" >
   <mat-list-item>
     <mat-icon
       *ngIf="header"
