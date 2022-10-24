@@ -236,7 +236,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
       hitTolerance: this.options.hitTolerance || 0,
       layerFilter: olLayer => {
         const storeOlLayer = this.stores.find((store: FeatureStore) => {
-          return store.layer.ol === olLayer;
+          return store.layer?.ol === olLayer;
         });
         return storeOlLayer !== undefined;
       }

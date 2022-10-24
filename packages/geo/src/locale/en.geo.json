@@ -266,7 +266,8 @@
       },
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
-        "geolocate": "Geolocate",
+        "geolocate": "Show geolocation",
+        "geolocateInactive": "Hide geolocation",
         "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",
