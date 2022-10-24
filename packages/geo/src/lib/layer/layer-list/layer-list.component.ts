@@ -294,7 +294,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   activeLayerExtentIsValid(layer: Layer): boolean {
     let valid = false;
-    if (layer.options.notShowOptionButtonZoomToExtent === true) {
+    if (layer.options.showButtonZoomToExtent === false) {
       return false;
     }
     const layerExtent = layer.options.extent;
