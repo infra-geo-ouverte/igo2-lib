@@ -145,6 +145,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private numberOfDrawings: number;
 
+  public linestringOnly: boolean;
+
   constructor(
     private languageService: LanguageService,
     private formBuilder: UntypedFormBuilder,
@@ -280,6 +282,12 @@ export class DrawComponent implements OnInit, OnDestroy {
         )
         .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
           this.selectedFeatures$.next(records.map((record) => record.entity));
+          this.linestringOnly = true;
+          for (const feature of this.selectedFeatures$.getValue()) {
+            if (feature.geometry.type !== 'LineString') {
+              this.linestringOnly = false;
+            }
+          }
         })
     );
 

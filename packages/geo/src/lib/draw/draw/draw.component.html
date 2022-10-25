@@ -69,7 +69,7 @@
       class="igo-form"
       [formGroup]="form"
       [@openClose]="(selectedFeatures$ | async).length !== 0 ? 'open' : 'closed'">
-      <div class="fill-color-picker mat-typography">
+      <div class="fill-color-picker mat-typography" *ngIf="linestringOnly !== true">
         <span>
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.draw.fill' | translate }}
