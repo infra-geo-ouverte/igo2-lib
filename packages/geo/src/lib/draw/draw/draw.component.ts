@@ -505,7 +505,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         longitude: lon4326 ? lon4326 : null,
         latitude: lat4326 ? lat4326 : null,
         rad: rad ? rad : null,
-        fontStyle: olGeometry.get('style_'),
+        fontStyle: olGeometry.get('fontStyle_'),
         drawingStyle: {
           fill: olGeometry.get('fillColor_'),
           stroke: olGeometry.get('strokeColor_')
@@ -638,7 +638,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   onFontChange(labelsAreShown: boolean, size: string, style: FontType) {
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
-        const olFeature = featureToOl(
+        let olFeature = featureToOl(
           feature,
           this.map.ol.getView().getProjection().getCode()
         );
@@ -646,9 +646,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         const entity = this.store
           .all()
           .find((e) => e.meta.id === olFeature.getId());
-        entity.properties.fontStyle = olFeature.get('style_');
+        entity.properties.fontStyle = olFeature.get('fontStyle_');
         this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
+        olFeature = this.store.layer.ol.getSource().getFeatures().find(f => f.getId() === entity.meta.id);
+        olFeature.setProperties({ fontStyle: entity.properties.fontStyle });
+        olFeature.changed();
       });
 
       this.fontSize = size;
@@ -675,7 +677,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   ) {
     if (this.selectedFeatures$.value.length > 0) {
       this.selectedFeatures$.value.forEach((feature) => {
-        const olFeature = featureToOl(
+        let olFeature = featureToOl(
           feature,
           this.map.ol.getView().getProjection().getCode()
         );
@@ -686,7 +688,9 @@ export class DrawComponent implements OnInit, OnDestroy {
         entity.properties.offsetX = olFeature.get('offsetX_');
         entity.properties.offsetY = olFeature.get('offsetY_');
         this.store.update(entity);
-        this.store.layer.ol.getSource().refresh();
+        olFeature = this.store.layer.ol.getSource().getFeatures().find(f => f.getId() === entity.meta.id);
+        olFeature.setProperties({ offsetX: entity.properties.offsetX, offsetY: entity.properties.offsetY });
+        olFeature.changed();
       });
       this.elementStyle(labelsAreShown);
     }
@@ -730,7 +734,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   ) {
     olFeature.setProperties(
       {
-        style_: `${fontSize}px ${fontStyle}`
+        fontStyle_: `${fontSize}px ${fontStyle}`
       },
       true
     );
