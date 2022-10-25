@@ -568,6 +568,9 @@ export class QueryService {
     delete properties.boundedBy;
     delete properties.shape;
     delete properties.SHAPE;
+    delete properties.SHAPE_S;
+    delete properties.SHAPE_L;
+    delete properties.SHAPE_P;
     delete properties.the_geom;
     delete properties.geom;
 

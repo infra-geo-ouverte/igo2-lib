@@ -9,6 +9,9 @@ export interface Message {
   type?: MessageType;
   options?: MessageOptions;
   format?: 'text' | 'html';
+  textInterpolateParams?: Object;
+  titleInterpolateParams?: Object;
+  showIcon?: boolean
 }
 
 export interface MessageOptions extends IndividualConfig {

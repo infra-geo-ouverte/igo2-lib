@@ -285,6 +285,9 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     this.subscriptions$$.push(
       this.store.count$.subscribe((cnt) => {
+        if (cnt > 0) {
+          this.store.setLayerExtent();
+        }
         cnt >= 1
           ? (this.store.layer.options.showInLayerList = true)
           : (this.store.layer.options.showInLayerList = false);
