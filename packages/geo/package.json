@@ -32,10 +32,9 @@
     "@igo2/common": "^1.13.0",
     "@igo2/core": "^1.13.0",
     "@igo2/utils": "^1.13.0",
-    "ol": "^6.15.1",
+    "ol": "^7.0.0",
     "proj4": "^2.8.0",
     "rxjs": "^7.5.6",
-    "ol-mapbox-style": "^8.2.1",
     "striptags": "^3.2.0"
   },
   "optionalDependencies": {

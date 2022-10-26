@@ -1,3 +1,5 @@
+import { Units } from "ol/control/ScaleLine";
+
 export type MapExtent = [number, number, number, number];
 
 export interface MapViewOptions {
@@ -44,7 +46,7 @@ export interface MapScaleLineOptions {
   className?: string;
   minWidth?: number;
   target?: string | HTMLElement;
-  units?: string;
+  units?: Units;
   bar?: boolean;
   steps?: number;
   text?: boolean;
