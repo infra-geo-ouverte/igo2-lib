@@ -920,25 +920,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
   }
 
-  computeElementRef(type?: string) {
-    const checkItems = this.elRef.nativeElement.getElementsByClassName(
-      'mat-checkbox-checked'
-    );
-    const checkItem =
-      type === 'lower'
-        ? this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[checkItems.length - 1]
-        : this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[0];
-    const igoList = this.elRef.nativeElement.getElementsByTagName(
-      'igo-list'
-    )[0];
-
-    return [igoList, checkItem];
-  }
-
   removeProblemLayerInList(layersList: Layer[]): Layer[] {
     for (const layer of layersList) {
       if (layer.olLoadingProblem === true) {
