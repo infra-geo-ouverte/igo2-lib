@@ -736,6 +736,10 @@
       },
       "query": {
         "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
+      },
+      "indexedDb": {
+        "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
+        "data-download-completed": "Téléchargement des données terminée."
       }
     }
   }
