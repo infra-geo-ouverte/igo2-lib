@@ -2,7 +2,7 @@ import * as olextent from 'ol/extent';
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
-import OlGeometryLayout from 'ol/geom/GeometryLayout';
+import type { GeometryLayout } from 'ol/geom/Geometry';
 import OlPolygon from 'ol/geom/Polygon';
 import OlPoint from 'ol/geom/Point';
 import OlLineString from 'ol/geom/LineString';
@@ -116,15 +116,15 @@ export function renderFeatureFromOl(
     const ends = olRenderFeature.getEnds() as number[];
     geom = new OlPolygon(
       olRenderFeature.getFlatCoordinates(),
-      OlGeometryLayout.XY,
+      'XY' as GeometryLayout,
       ends
     );
   } else if (geometryType === 'Point') {
-    geom = new OlPoint(olRenderFeature.getFlatCoordinates(), OlGeometryLayout.XY);
+    geom = new OlPoint(olRenderFeature.getFlatCoordinates(), 'XY' as GeometryLayout);
   } else if (geometryType === 'LineString') {
     geom = new OlLineString(
       olRenderFeature.getFlatCoordinates(),
-      OlGeometryLayout.XY
+      'XY' as GeometryLayout,
     );
   }
 

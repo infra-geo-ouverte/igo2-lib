@@ -204,7 +204,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
         "sliderModeTitle": "Curseur temporel",
-        "reportingDate": "Date de signalement"
+        "reportingDate": "Date de signalement",
+        "noFilterableLayer": "Aucune couche ne peut être filtrée dans la carte actuelle"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -417,6 +418,7 @@
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
+        "clearSearch": "Effacer la recherche",
         "ilayer": {
           "name": "Couches",
           "properties": {

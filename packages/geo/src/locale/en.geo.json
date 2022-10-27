@@ -205,7 +205,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
         "sliderModeTitle": "Time slider",
-        "reportingDate": "Reporting date"
+        "reportingDate": "Reporting date",
+        "noFilterableLayer": "No layer can be filtered in the current map"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -418,6 +419,7 @@
         "layer.title": "Layer",
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
+        "clearSearch": "Clear search",
         "ilayer": {
           "name": "Layers",
           "properties": {
