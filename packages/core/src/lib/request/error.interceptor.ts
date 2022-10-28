@@ -46,7 +46,6 @@ export class ErrorInterceptor implements HttpInterceptor {
     errorContainer: { httpError: HttpErrorResponse }
   ) {
     if (httpError instanceof HttpErrorResponse) {
-      console.log('httpError',httpError)
       const errorObj = httpError.error === 'object' ? httpError.error : {};
       errorObj.message = httpError.error.message || httpError.statusText;
       errorObj.caught = false;
