@@ -274,7 +274,7 @@
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-				"resetRotation": "Azimut: {{azimuth}} \nRéinitialiser la carte vers le nord",
+				"resetRotation": "Azimut: {{azimuth}}°N \nRéinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
