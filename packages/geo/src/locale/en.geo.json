@@ -735,7 +735,10 @@
         "maxLength": "{{column}} is longer than {{value}} characters"
       },
       "query": {
-        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features.",
+        "link": {
+          "message": "Hyperlink copied to clipboard"
+        }
       }
     }
   }

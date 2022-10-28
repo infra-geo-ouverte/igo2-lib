@@ -735,7 +735,10 @@
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       },
       "query": {
-        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation.",
+        "link": {
+          "message": "Le lien a été copié dans le presse-papier"
+        }
       }
     }
   }
