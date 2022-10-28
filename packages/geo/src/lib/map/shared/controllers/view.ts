@@ -140,7 +140,7 @@ export class MapViewController extends MapController {
       this.olMap.getView().on('change:rotation', (evt: ObjectEvent) => {
         this.rotation$.next(evt.target.getRotation());
       }) as EventsKey
-      )
+      );
   }
 
   /**

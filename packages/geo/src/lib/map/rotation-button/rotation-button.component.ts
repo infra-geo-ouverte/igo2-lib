@@ -15,7 +15,7 @@ export class RotationButtonComponent implements AfterContentInit {
   readonly currentStyle$ = new BehaviorSubject<{}>({
     transform: 'rotate(0rad)'
   });
-  
+
   @Input() map: IgoMap;
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
@@ -32,6 +32,6 @@ export class RotationButtonComponent implements AfterContentInit {
       });
       this.rotated$.next(radians !== 0);
     }
-    )
+    );
   }
 }
