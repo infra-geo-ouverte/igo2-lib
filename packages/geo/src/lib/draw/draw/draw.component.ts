@@ -53,6 +53,7 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
+import { StyleModalComponent, StyleModalData } from '../../layer/style-modal/style-modal.component';
 
 import {
   trigger,
@@ -60,7 +61,6 @@ import {
   style,
   animate,
   transition
-  // ...
 } from '@angular/animations';
 import Point from 'ol/geom/Point';
 
@@ -144,8 +144,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   public icon: string;
 
   private numberOfDrawings: number;
-
-  public linestringOnly: boolean;
 
   constructor(
     private languageService: LanguageService,
@@ -282,12 +280,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         )
         .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
           this.selectedFeatures$.next(records.map((record) => record.entity));
-          this.linestringOnly = true;
-          for (const feature of this.selectedFeatures$.getValue()) {
-            if (feature.geometry.type !== 'LineString') {
-              this.linestringOnly = false;
-            }
-          }
         })
     );
 
@@ -303,12 +295,40 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
+/**
+ * Open the style modal dialog box
+ */
+  openStyleModalDialog() {
+    setTimeout(() => {
+      // open the dialog box used to style features
+      const dialogRef = this.dialog.open(StyleModalComponent, {
+        disableClose: false,
+        data: {
+          features: this.selectedFeatures$.getValue(),
+          icons: this.icons,
+          icon: this.icon
+        }
+      });
+
+      // when dialog box is closed, get label and set it to geometry
+      dialogRef.afterClosed().subscribe((data: StyleModalData) => {
+        // checks if the user clicked ok
+        if (dialogRef.componentInstance.confirmFlag) {
+          console.log(data);
+          this.onFontChange(this.labelsAreShown, data.fontSize, data.fontStyle);
+          this.onColorChange(this.labelsAreShown, this.icon ? true : false, data.fillColor, data.strokeColor);
+          this.onOffsetLabelChange(this.labelsAreShown, data.offsetX, data.offsetY);
+        }
+      });
+    }, 250);
+  }
+
   /**
    * Open a dialog box to enter label and do something
    * @param olGeometry geometry at draw end or selected geometry
    * @param drawEnd event fired at drawEnd?
    */
-  private openDialog(olGeometry, isDrawEnd: boolean) {
+  private openDrawDialog(olGeometry, isDrawEnd: boolean) {
     setTimeout(() => {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
@@ -548,7 +568,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.selectedFeatures$.value[0],
         this.map.ol.getView().getProjection().getCode()
       );
-      this.openDialog(olGeometry, false);
+      this.openDrawDialog(olGeometry, false);
     }
   }
 
@@ -779,52 +799,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Updates values of the selected element on the HTML view
-
-  getFeatureFontSize(): string {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.fontStyle
-          .split(' ')[0]
-          .replace('px', '')
-      : '20';
-  }
-
-  getFeatureFontStyle() {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.fontStyle.substring(
-          this.selectedFeatures$.value[0].properties.fontStyle.indexOf(' ') + 1
-        )
-      : FontType.Arial;
-  }
-
-  getFeatureFillColor() {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.drawingStyle.fill
-      : 'rgba(255,255,255,0.4)';
-  }
-
-  getFeatureStrokeColor() {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.drawingStyle.stroke
-      : 'rgba(143,7,7,1)';
-  }
-
-  getFeatureOffsetX() {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.offsetX
-      : this.drawStyleService.getOffsetX();
-  }
-
-  getFeatureOffsetY() {
-    return this.selectedFeatures$.value.length > 0
-      ? this.selectedFeatures$.value[0].properties.offsetY
-      : '0';
-  }
-
-  get allFontStyles(): string[] {
-    return Object.values(FontType);
-  }
-
   updateHeightTable() {
 
     // Check the amount of rows as a possible alternative
@@ -894,7 +868,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawControlIsActive = true;
     this.drawEnd$$ = this.drawControl.end$.subscribe(
       (olGeometry: OlGeometry) => {
-        this.openDialog(olGeometry, true);
+        this.openDrawDialog(olGeometry, true);
       }
     );
 
@@ -905,7 +879,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     if (!this.drawSelect$$) {
       this.drawSelect$$ = this.drawControl.select$.subscribe(
         (olFeature: OlFeature<OlGeometry>) => {
-          this.openDialog(olFeature, false);
+          this.openDrawDialog(olFeature, false);
         }
       );
     }
@@ -931,7 +905,6 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.icon
         );
       });
-      // this.icon = undefined;
     } else {
       this.store.layer.ol.setStyle((feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
