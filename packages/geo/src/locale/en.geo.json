@@ -275,7 +275,7 @@
         "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
-        "resetRotation": "Azimuth: {{azimuth}}°N \nSet map to north",
+        "resetRotation": "Azimuth: {{azimuth}}°N. Set map to north",
         "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map.",
         "preventSreenLock": "Prevent the screen to enter in lock mode.",
         "letScreenLock": "Allow the screen to enter in lock mode."
