@@ -611,12 +611,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // todo https://www.damirscorner.com/blog/posts/20210924-HandleMissingImagesInAngular.html
-  // + featuredetails
-  imageErrorHandler(event) {
-    event.target.src = './assets/igo2/common/images/na.png';
-  }
-
   isUrl(value) {
     if (typeof value === 'string') {
       return (
