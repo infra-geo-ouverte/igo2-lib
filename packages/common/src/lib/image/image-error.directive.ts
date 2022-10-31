@@ -23,7 +23,6 @@ export class ImageErrorDirective {
       event.target.src = this.errorImageUrl;
     }
 
-   // 
   }
 
 }
