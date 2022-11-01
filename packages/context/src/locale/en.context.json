@@ -161,7 +161,7 @@
           "copyMsg": "Link copied to clipboard",
           "copyTitle": "Link"
         },
-        "shareHtmlClarifications": "",
+        "htmlClarifications": "",
         "errorTitle": "Share Map error",
         "placeholderLink": "Link",
         "included": "Included in shared URL :",
