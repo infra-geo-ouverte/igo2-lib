@@ -161,6 +161,7 @@
           "copyMsg": "Lien copié",
           "copyTitle": "Lien"
         },
+        "shareHtmlClarifications": "",
         "errorTitle": "Erreur lors du partage",
         "placeholderLink": "Lien",
         "included": "Inclus dans le lien de partage :",

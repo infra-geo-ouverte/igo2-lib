@@ -16,6 +16,7 @@
   <div>
     <br/>
     <section class="mat-typography">
+      <div *ngIf="('igo.context.shareMap.shareHtmlClarifications' | translate)===''">
         <h4 *ngIf="('igo.context.shareMap.included' | translate)!==''">{{'igo.context.shareMap.included' | translate}}</h4>
         <ul>
           <li *ngIf="('igo.context.shareMap.context' | translate)!==''">{{'igo.context.shareMap.context' | translate}}</li>
@@ -32,6 +33,10 @@
         <li *ngIf="('igo.context.shareMap.filterOgc' | translate)!==''">{{'igo.context.shareMap.filterOgc' | translate}}</li>
         <li *ngIf="('igo.context.shareMap.filterTime' | translate)!==''">{{'igo.context.shareMap.filterTime' | translate}}</li>
       </ul>
+    </div>
+    <igo-custom-html class="shareCustomPadding" *ngIf="('igo.context.shareMap.shareHtmlClarifications' | translate)!==''" class="mat-typography"
+        [html]="('igo.context.shareMap.shareHtmlClarifications' | translate)">
+     </igo-custom-html>
     </section>
   </div>
 </div>
