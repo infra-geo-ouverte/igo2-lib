@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="icon-options">
     <mat-form-field *ngIf="icons.length >= 1">
       <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
       <mat-select>
@@ -71,9 +71,7 @@
             <img src="{{ icon }}">
           </div>
         </mat-select-trigger>
-        <mat-option value="" (click)="onIconChange()">{{
-          'igo.geo.draw.noIcon' | translate
-        }}</mat-option>
+        <mat-option value="" (click)="onIconChange()">{{ 'igo.geo.draw.noIcon' | translate }}</mat-option>
         <mat-option
           *ngFor="let icon_html of icons"
           [value]="icon_html"

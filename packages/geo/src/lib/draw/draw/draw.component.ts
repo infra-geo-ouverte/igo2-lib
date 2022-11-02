@@ -307,14 +307,14 @@ export class DrawComponent implements OnInit, OnDestroy {
           features: this.selectedFeatures$.getValue(),
           icons: this.icons,
           icon: this.icon
-        }
+        },
+        autoFocus: false
       });
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((data: StyleModalData) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-          console.log(data);
           this.onFontChange(this.labelsAreShown, data.fontSize, data.fontStyle);
           this.onColorChange(this.labelsAreShown, this.icon ? true : false, data.fillColor, data.strokeColor);
           this.onOffsetLabelChange(this.labelsAreShown, data.offsetX, data.offsetY);
@@ -633,7 +633,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     fillColor: string,
     strokeColor: string
   ) {
-    if (this.selectedFeatures$.value.length > 0) {
+    if (this.selectedFeatures$.value.length > 0 && !isAnIcon) {
       this.selectedFeatures$.value.forEach((feature) => {
         let olFeature = featureToOl(
           feature,
@@ -653,9 +653,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.strokeColor = strokeColor;
 
     this.elementStyle(labelsAreShown, isAnIcon);
-    if (isAnIcon) {
-      this.icon = undefined;
-    }
     this.createDrawControl();
   }
 

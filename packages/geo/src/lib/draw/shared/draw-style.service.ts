@@ -77,7 +77,7 @@ export class DrawStyleService {
     this.fontStyle = fontStyle;
   }
 
-  getOffsetX() {
+  getOffsetX(): number {
     return this.offsetX;
   }
 
@@ -85,7 +85,7 @@ export class DrawStyleService {
     this.offsetX = offsetX;
   }
 
-  getOffsetY() {
+  getOffsetY(): number {
     return this.offsetY;
   }
 
@@ -131,7 +131,7 @@ export class DrawStyleService {
           font: fontSizeAndStyle,
           overflow: true,
           offsetX: offsetX,
-          offsetY: offsetY ? offsetY : this.offsetY
+          offsetY: offsetY
         }),
 
         image: new OlStyle.Circle({
@@ -163,7 +163,7 @@ export class DrawStyleService {
           font: fontSizeAndStyle,
           overflow: true,
           offsetX: offsetX,
-          offsetY: offsetY ? offsetY : this.offsetY
+          offsetY: offsetY
         }),
 
         stroke: new OlStyle.Stroke({
@@ -198,7 +198,7 @@ export class DrawStyleService {
           overflow: true,
 
           offsetX: offsetX,
-          offsetY: offsetY ? offsetY : this.offsetY
+          offsetY: offsetY
         }),
 
         stroke: new OlStyle.Stroke({

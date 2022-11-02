@@ -81,8 +81,6 @@ export class StyleModalComponent implements OnInit {
         ? this.data.features[0].properties.offsetY
         : this.drawStyleService.getOffsetY()
     };
-    this.form.controls['fill'].markAsUntouched();
-    this.form.controls['stroke'].markAsUntouched();
   }
 
   get allFontStyles(): string[] {
@@ -147,9 +145,9 @@ export class StyleModalComponent implements OnInit {
     if (!this.styleModalData.offsetY) {
       return this.data.features.length > 0
       ? this.data.features[0].properties.offsetY
-      : '0';
+      : this.drawStyleService.getOffsetY();
     } else {
-      this.styleModalData.offsetY;
+      return this.styleModalData.offsetY;
     }
   }
 
