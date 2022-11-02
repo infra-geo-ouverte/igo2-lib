@@ -260,7 +260,7 @@
           "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."
         },
         "style": {
-          "styleModal": "Edit symbology",
+          "styleModal": "Edit style",
           "styleModalTooltip": "Edit the style of the selected entities "
         }
       },
