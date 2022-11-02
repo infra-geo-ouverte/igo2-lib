@@ -707,7 +707,8 @@
         "fontSize": "Taille de police",
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
-        "offsetY": "Décalage vertical"
+        "offsetY": "Décalage vertical",
+        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier"
       },
       "network": {
         "online": {

@@ -118,6 +118,7 @@ export interface EntityTableColumn {
   multiple?: boolean;
   domainValues?: Array<SelectOption>;
   relation?: TableRelation;
+  tooltip?: string;
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };

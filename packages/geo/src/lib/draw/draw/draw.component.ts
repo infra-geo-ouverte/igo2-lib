@@ -46,7 +46,7 @@ import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
-import { skip } from 'rxjs/operators';
+import { skip, first } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
@@ -104,6 +104,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       {
         name: 'Drawing',
         title: this.languageService.translate.instant('igo.geo.draw.labels'),
+        tooltip: this.languageService.translate.instant('igo.geo.draw.changeLabel'),
         valueAccessor: (feature: FeatureWithDraw) => {
           return feature.properties.draw;
         }
@@ -268,6 +269,21 @@ export class DrawComponent implements OnInit, OnDestroy {
         const olGeometry = event.feature.getGeometry();
         this.clearLabelsOfOlGeometry(olGeometry);
       }
+    );
+
+    this.subscriptions$$.push(
+      this.store.stateView
+        .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+          return record.state.selected === true;
+        })
+        .pipe(
+          first()
+        )
+        .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
+          records.forEach((record) => {
+            record.state.selected = false;
+          });
+        })
     );
 
     this.subscriptions$$.push(
@@ -557,8 +573,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
   }
 
-  // HTML user interactions
-
   /**
    * Called when the user double-clicks the selected drawing
    */
@@ -796,15 +810,13 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Check the amount of rows as a possible alternative
+   */
   updateHeightTable() {
-
-    // Check the amount of rows as a possible alternative
-
     this.numberOfDrawings = this.store.count$.getValue();
-    this.numberOfDrawings > 6 ? this.tableTemplate.tableHeight = '23vh': this.tableTemplate.tableHeight = 'auto';
+    this.numberOfDrawings > 10 ? this.tableTemplate.tableHeight = '35vh': this.tableTemplate.tableHeight = 'auto';
   }
-
-  // Helper methods
 
   /**
    * Activate the correct control

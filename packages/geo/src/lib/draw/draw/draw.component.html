@@ -85,6 +85,20 @@
   </div>
 
   <button
+    mat-icon-button
+    color="accent"
+    disableRipple="true"
+    (click)="openShorcutsDialog()">
+    <mat-icon
+      class="shortcuts-icon"
+      svgIcon="keyboard-outline"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.draw.shortcuts' | translate">
+    </mat-icon>
+  </button>
+
+  <button
     *ngIf="selectedFeatures$.value.length"
     mat-raised-button
     color="primary"
@@ -97,20 +111,6 @@
       [matBadge]="selectedFeatures$.value.length"
       matBadgeColor="warn"
       matBadgeSize="medium">
-    </mat-icon>
-  </button>
-
-  <button
-    mat-icon-button
-    color="accent"
-    disableRipple="true"
-    (click)="openShorcutsDialog()">
-    <mat-icon
-      class="shortcuts-icon"
-      svgIcon="keyboard-outline"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.draw.shortcuts' | translate">
     </mat-icon>
   </button>
 </div>

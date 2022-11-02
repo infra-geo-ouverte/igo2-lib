@@ -707,7 +707,8 @@
         "fontSize": "Font size",
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
-        "offsetY": "Vertical offset"
+        "offsetY": "Vertical offset",
+        "changeLabel": "Double click on label to change it"
       },
       "network": {
         "online": {
