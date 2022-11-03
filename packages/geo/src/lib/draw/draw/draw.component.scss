@@ -26,37 +26,12 @@ $slide-toggle-width: 60px;
   }
 }
 
-.igo-form {
-  padding: 10px;
+.icon-options {
+  margin: 5px 5px 0px 5px;
 }
 
-.fill-field, .stroke-field {
-  width: 130px;
-}
-
-.fill-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 8px;
-  }
-}
-
-.stroke-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 35px;
-  }
-}
-
-.box {
-  width: 25px;
-  height: 25px;
+.deleteBtn {
+  margin-left: 12px;
 }
 
 img {
@@ -64,19 +39,7 @@ img {
   height: 100%;
 }
 
-.deleteBtn {
-  margin-left: 12px;
+.box {
+  width: 25px;
+  height: 25px;
 }
-
-.igo-form-font .mat-form-field + .mat-form-field{
-  margin-left: 18px;
-}
-
-.igo-form-fontSize{
-  left: 10px !important;
-  width: 150px;
-}
-.igo-form-fontStyle{
-  width: 150px;
-}
-

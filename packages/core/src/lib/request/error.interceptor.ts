@@ -21,9 +21,16 @@ export class ErrorInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(
-    req: HttpRequest<any>,
+    originalReq: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const interceptError = originalReq.headers.get('interceptError');
+    const req = originalReq.clone({
+      headers: originalReq.headers.delete('interceptError')
+    });
+    if (interceptError === 'false') {
+      return next.handle(req);
+    }
     const errorContainer = { httpError: undefined };
     return next.handle(req).pipe(
       catchError(error => this.handleError(error, errorContainer)),

@@ -1,0 +1,53 @@
+h2 {
+    font-weight: bold;
+    font-size: large;
+}
+
+.igo-form {
+    padding: 10px;
+}
+
+.fill-field, .stroke-field {
+    width: 130px;
+  }
+
+.fill-color-picker {
+    mat-icon {
+      position: relative;
+      top: 7px;
+    }
+    mat-form-field {
+      left: 8px;
+    }
+  }
+
+.stroke-color-picker {
+    mat-icon {
+      position: relative;
+      top: 7px;
+    }
+    mat-form-field {
+      left: 35px;
+    }
+}
+
+.box {
+    width: 25px;
+    height: 25px;
+}
+
+.edition-drawing {
+    padding: 10px 0;
+}
+
+.igo-input-container .mat-form-field + .mat-form-field{
+    margin-left: 8px;
+  }
+
+.igo-form-input-box {
+    width: 150px;
+}
+
+button {
+    margin-right: 5px;
+}

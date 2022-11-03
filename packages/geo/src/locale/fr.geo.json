@@ -257,6 +257,10 @@
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
+        },
+        "style": {
+          "styleModal": "Modifier le style",
+          "styleModalTooltip": "Éditer le style des entités sélectionnées"
         }
       },
       "download": {
@@ -701,7 +705,10 @@
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
         "fontSize": "Taille de police",
-        "fontStyle": "Style de police"
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical",
+        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier"
       },
       "network": {
         "online": {
@@ -735,7 +742,10 @@
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       },
       "query": {
-        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation.",
+        "link": {
+          "message": "Le lien a été copié dans le presse-papier"
+        }
       }
     }
   }
