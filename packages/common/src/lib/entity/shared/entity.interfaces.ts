@@ -123,7 +123,6 @@ export interface EntityTableColumn {
   cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
-  tooltip?: string;
 }
 
 export interface SelectOption {
