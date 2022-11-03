@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
+import scrollIntoView from 'scroll-into-view-if-needed';
+
 import { FloatLabelType } from '@angular/material/form-field';
 import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
@@ -292,8 +294,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.layers$$.unsubscribe();
   }
 
-  activeLayerIsValid(layer: Layer): boolean {
+  activeLayerExtentIsValid(layer: Layer): boolean {
     let valid = false;
+    if (layer.options.showButtonZoomToExtent === false) {
+      return false;
+    }
     const layerExtent = layer.options.extent;
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
 
@@ -307,7 +312,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return valid;
   }
 
-  activeLayersAreValid(layers: Layer[]): boolean {
+  activeLayersExtentAreValid(layers: Layer[]): boolean {
     let valid = false;
     const layersExtent = olextent.createEmpty();
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
@@ -401,7 +406,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
+  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement, fromUi: boolean = false) {
     const sortedLayersToMove = [];
     getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
     let rootParentByProperty = getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
@@ -418,9 +423,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
     });
 
     if (actiontype === LayerListDisplacement.Raise) {
-      this.raiseLayers(sortedLayersToMove, false);
+      this.raiseLayers(sortedLayersToMove, fromUi);
     } else if (actiontype === LayerListDisplacement.Lower) {
-      this.lowerLayers(sortedLayersToMove, false);
+      this.lowerLayers(sortedLayersToMove, fromUi);
     }
   }
 
@@ -482,9 +487,22 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.raiseLayers(layersToRaise);
     if (fromUi) {
       setTimeout(() => {
-        const elements = this.computeElementRef();
-        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-          elements[0].scrollTop = elements[1].offsetParent.offsetTop;
+        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        let targetToScroll;
+        if (checkItems.length) {
+          targetToScroll = checkItems[0];
+        }
+        if (itemFocused.length) {
+          targetToScroll = itemFocused[0];
+        }
+        if (targetToScroll) {
+          scrollIntoView(targetToScroll, {
+            scrollMode: 'if-needed',
+            behavior: 'smooth',
+            block: 'end',
+            inline: 'nearest'
+          });
         }
       }, 100);
     }
@@ -549,12 +567,22 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.lowerLayers(layersToLower);
     if (fromUi) {
       setTimeout(() => {
-        const elements = this.computeElementRef('lower');
-        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-          elements[0].scrollTop =
-            elements[1].offsetParent.offsetTop +
-            elements[1].offsetParent.offsetHeight -
-            elements[0].clientHeight;
+        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        let targetToScroll;
+        if (checkItems.length) {
+          targetToScroll = checkItems[checkItems.length-1];
+        }
+        if (itemFocused.length) {
+          targetToScroll = itemFocused[0];
+        }
+        if (targetToScroll) {
+          scrollIntoView(targetToScroll, {
+            scrollMode: 'if-needed',
+            behavior: 'smooth',
+            block: 'end',
+            inline: 'nearest'
+          });
         }
       }, 100);
     }
@@ -890,25 +918,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const elemTop = elem.offsetTop;
     const elemBottom = elemTop + elem.clientHeight;
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
-  }
-
-  computeElementRef(type?: string) {
-    const checkItems = this.elRef.nativeElement.getElementsByClassName(
-      'mat-checkbox-checked'
-    );
-    const checkItem =
-      type === 'lower'
-        ? this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[checkItems.length - 1]
-        : this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[0];
-    const igoList = this.elRef.nativeElement.getElementsByTagName(
-      'igo-list'
-    )[0];
-
-    return [igoList, checkItem];
   }
 
   removeProblemLayerInList(layersList: Layer[]): Layer[] {

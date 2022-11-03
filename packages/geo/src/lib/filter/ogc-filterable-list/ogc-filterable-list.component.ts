@@ -10,6 +10,7 @@ import { IgoMap } from '../../map';
 @Component({
   selector: 'igo-ogc-filterable-list',
   templateUrl: './ogc-filterable-list.component.html',
+  styleUrls: ['./ogc-filterable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterableListComponent {
