@@ -198,9 +198,9 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         const match = value.match(matchRegex) || [];
         const count = match.length;
         if (count === 1) {
-            return true
+            return true;
         } else {
-            return false
+            return false;
         }
     }
     return false;
