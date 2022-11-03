@@ -66,6 +66,7 @@ export const environment: Environment = {
       ]
     },
     searchSources: {
+      storedqueriesreverse: { enabled: false},
       nominatim: {
         enabled: false
       },
