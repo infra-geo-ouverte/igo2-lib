@@ -23,7 +23,7 @@ interface ActiveMessageTranslation {
 export class MessageService {
   public messages$ = new BehaviorSubject<Message[]>([]);
   private options: MessageOptions;
-  private activeMessageTranslations: ActiveMessageTranslation[];
+  private activeMessageTranslations: ActiveMessageTranslation[] = [];
 
   constructor(
     @Inject(Injector) private injector: Injector,
