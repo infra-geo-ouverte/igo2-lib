@@ -6,9 +6,9 @@ export interface DrawOptions {
 }
 
 export interface Draw {
-    area?: number;
-    length?: number;
-    lengths?: number[];
+  area?: number;
+  length?: number;
+  lengths?: number[];
 }
 
 export interface DrawingStyle {
@@ -24,6 +24,10 @@ export interface FeatureWithDrawProperties {
   longitude: number;
   latitude: number;
   rad: number;
+  fontStyle: string;
+  drawingStyle: DrawingStyle;
+  offsetX: number;
+  offsetY: number;
 }
 
 export interface FeatureStoreDrawStrategyOptions {

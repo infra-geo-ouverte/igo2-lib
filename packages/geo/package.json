@@ -2,7 +2,7 @@
   "name": "@igo2/geo",
   "version": "1.13.0",
   "description": "IGO Library",
-  "author": "MSP",
+  "author": "IGO Community",
   "keywords": ["igo"],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
@@ -35,7 +35,8 @@
     "ol": "^7.1.0",
     "proj4": "^2.8.0",
     "rxjs": "^7.5.6",
-    "striptags": "^3.2.0"
+    "striptags": "^3.2.0",
+    "ngx-color-picker": "^13.0.0"
   },
   "optionalDependencies": {
     "file-saver": "^2.0.2",

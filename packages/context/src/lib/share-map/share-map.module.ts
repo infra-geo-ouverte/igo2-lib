@@ -13,6 +13,7 @@ import { IgoLanguageModule } from '@igo2/core';
 import { ShareMapComponent } from './share-map/share-map.component';
 import { ShareMapUrlComponent } from './share-map/share-map-url.component';
 import { ShareMapApiComponent } from './share-map/share-map-api.component';
+import { IgoCustomHtmlModule } from '@igo2/common';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { ShareMapApiComponent } from './share-map/share-map-api.component';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    IgoCustomHtmlModule
   ],
   exports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent],
   declarations: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent]

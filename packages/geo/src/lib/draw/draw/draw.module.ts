@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -21,6 +22,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 /**
  * @ignore
  */
@@ -34,6 +38,7 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
+    MatBadgeModule,
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
@@ -43,15 +48,11 @@ import { DrawShorcutsComponent } from './draw-shorcuts.component';
     MatDialogModule,
     IgoLanguageModule,
     IgoEntityTableModule,
-    ColorPickerModule
+    ColorPickerModule,
+    BrowserModule,
+    BrowserAnimationsModule
   ],
-  declarations: [
-    DrawComponent,
-    DrawPopupComponent,
-    DrawShorcutsComponent
-  ],
-  exports: [
-    DrawComponent
-  ]
+  declarations: [DrawComponent, DrawPopupComponent, DrawShorcutsComponent],
+  exports: [DrawComponent]
 })
 export class IgoDrawModule {}
