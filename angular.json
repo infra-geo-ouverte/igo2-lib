@@ -33,6 +33,11 @@
               "demo/src/locale",
               {
                 "glob": "**/*",
+                "input": "./dist/common/assets/",
+                "output": "./assets/igo2/common/"
+              },
+              {
+                "glob": "**/*",
                 "input": "./dist/core/assets/",
                 "output": "./assets/igo2/core/"
               },

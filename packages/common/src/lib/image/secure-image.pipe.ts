@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Cacheable } from 'ts-cacheable';
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { ConfigService } from '@igo2/core';
 
 @Pipe({
@@ -20,7 +20,8 @@ export class SecureImagePipe implements PipeTransform {
   transform(url: string): Observable<string> {
     const headers = new HttpHeaders({
       'Content-Type': 'text/plain',
-      activityInterceptor: 'false'
+      activityInterceptor: 'false',
+      interceptError: 'false'
     });
 
     const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
@@ -34,6 +35,11 @@ export class SecureImagePipe implements PipeTransform {
         responseType: 'blob'
       })
       .pipe(
+        catchError((err) => {
+          err.error.caught = true;
+          err.error.toDisplay = false;
+          throw err;
+        }),
         switchMap((blob) => {
           return new Observable((observer) => {
             const reader = new FileReader();
