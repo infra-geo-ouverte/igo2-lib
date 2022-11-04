@@ -197,6 +197,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
 
+  get tableHeight(): string { return this.template.tableHeight ? this.template.tableHeight : 'auto'; }
+
   constructor(private cdRef: ChangeDetectorRef,
     private formBuilder: UntypedFormBuilder,
     protected _focusMonitor: FocusMonitor,

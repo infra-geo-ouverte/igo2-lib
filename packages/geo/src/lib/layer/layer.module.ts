@@ -1,6 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -37,10 +39,12 @@ import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legen
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
+import { StyleModalComponent } from './style-modal/style-modal.component';
 
 @NgModule({
   imports: [
     MatInputModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     CommonModule,
     FormsModule,
@@ -55,6 +59,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     MatSliderModule,
     MatBadgeModule,
     MatCheckboxModule,
+    ColorPickerModule,
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,
@@ -72,7 +77,8 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent
+    TrackFeatureButtonComponent,
+    StyleModalComponent
   ],
   declarations: [
     LayerItemComponent,
@@ -83,7 +89,8 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent
+    TrackFeatureButtonComponent,
+    StyleModalComponent
   ]
 })
 export class IgoLayerModule {
