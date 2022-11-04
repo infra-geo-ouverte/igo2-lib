@@ -27,3 +27,4 @@ export * from './lib/request';
 export * from './lib/storage';
 export * from './lib/compression';
 export * from './lib/network';
+export * from './lib/regex';
