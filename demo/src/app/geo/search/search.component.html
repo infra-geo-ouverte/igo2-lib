@@ -14,7 +14,7 @@
     </span>
   </mat-card-content>
 
-  <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu
+  <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu igoLongPress
 
     igoSearchPointerSummary
     [igoSearchPointerSummaryDelay]="500"
@@ -25,6 +25,7 @@
 
   <igo-panel title="Search">
     <igo-search-bar
+      [term]="term"
       (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
       [searchSettings]="true"
       [store]="searchStore"

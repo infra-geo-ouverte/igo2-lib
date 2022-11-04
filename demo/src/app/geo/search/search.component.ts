@@ -21,8 +21,7 @@ import {
   Layer,
   ProjectionService,
   Research,
-  SearchResult,
-  SearchService
+  SearchResult
 } from '@igo2/geo';
 
 import { SearchState } from '@igo2/integration';
@@ -79,7 +78,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private searchService: SearchService,
     private mediaService: MediaService
   ) {
     this.mapService.setMap(this.map);
@@ -158,18 +156,17 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       {
         id: 'coordinates',
         title: 'coordinates',
-        handler: this.onSearchCoordinate.bind(this)
+        handler: () => this.searchCoordinate(this.lonlat)
       },
       {
         id: 'googleMaps',
         title: 'googleMap',
-        handler: this.onOpenGoogleMaps.bind(this),
-        args: ['1']
+        handler: () => this.openGoogleMaps(this.lonlat),
       },
       {
         id: 'googleStreetView',
         title: 'googleStreetView',
-        handler: this.onOpenGoogleStreetView.bind(this)
+        handler: () => this.openGoogleStreetView(this.lonlat)
       }
     ]);
   }
@@ -206,31 +203,18 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return position;
   }
 
-  onPointerSearch(event) {
-    this.lonlat = event;
-    this.onSearchCoordinate();
-  }
-
-  onSearchCoordinate() {
+  searchCoordinate(lonlat) {
     this.searchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonlat);
-
-    for (const i in results) {
-      if (results.length > 0) {
-        results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
-          this.onSearch({ research: results[i], results: _results });
-        });
-      }
-    }
+    this.term = lonlat.map((c) => c.toFixed(6)).join(', ');
   }
 
-  onOpenGoogleMaps() {
-    window.open(GoogleLinks.getGoogleMapsCoordLink(this.lonlat[0], this.lonlat[1]));
+  openGoogleMaps(lonlat) {
+    window.open(GoogleLinks.getGoogleMapsCoordLink(lonlat[0], lonlat[1]));
   }
 
-  onOpenGoogleStreetView() {
+  openGoogleStreetView(lonlat) {
     window.open(
-      GoogleLinks.getGoogleStreetViewLink(this.lonlat[0], this.lonlat[1])
+      GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1])
     );
   }
 }
