@@ -17,13 +17,14 @@ import {
   FeatureStoreInMapExtentStrategy,
   Feature,
   FeatureMotion,
-  FeatureStoreInMapResolutionStrategy
+  FeatureStoreInMapResolutionStrategy,
+  GeoPropertiesStrategy
 } from '../../feature';
-import { VectorLayer } from '../../layer';
+import { LayerService, VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
-import { getCommonVectorSelectedStyle} from '../../utils';
+import { getCommonVectorSelectedStyle, PropertyTypeDetectorService} from '../../utils';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
@@ -31,6 +32,7 @@ import { ConfigService, StorageService } from '@igo2/core';
 
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { getGeoServiceAction } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +45,12 @@ export class FeatureWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(private storageService: StorageService, private configService: ConfigService) {}
+  constructor(
+    private storageService: StorageService,
+    private configService: ConfigService,
+    private layerService: LayerService,
+    private propertyTypeDetectorService: PropertyTypeDetectorService
+    ) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
     if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
@@ -80,6 +87,7 @@ export class FeatureWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
+    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
@@ -103,6 +111,7 @@ export class FeatureWorkspaceService {
     });
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
+    store.addStrategy(geoPropertiesStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
@@ -111,6 +120,7 @@ export class FeatureWorkspaceService {
   }
 
   private createTableTemplate(workspace: FeatureWorkspace, layer: VectorLayer): EntityTableTemplate {
+    const geoServiceAction = getGeoServiceAction(workspace, this.layerService);
     const fields = layer.dataSource.options.sourceFields || [];
 
     const relations = layer.dataSource.options.relations || [];
@@ -134,6 +144,7 @@ export class FeatureWorkspaceService {
             renderer: EntityTableColumnRenderer.UnsanitizedHTML
           };
         });
+        columnsFromFeatures.unshift(...geoServiceAction);
         workspace.meta.tableTemplate = {
           selection: true,
           sort: true,
@@ -170,6 +181,7 @@ export class FeatureWorkspaceService {
     });
 
     columns.push(...relationsColumn);
+    columns.unshift(...geoServiceAction);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
