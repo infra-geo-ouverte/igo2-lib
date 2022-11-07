@@ -1,6 +1,6 @@
 {
   "name": "@igo/demo",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
@@ -69,9 +69,9 @@
     "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
-    "preghpages.win": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
-    "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
-    "postghpages.win": "rimraf ./dist/ghpages",
+    "preghpages.win": "npm run build.demo -- --base-href /igo2-lib/ && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/demo/_config.yml",
+    "ghpages.win": "npx ngh --dir=dist/demo --no-silent=false --message=%npm_package_version%",
+    "postghpages.win": "rimraf ./dist/demo",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\"",
     "ghrelease.win": "gh-release -o infra-geo-ouverte -r igo2-lib -t %npm_package_version% -n %npm_package_version%"
   },

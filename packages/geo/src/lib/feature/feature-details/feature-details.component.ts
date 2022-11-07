@@ -194,10 +194,17 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   isEmbeddedLink(value) {
     if (typeof value === 'string') {
-      const regex = /^<a/;
-      return regex.test(value);
+        const matchRegex = /<a/g;
+        const match = value.match(matchRegex) || [];
+        const count = match.length;
+        if (count === 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
-  }
+    return false;
+}
 
   getEmbeddedLinkText(value) {
     const regex = /(?:>).*?(?=<|$)/;

@@ -389,10 +389,13 @@ export class EditionWorkspaceService {
 
     this.sanitizeParameter(feature, workspace);
 
+    const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
     let url = this.configService.getConfig('edition.url');
 
-    if (workspace.layer.dataSource.options.edition.baseUrl) {
-      url += workspace.layer.dataSource.options.edition.baseUrl;
+    if (!url) {
+      url = baseUrl;
+    } else {
+      url += baseUrl ? baseUrl : '';
     }
 
     if (feature.newFeature) {
@@ -630,7 +633,8 @@ export class EditionWorkspaceService {
   getDomainValues(relation: RelationOptions, feature?: Feature): Observable<any> {
     let url = relation.url;
     if (!url) {
-      url = this.configService.getConfig('edition.url') + relation.table;
+      url = this.configService.getConfig('edition.url') ?
+        this.configService.getConfig('edition.url') + relation.table : relation.table;
     }
 
     if (feature?.properties.code_mrc && url.includes('/apis/terrapi/municipalites')) {
