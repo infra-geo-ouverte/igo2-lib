@@ -123,14 +123,16 @@ export class EditionWorkspace extends Workspace {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result === false) {
+          let id, url;
           const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
           const deleteUrl = workspace.layer.dataSource.options.edition.deleteUrl;
-          let id;
-          let url;
-          if (baseUrl) {
-            url = this.configService.getConfig('edition.url') + baseUrl + '?' + deleteUrl;
+          if (baseUrl.length) {
+            url = this.configService.getConfig('edition.url') ?
+              this.configService.getConfig('edition.url') + baseUrl + '?' + deleteUrl :
+              baseUrl + '?' + deleteUrl;
           } else {
-            url = this.configService.getConfig('edition.url') + deleteUrl;
+            url = this.configService.getConfig('edition.url') ?
+              this.configService.getConfig('edition.url') + deleteUrl : deleteUrl;
           }
 
           for (const column of workspace.meta.tableTemplate.columns) {
