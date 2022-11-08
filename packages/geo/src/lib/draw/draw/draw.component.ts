@@ -47,7 +47,7 @@ import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance } from 'ol/sphere';
 import { DrawStyleService } from '../shared/draw-style.service';
-import { skip, first } from 'rxjs/operators';
+import { first, skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
 import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
@@ -65,15 +65,6 @@ import {
 } from '@angular/animations';
 import Point from 'ol/geom/Point';
 
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-  // ...
-} from '@angular/animations';
-import Point from 'ol/geom/Point';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
 @Component({
@@ -225,10 +216,25 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawControl = this.drawControls[0][1];
       this.deactivateDrawControl();
       this.allLayers.forEach(layer => {
-        if(layer.id !== this.activeDrawingLayer.id){
+        if (layer.id !== this.activeDrawingLayer.id) {
           layer.opacity = 0;
         }
         let store = this.stores.find(s => s.layer.id === layer.id);
+
+        this.subscriptions$$.push(
+          store.stateView
+            .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
+              return record.state.selected === true;
+            })
+            .pipe(
+              first()
+            )
+            .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
+              records.forEach((record) => {
+                record.state.selected = false;
+              });
+            })
+        );
 
         this.subscriptions$$.push(
           store.stateView
