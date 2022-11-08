@@ -88,7 +88,6 @@ export class EditionWorkspaceService {
       layer.options.linkedLayers = { linkId: wmsLinkId, links: [] };
     }
     const linkProperties = {
-      bidirectionnal: true,
       syncedDelete: true,
       linkedIds: [wfsLinkId],
       properties: [
@@ -166,7 +165,7 @@ export class EditionWorkspaceService {
           relations: dataSource.options.relations,
           queryTitle: (dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: dataSource.options.paramsWFS,
-          ogcFilters: Object.assign({}, dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
+          ogcFilters: Object.assign({}, dataSource.ogcFilters, {enabled: hasOgcFilters}),
           sourceFields: dataSource.options.sourceFields || undefined,
           edition: dataSource.options.edition
         } as WFSoptions
@@ -390,10 +389,13 @@ export class EditionWorkspaceService {
 
     this.sanitizeParameter(feature, workspace);
 
+    const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
     let url = this.configService.getConfig('edition.url');
 
-    if (workspace.layer.dataSource.options.edition.baseUrl) {
-      url += workspace.layer.dataSource.options.edition.baseUrl;
+    if (!url) {
+      url = baseUrl;
+    } else {
+      url += baseUrl ? baseUrl : '';
     }
 
     if (feature.newFeature) {
@@ -614,7 +616,8 @@ export class EditionWorkspaceService {
   getDomainValues(relation: RelationOptions): Observable<any> {
     let url = relation.url;
     if (!url) {
-      url = this.configService.getConfig('edition.url') + relation.table;
+      url = this.configService.getConfig('edition.url') ?
+        this.configService.getConfig('edition.url') + relation.table : relation.table;
     }
 
     return this.http.get<any>(url).pipe(

@@ -184,7 +184,7 @@ export class WfsActionsService implements OnDestroy {
         }
       }
     ];
-    return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
+    return (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
     actions : actions.filter(action => action.id !== 'ogcFilter');
   }
 }

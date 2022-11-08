@@ -137,6 +137,8 @@
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Shapefiles must be zipped AND geometries stored in Latitude Longitude coordinate (EPSG:4326/WGS:84)",
+        "importHtmlClarifications": "",
+        "exportHtmlClarifications": "",
         "other": "other",
         "others": "others",
         "projections": {
@@ -203,7 +205,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
         "sliderModeTitle": "Time slider",
-        "reportingDate": "Reporting date"
+        "reportingDate": "Reporting date",
+        "noFilterableLayer": "No layer can be filtered in the current map"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -255,6 +258,10 @@
           "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
           "noLayersVisible": "No layers currently visible.",
           "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."
+        },
+        "style": {
+          "styleModal": "Edit style",
+          "styleModalTooltip": "Edit the style of the selected entities "
         }
       },
       "download": {
@@ -265,7 +272,8 @@
       },
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
-        "geolocate": "Geolocate",
+        "geolocate": "Show geolocation",
+        "geolocateInactive": "Hide geolocation",
         "home-extent": "Go to the home map extent",
         "offline": "Offline mode",
         "online": "Online mode",
@@ -415,6 +423,7 @@
         "layer.title": "Layer",
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
+        "clearSearch": "Clear search",
         "ilayer": {
           "name": "Layers",
           "properties": {
@@ -699,6 +708,7 @@
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
         "offsetY": "Vertical offset",
+        "changeLabel": "Double click on label to change it",
         "layer": {
           "title": "Layer",
           "createNewLayer": "Create new drawing layer",
@@ -737,7 +747,10 @@
         "maxLength": "{{column}} is longer than {{value}} characters"
       },
       "query": {
-        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features."
+        "featureCountMax": "You may have more feature queryable on {{value}}. Zoom in to ensure you have access to all features.",
+        "link": {
+          "message": "Hyperlink copied to clipboard"
+        }
       }
     }
   }

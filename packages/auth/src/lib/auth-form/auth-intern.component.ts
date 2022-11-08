@@ -5,7 +5,7 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 import { AuthService } from '../shared/auth.service';
 import { LanguageService } from '@igo2/core';
@@ -27,7 +27,7 @@ export class AuthInternComponent {
   private _allowAnonymous = true;
 
   public error = '';
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public loading = false;
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -35,7 +35,7 @@ export class AuthInternComponent {
   constructor(
     public auth: AuthService,
     private languageService: LanguageService,
-    fb: FormBuilder
+    fb: UntypedFormBuilder
   ) {
     this.form = fb.group({
       username: ['', Validators.required],

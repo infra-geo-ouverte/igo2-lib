@@ -26,37 +26,12 @@ $slide-toggle-width: 60px;
   }
 }
 
-.igo-form {
-  padding: 10px;
+.icon-options {
+  margin: 5px 5px 0px 5px;
 }
 
-.fill-field, .stroke-field {
-  width: 130px;
-}
-
-.fill-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 8px;
-  }
-}
-
-.stroke-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 35px;
-  }
-}
-
-.box {
-  width: 25px;
-  height: 25px;
+.deleteBtn {
+  margin-left: 12px;
 }
 
 .edition-drawing{
@@ -72,26 +47,18 @@ img {
   margin-left: 12px;
 }
 
-.storeTable{
+.storeTable {
   height:auto !important;
   // max-height: 100px;
 }
 
-.igo-input-container .mat-form-field + .mat-form-field{
-  margin-left: 8px;
-}
-
-.igo-form-input-box{
-  width: 150px;
-}
-
-.layer-select{
+.layer-select {
   width: 100%;
   padding: 10px;
   padding-bottom: 0%;
 }
 
-.input-button-container{
+.input-button-container {
   padding: 10px;
   mat-form-field {
     width:25%;
@@ -100,9 +67,4 @@ img {
     left: 8px;
     bottom: 10px;
   }
-}
-
-
-.igo-form-input-box{
-  width: 150px;
 }

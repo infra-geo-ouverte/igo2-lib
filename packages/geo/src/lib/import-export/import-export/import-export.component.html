@@ -51,12 +51,17 @@
   </div>
 </form>
 <section class="mat-typography" *ngIf="selectedMode === 'import'">
-  <h4>{{'igo.geo.importExportForm.importClarifications' | translate}}</h4>
-  <ul>
-    <li>{{'igo.geo.importExportForm.importSizeMax' | translate: {size: fileSizeMb} }}</li>
-    <li>{{'igo.geo.importExportForm.importFormatAuthorized' | translate}}</li>
-    <li>{{'igo.geo.importExportForm.importShpZip' | translate}}</li>
-  </ul>
+  <div *ngIf="importHtmlClarifications === ''">
+    <h4>{{'igo.geo.importExportForm.importClarifications' | translate}}</h4>
+    <ul>
+      <li>{{'igo.geo.importExportForm.importSizeMax' | translate: {size: fileSizeMb} }}</li>
+      <li>{{'igo.geo.importExportForm.importFormatAuthorized' | translate}}</li>
+      <li>{{'igo.geo.importExportForm.importShpZip' | translate}}</li>
+    </ul>
+  </div>
+  <igo-custom-html *ngIf="importHtmlClarifications !== ''" class="mat-typography"
+    [html]="importHtmlClarifications">
+  </igo-custom-html>
 </section>
 
 <section class="mat-typography" *ngIf="(exportableLayers$ | async).length === 0 && selectedMode === 'export'">
@@ -166,5 +171,9 @@
     </button>
     <igo-spinner [shown]="loading$ | async"></igo-spinner>
   </div>
+
+  <igo-custom-html *ngIf="exportHtmlClarifications !== ''" class="mat-typography"
+    [html]="exportHtmlClarifications">
+  </igo-custom-html>
 
 </form>

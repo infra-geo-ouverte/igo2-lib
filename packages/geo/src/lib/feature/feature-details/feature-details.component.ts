@@ -22,7 +22,7 @@ import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
 import { HttpClient } from '@angular/common/http';
-
+import { Clipboard } from '@igo2/utils';
 @Component({
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
@@ -194,14 +194,22 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   isEmbeddedLink(value) {
     if (typeof value === 'string') {
-      const regex = /^<a/;
-      return regex.test(value);
+        const matchRegex = /<a/g;
+        const match = value.match(matchRegex) || [];
+        const count = match.length;
+        if (count === 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
-  }
+    return false;
+}
 
   getEmbeddedLinkText(value) {
-    const regex = /(?<=>).*?(?=<|$)/;
-    const text = value.match(regex)[0];
+    const regex = /(?:>).*?(?=<|$)/;
+    let text = value.match(regex)[0] as string;
+    text = text.replace(/>/g, '');
     return text;
   }
 
@@ -260,5 +268,15 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
       }
     }
     return feature.properties;
+  }
+
+  /**
+   * Copy the url to a clipboard
+   */
+  copyTextToClipboard(value: string): void {
+    const successful = Clipboard.copy(value);
+    if (successful) {
+      this.messageService.success('igo.geo.query.link.message');
+    }
   }
 }

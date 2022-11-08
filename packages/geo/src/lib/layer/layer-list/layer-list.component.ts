@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
+import scrollIntoView from 'scroll-into-view-if-needed';
+
 import { FloatLabelType } from '@angular/material/form-field';
 import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
@@ -29,9 +31,10 @@ import {
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
-import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
+import { LinkedProperties } from '../shared/layers/layer.interface';
 import { MatSliderChange } from '@angular/material/slider';
 import * as olextent from 'ol/extent';
+import { getAllChildLayersByProperty, getRootParentByProperty } from '../../map/shared/linkedLayers.utils';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -291,8 +294,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.layers$$.unsubscribe();
   }
 
-  activeLayerIsValid(layer: Layer): boolean {
+  activeLayerExtentIsValid(layer: Layer): boolean {
     let valid = false;
+    if (layer.options.showButtonZoomToExtent === false) {
+      return false;
+    }
     const layerExtent = layer.options.extent;
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
 
@@ -306,7 +312,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return valid;
   }
 
-  activeLayersAreValid(layers: Layer[]): boolean {
+  activeLayersExtentAreValid(layers: Layer[]): boolean {
     let valid = false;
     const layersExtent = olextent.createEmpty();
     const maxLayerZoomExtent = this.map.viewController.maxLayerZoomExtent;
@@ -400,10 +406,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
-    const layersToMove = [activeLayer];
+  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement, fromUi: boolean = false) {
     const sortedLayersToMove = [];
-    this.getLinkedLayers(activeLayer, layersToMove);
+    getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
+    let rootParentByProperty = getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
+    if (!rootParentByProperty) {
+      rootParentByProperty = activeLayer;
+    }
+    const layersToMove = [rootParentByProperty];
+    getAllChildLayersByProperty(this.map, rootParentByProperty, layersToMove, LinkedProperties.ZINDEX);
+
     this.layers.map(layer => {
       if (layersToMove.indexOf(layer) !== -1) {
         sortedLayersToMove.push(layer);
@@ -411,51 +423,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
     });
 
     if (actiontype === LayerListDisplacement.Raise) {
-      this.raiseLayers(sortedLayersToMove, false);
+      this.raiseLayers(sortedLayersToMove, fromUi);
     } else if (actiontype === LayerListDisplacement.Lower) {
-      this.lowerLayers(sortedLayersToMove, false);
-    }
-  }
-
-  private getLinkedLayers(activeLayer: Layer, layersList: Layer[]) {
-    const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
-    if (!linkedLayers) {
-      return;
-    }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-
-    if (isParentLayer) {
-      // search for child layers
-      currentLinks.map(link => {
-        if (!link.properties || link.properties.indexOf(LinkedProperties.ZINDEX) === -1) {
-          return;
-        }
-        link.linkedIds.map(linkedId => {
-          const childLayer = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
-          if (childLayer) {
-            if (!layersList.includes(childLayer)) {
-              layersList.push(childLayer);
-            }
-          }
-        });
-      });
-    } else {
-      // search for parent layer
-      this.layers.map(parentLayer => {
-        if (parentLayer.options.linkedLayers?.links) {
-          parentLayer.options.linkedLayers.links.map(l => {
-            if (
-              l.properties?.indexOf(LinkedProperties.ZINDEX) !== -1 &&
-              l.bidirectionnal !== false &&
-              l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layersList.push(parentLayer);
-              this.getLinkedLayers(parentLayer, layersList);
-            }
-          });
-        }
-      });
+      this.lowerLayers(sortedLayersToMove, fromUi);
     }
   }
 
@@ -517,9 +487,22 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.raiseLayers(layersToRaise);
     if (fromUi) {
       setTimeout(() => {
-        const elements = this.computeElementRef();
-        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-          elements[0].scrollTop = elements[1].offsetParent.offsetTop;
+        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        let targetToScroll;
+        if (checkItems.length) {
+          targetToScroll = checkItems[0];
+        }
+        if (itemFocused.length) {
+          targetToScroll = itemFocused[0];
+        }
+        if (targetToScroll) {
+          scrollIntoView(targetToScroll, {
+            scrollMode: 'if-needed',
+            behavior: 'smooth',
+            block: 'end',
+            inline: 'nearest'
+          });
         }
       }, 100);
     }
@@ -584,12 +567,22 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.lowerLayers(layersToLower);
     if (fromUi) {
       setTimeout(() => {
-        const elements = this.computeElementRef('lower');
-        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-          elements[0].scrollTop =
-            elements[1].offsetParent.offsetTop +
-            elements[1].offsetParent.offsetHeight -
-            elements[0].clientHeight;
+        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        let targetToScroll;
+        if (checkItems.length) {
+          targetToScroll = checkItems[checkItems.length-1];
+        }
+        if (itemFocused.length) {
+          targetToScroll = itemFocused[0];
+        }
+        if (targetToScroll) {
+          scrollIntoView(targetToScroll, {
+            scrollMode: 'if-needed',
+            behavior: 'smooth',
+            block: 'end',
+            inline: 'nearest'
+          });
         }
       }, 100);
     }
@@ -925,25 +918,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const elemTop = elem.offsetTop;
     const elemBottom = elemTop + elem.clientHeight;
     return elemBottom <= docViewBottom && elemTop >= docViewTop;
-  }
-
-  computeElementRef(type?: string) {
-    const checkItems = this.elRef.nativeElement.getElementsByClassName(
-      'mat-checkbox-checked'
-    );
-    const checkItem =
-      type === 'lower'
-        ? this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[checkItems.length - 1]
-        : this.elRef.nativeElement.getElementsByClassName(
-          'mat-checkbox-checked'
-        )[0];
-    const igoList = this.elRef.nativeElement.getElementsByTagName(
-      'igo-list'
-    )[0];
-
-    return [igoList, checkItem];
   }
 
   removeProblemLayerInList(layersList: Layer[]): Layer[] {

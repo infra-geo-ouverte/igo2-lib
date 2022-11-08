@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true, // for jspdf and moment
     "skipLibCheck": true,
     "baseUrl": "./",
     "downlevelIteration": true,

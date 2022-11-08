@@ -6,9 +6,12 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
+import {getUid} from 'ol/util';
+import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -27,7 +30,14 @@ import {
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
-import { StorageService } from '@igo2/core';
+import { StorageService, ConfigService } from '@igo2/core';
+import { ObjectEvent } from 'ol/Object';
+import {
+  getAllChildLayersByDeletion,
+  getRootParentByDeletion,
+  handleLayerPropertyChange,
+  initLayerSyncFromRootParentLayers
+} from './linkedLayers.utils';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -36,6 +46,7 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
+  public propertyChange$: Subject<{event:ObjectEvent, layer: Layer}>;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
@@ -48,7 +59,6 @@ export class IgoMap {
   public bufferDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
-
   private options: MapOptions;
   private mapViewOptions: MapViewOptions;
   private defaultOptions: Partial<MapOptions> = {
@@ -65,10 +75,12 @@ export class IgoMap {
 
   constructor(
     options?: MapOptions,
-    private storageService?: StorageService) {
+    private storageService?: StorageService,
+    private configService?: ConfigService) {
     this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
+    this.propertyChange$ = this.layerWatcher.propertyChange$;
     olproj4.register(proj4);
     this.init();
   }
@@ -122,13 +134,25 @@ export class IgoMap {
         {
           projection: this.viewController.getOlProjection()
         },
-        this.storageService);
+        this.storageService,
+        this.configService);
       this.geolocationController.setOlMap(this.ol);
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
+      this.layers$.subscribe((layers) => {
+        for (const layer of layers) {
+          if (layer.options.linkedLayers) {
+            layer.ol.once('postrender', () => {
+              initLayerSyncFromRootParentLayers(this, this.layers);
+            });
+          }
+        }
+      });
   });
+  this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }
+
 
   setTarget(id: string) {
     this.ol.setTarget(id);
@@ -265,8 +289,13 @@ export class IgoMap {
 
   getLayerByOlUId(olUId: string): Layer {
     return this.layers.find(
-      (layer: Layer) => (layer.ol as any).ol_uid && (layer.ol as any).ol_uid === olUId
+      (layer: Layer) => getUid(layer.ol) && getUid(layer.ol) === olUId
     );
+  }
+
+  getLayerByOlLayer(olLayer: olLayer<olSource>): Layer {
+    const olUId = getUid(olLayer);
+    return this.getLayerByOlUId(olUId);
   }
 
   /**
@@ -322,7 +351,6 @@ export class IgoMap {
         newLayers.splice(index, 1);
         this.handleLinkedLayersDeletion(layer, layersToRemove);
         layersToRemove.map(linkedLayer => {
-          layersToRemove.push(linkedLayer);
           const linkedIndex = newLayers.indexOf(linkedLayer);
           if (linkedIndex >= 0) {
             newLayers.splice(linkedIndex, 1);
@@ -341,40 +369,13 @@ export class IgoMap {
    * @param layersToRemove list to append the layer to delete into
    */
   handleLinkedLayersDeletion(srcLayer: Layer, layersToRemove: Layer[]) {
-    const linkedLayers = srcLayer.options.linkedLayers;
-    if (!linkedLayers) {
-      return;
+    let rootParentByDeletion = getRootParentByDeletion(this, srcLayer);
+    if (!rootParentByDeletion) {
+      rootParentByDeletion = srcLayer;
     }
-    const currentLinkedId = linkedLayers.linkId;
-    const currentLinks = linkedLayers.links;
-    const isParentLayer = currentLinks ? true : false;
-    if (isParentLayer) {
-      // search for child layers
-      currentLinks.map(link => {
-        if (!link.syncedDelete) {
-          return;
-        }
-        link.linkedIds.map(linkedId => {
-          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
-          if (layerToApply) {
-            layersToRemove.push(layerToApply);
-          }
-        });
-      });
-    } else {
-      // search for parent layer
-      this.layers.map(layer => {
-        if (layer.options.linkedLayers?.links) {
-          layer.options.linkedLayers.links.map(l => {
-            if (
-              l.syncedDelete && l.bidirectionnal !== false &&
-              l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layersToRemove.push(layer);
-              this.handleLinkedLayersDeletion(layer, layersToRemove);
-            }
-          });
-        }
-      });
+    const clbd = getAllChildLayersByDeletion(this, rootParentByDeletion, [rootParentByDeletion]);
+    for (const layer of clbd) {
+      layersToRemove.push(layer);
     }
   }
 

@@ -137,6 +137,8 @@
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés) ET leurs géométries doivent être en coordonnées Latitude Longitude (EPSG:4326/WGS84)",
+        "importHtmlClarifications": "",
+        "exportHtmlClarifications": "",
         "other": "autre",
         "others": "autres",
         "projections": {
@@ -202,7 +204,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
         "sliderModeTitle": "Curseur temporel",
-        "reportingDate": "Date de signalement"
+        "reportingDate": "Date de signalement",
+        "noFilterableLayer": "Aucune couche ne peut être filtrée dans la carte actuelle"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -254,6 +257,10 @@
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
+        },
+        "style": {
+          "styleModal": "Modifier le style",
+          "styleModalTooltip": "Éditer le style des entités sélectionnées"
         }
       },
       "download": {
@@ -265,6 +272,7 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "geolocateInactive": "Masquer votre position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
@@ -414,6 +422,7 @@
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
+        "clearSearch": "Effacer la recherche",
         "ilayer": {
           "name": "Couches",
           "properties": {
@@ -699,6 +708,7 @@
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
         "offsetY": "Décalage vertical",
+        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier",
         "layer": {
           "title": "Couche",
           "createNewLayer": "Créer une nouvelle couche de dessin",
@@ -737,7 +747,10 @@
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       },
       "query": {
-        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation.",
+        "link": {
+          "message": "Le lien a été copié dans le presse-papier"
+        }
       }
     }
   }
