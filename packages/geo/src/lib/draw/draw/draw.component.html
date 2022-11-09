@@ -52,6 +52,21 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <button
+      *ngIf="activeDrawingLayer"
+      mat-icon-button
+      [color]="activeDrawingLayer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="activeDrawingLayer.visible ?
+                    ('igo.geo.layer.hideLayer' | translate) :
+                    ('igo.geo.layer.showLayer' | translate)"
+      (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible">
+      <mat-icon
+        [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
+      </mat-icon>
+    </button>
   </div>
   <mat-divider></mat-divider>
   <div>
@@ -64,8 +79,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.draw.delete' | translate"
       [disabled]="(selectedFeatures$ | async).length === 0"
-      (click)="deleteDrawings()"
-    >
+      (click)="deleteDrawings()">
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
 

@@ -48,12 +48,11 @@ img {
 }
 
 .storeTable {
-  height:auto !important;
-  // max-height: 100px;
+  height: auto !important;
 }
 
 .layer-select {
-  width: 100%;
+  width: 85%;
   padding: 10px;
   padding-bottom: 0%;
 }
@@ -61,9 +60,9 @@ img {
 .input-button-container {
   padding: 10px;
   mat-form-field {
-    width:25%;
+    width: 25%;
   }
-  button{
+  button {
     left: 8px;
     bottom: 10px;
   }

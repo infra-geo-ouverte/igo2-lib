@@ -5,7 +5,8 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChild
 } from '@angular/core';
 
 import {
@@ -150,7 +151,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private activeDrawControl: DrawControl;
   private drawEnd$$: Subscription;
   private drawSelect$$: Subscription;
-  private activeDrawingLayer: VectorLayer;
+  public activeDrawingLayer: VectorLayer;
   public selectedFeatures$: BehaviorSubject<FeatureWithDraw[]> =
     new BehaviorSubject([]);
   public fillForm: string;
@@ -168,6 +169,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   private numberOfDrawings: number;
   public isCreatingNewLayer: boolean = false;
   private currGeometryType = this.geometryType.Point as any;
+
+  @ViewChild('selectedLayer') select;
 
   constructor(
     private languageService: LanguageService,
@@ -270,7 +273,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.allLayers.forEach(layer => layer.opacity = 1);
     this.activeStore.state.updateAll({selected: false});
     this.deactivateDrawControl();
-    // this.activeDrawControl.setOlMap(undefined);
     this.subscriptions$$.map((s) => s.unsubscribe());
   }
 
@@ -618,6 +620,9 @@ export class DrawComponent implements OnInit, OnDestroy {
           if (!this.labelsAreShown){
             this.onToggleLabels();
           }
+        } else {
+          this.select.value = this.activeDrawingLayer;
+          this.select.selectionChange.emit(this.activeDrawingLayer);
         }
       });
     }, 250);
@@ -664,18 +669,15 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawStyleService.toggleLabelsAreShown();
     this.labelsAreShown = !this.labelsAreShown;
     this.icon
-      ? this.onColorChange(
+      ? this.elementStyle(
           this.labelsAreShown,
-          true,
-          this.fillColor,
-          this.strokeColor
+          true
         )
-      : this.onColorChange(
+      : this.elementStyle(
           this.labelsAreShown,
-          false,
-          this.fillColor,
-          this.strokeColor
+          false
         );
+    this.createDrawControl();
   }
 
   /**
@@ -803,8 +805,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.activeStore.update(entity);
       });
     }
-    this.fillColor = fillColor;
-    this.strokeColor = strokeColor;
 
     this.elementStyle(labelsAreShown, isAnIcon);
     this.createDrawControl();
@@ -1012,7 +1012,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       : (this.tableTemplate.tableHeight = 'auto');
   }
 
-  updateActiveLayer(){
+  updateActiveLayer() {
     let currLayer = this.allLayers.find(layer => layer.title === this.activeDrawingLayer.title);
     return currLayer ? currLayer : this.allLayers[0];
   }
