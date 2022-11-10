@@ -279,6 +279,7 @@ export const environment: Environment = {
       ]
     },
     searchSources: {
+      storedqueriesreverse: { enabled: false},
       storedqueries: {
         available: true,
         title: 'Feuillets SNRC',

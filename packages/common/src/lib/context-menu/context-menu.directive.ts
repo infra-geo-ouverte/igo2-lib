@@ -30,9 +30,22 @@ export class ContextMenuDirective {
     private elementRef: ElementRef
   ) {}
 
+  @HostListener('longpress', ['$event'])
   @HostListener('contextmenu', ['$event'])
-  public onContextMenu(e: MouseEvent): void {
-    const {x, y} = e;
+  public onContextMenu(e: MouseEvent | TouchEvent): void {
+    let x;
+    let y;
+    if (e instanceof TouchEvent) {
+      x = e.touches[0].pageX;
+      y = e.touches[0].pageY;
+    } else if (e instanceof MouseEvent) {
+      x = e.x;
+      y = e.y;
+    }
+    if (!x || !y) {
+      return;
+    }
+
     this.close();
     e.preventDefault();
     this.menuPosition.emit({ x, y });

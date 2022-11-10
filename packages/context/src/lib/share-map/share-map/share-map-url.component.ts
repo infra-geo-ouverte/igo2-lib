@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 
 import { Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
@@ -23,7 +23,6 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   };
 
   constructor(
-    private languageService: LanguageService,
     private messageService: MessageService,
     private shareMapService: ShareMapService,
     private cdRef: ChangeDetectorRef
@@ -54,12 +53,7 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   copyTextToClipboard(textArea) {
     const successful = Clipboard.copy(textArea);
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.context.shareMap.dialog.copyTitle'
-      );
-      const msg = translate.instant('igo.context.shareMap.dialog.copyMsg');
-      this.messageService.success(msg, title);
+      this.messageService.success('igo.context.shareMap.dialog.copyMsg', 'igo.context.shareMap.dialog.copyTitle');
     }
   }
 }

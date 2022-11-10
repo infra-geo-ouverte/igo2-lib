@@ -1,8 +1,8 @@
 {
   "name": "@igo/demo",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "IGO Library",
-  "author": "MSP",
+  "author": "IGO Community",
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -107,7 +107,7 @@
     "jszip": "^3.10.1",
     "jwt-decode": "^2.2.0",
     "moment": "^2.29.4",
-    "ngx-color-picker": "^10.1.0",
+    "ngx-color-picker": "^13.0.0",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^15.0.0",
     "nosleep.js": "^0.12.0",
