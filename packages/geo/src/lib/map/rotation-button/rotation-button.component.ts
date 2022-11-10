@@ -12,6 +12,7 @@ import { IgoMap } from '../shared/map';
 export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);
   public azimuthRounded: number = 0;
+  public rotationRounded: number = 0;
   readonly currentStyle$ = new BehaviorSubject<{}>({
     transform: 'rotate(0rad)'
   });
@@ -26,6 +27,7 @@ export class RotationButtonComponent implements AfterContentInit {
     this.map.viewController.rotation$.subscribe(r => {
       const radians = r || 0;
       const deg = radians * 180 / Math.PI;
+      this.rotationRounded = Math.round(deg);
       this.azimuthRounded = Math.round(bearingToAzimuth(deg * -1));
       this.currentStyle$.next({
         transform: 'rotate(' + radians + 'rad)'

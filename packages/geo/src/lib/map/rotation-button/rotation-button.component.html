@@ -1,5 +1,5 @@
 <div *ngIf="((rotated$ | async) && !showIfNoRotation) || showIfNoRotation" class="igo-rotation-button-container"
-  [matTooltip]="(rotated$ | async) ? ('igo.geo.mapButtons.resetRotation' | translate: {azimuth: azimuthRounded}): ('igo.geo.mapButtons.tipRotation' | translate)"
+  [matTooltip]="(rotated$ | async) ? ('igo.geo.mapButtons.resetRotation' | translate: {azimuth: azimuthRounded, rotation: rotationRounded}): ('igo.geo.mapButtons.tipRotation' | translate)"
   matTooltipPosition="left">
   <button mat-icon-button matTooltipPosition="left" [color]="color" [disabled]="(rotated$ | async) === false"
     (click)="map.viewController.resetRotation()">
