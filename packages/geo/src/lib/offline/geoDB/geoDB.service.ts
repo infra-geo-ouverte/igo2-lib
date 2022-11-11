@@ -28,7 +28,7 @@ export class GeoDBService {
    * @param insertEvent Name of the event where the insert has been triggered
    * @returns
    */
-  update(url: string, regionID: number, object: any, insertSource: InsertSourceInsertDBEnum, insertEvent: string): Observable<any> {
+  update(url: string, regionID: any, object: any, insertSource: InsertSourceInsertDBEnum, insertEvent: string): Observable<any> {
     if (!object) {
       return;
     }
@@ -106,6 +106,14 @@ export class GeoDBService {
         }
       })
     );
+  }
+
+  getByID(url: string): Observable<any> {
+    return this.ngxIndexedDBService.getByID(this.dbName, url);
+  }
+
+  deleteByKey(url: string): Observable<any> {
+    return this.ngxIndexedDBService.deleteByKey(this.dbName, url);
   }
 
   getRegionTileCountByID(id: number): Observable<number> {

@@ -54,7 +54,7 @@
         },
         "unreadable": {
           "text": "The file '{{value}}' is unreadable",
-          "title": "Unreadable file" 
+          "title": "Unreadable file"
         },
         "tooLarge": {
           "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
@@ -746,6 +746,10 @@
         "link": {
           "message": "Hyperlink copied to clipboard"
         }
+      },
+      "indexedDb": {
+        "data-download-start": "Downloading data. Please don't leave the current app.",
+        "data-download-completed": "Data download completed"
       }
     }
   }
