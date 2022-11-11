@@ -4,7 +4,7 @@ import {
   } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { FeatureStore, IgoMap, DrawControl, FeatureWithDraw} from '@igo2/geo';
+import { FeatureStore, IgoMap, DrawControl, FeatureWithDraw, VectorLayer} from '@igo2/geo';
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
 
@@ -47,6 +47,13 @@ export class DrawingToolComponent {
   }
   set drawControls(dc:[string, DrawControl][]){
     this.drawState.drawControls = dc;
+  }
+
+  get activeDrawingLayer(): VectorLayer {
+    return this.drawState.activeDrawingLayer;
+  }
+  set activeDrawingLayer(value: VectorLayer) {
+    this.drawState.activeDrawingLayer = value;
   }
 
   public addLayersID(layerID:string){

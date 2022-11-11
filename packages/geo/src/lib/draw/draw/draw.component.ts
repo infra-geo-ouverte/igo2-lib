@@ -117,14 +117,8 @@ export class DrawComponent implements OnInit, OnDestroy {
   };
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
-
-  @Output() fillColor: string;
-  @Output() strokeColor: string;
-  @Output() strokeWidth: number;
-
-  @Output() fontSize: string;
-  @Output() fontStyle: string;
   @Input() map: IgoMap; // Map to draw on
+
   @Input()
   get stores(): FeatureStore<FeatureWithDraw>[] {
     return this._stores;
@@ -133,6 +127,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     this._stores = value;
   }
   private _stores:FeatureStore<FeatureWithDraw>[] = [];
+
   @Input()
   get drawControls(): [string, DrawControl][]{
     return this._drawControls;
@@ -141,8 +136,26 @@ export class DrawComponent implements OnInit, OnDestroy {
     this._drawControls = value;
   }
   private _drawControls = [];
+
+  @Input()
+  get activeDrawingLayer(): VectorLayer {
+    return this._activeDrawingLayer;
+  }
+  set activeDrawingLayer(value: VectorLayer) {
+    this._activeDrawingLayer = value;
+  }
+  private _activeDrawingLayer: VectorLayer;
+
+  @Output() activeLayerChange = new EventEmitter<VectorLayer>();
   @Output() drawControlsEvent = new EventEmitter<[string, DrawControl][]>();
   @Output() layersIDEvent = new EventEmitter<string>();
+
+  @Output() fillColor: string;
+  @Output() strokeColor: string;
+  @Output() strokeWidth: number;
+
+  @Output() fontSize: string;
+  @Output() fontStyle: string;
 
   public activeStore: FeatureStore<FeatureWithDraw>;
   private layerCounterID: number = 0;
@@ -151,7 +164,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   private activeDrawControl: DrawControl;
   private drawEnd$$: Subscription;
   private drawSelect$$: Subscription;
-  public activeDrawingLayer: VectorLayer;
   public selectedFeatures$: BehaviorSubject<FeatureWithDraw[]> =
     new BehaviorSubject([]);
   public fillForm: string;
@@ -193,10 +205,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   // Initialize the store that will contain the entities and create the Draw control
   ngOnInit() {
-    if (this.stores.length === 0 || !(Array.isArray(this.stores))) {
-      if (!(Array.isArray(this.stores))){
-        this.stores = [];
-      }
+    if (!this.stores.length) {
       this.activeStore = new FeatureStore<FeatureWithDraw>([], {
         map: this.map
       });
@@ -214,9 +223,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
     } else {
-      this.activeDrawingLayer = this.stores[0].layer;
-      this.activeStore = this.stores[0];
-      this.activeDrawControl = this.drawControls[0][1];
+      this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
+      this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
       this.deactivateDrawControl();
       this.allLayers.forEach(layer => {
         if (layer.id !== this.activeDrawingLayer.id) {
@@ -261,7 +269,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         );
       });
       this.onLayerChange(this.activeDrawingLayer);
-
     }
   }
 
@@ -620,6 +627,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           if (!this.labelsAreShown){
             this.onToggleLabels();
           }
+          this.activeLayerChange.emit(this.activeDrawingLayer);
         } else {
           this.select.value = this.activeDrawingLayer;
           this.select.selectionChange.emit(this.activeDrawingLayer);
@@ -713,6 +721,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     } else {
       this.setupLayer(true);
     }
+    this.activeLayerChange.emit(this.activeDrawingLayer);
   }
 
   public createLayer(newTitle?, isNewLayer?) {
