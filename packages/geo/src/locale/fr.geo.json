@@ -708,7 +708,12 @@
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
         "offsetY": "Décalage vertical",
-        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier"
+        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier",
+        "layer": {
+          "title": "Couche",
+          "createNewLayer": "Créer une nouvelle couche de dessin",
+          "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
+        }
       },
       "network": {
         "online": {

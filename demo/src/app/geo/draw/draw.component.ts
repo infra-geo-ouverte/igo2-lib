@@ -32,7 +32,7 @@ export class AppDrawComponent {
     projection: 'EPSG:3857'
   };
 
-  public store = new FeatureStore<FeatureWithDraw>([], {map: this.map});
+  public stores: FeatureStore<FeatureWithDraw>[] = [];
 
   constructor(
     private languageService: LanguageService,
