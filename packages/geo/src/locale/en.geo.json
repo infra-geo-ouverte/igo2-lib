@@ -708,7 +708,12 @@
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
         "offsetY": "Vertical offset",
-        "changeLabel": "Double click on label to change it"
+        "changeLabel": "Double click on label to change it",
+        "layer": {
+          "title": "Layer",
+          "createNewLayer": "Create new drawing layer",
+          "layerDialogInstruction": "Enter your drawing layer's title"
+        }
       },
       "network": {
         "online": {
