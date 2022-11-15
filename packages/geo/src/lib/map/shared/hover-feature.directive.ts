@@ -220,18 +220,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    */
   subscribeToPointerStore() {
     this.store$$ = this.pointerHoverFeatureStore.entities$.subscribe(resultsUnderPointerPosition => {
-      this.entitiesToPointerOverlay(resultsUnderPointerPosition);
+      this.addFeatureOverlay(resultsUnderPointerPosition);
     });
-  }
-
-  /**
-   * convert store entities to a pointer position overlay with label summary on.
-   * @param event OL map browser pointer event
-   */
-  private entitiesToPointerOverlay(resultsUnderPointerPosition: OlFeature<OlGeometry>[]) {
-
-    this.addFeatureOverlay(resultsUnderPointerPosition);
-
   }
 
   /**
@@ -302,7 +292,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
     }
-    this.clearLayer();
     let maximumZindex = -Infinity;
     let topMostOlLayer;
     const pixel = this.map.ol.getPixelFromCoordinate(event.coordinate);
@@ -327,12 +316,19 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
         hitTolerance: 10, layerFilter: olLayer => olLayer instanceof olLayerVector || olLayer instanceof olLayerVectorTile
       });
       if (!topMostOlLayer) {
+        // To clear label
+        this.clearLayer();
+        this.pointerHoverFeatureStore.clear();
         return;
       }
 
-      this.clearLayer();
       this.map.ol.forEachFeatureAtPixel(pixel, (mapFeature: RenderFeature | OlFeature<OlGeometry>, layerOL: any) => {
-        if (mapFeature.get('hoverSummary') === undefined) {
+        // To avoid flashing feature
+        if (
+          mapFeature.get('hoverSummary') === undefined &&
+          mapFeature.getProperties() !== this.pointerHoverFeatureStore.all()[0]?.getProperties()
+        ) {
+          this.clearLayer();
           let igoLayer;
           if (layerOL instanceof olLayerVector) {
             igoLayer = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorLayer;
@@ -394,7 +390,6 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             });
           }
         }
-        return true;
       }, {
         hitTolerance: 10, layerFilter: olLayer => olLayer === topMostOlLayer
       });
@@ -434,6 +429,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     } else if (feature instanceof OlFeature) {
       localFeature = feature;
     }
+    localFeature.setProperties(feature.getProperties());
     return localFeature;
   }
 

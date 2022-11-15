@@ -278,7 +278,7 @@
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-        "resetRotation": "Réinitialiser la carte vers le nord",
+				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
@@ -746,6 +746,10 @@
         "link": {
           "message": "Le lien a été copié dans le presse-papier"
         }
+      },
+      "indexedDb": {
+        "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
+        "data-download-completed": "Téléchargement des données terminée."
       }
     }
   }
