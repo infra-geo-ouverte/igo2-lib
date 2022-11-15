@@ -1,3 +1,19 @@
+## [1.13.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.1...1.13.2) (2022-11-14)
+
+
+### Bug Fixes
+
+* **chore:** fix gh pages build ([b979713](https://github.com/infra-geo-ouverte/igo2-lib/commit/b979713290168691b649b08d4c0f7b73f37b5fce))
+* **googleLinks:** links were broken ([#1130](https://github.com/infra-geo-ouverte/igo2-lib/issues/1130)) ([b3e15b0](https://github.com/infra-geo-ouverte/igo2-lib/commit/b3e15b0da8e7ee83024278ca41405e0a97c29064))
+* **hover:** fix flashing feature and property transfer ([#1129](https://github.com/infra-geo-ouverte/igo2-lib/issues/1129)) ([f9b38fd](https://github.com/infra-geo-ouverte/igo2-lib/commit/f9b38fd572fd3a7cf63e74ed54aea9c1c819bf9a))
+
+
+### Features
+
+* **geoDB:** service to load data from config file into the indexed-db ([#1115](https://github.com/infra-geo-ouverte/igo2-lib/issues/1115)) ([a8f866a](https://github.com/infra-geo-ouverte/igo2-lib/commit/a8f866a9ad720af9fe365c984473d7c9abe3d6e3))
+
+
+
 ## [1.13.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.0...1.13.1) (2022-11-07)
 
 
