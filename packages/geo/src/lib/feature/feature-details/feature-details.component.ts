@@ -156,7 +156,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
       let url = value;
       if (this.isEmbeddedLink(value)) {
         var div = document.createElement('div');
-        div.innerHTML =  value;
+        div.innerHTML = value;
         url = div.children[0].getAttribute('href');
       }
       window.open(url, '_blank');
