@@ -155,8 +155,9 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     } else {
       let url = value;
       if (this.isEmbeddedLink(value)) {
-        const regexUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-        url = value.match(regexUrl)[0];
+        var div = document.createElement('div');
+        div.innerHTML =  value;
+        url = div.children[0].getAttribute('href');
       }
       window.open(url, '_blank');
     }
