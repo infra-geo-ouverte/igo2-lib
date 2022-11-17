@@ -92,9 +92,9 @@ export class AppHoverComponent {
 
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
       params: {
-        featureTypes: 'CASERNE',
+        featureTypes: 'MSP_CASERNE_PUBLIC',
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
@@ -120,7 +120,7 @@ export class AppHoverComponent {
           },
           hoverStyle: {
             label: {
-              attribute: 'Caserne: ${nom_service_incendie} \n Mun: ${ville}',
+              attribute: 'Caserne: ${no_caserne} \n Mun: ${nom_ssi}',
               style: {
                 textAlign: 'left',
                 textBaseline: 'top',

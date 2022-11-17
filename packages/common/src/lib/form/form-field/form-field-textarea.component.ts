@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   OnInit
 } from '@angular/core';
-import type { FormControl } from '@angular/forms';
+import type { UntypedFormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -27,7 +27,7 @@ export class FormFieldTextareaComponent implements OnInit {
   /**
    * The field's form control
    */
-  @Input() formControl: FormControl;
+  @Input() formControl: UntypedFormControl;
 
   /**
    * Field placeholder

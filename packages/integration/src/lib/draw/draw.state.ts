@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { DrawControl, FeatureStore, FeatureWithDraw } from '@igo2/geo';
+import { DrawControl, FeatureStore, FeatureWithDraw, VectorLayer } from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -14,6 +14,7 @@ export class DrawState {
   public stores: FeatureStore<FeatureWithDraw>[] = [];
   public layersID: string[] = [];
   public drawControls: [string, DrawControl][] = [];
+  public activeDrawingLayer: VectorLayer;
 
   constructor(private mapState: MapState) {
     this.mapState.map.layers$.subscribe(() => {

@@ -1,4 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { AfterContentInit, Component, Input } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { bearingToAzimuth } from '@turf/helpers';
 
 import { IgoMap } from '../shared/map';
 
@@ -7,44 +9,31 @@ import { IgoMap } from '../shared/map';
   templateUrl: './rotation-button.component.html',
   styleUrls: ['./rotation-button.component.scss']
 })
-export class RotationButtonComponent {
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+export class RotationButtonComponent implements AfterContentInit {
+  readonly rotated$ = new BehaviorSubject<boolean>(false);
+  public azimuthRounded: number = 0;
+  public rotationRounded: number = 0;
+  readonly currentStyle$ = new BehaviorSubject<{}>({
+    transform: 'rotate(0rad)'
+  });
 
-  @Input()
-  get showIfNoRotation(): boolean {
-    return this._showIfNoRotation;
-  }
-  set showIfNoRotation(value: boolean) {
-    this._showIfNoRotation = value;
-  }
-  private _showIfNoRotation: boolean;
+  @Input() map: IgoMap;
+  @Input() showIfNoRotation: boolean;
+  @Input() color: string;
 
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
+  constructor() { }
 
-  get rotated(): boolean {
-    return this.map.viewController.getRotation() !== 0;
-  }
-
-  constructor() {}
-
-  rotationStyle(radians): {} {
-    const rotation = 'rotate(' + radians + 'rad)';
-    return {
-      transform: rotation
-    };
+  ngAfterContentInit() {
+    this.map.viewController.rotation$.subscribe(r => {
+      const radians = r || 0;
+      const deg = radians * 180 / Math.PI;
+      this.rotationRounded = Math.round(deg);
+      this.azimuthRounded = Math.round(bearingToAzimuth(deg * -1));
+      this.currentStyle$.next({
+        transform: 'rotate(' + radians + 'rad)'
+      });
+      this.rotated$.next(radians !== 0);
+    }
+    );
   }
 }

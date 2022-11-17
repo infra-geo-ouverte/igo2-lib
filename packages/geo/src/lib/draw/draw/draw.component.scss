@@ -26,37 +26,16 @@ $slide-toggle-width: 60px;
   }
 }
 
-.igo-form {
-  padding: 10px;
+.icon-options {
+  margin: 5px 5px 0px 5px;
 }
 
-.fill-field, .stroke-field {
-  width: 130px;
+.deleteBtn {
+  margin-left: 12px;
 }
 
-.fill-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 8px;
-  }
-}
-
-.stroke-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 35px;
-  }
-}
-
-.box {
-  width: 25px;
-  height: 25px;
+.edition-drawing{
+  padding: 10px 0;
 }
 
 .edition-drawing{
@@ -72,47 +51,32 @@ img {
   margin-left: 12px;
 }
 
-.storeTable{
-  height:auto !important;
+.storeTable {
+  height: auto !important;
 }
 
-.igo-input-container .mat-form-field + .mat-form-field{
-  margin-left: 8px;
-}
-
-.igo-form-input-box{
-  width: 150px;
-}
-
-.layer-select{
-  width: 100%;
+.layer-select {
+  width: 85%;
   padding: 10px;
   padding-bottom: 0%;
 }
 
-.input-button-container{
+.input-button-container {
   padding: 10px;
   mat-form-field {
-    width:25%;
+    width: 25%;
   }
-  button{
+  button {
     left: 8px;
     bottom: 10px;
   }
 }
 
-.igo-form-input-box{
-  width: 150px;
-}
-
-::ng-deep igo-entity-table{
-    td:last-child{
-      text-align: right !important;
-      button{
-        margin: 0% !important;
-      }
+::ng-deep igo-entity-table {
+  td:last-child {
+    text-align: right !important;
+    button {
+      margin: 0% !important;
     }
+  }
 }
-
-
-// /html/body/app-root/div/mat-sidenav-container/mat-sidenav-content/app-draw/mat-card/igo-draw/div/div[4]/div/igo-entity-table/div

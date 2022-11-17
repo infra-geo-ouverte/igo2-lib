@@ -8,6 +8,9 @@
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
         <a href="{{property.value}}" target='_blank' rel="noopener noreferrer"> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
+        <button class="copyClipboard" mat-icon-button (click)="copyTextToClipboard(property.value)">
+          <mat-icon svgIcon="content-copy"></mat-icon>
+        </button>
       </td>
 
       <td id="keyValue" *ngIf="feature.properties.target === undefined">
@@ -23,11 +26,14 @@
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && (isDoc(property.value) || isUrl(property.value)) && !isImg(property.value)">
         <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ 'igo.geo.targetHtmlUrl' | translate }}</u>
+        <button class="copyClipboard" mat-icon-button (click)="copyTextToClipboard(property.value)">
+          <mat-icon svgIcon="content-copy"></mat-icon>
+        </button>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && isImg(property.value)">
         <a href="{{property.value}}" target='_blank' (click)="openSecureUrl(property.value)" rel="noopener noreferrer">
-          <img src="{{(property.value | secureImage) | async}}" width="225" height="auto">
+          <img igoImageError src="{{(property.value | secureImage) | async}}" width="225" height="auto">
         </a>
       </td>
 

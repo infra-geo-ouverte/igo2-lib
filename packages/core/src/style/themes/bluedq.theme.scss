@@ -1,15 +1,15 @@
 .bluedq-theme {
     $dq-palette: (
-        50 : #e3eaec,
-        100 : #b9cad0,
-        200 : #8ba7b1,
-        300 : #5c8391,
-        400 : #39697a,
-        500 : #164e62,
-        600 : #13475a,
-        700 : #103d50,
-        800 : #0c3546,
-        900 : #062534,
+        50 : #e1f5fd,
+        100 : #b4e5fb,
+        200 : #82d4f8,
+        300 : #53c3f4,
+        400 : #31B6f2,
+        500 : #0d81df,
+        600 : #149Be1,
+        700 : #1088cd,
+        800 : #0F77B9,
+        900 : #095797,
         A100 : #6dc6ff,
         A200 : #3ab2ff,
         A400 : #079eff,
@@ -18,9 +18,9 @@
             50 : #000000,
             100 : #000000,
             200 : #000000,
-            300 : #ffffff,
-            400 : #ffffff,
-            500 : #ffffff,
+            300 : #000000,
+            400 : #000000,
+            500 : #000000,
             600 : #ffffff,
             700 : #ffffff,
             800 : #ffffff,
@@ -32,8 +32,8 @@
         )
     );
 
-    $primary: mat.define-palette($dq-palette, 500);
-    $accent: mat.define-palette($dq-palette, 200);
+    $primary: mat.define-palette($dq-palette, 900);
+    $accent: mat.define-palette($dq-palette, 500);
     $warn: mat.define-palette(mat.$red-palette);
 
     $temp-theme: mat.define-light-theme((

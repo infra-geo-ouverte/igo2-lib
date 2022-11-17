@@ -6,9 +6,16 @@
   .toast-error {
     background-color: mat.get-color-from-palette($warn);
   }
+
   .toast-info {
     background-color: mat.get-color-from-palette($primary);
   }
+  
+  .toast-no-icon { 
+    background-image: none;
+    padding-left: 6%;
+  }
+
   .toast-title {
     line-height: 23px;
     font-size: 15px;
@@ -20,4 +27,5 @@
     font-size: mat.font-size($typography, subheading-2);
     font-family:  Roboto, "Helvetica Neue", sans-serif;
   }
+
 }

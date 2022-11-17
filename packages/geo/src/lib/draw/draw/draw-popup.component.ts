@@ -24,10 +24,6 @@ import Circle from 'ol/geom/Circle';
 import { DDtoDMS } from '../shared/draw.utils';
 
 
-export interface DialogData {
-  label: string;
-}
-
 @Component({
   selector: 'igo-draw-popup-component',
   templateUrl: './draw-popup.component.html',

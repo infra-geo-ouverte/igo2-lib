@@ -20,9 +20,7 @@ import {
 } from './ogc-filter.interface';
 import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
-import * as moment_ from 'moment';
-const moment = moment_;
-
+import { default as moment } from 'moment';
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {

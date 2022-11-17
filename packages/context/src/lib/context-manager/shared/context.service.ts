@@ -540,9 +540,10 @@ export class ContextService {
 
     layers.forEach((layer) => {
       const layerFound = currentContext.layers.find(
-        (contextLayer) =>
-          layer.id === contextLayer.source.id && !contextLayer.baseLayer
-      );
+        (contextLayer) => {
+          const source = contextLayer.source;
+          return source && layer.id === source.id && !contextLayer.baseLayer;
+        });
 
       if (layerFound) {
         let layerStyle = layerFound[`style`];
@@ -624,12 +625,6 @@ export class ContextService {
     context.messages.push(context.message);
     context.messages.map(message => {
       if (message) {
-        message.title = message.title
-          ? this.languageService.translate.instant(message.title)
-          : undefined;
-        message.text = message.text
-          ? this.languageService.translate.instant(message.text)
-          : undefined;
         this.messageService.message(message as Message);
       }
     });

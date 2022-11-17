@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -41,6 +42,7 @@ import {MatRadioModule} from '@angular/material/radio';
     MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
+    MatBadgeModule,
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,

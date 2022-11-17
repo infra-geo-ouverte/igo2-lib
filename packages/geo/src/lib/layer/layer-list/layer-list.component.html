@@ -66,7 +66,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="lowerDisabled"
-      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Lower)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Lower, true)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="lowerDisabled"
                 svgIcon="arrow-down"></mat-icon>
     </button>
@@ -79,7 +79,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="raiseDisabled"
-      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Raise)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Raise, true)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="raiseDisabled"
                 svgIcon="arrow-up"></mat-icon>
     </button>
@@ -117,7 +117,7 @@
     </mat-menu>
 
     <button
-      *ngIf="activeLayerIsValid(activeLayer)"
+      *ngIf="activeLayerExtentIsValid(activeLayer)"
       class="zoomLayer-button"
       color="primary"
       mat-icon-button
@@ -222,7 +222,7 @@
     </mat-menu>
 
     <button
-      *ngIf="layersChecked.length !== 0 && activeLayersAreValid(layersChecked)"
+    *ngIf="layersChecked.length !== 0 && activeLayersExtentAreValid(layersChecked)"
       class="zoomLayer-button"
       color="primary"
       mat-icon-button

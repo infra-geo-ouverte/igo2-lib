@@ -1,1 +1,9 @@
-<igo-draw [stores]="stores" [map]="map" (layersIDEvent)="addLayersID($event)" [drawControls]="drawControls" (drawControlsEvent)="addDrawControls($event)"></igo-draw>
+<igo-draw
+    [stores]="stores"
+    [map]="map"
+    (layersIDEvent)="addLayersID($event)"
+    [activeDrawingLayer]="activeDrawingLayer"
+    [drawControls]="drawControls"
+    (drawControlsEvent)="addDrawControls($event)"
+    (activeLayerChange)="activeDrawingLayer = $event">
+</igo-draw>

@@ -1,8 +1,10 @@
+@import '../../../../../core/src/style/partial/media';
 
   .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
-    box-shadow: none;
+    box-shadow: none !important;
+    width: 95%
   }
 
   .checkboxes {
@@ -22,13 +24,17 @@
     white-space: normal;
     min-height: 40px;
     height: auto;
-    width: 150px;
+    width: 142px;
 
     ::ng-deep .mat-button-toggle-label-content {
       line-height: unset;
       font-size: small;
       display: block;
     }
+    @include mobile {
+      width: 45%;
+    }
+
   }
 
   ::ng-deep .material-tooltip {
