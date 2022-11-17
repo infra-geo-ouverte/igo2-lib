@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { userAgent } from '@igo2/utils';
-import { NetworkService, ConnectionState, MessageService, LanguageService } from '@igo2/core';
+import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
 import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
@@ -86,7 +86,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private networkService: NetworkService,
     private messageService: MessageService,
-    private languageService: LanguageService,
     private configService: ConfigService
   ) {
     this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
@@ -151,13 +150,16 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         this.cdRef.detectChanges();
       },
       (error: Error) => {
-        const translate = this.languageService.translate;
-        const title = translate.instant('igo.geo.targetHtmlUrlUnauthorizedTitle');
-        const message = translate.instant('igo.geo.targetHtmlUrlUnauthorized');
-        this.messageService.error(message, title);
+        this.messageService.error('igo.geo.targetHtmlUrlUnauthorized', 'igo.geo.targetHtmlUrlUnauthorizedTitle');
       });
     } else {
-      window.open(value, '_blank');
+      let url = value;
+      if (this.isEmbeddedLink(value)) {
+        var div = document.createElement('div');
+        div.innerHTML = value;
+        url = div.children[0].getAttribute('href');
+      }
+      window.open(url, '_blank');
     }
   }
 
