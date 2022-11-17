@@ -66,7 +66,6 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import Point from 'ol/geom/Point';
 
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
