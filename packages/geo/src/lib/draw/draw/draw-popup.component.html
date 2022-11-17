@@ -20,7 +20,7 @@
 <div *ngIf="labelFlag !== labelType.Custom">
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
-    <mat-radio-group>
+    <mat-radio-group class="mat-typography">
       <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" 
       (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
         {{getProperLengthLabel(option)}}

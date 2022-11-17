@@ -125,7 +125,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       {
         name: 'Drawing',
         title: this.languageService.translate.instant('igo.geo.draw.labels'),
-        tooltip: this.languageService.translate.instant('igo.geo.draw.changeLabel'),
         valueAccessor: (feature: FeatureWithDraw) => {
           return feature.properties.draw;
         }

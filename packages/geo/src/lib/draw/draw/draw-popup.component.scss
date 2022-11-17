@@ -19,21 +19,25 @@
   top: 5em !important;
 }
 
-::ng-deep .mat-form-field-wrapper{
+::ng-deep .mat-form-field-wrapper {
   margin-bottom: -1.25em;
   margin-top: 0.25em;
 }
 
-.geometry-type-toggle{
+.geometry-type-toggle {
   display: flex !important;
   justify-content: center;
 }
 
-.mat-dialog-actions{
+.mat-dialog-actions {
   display: flex !important;
   justify-content: center;
 }
 
-.input{
+.input {
   width: auto !important;
+}
+
+.mat-button-toggle-group, .mat-button-toggle {
+  width: 100%;
 }
