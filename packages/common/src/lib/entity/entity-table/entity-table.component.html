@@ -146,7 +146,7 @@
           </ng-container>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="headers; sticky: fixedHeader;" [ngClass]="getHeaderClass()">
+      <tr mat-header-row *matHeaderRowDef="headers; sticky: fixedHeader" [ngClass]="getHeaderClass()">
       </tr>
       <tr mat-row igoEntityTableRow *matRowDef="let record; columns: headers;" [scrollBehavior]="scrollBehavior" [ngClass]="getRowClass(record)" [selection]="selection" [selected]="rowIsSelected(record)" (select)="onRowSelect(record)" (click)="onRowClick(record)">
       </tr>

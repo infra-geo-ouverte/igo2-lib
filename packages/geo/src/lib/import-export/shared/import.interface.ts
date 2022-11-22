@@ -3,4 +3,5 @@ export interface ImportExportServiceOptions {
   clientSideFileSizeMaxMb?: number;
   forceNaming?: boolean;
   formats?: string[];
+  configFileToGeoDBService?: string;
 }
