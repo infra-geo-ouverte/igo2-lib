@@ -34,12 +34,36 @@ $slide-toggle-width: 60px;
   margin-left: 12px;
 }
 
+.edition-drawing{
+  padding: 10px 0;
+}
+
 img {
   width: 100%;
   height: 100%;
 }
 
-.box {
-  width: 25px;
-  height: 25px;
+.deleteBtn {
+  margin-left: 12px;
+}
+
+.storeTable {
+  height: auto !important;
+}
+
+.layer-select {
+  width: 85%;
+  padding: 10px;
+  padding-bottom: 0%;
+}
+
+.input-button-container {
+  padding: 10px;
+  mat-form-field {
+    width: 25%;
+  }
+  button {
+    left: 8px;
+    bottom: 10px;
+  }
 }

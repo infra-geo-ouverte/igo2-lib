@@ -1,3 +1,17 @@
+## [1.13.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.2...1.13.3) (2022-11-16)
+
+
+### Bug Fixes
+
+* **layer-sync/feature-details:** layer sync filters init / embedded link ([#1132](https://github.com/infra-geo-ouverte/igo2-lib/issues/1132)) ([a8c911f](https://github.com/infra-geo-ouverte/igo2-lib/commit/a8c911f880567b7caa9e0d9331cdb34c39fba085))
+
+
+### Features
+
+* **draw:** Make multiple layers with the drawing tool ([#1081](https://github.com/infra-geo-ouverte/igo2-lib/issues/1081)) ([39179bb](https://github.com/infra-geo-ouverte/igo2-lib/commit/39179bbd57d797821c882041453152ced5c4a83c))
+
+
+
 ## [1.13.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.1...1.13.2) (2022-11-14)
 
 

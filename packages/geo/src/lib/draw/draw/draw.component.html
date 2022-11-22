@@ -32,13 +32,46 @@
     <mat-slide-toggle
       [checked]="labelsAreShown"
       [labelPosition]="'before'"
-      (change)="onToggleLabels()">
-      {{'igo.geo.draw.toggleMapTooltips' | translate}}
+      (change)="onToggleLabels()"
+    >
+      {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
   </div>
 
+  <mat-divider></mat-divider>
+
   <div>
-    <button *ngIf="store.count$.getValue() > 0"
+    <mat-form-field appearance="outline" class="layer-select">
+      <mat-label>{{'igo.geo.draw.layer.title' | translate}}</mat-label>
+      <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)" [value]="updateActiveLayer()">
+        <mat-option *ngFor="let layer of allLayers" [value]="layer">
+          {{ layer.title }}
+        </mat-option>
+        <mat-option id="createNewLayer" >
+          {{'igo.geo.draw.layer.createNewLayer' | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      *ngIf="activeDrawingLayer"
+      mat-icon-button
+      [color]="activeDrawingLayer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="activeDrawingLayer.visible ?
+                    ('igo.geo.layer.hideLayer' | translate) :
+                    ('igo.geo.layer.showLayer' | translate)"
+      (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible">
+      <mat-icon
+        [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
+      </mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <div>
+    <button
+      *ngIf="activeStore.count$.getValue() > 0"
       class="deleteBtn"
       mat-icon-button
       color="warn"
@@ -54,8 +87,7 @@
       <igo-entity-table
         #table
         class="table-compact"
-        id="storeElements"
-        [store]="store"
+        [store]="activeStore"
         [template]="tableTemplate"
         (dblclick)="editLabelDrawing()">
       </igo-entity-table>
@@ -88,13 +120,15 @@
     mat-icon-button
     color="accent"
     disableRipple="true"
-    (click)="openShorcutsDialog()">
+    (click)="openShorcutsDialog()"
+  >
     <mat-icon
       class="shortcuts-icon"
       svgIcon="keyboard-outline"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.draw.shortcuts' | translate">
+      [matTooltip]="'igo.geo.draw.shortcuts' | translate"
+    >
     </mat-icon>
   </button>
 
