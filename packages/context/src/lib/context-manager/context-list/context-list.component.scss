@@ -11,7 +11,9 @@
 }
 
 .clear-button {
-  padding-right: 5px;
+  ::ng-deep mat-icon  {
+    width: auto !important;
+  }
 }
 
 mat-form-field {
