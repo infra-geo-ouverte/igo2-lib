@@ -21,6 +21,7 @@ import { DrawComponent } from './draw.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
+import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -52,7 +53,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     BrowserAnimationsModule
   ],
-  declarations: [DrawComponent, DrawPopupComponent, DrawShorcutsComponent],
+  declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
   exports: [DrawComponent]
 })
 export class IgoDrawModule {}
