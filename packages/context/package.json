@@ -14,11 +14,11 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "peerDependencies": {
-    "@angular/animations": "^14.1.2",
-    "@angular/common": "^14.1.2",
-    "@angular/core": "^14.1.2",
-    "@angular/forms": "^14.1.2",
-    "@angular/material": "^14.1.2",
+    "@angular/animations": "^14.2.12",
+    "@angular/common": "^14.2.12",
+    "@angular/core": "14.2.12",
+    "@angular/forms": "^14.2.12",
+    "@angular/material": "^14.2.7",
     "@igo2/auth": "^1.13.4",
     "@igo2/common": "^1.13.4",
     "@igo2/core": "^1.13.4",

@@ -20,11 +20,11 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.1.2",
-    "@angular/common": "^14.1.2",
-    "@angular/core": "^14.1.2",
-    "@angular/forms": "^14.1.2",
-    "@angular/material": "^14.1.2",
+    "@angular/cdk": "^14.2.7",
+    "@angular/common": "^14.2.12",
+    "@angular/core": "^14.2.12",
+    "@angular/forms": "^14.2.12",
+    "@angular/material": "^14.2.7",
     "@igo2/core": "^1.13.4",
     "@igo2/utils": "^1.13.4",
     "rxjs": "^7.5.6",
