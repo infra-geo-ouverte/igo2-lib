@@ -1,3 +1,13 @@
+## [1.13.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.3...1.13.4) (2022-11-22)
+
+
+### Bug Fixes
+
+* **contexts:** fix empty context list when ours is empty ([#1137](https://github.com/infra-geo-ouverte/igo2-lib/issues/1137)) ([cd8b830](https://github.com/infra-geo-ouverte/igo2-lib/commit/cd8b830063095fde3fe78e8ed352bfb24a497b38))
+* **imgerror:** relative path is used ([#1135](https://github.com/infra-geo-ouverte/igo2-lib/issues/1135)) ([4fe3918](https://github.com/infra-geo-ouverte/igo2-lib/commit/4fe3918490e3dab7d0f68bada832b708b0909f3b))
+
+
+
 ## [1.13.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.2...1.13.3) (2022-11-16)
 
 
