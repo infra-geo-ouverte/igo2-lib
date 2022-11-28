@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -55,7 +56,8 @@ import {MatRadioModule} from '@angular/material/radio';
     ColorPickerModule,
     BrowserModule,
     BrowserAnimationsModule,
-    MatRadioModule
+    MatRadioModule,
+    MatCheckboxModule
   ],
   declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
   exports: [DrawComponent]

@@ -31,11 +31,14 @@ import { DDtoDMS } from '../shared/draw.utils';
   })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;
-  @Input() labelFlag: LabelType = LabelType.Custom;
-  @Input() measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit;
+  @Input() labelFlag: LabelType | [LabelType, LabelType] = LabelType.Custom;
+  @Input() coordinatesMeasureUnit: CoordinatesUnit;
+  @Input() lengthMeasureUnit: MeasureLengthUnit;
+  @Input() areaMeasureUnit: MeasureAreaUnit;
 
   public geometryType = GeometryType;
   public labelType = LabelType;
+  public arrayBuiltInType: any[] = [];
 
   public currentLabel: string;
   public currentCoordinates: string;
@@ -51,11 +54,13 @@ export class DrawPopupComponent {
   private longlatDD: [number, number];
   private labelLength: number;
 
+  public polygonCheck = 0; // Count for polygon label types checkboxes
+
   constructor(
     private languageService: LanguageService,
     public dialogRef: MatDialogRef<DrawPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { olGeometry: any, map: IgoMap }
-    ){
+    ) {
       this.currentLabel = this.data.olGeometry.get('draw');
       this.labelLength = this.currentLabel ? this.currentLabel.length: 0;
       let olGeometry;
@@ -72,8 +77,6 @@ export class DrawPopupComponent {
           this.olGeometryType = this.data.olGeometry.getGeometry().getType();
           olGeometry = this.data.olGeometry.get('geometry');
         }
-        this.labelFlag = this.data.olGeometry.get('labelType');
-        this.measureUnit = this.data.olGeometry.get('measureUnit');
       }
       else{
         this.olGeometryType = this.data.olGeometry.getType();
@@ -118,6 +121,27 @@ export class DrawPopupComponent {
         this.areaInMetersSquare = measureOlGeometryArea(circularPolygon,projection.getCode()).toFixed(2);
         this.currentArea = this.areaInMetersSquare;
       }
+
+      if (data.olGeometry.get('labelType') === LabelType.Coordinates) {
+        this.onLabelTypeChange(LabelType.Predefined);
+        this.onLabelTypeChange(LabelType.Coordinates, true);
+        this.coordinatesMeasureUnit = data.olGeometry.get('measureUnit');
+      } else if (data.olGeometry.get('labelType') === LabelType.Length) {
+        this.onLabelTypeChange(LabelType.Predefined);
+        this.onLabelTypeChange(LabelType.Length, true);
+        this.lengthMeasureUnit = data.olGeometry.get('measureUnit');
+      } else if (data.olGeometry.get('labelType') === LabelType.Area) {
+        this.onLabelTypeChange(LabelType.Predefined);
+        this.onLabelTypeChange(LabelType.Area, true);
+        this.areaMeasureUnit = data.olGeometry.get('measureUnit');
+      } else if (data.olGeometry.get('labelType')?.length === 2) {
+        this.onLabelTypeChange(LabelType.Predefined);
+        this.onLabelTypeChange(LabelType.Length, true);
+        this.onLabelTypeChange(LabelType.Area, true);
+        this.lengthMeasureUnit = data.olGeometry.get('measureUnit')[0];
+        this.areaMeasureUnit = data.olGeometry.get('measureUnit')[1];
+      }
+      this.buildArrayType();
     }
 
   /**
@@ -133,85 +157,124 @@ export class DrawPopupComponent {
     if(this.labelFlag === LabelType.Predefined){
       this.dialogRef.close();
     }
+    else if (this.labelFlag === LabelType.Custom){
+      this.dialogRef.close({
+        label: input
+      });
+    }
     else if(this.labelFlag === LabelType.Coordinates){
-      this.dialogRef.close(this.currentCoordinates);
+      this.dialogRef.close({
+        label: this.currentCoordinates,
+        measureUnit: this.coordinatesMeasureUnit
+      });
+    }
+    else if (this.olGeometryType === GeometryType.Polygon) {
+      if (this.polygonCheck === 2) {
+        this.labelFlag = [LabelType.Length, LabelType.Area];
+        this.dialogRef.close({
+          label: 'P: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[MeasureLengthUnit.Meters] + '\n'
+          + 'A: ' + this.currentArea + ' ' + MeasureAreaUnitAbbreviation[MeasureAreaUnit.SquareMeters],
+          measureUnit: [this.lengthMeasureUnit, this.areaMeasureUnit]
+        });
+      } else {
+        this.labelFlag === LabelType.Length ?
+        this.dialogRef.close({
+          label: 'P: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.lengthMeasureUnit],
+          measureUnit: this.lengthMeasureUnit
+        }) :
+        this.dialogRef.close({
+          label: this.currentArea + ' ' + MeasureAreaUnitAbbreviation[this.areaMeasureUnit],
+          measureUnit: this.areaMeasureUnit
+        });
+      }
     }
     else if (this.labelFlag === LabelType.Length){
       if (this.olGeometryType === GeometryType.Circle){
-        this.dialogRef.close('R: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
+        this.dialogRef.close({
+          label: 'R: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.lengthMeasureUnit],
+          measureUnit: this.lengthMeasureUnit
+        });
       }
-      else if (this.olGeometryType === GeometryType.Polygon){
-        this.dialogRef.close('P: ' + this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
-      }
-      else{
-        this.dialogRef.close(this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.measureUnit]);
+      else if (this.olGeometryType === GeometryType.LineString) {
+        this.dialogRef.close({
+          label: this.currentLength + ' ' + MeasureLengthUnitAbbreviation[this.lengthMeasureUnit],
+          measureUnit: this.lengthMeasureUnit
+        });
       }
     }
     else if (this.labelFlag === LabelType.Area){
-      this.dialogRef.close(this.currentArea + ' ' + MeasureAreaUnitAbbreviation[this.measureUnit]);
-    }
-    else if (this.labelFlag === LabelType.Custom){
-      this.dialogRef.close(input);
+      this.dialogRef.close({
+        label: this.currentArea + ' ' + MeasureAreaUnitAbbreviation[this.areaMeasureUnit],
+        measureUnit: this.areaMeasureUnit
+      });
     }
   }
 
-  onLabelTypeChange(labelType: LabelType){
+  onLabelTypeChange(labelType: LabelType, checked?: boolean){
     this.labelFlag = labelType;
     if (labelType === LabelType.Predefined){
       if (this.olGeometryType === GeometryType.Point ){
         this.labelFlag = LabelType.Coordinates;
         this.currentCoordinates = this.coordinatesInDD;
-        this.measureUnit = CoordinatesUnit.DecimalDegree;
+        this.coordinatesMeasureUnit = CoordinatesUnit.DecimalDegree;
       }
       else if (this.olGeometryType === GeometryType.LineString){
         this.labelFlag = LabelType.Length;
         this.currentLength = this.lengthInMeters;
-        this.measureUnit = MeasureLengthUnit.Meters;
+        this.lengthMeasureUnit = MeasureLengthUnit.Meters;
       }
     }
     else if (labelType === LabelType.Area){
       this.currentArea = this.areaInMetersSquare;
-      this.measureUnit = MeasureAreaUnit.SquareMeters;
+      this.areaMeasureUnit = MeasureAreaUnit.SquareMeters;
     }
     else if (this.labelFlag === LabelType.Length){
       this.currentLength = this.lengthInMeters;
-      this.measureUnit = MeasureLengthUnit.Meters;
+      this.lengthMeasureUnit = MeasureLengthUnit.Meters;
     }
     else if (this.labelFlag === LabelType.Coordinates){
       this.currentCoordinates = this.coordinatesInDD;
-      this.measureUnit = CoordinatesUnit.DecimalDegree;
+      this.coordinatesMeasureUnit = CoordinatesUnit.DecimalDegree;
     }
 
+    const labeltypes = [this.labelType.Area, this.labelType.Coordinates, this.labelType.Length];
+    if (
+      this.olGeometryType === GeometryType.Polygon &&
+      labeltypes.includes(labelType)) {
+      checked ? this.polygonCheck += 1 : this.polygonCheck -= 1;;
+    } else {
+      this.polygonCheck = 0;
+    }
   }
 
   onChangeLengthUnit(lengthUnit: MeasureLengthUnit){
-    this.measureUnit = lengthUnit;
+    this.lengthMeasureUnit = lengthUnit;
     this.currentLength = metersToUnit(Number(this.lengthInMeters), lengthUnit).toFixed(2);
   }
 
   onChangeAreaUnit(areaUnit: MeasureAreaUnit){
-    this.measureUnit = areaUnit;
+    this.areaMeasureUnit = areaUnit;
     this.currentArea = squareMetersToUnit(Number(this.areaInMetersSquare), areaUnit).toFixed(2);
   }
 
   onChangeCoordinateUnit(coordinatesUnit: CoordinatesUnit){
-    this.measureUnit = coordinatesUnit;
+    this.coordinatesMeasureUnit = coordinatesUnit;
     let coordinates = DDtoDMS(this.longlatDD, coordinatesUnit);
     this.currentCoordinates = '(' + coordinates[1] + ', ' + coordinates[0] + ')';
   }
 
-
-  /**
-   * HTML Getters
-   */
-  get arrayBuiltInType(): string[]{
-    let arrayBILabels = [];
+  buildArrayType() {
     for (const labelType of Object.values(LabelType)){
       if (labelType !== LabelType.Custom && labelType !== LabelType.Predefined){
-        arrayBILabels.push(labelType);
+        this.arrayBuiltInType.push({
+          value: labelType,
+          checked:
+            this.selectOptions(labelType) ||
+            this.labelFlag === labelType ||
+            (this.polygonCheck === 2 && labelType !== LabelType.Coordinates)
+        });
       }
     }
-    return arrayBILabels;
   }
 
   noLabelButton(){
@@ -294,7 +357,7 @@ export class DrawPopupComponent {
     if (this.olGeometryType === GeometryType.Point){
       return option === LabelType.Coordinates;
     }
-    if (this.olGeometryType === GeometryType.LineString){
+    else if (this.olGeometryType === GeometryType.LineString){
       return option === LabelType.Length;
     }
   }

@@ -409,16 +409,16 @@ export class DrawComponent implements OnInit, OnDestroy {
       });
 
       // when dialog box is closed, get label and set it to geometry
-      dialogRef.afterClosed().subscribe((label: string) => {
+      dialogRef.afterClosed().subscribe((result) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
 
-          this.updateLabelOfOlGeometry(olGeometry, label);
+          this.updateLabelOfOlGeometry(olGeometry, result.label);
           this.updateLabelType(olGeometry, dialogRef.componentInstance.labelFlag);
-          this.updateMeasureUnit(olGeometry, dialogRef.componentInstance.measureUnit);
+          this.updateMeasureUnit(olGeometry, result.measureUnit);
 
           if (!(olGeometry instanceof OlFeature)){
-            this.updateFontSizeAndStyle(olGeometry, '20', FontType.Arial);
+            this.updateFontSizeAndStyle(olGeometry, '15', FontType.Arial);
             this.updateFillAndStrokeColor(
               olGeometry,
               'rgba(255,255,255,0.4)',
@@ -431,8 +431,8 @@ export class DrawComponent implements OnInit, OnDestroy {
             );
           }
 
-          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, label,
-            [dialogRef.componentInstance.labelFlag, dialogRef.componentInstance.measureUnit]);
+          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, result.label,
+            [dialogRef.componentInstance.labelFlag, result.measureUnit]);
           this.updateHeightTable();
         }
         // deletes the feature
@@ -1043,7 +1043,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private updateLabelType(
     olFeature: OlFeature<OlGeometry>,
-    typeOfLabel: LabelType
+    typeOfLabel: LabelType | [LabelType, LabelType]
   ){
     olFeature.setProperties(
       {
@@ -1055,11 +1055,11 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   private updateMeasureUnit(
     olFeature: OlFeature<OlGeometry>,
-    measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit
+    measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit | []
   ){
     olFeature.setProperties(
       {
-        measureUnit_:measureUnit
+        measureUnit_: measureUnit
       },
       true
     );
@@ -1073,7 +1073,7 @@ export class DrawComponent implements OnInit, OnDestroy {
       ? this.selectedFeatures$.value[0].properties.fontStyle
           .split(' ')[0]
           .replace('px', '')
-      : '20';
+      : '15';
   }
 
   getFeatureFontStyle() {

@@ -20,12 +20,23 @@
 <div *ngIf="labelFlag !== labelType.Custom">
   <div>
     <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
-    <mat-radio-group class="mat-typography">
-      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option" [disabled]="optionAvailable(option)" 
-      (change)="onLabelTypeChange($event.value)" [checked]="selectOptions(option)">
-        {{getProperLengthLabel(option)}}
+    <mat-radio-group *ngIf="olGeometryType !== 'Polygon'" class="mat-typography">
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option.value" [disabled]="optionAvailable(option.value)" 
+      (change)="onLabelTypeChange($event.value)" [checked]="option.checked">
+        {{getProperLengthLabel(option.value)}}
       </mat-radio-button>
     </mat-radio-group>
+    <ng-container class="mat-typography" *ngIf="olGeometryType === 'Polygon'">
+      <mat-checkbox
+        *ngFor="let option of arrayBuiltInType"
+        class="mat-typography"
+        [value]="option.value"
+        [disabled]="optionAvailable(option.value)"
+        (change)="onLabelTypeChange($event.source.value, $event.checked)"
+        [checked]="option.checked">
+        {{getProperLengthLabel(option.value)}}
+      </mat-checkbox>
+    </ng-container>
     <div *ngIf="labelFlag === labelType.Coordinates">
       <mat-form-field class="readOnly-Input">
         <input
@@ -35,14 +46,14 @@
           value="{{currentCoordinates}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
-        <mat-select [value]="measureUnit" (selectionChange)="onChangeCoordinateUnit($event.value)">
+        <mat-select [value]="coordinatesMeasureUnit" (selectionChange)="onChangeCoordinateUnit($event.value)">
           <mat-option *ngFor="let unit of allCoordinatesUnits" [value]="unit">
             {{unit}}
           </mat-option>
         </mat-select>  
       </mat-form-field>
     </div>
-    <div *ngIf="labelFlag === labelType.Length">
+    <div *ngIf="labelFlag === labelType.Length || polygonCheck === 2">
       <mat-form-field class="readOnly-Input">
         <input
           #input
@@ -51,14 +62,14 @@
           value="{{currentLength}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
-        <mat-select [value]="measureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
+        <mat-select [value]="lengthMeasureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
           <mat-option *ngFor="let unit of allLengthUnits" [value]="unit">
             {{getLengthUnitEnum(unit)}}
           </mat-option>
         </mat-select>  
       </mat-form-field>
     </div>
-    <div *ngIf="labelFlag === labelType.Area">
+    <div *ngIf="labelFlag === labelType.Area || polygonCheck === 2">
       <mat-form-field class="readOnly-Input">
         <input
           #input
@@ -67,7 +78,7 @@
           value="{{currentArea}}" readonly>
       </mat-form-field>
       <mat-form-field class="unit-field">
-        <mat-select [value]="measureUnit" (selectionChange)="onChangeAreaUnit($event.value)">
+        <mat-select [value]="areaMeasureUnit" (selectionChange)="onChangeAreaUnit($event.value)">
           <mat-option *ngFor="let unit of allAreaUnits" [value]="unit">
             {{getAreaUnitEnum(unit)}}
           </mat-option>
