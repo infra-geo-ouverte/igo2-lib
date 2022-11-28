@@ -60,7 +60,7 @@ export class ConfigFileToGeoDBService {
                       return this.http.get(url, { responseType }).pipe(concatMap(r => {
                         if (isZip) {
                           const observables$ = [this.geoDBService.update(url, url, {}, InsertSourceInsertDBEnum.System, insertEvent)];
-                          JSZip.loadAsync(r) // 1) read the Blob
+                          JSZip.loadAsync(r)
                             .then((zipped) => {
                               zipped.forEach((relativePath) => {
                                 if (relativePath.toLocaleLowerCase().endsWith('.geojson')) {
