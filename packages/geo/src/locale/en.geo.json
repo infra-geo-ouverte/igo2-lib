@@ -719,7 +719,8 @@
           "Length": "Length",
           "Area": "Area",
           "predefined": "Predefined",
-          "custom": "Custom"
+          "custom": "Custom",
+          "A": "A: "
         },
         "popupTitle": "Drawing's label"
       },

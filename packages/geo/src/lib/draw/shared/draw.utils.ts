@@ -114,7 +114,13 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
 
 export function DDtoDMS(value: [number, number], unit: CoordinatesUnit): string[] | undefined {
   const conversionMapper = new Map([
-    [CoordinatesUnit.DecimalDegree, (val: [number, number]) => [val[0].toFixed(4).toString(), val[1].toFixed(4).toString()]],
+    [CoordinatesUnit.DecimalDegree, (val: [number, number]) => {
+      if (typeof val[0] === 'number') {
+        return [val[0].toFixed(5).toString(), val[1].toFixed(5).toString()];
+      } else {
+        return [Number(val[0]).toFixed(5).toString(), Number(val[1]).toFixed(5).toString()];
+      }
+    }],
     [CoordinatesUnit.DegreesMinutesSeconds, (val: [number, number]) => convertDDToDMS(val, 2)]
   ]);
   let conversion = conversionMapper.get(unit);

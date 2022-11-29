@@ -719,7 +719,8 @@
           "Length": "Longueur",
           "Area": "Superficie",
           "predefined": "Prédéfinie",
-          "custom": "Personnalisée"
+          "custom": "Personnalisée",
+          "A": "S: "
         },
         "popupTitle": "Étiquette du dessin"
       },
