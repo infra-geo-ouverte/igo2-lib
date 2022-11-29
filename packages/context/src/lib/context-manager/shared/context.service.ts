@@ -29,7 +29,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer } from '@igo2/geo';
+import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -476,8 +476,9 @@ export class ContextService {
         layerOptions: {
           title: layer.options.title,
           zIndex: ++i,
-          visible: layer.visible
-        },
+          visible: layer.visible,
+          security: layer.security
+        } as LayerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
