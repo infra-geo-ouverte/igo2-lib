@@ -1,6 +1,6 @@
 {
   "name": "@igo/demo",
-  "version": "1.13.3",
+  "version": "1.13.4",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
@@ -31,6 +31,7 @@
     "build.context": "ng build context --configuration production && gulp context && gulp core:bundleLocale",
     "build.integration": "ng build integration --configuration production && gulp integration && gulp core:bundleLocale",
     "build.demo": "ng build demo --configuration=production && gulp core:bundleLocale",
+    "build.ghpages": "ng build demo --configuration=production --output-path ./dist/ghpages --base-href /igo2-lib/",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
     "copy": "copy-newer --cwd dist ** \"..\\igo2\\node_modules\\@igo2\"",
     "doc": "npm run build.doc && compodoc -s --port 4220",
@@ -66,12 +67,12 @@
     "preversion": "rimraf ./dist && npm run build.all && npm run test.all",
     "version": "gulp bumpVersion && npm run build.libs && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages.win",
-    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
+    "preghpages": "gulp core:bundleLocale && npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
-    "preghpages.win": "npm run build.demo -- --base-href /igo2-lib/ && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/demo/_config.yml",
-    "ghpages.win": "npx ngh --dir=dist/demo --no-silent=false --message=%npm_package_version%",
-    "postghpages.win": "rimraf ./dist/demo"
+    "preghpages.win": "gulp core:bundleLocale && npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
+    "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
+    "postghpages.win": "rimraf ./dist/ghpages"
   },
   "private": true,
   "dependencies": {

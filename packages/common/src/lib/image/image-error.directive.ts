@@ -10,7 +10,7 @@ import {
 })
 export class ImageErrorDirective {
 
-  @Input() errorImageUrl: string = '/assets/igo2/common/images/na.png';
+  @Input() errorImageUrl: string = './assets/igo2/common/images/na.png';
   @Input() hideError: boolean = false;
 
   constructor(private el: ElementRef) {}
