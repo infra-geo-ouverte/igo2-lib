@@ -5,6 +5,8 @@ import { catchError, concatMap } from 'rxjs/operators';
 import { GeoDBService } from './geoDB.service';
 import { of, zip } from 'rxjs';
 import { DatasToIDB, GeoDBData } from './geoDB.interface';
+import { default as JSZip } from 'jszip';
+import { InsertSourceInsertDBEnum } from './geoDB.enums';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +41,7 @@ export class ConfigFileToGeoDBService {
           }
           if (currentDate >= geoData.triggerDate) {
             if (geoData.action === 'update') {
-              const insertEvent = `${geoData.source || 'automatedDataUpdate'} (${geoData.triggerDate})`;
+              const insertEvent = `${geoData.source || InsertSourceInsertDBEnum.System} (${geoData.triggerDate})`;
               geoData.urls.map((url) => {
                 datas$.push(
                   this.geoDBService.getByID(url).pipe(concatMap((res: GeoDBData) => {
@@ -50,8 +52,34 @@ export class ConfigFileToGeoDBService {
                         { disableTimeOut: true, progressBar: false, closeButton: true, tapToDismiss: false });
                         firstDownload = false;
                       }
-                      return this.http.get(url)
-                        .pipe(concatMap(r => this.geoDBService.update(url, url as any, r, 'system' as any, insertEvent)));
+                      let responseType: any = 'json';
+                      const isZip = this.isZip(url);
+                      if (isZip) {
+                        responseType = 'arraybuffer';
+                      }
+                      return this.http.get(url, { responseType }).pipe(concatMap(r => {
+                        if (isZip) {
+                          const observables$ = [this.geoDBService.update(url, url, {}, InsertSourceInsertDBEnum.System, insertEvent)];
+                          JSZip.loadAsync(r)
+                            .then((zipped) => {
+                              zipped.forEach((relativePath) => {
+                                if (relativePath.toLocaleLowerCase().endsWith('.geojson')) {
+                                  zipped.file(relativePath).async("base64").then((r) => {
+                                    const geojson = JSON.parse(atob(r));
+                                    const subUrl = geoData.zippedBaseUrl || '';
+                                    const zippedUrl = subUrl + (subUrl.endsWith('/') ? '' : '/') + relativePath;
+                                    observables$.push(
+                                      this.geoDBService.update(zippedUrl, url, geojson, InsertSourceInsertDBEnum.System, insertEvent)
+                                    );
+                                  }
+                                  );
+                                }
+                              });
+                            });
+                          return zip(observables$);
+                        }
+                        return this.geoDBService.update(url, url, r, InsertSourceInsertDBEnum.System, insertEvent);
+                      }));
                     } else {
                       return of(false);
                     }
@@ -78,5 +106,8 @@ export class ConfigFileToGeoDBService {
     });
   }
 
-
+  private isZip(value) {
+    const regex = /(zip)$/;
+    return typeof value === 'string' && regex.test(value.toLowerCase());
+  }
 }

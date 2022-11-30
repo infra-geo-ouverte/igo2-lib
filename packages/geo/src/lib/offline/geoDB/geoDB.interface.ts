@@ -14,6 +14,7 @@ export interface GeoDataToIDB {
   action: "delete" | 'update';
   urls: string[];
   source?: string;
+  zippedBaseUrl?: string;
 }
 
 export interface DatasToIDB {
