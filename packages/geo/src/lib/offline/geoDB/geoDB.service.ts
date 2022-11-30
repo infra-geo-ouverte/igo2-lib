@@ -12,7 +12,7 @@ import { InsertSourceInsertDBEnum } from './geoDB.enums';
 export class GeoDBService {
   readonly dbName: string = 'geoData';
   public collisionsMap: Map<number, string[]> = new Map();
-  public _newTiles: number = 0;
+  public _newData: number = 0;
 
   constructor(
     private ngxIndexedDBService: NgxIndexedDBService,
@@ -56,7 +56,7 @@ export class GeoDBService {
       }),
       concatMap((dbObject: GeoDBData) => {
         if (!dbObject) {
-          this._newTiles++;
+          this._newData++;
           return this.ngxIndexedDBService.add(this.dbName, geoDBData);
         } else {
           const currentRegionID = dbObject.regionID;
@@ -116,11 +116,11 @@ export class GeoDBService {
     return this.ngxIndexedDBService.deleteByKey(this.dbName, url);
   }
 
-  getRegionTileCountByID(id: number): Observable<number> {
+  getRegionCountByID(id: number): Observable<number> {
     const subject: Subject<number> = new Subject();
     const dbRequest = this.getRegionByID(id)
-      .subscribe((tiles) => {
-        subject.next(tiles.length);
+      .subscribe((datas) => {
+        subject.next(datas.length);
         subject.complete();
       });
     return subject;
@@ -143,9 +143,9 @@ export class GeoDBService {
 
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.ngxIndexedDBService.getAllByIndex(this.dbName, 'regionID', IDBKey);
-    dbRequest.subscribe((tiles: GeoDBData[]) => {
-      tiles.forEach((tile) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, tile.url);
+    dbRequest.subscribe((datas: GeoDBData[]) => {
+      datas.forEach((data) => {
+        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
       });
     });
     return dbRequest;
@@ -161,7 +161,7 @@ export class GeoDBService {
 
   resetCounters() {
     this.resetCollisionsMap();
-    this._newTiles = 0;
+    this._newData = 0;
   }
 
   resetCollisionsMap() {
@@ -182,7 +182,7 @@ export class GeoDBService {
     }
   }
 
-  get newTiles(): number {
-    return this._newTiles;
+  get newData(): number {
+    return this._newData;
   }
 }
