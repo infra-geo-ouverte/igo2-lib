@@ -9,7 +9,7 @@ import {
   updateOlGeometryCenter
 } from '../../measure/shared/measure.utils';
 import { CoordinatesUnit } from './draw.enum';
-import { convertDDToDMS } from '../../map/shared/map.utils';
+import { convertDDToDMS, roundCoordToString } from '../../map/shared/map.utils';
 
 
 /**
@@ -116,9 +116,10 @@ export function DDtoDMS(value: [number, number], unit: CoordinatesUnit): string[
   const conversionMapper = new Map([
     [CoordinatesUnit.DecimalDegree, (val: [number, number]) => {
       if (typeof val[0] === 'number') {
-        return [val[0].toFixed(5).toString(), val[1].toFixed(5).toString()];
+        return roundCoordToString(val, 5) as string[];
       } else {
-        return [Number(val[0]).toFixed(5).toString(), Number(val[1]).toFixed(5).toString()];
+        const numVal: [number, number] = [Number(val[0]), Number(val[1])];
+        return roundCoordToString(numVal, 5) as string[];
       }
     }],
     [CoordinatesUnit.DegreesMinutesSeconds, (val: [number, number]) => convertDDToDMS(val, 2)]

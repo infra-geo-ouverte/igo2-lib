@@ -3,7 +3,7 @@ import { LanguageService } from '@igo2/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
-import { IgoMap } from '../../map/shared';
+import { IgoMap, roundCoordTo } from '../../map/shared';
 import OlFeature from 'ol/Feature';
 import {
   measureOlGeometryLength,
@@ -85,9 +85,9 @@ export class DrawPopupComponent {
 
       if (this.olGeometryType === GeometryType.Point || this.olGeometryType === GeometryType.Circle){
         if(this.data.olGeometry instanceof OlFeature){
-          let longitude = this.data.olGeometry.get('longitude').toFixed(5);
-          let latitude = this.data.olGeometry.get('latitude').toFixed(5);
-          this.longlatDD = [longitude, latitude];
+          let longitude = this.data.olGeometry.get('longitude');
+          let latitude = this.data.olGeometry.get('latitude');
+          this.longlatDD = roundCoordTo([longitude, latitude], 5);
           this.coordinatesInDD = '(' + latitude + ', '
           + longitude + ')';
         }
@@ -97,9 +97,9 @@ export class DrawPopupComponent {
             projection,
             'EPSG:4326'
           );
-          this.longlatDD = [Number(point4326[0].toFixed(5)), Number(point4326[1].toFixed(5))];
+          this.longlatDD = roundCoordTo([point4326[0], point4326[1]], 5);
           this.coordinatesInDD =
-            '(' + point4326[1].toFixed(5) + ', ' + point4326[0].toFixed(5) + ')';
+            '(' + this.longlatDD[1] + ', ' + this.longlatDD[0] + ')';
         }
         this.currentCoordinates = this.coordinatesInDD;
       }
