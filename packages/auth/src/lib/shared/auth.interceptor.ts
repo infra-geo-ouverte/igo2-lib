@@ -55,6 +55,7 @@ export class AuthInterceptor implements HttpInterceptor {
       req = originalReq.clone({
         withCredentials
       });
+      return next.handle(req);
     }
     this.refreshToken();
     const token = this.tokenService.get();

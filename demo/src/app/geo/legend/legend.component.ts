@@ -150,12 +150,12 @@ export class AppLegendComponent {
 
     this.layerService
       .createAsyncLayer({
+        title: 'Commission scolaire anglophone',
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          optionsFromCapabilities: true,
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
           params: {
-            LAYERS: 'MELS_CS_ANGLO_S',
+            LAYERS: 'WMS_MEQ_CS_ANGLO',
             VERSION: '1.3.0'
           }
         }
@@ -187,31 +187,6 @@ export class AppLegendComponent {
           optionsFromCapabilities: true,
           params: {
             LAYERS: 'lieuhabite',
-            VERSION: '1.3.0'
-          }
-        }
-      })
-      .subscribe(l => this.map.addLayer(l));
-
-    this.layerService
-      .createAsyncLayer({
-        title: '2 styles nurc:Arc_Sample_Parent',
-        visible: true,
-        legendOptions: {
-          // collapsed: false,
-          display: true,
-          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
-          stylesAvailable: [
-            { name: 'rain', title: 'Pluie' },
-            { name: 'raster', title: 'Défaut' }
-          ] //
-        },
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://demo.geo-solutions.it/geoserver/ows',
-          optionsFromCapabilities: true,
-          params: {
-            LAYERS: 'nurc:Arc_Sample', // , test:Linea_costa
             VERSION: '1.3.0'
           }
         }

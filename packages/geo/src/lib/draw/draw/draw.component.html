@@ -1,21 +1,21 @@
 <div>
   <div class="geometry-type-toggle mat-typography">
-    <mat-button-toggle-group (change)="onGeometryTypeChange($event.value)" [value]="geometryType.Point">
-
+    <mat-button-toggle-group
+      (change)="onGeometryTypeChange($event.value)" [value]="geometryType.Point">
       <mat-button-toggle [value]="geometryType.Point">
-        {{ 'igo.geo.draw.' + geometryType.Point | translate }}
+        {{'igo.geo.draw.' + geometryType.Point | translate}}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.LineString">
-        {{ 'igo.geo.draw.' + geometryType.LineString | translate }}
+        {{'igo.geo.draw.' + geometryType.LineString | translate}}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.Polygon">
-        {{ 'igo.geo.draw.' + geometryType.Polygon | translate }}
+        {{'igo.geo.draw.' + geometryType.Polygon | translate}}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.Circle">
-        {{ 'igo.geo.draw.' + geometryType.Circle | translate }}
+        {{'igo.geo.draw.' + geometryType.Circle | translate}}
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
@@ -26,148 +26,52 @@
       [checked]="drawControlIsActive"
       [labelPosition]="'before'"
       (change)="onToggleDrawControl($event.checked)">
-      {{ 'igo.geo.spatialFilter.drawControl' | translate }}
+      {{'igo.geo.spatialFilter.drawControl' | translate}}
     </mat-slide-toggle>
 
     <mat-slide-toggle
       [checked]="labelsAreShown"
       [labelPosition]="'before'"
-      (change)="onToggleLabels()">
+      (change)="onToggleLabels()"
+    >
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
   </div>
 
-  <form class="igo-form" [formGroup]="form">
-    <div class="fill-color-picker mat-typography">
-      <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
-        {{ 'igo.geo.draw.fill' | translate }}
-      </span>
+  <mat-divider></mat-divider>
 
-      <mat-form-field
-        class="fill-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate">
-        <mat-label>{{ fillColor }}</mat-label>
-
-        <input
-          formControlName="fill"
-          matInput
-          type="text"
-          [(colorPicker)]="fillColor"
-          [style.background]="fillColor"
-          [readonly]="true"
-          [colorPicker]="fillColor"
-          [cpWidth]="'200px'"
-          [cpOutputFormat]="'rgba'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="onColorChange(labelsAreShown, false)"/>
-      </mat-form-field>
-    </div>
-
-    <div class="stroke-color-picker mat-typography">
-      <span>
-        <mat-icon class="stroke-palette-icon" svgIcon="square-outline"></mat-icon>
-        {{ 'igo.geo.draw.stroke' | translate }}
-      </span>
-
-      <mat-form-field
-        class="stroke-field"
-        appearance="outline"
-        floatLabel="always"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.draw.colorPicker' | translate">
-        <mat-label>{{ strokeColor }}</mat-label>
-        <input
-          formControlName="stroke"
-          matInput
-          type="text"
-          [(colorPicker)]="strokeColor"
-          [style.background]="strokeColor"
-          [readonly]="true"
-          [colorPicker]="strokeColor"
-          [cpWidth]="'200px'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpOutputFormat]="'rgba'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="onColorChange(labelsAreShown, false)">
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field *ngIf="icons.length >= 1">
-        <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
-        <mat-select>
-          <mat-select-trigger>
-            <div *ngIf="icon" class="box">
-              <img src="{{ icon }}">
-            </div>
-          </mat-select-trigger>
-          <mat-option value="" (click)="onIconChange()">{{ 'igo.geo.draw.noIcon' | translate }}</mat-option>
-          <mat-option
-            *ngFor="let icon_html of icons"
-            [value]="icon_html"
-            (click)="onIconChange(icon_html)">
-            <div class="box">
-              <img src="{{ icon_html }}">
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </form>
-
-
-  <div class="igo-form-font">
-    <mat-form-field appearance="outline" class="igo-form-fontSize">
-      <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
-      <input
-        matInput
-        #testFontSize
-        type="number"
-        placeholder="10"
-        min="10"
-        onkeydown="return event.keyCode !== 69"
-        [value]="fontSize"
-        (input)="
-          onFontChange(
-            labelsAreShown,
-            $event.target.value,
-            testFontStyle.value
-          )"
-      />
-      <span matSuffix>px</span>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="igo-form-fontStyle">
-      <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
-      <mat-select
-        #testFontStyle
-        [value]="fontStyle"
-        (selectionChange)="onFontChange(labelsAreShown, testFontSize.value, $event.value)">
-        <mat-option
-          *ngFor="let fontSelect of allFontStyles"
-          [value]="fontSelect">
-          {{ fontSelect }}
+  <div>
+    <mat-form-field appearance="outline" class="layer-select">
+      <mat-label>{{'igo.geo.draw.layer.title' | translate}}</mat-label>
+      <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)" [value]="updateActiveLayer()">
+        <mat-option *ngFor="let layer of allLayers" [value]="layer">
+          {{ layer.title }}
+        </mat-option>
+        <mat-option id="createNewLayer" >
+          {{'igo.geo.draw.layer.createNewLayer' | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <button
+      *ngIf="activeDrawingLayer"
+      mat-icon-button
+      [color]="activeDrawingLayer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="activeDrawingLayer.visible ?
+                    ('igo.geo.layer.hideLayer' | translate) :
+                    ('igo.geo.layer.showLayer' | translate)"
+      (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible">
+      <mat-icon
+        [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
+      </mat-icon>
+    </button>
   </div>
-
   <mat-divider></mat-divider>
   <div>
     <button
-      *ngIf="store.count$.getValue() > 0"
+      *ngIf="activeStore.count$.getValue() > 0"
       class="deleteBtn"
       mat-icon-button
       color="warn"
@@ -179,26 +83,68 @@
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
 
-    <igo-entity-table
-      #table
-      class="table-compact"
-      [store]="store"
-      [template]="tableTemplate"
-      (dblclick)="editLabelDrawing()">
-    </igo-entity-table>
+    <div>
+      <igo-entity-table
+        #table
+        class="table-compact"
+        [store]="activeStore"
+        [template]="tableTemplate"
+        (dblclick)="editLabelDrawing()">
+      </igo-entity-table>
+    </div>
+  </div>
+
+  <div class="icon-options">
+    <mat-form-field *ngIf="icons.length >= 1">
+      <mat-label>{{ 'igo.geo.draw.icon' | translate }}</mat-label>
+      <mat-select>
+        <mat-select-trigger>
+          <div *ngIf="icon" class="box">
+            <img src="{{ icon }}">
+          </div>
+        </mat-select-trigger>
+        <mat-option value="" (click)="onIconChange()">{{ 'igo.geo.draw.noIcon' | translate }}</mat-option>
+        <mat-option
+          *ngFor="let icon_html of icons"
+          [value]="icon_html"
+          (click)="onIconChange(icon_html)">
+          <div class="box">
+            <img src="{{ icon_html }}">
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <button
     mat-icon-button
     color="accent"
     disableRipple="true"
-    (click)="openShorcutsDialog()">
+    (click)="openShorcutsDialog()"
+  >
     <mat-icon
       class="shortcuts-icon"
       svgIcon="keyboard-outline"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.draw.shortcuts' | translate">
+      [matTooltip]="'igo.geo.draw.shortcuts' | translate"
+    >
+    </mat-icon>
+  </button>
+
+  <button
+    *ngIf="selectedFeatures$.value.length"
+    mat-raised-button
+    color="primary"
+    (click)="openStyleModalDialog()"
+    [matTooltip]="'igo.geo.layer.style.styleModalTooltip' | translate">
+    {{'igo.geo.layer.style.styleModal' | translate}}
+    <mat-icon
+      class="style-icon"
+      svgIcon="palette"
+      [matBadge]="selectedFeatures$.value.length"
+      matBadgeColor="warn"
+      matBadgeSize="medium">
     </mat-icon>
   </button>
 </div>

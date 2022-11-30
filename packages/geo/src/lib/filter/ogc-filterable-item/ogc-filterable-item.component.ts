@@ -52,6 +52,10 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.layer.visible) {
+      this.filtersCollapsed = false;
+    }
+
     const ogcFilters = this.datasource.options.ogcFilters;
     if (
       (ogcFilters.pushButtons && ogcFilters.pushButtons.bundles.length > 0) ||

@@ -1,3 +1,69 @@
+## [1.13.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.3...1.13.4) (2022-11-22)
+
+
+### Bug Fixes
+
+* **contexts:** fix empty context list when ours is empty ([#1137](https://github.com/infra-geo-ouverte/igo2-lib/issues/1137)) ([cd8b830](https://github.com/infra-geo-ouverte/igo2-lib/commit/cd8b830063095fde3fe78e8ed352bfb24a497b38))
+* **imgerror:** relative path is used ([#1135](https://github.com/infra-geo-ouverte/igo2-lib/issues/1135)) ([4fe3918](https://github.com/infra-geo-ouverte/igo2-lib/commit/4fe3918490e3dab7d0f68bada832b708b0909f3b))
+
+
+
+## [1.13.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.2...1.13.3) (2022-11-16)
+
+
+### Bug Fixes
+
+* **layer-sync/feature-details:** layer sync filters init / embedded link ([#1132](https://github.com/infra-geo-ouverte/igo2-lib/issues/1132)) ([a8c911f](https://github.com/infra-geo-ouverte/igo2-lib/commit/a8c911f880567b7caa9e0d9331cdb34c39fba085))
+
+
+### Features
+
+* **draw:** Make multiple layers with the drawing tool ([#1081](https://github.com/infra-geo-ouverte/igo2-lib/issues/1081)) ([39179bb](https://github.com/infra-geo-ouverte/igo2-lib/commit/39179bbd57d797821c882041453152ced5c4a83c))
+
+
+
+## [1.13.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.1...1.13.2) (2022-11-14)
+
+
+### Bug Fixes
+
+* **chore:** fix gh pages build ([b979713](https://github.com/infra-geo-ouverte/igo2-lib/commit/b979713290168691b649b08d4c0f7b73f37b5fce))
+* **googleLinks:** links were broken ([#1130](https://github.com/infra-geo-ouverte/igo2-lib/issues/1130)) ([b3e15b0](https://github.com/infra-geo-ouverte/igo2-lib/commit/b3e15b0da8e7ee83024278ca41405e0a97c29064))
+* **hover:** fix flashing feature and property transfer ([#1129](https://github.com/infra-geo-ouverte/igo2-lib/issues/1129)) ([f9b38fd](https://github.com/infra-geo-ouverte/igo2-lib/commit/f9b38fd572fd3a7cf63e74ed54aea9c1c819bf9a))
+
+
+### Features
+
+* **geoDB:** service to load data from config file into the indexed-db ([#1115](https://github.com/infra-geo-ouverte/igo2-lib/issues/1115)) ([a8f866a](https://github.com/infra-geo-ouverte/igo2-lib/commit/a8f866a9ad720af9fe365c984473d7c9abe3d6e3))
+
+
+
+## [1.13.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.0...1.13.1) (2022-11-07)
+
+
+### Bug Fixes
+
+* **arcgis:** url remplacement may cause errors if mapserver is not enabled ([#1072](https://github.com/infra-geo-ouverte/igo2-lib/issues/1072)) ([0474418](https://github.com/infra-geo-ouverte/igo2-lib/commit/0474418a269a5d66a062b5cf04cecceab09baccb))
+* **auth Interceptor:** withCredentials & token conflict ([#1123](https://github.com/infra-geo-ouverte/igo2-lib/issues/1123)) ([d8fb861](https://github.com/infra-geo-ouverte/igo2-lib/commit/d8fb861d27bd6481a6fd7d984d7b9af5850472a0))
+* **contextmenu:** handle ios mobile device ([#1119](https://github.com/infra-geo-ouverte/igo2-lib/issues/1119)) ([c26b81e](https://github.com/infra-geo-ouverte/igo2-lib/commit/c26b81e8a439678645556567c2db2c516cb9f3f9))
+* delete geometry column from search result or query ([#1108](https://github.com/infra-geo-ouverte/igo2-lib/issues/1108)) ([99a1c3c](https://github.com/infra-geo-ouverte/igo2-lib/commit/99a1c3c7d2b31e959df6ac05e05d7e0d8bb2329d))
+* **feature-details:** add multi embedded link condition ([#1124](https://github.com/infra-geo-ouverte/igo2-lib/issues/1124)) ([a787d00](https://github.com/infra-geo-ouverte/igo2-lib/commit/a787d0052ade899792a4f14c0635feb3e56e031c))
+* **layer-list:** follow checked or focused layer on layer displacement ([#1116](https://github.com/infra-geo-ouverte/igo2-lib/issues/1116)) ([61bf9da](https://github.com/infra-geo-ouverte/igo2-lib/commit/61bf9dacd63447dc27fad8346d944f825d1ec8dd))
+* **measure-poi:** fix measure state layer init / CSS poi fix ([#1113](https://github.com/infra-geo-ouverte/igo2-lib/issues/1113)) ([c2c991f](https://github.com/infra-geo-ouverte/igo2-lib/commit/c2c991f1b6d51dfdce3589046856c3dcbee3ec79))
+
+
+### Features
+
+* **draw:** Management of the editing of individual element  ([#1065](https://github.com/infra-geo-ouverte/igo2-lib/issues/1065)) ([8427863](https://github.com/infra-geo-ouverte/igo2-lib/commit/84278639e23f55ce099b21b6d0574eb66c59abd5))
+* **edition:** allow absolute url if config is not defined ([#1127](https://github.com/infra-geo-ouverte/igo2-lib/issues/1127)) ([27bd2fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/27bd2fed8a4cb0740cd7052e28df28943ec4cb12))
+* **feature-details:** copy content button alongside the url ([#1114](https://github.com/infra-geo-ouverte/igo2-lib/issues/1114)) ([636a70f](https://github.com/infra-geo-ouverte/igo2-lib/commit/636a70fcd89bdacbd33f39997b729edbfc70ba84))
+* **geolocate:** add basic icon button config ([#1085](https://github.com/infra-geo-ouverte/igo2-lib/issues/1085)) ([a243317](https://github.com/infra-geo-ouverte/igo2-lib/commit/a243317ad7011f4ecdbb0db0fc9e2a5c11fa1c22))
+* **importExport:** add custom html for clarification ([#1095](https://github.com/infra-geo-ouverte/igo2-lib/issues/1095)) ([7b47d68](https://github.com/infra-geo-ouverte/igo2-lib/commit/7b47d6808f5e2600aadc4683ebd83b2bae36dfcf))
+* **searchBar:** add clear search tooltip ([#1111](https://github.com/infra-geo-ouverte/igo2-lib/issues/1111)) ([1b2d1ad](https://github.com/infra-geo-ouverte/igo2-lib/commit/1b2d1adf904deabaf31024c1e99e86f65a05521e))
+* **share:** add custom html for clarification ([#1122](https://github.com/infra-geo-ouverte/igo2-lib/issues/1122)) ([c8586d9](https://github.com/infra-geo-ouverte/igo2-lib/commit/c8586d944399043c423d5db9787e71d8d07b1dba))
+
+
+
 # [1.13.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.12.1...1.13.0) (2022-10-14)
 
 

@@ -149,6 +149,7 @@ export class IgoMap {
           }
         }
       });
+      this.viewController.monitorRotation();
   });
   this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
   }
