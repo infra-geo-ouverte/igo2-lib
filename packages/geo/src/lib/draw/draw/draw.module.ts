@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -25,6 +26,9 @@ import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import {MatRadioModule} from '@angular/material/radio';
+
 
 /**
  * @ignore
@@ -51,7 +55,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     IgoEntityTableModule,
     ColorPickerModule,
     BrowserModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatRadioModule,
+    MatCheckboxModule
   ],
   declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
   exports: [DrawComponent]
