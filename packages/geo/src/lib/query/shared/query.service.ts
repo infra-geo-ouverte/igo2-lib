@@ -314,7 +314,6 @@ export class QueryService {
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
     }
-
     if (features.length > 0 && features[0].geometry === null) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
@@ -330,7 +329,7 @@ export class QueryService {
 
     if (
       featureCount.test(url) &&
-      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      ((wmsDatasource.params?.FEATURE_COUNT && this.featureCount > 1 && features.length === this.featureCount) ||
       (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
       this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
         const messageObj = this.messageService.info(message);
