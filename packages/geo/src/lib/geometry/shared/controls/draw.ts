@@ -212,7 +212,7 @@ export class DrawControl {
     if (!this.freehand$.getValue() || this.ispredefinedRadius$.getValue()) {
       if (!this.freehand$.getValue()) {
         olDrawInteraction = new OlDraw({
-          type: this.olGeometryType,
+          type: this.olGeometryType as Type,
           source: this.getSource(),
           stopClick: true,
           style: this.olInteractionStyle,
@@ -243,7 +243,7 @@ export class DrawControl {
         });
       } else {
         olDrawInteraction = new OlDraw({
-          type: this.olGeometryType,
+          type: this.olGeometryType as Type,
           source: this.getSource(),
           style: this.olInteractionStyle,
           maxPoints: this.options.maxPoints,

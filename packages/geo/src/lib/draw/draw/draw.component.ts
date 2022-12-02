@@ -666,8 +666,8 @@ export class DrawComponent implements OnInit, OnDestroy {
       }
 
     }
-    if (this.drawControl.radiusDrawEnd$.getValue()) {
-      rad = this.drawControl.radiusDrawEnd$.getValue();
+    if (this.activeDrawControl.radiusDrawEnd$.getValue()) {
+      rad = this.activeDrawControl.radiusDrawEnd$.getValue();
     }
 
     if (olGeometry instanceof OlPoint) {
@@ -704,8 +704,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         id: featureId
       }
     });
-    this.drawControl.predefinedRadius$.next(undefined);
-    this.drawControl.radiusDrawEnd$.next(undefined);
+    this.activeDrawControl.predefinedRadius$.next(undefined);
+    this.activeDrawControl.radiusDrawEnd$.next(undefined);
   }
 
   private buildForm() {
