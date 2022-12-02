@@ -137,6 +137,8 @@
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés) ET leurs géométries doivent être en coordonnées Latitude Longitude (EPSG:4326/WGS84)",
+        "importHtmlClarifications": "",
+        "exportHtmlClarifications": "",
         "other": "autre",
         "others": "autres",
         "projections": {
@@ -202,7 +204,8 @@
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
         "sliderModeTitle": "Curseur temporel",
-        "reportingDate": "Date de signalement"
+        "reportingDate": "Date de signalement",
+        "noFilterableLayer": "Aucune couche ne peut être filtrée dans la carte actuelle"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -254,6 +257,10 @@
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
+        },
+        "style": {
+          "styleModal": "Modifier le style",
+          "styleModalTooltip": "Éditer le style des entités sélectionnées"
         }
       },
       "download": {
@@ -265,12 +272,13 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "geolocateInactive": "Masquer votre position",
         "home-extent": "Aller à l'étendue de la carte",
         "offline": "Passer en mode hors-ligne",
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-        "resetRotation": "Réinitialiser la carte vers le nord",
+				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
@@ -414,6 +422,7 @@
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
+        "clearSearch": "Effacer la recherche",
         "ilayer": {
           "name": "Couches",
           "properties": {
@@ -698,7 +707,24 @@
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
         "fontSize": "Taille de police",
-        "fontStyle": "Style de police"
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical",
+        "layer": {
+          "title": "Titre",
+          "createNewLayer": "Créer une nouvelle couche de dessin",
+          "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
+        },
+        "builtInInstructions": "Sélectionnez une option",
+        "labelType": {
+          "Coordinates": "Coordonnées",
+          "Length": "Longueur",
+          "Area": "Superficie",
+          "predefined": "Prédéfinie",
+          "custom": "Personnalisée",
+          "A": "S: "
+        },
+        "popupTitle": "Étiquette du dessin"
       },
       "network": {
         "online": {
@@ -732,7 +758,14 @@
         "maxLength": "{{column}} doit être plus court que {{value}} caractères"
       },
       "query": {
-        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation."
+        "featureCountMax": "Vous pourriez avoir plus d'entités interrogeables sur la couche {{value}}. Pour vous en assurer, vous pouvez zoomer et redéclencher l'interrogation.",
+        "link": {
+          "message": "Le lien a été copié dans le presse-papier"
+        }
+      },
+      "indexedDb": {
+        "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
+        "data-download-completed": "Téléchargement des données terminée."
       }
     }
   }

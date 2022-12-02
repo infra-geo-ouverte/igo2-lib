@@ -1,7 +1,7 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';
@@ -19,7 +19,7 @@ import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
-  geometryType: typeof OlGeometryType | string;
+  geometryType: Type | string;
   drawingLayerSource?: OlVectorSource<OlGeometry>;
   drawingLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
   drawingLayerStyle?: OlStyleLike;
@@ -74,7 +74,7 @@ export class DrawControl {
 
   private keyDown$$: Subscription;
 
-  private olGeometryType: typeof OlGeometryType | undefined | string;
+  private olGeometryType: typeof OlGeometry | undefined | string;
   private olInteractionStyle: OlStyleLike;
   private olMap: OlMap;
   private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
@@ -154,7 +154,7 @@ export class DrawControl {
    * Set the current geometry type
    * @param geometryType the geometry type
    */
-  setGeometryType(geometryType: typeof OlGeometryType) {
+  setGeometryType(geometryType: Type) {
     this.olGeometryType = geometryType;
   }
 

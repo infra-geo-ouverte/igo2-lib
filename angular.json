@@ -36,6 +36,11 @@
               "demo/src/locale",
               {
                 "glob": "**/*",
+                "input": "./dist/common/assets/",
+                "output": "./assets/igo2/common/"
+              },
+              {
+                "glob": "**/*",
                 "input": "./dist/core/assets/",
                 "output": "./assets/igo2/core/"
               },
@@ -93,7 +98,14 @@
               "txml",
               "lru-cache",
               "striptags",
-              "nosleep.js"
+              "nosleep.js",
+              "ts-md5",
+              "moment",
+              "html2canvas",
+              "jszip",
+              "bowser",
+              "rgbcolor",
+              "rbush"
             ]
           },
           "configurations": {
@@ -126,7 +138,6 @@
             },
             "developpement": {
               "optimization": false,
-              "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
@@ -499,6 +510,14 @@
         }
       }
     }
-  },
-  "defaultProject": "demo"
+  }
+,"cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "cache": {
+      "enabled": false,
+      "environment": "all"
+    }
+  }
 }

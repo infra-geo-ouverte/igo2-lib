@@ -9,7 +9,8 @@ import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/fe
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
   featureToOl,
-  moveToOlFeatures
+  moveToOlFeatures,
+  computeOlFeaturesExtent
 } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
@@ -43,6 +44,7 @@ export function addLayerAndFeaturesToMap(
     source,
     style: createImportedLayerRandomStyle()
   });
+  layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
   map.addLayer(layer);
   moveToOlFeatures(map, olFeatures);
 

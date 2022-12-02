@@ -11,19 +11,16 @@ import {
 import { AppWidgetRoutingModule } from './widget-routing.module';
 
 @NgModule({
-  declarations: [
-    AppSalutationWidgetComponent,
-    AppWidgetComponent
-  ],
-  imports: [
-    AppWidgetRoutingModule,
-    MatButtonModule,
-    MatCardModule,
-    IgoWidgetModule
-  ],
-  exports: [AppWidgetComponent],
-  entryComponents: [
-    AppSalutationWidgetComponent
-  ]
+    declarations: [
+        AppSalutationWidgetComponent,
+        AppWidgetComponent
+    ],
+    imports: [
+        AppWidgetRoutingModule,
+        MatButtonModule,
+        MatCardModule,
+        IgoWidgetModule
+    ],
+    exports: [AppWidgetComponent]
 })
 export class AppWidgetModule {}

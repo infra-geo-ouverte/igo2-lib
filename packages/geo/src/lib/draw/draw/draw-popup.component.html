@@ -1,20 +1,130 @@
-<div mat-dialog-content>
-  <p class="mat-typography">
-    {{ 'igo.geo.draw.dialogInstruction' | translate }}
-  </p>
-  <mat-form-field class="example-full-width">
-    <input
-      #input
-      matInput
-      placeholder="{{ 'igo.geo.draw.dialogTitle' | translate }}"
-      value="{{ data.currentLabel }}"/>
-  </mat-form-field>
+<div>
+  <h2 mat-dialog-title>
+    {{ 'igo.geo.draw.popupTitle' | translate }}
+  </h2>
 </div>
-<div mat-dialog-actions>
-  <button mat-raised-button (click)="cancelDrawing()">
-    {{ 'igo.geo.draw.cancel' | translate }}
-  </button>
-  <button mat-raised-button color="primary" (click)="confirm(input.value)">
-    OK
-  </button>
+
+
+<div class="geometry-type-toggle mat-typography">
+  <mat-button-toggle-group
+    (change)="onLabelTypeChange($event.value)" [value]="customOrPredefined">
+    <mat-button-toggle [value]="labelType.Custom" >
+      {{ 'igo.geo.draw.labelType.custom' | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="labelType.Predefined">
+      {{ 'igo.geo.draw.labelType.predefined' | translate }}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<div *ngIf="labelFlag !== labelType.Custom">
+  <div>
+    <p class="mat-typography">{{ 'igo.geo.draw.builtInInstructions' | translate }}</p>
+    <mat-radio-group *ngIf="olGeometryType !== 'Polygon'" class="mat-typography">
+      <mat-radio-button *ngFor="let option of arrayBuiltInType" [value]="option.value" [disabled]="optionAvailable(option.value)" 
+      (change)="onLabelTypeChange($event.value)" [checked]="option.checked">
+        {{getProperLengthLabel(option.value)}}
+      </mat-radio-button>
+    </mat-radio-group>
+    <ng-container class="mat-typography" *ngIf="olGeometryType === 'Polygon'">
+      <mat-checkbox
+        *ngFor="let option of arrayBuiltInType"
+        class="mat-typography"
+        [value]="option.value"
+        [disabled]="optionAvailable(option.value)"
+        (change)="onLabelTypeChange($event.source.value, $event.checked)"
+        [checked]="option.checked">
+        {{getProperLengthLabel(option.value)}}
+      </mat-checkbox>
+    </ng-container>
+    <div *ngIf="labelFlag === labelType.Coordinates">
+      <mat-form-field class="readOnly-Input">
+        <input
+          #input
+          matInput
+          placeholder="(Latitude, Longitude)"
+          value="{{currentCoordinates}}" readonly>
+      </mat-form-field>
+      <mat-form-field class="unit-field">
+        <mat-select [value]="coordinatesMeasureUnit" (selectionChange)="onChangeCoordinateUnit($event.value)">
+          <mat-option *ngFor="let unit of allCoordinatesUnits" [value]="unit">
+            {{unit}}
+          </mat-option>
+        </mat-select>  
+      </mat-form-field>
+    </div>
+    <div *ngIf="labelFlag === labelType.Length || polygonCheck === 2">
+      <mat-form-field class="readOnly-Input">
+        <input
+          #input
+          matInput
+          placeholder={{lengthLabelT}}
+          value="{{currentLength}}" readonly>
+      </mat-form-field>
+      <mat-form-field class="unit-field">
+        <mat-select [value]="lengthMeasureUnit" (selectionChange)="onChangeLengthUnit($event.value)">
+          <mat-option *ngFor="let unit of allLengthUnits" [value]="unit">
+            {{getLengthUnitEnum(unit)}}
+          </mat-option>
+        </mat-select>  
+      </mat-form-field>
+    </div>
+    <div *ngIf="labelFlag === labelType.Area || polygonCheck === 2">
+      <mat-form-field class="readOnly-Input">
+        <input
+          #input
+          matInput
+          placeholder="{{ 'igo.geo.draw.labelType.Area' | translate }}"
+          value="{{currentArea}}" readonly>
+      </mat-form-field>
+      <mat-form-field class="unit-field">
+        <mat-select [value]="areaMeasureUnit" (selectionChange)="onChangeAreaUnit($event.value)">
+          <mat-option *ngFor="let unit of allAreaUnits" [value]="unit">
+            {{getAreaUnitEnum(unit)}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="cancelDrawing()" >
+      {{'igo.geo.draw.cancel' | translate}}
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirm()"> 
+      {{noLabelButton()}} 
+    </button>
+  </div>
+</div>
+
+<div *ngIf="labelFlag === labelType.Custom">
+  <div>
+    <p class="mat-typography">{{ 'igo.geo.draw.dialogInstruction' | translate }}</p>
+    <mat-form-field class="input">
+      <input
+        #input
+        matInput
+        (select)="true"
+        (input)="getLabelLength($event.target.value)"
+        placeholder="{{'igo.geo.draw.dialogTitle' | translate}}"
+        value="{{ currentLabel }}"
+        cdkFocusInitial/>
+    </mat-form-field>
+  </div>
+  
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="cancelDrawing()" >
+      {{'igo.geo.draw.cancel' | translate}}
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirm(input.value)">
+      {{noLabelButton()}}
+    </button>
+  </div>
 </div>

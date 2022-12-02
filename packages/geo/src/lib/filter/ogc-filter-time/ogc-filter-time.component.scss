@@ -11,7 +11,7 @@
 
 .datetime-input {
   display: inline-block;
-  width: 117px; 
+  width: 100px; 
   margin: 10px 0px 5px 10px;
 
   @include mobile {
@@ -40,10 +40,10 @@
 
 .year-input {
   width: 98px;
-  margin: 10px 18px 5px 12px;
+  margin: 10px 14px 5px 4px;
   
   @include mobile {
-    width: 33%;
+    width: 32%;
     margin: 0px 0px 0px 10px;
   }
 }
@@ -62,17 +62,18 @@
 
 .reset-button {
   width: 25px;
+  padding-left:8px;
   
   @include mobile {
-    padding-left: 6px;
+    padding-left: 8px;
   }
 }
 
 .toggle-filter-state {
-  padding-left: 15px;
+  padding-left: 20px;
 
   @include mobile {
-    padding-left: 7px;
+    padding-left: 12px;
   }
 }
 

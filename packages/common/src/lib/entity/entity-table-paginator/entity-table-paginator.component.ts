@@ -133,7 +133,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
         Math.min(startIndex + pageSize, length) :
         startIndex + pageSize;
     return `${startIndex + 1} - ${endIndex} ${of.value} ${length}`;
-  }
+  };
 
   private unsubscribeAll() {
     this.paginationLabelTranslation$$.map(sub => sub.unsubscribe());

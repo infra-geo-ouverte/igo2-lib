@@ -31,12 +31,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { FormBuilder, NgControl, NgForm, FormControlName, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, NgControl, NgForm, FormControlName, UntypedFormGroup } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
-import * as moment_ from 'moment';
-const moment = moment_;
+import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-entity-table',
@@ -49,9 +48,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  public formGroup: FormGroup = new FormGroup({});
+  public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
-  public filteredOptions: Observable<any[]>;
+  public filteredOptions = {};
 
   /**
    * Reference to the column renderer types
@@ -198,8 +197,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
 
+  get tableHeight(): string { return this.template.tableHeight ? this.template.tableHeight : 'auto'; }
+
   constructor(private cdRef: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     protected _focusMonitor: FocusMonitor,
     protected _elementRef: ElementRef<HTMLElement>,
     @Optional() @Self() public ngControl: NgControl,
@@ -257,9 +258,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process autocomplete value change (edition)
    */
-  onAutocompleteValueChange(column: string, record: EntityRecord<any>, event) {
-    this.formGroup.controls[column].setValue(event.option.viewValue);
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
+  onAutocompleteValueChange(column: EntityTableColumn, record: EntityRecord<any>, event) {
+    this.formGroup.controls[column.name].setValue(event.option.viewValue);
+    const key = this.getColumnKeyWithoutPropertiesTag(column.name);
     record.entity.properties[key] = event.option.value;
   }
 
@@ -311,17 +312,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           item[key]
         ));
 
-        this.filteredOptions = this.formGroup.controls[column.name].valueChanges.pipe(
-          map(value => {
-            if (value.length) {
-              return column.domainValues.filter((option) => {
-                const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-                const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                return featureNameNormalized.includes(filterNormalized);
-              });
-            }
-          })
-        );
+        this.filteredOptions[column.name] = new Observable<any[]>();
+        this.filteredOptions[column.name] =
+          this.formGroup.controls[column.name].valueChanges.pipe(
+            map(value => {
+              if (value?.length) {
+                return column.domainValues?.filter((option) => {
+                  const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+                  const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                  return featureNameNormalized.includes(filterNormalized);
+                });
+              }
+            })
+          );
 
         let formControlValue = item[key];
         column.domainValues.forEach(option => {

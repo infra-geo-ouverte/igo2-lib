@@ -26,37 +26,20 @@ $slide-toggle-width: 60px;
   }
 }
 
-.igo-form {
-  padding: 10px;
+.icon-options {
+  margin: 5px 5px 0px 5px;
 }
 
-.fill-field, .stroke-field {
-  width: 130px;
+.deleteBtn {
+  margin-left: 12px;
 }
 
-.fill-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 8px;
-  }
+.edition-drawing{
+  padding: 10px 0;
 }
 
-.stroke-color-picker {
-  mat-icon {
-    position: relative;
-    top: 7px;
-  }
-  mat-form-field {
-    left: 35px;
-  }
-}
-
-.box {
-  width: 25px;
-  height: 25px;
+.edition-drawing{
+  padding: 10px 0;
 }
 
 img {
@@ -68,16 +51,25 @@ img {
   margin-left: 12px;
 }
 
-.igo-form-font .mat-form-field + .mat-form-field{
-  margin-left: 18px;
+.storeTable {
+  height: auto !important;
 }
 
-.igo-form-fontSize{
-  left: 10px !important;
-  width: 150px;
+.layer-select {
+  width: 85%;
+  padding: 10px;
+  padding-bottom: 0%;
 }
-.igo-form-fontStyle{
-  width: 150px;
+
+.input-button-container {
+  padding: 10px;
+  mat-form-field {
+    width: 25%;
+  }
+  button {
+    left: 8px;
+    bottom: 10px;
+  }
 }
 
 .radius {
@@ -96,4 +88,13 @@ img {
   width: 100%;
   margin-left: 2px;
   padding: 5px;
+}
+
+::ng-deep igo-entity-table {
+  td:last-child {
+    text-align: right !important;
+    button {
+      margin: 0% !important;
+    }
+  }
 }

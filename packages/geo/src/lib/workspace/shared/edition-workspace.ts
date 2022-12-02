@@ -15,7 +15,7 @@ import { DrawControl } from '../../geometry';
 import { createInteractionStyle, GeometryType } from '../../draw';
 import { featureToOl } from '../../feature';
 
-import type { default as OlGeometryType } from 'ol/geom/GeometryType';
+import type { Type } from 'ol/geom/Geometry';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlVectorSource from 'ol/source/Vector';
@@ -123,14 +123,16 @@ export class EditionWorkspace extends Workspace {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result === false) {
+          let id, url;
           const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
           const deleteUrl = workspace.layer.dataSource.options.edition.deleteUrl;
-          let id;
-          let url;
-          if (baseUrl) {
-            url = this.configService.getConfig('edition.url') + baseUrl + '?' + deleteUrl;
+          if (baseUrl.length) {
+            url = this.configService.getConfig('edition.url') ?
+              this.configService.getConfig('edition.url') + baseUrl + '?' + deleteUrl :
+              baseUrl + '?' + deleteUrl;
           } else {
-            url = this.configService.getConfig('edition.url') + deleteUrl;
+            url = this.configService.getConfig('edition.url') ?
+              this.configService.getConfig('edition.url') + deleteUrl : deleteUrl;
           }
 
           for (const column of workspace.meta.tableTemplate.columns) {
@@ -227,7 +229,7 @@ export class EditionWorkspace extends Workspace {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: typeof OlGeometryType, feature, workspace: EditionWorkspace) {
+  onGeometryTypeChange(geometryType: Type, feature, workspace: EditionWorkspace) {
       this.drawControl.setGeometryType(geometryType);
       this.toggleDrawControl(feature, workspace);
     }

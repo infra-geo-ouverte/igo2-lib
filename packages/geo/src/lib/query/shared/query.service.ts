@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
-import * as striptags_ from 'striptags';
+import { default as striptags } from 'striptags';
 
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
@@ -139,7 +139,7 @@ export class QueryService {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
       }*/
-      const featureGeometryCoordinates = feature.getGeometry().getCoordinates();
+      const featureGeometryCoordinates = (feature.getGeometry() as any).getCoordinates();
       const featureGeometryType = feature.getGeometry().getType();
 
       if (!firstFeatureType && !outBboxExtent) {
@@ -314,7 +314,6 @@ export class QueryService {
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
     }
-
     if (features.length > 0 && features[0].geometry === null) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
@@ -330,7 +329,7 @@ export class QueryService {
 
     if (
       featureCount.test(url) &&
-      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      ((wmsDatasource.params?.FEATURE_COUNT && this.featureCount > 1 && features.length === this.featureCount) ||
       (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
       this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
         const messageObj = this.messageService.info(message);
@@ -526,7 +525,6 @@ export class QueryService {
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
     // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
-    const striptags = striptags_;
     const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
     if (body === '' || res === '') {
       return [];
@@ -569,6 +567,9 @@ export class QueryService {
     delete properties.boundedBy;
     delete properties.shape;
     delete properties.SHAPE;
+    delete properties.SHAPE_S;
+    delete properties.SHAPE_L;
+    delete properties.SHAPE_P;
     delete properties.the_geom;
     delete properties.geom;
 

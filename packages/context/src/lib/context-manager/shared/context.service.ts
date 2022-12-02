@@ -29,7 +29,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer } from '@igo2/geo';
+import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -476,8 +476,9 @@ export class ContextService {
         layerOptions: {
           title: layer.options.title,
           zIndex: ++i,
-          visible: layer.visible
-        },
+          visible: layer.visible,
+          security: layer.security
+        } as LayerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -540,9 +541,10 @@ export class ContextService {
 
     layers.forEach((layer) => {
       const layerFound = currentContext.layers.find(
-        (contextLayer) =>
-          layer.id === contextLayer.source.id && !contextLayer.baseLayer
-      );
+        (contextLayer) => {
+          const source = contextLayer.source;
+          return source && layer.id === source.id && !contextLayer.baseLayer;
+        });
 
       if (layerFound) {
         let layerStyle = layerFound[`style`];
@@ -624,12 +626,6 @@ export class ContextService {
     context.messages.push(context.message);
     context.messages.map(message => {
       if (message) {
-        message.title = message.title
-          ? this.languageService.translate.instant(message.title)
-          : undefined;
-        message.text = message.text
-          ? this.languageService.translate.instant(message.text)
-          : undefined;
         this.messageService.message(message as Message);
       }
     });

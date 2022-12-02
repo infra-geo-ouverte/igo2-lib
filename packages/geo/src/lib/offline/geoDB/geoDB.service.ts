@@ -12,7 +12,7 @@ import { InsertSourceInsertDBEnum } from './geoDB.enums';
 export class GeoDBService {
   readonly dbName: string = 'geoData';
   public collisionsMap: Map<number, string[]> = new Map();
-  public _newTiles: number = 0;
+  public _newData: number = 0;
 
   constructor(
     private ngxIndexedDBService: NgxIndexedDBService,
@@ -28,7 +28,7 @@ export class GeoDBService {
    * @param insertEvent Name of the event where the insert has been triggered
    * @returns
    */
-  update(url: string, regionID: number, object: any, insertSource: InsertSourceInsertDBEnum, insertEvent: string): Observable<any> {
+  update(url: string, regionID: any, object: any, insertSource: InsertSourceInsertDBEnum, insertEvent: string): Observable<any> {
     if (!object) {
       return;
     }
@@ -56,7 +56,7 @@ export class GeoDBService {
       }),
       concatMap((dbObject: GeoDBData) => {
         if (!dbObject) {
-          this._newTiles++;
+          this._newData++;
           return this.ngxIndexedDBService.add(this.dbName, geoDBData);
         } else {
           const currentRegionID = dbObject.regionID;
@@ -108,11 +108,19 @@ export class GeoDBService {
     );
   }
 
-  getRegionTileCountByID(id: number): Observable<number> {
+  getByID(url: string): Observable<any> {
+    return this.ngxIndexedDBService.getByID(this.dbName, url);
+  }
+
+  deleteByKey(url: string): Observable<any> {
+    return this.ngxIndexedDBService.deleteByKey(this.dbName, url);
+  }
+
+  getRegionCountByID(id: number): Observable<number> {
     const subject: Subject<number> = new Subject();
     const dbRequest = this.getRegionByID(id)
-      .subscribe((tiles) => {
-        subject.next(tiles.length);
+      .subscribe((datas) => {
+        subject.next(datas.length);
         subject.complete();
       });
     return subject;
@@ -135,9 +143,9 @@ export class GeoDBService {
 
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.ngxIndexedDBService.getAllByIndex(this.dbName, 'regionID', IDBKey);
-    dbRequest.subscribe((tiles: GeoDBData[]) => {
-      tiles.forEach((tile) => {
-        this.ngxIndexedDBService.deleteByKey(this.dbName, tile.url);
+    dbRequest.subscribe((datas: GeoDBData[]) => {
+      datas.forEach((data) => {
+        this.ngxIndexedDBService.deleteByKey(this.dbName, data.url);
       });
     });
     return dbRequest;
@@ -153,7 +161,7 @@ export class GeoDBService {
 
   resetCounters() {
     this.resetCollisionsMap();
-    this._newTiles = 0;
+    this._newData = 0;
   }
 
   resetCollisionsMap() {
@@ -174,7 +182,7 @@ export class GeoDBService {
     }
   }
 
-  get newTiles(): number {
-    return this._newTiles;
+  get newData(): number {
+    return this._newData;
   }
 }

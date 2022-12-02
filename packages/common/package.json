@@ -1,8 +1,8 @@
 {
   "name": "@igo2/common",
-  "version": "1.12.1",
+  "version": "1.13.4",
   "description": "IGO Library",
-  "author": "MSP",
+  "author": "IGO Community",
   "keywords": ["igo"],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
@@ -14,15 +14,15 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^12.2.9",
-    "@angular/core": "^12.2.9",
-    "@angular/material": "^12.2.9",
-    "@igo2/core": "^1.12.1",
-    "@igo2/utils": "^1.12.1",
+    "@angular/common": "^14.1.2",
+    "@angular/core": "^14.1.2",
+    "@angular/material": "^14.1.2",
+    "@igo2/core": "^1.13.4",
+    "@igo2/utils": "^1.13.4",
     "scroll-into-view-if-needed": "^2.2.20",
     "typy": "^3.3.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.4.0"
   }
 }
