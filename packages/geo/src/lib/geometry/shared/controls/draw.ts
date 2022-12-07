@@ -1,6 +1,7 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import * as OlStyle from 'ol/style';
 import type { Type } from 'ol/geom/Geometry';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -146,7 +147,8 @@ export class DrawControl {
     return this.olDrawingLayerSource;
 
   }
-  setOlInteractionStyle(style: OlStyleLike) {
+
+  setOlInteractionStyle(style) {
     this.olInteractionStyle = style;
   }
 
@@ -237,7 +239,7 @@ export class DrawControl {
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
-          style: this.olInteractionStyle,
+          style: typeof this.olInteractionStyle === 'function' ? undefined : this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });

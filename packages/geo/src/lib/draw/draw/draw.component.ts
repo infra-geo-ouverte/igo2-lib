@@ -237,8 +237,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
-    private drawIconService: DrawIconService,
-    private messageService: MessageService
+    private drawIconService: DrawIconService
 
   ) {
     this.buildForm();
@@ -1309,35 +1308,28 @@ export class DrawComponent implements OnInit, OnDestroy {
       radiusMeters = undefined;
     }
 
-    if (radiusMeters >= 100001 || radiusMeters < 0) {
-      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-        this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-      this.radiusFormControl.setValue(1000);
+    const pointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
+      const geom = feature.getGeometry() as OlPoint;
+      const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
 
-    } else {
-      const pointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
-        const geom = feature.getGeometry() as OlPoint;
-        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-
-        const radius = radiusMeters / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution;
-        this.activeDrawControl.predefinedRadius$.next(radiusMeters);
-        return new OlStyle.Style({
-          image: new OlStyle.Circle({
-            radius: radius,
-            stroke: new OlStyle.Stroke({
-              width: 1,
-              color: 'rgba(143,7,7,1)'
-            }),
-            fill: new OlStyle.Fill({
-              color: 'rgba(255,255,255,0.4)'
-            })
+      const radius = radiusMeters / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution;
+      this.activeDrawControl.predefinedRadius$.next(radiusMeters);
+      return new OlStyle.Style({
+        image: new OlStyle.Circle({
+          radius: radius,
+          stroke: new OlStyle.Stroke({
+            width: 1,
+            color: 'rgba(143,7,7,1)'
+          }),
+          fill: new OlStyle.Fill({
+            color: 'rgba(255,255,255,0.4)'
           })
-        });
-      };
+        })
+      });
+    };
 
-      this.activeDrawControl.setOlInteractionStyle(pointStyle);
-      this.toggleDrawControl();
-    }
+    this.activeDrawControl.setOlInteractionStyle(pointStyle);
+    this.toggleDrawControl();
   }
 
   onMeasureUnitChange(selectedMeasureUnit: MeasureLengthUnit) {
