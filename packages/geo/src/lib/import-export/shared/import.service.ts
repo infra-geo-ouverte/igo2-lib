@@ -78,11 +78,11 @@ export class ImportService {
   private getFileImporter(
     file: File
   ): (
-    file: File,
-    observer: Observer<Feature[]>,
-    projectionIn: string,
-    projectionOut: string
-  ) => void {
+      file: File,
+      observer: Observer<Feature[]>,
+      projectionIn: string,
+      projectionOut: string
+    ) => void {
     const extension = getFileExtension(file);
     const allowedExtensions = ImportService.allowedExtensions;
     let zipMimeTypes = [];
@@ -180,41 +180,41 @@ export class ImportService {
     formData.append('skipFailures', '');
 
     this.http.post(url, formData, { headers: new HttpHeaders() })
-    .subscribe(
-      (response: { errors?: string[] } | object | null) => {
-        if (response === null) {
-          observer.error(new ImportUnreadableFileError());
-          return;
-        }
+      .subscribe(
+        (response: { errors?: string[] } | object | null) => {
+          if (response === null) {
+            observer.error(new ImportUnreadableFileError());
+            return;
+          }
 
-        const errors = (response as any).errors || [];
-        if (errors.length > 0) {
-          observer.error(new ImportUnreadableFileError());
-        } else {
-          const features = this.parseFeaturesFromGeoJSON(
-            file,
-            response,
-            projectionOut
-          );
-          observer.next(features);
-          observer.complete();
+          const errors = (response as any).errors || [];
+          if (errors.length > 0) {
+            observer.error(new ImportUnreadableFileError());
+          } else {
+            const features = this.parseFeaturesFromGeoJSON(
+              file,
+              response,
+              projectionOut
+            );
+            observer.next(features);
+            observer.complete();
+          }
+        },
+        (error: any) => {
+          error.error.caught = true;
+          const errMsg = error.error.msg || '';
+          if (errMsg === 'No valid files found') {
+            observer.error(new ImportInvalidFileError());
+          } else if (errMsg && errMsg.startWith('ERROR 1: Failed to process SRS definition')
+          ) {
+            observer.error(new ImportSRSError());
+          } else if (error.status === 500) {
+            observer.error(new ImportOgreServerError());
+          } else {
+            observer.error(new ImportUnreadableFileError());
+          }
         }
-      },
-      (error: any) => {
-        error.error.caught = true;
-        const errMsg = error.error.msg || '';
-        if (errMsg === 'No valid files found') {
-          observer.error(new ImportInvalidFileError());
-        } else if (errMsg && errMsg.startWith('ERROR 1: Failed to process SRS definition')
-        ) {
-          observer.error(new ImportSRSError());
-        } else if (error.status === 500) {
-          observer.error(new ImportOgreServerError());
-        } else {
-          observer.error(new ImportUnreadableFileError());
-        }
-      }
-    );
+      );
   }
 
   private parseFeaturesFromFile(
