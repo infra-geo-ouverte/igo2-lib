@@ -19,11 +19,21 @@ import {
   ImportOgreServerError
 } from './import.errors';
 import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
+import { ImportExportServiceOptions } from './import.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImportService {
+
+  static formatExtensionAssociation = {
+    GeoJSON: 'geojson',
+    GML: 'gml',
+    GPX: 'gpx',
+    KML: 'kml',
+    Shapefile: 'zip'
+  };
+
   static allowedMimeTypes = [
     'application/gml+xml',
     'application/vnd.google-earth.kml+xml',
@@ -37,15 +47,24 @@ export class ImportService {
     'application/x-zip'
   ];
 
-  static allowedExtensions = ['geojson', 'kml', 'gpx', 'json', 'gml'];
+  static allowedExtensions = ['geojson', 'kml', 'gpx', 'json', 'gml', 'zip'];
 
   private ogreUrl: string;
   private clientSideFileSizeMax: number;
 
   constructor(private http: HttpClient, private config: ConfigService) {
-    this.ogreUrl = this.config.getConfig('importExport.url');
-    const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
+    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    this.ogreUrl = importConfig.url;
+    const configFileSizeMb = importConfig.clientSideFileSizeMaxMb;
     this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
+    if (importConfig.formats) {
+      ImportService.allowedExtensions = importConfig.formats
+        .map(format => ImportService.formatExtensionAssociation[format])
+        .filter(e => e);
+      if (ImportService.allowedExtensions.includes('geojson')) {
+        ImportService.allowedExtensions.push('json');
+      }
+    }
   }
 
   import(
@@ -65,12 +84,16 @@ export class ImportService {
     projectionOut: string
   ) => void {
     const extension = getFileExtension(file);
+    const allowedExtensions = ImportService.allowedExtensions;
+    let zipMimeTypes = [];
+    if (allowedExtensions.includes('zip')) {
+      zipMimeTypes = ImportService.allowedZipMimeTypes;
+    }
     const mimeType = file.type;
     const allowedMimeTypes = [
       ...ImportService.allowedMimeTypes,
-      ...ImportService.allowedZipMimeTypes
+      ...zipMimeTypes
     ];
-    const allowedExtensions = ImportService.allowedExtensions;
 
     if (
       allowedMimeTypes.indexOf(mimeType) < 0 &&
