@@ -21,7 +21,7 @@ import {
   featureToOl
 } from '../../feature';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoordinatesUnit, FontType, GeometryType, LabelType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
@@ -204,7 +204,6 @@ export class DrawComponent implements OnInit, OnDestroy {
   public drawControlIsActive: boolean = false;
   public labelsAreShown: boolean;
   public freehandMode = false;
-  public usePredefinedRadius = false;
   private subscriptions$$: Subscription[] = [];
 
   public position: string = 'bottom';
@@ -812,17 +811,16 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   onToggleFreehandMode(event: any) {
     if (this.isCircle()) {
-      this.usePredefinedRadius = event.checked;
-      this.activeDrawControl.ispredefinedRadius$.next(this.usePredefinedRadius);
-      if (event.checked) {
+      this.activeDrawControl.ispredefinedRadius$.next(!event.checked);
+      if (!event.checked) {
         this.radiusFormControl.setValue(1000);
+        this.measureUnit = MeasureLengthUnit.Meters;
       } else {
         this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
       }
-    } else {
-      this.freehandMode = event.checked;
-      this.activeDrawControl.freehand$.next(this.freehandMode);
     }
+    this.freehandMode = event.checked;
+    this.activeDrawControl.freehand$.next(this.freehandMode);
     this.toggleDrawControl();
   }
 
@@ -1030,18 +1028,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   onGeometryTypeChange(geometryType: Type) {
     this.currGeometryType = geometryType;
     this.activeDrawControl.setGeometryType(geometryType);
-    this.toggleDrawControl();
-    if (this.activeDrawControl.getGeometryType() === this.geometryType.Circle) {
-      if (!this.activeDrawControl.ispredefinedRadius$.getValue()) {
-        this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
-      }
-      this.freehandMode = true;
-      this.activeDrawControl.freehand$.next(this.freehandMode);
-    } else {
-      this.freehandMode = false;
-      this.activeDrawControl.freehand$.next(this.freehandMode);
-      this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
-    }
+    this.freehandMode ?
+      this.onToggleFreehandMode({ checked: true }) :
+      this.onToggleFreehandMode({ checked: false });
     this.toggleDrawControl();
   }
 

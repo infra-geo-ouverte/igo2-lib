@@ -619,6 +619,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (this.freehandDrawIsActive) {
         this.overlayStyle$.next(undefined);
         this.drawStyle$.next(undefined);
+      } else {
+        this.radius = 1000;
+        this.measureUnit = MeasureLengthUnit.Meters;
       }
     } else {
       this.predefinedRadius.emit(false);

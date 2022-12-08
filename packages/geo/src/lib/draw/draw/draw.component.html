@@ -36,14 +36,8 @@
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
 
-    <mat-slide-toggle *ngIf="isCircle()"
-      [checked]="usePredefinedRadius"
-      [labelPosition]="'before'"
-      (change)="onToggleFreehandMode($event)">
-      {{ 'igo.geo.draw.insertvalueRadius' | translate }}
-    </mat-slide-toggle>
-
-    <mat-slide-toggle *ngIf="isLineString() || isPolygon()"
+    <mat-slide-toggle
+      *ngIf="!isPoint()"
       [checked]="freehandMode"
       [labelPosition]="'before'"
       (change)="onToggleFreehandMode($event)">
@@ -58,7 +52,7 @@
             min="0"
             placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
             [formControl]="radiusFormControl"
-            [readonly]="this.freehandMode && !usePredefinedRadius">
+            [readonly]="this.freehandMode">
         </mat-form-field>
       </form>
 

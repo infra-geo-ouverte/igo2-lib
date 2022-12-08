@@ -1,7 +1,6 @@
 import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import * as OlStyle from 'ol/style';
 import type { Type } from 'ol/geom/Geometry';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -211,8 +210,8 @@ export class DrawControl {
   addOlInteractions(activateModifyAndSelect?: boolean) {
     // Create Draw interaction
     let olDrawInteraction;
-    if (!this.freehand$.getValue() || this.ispredefinedRadius$.getValue()) {
-      if (!this.freehand$.getValue()) {
+    if (!this.freehand$.getValue()) {
+      if (!this.ispredefinedRadius$.getValue()) {
         olDrawInteraction = new OlDraw({
           type: this.olGeometryType as Type,
           source: this.getSource(),
