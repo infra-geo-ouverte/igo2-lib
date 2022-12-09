@@ -810,17 +810,15 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   onToggleFreehandMode(event: any) {
-    if (this.isCircle()) {
-      this.activeDrawControl.ispredefinedRadius$.next(!event.checked);
-      if (!event.checked) {
-        this.radiusFormControl.setValue(1000);
-        this.measureUnit = MeasureLengthUnit.Meters;
-      } else {
-        this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
-      }
+    if (this.isCircle() && !event.checked) {
+      this.activeDrawControl.ispredefinedRadius$.next(true);
+      this.changeRadius(this.radiusFormControl.value);
+    } else {
+      this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
+      this.activeDrawControl.ispredefinedRadius$.next(false);
     }
     this.freehandMode = event.checked;
-    this.activeDrawControl.freehand$.next(this.freehandMode);
+    this.activeDrawControl.freehand$.next(event.checked);
     this.toggleDrawControl();
   }
 
