@@ -44,7 +44,7 @@ export default function jsGeoPdfPlugin(jsPDFAPI) {
         ',PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Standard_Parallel_1",0.0]'+
         ',PARAMETER["Auxiliary_Sphere_Type",0.0],UNIT["Meter",1.0]]) >>';
 
-        bounds_obj.content = '<< /Bounds [ 0 1 0 0 1 0 1 1 ] /GCS ' + 
+        bounds_obj.content = '<< /Bounds [ 0 1 0 0 1 0 1 1 ] /GCS ' +
         proj_obj.objId + ' 0 R /GPTS [ ' + bounds + ' ] /LPTS [ 0 1 0 0 1 0 1 1 ] /Subtype /GEO /Type /Measure >>';
 
         bbox_obj.content = '<< /BBox [ ' + bbox + ' ] /Measure ' + bounds_obj.objId + ' 0 R /Name (Layer) /Type /Viewport >>';
@@ -54,12 +54,12 @@ export default function jsGeoPdfPlugin(jsPDFAPI) {
         title_obj.content = '<< /Name IGO2 /Type OCG /Date '+ date +' >>';
 
         return bbox_obj.objId;
-    }
+    };
 
     jsPDFAPI.setGeoArea = function(pdfExt, geoExt) {
         this.internal.events.subscribe('putPage', function() {
             const bbox_id = setGeoArea.call(this, pdfExt, geoExt);
             this.internal.write('/VP [ ' + bbox_id + ' 0 R ]');
         });
-    }
+    };
 }

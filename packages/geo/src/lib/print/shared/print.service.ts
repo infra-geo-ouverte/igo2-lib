@@ -92,15 +92,15 @@ export class PrintService {
         this.TEXTPDFFONT.titleFontSize,
         this.TEXTPDFFONT.titleFontStyle,
         doc);
-         
-      this.addTextInPdfDoc(doc, 
-        options.title, 
-        this.TEXTPDFFONT.titleFont, 
-        this.TEXTPDFFONT.titleFontStyle, 
-        titleSizes.fontSize, 
-        titleSizes.marginLeft + margins[3], 
+
+      this.addTextInPdfDoc(doc,
+        options.title,
+        this.TEXTPDFFONT.titleFont,
+        this.TEXTPDFFONT.titleFontStyle,
+        titleSizes.fontSize,
+        titleSizes.marginLeft + margins[3],
         margins[0]);
-        
+
       margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
 
     }
