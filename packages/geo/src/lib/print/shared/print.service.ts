@@ -398,13 +398,13 @@ export class PrintService {
     );
   }
 
-  private addTextInPdfDoc(doc: jsPDF, 
+  private addTextInPdfDoc(doc: jsPDF,
     textToAdd: string,
     textFont: string,
     textFontStyle: string,
     textFontSize: number,
     textMarginLeft: number,
-    textMarginTop: number) 
+    textMarginTop: number)
     {
       doc.setFont(textFont, textFontStyle);
       doc.setFontSize(textFontSize);
