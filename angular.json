@@ -515,6 +515,7 @@
     "cache": {
       "enabled": false,
       "environment": "all"
-    }
+    },
+    "analytics": false
   }
 }
