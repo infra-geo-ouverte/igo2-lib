@@ -109,18 +109,18 @@ export class PrintService {
     if (options.subtitle !== undefined && options.subtitle !== '') {
 
       const subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
-        margins, 
-        this.TEXTPDFFONT.subtitleFont, 
-        this.TEXTPDFFONT.subtitleFontSize, 
+        margins,
+        this.TEXTPDFFONT.subtitleFont,
+        this.TEXTPDFFONT.subtitleFontSize,
         this.TEXTPDFFONT.subtitleFontStyle,
-        doc)
+        doc);
 
-       this.addTextInPdfDoc(doc, 
-        options.subtitle, 
-        this.TEXTPDFFONT.subtitleFont, 
-        this.TEXTPDFFONT.subtitleFontStyle, 
-        subtitleSizes.fontSize, 
-        subtitleSizes.marginLeft + margins[3], 
+       this.addTextInPdfDoc(doc,
+        options.subtitle,
+        this.TEXTPDFFONT.subtitleFont,
+        this.TEXTPDFFONT.subtitleFontStyle,
+        subtitleSizes.fontSize,
+        subtitleSizes.marginLeft + margins[3],
         margins[0]
       );
 
@@ -174,7 +174,7 @@ export class PrintService {
   // ref GeoMoose https://github.com/geomoose/gm3/tree/main/src/gm3/components/print
   addGeoRef(doc, map, width, height, resolution, margins) {
     const unit = 'mm';
-    const docHeight = doc.internal.pageSize.getHeight() ;
+    const docHeight = doc.internal.pageSize.getHeight();
 
     // x,y = margin left-bottom corner for img in pdf doc
     const x = margins[3];
@@ -349,10 +349,11 @@ export class PrintService {
   }
 
 
-  getTextPdfObjectSizeAndMarg(text: string, margins, font:string, fontSizeInPt: number, fontStyle:string, doc: jsPDF): TextPdfSizeAndMargin {
+  getTextPdfObjectSizeAndMarg(text: string, margins, font:string, fontSizeInPt: number, fontStyle:string, doc: jsPDF)
+  : TextPdfSizeAndMargin {
     const pdfResolution = 96;
     const docWidth = doc.internal.pageSize.getWidth();
-    const pageWidth = docWidth - margins[1] - margins[3]
+    const pageWidth = docWidth - margins[1] - margins[3];
 
     // important to set it first, the size change when font change!
     doc.setFont(font, fontStyle);  
@@ -384,24 +385,31 @@ export class PrintService {
    * * @param  doc - pdf document
    * * @param  comment - Comment to add in the document
    */
-  private addComment(doc: jsPDF, comment: string) { //margin bottom is fix
-    const commentMarginLeft = 20;
-    const commentMarginBottom = 5; //fix 
+  private addComment(doc: jsPDF, comment: string) { 
+    const commentMarginLeft = 20; //margin left and bottom is fix
+    const commentMarginBottom = 5; 
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
-    this. addTextInPdfDoc(doc,comment, 
-      this.TEXTPDFFONT.commentFont,  
-      this.TEXTPDFFONT.commentFontStyle, 
+    this. addTextInPdfDoc(doc,comment,
+      this.TEXTPDFFONT.commentFont,
+      this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
-      commentMarginLeft, 
+      commentMarginLeft,
       marginTop
-    )
+    );
   }
 
-  private addTextInPdfDoc(doc: jsPDF, textToAdd: string, textFont:string, textFontStyle:string, textFontSize: number, textMarginLeft: number, textMarginTop: number) {
-    doc.setFont(textFont, textFontStyle);
-    doc.setFontSize(textFontSize);
-    doc.text(textToAdd, textMarginLeft, textMarginTop);
-  }
+  private addTextInPdfDoc(doc: jsPDF, 
+    textToAdd: string,
+    textFont: string,
+    textFontStyle: string,
+    textFontSize: number,
+    textMarginLeft: number,
+    textMarginTop: number) 
+    {
+      doc.setFont(textFont, textFontStyle);
+      doc.setFontSize(textFontSize);
+      doc.text(textToAdd, textMarginLeft, textMarginTop);
+    }
 
   /**
    * Add projection and/or scale to the document
@@ -940,8 +948,8 @@ export class PrintService {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
-    const canHeight = this.pdf_units2points(canvas.height, 'mm') 
-    const canWidth = this.pdf_units2points(canvas.width, 'mm')
+    const canHeight = this.pdf_units2points(canvas.height, 'mm');
+    const canWidth = this.pdf_units2points(canvas.width, 'mm');
 
     const heightRatio = canHeight / pageHeight;
     const widthRatio = canWidth / pageWidth;
@@ -1082,7 +1090,7 @@ export class PrintService {
     });
   }
 
-  
+
   private pdf_units2points(n, unit): number {
     let k = 1;
 
