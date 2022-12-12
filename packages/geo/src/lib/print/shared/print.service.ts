@@ -150,7 +150,7 @@ export class PrintService {
           const height = this.imgSizeAdded[1];
           const res = 1;
           this.addGeoRef(doc, map, width, height, res, margins);
-        
+
           if (options.legendPosition !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
               await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
@@ -179,13 +179,13 @@ export class PrintService {
     // x,y = margin left-bottom corner for img in pdf doc
     const x = margins[3];
     const y = docHeight - margins[0] - height;
- 
+
     let pdf_extents = [x, y, x + width, y + height];
     for(let i = 0; i < pdf_extents.length; i++) {
       pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
     }
 
-    // exemple in geoMoose 
+    // exemple in geoMoose
     // let map_extents = map.viewController.olView.calculateExtent([
     //   this.toPoints(width, unit) * resolution,
     //   this.toPoints(height, unit) * resolution,
@@ -355,9 +355,9 @@ export class PrintService {
     const docWidth = doc.internal.pageSize.getWidth();
     const pageWidth = docWidth - margins[1] - margins[3];
 
-    // important to set it first, the size change when font change!
-    doc.setFont(font, fontStyle);  
-    doc.setFontSize(fontSizeInPt); 
+    // important to set it first, the textDimension change when font change!
+    doc.setFont(font, fontStyle);
+    doc.setFontSize(fontSizeInPt);
 
     let textDimensions = doc.getTextDimensions(text);
     let textMarginLeft: number;
@@ -365,8 +365,8 @@ export class PrintService {
     if (textDimensions.w > pageWidth) {
       // if the text is to long, reduce fontSize 70% and the overflow with be cut in print...
       textMarginLeft = 0;
-      fontSizeInPt = fontSizeInPt * 0.7; 
-      doc.setFontSize(fontSizeInPt); 
+      fontSizeInPt = fontSizeInPt * 0.7;
+      doc.setFontSize(fontSizeInPt);
       textDimensions = doc.getTextDimensions(text);
 
     } else {
@@ -377,7 +377,7 @@ export class PrintService {
       'fontSize': fontSizeInPt,
       'marginLeft': textMarginLeft,
       'height': textDimensions.h
-    }
+    };
   }
 
   /**
@@ -385,9 +385,9 @@ export class PrintService {
    * * @param  doc - pdf document
    * * @param  comment - Comment to add in the document
    */
-  private addComment(doc: jsPDF, comment: string) { 
+  private addComment(doc: jsPDF, comment: string) {
     const commentMarginLeft = 20; //margin left and bottom is fix
-    const commentMarginBottom = 5; 
+    const commentMarginBottom = 5;
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
     this. addTextInPdfDoc(doc,comment,
       this.TEXTPDFFONT.commentFont,
