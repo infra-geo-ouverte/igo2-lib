@@ -46,7 +46,7 @@ export class PrintService {
     commentFont: 'courier',
     commentFontStyle: 'normal',
     commentFontSize: 16
-  }
+  };
 
   constructor(
     private http: HttpClient,
@@ -63,7 +63,7 @@ export class PrintService {
     const orientation = options.orientation;
     const legendPostion = options.legendPosition;
     this.activityId = this.activityService.register();
-  
+
     GeoPdfPlugin(jsPDF.API);
 
     const doc = new jsPDF({
@@ -87,11 +87,11 @@ export class PrintService {
     // PDF title
     if (options.title !== undefined && options.title !== '') {
       const titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
-        margins, 
-        this.TEXTPDFFONT.titleFont, 
-        this.TEXTPDFFONT.titleFontSize, 
+        margins,
+        this.TEXTPDFFONT.titleFont,
+        this.TEXTPDFFONT.titleFontSize,
         this.TEXTPDFFONT.titleFontStyle,
-         doc)
+        doc);
          
       this.addTextInPdfDoc(doc, 
         options.title, 
@@ -99,8 +99,8 @@ export class PrintService {
         this.TEXTPDFFONT.titleFontStyle, 
         titleSizes.fontSize, 
         titleSizes.marginLeft + margins[3], 
-        margins[0]
-      );
+        margins[0]);
+        
       margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
 
     }
