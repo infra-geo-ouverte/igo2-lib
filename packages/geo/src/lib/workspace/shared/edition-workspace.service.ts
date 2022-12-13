@@ -646,7 +646,7 @@ export class EditionWorkspaceService {
         if (result.features) {
           let dom = [];
           result.features.map(feature => {
-            const id = parseInt(feature.properties.code);
+            const id = feature.properties.code;
             const value = feature.properties.nom;
             dom.push({id, value});
           });

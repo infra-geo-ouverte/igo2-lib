@@ -272,7 +272,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         let dom = [];
         this.http.get<any>(col.relation.url + '?mrcCode=' + record.entity.properties.code_mrc).subscribe(result => {
           result.features.map(feature => {
-            const id = parseInt(feature.properties.code);
+            const id = feature.properties.code;
             const value = feature.properties.nom;
             dom.push({id, value});
           });
@@ -353,7 +353,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         const domain = column.domainValues as any;
         if (!domain?.features) {
           column.domainValues?.forEach(option => {
-            if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue)) {
+            if (typeof formControlValue === 'string' && typeof option.id === 'number' && /^\d+$/.test(formControlValue)) {
               formControlValue = parseInt(formControlValue);
             }
             if (option.value === formControlValue || option.id === formControlValue) {
@@ -706,7 +706,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         } else {
           if (!domain?.features) {
             column.domainValues.forEach(option => {
-              if (typeof value === 'string' && /^\d+$/.test(value)) {
+              if (typeof value === 'string' && typeof option.id === 'number' && /^\d+$/.test(value)) {
                 value = parseInt(value);
               }
               if (option.value === value || option.id === value) {
@@ -724,7 +724,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         if (!domain?.features) {
           column.domainValues.forEach(option => {
-            if (typeof value === 'string' && /^\d+$/.test(value)) {
+            if (typeof value === 'string' && typeof option.id === 'number' && /^\d+$/.test(value)) {
               value = parseInt(value);
             }
             if (option.value === value || option.id === value) {
