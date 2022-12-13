@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.18.1, 18.x]
+        node-version: [16.18.1]
 
     steps:
     - name: The branch or tag ref that triggered the workflow run.
