@@ -183,14 +183,7 @@ export class PrintService {
       pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
     }
 
-    // exemple in geoMoose
-    // let map_extents = map.viewController.olView.calculateExtent([
-    //   this.toPoints(width, unit) * resolution,
-    //   this.toPoints(height, unit) * resolution,
-    // ]);
-
-    const mapSize = map.ol.getSize();
-    const mapExtent = map.ol.getView().calculateExtent(mapSize);
+    const mapExtent = map.viewController.getExtent('EPSG:3857');
     doc.setGeoArea(pdf_extents, mapExtent);
 
   }
