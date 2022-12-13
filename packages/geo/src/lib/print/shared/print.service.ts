@@ -39,10 +39,8 @@ export class PrintService {
   TEXTPDFFONT = {
     titleFont: 'Times',
     titleFontStyle: 'bold',
-    titleFontSize: 17,
     subtitleFont: 'Times',
     subtitleFontStyle: 'bold',
-    subtitleFontSize: 12,
     commentFont: 'courier',
     commentFontStyle: 'normal',
     commentFontSize: 16
@@ -85,11 +83,12 @@ export class PrintService {
     let subtitleSizes: TextPdfSizeAndMargin;
 
     // PDF title
-    if (options.title !== undefined && options.title !== '') {
-      const titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
+    if (options.title !== undefined ) {
+      const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+      titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
         margins,
         this.TEXTPDFFONT.titleFont,
-        this.TEXTPDFFONT.titleFontSize,
+        fontSizeInPt,
         this.TEXTPDFFONT.titleFontStyle,
         doc);
 
@@ -106,12 +105,11 @@ export class PrintService {
     }
 
     // PDF subtitle
-    if (options.subtitle !== undefined && options.subtitle !== '') {
-
-      const subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
+    if (options.subtitle !== undefined) {
+      subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
-        this.TEXTPDFFONT.subtitleFontSize,
+        titleSizes.fontSize * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
         doc);
 
