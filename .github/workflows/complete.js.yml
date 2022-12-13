@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.18.1]
 
     steps:
     - name: The branch or tag ref that triggered the workflow run.
