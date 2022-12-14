@@ -22,7 +22,7 @@ export class ShareMapService {
       if (params['lang']) {
         this.language = params['lang'];
       }
-    })
+    });
   }
 
   getUrlWithApi(formValues) {
@@ -119,7 +119,7 @@ export class ShareMapService {
 
     let url = this.language ?
       `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}&lang=${this.language}` :
-      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`
+      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
       url = url.endsWith('&') ? url.slice(0, -1) : url;
