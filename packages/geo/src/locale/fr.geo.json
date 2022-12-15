@@ -708,12 +708,21 @@
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
         "offsetY": "Décalage vertical",
-        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier",
         "layer": {
-          "title": "Couche",
+          "title": "Titre",
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
-        }
+        },
+        "builtInInstructions": "Sélectionnez une option",
+        "labelType": {
+          "Coordinates": "Coordonnées",
+          "Length": "Longueur",
+          "Area": "Superficie",
+          "predefined": "Prédéfinie",
+          "custom": "Personnalisée",
+          "A": "S: "
+        },
+        "popupTitle": "Étiquette du dessin"
       },
       "network": {
         "online": {

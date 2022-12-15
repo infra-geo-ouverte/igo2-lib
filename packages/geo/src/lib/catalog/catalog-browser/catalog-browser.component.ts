@@ -159,6 +159,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
       }
+      if (this.catalog.profils?.length) {
+        layer.options.security = { profils: this.catalog.profils };
+      }
       return this.layerService.createAsyncLayer(layer.options);
     });
 
