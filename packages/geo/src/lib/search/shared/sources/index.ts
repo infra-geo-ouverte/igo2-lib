@@ -1,5 +1,3 @@
-export * from './cadastre';
-export * from './cadastre.providers';
 export * from './source';
 export * from './source.interfaces';
 export * from './icherche';
