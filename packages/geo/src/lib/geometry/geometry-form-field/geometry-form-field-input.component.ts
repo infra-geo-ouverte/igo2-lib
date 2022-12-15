@@ -153,6 +153,17 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private _freehandDrawIsActive: boolean;
 
   /**
+   * Whether freehand draw control should be active or not
+   */
+  @Input()
+  get predefinedRadius(): boolean { return this._predefinedRadius; }
+  set predefinedRadius(value: boolean) {
+    this._predefinedRadius = value;
+    this.drawControl.ispredefinedRadius$.next(value);
+  }
+  private _predefinedRadius: boolean;
+
+  /**
    * Control options
    */
   @Input() controlOptions: {[key: string]: any} = {};
