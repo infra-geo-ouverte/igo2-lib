@@ -533,7 +533,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.topPanelState = 'collapsed';
       } else {
         this.topPanelState = 'expanded';
-      } 
+      }
     }
   }
 
