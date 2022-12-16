@@ -30,4 +30,13 @@ export class PanelComponent {
     this._withHeader = value;
   }
   private _withHeader = true;
+
+  @Input()
+  get cursorPointer() {
+    return this._cursorPointer;
+  }
+  set cursorPointer(value: boolean) {
+    this._cursorPointer = value;
+  }
+  private _cursorPointer: boolean = false;
 }
