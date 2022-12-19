@@ -238,6 +238,18 @@ export class MapGeolocationController extends MapController {
       }));
   }
 
+  public addOnChangedListener(event: (geo: olGeolocation) => any) {
+    let listener = () => {
+      event(this.geolocation);
+    };
+    this.geolocation.on("change", listener);
+    return listener;
+  }
+
+  public deleteChangedListener(event: () => any) {
+    this.geolocation.un("change", event);
+  }
+
   public updateGeolocationOptions(options: MapViewOptions) {
     if (!options) { return;}
     // todo maybe a dedicated interface for geolocation should be defined instead of putting these inside the mapviewoptions?

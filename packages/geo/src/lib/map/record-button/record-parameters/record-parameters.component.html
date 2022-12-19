@@ -1,0 +1,27 @@
+<div>
+  <h1 mat-dialog-title>{{ 'igo.geo.record-prompts.intervalMode' | translate }}</h1>
+  <div mat-dialog-content>
+    <mat-radio-group class="radio-group element"
+    [(ngModel)]="intervalMode">
+      <mat-radio-button value="time">{{ 'igo.geo.record-prompts.timeInterval' | translate }}</mat-radio-button>
+      <mat-radio-button value="distance">{{ 'igo.geo.record-prompts.distInterval' | translate }}</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- <mat-form-field appearance="fill"> -->
+    <div class="element">
+    <label class="ang-label">{{ 'igo.geo.record-prompts.numInputLabel' | translate }}</label>
+      <input  matInput type="number" [(ngModel)]="amountInput" style="width: 2.5em; text-align: right; background-color: rgba(0, 0, 0, 0.04); border-bottom: 1px solid black">
+      <label class="ang-label">{{ intervalMode === 'time' ? ('igo.geo.record-prompts.second' | translate) : ('igo.geo.record-prompts.meter' | translate) }}</label>
+    </div><!-- </mat-form-field> -->
+
+    <mat-form-field appearance="fill" class="element">
+      <mat-label class="ang-label">{{ 'igo.geo.record-prompts.routeInputLabel' | translate }}</mat-label>
+      <input  matInput [(ngModel)]="fileName">
+    </mat-form-field>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
+    <button mat-button [mat-dialog-close]="getInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
+  </div>
+</div>

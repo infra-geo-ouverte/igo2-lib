@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>{{ 'igo.geo.record-prompts.filesToDownload' | translate }}</h1>
+<div mat-dialog-content>
+  <mat-radio-group class="radio-group element"
+  [(ngModel)]="gpxType">
+    <mat-radio-button value="track">{{ 'igo.geo.record-prompts.track' | translate }}</mat-radio-button>
+    <mat-radio-button value="points">Points</mat-radio-button>
+    <mat-radio-button value="both">{{ 'igo.geo.record-prompts.both' | translate }}</mat-radio-button>
+  </mat-radio-group>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
+  <button mat-button [mat-dialog-close]="gpxType" cdkFocusInitial>{{ 'igo.geo.record-prompts.save' | translate }}</button>
+</div>

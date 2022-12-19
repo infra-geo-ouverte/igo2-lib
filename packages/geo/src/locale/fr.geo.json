@@ -279,6 +279,7 @@
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
 				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
+        "record": "ENR",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
@@ -324,6 +325,31 @@
           "bottomright": "Coin bas droit de la carte",
           "newpage": "Sur une nouvelle page"
         }
+      },
+      "record-prompts": {
+        "intervalMode": "Type d'intervalle",
+        "timeInterval": "Intervalle en secondes",
+        "distInterval": "Intervalle en mètres",
+        "numInputLabel": "Enregistrer à chaque ",
+        "second": " secondes.",
+        "meter": "mètres.",
+        "routeInputLabel": "Nom de la trace",
+        "startRecord": "Commencer",
+        "cancel": "Annuler",
+        "save": "Télécharger",
+        "track": "Trace",
+        "both": "Trace et points",
+        "filesToDownload": "Fichiers à télécharger",
+        "gpxDownloadedToast": "Les fichier(s) ont été sauvegardé!",
+        "gpxDownloadError": "Une erreur est survenue et les fichiers n'ont pas pu être téléchargés",
+        "gpxIsEmpty": "Aucune position n'a été enregistrée, donc aucun fichier n'a été enregistré",
+        "loadGPX": "Charger",
+        "shareGPX": "Partager",
+        "pause": "Pause",
+        "stop": "Terminer",
+        "positionNotFound": "Votre position n'a pas encore été trouvée, donc l'enregistrement ne peut pas commencer",
+        "mapNotRendered": "La carte n'a pas encore été initialisée, essayez quand elle le sera",
+        "confirmNotDownloadGpx": "Êtes-vous certain de vouloir annuler cet enregistrement? Toutes les données de la trace seront perdues."
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",
