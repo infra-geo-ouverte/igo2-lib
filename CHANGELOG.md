@@ -1,3 +1,27 @@
+# [1.14.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.4...1.14.0) (2022-12-15)
+
+
+### Bug Fixes
+
+* **app:** fix mat-icon suffix css ([#1139](https://github.com/infra-geo-ouverte/igo2-lib/issues/1139)) ([afae52e](https://github.com/infra-geo-ouverte/igo2-lib/commit/afae52e4b59e3ee1b815411c166f36d159ba6d5e))
+* **export:** layer names with ’ cause export crash (ogre). ([#1146](https://github.com/infra-geo-ouverte/igo2-lib/issues/1146)) ([f9e0551](https://github.com/infra-geo-ouverte/igo2-lib/commit/f9e05515c456cc5732581029122fc0eab2c176e3))
+* **hover:** different view projection cause app crash due to vector tile definition ([e1a0a93](https://github.com/infra-geo-ouverte/igo2-lib/commit/e1a0a93d7329197ff0a8efb5875d829388552e94))
+* **query:** don't show message when feature count is 1 or less ([#1141](https://github.com/infra-geo-ouverte/igo2-lib/issues/1141)) ([74dc55d](https://github.com/infra-geo-ouverte/igo2-lib/commit/74dc55dce93a1d97340fdd85a4e72af0da5c2c42))
+* **query:** undefined geometry handling ([#1143](https://github.com/infra-geo-ouverte/igo2-lib/issues/1143)) ([74c18d4](https://github.com/infra-geo-ouverte/igo2-lib/commit/74c18d4a964f5c065d340a097bca4e2065418231))
+
+
+### Features
+
+* **auth:** allow language force to bypass user locale ([#1147](https://github.com/infra-geo-ouverte/igo2-lib/issues/1147)) ([52ab2c9](https://github.com/infra-geo-ouverte/igo2-lib/commit/52ab2c9fa7c700bae29411819b7580b1ef152335))
+* **ConfigFileToGeoDBService:** using zipped geojson ([#1140](https://github.com/infra-geo-ouverte/igo2-lib/issues/1140)) ([8c7dc93](https://github.com/infra-geo-ouverte/igo2-lib/commit/8c7dc93e750cb5ec9328a449e4e4a1c53d971d25))
+* **draw:** added possibility to use a predefined radius when drawing circle in drawing tool ([#1090](https://github.com/infra-geo-ouverte/igo2-lib/issues/1090)) ([4a93c0d](https://github.com/infra-geo-ouverte/igo2-lib/commit/4a93c0d3aae8fdd768b312c7a7c716c404a7543e))
+* **draw:** Drawing coordinate label and predefined values (area,length,perimeter)([#1092](https://github.com/infra-geo-ouverte/igo2-lib/issues/1092)) ([f9e3fe0](https://github.com/infra-geo-ouverte/igo2-lib/commit/f9e3fe0d14a1c80f0a8139880de7f9b25ba4e667))
+* **import:** controls for import formats ([#1144](https://github.com/infra-geo-ouverte/igo2-lib/issues/1144)) ([13ed654](https://github.com/infra-geo-ouverte/igo2-lib/commit/13ed6543789d4f5e9d7ae568f0169118345c21c1))
+* **layer & catalog:** provide interface to handle profils on layer (auth) ([#1109](https://github.com/infra-geo-ouverte/igo2-lib/issues/1109)) ([f00532f](https://github.com/infra-geo-ouverte/igo2-lib/commit/f00532f95d1504e4156b56ebf8bb95a4189b19e5))
+* **print:** print make georeferenced PDF ([#1149](https://github.com/infra-geo-ouverte/igo2-lib/issues/1149)) ([7b3eeb6](https://github.com/infra-geo-ouverte/igo2-lib/commit/7b3eeb65696c70be367e75a22672a6de83f9627e))
+
+
+
 ## [1.13.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.3...1.13.4) (2022-11-22)
 
 

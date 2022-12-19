@@ -23,3 +23,9 @@ export interface PrintOptions {
   isPrintService: boolean;
   doZipFile: boolean;
 }
+
+export interface TextPdfSizeAndMargin {
+  fontSize: number,
+  marginLeft: number,
+  height: number
+}
