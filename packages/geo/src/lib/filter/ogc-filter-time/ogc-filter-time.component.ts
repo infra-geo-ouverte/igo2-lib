@@ -104,6 +104,9 @@ export class OgcFilterTimeComponent implements OnInit {
     return this.currentFilter.displayFormat ? this.currentFilter.displayFormat : this._defaultDisplayFormat;
   }
 
+  public filterBeginFunction;
+  public filterEndFunction;
+
   constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit(){
@@ -121,6 +124,8 @@ export class OgcFilterTimeComponent implements OnInit {
     this.updateHoursMinutesArray();
     // update value for now value
     this.updateValues();
+    this.dateFilter(this.filterBeginFunction, 'begin');
+    this.dateFilter(this.filterEndFunction, 'end');
   }
 
   parseFilter(filter): Date {
@@ -282,7 +287,7 @@ export class OgcFilterTimeComponent implements OnInit {
     }
   }
 
-  dateFilter(type: string, date: string): boolean {
+  dateFilter(type: string, date: string) {
     const dateValue = new Date(date);
     const diff = dateValue.getTime() - new Date(this.handleMin()).getTime();
 
@@ -291,9 +296,11 @@ export class OgcFilterTimeComponent implements OnInit {
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
         const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'years', true);
-        return (monthDiffPlus1 % moment.duration(this.step).asYears()) === 0;
+        this.filterEndFunction = (monthDiffPlus1 % moment.duration(this.step).asYears()) === 0;
+        return;
       } else if ( type === 'begin' ) {
-        return (monthDiff % moment.duration(this.step).asYears()) === 0;
+        this.filterBeginFunction = (monthDiff % moment.duration(this.step).asYears()) === 0;
+        return;
       }
     }
     else if (this.ogcFilterTimeService.stepIsMonthDuration(this.step)) {
@@ -301,18 +308,22 @@ export class OgcFilterTimeComponent implements OnInit {
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
         const monthDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
-        return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
+        this.filterEndFunction = (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
+        return;
       } else if ( type === 'begin' ) {
-        return (monthDiff % moment.duration(this.step).asMonths()) === 0;
+        this.filterBeginFunction = (monthDiff % moment.duration(this.step).asMonths()) === 0;
+        return;
       }
     } else if (this.ogcFilterTimeService.stepIsWeekDuration(this.step)) {
       const weekDiff = moment(dateValue).diff(moment(this.handleMin()), 'weeks', true);
       if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
         const weekDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
-        return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
+        this.filterEndFunction = (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
+        return;
       } else if ( type === 'begin' ) {
-        return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
+        this.filterBeginFunction = (weekDiff % moment.duration(this.step).asWeeks()) === 0;
+        return;
       }
     } else if (this.ogcFilterTimeService.stepIsDayDuration(this.step)) {
       const dayDiff = moment(dateValue).diff(moment(this.handleMin()), 'days', true);
@@ -320,20 +331,36 @@ export class OgcFilterTimeComponent implements OnInit {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
         const dayDiffPlus1 = moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
         const _mod = (dayDiffPlus1 % moment.duration(this.step).asDays());
-        return (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+        this.filterEndFunction = (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+        return;
       } else if ( type === 'begin' ) {
         const _mod = ((dayDiff % moment.duration(this.step).asDays()) + 1);
-        return (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8
+        this.filterBeginFunction = (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8
+        return;
       }
     } else if ( this.ogcFilterTimeService.stepIsHourDuration(this.step) ) {
-      const hourDiff = moment(dateValue).diff(moment(this.handleMin()), 'hours', true);
-      return (hourDiff % moment.duration(this.step).asHours()) === 0;
-
+      if ( type === 'end' ) {
+        const hourDiff = moment(dateValue).diff(moment(this.handleMin()), 'hours', true);
+        this.filterEndFunction = (hourDiff % moment.duration(this.step).asHours()) === 0;
+        return;
+      } else if (type === 'begin') {
+        const hourDiff = moment(dateValue).diff(moment(this.handleMin()), 'hours', true);
+        this.filterBeginFunction = (hourDiff % moment.duration(this.step).asHours()) === 0;
+        return;
+      }
     } else if ( this.ogcFilterTimeService.stepIsMinuteDuration(this.step) ) {
-      return true;
+      if ( type === 'end' ) {
+        this.filterEndFunction = true;
+        return;
+      } else if (type === 'begin') {
+        this.filterBeginFunction = true;
+        return;
+      }
     }
 
-    return diff % this.stepMilliseconds === 0;
+    this.filterEndFunction = diff % this.stepMilliseconds === 0;
+    this.filterBeginFunction = diff % this.stepMilliseconds === 0;
+    return;
   }
 
   getDateTime(date, pos) {
