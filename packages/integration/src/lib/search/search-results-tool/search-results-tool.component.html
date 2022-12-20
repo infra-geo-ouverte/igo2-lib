@@ -7,7 +7,7 @@
 </div>
 
 <igo-flexible
-  *ngIf="store && (store.stateView.empty$ | async)===false"
+  *ngIf="term.length >= 2 && (debouncedEmpty$ | async) === false"
   #topPanel
   initial="100%"
   initialMobile="100%"
