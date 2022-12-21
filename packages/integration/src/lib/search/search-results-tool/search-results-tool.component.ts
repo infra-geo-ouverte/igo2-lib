@@ -155,7 +155,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     public toolState: ToolState,
     private directionState: DirectionState,
     configService: ConfigService
-  ) { 
+  ) {
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
     );
