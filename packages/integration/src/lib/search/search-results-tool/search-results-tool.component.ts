@@ -155,7 +155,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     public toolState: ToolState,
     private directionState: DirectionState,
     configService: ConfigService
-  ) {
+  ) { 
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
     );
@@ -525,11 +525,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleTopPanel() {
-    if (this.topPanelState === 'expanded') {
-      this.topPanelState = 'collapsed';
+  toggleTopPanel(event?: MouseEvent) {
+    if(event && ((event.target as any)?.className !== 'igo-panel-title')) {
+      return;
     } else {
-      this.topPanelState = 'expanded';
+      if (this.topPanelState === 'expanded') {
+        this.topPanelState = 'collapsed';
+      } else {
+        this.topPanelState = 'expanded';
+      }
     }
   }
 
