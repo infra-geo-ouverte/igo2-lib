@@ -1,50 +1,46 @@
 <igo-list [navigation]="true">
-  <ng-template
-    #groupTemplate
-    ngFor let-group
-    [ngForOf]="results$ | async">
 
-    <igo-collapsible [class]="group.source.getId()"
-      *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
-      [title]="computeGroupTitle(group)"
-      [collapsed]="collapsed[group.source.title]"
-      (toggle)="collapsed[group.source.title] = $event">
-      <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
-    </igo-collapsible>
+  <ng-container *ngIf="mode === searchResultMode.Grouped; then tabsTemplate else flatTemplate"></ng-container>
 
-    <ng-template #flatTemplate>
-      <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
-    </ng-template>
-
-    <ng-template #storeItemTemplate let-results="results">
-      <ng-template ngFor let-result [ngForOf]="results">
-        <igo-search-results-item
-          igoListItem
-          color="accent"
-          [map]="map"
-          [result]="result"
-          [showIcons]="showIcons"
-          [withZoomButton]="withZoomButton"
-          [focused]="store.state.get(result).focused"
-          [selected]="store.state.get(result).selected"
-          (focus)="resultFocus.emit(result)"
-          (unfocus)="resultUnfocus.emit(result)"
-          (select)="onResultSelect(result)"
-          (mouseenter)="resultFocus.emit(result)"
-          (mouseleave)="resultUnfocus.emit(result)">
-
-          <ng-container igoSearchItemToolbar
-            [ngTemplateOutlet]="templateSearchToolbar"
-            [ngTemplateOutletContext]="{result: result}">
-          </ng-container>
-
-        </igo-search-results-item>
-      </ng-template>
-      <span class="moreResults mat-typography" *ngIf="isMoreResults(group)" (click)="displayMoreResults(group)">
-        <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
-      </span>
-    </ng-template>
-
+  <ng-template #tabsTemplate>
+    <mat-tab-group class="custom-tabs-view">
+      <mat-tab *ngFor="let group of results$ | async" [label]="computeGroupTitle(group)">
+        <ng-container *ngTemplateOutlet="storeItemTemplate; context: {group: group}"></ng-container>
+      </mat-tab>
+    </mat-tab-group>
   </ng-template>
 
-</igo-list>
+  <ng-template #flatTemplate>
+    <ng-template ngFor let-group [ngForOf]="results$ | async">
+      <ng-container *ngTemplateOutlet="storeItemTemplate; context: {group: group}"></ng-container>
+    </ng-template>
+  </ng-template>
+
+  <ng-template #storeItemTemplate let-group="group">
+    <ng-template ngFor let-result [ngForOf]="group.results">
+      <igo-search-results-item
+        igoListItem
+        color="accent"
+        [map]="map"
+        [result]="result"
+        [showIcons]="showIcons"
+        [withZoomButton]="withZoomButton"
+        [focused]="store.state.get(result).focused"
+        [selected]="store.state.get(result).selected"
+        (focus)="resultFocus.emit(result)"
+        (unfocus)="resultUnfocus.emit(result)"
+        (select)="onResultSelect(result)"
+        (mouseenter)="resultFocus.emit(result)"
+        (mouseleave)="resultUnfocus.emit(result)">
+
+        <ng-container igoSearchItemToolbar
+          [ngTemplateOutlet]="templateSearchToolbar"
+          [ngTemplateOutletContext]="{result: result}">
+        </ng-container>
+
+      </igo-search-results-item>
+    </ng-template>
+    <span class="moreResults mat-typography" *ngIf="isMoreResults(group)" (click)="displayMoreResults(group)">
+      <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
+    </span>
+  </ng-template>
