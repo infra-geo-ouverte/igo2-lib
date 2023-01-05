@@ -244,7 +244,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
+        debounce(() => timer(this.debounce))
       )
       .subscribe((term: string) => this.onSetTerm(term));
 
