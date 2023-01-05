@@ -1,4 +1,55 @@
-<igo-list [navigation]="true">
+<igo-list [navigation]="true" *ngIf="forToastPanel === false">
+  <ng-template
+    #groupTemplate
+    ngFor let-group
+    [ngForOf]="results$ | async">
+
+    <igo-collapsible [class]="group.source.getId()"
+      *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
+      [title]="computeGroupTitle(group)"
+      [collapsed]="collapsed[group.source.title]"
+      (toggle)="collapsed[group.source.title] = $event">
+      <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
+    </igo-collapsible>
+
+    <ng-template #flatTemplate>
+      <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
+    </ng-template>
+
+    <ng-template #storeItemTemplate let-results="results">
+      <ng-template ngFor let-result [ngForOf]="results">
+        <igo-search-results-item
+          igoListItem
+          color="accent"
+          [map]="map"
+          [result]="result"
+          [showIcons]="showIcons"
+          [withZoomButton]="withZoomButton"
+          [focused]="store.state.get(result).focused"
+          [selected]="store.state.get(result).selected"
+          (focus)="resultFocus.emit(result)"
+          (unfocus)="resultUnfocus.emit(result)"
+          (select)="onResultSelect(result)"
+          (mouseenter)="resultFocus.emit(result)"
+          (mouseleave)="resultUnfocus.emit(result)">
+
+          <ng-container igoSearchItemToolbar
+            [ngTemplateOutlet]="templateSearchToolbar"
+            [ngTemplateOutletContext]="{result: result}">
+          </ng-container>
+
+        </igo-search-results-item>
+      </ng-template>
+      <span class="moreResults mat-typography" *ngIf="isMoreResults(group)" (click)="displayMoreResults(group)">
+        <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
+      </span>
+    </ng-template>
+
+  </ng-template>
+
+</igo-list>
+
+<igo-list [navigation]="true" *ngIf="forToastPanel">
 
   <ng-container *ngIf="mode === searchResultMode.Grouped; then tabsTemplate else flatTemplate"></ng-container>
 
@@ -44,3 +95,4 @@
       <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
     </span>
   </ng-template>
+</igo-list>
