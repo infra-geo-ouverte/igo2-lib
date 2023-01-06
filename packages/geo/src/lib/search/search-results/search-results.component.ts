@@ -23,6 +23,9 @@ import { SearchService } from '../shared/search.service';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
 
+import { ConfigService } from '@igo2/core';
+
+
 export enum SearchResultMode {
   Grouped = 'grouped',
   Flat = 'flat'
@@ -39,6 +42,9 @@ export enum SearchResultMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
+
+  public showValue:Boolean=true;
+
   /**
    * Reference to the SearchResultMode enum
    * @internal
@@ -137,7 +143,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   >;
 
   constructor(private cdRef: ChangeDetectorRef,
-              private searchService: SearchService) {}
+              private searchService: SearchService,
+              private configService: ConfigService
+              ) {}
 
   /**
    * Bind the search results store to the watcher
@@ -149,6 +157,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     this.settingsChange$$ = this.settingsChange$.subscribe(() => {
       this.pageIterator = [];
     });
+    //configService to show value of results
+    this.showValue= this.configService.getConfig('searchResultsNumber');
   }
 
   /**
@@ -169,7 +179,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   computeGroupTitle(group: {source: SearchSource; results: SearchResult[]}): string {
     const parts = [group.source.title];
     const count = group.results.length;
-    if (count > 1) {
+    if (count > 1 && this.showValue) {
       parts.push(`(${count})`);
     }
     return parts.join(' ');
