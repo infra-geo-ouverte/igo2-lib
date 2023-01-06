@@ -4,19 +4,19 @@ import { RecordParametersComponent } from './record-parameters/record-parameters
 import { GpxSelectionComponent } from './gpx-selection/gpx-selection.component';
 import olGeolocation from 'ol/Geolocation';
 import * as olSphere from 'ol/sphere';
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 import { MapService } from '../shared/map.service';
 import { downloadContent } from '@igo2/utils';
 import {transform} from 'ol/proj';
 import { MapGeolocationController } from '../shared';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
 import Feature from 'ol/Feature';
 import { LineString } from 'ol/geom';
 import { StyleService, VectorLayer } from '../../layer';
 import { QueryableDataSourceOptions } from '../../query';
 import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
 import { Subscription } from 'rxjs';
+import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
 
 interface PositionDetailed {
   coordinates: number[];
@@ -54,7 +54,8 @@ export class RecordButtonComponent {
     private mapService: MapService,
     private languageService: LanguageService,
     private styleService: StyleService,
-    private snackBar: MatSnackBar,
+    private messageService: MessageService,
+    private geoDBService: GeoDBService
     ) { }
 
   /**
@@ -103,20 +104,16 @@ export class RecordButtonComponent {
         result.fileName = 'untitled';
       }
       if(!this.mapService.getMap()) {
-        this.snackBar.open(this.languageService.translate.instant(
+        this.messageService.alert(this.languageService.translate.instant(
           'igo.geo.record-prompts.mapNotRendered'
-        ), 'OK',{
-          duration: 3000
-        });
+        ));
         return;
       }
       this.geoMap = this.mapService.getMap().geolocationController;
       if(!this.geoMap.position$.value) {
-        this.snackBar.open(this.languageService.translate.instant(
+        this.messageService.alert(this.languageService.translate.instant(
           'igo.geo.record-prompts.positionNotFound'
-        ), 'OK',{
-          duration: 3000
-        });
+        ));
         return;
       }
       this.recordParameters = result;
@@ -297,38 +294,58 @@ export class RecordButtonComponent {
         for(let i = 0; i<reservedChars.length; i++) {
           this.fileName = this.fileName.replace(reservedChars.charAt(i), "&");
         }
+
         if(result === 'both') {
           downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileName + '_' + 'track' + '.gpx');
           downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
+          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileName + '_' + 'track' + '.gpx'),
+                                     new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
         }
         else if(result === 'track') {
           downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileName + '_' + 'track' + '.gpx');
+          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileName + '_' + 'track' + '.gpx')]);
         }
         else if(result !== undefined) {
           downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
+          this.updateIndexedDBFiles([new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
         }
         this.routeFeatures = [];
         this.recordParameters = undefined;
         this.timePassed = 0;
         if(result) {
-          this.snackBar.open(this.languageService.translate.instant(
+          this.messageService.success(this.languageService.translate.instant(
             'igo.geo.record-prompts.gpxDownloadedToast'
-          ), 'OK',{
-            duration: 3000
-          });
+          ));
         }
       });
     }
     else {
-      this.snackBar.open(this.languageService.translate.instant(
+      this.messageService.alert(this.languageService.translate.instant(
         'igo.geo.record-prompts.gpxIsEmpty'
-      ), 'OK',{
-        duration: 3000
-      });
+      ));
       this.routeFeatures = [];
       this.recordParameters = undefined;
       this.timePassed = 0;
     }
+  }
+
+  updateIndexedDBFiles(files: File[]) {
+    let fileArray: File[] = [];
+    this.geoDBService.get('suiviTrace').subscribe(async (res) => {
+      if(res) {
+        fileArray = res;
+      }
+      for await (const file of files) {
+        const nameExists = fileArray.filter(fileF => fileF.name === file.name);
+        let tempFile = file;
+        if(nameExists.length > 0) {
+          const text = await file.text();
+          tempFile = new File([text], file.name.slice(0, file.name.length-4)+`(${nameExists.length}).gpx`);
+        }
+        fileArray.push(tempFile);
+      };
+      this.geoDBService.update('suiviTrace', fileArray.length, fileArray,InsertSourceInsertDBEnum.System,'suiviTrace'+fileArray.length);
+    });
   }
 }
 

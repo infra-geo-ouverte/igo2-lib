@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
 
 import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.component';
 import { HomeExtentButtonComponent } from './home-extent-button/home-extent-button.component';
@@ -43,7 +43,7 @@ import { InfoSectionComponent } from './info-section/info-section.component';
     MatInputModule,
     FormsModule,
     MatDialogModule,
-    MatSnackBarModule,
+    MatTableModule,
 
     IgoLanguageModule,
     IgoConfirmDialogModule,

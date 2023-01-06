@@ -1,4 +1,11 @@
-<div>
+<div *ngIf="stateAffichage === Affichage.Choice" style="width: fit-content;">
+  <div mat-dialog-content style="width: fit-content;">
+    <button mat-button (click)="stateAffichage = Affichage.TrackHistory">Historique</button>
+    <button mat-button (click)="stateAffichage = Affichage.RecordTrack">Enregistrer</button>
+  </div>
+</div>
+
+<div *ngIf="stateAffichage === Affichage.RecordTrack">
   <h1 mat-dialog-title>{{ 'igo.geo.record-prompts.intervalMode' | translate }}</h1>
   <div mat-dialog-content>
     <mat-radio-group class="radio-group element"
@@ -23,5 +30,44 @@
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
     <button mat-button [mat-dialog-close]="getInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
+  </div>
+</div>
+
+<div *ngIf="stateAffichage === Affichage.TrackHistory">
+  <div mat-dialog-content style="align-items:center; padding: 0;">
+    <span *ngIf="!trackFiles || trackFiles.length === 0" style="padding: 20px;">Aucune trace n'a été trouvée</span>
+    <table mat-table *ngIf="trackFiles" [dataSource]="trackFiles" class="mat-elevation-z8">
+
+      <!-- File name Column -->
+      <ng-container matColumnDef="name">
+        <td mat-cell *matCellDef="let element"> {{element.name.substring(0, element.name.lastIndexOf("."))}} </td>
+      </ng-container>
+
+      <!-- Date Column -->
+      <ng-container matColumnDef="date">
+        <td mat-cell *matCellDef="let element"> {{ getDate(element.lastModified) }} </td>
+      </ng-container>
+
+      <!-- Controls Column -->
+      <ng-container matColumnDef="buttons">
+        <td mat-cell *matCellDef="let element" style="padding-top: 8px; padding-bottom: 8px;">
+          <div style="display:inline-block; width: 100%;">
+            <button mat-raised-button (click)="chargerFile(element)" style="width: 100%; margin-bottom: 5px;">{{ 'igo.geo.record-prompts.loadGPX' | translate }}</button>
+          </div>
+          <div style="width: 100%;">
+            <button mat-raised-button color="warn" (click)="supprimerGPXFile(element)" style="width: 100%;">
+              <mat-icon svgIcon="delete"
+                style="vertical-align: middle;">
+              </mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-row *matRowDef="let row; columns: ['name', 'date', 'buttons'];"></tr>
+    </table>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
   </div>
 </div>
