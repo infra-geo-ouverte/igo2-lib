@@ -501,6 +501,10 @@
           "title": "Show results geometries",
           "tooltip": "Hide/ show the results geometries "
         },
+        "reverseCoordFormat": {
+          "title": "Reverse Coordinates",
+          "tooltip": "Reverse coordinates format from (longitude, latitude) to (latitude, longitude)"
+        },
         "searchSources": {
           "selectAll": "Select All",
           "unselectAll": "Unselect All",

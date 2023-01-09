@@ -94,13 +94,11 @@
             (click)="$event.stopPropagation()" [checked]="searchResultsGeometryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.searchResultsGeometry.title' | translate}}
           </mat-slide-toggle>
-
           <mat-slide-toggle class="pointer-summary-option" (change)="changeSearchCoordsFormat($event)" tooltip-position="below"
-            matTooltipShowDelay="500" matTooltip="long-lat vs lat-long"
+            matTooltipShowDelay="500" matTooltip="igo.geo.search.reverseCoordFormat.tooltip"
             (click)="$event.stopPropagation()" [checked]="changeSearchCoordsFormatEnabled" [labelPosition]="'after'">
-            long-lat vs lat-long
+            {{'igo.geo.search.reverseCoordFormat.title' | translate}}
           </mat-slide-toggle>
-
         </span>
       </span>
   </mat-menu>

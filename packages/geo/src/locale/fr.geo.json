@@ -500,6 +500,10 @@
           "title": "Montrer tous les résultats",
           "tooltip": "Afficher/cacher la géométrie des résultats"
         },
+        "reverseCoordFormat": {
+          "title": "Inverser les coordonnées",
+          "tooltip": "Inverser les coordonnées de (longitude, latitude) à (latitude, longitude)."
+        },
         "searchSources": {
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",

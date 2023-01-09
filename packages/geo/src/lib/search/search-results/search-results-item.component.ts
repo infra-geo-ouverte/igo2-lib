@@ -13,8 +13,6 @@ import { IgoMap } from '../../map';
 import { CoordinatesReverseSearchSource } from '../shared/sources/coordinates';
 import { StorageService } from '@igo2/core';
 
-//import { SearchState } from '@igo2/integration'
-
 /**
  * Search results list item
  */
