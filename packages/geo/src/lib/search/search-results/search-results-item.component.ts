@@ -11,7 +11,7 @@ import { SearchResult } from '../shared/search.interfaces';
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
 import { IgoMap } from '../../map';
 import { CoordinatesReverseSearchSource } from '../shared/sources/coordinates';
-import { ConfigService, StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core';
 
 //import { SearchState } from '@igo2/integration'
 
@@ -90,7 +90,7 @@ export class SearchResultsItemComponent {
     if(this.changeSearchCoordsFormatEnabled && this.result.source.getId() === CoordinatesReverseSearchSource.id) {
       const coords: [number, number] = this.result.data.geometry.coordinates;
       this.result.meta.titleHtml = `${coords[1]}, ${coords[0]}`;
-    }  
+    }
   }
 
   onZoomHandler() {
