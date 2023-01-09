@@ -94,6 +94,13 @@
             (click)="$event.stopPropagation()" [checked]="searchResultsGeometryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.searchResultsGeometry.title' | translate}}
           </mat-slide-toggle>
+
+          <mat-slide-toggle class="pointer-summary-option" (change)="changeSearchCoordsFormat($event)" tooltip-position="below"
+            matTooltipShowDelay="500" matTooltip="long-lat vs lat-long"
+            (click)="$event.stopPropagation()" [checked]="changeSearchCoordsFormatEnabled" [labelPosition]="'after'">
+            long-lat vs lat-long
+          </mat-slide-toggle>
+
         </span>
       </span>
   </mat-menu>
