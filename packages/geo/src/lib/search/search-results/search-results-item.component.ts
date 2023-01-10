@@ -79,13 +79,13 @@ export class SearchResultsItemComponent {
     return getEntityIcon(this.result);
   }
 
-  private changeSearchCoordsFormatEnabled: boolean = false;
+  private reverseSearchCoordsFormatEnabled: boolean = false;
 
   constructor(private storageService: StorageService) {}
 
   ngOnInit() {
-    this.changeSearchCoordsFormatEnabled = this.storageService.get('changeSearchCoordsFormatEnabled') as boolean || false;
-    if(this.changeSearchCoordsFormatEnabled && this.result.source.getId() === CoordinatesReverseSearchSource.id) {
+    this.reverseSearchCoordsFormatEnabled = this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
+    if(this.reverseSearchCoordsFormatEnabled && this.result.source.getId() === CoordinatesReverseSearchSource.id) {
       const coords: [number, number] = this.result.data.geometry.coordinates;
       this.result.meta.titleHtml = `${coords[1]}, ${coords[0]}`;
     }

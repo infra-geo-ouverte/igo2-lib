@@ -109,7 +109,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    /**
    * Event emitted when the coords format setting is changed
    */
-   @Output() changeSearchCoordsFormatStatus = new EventEmitter<boolean>();
+   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
 
   /**
    * Search term
@@ -137,7 +137,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input() pointerSummaryEnabled: boolean = false;
   @Input() searchResultsGeometryEnabled: boolean = false;
-  @Input() changeSearchCoordsFormatEnabled: boolean = false;
+  @Input() reverseSearchCoordsFormatEnabled: boolean = false;
   /**
    * Whether a float label should be displayed
    */
