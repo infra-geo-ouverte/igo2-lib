@@ -10,8 +10,6 @@ import {
 import { SearchResult } from '../shared/search.interfaces';
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
 import { IgoMap } from '../../map';
-import { CoordinatesReverseSearchSource } from '../shared/sources/coordinates';
-import { StorageService } from '@igo2/core';
 
 /**
  * Search results list item
@@ -77,18 +75,6 @@ export class SearchResultsItemComponent {
    */
   get icon(): string {
     return getEntityIcon(this.result);
-  }
-
-  private reverseSearchCoordsFormatEnabled: boolean = false;
-
-  constructor(private storageService: StorageService) {}
-
-  ngOnInit() {
-    this.reverseSearchCoordsFormatEnabled = this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
-    if(this.reverseSearchCoordsFormatEnabled && this.result.source.getId() === CoordinatesReverseSearchSource.id) {
-      const coords: [number, number] = this.result.data.geometry.coordinates;
-      this.result.meta.titleHtml = `${coords[1]}, ${coords[0]}`;
-    }
   }
 
   onZoomHandler() {

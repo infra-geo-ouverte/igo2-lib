@@ -43,6 +43,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return this.title$.getValue();
   }
 
+  private reverseSearchCoordsFormatEnabled: boolean = false;
+
   constructor(
     @Inject('options') options: SearchSourceOptions,
     private languageService: LanguageService,
@@ -54,6 +56,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));
+
+    storageService.storageChange$.subscribe(() => {
+      this.reverseSearchCoordsFormatEnabled = storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
+    });
   }
 
   getId(): string {
@@ -94,8 +100,11 @@ export class CoordinatesReverseSearchSource extends SearchSource
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 
-    const roundedCoordString = roundCoordTo(data, 6).join(', ');
-    const roundedCoordStringDMS = dataDMS.join(', ');
+    const roundedCoordString = (!this.reverseSearchCoordsFormatEnabled) ?
+      roundCoordTo(data, 6).join(', ') : roundCoordTo(data, 6).reverse().join(', ');
+
+    const roundedCoordStringDMS = (!this.reverseSearchCoordsFormatEnabled) ?
+      dataDMS.join(', ') : dataDMS.reverse().join(', ');
 
     let geometry: FeatureGeometry = {
       type: 'Point',
@@ -124,10 +133,14 @@ export class CoordinatesReverseSearchSource extends SearchSource
       subtitleHtml += '<small>Confiance: ' + options.conf + '%</small>';
     }
 
-    const coordKey = this.languageService.translate.instant('igo.geo.search.coordinates.coord');
+    const coordKey = (!this.reverseSearchCoordsFormatEnabled) ?
+      this.languageService.translate.instant('igo.geo.search.coordinates.coord'):
+      this.languageService.translate.instant('igo.geo.search.coordinates.revercedCoord');
     properties[coordKey] = roundedCoordString;
 
-    const coordKeyDMS = this.languageService.translate.instant('igo.geo.search.coordinates.coordDMS');
+    const coordKeyDMS = (!this.reverseSearchCoordsFormatEnabled) ?
+     this.languageService.translate.instant('igo.geo.search.coordinates.coordDMS'):
+     this.languageService.translate.instant('igo.geo.search.coordinates.revercedCoordDMS');
     properties[coordKeyDMS] = roundedCoordStringDMS;
 
     return {

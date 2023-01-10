@@ -485,7 +485,9 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "revercedCoord": "Geographic (latitude, longitude)",
           "coordDMS": "Geographic (longitude, latitude) (DMS)",
+          "revercedCoordDMS": "Geographic (latitude, longitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
