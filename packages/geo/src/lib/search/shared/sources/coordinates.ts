@@ -176,6 +176,6 @@ export class CoordinatesReverseSearchSource extends SearchSource
         icon: 'map-marker',
         score: 100, // every coord exists
       }
-    };; 
+    };
   }
 }
