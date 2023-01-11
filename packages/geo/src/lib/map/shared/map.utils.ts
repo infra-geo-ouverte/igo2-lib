@@ -488,11 +488,13 @@ export function roundCoordToString(coord: [number, number], decimal: number = 3)
  * and for the current UTM zone and MTM zone.
  * @param lonLat [number, number] array of the coordinate to transform.
  * @param projections  Projection[] Array of destination projection.
+ * @param reverceCoords To reverse coords from latLon to lonLat (search option)
  * @returns Returns an array of converted coordinates.
  */
 export function lonLatConversion(
   lonLat: [number, number],
-  projections: Projection[]
+  projections: Projection[],
+  reverceCoords?: boolean,
 ): {
   code: string;
   alias: string;
@@ -505,7 +507,7 @@ export function lonLatConversion(
       code: 'EPSG:3857',
       alias: 'Web Mercator',
       coord: rawCoord3857,
-      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')} ; 3857`
+      igo2CoordFormat: (!reverceCoords) ? `${roundCoordTo(rawCoord3857).join(', ')} ; 3857` : `${roundCoordTo(rawCoord3857).reverse().join(', ')} ; 3857`
     }
   ];
 
@@ -518,7 +520,7 @@ export function lonLatConversion(
     code: epsgUtm,
     alias: 'UTM',
     coord: rawCoordUtm,
-    igo2CoordFormat: `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}`
+    igo2CoordFormat: (!reverceCoords) ? `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}` : `${utmName} ${roundCoordTo(rawCoordUtm).reverse().join(', ')}`
   });
 
   // detect the current mtm zone.
@@ -532,7 +534,7 @@ export function lonLatConversion(
       code: epsgMtm,
       alias: 'MTM',
       coord: rawCoordMtm,
-      igo2CoordFormat: `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}`
+      igo2CoordFormat: (!reverceCoords) ? `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}` : `${mtmName} ${roundCoordTo(rawCoordMtm).reverse().join(', ')}`
     });
   }
 
@@ -543,9 +545,7 @@ export function lonLatConversion(
       code: projection.code,
       alias: projection.alias || projection.code,
       coord: rawCoord,
-      igo2CoordFormat: `${roundCoordTo(rawCoord).join(
-        ', '
-      )} ; ${numericEpsgCode}`
+      igo2CoordFormat: (!reverceCoords) ? `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}` : `${roundCoordTo(rawCoord).reverse().join(', ')} ; ${numericEpsgCode}`
     });
   });
 

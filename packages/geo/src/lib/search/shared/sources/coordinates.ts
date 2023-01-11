@@ -96,7 +96,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   private dataToResult(data: [number, number], options: ReverseSearchOptions): SearchResult<Feature> {
     const dataDMS = convertDDToDMS(data);
-    const convertedCoord = lonLatConversion(data, this.projections);
+    const convertedCoord = lonLatConversion(data, this.projections, this.reverseSearchCoordsFormatEnabled);
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 
@@ -176,6 +176,6 @@ export class CoordinatesReverseSearchSource extends SearchSource
         icon: 'map-marker',
         score: 100, // every coord exists
       }
-    };
+    };; 
   }
 }
