@@ -1,4 +1,4 @@
-<igo-list [navigation]="true" *ngIf="forToastPanel === false">
+<igo-list [navigation]="true" *ngIf="tabsMode === false">
   <ng-template
     #groupTemplate
     ngFor let-group
@@ -49,7 +49,7 @@
 
 </igo-list>
 
-<igo-list [navigation]="true" *ngIf="forToastPanel">
+<igo-list [navigation]="true" *ngIf="tabsMode">
 
   <ng-container *ngIf="mode === searchResultMode.Grouped; then tabsTemplate else flatTemplate"></ng-container>
 

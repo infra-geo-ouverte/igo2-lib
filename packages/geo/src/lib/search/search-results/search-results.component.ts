@@ -79,9 +79,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() withZoomButton = false;
 
   /**
-   * To check if the view for toast-panel or search-result-tools
+   * To check if the view for tabsMode for search-result-tools
    */
-  @Input() forToastPanel: boolean = false;
+  @Input() tabsMode: boolean = false;
 
   /**
    * Search term
