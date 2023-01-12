@@ -86,8 +86,16 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('favorite', ['$event'])
   onFavorite(context: Context) {
+    const favContextSet = this.storageService.get('favorite.context.uri');
     if (!context.id) {
       context.id = context.uri;
+    }
+    if (favContextSet === context.uri) {
+      this.contextService.unsetFavContext();
+      if (this.previousMessageId) {
+        this.messageService.remove(this.previousMessageId);
+      }
+      return;
     }
     this.contextService.setDefault(context.id).subscribe(() => {
       if (this.previousMessageId) {

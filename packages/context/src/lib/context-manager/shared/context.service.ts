@@ -157,6 +157,7 @@ export class ContextService {
   }
 
   setDefault(id: string): Observable<any> {
+    this.defaultContextId$.next(id);
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
       return this.http.post(url, { defaultContextId: id });
@@ -164,6 +165,11 @@ export class ContextService {
       this.storageService.set('favorite.context.uri', id);
       return of(undefined);
     }
+  }
+
+  unsetFavContext(): void {
+    this.setDefault(null);
+    this.storageService.set('favorite.context.uri', null);
   }
 
   hideContext(id: string) {

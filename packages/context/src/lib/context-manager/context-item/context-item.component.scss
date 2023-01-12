@@ -22,3 +22,14 @@ mat-icon.disabled {
 mat-list-item.mat-list-item-light ::ng-deep .mat-list-item-content {
   color: rgba(150, 150, 150, 1);
 }
+
+.icon-favorite-light {
+  color: white;
+  stroke: #606060;;
+  stroke-width: 1.7px;
+  transform: scale(0.65);
+}
+
+.button-favorite {
+  width: 21px !important;
+}

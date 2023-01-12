@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
+import { ConfigService, StorageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
@@ -47,10 +47,16 @@ export class ContextItemComponent {
 
   constructor(
     public auth: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    public configService: ConfigService
   ) {}
 
   favoriteClick(context: DetailedContext) {
+    if (this.default) {
+      this.default = false;
+    } else {
+      this.default = true;
+    }
     this.favorite.emit(context);
   }
 }

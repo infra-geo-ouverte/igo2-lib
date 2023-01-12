@@ -13,6 +13,7 @@
     <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
   <button mat-list-avatar
+    class="button-favorite"
     *ngIf="!auth.authenticated && showFavorite"
     mat-icon-button
     igoStopPropagation
@@ -20,7 +21,11 @@
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favoriteClick(context)">
-    <mat-icon svgIcon="star"></mat-icon>
+    <mat-icon 
+      [ngClass]="configService.getConfig('favoriteContext.lightIcon') ? 'icon-favorite-light' : ''"    
+      [color]="default ? 'primary': 'white'" 
+      svgIcon="star">
+    </mat-icon>
   </button>
   <h4 matLine>{{context.title}}</h4>
 
