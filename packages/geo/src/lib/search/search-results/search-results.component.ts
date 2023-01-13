@@ -14,6 +14,7 @@ import type { TemplateRef } from '@angular/core';
 import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
+import { ConfigService } from '@igo2/core';
 import { EntityState, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreWatcher } from '@igo2/common';
 
 import { IgoMap } from '../../map';
@@ -22,9 +23,6 @@ import { TextSearchOptions } from '../shared/sources/source.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
-
-import { ConfigService } from '@igo2/core';
-
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -43,7 +41,7 @@ export enum SearchResultMode {
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
 
-  public showValue:Boolean=true;
+  public showValue = true;
 
   /**
    * Reference to the SearchResultMode enum
@@ -157,8 +155,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     this.settingsChange$$ = this.settingsChange$.subscribe(() => {
       this.pageIterator = [];
     });
-    //configService to show value of results
-    this.showValue= this.configService.getConfig('searchResultsNumber');
+
+    if (this.configService.getConfig('searchResultsNumber') === false) {
+      this.showValue = false;
+    }
   }
 
   /**
