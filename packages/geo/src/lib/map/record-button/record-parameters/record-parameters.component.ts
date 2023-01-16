@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { LanguageService, MessageService } from '@igo2/core';
+import { downloadContent } from '@igo2/utils';
 import { Feature } from '../../../feature';
 import { handleFileImportSuccess, ImportService } from '../../../import-export';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../../offline';
@@ -58,7 +59,12 @@ export class RecordParametersComponent implements OnInit{
     this.geoDBService.update('suiviTrace', this.trackFiles.length, this.trackFiles,
                       InsertSourceInsertDBEnum.System,'suiviTrace'+this.trackFiles.length);
     this.table.renderRows();
-}
+  }
+
+  async downloadGPXFile(file: File) {
+    const fileContent = await file.text();
+    downloadContent(fileContent, 'text/xml;charset=utf-8', file.name);
+  }
 
   getDate(dateNumber : number) {
     return (new Date(dateNumber)).toLocaleDateString();
@@ -72,6 +78,13 @@ export class RecordParametersComponent implements OnInit{
       this.messageService,
       this.languageService
     );
+  }
+
+  formReady(): boolean {
+    if(this.amountInput && this.amountInput > 0 && this.fileName) {
+      return true;
+    }
+    return false;
   }
 
   /**

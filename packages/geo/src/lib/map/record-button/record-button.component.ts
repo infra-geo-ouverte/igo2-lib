@@ -17,6 +17,7 @@ import { QueryableDataSourceOptions } from '../../query';
 import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
 import { Subscription } from 'rxjs';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
+import NoSleep from 'nosleep.js';
 
 interface PositionDetailed {
   coordinates: number[];
@@ -43,6 +44,7 @@ export class RecordButtonComponent {
   timePassed: number = 0;
   lineString: LineString;
   positionSubscription: Subscription;
+  noSleep: NoSleep = new NoSleep();
   geolocationListener: () => any;
 
 
@@ -56,7 +58,8 @@ export class RecordButtonComponent {
     private styleService: StyleService,
     private messageService: MessageService,
     private geoDBService: GeoDBService
-    ) { }
+    ) {
+    }
 
   /**
    * @param coord1 Coordinates of origin point
@@ -100,8 +103,11 @@ export class RecordButtonComponent {
 
   private setUpRecordListeners(result: any) {
     if(result !== undefined) {
-      if(!result.fileName) {
-        result.fileName = 'untitled';
+      if(!result.fileName || !result.amountInput) {
+        this.messageService.alert(this.languageService.translate.instant(
+          'igo.geo.record-prompts.badInputs'
+        ));
+        return;
       }
       if(!this.mapService.getMap()) {
         this.messageService.alert(this.languageService.translate.instant(
@@ -110,12 +116,15 @@ export class RecordButtonComponent {
         return;
       }
       this.geoMap = this.mapService.getMap().geolocationController;
-      if(!this.geoMap.position$.value) {
+      if(!this.geoMap.position$.value || !this.geoMap.position$.value.position) {
         this.messageService.alert(this.languageService.translate.instant(
           'igo.geo.record-prompts.positionNotFound'
         ));
         return;
       }
+      this.noSleep.enable();
+      this.startTime = new Date();
+      this.currentTime = new Date();
       this.recordParameters = result;
       const startingPosition: PositionDetailed = {
         coordinates: transform(this.geoMap.position$.value.position, 'EPSG:3857', 'EPSG:4326'),
@@ -123,8 +132,6 @@ export class RecordButtonComponent {
       };
       this.routeFeatures.push(startingPosition);
       this.createLineString();
-      this.startTime = new Date();
-      this.currentTime = new Date();
       this.positionSubscription = this.geoMap.position$.subscribe(() => {
         for(let i = this.lineString.getCoordinates().length; i<this.routeFeatures.length; i++){
           this.lineString.appendCoordinate(transform(
@@ -237,6 +244,7 @@ export class RecordButtonComponent {
   }
 
   pauseRecording() {
+    this.noSleep.disable();
     clearInterval(this.timerKey);
     clearInterval(this.pointIntervalKey);
     this.geoMap.deleteChangedListener(this.geolocationListener);

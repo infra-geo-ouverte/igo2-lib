@@ -334,7 +334,9 @@
         "numInputLabel": "Save every ",
         "second": " seconds.",
         "meter": "meters.",
-        "routeInputLabel": "Route name",
+        "routeInputLabel": "Track name",
+        "record": "Record",
+        "history": "History",
         "startRecord": "Start",
         "cancel": "Cancel",
         "save": "Save",
@@ -350,7 +352,10 @@
         "stop": "Stop",
         "positionNotFound": "Your position hasn't been found yet, so the recording cannot start",
         "mapNotRendered": "The map hasn'nt been rendered yet, try again when it has rendered",
-        "confirmNotDownloadGpx": "Are you certain you want to cancel this recording? All the track data will be lost."
+        "confirmNotDownloadGpx": "Are you certain you want to cancel this recording? All the track data will be lost.",
+        "invalidNumber": "The number must be valid and above 0",
+        "noTraceFound": "No traces have been found",
+        "badInputs": "The inputs you've entered weren't valid"
       },
       "directionsForm": {
         "stopLayer": "Directions - stops",

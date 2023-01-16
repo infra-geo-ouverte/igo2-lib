@@ -331,6 +331,8 @@
         "timeInterval": "Intervalle en secondes",
         "distInterval": "Intervalle en mètres",
         "numInputLabel": "Enregistrer à chaque ",
+        "record": "Enregistrer",
+        "history": "Historique",
         "second": " secondes.",
         "meter": "mètres.",
         "routeInputLabel": "Nom de la trace",
@@ -349,7 +351,10 @@
         "stop": "Terminer",
         "positionNotFound": "Votre position n'a pas encore été trouvée, donc l'enregistrement ne peut pas commencer",
         "mapNotRendered": "La carte n'a pas encore été initialisée, essayez quand elle le sera",
-        "confirmNotDownloadGpx": "Êtes-vous certain de vouloir annuler cet enregistrement? Toutes les données de la trace seront perdues."
+        "confirmNotDownloadGpx": "Êtes-vous certain de vouloir annuler cet enregistrement? Toutes les données de la trace seront perdues.",
+        "invalidNumber": "Le nombre saisi doit être valide et supérieur à 0",
+        "noTraceFound": "Aucune trace n'a été trouvée",
+        "badInputs": "Les données que vous avez entrée n'étaient pas valides"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",

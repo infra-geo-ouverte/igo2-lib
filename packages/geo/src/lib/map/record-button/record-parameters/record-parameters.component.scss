@@ -32,12 +32,11 @@ input[type=number] {
   word-wrap: break-word !important;
   white-space: unset !important;
   flex: 0 0 40% !important;
-  width: 40% !important;
+  width: 37% !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
-  padding-left: 10px;
 
-  word-break: break-word;
+  word-break:break-word;
 
   -ms-hyphens: auto;
   -moz-hyphens: auto;
@@ -48,13 +47,13 @@ input[type=number] {
 .mat-column-date {
   word-wrap: break-word !important;
   white-space: unset !important;
-  flex: 0 0 30% !important;
-  width: 30% !important;
+  flex: 0 0 40% !important;
+  width: 38% !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
   padding-left: 10px;
 
-  word-break: break-word;
+  word-break:break-word;
 
   -ms-hyphens: auto;
   -moz-hyphens: auto;
@@ -63,8 +62,7 @@ input[type=number] {
 }
 
 .mat-column-buttons {
-  flex: 0 0 30% !important;
-  width: 30% !important;
-  padding-right: 10px;
+  flex: 0 0 20% !important;
+  width: 25% !important;
   padding-left: 10px;
 }

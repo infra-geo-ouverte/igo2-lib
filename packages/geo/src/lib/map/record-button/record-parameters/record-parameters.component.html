@@ -1,12 +1,13 @@
 <div *ngIf="stateAffichage === Affichage.Choice" style="width: fit-content;">
   <div mat-dialog-content style="width: fit-content;">
-    <button mat-button (click)="stateAffichage = Affichage.TrackHistory">Historique</button>
-    <button mat-button (click)="stateAffichage = Affichage.RecordTrack">Enregistrer</button>
+    <button mat-button (click)="stateAffichage = Affichage.TrackHistory">{{ 'igo.geo.record-prompts.history' | translate }}</button>
+    <button mat-button (click)="stateAffichage = Affichage.RecordTrack">{{ 'igo.geo.record-prompts.record' | translate }}</button>
   </div>
 </div>
 
 <div *ngIf="stateAffichage === Affichage.RecordTrack">
   <h1 mat-dialog-title>{{ 'igo.geo.record-prompts.intervalMode' | translate }}</h1>
+
   <div mat-dialog-content>
     <mat-radio-group class="radio-group element"
     [(ngModel)]="intervalMode">
@@ -14,28 +15,33 @@
       <mat-radio-button value="distance">{{ 'igo.geo.record-prompts.distInterval' | translate }}</mat-radio-button>
     </mat-radio-group>
 
-    <!-- <mat-form-field appearance="fill"> -->
     <div class="element">
-    <label class="ang-label">{{ 'igo.geo.record-prompts.numInputLabel' | translate }}</label>
-      <input  matInput type="number" [(ngModel)]="amountInput" style="width: 2.5em; text-align: right; background-color: rgba(0, 0, 0, 0.04); border-bottom: 1px solid black">
+      <label class="ang-label">
+        <span *ngIf="!amountInput" style="font-size: small; color: red;"><sup>*</sup></span>
+        {{ 'igo.geo.record-prompts.numInputLabel' | translate }}
+      </label>
+      <input matInput min="1" type="number" [(ngModel)]="amountInput" style="width: 2.5em; text-align: right; background-color: rgba(0, 0, 0, 0.04); border-bottom: 1px solid black">
       <label class="ang-label">{{ intervalMode === 'time' ? ('igo.geo.record-prompts.second' | translate) : ('igo.geo.record-prompts.meter' | translate) }}</label>
-    </div><!-- </mat-form-field> -->
+      <p *ngIf="amountInput <= 0" style="font-size: small; color: red;">* {{ 'igo.geo.record-prompts.invalidNumber' | translate }}</p>
+    </div>
 
     <mat-form-field appearance="fill" class="element">
-      <mat-label class="ang-label">{{ 'igo.geo.record-prompts.routeInputLabel' | translate }}</mat-label>
+      <mat-label class="ang-label">
+        <span *ngIf="!fileName" style="font-size: small; color: red;"><sup>*</sup></span>
+        {{ 'igo.geo.record-prompts.routeInputLabel' | translate }}</mat-label>
       <input  matInput [(ngModel)]="fileName">
     </mat-form-field>
 
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
-    <button mat-button [mat-dialog-close]="getInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
+    <button mat-button [disabled]="!formReady()" [mat-dialog-close]="getInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
   </div>
 </div>
 
 <div *ngIf="stateAffichage === Affichage.TrackHistory">
   <div mat-dialog-content style="align-items:center; padding: 0;">
-    <span *ngIf="!trackFiles || trackFiles.length === 0" style="padding: 20px;">Aucune trace n'a été trouvée</span>
+    <h3 mat-dialog-title *ngIf="!trackFiles || trackFiles.length === 0" style="padding-right: 20px; padding-left: 20px; font-size: 15px;">{{ 'igo.geo.record-prompts.noTraceFound' | translate }}</h3>
     <table mat-table *ngIf="trackFiles" [dataSource]="trackFiles" class="mat-elevation-z8">
 
       <!-- File name Column -->
@@ -50,16 +56,21 @@
 
       <!-- Controls Column -->
       <ng-container matColumnDef="buttons">
-        <td mat-cell *matCellDef="let element" style="padding-top: 8px; padding-bottom: 8px;">
+        <td mat-cell *matCellDef="let element" style="padding-top: 8px; padding-bottom: 8px; width: 30%;">
           <div style="display:inline-block; width: 100%;">
             <button mat-raised-button (click)="chargerFile(element)" style="width: 100%; margin-bottom: 5px;">{{ 'igo.geo.record-prompts.loadGPX' | translate }}</button>
-          </div>
-          <div style="width: 100%;">
-            <button mat-raised-button color="warn" (click)="supprimerGPXFile(element)" style="width: 100%;">
-              <mat-icon svgIcon="delete"
-                style="vertical-align: middle;">
-              </mat-icon>
-            </button>
+            <div style="font-size:smaller;">
+              <button mat-raised-button (click)="downloadGPXFile(element)" style="width: 48%; float:left; display:inline; padding: 0; min-width: 0px; margin-right: 4%;">
+                <mat-icon svgIcon="download"
+                  style="vertical-align: middle; transform: scale(0.75);">
+                </mat-icon>
+              </button>
+              <button mat-raised-button color="warn" (click)="supprimerGPXFile(element)" style="width: 48%; float:left; display:inline; padding: 0; min-width: 0px;">
+                <mat-icon svgIcon="delete"
+                  style="vertical-align: middle; transform: scale(0.75);">
+                </mat-icon>
+              </button>
+            </div>
           </div>
         </td>
       </ng-container>
