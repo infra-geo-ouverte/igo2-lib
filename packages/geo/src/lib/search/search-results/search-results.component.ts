@@ -156,7 +156,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       this.pageIterator = [];
     });
 
-    if (this.configService.getConfig('searchResultsNumber') === false) {
+    if (this.configService.getConfig('searchSources.searchResultsNumber') === false) {
       this.showValue = false;
     }
   }
