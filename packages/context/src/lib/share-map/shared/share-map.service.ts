@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 
-import { RouteService, MessageService } from '@igo2/core';
+import { RouteService } from '@igo2/core';
 import { Layer, WMSDataSourceOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
@@ -12,14 +12,23 @@ import { ContextService } from '../../context-manager/shared/context.service';
 })
 export class ShareMapService {
 
+  private language = '';
+
   constructor(
     private contextService: ContextService,
-    private messageService: MessageService,
     @Optional() private route: RouteService
-  ) {}
+  ) {
+    this.route.queryParams.subscribe((params) => {
+      if (params['lang']) {
+        this.language = params['lang'];
+      }
+    });
+  }
 
   getUrlWithApi(formValues) {
-    return `${location.origin + location.pathname}?context=${formValues.uri}`;
+    return this.language ?
+      `${location.origin + location.pathname}?context=${formValues.uri}&lang=${this.language}` :
+      `${location.origin + location.pathname}?context=${formValues.uri}`;
   }
 
   createContextShared(map: IgoMap, formValues) {
@@ -108,8 +117,9 @@ export class ShareMapService {
       context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
-    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
-
+    let url = this.language ?
+      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}&lang=${this.language}` :
+      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
       url = url.endsWith('&') ? url.slice(0, -1) : url;
