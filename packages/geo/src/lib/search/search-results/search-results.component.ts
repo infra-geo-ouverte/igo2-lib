@@ -14,6 +14,7 @@ import type { TemplateRef } from '@angular/core';
 import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
+import { ConfigService } from '@igo2/core';
 import { EntityState, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreWatcher } from '@igo2/common';
 
 import { IgoMap } from '../../map';
@@ -39,6 +40,9 @@ export enum SearchResultMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
+
+  private showResultsCount: boolean = true;
+
   /**
    * Reference to the SearchResultMode enum
    * @internal
@@ -137,7 +141,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   >;
 
   constructor(private cdRef: ChangeDetectorRef,
-              private searchService: SearchService) {}
+              private searchService: SearchService,
+              private configService: ConfigService
+              ) {}
 
   /**
    * Bind the search results store to the watcher
@@ -149,6 +155,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     this.settingsChange$$ = this.settingsChange$.subscribe(() => {
       this.pageIterator = [];
     });
+
+    if (this.configService.getConfig('searchSources.showResultsCount') === false) {
+      this.showResultsCount = false;
+    }
   }
 
   /**
@@ -169,7 +179,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   computeGroupTitle(group: {source: SearchSource; results: SearchResult[]}): string {
     const parts = [group.source.title];
     const count = group.results.length;
-    if (count > 1) {
+    if (count > 1 && this.showResultsCount) {
       parts.push(`(${count})`);
     }
     return parts.join(' ');
