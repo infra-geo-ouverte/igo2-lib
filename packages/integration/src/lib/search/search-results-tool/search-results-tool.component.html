@@ -41,7 +41,7 @@
   </div>
 
   <div igoFlexibleFill class="igo-content">
-    <igo-panel [title]="featureTitle" *ngIf="feature$ | async">
+    <igo-panel [title]="featureTitle" *ngIf="feature$ | async" (click)="toggleTopPanel($event)" [cursorPointer]="true">
 
       <button
         mat-icon-button
