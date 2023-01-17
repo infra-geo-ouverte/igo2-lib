@@ -41,7 +41,7 @@ export enum SearchResultMode {
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
 
-  public showValue = true;
+  private showResultsCount: boolean = true;
 
   /**
    * Reference to the SearchResultMode enum
@@ -156,8 +156,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       this.pageIterator = [];
     });
 
-    if (this.configService.getConfig('searchSources.searchResultsNumber') === false) {
-      this.showValue = false;
+    if (this.configService.getConfig('searchSources.showResultsCount') === false) {
+      this.showResultsCount = false;
     }
   }
 
@@ -179,7 +179,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   computeGroupTitle(group: {source: SearchSource; results: SearchResult[]}): string {
     const parts = [group.source.title];
     const count = group.results.length;
-    if (count > 1 && this.showValue) {
+    if (count > 1 && this.showResultsCount) {
       parts.push(`(${count})`);
     }
     return parts.join(' ');
