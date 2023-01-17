@@ -12,14 +12,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PanelComponent {
-  @Input()
-  get title() {
-    return this._title;
-  }
-  set title(value: string) {
-    this._title = value;
-  }
-  private _title: string;
+  @Input() title: string;
 
   @Input()
   @HostBinding('class.igo-panel-with-header')
@@ -31,12 +24,5 @@ export class PanelComponent {
   }
   private _withHeader = true;
 
-  @Input()
-  get cursorPointer() {
-    return this._cursorPointer;
-  }
-  set cursorPointer(value: boolean) {
-    this._cursorPointer = value;
-  }
-  private _cursorPointer: boolean = false;
+  @Input() cursorPointer: boolean = false;
 }
