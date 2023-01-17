@@ -13,7 +13,7 @@ import {
   FloatLabelType,
   MatFormFieldAppearance
 } from '@angular/material/form-field';
-import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
@@ -244,7 +244,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
+        debounce(() => timer(this.debounce))
       )
       .subscribe((term: string) => this.onSetTerm(term));
 
