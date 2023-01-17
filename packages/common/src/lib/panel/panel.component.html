@@ -1,4 +1,4 @@
-<div *ngIf="withHeader" class="igo-panel-header mat-typography" title="">
+<div *ngIf="withHeader" class="igo-panel-header mat-typography" title="" [ngClass]="{'igo-cursor-pointer': cursorPointer === true}">
   <h3>
     <ng-content select="[panelLeftButton]"></ng-content>
     <div class="igo-panel-title">

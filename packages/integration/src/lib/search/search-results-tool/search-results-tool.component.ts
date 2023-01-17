@@ -525,11 +525,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleTopPanel() {
-    if (this.topPanelState === 'expanded') {
-      this.topPanelState = 'collapsed';
+  toggleTopPanel(event?: MouseEvent) {
+    if(event && ((event.target as any)?.className !== 'igo-panel-title')) {
+      return;
     } else {
-      this.topPanelState = 'expanded';
+      if (this.topPanelState === 'expanded') {
+        this.topPanelState = 'collapsed';
+      } else {
+        this.topPanelState = 'expanded';
+      }
     }
   }
 
