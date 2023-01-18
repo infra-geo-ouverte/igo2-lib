@@ -62,10 +62,10 @@ export class QueryService {
     }
     const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) =>  this.queryLayer(layer, options));
-      
-    let flatArray  = [].concat.apply([], newLayares);
-    
-      return flatArray;
+
+    let flatArray = [].concat.apply([], newLayares);
+
+    return flatArray;
   }
 
   queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> | Observable<Feature[]>[] {
@@ -824,15 +824,15 @@ export class QueryService {
           data.url = data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
           .replace(/\{ymin\}/g, mapExtent[1].toString())
           .replace(/\{xmax\}/g, mapExtent[2].toString())
-          .replace(/\{ymax\}/g, mapExtent[3].toString())
+          .replace(/\{ymax\}/g, mapExtent[3].toString());
         }
-        
+
         if(item.maxResolution) {
           data.maxResolution = item.maxResolution;
         }
 
         if(item.minScale) {
-          data.minScale = item.minScale
+          data.minScale = item.minScale;
         }
 
         return data;
