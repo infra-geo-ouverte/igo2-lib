@@ -255,8 +255,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       .pipe(distinctUntilChanged())
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
 
-    this.showSearchButton = this.configService.getConfig("searchBar.showSearchButton") !== undefined ?
-      this.configService.getConfig("searchBar.showSearchButton") : false;
+    const configValue = this.configService.getConfig("searchBar.showSearchButton");
+    this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
   /**
