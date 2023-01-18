@@ -61,10 +61,8 @@ export class QueryService {
       });
     }
     const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) =>  this.queryLayer(layer, options));
-
+    .map((layer: Layer) =>  this.queryLayer(layer, options));
     let flatArray = [].concat.apply([], newLayares);
-
     return flatArray;
   }
 
