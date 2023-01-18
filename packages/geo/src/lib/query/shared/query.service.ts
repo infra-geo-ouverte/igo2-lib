@@ -61,7 +61,7 @@ export class QueryService {
       });
     }
     const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-    .map((layer: Layer) =>  this.queryLayer(layer, options));
+    .map((layer: Layer) => this.queryLayer(layer, options));
     let flatArray = [].concat.apply([], newLayares);
     return flatArray;
   }
@@ -79,7 +79,7 @@ export class QueryService {
       const request = this.http.get(url, { responseType: 'text' });
       return request.pipe(map(res => this.extractData(res, layer, options, url)));
     }
-    
+
     // if url is array of QueryUrlData
     // check QueryFormat
     if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
