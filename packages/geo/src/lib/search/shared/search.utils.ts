@@ -52,6 +52,7 @@ export function featureToSearchResult(
     delete feature.properties.SHAPE_P;
     delete feature.properties.the_geom;
     delete feature.properties.geom;
+    delete feature.properties.geom32198;
   }
   feature.sourceId = source.getId();
   return {
