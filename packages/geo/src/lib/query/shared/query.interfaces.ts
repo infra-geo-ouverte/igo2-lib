@@ -17,7 +17,7 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
-  queryUrl?: string;
+  queryUrl?: QueryUrlData[];
   queryLayerFeatures?: boolean;
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
@@ -30,4 +30,10 @@ export interface QueryableDataSource extends DataSource {
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
   options: QueryableDataSourceOptions;
+}
+
+export interface QueryUrlData {
+  url: string;
+  maxResolution?: number;
+  minScale?: number;
 }

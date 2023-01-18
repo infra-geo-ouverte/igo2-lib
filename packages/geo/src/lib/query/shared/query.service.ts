@@ -34,7 +34,8 @@ import {
 import {
   QueryOptions,
   QueryableDataSource,
-  QueryableDataSourceOptions
+  QueryableDataSourceOptions,
+  QueryUrlData
 } from './query.interfaces';
 import { MapExtent } from '../../map/shared/map.interface';
 
@@ -59,40 +60,68 @@ export class QueryService {
         this.messageService.remove(id);
       });
     }
-    return layers
-      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) => this.queryLayer(layer, options));
+    const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
+      .map((layer: Layer) =>  this.queryLayer(layer, options));
+      
+    let flatArray  = [].concat.apply([], newLayares);
+    
+      return flatArray;
   }
 
-  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
+  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> | Observable<Feature[]>[] {
+
     const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
+
     if (!url) {
       return of([]);
     }
 
-    if (
-      (layer.dataSource as QueryableDataSource).options.queryFormat ===
-      QueryFormat.HTMLGML2
-    ) {
-      const urlGml = this.getQueryUrl(layer.dataSource, options, true);
-      return this.http.get(urlGml, { responseType: 'text' }).pipe(
-        mergeMap(gmlRes => {
-          const mergedGML = this.mergeGML(gmlRes, url, layer);
-          const imposedGeom = mergedGML[0];
-          const imposedProperties = mergedGML[1];
-          return this.http
-            .get(url, { responseType: 'text' })
-            .pipe(
-              map(res =>
-                this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
-              )
-            );
-        })
-      );
+    // if url is string
+    if(typeof url === 'string') {
+      const request = this.http.get(url, { responseType: 'text' });
+      return request.pipe(map(res => this.extractData(res, layer, options, url)));
     }
+    
+    // if url is array of QueryUrlData
+    // check QueryFormat
+    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+      const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
+      let observables: any = [];
+      for (let i = 0; i < urlGmls.length; i++) {
+        const element = urlGmls[i] as QueryUrlData;
+        observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
+      }
 
-    const request = this.http.get(url, { responseType: 'text' });
-    return request.pipe(map(res => this.extractData(res, layer, options, url)));
+      return observables;
+
+    } else {
+
+      let observables: any = [];
+
+      for (let i = 0; i < url.length; i++) {
+        const element: QueryUrlData = url[i];
+        const request = this.http.get(element.url, { responseType: 'text' });
+        observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
+      }
+      return observables;
+    }
+  }
+
+  private requestDataForHTMLGML2(urlGml: string, url: string ,layer: Layer, options: QueryOptions): Observable<Feature[]> {
+    return this.http.get(urlGml, { responseType: 'text' }).pipe(
+      mergeMap(gmlRes => {
+        const mergedGML = this.mergeGML(gmlRes, url, layer);
+        const imposedGeom = mergedGML[0];
+        const imposedProperties = mergedGML[1];
+        return this.http
+          .get(url, { responseType: 'text' })
+          .pipe(
+            map(res =>
+              this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+            )
+          );
+      })
+    );
   }
 
   private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
@@ -599,7 +628,7 @@ export class QueryService {
     options: QueryOptions,
     forceGML2 = false,
     mapExtent?: MapExtent
-  ): string {
+  ): string | QueryUrlData[]{
     let url;
 
     if (datasource.options.queryUrl) {
@@ -777,20 +806,36 @@ export class QueryService {
    *
    */
 
-  getCustomQueryUrl(
-    datasource: QueryableDataSource,
-    options: QueryOptions,
-    mapExtent?: MapExtent): string {
+    getCustomQueryUrl(
+      datasource: QueryableDataSource,
+      options: QueryOptions,
+      mapExtent?: MapExtent): QueryUrlData[] {
 
-      let url = datasource.options.queryUrl.replace(/\{xmin\}/g, mapExtent[0].toString())
-      .replace(/\{ymin\}/g, mapExtent[1].toString())
-      .replace(/\{xmax\}/g, mapExtent[2].toString())
-      .replace(/\{ymax\}/g, mapExtent[3].toString())
-      .replace(/\{x\}/g, options.coordinates[0].toString())
-      .replace(/\{y\}/g, options.coordinates[1].toString())
-      .replace(/\{resolution\}/g, options.resolution.toString())
-      .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+        return datasource.options.queryUrl.map(item => {
+        let data: QueryUrlData = {
+          url: item.url
+          .replace(/\{x\}/g, options.coordinates[0].toString())
+          .replace(/\{y\}/g, options.coordinates[1].toString())
+          .replace(/\{resolution\}/g, options.resolution.toString())
+          .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
+        };
 
-      return url;
+        if(mapExtent) {
+          data.url = data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
+          .replace(/\{ymin\}/g, mapExtent[1].toString())
+          .replace(/\{xmax\}/g, mapExtent[2].toString())
+          .replace(/\{ymax\}/g, mapExtent[3].toString())
+        }
+        
+        if(item.maxResolution) {
+          data.maxResolution = item.maxResolution;
+        }
+
+        if(item.minScale) {
+          data.minScale = item.minScale
+        }
+
+        return data;
+      });
     }
 }

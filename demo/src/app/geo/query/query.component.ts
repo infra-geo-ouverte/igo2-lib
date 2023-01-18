@@ -52,6 +52,13 @@ export class AppQueryComponent {
     private layerService: LayerService,
     private overlayService: OverlayService
   ) {
+
+
+    this.map.viewController.resolution$.subscribe((res) => {
+      console.log(res);
+    })
+
+
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
@@ -65,7 +72,7 @@ export class AppQueryComponent {
         );
       });
 
-    this.dataSourceService
+    /*this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -84,9 +91,9 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });
+      });*/
 
-    this.dataSourceService
+    /*this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -106,9 +113,41 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });
+      });*/
+      const qs = [
+       /* {
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}',
+          maxResolution: 400,
+          minScale: 100
+        },*/
+        {
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}'
+        }
+      ];
 
-    this.dataSourceService
+      this.layerService
+      .createAsyncLayer({
+        title: 'Vector tile with custom getfeatureinfo url',
+        visible: true,
+        sourceOptions: {
+          type: 'mvt',
+          url:
+            'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
+          queryable: true,
+          // queryFormat: QueryFormat.HTMLGML2,
+          // queryUrl: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}',
+          queryUrl:qs,
+          queryLayerFeatures: false,
+          queryFormat: 'geojson'
+        },
+        mapboxStyle: {
+          url: 'assets/mapboxStyleExample-vectortile.json',
+          source: 'ahocevar'
+        }
+      } as any)
+      .subscribe(l => this.map.addLayer(l));
+
+    /*this.dataSourceService
       .createAsyncDataSource({
         type: 'vector',
         queryable: true,
@@ -127,11 +166,11 @@ export class AppQueryComponent {
           })
         );
         this.addFeatures(dataSource as FeatureDataSource);
-      });
+      });*/
   }
 
   addFeatures(dataSource: FeatureDataSource) {
-    const feature1 = new olFeature({
+    /*const feature1 = new olFeature({
       name: 'feature1',
       geometry: new olLineString([
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
@@ -158,7 +197,7 @@ export class AppQueryComponent {
       ]),
     });
 
-    dataSource.ol.addFeatures([feature1, feature2, feature3]);
+    dataSource.ol.addFeatures([feature1, feature2, feature3]);*/
 
     this.layerService
       .createAsyncLayer({
@@ -181,7 +220,7 @@ export class AppQueryComponent {
       .subscribe(l => this.map.addLayer(l));
 
 
-      this.dataSourceService
+      /*this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/incendie.fcgi',
@@ -201,7 +240,7 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });
+      });*/
 
   }
 
