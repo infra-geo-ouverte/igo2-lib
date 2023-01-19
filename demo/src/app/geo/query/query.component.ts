@@ -65,9 +65,9 @@ export class AppQueryComponent {
   ) {
 
     // get map resolution
-    this.map.viewController.resolution$.subscribe((res) => {
+   /* this.map.viewController.resolution$.subscribe((res) => {
       console.log(res);
-    });
+    });*/
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -127,22 +127,26 @@ export class AppQueryComponent {
 
       this.layerService
       .createAsyncLayer({
-        title: 'Vector tile with custom getfeatureinfo url',
+        title: 'Query test',
         visible: true,
         sourceOptions: {
-          type: 'mvt',
-          url:
-            'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
-          queryable: true,
-          queryFormat: QueryFormat.HTMLGML2,
-          queryUrl: this.queryUrls,
-          queryLayerFeatures: false,
-          //queryFormat: 'geojson'
-        },
-        mapboxStyle: {
-          url: 'assets/mapboxStyleExample-vectortile.json',
-          source: 'ahocevar'
-        }
+        type: 'wms',
+        url:
+        'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
+        queryable: true,
+        queryUrl: 
+        
+        [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image/png&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}'}
+      ]
+        
+        ,
+        queryLayerFeatures: false,
+        queryFormat: 'geojson',
+        params: {
+        layers: 'SDA_MUNIC_S_20K',
+        version: '1.3.0'
+      }
+    }
       } as any)
       .subscribe(l => this.map.addLayer(l));
 
