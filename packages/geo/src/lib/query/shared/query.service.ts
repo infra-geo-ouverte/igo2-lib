@@ -604,7 +604,7 @@ export class QueryService {
     let url;
 
     if (datasource.options.queryUrl) {
-      return this.getCustomQueryUrl(datasource, options, mapExtent);
+      return this.getCustomQueryUrl(datasource, options);
     }
 
     switch (datasource.constructor) {
