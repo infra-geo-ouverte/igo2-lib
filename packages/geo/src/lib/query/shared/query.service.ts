@@ -604,7 +604,7 @@ export class QueryService {
     let url;
 
     if (datasource.options.queryUrl) {
-      return this.getCustomQueryUrl(datasource, options);
+      return this.getCustomQueryUrl(datasource, options, mapExtent);
     }
 
     switch (datasource.constructor) {
@@ -780,7 +780,8 @@ export class QueryService {
 
   getCustomQueryUrl(
     datasource: QueryableDataSource,
-    options: QueryOptions
+    options: QueryOptions,
+    mapExtent?: MapExtent
   ): string {
 
     const extent = olextent.getForViewAndSize(
@@ -791,6 +792,10 @@ export class QueryService {
     );
 
     let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
+    .replace(/\{xmin\}/g, mapExtent[0].toString())
+    .replace(/\{ymin\}/g, mapExtent[1].toString())
+    .replace(/\{xmax\}/g, mapExtent[2].toString())
+    .replace(/\{ymax\}/g, mapExtent[3].toString())
     .replace(/\{x\}/g, options.coordinates[0].toString())
     .replace(/\{y\}/g, options.coordinates[1].toString())
     .replace(/\{resolution\}/g, options.resolution.toString())
