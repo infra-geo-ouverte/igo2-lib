@@ -599,6 +599,7 @@ export class QueryService {
     delete properties.SHAPE_P;
     delete properties.the_geom;
     delete properties.geom;
+    delete properties.geom32198;
 
     let geometry;
     if (featureGeometry) {
@@ -630,7 +631,7 @@ export class QueryService {
     let url;
 
     if (datasource.options.queryUrl) {
-      return this.getCustomQueryUrl(datasource, options, mapExtent);
+      return this.getCustomQueryUrl(datasource, options);
     }
 
     switch (datasource.constructor) {
@@ -804,36 +805,24 @@ export class QueryService {
    *
    */
 
-    getCustomQueryUrl(
-      datasource: QueryableDataSource,
-      options: QueryOptions,
-      mapExtent?: MapExtent): QueryUrlData[] {
+  getCustomQueryUrl(
+    datasource: QueryableDataSource,
+    options: QueryOptions
+  ): string {
 
-        return datasource.options.queryUrl.map(item => {
-        let data: QueryUrlData = {
-          url: item.url
-          .replace(/\{x\}/g, options.coordinates[0].toString())
-          .replace(/\{y\}/g, options.coordinates[1].toString())
-          .replace(/\{resolution\}/g, options.resolution.toString())
-          .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
-        };
+    const extent = olextent.getForViewAndSize(
+      options.coordinates,
+      options.resolution,
+      0,
+      [101, 101]
+    );
 
-        if(mapExtent) {
-          data.url = data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
-          .replace(/\{ymin\}/g, mapExtent[1].toString())
-          .replace(/\{xmax\}/g, mapExtent[2].toString())
-          .replace(/\{ymax\}/g, mapExtent[3].toString());
-        }
+    let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
+    .replace(/\{x\}/g, options.coordinates[0].toString())
+    .replace(/\{y\}/g, options.coordinates[1].toString())
+    .replace(/\{resolution\}/g, options.resolution.toString())
+    .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
 
-        if(item.maxResolution) {
-          data.maxResolution = item.maxResolution;
-        }
-
-        if(item.minScale) {
-          data.minScale = item.minScale;
-        }
-
-        return data;
-      });
-    }
+    return url;
+  }
 }

@@ -164,8 +164,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe(
       (searchTerm: string) => {
-        if (searchTerm !== undefined && searchTerm !== null) {
+        if (searchTerm !== undefined && searchTerm !== null && searchTerm !== '') {
           this.term = searchTerm;
+          this.debouncedEmpty$.next(false);
+        } else if (searchTerm === '') {
+          this.debouncedEmpty$.next(true);
         }
       }
     );
@@ -525,11 +528,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleTopPanel() {
-    if (this.topPanelState === 'expanded') {
-      this.topPanelState = 'collapsed';
+  toggleTopPanel(event?: MouseEvent) {
+    if(event && ((event.target as any)?.className !== 'igo-panel-title')) {
+      return;
     } else {
-      this.topPanelState = 'expanded';
+      if (this.topPanelState === 'expanded') {
+        this.topPanelState = 'collapsed';
+      } else {
+        this.topPanelState = 'expanded';
+      }
     }
   }
 
