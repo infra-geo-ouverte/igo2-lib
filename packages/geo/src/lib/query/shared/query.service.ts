@@ -781,8 +781,7 @@ export class QueryService {
   getCustomQueryUrl(
     datasource: QueryableDataSource,
     options: QueryOptions,
-    mapExtent?: MapExtent
-  ): string {
+    mapExtent?: MapExtent): string {
 
     const extent = olextent.getForViewAndSize(
       options.coordinates,
