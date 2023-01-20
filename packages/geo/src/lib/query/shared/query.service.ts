@@ -157,7 +157,7 @@ export class QueryService {
       /******************* result of checking *******************/
       if(checkScale === true && checkResolution === true) {
         return true;
-      } else if((checkResolution === true && checkScale == undefined) || (checkScale === true && checkResolution == undefined)) {
+      } else if((checkResolution === true && checkScale === undefined) || (checkScale === true && checkResolution === undefined)) {
           return true;
       } else {
         return false;
