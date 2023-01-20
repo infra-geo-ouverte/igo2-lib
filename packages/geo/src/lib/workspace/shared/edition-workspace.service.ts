@@ -428,7 +428,8 @@ export class EditionWorkspaceService {
   public addFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}) {
     if (workspace.layer.dataSource.options.edition.hasGeometry) {
       const projDest = workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
-      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] = this.wktFormat.writeGeometry(
+      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] =
+      'SRID=' + projDest.replace("EPSG:", "") + ';' + this.wktFormat.writeGeometry(
         this.geoJsonFormat.readFeature(feature.geometry).getGeometry().transform('EPSG:4326', projDest),
         { dataProjection: projDest });
     }
@@ -534,9 +535,10 @@ export class EditionWorkspaceService {
       const projDest = workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
       // Remove 3e dimension
       feature.geometry.coordinates = removeZ(feature.geometry.coordinates);
-      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] = this.wktFormat.writeGeometry(
-        this.geoJsonFormat.readFeature(feature.geometry).getGeometry().transform('EPSG:4326', projDest),
-        { dataProjection: projDest });
+      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] =
+        'SRID=' + projDest.replace("EPSG:", "") + ';' + this.wktFormat.writeGeometry(
+          this.geoJsonFormat.readFeature(feature.geometry).getGeometry().transform('EPSG:4326', projDest),
+          { dataProjection: projDest });
     }
 
     for (const property in feature.properties) {
