@@ -82,6 +82,9 @@ export class QueryService {
       return request.pipe(map(res => this.extractData(res, layer, options, url)));
     }
 
+    const resolution: number = layer.map.viewController.getResolution();
+    const scale: number = layer.map.viewController.getScale();
+
     // if url is array of QueryUrlData
     // check QueryFormat
     if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
@@ -90,17 +93,20 @@ export class QueryService {
       let observables: any = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
-        observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
+        if(this.checkScaleAndResolution(resolution, scale, element)) {
+          observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
+        }
       }
       return observables;
 
     } else {
-
       let observables: any = [];
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
-        const request = this.http.get(element.url, { responseType: 'text' });
-        observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
+        if(this.checkScaleAndResolution(resolution, scale, element)) {
+          const request = this.http.get(element.url, { responseType: 'text' });
+          observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
+        }
       }
       return observables;
     }
@@ -121,6 +127,42 @@ export class QueryService {
           );
       })
     );
+  }
+
+  private checkScaleAndResolution(resolution: number, scale: number, element: QueryUrlData): boolean {
+    let checkScale: boolean;
+    let checkResolution: boolean;
+
+    if(!element.minResolution && !element.maxResolution && !element.minScale && !element.maxScale) {
+      return true;
+    } else {
+      /******************* checking Resolution *******************/
+      if(element.minResolution || element.maxResolution) {
+        if((resolution > element.minResolution) && (resolution < element.maxResolution)) {
+          checkResolution = true;
+        } else if((resolution === element.minResolution) || (resolution === element.maxResolution)) {
+          checkResolution = true;
+        }
+      }
+
+      /******************* checking Scale *******************/
+      if(element.minScale || element.maxScale) {
+        if((scale > element.minScale) && (scale < element.maxScale)) {
+          checkScale = true;
+        } else if((scale === element.minScale) || (scale === element.maxScale)) {
+          checkScale = true;
+        }
+      }
+
+      /******************* result of checking *******************/
+      if(checkScale === true && checkResolution === true) {
+        return true;
+      } else if((checkResolution === true && checkScale == undefined) || (checkScale === true && checkResolution == undefined)) {
+          return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
@@ -839,9 +881,17 @@ export class QueryService {
         if(item.maxResolution) {
           data.maxResolution = item.maxResolution;
         }
-      
+
+        if(item.minResolution) {
+          data.minResolution = item.minResolution;
+        }
+
         if(item.minScale) {
           data.minScale = item.minScale;
+        }
+
+        if(item.maxScale) {
+          data.maxScale = item.maxScale;
         }
 
         return data;

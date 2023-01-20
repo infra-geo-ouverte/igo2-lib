@@ -49,11 +49,6 @@ export class AppQueryComponent {
     private layerService: LayerService
   ) {
 
-    // get map resolution
-   /* this.map.viewController.resolution$.subscribe((res) => {
-      console.log(res);
-    });*/
-
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
@@ -67,7 +62,7 @@ export class AppQueryComponent {
         );
       });
 
-    /*this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -86,9 +81,9 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });*/
+      });
 
-    /*this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -108,33 +103,25 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });*/
+      });
 
-      /*this.layerService
+      this.layerService
       .createAsyncLayer({
         title: 'Query test',
         visible: true,
         sourceOptions: {
-        type: 'wms',
-        url:
-        'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
-        queryable: true,
-        queryUrl: 
-        
-        [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}
-      ]
-        
-        ,
-        queryLayerFeatures: false,
-        queryFormat: QueryFormat.HTMLGML2,
-        // queryFormat: 'geojson',
-        params: {
-        layers: 'SDA_MUNIC_S_20K',
-        version: '1.3.0'
-      }
-    }
-      } as any)
-      .subscribe(l => this.map.addLayer(l));*/
+          type: 'wms',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
+          queryable: true,
+          queryUrl: [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}],
+          queryLayerFeatures: false,
+          queryFormat: 'geojson',
+          params: {
+            layers: 'SDA_MUNIC_S_20K',
+            version: '1.3.0'
+          }
+        }
+      } as any).subscribe(l => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -188,16 +175,17 @@ export class AppQueryComponent {
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'Vector tile with custom getfeatureinfo url',
         visible: true,
         sourceOptions: {
           type: 'mvt',
-          url:
-            'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
+          url: 'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
           queryable: true,
-          queryUrl: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application%2Fgeojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
+          queryUrl: [
+            { url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application%2Fgeojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}
+          ],
           queryLayerFeatures: false,
           // queryFormat: 'geojson'
         },
@@ -206,27 +194,24 @@ export class AppQueryComponent {
           source: 'ahocevar'
         }
       } as any)
-      .subscribe(l => this.map.addLayer(l));*/
+      .subscribe(l => this.map.addLayer(l));
 
       this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/incendie.fcgi',
         queryable: true,
-        
         queryUrl: [
           {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
           },
           {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
+            minScale: 2.2041016459645153,
+            maxScale:5,
+            maxResolution: 1,
+            minResolution: 2,
           },
-          {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
-          },
-          {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
-          }
         ],
         queryFormat: 'geojson',
         params: {

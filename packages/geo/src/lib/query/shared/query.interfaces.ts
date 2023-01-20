@@ -35,5 +35,7 @@ export interface QueryableDataSource extends DataSource {
 export interface QueryUrlData {
   url: string;
   maxResolution?: number;
+  minResolution?: number;
+  maxScale?: number;
   minScale?: number;
 }
