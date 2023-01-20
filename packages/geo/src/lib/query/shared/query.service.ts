@@ -60,25 +60,18 @@ export class QueryService {
         this.messageService.remove(id);
       });
     }
+
     const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
     .map((layer: Layer) => this.queryLayer(layer, options));
-
-    console.log('query newLayares: ', newLayares);
-
-
+    // the directive accept array in this format [observable, observable...]
+    // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
+    // so we need to flat the array
     let flatArray = [].concat.apply([], newLayares);
-
-    console.log('query flatArray: ', flatArray);
-    flatArray[1].subscribe((res) => {
-      console.log('ssssssssss: ', res);
-    })
     return flatArray;
   }
 
   queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> | Observable<Feature[]>[] {
-
     const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
-    console.log('queryLayer: ', url);
     if (!url) {
       return of([]);
     }
@@ -92,28 +85,23 @@ export class QueryService {
     // if url is array of QueryUrlData
     // check QueryFormat
     if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+
       const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
-      console.log('****************','urlGmls', urlGmls);
       let observables: any = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
         observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
       }
-      console.log('if the type is ', (layer.dataSource as QueryableDataSource).options.queryFormat,
-      QueryFormat.HTMLGML2, observables);
       return observables;
 
     } else {
 
       let observables: any = [];
-
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         const request = this.http.get(element.url, { responseType: 'text' });
         observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
       }
-      console.log('if the type is else:', 
-      (layer.dataSource as QueryableDataSource).options.queryFormat, observables);
       return observables;
     }
   }
@@ -644,7 +632,7 @@ export class QueryService {
     let url;
 
     if (datasource.options.queryUrl) {
-      return this.getCustomQueryUrl(datasource, options);
+      return this.getCustomQueryUrl(datasource, options, mapExtent);
     }
 
     switch (datasource.constructor) {
@@ -818,31 +806,11 @@ export class QueryService {
    *
    */
 
-  /*getCustomQueryUrl(
-    datasource: QueryableDataSource,
-    options: QueryOptions
-  ): string {
-
-    const extent = olextent.getForViewAndSize(
-      options.coordinates,
-      options.resolution,
-      0,
-      [101, 101]
-    );
-
-    let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
-    .replace(/\{x\}/g, options.coordinates[0].toString())
-    .replace(/\{y\}/g, options.coordinates[1].toString())
-    .replace(/\{resolution\}/g, options.resolution.toString())
-    .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
-
-    return url;
-  }*/
-
   getCustomQueryUrl(
     datasource: QueryableDataSource,
-    options: QueryOptions): QueryUrlData[] {
-      
+    options: QueryOptions,
+    mapExtent?: MapExtent): QueryUrlData[] {
+
       const extent = olextent.getForViewAndSize(
         options.coordinates,
         options.resolution,
@@ -850,31 +818,33 @@ export class QueryService {
         [101, 101]
       );
 
-      /*let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
-        .replace(/\{x\}/g, options.coordinates[0].toString())
-        .replace(/\{y\}/g, options.coordinates[1].toString())
-        .replace(/\{resolution\}/g, options.resolution.toString())
-        .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));*/
-
       return datasource.options.queryUrl.map(item => {
+        let data: QueryUrlData = {
+          url: item.url.replace(/\{bbox\}/g, extent.join(','))
+          .replace(/\{x\}/g, options.coordinates[0].toString())
+          .replace(/\{y\}/g, options.coordinates[1].toString())
+          .replace(/\{resolution\}/g, options.resolution.toString())
+          .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
+        };
 
-      let data: QueryUrlData = {
-        url: item.url.replace(/\{bbox\}/g, extent.join(','))
-        .replace(/\{x\}/g, options.coordinates[0].toString())
-        .replace(/\{y\}/g, options.coordinates[1].toString())
-        .replace(/\{resolution\}/g, options.resolution.toString())
-        .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
-      };
+        // if the queryFormat changed to "QueryFormat.HTMLGML2": mapExtent will be undefined
+        // we need to check "mapExtent" befor replace variables in the url
+        if(mapExtent) {
+          data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
+          .replace(/\{ymin\}/g, mapExtent[1].toString())
+          .replace(/\{xmax\}/g, mapExtent[2].toString())
+          .replace(/\{ymax\}/g, mapExtent[3].toString());
+        }
+
+        if(item.maxResolution) {
+          data.maxResolution = item.maxResolution;
+        }
       
-      if(item.maxResolution) {
-        data.maxResolution = item.maxResolution;
-      }
+        if(item.minScale) {
+          data.minScale = item.minScale;
+        }
 
-      if(item.minScale) {
-        data.minScale = item.minScale;
-      }
-      console.log('getCustomQueryUrl: ', data);
-      return data;
-    });
-  }
+        return data;
+      });
+    }
 }

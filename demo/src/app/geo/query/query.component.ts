@@ -44,17 +44,6 @@ export class AppQueryComponent {
     zoom: 6
   };
 
-  private queryUrls = [
-    {
-       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}',
-       maxResolution: 400,
-       minScale: 100
-     },
-     {
-       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi%3A96&INFO_FORMAT=geojson&FEATURE_COUNT=5&I=50&J=50&CRS=EPSG:{srid}&STYLES=&WIDTH=101&HEIGHT=101&BBOX={xmin},{ymin},{xmax},{ymax}'
-     }
-   ];
-
   constructor(
     private dataSourceService: DataSourceService,
     private layerService: LayerService
@@ -231,10 +220,15 @@ export class AppQueryComponent {
           },
           {
             url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+          },
+          {
+            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+          },
+          {
+            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
           }
         ],
-        // queryFormat: 'geojson',
-        queryFormat: QueryFormat.HTMLGML2,
+        queryFormat: 'geojson',
         params: {
           layers: 'MSP_CASERNE_PUBLIC',
           version: '1.3.0'
