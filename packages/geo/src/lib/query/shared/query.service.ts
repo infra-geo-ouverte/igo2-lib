@@ -138,19 +138,25 @@ export class QueryService {
     } else {
       /******************* checking Resolution *******************/
       if(element.minResolution || element.maxResolution) {
-        if((resolution > element.minResolution) && (resolution < element.maxResolution)) {
+        // if "minResolution" and "maxResolution" exists check if resoltion is between
+        if((resolution >= element.minResolution) && (resolution <= element.maxResolution)) {
           checkResolution = true;
-        } else if((resolution === element.minResolution) || (resolution === element.maxResolution)) {
-          checkResolution = true;
+        } else {
+          // check if "minResolution" or "maxResolution" exists
+          if(resolution >= element.minResolution) { checkResolution = true; } else { return false; }
+          if(resolution <= element.maxResolution) { checkResolution = true; } else { return false; }
         }
       }
 
       /******************* checking Scale *******************/
       if(element.minScale || element.maxScale) {
+        // if "minScale" and "maxScale" exists check if scale is between
         if((scale > element.minScale) && (scale < element.maxScale)) {
           checkScale = true;
-        } else if((scale === element.minScale) || (scale === element.maxScale)) {
-          checkScale = true;
+        } else {
+          // check if "minScale" or "maxScale" exists
+          if(scale <= element.maxScale) { checkScale = true; } else { return false; }
+          if(scale >= element.minScale) { checkScale = true; } else { return false; }
         }
       }
 
