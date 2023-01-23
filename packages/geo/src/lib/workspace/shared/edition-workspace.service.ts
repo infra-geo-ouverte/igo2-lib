@@ -34,6 +34,8 @@ import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspace } from './edition-workspace';
 
+import WKT from 'ol/format/WKT';
+import GeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -49,6 +51,8 @@ export class EditionWorkspaceService {
   public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(undefined);
   public rowsInMapExtentCheckCondition$ = new BehaviorSubject<boolean>(true);
   public loading = false;
+  public wktFormat = new WKT();
+  public geoJsonFormat = new GeoJSON();
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -422,11 +426,12 @@ export class EditionWorkspaceService {
   }
 
   public addFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}) {
-    // TODO: adapt to any kind of geometry
     if (workspace.layer.dataSource.options.edition.hasGeometry) {
-      //feature.properties[geom] = feature.geometry;
-      feature.properties["longitude"] = feature.geometry.coordinates[0];
-      feature.properties["latitude"] = feature.geometry.coordinates[1];
+      const projDest = workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
+      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] =
+      'SRID=' + projDest.replace("EPSG:", "") + ';' + this.wktFormat.writeGeometry(
+        this.geoJsonFormat.readFeature(feature.geometry).getGeometry().transform('EPSG:4326', projDest),
+        { dataProjection: projDest });
     }
 
     for (const property in feature.properties) {
@@ -526,11 +531,14 @@ export class EditionWorkspaceService {
   }
 
   public modifyFeature(feature, workspace: EditionWorkspace, url: string, headers: {[key: string]: any}, protocole = 'patch' ) {
-    //TODO: adapt to any kind of geometry
     if (workspace.layer.dataSource.options.edition.hasGeometry) {
-      //feature.properties[geom] = feature.geometry;
-      feature.properties["longitude"] = feature.geometry.coordinates[0];
-      feature.properties["latitude"] = feature.geometry.coordinates[1];
+      const projDest = workspace.layer.options.sourceOptions.edition.geomDatabaseProj;
+      // Remove 3e dimension
+      feature.geometry.coordinates = removeZ(feature.geometry.coordinates);
+      feature.properties[workspace.layer.dataSource.options.params.fieldNameGeometry] =
+        'SRID=' + projDest.replace("EPSG:", "") + ';' + this.wktFormat.writeGeometry(
+          this.geoJsonFormat.readFeature(feature.geometry).getGeometry().transform('EPSG:4326', projDest),
+          { dataProjection: projDest });
     }
 
     for (const property in feature.properties) {
@@ -773,4 +781,10 @@ function getColumnKeyWithoutPropertiesTag(column: string) {
     return column.split('.')[1];
   }
   return column;
+}
+
+function removeZ(coords: any) {
+  if (coords.length === 0) return coords;
+  if (typeof coords[0] === 'number') return coords.slice(0, 2);
+  return coords.map(removeZ);
 }
