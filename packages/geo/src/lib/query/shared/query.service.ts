@@ -84,7 +84,6 @@ export class QueryService {
 
     const resolution: number = layer.map.viewController.getResolution();
     const scale: number = layer.map.viewController.getScale();
-
     // if url is array of QueryUrlData
     // check QueryFormat
     if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
@@ -143,8 +142,8 @@ export class QueryService {
           checkResolution = true;
         } else {
           // check if "minResolution" or "maxResolution" exists
-          if(resolution >= element.minResolution) { checkResolution = true; } else { return false; }
-          if(resolution <= element.maxResolution) { checkResolution = true; } else { return false; }
+          if(element.minResolution && resolution >= element.minResolution) { checkResolution = true; } else { return false; }
+          if(element.maxResolution && resolution <= element.maxResolution) { checkResolution = true; } else { return false; }
         }
       }
 
@@ -155,8 +154,8 @@ export class QueryService {
           checkScale = true;
         } else {
           // check if "minScale" or "maxScale" exists
-          if(scale <= element.maxScale) { checkScale = true; } else { return false; }
-          if(scale >= element.minScale) { checkScale = true; } else { return false; }
+          if(element.maxScale && scale <= element.maxScale) { checkScale = true; } else { return false; }
+          if(element.minScale && scale >= element.minScale) { checkScale = true; } else { return false; }
         }
       }
 
