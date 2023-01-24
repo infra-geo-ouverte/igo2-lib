@@ -1,5 +1,5 @@
 .bluedark-theme {
-    $darkblue-palette: (
+    $bluedark-palette: (
         50 : #e3eaec,
         100 : #b9cad0,
         200 : #8ba7b1,
@@ -32,8 +32,8 @@
         )
     );
 
-    $primary: mat.define-palette($darkblue-palette, 500);
-    $accent: mat.define-palette($darkblue-palette, 200);
+    $primary: mat.define-palette($bluedark-palette, 500);
+    $accent: mat.define-palette($bluedark-palette, 200);
     $warn: mat.define-palette(mat.$red-palette);
 
     $temp-theme: mat.define-light-theme((
