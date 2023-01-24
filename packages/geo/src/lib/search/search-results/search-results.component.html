@@ -54,7 +54,7 @@
   <ng-container *ngIf="mode === searchResultMode.Grouped; then tabsTemplate else flatTemplate"></ng-container>
 
   <ng-template #tabsTemplate>
-    <mat-tab-group class="custom-tabs-view">
+    <mat-tab-group class="custom-tabs-view" dynamicHeight>
       <mat-tab *ngFor="let group of results$ | async" [label]="computeGroupTitle(group)">
         <ng-container *ngTemplateOutlet="storeItemTemplate; context: {group: group}"></ng-container>
       </mat-tab>
