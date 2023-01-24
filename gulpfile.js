@@ -214,6 +214,7 @@ gulp.task('core:concatStyles', done => {
       './packages/geo/src/lib/workspace/workspace.theming.scss',
       './packages/geo/src/lib/workspace/confirmation-popup/confirmation-popup.theming.scss',
       './packages/core/src/style/themes/blue.theme.scss',
+      './packages/core/src/style/themes/bluedark.theme.scss',
       './packages/core/src/style/themes/bluedq.theme.scss',
       './packages/core/src/style/themes/bluegrey.theme.scss',
       './packages/core/src/style/themes/deeppurple.theme.scss',
