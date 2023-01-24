@@ -273,7 +273,14 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         this.http.get<any>(col.relation.url + '?mrcCode=' + record.entity.properties.code_mrc).subscribe(result => {
           result.features.map(feature => {
             const id = feature.properties.code;
-            const value = feature.properties.nom;
+            let value;
+            if (feature.properties.designation === 'P') {
+              value = feature.properties.nom + ' - Paroisse';
+            } else if (feature.properties.designation === 'VL') {
+              value = feature.properties.nom + ' - Village';
+            } else {
+              value = feature.properties.nom;
+            }
             dom.push({id, value});
           });
           col.domainValues = dom;
