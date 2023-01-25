@@ -474,7 +474,9 @@
             "km": "Repère kilométrique",
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Halte routière",
+            "cycleStop": "Halte cyclable"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -690,7 +692,9 @@
         "drawing": "Dessins",
         "fill": "Remplissage",
         "finish": "Terminer le dessin en cours",
+        "freehandMode": "Dessiner à main levée",
         "icon": "Icônes",
+        "insertvalueRadius": "Utiliser un rayon prédéfini",
         "labels": "Étiquettes",
         "LineString": "Ligne",
         "move": "Centrer la vue sur le curseur",
@@ -708,12 +712,21 @@
         "fontStyle": "Style de police",
         "offsetX": "Décalage horizontal",
         "offsetY": "Décalage vertical",
-        "changeLabel": "Double-cliquer sur l'étiquette pour la modifier",
         "layer": {
-          "title": "Couche",
+          "title": "Titre",
           "createNewLayer": "Créer une nouvelle couche de dessin",
           "layerDialogInstruction": "Veuillez entrer le titre de votre couche de dessin"
-        }
+        },
+        "builtInInstructions": "Sélectionnez une option",
+        "labelType": {
+          "Coordinates": "Coordonnées",
+          "Length": "Longueur",
+          "Area": "Superficie",
+          "predefined": "Prédéfinie",
+          "custom": "Personnalisée",
+          "A": "S: "
+        },
+        "popupTitle": "Étiquette du dessin"
       },
       "network": {
         "online": {

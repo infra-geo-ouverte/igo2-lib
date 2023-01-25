@@ -1,0 +1,47 @@
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+  }
+
+.readOnly-Input {
+  width: 200px !important;
+}  
+
+.unit-field {
+  width: 50px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.mat-form-field {
+  position: sticky !important;
+}
+.coordinatesInputView {
+  top: 5em !important;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -1.25em;
+  margin-top: 0.25em;
+}
+
+.geometry-type-toggle {
+  display: flex !important;
+  justify-content: center;
+}
+
+.mat-dialog-actions {
+  display: flex !important;
+  justify-content: center;
+}
+
+.input {
+  width: auto !important;
+}
+
+.mat-button-toggle-group, .mat-button-toggle {
+  width: 100%;
+}
+
+mat-checkbox {
+  margin-right: 10px;
+}

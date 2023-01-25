@@ -314,8 +314,7 @@ export class QueryService {
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
     }
-
-    if (features.length > 0 && features[0].geometry === null) {
+    if (features.length > 0 && (features[0].geometry === null || !features[0].geometry)) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
       for (const feature of features) {
@@ -330,7 +329,7 @@ export class QueryService {
 
     if (
       featureCount.test(url) &&
-      ((wmsDatasource.params?.FEATURE_COUNT && features.length === this.featureCount) ||
+      ((wmsDatasource.params?.FEATURE_COUNT && this.featureCount > 1 && features.length === this.featureCount) ||
       (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
       this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
         const messageObj = this.messageService.info(message);
@@ -573,6 +572,7 @@ export class QueryService {
     delete properties.SHAPE_P;
     delete properties.the_geom;
     delete properties.geom;
+    delete properties.geom32198;
 
     let geometry;
     if (featureGeometry) {
@@ -783,15 +783,23 @@ export class QueryService {
     options: QueryOptions,
     mapExtent?: MapExtent): string {
 
-      let url = datasource.options.queryUrl.replace(/\{xmin\}/g, mapExtent[0].toString())
-      .replace(/\{ymin\}/g, mapExtent[1].toString())
-      .replace(/\{xmax\}/g, mapExtent[2].toString())
-      .replace(/\{ymax\}/g, mapExtent[3].toString())
-      .replace(/\{x\}/g, options.coordinates[0].toString())
-      .replace(/\{y\}/g, options.coordinates[1].toString())
-      .replace(/\{resolution\}/g, options.resolution.toString())
-      .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+    const extent = olextent.getForViewAndSize(
+      options.coordinates,
+      options.resolution,
+      0,
+      [101, 101]
+    );
 
-      return url;
-    }
+    let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
+    .replace(/\{xmin\}/g, mapExtent[0].toString())
+    .replace(/\{ymin\}/g, mapExtent[1].toString())
+    .replace(/\{xmax\}/g, mapExtent[2].toString())
+    .replace(/\{ymax\}/g, mapExtent[3].toString())
+    .replace(/\{x\}/g, options.coordinates[0].toString())
+    .replace(/\{y\}/g, options.coordinates[1].toString())
+    .replace(/\{resolution\}/g, options.resolution.toString())
+    .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+
+    return url;
+  }
 }
