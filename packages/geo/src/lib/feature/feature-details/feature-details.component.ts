@@ -12,7 +12,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { userAgent } from '@igo2/utils';
 import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
 import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
