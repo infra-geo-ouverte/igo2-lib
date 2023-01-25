@@ -475,7 +475,9 @@
             "km": "Mileage mark",
             "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Rest area",
+            "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -684,13 +686,15 @@
         "cancel": "Cancel",
         "Circle": "Circle",
         "colorPicker": "Click to open the color picker",
-        "dialogInstruction": "Enter your draw's label",
+        "dialogInstruction": "Enter your drawing's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
         "fill": "Fill",
         "finish": "Finish current drawing",
+        "freehandMode": "Freehand draw",
         "icon": "Icons",
+        "InsertvalueRadius": "Use a predefined radius",
         "labels": "Labels",
         "LineString": "Line",
         "move": "Center view on cursor",
@@ -708,12 +712,21 @@
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
         "offsetY": "Vertical offset",
-        "changeLabel": "Double click on label to change it",
         "layer": {
-          "title": "Layer",
+          "title": "Title",
           "createNewLayer": "Create new drawing layer",
           "layerDialogInstruction": "Enter your drawing layer's title"
-        }
+        },
+        "builtInInstructions": "Select an option",
+        "labelType": {
+          "Coordinates": "Coordinates",
+          "Length": "Length",
+          "Area": "Area",
+          "predefined": "Predefined",
+          "custom": "Custom",
+          "A": "A: "
+        },
+        "popupTitle": "Drawing's label"
       },
       "network": {
         "online": {

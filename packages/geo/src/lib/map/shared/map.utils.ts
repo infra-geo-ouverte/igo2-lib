@@ -478,6 +478,10 @@ export function roundCoordTo(coord: [number, number], decimal: number = 3): [num
     NumberUtils.roundToNDecimal(coord[1], decimal)] as [number, number];
 }
 
+export function roundCoordToString(coord: [number, number], decimal: number = 3): [string, string]{
+    return roundCoordTo(coord, decimal).map(r => r.toString()) as [string, string];
+}
+
 /**
  * Returns an array of converted coordinates.
  * Conversion is done for every configured projections

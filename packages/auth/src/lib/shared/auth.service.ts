@@ -19,6 +19,7 @@ export class AuthService {
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
+  public languageForce = false;
   private anonymous = false;
 
   get hasAuthService() {
@@ -166,7 +167,7 @@ export class AuthService {
         this.tokenService.set(data.token);
         const tokenDecoded = this.decodeToken();
         if (tokenDecoded && tokenDecoded.user) {
-          if (tokenDecoded.user.locale) {
+          if (tokenDecoded.user.locale && !this.languageForce) {
             this.languageService.setLanguage(tokenDecoded.user.locale);
           }
           if (tokenDecoded.user.isExpired) {

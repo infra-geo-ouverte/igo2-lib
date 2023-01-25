@@ -32,10 +32,42 @@
     <mat-slide-toggle
       [checked]="labelsAreShown"
       [labelPosition]="'before'"
-      (change)="onToggleLabels()"
-    >
+      (change)="onToggleLabels()">
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
+
+    <mat-slide-toggle
+      *ngIf="!isPoint()"
+      [checked]="freehandMode"
+      [labelPosition]="'before'"
+      (change)="onToggleFreehandMode($event)">
+      {{ 'igo.geo.draw.freehandMode' | translate }}
+    </mat-slide-toggle>
+
+    <div class="radius-unit" *ngIf="isCircle()">
+      <form class="radius-form">
+        <mat-form-field class="radius">
+          <input
+            matInput type="number"
+            min="0"
+            placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
+            [formControl]="radiusFormControl"
+            [readonly]="this.freehandMode">
+        </mat-form-field>
+      </form>
+
+      <mat-form-field class="unit-field">
+        <mat-select
+          [value]="measureUnit"
+          (selectionChange)="onMeasureUnitChange($event.value)">
+          <mat-option
+            *ngFor="let measureUnit of measureUnits"
+            [value]="measureUnit">
+            {{('igo.geo.measure.' + measureUnit) | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 
   <mat-divider></mat-divider>
@@ -79,7 +111,8 @@
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.draw.delete' | translate"
       [disabled]="(selectedFeatures$ | async).length === 0"
-      (click)="deleteDrawings()">
+      (click)="deleteDrawings()"
+    >
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
 
@@ -88,8 +121,7 @@
         #table
         class="table-compact"
         [store]="activeStore"
-        [template]="tableTemplate"
-        (dblclick)="editLabelDrawing()">
+        [template]="tableTemplate">
       </igo-entity-table>
     </div>
   </div>

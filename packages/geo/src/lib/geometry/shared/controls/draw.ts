@@ -59,16 +59,23 @@ export class DrawControl {
   /**
    * Draw abort observable (abort drawn features)
    */
-     public abort$: Subject<any> = new Subject();
+  public abort$: Subject<any> = new Subject();
 
   /**
    * Freehand mode observable (defaults to false)
    */
   freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  /**
+   * Observables from predefined radius (defaults to false and undefined)
+   */
+  ispredefinedRadius$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
 
   private keyDown$$: Subscription;
 
-  private olGeometryType: Type;
+  private olGeometryType: typeof OlGeometry | undefined | string;
+  private olInteractionStyle: OlStyleLike;
   private olMap: OlMap;
   private olDrawingLayer: OlVectorLayer<OlVectorSource<OlGeometry>>;
   private olDrawInteraction: OlDraw;
@@ -78,8 +85,20 @@ export class DrawControl {
   private onDrawEndKey: EventsKey;
   private onDrawAbortKey: EventsKey;
   private onDrawKey: EventsKey;
+  public radius: number;
 
   private mousePosition: [number, number];
+
+  /**
+   * take the value of radius
+   */
+  get radiusVal(): number {
+    return this.predefinedRadius$.getValue();
+  }
+  set radiusValData(radiusCercle: number) {
+    this.predefinedRadius$.next(radiusCercle);
+  }
+
 
   /**
    * Wheter the control is active
@@ -98,7 +117,8 @@ export class DrawControl {
 
   constructor(private options: DrawControlOptions) {
     this.olDrawingLayer = options.drawingLayer ? options.drawingLayer : this.createOlInnerOverlayLayer();
-    this.olGeometryType = this.options.geometryType as Type;
+    this.olGeometryType = this.options.geometryType;
+    this.olInteractionStyle = this.options.interactionStyle;
   }
 
   /**
@@ -124,6 +144,11 @@ export class DrawControl {
    */
   getSource(): OlVectorSource<OlGeometry> {
     return this.olDrawingLayerSource;
+
+  }
+
+  setOlInteractionStyle(style) {
+    this.olInteractionStyle = style;
   }
 
   /**
@@ -132,6 +157,13 @@ export class DrawControl {
    */
   setGeometryType(geometryType: Type) {
     this.olGeometryType = geometryType;
+  }
+
+  /**
+   * Get the current geometry type
+   */
+  getGeometryType() {
+    return this.olGeometryType;
   }
 
   /**
@@ -179,29 +211,42 @@ export class DrawControl {
     // Create Draw interaction
     let olDrawInteraction;
     if (!this.freehand$.getValue()) {
-      olDrawInteraction = new OlDraw({
-        type: this.olGeometryType,
-        source: this.getSource(),
-        stopClick: true,
-        style: this.options.interactionStyle,
-        maxPoints: this.options.maxPoints,
-        freehand: false,
-        freehandCondition: () => false
-      });
+      if (!this.ispredefinedRadius$.getValue()) {
+        olDrawInteraction = new OlDraw({
+          type: this.olGeometryType as Type,
+          source: this.getSource(),
+          stopClick: true,
+          style: this.olInteractionStyle,
+          maxPoints: this.options.maxPoints,
+          freehand: false,
+          freehandCondition: () => false
+        });
+      } else {
+        olDrawInteraction = new OlDraw({
+          type: 'Point',
+          source: this.getSource(),
+          stopClick: true,
+          style: this.olInteractionStyle,
+          maxPoints: this.options.maxPoints,
+          freehand: false,
+          freehandCondition: () => false
+        });
+      }
 
     } else {
       if (this.olGeometryType === 'Point') {
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
+          style: typeof this.olInteractionStyle === 'function' ? undefined : this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });
-
       } else {
         olDrawInteraction = new OlDraw({
-          type: this.olGeometryType,
+          type: this.olGeometryType as Type,
           source: this.getSource(),
+          style: this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });
@@ -211,7 +256,6 @@ export class DrawControl {
     // Add Draw interaction to map and create listeners
     this.olMap.addInteraction(olDrawInteraction);
     this.olDrawInteraction = olDrawInteraction;
-
     this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
     this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
     this.onDrawAbortKey = olDrawInteraction.on('drawabort', (event: OlDrawEvent) => this.abort$.next(event.feature.getGeometry()));
@@ -275,6 +319,9 @@ export class DrawControl {
    * @param event Draw event (drawend)
    */
   private onDrawEnd(event: OlDrawEvent) {
+    if (event.feature.getGeometry().getType() === 'Point') {
+      this.radiusDrawEnd$.next(this.predefinedRadius$.getValue());
+    }
     this.unsubscribeKeyDown();
     unByKey(this.onDrawKey);
     const olGeometry = event.feature.getGeometry();

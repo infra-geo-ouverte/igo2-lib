@@ -29,6 +29,10 @@
   overflow: auto;
 }
 
+.igo-cursor-pointer {
+  cursor: pointer;
+}
+
 :host.igo-panel-with-header {
   .igo-panel-content {
     height: calc(100% - #{$igo-panel-header-height});

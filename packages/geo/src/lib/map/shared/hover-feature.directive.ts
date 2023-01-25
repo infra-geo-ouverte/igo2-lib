@@ -148,7 +148,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       zIndex: 901,
       renderMode: "vector",
       declutter: true,
-      source: new olVectorTileSource({}),
+      source: new olVectorTileSource({projection: this.map.projection}),
       style: (feature, resolution) => {
         if (this.mvtStyleOptions && feature.getId() in this.selectionMVT) {
           return this.createHoverStyle(feature, this.mvtStyleOptions, resolution);

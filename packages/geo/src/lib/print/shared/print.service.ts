@@ -5,7 +5,7 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
-import jspdf from 'jspdf';
+import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { default as JSZip } from 'jszip';
 
@@ -18,7 +18,8 @@ import { formatScale } from '../../map/shared/map.utils';
 import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
-import { PrintOptions } from './print.interface';
+import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
+import GeoPdfPlugin from './geopdf';
 
 declare global {
   interface Navigator {
@@ -33,6 +34,18 @@ export class PrintService {
   zipFile: JSZip;
   nbFileToProcess: number;
   activityId: string;
+  imgSizeAdded: Array<number>;
+
+  TEXTPDFFONT = {
+    titleFont: 'Times',
+    titleFontStyle: 'bold',
+    subtitleFont: 'Times',
+    subtitleFontStyle: 'bold',
+    commentFont: 'courier',
+    commentFontStyle: 'normal',
+    commentFontSize: 16
+  };
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
@@ -43,16 +56,18 @@ export class PrintService {
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
     const status$ = new Subject();
-
     const paperFormat: string = options.paperFormat;
     const resolution = +options.resolution; // Default is 96
     const orientation = options.orientation;
     const legendPostion = options.legendPosition;
-
     this.activityId = this.activityService.register();
-    const doc = new jspdf({
+
+    GeoPdfPlugin(jsPDF.API);
+
+    const doc = new jsPDF({
       orientation,
-      format: paperFormat.toLowerCase()
+      format: paperFormat.toLowerCase(),
+      unit: 'mm' // default
     });
 
     const dimensions = [
@@ -64,19 +79,52 @@ export class PrintService {
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
-    let titleSizeResults = [0, 0];
+    let titleSizes: TextPdfSizeAndMargin;
+    let subtitleSizes: TextPdfSizeAndMargin;
 
-    if (options.title !== undefined) {
-      titleSizeResults = this.getTitleSize(options.title, width, height, doc); // return : size(pt) and left margin (mm)
-      this.addTitle(doc, options.title, titleSizeResults[0], margins[3] + titleSizeResults[1], titleSizeResults[0] * (25.4 / 72));
+    // PDF title
+    if (options.title !== undefined ) {
+      const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+      titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
+        margins,
+        this.TEXTPDFFONT.titleFont,
+        fontSizeInPt,
+        this.TEXTPDFFONT.titleFontStyle,
+        doc);
+
+      this.addTextInPdfDoc(doc,
+        options.title,
+        this.TEXTPDFFONT.titleFont,
+        this.TEXTPDFFONT.titleFontStyle,
+        titleSizes.fontSize,
+        titleSizes.marginLeft + margins[3],
+        margins[0]);
+
+      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
+
     }
+
+    // PDF subtitle
     if (options.subtitle !== undefined) {
-      let subtitleSizeResult = 0;
-      const titleH = titleSizeResults[0];
-      subtitleSizeResult = this.getSubTitleSize(options.subtitle, width, height, doc); // return : size(pt) and left margin (mm)
-      this.addSubTitle(doc, options.subtitle, titleH * 0.7, margins[3] + subtitleSizeResult, titleH * 1.7 * (25.4 / 72));
-      margins[0] = margins[0] + titleSizeResults[0] * 0.7 * (25.4 / 72);
+      subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
+        margins,
+        this.TEXTPDFFONT.subtitleFont,
+        titleSizes.fontSize * 0.7, // 70% size of title
+        this.TEXTPDFFONT.subtitleFontStyle,
+        doc);
+
+       this.addTextInPdfDoc(doc,
+        options.subtitle,
+        this.TEXTPDFFONT.subtitleFont,
+        this.TEXTPDFFONT.subtitleFontStyle,
+        subtitleSizes.fontSize,
+        subtitleSizes.marginLeft + margins[3],
+        margins[0]
+      );
+
+      margins[0] += 5; // cumulative marg top for next elem to place in pdf doc. 5 is a fix it could be adjust
     }
+
     if (options.showProjection === true || options.showScale === true) {
       this.addProjScale(
         doc,
@@ -95,6 +143,12 @@ export class PrintService {
         if (status === SubjectStatus.Done) {
           await this.addScale(doc, map, margins);
           await this.handleMeasureLayer(doc, map, margins);
+
+          const width = this.imgSizeAdded[0];
+          const height = this.imgSizeAdded[1];
+          const res = 1;
+          this.addGeoRef(doc, map, width, height, res, margins);
+
           if (options.legendPosition !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
               await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
@@ -115,6 +169,24 @@ export class PrintService {
 
     return status$;
   }
+  // ref GeoMoose https://github.com/geomoose/gm3/tree/main/src/gm3/components/print
+  addGeoRef(doc, map, width, height, resolution, margins) {
+    const unit = 'mm';
+    const docHeight = doc.internal.pageSize.getHeight();
+
+    // x,y = margin left-bottom corner for img in pdf doc
+    const x = margins[3];
+    const y = docHeight - margins[0] - height;
+
+    let pdf_extents = [x, y, x + width, y + height];
+    for(let i = 0; i < pdf_extents.length; i++) {
+      pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
+    }
+
+    const mapExtent = map.viewController.getExtent('EPSG:3857');
+    doc.setGeoArea(pdf_extents, mapExtent);
+
+  }
 
   /**
    * Add measure overlay on the map on the document when the measure layer is present
@@ -123,7 +195,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async handleMeasureLayer(
-    doc: jspdf,
+    doc: jsPDF,
     map: IgoMap,
     margins: Array<number>
   ) {
@@ -267,74 +339,69 @@ export class PrintService {
     return status$;
   }
 
-  getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jspdf) {
+
+  getTextPdfObjectSizeAndMarg(text: string, margins, font:string, fontSizeInPt: number, fontStyle:string, doc: jsPDF)
+  : TextPdfSizeAndMargin {
     const pdfResolution = 96;
-    const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
-    doc.setFont('Times', 'bold');
-    const width = doc.getTextWidth(title);
+    const docWidth = doc.internal.pageSize.getWidth();
+    const pageWidth = docWidth - margins[1] - margins[3];
 
-    const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
-    const titleTailleMinimale = Math.round( 2 * (pageHeight + 150 ) * 0.037) / 2;
-    let titleFontSize = 0;
+    // important to set it first, the textDimension change when font change!
+    doc.setFont(font, fontStyle);
+    doc.setFontSize(fontSizeInPt);
 
-    let titleMarginLeft;
-    if (titleWidth >= (pageWidth)) {
-      titleMarginLeft = 0;
-      titleFontSize = Math.round(((pageWidth / title.length) * pdfResolution) / 25.4);
-      // If the formula to find the font size gives below the defined minimum size
-      if (titleFontSize < titleTailleMinimale) {
-        titleFontSize = titleTailleMinimale;
-      }
+    let textDimensions = doc.getTextDimensions(text);
+    let textMarginLeft: number;
+
+    if (textDimensions.w > pageWidth) {
+      // if the text is to long, reduce fontSize 70% and the overflow with be cut in print...
+      textMarginLeft = 0;
+      fontSizeInPt = fontSizeInPt * 0.7;
+      doc.setFontSize(fontSizeInPt);
+      textDimensions = doc.getTextDimensions(text);
+
     } else {
-      titleMarginLeft = (pageWidth - titleWidth) / 2 ;
-      titleFontSize = titleSize;
+      textMarginLeft = (pageWidth - textDimensions.w ) / 2 ;
     }
-    return [titleFontSize, titleMarginLeft];
+
+    return {
+      'fontSize': fontSizeInPt,
+      'marginLeft': textMarginLeft,
+      'height': textDimensions.h
+    };
   }
 
-  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jspdf) {
-    const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% of the title's font size
-
-    doc.setFont('Times', 'bold');
-
-    const subtitleWidth = doc.getStringUnitWidth(subtitle) * subtitleSize / doc.internal.scaleFactor;
-
-    let subtitleMarginLeft;
-    if (subtitleWidth >= (pageWidth)) {
-      subtitleMarginLeft = 0;
-    } else {
-      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ;
-    }
-    return subtitleMarginLeft;
-  }
-
-  private addTitle(doc: jspdf, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
-    doc.setFont('Times', 'bold');
-    doc.setFontSize(titleFontSize);
-    doc.text(title, titleMarginLeft, titleMarginTop);
-  }
-
-  private addSubTitle(doc: jspdf, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
-    doc.setFont('Times', 'bold');
-    doc.setFontSize(subtitleFontSize);
-    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop);
-  }
   /**
    * Add comment to the document
    * * @param  doc - pdf document
    * * @param  comment - Comment to add in the document
-   * * @param  size - Size of the document
    */
-  private addComment(doc: jspdf, comment: string) {
-    const commentSize = 16;
-    const commentMarginLeft = 20;
-    const marginBottom = 5;
-    const heightPixels = doc.internal.pageSize.height - marginBottom;
-
-    doc.setFont('courier');
-    doc.setFontSize(commentSize);
-    doc.text(comment, commentMarginLeft, heightPixels);
+  private addComment(doc: jsPDF, comment: string) {
+    const commentMarginLeft = 20; //margin left and bottom is fix
+    const commentMarginBottom = 5;
+    const marginTop = doc.internal.pageSize.height - commentMarginBottom;
+    this. addTextInPdfDoc(doc,comment,
+      this.TEXTPDFFONT.commentFont,
+      this.TEXTPDFFONT.commentFontStyle,
+      this.TEXTPDFFONT.commentFontSize,
+      commentMarginLeft,
+      marginTop
+    );
   }
+
+  private addTextInPdfDoc(doc: jsPDF,
+    textToAdd: string,
+    textFont: string,
+    textFontStyle: string,
+    textFontSize: number,
+    textMarginLeft: number,
+    textMarginTop: number)
+    {
+      doc.setFont(textFont, textFontStyle);
+      doc.setFontSize(textFontSize);
+      doc.text(textToAdd, textMarginLeft, textMarginTop);
+    }
+
   /**
    * Add projection and/or scale to the document
    * @param  doc - pdf document
@@ -344,7 +411,7 @@ export class PrintService {
    * @param  scale - Bool to indicate if scale need to be added
    */
   private addProjScale(
-    doc: jspdf,
+    doc: jsPDF,
     map: IgoMap,
     dpi: number,
     projection: boolean,
@@ -381,7 +448,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async addLegend(
-    doc: jspdf,
+    doc: jsPDF,
     map: IgoMap,
     margins: Array<number>,
     resolution: number
@@ -434,7 +501,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
      private async addLegendSamePage(
-      doc: jspdf,
+      doc: jsPDF,
       map: IgoMap,
       margins: Array<number>,
       resolution: number,
@@ -496,7 +563,7 @@ export class PrintService {
    * @param  margins - Page margins
    */
   private async addScale(
-    doc: jspdf,
+    doc: jsPDF,
     map: IgoMap,
     margins: Array<number>
     ) {
@@ -538,7 +605,7 @@ export class PrintService {
   }
 
   private addCanvas(
-    doc: jspdf,
+    doc: jsPDF,
     canvas: HTMLCanvasElement,
     margins: Array<number>
   ) {
@@ -548,6 +615,10 @@ export class PrintService {
     }
 
     if (image !== undefined) {
+      if (image.length < 20 ) { //  img is corrupt    todo: fix addScale in mobile make a corrupt img
+        console.log('Warning: An image cannot be print in pdf file');
+        return;
+      }
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
       doc.addImage(
         image,
@@ -558,12 +629,13 @@ export class PrintService {
         imageSize[1]
       );
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
+      this.imgSizeAdded = imageSize; // keep img size for georef later
     }
   }
 
   // TODO fix printing with image resolution
   private addMap(
-    doc: jspdf,
+    doc: jsPDF,
     map: IgoMap,
     resolution: number,
     size: Array<number>,
@@ -853,8 +925,8 @@ export class PrintService {
    * Save document
    * @param  doc - Document to save
    */
-  protected async saveDoc(doc: jspdf) {
-    await doc.save('map.pdf', { returnPromise: true });
+  protected async saveDoc(doc: jsPDF) {
+    await doc.save('map_georef.pdf', { returnPromise: true });
   }
 
   /**
@@ -865,12 +937,11 @@ export class PrintService {
    */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight =
-      doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
-    const pageWidth =
-      doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
-    const canHeight = canvas.height;
-    const canWidth = canvas.width;
+    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
+    const canHeight = this.pdf_units2points(canvas.height, 'mm');
+    const canWidth = this.pdf_units2points(canvas.width, 'mm');
+
     const heightRatio = canHeight / pageHeight;
     const widthRatio = canWidth / pageWidth;
     const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
@@ -1009,4 +1080,44 @@ export class PrintService {
       delete that.zipFile;
     });
   }
+
+
+  private pdf_units2points(n, unit): number {
+    let k = 1;
+
+    // this code is borrowed from jsPDF
+    //  as it does not expose a public API
+    //  for converting units to points.
+    switch (unit) {
+        case 'pt':
+            k = 1;
+            break;
+        case 'mm':
+            k = 72 / 25.4;
+            break;
+        case 'cm':
+            k = 72 / 2.54;
+            break;
+        case 'in':
+            k = 72;
+            break;
+        case 'px':
+            k = 96 / 72;
+            break;
+        case 'pc':
+            k = 12;
+            break;
+        case 'em':
+            k = 12;
+            break;
+        case 'ex':
+            k = 6;
+            break;
+        default:
+            throw new Error('Invalid unit: ' + unit);
+    }
+
+    return n * k;
+  }
+
 }
