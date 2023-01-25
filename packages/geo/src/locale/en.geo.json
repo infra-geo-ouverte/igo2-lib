@@ -475,7 +475,9 @@
             "km": "Mileage mark",
             "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Rest area",
+            "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -690,7 +692,9 @@
         "drawing": "Draws",
         "fill": "Fill",
         "finish": "Finish current drawing",
+        "freehandMode": "Freehand draw",
         "icon": "Icons",
+        "InsertvalueRadius": "Use a predefined radius",
         "labels": "Labels",
         "LineString": "Line",
         "move": "Center view on cursor",

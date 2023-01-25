@@ -186,6 +186,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
+  @Output() predefinedRadius = new EventEmitter<boolean>();
 
   @Output() clearButtonEvent = new EventEmitter();
 
@@ -613,6 +614,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   onfreehandControlChange() {
     this.freehandDrawIsActive = !this.freehandDrawIsActive;
     this.freehandControl.emit(this.freehandDrawIsActive);
+    if (this.isPoint()) {
+      this.predefinedRadius.emit(!this.freehandDrawIsActive);
+      if (this.freehandDrawIsActive) {
+        this.overlayStyle$.next(undefined);
+        this.drawStyle$.next(undefined);
+      }
+    } else {
+      this.predefinedRadius.emit(false);
+    }
   }
 
   /**

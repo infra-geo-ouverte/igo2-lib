@@ -474,7 +474,9 @@
             "km": "Repère kilométrique",
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Halte routière",
+            "cycleStop": "Halte cyclable"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -690,7 +692,9 @@
         "drawing": "Dessins",
         "fill": "Remplissage",
         "finish": "Terminer le dessin en cours",
+        "freehandMode": "Dessiner à main levée",
         "icon": "Icônes",
+        "insertvalueRadius": "Utiliser un rayon prédéfini",
         "labels": "Étiquettes",
         "LineString": "Ligne",
         "move": "Centrer la vue sur le curseur",

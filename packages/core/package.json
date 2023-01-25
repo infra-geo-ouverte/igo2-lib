@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "1.13.4",
+  "version": "1.14.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -21,7 +21,7 @@
     "@angular/cdk": "^14.2.7",
     "@angular/common": "^14.2.12",
     "@angular/core": "^14.2.12",
-    "@igo2/utils": "^1.13.4",
+    "@igo2/utils": "^1.14.1",
     "rxjs": "^7.5.6",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^15.0.0"

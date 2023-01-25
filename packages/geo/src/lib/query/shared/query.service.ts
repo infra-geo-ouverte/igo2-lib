@@ -572,6 +572,7 @@ export class QueryService {
     delete properties.SHAPE_P;
     delete properties.the_geom;
     delete properties.geom;
+    delete properties.geom32198;
 
     let geometry;
     if (featureGeometry) {
@@ -782,15 +783,23 @@ export class QueryService {
     options: QueryOptions,
     mapExtent?: MapExtent): string {
 
-      let url = datasource.options.queryUrl.replace(/\{xmin\}/g, mapExtent[0].toString())
-      .replace(/\{ymin\}/g, mapExtent[1].toString())
-      .replace(/\{xmax\}/g, mapExtent[2].toString())
-      .replace(/\{ymax\}/g, mapExtent[3].toString())
-      .replace(/\{x\}/g, options.coordinates[0].toString())
-      .replace(/\{y\}/g, options.coordinates[1].toString())
-      .replace(/\{resolution\}/g, options.resolution.toString())
-      .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+    const extent = olextent.getForViewAndSize(
+      options.coordinates,
+      options.resolution,
+      0,
+      [101, 101]
+    );
 
-      return url;
-    }
+    let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
+    .replace(/\{xmin\}/g, mapExtent[0].toString())
+    .replace(/\{ymin\}/g, mapExtent[1].toString())
+    .replace(/\{xmax\}/g, mapExtent[2].toString())
+    .replace(/\{ymax\}/g, mapExtent[3].toString())
+    .replace(/\{x\}/g, options.coordinates[0].toString())
+    .replace(/\{y\}/g, options.coordinates[1].toString())
+    .replace(/\{resolution\}/g, options.resolution.toString())
+    .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+
+    return url;
+  }
 }
