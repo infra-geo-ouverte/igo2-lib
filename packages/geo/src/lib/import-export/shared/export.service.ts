@@ -224,7 +224,7 @@ export class ExportService {
       outputName = `${title}.csv`;
     }
     outputName = outputName.replace(' ', '_');
-    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/’/g, "'");
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);

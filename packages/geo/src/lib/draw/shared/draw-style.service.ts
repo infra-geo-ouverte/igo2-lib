@@ -15,7 +15,7 @@ export class DrawStyleService {
   private strokeWidth: number = 1;
   private labelsAreShown = true;
   private icon: string;
-  private fontSize: string = '20';
+  private fontSize: string = '15';
   private fontStyle: string = FontType.Arial.toString();
   private offsetX: number = 0;
   private offsetY: number = 0;

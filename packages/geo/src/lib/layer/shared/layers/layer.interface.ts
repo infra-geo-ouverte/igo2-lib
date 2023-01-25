@@ -13,6 +13,7 @@ export interface LayerOptions {
   title?: string;
   id?: string;
   alias?: string;
+  security?: LayerSecurityOptions;
   baseLayer?: boolean;
   opacity?: number;
   visible?: boolean;
@@ -34,6 +35,10 @@ export interface LayerOptions {
   check?: boolean;
   linkedLayers?: LayersLink;
   showButtonZoomToExtent?: boolean;
+}
+
+export interface LayerSecurityOptions {
+  profils?: string[]
 }
 
 export interface GeoWorkspaceOptions {
