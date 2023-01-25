@@ -982,7 +982,6 @@ export class PrintService {
         saveAs(blob, nameWithExt);
         that.saveFileProcessing();
       }, blobFormat);
-      
     } catch (err) {
       this.messageService.error(
         this.languageService.translate.instant(
