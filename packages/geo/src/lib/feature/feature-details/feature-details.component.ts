@@ -118,7 +118,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   htmlSanitizer(value): SafeResourceUrl {
-    if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
+    if (!value.body) {
       return;
     }
     const regexBase = /<base href="[\w:\/\.]+">/;
