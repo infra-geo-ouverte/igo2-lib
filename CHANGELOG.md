@@ -1,3 +1,30 @@
+## [1.14.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.0...1.14.1) (2023-01-25)
+
+
+### Bug Fixes
+
+* **draw:** drawlayer zoom to extent ([#1161](https://github.com/infra-geo-ouverte/igo2-lib/issues/1161)) ([78664b2](https://github.com/infra-geo-ouverte/igo2-lib/commit/78664b25df0fcbc7df891fff7df7fd5b44c4effd))
+* **mapOfflineDirective:** keep layer's maxResolution on online/offline toggle ([#1166](https://github.com/infra-geo-ouverte/igo2-lib/issues/1166)) ([1a5f238](https://github.com/infra-geo-ouverte/igo2-lib/commit/1a5f2387f49bca6a31f8cb7cb0e17407c01d7ecf))
+* **ogc-filter-time:** fix calendar select date function ([#1153](https://github.com/infra-geo-ouverte/igo2-lib/issues/1153)) ([2b444ca](https://github.com/infra-geo-ouverte/igo2-lib/commit/2b444ca875b1555f180811dc04e5c83352f2c0fd))
+* **print:** bug in geopdf with projection string ([#1160](https://github.com/infra-geo-ouverte/igo2-lib/issues/1160)) ([50e2b4c](https://github.com/infra-geo-ouverte/igo2-lib/commit/50e2b4cf42cdd919706dd8e050700eed64ddc05c))
+* **query:** fix query url bbox param ([#1169](https://github.com/infra-geo-ouverte/igo2-lib/issues/1169)) ([94481a9](https://github.com/infra-geo-ouverte/igo2-lib/commit/94481a965f6a8075d501eb5566756e72d43ed207))
+* **search-result:** allow more results on a filtered state ([#1171](https://github.com/infra-geo-ouverte/igo2-lib/issues/1171)) ([7d2dea3](https://github.com/infra-geo-ouverte/igo2-lib/commit/7d2dea3f6e9a84db06f8d8e1ae9a10875788d15d))
+* **search-results:** hide empty result during typing ([#1154](https://github.com/infra-geo-ouverte/igo2-lib/issues/1154)) ([10cee3c](https://github.com/infra-geo-ouverte/igo2-lib/commit/10cee3cff38a18df6a177ac2cdb971f4305d0874))
+
+
+### Features
+
+* delete column geom32198 on query or feature conversion to search result ([#1165](https://github.com/infra-geo-ouverte/igo2-lib/issues/1165)) ([c015744](https://github.com/infra-geo-ouverte/igo2-lib/commit/c01574495348591bfb3e36447a4250600947420a))
+* **icherche:** add bike and road rest areas([#1163](https://github.com/infra-geo-ouverte/igo2-lib/issues/1163)) ([b615d50](https://github.com/infra-geo-ouverte/igo2-lib/commit/b615d50ee8cfec13b16089e47713c8ff3da6ed5b))
+* **search-results:** Remove the number of results [#829](https://github.com/infra-geo-ouverte/igo2-lib/issues/829) ([#1157](https://github.com/infra-geo-ouverte/igo2-lib/issues/1157)) based on config ([f20e344](https://github.com/infra-geo-ouverte/igo2-lib/commit/f20e3442527221b118c23ef1edaa6a8c98935c84))
+
+
+### Performance Improvements
+
+* **integration:** add click action on igo-panel-title to show location details ([#1148](https://github.com/infra-geo-ouverte/igo2-lib/issues/1148)) ([23b4982](https://github.com/infra-geo-ouverte/igo2-lib/commit/23b4982a0e6fb0c6e60c873bc409e9b825424054))
+
+
+
 # [1.14.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.13.4...1.14.0) (2022-12-15)
 
 

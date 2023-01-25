@@ -191,6 +191,18 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['entreprise']
             },
             {
+              title: 'igo.geo.search.icherche.type.cycleStop',
+              value: 'haltes_cyclables',
+              enabled: types.indexOf('haltes_cyclables') !== -1,
+              hashtags: ['haltevelo','haltes_cyclables']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.restArea',
+              value: 'haltes_routieres',
+              enabled: types.indexOf('haltes_routieres') !== -1,
+              hashtags: ['halteroute','haltes_routieres']
+            },
+            {
               title: 'igo.geo.search.icherche.type.hq',
               value: 'hq',
               enabled: types.indexOf('hq') !== -1,
@@ -215,12 +227,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['mrc']
             },
             {
+<<<<<<< HEAD
               title: 'igo.geo.search.icherche.type.matricule',
               value: 'matricules-fonciers',
               enabled: types.indexOf('matricules-fonciers') !== -1,
               hashtags: ['matricule', 'matricules-fonciers']
             },
             {
+=======
+>>>>>>> origin/master
               title: 'igo.geo.search.icherche.type.city',
               value: 'municipalites',
               enabled: types.indexOf('municipalites') !== -1,

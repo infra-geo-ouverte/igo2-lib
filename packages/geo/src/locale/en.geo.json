@@ -477,7 +477,9 @@
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
             "dessertes": "Police service (CSAU)",
-            "matricule": "Land registration"
+            "matricule": "Land registration",
+            "restArea": "Rest area",
+            "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
