@@ -685,14 +685,14 @@
         "abort": "Abort current drawing",
         "cancel": "Cancel",
         "Circle": "Circle",
-        "colorPicker": "Click to open the color picker",
+        "colorPicker": "Click to open the color selector",
         "dialogInstruction": "Enter your drawing's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
-        "drawing": "Draws",
+        "drawing": "Drawings",
         "fill": "Fill",
         "finish": "Finish current drawing",
-        "freehandMode": "Freehand draw",
+        "freehandMode": "Freehand drawing",
         "icon": "Icons",
         "InsertvalueRadius": "Use a predefined radius",
         "labels": "Labels",
@@ -723,10 +723,10 @@
           "Length": "Length",
           "Area": "Area",
           "predefined": "Predefined",
-          "custom": "Custom",
+          "custom": "Customized",
           "A": "A: "
         },
-        "popupTitle": "Drawing's label"
+        "popupTitle": "Drawing label"
       },
       "network": {
         "online": {
