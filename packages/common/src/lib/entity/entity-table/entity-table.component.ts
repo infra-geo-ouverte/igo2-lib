@@ -376,7 +376,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           );
         }
       } else if (column.type === 'date') {
-        if (column.visible) {
+        if (column.visible !== false) {
           if (item[key]) {
             let date = moment(item[key]);
             item[key] = date.utc().format('YYYY-MM-DD');
