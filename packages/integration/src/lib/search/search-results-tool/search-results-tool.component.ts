@@ -49,6 +49,7 @@ import { MapState } from '../../map/map.state';
 import { SearchState } from '../search.state';
 import { ToolState } from '../../tool/tool.state';
 import { DirectionState } from '../../directions/directions.state';
+import Layer from 'ol/layer/Layer';
 
 /**
  * Tool to browse the search results
@@ -619,5 +620,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }
       });
     }, 250);
+  }
+
+  public features: SearchResult[] = [];
+  onAddFeaturesToLayer(feature: SearchResult) {
+    console.log('from integration onAddFeaturesToLayer:');
+    const i = this.features.findIndex((f:SearchResult) => f.meta.id === feature.meta.id);
+    (i === -1) ? this.features.push(feature) :this.features.splice(i, 1);
   }
 }

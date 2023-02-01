@@ -23,6 +23,8 @@ import { TextSearchOptions } from '../shared/sources/source.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateLayerDialogComponent } from './create-layer-dialog.component';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -99,6 +101,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   @Input() termSplitter: string = '|';
 
+  @Input() features: SearchResult[] = [];
+
   /**
    * Event emitted when a result is focused
    */
@@ -142,7 +146,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   constructor(private cdRef: ChangeDetectorRef,
               private searchService: SearchService,
-              private configService: ConfigService
+              private configService: ConfigService,
+              private dialog: MatDialog
               ) {}
 
   /**
@@ -290,5 +295,21 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       });
     });
     return;
+  }
+
+  exportFeaturesToLayer(event) {
+
+    console.log('exportFeatures open modal: ', this.features);
+
+    const dialogRef = this.dialog.open(CreateLayerDialogComponent, {
+      width: '700px',
+      data: {
+        features: this.features
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((catalog) => {
+      console.log('after close');
+    });
   }
 }

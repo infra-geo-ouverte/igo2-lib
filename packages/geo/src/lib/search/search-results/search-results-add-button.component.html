@@ -19,3 +19,24 @@ matTooltipShowDelay="500"
   [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
 </mat-icon>
 </button>
+
+<button
+igoStopPropagation
+*ngIf="layer.meta.dataType === 'Feature'"
+mat-icon-button
+tooltip-position="below"
+matTooltipShowDelay="500"
+[matTooltip]="(exportTooltip$ | async) | translate"
+[color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+(click)="addFeatureToLayer($event)">
+<mat-icon
+  matBadge="icon"
+  igoMatBadgeIcon="eye-off"
+  igoMatBadgeInverseColor="true"
+  [matBadgeHidden]="(inRange$ | async)"
+  matBadgeDisabled="true"
+  matBadgeSize="small"
+  matBadgePosition="after"
+  [svgIcon]="(isPreview$ | async) ? 'file-plus-outline' : added ? 'file-minus-outline' : 'file-plus-outline'">
+</mat-icon>
+</button>

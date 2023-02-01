@@ -3,7 +3,9 @@ import {
   Input,
   ChangeDetectionStrategy,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 
 import { SearchResult } from '../shared/search.interfaces';
@@ -22,6 +24,10 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
     'igo.geo.catalog.layer.addToMap'
+  );
+
+  public exportTooltip$: BehaviorSubject<string> = new BehaviorSubject(
+    'igo.geo.catalog.feature.addToLayar'
   );
 
   private resolution$$: Subscription;
@@ -56,6 +62,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     this._color = value;
   }
   private _color = 'primary';
+
+  /**
+   * Event emitted when a result is added
+   */
+  @Output() addFeaturesToLayer = new EventEmitter<SearchResult>();
 
   constructor(private layerService: LayerService) {}
 
@@ -204,5 +215,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         ? 'igo.geo.catalog.layer.addToMap'
         : 'igo.geo.catalog.layer.addToMapOutRange';
     }
+  }
+
+  addFeatureToLayer(event) {
+    console.log('add fature To Layer:');
+    this.addFeaturesToLayer.emit(this.layer);
+    this.added = !this.added;
+    this.isPreview$.next(false);
   }
 }
