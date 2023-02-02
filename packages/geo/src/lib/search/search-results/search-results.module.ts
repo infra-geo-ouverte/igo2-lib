@@ -25,7 +25,7 @@ import { IgoMetadataModule } from './../../metadata/metadata.module';
 import { SearchResultsComponent } from './search-results.component';
 import { SearchResultsItemComponent } from './search-results-item.component';
 import { SearchResultAddButtonComponent } from './search-results-add-button.component';
-import { CreateLayerDialogComponent } from './create-layer-dialog.component';
+import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 
 /**
  * @ignore
@@ -59,7 +59,7 @@ import { CreateLayerDialogComponent } from './create-layer-dialog.component';
     SearchResultsComponent,
     SearchResultsItemComponent,
     SearchResultAddButtonComponent,
-    CreateLayerDialogComponent
+    SaveFeatureDialogComponent
   ]
 })
 export class IgoSearchResultsModule {}

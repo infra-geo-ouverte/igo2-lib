@@ -3,11 +3,21 @@
 <div mat-dialog-content class="mat-typography">
     <form class="igo-form" [formGroup]="form">
       
+      <igo-list [navigation]="false" [selection]="false">
+       
+        <igo-search-results-item
+          igoListItem
+          color="accent"
+          [result]="feature"
+          showIcons="true">
+        </igo-search-results-item>
+   
+    </igo-list>
         <div class="igo-input-container">
           <mat-form-field>
             <input type="text"
               placeholder="Pick one or set new layer name"
-              aria-label="Layers"
+              aria-label="Pick one or set new layer name"
               matInput
               [matAutocomplete]="auto"
               formControlName="layerName">
@@ -20,17 +30,7 @@
       </div>
 
 
-        <h2>Feture</h2>
-        <igo-list [navigation]="false" [selection]="false">
-       
-            <igo-search-results-item
-              igoListItem
-              color="accent"
-              [result]="feature"
-              showIcons="true">
-            </igo-search-results-item>
-       
-        </igo-list>
+        
         
     </form>
 </div>

@@ -14,10 +14,11 @@ import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { CreateLayerDialogComponent } from './create-layer-dialog.component';
+import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AnyLayerOptions } from '../../layer';
 import Layer from 'ol/layer/Layer';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { FeatureDataSource } from '../../datasource';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -230,13 +231,15 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
     this.added = !this.added;
     this.isPreview$.next(false);
-    const dialogRef = this.dialog.open(CreateLayerDialogComponent, {
+    const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
       width: '700px',
       data: {
         feature: fature,
         layers: this.map.layers
       }
     });
+    
+
 
     dialogRef.afterClosed().subscribe((data: {layer: string | Layer, feature: SearchResult}) => {
       this.added = false;
@@ -245,10 +248,30 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       // check if is new layer
       if(typeof data.layer === 'string') {
         console.log('create new layer and add future');
+        this.createNewLayer(data.layer, data.feature);
       } else {
         // else use existing layer
+        console.log('choosen layer', data.layer);
         console.log('add future to choosen layer');
       }
     });
+  }
+
+  createNewLayer(layerName: string, feature: SearchResult) {
+    
+
+    let newLayer = this.layerService.createLayer({
+      title: layerName,
+      visible: true,
+      baseLayer: true,
+      source: new FeatureDataSource(),
+      showInLayerList: true,
+    });
+    console.log(newLayer);
+
+    this.map.addLayer(newLayer);
+    // newLayer.ol.addFeature
+
+
   }
 }

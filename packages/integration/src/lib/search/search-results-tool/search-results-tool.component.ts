@@ -49,7 +49,6 @@ import { MapState } from '../../map/map.state';
 import { SearchState } from '../search.state';
 import { ToolState } from '../../tool/tool.state';
 import { DirectionState } from '../../directions/directions.state';
-import Layer from 'ol/layer/Layer';
 
 /**
  * Tool to browse the search results

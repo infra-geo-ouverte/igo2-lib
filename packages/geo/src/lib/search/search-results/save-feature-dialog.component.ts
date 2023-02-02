@@ -8,12 +8,12 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 @Component({
-  selector: 'igo-create-layer-dialog',
-  templateUrl: './create-layer-dialog.component.html',
-  styleUrls: ['./create-layer-dialog.component.scss']
+  selector: 'igo-save-feature-dialog',
+  templateUrl: './save-feature-dialog.component.html',
+  styleUrls: ['./save-feature-dialog.component.scss']
 })
-export class CreateLayerDialogComponent implements OnInit {
-  
+export class SaveFeatureDialogComponent implements OnInit {
+
   public form: UntypedFormGroup;
   feature: SearchResult;
   layers: Layer[] = [];
@@ -22,7 +22,7 @@ export class CreateLayerDialogComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     public languageService: LanguageService,
-    public dialogRef: MatDialogRef<CreateLayerDialogComponent>,
+    public dialogRef: MatDialogRef<SaveFeatureDialogComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
     public data: { feature: SearchResult; layers: Layer[]}
@@ -31,7 +31,6 @@ export class CreateLayerDialogComponent implements OnInit {
       layerName: ['', [Validators.required]],
     });
   }
-   
 
   ngOnInit() {
     this.feature = this.data.feature;
@@ -58,7 +57,6 @@ export class CreateLayerDialogComponent implements OnInit {
   save() {
     const data: {layer: string | Layer, feature: SearchResult} = {layer: this.form.value.layerName, feature: this.feature};
     this.dialogRef.close(data);
-
   }
 
   cancel() {
