@@ -1,32 +1,47 @@
-<h1 mat-dialog-title class="mat-typography">save Fetures</h1>
+<h1 mat-dialog-title class="mat-typography">Save Fetures in new or existing layer</h1>
 
 <div mat-dialog-content class="mat-typography">
-    <form class="igo-form">
+    <form class="igo-form" [formGroup]="form">
+      
         <div class="igo-input-container">
-            <mat-form-field>
-              <input type="text" placeholder="layer name" matInput>
-            </mat-form-field>
+          <mat-form-field>
+            <input type="text"
+              placeholder="Pick one"
+              aria-label="Layers"
+              matInput
+              [matAutocomplete]="auto"
+              formControlName="layerName">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let layer of layers" [value]="layer.title">
+                <p mat-line>{{layer.title}}</p>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+      </div>
+
+
+        <div class="igo-input-container">
+          <mat-form-field>
+            <mat-select multiple placeholder="Features" [value]="features">
+              <mat-option *ngFor="let feature of features" [value]="feature">
+                  <p mat-line>{{feature.meta.title}}</p>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
-        <div class="igo-input-container">
-            <mat-form-field>
-              <mat-select placeholder="Layers">
-                <mat-option *ngFor="let topping of toppingList" [value]="topping">
-                    <p mat-line>{{topping}}</p>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-        <div class="igo-input-container">
-            <mat-form-field>
-              <mat-select multiple placeholder="Features">
-                <mat-option *ngFor="let topping of toppingList" [value]="topping">
-                    <p mat-line>{{topping}}</p>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+        <h2>Fetures list</h2>
+        <igo-list [navigation]="false" [selection]="false">
+          <ng-template ngFor let-feature [ngForOf]="features">
+            <igo-search-results-item
+              igoListItem
+              color="accent"
+              [result]="feature"
+              showIcons="true">
+            </igo-search-results-item>
+          </ng-template>
+        </igo-list>
+        
     </form>
 </div>
 
@@ -44,7 +59,7 @@
       type="button"
       color="primary"
       (click)="save()">
-      Create
+      Save
     </button>
   </div>
 </div>

@@ -25,6 +25,8 @@ import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateLayerDialogComponent } from './create-layer-dialog.component';
+import { AnyLayerOptions, Layer, LayerService } from '../../layer';
+import { strict } from 'assert';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -147,7 +149,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   constructor(private cdRef: ChangeDetectorRef,
               private searchService: SearchService,
               private configService: ConfigService,
-              private dialog: MatDialog
+              private dialog: MatDialog,
+              private layerService: LayerService,
               ) {}
 
   /**
@@ -298,18 +301,28 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   exportFeaturesToLayer(event) {
-
-    console.log('exportFeatures open modal: ', this.features);
-
     const dialogRef = this.dialog.open(CreateLayerDialogComponent, {
       width: '700px',
       data: {
-        features: this.features
+        features: this.features,
+        layers: this.map.layers
       }
     });
 
-    dialogRef.afterClosed().subscribe((catalog) => {
+    dialogRef.afterClosed().subscribe((data) => {
       console.log('after close');
+      // check if is new layer
+      if(typeof data.layerName === 'string') {
+        const layerOptions: AnyLayerOptions = {};
+        const layer: Layer = this.layerService.createLayer(layerOptions);
+        this.map.addLayer(layer);
+      } else {
+      // else use existing layer
+        
+      }
+      
+    
+
     });
   }
 }
