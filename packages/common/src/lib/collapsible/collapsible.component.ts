@@ -26,8 +26,4 @@ export class CollapsibleComponent {
   private _collapsed = false;
 
   @Output() toggle: EventEmitter<boolean> = new EventEmitter();
-
-  @Input() sourceId: string;
-
-  @Output() exportFeaturesToLayer: EventEmitter<any> = new EventEmitter();
 }
