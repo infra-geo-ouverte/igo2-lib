@@ -14,6 +14,10 @@ import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
 import { Subscription, BehaviorSubject } from 'rxjs';
+import { CreateLayerDialogComponent } from './create-layer-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AnyLayerOptions } from '../../layer';
+import Layer from 'ol/layer/Layer';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -68,7 +72,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    */
   @Output() addFeaturesToLayer = new EventEmitter<SearchResult>();
 
-  constructor(private layerService: LayerService) {}
+  constructor(private layerService: LayerService, private dialog: MatDialog) {}
 
   /**
    * @internal
@@ -217,10 +221,34 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
   }
 
-  addFeatureToLayer(event) {
-    console.log('add fature To Layer:');
-    this.addFeaturesToLayer.emit(this.layer);
+  addFeatureToLayer() {
+    if (this.layer.meta.dataType !== 'Feature') {
+      return;
+    }
+    const fature: SearchResult = this.layer;
+    console.log('future selected future:; ', fature);
+
     this.added = !this.added;
     this.isPreview$.next(false);
+    const dialogRef = this.dialog.open(CreateLayerDialogComponent, {
+      width: '700px',
+      data: {
+        feature: fature,
+        layers: this.map.layers
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((data: {layer: string | Layer, feature: SearchResult}) => {
+      this.added = false;
+      if(!data) { return; }
+      console.log('after close');
+      // check if is new layer
+      if(typeof data.layer === 'string') {
+        console.log('create new layer and add future');
+      } else {
+        // else use existing layer
+        console.log('add future to choosen layer');
+      }
+    });
   }
 }

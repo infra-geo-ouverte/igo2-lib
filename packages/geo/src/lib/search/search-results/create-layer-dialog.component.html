@@ -1,4 +1,4 @@
-<h1 mat-dialog-title class="mat-typography">Save Fetures in new or existing layer</h1>
+<h1 mat-dialog-title class="mat-typography">Save Feture in new or existing layer</h1>
 
 <div mat-dialog-content class="mat-typography">
     <form class="igo-form" [formGroup]="form">
@@ -6,13 +6,13 @@
         <div class="igo-input-container">
           <mat-form-field>
             <input type="text"
-              placeholder="Pick one"
+              placeholder="Pick one or set new layer name"
               aria-label="Layers"
               matInput
               [matAutocomplete]="auto"
               formControlName="layerName">
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-              <mat-option *ngFor="let layer of layers" [value]="layer.title">
+            <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
+              <mat-option *ngFor="let layer of filteredLayers | async" [value]="layer">
                 <p mat-line>{{layer.title}}</p>
               </mat-option>
             </mat-autocomplete>
@@ -20,26 +20,16 @@
       </div>
 
 
-        <div class="igo-input-container">
-          <mat-form-field>
-            <mat-select multiple placeholder="Features" [value]="features">
-              <mat-option *ngFor="let feature of features" [value]="feature">
-                  <p mat-line>{{feature.meta.title}}</p>
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <h2>Fetures list</h2>
+        <h2>Feture</h2>
         <igo-list [navigation]="false" [selection]="false">
-          <ng-template ngFor let-feature [ngForOf]="features">
+       
             <igo-search-results-item
               igoListItem
               color="accent"
               [result]="feature"
               showIcons="true">
             </igo-search-results-item>
-          </ng-template>
+       
         </igo-list>
         
     </form>
