@@ -18,7 +18,7 @@ export class GpxSelectionComponent {
     if(confirm(this.languageService.translate.instant(
       'igo.geo.record-prompts.confirmNotDownloadGpx'
     ))){
-      this.dialogRef.close();
+      this.dialogRef.close('noDownload');
     }
   }
 

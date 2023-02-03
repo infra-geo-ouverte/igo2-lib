@@ -106,11 +106,9 @@ export class RecordButtonComponent implements OnInit {
     else {
       const dialogRef = this.dialog.open(PauseStopComponent);
       dialogRef.afterClosed().subscribe(paused => {
-        if(paused) {
-          this.pauseRecording();
-        }
-        else {
-          this.stopRecording();
+        this.pauseRecording();
+        if(paused === false){
+          this.saveFile();
         }
       });
     }
@@ -147,7 +145,9 @@ export class RecordButtonComponent implements OnInit {
         timeStamp: new Date().toLocaleString().replace(', ', 'T')
       };
       this.routeFeatures.push(startingPosition);
-      this.createLineString();
+      if(!this.lineString) {
+        this.createLineString();
+      }
       this.positionSubscription = this.geoMap.position$.subscribe(() => {
         for(let i = this.lineString.getCoordinates().length; i<this.routeFeatures.length; i++){
           this.lineString.appendCoordinate(transform(
@@ -186,8 +186,8 @@ export class RecordButtonComponent implements OnInit {
         this.geoDBService.update('layerRecording',
         'layerRecording',
           res,InsertSourceInsertDBEnum.System,
-          'layerRecording'+this.routeFeatures.length
-        );
+          'layerRecording'
+        ).subscribe((r) => {});
       });
     }
   }
@@ -280,16 +280,6 @@ export class RecordButtonComponent implements OnInit {
       style: style,
     });
     this.mapService.getMap().addLayer(layer);
-
-    this.geoDBService.update('layerRecording',
-    'layerRecording',
-      {
-        startTime: this.startTime,
-        recordParameters: this.recordParameters,
-        points: this.routeFeatures
-      },InsertSourceInsertDBEnum.System,
-      'layerRecording'+this.routeFeatures.length
-    );
   }
 
   pauseRecording() {
@@ -301,13 +291,14 @@ export class RecordButtonComponent implements OnInit {
     this.currentTime = new Date();
     this.startTime = new Date();
     this.isRecording = !this.isRecording;
+    this.positionSubscription.unsubscribe();
   }
 
   stopRecording() {
-    this.pauseRecording();
     this.positionSubscription.unsubscribe();
     this.saveFile();
     this.geoDBService.deleteByKey("layerRecording").subscribe();
+    this.lineString = undefined;
   }
 
   /**
@@ -332,6 +323,10 @@ export class RecordButtonComponent implements OnInit {
       const dialogRef = this.dialog.open(GpxSelectionComponent, {
       width: '25em'});
       dialogRef.afterClosed().subscribe(async (result) => {
+        if(result === undefined) {
+          this.record();
+          return;
+        }
         const xml = '<?xml version="1.0" encoding="utf-8"?>\n';
         let gpxTrackText = xml + '<gpx>\n<trk>\n  <trkseg>\n';
         let gpxPointsText = xml + '<gpx>\n';
@@ -363,7 +358,7 @@ export class RecordButtonComponent implements OnInit {
           downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileName + '_' + 'track' + '.gpx');
           this.updateIndexedDBFiles([new File([gpxTrackText], this.fileName + '_' + 'track' + '.gpx')]);
         }
-        else if(result !== undefined) {
+        else if(result === 'points') {
           downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
           this.updateIndexedDBFiles([new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
         }
