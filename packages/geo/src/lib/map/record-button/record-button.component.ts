@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RecordParametersComponent } from './record-parameters/record-parameters.component';
 import { GpxSelectionComponent } from './gpx-selection/gpx-selection.component';
@@ -29,7 +29,7 @@ interface PositionDetailed {
   templateUrl: './record-button.component.html',
   styleUrls: ['./record-button.component.scss']
 })
-export class RecordButtonComponent {
+export class RecordButtonComponent implements OnInit {
 
   isRecording = false;
   timerKey = null;
@@ -60,6 +60,22 @@ export class RecordButtonComponent {
     private geoDBService: GeoDBService
     ) {
     }
+
+  ngOnInit(): void {
+    this.mapService.getMap().ol.once('rendercomplete', () => {
+      this.geoDBService.get('layerRecording').subscribe(async (res) => {
+        if(res) {
+          this.timePassed = (new Date()).getTime() - res.startTime;
+          this.startTime = new Date();
+          this.currentTime = new Date();
+          this.recordParameters = res.recordParameters;
+          this.routeFeatures = res.points;
+          this.createLineString();
+          this.record();
+        }
+      });
+    });
+  }
 
   /**
    * @param coord1 Coordinates of origin point
@@ -138,6 +154,7 @@ export class RecordButtonComponent {
             [this.routeFeatures[i].coordinates[0],this.routeFeatures[i].coordinates[1]],
             'EPSG:4326', 'EPSG:3857'));
         }
+        this.updatePointsArrayDb();
       });
       this.isRecording = !this.isRecording;
       this.fileName = result.fileName;
@@ -150,6 +167,28 @@ export class RecordButtonComponent {
       else if(result.intervalMode === 'distance') {
         this.setUpDistanceIntervalObserver();
       }
+    }
+  }
+
+  updatePointsArrayDb() {
+    if (this.routeFeatures.length > 0) {
+      this.geoDBService.get('layerRecording').subscribe(async (res) => {
+        if(!res) {
+          res = {
+            startTime: this.startTime,
+            recordParameters: this.recordParameters,
+            points: this.routeFeatures
+          };
+        }
+        else {
+          res.points = this.routeFeatures;
+        }
+        this.geoDBService.update('layerRecording',
+        'layerRecording',
+          res,InsertSourceInsertDBEnum.System,
+          'layerRecording'+this.routeFeatures.length
+        );
+      });
     }
   }
 
@@ -234,13 +273,23 @@ export class RecordButtonComponent {
     const time = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
     const layer = new VectorLayer({
-      title: `Résultats ${layerName} ${today} ${time}`,
+      title: `${layerName} ${today} ${time}`,
       source: featureSource,
       sourceOptions: sourceOptions,
       id: layerId,
       style: style,
     });
     this.mapService.getMap().addLayer(layer);
+
+    this.geoDBService.update('layerRecording',
+    'layerRecording',
+      {
+        startTime: this.startTime,
+        recordParameters: this.recordParameters,
+        points: this.routeFeatures
+      },InsertSourceInsertDBEnum.System,
+      'layerRecording'+this.routeFeatures.length
+    );
   }
 
   pauseRecording() {
@@ -258,6 +307,7 @@ export class RecordButtonComponent {
     this.pauseRecording();
     this.positionSubscription.unsubscribe();
     this.saveFile();
+    this.geoDBService.deleteByKey("layerRecording").subscribe();
   }
 
   /**
