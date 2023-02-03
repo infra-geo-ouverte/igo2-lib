@@ -295,10 +295,11 @@ export class RecordButtonComponent implements OnInit {
   }
 
   stopRecording() {
-    this.positionSubscription.unsubscribe();
-    this.saveFile();
     this.geoDBService.deleteByKey("layerRecording").subscribe();
     this.lineString = undefined;
+    this.routeFeatures = [];
+    this.recordParameters = undefined;
+    this.timePassed = 0;
   }
 
   /**
@@ -362,9 +363,7 @@ export class RecordButtonComponent implements OnInit {
           downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
           this.updateIndexedDBFiles([new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
         }
-        this.routeFeatures = [];
-        this.recordParameters = undefined;
-        this.timePassed = 0;
+        this.stopRecording();
         if(result) {
           this.messageService.success(this.languageService.translate.instant(
             'igo.geo.record-prompts.gpxDownloadedToast'
@@ -376,9 +375,7 @@ export class RecordButtonComponent implements OnInit {
       this.messageService.alert(this.languageService.translate.instant(
         'igo.geo.record-prompts.gpxIsEmpty'
       ));
-      this.routeFeatures = [];
-      this.recordParameters = undefined;
-      this.timePassed = 0;
+      this.stopRecording();
     }
   }
 
