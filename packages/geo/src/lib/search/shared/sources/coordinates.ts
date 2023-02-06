@@ -135,12 +135,12 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
     const coordKey = (!this.reverseSearchCoordsFormatEnabled) ?
       this.languageService.translate.instant('igo.geo.search.coordinates.coord'):
-      this.languageService.translate.instant('igo.geo.search.coordinates.revercedCoord');
+      this.languageService.translate.instant('igo.geo.search.coordinates.reversedCoord');
     properties[coordKey] = roundedCoordString;
 
     const coordKeyDMS = (!this.reverseSearchCoordsFormatEnabled) ?
      this.languageService.translate.instant('igo.geo.search.coordinates.coordDMS'):
-     this.languageService.translate.instant('igo.geo.search.coordinates.revercedCoordDMS');
+     this.languageService.translate.instant('igo.geo.search.coordinates.reversedCoordDMS');
     properties[coordKeyDMS] = roundedCoordStringDMS;
 
     return {

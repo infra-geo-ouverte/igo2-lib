@@ -484,9 +484,9 @@
         "coordinates": {
           "name": "Coordonnées",
           "coord": "Coordonnée (longitude, latitude)",
-          "revercedCoord": "Coordonnée (latitude, longitude)",
+          "reversedCoord": "Coordonnée (latitude, longitude)",
           "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
-          "revercedCoordDMS": "Coordonnée (latitude, longitude) (DMS)",
+          "reversedCoordDMS": "Coordonnée (latitude, longitude) (DMS)",
           "radius": "Rayon",
           "conf": "Confiance"
         },
