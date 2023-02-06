@@ -36,6 +36,7 @@
       <ng-template #igoSearchItemToolbar let-result="result">
         <igo-search-add-button
           [map]="map"
+          [store]="store"
           [layer]="result"
           (addFeaturesToLayer)="onAddFeaturesToLayer($event)">
         </igo-search-add-button>

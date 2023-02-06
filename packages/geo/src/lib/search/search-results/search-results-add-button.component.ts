@@ -19,6 +19,10 @@ import { MatDialog } from '@angular/material/dialog';
 import Layer from 'ol/layer/Layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
+import { FeatureStore } from '../../feature';
+import { FeatureWithDraw } from '../../draw';
+import { EntityStore } from '@igo2/common';
+import olFeature from 'ol/Feature';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -48,6 +52,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   private mouseInsideAdd: boolean = false;
 
   @Input() layer: SearchResult;
+
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * Whether the layer is already added to the map
@@ -226,52 +232,78 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     if (this.layer.meta.dataType !== 'Feature') {
       return;
     }
-    const fature: SearchResult = this.layer;
-    console.log('future selected future:; ', fature);
+
+    let activeStore = new FeatureStore<FeatureWithDraw>([], {
+      map: this.map
+    });
 
     this.added = !this.added;
     this.isPreview$.next(false);
     const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
       width: '700px',
       data: {
-        feature: fature,
+        feature: this.layer,
         layers: this.map.layers
       }
     });
-    
+
 
 
     dialogRef.afterClosed().subscribe((data: {layer: string | Layer, feature: SearchResult}) => {
       this.added = false;
-      if(!data) { return; }
-      console.log('after close');
-      // check if is new layer
-      if(typeof data.layer === 'string') {
-        console.log('create new layer and add future');
-        this.createNewLayer(data.layer, data.feature);
-      } else {
-        // else use existing layer
-        console.log('choosen layer', data.layer);
-        console.log('add future to choosen layer');
+      let activeDrawingLayer: VectorLayer;
+      if(data) { 
+        
+        console.log('after close');
+        // check if is new layer
+        if(typeof data.layer === 'string') {
+          console.log('create new layer and add future');
+          this.createNewLayer(data.layer, data.feature);
+        } else {
+          // else use existing layer
+          console.log('add future to choosen layer');
+          this.editLayer(data.layer, data.feature);
+          
+        }
       }
     });
   }
 
   createNewLayer(layerName: string, feature: SearchResult) {
-    
-
+    console.log("createNewLayer: ", feature);
+    const source = new FeatureDataSource();
+    const feature1 = new olFeature({})
+    source.ol.addFeature(feature1);
     let newLayer = this.layerService.createLayer({
       title: layerName,
-      visible: true,
-      baseLayer: true,
-      source: new FeatureDataSource(),
+      source: source,
       showInLayerList: true,
     });
-    console.log(newLayer);
+    // console.log(newLayer.options.source.ol.u);
 
     this.map.addLayer(newLayer);
+
+    //source.ol.addFeature(feature)
     // newLayer.ol.addFeature
 
 
+  }
+
+  editLayer(layer: Layer, feature: SearchResult) {
+    const featureDate = {
+      type: feature.data.type,
+      geometry: feature.data.geometry,
+      projection: feature.data.projection,
+      properties: feature.data.properties,
+      meta: feature.data.meta
+    }
+
+    console.log('featureDate: ', featureDate);
+
+    // this.activeStore.setLayerFeatures([featureDate])
+    // this.activeStore.layer.ol.getFeatures()
+    // this.activeStore.update(featureDate);
+    // console.log('selected layer', layer);
+    // console.log('selected feature', feature);
   }
 }

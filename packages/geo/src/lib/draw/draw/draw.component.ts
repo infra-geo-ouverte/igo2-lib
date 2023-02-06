@@ -831,6 +831,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    */
 
   public onLayerChange(currLayer?: VectorLayer) {
+    console.log('onLayerChange', 'currLayer', currLayer, 'activeDrawingLayer', this.activeDrawingLayer);
     if (currLayer) {
       this.activeStore.state.updateAll({selected: false});
       this.isCreatingNewLayer = false;
@@ -849,6 +850,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     } else {
       this.setupLayer(true);
     }
+    console.log('this.activeDrawingLayer after testing; ',this.activeDrawingLayer);
     this.activeLayerChange.emit(this.activeDrawingLayer);
   }
 
