@@ -19,10 +19,11 @@ import { MatDialog } from '@angular/material/dialog';
 import Layer from 'ol/layer/Layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
-import { FeatureStore } from '../../feature';
-import { FeatureWithDraw } from '../../draw';
+import { FeatureMotion, FeatureStore, FeatureStoreLoadingStrategy, FeatureStoreSelectionStrategy, tryAddLoadingStrategy, tryAddSelectionStrategy, tryBindStoreLayer } from '../../feature';
+import { CoordinatesUnit, FeatureWithDraw, FontType, LabelType } from '../../draw';
 import { EntityStore } from '@igo2/common';
 import olFeature from 'ol/Feature';
+import { DrawStyleService } from '../../draw/shared/draw-style.service';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -79,7 +80,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    */
   @Output() addFeaturesToLayer = new EventEmitter<SearchResult>();
 
-  constructor(private layerService: LayerService, private dialog: MatDialog) {}
+  constructor(private layerService: LayerService, private dialog: MatDialog, private drawStyleService: DrawStyleService) {}
 
   /**
    * @internal
@@ -233,10 +234,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let activeStore = new FeatureStore<FeatureWithDraw>([], {
-      map: this.map
-    });
-
     this.added = !this.added;
     this.isPreview$.next(false);
     const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
@@ -258,52 +255,109 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         // check if is new layer
         if(typeof data.layer === 'string') {
           console.log('create new layer and add future');
-          this.createNewLayer(data.layer, data.feature);
+          // this.createNewLayer(data.layer, data.feature);
+          this.createLayer(data.layer, data.feature);
         } else {
           // else use existing layer
           console.log('add future to choosen layer');
-          this.editLayer(data.layer, data.feature);
+          // this.addFeature(data.feature, data.layer, );
           
         }
       }
     });
   }
 
-  createNewLayer(layerName: string, feature: SearchResult) {
-    console.log("createNewLayer: ", feature);
-    const source = new FeatureDataSource();
-    const feature1 = new olFeature({})
-    source.ol.addFeature(feature1);
-    let newLayer = this.layerService.createLayer({
-      title: layerName,
-      source: source,
-      showInLayerList: true,
+
+  createLayer(layerTitle: string, feature: SearchResult) {
+    let activeStore: FeatureStore<FeatureWithDraw> = new FeatureStore<FeatureWithDraw>([], {
+      map: this.map
     });
-    // console.log(newLayer.options.source.ol.u);
+    
+    let activeDrawingLayer: VectorLayer = new VectorLayer({
+      isIgoInternalLayer: true,
+      id: "igo-draw-layer" + this.map.layers.length + 1,
+      title: layerTitle,
+      zIndex: 200,
+      source: new FeatureDataSource(),
+      style: (f, resolution) => {
+        return this.drawStyleService.createIndividualElementStyle(
+          f,
+          resolution,
+          true,
+          f.get('fontStyle'),
+          f.get('drawingStyle').fill,
+          f.get('drawingStyle').stroke,
+          f.get('offsetX'),
+          f.get('offsetY'),
+          this.drawStyleService.getIcon()
+        );
+      },
+      showInLayerList: true,
+      exportable: true,
+      browsable: false,
+      workspace: {
+        enabled: false
+      }
+    });
 
-    this.map.addLayer(newLayer);
+    tryBindStoreLayer(activeStore, activeDrawingLayer);
+    tryAddLoadingStrategy(
+      activeStore,
+      new FeatureStoreLoadingStrategy({
+        motion: FeatureMotion.None
+      })
+    );
 
-    //source.ol.addFeature(feature)
-    // newLayer.ol.addFeature
+    tryAddSelectionStrategy(
+      activeStore,
+      new FeatureStoreSelectionStrategy({
+        map: this.map,
+        motion: FeatureMotion.None,
+        many: true
+      })
+    );
+    activeStore.layer.visible = true;
 
+    this.addFeature(feature, activeStore);
 
   }
 
-  editLayer(layer: Layer, feature: SearchResult) {
-    const featureDate = {
+  addFeature(feature: SearchResult, activeStore: FeatureStore<FeatureWithDraw>) {
+    console.log('feature: ', feature);
+    
+    const newFeature = {
       type: feature.data.type,
-      geometry: feature.data.geometry,
+      geometry: {
+        coordinates: feature.data.geometry.coordinates, 
+        type: feature.data.geometry.type
+      },
       projection: feature.data.projection,
-      properties: feature.data.properties,
-      meta: feature.data.meta
-    }
-
-    console.log('featureDate: ', featureDate);
-
-    // this.activeStore.setLayerFeatures([featureDate])
-    // this.activeStore.layer.ol.getFeatures()
-    // this.activeStore.update(featureDate);
-    // console.log('selected layer', layer);
-    // console.log('selected feature', feature);
+      properties: {
+        id: feature.meta.id,
+        draw: feature.meta.title,
+        longitude: feature.data.geometry.coordinates[0],
+        latitude: feature.data.geometry.coordinates[1],
+        rad: null,
+        fontStyle: FontType.Arial,
+        drawingStyle: {
+          // fill: feature.data.meta.style.getFill(),
+          fill: 'rgba(255,255,255,0.4)',
+          // stroke: feature.data.meta.style.getStroke()
+          stroke: 'rgba(143,7,7,1)'
+        },
+        offsetX: 0,
+        offsetY: -15,
+        labelType: LabelType.Coordinates,
+        measureUnit: CoordinatesUnit.DecimalDegree
+      },
+      meta: {
+        id: feature.meta.id
+      }
+    };
+    console.log("featrure; ", newFeature);
+    activeStore.update(newFeature);
+    
+    activeStore.setLayerExtent();
+    activeStore.layer.ol.getSource().refresh();
   }
 }

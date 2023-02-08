@@ -27,7 +27,6 @@ mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
 [matTooltip]="(exportTooltip$ | async) | translate"
-[color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="addFeatureToLayer()">
 <mat-icon
   matBadge="icon"
@@ -37,6 +36,6 @@ matTooltipShowDelay="500"
   matBadgeDisabled="true"
   matBadgeSize="small"
   matBadgePosition="after"
-  [svgIcon]="(isPreview$ | async) ? 'file-plus-outline' : added ? 'file-minus-outline' : 'file-plus-outline'">
+  svgIcon="file-plus-outline">
 </mat-icon>
 </button>
