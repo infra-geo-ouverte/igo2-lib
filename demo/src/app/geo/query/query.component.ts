@@ -107,13 +107,13 @@ export class AppQueryComponent {
 
       this.layerService
       .createAsyncLayer({
-        title: 'Query test',
+        title: 'Query url test',
         visible: true,
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
           queryable: true,
-          queryUrl: [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}],
+          queryUrl: [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application/geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}],
           queryLayerFeatures: false,
           queryFormat: 'geojson',
           params: {
@@ -204,19 +204,16 @@ export class AppQueryComponent {
         queryUrl: [
           {
             url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
-          },
-          {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
-            minScale: 2.2041016459645153,
-            maxScale:5,
-            maxResolution: 1,
-            minResolution: 2,
-          },
+            // minScale: 20000,
+            // maxScale: 9000000,
+            minResolution: 0,
+            maxResolution: 400
+          }
         ],
         queryFormat: 'geojson',
         params: {
-          layers: 'MSP_CASERNE_PUBLIC',
-          version: '1.3.0'
+          version: '1.3.0',
+          layers: 'MSP_CASERNE_PUBLIC'
         }
       } as QueryableDataSourceOptions)
       .subscribe(dataSource => {

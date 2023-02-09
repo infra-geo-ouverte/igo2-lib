@@ -92,7 +92,7 @@ export class QueryService {
       let observables: any = [];
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
-        if(this.checkScaleAndResolution(resolution, scale, element)) {
+        if (this.checkScaleAndResolution(resolution, scale, element)) {
           observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
         }
       }
@@ -102,7 +102,7 @@ export class QueryService {
       let observables: any = [];
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
-        if(this.checkScaleAndResolution(resolution, scale, element)) {
+        if (this.checkScaleAndResolution(resolution, scale, element)) {
           const request = this.http.get(element.url, { responseType: 'text' });
           observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
         }
@@ -132,38 +132,38 @@ export class QueryService {
     let checkScale: boolean;
     let checkResolution: boolean;
 
-    if(!element.minResolution && !element.maxResolution && !element.minScale && !element.maxScale) {
+    if (!element.minResolution && !element.maxResolution && !element.minScale && !element.maxScale) {
       return true;
     } else {
       /******************* checking Resolution *******************/
-      if(element.minResolution || element.maxResolution) {
+      if (element.minResolution && element.maxResolution) {
         // if "minResolution" and "maxResolution" exists check if resoltion is between
-        if((resolution >= element.minResolution) && (resolution <= element.maxResolution)) {
+        if ((resolution >= element.minResolution) && (resolution <= element.maxResolution)) {
           checkResolution = true;
-        } else {
-          // check if "minResolution" or "maxResolution" exists
-          if(element.minResolution && resolution >= element.minResolution) { checkResolution = true; } else { return false; }
-          if(element.maxResolution && resolution <= element.maxResolution) { checkResolution = true; } else { return false; }
         }
+      } else {
+        // check if "minResolution" or "maxResolution" exists
+        if (element.minResolution && resolution >= element.minResolution) { checkResolution = true; }
+        if (element.maxResolution && resolution <= element.maxResolution) { checkResolution = true; }
       }
 
       /******************* checking Scale *******************/
-      if(element.minScale || element.maxScale) {
+      if (element.minScale && element.maxScale) {
         // if "minScale" and "maxScale" exists check if scale is between
-        if((scale > element.minScale) && (scale < element.maxScale)) {
+        if ((scale > element.minScale) && (scale < element.maxScale)) {
           checkScale = true;
-        } else {
-          // check if "minScale" or "maxScale" exists
-          if(element.maxScale && scale <= element.maxScale) { checkScale = true; } else { return false; }
-          if(element.minScale && scale >= element.minScale) { checkScale = true; } else { return false; }
         }
+      } else {
+        // check if "minScale" or "maxScale" exists
+        if (element.maxScale && scale <= element.maxScale) { checkScale = true; }
+        if (element.minScale && scale >= element.minScale) { checkScale = true; }
       }
 
       /******************* result of checking *******************/
-      if(checkScale === true && checkResolution === true) {
+      if (checkScale === true && checkResolution === true) {
         return true;
-      } else if((checkResolution === true && checkScale === undefined) || (checkScale === true && checkResolution === undefined)) {
-          return true;
+      } else if ((checkResolution === true && !checkScale) || (checkScale === true && !checkResolution)) {
+        return true;
       } else {
         return false;
       }
