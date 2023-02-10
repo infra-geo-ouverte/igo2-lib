@@ -381,7 +381,7 @@ export class RecordButtonComponent implements OnInit {
 
   updateIndexedDBFiles(files: File[]) {
     let fileArray: File[] = [];
-    this.geoDBService.get('suiviTrace').subscribe(async (res) => {
+    this.geoDBService.get('recordedTraces').subscribe(async (res) => {
       if(res) {
         fileArray = res;
       }
@@ -394,7 +394,12 @@ export class RecordButtonComponent implements OnInit {
         }
         fileArray.push(tempFile);
       };
-      this.geoDBService.update('suiviTrace', fileArray.length, fileArray,InsertSourceInsertDBEnum.System,'suiviTrace'+fileArray.length);
+      this.geoDBService.update('recordedTraces',
+        fileArray.length,
+        fileArray,
+        InsertSourceInsertDBEnum.System,
+        'recordedTraces'+fileArray.length
+      );
     });
   }
 }

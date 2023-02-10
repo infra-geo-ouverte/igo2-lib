@@ -8,7 +8,7 @@ import { handleFileImportSuccess, ImportService } from '../../../import-export';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../../offline';
 import { MapService } from '../../shared';
 
-enum Affichage {
+enum Display {
   Choice = 1,
   TrackHistory = 2,
   RecordTrack = 3
@@ -23,8 +23,8 @@ export class RecordParametersComponent implements OnInit{
   intervalMode: string = 'time';
   amountInput: number;
   fileName: string;
-  Affichage = Affichage;
-  stateAffichage: Affichage = Affichage.Choice;
+  display = Display;
+  stateAffichage: Display = Display.Choice;
   trackFiles: (File)[];
   @ViewChild(MatTable) table:MatTable<any>;
 
@@ -36,14 +36,14 @@ export class RecordParametersComponent implements OnInit{
               private geoDBService: GeoDBService) { }
 
   ngOnInit(): void {
-    this.geoDBService.get('suiviTrace').subscribe((res) => {
+    this.geoDBService.get('recordedTraces').subscribe((res) => {
       if(res) {
         this.trackFiles = res;
       }
     });
   }
 
-  async chargerFile(file: File) {
+  loadFile(file: File) {
     this.importService.import(file, 'EPSG:4326').subscribe(
       (features: Feature[]) => {
         this.onFileImportSuccess(file, features);
@@ -54,10 +54,10 @@ export class RecordParametersComponent implements OnInit{
     );
   }
 
-  async supprimerGPXFile(file: File) {
+  deleteGPXFile(file: File) {
     this.trackFiles.splice(this.trackFiles.indexOf(file), 1);
-    this.geoDBService.update('suiviTrace', this.trackFiles.length, this.trackFiles,
-                      InsertSourceInsertDBEnum.System,'suiviTrace'+this.trackFiles.length);
+    this.geoDBService.update('recordedTraces', this.trackFiles.length, this.trackFiles,
+                      InsertSourceInsertDBEnum.System,'recordedTraces'+this.trackFiles.length);
     this.table.renderRows();
   }
 

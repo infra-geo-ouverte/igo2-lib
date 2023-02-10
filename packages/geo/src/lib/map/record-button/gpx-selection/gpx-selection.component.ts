@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ConfirmDialogService } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
 @Component({
@@ -12,14 +13,17 @@ export class GpxSelectionComponent {
   gpxType: string = 'track';
 
   constructor(private dialogRef: MatDialogRef<GpxSelectionComponent>,
-              private languageService: LanguageService) { }
+              private languageService: LanguageService,
+              private confirmDialogService: ConfirmDialogService) { }
 
   onNoClick(): void {
-    if(confirm(this.languageService.translate.instant(
+    this.confirmDialogService.open(this.languageService.translate.instant(
       'igo.geo.record-prompts.confirmNotDownloadGpx'
-    ))){
-      this.dialogRef.close('noDownload');
-    }
+    )).subscribe((res) => {
+      if(res === true) {
+        this.dialogRef.close('noDownload');
+      }
+    });
   }
 
 }

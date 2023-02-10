@@ -1,11 +1,11 @@
-<div *ngIf="stateAffichage === Affichage.Choice" style="width: fit-content;">
+<div *ngIf="stateAffichage === display.Choice" style="width: fit-content;">
   <div mat-dialog-content style="width: fit-content;">
-    <button mat-button (click)="stateAffichage = Affichage.TrackHistory">{{ 'igo.geo.record-prompts.history' | translate }}</button>
-    <button mat-button (click)="stateAffichage = Affichage.RecordTrack">{{ 'igo.geo.record-prompts.record' | translate }}</button>
+    <button mat-button (click)="stateAffichage = display.TrackHistory">{{ 'igo.geo.record-prompts.history' | translate }}</button>
+    <button mat-button (click)="stateAffichage = display.RecordTrack">{{ 'igo.geo.record-prompts.record' | translate }}</button>
   </div>
 </div>
 
-<div *ngIf="stateAffichage === Affichage.RecordTrack">
+<div *ngIf="stateAffichage === display.RecordTrack">
   <h1 mat-dialog-title>{{ 'igo.geo.record-prompts.intervalMode' | translate }}</h1>
 
   <div mat-dialog-content>
@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<div *ngIf="stateAffichage === Affichage.TrackHistory">
+<div *ngIf="stateAffichage === display.TrackHistory">
   <div mat-dialog-content style="align-items:center; padding: 0;">
     <h3 mat-dialog-title *ngIf="!trackFiles || trackFiles.length === 0" style="padding-right: 20px; padding-left: 20px; font-size: 15px;">{{ 'igo.geo.record-prompts.noTraceFound' | translate }}</h3>
     <table mat-table *ngIf="trackFiles" [dataSource]="trackFiles" class="mat-elevation-z8">
@@ -58,14 +58,14 @@
       <ng-container matColumnDef="buttons">
         <td mat-cell *matCellDef="let element" style="padding-top: 8px; padding-bottom: 8px; width: 30%;">
           <div style="display:inline-block; width: 100%;">
-            <button mat-raised-button (click)="chargerFile(element)" style="width: 100%; margin-bottom: 5px;">{{ 'igo.geo.record-prompts.loadGPX' | translate }}</button>
+            <button mat-raised-button (click)="loadFile(element)" style="width: 100%; margin-bottom: 5px;">{{ 'igo.geo.record-prompts.loadGPX' | translate }}</button>
             <div style="font-size:smaller;">
               <button mat-raised-button (click)="downloadGPXFile(element)" style="width: 48%; float:left; display:inline; padding: 0; min-width: 0px; margin-right: 4%;">
                 <mat-icon svgIcon="download"
                   style="vertical-align: middle; transform: scale(0.75);">
                 </mat-icon>
               </button>
-              <button mat-raised-button color="warn" (click)="supprimerGPXFile(element)" style="width: 48%; float:left; display:inline; padding: 0; min-width: 0px;">
+              <button mat-raised-button color="warn" (click)="deleteGPXFile(element)" style="width: 48%; float:left; display:inline; padding: 0; min-width: 0px;">
                 <mat-icon svgIcon="delete"
                   style="vertical-align: middle; transform: scale(0.75);">
                 </mat-icon>
