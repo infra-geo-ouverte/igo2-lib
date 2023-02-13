@@ -16,7 +16,15 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
-import { FeatureMotion, FeatureStore, FeatureStoreLoadingStrategy, FeatureStoreSelectionStrategy, tryAddLoadingStrategy, tryAddSelectionStrategy, tryBindStoreLayer } from '../../feature';
+import {
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreLoadingStrategy,
+  FeatureStoreSelectionStrategy,
+  tryAddLoadingStrategy,
+  tryAddSelectionStrategy,
+  tryBindStoreLayer
+} from '../../feature';
 import { CoordinatesUnit, FeatureWithDraw, FontType, LabelType } from '../../draw';
 import { EntityStore } from '@igo2/common';
 import { DrawStyleService } from '../../draw/shared/draw-style.service';
@@ -234,7 +242,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         : 'igo.geo.catalog.layer.addToMapOutRange';
     }
   }
-  
+
   addFeatureToLayer() {
     if (this.layer.meta.dataType !== 'Feature') {
       return;
@@ -252,7 +260,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     dialogRef.afterClosed().subscribe((data: {layer: string | any, feature: SearchResult}) => {
       if (data) {
         if(this.stores.length > 0) {
-          this.stores.map((store) => {store.state.updateAll({selected: false}); (store?.layer).visible = false; return store});
+          this.stores.map((store) => {
+            store.state.updateAll({selected: false});
+            (store?.layer).visible = false;
+            return store;
+          });
         }
         // check if is new layer
         if (typeof data.layer === 'string') {
@@ -306,7 +318,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         enabled: false
       }
     });
-    
+
     tryBindStoreLayer(activeStore, activeDrawingLayer);
     tryAddLoadingStrategy(
       activeStore,
@@ -314,7 +326,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         motion: FeatureMotion.None
       })
     );
-    
+
     tryAddSelectionStrategy(
       activeStore,
       new FeatureStoreSelectionStrategy({
@@ -332,7 +344,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         this.clearLabelsOfOlGeometry(olGeometry);
       }
     );
-    
+
     this.addFeature(selectedFeature, activeStore);
     this.stores.push(activeStore);
   }
@@ -342,7 +354,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     const newFeature = {
       type: feature.data.type,
       geometry: {
-        coordinates: feature.data.geometry.coordinates, 
+        coordinates: feature.data.geometry.coordinates,
         type: feature.data.geometry.type
       },
       projection: feature.data.projection,
