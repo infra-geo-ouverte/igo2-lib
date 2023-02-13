@@ -857,34 +857,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       let numberId = Number(layer.id.replace('igo-draw-layer',''));
       this.layerCounterID = Math.max(numberId,this.layerCounterID);
     }
-    console.log('layer data', {
-      isIgoInternalLayer: true,
-      id: 'igo-draw-layer' + ++this.layerCounterID,
-      title: isNewLayer
-        ? newTitle
-        : this.languageService.translate.instant('igo.geo.draw.drawing'),
-      zIndex: 200,
-      source: new FeatureDataSource(),
-      style: (feature, resolution) => {
-        return this.drawStyleService.createIndividualElementStyle(
-          feature,
-          resolution,
-          this.labelsAreShown,
-          feature.get('fontStyle'),
-          feature.get('drawingStyle').fill,
-          feature.get('drawingStyle').stroke,
-          feature.get('offsetX'),
-          feature.get('offsetY'),
-          this.icon
-        );
-      },
-      showInLayerList: true,
-      exportable: true,
-      browsable: false,
-      workspace: {
-        enabled: false
-      }
-    });
     this.activeDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
       id: 'igo-draw-layer' + ++this.layerCounterID,

@@ -4,8 +4,6 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   OnDestroy,
-  Output,
-  EventEmitter
 } from '@angular/core';
 
 import { SearchResult } from '../shared/search.interfaces';
@@ -16,14 +14,17 @@ import { LAYER } from '../../layer/shared/layer.enums';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import Layer from 'ol/layer/Layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
 import { FeatureMotion, FeatureStore, FeatureStoreLoadingStrategy, FeatureStoreSelectionStrategy, tryAddLoadingStrategy, tryAddSelectionStrategy, tryBindStoreLayer } from '../../feature';
 import { CoordinatesUnit, FeatureWithDraw, FontType, LabelType } from '../../draw';
 import { EntityStore } from '@igo2/common';
-import olFeature from 'ol/Feature';
 import { DrawStyleService } from '../../draw/shared/draw-style.service';
+import { getTooltipsOfOlGeometry } from '../../measure';
+import OlOverlay from 'ol/Overlay';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
+import { default as OlGeometry } from 'ol/geom/Geometry';
+import { Layer } from '../../layer';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -31,7 +32,7 @@ import { DrawStyleService } from '../../draw/shared/draw-style.service';
   styleUrls: ['./search-results-add-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
+export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
     'igo.geo.catalog.layer.addToMap'
   );
@@ -75,12 +76,17 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
   private _color = 'primary';
 
-  /**
-   * Event emitted when a result is added
-   */
-  @Output() addFeaturesToLayer = new EventEmitter<SearchResult>();
+  @Input() stores: FeatureStore<FeatureWithDraw>[] = [];
 
-  constructor(private layerService: LayerService, private dialog: MatDialog, private drawStyleService: DrawStyleService) {}
+  get allLayers() {
+    return this.map.layers.filter((layer) =>
+      layer.id.includes('igo-saved-layer')
+    );
+  }
+
+  constructor(private layerService: LayerService, 
+    private dialog: MatDialog,
+    private drawStyleService: DrawStyleService) {}
 
   /**
    * @internal
@@ -229,66 +235,70 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  
+
   addFeatureToLayer() {
     if (this.layer.meta.dataType !== 'Feature') {
       return;
     }
 
-    this.added = !this.added;
-    this.isPreview$.next(false);
+    const selectedFeature = this.layer;
     const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
       width: '700px',
       data: {
-        feature: this.layer,
-        layers: this.map.layers
+        feature: selectedFeature,
+        layers: this.allLayers
       }
     });
 
-
-
-    dialogRef.afterClosed().subscribe((data: {layer: string | Layer, feature: SearchResult}) => {
-      this.added = false;
-      let activeDrawingLayer: VectorLayer;
-      if(data) { 
-        
-        console.log('after close');
+    dialogRef.afterClosed().subscribe((data: {layer: string | any, feature: SearchResult}) => {
+      if(data) {
+        if(this.stores.length > 0) {
+          this.stores.map((store) => {store.state.updateAll({selected: false}); (store?.layer).visible = false; return store});
+        }
         // check if is new layer
         if(typeof data.layer === 'string') {
-          console.log('create new layer and add future');
-          // this.createNewLayer(data.layer, data.feature);
           this.createLayer(data.layer, data.feature);
         } else {
-          // else use existing layer
-          console.log('add future to choosen layer');
-          // this.addFeature(data.feature, data.layer, );
-          
+          const activeStore = this.stores.find(store => store.layer.id === data.layer.id);
+          activeStore.layer.visible = true;
+          activeStore.layer.opacity = 1;
+          this.addFeature(data.feature, activeStore);
         }
       }
     });
   }
 
+  createLayer(layerTitle: string, selectedFeature: SearchResult) {
 
-  createLayer(layerTitle: string, feature: SearchResult) {
-    let activeStore: FeatureStore<FeatureWithDraw> = new FeatureStore<FeatureWithDraw>([], {
+    const activeStore: FeatureStore<FeatureWithDraw> = new FeatureStore<FeatureWithDraw>([], {
       map: this.map
     });
-    
+
+    // set layer id
+    let layerCounterID: number = 0;
+    for (const layer of this.allLayers) {
+      let numberId = Number(layer.id.replace('igo-saved-layer',''));
+      layerCounterID = Math.max(numberId,layerCounterID);
+    }
+
     let activeDrawingLayer: VectorLayer = new VectorLayer({
       isIgoInternalLayer: true,
-      id: "igo-draw-layer" + this.map.layers.length + 1,
+      id: 'igo-saved-layer' + ++layerCounterID,
       title: layerTitle,
       zIndex: 200,
       source: new FeatureDataSource(),
-      style: (f, resolution) => {
+      style: (feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
-          f,
+          feature,
           resolution,
           true,
-          f.get('fontStyle'),
-          f.get('drawingStyle').fill,
-          f.get('drawingStyle').stroke,
-          f.get('offsetX'),
-          f.get('offsetY'),
+          feature.get('fontStyle'),
+          feature.get('drawingStyle').fill,
+          feature.get('drawingStyle').stroke,
+          feature.get('offsetX'),
+          feature.get('offsetY'),
           this.drawStyleService.getIcon()
         );
       },
@@ -299,32 +309,39 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         enabled: false
       }
     });
-
+    
     tryBindStoreLayer(activeStore, activeDrawingLayer);
     tryAddLoadingStrategy(
-      activeStore,
+      activeStore, 
       new FeatureStoreLoadingStrategy({
         motion: FeatureMotion.None
       })
     );
-
+    
     tryAddSelectionStrategy(
-      activeStore,
+      activeStore, 
       new FeatureStoreSelectionStrategy({
         map: this.map,
         motion: FeatureMotion.None,
         many: true
       })
     );
+    
     activeStore.layer.visible = true;
-
-    this.addFeature(feature, activeStore);
-
+    activeStore.source.ol.on(
+      'removefeature',
+      (event: OlVectorSourceEvent<OlGeometry>) => {
+        const olGeometry = event.feature.getGeometry();
+        this.clearLabelsOfOlGeometry(olGeometry);
+      }
+    );
+    
+    this.addFeature(selectedFeature, activeStore);
+    this.stores.push(activeStore);
   }
 
   addFeature(feature: SearchResult, activeStore: FeatureStore<FeatureWithDraw>) {
-    console.log('feature: ', feature);
-    
+
     const newFeature = {
       type: feature.data.type,
       geometry: {
@@ -340,9 +357,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         rad: null,
         fontStyle: FontType.Arial,
         drawingStyle: {
-          // fill: feature.data.meta.style.getFill(),
           fill: 'rgba(255,255,255,0.4)',
-          // stroke: feature.data.meta.style.getStroke()
           stroke: 'rgba(143,7,7,1)'
         },
         offsetX: 0,
@@ -354,10 +369,19 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
         id: feature.meta.id
       }
     };
-    console.log("featrure; ", newFeature);
+
     activeStore.update(newFeature);
-    
     activeStore.setLayerExtent();
     activeStore.layer.ol.getSource().refresh();
+  }
+
+  private clearLabelsOfOlGeometry(olGeometry) {
+    getTooltipsOfOlGeometry(olGeometry).forEach(
+      (olTooltip: OlOverlay | undefined) => {
+        if (olTooltip && olTooltip.getMap()) {
+          this.map.ol.removeOverlay(olTooltip);
+        }
+      }
+    );
   }
 }

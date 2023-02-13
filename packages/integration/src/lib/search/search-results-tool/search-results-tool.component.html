@@ -31,14 +31,13 @@
       (resultMouseenter)="onResultFocus($event)"
       (resultMouseleave)="onResultUnfocus($event)"
       (moreResults)="onSearch($event)"
-      [map]="map"
-      [features]="features">
+      [map]="map">
       <ng-template #igoSearchItemToolbar let-result="result">
         <igo-search-add-button
           [map]="map"
           [store]="store"
-          [layer]="result"
-          (addFeaturesToLayer)="onAddFeaturesToLayer($event)">
+          [stores]="stores"
+          [layer]="result">
         </igo-search-add-button>
       </ng-template>
     </igo-search-results>

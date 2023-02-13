@@ -34,8 +34,7 @@ export class SaveFeatureDialogComponent implements OnInit {
 
   ngOnInit() {
     this.feature = this.data.feature;
-    Object.assign(this.layers, this.data.layers);
-
+    this.layers = this.data.layers;
     this.filteredLayers = this.form.controls['layerName'].valueChanges.pipe(
       startWith(''),
       map(val => this.filter(val))
@@ -47,7 +46,7 @@ export class SaveFeatureDialogComponent implements OnInit {
       return;
     }
     return this.layers.map(l => l).filter(layer =>
-      layer.title.toLowerCase().includes(val.toLowerCase()));
+      layer?.title?.toLowerCase().includes(val.toLowerCase()));
   }
 
   displayFn(layer: Layer): string {

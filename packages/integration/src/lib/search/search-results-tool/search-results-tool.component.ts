@@ -41,7 +41,10 @@ import {
   getCommonVectorSelectedStyle,
   computeOlFeaturesExtent,
   featuresAreOutOfView,
-  roundCoordTo
+  roundCoordTo,
+  FeatureWithDraw,
+  FeatureStore,
+  DrawStyleService,
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -148,13 +151,16 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
+  public stores: FeatureStore<FeatureWithDraw>[] = [];
+
   constructor(
     private mapState: MapState,
     private searchState: SearchState,
     private elRef: ElementRef,
     public toolState: ToolState,
     private directionState: DirectionState,
-    configService: ConfigService
+    configService: ConfigService,
+    private drawStyleService: DrawStyleService
   ) {
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
@@ -619,12 +625,5 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         }
       });
     }, 250);
-  }
-
-  public features: SearchResult[] = [];
-  onAddFeaturesToLayer(feature: SearchResult) {
-    console.log('from integration onAddFeaturesToLayer:');
-    const i = this.features.findIndex((f:SearchResult) => f.meta.id === feature.meta.id);
-    (i === -1) ? this.features.push(feature) :this.features.splice(i, 1);
   }
 }
