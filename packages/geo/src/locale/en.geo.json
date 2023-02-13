@@ -263,7 +263,11 @@
         "style": {
           "styleModal": "Edit style",
           "styleModalTooltip": "Edit the style of the selected entities "
-        }
+        },
+        "saveBtn": "Save",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Save Localisation in Layer",
+        "pleaseChooseOrSet": "Please choose a layer or set a new layer name"
       },
       "download": {
         "action": "Download data",

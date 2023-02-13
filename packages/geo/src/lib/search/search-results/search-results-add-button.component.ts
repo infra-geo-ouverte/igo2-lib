@@ -24,7 +24,7 @@ import { getTooltipsOfOlGeometry } from '../../measure';
 import OlOverlay from 'ol/Overlay';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
-import { Layer } from '../../layer';
+
 
 @Component({
   selector: 'igo-search-add-button',
@@ -84,7 +84,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     );
   }
 
-  constructor(private layerService: LayerService, 
+  constructor(private layerService: LayerService,
     private dialog: MatDialog,
     private drawStyleService: DrawStyleService) {}
 
@@ -234,10 +234,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         : 'igo.geo.catalog.layer.addToMapOutRange';
     }
   }
-
-
   
-
   addFeatureToLayer() {
     if (this.layer.meta.dataType !== 'Feature') {
       return;
@@ -253,12 +250,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     });
 
     dialogRef.afterClosed().subscribe((data: {layer: string | any, feature: SearchResult}) => {
-      if(data) {
+      if (data) {
         if(this.stores.length > 0) {
           this.stores.map((store) => {store.state.updateAll({selected: false}); (store?.layer).visible = false; return store});
         }
         // check if is new layer
-        if(typeof data.layer === 'string') {
+        if (typeof data.layer === 'string') {
           this.createLayer(data.layer, data.feature);
         } else {
           const activeStore = this.stores.find(store => store.layer.id === data.layer.id);
@@ -312,21 +309,21 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     
     tryBindStoreLayer(activeStore, activeDrawingLayer);
     tryAddLoadingStrategy(
-      activeStore, 
+      activeStore,
       new FeatureStoreLoadingStrategy({
         motion: FeatureMotion.None
       })
     );
     
     tryAddSelectionStrategy(
-      activeStore, 
+      activeStore,
       new FeatureStoreSelectionStrategy({
         map: this.map,
         motion: FeatureMotion.None,
         many: true
       })
     );
-    
+
     activeStore.layer.visible = true;
     activeStore.source.ol.on(
       'removefeature',

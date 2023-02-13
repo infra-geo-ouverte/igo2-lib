@@ -1,38 +1,31 @@
-<h1 mat-dialog-title class="mat-typography">Save Feture in new or existing layer</h1>
+<h1 mat-dialog-title class="mat-typography">{{'igo.geo.layer.saveFeatureInLayer' | translate}}</h1>
 
 <div mat-dialog-content class="mat-typography">
-    <form class="igo-form" [formGroup]="form">
-      
-      <igo-list [navigation]="false" [selection]="false">
-       
-        <igo-search-results-item
-          igoListItem
-          color="accent"
-          [result]="feature"
-          showIcons="true">
-        </igo-search-results-item>
-   
+  <form class="igo-form" [formGroup]="form">
+    <igo-list [navigation]="false" [selection]="false">
+      <igo-search-results-item
+        igoListItem
+        color="accent"
+        [result]="feature"
+        showIcons="true">
+      </igo-search-results-item>
     </igo-list>
-        <div class="igo-input-container">
-          <mat-form-field>
-            <input type="text"
-              placeholder="Pick one or set new layer name"
-              aria-label="Pick one or set new layer name"
-              matInput
-              [matAutocomplete]="auto"
-              formControlName="layerName">
-            <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
-              <mat-option *ngFor="let layer of filteredLayers | async" [value]="layer">
-                <p mat-line>{{layer.title}}</p>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-      </div>
-
-
-        
-        
-    </form>
+    
+    <div class="igo-input-container">
+      <mat-form-field>
+        <input type="text"
+          placeholder="{{'igo.geo.layer.pleaseChooseOrSet' | translate}}"
+          matInput
+          [matAutocomplete]="auto"
+          formControlName="layerName">
+        <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
+          <mat-option *ngFor="let layer of filteredLayers | async" [value]="layer">
+            <p mat-line>{{layer.title}}</p>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </form>
 </div>
 
 <div mat-dialog-actions style="justify-content: center">
@@ -41,7 +34,7 @@
       mat-raised-button
       type="button"
       (click)="cancel()">
-      {{'igo.geo.catalog.library.cancel' | translate}}
+      {{'igo.geo.layer.cancelBtn' | translate}}
     </button>
     <button
       id="createLayerBtnDialog"
@@ -49,7 +42,7 @@
       type="button"
       color="primary"
       (click)="save()">
-      {{'igo.geo.printForm.saveBtn' | translate}}
+      {{'igo.geo.layer.saveBtn' | translate}}
     </button>
   </div>
 </div>

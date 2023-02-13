@@ -262,7 +262,11 @@
         "style": {
           "styleModal": "Modifier le style",
           "styleModalTooltip": "Éditer le style des entités sélectionnées"
-        }
+        },
+        "saveBtn": "Sauvegarder",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Ajouter une addresse dans une couche",
+        "pleaseChooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
       "download": {
         "action": "Télécharger les données associées",
