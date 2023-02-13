@@ -3,7 +3,8 @@ import {
   Input,
   AfterViewInit,
   OnDestroy,
-  ApplicationRef
+  ApplicationRef,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { Layer, LayerOptions } from '../../layer/shared';
@@ -22,8 +23,18 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
 
   @Input() map: IgoMap;
   @Input() disabled: boolean;
-  @Input() display: boolean;
   @Input() title: string;
+
+  @Input()
+  get display(): boolean {
+    return this._display;
+  }
+  set display(value: boolean) {
+    this._display = value;
+    this.cdRef.detectChanges();
+    this.basemap.ol.getView().changed();
+  }
+  private _display: boolean;
 
   @Input()
   get baseLayer(): Layer {
@@ -42,8 +53,9 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private layerService: LayerService,
-    private appRef: ApplicationRef
-  ) { }
+    private appRef: ApplicationRef,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngAfterViewInit() {
     this.handleMainMapViewChange(this.map.ol.getView());
