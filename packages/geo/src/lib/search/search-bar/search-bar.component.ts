@@ -81,7 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = false;
+  public showSearchButton: boolean = true;
 
   /**
    * List of available search types
@@ -186,6 +186,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() store: EntityStore<SearchResult>;
 
+   /**
+   * Event emitted when a first result is selected by default
+   */
+   @Output() firstResultSelect = new EventEmitter<SearchResult>();
+
   /**
    * Event emitted when the search term changes
    */
@@ -256,7 +261,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
 
     const configValue = this.configService.getConfig("searchBar.showSearchButton");
-    this.showSearchButton = configValue !== undefined ? configValue : false;
+    this.showSearchButton = configValue !== undefined ? configValue : true;
   }
 
   /**
@@ -456,4 +461,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.store.updateMany(newResults);
     }
   }
+
+  /**
+   * When the user clicks on the magnifying glass and
+   * this find the first object on the map
+   */
+  onFindFirstElement(){
+    const firstResult = this.store.all().filter((result) => result.source.getId() === 'icherche')[0];
+    if(firstResult){
+      this.store.state.update(firstResult,{focused:true,selected:true},true);
+      this.firstResultSelect.emit(firstResult);
+      return;
+    }
+  }
+
 }

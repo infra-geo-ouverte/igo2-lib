@@ -423,6 +423,7 @@
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
         "clearSearch": "Effacer la recherche",
+        "searchGlass": "Faire une recherche",
         "ilayer": {
           "name": "Couches",
           "properties": {

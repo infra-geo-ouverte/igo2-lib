@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoMessageModule } from '@igo2/core';
+import { IgoMessageModule, IgoLanguageModule, } from '@igo2/core';
 
 import {
   IgoPanelModule,
@@ -48,6 +48,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
     IgoAppSearchModule,
     IgoActionbarModule,
     IgoContextMenuModule,
+    IgoLanguageModule,
     IgoFeatureModule
   ],
   exports: [AppSearchComponent],

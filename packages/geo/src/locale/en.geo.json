@@ -424,6 +424,7 @@
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
         "clearSearch": "Clear search",
+        "searchGlass":"Search",
         "ilayer": {
           "name": "Layers",
           "properties": {
