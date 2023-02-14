@@ -288,7 +288,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     // set layer id
     let layerCounterID: number = 0;
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-search-layerr',''));
+      let numberId = Number(layer.id.replace('igo-search-layer',''));
       layerCounterID = Math.max(numberId,layerCounterID);
     }
 
