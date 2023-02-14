@@ -12,7 +12,6 @@
         "unavailableTitle": "Catalog unavailable",
         "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
         "someUnavailable": "Some of the layers from the current catalog are unavailable at the moment or you don't have the required permissions.",
-        "feature.addToLayar": "Add to Layar",
         "externalProvider": {
            "catalog": "This catalog comes from an external organization.",
            "group": "This layers comes from an external organization.",
@@ -267,7 +266,7 @@
         "saveBtn": "Save",
         "cancelBtn": "Cancel",
         "saveFeatureInLayer": "Save Localisation in Layer",
-        "pleaseChooseOrSet": "Please choose a layer or set a new layer name"
+        "chooseOrSet": "Choose a layer or set a new layer name"
       },
       "download": {
         "action": "Download data",
@@ -429,6 +428,7 @@
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
         "clearSearch": "Clear search",
+        "addToLayar": "Add to Layar",
         "ilayer": {
           "name": "Layers",
           "properties": {

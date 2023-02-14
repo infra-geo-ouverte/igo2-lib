@@ -12,7 +12,6 @@
         "unavailableTitle": "Catalogue indisponible",
         "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
         "someUnavailable": "Certaines couches d'information du catalogue sont indisponible pour le moment ou vous n'avez pas les permissions requises.",
-        "feature.addToLayar": "Ajouter à une couche",
         "externalProvider": {
           "catalog": "Ce catalogue provient d'une organisation externe.",
           "group": "Ces couches proviennent d'une organisation externe.",
@@ -266,7 +265,7 @@
         "saveBtn": "Sauvegarder",
         "cancelBtn": "Cancel",
         "saveFeatureInLayer": "Ajouter une addresse dans une couche",
-        "pleaseChooseOrSet": "Choisir une couche ou définir un nouveau nom"
+        "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
       "download": {
         "action": "Télécharger les données associées",
@@ -428,6 +427,7 @@
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
         "clearSearch": "Effacer la recherche",
+        "addToLayar": "Ajouter à une couche",
         "ilayer": {
           "name": "Couches",
           "properties": {

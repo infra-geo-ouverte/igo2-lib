@@ -46,7 +46,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   );
 
   public exportTooltip$: BehaviorSubject<string> = new BehaviorSubject(
-    'igo.geo.catalog.feature.addToLayar'
+    'igo.geo.search.addToLayar'
   );
 
   private resolution$$: Subscription;
@@ -88,7 +88,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
 
   get allLayers() {
     return this.map.layers.filter((layer) =>
-      layer.id.includes('igo-saved-layer')
+      layer.id.includes('igo-search-layer')
     );
   }
 
@@ -288,13 +288,13 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     // set layer id
     let layerCounterID: number = 0;
     for (const layer of this.allLayers) {
-      let numberId = Number(layer.id.replace('igo-saved-layer',''));
+      let numberId = Number(layer.id.replace('igo-search-layerr',''));
       layerCounterID = Math.max(numberId,layerCounterID);
     }
 
     let activeDrawingLayer: VectorLayer = new VectorLayer({
       isIgoInternalLayer: true,
-      id: 'igo-saved-layer' + ++layerCounterID,
+      id: 'igo-search-layer' + ++layerCounterID,
       title: layerTitle,
       zIndex: 200,
       source: new FeatureDataSource(),
