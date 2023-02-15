@@ -28,6 +28,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
+  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private layersSubcriptions = [];
@@ -69,8 +71,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           lay => lay.id === this.layer.data.sourceOptions.id
         ) !== -1;
     }
+    this.map.layers$.subscribe(() => {
+      this.isVisible();
+    });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(value => {
       this.isInResolutionsRange(value);
+      this.isVisible();
       this.tooltip$.next(this.computeTooltip());
     });
   }
@@ -192,6 +198,21 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );
+  }
+
+  isVisible() {
+    if (this.layer?.data?.sourceOptions?.id) {
+      const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
+      oLayer ? this.isVisible$.next(oLayer.visible) : this.isVisible$.next(false);
+    }
+  }
+
+  getBadgeIcon() {
+    if (this.inRange$.getValue()) {
+      return this.isVisible$.getValue() ? 'eye' : 'eye-off';
+    } else {
+      return 'eye-off';
+    }
   }
 
   computeTooltip(): string {
