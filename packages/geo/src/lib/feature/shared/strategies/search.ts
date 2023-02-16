@@ -1,11 +1,10 @@
-import { Index } from 'flexsearch'
-import OlEvent from 'ol/events/Event';
+import { Index } from 'flexsearch';
 import { EntityStoreStrategy } from '@igo2/common';
 import { FeatureStore } from '../store';
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
 
 /**
- * 
+ *
  * This strategy loads a layer's features's properties into a searchable index.
  */
 export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
@@ -58,7 +57,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   private initStoreSearchIndex(store) {
-    store.searchIndex = new Index({ tokenize: "full" })
+    store.searchIndex = new Index({ tokenize: "full" });
   }
 
   /**
@@ -71,7 +70,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     }
     this.initStoreSearchIndex(store);
 
-    store.entities$.subscribe((e) => this.onEntitiesChanges(store))
+    store.entities$.subscribe((e) => this.onEntitiesChanges(store));
   }
 
   /**
@@ -103,8 +102,8 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     const ratio = this.options.percentDistinctValueRatio || 15;
     const featuresProperties = [];
     store.index.forEach((value, key) => {
-      featuresProperties.push(value.properties)
-    })
+      featuresProperties.push(value.properties);
+    });
 
     if (featuresProperties.length === 0) {
       this.initStoreSearchIndex(store);
@@ -115,19 +114,19 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
 
       } else {
         // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
-        const columns = Object.keys(featuresProperties[0])
+        const columns = Object.keys(featuresProperties[0]);
         const columnsToNotIndex = columns.map((column) => {
-          const distinctValues = [...new Set(featuresProperties.map(item => item[column]))]
+          const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
           // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
           if ((distinctValues.length / featuresProperties.length) * 100 <= ratio || distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
-            return column
+            return column;
           }
         }).filter(f => f);
         store.index.forEach((value, key) => {
           const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
           columnsToNotIndex.map(c => delete propertiesToIndex[c]);
           store.searchIndex.add(key, JSON.stringify(propertiesToIndex));
-        })
+        });
       }
     }
   }

@@ -82,7 +82,7 @@ export interface FeatureStoreSearchIndexStrategyOptions
 extends EntityStoreStrategyOptions {
   sourceFields?: SourceFieldsOptionsParams[];
   percentDistinctValueRatio?: number
-} 
+}
 
 export interface FeatureStoreSelectionStrategyOptions
   extends FeatureStoreStrategyOptions {

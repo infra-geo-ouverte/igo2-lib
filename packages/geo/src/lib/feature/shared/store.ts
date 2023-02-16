@@ -2,7 +2,7 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olextent from 'ol/extent';
 
-import {Index} from 'flexsearch'
+import {Index} from 'flexsearch';
 
 import {
   getEntityId,
