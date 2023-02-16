@@ -480,8 +480,8 @@
             "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
-            "map": "À l'étendue de la carte",
-            "quebec": "Au Québec"
+            "map": "Map extent",
+            "quebec": "Whole Quebec"
           }
         },
         "coordinates": {
