@@ -5,12 +5,8 @@ import { FeatureStore } from '../store';
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
 
 /**
- * This strategy loads a layer's features into it's store counterpart.
- * The layer -> store binding is a one-way binding. That means any OL feature
- * added to the layer will be added to the store but the opposite is false.
- *
- * Important: In it's current state, this strategy is to meant to be combined
- * with a standard Loading strategy and it would probably cause recursion issues.
+ * 
+ * This strategy loads a layer's features's properties into a searchable index.
  */
 export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
 
@@ -24,7 +20,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Bind this strategy to a store and start watching for Ol source changes
+   * Bind this strategy to a store and start watching for entities changes
    * @param store Feature store
    */
   bindStore(store: FeatureStore) {
@@ -35,7 +31,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Unbind this strategy from a store and stop watching for Ol source changes
+   * Unbind this strategy from a store and stop watching for entities changes
    * @param store Feature store
    */
   unbindStore(store: FeatureStore) {
@@ -66,7 +62,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Watch for a store's  OL source changes
+   * Watch for a store's entities changes
    * @param store Feature store
    */
   private watchStore(store: FeatureStore) {
@@ -79,7 +75,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Stop watching for a store's OL source changes
+   * Stop watching for a store's entities changes
    * @param store Feature store
    */
   private unwatchStore(store: FeatureStore) {
@@ -100,7 +96,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Maintain searchble index for every loaded entities
+   * Maintain searcahble index for every loaded entities
    * @param store Feature store
    */
   private onEntitiesChanges(store: FeatureStore) {
@@ -115,6 +111,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     } else {
       if (this.options.sourceFields) {
         // TODO
+
 
       } else {
         // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
