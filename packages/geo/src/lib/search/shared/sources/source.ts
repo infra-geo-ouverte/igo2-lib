@@ -9,6 +9,8 @@ import {
   ReverseSearchOptions,
   SearchSourceSettings
 } from './source.interfaces';
+import { FeatureStore } from '../../../feature';
+import { Workspace } from '@igo2/common';
 
 /**
  * Base search source class
@@ -108,6 +110,19 @@ export class SearchSource {
    */
   get settings(): SearchSourceSettings[] {
     return this.options.settings === undefined ? [] : this.options.settings;
+  }
+
+  set featureStoresWithIndex(storesWithIndex: FeatureStore[]) {
+    this._featureStoresWithIndex = storesWithIndex;
+  }
+  get featureStoresWithIndex() {
+    return this._featureStoresWithIndex;
+  }
+  private _featureStoresWithIndex: FeatureStore[];
+
+  setWorkspaces(workspaces: Workspace[]) {
+    this.featureStoresWithIndex = workspaces.filter(fw => (fw.entityStore as FeatureStore).searchIndex).map(fw => fw.entityStore as FeatureStore)
+    console.log('this.featureStoresWithIndex', workspaces, this.featureStoresWithIndex)
   }
 
   /**

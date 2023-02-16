@@ -454,6 +454,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Imported data (vector)",
+          "restrictExtent": {
+            "map": "Map extent",
+            "whole": "Whole dataset"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {

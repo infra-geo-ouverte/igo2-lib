@@ -453,6 +453,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Données importées (vecteurs)",
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "whole": "L'entièreté du jeu de données"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {
