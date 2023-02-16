@@ -17,7 +17,8 @@ import {
   FeatureStoreInMapExtentStrategy,
   Feature,
   FeatureMotion,
-  FeatureStoreInMapResolutionStrategy
+  FeatureStoreInMapResolutionStrategy,
+  FeatureStoreSearchIndexStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
@@ -79,6 +80,7 @@ export class FeatureWorkspaceService {
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
+    const searchStrategy = new FeatureStoreSearchIndexStrategy({percentDistinctValueRatio: 10});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
@@ -101,6 +103,7 @@ export class FeatureWorkspaceService {
       many: true,
       dragBox: true
     });
+    store.addStrategy(searchStrategy, true);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
