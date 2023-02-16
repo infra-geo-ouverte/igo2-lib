@@ -43,8 +43,6 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return this.title$.getValue();
   }
 
-  private reverseSearchCoordsFormatEnabled: boolean = false;
-
   constructor(
     @Inject('options') options: SearchSourceOptions,
     private languageService: LanguageService,
@@ -56,10 +54,6 @@ export class CoordinatesReverseSearchSource extends SearchSource
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));
-
-    storageService.storageChange$.subscribe(() => {
-      this.reverseSearchCoordsFormatEnabled = storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
-    });
   }
 
   getId(): string {
@@ -89,21 +83,24 @@ export class CoordinatesReverseSearchSource extends SearchSource
   })
   reverseSearch(
     lonLat: [number, number],
-    options?: ReverseSearchOptions
+    options?: ReverseSearchOptions,
+    reverseSearchCoordsFormatEnabled?: boolean
   ): Observable<SearchResult<Feature>[]> {
-    return of([this.dataToResult(lonLat, options)]);
+    return of([this.dataToResult(lonLat, options, reverseSearchCoordsFormatEnabled)]);
   }
 
-  private dataToResult(data: [number, number], options: ReverseSearchOptions): SearchResult<Feature> {
+  private dataToResult(data: [number, number], options: ReverseSearchOptions,
+    reverseSearchCoordsFormatEnabled: boolean): SearchResult<Feature> {
+
     const dataDMS = convertDDToDMS(data);
-    const convertedCoord = lonLatConversion(data, this.projections, this.reverseSearchCoordsFormatEnabled);
+    const convertedCoord = lonLatConversion(data, this.projections, reverseSearchCoordsFormatEnabled);
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 
-    const roundedCoordString = (!this.reverseSearchCoordsFormatEnabled) ?
+    const roundedCoordString = (!reverseSearchCoordsFormatEnabled) ?
       roundCoordTo(data, 6).join(', ') : roundCoordTo(data, 6).reverse().join(', ');
 
-    const roundedCoordStringDMS = (!this.reverseSearchCoordsFormatEnabled) ?
+    const roundedCoordStringDMS = (!reverseSearchCoordsFormatEnabled) ?
       dataDMS.join(', ') : dataDMS.reverse().join(', ');
 
     let geometry: FeatureGeometry = {
@@ -133,12 +130,12 @@ export class CoordinatesReverseSearchSource extends SearchSource
       subtitleHtml += '<small>Confiance: ' + options.conf + '%</small>';
     }
 
-    const coordKey = (!this.reverseSearchCoordsFormatEnabled) ?
+    const coordKey = (!reverseSearchCoordsFormatEnabled) ?
       this.languageService.translate.instant('igo.geo.search.coordinates.coord'):
       this.languageService.translate.instant('igo.geo.search.coordinates.reversedCoord');
     properties[coordKey] = roundedCoordString;
 
-    const coordKeyDMS = (!this.reverseSearchCoordsFormatEnabled) ?
+    const coordKeyDMS = (!reverseSearchCoordsFormatEnabled) ?
      this.languageService.translate.instant('igo.geo.search.coordinates.coordDMS'):
      this.languageService.translate.instant('igo.geo.search.coordinates.reversedCoordDMS');
     properties[coordKeyDMS] = roundedCoordStringDMS;
