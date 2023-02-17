@@ -702,6 +702,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         id: featureId
       }
     });
+    this.activeStore.setLayerExtent();
     this.activeDrawControl.predefinedRadius$.next(undefined);
     this.activeDrawControl.radiusDrawEnd$.next(undefined);
   }
@@ -781,6 +782,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         });
     });
     this.updateHeightTable();
+    this.activeStore.setLayerExtent();
   }
 
   /**
@@ -1168,7 +1170,6 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   updateHeightTable() {
     // Check the amount of rows as a possible alternative
-
     this.numberOfDrawings = this.activeStore.count$.getValue();
     this.numberOfDrawings > 10
       ? (this.tableTemplate.tableHeight = '35vh')

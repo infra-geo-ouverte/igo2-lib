@@ -39,7 +39,7 @@ export default function jsGeoPdfPlugin(jsPDFAPI) {
         const proj_obj = this.internal.newAdditionalObject();
 
         proj_obj.content = '<< /EPSG 3857 /Type /PROJCS /WKT (PROJCS["WGS_1984_Web_Mercator_Auxiliary_Sphere"'+
-        ',+GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0]'+
+        ',GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0]'+
         ',UNIT["Degree",0.017453292519943295]],PROJECTION["Mercator_Auxiliary_Sphere"],PARAMETER["False_Easting",0.0]'+
         ',PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Standard_Parallel_1",0.0]'+
         ',PARAMETER["Auxiliary_Sphere_Type",0.0],UNIT["Meter",1.0]]) >>';
@@ -51,7 +51,7 @@ export default function jsGeoPdfPlugin(jsPDFAPI) {
 
         const title_obj = this.internal.newAdditionalObject();
         const date = new Date().toLocaleDateString('en-CA');
-        title_obj.content = '<< /Name IGO2 /Type OCG /Date '+ date +' >>';
+        title_obj.content = '<< /Name IGO2 /Type /OCG /Date '+ date +' >>';
 
         return bbox_obj.objId;
     };
