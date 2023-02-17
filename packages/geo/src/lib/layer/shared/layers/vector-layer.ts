@@ -413,7 +413,7 @@ export class VectorLayer extends Layer {
       };
 
       const options: SimpleGetOptions = { responseType };
-      this.geoNetworkService.geoDBService.get(url).pipe(delay(100)).pipe(concatMap(r =>
+      this.geoNetworkService.geoDBService.get(url).pipe(delay(750)).pipe(concatMap(r =>
         r ? of(r) : this.geoNetworkService.get(modifiedUrl, options)
           .pipe(
             first(),

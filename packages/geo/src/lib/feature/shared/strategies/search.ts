@@ -1,7 +1,8 @@
-import { Index } from 'flexsearch';
+import { Document } from 'flexsearch';
 import { EntityStoreStrategy } from '@igo2/common';
 import { FeatureStore } from '../store';
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
+import { skipWhile } from 'rxjs/operators';
 
 /**
  *
@@ -57,7 +58,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   }
 
   private initStoreSearchIndex(store) {
-    store.searchIndex = new Index({ tokenize: "full" });
+    store.searchDocument = new Document({ tokenize: "full" });
   }
 
   /**
@@ -70,7 +71,9 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     }
     this.initStoreSearchIndex(store);
 
-    store.entities$.subscribe((e) => this.onEntitiesChanges(store));
+    store.entities$
+      .pipe(skipWhile((e) => !e.length))
+      .subscribe(() => this.onEntitiesChanges(store));
   }
 
   /**
@@ -80,7 +83,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
   private unwatchStore(store: FeatureStore) {
     const key = this.stores$$.get(store);
     if (key !== undefined) {
-      store.searchIndex = undefined;
+      store.searchDocument = undefined;
       this.stores$$.delete(store);
     }
   }
@@ -102,12 +105,11 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
     const ratio = this.options.percentDistinctValueRatio || 15;
     const featuresProperties = [];
     store.index.forEach((value, key) => {
-      featuresProperties.push(value.properties);
+      const fp = value.properties;
+      fp.igoSearchID = key;
+      featuresProperties.push(fp);
     });
-
-    if (featuresProperties.length === 0) {
-      this.initStoreSearchIndex(store);
-    } else {
+    const toIndex = [];
       if (this.options.sourceFields) {
         // TODO
 
@@ -125,9 +127,23 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
         store.index.forEach((value, key) => {
           const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
           columnsToNotIndex.map(c => delete propertiesToIndex[c]);
-          store.searchIndex.add(key, JSON.stringify(propertiesToIndex));
+          toIndex.push(propertiesToIndex);
         });
       }
+
+      if (toIndex.length === 0) {
+        this.initStoreSearchIndex(store);
+      } else {
+        
+        const keysToIndex = Object.keys(toIndex[0]).filter(f => f!== 'igoSearchID')
+        store.searchDocument = new Document({
+          document: {
+            id: 'igoSearchID',
+            index: keysToIndex.map(key => {return {field: key,tokenize: "full"}})
+          }
+        });
+      toIndex.map(i => {
+        store.searchDocument.add(i.igoSearchID, i)})
     }
   }
 }
