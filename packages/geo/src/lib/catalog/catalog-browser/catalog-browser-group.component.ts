@@ -14,6 +14,8 @@ import { EntityStore } from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
 
 import {
+  addedChangeEmmitter,
+  addedChangeGroupEmmitter,
   Catalog,
   CatalogItem,
   CatalogItemGroup,
@@ -87,18 +89,12 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the add/remove button of the group is clicked
    */
-  @Output() addedChange = new EventEmitter<{
-    added: boolean;
-    group: CatalogItemGroup;
-  }>();
+  @Output() addedChange = new EventEmitter<addedChangeGroupEmmitter>();
 
   /**
    * Event emitted when the add/remove button of a layer is clicked
    */
-  @Output() layerAddedChange = new EventEmitter<{
-    added: boolean;
-    layer: CatalogItemLayer;
-  }>();
+  @Output() layerAddedChange = new EventEmitter<addedChangeEmmitter>();
 
   /**
    * @internal
@@ -144,8 +140,8 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * On toggle button click, emit the added change event
    * @internal
    */
-  onToggleClick() {
-    this.added$.value ? this.remove() : this.add();
+  onToggleClick(event: Event) {
+    this.added$.value ? this.remove(event) : this.add(event);
   }
 
   /**
@@ -163,7 +159,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added change event
    */
-  onLayerAddedChange(event: { added: boolean; layer: CatalogItemLayer }) {
+  onLayerAddedChange(event: addedChangeEmmitter) {
     this.layerAddedChange.emit(event);
     this.tryToggleGroup(event);
   }
@@ -171,22 +167,24 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Emit added change event with added = true
    */
-  private add() {
+  private add(event: Event) {
     this.added$.next(true);
     this.addedChange.emit({
       added: true,
-      group: this.group
+      group: this.group,
+      event
     });
   }
 
   /**
    * Emit added change event with added = true
    */
-  private remove() {
+  private remove(event: Event) {
     this.added$.next(false);
     this.addedChange.emit({
       added: false,
-      group: this.group
+      group: this.group,
+      event
     });
   }
 
@@ -198,7 +196,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * If all the layers of the group added or removed, add or remove the group itself.
    * @param event The last layer added change event to occur
    */
-  private tryToggleGroup(event: { added: boolean; layer: CatalogItemLayer }) {
+  private tryToggleGroup(event: addedChangeEmmitter) {
     const added = event.added;
     const layer = event.layer;
 
@@ -208,7 +206,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       .map((item: CatalogItem) => this.state.get(item).added || false);
 
     if (layersAdded.every(value => value === added)) {
-      added ? this.add() : this.remove();
+      added ? this.add(event.event) : this.remove(event.event);
     } else if (this.added$.value === true) {
       this.added$.next(false);
     }

@@ -45,6 +45,7 @@ export class IgoMap {
   public ol: olMap;
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
+  public layersAddedByClick$ = new BehaviorSubject<Layer[]>(undefined);
   public status$: Subject<SubjectStatus>;
   public propertyChange$: Subject<{event:ObjectEvent, layer: Layer}>;
   public overlay: Overlay;

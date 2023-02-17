@@ -20,7 +20,9 @@ import {
   CatalogItemLayer,
   CatalogItemGroup,
   CatalogItemState,
-  CatalogItemType
+  CatalogItemType,
+  addedChangeEmmitter,
+  addedChangeGroupEmmitter
 } from '../shared';
 
 /**
@@ -117,10 +119,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added event
    */
-  onLayerAddedChange(event: { added: boolean; layer: CatalogItemLayer }) {
+  onLayerAddedChange(event: addedChangeEmmitter) {
     const layer = event.layer;
     this.store.state.update(layer, { added: event.added }, false);
-    event.added ? this.addLayerToMap(layer) : this.removeLayerFromMap(layer);
+    event.added ? this.addLayerToMap(layer, event) : this.removeLayerFromMap(layer);
   }
 
   /**
@@ -128,7 +130,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Group added event
    */
-  onGroupAddedChange(event: { added: boolean; group: CatalogItemGroup }) {
+  onGroupAddedChange(event: addedChangeGroupEmmitter) {
     const group = event.group;
     this.store.state.update(group, { added: event.added }, false);
     event.added ? this.addGroupToMap(group) : this.removeGroupFromMap(group);
@@ -138,7 +140,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add layer to map
    * @param layer Catalog layer
    */
-  private addLayerToMap(layer: CatalogItemLayer) {
+  private addLayerToMap(layer: CatalogItemLayer, event?: addedChangeEmmitter) {
     this.addLayersToMap([layer]);
   }
 
@@ -154,7 +156,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add multiple layers to map
    * @param layers Catalog layers
    */
-  private addLayersToMap(layers: CatalogItemLayer[]) {
+  private addLayersToMap(layers: CatalogItemLayer[], event?: addedChangeEmmitter) {
     const layers$ = layers.map((layer: CatalogItemLayer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
@@ -166,6 +168,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     });
 
     zip(...layers$).subscribe((oLayers: Layer[]) => {
+      if (event.event.type === 'click' && event.added) {
+        this.map.layersAddedByClick$.next(oLayers)
+      }
       this.store.state.updateMany(layers, { added: true });
       this.map.addLayers(oLayers);
     });
