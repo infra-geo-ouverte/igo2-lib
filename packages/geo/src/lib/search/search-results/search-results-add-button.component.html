@@ -5,7 +5,7 @@ igoStopPropagation
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
-[matTooltip]="(tooltip$ | async) | translate"
+[matTooltip]="computeTooltip() | translate"
 [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="onToggleClick($event)">
 <mat-icon
