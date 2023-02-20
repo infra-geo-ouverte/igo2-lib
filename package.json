@@ -148,6 +148,7 @@
     "@types/node": "^14.18.23",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
+    "@types/flexsearch": "^0.7.3",
     "angular-cli-ghpages": "^1.0.3",
     "conventional-changelog-cli": "^2.0.12",
     "copy-newer": "^2.1.2",
