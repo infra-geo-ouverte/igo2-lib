@@ -15,7 +15,7 @@ matTooltipShowDelay="500"
   igoMatBadgeBackgroundColor="none"
   igoMatBadgeInverseColor="true"
   [matBadgeHidden]="(inRange$ | async) && !added"
-  [matBadgeDisabled]="!(inRange$ | async)"
+  [matBadgeDisabled]="(inRange$ | async) === false"
   matBadgeSize="small"
   matBadgePosition="after"
   [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
