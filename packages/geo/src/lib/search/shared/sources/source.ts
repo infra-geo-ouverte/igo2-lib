@@ -121,8 +121,9 @@ export class SearchSource {
   private _featureStoresWithIndex: FeatureStore[];
 
   setWorkspaces(workspaces: Workspace[]) {
-    this.featureStoresWithIndex = workspaces.filter(fw => (fw.entityStore as FeatureStore).searchDocument).map(fw => fw.entityStore as FeatureStore)
-    console.log('this.featureStoresWithIndex', workspaces, this.featureStoresWithIndex)
+    this.featureStoresWithIndex = workspaces
+      .filter(fw => (fw.entityStore as FeatureStore).searchDocument)
+      .map(fw => fw.entityStore as FeatureStore);
   }
 
   /**

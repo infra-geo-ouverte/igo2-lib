@@ -1,4 +1,4 @@
-import { Document } from 'flexsearch';
+import { Document, DocumentOptions } from 'flexsearch';
 import { EntityStoreStrategy } from '@igo2/common';
 import { FeatureStore } from '../store';
 import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
@@ -102,7 +102,7 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   private onEntitiesChanges(store: FeatureStore) {
-    const ratio = this.options.percentDistinctValueRatio || 15;
+    const ratio = this.options.percentDistinctValueRatio || 2;
     const featuresProperties = [];
     store.index.forEach((value, key) => {
       const fp = value.properties;
@@ -110,40 +110,53 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
       featuresProperties.push(fp);
     });
     const toIndex = [];
-      if (this.options.sourceFields) {
-        // TODO
+    let columnsToNotIndex = [];
+    let contentToIndex = [];
+    if (this.options.sourceFields) {
+      columnsToNotIndex = this.options.sourceFields.filter(sf => !sf.searchIndex?.enabled);
+      contentToIndex = this.options.sourceFields.filter(sf => sf.searchIndex?.enabled).map(sf2 => {
+        return Object.assign({}, {field: sf2.name, tokenize: "full"}, sf2.searchIndex);
+      });
+      console.log('columnsToNotIndex', columnsToNotIndex, contentToIndex );
 
-
-      } else {
-        // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
-        const columns = Object.keys(featuresProperties[0]);
-        const columnsToNotIndex = columns.map((column) => {
-          const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
-          // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
-          if ((distinctValues.length / featuresProperties.length) * 100 <= ratio || distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
-            return column;
-          }
-        }).filter(f => f);
-        store.index.forEach((value, key) => {
-          const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
-          columnsToNotIndex.map(c => delete propertiesToIndex[c]);
-          toIndex.push(propertiesToIndex);
-        });
+    } else {
+      // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
+      const columns = Object.keys(featuresProperties[0]);
+      const columnsToIndex = [];
+      columnsToNotIndex = columns.map((column) => {
+        const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
+        // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
+        if ((distinctValues.length / featuresProperties.length) * 100 <= ratio || distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
+          columnsToNotIndex.push(column);
+        } else {
+          columnsToIndex.push(column);
+        }
+      }).filter(f => f);
+      const keysToIndex = columnsToIndex.filter(f => f!== 'igoSearchID');
+      contentToIndex = keysToIndex.map(key => {return {field: key,tokenize: "full"};});
+    }
+    store.index.forEach((value, key) => {
+      const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
+      columnsToNotIndex.map(c => delete propertiesToIndex[c]);
+      if (Object.keys(propertiesToIndex).length) {
+        toIndex.push(propertiesToIndex);
       }
+    });
 
-      if (toIndex.length === 0) {
-        this.initStoreSearchIndex(store);
-      } else {
-        
-        const keysToIndex = Object.keys(toIndex[0]).filter(f => f!== 'igoSearchID')
-        store.searchDocument = new Document({
-          document: {
-            id: 'igoSearchID',
-            index: keysToIndex.map(key => {return {field: key,tokenize: "full"}})
-          }
-        });
+    if (toIndex.length === 0) {
+      this.initStoreSearchIndex(store);
+    } else {
+
+
+      store.searchDocument = new Document({
+        document: {
+          id: 'igoSearchID',
+          index: contentToIndex
+        } as DocumentOptions<any>
+      });
       toIndex.map(i => {
-        store.searchDocument.add(i.igoSearchID, i)})
+        store.searchDocument.add(i.igoSearchID, i);
+      });
     }
   }
 }
