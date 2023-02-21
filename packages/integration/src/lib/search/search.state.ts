@@ -4,6 +4,7 @@ import { EntityRecord, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityS
 import { ConfigService, StorageService } from '@igo2/core';
 import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { WorkspaceState } from '../workspace/workspace.state';
 
 /**
  * Service that holds the state of the search module
@@ -50,6 +51,7 @@ export class SearchState {
   constructor(
     private searchSourceService: SearchSourceService,
     private storageService: StorageService,
+    private workspaceState: WorkspaceState,
     private configService: ConfigService) {
     const searchOverlayStyle = this.configService.getConfig('searchOverlayStyle') as {
       base?: CommonVectorStyleOptions,
@@ -67,6 +69,14 @@ export class SearchState {
       this.searchResultsGeometryEnabled$.next(searchResultsGeometryEnabled);
     }
     this.store.addStrategy(this.createCustomFilterTermStrategy(), false);
+
+    const wksSource = this.searchSourceService.getSources().find(source => source.getId() === 'workspace');
+    this.workspaceState.store.entities$
+    .subscribe(e => {
+      const searchableWks = e.filter(fw => (fw.entityStore as any).searchDocument);
+      this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+    }
+    );
   }
 
   private createCustomFilterTermStrategy(): EntityStoreFilterCustomFuncStrategy {
