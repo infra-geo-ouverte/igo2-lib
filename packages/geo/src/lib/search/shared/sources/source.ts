@@ -121,9 +121,27 @@ export class SearchSource {
   private _featureStoresWithIndex: FeatureStore[];
 
   setWorkspaces(workspaces: Workspace[]) {
+    if (workspaces.filter(fw => (fw.entityStore as FeatureStore).searchDocument).length >= 1) {
+      this.options.available = true;
+    } else {
+      this.options.available = false;
+    }
+    const values = [];
     this.featureStoresWithIndex = workspaces
       .filter(fw => (fw.entityStore as FeatureStore).searchDocument)
-      .map(fw => fw.entityStore as FeatureStore);
+      .map(fw => {
+        values.push({
+          title: fw.title,
+          value: fw.title,
+          enabled: true
+        });
+        return fw.entityStore as FeatureStore;
+      });
+    const datasets = this.options.settings.find(s => s.title === 'datasets');
+    if (datasets) {
+      datasets.values = values;
+    }
+    this.setParamFromSetting(datasets);
   }
 
   /**

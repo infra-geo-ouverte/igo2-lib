@@ -80,7 +80,10 @@ export class FeatureWorkspaceService {
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
-    const searchStrategy = new FeatureStoreSearchIndexStrategy({ percentDistinctValueRatio: 2, sourceFields: layer.dataSource.options.sourceFields });
+    const searchStrategy = new FeatureStoreSearchIndexStrategy({
+      percentDistinctValueRatio: 2,
+      sourceFields: layer.dataSource.options.sourceFields
+    });
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});

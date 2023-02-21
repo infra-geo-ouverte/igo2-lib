@@ -117,8 +117,6 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
       contentToIndex = this.options.sourceFields.filter(sf => sf.searchIndex?.enabled).map(sf2 => {
         return Object.assign({}, {field: sf2.name, tokenize: "full"}, sf2.searchIndex);
       });
-      console.log('columnsToNotIndex', columnsToNotIndex, contentToIndex );
-
     } else {
       // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
       const columns = Object.keys(featuresProperties[0]);
@@ -126,7 +124,9 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
       columnsToNotIndex = columns.map((column) => {
         const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
         // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
-        if ((distinctValues.length / featuresProperties.length) * 100 <= ratio || distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
+        if (
+          (distinctValues.length / featuresProperties.length) * 100 <= ratio ||
+          distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
           columnsToNotIndex.push(column);
         } else {
           columnsToIndex.push(column);

@@ -513,6 +513,7 @@
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
             "radius": "Rayon de recherche",

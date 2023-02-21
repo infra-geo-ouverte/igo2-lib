@@ -514,6 +514,7 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",
             "radius": "Search radius",
