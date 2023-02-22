@@ -52,11 +52,7 @@ export class ContextItemComponent {
   ) {}
 
   favoriteClick(context: DetailedContext) {
-    if (this.default) {
-      this.default = false;
-    } else {
-      this.default = true;
-    }
+    this.default = !this.default;
     this.favorite.emit(context);
   }
 }

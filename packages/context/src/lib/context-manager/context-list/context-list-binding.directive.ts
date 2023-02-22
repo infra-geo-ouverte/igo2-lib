@@ -6,7 +6,7 @@ import {
   HostListener,
   ChangeDetectorRef
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MessageService, LanguageService, StorageService } from '@igo2/core';
@@ -85,15 +85,30 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('favorite', ['$event'])
-  onFavorite(context: Context) {
-    const favContextSet = this.storageService.get('favorite.context.uri');
+  async onFavorite(context: Context) {
+    let favContextSet;
+    if (this.contextService.baseUrl) {
+      favContextSet = await (await firstValueFrom(this.contextService.getDefault())).id;
+    } else {
+      favContextSet = this.storageService.get('favorite.context.uri');
+    }
     if (!context.id) {
       context.id = context.uri;
     }
-    if (favContextSet === context.uri) {
-      this.contextService.unsetFavContext();
-      if (this.previousMessageId) {
-        this.messageService.remove(this.previousMessageId);
+    if (favContextSet === context.id) {
+      if (this.auth.authenticated) {
+        this.contextService.setDefault().subscribe(() => {
+          if (this.previousMessageId) {
+            this.messageService.remove(this.previousMessageId);
+          }
+          this.contextService.getDefault().subscribe((defaultContext) => {
+            this.contextService.defaultContextId$.next(defaultContext.id);
+            this.cdRef.detectChanges();
+          });
+          return;
+        });
+      } else {
+        this.storageService.set('favorite.context.uri', null);
       }
       return;
     }

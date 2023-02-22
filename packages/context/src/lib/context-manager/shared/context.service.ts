@@ -54,7 +54,7 @@ export class ContextService {
   public toolsChanged$ = new Subject<DetailedContext>();
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
-  private baseUrl: string;
+  public baseUrl: string;
 
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
@@ -141,7 +141,7 @@ export class ContextService {
         })
       );
     } else {
-      const uri = this.storageService.get('favorite.context.uri') as string;
+      const uri = this.storageService.get('favorite.context.uri') === null ? 'default' : this.storageService.get('favorite.context.uri') as string;
       this.defaultContextId$.next(uri);
       return this.getContextByUri(uri);
     }
@@ -156,20 +156,14 @@ export class ContextService {
     return of([]);
   }
 
-  setDefault(id: string): Observable<any> {
-    this.defaultContextId$.next(id);
+  setDefault(id?: string): Observable<any> {
     if (this.authService.authenticated) {
       const url = this.baseUrl + '/contexts/default';
-      return this.http.post(url, { defaultContextId: id });
+      return this.http.post(url, { defaultContextId: id ? id : this.config.getConfig('context.defaultContextUri') });
     } else {
       this.storageService.set('favorite.context.uri', id);
       return of(undefined);
     }
-  }
-
-  unsetFavContext(): void {
-    this.setDefault(null);
-    this.storageService.set('favorite.context.uri', null);
   }
 
   hideContext(id: string) {
