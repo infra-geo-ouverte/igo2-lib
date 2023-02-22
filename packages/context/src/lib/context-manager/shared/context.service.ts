@@ -141,7 +141,9 @@ export class ContextService {
         })
       );
     } else {
-      const uri = this.storageService.get('favorite.context.uri') === null ? 'default' : this.storageService.get('favorite.context.uri') as string;
+      const uri = this.storageService.get('favorite.context.uri') === null
+        ? 'default'
+        : this.storageService.get('favorite.context.uri') as string;
       this.defaultContextId$.next(uri);
       return this.getContextByUri(uri);
     }
