@@ -137,7 +137,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input() pointerSummaryEnabled: boolean = false;
   @Input() searchResultsGeometryEnabled: boolean = false;
-  @Input() reverseSearchCoordsFormatEnabled: boolean = false;
+
+  /**
+   * When reverse coordinates status change
+   */
+  @Input()
+  get reverseSearchCoordsFormatEnabled(): boolean {
+    return this._reverseSearchCoordsFormatEnabled;
+  }
+  set reverseSearchCoordsFormatEnabled(value: boolean) {
+    this._reverseSearchCoordsFormatEnabled = value;
+    this.setTerm(this.term, true);
+  }
+  private _reverseSearchCoordsFormatEnabled = false;
+
   /**
    * Whether a float label should be displayed
    */
@@ -325,14 +338,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Send the term into the stream only if this component is not disabled
    * @param term Search term
    */
-  setTerm(term: string) {
+  setTerm(term: string, reverseCoordEvent?: boolean) {
+
     if (this.disabled) {
       return;
     }
 
     term = term || '';
 
-    if (term !== this.term) {
+    if (term !== this.term && !reverseCoordEvent) {
       this.term$.next(term);
     }
 

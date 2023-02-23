@@ -504,7 +504,8 @@
         },
         "reverseCoordFormat": {
           "title": "Inverser les coordonnées",
-          "tooltip": "Inverser les coordonnées de (longitude, latitude) à (latitude, longitude)."
+          "tooltipLonLat": "Inverser les coordonnées de (longitude, latitude) à (latitude, longitude).",
+          "tooltipLatLon": "Inverser les coordonnées de (latitude, longitude) à (longitude, latitude)."
         },
         "searchSources": {
           "selectAll": "Tout sélectionner",

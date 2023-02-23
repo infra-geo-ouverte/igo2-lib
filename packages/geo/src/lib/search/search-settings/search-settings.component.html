@@ -95,7 +95,9 @@
             {{'igo.geo.search.searchResultsGeometry.title' | translate}}
           </mat-slide-toggle>
           <mat-slide-toggle class="pointer-summary-option" (change)="reverseSearchCoordsFormat($event)" tooltip-position="below"
-            matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.reverseCoordFormat.tooltip' | translate"
+            matTooltipShowDelay="500"
+            [matTooltip]="reverseSearchCoordsFormatEnabled ? ('igo.geo.search.reverseCoordFormat.tooltipLatLon' | translate)
+            : ('igo.geo.search.reverseCoordFormat.tooltipLonLat' | translate)"
             (click)="$event.stopPropagation()" [checked]="reverseSearchCoordsFormatEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.reverseCoordFormat.title' | translate}}
           </mat-slide-toggle>

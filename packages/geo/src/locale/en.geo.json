@@ -505,7 +505,8 @@
         },
         "reverseCoordFormat": {
           "title": "Reverse Coordinates",
-          "tooltip": "Reverse coordinates format from (longitude, latitude) to (latitude, longitude)"
+          "tooltipLonLat": "Reverse coordinates format from (longitude, latitude) to (latitude, longitude)",
+          "tooltipLatLon": "Reverse coordinates format from (latitude, longitude) to (longitude, latitude)"
         },
         "searchSources": {
           "selectAll": "Select All",
