@@ -7,6 +7,10 @@ import { AuthService } from '@igo2/auth';
 import { ContextState } from '../context/context.state';
 import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
+import { MapState } from '../map/map.state';
+
+import { Layer } from '@igo2/geo';
+
 
 /**
  * Service that holds the state of the search module
@@ -24,7 +28,8 @@ export class AnalyticsListenerService {
     private authService: AuthService,
     private contextState: ContextState,
     private searchState: SearchState,
-    private toolState: ToolState
+    private toolState: ToolState,
+    private mapState: MapState
   ) {}
 
   listen() {

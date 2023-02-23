@@ -34,7 +34,7 @@
       [matTooltip]="'igo.geo.catalog.group.removeFromMap' | translate"
       color="warn"
       [disabled]="disabled$ | async"
-      (click)="onToggleClick()">
+      (click)="onToggleClick($event)">
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
   </ng-container>

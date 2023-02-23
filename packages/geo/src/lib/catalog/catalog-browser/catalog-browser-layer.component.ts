@@ -10,7 +10,7 @@ import {
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
-import { addedChangeEmmitter, CatalogItemLayer } from '../shared';
+import { addedChangeEmitter, CatalogItemLayer } from '../shared';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
@@ -54,7 +54,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the add/remove button is clicked
    */
-  @Output() addedChange = new EventEmitter<addedChangeEmmitter>();
+  @Output() addedChange = new EventEmitter<addedChangeEmitter>();
 
   @Output() addedLayerIsPreview = new EventEmitter<boolean>();
 

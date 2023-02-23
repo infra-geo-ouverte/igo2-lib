@@ -170,7 +170,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           if (event.type === 'click') {
             this.map.layersAddedByClick$.next([layer]);
           }
-          this.map.addLayer(layer)
+          this.map.addLayer(layer);
         })
     );
   }
