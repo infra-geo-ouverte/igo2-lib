@@ -80,7 +80,7 @@ export class RecordButtonComponent implements OnInit {
   /**
    * @param coord1 Coordinates of origin point
    * @param coord2 Coordinates of destination point
-   * @returns Distance between points in meters
+   * @returns Distance between points in km
    */
   distanceBetweenPoints(coord1: number[], coord2: number[]): number{
     return olSphere.getDistance(coord1, coord2) / 1000;
@@ -106,7 +106,9 @@ export class RecordButtonComponent implements OnInit {
     else {
       const dialogRef = this.dialog.open(PauseStopComponent);
       dialogRef.afterClosed().subscribe(paused => {
-        this.pauseRecording();
+        if(paused !== undefined) {
+          this.pauseRecording();
+        }
         if(paused === false){
           this.saveFile();
         }
@@ -364,7 +366,7 @@ export class RecordButtonComponent implements OnInit {
           this.updateIndexedDBFiles([new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
         }
         this.stopRecording();
-        if(result) {
+        if(result !== 'noDownload') {
           this.messageService.success(this.languageService.translate.instant(
             'igo.geo.record-prompts.gpxDownloadedToast'
           ));

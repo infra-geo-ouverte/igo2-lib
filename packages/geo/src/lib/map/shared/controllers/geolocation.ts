@@ -248,38 +248,39 @@ export class MapGeolocationController extends MapController {
 
   updateArrowFeatureOrientation(position3857: number[]) {
     const tempPosition = olproj.transform(position3857, 'EPSG:3857', 'EPSG:4326');
-      if(!this.lastPosition) {
-        this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
-        return;
+    if(!this.lastPosition) {
+      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      return;
+    }
+    if(this.geolocation.getAccuracy() <= this.accuracyThreshold
+        && this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003) {
+      var dx = tempPosition[1] - this.lastPosition.coordinates[1];
+      var dy = tempPosition[0] - this.lastPosition.coordinates[0];
+      var theta = Math.atan2(dy, dx);
+      if (theta < 0) theta = (2*Math.PI) + theta;
+      theta += Math.PI;
+      this.arrowRotation = theta;
+      if(this.featureArrow) {
+        this.featureArrow.setStyle(new olstyle.Style({
+          image: new olstyle.RegularShape({
+            radius: 35,
+            fill: new olstyle.Fill({
+              color: 'rgba(71, 209, 255, 0.4)'
+            }),
+            points: 3,
+            displacement: [0,-29],
+            rotation: this.arrowRotation,
+            rotateWithView: true
+          }
+            ),
+        }));
       }
-      if(this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.002) {
-        var dx = tempPosition[1] - this.lastPosition.coordinates[1];
-        var dy = tempPosition[0] - this.lastPosition.coordinates[0];
-        var theta = Math.atan2(dy, dx);
-        if (theta < 0) theta = (2*Math.PI) + theta;
-        theta += Math.PI;
-        this.arrowRotation = theta;
-        if(this.featureArrow) {
-          this.featureArrow.setStyle(new olstyle.Style({
-            image: new olstyle.RegularShape({
-              radius: 35,
-              fill: new olstyle.Fill({
-                color: 'rgba(71, 209, 255, 0.4)'
-              }),
-              points: 3,
-              displacement: [0,-29],
-              rotation: this.arrowRotation,
-              rotateWithView: true
-            }
-              ),
-          }));
-        }
-        this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
-      }
-      else {
-        if(this.featureArrow && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
-          this.featureArrow.setStyle(new olstyle.Style({}));
-      }
+      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+    }
+    else {
+      if(this.featureArrow && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
+        this.featureArrow.setStyle(new olstyle.Style({}));
+    }
   }
 
   /**
@@ -452,8 +453,6 @@ export class MapGeolocationController extends MapController {
         bufferFeature.setStyle(bufferStyle);
         this.geolocationOverlay.addOlFeature(bufferFeature, motion);
       }
-
     }
-
   }
 }
