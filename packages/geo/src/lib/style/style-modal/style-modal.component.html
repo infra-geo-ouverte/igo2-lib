@@ -1,5 +1,5 @@
 <div mat-dialog-content>
-  <h2 mat-dialog-title class="mat-typography">{{ 'igo.geo.layer.style.styleModal' | translate }}</h2>
+  <h2 mat-dialog-title class="mat-typography">{{ 'igo.geo.style.styleModal' | translate }}</h2>
   <div
   class="edition-drawing mat-typography"
   [hidden]="data.features.length === 0">
@@ -75,7 +75,7 @@
         </mat-form-field>
       </div>
 
-      <div class="igo-input-container">
+      <div class="igo-input-container" *ngIf="data.handleLabels">
         <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
           <input
@@ -104,7 +104,7 @@
         </mat-form-field>
       </div>
 
-      <div class="igo-input-container">
+      <div class="igo-input-container" *ngIf="data.handleLabels">
         <mat-form-field appearance="outline" class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.draw.offsetX' | translate }}</mat-label>
           <input

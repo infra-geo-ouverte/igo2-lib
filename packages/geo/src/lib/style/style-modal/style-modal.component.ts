@@ -2,7 +2,9 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
-import { DrawStyleService, FontType } from '../../draw';
+import { DrawStyleService } from '../style-service/draw-style.service';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { FontType } from '../shared/font.enum';
 
 export interface StyleModalData {
   fillColor: string;
@@ -30,7 +32,7 @@ export class StyleModalComponent implements OnInit {
     public dialogRef: MatDialogRef<StyleModalComponent>,
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: { features }) {
+    @Inject(MAT_DIALOG_DATA) public data: { features: Feature[], handleLabels: boolean  }) {
       this.buildForm();
     }
 

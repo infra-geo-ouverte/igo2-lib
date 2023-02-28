@@ -39,7 +39,6 @@ import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legen
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
-import { StyleModalComponent } from './style-modal/style-modal.component';
 
 @NgModule({
   imports: [
@@ -77,8 +76,7 @@ import { StyleModalComponent } from './style-modal/style-modal.component';
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent,
-    StyleModalComponent
+    TrackFeatureButtonComponent
   ],
   declarations: [
     LayerItemComponent,
@@ -89,8 +87,7 @@ import { StyleModalComponent } from './style-modal/style-modal.component';
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent,
-    StyleModalComponent
+    TrackFeatureButtonComponent
   ]
 })
 export class IgoLayerModule {

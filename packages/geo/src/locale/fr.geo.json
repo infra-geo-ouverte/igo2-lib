@@ -257,11 +257,11 @@
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
-        },
-        "style": {
-          "styleModal": "Modifier le style",
-          "styleModalTooltip": "Éditer le style des entités sélectionnées"
         }
+      },
+      "style": {
+        "styleModal": "Modifier le style",
+        "styleModalTooltip": "Éditer le style des entités sélectionnées"
       },
       "download": {
         "action": "Télécharger les données associées",

@@ -258,11 +258,11 @@
           "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
           "noLayersVisible": "No layers currently visible.",
           "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."
-        },
-        "style": {
-          "styleModal": "Edit style",
-          "styleModalTooltip": "Edit the style of the selected entities "
         }
+      },
+      "style": {
+        "styleModal": "Edit style",
+        "styleModalTooltip": "Edit the style of the selected entities "
       },
       "download": {
         "action": "Download data",
