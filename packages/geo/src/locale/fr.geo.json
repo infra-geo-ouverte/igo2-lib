@@ -427,7 +427,7 @@
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
         "clearSearch": "Effacer la recherche",
-        "addToLayar": "Ajouter à une couche",
+        "addToLayer": "Ajouter à une couche",
         "ilayer": {
           "name": "Couches",
           "properties": {

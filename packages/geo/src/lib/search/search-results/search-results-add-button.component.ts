@@ -46,7 +46,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   );
 
   public exportTooltip$: BehaviorSubject<string> = new BehaviorSubject(
-    'igo.geo.search.addToLayar'
+    'igo.geo.search.addToLayer'
   );
 
   private resolution$$: Subscription;

@@ -428,7 +428,7 @@
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
         "clearSearch": "Clear search",
-        "addToLayar": "Add to Layar",
+        "addToLayer": "Add to Layar",
         "ilayer": {
           "name": "Layers",
           "properties": {
