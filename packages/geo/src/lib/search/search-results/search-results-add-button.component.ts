@@ -272,7 +272,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         } else {
           const activeStore = this.stores.find(store => store.layer.id === data.layer.id);
           activeStore.layer.visible = true;
-          
           activeStore.layer.opacity = 1;
           this.addFeature(data.feature, activeStore);
         }
