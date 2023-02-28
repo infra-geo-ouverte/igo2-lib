@@ -43,8 +43,7 @@ import {
   featuresAreOutOfView,
   roundCoordTo,
   FeatureWithDraw,
-  FeatureStore,
-  DrawStyleService,
+  FeatureStore
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -52,6 +51,7 @@ import { MapState } from '../../map/map.state';
 import { SearchState } from '../search.state';
 import { ToolState } from '../../tool/tool.state';
 import { DirectionState } from '../../directions/directions.state';
+import { DrawState } from '../../draw';
 
 /**
  * Tool to browse the search results
@@ -151,7 +151,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
-  public stores: FeatureStore<FeatureWithDraw>[] = [];
+  get stores(): FeatureStore<FeatureWithDraw>[] {
+    return this.drawState.searchLayerStores;
+  }
 
   constructor(
     private mapState: MapState,
@@ -160,7 +162,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     public toolState: ToolState,
     private directionState: DirectionState,
     configService: ConfigService,
-    private drawStyleService: DrawStyleService
+    private drawState: DrawState
   ) {
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'

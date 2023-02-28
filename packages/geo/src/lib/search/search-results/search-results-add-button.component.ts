@@ -272,6 +272,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         } else {
           const activeStore = this.stores.find(store => store.layer.id === data.layer.id);
           activeStore.layer.visible = true;
+          
           activeStore.layer.opacity = 1;
           this.addFeature(data.feature, activeStore);
         }
@@ -296,7 +297,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       isIgoInternalLayer: true,
       id: 'igo-search-layer' + ++layerCounterID,
       title: layerTitle,
-      zIndex: 200,
       source: new FeatureDataSource(),
       style: (feature, resolution) => {
         return this.drawStyleService.createIndividualElementStyle(
