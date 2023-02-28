@@ -19,7 +19,6 @@ import {
   Catalog,
   CatalogItem,
   CatalogItemGroup,
-  CatalogItemLayer,
   CatalogItemState,
   CatalogItemType
 } from '../shared';

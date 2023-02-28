@@ -9,7 +9,14 @@ import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
 import { MapState } from '../map/map.state';
 
-import { Layer, WMTSDataSourceOptions, WebSocketDataSourceOptions, WMSDataSourceOptions, XYZDataSourceOptions, OSMDataSourceOptions, ClusterDataSourceOptions } from '@igo2/geo';
+import {
+  Layer,
+  WMTSDataSourceOptions,
+  WebSocketDataSourceOptions,
+  XYZDataSourceOptions,
+  OSMDataSourceOptions,
+  ClusterDataSourceOptions
+} from '@igo2/geo';
 
 
 /**
@@ -84,10 +91,10 @@ export class AnalyticsListenerService {
     */
   listenLayer(){
     this.mapState.map.layersAddedByClick$.subscribe((layers: Layer[]) => {
-      if(layers == undefined){
+      if(!layers){
         return;
       }
-        
+
       layers.map(layer => {
         switch (layer.dataSource.options.type){
           case 'wms':
@@ -99,7 +106,8 @@ export class AnalyticsListenerService {
             break;
           case 'websocket':
             const webSocketDataSource = layer.dataSource.options as WebSocketDataSourceOptions;
-            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, webSocketDataSource.url, webSocketDataSource.onmessage);
+            this.analyticsService.trackLayer(layer.dataSource.options.type,
+              layer.title, webSocketDataSource.url, webSocketDataSource.onmessage);
             break;
           case 'cluster':
             //type+URL
