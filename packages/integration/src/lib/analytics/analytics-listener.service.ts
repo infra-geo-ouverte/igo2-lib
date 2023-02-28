@@ -9,7 +9,7 @@ import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
 import { MapState } from '../map/map.state';
 
-import { Layer } from '@igo2/geo';
+import { Layer, WMTSDataSourceOptions, WebSocketDataSourceOptions, WMSDataSourceOptions, XYZDataSourceOptions, OSMDataSourceOptions, ClusterDataSourceOptions } from '@igo2/geo';
 
 
 /**
@@ -37,6 +37,7 @@ export class AnalyticsListenerService {
     this.listenContext();
     this.listenTool();
     this.listenSearch();
+    this.listenLayer();
   }
 
   listenUser() {
@@ -75,6 +76,52 @@ export class AnalyticsListenerService {
       if (searchTerm !== undefined && searchTerm !== null) {
         this.analyticsService.trackSearch(searchTerm, this.searchState.store.count);
       }
+    });
+  }
+
+  /**
+    * Listener for adding layers to the map
+    */
+  listenLayer(){
+    this.mapState.map.layersAddedByClick$.subscribe((layers: Layer[]) => {
+      if(layers == undefined){
+        return;
+      }
+        
+      layers.map(layer => {
+        switch (layer.dataSource.options.type){
+          case 'wms':
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title);
+            break;
+          case 'wmts':
+            const wmstDataSource = layer.dataSource.options as WMTSDataSourceOptions;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, wmstDataSource.url, wmstDataSource.matrixSet);
+            break;
+          case 'websocket':
+            const webSocketDataSource = layer.dataSource.options as WebSocketDataSourceOptions;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, webSocketDataSource.url, webSocketDataSource.onmessage);
+            break;
+          case 'cluster':
+            //type+URL
+            const clusterDataSource = layer.dataSource.options as ClusterDataSourceOptions;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, clusterDataSource.url);
+            break;
+          case 'xyz':
+            //type, url
+            const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, xyzDataSource.url);
+            break;
+          case 'osm':
+            //type
+            const osmDataSource = layer.dataSource.options as OSMDataSourceOptions;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, osmDataSource.url);
+            break;
+          default:
+            //layer+name???
+            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title);
+            break;
+        }
+      });
     });
   }
 }

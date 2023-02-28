@@ -86,4 +86,48 @@ export class AnalyticsService {
       this.paq.push(['trackEvent', category, action, name]);
     }
   }
+
+  /**
+   * Traking function for adding layers to the map
+   * @param otherParam Either the matrixSet or onmessage of a layer
+   */
+  public trackLayer(type: string, layer: string, url?: string, otherParam?: string){
+    if (this.options.provider === 'matomo'){
+      switch (type){
+        case 'wms':
+          //layers
+          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          break;
+
+        case 'wmts':
+          //type, layer, matrixSet
+          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 4, 'matrixSet', otherParam, 'LayerAdded']);
+          break;
+
+        case 'webSocket':
+          //onmessage
+          this.paq.push(['setCustomVariable', 4, 'onmessage', otherParam, 'LayerAdded']);
+          break;
+
+        case 'cluster':
+        case 'xyz':
+          //type+url
+          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);
+          break;
+
+        case 'osm':
+          //type
+          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          break;
+
+        default:
+          //layer+name?
+          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);
+      }
+    }
+  }
 }
