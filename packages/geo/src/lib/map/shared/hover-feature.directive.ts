@@ -21,7 +21,6 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlFeature from 'ol/Feature';
-import * as OlStyle from 'ol/style';
 import * as OlGeom from 'ol/geom';
 
 import { EntityStore } from '@igo2/common';
@@ -36,6 +35,7 @@ import { StyleService } from '../../style/style-service/style.service';
 import { unByKey } from 'ol/Observable';
 import RenderFeature from 'ol/render/Feature';
 import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
+import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -139,7 +139,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: hoverFeatureMarker
+      style: hoverFeatureMarkerStyle
     });
     tryBindStoreLayer(store, layer);
 
@@ -519,60 +519,4 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       this.store.clearLayer();
     }
   }
-}
-
-/**
- * Create a default style for the pointer position and it's label summary.
- * @param feature OlFeature
- * @returns OL style function
- */
-export function hoverFeatureMarker(feature: OlFeature<OlGeom.Geometry>, resolution: number): OlStyle.Style[] {
-
-  const olStyleText = new OlStyle.Style({
-    text: new OlStyle.Text({
-      text: feature.get('hoverSummary'),
-      textAlign: 'left',
-      textBaseline: 'top',
-      font: '12px Calibri,sans-serif',
-      fill: new OlStyle.Fill({ color: '#000' }),
-      backgroundFill: new OlStyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
-      backgroundStroke: new OlStyle.Stroke({ color: 'rgba(200, 200, 200, 0.75)', width: 2 }),
-      stroke: new OlStyle.Stroke({ color: '#fff', width: 3 }),
-      overflow: true,
-      offsetX: 10,
-      offsetY: 20,
-      padding: [2.5, 2.5, 2.5, 2.5]
-    })
-  });
-
-  const olStyle = [olStyleText];
-  switch (feature.getGeometry().getType()) {
-    case 'Point':
-      olStyle.push(new OlStyle.Style({
-        image: new OlStyle.Circle({
-          radius: 10,
-          stroke: new OlStyle.Stroke({
-            color: 'blue',
-            width: 3
-          })
-        })
-      }));
-      break;
-    default:
-      olStyle.push(new OlStyle.Style({
-        stroke: new OlStyle.Stroke({
-          color: 'white',
-          width: 5
-        })
-      }));
-      olStyle.push(new OlStyle.Style({
-        stroke: new OlStyle.Stroke({
-          color: 'blue',
-          width: 3
-        })
-      }));
-  }
-
-  return olStyle;
-
 }

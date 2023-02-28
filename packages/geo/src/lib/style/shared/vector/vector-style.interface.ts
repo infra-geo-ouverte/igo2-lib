@@ -17,8 +17,6 @@ export interface CommonVectorStyleOptions {
   strokeWidth?: number; // line and poly
 }
 
-
-
 export interface StyleByAttribute {
     anchor?: Array<[number,number]>;
     type?: string;

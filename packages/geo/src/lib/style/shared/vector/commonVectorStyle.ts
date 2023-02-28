@@ -1,5 +1,5 @@
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olstyle from 'ol/style';
+import * as olStyle from 'ol/style';
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
 
@@ -27,7 +27,7 @@ export function getCommonVectorSelectedStyle(
     strokeColor = [0, 255, 255],
     strokeOpacity = 0.5,
     strokeWidth = 4
-  }: FeatureCommonVectorStyleOptions): olstyle.Style {
+  }: FeatureCommonVectorStyleOptions): olStyle.Style {
 
   return getCommonVectorStyle({
     feature,
@@ -58,7 +58,7 @@ export function getCommonVectorStyle(
     strokeColor = [0, 161, 222],
     strokeOpacity = 0.5,
     strokeWidth = 2
-  }: FeatureCommonVectorStyleOptions): olstyle.Style {
+  }: FeatureCommonVectorStyleOptions): olStyle.Style {
 
   const isOlFeature = feature instanceof olFeature;
   let geometry;
