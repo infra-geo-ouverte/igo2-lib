@@ -7,7 +7,7 @@ import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-dataso
 
 import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt-datasource.interface';
 
-import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
+import { StyleByAttribute, MapboxStyle } from '../../../style/shared/vector/vector-style.interface';
 import RenderFeature from 'ol/render/Feature';
 import Feature from 'ol/Feature';
 

@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
-import { StyleByAttribute } from './vector-style.interface';
 
-import { ClusterParam } from './clusterParam';
-import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
 import RenderFeature from 'ol/render/Feature';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { StyleByAttribute } from '../shared/vector/vector-style.interface';
+import { ClusterParam } from '../../layer/shared/clusterParam';
 
 @Injectable({
   providedIn: 'root'

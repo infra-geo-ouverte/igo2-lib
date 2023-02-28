@@ -20,7 +20,7 @@ import { ClusterDataSourceOptions } from '../../../datasource/shared/datasources
 
 import { ClusterParam } from '../clusterParam';
 
-import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
+import { StyleByAttribute, MapboxStyle } from '../../../style/shared/vector/vector-style.interface';
 import RenderFeature from 'ol/render/Feature';
 import Feature from 'ol/Feature';
 

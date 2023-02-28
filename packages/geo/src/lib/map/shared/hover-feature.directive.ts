@@ -32,10 +32,10 @@ import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
-import { StyleService } from '../../layer/shared/style.service';
+import { StyleService } from '../../style/style-service/style.service';
 import { unByKey } from 'ol/Observable';
 import RenderFeature from 'ol/render/Feature';
-import { StyleByAttribute } from '../../layer/shared/vector-style.interface';
+import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.

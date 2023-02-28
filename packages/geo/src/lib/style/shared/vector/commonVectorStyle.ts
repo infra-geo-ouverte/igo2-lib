@@ -3,10 +3,12 @@ import * as olstyle from 'ol/style';
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
 
-import { createOverlayMarkerStyle } from '../overlay/shared/overlay-marker-style.utils';
-import { createOverlayDefaultStyle } from '../overlay/shared/overlay.utils';
-import { FeatureCommonVectorStyleOptions } from './commonVectorStyle.interface';
-import { Feature } from '../feature';
+
+import { Feature } from '../../../feature/shared/feature.interfaces';
+import { FeatureCommonVectorStyleOptions } from './vector-style.interface';
+
+import { createOverlayDefaultStyle } from '../overlay/overlay-style.utils';
+import { createOverlayMarkerStyle } from '../overlay/overlay-marker-style.utils';
 
 
 /**

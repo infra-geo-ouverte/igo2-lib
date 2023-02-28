@@ -19,7 +19,6 @@ import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule, IgoCustomHtmlMo
 import { ExportButtonComponent } from './export-button/export-button.component';
 import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
-import { IgoStyleListModule } from './style-list/style-list.module';
 
 @NgModule({
   imports: [
@@ -40,10 +39,9 @@ import { IgoStyleListModule } from './style-list/style-list.module';
     IgoSpinnerModule,
     IgoKeyValueModule,
     IgoDrapDropModule,
-    IgoCustomHtmlModule,
-    IgoStyleListModule.forRoot()
+    IgoCustomHtmlModule
   ],
-  exports: [ImportExportComponent, DropGeoFileDirective, IgoStyleListModule, ExportButtonComponent],
+  exports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent],
   declarations: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
 })
 export class IgoImportExportModule {

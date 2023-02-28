@@ -42,7 +42,7 @@ import {
 } from './layers';
 
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
-import { StyleService } from './style.service';
+import { StyleService } from '../../style/style-service/style.service';
 import { LanguageService, MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
