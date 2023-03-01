@@ -81,7 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = true;
+  public showSearchButton: boolean = false;
 
   /**
    * List of available search types
@@ -261,7 +261,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
 
     const configValue = this.configService.getConfig("searchBar.showSearchButton");
-    this.showSearchButton = configValue !== undefined ? configValue : true;
+    this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
   /**
@@ -466,7 +466,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * When the user clicks on the magnifying glass and
    * this find the first object on the map
    */
-  onFindFirstElement(){
+  selectFirstElement(){
     const firstResult = this.store.all().filter((result) => result.source.getId() === 'icherche')[0];
     if(firstResult){
       this.store.state.update(firstResult,{focused:true,selected:true},true);

@@ -9,27 +9,25 @@
       [disabled]="disabled$ | async"
       [placeholder]="placeholder ? placeholder : (placeholder$ | async) ? (placeholder$.value | translate) : undefined"
       [value]="term$ | async"
-      (keydown.enter)="onFindFirstElement()"
+      (keydown.enter)="selectFirstElement()"
       (keyup)="onKeyup($event)"
       (touchend)="onKeyup($event)">
   </mat-form-field>
 
   <div class="search-bar-buttons">
     <button *ngIf="(empty$ | async)===false"
-    mat-icon-button
-    [color]="color"
-    (click)="onClearButtonClick()"
-    [matTooltip]="'igo.geo.search.clearSearch' | translate">
+      mat-icon-button
+      [color]="color"
+      (click)="onClearButtonClick()"
+      [matTooltip]="'igo.geo.search.clearSearch' | translate">
     <mat-icon svgIcon="close"></mat-icon>
     </button>
 
-    <button
-    #glass
-    *ngIf="showSearchButton"
+    <button *ngIf="showSearchButton"
       mat-icon-button
       [color]="color"
-      (click)="onFindFirstElement()"
-      [matTooltip]="'igo.geo.search.searchGlass' | translate">
+      (click)="selectFirstElement()"
+      [matTooltip]="'igo.geo.search.search' | translate">
       <mat-icon svgIcon="magnify"></mat-icon>
     </button>
 
