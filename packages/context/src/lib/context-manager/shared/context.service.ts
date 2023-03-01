@@ -29,7 +29,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
+import { ExportService, IgoMap, Layer, LayerOptions } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -76,6 +76,7 @@ export class ContextService {
     private config: ConfigService,
     private messageService: MessageService,
     private storageService: StorageService,
+    private exportService: ExportService,
     @Optional() private route: RouteService
   ) {
     this.options = Object.assign(
@@ -579,17 +580,22 @@ export class ContextService {
           const writer = new GeoJSON();
           if (layer.ol.getSource() instanceof Cluster) {
             const clusterSource = layer.ol.getSource() as Cluster;
+            let olFeatures = clusterSource.getFeatures();
+            olFeatures = (olFeatures as any).flatMap((cluster: any) => cluster.get('features'));
+            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
             features = writer.writeFeatures(
-              clusterSource.getFeatures(),
+              cleanedOlFeatures,
               {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:3857'
               }
             );
           } else {
-            const source = layer.ol.getSource() as any;
+            const source = layer.ol.getSource() as olVectorSource;
+            const olFeatures = source.getFeatures();
+            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
             features = writer.writeFeatures(
-              source.getFeatures(),
+              cleanedOlFeatures,
               {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:3857'
