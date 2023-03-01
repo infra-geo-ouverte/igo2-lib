@@ -32,7 +32,7 @@ export class StyleModalComponent implements OnInit {
     public dialogRef: MatDialogRef<StyleModalComponent>,
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: { features: Feature[], handleLabels: boolean  }) {
+    @Inject(MAT_DIALOG_DATA) public data: { features: Feature[], handleLabels: boolean }) {
       this.buildForm();
     }
 
