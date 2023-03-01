@@ -143,21 +143,9 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
-    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle'];
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
     // handling legacy property.
-    legacyStyleOptions.map(legacyOption => {
-      if (layerOptions[legacyOption]) {
-        layerOptions.igoStyle[legacyOption] = layerOptions[legacyOption];
-        delete layerOptions[legacyOption];
-        console.warn(`
-        The location of this style option (${legacyOption}) is deprecated.
-        Please move this property within igoStyle property.
-        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${legacyOption}: {...} }
-        This legacy conversion will be deleted in 2024.
-        `);
-      }
-    });
-
+    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
 
     if (layerOptions.style !== undefined) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
@@ -205,6 +193,27 @@ export class LayerService {
     return igoLayer;
   }
 
+  private handleLegacyStyles(layerOptions, legacyStyleOptions: string[]) {
+    legacyStyleOptions.map(legacyOption => {
+      if (layerOptions[legacyOption]) {
+        let newKey = legacyOption;
+        if (legacyOption === 'style' && typeof layerOptions[legacyOption] === 'object') {
+          newKey = 'igoStyleObject';
+        } else {
+          return;
+        }
+        layerOptions.igoStyle[newKey] = layerOptions[legacyOption];
+        delete layerOptions[legacyOption];
+        console.warn(`
+        The location of this style option (${legacyOption}) is deprecated.
+        Please move this property within igoStyle property.
+        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${newKey}: {...} }
+        This legacy conversion will be deleted in 2024.
+        `);
+      }
+    });
+  }
+
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
@@ -214,20 +223,9 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
-    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle'];
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'style'];
     // handling legacy property.
-    legacyStyleOptions.map(legacyOption => {
-      if (layerOptions[legacyOption]) {
-        layerOptions.igoStyle[legacyOption] = layerOptions[legacyOption];
-        delete layerOptions[legacyOption];
-        console.warn(`
-        The location of this style option (${legacyOption}) is deprecated.
-        Please move this property within igoStyle property.
-        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${legacyOption}: {...} }
-        This legacy conversion will be deleted in 2024.
-        `);
-      }
-    });
+    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
 
     if (layerOptions.style !== undefined) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
