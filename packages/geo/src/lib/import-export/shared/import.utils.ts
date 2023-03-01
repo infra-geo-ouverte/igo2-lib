@@ -18,7 +18,7 @@ import { ClusterParam } from '../../layer/shared/clusterParam';
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { uuid } from '@igo2/utils';
-import { featureRandomStyle } from '../../style/shared/feature/feature-style';
+import { featureRandomStyle, featureRandomStyleFunction } from '../../style/shared/feature/feature-style';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -35,11 +35,19 @@ export function addLayerAndFeaturesToMap(
   };
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
+  let randomStyle;
+  if (
+    olFeatures[0].getKeys().includes('_style') ||
+    olFeatures[0].getKeys().includes('_mapTitle')) {
+    randomStyle = featureRandomStyleFunction();
+  } else {
+    randomStyle = featureRandomStyle();
+  }
   const layer = new VectorLayer({
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
-    style: featureRandomStyle()
+    style: randomStyle
   });
   layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
   map.addLayer(layer);
