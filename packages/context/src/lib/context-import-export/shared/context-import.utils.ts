@@ -1,4 +1,3 @@
-import * as olStyle from 'ol/style';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {

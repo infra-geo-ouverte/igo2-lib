@@ -331,12 +331,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           this.clearLayer();
           let igoLayer;
           if (layerOL instanceof olLayerVector) {
-            igoLayer = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorLayer;
-            if (!this.canProcessHover(igoLayer)) {
+            const myOlLayerVector = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorLayer;
+            if (!this.canProcessHover(myOlLayerVector)) {
               return;
             }
             let localOlFeature = this.handleRenderFeature(mapFeature);
-            this.setLayerStyleFromOptions(igoLayer, localOlFeature);
+            this.setLayerStyleFromOptions(myOlLayerVector, localOlFeature);
             const featuresToLoad = [localOlFeature];
             localOlFeature.set("_isLabel", false);
             const myLabelOlFeature = new OlFeature();
@@ -346,20 +346,21 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             myLabelOlFeature.setGeometry(labelGeom);
             myLabelOlFeature.setId(localOlFeature.getId());
             myLabelOlFeature.set("_isLabel", true);
-            this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
+            this.setLayerStyleFromOptions(myOlLayerVector, myLabelOlFeature);
             featuresToLoad.push(myLabelOlFeature);
             this.pointerHoverFeatureStore.load(featuresToLoad);
+            igoLayer = myOlLayerVector;
             return true;
           }
           if (layerOL instanceof olLayerVectorTile) {
-            igoLayer = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorTileLayer;
-            if (!this.canProcessHover(igoLayer)) {
+            const myOlLayerVectorTile = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorTileLayer;
+            if (!this.canProcessHover(myOlLayerVectorTile)) {
               return;
             }
-            if (igoLayer?.options?.styleByAttribute?.hoverStyle) {
-              this.mvtStyleOptions = igoLayer.options.styleByAttribute.hoverStyle;
-            } else if (igoLayer?.options?.hoverStyle) {
-              this.mvtStyleOptions = igoLayer.options.hoverStyle;
+            if (myOlLayerVectorTile?.options?.igoStyle?.styleByAttribute?.hoverStyle) {
+              this.mvtStyleOptions = myOlLayerVectorTile.options.igoStyle.styleByAttribute.hoverStyle;
+            } else if (myOlLayerVectorTile?.options?.igoStyle?.hoverStyle) {
+              this.mvtStyleOptions = myOlLayerVectorTile.options.igoStyle.hoverStyle;
             }
             this.selectionLayer.setSource(layerOL.getSource());
             layerOL.getFeatures(event.pixel).then((mvtFeatures: (RenderFeature | OlFeature<OlGeometry>)[]) => {
@@ -383,11 +384,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               myLabelOlFeature.setGeometry(labelGeom);
               myLabelOlFeature.setId(localOlFeature.getId());
               myLabelOlFeature.set("_isLabel", true);
-              this.setLayerStyleFromOptions(igoLayer, myLabelOlFeature);
+              this.setLayerStyleFromOptions(myOlLayerVectorTile, myLabelOlFeature);
               this.pointerHoverFeatureStore.load([myLabelOlFeature]);
               this.selectionMVT[feature.getId()] = localOlFeature;
               this.selectionLayer.changed();
             });
+            igoLayer = myOlLayerVectorTile;
           }
         }
       }, {
@@ -407,13 +409,13 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
       return false;
     }
 
-    if (!igoLayer.options.styleByAttribute && !igoLayer.options.hoverStyle) {
+    if (!igoLayer.options.igoStyle?.styleByAttribute && !igoLayer.options.igoStyle?.hoverStyle) {
       return false;
     }
 
     if (
-      (igoLayer.options.styleByAttribute && !igoLayer.options.styleByAttribute.hoverStyle) &&
-      !igoLayer.options.hoverStyle) {
+      (igoLayer.options.igoStyle?.styleByAttribute && !igoLayer.options.igoStyle?.styleByAttribute.hoverStyle) &&
+      !igoLayer.options.igoStyle?.hoverStyle) {
       return false;
     }
     return true;
@@ -455,12 +457,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
 
   private setLayerStyleFromOptions(igoLayer: VectorLayer | VectorTileLayer, feature: OlFeature<OlGeometry>) {
     const resolution = this.store.layer.map.viewController.getResolution();
-    if (igoLayer?.options?.styleByAttribute?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.styleByAttribute.hoverStyle, resolution));
+    if (igoLayer?.options?.igoStyle?.styleByAttribute?.hoverStyle) {
+      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.igoStyle.styleByAttribute.hoverStyle, resolution));
       return;
     }
-    if (igoLayer?.options?.hoverStyle) {
-      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.hoverStyle, resolution));
+    if (igoLayer?.options?.igoStyle?.hoverStyle) {
+      this.store.layer.ol.setStyle(this.createHoverStyle(feature, igoLayer.options.igoStyle.hoverStyle, resolution));
     }
   }
 

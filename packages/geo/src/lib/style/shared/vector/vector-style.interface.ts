@@ -1,9 +1,20 @@
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { Feature } from '../../../feature/shared/feature.interfaces';
+import olStyle from 'ol/style/Style';
 
 export interface FeatureCommonVectorStyleOptions extends CommonVectorStyleOptions {
   feature: Feature | olFeature<OlGeometry>;
+}
+
+export interface IgoStyle extends IgoStyleBase{
+  clusterBaseStyle?: { [key: string]: any } | olStyle | olStyle[];
+}
+export interface IgoStyleBase {
+  editable?: boolean
+  hoverStyle?: StyleByAttribute;
+  mapboxStyle ?: MapboxStyle;
+  styleByAttribute?: StyleByAttribute;
 }
 
 export interface CommonVectorStyleOptions {

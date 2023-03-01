@@ -139,6 +139,26 @@ export class LayerService {
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
     let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorLayer;
+
+    if (!layerOptions.igoStyle) {
+      layerOptions.igoStyle = {};
+    }
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle'];
+    // handling legacy property.
+    legacyStyleOptions.map(legacyOption => {
+      if (layerOptions[legacyOption]) {
+        layerOptions.igoStyle[legacyOption] = layerOptions[legacyOption];
+        delete layerOptions[legacyOption];
+        console.warn(`
+        The location of this style option (${legacyOption}) is deprecated.
+        Please move this property within igoStyle property.
+        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${legacyOption}: {...} }
+        This legacy conversion will be deleted in 2024.
+        `);
+      }
+    });
+
+
     if (layerOptions.style !== undefined) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
@@ -146,12 +166,12 @@ export class LayerService {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
-    } else if (layerOptions.styleByAttribute) {
+    } else if (layerOptions.igoStyle?.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute,
+          layerOptions.igoStyle.styleByAttribute,
           resolution
         );
       };
@@ -160,7 +180,7 @@ export class LayerService {
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
-      const baseStyle = layerOptions.clusterBaseStyle;
+      const baseStyle = layerOptions.igoStyle.clusterBaseStyle;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createClusterStyle(
           feature,
@@ -191,16 +211,34 @@ export class LayerService {
     let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorTileLayer;
 
+    if (!layerOptions.igoStyle) {
+      layerOptions.igoStyle = {};
+    }
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle'];
+    // handling legacy property.
+    legacyStyleOptions.map(legacyOption => {
+      if (layerOptions[legacyOption]) {
+        layerOptions.igoStyle[legacyOption] = layerOptions[legacyOption];
+        delete layerOptions[legacyOption];
+        console.warn(`
+        The location of this style option (${legacyOption}) is deprecated.
+        Please move this property within igoStyle property.
+        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${legacyOption}: {...} }
+        This legacy conversion will be deleted in 2024.
+        `);
+      }
+    });
+
     if (layerOptions.style !== undefined) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
     }
 
-    if (layerOptions.styleByAttribute) {
+    if (layerOptions.igoStyle.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute,
+          layerOptions.igoStyle.styleByAttribute,
           resolution
         );
       };
@@ -220,16 +258,16 @@ export class LayerService {
   }
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
-    if (layerOptions.mapboxStyle) {
-      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+    if (layerOptions.igoStyle?.mapboxStyle) {
+      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe(res => {
         if (res.sprite){
-          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          const url = this.getAbsoluteUrl(layerOptions.igoStyle.mapboxStyle.url, res.sprite);
           this.getStuff(url+'.json').subscribe(res2 => {
-            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source, undefined, res2,
+            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source, undefined, res2,
               url+'.png');
           });
         } else {
-          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source);
+          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source);
         }
       });
     }
