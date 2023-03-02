@@ -197,10 +197,12 @@ export class LayerService {
     legacyStyleOptions.map(legacyOption => {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
-        if (legacyOption === 'style' && typeof layerOptions[legacyOption] === 'object') {
-          newKey = 'igoStyleObject';
-        } else {
-          return;
+        if (legacyOption === 'style') {
+          if (typeof layerOptions[legacyOption] === 'object') {
+            newKey = 'igoStyleObject';
+          } else {
+            return;
+          }
         }
         layerOptions.igoStyle[newKey] = layerOptions[legacyOption];
         delete layerOptions[legacyOption];
