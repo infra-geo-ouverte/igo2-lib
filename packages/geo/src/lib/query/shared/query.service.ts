@@ -61,12 +61,12 @@ export class QueryService {
       });
     }
 
-    const newLayares = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
+    const newLayers = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
     .map((layer: Layer) => this.queryLayer(layer, options));
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
-    let flatArray = [].concat.apply([], newLayares);
+    let flatArray = [].concat.apply([], newLayers);
     return flatArray;
   }
 
@@ -678,7 +678,7 @@ export class QueryService {
   ): string | QueryUrlData[]{
     let url;
 
-    if (datasource.options.queryUrl) {
+    if (datasource.options.queryUrls) {
       return this.getCustomQueryUrl(datasource, options, mapExtent);
     }
 
@@ -865,7 +865,7 @@ export class QueryService {
         [101, 101]
       );
 
-      return datasource.options.queryUrl.map(item => {
+      return datasource.options.queryUrls.map(item => {
         let data: QueryUrlData = {
           url: item.url.replace(/\{bbox\}/g, extent.join(','))
           .replace(/\{x\}/g, options.coordinates[0].toString())

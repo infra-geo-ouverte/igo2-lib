@@ -17,7 +17,7 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
-  queryUrl?: QueryUrlData[];
+  queryUrls?: QueryUrlData[];
   queryLayerFeatures?: boolean;
   mapLabel?: string;
   queryHtmlTarget?: QueryHtmlTarget;
