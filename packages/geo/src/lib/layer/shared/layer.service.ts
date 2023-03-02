@@ -147,8 +147,8 @@ export class LayerService {
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
 
-    if (layerOptions.style !== undefined) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
+    if (layerOptions.igoStyle.igoStyleObject) {
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
@@ -227,8 +227,8 @@ export class LayerService {
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
 
-    if (layerOptions.style !== undefined) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
+    if (layerOptions.igoStyle.igoStyleObject) {
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     }
 
     if (layerOptions.igoStyle.styleByAttribute) {

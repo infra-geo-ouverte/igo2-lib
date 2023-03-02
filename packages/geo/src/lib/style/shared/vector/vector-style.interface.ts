@@ -13,6 +13,7 @@ export interface IgoStyle extends IgoStyleBase{
 export interface IgoStyleBase {
   editable?: boolean
   hoverStyle?: StyleByAttribute;
+  igoStyleObject?: { [key: string]: any };
   mapboxStyle ?: MapboxStyle;
   styleByAttribute?: StyleByAttribute;
 }
