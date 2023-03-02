@@ -331,12 +331,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
           this.clearLayer();
           let igoLayer;
           if (layerOL instanceof olLayerVector) {
-            const myOlLayerVector = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorLayer;
-            if (!this.canProcessHover(myOlLayerVector)) {
+            const myLayerVector = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorLayer;
+            if (!this.canProcessHover(myLayerVector)) {
               return;
             }
             let localOlFeature = this.handleRenderFeature(mapFeature);
-            this.setLayerStyleFromOptions(myOlLayerVector, localOlFeature);
+            this.setLayerStyleFromOptions(myLayerVector, localOlFeature);
             const featuresToLoad = [localOlFeature];
             localOlFeature.set("_isLabel", false);
             const myLabelOlFeature = new OlFeature();
@@ -346,21 +346,21 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
             myLabelOlFeature.setGeometry(labelGeom);
             myLabelOlFeature.setId(localOlFeature.getId());
             myLabelOlFeature.set("_isLabel", true);
-            this.setLayerStyleFromOptions(myOlLayerVector, myLabelOlFeature);
+            this.setLayerStyleFromOptions(myLayerVector, myLabelOlFeature);
             featuresToLoad.push(myLabelOlFeature);
             this.pointerHoverFeatureStore.load(featuresToLoad);
-            igoLayer = myOlLayerVector;
+            igoLayer = myLayerVector;
             return true;
           }
           if (layerOL instanceof olLayerVectorTile) {
-            const myOlLayerVectorTile = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorTileLayer;
-            if (!this.canProcessHover(myOlLayerVectorTile)) {
+            const myLayerVectorTile = this.map.getLayerByOlUId((layerOL as any).ol_uid) as VectorTileLayer;
+            if (!this.canProcessHover(myLayerVectorTile)) {
               return;
             }
-            if (myOlLayerVectorTile?.options?.igoStyle?.styleByAttribute?.hoverStyle) {
-              this.mvtStyleOptions = myOlLayerVectorTile.options.igoStyle.styleByAttribute.hoverStyle;
-            } else if (myOlLayerVectorTile?.options?.igoStyle?.hoverStyle) {
-              this.mvtStyleOptions = myOlLayerVectorTile.options.igoStyle.hoverStyle;
+            if (myLayerVectorTile?.options?.igoStyle?.styleByAttribute?.hoverStyle) {
+              this.mvtStyleOptions = myLayerVectorTile.options.igoStyle.styleByAttribute.hoverStyle;
+            } else if (myLayerVectorTile?.options?.igoStyle?.hoverStyle) {
+              this.mvtStyleOptions = myLayerVectorTile.options.igoStyle.hoverStyle;
             }
             this.selectionLayer.setSource(layerOL.getSource());
             layerOL.getFeatures(event.pixel).then((mvtFeatures: (RenderFeature | OlFeature<OlGeometry>)[]) => {
@@ -384,12 +384,12 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
               myLabelOlFeature.setGeometry(labelGeom);
               myLabelOlFeature.setId(localOlFeature.getId());
               myLabelOlFeature.set("_isLabel", true);
-              this.setLayerStyleFromOptions(myOlLayerVectorTile, myLabelOlFeature);
+              this.setLayerStyleFromOptions(myLayerVectorTile, myLabelOlFeature);
               this.pointerHoverFeatureStore.load([myLabelOlFeature]);
               this.selectionMVT[feature.getId()] = localOlFeature;
               this.selectionLayer.changed();
             });
-            igoLayer = myOlLayerVectorTile;
+            igoLayer = myLayerVectorTile;
           }
         }
       }, {
