@@ -104,7 +104,8 @@ export class AnalyticsListenerService {
             break;
           case 'wmts':
             const wmstDataSource = layer.dataSource.options as WMTSDataSourceOptions;
-            this.analyticsService.trackLayer(layer.dataSource.options.type, wmstDataSource.layer, wmstDataSource.url, wmstDataSource.matrixSet);
+            this.analyticsService.trackLayer(layer.dataSource.options.type, wmstDataSource.layer, 
+              wmstDataSource.url, wmstDataSource.matrixSet);
             break;
           case 'websocket':
             const webSocketDataSource = layer.dataSource.options as WebSocketDataSourceOptions;
