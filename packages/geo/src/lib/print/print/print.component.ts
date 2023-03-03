@@ -114,6 +114,7 @@ export class PrintComponent {
       const resolution = +data.resolution;
 
       let nbRequests = data.showLegend ? 2 : 1;
+      console.log('entred data to download image', data);
       this.printService
         .downloadMapImage(
           this.map,
@@ -125,7 +126,8 @@ export class PrintComponent {
           data.title,
           data.subtitle,
           data.comment,
-          data.doZipFile
+          data.doZipFile,
+          data.legendPosition
         )
         .pipe(take(1))
         .subscribe(() => {
