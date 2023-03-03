@@ -13,10 +13,10 @@ import {
   FloatLabelType,
   MatFormFieldAppearance
 } from '@angular/material/form-field';
-import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
@@ -76,6 +76,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private searchType$$: Subscription;
 
   private researches$$: Subscription[];
+
+  /**
+   * whether to show search button or not
+   */
+
+  public showSearchButton: boolean = false;
 
   /**
    * List of available search types
@@ -180,11 +186,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() minLength = 2;
 
   /**
-   * Search icon
-   */
-  @Input() searchIcon: string;
-
-  /**
    * Search Selector
    */
   @Input() searchSelector = false;
@@ -247,7 +248,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private languageService: LanguageService,
+    private configService: ConfigService,
     private searchService: SearchService,
     private searchSourceService: SearchSourceService
   ) {}
@@ -263,7 +264,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
+        debounce(() => timer(this.debounce))
       )
       .subscribe((term: string) => this.onSetTerm(term));
 
@@ -272,6 +273,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchType$$ = this.searchType$
       .pipe(distinctUntilChanged())
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
+
+    const configValue = this.configService.getConfig("searchBar.showSearchButton");
+    this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
   /**

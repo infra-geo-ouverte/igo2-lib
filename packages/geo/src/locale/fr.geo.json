@@ -474,7 +474,9 @@
             "km": "Repère kilométrique",
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Halte routière",
+            "cycleStop": "Halte cyclable"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -612,7 +614,7 @@
         "secteur": "Secteurs",
         "immeubles": "Immeubles patrimoniaux",
         "sites": "Sites patrimoniaux",
-        "cpe": "Centre de la petite enfance",
+        "service-garde": "Services de garde",
         "public": "Écoles publiques",
         "prive": "Écoles privés",
         "gouvernemental": "Écoles gouvernementales",

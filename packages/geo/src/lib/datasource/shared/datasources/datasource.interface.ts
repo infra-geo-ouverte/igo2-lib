@@ -60,6 +60,7 @@ export interface EditionOptions {
   deleteUrl: string;
   modifyUrl: string;
   geomType: Type;
+  geomDatabaseProj?: string;
   hasGeometry: boolean;
   addWithDraw?: boolean;
   messages?: any[];

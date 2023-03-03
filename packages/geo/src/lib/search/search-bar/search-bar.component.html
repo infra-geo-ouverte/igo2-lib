@@ -5,7 +5,7 @@
       #input
       matInput
       autocomplete="off"
-      [ngClass]="{'hasSearchIcon': searchIcon}"
+      [ngClass]="{'hasSearchIcon': showSearchButton}"
       [disabled]="disabled$ | async"
       [placeholder]="placeholder ? placeholder : (placeholder$ | async) ? (placeholder$.value | translate) : undefined"
       [value]="term$ | async"
@@ -14,20 +14,18 @@
   </mat-form-field>
 
   <div class="search-bar-buttons">
-    <button
-      mat-icon-button
-      [color]="color"
-      *ngIf="searchIcon !== undefined">
-      <mat-icon svgIcon="{{searchIcon}}"></mat-icon>
-    </button>
-
-    <button
-      *ngIf="(empty$ | async)===false"
+    <button *ngIf="(empty$ | async)===false"
       mat-icon-button
       [color]="color"
       (click)="onClearButtonClick()"
       [matTooltip]="'igo.geo.search.clearSearch' | translate">
       <mat-icon svgIcon="close"></mat-icon>
+    </button>
+    
+    <button *ngIf="showSearchButton"
+      mat-icon-button
+      [color]="color">
+      <mat-icon svgIcon="magnify"></mat-icon>
     </button>
 
     <igo-search-selector
