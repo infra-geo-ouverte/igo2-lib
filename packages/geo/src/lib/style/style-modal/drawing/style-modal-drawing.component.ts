@@ -2,25 +2,16 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
-import { DrawStyleService } from '../style-service/draw-style.service';
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { FontType } from '../shared/font.enum';
-
-export interface StyleModalData {
-  fillColor: string;
-  strokeColor: string;
-  fontSize: string;
-  fontStyle: FontType;
-  offsetX: number;
-  offsetY: number;
-}
+import { DrawStyleService } from '../../style-service/draw-style.service';
+import { FontType } from '../../shared/font.enum';
+import { DrawingMatDialogData, StyleModalData } from '../shared/style-modal.interface';
 
 @Component({
-  selector: 'igo-style-modal-component',
-  templateUrl: './style-modal.component.html',
-  styleUrls: ['./style-modal.component.scss']
+  selector: 'igo-style-modal-drawing',
+  templateUrl: './style-modal-drawing.component.html',
+  styleUrls: ['./style-modal-drawing.component.scss']
 })
-export class StyleModalComponent implements OnInit {
+export class StyleModalDrawingComponent implements OnInit {
   @Input() confirmFlag: boolean = false;
 
   public form: UntypedFormGroup;
@@ -29,10 +20,10 @@ export class StyleModalComponent implements OnInit {
   public linestringOnly: boolean;
 
   constructor(
-    public dialogRef: MatDialogRef<StyleModalComponent>,
+    public dialogRef: MatDialogRef<StyleModalDrawingComponent>,
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: { features: Feature[], handleLabels: boolean }) {
+    @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData) {
       this.buildForm();
     }
 

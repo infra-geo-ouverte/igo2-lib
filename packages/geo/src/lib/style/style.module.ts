@@ -9,7 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { IgoStyleListModule } from './style-list/style-list.module';
-import { StyleModalComponent } from './style-modal/style-modal.component';
+import { StyleModalDrawingComponent } from './style-modal/drawing/style-modal-drawing.component';
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
 
@@ -27,8 +27,8 @@ import { StyleService } from './style-service/style.service';
     ReactiveFormsModule,
     IgoStyleListModule.forRoot()
   ],
-  exports: [IgoStyleListModule, StyleModalComponent],
-  declarations: [StyleModalComponent]
+  exports: [IgoStyleListModule, StyleModalDrawingComponent],
+  declarations: [StyleModalDrawingComponent]
 })
 export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {

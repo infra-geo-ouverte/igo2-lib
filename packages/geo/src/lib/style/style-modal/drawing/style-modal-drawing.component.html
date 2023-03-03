@@ -9,7 +9,7 @@
       <div class="fill-color-picker mat-typography" *ngIf="linestringOnly !== true">
         <span>
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
-          {{ 'igo.geo.draw.fill' | translate }}
+          {{ 'igo.geo.style.fill' | translate }}
         </span>
 
         <mat-form-field
@@ -18,7 +18,7 @@
           floatLabel="always"
           tooltip-position="below"
           matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.draw.colorPicker' | translate">
+          [matTooltip]="'igo.geo.style.colorPicker' | translate">
           <mat-label>{{ getFeatureFillColor() }}</mat-label>
           <input
             #fillColorInput
@@ -33,7 +33,7 @@
             [cpPosition]="'bottom'"
             [cpPositionOffset]="'-75%'"
             [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
+            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
             [cpOKButton]="true"
             (colorPickerChange)="styleModalData.fillColor = $event">
         </mat-form-field>
@@ -45,7 +45,7 @@
             class="stroke-palette-icon"
             svgIcon="square-outline">
           </mat-icon>
-          {{'igo.geo.draw.stroke' | translate}}
+          {{'igo.geo.style.stroke' | translate}}
         </span>
 
         <mat-form-field
@@ -54,7 +54,7 @@
           floatLabel="always"
           tooltip-position="below"
           matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.draw.colorPicker' | translate">
+          [matTooltip]="'igo.geo.style.colorPicker' | translate">
           <mat-label>{{ getFeatureStrokeColor() }}</mat-label>
           <input
             #strokeColorInput
@@ -69,15 +69,15 @@
             [cpPositionOffset]="'-75%'"
             [cpOutputFormat]="'rgba'"
             [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.draw.cancel' | translate"
+            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
             [cpOKButton]="true"
             (colorPickerChange)="styleModalData.strokeColor = $event">
         </mat-form-field>
       </div>
 
-      <div class="igo-input-container" *ngIf="data.handleLabels">
+      <div class="igo-input-container">
         <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.draw.fontSize' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.style.fontSize' | translate }}</mat-label>
           <input
             matInput
             #testFontSize
@@ -90,7 +90,7 @@
           <span matSuffix>px</span>
         </mat-form-field>
         <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.draw.fontStyle' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.style.fontStyle' | translate }}</mat-label>
           <mat-select
             #testFontStyle
             [value]="getFeatureFontStyle()"
@@ -104,9 +104,9 @@
         </mat-form-field>
       </div>
 
-      <div class="igo-input-container" *ngIf="data.handleLabels">
+      <div class="igo-input-container">
         <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.draw.offsetX' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.style.offsetX' | translate }}</mat-label>
           <input
             matInput
             #offsetXInput
@@ -116,7 +116,7 @@
             (input)="styleModalData.offsetX = $event.target.value">
         </mat-form-field>
         <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.draw.offsetY' | translate }}</mat-label>
+          <mat-label>{{ 'igo.geo.style.offsetY' | translate }}</mat-label>
           <input
             matInput
             #offsetYInput
@@ -132,7 +132,7 @@
 <div mat-dialog-actions>
   <button 
     mat-raised-button 
-    (click)="cancelDrawing()">{{'igo.geo.draw.cancel' | translate}}
+    (click)="cancelDrawing()">{{'igo.geo.style.cancel' | translate}}
   </button>
   <button 
     mat-raised-button 

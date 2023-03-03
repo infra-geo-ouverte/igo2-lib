@@ -1,1 +1,2 @@
-export * from './style-modal.component';
+export * from './drawing';
+export * from './shared';

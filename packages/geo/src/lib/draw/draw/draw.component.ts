@@ -59,7 +59,8 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle, DDtoDMS } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
-import { StyleModalComponent, StyleModalData } from '../../style/style-modal/style-modal.component';
+import { StyleModalDrawingComponent } from '../../style/style-modal/drawing/style-modal-drawing.component';
+import { StyleModalData } from '../../style/style-modal/shared/style-modal.interface';
 
 import {
   trigger,
@@ -398,13 +399,12 @@ export class DrawComponent implements OnInit, OnDestroy {
   openStyleModalDialog() {
     setTimeout(() => {
       // open the dialog box used to style features
-      const dialogRef = this.dialog.open(StyleModalComponent, {
+      const dialogRef = this.dialog.open(StyleModalDrawingComponent, {
         disableClose: false,
         data: {
           features: this.selectedFeatures$.getValue(),
           icons: this.icons,
-          icon: this.icon,
-          handleLabels: true
+          icon: this.icon
         },
         autoFocus: false
       });
