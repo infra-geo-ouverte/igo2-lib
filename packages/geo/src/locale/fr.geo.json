@@ -261,6 +261,7 @@
       },
       "style": {
         "styleModal": "Modifier le style",
+        "styleModalTooltipLayer": "Éditer le style des la présente couche.",
         "styleModalTooltipSelected": "Éditer le style des entités sélectionnées",
         "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "cancel": "Annuler",

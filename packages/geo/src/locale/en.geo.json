@@ -262,6 +262,7 @@
       },
       "style": {
         "styleModal": "Edit style",
+        "styleModalTooltipLayer": "Edit the style of the layer.",
         "styleModalTooltipSelected": "Edit the style of the selected entities",
         "colorPicker": "Click to open the color selector",
         "cancel": "Cancel",

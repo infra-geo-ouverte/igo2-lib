@@ -182,17 +182,20 @@ export function addImportedFeaturesToMap(
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
   let randomStyle;
+  let editable: boolean = false;
   if (
     olFeatures[0].getKeys().includes('_style') ||
     olFeatures[0].getKeys().includes('_mapTitle')) {
     randomStyle = featureRandomStyleFunction();
   } else {
     randomStyle = featureRandomStyle();
+    editable = true;
   }
   const layer = new VectorLayer({
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
+    igoStyle: { editable },
     style: randomStyle
   });
   map.addLayer(layer);
