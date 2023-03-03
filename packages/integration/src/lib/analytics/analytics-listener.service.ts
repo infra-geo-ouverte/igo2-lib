@@ -15,7 +15,8 @@ import {
   WebSocketDataSourceOptions,
   XYZDataSourceOptions,
   OSMDataSourceOptions,
-  ClusterDataSourceOptions
+  ClusterDataSourceOptions,
+  WMSDataSourceOptionsParams
 } from '@igo2/geo';
 
 
@@ -98,11 +99,12 @@ export class AnalyticsListenerService {
       layers.map(layer => {
         switch (layer.dataSource.options.type){
           case 'wms':
-            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title);
+            const wmsDataSource = layer.dataSource.options as WMSDataSourceOptionsParams;
+            this.analyticsService.trackLayer(layer.dataSource.options.type, wmsDataSource.LAYERS);
             break;
           case 'wmts':
             const wmstDataSource = layer.dataSource.options as WMTSDataSourceOptions;
-            this.analyticsService.trackLayer(layer.dataSource.options.type, layer.title, wmstDataSource.url, wmstDataSource.matrixSet);
+            this.analyticsService.trackLayer(layer.dataSource.options.type, wmstDataSource.layer, wmstDataSource.url, wmstDataSource.matrixSet);
             break;
           case 'websocket':
             const webSocketDataSource = layer.dataSource.options as WebSocketDataSourceOptions;

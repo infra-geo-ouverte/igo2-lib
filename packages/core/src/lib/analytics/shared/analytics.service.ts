@@ -96,37 +96,43 @@ export class AnalyticsService {
       switch (type){
         case 'wms':
           //layers
-          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          //this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          this.paq.push(['trackEvent', 'layer', 'addWMSLayer', layer]);
           break;
 
         case 'wmts':
           //type, layer, matrixSet
-          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
           this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 4, 'matrixSet', otherParam, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 4, 'matrixSet', otherParam, 'LayerAdded']);*/
+          this.paq.push(['trackEvent', 'layer', 'addWMTSLayer', layer]);
           break;
 
         case 'webSocket':
           //onmessage
-          this.paq.push(['setCustomVariable', 4, 'onmessage', otherParam, 'LayerAdded']);
+          //this.paq.push(['setCustomVariable', 4, 'onmessage', otherParam, 'LayerAdded']);
+          this.paq.push(['trackEvent', 'layer', 'WebSocketLayer', layer]);
           break;
 
         case 'cluster':
         case 'xyz':
           //type+url
-          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);
+          /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);*/
+          this.paq.push(['trackEvent', 'layer', 'addLayer', layer]);
           break;
 
         case 'osm':
           //type
-          this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          //this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
+          this.paq.push(['trackEvent', 'layer', 'addOSMLayer', layer]);
           break;
 
         default:
           //layer+name?
-          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);
+          /*this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
+          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);*/
+          this.paq.push(['trackEvent', 'layer', 'addDefaultLayer', layer]);
       }
     }
   }
