@@ -506,9 +506,9 @@
           "tooltip": "Hide/ show the results geometries "
         },
         "reverseCoordFormat": {
-          "title": "Reverse Coordinates",
-          "tooltipLonLat": "Reverse coordinates format from (longitude, latitude) to (latitude, longitude)",
-          "tooltipLatLon": "Reverse coordinates format from (latitude, longitude) to (longitude, latitude)"
+          "title": "Display data in latitude/longitude",
+          "tooltipLonLat": "Display data in latitude/longitude",
+          "tooltipLatLon": "Display data in longitude/latitude"
         },
         "searchSources": {
           "selectAll": "Select All",

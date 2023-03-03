@@ -505,9 +505,9 @@
           "tooltip": "Afficher/cacher la géométrie des résultats"
         },
         "reverseCoordFormat": {
-          "title": "Inverser les coordonnées",
-          "tooltipLonLat": "Inverser les coordonnées de (longitude, latitude) à (latitude, longitude).",
-          "tooltipLatLon": "Inverser les coordonnées de (latitude, longitude) à (longitude, latitude)."
+          "title": "Afficher les données en latitude/longitude",
+          "tooltipLonLat": "Afficher les données en latitude/longitude.",
+          "tooltipLatLon": "Afficher les données en longitude/latitude."
         },
         "searchSources": {
           "selectAll": "Tout sélectionner",
