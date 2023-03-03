@@ -186,11 +186,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() store: EntityStore<SearchResult>;
 
-   /**
-   * Event emitted when a first result is selected by default
-   */
-   @Output() firstResultSelect = new EventEmitter<SearchResult>();
-
   /**
    * Event emitted when the search term changes
    */
@@ -467,10 +462,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * this find the first object on the map
    */
   selectFirstElement(){
-    const firstResult = this.store.all().filter((result) => result.source.getId() === 'icherche')[0];
+
+    const firstResult = this.store.all().sort((a,b) => a.source.displayOrder -b.source.displayOrder)[0];
+
     if(firstResult){
       this.store.state.update(firstResult,{focused:true,selected:true},true);
-      this.firstResultSelect.emit(firstResult);
+
       return;
     }
   }
