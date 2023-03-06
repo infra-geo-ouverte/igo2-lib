@@ -2,13 +2,14 @@ import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
+  Input,
   OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
 import * as proj from 'ol/proj';
 
-import { LanguageService, MediaService } from '@igo2/core';
+import { LanguageService, MediaService, StorageService } from '@igo2/core';
 import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
@@ -55,7 +56,9 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public osmLayer: Layer;
 
   @ViewChild('mapBrowser', { read: ElementRef, static: true }) mapBrowser: ElementRef;
-
+  @ViewChild('searchBar', { read: ElementRef, static: true })
+  searchBar: ElementRef;
+  
   public lonlat;
   public mapProjection: string;
   public term: string;
@@ -71,6 +74,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   public selectedFeature: Feature;
+  public igoReverseSearchCoordsFormatEnabled: boolean;
 
   constructor(
     private languageService: LanguageService,
@@ -78,7 +82,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private storageService: StorageService,
   ) {
     this.mapService.setMap(this.map);
 
@@ -93,14 +98,18 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.osmLayer = layer;
         this.map.addLayer(layer);
       });
+
+      this.igoReverseSearchCoordsFormatEnabled = 
+      this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
   }
 
   onPointerSummaryStatusChange(value) {
     this.igoSearchPointerSummaryEnabled = value;
   }
 
-  onSearchTermChange(term = '') {
+  onSearchTermChange(term?: string) {
     this.term = term;
+    this.searchState.setSearchTerm(term);
     const termWithoutHashtag = term.replace(/(#[^\s]*)/g, '').trim();
     if (termWithoutHashtag.length < 2) {
       this.searchStore.clear();
@@ -115,6 +124,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.searchStore.updateMany(newResults);
+  }
+
+  onReverseCoordsFormatStatusChange(value) {
+    this.storageService.set('reverseSearchCoordsFormatEnabled', value);
+    this.igoReverseSearchCoordsFormatEnabled = value;
   }
 
   onSearchSettingsChange() {
@@ -205,7 +219,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   searchCoordinate(lonlat) {
     this.searchStore.clear();
-    this.term = lonlat.map((c) => c.toFixed(6)).join(', ');
+    this.term = (!this.igoReverseSearchCoordsFormatEnabled) ?
+    lonlat.map((c) => c.toFixed(6)).join(', ') : lonlat.reverse().map((c) => c.toFixed(6)).join(', ');
   }
 
   openGoogleMaps(lonlat) {
