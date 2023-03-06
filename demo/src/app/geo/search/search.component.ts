@@ -2,7 +2,6 @@ import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
   ViewChild
@@ -56,9 +55,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public osmLayer: Layer;
 
   @ViewChild('mapBrowser', { read: ElementRef, static: true }) mapBrowser: ElementRef;
-  @ViewChild('searchBar', { read: ElementRef, static: true })
-  searchBar: ElementRef;
-  
+
   public lonlat;
   public mapProjection: string;
   public term: string;
@@ -99,7 +96,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.map.addLayer(layer);
       });
 
-      this.igoReverseSearchCoordsFormatEnabled = 
+      this.igoReverseSearchCoordsFormatEnabled =
       this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
   }
 
