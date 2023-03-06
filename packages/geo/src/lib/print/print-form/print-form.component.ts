@@ -224,6 +224,9 @@ export class PrintFormComponent implements OnInit {
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
     data.isPrintService = this.isPrintService;
+    if(data.legendPosition === 'newpage') {
+      data.showLegend = true;
+    }
     if (isValid) {
       this.submit.emit(data);
     }

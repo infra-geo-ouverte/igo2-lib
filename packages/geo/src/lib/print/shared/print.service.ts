@@ -740,10 +740,8 @@ export class PrintService {
     title = '',
     subtitle = '',
     comment = '',
-    doZipFile = true,
-    legendPosition: string
+    doZipFile = true
   ) {
-    console.log('downloadMapImage', legend);
     const status$ = new Subject();
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
@@ -871,25 +869,8 @@ export class PrintService {
           }
         }
       }
-
       // Add map to new canvas
       newContext.drawImage(oldCanvas, 0, positionHCanvas);
-
-      // If legendPosition !== none
-      if (legendPosition !== 'none') {
-        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1 ) {
-          console.log('add legend befor dow image');
-          this.addLegendToImage(newContext, newCanvas, map, resolution, legendPosition, format);
-          return;
-          // console.log("legent canvas and margins", LM[0]);
-          
-          //newContext.drawImage(LM[0], 0, positionHCanvas);
-          
-        }
-      }
-      
-
-      
 
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
@@ -933,71 +914,6 @@ export class PrintService {
     map.ol.renderSync();
 
     return status$;
-  }
-
-  private async addLegendToImage(
-      newContext,
-      newCanvas,
-      map: IgoMap,
-      resolution: number,
-      legendPosition: string,
-      format: string
-  ) {
-    const margins = [10, 10, 10, 10];
-    const width = newCanvas.width;
-    const height = newCanvas.height;
-    const html = await this.getLayersLegendHtml(map, width, resolution).toPromise();
-
-    if (html === '') {
-      console.log('no html');
-      return false;
-    }
-    
-    const div = window.document.createElement('div');
-    div.style.position = 'absolute';
-    div.style.top = '0';
-    window.document.body.appendChild(div);
-    div.innerHTML = html;
-    await this.timeout(1);
-    const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
-      console.log(e);
-    });
-    // console.log('html; ', canvas);
-    let marginsLegend;
-    if(canvas) {
-      const pourcentageReduction = 0.85;
-      const imageSize = [pourcentageReduction * (25.4 * newCanvas.width) / resolution,
-           pourcentageReduction * (25.4 * newCanvas.height) / resolution];
-// Move the legend to the correct position on the page
-           if ( legendPosition === 'bottomright') {
-            marginsLegend = [height - margins[2] - imageSize[1], margins[1],
-             margins[2], width - margins[1] - imageSize[0]];
-          } else if (legendPosition === 'topright') {
-            marginsLegend = [margins[0], margins[1], height - margins[0] - imageSize[1],
-            width - margins[1] - imageSize[0] ];
-          } else if (legendPosition === 'bottomleft') {
-            // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
-            marginsLegend = [height - margins[2] - imageSize[1] - 15,
-            width - margins[3] - imageSize[0], margins[2] + 15, margins[3] ];
-          } else if (legendPosition === 'topleft') {
-            marginsLegend = [margins[0], width - margins[3] - imageSize[0],
-             height - margins[0] - imageSize[1], margins[3] ];
-          }
-
-          // add the Legend in Prancipal image
-       
-          // let image = canvas.toDataURL('image/png');
-          // console.log('marginsLegend: ', marginsLegend);
-          //console.log('image: ', image);
-          console.log(marginsLegend);
-          newContext.drawImage(canvas, marginsLegend[3],marginsLegend[0]);
-          // let status = SubjectStatus.Done;
-          let fileNameWithExt = 'map.' + format;
-          this.saveCanvasImageAsFile(newCanvas, fileNameWithExt, format);
-          // return [canvas, marginsLegend];
-          
-    }
-    return 'end here';
   }
 
   private renderMap(map, size, extent) {
