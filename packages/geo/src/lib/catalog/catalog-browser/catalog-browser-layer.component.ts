@@ -229,7 +229,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   getBadgeIcon() {
     if (this.inRange$.getValue()) {
-      return this.isVisible$.getValue() ? 'eye' : 'eye-off';
+      return this.isVisible$.getValue() ? '' : 'eye-off';
     } else {
       return 'eye-off';
     }
@@ -241,7 +241,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
         return 'igo.geo.catalog.layer.addToMap';
       } else if (this.inRange$.value) {
         return this.isVisible$.value
-        ? 'igo.geo.catalog.layer.removeFromMapVisible'
+        ? 'igo.geo.catalog.layer.removeFromMap'
         : 'igo.geo.catalog.layer.removeFromMapNotVisible';
       } else {
         return 'igo.geo.catalog.layer.removeFromMapOutRange';

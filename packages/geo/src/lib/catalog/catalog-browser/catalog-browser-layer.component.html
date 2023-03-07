@@ -29,10 +29,10 @@
     <mat-icon
        matBadge="icon"
        [igoMatBadgeIcon]="getBadgeIcon()"
-       [igoMatBadgeColor]="(inRange$ | async) && (isVisible$ | async) ? '#1976d2' : 'rgba(0,0,0,0.87)'"
+       igoMatBadgeColor="rgba(0,0,0,0.87)"
        igoMatBadgeBackgroundColor="none"
        igoMatBadgeInverseColor="true"
-       [matBadgeHidden]="(inRange$ | async) && !added"
+       [matBadgeHidden]="((inRange$ | async) && (isVisible$ | async) === true) || ((inRange$ | async) && !added) || ((inRange$ | async) && (isPreview$ | async))"
        [matBadgeDisabled]="(inRange$ | async) === false"
        matBadgeSize="small"
        matBadgePosition="after"

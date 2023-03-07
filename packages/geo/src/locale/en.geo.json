@@ -7,7 +7,6 @@
         "layer.removeFromMap": "Remove from map",
         "layer.removeFromMapOutRange": "Remove from map. The layer is not visible at the current scale. Please zoom in/out",
         "layer.removeFromMapNotVisible": "Remove from map. The layer is visible at the current scale but is not active. Toggle the map tool to adjust layer visibility.",
-        "layer.removeFromMapVisible": "Remove from map. The layer is visible at the current scale. Toggle the map tool to adjust layer visibility.",
         "group.addToMap": "Add all layers from this group to map",
         "group.removeFromMap": "Remove all layers from this group to map",
         "baseLayers": "Baselayers",
