@@ -76,18 +76,27 @@ export class QueryService {
       return of([]);
     }
 
-    // if url is string
-    if(typeof url === 'string') {
-      const request = this.http.get(url, { responseType: 'text' });
-      return request.pipe(map(res => this.extractData(res, layer, options, url)));
-    }
-
     const resolution: number = layer.map.viewController.getResolution();
     const scale: number = layer.map.viewController.getScale();
-    // if url is array of QueryUrlData
-    // check QueryFormat
-    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
 
+    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+      if (typeof url === 'string') {
+        const urlGml = this.getQueryUrl(layer.dataSource, options, true) as string;
+        return this.http.get(urlGml, { responseType: 'text' }).pipe(
+          mergeMap(gmlRes => {
+            const mergedGML = this.mergeGML(gmlRes, url, layer);
+            const imposedGeom = mergedGML[0];
+            const imposedProperties = mergedGML[1];
+            return this.http
+              .get(url, { responseType: 'text' })
+              .pipe(
+                map(res =>
+                  this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+                )
+              );
+          })
+        );
+      }
       const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
       let observables: any = [];
       for (let i = 0; i < urlGmls.length; i++) {
@@ -97,8 +106,11 @@ export class QueryService {
         }
       }
       return observables;
-
     } else {
+      if (typeof url === 'string') {
+        const request = this.http.get(url, { responseType: 'text' });
+        return request.pipe(map(res => this.extractData(res, layer, options, url)));
+      }
       let observables: any = [];
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
