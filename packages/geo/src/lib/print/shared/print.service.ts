@@ -877,7 +877,7 @@ export class PrintService {
           );
         } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
-            map, 
+            map,
             format,
             doZipFile,
             resolution
@@ -930,12 +930,12 @@ export class PrintService {
   }
 
   /**
-   * Create and Add legent to the map
+   * Create and Add Legend to the map canvas
    * @param  canvas Canvas of the map
    * @param  map Map of the app
    * @param  resolution Resolution of map
    * @param  legendPosition Legend position
-   * @param  format Image format 
+   * @param  format Image format
    */
   private async addLegendToImage(
       canvas: HTMLCanvasElement,
@@ -970,26 +970,26 @@ export class PrintService {
       console.log(e);
     });
 
-    if(canvasLegend) {
+    if (canvasLegend) {
       const canvasHeight = canvas.height;
       const canvasWidth = canvas.width;
       const legendHeight = canvasLegend.height;
       const legendWidth = canvasLegend.width;
-
+      // Move the legend to the correct position on the page
       const offset = canvasHeight * 0.01;
       let legendX: number;
       let legendY: number;
 
-      if(legendPosition === 'bottomright') {
+      if (legendPosition === 'bottomright') {
         legendX = canvasWidth - legendWidth - offset;
         legendY = canvasHeight - legendHeight - offset;
-      } else if(legendPosition === 'topright') {
+      } else if (legendPosition === 'topright') {
         legendX = canvasWidth - legendWidth - offset;
         legendY = offset;
-      } else if(legendPosition === 'bottomleft') {
+      } else if (legendPosition === 'bottomleft') {
         legendX = offset;
         legendY = canvasHeight - legendHeight - offset;
-      } else if(legendPosition === 'topleft') {
+      } else if (legendPosition === 'topleft') {
         legendX = offset;
         legendY = offset;
       }

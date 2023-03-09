@@ -135,22 +135,6 @@ export class PrintComponent {
             this.disabled$.next(false);
           }
         });
-     
-      /*if (data.showLegend) {
-        this.printService
-          .getLayersLegendImage(
-            this.map,
-            data.imageFormat,
-            data.doZipFile,
-            +resolution
-          )
-          .then(() => {
-            nbRequests--;
-            if (!nbRequests) {
-              this.disabled$.next(false);
-            }
-          });
-      }*/
     }
   }
 }
