@@ -121,11 +121,11 @@ export class PrintComponent {
           data.imageFormat,
           data.showProjection,
           data.showScale,
-          data.showLegend,
           data.title,
           data.subtitle,
           data.comment,
-          data.doZipFile
+          data.doZipFile,
+          data.legendPosition
         )
         .pipe(take(1))
         .subscribe(() => {
@@ -134,7 +134,8 @@ export class PrintComponent {
             this.disabled$.next(false);
           }
         });
-      if (data.showLegend) {
+     
+      /*if (data.showLegend) {
         this.printService
           .getLayersLegendImage(
             this.map,
@@ -148,7 +149,7 @@ export class PrintComponent {
               this.disabled$.next(false);
             }
           });
-      }
+      }*/
     }
   }
 }
