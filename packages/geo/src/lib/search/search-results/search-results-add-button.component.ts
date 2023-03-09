@@ -11,12 +11,13 @@ import { IgoMap } from '../../map/shared/map';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, take } from 'rxjs';
 import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureDataSource } from '../../datasource';
+import { DataSourceService, FeatureDataSource } from '../../datasource';
 import {
+  Feature,
   FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
@@ -25,13 +26,13 @@ import {
   tryAddSelectionStrategy,
   tryBindStoreLayer
 } from '../../feature';
-import { CoordinatesUnit, FeatureWithDraw, FontType, LabelType } from '../../draw';
 import { EntityStore } from '@igo2/common';
-import { DrawStyleService } from '../../draw/shared/draw-style.service';
 import { getTooltipsOfOlGeometry } from '../../measure';
 import OlOverlay from 'ol/Overlay';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
+import { QueryableDataSourceOptions } from '../../query';
+import { createOverlayDefaultStyle } from '../../overlay';
 
 
 @Component({
@@ -84,7 +85,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   }
   private _color = 'primary';
 
-  @Input() stores: FeatureStore<FeatureWithDraw>[] = [];
+  @Input() stores: FeatureStore<Feature>[] = [];
 
   get allLayers() {
     return this.map.layers.filter((layer) =>
@@ -92,9 +93,10 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     );
   }
 
-  constructor(private layerService: LayerService,
+  constructor(
+    private layerService: LayerService,
     private dialog: MatDialog,
-    private drawStyleService: DrawStyleService) {}
+    private dataSourceService: DataSourceService) {}
 
   /**
    * @internal
@@ -281,7 +283,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
 
   createLayer(layerTitle: string, selectedFeature: SearchResult) {
 
-    const activeStore: FeatureStore<FeatureWithDraw> = new FeatureStore<FeatureWithDraw>([], {
+    const activeStore: FeatureStore<Feature> = new FeatureStore<Feature>([], {
       map: this.map
     });
 
@@ -292,63 +294,63 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       layerCounterID = Math.max(numberId,layerCounterID);
     }
 
-    let activeDrawingLayer: VectorLayer = new VectorLayer({
-      isIgoInternalLayer: true,
-      id: 'igo-search-layer' + ++layerCounterID,
-      title: layerTitle,
-      source: new FeatureDataSource(),
-      style: (feature, resolution) => {
-        return this.drawStyleService.createIndividualElementStyle(
-          feature,
-          resolution,
-          true,
-          feature.get('fontStyle'),
-          feature.get('drawingStyle').fill,
-          feature.get('drawingStyle').stroke,
-          feature.get('offsetX'),
-          feature.get('offsetY'),
-          this.drawStyleService.getIcon()
-        );
-      },
-      showInLayerList: true,
-      exportable: true,
-      browsable: false,
-      workspace: {
-        enabled: false
-      }
-    });
+    this.dataSourceService
+        .createAsyncDataSource({
+          type: 'vector',
+          queryable: true
+        } as QueryableDataSourceOptions)
+        .pipe(take(1))
+        .subscribe((dataSource: FeatureDataSource) => {
+          let searchLayer: VectorLayer = new VectorLayer({
+            isIgoInternalLayer: true,
+            id: 'igo-search-layer' + ++layerCounterID,
+            title: layerTitle,
+            source: dataSource,
+            style: createOverlayDefaultStyle({
+              text: '',
+              strokeWidth: 1,
+              fillColor: 'rgba(255,255,255,0.4)',
+              strokeColor: 'rgba(143,7,7,1)'
+            }),
+            showInLayerList: true,
+            exportable: true,
+            workspace: {
+              enabled: true
+            }
+          });
 
-    tryBindStoreLayer(activeStore, activeDrawingLayer);
-    tryAddLoadingStrategy(
-      activeStore,
-      new FeatureStoreLoadingStrategy({
-        motion: FeatureMotion.None
-      })
-    );
+          tryBindStoreLayer(activeStore, searchLayer);
+          tryAddLoadingStrategy(
+            activeStore,
+            new FeatureStoreLoadingStrategy({
+              motion: FeatureMotion.None
+            })
+          );
 
-    tryAddSelectionStrategy(
-      activeStore,
-      new FeatureStoreSelectionStrategy({
-        map: this.map,
-        motion: FeatureMotion.None,
-        many: true
-      })
-    );
+          tryAddSelectionStrategy(
+            activeStore,
+            new FeatureStoreSelectionStrategy({
+              map: this.map,
+              motion: FeatureMotion.None,
+              many: true
+            })
+          );
 
-    activeStore.layer.visible = true;
-    activeStore.source.ol.on(
-      'removefeature',
-      (event: OlVectorSourceEvent<OlGeometry>) => {
-        const olGeometry = event.feature.getGeometry();
-        this.clearLabelsOfOlGeometry(olGeometry);
-      }
-    );
+          activeStore.layer.visible = true;
+          activeStore.source.ol.on(
+            'removefeature',
+            (event: OlVectorSourceEvent<OlGeometry>) => {
+              const olGeometry = event.feature.getGeometry();
+              this.clearLabelsOfOlGeometry(olGeometry);
+            }
+          );
 
-    this.addFeature(selectedFeature, activeStore);
-    this.stores.push(activeStore);
+          this.addFeature(selectedFeature, activeStore);
+          this.stores.push(activeStore);
+        });
   }
 
-  addFeature(feature: SearchResult, activeStore: FeatureStore<FeatureWithDraw>) {
+  addFeature(feature: SearchResult, activeStore: FeatureStore<Feature>) {
 
     const newFeature = {
       type: feature.data.type,
@@ -359,19 +361,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       projection: feature.data.projection,
       properties: {
         id: feature.meta.id,
-        draw: feature.meta.title,
-        longitude: feature.data.geometry.coordinates[0],
-        latitude: feature.data.geometry.coordinates[1],
-        rad: null,
-        fontStyle: FontType.Arial,
-        drawingStyle: {
-          fill: 'rgba(255,255,255,0.4)',
-          stroke: 'rgba(143,7,7,1)'
-        },
-        offsetX: 0,
-        offsetY: -15,
-        labelType: LabelType.Coordinates,
-        measureUnit: CoordinatesUnit.DecimalDegree
+        titre: feature.meta.title
       },
       meta: {
         id: feature.meta.id
