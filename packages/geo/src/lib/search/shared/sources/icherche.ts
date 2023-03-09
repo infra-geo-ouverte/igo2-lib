@@ -85,10 +85,6 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   ) {
     super(options, storageService);
 
-    this.languageService.translate
-      .get(this.options.title)
-      .subscribe((title) => this.title$.next(title));
-
     const authService = injector.get(AuthService);
     if (this.settings.length) {
       if (!authService) {
@@ -99,6 +95,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         });
       }
     }
+
+    this.languageService.language$.subscribe(() => {
+      this.title$.next(this.languageService.translate.instant(this.options.title));
+    });
   }
 
   getId(): string {
@@ -653,9 +653,9 @@ export class IChercheReverseSearchSource extends SearchSource
   ) {
     super(options, storageService);
 
-    this.languageService.translate
-      .get(this.options.title)
-      .subscribe((title) => this.title$.next(title));
+    this.languageService.language$.subscribe(() => {
+      this.title$.next(this.languageService.translate.instant(this.options.title));
+    });
 
     const authService = injector.get(AuthService);
     if (this.settings.length) {
