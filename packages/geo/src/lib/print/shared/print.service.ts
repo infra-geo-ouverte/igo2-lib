@@ -235,6 +235,7 @@ export class PrintService {
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
+
       if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
@@ -255,7 +256,8 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
-      const images$ = legends.filter(l => l.display).map((legend) =>
+      const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
+      .map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';

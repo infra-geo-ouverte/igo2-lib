@@ -115,4 +115,5 @@ export interface OutputLayerLegend {
   title: string;
   url: string;
   display: boolean;
+  isInResolutionsRange: boolean;
 }
