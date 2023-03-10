@@ -1,7 +1,7 @@
 <div *ngIf="stateAffichage === display.Choice" style="width: fit-content;">
   <div mat-dialog-content style="width: fit-content;">
     <button mat-button (click)="stateAffichage = display.TrackHistory">{{ 'igo.geo.record-prompts.history' | translate }}</button>
-    <button mat-button (click)="stateAffichage = display.RecordTrack">{{ 'igo.geo.record-prompts.record' | translate }}</button>
+    <button mat-button (click)="displayParameters()">{{ 'igo.geo.record-prompts.record' | translate }}</button>
   </div>
 </div>
 

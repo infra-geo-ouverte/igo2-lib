@@ -355,7 +355,8 @@
         "confirmNotDownloadGpx": "Are you certain you want to cancel this recording? All the track data will be lost.",
         "invalidNumber": "The number must be valid and above 0",
         "noTraceFound": "No traces have been found",
-        "badInputs": "The inputs you've entered weren't valid"
+        "badInputs": "The inputs you've entered weren't valid",
+        "confirmDeleteRecording": "Are you sure you want to delete this recording?"
       },
       "directionsForm": {
         "stopLayer": "Directions - stops",

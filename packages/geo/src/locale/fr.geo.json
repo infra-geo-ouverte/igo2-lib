@@ -354,7 +354,8 @@
         "confirmNotDownloadGpx": "Êtes-vous certain de vouloir annuler cet enregistrement? Toutes les données de la trace seront perdues.",
         "invalidNumber": "Le nombre saisi doit être valide et supérieur à 0",
         "noTraceFound": "Aucune trace n'a été trouvée",
-        "badInputs": "Les données que vous avez entrée n'étaient pas valides"
+        "badInputs": "Les données que vous avez entrée n'étaient pas valides",
+        "confirmDeleteRecording": "Êtes-vous certain de vouloir supprimer cet enregistrement?"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",

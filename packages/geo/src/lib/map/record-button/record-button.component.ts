@@ -15,7 +15,7 @@ import { LineString } from 'ol/geom';
 import { StyleService, VectorLayer } from '../../layer';
 import { QueryableDataSourceOptions } from '../../query';
 import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, take } from 'rxjs';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
 import NoSleep from 'nosleep.js';
 
@@ -35,7 +35,7 @@ export class RecordButtonComponent implements OnInit {
   timerKey = null;
   pointIntervalKey = null;
   geolocation: olGeolocation;
-  fileName: string;
+  fileNames: string[] = [];
   geoMap: MapGeolocationController;
   position: number[];
   startTime: Date;
@@ -125,16 +125,16 @@ export class RecordButtonComponent implements OnInit {
         ));
         return;
       }
-      if(!this.mapService.getMap()) {
-        this.messageService.alert(this.languageService.translate.instant(
-          'igo.geo.record-prompts.mapNotRendered'
-        ));
-        return;
-      }
       this.geoMap = this.mapService.getMap().geolocationController;
       if(!this.geoMap.position$.value || !this.geoMap.position$.value.position) {
         this.messageService.alert(this.languageService.translate.instant(
           'igo.geo.record-prompts.positionNotFound'
+        ));
+        return;
+      }
+      if(!this.mapService.getMap()) {
+        this.messageService.alert(this.languageService.translate.instant(
+          'igo.geo.record-prompts.mapNotRendered'
         ));
         return;
       }
@@ -147,19 +147,22 @@ export class RecordButtonComponent implements OnInit {
         timeStamp: new Date().toLocaleString().replace(', ', 'T')
       };
       this.routeFeatures.push(startingPosition);
-      if(!this.lineString) {
-        this.createLineString();
-      }
-      this.positionSubscription = this.geoMap.position$.subscribe(() => {
-        for(let i = this.lineString.getCoordinates().length; i<this.routeFeatures.length; i++){
-          this.lineString.appendCoordinate(transform(
-            [this.routeFeatures[i].coordinates[0],this.routeFeatures[i].coordinates[1]],
-            'EPSG:4326', 'EPSG:3857'));
+      this.setFileName(result.fileName).subscribe((namingIsOver) => {
+        if(namingIsOver === true) {
+          if(!this.lineString) {
+            this.createLineString();
+          }
+          this.positionSubscription = this.geoMap.position$.subscribe(() => {
+            for(let i = this.lineString.getCoordinates().length; i<this.routeFeatures.length; i++){
+              this.lineString.appendCoordinate(transform(
+                [this.routeFeatures[i].coordinates[0],this.routeFeatures[i].coordinates[1]],
+                'EPSG:4326', 'EPSG:3857'));
+            }
+            this.updatePointsArrayDb();
+          });
         }
-        this.updatePointsArrayDb();
       });
       this.isRecording = !this.isRecording;
-      this.fileName = result.fileName;
       this.timerKey = setInterval(() => {
         this.currentTime = new Date();
       }, 1000);
@@ -170,6 +173,32 @@ export class RecordButtonComponent implements OnInit {
         this.setUpDistanceIntervalObserver();
       }
     }
+  }
+
+  private setFileName(name: string): BehaviorSubject<boolean> {
+    let fileArray: File[] = [];
+    let namingOverSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    this.geoDBService.get('recordedTraces').pipe(take(1)).subscribe((res) => {
+      if(res) {
+        fileArray = res;
+      }
+      const trackNameExists = fileArray.filter(fileF => fileF.name.substring(0, fileF.name.lastIndexOf('_')+6) === name+'_track');
+      const pointsNameExists = fileArray.filter(fileF => fileF.name.substring(0, fileF.name.lastIndexOf('_')+7) === name+'_points');
+      if(trackNameExists.length > 0) {
+        this.fileNames[0] = name + `_track (${trackNameExists.length}).gpx`;
+      }
+      else {
+        this.fileNames[0] = name + '_track.gpx';
+      }
+      if(pointsNameExists.length > 0) {
+        this.fileNames[1] = name + `_points (${pointsNameExists.length}).gpx`;
+      }
+      else {
+        this.fileNames[1] = name + '_points.gpx';
+      }
+      namingOverSubject.next(true);
+    });
+    return namingOverSubject;
   }
 
   updatePointsArrayDb() {
@@ -249,7 +278,7 @@ export class RecordButtonComponent implements OnInit {
     var featureLine = new Feature({
         geometry: this.lineString
     });
-    this.addLayerToMap([featureLine], 'trackLine', 'trace position');
+    this.addLayerToMap([featureLine], this.fileNames[0], 'trace position');
   }
 
   private addLayerToMap(features: any[], layerId: string, layerName: string) {
@@ -348,25 +377,33 @@ export class RecordButtonComponent implements OnInit {
         const reservedChars = "|\\?*<\":>+[]/'";
 
         for(let i = 0; i<reservedChars.length; i++) {
-          this.fileName = this.fileName.replace(reservedChars.charAt(i), "&");
+          for(let name of this.fileNames) {
+            name = name.replace(reservedChars.charAt(i), "&");
+          }
         }
 
         if(result === 'both') {
-          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileName + '_' + 'track' + '.gpx');
-          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
-          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileName + '_' + 'track' + '.gpx'),
-                                     new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
+          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileNames[0]);
+          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileNames[1]);
+          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileNames[0]),
+                                     new File([gpxPointsText], this.fileNames[1])]);
         }
         else if(result === 'track') {
-          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileName + '_' + 'track' + '.gpx');
-          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileName + '_' + 'track' + '.gpx')]);
+          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileNames[0]);
+          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileNames[0])]);
         }
         else if(result === 'points') {
-          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileName + '_' + 'points' + '.gpx');
-          this.updateIndexedDBFiles([new File([gpxPointsText], this.fileName + '_' + 'points' + '.gpx')]);
+          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileNames[1]);
+          this.updateIndexedDBFiles([new File([gpxPointsText], this.fileNames[1])]);
         }
         this.stopRecording();
-        if(result !== 'noDownload') {
+        if(result === 'noDownload') {
+          const resultsLayer = this.mapService.getMap().getLayerById(this.fileNames[0]);
+          if (resultsLayer !== undefined) {
+            this.mapService.getMap().removeLayer(resultsLayer);
+          }
+        }
+        else {
           this.messageService.success(this.languageService.translate.instant(
             'igo.geo.record-prompts.gpxDownloadedToast'
           ));
@@ -388,13 +425,7 @@ export class RecordButtonComponent implements OnInit {
         fileArray = res;
       }
       for await (const file of files) {
-        const nameExists = fileArray.filter(fileF => fileF.name === file.name);
-        let tempFile = file;
-        if(nameExists.length > 0) {
-          const text = await file.text();
-          tempFile = new File([text], file.name.slice(0, file.name.length-4)+`(${nameExists.length}).gpx`);
-        }
-        fileArray.push(tempFile);
+        fileArray.push(file);
       };
       this.geoDBService.update('recordedTraces',
         fileArray.length,
