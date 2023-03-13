@@ -776,12 +776,20 @@ export class PrintService {
       // Set the new canvas with the new calculated size
       newCanvas.width = width;
       newCanvas.height = height;
-      // Patch Jpeg default black background to white
-      if (format === 'jpeg') {
-        newContext.fillStyle = '#ffffff';
-        newContext.fillRect(0, 0, width, height);
-        newContext.fillStyle = '#000000';
+      if (['bmp','gif', 'jpeg', 'png', 'tiff'].indexOf(format) > -1) {
+        // Patch Jpeg default black background to white
+        if (format === 'jpeg') {
+          newContext.fillStyle = '#ffffff';
+          newContext.fillRect(0, 0, width, height);
+          newContext.fillStyle = '#000000';
+        } else if (title !== '' || subtitle !== '' || comment !== '' ||
+            projection !== false || scale !== false) {
+              newContext.fillStyle = '#ffffff';
+              newContext.fillRect(0, 0, width, height);
+              newContext.fillStyle = '#000000';
+        }
       }
+
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
@@ -867,20 +875,13 @@ export class PrintService {
 
       // Check the legendPosition
       if (legendPosition !== 'none') {
-        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1 ) {
+        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
             newCanvas,
             map,
             resolution,
             legendPosition,
             format
-          );
-        } else if (legendPosition === 'newpage') {
-          await this.getLayersLegendImage(
-            map,
-            format,
-            doZipFile,
-            resolution
           );
         }
       }

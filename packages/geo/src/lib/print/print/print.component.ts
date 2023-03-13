@@ -115,6 +115,10 @@ export class PrintComponent {
 
       let nbRequests = data.showLegend ? 2 : 1;
 
+      if (data.legendPosition === 'newpage') {
+        nbRequests++;
+      }
+
       this.printService
         .downloadMapImage(
           this.map,
@@ -131,8 +135,22 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe(() => {
           nbRequests--;
-          if (!nbRequests) {
-            this.disabled$.next(false);
+          if(data.legendPosition === 'newpage') {
+            this.printService.getLayersLegendImage(
+              this.map,
+              data.imageFormat,
+              data.doZipFile,
+              resolution
+            ).then(() => {
+              nbRequests--;
+              if (!nbRequests) {
+                this.disabled$.next(false);
+              }
+            });
+          } else {
+            if (!nbRequests) {
+              this.disabled$.next(false);
+            }
           }
         });
     }
