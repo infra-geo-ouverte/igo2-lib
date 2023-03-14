@@ -5,15 +5,17 @@ igoStopPropagation
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
-[matTooltip]="(tooltip$ | async) | translate"
+[matTooltip]="computeTooltip() | translate"
 [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="onToggleClick($event)">
 <mat-icon
   matBadge="icon"
-  igoMatBadgeIcon="eye-off"
+  [igoMatBadgeIcon]="getBadgeIcon()"
+  igoMatBadgeColor="rgba(0,0,0,0.87)"
+  igoMatBadgeBackgroundColor="none"
   igoMatBadgeInverseColor="true"
-  [matBadgeHidden]="(inRange$ | async)"
-  matBadgeDisabled="true"
+  [matBadgeHidden]="((inRange$ | async) && (isVisible$ | async) === true) || ((inRange$ | async) && !added) || ((inRange$ | async) && (isPreview$ | async))"
+  [matBadgeDisabled]="(inRange$ | async) === false"
   matBadgeSize="small"
   matBadgePosition="after"
   [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">

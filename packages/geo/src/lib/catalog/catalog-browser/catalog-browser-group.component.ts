@@ -21,6 +21,7 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
+import { IgoMap } from '../../map';
 
 /**
  * Catalog browser group item
@@ -60,6 +61,8 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Catalog group
    */
   @Input() group: CatalogItemGroup;
+
+  @Input() map: IgoMap;
 
   /**
    * Whether the group is collapsed
