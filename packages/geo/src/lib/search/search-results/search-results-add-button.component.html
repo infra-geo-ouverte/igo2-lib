@@ -28,7 +28,7 @@ igoStopPropagation
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
-[matTooltip]="(exportTooltip$ | async) | translate"
+[matTooltip]="(addFeatureToLayerTooltip$ | async) | translate"
 (click)="addFeatureToLayer()">
 <mat-icon
   matBadge="icon"

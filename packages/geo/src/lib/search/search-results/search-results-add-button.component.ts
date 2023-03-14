@@ -46,7 +46,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     'igo.geo.catalog.layer.addToMap'
   );
 
-  public exportTooltip$: BehaviorSubject<string> = new BehaviorSubject(
+  public addFeatureToLayerTooltip$: BehaviorSubject<string> = new BehaviorSubject(
     'igo.geo.search.addToLayer'
   );
 
