@@ -323,7 +323,8 @@
           "topright": "Top right corner of the map",
           "bottomleft": "Bottom left corner of the map",
           "bottomright": "Bottom right corner of the map",
-          "newpage": "On a new page"
+          "newpage": "On a new page",
+          "newimage": "On a new image"
         }
       },
       "directionsForm": {
