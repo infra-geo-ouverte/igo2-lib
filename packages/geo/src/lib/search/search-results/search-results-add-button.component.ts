@@ -20,13 +20,13 @@ import { Subscription, BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
-  public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
-    'igo.geo.catalog.layer.addToMap'
-  );
 
   private resolution$$: Subscription;
+  private layers$$: Subscription;
 
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -69,14 +69,18 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           lay => lay.id === this.layer.data.sourceOptions.id
         ) !== -1;
     }
+    this.layers$$ = this.map.layers$.subscribe(() => {
+      this.isVisible();
+    });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(value => {
       this.isInResolutionsRange(value);
-      this.tooltip$.next(this.computeTooltip());
+      this.isVisible();
     });
   }
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   /**
@@ -194,11 +198,32 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     );
   }
 
+  isVisible() {
+    if (this.layer?.data?.sourceOptions?.id) {
+      const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
+      oLayer ? this.isVisible$.next(oLayer.visible) : this.isVisible$.next(false);
+    }
+  }
+
+  getBadgeIcon() {
+    if (this.inRange$.value) {
+      return this.isVisible$.value ? '' : 'eye-off';
+    } else {
+      return 'eye-off';
+    }
+  }
+
   computeTooltip(): string {
     if (this.added) {
-      return this.inRange$.value
+      if (this.isPreview$.value) {
+        return 'igo.geo.catalog.layer.addToMap';
+      } else if (this.inRange$.value) {
+        return this.isVisible$.value
         ? 'igo.geo.catalog.layer.removeFromMap'
-        : 'igo.geo.catalog.layer.removeFromMapOutRange';
+        : 'igo.geo.catalog.layer.removeFromMapNotVisible';
+      } else {
+        return 'igo.geo.catalog.layer.removeFromMapOutRange';
+      }
     } else {
       return this.inRange$.value
         ? 'igo.geo.catalog.layer.addToMap'
