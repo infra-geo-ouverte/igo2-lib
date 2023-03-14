@@ -280,18 +280,22 @@ export class QueryService {
           type: olmline.getType(),
           coordinates: olmline.getCoordinates()
         };
+        break;
       case 'Point':
         returnGeometry = olmpts;
+        break;
       case 'Polygon':
         returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
+        break;
       case 'MultiPolygon':
         returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
+        break;
     }
     const imposedProperties = {};
 
