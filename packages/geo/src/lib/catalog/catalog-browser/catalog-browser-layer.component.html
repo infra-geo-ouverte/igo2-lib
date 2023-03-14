@@ -28,10 +28,12 @@
     (click)="onToggleClick($event)">
     <mat-icon
        matBadge="icon"
-       igoMatBadgeIcon="eye-off"
+       [igoMatBadgeIcon]="getBadgeIcon()"
+       igoMatBadgeColor="rgba(0,0,0,0.87)"
+       igoMatBadgeBackgroundColor="none"
        igoMatBadgeInverseColor="true"
-       [matBadgeHidden]="isInResolutionsRange()"
-       matBadgeDisabled="true"
+       [matBadgeHidden]="((inRange$ | async) && (isVisible$ | async) === true) || ((inRange$ | async) && !added) || ((inRange$ | async) && (isPreview$ | async))"
+       [matBadgeDisabled]="(inRange$ | async) === false"
        matBadgeSize="small"
        matBadgePosition="after"
        [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">

@@ -47,13 +47,13 @@ export class CoordinatesReverseSearchSource extends SearchSource
     @Inject('options') options: SearchSourceOptions,
     private languageService: LanguageService,
     storageService: StorageService,
-    @Inject('projections') projections: Projection[],
+    @Inject('projections') projections: Projection[]
   ) {
     super(options, storageService);
     this.projections = projections;
-    this.languageService.translate
-      .get(this.options.title)
-      .subscribe(title => this.title$.next(title));
+    this.languageService.language$.subscribe(() => {
+      this.title$.next(this.languageService.translate.instant(this.options.title));
+    });
   }
 
   getId(): string {

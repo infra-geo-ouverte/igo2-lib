@@ -6,6 +6,7 @@
         "layer.addToMapOutRange": "Ajouter à la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "layer.removeFromMap": "Retirer de la carte",
         "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
+        "layer.removeFromMapNotVisible": "Retirer de la carte. La donnée est visible à l'échelle active, mais n'est pas activée. Veuillez basculer vers l'outil carte pour la rendre visible.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte",
