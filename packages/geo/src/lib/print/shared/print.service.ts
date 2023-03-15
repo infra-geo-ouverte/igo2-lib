@@ -329,7 +329,6 @@ export class PrintService {
           // Add the canvas to zip
           this.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
         }
-        div.parentNode.removeChild(div); // remove temp div (IE)
       } catch (err) {
         status = SubjectStatus.Error;
       }
@@ -487,7 +486,6 @@ export class PrintService {
       doc.addPage();
       imgData = canvas.toDataURL('image/png');
       doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
-      div.parentNode.removeChild(div); // remove temp div (IE style)
     }
 
     await this.saveDoc(doc);
@@ -551,7 +549,6 @@ export class PrintService {
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
-        div.parentNode.removeChild(div); // remove temp div (IE style)
         await this.saveDoc(doc);
       }
     }
@@ -1066,17 +1063,11 @@ export class PrintService {
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      // If navigator is Internet Explorer
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(canvas.msToBlob(), nameWithExt);
-        this.saveFileProcessing();
-      } else {
-        canvas.toBlob((blob) => {
-          // download image
-          saveAs(blob, nameWithExt);
-          that.saveFileProcessing();
-        }, blobFormat);
-      }
+      canvas.toBlob((blob) => {
+        // download image
+        saveAs(blob, nameWithExt);
+        that.saveFileProcessing();
+      }, blobFormat);
     } catch (err) {
       this.messageService.error(
         this.languageService.translate.instant(

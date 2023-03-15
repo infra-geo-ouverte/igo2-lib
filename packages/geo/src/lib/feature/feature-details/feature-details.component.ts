@@ -12,7 +12,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { userAgent } from '@igo2/utils';
 import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
 import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
@@ -118,7 +117,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   htmlSanitizer(value): SafeResourceUrl {
-    if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
+    if (!value.body) {
       return;
     }
     const regexBase = /<base href="[\w:\/\.]+">/;
