@@ -77,8 +77,6 @@ export class SearchResultsItemComponent {
     return getEntityIcon(this.result);
   }
 
-  constructor() {}
-
   onZoomHandler() {
     const olFeature = this.format.readFeature(this.result.data, {
       dataProjection: this.result.data.projection,

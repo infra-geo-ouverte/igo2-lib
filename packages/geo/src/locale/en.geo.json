@@ -488,7 +488,9 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "reversedCoord": "Geographic (latitude, longitude)",
           "coordDMS": "Geographic (longitude, latitude) (DMS)",
+          "reversedCoordDMS": "Geographic (latitude, longitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
@@ -503,6 +505,11 @@
         "searchResultsGeometry": {
           "title": "Show results geometries",
           "tooltip": "Hide/ show the results geometries "
+        },
+        "reverseCoordFormat": {
+          "title": "Display data in latitude/longitude",
+          "tooltipLonLat": "Display data in latitude/longitude",
+          "tooltipLatLon": "Display data in longitude/latitude"
         },
         "searchSources": {
           "selectAll": "Select All",
