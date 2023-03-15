@@ -252,6 +252,7 @@ export interface ReverseSearch {
    */
   reverseSearch(
     lonLat: [number, number],
-    options?: ReverseSearchOptions
+    options?: ReverseSearchOptions,
+    reverseSearchCoordsFormat?: boolean
   ): Observable<SearchResult[]>;
 }

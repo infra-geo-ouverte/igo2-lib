@@ -142,7 +142,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   constructor(private cdRef: ChangeDetectorRef,
               private searchService: SearchService,
-              private configService: ConfigService
+              private configService: ConfigService,
               ) {}
 
   /**

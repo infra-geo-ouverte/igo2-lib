@@ -33,7 +33,9 @@
       (searchTermChange)="onSearchTermChange($event)"
       (search)="onSearch($event)"
       (clearFeature)="removeFeatureFromMap()"
-      (searchSettingsChange)="onSearchSettingsChange()">
+      (searchSettingsChange)="onSearchSettingsChange()"
+      [reverseSearchCoordsFormatEnabled]="igoReverseSearchCoordsFormatEnabled"
+      (reverseSearchCoordsFormatStatus)="onReverseCoordsFormatStatusChange($event)">
     </igo-search-bar>
 
     <igo-search-results
