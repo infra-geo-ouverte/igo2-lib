@@ -32,7 +32,7 @@ import OlOverlay from 'ol/Overlay';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { QueryableDataSourceOptions } from '../../query';
-import { createOverlayDefaultStyle } from '../../overlay';
+import { createOverlayDefaultStyle } from '../../style/shared/overlay/overlay-style.utils';
 
 
 @Component({
