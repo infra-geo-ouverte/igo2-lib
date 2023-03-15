@@ -323,7 +323,8 @@
           "topright": "Coin haut droit de la carte",
           "bottomleft": "Coin bas gauche de la carte",
           "bottomright": "Coin bas droit de la carte",
-          "newpage": "Sur une nouvelle page"
+          "newpage": "Sur une nouvelle page",
+          "newimage": "Sur une nouvelle image"
         }
       },
       "directionsForm": {
