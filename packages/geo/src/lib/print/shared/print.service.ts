@@ -43,7 +43,7 @@ export class PrintService {
     subtitleFontStyle: 'bold',
     commentFont: 'courier',
     commentFontStyle: 'normal',
-    commentFontSize: 12
+    commentFontSize: 16
   };
 
   constructor(
@@ -75,13 +75,13 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [5, 10, 10, 10];
+    const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
-
+    doc.line(20, 25, 60, 25);
     // PDF title
     if (options.title !== undefined ) {
       const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
@@ -135,7 +135,7 @@ export class PrintService {
         );
     }
     if (options.comment !== '') {
-      this.addComment(doc, options.comment, width);
+      this.addComment(doc, options.comment);
     }
 
     this.addMap(doc, map, resolution, size, margins).subscribe(
@@ -376,17 +376,16 @@ export class PrintService {
    * * @param  doc - pdf document
    * * @param  comment - Comment to add in the document
    */
-  private addComment(doc: jsPDF, comment: string, width: number) {
-    const commentMarginLeft = 10; //margin left and bottom is fix
-    const commentMarginBottom = 10;
+  private addComment(doc: jsPDF, comment: string) {
+    const commentMarginLeft = 20; //margin left and bottom is fix
+    const commentMarginBottom = 5;
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
     this. addTextInPdfDoc(doc,comment,
       this.TEXTPDFFONT.commentFont,
       this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
       commentMarginLeft,
-      marginTop,
-      width
+      marginTop
     );
   }
 
@@ -396,16 +395,11 @@ export class PrintService {
     textFontStyle: string,
     textFontSize: number,
     textMarginLeft: number,
-    textMarginTop: number,
-    width?: number)
+    textMarginTop: number)
     {
       doc.setFont(textFont, textFontStyle);
       doc.setFontSize(textFontSize);
-      let text = textToAdd;
-      if(width) {
-        text = doc.splitTextToSize(textToAdd, width);
-      }
-      doc.text(text, textMarginLeft, textMarginTop);
+      doc.text(textToAdd, textMarginLeft, textMarginTop);
     }
 
   /**
@@ -424,7 +418,7 @@ export class PrintService {
     scale: boolean
   ) {
     const translate = this.languageService.translate;
-    const projScaleSize = 12;
+    const projScaleSize = 16;
     const projScaleMarginLeft = 20;
     const marginBottom = 15;
     const heightPixels = doc.internal.pageSize.height - marginBottom;
