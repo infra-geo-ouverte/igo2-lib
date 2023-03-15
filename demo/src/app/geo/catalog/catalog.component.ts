@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { LanguageService, ConfigService, StorageService } from '@igo2/core';
-import { IgoMap, LayerService, Catalog, CatalogItem, CatalogService } from '@igo2/geo';
-import { EntityStore } from '@igo2/common';
+import { IgoMap, LayerService, Catalog, CatalogItem, CatalogService, MapService } from '@igo2/geo';
+import { EntityRecord, EntityStore } from '@igo2/common';
 
 @Component({
   selector: 'app-catalog',
@@ -10,6 +10,7 @@ import { EntityStore } from '@igo2/common';
   styleUrls: ['./catalog.component.scss']
 })
 export class AppCatalogComponent implements OnInit {
+  catalog: Catalog;
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -32,7 +33,8 @@ export class AppCatalogComponent implements OnInit {
     private languageService: LanguageService,
     private layerService: LayerService,
     private catalogService: CatalogService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private mapService: MapService
   ) {}
 
   /**
@@ -49,6 +51,18 @@ export class AppCatalogComponent implements OnInit {
       .subscribe(layer => this.map.addLayer(layer));
 
     this.loadCatalogs();
+
+    this.mapService.setMap(this.map);
+    this.catalogStore.stateView
+      .firstBy$(
+        (record: EntityRecord<Catalog>) => record.state.selected === true
+      )
+      .subscribe((record: EntityRecord<Catalog>) => {
+        if (record && record.entity) {
+          const catalog = record.entity;
+          this.catalog = catalog;
+        }
+      });
   }
 
   /**
