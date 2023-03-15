@@ -42,7 +42,7 @@ export class AppComponent implements OnDestroy {
 
   private detectOldBrowser() {
     const oldBrowser = userAgent.satisfies({
-      ie: '<11',
+      ie: '<=11',
       chrome: '<64',
       firefox: '<60'
     });
