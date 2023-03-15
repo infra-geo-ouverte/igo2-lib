@@ -120,13 +120,13 @@ export class MapOfflineDirective implements AfterViewInit {
           this.networkState.connection === false ||
           this.offlineButtonState.connection === false
         ) {
-          layer.ol.setMaxResolution(0);
+          layer.maxResolution = 0;
           return;
         } else if (
           this.networkState.connection === true ||
           this.offlineButtonState.connection === true
         ) {
-          layer.ol.setMaxResolution(Infinity);
+          layer.maxResolution = layer.options.maxResolution || Infinity;
           return;
         }
       }
@@ -163,12 +163,12 @@ export class MapOfflineDirective implements AfterViewInit {
             this.networkState.connection === false ||
             this.offlineButtonState.connection === false
           ) {
-            layer.ol.setMaxResolution(0);
+            layer.maxResolution = 0;
           } else if (
             this.networkState.connection === true ||
             this.offlineButtonState.connection === true
           ) {
-            layer.ol.setMaxResolution(Infinity);
+            layer.maxResolution = layer.options.maxResolution || Infinity;
           }
         }
       } else {
@@ -176,12 +176,12 @@ export class MapOfflineDirective implements AfterViewInit {
           this.networkState.connection === false ||
           this.offlineButtonState.connection === false
         ) {
-          layer.ol.setMaxResolution(0);
+          layer.maxResolution = 0;
         } else if (
           this.networkState.connection === true ||
           this.offlineButtonState.connection === true
         ) {
-          layer.ol.setMaxResolution(Infinity);
+          layer.maxResolution = layer.options.maxResolution || Infinity;
         }
       }
     });

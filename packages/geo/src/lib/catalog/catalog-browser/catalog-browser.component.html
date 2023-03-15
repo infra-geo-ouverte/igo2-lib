@@ -4,6 +4,7 @@
       <igo-catalog-browser-group
         [catalog]="catalog"
         [group]="item"
+        [map]="map"
         [state]="store.state"
         [resolution]="resolution$ | async"
         [catalogAllowLegend]="catalogAllowLegend"
@@ -18,6 +19,7 @@
       <igo-catalog-browser-layer
         igoListItem
         [layer]="item"
+        [map]="map"
         [resolution]="resolution$ | async"
         [catalogAllowLegend]="catalogAllowLegend"
         [added]="store.state.get(item).added"

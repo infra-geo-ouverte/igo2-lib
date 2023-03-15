@@ -6,6 +6,7 @@
         "layer.addToMapOutRange": "Ajouter à la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "layer.removeFromMap": "Retirer de la carte",
         "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
+        "layer.removeFromMapNotVisible": "Retirer de la carte. La donnée est visible à l'échelle active, mais n'est pas activée. Veuillez basculer vers l'outil carte pour la rendre visible.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte",
@@ -261,7 +262,11 @@
         "style": {
           "styleModal": "Modifier le style",
           "styleModalTooltip": "Éditer le style des entités sélectionnées"
-        }
+        },
+        "saveBtn": "Sauvegarder",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Ajouter la sélection dans une couche",
+        "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
       "download": {
         "action": "Télécharger les données associées",
@@ -322,7 +327,8 @@
           "topright": "Coin haut droit de la carte",
           "bottomleft": "Coin bas gauche de la carte",
           "bottomright": "Coin bas droit de la carte",
-          "newpage": "Sur une nouvelle page"
+          "newpage": "Sur une nouvelle page",
+          "newimage": "Sur une nouvelle image"
         }
       },
       "directionsForm": {
@@ -423,6 +429,7 @@
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
         "clearSearch": "Effacer la recherche",
+        "addToLayer": "Ajouter à une couche",
         "ilayer": {
           "name": "Couches",
           "properties": {
@@ -474,7 +481,9 @@
             "km": "Repère kilométrique",
             "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
-            "cadastre": "Cadastre"
+            "cadastre": "Cadastre",
+            "restArea": "Halte routière",
+            "cycleStop": "Halte cyclable"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -484,7 +493,9 @@
         "coordinates": {
           "name": "Coordonnées",
           "coord": "Coordonnée (longitude, latitude)",
+          "reversedCoord": "Coordonnée (latitude, longitude)",
           "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
+          "reversedCoordDMS": "Coordonnée (latitude, longitude) (DMS)",
           "radius": "Rayon",
           "conf": "Confiance"
         },
@@ -499,6 +510,11 @@
         "searchResultsGeometry": {
           "title": "Montrer tous les résultats",
           "tooltip": "Afficher/cacher la géométrie des résultats"
+        },
+        "reverseCoordFormat": {
+          "title": "Afficher les données en latitude/longitude",
+          "tooltipLonLat": "Afficher les données en latitude/longitude.",
+          "tooltipLatLon": "Afficher les données en longitude/latitude."
         },
         "searchSources": {
           "selectAll": "Tout sélectionner",
@@ -605,7 +621,7 @@
         "secteur": "Secteurs",
         "immeubles": "Immeubles patrimoniaux",
         "sites": "Sites patrimoniaux",
-        "cpe": "Centre de la petite enfance",
+        "service-garde": "Services de garde",
         "public": "Écoles publiques",
         "prive": "Écoles privés",
         "gouvernemental": "Écoles gouvernementales",

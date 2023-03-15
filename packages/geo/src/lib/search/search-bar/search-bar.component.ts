@@ -13,10 +13,10 @@ import {
   FloatLabelType,
   MatFormFieldAppearance
 } from '@angular/material/form-field';
-import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
@@ -78,6 +78,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private researches$$: Subscription[];
 
   /**
+   * whether to show search button or not
+   */
+
+  public showSearchButton: boolean = false;
+
+  /**
    * List of available search types
    */
   @Input() searchTypes: string[] = SEARCH_TYPES;
@@ -106,6 +112,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
    @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
 
+   /**
+   * Event emitted when the coords format setting is changed
+   */
+   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+
   /**
    * Search term
    */
@@ -132,6 +143,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input() pointerSummaryEnabled: boolean = false;
   @Input() searchResultsGeometryEnabled: boolean = false;
+
+  /**
+   * When reverse coordinates status change
+   */
+  @Input()
+  get reverseSearchCoordsFormatEnabled(): boolean {
+    return this._reverseSearchCoordsFormatEnabled;
+  }
+  set reverseSearchCoordsFormatEnabled(value: boolean) {
+    this._reverseSearchCoordsFormatEnabled = value;
+    this.setTerm(this.term, true);
+  }
+  private _reverseSearchCoordsFormatEnabled = false;
+
   /**
    * Whether a float label should be displayed
    */
@@ -159,11 +184,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Minimum term length required to trigger a research
    */
   @Input() minLength = 2;
-
-  /**
-   * Search icon
-   */
-  @Input() searchIcon: string;
 
   /**
    * Search Selector
@@ -228,7 +248,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private languageService: LanguageService,
+    private configService: ConfigService,
     private searchService: SearchService,
     private searchSourceService: SearchSourceService
   ) {}
@@ -244,7 +264,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
+        debounce(() => timer(this.debounce))
       )
       .subscribe((term: string) => this.onSetTerm(term));
 
@@ -253,6 +273,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchType$$ = this.searchType$
       .pipe(distinctUntilChanged())
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
+
+    const configValue = this.configService.getConfig("searchBar.showSearchButton");
+    this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
   /**
@@ -319,14 +342,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Send the term into the stream only if this component is not disabled
    * @param term Search term
    */
-  setTerm(term: string) {
+  setTerm(term: string, reverseCoordEvent?: boolean) {
+
     if (this.disabled) {
       return;
     }
 
     term = term || '';
 
-    if (term !== this.term) {
+    if (term !== this.term && !reverseCoordEvent) {
       this.term$.next(term);
     }
 
