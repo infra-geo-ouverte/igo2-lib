@@ -93,7 +93,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
     reverseSearchCoordsFormatEnabled: boolean): SearchResult<Feature> {
 
     const dataDMS = convertDDToDMS(data);
-    const convertedCoord = lonLatConversion(data, this.projections, reverseSearchCoordsFormatEnabled);
+    const convertedCoord = lonLatConversion(data, this.projections);
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 

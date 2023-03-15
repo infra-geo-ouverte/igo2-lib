@@ -493,8 +493,7 @@ export function roundCoordToString(coord: [number, number], decimal: number = 3)
  */
 export function lonLatConversion(
   lonLat: [number, number],
-  projections: Projection[],
-  reverseCoords?: boolean,
+  projections: Projection[]
 ): {
   code: string;
   alias: string;
@@ -507,7 +506,7 @@ export function lonLatConversion(
       code: 'EPSG:3857',
       alias: 'Web Mercator',
       coord: rawCoord3857,
-      igo2CoordFormat: (!reverseCoords) ? `${roundCoordTo(rawCoord3857).join(', ')} ; 3857` : `${roundCoordTo(rawCoord3857).reverse().join(', ')} ; 3857`
+      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')} ; 3857`
     }
   ];
 
@@ -520,7 +519,7 @@ export function lonLatConversion(
     code: epsgUtm,
     alias: 'UTM',
     coord: rawCoordUtm,
-    igo2CoordFormat: (!reverseCoords) ? `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}` : `${utmName} ${roundCoordTo(rawCoordUtm).reverse().join(', ')}`
+    igo2CoordFormat: `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}`
   });
 
   // detect the current mtm zone.
@@ -534,7 +533,7 @@ export function lonLatConversion(
       code: epsgMtm,
       alias: 'MTM',
       coord: rawCoordMtm,
-      igo2CoordFormat: (!reverseCoords) ? `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}` : `${mtmName} ${roundCoordTo(rawCoordMtm).reverse().join(', ')}`
+      igo2CoordFormat: `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}`
     });
   }
 
@@ -545,7 +544,7 @@ export function lonLatConversion(
       code: projection.code,
       alias: projection.alias || projection.code,
       coord: rawCoord,
-      igo2CoordFormat: (!reverseCoords) ? `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}` : `${roundCoordTo(rawCoord).reverse().join(', ')} ; ${numericEpsgCode}`
+      igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}`
     });
   });
 
