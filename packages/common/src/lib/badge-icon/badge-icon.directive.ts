@@ -48,6 +48,20 @@ export class IgoBadgeIconDirective implements OnInit {
   }
   private inheritColor = false;
 
+  @Input()
+  set igoMatBadgeColor(value: string) {
+    this.color = value;
+    this.updateColor();
+  }
+  private color;
+
+  @Input()
+  set igoMatBadgeBackgroundColor(value: string) {
+    this.backgroundColor = value;
+    this.updateColor();
+  }
+  private backgroundColor;
+
   get badge() {
     return this.el.nativeElement.querySelector('.mat-badge-content');
   }
@@ -82,7 +96,10 @@ export class IgoBadgeIconDirective implements OnInit {
       return;
     }
 
-    if (this.inheritColor) {
+    if (this.color || this.backgroundColor) {
+      this.badge.style.color = this.color ? this.color : '';
+      this.badge.style.background = this.backgroundColor ? this.backgroundColor : '';
+    } else if (this.inheritColor) {
       if (this.inverseColor) {
         this.badge.style.color = 'currentColor';
         this.badge.style.background = 'none';
@@ -90,7 +107,7 @@ export class IgoBadgeIconDirective implements OnInit {
         this.badge.style.color = '';
         this.badge.style.background = 'currentColor';
       }
-    } else {
+    } else if (!this.inheritColor) {
       if (this.inverseColor) {
         this.badge.style.color = window
           .getComputedStyle(this.badge, null)

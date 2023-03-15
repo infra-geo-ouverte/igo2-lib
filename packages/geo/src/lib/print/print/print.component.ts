@@ -114,6 +114,11 @@ export class PrintComponent {
       const resolution = +data.resolution;
 
       let nbRequests = data.showLegend ? 2 : 1;
+
+      if (data.legendPosition === 'newpage') {
+        nbRequests++;
+      }
+
       this.printService
         .downloadMapImage(
           this.map,
@@ -121,34 +126,33 @@ export class PrintComponent {
           data.imageFormat,
           data.showProjection,
           data.showScale,
-          data.showLegend,
           data.title,
           data.subtitle,
           data.comment,
-          data.doZipFile
+          data.doZipFile,
+          data.legendPosition
         )
         .pipe(take(1))
         .subscribe(() => {
           nbRequests--;
-          if (!nbRequests) {
-            this.disabled$.next(false);
-          }
-        });
-      if (data.showLegend) {
-        this.printService
-          .getLayersLegendImage(
-            this.map,
-            data.imageFormat,
-            data.doZipFile,
-            +resolution
-          )
-          .then(() => {
-            nbRequests--;
+          if(data.legendPosition === 'newpage') {
+            this.printService.getLayersLegendImage(
+              this.map,
+              data.imageFormat,
+              data.doZipFile,
+              resolution
+            ).then(() => {
+              nbRequests--;
+              if (!nbRequests) {
+                this.disabled$.next(false);
+              }
+            });
+          } else {
             if (!nbRequests) {
               this.disabled$.next(false);
             }
-          });
-      }
+          }
+        });
     }
   }
 }
