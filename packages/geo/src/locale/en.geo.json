@@ -6,6 +6,7 @@
         "layer.addToMapOutRange": "Add to map. The layer is not visible at the current scale. Please zoom in/out",
         "layer.removeFromMap": "Remove from map",
         "layer.removeFromMapOutRange": "Remove from map. The layer is not visible at the current scale. Please zoom in/out",
+        "layer.removeFromMapNotVisible": "Remove from map. The layer is visible at the current scale but is not active. Toggle the map tool to adjust layer visibility.",
         "group.addToMap": "Add all layers from this group to map",
         "group.removeFromMap": "Remove all layers from this group to map",
         "baseLayers": "Baselayers",
@@ -262,7 +263,11 @@
         "style": {
           "styleModal": "Edit style",
           "styleModalTooltip": "Edit the style of the selected entities "
-        }
+        },
+        "saveBtn": "Save",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Save selection in layer",
+        "chooseOrSet": "Choose a layer or set a new layer name"
       },
       "download": {
         "action": "Download data",
@@ -323,7 +328,8 @@
           "topright": "Top right corner of the map",
           "bottomleft": "Bottom left corner of the map",
           "bottomright": "Bottom right corner of the map",
-          "newpage": "On a new page"
+          "newpage": "On a new page",
+          "newimage": "On a new image"
         }
       },
       "directionsForm": {
@@ -424,6 +430,7 @@
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
         "clearSearch": "Clear search",
+        "addToLayer": "Add to layer",
         "ilayer": {
           "name": "Layers",
           "properties": {
@@ -487,7 +494,9 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "reversedCoord": "Geographic (latitude, longitude)",
           "coordDMS": "Geographic (longitude, latitude) (DMS)",
+          "reversedCoordDMS": "Geographic (latitude, longitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
@@ -502,6 +511,11 @@
         "searchResultsGeometry": {
           "title": "Show results geometries",
           "tooltip": "Hide/ show the results geometries "
+        },
+        "reverseCoordFormat": {
+          "title": "Display data in latitude/longitude",
+          "tooltipLonLat": "Display data in latitude/longitude",
+          "tooltipLatLon": "Display data in longitude/latitude"
         },
         "searchSources": {
           "selectAll": "Select All",
@@ -607,7 +621,7 @@
         "secteur": "Sector",
         "immeubles": "Tenement",
         "sites": "Cultural sites",
-        "cpe": "Children's education center",
+        "service-garde": "Child care",
         "public": "Public schools",
         "prive": "Private school",
         "gouvernemental": "Government schools",
@@ -685,14 +699,14 @@
         "abort": "Abort current drawing",
         "cancel": "Cancel",
         "Circle": "Circle",
-        "colorPicker": "Click to open the color picker",
+        "colorPicker": "Click to open the color selector",
         "dialogInstruction": "Enter your drawing's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
-        "drawing": "Draws",
+        "drawing": "Drawings",
         "fill": "Fill",
         "finish": "Finish current drawing",
-        "freehandMode": "Freehand draw",
+        "freehandMode": "Freehand drawing",
         "icon": "Icons",
         "InsertvalueRadius": "Use a predefined radius",
         "labels": "Labels",
@@ -723,10 +737,10 @@
           "Length": "Length",
           "Area": "Area",
           "predefined": "Predefined",
-          "custom": "Custom",
+          "custom": "Customized",
           "A": "A: "
         },
-        "popupTitle": "Drawing's label"
+        "popupTitle": "Drawing label"
       },
       "network": {
         "online": {
