@@ -11,6 +11,7 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   formatType?: string;
   formatOptions?: any;
 
+  params?: any;
   features?: olFeature<OlGeometry>[];
   format?: olFormatFeature;
   url?: string;
