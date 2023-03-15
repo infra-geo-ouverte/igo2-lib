@@ -15,6 +15,7 @@ import {
   sourceCanReverseSearch,
   sourceCanReverseSearchAsSummary
 } from './search.utils';
+import { StorageService } from '@igo2/core';
 
 /**
  * This service perform researches in all the search sources enabled.
@@ -29,7 +30,8 @@ import {
 export class SearchService {
   constructor(
     private searchSourceService: SearchSourceService,
-    private mapService: MapService
+    private mapService: MapService,
+    private storageService: StorageService
   ) {}
 
   /**
@@ -92,7 +94,9 @@ export class SearchService {
     const sources = this.searchSourceService
       .getEnabledSources()
       .filter(reverseSourceFonction);
-    return this.reverseSearchSources(sources, lonLat, options || {});
+    const reverseSearchCoordsFormat = this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
+
+    return this.reverseSearchSources(sources, lonLat, options || {}, reverseSearchCoordsFormat);
   }
 
   /**
@@ -124,13 +128,15 @@ export class SearchService {
   private reverseSearchSources(
     sources: SearchSource[],
     lonLat: [number, number],
-    options: ReverseSearchOptions
+    options: ReverseSearchOptions,
+    reverseSearchCoordsFormat: boolean
   ): Research[] {
     return sources.map((source: SearchSource) => {
       return {
         request: ((source as any) as ReverseSearch).reverseSearch(
           lonLat,
-          options
+          options,
+          reverseSearchCoordsFormat
         ),
         reverse: true,
         source
