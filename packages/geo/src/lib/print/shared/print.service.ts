@@ -75,13 +75,13 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [10, 10, 10, 10];
+    const margins = [5, 10, 5, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
-    doc.line(20, 25, 60, 25);
+    let commentSiezs: TextPdfSizeAndMargin;
     // PDF title
     if (options.title !== undefined ) {
       const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
@@ -92,6 +92,9 @@ export class PrintService {
         this.TEXTPDFFONT.titleFontStyle,
         doc);
 
+        console.log('titleSizes', titleSizes);
+        console.log('margins', margins);
+
       this.addTextInPdfDoc(doc,
         options.title,
         this.TEXTPDFFONT.titleFont,
@@ -100,12 +103,13 @@ export class PrintService {
         titleSizes.marginLeft + margins[3],
         margins[0]);
 
-      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
+      
 
     }
 
     // PDF subtitle
     if (options.subtitle !== undefined) {
+      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
@@ -135,7 +139,30 @@ export class PrintService {
         );
     }
     if (options.comment !== '') {
-      this.addComment(doc, options.comment);
+     
+      this.TEXTPDFFONT.commentFont;
+      this.TEXTPDFFONT.commentFontStyle;
+      this.TEXTPDFFONT.commentFontSize;
+
+      commentSiezs = this.getTextPdfObjectSizeAndMarg(options.comment,
+        margins,
+        this.TEXTPDFFONT.commentFont,
+        this.TEXTPDFFONT.commentFontSize,
+        this.TEXTPDFFONT.commentFontStyle,
+        doc);
+
+        console.log('commentSiezs: ', commentSiezs);
+
+        this.addTextInPdfDoc(doc,
+          options.comment,
+          this.TEXTPDFFONT.commentFont,
+          this.TEXTPDFFONT.commentFontStyle,
+          commentSiezs.fontSize,
+          commentSiezs.marginLeft + 5,
+          doc.internal.pageSize.height - 5
+        );
+
+      // this.addComment(doc, options.comment);
     }
 
     this.addMap(doc, map, resolution, size, margins).subscribe(
