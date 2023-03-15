@@ -263,7 +263,11 @@
         "style": {
           "styleModal": "Edit style",
           "styleModalTooltip": "Edit the style of the selected entities "
-        }
+        },
+        "saveBtn": "Save",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Save selection in layer",
+        "chooseOrSet": "Choose a layer or set a new layer name"
       },
       "download": {
         "action": "Download data",
@@ -426,6 +430,7 @@
         "layer.placeholder": "Search for a layer",
         "ichercheReverse.name": "Search by coordinates",
         "clearSearch": "Clear search",
+        "addToLayer": "Add to layer",
         "ilayer": {
           "name": "Layers",
           "properties": {
