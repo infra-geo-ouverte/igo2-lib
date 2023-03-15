@@ -379,7 +379,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   }
 
   addFeature(feature: SearchResult, activeStore: FeatureStore<Feature>) {
-
     const newFeature = {
       type: feature.data.type,
       geometry: {
@@ -387,15 +386,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         type: feature.data.geometry.type
       },
       projection: feature.data.projection,
-      properties: {
-        id: feature.meta.id,
-        titre: feature.meta.title
-      },
+      properties: feature.data.properties,
       meta: {
         id: feature.meta.id
       }
     };
-
+    delete newFeature.properties.Route;
     activeStore.update(newFeature);
     activeStore.setLayerExtent();
     activeStore.layer.ol.getSource().refresh();

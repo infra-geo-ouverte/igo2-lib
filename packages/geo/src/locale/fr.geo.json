@@ -265,7 +265,7 @@
         },
         "saveBtn": "Sauvegarder",
         "cancelBtn": "Cancel",
-        "saveFeatureInLayer": "Ajouter une addresse dans une couche",
+        "saveFeatureInLayer": "Ajouter la sélection dans une couche",
         "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
       "download": {

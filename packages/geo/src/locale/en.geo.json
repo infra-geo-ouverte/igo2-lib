@@ -266,7 +266,7 @@
         },
         "saveBtn": "Save",
         "cancelBtn": "Cancel",
-        "saveFeatureInLayer": "Save Localisation in Layer",
+        "saveFeatureInLayer": "Save selection in layer",
         "chooseOrSet": "Choose a layer or set a new layer name"
       },
       "download": {
