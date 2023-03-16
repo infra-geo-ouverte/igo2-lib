@@ -1166,7 +1166,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   get allLayers() {
     return this.map.layers.filter((layer) =>
-      layer.id.includes('igo-draw-layer')
+      String(layer.id).includes('igo-draw-layer')
     );
   }
 
