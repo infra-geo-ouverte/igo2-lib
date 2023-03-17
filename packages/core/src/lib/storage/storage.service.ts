@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { ConfigService } from '../config/config.service';
 import { StorageScope, StorageOptions, StorageServiceEvent, StorageServiceEventEnum } from './storage.interface';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, from, map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
+  private readonly reservedSpace = 1e07;
   protected options: StorageOptions;
 
   public storageChange$: BehaviorSubject<StorageServiceEvent> = new BehaviorSubject(undefined);
@@ -83,5 +84,48 @@ export class StorageService {
       localStorage.clear();
     }
     this.storageChange$.next({scope, event: StorageServiceEventEnum.CLEARED });
+  }
+
+  /**
+   * https://developer.mozilla.org/en-US/docs/Web/API/StorageManager
+   * Refer to https://caniuse.com/?search=storagemanager%20estimate
+   * for browser compatibility
+   * @returns  Observable of navigator storage estimate by domain
+   */
+  private getNavigatorStorageQuota(): Observable<StorageEstimate> {
+    const quotaObs = from(navigator.storage.estimate());
+    return quotaObs;
+  }
+
+  public enoughSpaceInNavigatorStorage(objectSize: number): Observable<boolean> {
+    const quotaObs = this.getNavigatorStorageQuota().pipe(map(
+      (quota) => {
+        const totalSpace = quota.quota;
+        const usedSpace = quota.usage;
+        return totalSpace >= usedSpace + objectSize + this.reservedSpace;
+      }
+    ));
+    return quotaObs;
+  }
+
+  public totalSpaceInNavigatorStorage(): Observable<number> {
+    const quotaObs = this.getNavigatorStorageQuota().pipe(map(
+      (quota) => {
+        const totalSpace = quota.quota;
+        return totalSpace;
+      }
+    ));
+    return quotaObs;
+  }
+
+  public spaceLeftInNavigatorStorage(): Observable<number> {
+    const quotaObs = this.getNavigatorStorageQuota().pipe(map(
+      (quota) => {
+        const totalSpace = quota.quota;
+        const usedSpace = quota.usage;
+        return totalSpace - usedSpace - this.reservedSpace;
+      }
+    ));
+    return quotaObs;
   }
 }
