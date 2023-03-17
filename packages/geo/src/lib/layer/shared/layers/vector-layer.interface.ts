@@ -44,6 +44,7 @@ export interface VectorLayerOptions extends LayerOptions {
   animation?: VectorAnimation;
   clusterParam?: ClusterParam;
   trackFeature?: string | number;
+  storeToIdb?: boolean
   igoStyle?: IgoStyle;
 }
 

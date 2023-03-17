@@ -43,7 +43,7 @@ import {
 import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { skipWhile } from 'rxjs/operators';
-import { EntityRecord, Workspace } from '@igo2/common';
+import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
@@ -56,6 +56,7 @@ import { computeProjectionsConstraints } from '../../map';
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { LayerService } from '../../layer/shared/layer.service';
 
 @Component({
   selector: 'igo-import-export',
@@ -164,7 +165,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private config: ConfigService,
     private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
-    private downloadService: DownloadService
+    private downloadService: DownloadService,
+    private layerService: LayerService,
+    private confirmDialogService: ConfirmDialogService
   ) {
     this.loadConfig();
     this.buildForm();
@@ -751,7 +754,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         features,
         this.map,
         this.messageService,
-        this.languageService
+        this.languageService,
+        this.layerService,
+        this.confirmDialogService
       );
     } else {
       handleFileImportSuccess(
@@ -760,6 +765,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.map,
         this.messageService,
         this.languageService,
+        this.layerService,
+        this.confirmDialogService,
         this.styleListService,
         this.styleService
       );

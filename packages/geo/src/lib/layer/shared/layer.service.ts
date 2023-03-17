@@ -163,7 +163,7 @@ export class LayerService {
           resolution
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -177,7 +177,7 @@ export class LayerService {
           baseStyle
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork);
+      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -185,7 +185,7 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork);
+      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl as any);

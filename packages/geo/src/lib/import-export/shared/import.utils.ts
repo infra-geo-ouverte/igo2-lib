@@ -19,17 +19,23 @@ import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-d
 import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { uuid } from '@igo2/utils';
 import { featureRandomStyle, featureRandomStyleFunction } from '../../style/shared/feature/feature-style';
+import { LayerService } from '../../layer/shared/layer.service';
+import { ConfirmDialogService } from '@igo2/common';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
   map: IgoMap,
-  layerTitle: string
+  layerTitle: string,
+  layerService: LayerService,
+  storeToIdb: boolean = false
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
   );
 
+  const id = uuid();
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    id,
     type: 'vector',
     queryable: true
   };
@@ -45,13 +51,15 @@ export function addLayerAndFeaturesToMap(
     randomStyle = featureRandomStyle();
     editable = true;
   }
-  const layer = new VectorLayer({
+  const layer = layerService.createLayer({
+    id,
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
+    storeToIdb,
     style: randomStyle
-  });
+  }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
   map.addLayer(layer);
   moveToOlFeatures(map, olFeatures);
@@ -187,6 +195,8 @@ export function handleFileImportSuccess(
   map: IgoMap,
   messageService: MessageService,
   languageService: LanguageService,
+  layerService: LayerService,
+  confirmDialogService: ConfirmDialogService,
   styleListService?: StyleListService,
   styleService?: StyleService
 ) {
@@ -197,24 +207,27 @@ export function handleFileImportSuccess(
 
   const layerTitle = computeLayerTitleFromFile(file);
 
-  if (!styleListService) {
-    addLayerAndFeaturesToMap(features, map, layerTitle);
-  } else {
-    addLayerAndFeaturesStyledToMap(
-      features,
-      map,
-      layerTitle,
-      styleListService,
-      styleService
-    );
-  }
-
+  const m = 'Sauvegarder le couche pour etre utilisé ultérieurement dans une autre session?'
+  confirmDialogService.open(m).subscribe((confirm) => {
+    if (!styleListService) {
+      addLayerAndFeaturesToMap(features, map, layerTitle, layerService, confirm);
+    } else {
+      addLayerAndFeaturesStyledToMap(
+        features,
+        map,
+        layerTitle,
+        styleListService,
+        styleService
+      );
+    }
+  
   const translate = languageService.translate;
   const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');
   const message = translate.instant('igo.geo.dropGeoFile.success.text', {
     value: layerTitle
   });
   messageService.success(message, messageTitle);
+  });
 }
 
 export function handleFileImportError(

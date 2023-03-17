@@ -8,6 +8,7 @@ import { getVectorContext } from 'ol/render';
 import olFeature from 'ol/Feature';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
+import * as olformat from 'ol/format';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -28,6 +29,7 @@ import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo
 import { catchError, concatMap, first } from 'rxjs/operators';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { of } from 'rxjs';
+import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -53,9 +55,9 @@ export class VectorLayer extends Layer {
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
     private geoNetworkService?: GeoNetworkService,
-    private geoDBService?: GeoDBService
+    public geoDBService?: GeoDBService
   ) {
-    super(options, messageService, authInterceptor);
+    super(options, messageService, authInterceptor, geoDBService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -72,6 +74,13 @@ export class VectorLayer extends Layer {
           this.flash(e.feature);
         }.bind(this)
       );
+    }
+    if (this.options.storeToIdb && this.geoDBService) {
+      this.maintainFeaturesInIdb();
+      this.dataSource.ol.on( 'addfeature',() =>{ this.maintainFeaturesInIdb()});
+      this.dataSource.ol.on( 'changefeature',() =>{ this.maintainFeaturesInIdb()});
+      this.dataSource.ol.on( 'clear',() =>{ this.maintainFeaturesInIdb()});
+      this.dataSource.ol.on( 'removefeature',() =>{ this.maintainFeaturesInIdb()});
     }
 
     if (this.options.trackFeature) {
@@ -114,8 +123,17 @@ export class VectorLayer extends Layer {
       if (loader) {
         vectorSource.setLoader(loader);
       }
+    } else {
+      console.log('this.options', this.options, vectorSource)
+      // todo ici to load data from idb
     }
     return vector;
+  }
+
+  private maintainFeaturesInIdb() {
+    //todo + layer in idb too
+    const geojsonObject = JSON.parse(new olformat.GeoJSON().writeFeatures(this.dataSource.ol.getFeatures()));
+    this.geoDBService.update(this.id,this.id, geojsonObject, InsertSourceInsertDBEnum.User,`${this.title}-${this.id}-${new Date()}`)
   }
 
   protected flash(feature) {

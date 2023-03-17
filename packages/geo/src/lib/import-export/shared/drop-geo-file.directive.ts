@@ -3,7 +3,7 @@ import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angul
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
-import { DragAndDropDirective } from '@igo2/common';
+import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -13,6 +13,8 @@ import { handleFileImportSuccess, handleFileImportError } from '../shared/import
 import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
+import { LayerService } from '../../layer/shared/layer.service';
+
 
 @Directive({
   selector: '[igoDropGeoFile]'
@@ -36,7 +38,9 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
     private styleListService: StyleListService,
     private styleService: StyleService,
     private config: ConfigService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private layerService: LayerService,
+    private confirmDialogService: ConfirmDialogService
   ) {
     super();
   }
@@ -130,10 +134,10 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     if (!this.config.getConfig('importWithStyle')) {
-      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
+      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService, this.layerService, this.confirmDialogService);
     } else {
       handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService,
-                               this.styleListService, this.styleService);
+        this.layerService, this.confirmDialogService, this.styleListService, this.styleService);
     }
   }
 
