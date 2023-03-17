@@ -43,7 +43,7 @@ export class PrintService {
     subtitleFontStyle: 'bold',
     commentFont: 'courier',
     commentFontStyle: 'normal',
-    commentFontSize: 16
+    commentFontSize: 12
   };
 
   constructor(
@@ -75,15 +75,14 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [5, 10, 5, 10];
+    const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
-    let commentSiezs: TextPdfSizeAndMargin;
     // PDF title
-    if (options.title !== undefined ) {
+    if (options.title !== undefined && options.title !== '') {
       const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
       titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
         margins,
@@ -91,9 +90,6 @@ export class PrintService {
         fontSizeInPt,
         this.TEXTPDFFONT.titleFontStyle,
         doc);
-
-        console.log('titleSizes', titleSizes);
-        console.log('margins', margins);
 
       this.addTextInPdfDoc(doc,
         options.title,
@@ -103,13 +99,11 @@ export class PrintService {
         titleSizes.marginLeft + margins[3],
         margins[0]);
 
-      
-
+      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
     }
 
     // PDF subtitle
-    if (options.subtitle !== undefined) {
-      margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
+    if (options.subtitle !== undefined && options.subtitle !== '') {
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
@@ -138,31 +132,8 @@ export class PrintService {
         options.showScale
         );
     }
-    if (options.comment !== '') {
-     
-      this.TEXTPDFFONT.commentFont;
-      this.TEXTPDFFONT.commentFontStyle;
-      this.TEXTPDFFONT.commentFontSize;
-
-      commentSiezs = this.getTextPdfObjectSizeAndMarg(options.comment,
-        margins,
-        this.TEXTPDFFONT.commentFont,
-        this.TEXTPDFFONT.commentFontSize,
-        this.TEXTPDFFONT.commentFontStyle,
-        doc);
-
-        console.log('commentSiezs: ', commentSiezs);
-
-        this.addTextInPdfDoc(doc,
-          options.comment,
-          this.TEXTPDFFONT.commentFont,
-          this.TEXTPDFFONT.commentFontStyle,
-          commentSiezs.fontSize,
-          commentSiezs.marginLeft + 5,
-          doc.internal.pageSize.height - 5
-        );
-
-      // this.addComment(doc, options.comment);
+    if (options.comment !== undefined && options.comment !== '') {
+      this.addComment(doc, options.comment);
     }
 
     this.addMap(doc, map, resolution, size, margins).subscribe(
@@ -404,15 +375,16 @@ export class PrintService {
    * * @param  comment - Comment to add in the document
    */
   private addComment(doc: jsPDF, comment: string) {
-    const commentMarginLeft = 20; //margin left and bottom is fix
-    const commentMarginBottom = 5;
+    const commentMarginLeft = 10; //margin left and bottom is fix
+    const commentMarginBottom = 10;
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
     this. addTextInPdfDoc(doc,comment,
       this.TEXTPDFFONT.commentFont,
       this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
       commentMarginLeft,
-      marginTop
+      marginTop,
+      true
     );
   }
 
@@ -422,11 +394,18 @@ export class PrintService {
     textFontStyle: string,
     textFontSize: number,
     textMarginLeft: number,
-    textMarginTop: number)
+    textMarginTop: number,
+    isComment: boolean = false)
     {
       doc.setFont(textFont, textFontStyle);
       doc.setFontSize(textFontSize);
+
+      if(isComment) {
+        textToAdd = doc.splitTextToSize(textToAdd, (doc.internal.pageSize.getWidth() - (textMarginLeft * 3)));
+        console.log(textToAdd[0].length)
+      }
       doc.text(textToAdd, textMarginLeft, textMarginTop);
+      
     }
 
   /**
@@ -445,8 +424,8 @@ export class PrintService {
     scale: boolean
   ) {
     const translate = this.languageService.translate;
-    const projScaleSize = 16;
-    const projScaleMarginLeft = 20;
+    const projScaleSize = 12;
+    const projScaleMarginLeft = 10;
     const marginBottom = 15;
     const heightPixels = doc.internal.pageSize.height - marginBottom;
 
@@ -964,7 +943,7 @@ export class PrintService {
    */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = this.pdf_units2points(canvas.height, 'mm');
     const canWidth = this.pdf_units2points(canvas.width, 'mm');

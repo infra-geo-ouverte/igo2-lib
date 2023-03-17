@@ -21,6 +21,7 @@
         matInput
         formControlName="comment"
         placeholder="{{'igo.geo.printForm.comment' | translate}}">
+        <mat-error *ngIf="commentField.errors?.maxlength">{{maxLenth}}</mat-error>
     </mat-form-field>
   </div>
 
@@ -110,7 +111,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select
+      <mat-select (selectionChange)="changeCommentLenth()"
         formControlName="orientation"
         placeholder="{{'igo.geo.printForm.orientation' | translate}}">
         <mat-option *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">

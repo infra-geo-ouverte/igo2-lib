@@ -3,7 +3,8 @@ import {
   UntypedFormGroup,
   UntypedFormBuilder,
   UntypedFormControl,
-  Validators
+  Validators,
+  AbstractControl
 } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
@@ -200,11 +201,13 @@ export class PrintFormComponent implements OnInit {
 
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
+  maxLenth: number = 180;
+
   constructor(private formBuilder: UntypedFormBuilder) {
     this.form = this.formBuilder.group({
       title: ['', []],
       subtitle: ['', []],
-      comment: ['', []],
+      comment: ['', [Validators.minLength(0), Validators.maxLength(this.maxLenth)]],
       outputFormat: ['', [Validators.required]],
       paperFormat: ['', [Validators.required]],
       imageFormat: [ '', [Validators.required]],
@@ -235,5 +238,10 @@ export class PrintFormComponent implements OnInit {
     } else {
       this.isPrintService = true;
     }
+  }
+
+  changeCommentLenth() {
+    this.maxLenth = (this.orientation === PrintOrientation.landscape) ? 180 : 90;
+    this.commentField.setValidators([Validators.maxLength(this.maxLenth)]​);
   }
 }
