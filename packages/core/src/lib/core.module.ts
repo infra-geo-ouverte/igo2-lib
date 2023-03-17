@@ -20,6 +20,14 @@ const dbConfig: DBConfig = {
     storeSchema: [
       { name: 'regionID', keypath: 'regionID', options: { unique: false }}
     ]
+  },
+  {
+    store: 'layerData',
+    storeConfig: { keyPath: 'layerId', autoIncrement: false },
+    storeSchema: [
+      { name: 'layerOptions', keypath: 'layerOptions', options: { unique: false }},
+      { name: 'sourceOptions', keypath: 'sourceOptions', options: { unique: false }}
+    ]
   }]
 };
 @NgModule({
