@@ -207,8 +207,7 @@ export function handleFileImportSuccess(
 
   const layerTitle = computeLayerTitleFromFile(file);
 
-  const m = 'Sauvegarder le couche pour etre utilisé ultérieurement dans une autre session?'
-  confirmDialogService.open(m).subscribe((confirm) => {
+  confirmDialogService.open('igo.geo.import.promptStoreToIdb').subscribe((confirm) => {
     if (!styleListService) {
       addLayerAndFeaturesToMap(features, map, layerTitle, layerService, confirm);
     } else {
