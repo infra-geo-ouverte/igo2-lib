@@ -138,6 +138,12 @@ export class RecordButtonComponent implements OnInit {
         ));
         return;
       }
+      if(!this.recordParameters && !this.isRecording && this.fileNames.length > 0) {
+        const resultsLayer = this.mapService.getMap().getLayerById(this.fileNames[0]);
+        if (resultsLayer !== undefined) {
+          this.mapService.getMap().removeLayer(resultsLayer);
+        }
+      }
       this.noSleep.enable();
       this.startTime = new Date();
       this.currentTime = new Date();
@@ -182,16 +188,32 @@ export class RecordButtonComponent implements OnInit {
       if(res) {
         fileArray = res;
       }
-      const trackNameExists = fileArray.filter(fileF => fileF.name.substring(0, fileF.name.lastIndexOf('_')+6) === name+'_track');
-      const pointsNameExists = fileArray.filter(fileF => fileF.name.substring(0, fileF.name.lastIndexOf('_')+7) === name+'_points');
-      if(trackNameExists.length > 0) {
-        this.fileNames[0] = name + `_track (${trackNameExists.length}).gpx`;
+      const regex = new RegExp('(.*?)(?:\\ \\((\\d+)\\))?(\\.[^.]*)$');
+      let trackNameNumber = -1;
+      let pointsNameNumber = -1;
+      for(let file of fileArray) {
+        const regexResult = regex.exec(file.name);
+        if(regexResult[1] === name+'_track') {
+          if(!regexResult[2] && trackNameNumber === -1)
+            trackNameNumber = 1;
+          else if(parseInt(regexResult[2]) >= trackNameNumber)
+            trackNameNumber = parseInt(regexResult[2]) + 1;
+        }
+        if(regexResult[1] === name+'_points') {
+          if(!regexResult[2] && pointsNameNumber === -1)
+            pointsNameNumber = 1;
+          else if(parseInt(regexResult[2]) >= pointsNameNumber)
+            pointsNameNumber = parseInt(regexResult[2]) + 1;
+        }
+      }
+      if(trackNameNumber !== -1) {
+        this.fileNames[0] = name + `_track (${trackNameNumber}).gpx`;
       }
       else {
         this.fileNames[0] = name + '_track.gpx';
       }
-      if(pointsNameExists.length > 0) {
-        this.fileNames[1] = name + `_points (${pointsNameExists.length}).gpx`;
+      if(pointsNameNumber !== -1) {
+        this.fileNames[1] = name + `_points (${pointsNameNumber}).gpx`;
       }
       else {
         this.fileNames[1] = name + '_points.gpx';
