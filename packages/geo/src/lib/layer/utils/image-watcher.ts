@@ -1,6 +1,6 @@
 import olSourceImage from 'ol/source/Image';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
-import { LanguageService, MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { ImageLayer } from '../shared/layers/image-layer';
 
 
@@ -12,14 +12,12 @@ export class ImageWatcher extends Watcher {
   private source: olSourceImage;
 
   private messageService: MessageService;
-  private languageService: LanguageService;
 
-  constructor(layer: ImageLayer, messageService: MessageService, languageService: LanguageService) {
+  constructor(layer: ImageLayer, messageService: MessageService) {
     super();
     this.source = layer.options.source.ol;
     this.id = uuid();
     this.messageService = messageService;
-    this.languageService = languageService;
   }
 
   protected watch() {
@@ -74,14 +72,11 @@ export class ImageWatcher extends Watcher {
     if (!event.image.__watchers__) {
       return;
     }
-    const title = this.languageService.translate.instant(
-      'igo.geo.dataSource.unavailableTitle'
-    );
-    const message = this.languageService.translate.instant(
-      'igo.geo.dataSource.unavailable', {value: event.target.params_.LAYERS}
-    );
-
-    this.messageService.error(message, title);
+    this.messageService.error(
+      'igo.geo.dataSource.unavailable',
+      'igo.geo.dataSource.unavailableTitle',
+      undefined,
+      { value: event.target.params_.LAYERS });
     this.loaded = -1;
     this.loading = 0;
     this.status = SubjectStatus.Error;

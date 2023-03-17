@@ -45,13 +45,11 @@ export class ShareMapApiComponent implements OnInit {
     this.shareMapService.createContextShared(this.map, inputs).subscribe(
       rep => {
         this.idContextShared = rep.id;
-        const title = this.languageService.translate.instant(
-          'igo.context.contextManager.dialog.saveTitle'
-        );
-        const msg = this.languageService.translate.instant('igo.context.contextManager.dialog.saveMsg', {
-          value: inputs.title
-        });
-        this.messageService.success(msg, title);
+        this.messageService.success(
+          'igo.context.contextManager.dialog.saveMsg',
+          'igo.context.contextManager.dialog.saveTitle',
+          undefined,
+          { value: inputs.title });
       },
       err => {
         err.error.title = this.languageService.translate.instant(
@@ -67,13 +65,11 @@ export class ShareMapApiComponent implements OnInit {
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.shareMapService.updateContextShared(this.map, inputs, this.idContextShared).subscribe(
       rep => {
-        const title = this.languageService.translate.instant(
-          'igo.context.contextManager.dialog.saveTitle'
-        );
-        const msg = this.languageService.translate.instant('igo.context.contextManager.dialog.saveMsg', {
-          value: inputs.title
-        });
-        this.messageService.success(msg, title);
+        this.messageService.success(
+          'igo.context.contextManager.dialog.saveMsg',
+          'igo.context.contextManager.dialog.saveTitle',
+          undefined,
+          { value: inputs.title });
       },
       err => {
         err.error.title = this.languageService.translate.instant(
@@ -87,12 +83,9 @@ export class ShareMapApiComponent implements OnInit {
   copyTextToClipboard(textArea) {
     const successful = Clipboard.copy(textArea);
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.context.shareMap.dialog.copyTitle'
-      );
-      const msg = translate.instant('igo.context.shareMap.dialog.copyMsg');
-      this.messageService.success(msg, title);
+      this.messageService.success(
+        'igo.context.shareMap.dialog.copyMsg',
+        'igo.context.shareMap.dialog.copyTitle');
     }
   }
 

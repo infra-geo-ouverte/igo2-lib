@@ -3,7 +3,7 @@ import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { MessageService, LanguageService, ConfigService } from '@igo2/core';
+import { MessageService, ConfigService } from '@igo2/core';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
@@ -41,7 +41,6 @@ export class ContextImportExportComponent implements OnInit {
   constructor(
     private contextImportService: ContextImportService,
     private contextExportService: ContextExportService,
-    private languageService: LanguageService,
     private messageService: MessageService,
     private formBuilder: UntypedFormBuilder,
     private config: ConfigService,
@@ -104,7 +103,6 @@ export class ContextImportExportComponent implements OnInit {
       file,
       context,
       this.messageService,
-      this.languageService,
       this.contextService
     );
   }
@@ -115,18 +113,17 @@ export class ContextImportExportComponent implements OnInit {
       file,
       error,
       this.messageService,
-      this.languageService,
       this.fileSizeMb
     );
   }
 
   private onFileExportError(error: Error) {
     this.loading$.next(false);
-    handleFileExportError(error, this.messageService, this.languageService);
+    handleFileExportError(error, this.messageService);
   }
 
   private onFileExportSuccess() {
-    handleFileExportSuccess(this.messageService, this.languageService);
+    handleFileExportSuccess(this.messageService);
   }
 
   selectAll(e) {

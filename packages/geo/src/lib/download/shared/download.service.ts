@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 
 import { Layer } from '../../layer/shared';
 import { OgcFilterWriter, OgcFilterableDataSourceOptions } from '../../filter/shared';
@@ -16,16 +16,13 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 export class DownloadService {
 
   constructor(
-    private messageService: MessageService,
-    private languageService: LanguageService
+    private messageService: MessageService
   ) {}
 
   open(layer: Layer) {
-    const translate = this.languageService.translate;
-    const title = translate.instant('igo.geo.download.title');
     this.messageService.success(
-      translate.instant('igo.geo.download.start'),
-      title
+      'igo.geo.download.start',
+      'igo.geo.download.title'
     );
 
     const DSOptions: DataSourceOptions = layer.dataSource.options;

@@ -74,12 +74,9 @@ export class DirectionsToolComponent implements OnInit {
   ngOnInit(): void {
     const warningShown = this.storageService.get('direction.warning.shown') as boolean;
     if (!warningShown) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.integration.directions.warning.title'
-      );
-      const msg = translate.instant('igo.integration.directions.warning.message');
-      this.messageService.info(msg, title, { timeOut: 20000 });
+      this.messageService.info(
+        'igo.integration.directions.warning.message',
+        'igo.integration.directions.warning.title', { timeOut: 20000 });
       this.storageService.set('direction.warning.shown', true, StorageScope.SESSION);
     }
     this.contextState.context$.subscribe(c => {
