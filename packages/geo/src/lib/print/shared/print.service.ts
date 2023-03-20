@@ -20,6 +20,7 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
+import { PrintPaperFormat } from './print.type';
 
 declare global {
   interface Navigator {
@@ -81,9 +82,15 @@ export class PrintService {
     const size = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
+
+    // if paper format A1 or A0 add margin top
+    if ((options.title !== '' || options.subtitle) &&
+      (paperFormat === PrintPaperFormat.A1 || paperFormat === PrintPaperFormat.A0)) {
+      margins[0] += 10;
+    }
     // PDF title
+    const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
     if (options.title !== undefined && options.title !== '') {
-      const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
       titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
         margins,
         this.TEXTPDFFONT.titleFont,
@@ -107,7 +114,7 @@ export class PrintService {
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
-        titleSizes.fontSize * 0.7, // 70% size of title
+        (options.title !== '') ? titleSizes.fontSize * 0.7 : fontSizeInPt * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
         doc);
 
@@ -402,10 +409,8 @@ export class PrintService {
 
       if(isComment) {
         textToAdd = doc.splitTextToSize(textToAdd, (doc.internal.pageSize.getWidth() - (textMarginLeft * 3)));
-        console.log(textToAdd[0].length)
       }
       doc.text(textToAdd, textMarginLeft, textMarginTop);
-      
     }
 
   /**

@@ -3,8 +3,7 @@ import {
   UntypedFormGroup,
   UntypedFormBuilder,
   UntypedFormControl,
-  Validators,
-  AbstractControl
+  Validators
 } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
@@ -201,13 +200,13 @@ export class PrintFormComponent implements OnInit {
 
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
-  maxLenth: number = 180;
+  maxLength: number = 180;
 
   constructor(private formBuilder: UntypedFormBuilder) {
     this.form = this.formBuilder.group({
-      title: ['', []],
-      subtitle: ['', []],
-      comment: ['', [Validators.minLength(0), Validators.maxLength(this.maxLenth)]],
+      title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
+      subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],
+      comment: ['', [Validators.minLength(0), Validators.maxLength(this.maxLength)]],
       outputFormat: ['', [Validators.required]],
       paperFormat: ['', [Validators.required]],
       imageFormat: [ '', [Validators.required]],
@@ -241,7 +240,8 @@ export class PrintFormComponent implements OnInit {
   }
 
   changeCommentLenth() {
-    this.maxLenth = (this.orientation === PrintOrientation.landscape) ? 180 : 90;
-    this.commentField.setValidators([Validators.maxLength(this.maxLenth)]​);
+    this.maxLength = (this.orientation === PrintOrientation.landscape) ? 180 : 145;
+    this.commentField.setValidators([Validators.maxLength(this.maxLength)]​);
+    this.commentField.updateValueAndValidity();
   }
 }

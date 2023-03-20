@@ -5,6 +5,9 @@
         matInput
         formControlName="title"
         placeholder="{{'igo.geo.printForm.title' | translate}}">
+        <mat-error *ngIf="titleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.title' | translate, 
+          value: 130 } }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
@@ -13,6 +16,9 @@
         matInput
         formControlName="subtitle"
         placeholder="{{'igo.geo.printForm.subtitle' | translate}}">
+        <mat-error *ngIf="subtitleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.subtitle' | translate, 
+          value: 120 } }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
@@ -21,7 +27,9 @@
         matInput
         formControlName="comment"
         placeholder="{{'igo.geo.printForm.comment' | translate}}">
-        <mat-error *ngIf="commentField.errors?.maxlength">{{maxLenth}}</mat-error>
+        <mat-error *ngIf="commentField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.comment' | translate, 
+          value: maxLength } }}</mat-error>
     </mat-form-field>
   </div>
 
