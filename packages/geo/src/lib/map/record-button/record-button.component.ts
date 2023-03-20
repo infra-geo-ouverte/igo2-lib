@@ -125,16 +125,16 @@ export class RecordButtonComponent implements OnInit {
         ));
         return;
       }
+      if(!this.mapService.getMap()) {
+        this.messageService.alert(this.languageService.translate.instant(
+          'igo.geo.record-prompts.mapNotRendered'
+        ));
+        return;
+      }
       this.geoMap = this.mapService.getMap().geolocationController;
       if(!this.geoMap.position$.value || !this.geoMap.position$.value.position) {
         this.messageService.alert(this.languageService.translate.instant(
           'igo.geo.record-prompts.positionNotFound'
-        ));
-        return;
-      }
-      if(!this.mapService.getMap()) {
-        this.messageService.alert(this.languageService.translate.instant(
-          'igo.geo.record-prompts.mapNotRendered'
         ));
         return;
       }
