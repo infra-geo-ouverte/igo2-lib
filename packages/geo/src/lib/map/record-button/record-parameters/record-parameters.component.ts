@@ -105,7 +105,7 @@ export class RecordParametersComponent implements OnInit{
 
   displayParameters() {
     const geoMap = this.mapService.getMap().geolocationController;
-    if(!geoMap.position$.value || !geoMap.position$.value.position) {
+    if(!geoMap || !geoMap.position$.value || !geoMap.position$.value.position) {
       this.messageService.alert(this.languageService.translate.instant(
         'igo.geo.record-prompts.positionNotFound'
       ));
