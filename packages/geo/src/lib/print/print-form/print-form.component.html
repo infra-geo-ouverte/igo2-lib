@@ -83,7 +83,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select
+      <mat-select (selectionChange)="changeCommentLength()"
         formControlName="paperFormat"
         placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
         <mat-option *ngFor="let paperFormat of paperFormats | keyvalue " [value]="paperFormat.key">
@@ -119,7 +119,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select (selectionChange)="changeCommentLenth()"
+      <mat-select (selectionChange)="changeCommentLength()"
         formControlName="orientation"
         placeholder="{{'igo.geo.printForm.orientation' | translate}}">
         <mat-option *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">

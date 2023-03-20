@@ -234,13 +234,49 @@ export class PrintFormComponent implements OnInit {
   toggleImageSaveProp() {
     if (this.outputFormatField.value === 'Image') {
       this.isPrintService = false;
+      this.commentField.clearValidators();
+      this.commentField.updateValueAndValidity();
     } else {
       this.isPrintService = true;
     }
   }
 
-  changeCommentLenth() {
-    this.maxLength = (this.orientation === PrintOrientation.landscape) ? 180 : 145;
+  changeCommentLength() {
+    switch (this.paperFormat) {
+      case PrintPaperFormat.A0:
+        // A0, landscape, length 900 | A0, portrait, comment length:  600
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 900 : 600;
+        break;
+      case PrintPaperFormat.A1:
+        // A1, landscape, length 600 | A1, portrait, length 400;
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 600 : 400;
+        break;
+      case PrintPaperFormat.A2:
+        // A2, landscape, length 400 | A2, portrait, length 300;
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 400 : 300;
+        break;
+      case PrintPaperFormat.A3:
+        // A3, landscape, length 300 | A3, portrait, length 200;
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 300 : 200;
+        break;
+      case PrintPaperFormat.A4:
+        // A4, landscape length 200 | A4, portrait length 120;
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 200 : 100;
+        break;
+      case PrintPaperFormat.A5:
+        // A5, landscape length 120 | A5, portrait length 80;
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 120 : 80;
+        break;
+      case PrintPaperFormat.Letter:
+        // lettre, landscape, 180 | lettre, portrait, 140
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 180 : 140;
+        break;
+      default:
+        // legal, landscape, 200 | legal, portrait, 140
+        this.maxLength = (this.orientation === PrintOrientation.landscape) ? 200 : 140;
+        break;
+    }
+
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]​);
     this.commentField.updateValueAndValidity();
   }
