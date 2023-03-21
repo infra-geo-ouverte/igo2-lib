@@ -8,4 +8,8 @@
 
 igo-list ::ng-deep mat-list {
   height: 100%;
+  .custom-tabs-view .mat-tab-header-pagination {
+    min-width: 20px;
+  }
 }
+

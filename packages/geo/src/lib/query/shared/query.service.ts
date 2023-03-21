@@ -34,7 +34,8 @@ import {
 import {
   QueryOptions,
   QueryableDataSource,
-  QueryableDataSourceOptions
+  QueryableDataSourceOptions,
+  QueryUrlData
 } from './query.interfaces';
 import { MapExtent } from '../../map/shared/map.interface';
 
@@ -59,40 +60,126 @@ export class QueryService {
         this.messageService.remove(id);
       });
     }
-    return layers
-      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) => this.queryLayer(layer, options));
+
+    const newLayers = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
+    .map((layer: Layer) => this.queryLayer(layer, options));
+    // the directive accept array in this format [observable, observable...]
+    // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
+    // so we need to flat the array
+    let flatArray = [].concat.apply([], newLayers);
+    return flatArray;
   }
 
-  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
+  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> | Observable<Feature[]>[] {
     const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
     if (!url) {
       return of([]);
     }
 
-    if (
-      (layer.dataSource as QueryableDataSource).options.queryFormat ===
-      QueryFormat.HTMLGML2
-    ) {
-      const urlGml = this.getQueryUrl(layer.dataSource, options, true);
-      return this.http.get(urlGml, { responseType: 'text' }).pipe(
-        mergeMap(gmlRes => {
-          const mergedGML = this.mergeGML(gmlRes, url, layer);
-          const imposedGeom = mergedGML[0];
-          const imposedProperties = mergedGML[1];
-          return this.http
-            .get(url, { responseType: 'text' })
-            .pipe(
-              map(res =>
-                this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
-              )
-            );
-        })
-      );
-    }
+    const resolution: number = layer.map.viewController.getResolution();
+    const scale: number = layer.map.viewController.getScale();
 
-    const request = this.http.get(url, { responseType: 'text' });
-    return request.pipe(map(res => this.extractData(res, layer, options, url)));
+    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+      if (typeof url === 'string') {
+        const urlGml = this.getQueryUrl(layer.dataSource, options, true) as string;
+        return this.http.get(urlGml, { responseType: 'text' }).pipe(
+          mergeMap(gmlRes => {
+            const mergedGML = this.mergeGML(gmlRes, url, layer);
+            const imposedGeom = mergedGML[0];
+            const imposedProperties = mergedGML[1];
+            return this.http
+              .get(url, { responseType: 'text' })
+              .pipe(
+                map(res =>
+                  this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+                )
+              );
+          })
+        );
+      }
+      const urlGmls = this.getQueryUrl(layer.dataSource, options, true);
+      let observables: any = [];
+      for (let i = 0; i < urlGmls.length; i++) {
+        const element = urlGmls[i] as QueryUrlData;
+        if (this.checkScaleAndResolution(resolution, scale, element)) {
+          observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
+        }
+      }
+      return observables;
+    } else {
+      if (typeof url === 'string') {
+        const request = this.http.get(url, { responseType: 'text' });
+        return request.pipe(map(res => this.extractData(res, layer, options, url)));
+      }
+      let observables: any = [];
+      for (let i = 0; i < url.length; i++) {
+        const element: QueryUrlData = url[i];
+        if (this.checkScaleAndResolution(resolution, scale, element)) {
+          const request = this.http.get(element.url, { responseType: 'text' });
+          observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
+        }
+      }
+      return observables;
+    }
+  }
+
+  private requestDataForHTMLGML2(urlGml: string, url: string ,layer: Layer, options: QueryOptions): Observable<Feature[]> {
+    return this.http.get(urlGml, { responseType: 'text' }).pipe(
+      mergeMap(gmlRes => {
+        const mergedGML = this.mergeGML(gmlRes, url, layer);
+        const imposedGeom = mergedGML[0];
+        const imposedProperties = mergedGML[1];
+        return this.http
+          .get(url, { responseType: 'text' })
+          .pipe(
+            map(res =>
+              this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+            )
+          );
+      })
+    );
+  }
+
+  private checkScaleAndResolution(resolution: number, scale: number, element: QueryUrlData): boolean {
+    let checkScale: boolean;
+    let checkResolution: boolean;
+
+    if (!element.minResolution && !element.maxResolution && !element.minScale && !element.maxScale) {
+      return true;
+    } else {
+      /******************* checking Resolution *******************/
+      if (element.minResolution && element.maxResolution) {
+        // if "minResolution" and "maxResolution" exists check if resoltion is between
+        if ((resolution >= element.minResolution) && (resolution <= element.maxResolution)) {
+          checkResolution = true;
+        }
+      } else {
+        // check if "minResolution" or "maxResolution" exists
+        if (element.minResolution && resolution >= element.minResolution) { checkResolution = true; }
+        if (element.maxResolution && resolution <= element.maxResolution) { checkResolution = true; }
+      }
+
+      /******************* checking Scale *******************/
+      if (element.minScale && element.maxScale) {
+        // if "minScale" and "maxScale" exists check if scale is between
+        if ((scale > element.minScale) && (scale < element.maxScale)) {
+          checkScale = true;
+        }
+      } else {
+        // check if "minScale" or "maxScale" exists
+        if (element.maxScale && scale <= element.maxScale) { checkScale = true; }
+        if (element.minScale && scale >= element.minScale) { checkScale = true; }
+      }
+
+      /******************* result of checking *******************/
+      if (checkScale === true && checkResolution === true) {
+        return true;
+      } else if ((checkResolution === true && !checkScale) || (checkScale === true && !checkResolution)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
@@ -193,18 +280,22 @@ export class QueryService {
           type: olmline.getType(),
           coordinates: olmline.getCoordinates()
         };
+        break;
       case 'Point':
         returnGeometry = olmpts;
+        break;
       case 'Polygon':
         returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
+        break;
       case 'MultiPolygon':
         returnGeometry = {
           type: olmpoly.getType(),
           coordinates: olmpoly.getCoordinates()
         };
+        break;
     }
     const imposedProperties = {};
 
@@ -600,10 +691,10 @@ export class QueryService {
     options: QueryOptions,
     forceGML2 = false,
     mapExtent?: MapExtent
-  ): string {
+  ): string | QueryUrlData[]{
     let url;
 
-    if (datasource.options.queryUrl) {
+    if (datasource.options.queryUrls) {
       return this.getCustomQueryUrl(datasource, options, mapExtent);
     }
 
@@ -781,25 +872,50 @@ export class QueryService {
   getCustomQueryUrl(
     datasource: QueryableDataSource,
     options: QueryOptions,
-    mapExtent?: MapExtent): string {
+    mapExtent?: MapExtent): QueryUrlData[] {
 
-    const extent = olextent.getForViewAndSize(
-      options.coordinates,
-      options.resolution,
-      0,
-      [101, 101]
-    );
+      const extent = olextent.getForViewAndSize(
+        options.coordinates,
+        options.resolution,
+        0,
+        [101, 101]
+      );
 
-    let url = datasource.options.queryUrl.replace(/\{bbox\}/g, extent.join(','))
-    .replace(/\{xmin\}/g, mapExtent[0].toString())
-    .replace(/\{ymin\}/g, mapExtent[1].toString())
-    .replace(/\{xmax\}/g, mapExtent[2].toString())
-    .replace(/\{ymax\}/g, mapExtent[3].toString())
-    .replace(/\{x\}/g, options.coordinates[0].toString())
-    .replace(/\{y\}/g, options.coordinates[1].toString())
-    .replace(/\{resolution\}/g, options.resolution.toString())
-    .replace(/\{srid\}/g, options.projection.replace('EPSG:',''));
+      return datasource.options.queryUrls.map(item => {
+        let data: QueryUrlData = {
+          url: item.url.replace(/\{bbox\}/g, extent.join(','))
+          .replace(/\{x\}/g, options.coordinates[0].toString())
+          .replace(/\{y\}/g, options.coordinates[1].toString())
+          .replace(/\{resolution\}/g, options.resolution.toString())
+          .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
+        };
 
-    return url;
-  }
+        // if the queryFormat changed to "QueryFormat.HTMLGML2": mapExtent will be undefined
+        // we need to check "mapExtent" befor replace variables in the url
+        if(mapExtent) {
+          data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
+          .replace(/\{ymin\}/g, mapExtent[1].toString())
+          .replace(/\{xmax\}/g, mapExtent[2].toString())
+          .replace(/\{ymax\}/g, mapExtent[3].toString());
+        }
+
+        if(item.maxResolution) {
+          data.maxResolution = item.maxResolution;
+        }
+
+        if(item.minResolution) {
+          data.minResolution = item.minResolution;
+        }
+
+        if(item.minScale) {
+          data.minScale = item.minScale;
+        }
+
+        if(item.maxScale) {
+          data.maxScale = item.maxScale;
+        }
+
+        return data;
+      });
+    }
 }

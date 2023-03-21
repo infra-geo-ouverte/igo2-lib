@@ -86,9 +86,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     private formatter: ILayerSearchResultFormatter
   ) {
     super(options, storageService);
-    this.languageService.translate
-      .get(this.options.title)
-      .subscribe(title => this.title$.next(title));
+    this.languageService.language$.subscribe(() => {
+      this.title$.next(this.languageService.translate.instant(this.options.title));
+    });
   }
 
   getId(): string {

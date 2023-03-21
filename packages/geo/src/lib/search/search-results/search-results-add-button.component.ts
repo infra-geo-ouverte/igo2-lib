@@ -3,7 +3,7 @@ import {
   Input,
   ChangeDetectionStrategy,
   OnInit,
-  OnDestroy
+  OnDestroy,
 } from '@angular/core';
 
 import { SearchResult } from '../shared/search.interfaces';
@@ -11,7 +11,29 @@ import { IgoMap } from '../../map/shared/map';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, take } from 'rxjs';
+import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { DataSourceService, FeatureDataSource } from '../../datasource';
+import {
+  Feature,
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreLoadingStrategy,
+  FeatureStoreSelectionStrategy,
+  tryAddLoadingStrategy,
+  tryAddSelectionStrategy,
+  tryBindStoreLayer
+} from '../../feature';
+import { EntityStore } from '@igo2/common';
+import { getTooltipsOfOlGeometry } from '../../measure';
+import OlOverlay from 'ol/Overlay';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
+import { default as OlGeometry } from 'ol/geom/Geometry';
+import { QueryableDataSourceOptions } from '../../query';
+import { createOverlayDefaultStyle } from '../../overlay';
+
 
 @Component({
   selector: 'igo-search-add-button',
@@ -19,14 +41,21 @@ import { Subscription, BehaviorSubject } from 'rxjs';
   styleUrls: ['./search-results-add-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
+export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
     'igo.geo.catalog.layer.addToMap'
   );
 
+  public addFeatureToLayerTooltip$: BehaviorSubject<string> = new BehaviorSubject(
+    'igo.geo.search.addToLayer'
+  );
+
   private resolution$$: Subscription;
+  private layers$$: Subscription;
 
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -37,6 +66,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   private mouseInsideAdd: boolean = false;
 
   @Input() layer: SearchResult;
+
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * Whether the layer is already added to the map
@@ -57,7 +88,18 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
   private _color = 'primary';
 
-  constructor(private layerService: LayerService) {}
+  @Input() stores: FeatureStore<Feature>[] = [];
+
+  get allLayers() {
+    return this.map.layers.filter((layer) =>
+      String(layer.id).includes('igo-search-layer')
+    );
+  }
+
+  constructor(
+    private layerService: LayerService,
+    private dialog: MatDialog,
+    private dataSourceService: DataSourceService) {}
 
   /**
    * @internal
@@ -69,14 +111,18 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
           lay => lay.id === this.layer.data.sourceOptions.id
         ) !== -1;
     }
+    this.layers$$ = this.map.layers$.subscribe(() => {
+      this.isVisible();
+    });
     this.resolution$$ = this.map.viewController.resolution$.subscribe(value => {
       this.isInResolutionsRange(value);
-      this.tooltip$.next(this.computeTooltip());
+      this.isVisible();
     });
   }
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   /**
@@ -194,15 +240,170 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     );
   }
 
+  isVisible() {
+    if (this.layer?.data?.sourceOptions?.id) {
+      const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
+      oLayer ? this.isVisible$.next(oLayer.visible) : this.isVisible$.next(false);
+    }
+  }
+
+  getBadgeIcon() {
+    if (this.inRange$.value) {
+      return this.isVisible$.value ? '' : 'eye-off';
+    } else {
+      return 'eye-off';
+    }
+  }
+
   computeTooltip(): string {
     if (this.added) {
-      return this.inRange$.value
+      if (this.isPreview$.value) {
+        return 'igo.geo.catalog.layer.addToMap';
+      } else if (this.inRange$.value) {
+        return this.isVisible$.value
         ? 'igo.geo.catalog.layer.removeFromMap'
-        : 'igo.geo.catalog.layer.removeFromMapOutRange';
+        : 'igo.geo.catalog.layer.removeFromMapNotVisible';
+      } else {
+        return 'igo.geo.catalog.layer.removeFromMapOutRange';
+      }
     } else {
       return this.inRange$.value
         ? 'igo.geo.catalog.layer.addToMap'
         : 'igo.geo.catalog.layer.addToMapOutRange';
     }
+  }
+
+  addFeatureToLayer() {
+    if (this.layer.meta.dataType !== 'Feature') {
+      return;
+    }
+
+    const selectedFeature = this.layer;
+    const dialogRef = this.dialog.open(SaveFeatureDialogComponent, {
+      width: '700px',
+      data: {
+        feature: selectedFeature,
+        layers: this.allLayers
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((data: {layer: string | any, feature: SearchResult}) => {
+      if (data) {
+        if(this.stores.length > 0) {
+          this.stores.map((store) => {
+            store.state.updateAll({selected: false});
+            (store?.layer).visible = false;
+            return store;
+          });
+        }
+        // check if is new layer
+        if (typeof data.layer === 'string') {
+          this.createLayer(data.layer, data.feature);
+        } else {
+          const activeStore = this.stores.find(store => store.layer.id === data.layer.id);
+          activeStore.layer.visible = true;
+          activeStore.layer.opacity = 1;
+          this.addFeature(data.feature, activeStore);
+        }
+      }
+    });
+  }
+
+  createLayer(layerTitle: string, selectedFeature: SearchResult) {
+
+    const activeStore: FeatureStore<Feature> = new FeatureStore<Feature>([], {
+      map: this.map
+    });
+
+    // set layer id
+    let layerCounterID: number = 0;
+    for (const layer of this.allLayers) {
+      let numberId = Number(layer.id.replace('igo-search-layer',''));
+      layerCounterID = Math.max(numberId,layerCounterID);
+    }
+
+    this.dataSourceService
+        .createAsyncDataSource({
+          type: 'vector',
+          queryable: true
+        } as QueryableDataSourceOptions)
+        .pipe(take(1))
+        .subscribe((dataSource: FeatureDataSource) => {
+          let searchLayer: VectorLayer = new VectorLayer({
+            isIgoInternalLayer: true,
+            id: 'igo-search-layer' + ++layerCounterID,
+            title: layerTitle,
+            source: dataSource,
+            style: createOverlayDefaultStyle({
+              text: '',
+              strokeWidth: 1,
+              fillColor: 'rgba(255,255,255,0.4)',
+              strokeColor: 'rgba(143,7,7,1)'
+            }),
+            showInLayerList: true,
+            exportable: true,
+            workspace: {
+              enabled: true
+            }
+          });
+
+          tryBindStoreLayer(activeStore, searchLayer);
+          tryAddLoadingStrategy(
+            activeStore,
+            new FeatureStoreLoadingStrategy({
+              motion: FeatureMotion.None
+            })
+          );
+
+          tryAddSelectionStrategy(
+            activeStore,
+            new FeatureStoreSelectionStrategy({
+              map: this.map,
+              motion: FeatureMotion.None,
+              many: true
+            })
+          );
+
+          activeStore.layer.visible = true;
+          activeStore.source.ol.on(
+            'removefeature',
+            (event: OlVectorSourceEvent<OlGeometry>) => {
+              const olGeometry = event.feature.getGeometry();
+              this.clearLabelsOfOlGeometry(olGeometry);
+            }
+          );
+
+          this.addFeature(selectedFeature, activeStore);
+          this.stores.push(activeStore);
+        });
+  }
+
+  addFeature(feature: SearchResult, activeStore: FeatureStore<Feature>) {
+    const newFeature = {
+      type: feature.data.type,
+      geometry: {
+        coordinates: feature.data.geometry.coordinates,
+        type: feature.data.geometry.type
+      },
+      projection: feature.data.projection,
+      properties: feature.data.properties,
+      meta: {
+        id: feature.meta.id
+      }
+    };
+    delete newFeature.properties.Route;
+    activeStore.update(newFeature);
+    activeStore.setLayerExtent();
+    activeStore.layer.ol.getSource().refresh();
+  }
+
+  private clearLabelsOfOlGeometry(olGeometry) {
+    getTooltipsOfOlGeometry(olGeometry).forEach(
+      (olTooltip: OlOverlay | undefined) => {
+        if (olTooltip && olTooltip.getMap()) {
+          this.map.ol.removeOverlay(olTooltip);
+        }
+      }
+    );
   }
 }

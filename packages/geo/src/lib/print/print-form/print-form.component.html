@@ -54,8 +54,16 @@
         formControlName="legendPosition"
         placeholder="{{'igo.geo.printForm.legendPosition' | translate}}">
         <mat-option *ngFor="let legendPosition of legendPositions | keyvalue " [value]="legendPosition.key">
+          <ng-container *ngIf="!['newpage', 'newimage'].includes(legendPosition.value)">
             {{'igo.geo.printForm.legendPositions.' + legendPosition.value | translate}}
+          </ng-container>
+
+          <ng-container *ngIf="['newpage', 'newimage'].includes(legendPosition.value)">
+            {{ ((outputFormat === 'Pdf') ? 'igo.geo.printForm.legendPositions.newpage' : 
+            'igo.geo.printForm.legendPositions.newimage') | translate}}
+          </ng-container>
         </mat-option>
+
       </mat-select>
     </mat-form-field>
   </div>
