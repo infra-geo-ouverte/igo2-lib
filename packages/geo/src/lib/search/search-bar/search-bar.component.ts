@@ -483,11 +483,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   selectFirstElement(){
 
-    const firstResult = this.store.all().sort((a,b) => a.source.displayOrder -b.source.displayOrder)[0];
-
+    const firstResult = this.store.all().filter((result) => result.source.getId() === 'icherche'|| 'ilayer' || 'nominatim')[0];
+    console.log("premier element",firstResult);
     if(firstResult){
       this.store.state.update(firstResult,{focused:true,selected:true},true);
-
+      console.log("dans la conditionpremier element icherche",firstResult);
       return;
     }
   }
