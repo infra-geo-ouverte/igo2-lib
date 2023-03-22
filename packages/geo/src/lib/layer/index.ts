@@ -7,4 +7,3 @@ export * from './layer-list';
 export * from './layer-list-tool';
 export * from './track-feature-button';
 export * from './utils';
-export * from './style-modal';

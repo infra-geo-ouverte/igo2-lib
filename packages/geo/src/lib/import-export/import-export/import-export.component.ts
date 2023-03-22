@@ -40,8 +40,8 @@ import {
   handleFileImportSuccess,
   handleFileImportError
 } from '../shared/import.utils';
-import { StyleService } from '../../layer/shared/style.service';
-import { StyleListService } from '../style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { StyleListService } from '../../style/style-list/style-list.service';
 import { skipWhile } from 'rxjs/operators';
 import { EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
@@ -526,7 +526,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
 
-      const translate = this.languageService.translate;
+
       let geomTypes: { geometryType: string, features: any[] }[] = [];
       if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
         olFeatures.forEach((olFeature) => {
@@ -559,9 +559,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
         const gpxFeatureCntPointOrPoly = geomTypes.length;
         if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
-          const title = translate.instant('igo.geo.export.gpx.error.poly.title');
-          const message = translate.instant('igo.geo.export.gpx.error.poly.text');
-          this.messageService.error(message, title, { timeOut: 20000 });
+          this.messageService.error('igo.geo.export.gpx.error.poly.text', 'igo.geo.export.gpx.error.poly.title', { timeOut: 20000 });
         }
       } else if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
         geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
@@ -595,9 +593,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       if (geomTypes.length === 0) {
         this.loading$.next(false);
-        const title = translate.instant('igo.geo.export.nothing.title');
-        const message = translate.instant('igo.geo.export.nothing.text');
-        this.messageService.error(message, title, { timeOut: 20000 });
+        this.messageService.error('igo.geo.export.nothing.text', 'igo.geo.export.nothing.title', { timeOut: 20000 });
 
       } else {
         if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || !data.combineLayers) {
@@ -750,8 +746,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         file,
         features,
         this.map,
-        this.messageService,
-        this.languageService
+        this.messageService
       );
     } else {
       handleFileImportSuccess(
@@ -759,7 +754,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         features,
         this.map,
         this.messageService,
-        this.languageService,
         this.styleListService,
         this.styleService
       );
@@ -772,25 +766,23 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       file,
       error,
       this.messageService,
-      this.languageService,
       this.fileSizeMb
     );
   }
 
   private onPopupBlockedError(preCheck: boolean = true) {
     this.loading$.next(false);
-    const translate = this.languageService.translate;
-    const title = translate.instant('igo.geo.export.popupBlocked.title');
-    const extraMessage = preCheck ?
-      translate.instant('igo.geo.export.popupBlocked.selectAgain') :
-      translate.instant('igo.geo.export.popupBlocked.retry');
-    const message = translate.instant('igo.geo.export.popupBlocked.text', { extraMessage });
-    this.messageService.error(message, title, { timeOut: 20000 });
+    const extraMessage = preCheck ? 'igo.geo.export.popupBlocked.selectAgain' : 'igo.geo.export.popupBlocked.retry';
+    this.messageService.error(
+      'igo.geo.export.popupBlocked.text',
+      'igo.geo.export.popupBlocked.title',
+      { timeOut: 20000 },
+      {extraMessage});
   }
 
   private onFileExportError(error: Error) {
     this.loading$.next(false);
-    handleFileExportError(error, this.messageService, this.languageService);
+    handleFileExportError(error, this.messageService);
   }
 
   private loadConfig() {
@@ -896,17 +888,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         if (layers && layers.length) {
           if (layers.length > 1) {
             this.messageService.alert(
-              this.languageService.translate.instant('igo.geo.export.customList.text', { value: layersWithCustomFormats.join() }),
-              this.languageService.translate.instant('igo.geo.export.customList.title')
+              'igo.geo.export.customList.text',
+              'igo.geo.export.customList.title',
+              undefined,
+              { value: layersWithCustomFormats.join() }
             );
           }
         }
       } else {
         this.formats$.next([]);
-        this.messageService.alert(
-          this.languageService.translate.instant('igo.geo.export.noFormat.text'),
-          this.languageService.translate.instant('igo.geo.export.noFormat.title')
-        );
+        this.messageService.alert('igo.geo.export.noFormat.text','igo.geo.export.noFormat.title');
       }
       return;
     } else {
@@ -972,7 +963,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileExportSuccess() {
-    handleFileExportSuccess(this.messageService, this.languageService);
+    handleFileExportSuccess(this.messageService);
   }
 
   onImportExportChange(event) {

@@ -141,12 +141,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   copyTextToClipboard(): void {
     const successful = Clipboard.copy(this.coordinates.toString());
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.integration.advanced-map-tool.advanced-coordinates.copyTitle'
-      );
-      const msg = translate.instant('igo.integration.advanced-map-tool.advanced-coordinates.copyMsg');
-      this.messageService.success(msg, title);
+      this.messageService.success(
+        'igo.integration.advanced-map-tool.advanced-coordinates.copyMsg',
+        'igo.integration.advanced-map-tool.advanced-coordinates.copyTitle');
     }
   }
 

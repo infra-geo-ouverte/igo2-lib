@@ -20,6 +20,7 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
+import { PrintPaperFormat } from './print.type';
 
 declare global {
   interface Navigator {
@@ -43,7 +44,7 @@ export class PrintService {
     subtitleFontStyle: 'bold',
     commentFont: 'courier',
     commentFontStyle: 'normal',
-    commentFontSize: 16
+    commentFontSize: 12
   };
 
   constructor(
@@ -82,9 +83,14 @@ export class PrintService {
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
+    // if paper format A1 or A0 add margin top
+    if ((options.title !== '' || options.subtitle) &&
+      (paperFormat === PrintPaperFormat.A1 || paperFormat === PrintPaperFormat.A0)) {
+      margins[0] += 10;
+    }
     // PDF title
-    if (options.title !== undefined ) {
-      const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+    const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+    if (options.title !== undefined && options.title !== '') {
       titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
         margins,
         this.TEXTPDFFONT.titleFont,
@@ -101,15 +107,14 @@ export class PrintService {
         margins[0]);
 
       margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
-
     }
 
     // PDF subtitle
-    if (options.subtitle !== undefined) {
+    if (options.subtitle !== undefined && options.subtitle !== '') {
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
-        titleSizes.fontSize * 0.7, // 70% size of title
+        (options.title !== '') ? titleSizes.fontSize * 0.7 : fontSizeInPt * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
         doc);
 
@@ -134,7 +139,7 @@ export class PrintService {
         options.showScale
         );
     }
-    if (options.comment !== '') {
+    if (options.comment !== undefined && options.comment !== '') {
       this.addComment(doc, options.comment);
     }
 
@@ -376,15 +381,16 @@ export class PrintService {
    * * @param  comment - Comment to add in the document
    */
   private addComment(doc: jsPDF, comment: string) {
-    const commentMarginLeft = 20; //margin left and bottom is fix
-    const commentMarginBottom = 5;
+    const commentMarginLeft = 10; //margin left and bottom is fix
+    const commentMarginBottom = 10;
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
     this. addTextInPdfDoc(doc,comment,
       this.TEXTPDFFONT.commentFont,
       this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
       commentMarginLeft,
-      marginTop
+      marginTop,
+      true
     );
   }
 
@@ -394,10 +400,15 @@ export class PrintService {
     textFontStyle: string,
     textFontSize: number,
     textMarginLeft: number,
-    textMarginTop: number)
+    textMarginTop: number,
+    isComment: boolean = false)
     {
       doc.setFont(textFont, textFontStyle);
       doc.setFontSize(textFontSize);
+
+      if(isComment) {
+        textToAdd = doc.splitTextToSize(textToAdd, (doc.internal.pageSize.getWidth() - (textMarginLeft * 3)));
+      }
       doc.text(textToAdd, textMarginLeft, textMarginTop);
     }
 
@@ -417,8 +428,8 @@ export class PrintService {
     scale: boolean
   ) {
     const translate = this.languageService.translate;
-    const projScaleSize = 16;
-    const projScaleMarginLeft = 20;
+    const projScaleSize = 12;
+    const projScaleMarginLeft = 10;
     const marginBottom = 15;
     const heightPixels = doc.internal.pageSize.height - marginBottom;
 
@@ -668,14 +679,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -695,14 +699,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -1020,7 +1017,7 @@ export class PrintService {
    */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = this.pdf_units2points(canvas.height, 'mm');
     const canWidth = this.pdf_units2points(canvas.width, 'mm');
@@ -1069,14 +1066,7 @@ export class PrintService {
         that.saveFileProcessing();
       }, blobFormat);
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 
@@ -1105,14 +1095,7 @@ export class PrintService {
         }, blobFormat);
       }
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 

@@ -90,8 +90,8 @@ export function computeTermSimilarity(from, to, caseSensitive: boolean = false):
   if (!from || !to) {
     return 0;
   }
-  const termFrom = caseSensitive ? from : from.toLowerCase();
-  const termTo = caseSensitive ? to : to.toLowerCase();
+  const termFrom = caseSensitive ? from : from.toString().toLowerCase();
+  const termTo = caseSensitive ? to : to.toString().toLowerCase();
   const fromToDiff = findDiff(termFrom, termTo);
   const toFromDiff = findDiff(termTo, termFrom);
   const totalDiff = fromToDiff + toFromDiff;

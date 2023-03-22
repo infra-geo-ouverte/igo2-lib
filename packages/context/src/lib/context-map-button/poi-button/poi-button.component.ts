@@ -66,23 +66,17 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
 
   deletePoi(poi: Poi) {
     if (poi && poi.id) {
-      const translate = this.languageService.translate;
       this.confirmDialogService
-        .open(translate.instant('igo.context.poiButton.dialog.confirmDelete'))
+        .open(this.languageService.translate.instant('igo.context.poiButton.dialog.confirmDelete'))
         .subscribe(confirm => {
           if (confirm) {
             this.poiService.delete(poi.id).subscribe(
               () => {
-                const title = translate.instant(
-                  'igo.context.poiButton.dialog.deleteTitle'
-                );
-                const message = translate.instant(
+                this.messageService.info(
                   'igo.context.poiButton.dialog.deleteMsg',
-                  {
-                    value: poi.title
-                  }
-                );
-                this.messageService.info(message, title);
+                  'igo.context.poiButton.dialog.deleteTitle',
+                  undefined,
+                  { value: poi.title });
                 this.pois = this.pois.filter(p => p.id !== poi.id);
               },
               err => {
@@ -130,17 +124,11 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
           poi.title = title;
           this.poiService.create(poi).subscribe(
             newPoi => {
-              const translate = this.languageService.translate;
-              const titleD = translate.instant(
-                'igo.context.poiButton.dialog.createTitle'
-              );
-              const message = translate.instant(
+              this.messageService.success(
                 'igo.context.poiButton.dialog.createMsg',
-                {
-                  value: poi.title
-                }
-              );
-              this.messageService.success(message, titleD);
+                'igo.context.poiButton.dialog.createTitle',
+                undefined,
+                { value: poi.title });
               poi.id = newPoi.id;
               this.pois.push(poi);
             },
