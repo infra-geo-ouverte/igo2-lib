@@ -6,6 +6,7 @@
         "layer.addToMapOutRange": "Ajouter à la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "layer.removeFromMap": "Retirer de la carte",
         "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
+        "layer.removeFromMapNotVisible": "Retirer de la carte. La donnée est visible à l'échelle active, mais n'est pas activée. Veuillez basculer vers l'outil carte pour la rendre visible.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte",
@@ -261,7 +262,24 @@
         "style": {
           "styleModal": "Modifier le style",
           "styleModalTooltip": "Éditer le style des entités sélectionnées"
-        }
+        },
+        "saveBtn": "Sauvegarder",
+        "cancelBtn": "Cancel",
+        "saveFeatureInLayer": "Ajouter la sélection dans une couche",
+        "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
+      },
+      "style": {
+        "styleModal": "Modifier le style",
+        "styleModalTooltipLayer": "Éditer le style des la présente couche.",
+        "styleModalTooltipSelected": "Éditer le style des entités sélectionnées",
+        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
+        "cancel": "Annuler",
+        "fill": "Remplissage",
+        "stroke": "Contour",
+        "fontSize": "Taille de police",
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical"
       },
       "download": {
         "action": "Télécharger les données associées",
@@ -323,7 +341,8 @@
           "topright": "Coin haut droit de la carte",
           "bottomleft": "Coin bas gauche de la carte",
           "bottomright": "Coin bas droit de la carte",
-          "newpage": "Sur une nouvelle page"
+          "newpage": "Sur une nouvelle page",
+          "newimage": "Sur une nouvelle image"
         }
       },
       "record-prompts": {
@@ -455,6 +474,7 @@
         "layer.placeholder": "Rechercher une couche de données.",
         "ichercheReverse.name": "Recherche par coordonnées",
         "clearSearch": "Effacer la recherche",
+        "addToLayer": "Ajouter à une couche",
         "ilayer": {
           "name": "Couches",
           "properties": {
@@ -483,6 +503,13 @@
           "country": {
             "all": "Le monde",
             "canada": "Canada"
+          }
+        },
+        "workspace": {
+          "name": "Données importées (vecteurs)",
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "whole": "L'entièreté du jeu de données"
           }
         },
         "icherche": {
@@ -518,7 +545,9 @@
         "coordinates": {
           "name": "Coordonnées",
           "coord": "Coordonnée (longitude, latitude)",
+          "reversedCoord": "Coordonnée (latitude, longitude)",
           "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
+          "reversedCoordDMS": "Coordonnée (latitude, longitude) (DMS)",
           "radius": "Rayon",
           "conf": "Confiance"
         },
@@ -534,10 +563,16 @@
           "title": "Montrer tous les résultats",
           "tooltip": "Afficher/cacher la géométrie des résultats"
         },
+        "reverseCoordFormat": {
+          "title": "Afficher les données en latitude/longitude",
+          "tooltipLonLat": "Afficher les données en latitude/longitude.",
+          "tooltipLatLon": "Afficher les données en longitude/latitude."
+        },
         "searchSources": {
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
             "radius": "Rayon de recherche",
@@ -717,12 +752,10 @@
         "abort": "Annuler le dessin en cours",
         "cancel": "Annuler",
         "Circle": "Cercle",
-        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
-        "fill": "Remplissage",
         "finish": "Terminer le dessin en cours",
         "freehandMode": "Dessiner à main levée",
         "icon": "Icônes",
@@ -736,14 +769,9 @@
         "Polygon": "Polygone",
         "radius": "Rayon",
         "shortcuts": "Raccourcis clavier",
-        "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
-        "fontSize": "Taille de police",
-        "fontStyle": "Style de police",
-        "offsetX": "Décalage horizontal",
-        "offsetY": "Décalage vertical",
         "layer": {
           "title": "Titre",
           "createNewLayer": "Créer une nouvelle couche de dessin",

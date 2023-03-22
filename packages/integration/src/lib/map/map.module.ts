@@ -17,7 +17,8 @@ import {
   IgoMetadataModule,
   IgoDownloadModule,
   IgoFilterModule,
-  IgoImportExportModule
+  IgoImportExportModule,
+  IgoStyleModule
 } from '@igo2/geo';
 import { IgoContextModule } from '@igo2/context';
 import { MapDetailsToolComponent } from './map-details-tool/map-details-tool.component';
@@ -61,6 +62,7 @@ import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-to
     IgoMetadataModule,
     IgoDownloadModule,
     IgoImportExportModule,
+    IgoStyleModule,
     IgoFilterModule,
     MatRadioModule,
     IgoContextModule,

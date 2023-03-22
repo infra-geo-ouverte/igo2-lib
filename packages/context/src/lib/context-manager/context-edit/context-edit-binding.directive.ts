@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 
 import { Context, DetailedContext } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
@@ -28,12 +28,13 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   onEdit(context: Context) {
     const id = this.component.context.id;
     this.contextService.update(id, context).subscribe(() => {
-      const translate = this.languageService.translate;
-      const message = translate.instant('igo.context.contextManager.dialog.saveMsg', {
+      this.messageService.success(
+        'igo.context.contextManager.dialog.saveMsg',
+        'igo.context.contextManager.dialog.saveTitle',
+        undefined,
+      {
         value: context.title || this.component.context.title
       });
-      const title = translate.instant('igo.context.contextManager.dialog.saveTitle');
-      this.messageService.success(message, title);
       this.contextService.setEditedContext(undefined);
       this.submitSuccessed.emit(context);
     });
@@ -42,8 +43,7 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   constructor(
     @Self() component: ContextEditComponent,
     private contextService: ContextService,
-    private messageService: MessageService,
-    private languageService: LanguageService
+    private messageService: MessageService
   ) {
     this.component = component;
   }

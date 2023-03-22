@@ -19,10 +19,8 @@ import { SearchService } from './search.service';
 
 import olFeature from 'ol/Feature';
 import { transform } from 'ol/proj';
-import * as olstyle from 'ol/style';
 import * as olgeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { SearchResult, Research } from './search.interfaces';
 import { EntityStore } from '@igo2/common';
@@ -36,6 +34,7 @@ import { SearchSourceService } from './search-source.service';
 import { sourceCanReverseSearchAsSummary } from './search.utils';
 import { MediaService } from '@igo2/core';
 import { unByKey } from 'ol/Observable';
+import { pointerPositionSummaryMarkerStyle } from '../../style/shared/feature/feature-style';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -130,7 +129,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
       showInLayerList: false,
       exportable: false,
       browsable: false,
-      style: pointerPositionSummaryMarker
+      style: pointerPositionSummaryMarkerStyle
     });
     tryBindStoreLayer(store, layer);
   }
@@ -346,34 +345,4 @@ private clearLayer() {
     this.store.clearLayer();
   }
 }
-
-}
-
-/**
- * Create a default style for the pointer position and it's label summary.
- * @param feature OlFeature
- * @returns OL style function
- */
-export function pointerPositionSummaryMarker(feature: olFeature<OlGeometry>, resolution: number): olstyle.Style {
-  return new olstyle.Style({
-    image: new olstyle.Icon({
-      src: './assets/igo2/geo/icons/cross_black_18px.svg',
-      imgSize: [18, 18], // for ie
-    }),
-
-    text: new olstyle.Text({
-      text: feature.get('pointerSummary'),
-      textAlign: 'left',
-      textBaseline: 'bottom',
-      font: '12px Calibri,sans-serif',
-      fill: new olstyle.Fill({ color: '#000' }),
-      backgroundFill: new olstyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
-      backgroundStroke: new olstyle.Stroke({ color: 'rgba(200, 200, 200, 0.75)', width: 2 }),
-      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
-      overflow: true,
-      offsetX: 10,
-      offsetY: -10,
-      padding: [2.5, 2.5, 2.5, 2.5]
-    })
-  });
 }

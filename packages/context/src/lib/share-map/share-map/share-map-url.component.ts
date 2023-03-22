@@ -53,7 +53,9 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   copyTextToClipboard(textArea) {
     const successful = Clipboard.copy(textArea);
     if (successful) {
-      this.messageService.success('igo.context.shareMap.dialog.copyMsg', 'igo.context.shareMap.dialog.copyTitle');
+      this.messageService.success(
+        'igo.context.shareMap.dialog.copyMsg',
+        'igo.context.shareMap.dialog.copyTitle');
     }
   }
 }
