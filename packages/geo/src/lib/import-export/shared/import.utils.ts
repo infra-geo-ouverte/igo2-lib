@@ -21,6 +21,7 @@ import { uuid } from '@igo2/utils';
 import { featureRandomStyle, featureRandomStyleFunction } from '../../style/shared/feature/feature-style';
 import { LayerService } from '../../layer/shared/layer.service';
 import { ConfirmDialogService } from '@igo2/common';
+import { first, of } from 'rxjs';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -198,7 +199,7 @@ export function handleFileImportSuccess(
   messageService: MessageService,
   languageService: LanguageService,
   layerService: LayerService,
-  confirmDialogService: ConfirmDialogService,
+  confirmDialogService?: ConfirmDialogService,
   styleListService?: StyleListService,
   styleService?: StyleService
 ) {
@@ -207,9 +208,14 @@ export function handleFileImportSuccess(
     return;
   }
 
-  const layerTitle = computeLayerTitleFromFile(file);
+  let layerTitle = computeLayerTitleFromFile(file);
 
-  confirmDialogService.open('igo.geo.import.promptStoreToIdb').subscribe((confirm) => {
+  const obs$ = confirmDialogService ? confirmDialogService.open('igo.geo.import.promptStoreToIdb') : of(false);
+
+  obs$.pipe(first()).subscribe((confirm) => {
+    const d = new Date();
+    const dformat = `${[d.getFullYear(),d.getMonth() + 1,d.getDate()].join('/')} ${[d.getHours(),d.getMinutes()].join(':')}`;
+    layerTitle = confirm ? `${layerTitle} (${dformat})` : layerTitle;
     if (!styleListService) {
       addLayerAndFeaturesToMap(features, map, contextUri, layerTitle, layerService, confirm);
     } else {
@@ -222,12 +228,12 @@ export function handleFileImportSuccess(
       );
     }
 
-  const translate = languageService.translate;
-  const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');
-  const message = translate.instant('igo.geo.dropGeoFile.success.text', {
-    value: layerTitle
-  });
-  messageService.success(message, messageTitle);
+    const translate = languageService.translate;
+    const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');
+    const message = translate.instant('igo.geo.dropGeoFile.success.text', {
+      value: layerTitle
+    });
+    messageService.success(message, messageTitle);
   });
 }
 

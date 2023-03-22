@@ -14,6 +14,7 @@ import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
 import { LayerService } from '../../layer/shared/layer.service';
+import { ImportExportServiceOptions } from './import.interface';
 
 
 @Directive({
@@ -135,6 +136,8 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
+    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const confirmDialogService = importConfig?.allowToStoreLayer ? this.confirmDialogService : undefined;
     if (!this.config.getConfig('importWithStyle')) {
       handleFileImportSuccess(
         file,
@@ -144,10 +147,10 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
         this.messageService,
         this.languageService,
         this.layerService,
-        this.confirmDialogService);
+        confirmDialogService);
     } else {
       handleFileImportSuccess(file, features, this.map, this.contextUri, this.messageService, this.languageService,
-        this.layerService, this.confirmDialogService, this.styleListService, this.styleService);
+        this.layerService, confirmDialogService, this.styleListService, this.styleService);
     }
   }
 

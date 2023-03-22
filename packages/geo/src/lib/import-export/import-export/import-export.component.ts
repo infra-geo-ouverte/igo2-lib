@@ -57,6 +57,7 @@ import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { LayerService } from '../../layer/shared/layer.service';
+import { ImportExportServiceOptions } from '../shared/import.interface';
 
 @Component({
   selector: 'igo-import-export',
@@ -750,6 +751,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
+    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const confirmDialogService = importConfig?.allowToStoreLayer ? this.confirmDialogService : undefined;
     if (!this.config.getConfig('importWithStyle')) {
       handleFileImportSuccess(
         file,
@@ -759,7 +762,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.messageService,
         this.languageService,
         this.layerService,
-        this.confirmDialogService
+        confirmDialogService
       );
     } else {
       handleFileImportSuccess(
@@ -770,7 +773,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         this.messageService,
         this.languageService,
         this.layerService,
-        this.confirmDialogService,
+        confirmDialogService,
         this.styleListService,
         this.styleService
       );
