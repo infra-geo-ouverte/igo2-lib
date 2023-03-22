@@ -151,9 +151,11 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
             'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
           queryable: true
         },
-        mapboxStyle: {
-          url: 'assets/mapboxStyleExample-vectortile.json',
-          source: 'ahocevar'
+        igoStyle: {
+          mapboxStyle: {
+            url: 'assets/mapboxStyleExample-vectortile.json',
+            source: 'ahocevar'
+          }
         }
       } as any)
       .subscribe(l => this.map.addLayer(l));
@@ -169,10 +171,12 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
           animation: {
             duration: 2000
           },
-          mapboxStyle: {
-            url: 'assets/mapboxStyleExample-feature.json',
-            source: 'source_nameX'
-          }
+          igoStyle: {
+            mapboxStyle: {
+              url: 'assets/mapboxStyleExample-feature.json',
+              source: 'source_nameX'
+            }
+          },
         }) as VectorLayer;
         this.map.addLayer(layer);
         this.store.bindLayer(layer);
