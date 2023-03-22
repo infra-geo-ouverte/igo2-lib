@@ -506,6 +506,7 @@
         "searchSources": {
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
+          "defaultSettings": "Default Settings",
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",

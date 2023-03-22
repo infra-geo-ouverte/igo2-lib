@@ -505,6 +505,7 @@
         "searchSources": {
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
+          "defaultSettings": "Sélection par défaut",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

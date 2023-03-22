@@ -23,6 +23,7 @@ import {
   sourceCanReverseSearch
 } from '../shared/search.utils';
 import { MediaService, StorageService } from '@igo2/core';
+import { IChercheSearchSource } from '../shared';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -193,6 +194,39 @@ export class SearchSettingsComponent implements OnInit {
       source.enabled = this.searchSourcesAllEnabled;
       this.searchSourceChange.emit(source);
     });
+  }
+
+  /**
+   * Triggered when the default options is clicked
+   * @internal
+   */
+  checkDefaultOptions(event, source: IChercheSearchSource, setting: SearchSourceSettings){
+    event.stopPropagation();
+
+    setting.allEnabled = true;
+    this.checkUncheckAll(event, source, setting);
+
+    switch(source.title){
+      case "iCherche":{
+        if(setting.title === "results type"){
+          source.enabled = true;
+          for(var index in setting.values){
+            setting.values[index].enabled = source.getDefaultOptionsExt().settings[0].values[index].enabled;
+        }
+      }
+      break;
+    }
+      case "Recherche par coordonnées":{
+        break;
+      }
+      default:{
+        break;
+      }
+    }    
+
+    source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
+
   }
 
   /**
