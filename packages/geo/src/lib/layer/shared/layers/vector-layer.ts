@@ -83,7 +83,7 @@ export class VectorLayer extends Layer {
     }
     if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
       if (this.options.idbInfo.firstLoad){
-        this.maintainFeaturesInIdb()
+        this.maintainFeaturesInIdb();
       }
       this.dataSource.ol.once('featuresloadend', () => {
         this.dataSource.ol.on('addfeature', () => this.maintainFeaturesInIdb());
@@ -152,9 +152,9 @@ export class VectorLayer extends Layer {
     if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
       vector.once('sourceready', () => {
         if (this.options.idbInfo.firstLoad){
-          this.maintainOptionsInIdb()
+          this.maintainOptionsInIdb();
         }
-        fromEvent<BaseEvent>(vector, 'change').pipe(debounceTime(750)).subscribe(() => this.maintainOptionsInIdb())
+        fromEvent<BaseEvent>(vector, 'change').pipe(debounceTime(750)).subscribe(() => this.maintainOptionsInIdb());
         vector.on('change:zIndex', () => this.maintainOptionsInIdb());
       });
     }
@@ -190,7 +190,7 @@ export class VectorLayer extends Layer {
   }
 
   private maintainFeaturesInIdb() {
-    const dsFeatures = this.dataSource.ol.getFeatures()
+    const dsFeatures = this.dataSource.ol.getFeatures();
     const geojsonObject = JSON.parse(new olformat.GeoJSON().writeFeatures(dsFeatures, {
       dataProjection: 'EPSG:4326',
       featureProjection: this.dataSource.ol.getProjection() || 'EPSG:3857'

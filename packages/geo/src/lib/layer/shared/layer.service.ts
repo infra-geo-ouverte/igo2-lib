@@ -328,7 +328,7 @@ export class LayerService {
         const layersToAdd = idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
         return zip(layersToAdd.map(layerToAdd => this.createAsyncLayer(layerToAdd)));
       })
-    )
+    );
   }
 
 }
