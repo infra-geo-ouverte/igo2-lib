@@ -33,6 +33,8 @@ import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import { LayerDBData } from '../../../offline';
 import BaseEvent from 'ol/events/Event';
+import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
+
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -164,36 +166,8 @@ export class VectorLayer extends Layer {
     this.layerDBService.deleteByKey(this.id)).subscribe();
   }
 
-  private olStyleToBasicIgoStyle() {
-    const layerOlStyle = this.ol.getStyle();
-    if (typeof layerOlStyle === 'function' || layerOlStyle instanceof Array) {
-      return;
-    }
-    
-    const rStyle = {
-      fill: {
-        color: layerOlStyle.getFill().getColor()
-      },
-      stroke: {
-        color: layerOlStyle.getStroke().getColor(),
-        width: 2
-      },
-      circle: {
-        fill: {
-          color: (layerOlStyle.getImage() as any).getFill().getColor()
-        },
-        stroke: {
-          color: (layerOlStyle.getImage() as any).getStroke().getColor(),
-          width: 2
-        },
-        radius: 5,
-      }
-    }
-    return rStyle;
-  }
-
   private maintainOptionsInIdb() {
-    this.options.igoStyle.igoStyleObject = this.olStyleToBasicIgoStyle();
+    this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
     const layerData: LayerDBData = {
       layerId: this.id,
       detailedContextUri: this.options.idbInfo.contextUri,
