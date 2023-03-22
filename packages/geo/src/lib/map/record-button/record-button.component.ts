@@ -9,15 +9,16 @@ import { MapService } from '../shared/map.service';
 import { downloadContent } from '@igo2/utils';
 import {transform} from 'ol/proj';
 import { MapGeolocationController } from '../shared';
-import { LanguageService, MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import Feature from 'ol/Feature';
 import { LineString } from 'ol/geom';
-import { StyleService, VectorLayer } from '../../layer';
+import { VectorLayer } from '../../layer';
 import { QueryableDataSourceOptions } from '../../query';
 import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
 import NoSleep from 'nosleep.js';
+import { StyleService } from '../../style/style-service/style.service';
 
 interface PositionDetailed {
   coordinates: number[];
@@ -54,7 +55,6 @@ export class RecordButtonComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private mapService: MapService,
-    private languageService: LanguageService,
     private styleService: StyleService,
     private messageService: MessageService,
     private geoDBService: GeoDBService
@@ -120,22 +120,16 @@ export class RecordButtonComponent implements OnInit {
   private setUpRecordListeners(result: any) {
     if(result !== undefined) {
       if(!result.fileName || !result.amountInput) {
-        this.messageService.alert(this.languageService.translate.instant(
-          'igo.geo.record-prompts.badInputs'
-        ));
+        this.messageService.alert('igo.geo.record-prompts.badInputs');
         return;
       }
       if(!this.mapService.getMap()) {
-        this.messageService.alert(this.languageService.translate.instant(
-          'igo.geo.record-prompts.mapNotRendered'
-        ));
+        this.messageService.alert('igo.geo.record-prompts.mapNotRendered');
         return;
       }
       this.geoMap = this.mapService.getMap().geolocationController;
       if(!this.geoMap.position$.value || !this.geoMap.position$.value.position) {
-        this.messageService.alert(this.languageService.translate.instant(
-          'igo.geo.record-prompts.positionNotFound'
-        ));
+        this.messageService.alert('igo.geo.record-prompts.positionNotFound');
         return;
       }
       if(!this.recordParameters && !this.isRecording && this.fileNames.length > 0) {
@@ -426,16 +420,12 @@ export class RecordButtonComponent implements OnInit {
           }
         }
         else {
-          this.messageService.success(this.languageService.translate.instant(
-            'igo.geo.record-prompts.gpxDownloadedToast'
-          ));
+          this.messageService.success('igo.geo.record-prompts.gpxDownloadedToast');
         }
       });
     }
     else {
-      this.messageService.alert(this.languageService.translate.instant(
-        'igo.geo.record-prompts.gpxIsEmpty'
-      ));
+      this.messageService.alert('igo.geo.record-prompts.gpxIsEmpty');
       this.stopRecording();
     }
   }

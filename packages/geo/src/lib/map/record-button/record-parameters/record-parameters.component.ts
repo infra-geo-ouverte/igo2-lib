@@ -91,8 +91,7 @@ export class RecordParametersComponent implements OnInit{
       file,
       features,
       this.mapService.getMap(),
-      this.messageService,
-      this.languageService
+      this.messageService
     );
   }
 
