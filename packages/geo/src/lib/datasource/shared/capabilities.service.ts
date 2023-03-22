@@ -14,7 +14,7 @@ import olAttribution from 'ol/control/Attribution';
 import { ObjectUtils } from '@igo2/utils';
 import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { EsriStyleGenerator } from '../utils/esri-style-generator';
+import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
   QueryFormat,
   QueryFormatMimeType

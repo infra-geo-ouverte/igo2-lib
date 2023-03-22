@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
-import { LanguageService, MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { Layer } from '../../../layer';
 
 @Component({
@@ -87,8 +87,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   constructor(
     private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService,
-    private languageService: LanguageService) {}
+    private messageService: MessageService) {}
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
@@ -137,8 +136,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
             (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
             (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
             this.bufferFormControl.setValue(0);
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.messageService.alert('igo.geo.spatialFilter.bufferAlert', 'igo.geo.spatialFilter.warning');
         }
     });
   }
