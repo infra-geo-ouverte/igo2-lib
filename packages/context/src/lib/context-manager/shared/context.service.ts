@@ -741,7 +741,9 @@ export class ContextService {
         'igo.context.contextManager.errors.addPermission'
       );
     }
-    this.messageService.error(error.error.message, error.error.title);
+    this.messageService.error(
+      'igo.context.contextManager.errors.addPermission',
+      'igo.context.contextManager.errors.addPermissionTitle');
   }
 
   private handleContextsChange(

@@ -49,17 +49,13 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     const contextFromMap = this.contextService.getContextFromMap(map);
 
     const msgSuccess = () => {
-      const translate = this.languageService.translate;
-      const message = translate.instant(
+      this.messageService.success(
         'igo.context.contextManager.dialog.saveMsg',
+        'igo.context.contextManager.dialog.saveTitle',
+        undefined,
         {
           value: context.title
-        }
-      );
-      const title = translate.instant(
-        'igo.context.contextManager.dialog.saveTitle'
-      );
-      this.messageService.success(message, title);
+        });
     };
 
     if (context.imported) {
@@ -94,17 +90,14 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         this.messageService.remove(this.previousMessageId);
       }
       this.contextService.defaultContextId$.next(context.id);
-      const translate = this.languageService.translate;
-      const message = translate.instant(
+      const messageObj = this.messageService.success(
         'igo.context.contextManager.dialog.favoriteMsg',
-        {
-          value: context.title
-        }
+      'igo.context.contextManager.dialog.favoriteTitle',
+      undefined,
+      {
+        value: context.title
+      }
       );
-      const title = translate.instant(
-        'igo.context.contextManager.dialog.favoriteTitle'
-      );
-      const messageObj = this.messageService.success(message, title);
       this.previousMessageId = messageObj.toastId;
       this.cdRef.detectChanges();
     });
@@ -132,16 +125,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
           this.contextService
             .delete(context.id, context.imported)
             .subscribe(() => {
-              const message = translate.instant(
+              this.messageService.info(
                 'igo.context.contextManager.dialog.deleteMsg',
-                {
-                  value: context.title
-                }
-              );
-              const title = translate.instant(
-                'igo.context.contextManager.dialog.deleteTitle'
-              );
-              this.messageService.info(message, title);
+                'igo.context.contextManager.dialog.deleteTitle',
+                undefined,
+                {value: context.title});
             });
         }
       });
@@ -154,17 +142,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       uri: context.uri + '-copy'
     };
     this.contextService.clone(context.id, properties).subscribe(() => {
-      const translate = this.languageService.translate;
-      const message = translate.instant(
+      this.messageService.success(
         'igo.context.contextManager.dialog.cloneMsg',
-        {
-          value: context.title
-        }
-      );
-      const title = translate.instant(
-        'igo.context.contextManager.dialog.cloneTitle'
-      );
-      this.messageService.success(message, title);
+        'igo.context.contextManager.dialog.cloneTitle',
+        undefined,
+        { value: context.title });
     });
   }
 
@@ -177,17 +159,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     );
     context.title = title;
     this.contextService.create(context).subscribe(() => {
-      const translate = this.languageService.translate;
-      const titleD = translate.instant(
-        'igo.context.bookmarkButton.dialog.createTitle'
-      );
-      const message = translate.instant(
+      this.messageService.success(
         'igo.context.bookmarkButton.dialog.createMsg',
-        {
-          value: context.title
-        }
-      );
-      this.messageService.success(message, titleD);
+        'igo.context.bookmarkButton.dialog.createTitle',
+        undefined,
+        { value: context.title });
       this.contextService.loadContext(context.uri);
     });
   }

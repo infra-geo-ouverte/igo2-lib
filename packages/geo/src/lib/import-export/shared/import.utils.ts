@@ -1,4 +1,4 @@
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
@@ -186,12 +186,11 @@ export function handleFileImportSuccess(
   features: Feature[],
   map: IgoMap,
   messageService: MessageService,
-  languageService: LanguageService,
   styleListService?: StyleListService,
   styleService?: StyleService
 ) {
   if (features.length === 0) {
-    handleNothingToImportError(file, messageService, languageService);
+    handleNothingToImportError(file, messageService);
     return;
   }
 
@@ -208,20 +207,17 @@ export function handleFileImportSuccess(
       styleService
     );
   }
-
-  const translate = languageService.translate;
-  const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');
-  const message = translate.instant('igo.geo.dropGeoFile.success.text', {
-    value: layerTitle
-  });
-  messageService.success(message, messageTitle);
+  messageService.success(
+    'igo.geo.dropGeoFile.success.text',
+    'igo.geo.dropGeoFile.success.title',
+    undefined,
+    { value: layerTitle });
 }
 
 export function handleFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService,
   sizeMb?: number
 ) {
   sizeMb = sizeMb ? sizeMb : 30;
@@ -236,7 +232,6 @@ export function handleFileImportError(
     file,
     error,
     messageService,
-    languageService,
     sizeMb
   );
 }
@@ -244,85 +239,79 @@ export function handleFileImportError(
 export function handleInvalidFileImportError(
   file: File,
   error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.dropGeoFile.invalid.title');
-  const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
-    value: file.name,
-    mimeType: file.type
-  });
-  messageService.error(message, title);
+  messageService.error(
+    'igo.geo.dropGeoFile.invalid.text',
+    'igo.geo.dropGeoFile.invalid.title',
+    undefined,
+    {
+      value: file.name,
+      mimeType: file.type
+    });
 }
 
 export function handleUnreadbleFileImportError(
   file: File,
   error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.dropGeoFile.unreadable.title');
-  const message = translate.instant('igo.geo.dropGeoFile.unreadable.text', {
-    value: file.name
-  });
-  messageService.error(message, title);
+  messageService.error('igo.geo.dropGeoFile.unreadable.text',
+    'igo.geo.dropGeoFile.unreadable.title',
+    undefined,
+    { value: file.name });
 }
 
 export function handleSizeFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService,
   sizeMb: number
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.dropGeoFile.tooLarge.title');
-  const message = translate.instant('igo.geo.dropGeoFile.tooLarge.text', {
-    value: file.name,
-    size: sizeMb
-  });
-  messageService.error(message, title);
+  messageService.error(
+    'igo.geo.dropGeoFile.tooLarge.text',
+    'igo.geo.dropGeoFile.tooLarge.title',
+    undefined,
+    {
+      value: file.name,
+      size: sizeMb
+    });
 }
 
 export function handleNothingToImportError(
   file: File,
   messageService: MessageService,
-  languageService: LanguageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.dropGeoFile.empty.title');
-  const message = translate.instant('igo.geo.dropGeoFile.empty.text', {
-    value: file.name,
-    mimeType: file.type
-  });
-  messageService.error(message, title);
+  messageService.error(
+    'igo.geo.dropGeoFile.empty.text',
+    'igo.geo.dropGeoFile.empty.title',
+    undefined,
+    {
+      value: file.name,
+      mimeType: file.type
+    });
 }
 
 export function handleSRSImportError(
   file: File,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.dropGeoFile.invalidSRS.title');
-  const message = translate.instant('igo.geo.dropGeoFile.invalidSRS.text', {
-    value: file.name,
-    mimeType: file.type
-  });
-  messageService.error(message, title);
+  messageService.error(
+    'igo.geo.dropGeoFile.invalidSRS.text',
+    'igo.geo.dropGeoFile.invalidSRS.title',
+    undefined,
+    {
+      value: file.name,
+      mimeType: file.type
+    });
 }
 
 export function handleOgreServerImportError(
   file: File,
   error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const title = languageService.translate.instant('igo.geo.dropGeoFile.ogreServer.title');
-  const message = languageService.translate.instant('igo.geo.dropGeoFile.ogreServer.text');
-  messageService.error(message, title);
+  messageService.error('igo.geo.dropGeoFile.ogreServer.text', 'igo.geo.dropGeoFile.ogreServer.title');
 }
 
 export function getFileExtension(file: File): string {
