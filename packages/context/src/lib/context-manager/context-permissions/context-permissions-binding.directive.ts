@@ -27,15 +27,11 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('addPermission', ['$event'])
   onAddPermission(permission: ContextPermission) {
-    const translate = this.languageService.translate;
+
     if (!permission.profil) {
-      const message = translate.instant(
-        'igo.context.contextManager.errors.addPermissionEmpty'
-      );
-      const title = translate.instant(
-        'igo.context.contextManager.errors.addPermissionTitle'
-      );
-      this.messageService.error(message, title);
+      this.messageService.error(
+        'igo.context.contextManager.errors.addPermissionEmpty',
+        'igo.context.contextManager.errors.addPermissionTitle');
       return;
     }
     const contextId = this.component.context.id;
@@ -50,16 +46,11 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
           this.component.permissions[permission.typePermission].push(p);
         }
         const profil = permission.profil;
-        const message = translate.instant(
+        this.messageService.success(
           'igo.context.permission.dialog.addMsg',
-          {
-            value: profil
-          }
-        );
-        const title = translate.instant(
-          'igo.context.permission.dialog.addTitle'
-        );
-        this.messageService.success(message, title);
+          'igo.context.permission.dialog.addTitle',
+          undefined,
+          { value: profil });
         this.cd.detectChanges();
       });
   }
@@ -78,17 +69,11 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         this.component.permissions[permission.typePermission].splice(index, 1);
 
         const profil = permission.profil;
-        const translate = this.languageService.translate;
-        const message = translate.instant(
+        this.messageService.success(
           'igo.context.permission.dialog.deleteMsg',
-          {
-            value: profil
-          }
-        );
-        const title = translate.instant(
-          'igo.context.permission.dialog.deleteTitle'
-        );
-        this.messageService.success(message, title);
+          'igo.context.permission.dialog.deleteTitle',
+          undefined,
+          { value: profil });
         this.cd.detectChanges();
       });
   }
@@ -97,17 +82,11 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
   onScopeChanged(context: Context) {
     const scope = context.scope;
     this.contextService.update(context.id, { scope }).subscribe(() => {
-      const translate = this.languageService.translate;
-      const message = translate.instant(
+      this.messageService.success(
         'igo.context.permission.dialog.scopeChangedMsg',
-        {
-          value: translate.instant('igo.context.permission.scope.' + scope)
-        }
-      );
-      const title = translate.instant(
-        'igo.context.permission.dialog.scopeChangedTitle'
-      );
-      this.messageService.success(message, title);
+        'igo.context.permission.dialog.scopeChangedTitle',
+        undefined,
+        { value: 'igo.context.permission.scope.' + scope });
     });
   }
 

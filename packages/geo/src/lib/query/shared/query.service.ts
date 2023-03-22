@@ -422,10 +422,8 @@ export class QueryService {
       featureCount.test(url) &&
       ((wmsDatasource.params?.FEATURE_COUNT && this.featureCount > 1 && features.length === this.featureCount) ||
       (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
-      this.languageService.translate.get('igo.geo.query.featureCountMax', {value: layer.title}).subscribe(message => {
-        const messageObj = this.messageService.info(message);
-        this.previousMessageIds.push(messageObj.toastId);
-      });
+      const messageObj = this.messageService.info('igo.geo.query.featureCountMax', undefined, undefined, { value: layer.title });
+      this.previousMessageIds.push(messageObj.toastId);
     }
 
     return features.map((feature: Feature, index: number) => {

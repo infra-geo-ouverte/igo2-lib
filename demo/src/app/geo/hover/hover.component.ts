@@ -45,26 +45,26 @@ export class AppHoverComponent {
   ) {
 
     this.dataSourceService
-    .createAsyncDataSource({
-      type: 'wmts',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
-      layer: 'carte_gouv_qc_public',
-      matrixSet: 'EPSG_3857',
-      version: '1.3.0'
-    })
-    .subscribe(dataSource => {
-      this.map.addLayer(
-        this.layerService.createLayer({
-          title: 'Quebec',
-          visible: true,
-          baseLayer: true,
-          source: dataSource
-        })
-      );
-    });
+      .createAsyncDataSource({
+        type: 'wmts',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
+        layer: 'carte_gouv_qc_public',
+        matrixSet: 'EPSG_3857',
+        version: '1.3.0'
+      })
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Quebec',
+            visible: true,
+            baseLayer: true,
+            source: dataSource
+          })
+        );
+      });
 
     interface WFSDataOptions
-      extends WFSDataSourceOptions {}
+      extends WFSDataSourceOptions { }
 
     const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
@@ -110,39 +110,41 @@ export class AppHoverComponent {
           title: 'WFS (point)',
           visible: true,
           source: dataSource,
-          styleByAttribute: {
-            attribute: 'en_caserne',
-            data: ['true', 'false'],
-            stroke: ['red', 'blue'],
-            fill: ['#ffffff', '#ffffff'],
-            radius: [7, 7],
-            width: [2, 2]
-          },
-          hoverStyle: {
-            label: {
-              attribute: 'Caserne: ${no_caserne} \n Mun: ${nom_ssi}',
-              style: {
-                textAlign: 'left',
-                textBaseline: 'top',
-                font: '12px Calibri,sans-serif',
-                fill: { color: '#000' },
-                backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-                backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
-                stroke: { color: '#fff', width: 3 },
-                overflow: true,
-                offsetX: 20,
-                offsetY: 10,
-                padding: [2.5, 2.5, 2.5, 2.5]
-              }
+          igoStyle: {
+            styleByAttribute: {
+              attribute: 'en_caserne',
+              data: ['true', 'false'],
+              stroke: ['red', 'blue'],
+              fill: ['#ffffff', '#ffffff'],
+              radius: [7, 7],
+              width: [2, 2]
             },
-            baseStyle: {
-              circle: {
-                stroke: {
-                  color: 'orange',
-                  width: 5
-                },
-                width: [5],
-                radius: 15
+            hoverStyle: {
+              label: {
+                attribute: 'Caserne: ${no_caserne} \n Mun: ${nom_ssi}',
+                style: {
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  font: '12px Calibri,sans-serif',
+                  fill: { color: '#000' },
+                  backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
+                  backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
+                  stroke: { color: '#fff', width: 3 },
+                  overflow: true,
+                  offsetX: 20,
+                  offsetY: 10,
+                  padding: [2.5, 2.5, 2.5, 2.5]
+                }
+              },
+              baseStyle: {
+                circle: {
+                  stroke: {
+                    color: 'orange',
+                    width: 5
+                  },
+                  width: [5],
+                  radius: 15
+                }
               }
             }
           }

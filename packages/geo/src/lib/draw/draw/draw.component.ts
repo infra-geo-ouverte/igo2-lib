@@ -23,7 +23,8 @@ import {
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CoordinatesUnit, FontType, GeometryType, LabelType } from '../shared/draw.enum';
+import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
+import { FontType } from '../../style/shared/font.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
@@ -50,7 +51,7 @@ import OlOverlay from 'ol/Overlay';
 import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { getDistance, getLength } from 'ol/sphere';
-import { DrawStyleService } from '../shared/draw-style.service';
+import { DrawStyleService } from '../../style/style-service/draw-style.service';
 import { first, skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
@@ -58,7 +59,8 @@ import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createInteractionStyle, DDtoDMS } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
 import { DrawIconService } from '../shared/draw-icon.service';
-import { StyleModalComponent, StyleModalData } from '../../layer/style-modal/style-modal.component';
+import { StyleModalDrawingComponent } from '../../style/style-modal/drawing/style-modal-drawing.component';
+import { StyleModalData } from '../../style/style-modal/shared/style-modal.interface';
 
 import {
   trigger,
@@ -397,7 +399,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   openStyleModalDialog() {
     setTimeout(() => {
       // open the dialog box used to style features
-      const dialogRef = this.dialog.open(StyleModalComponent, {
+      const dialogRef = this.dialog.open(StyleModalDrawingComponent, {
         disableClose: false,
         data: {
           features: this.selectedFeatures$.getValue(),
@@ -1358,7 +1360,8 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('drawingStyle').fill,
           feature.get('drawingStyle').stroke,
           feature.get('offsetX'),
-          feature.get('offsetY')
+          feature.get('offsetY'),
+          this.map.projection
         );
       });
     }

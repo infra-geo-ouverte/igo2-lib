@@ -379,8 +379,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
             this.bufferFormControl.setValue(0);
             this.buffer = 0;
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.messageService.alert('igo.geo.spatialFilter.bufferAlert','igo.geo.spatialFilter.warning');
         }
     });
 
@@ -763,8 +762,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           this.radiusFormControl.value < 0 ||
           (this.measureUnit === MeasureLengthUnit.Meters && this.radiusFormControl.value >= 100000) ||
           (this.measureUnit === MeasureLengthUnit.Kilometers && this.radiusFormControl.value >= 100)) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.messageService.alert('igo.geo.spatialFilter.radiusAlert', 'igo.geo.spatialFilter.warning');
           this.radius = 1000;
           this.measureUnit === MeasureLengthUnit.Meters ?
             this.radiusFormControl.setValue(this.radius) :
@@ -775,8 +773,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       } else {
         if (formValue) {
           if (formValue >= 100000) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.messageService.alert('igo.geo.spatialFilter.radiusAlert', 'igo.geo.spatialFilter.warning');
             this.formControl.reset();
             return;
           }
