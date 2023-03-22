@@ -16,11 +16,8 @@ export class LayerDBService {
 
   /**
    * Only blob can be will be compressed
-   * @param url
-   * @param regionID
-   * @param object object to handle
-   * @param insertSource type of event user or system
-   * @param insertEvent Name of the event where the insert has been triggered
+   * This method allow to update the stored layer into the indexeddb (layerData)
+   * @param layerDBData
    * @returns
    */
   update(layerDBData: LayerDBData): Observable<any> {
@@ -56,22 +53,30 @@ export class LayerDBService {
     return subject;
   }
 
-  get(layerId: string): Observable<any> {
-    return this.ngxIndexedDBService.getByID(this.dbName, layerId).pipe(
-      map((data: LayerDBData) => {
-        return data;
-      })
-    );
-  }
 
-  getByID(layerId: string): Observable<any> {
+  /**
+   * This method retrieve an idb layer definition 
+   * @param layerId
+   * @returns
+   */
+  getByID(layerId: string): Observable<LayerDBData> {
     return this.ngxIndexedDBService.getByID(this.dbName, layerId);
   }
 
-  deleteByKey(layerId: string): Observable<any> {
+  /**
+   * This method delete an idb layer definition 
+   * @param layerId
+   * @returns
+   */
+  deleteByKey(layerId: string): Observable<boolean> {
     return this.ngxIndexedDBService.deleteByKey(this.dbName, layerId);
   }
 
+  /**
+   * This method retrive all idb layer definition 
+   * @param layerId
+   * @returns
+   */
   getAll(): Observable<LayerDBData[]> {
     return this.ngxIndexedDBService.getAll(this.dbName);
   }
