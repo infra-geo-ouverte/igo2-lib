@@ -476,6 +476,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Données importées (vecteurs)",
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "whole": "L'entièreté du jeu de données"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {
@@ -536,6 +543,7 @@
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
             "radius": "Rayon de recherche",
