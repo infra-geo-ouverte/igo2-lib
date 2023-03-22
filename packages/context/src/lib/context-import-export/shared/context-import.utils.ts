@@ -15,7 +15,7 @@ import {
   featureRandomStyle,
   featureRandomStyleFunction
 } from '@igo2/geo';
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
 import OlFeature from 'ol/Feature';
@@ -24,11 +24,10 @@ export function handleFileImportSuccess(
   file: File,
   context: DetailedContext,
   messageService: MessageService,
-  languageService: LanguageService,
   contextService: ContextService
 ) {
   if (Object.keys(context).length <= 0) {
-    handleNothingToImportError(file, messageService, languageService);
+    handleNothingToImportError(file, messageService);
     return;
   }
 
@@ -36,24 +35,17 @@ export function handleFileImportSuccess(
 
   addContextToContextList(context, contextTitle, contextService);
 
-  const translate = languageService.translate;
-  const messageTitle = translate.instant(
-    'igo.context.contextImportExport.import.success.title'
-  );
-  const message = translate.instant(
+  messageService.success(
     'igo.context.contextImportExport.import.success.text',
-    {
+    'igo.context.contextImportExport.import.success.title', undefined, {
       value: contextTitle
-    }
-  );
-  messageService.success(message, messageTitle);
+    });
 }
 
 export function handleFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService,
   sizeMb?: number
 ) {
   sizeMb = sizeMb ? sizeMb : 30;
@@ -66,7 +58,6 @@ export function handleFileImportError(
     file,
     error,
     messageService,
-    languageService,
     sizeMb
   );
 }
@@ -75,78 +66,57 @@ export function handleInvalidFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant(
-    'igo.context.contextImportExport.import.invalid.title'
-  );
-  const message = translate.instant(
+  messageService.error(
     'igo.context.contextImportExport.import.invalid.text',
+    'igo.context.contextImportExport.import.invalid.title',
+    undefined,
     {
       value: file.name,
       mimeType: file.type
     }
   );
-  messageService.error(message, title);
 }
 
 export function handleSizeFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService,
   sizeMb: number
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant(
-    'igo.context.contextImportExport.import.tooLarge.title'
-  );
-  const message = translate.instant(
+  messageService.error(
     'igo.context.contextImportExport.import.tooLarge.text',
+    'igo.context.contextImportExport.import.tooLarge.title',
+    undefined,
     {
       value: file.name,
       size: sizeMb
-    }
-  );
-  messageService.error(message, title);
+    });
 }
 
 export function handleUnreadbleFileImportError(
   file: File,
   error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant(
-    'igo.context.contextImportExport.import.unreadable.title'
-  );
-  const message = translate.instant(
+  messageService.error(
     'igo.context.contextImportExport.import.unreadable.text',
+    'igo.context.contextImportExport.import.unreadable.title',
+    undefined,
     {
       value: file.name
-    }
-  );
-  messageService.error(message, title);
+    });
 }
 
 export function handleNothingToImportError(
   file: File,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant(
-    'igo.context.contextImportExport.import.empty.title'
-  );
-  const message = translate.instant(
+  messageService.error(
     'igo.context.contextImportExport.import.empty.text',
-    {
-      value: file.name
-    }
-  );
-  messageService.error(message, title);
+    'igo.context.contextImportExport.import.empty.title',
+    undefined,
+    { value: file.name });
 }
 
 export function addContextToContextList(

@@ -668,14 +668,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -695,14 +688,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -1069,14 +1055,7 @@ export class PrintService {
         that.saveFileProcessing();
       }, blobFormat);
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 
@@ -1105,14 +1084,7 @@ export class PrintService {
         }, blobFormat);
       }
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 

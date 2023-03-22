@@ -44,7 +44,7 @@ import {
 
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import { StyleService } from '../../style/style-service/style.service';
-import { LanguageService, MessageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
@@ -59,7 +59,6 @@ export class LayerService {
     private dataSourceService: DataSourceService,
     private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
-    private languageService: LanguageService,
     private layerDBService: LayerDBService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
@@ -132,7 +131,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.messageService, this.languageService, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.messageService, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
