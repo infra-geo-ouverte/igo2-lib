@@ -8,6 +8,7 @@ import { ObjectUtils } from '@igo2/utils';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { Style } from 'ol/style';
+import * as olStyle from 'ol/style';
 
 import {
   OSMDataSource,
@@ -139,7 +140,7 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style[] | Style | OlStyleLike;
+    let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorLayer;
 
     if (!layerOptions.igoStyle) {
@@ -219,6 +220,9 @@ export class LayerService {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
         if (legacyOption === 'style') {
+          if (layerOptions[legacyOption] instanceof olStyle.Style) {
+            return;
+          }
           if (typeof layerOptions[legacyOption] === 'object') {
             newKey = 'igoStyleObject';
           } else {

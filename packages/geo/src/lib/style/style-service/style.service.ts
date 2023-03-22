@@ -85,7 +85,7 @@ export class StyleService {
     return parsedStyle;
   }
 
-  private parseStyle(key: string, value: any) {
+  public parseStyle(key: string, value: any) {
     const styleOptions = {};
     const olCls = this.getOlCls(key);
 
