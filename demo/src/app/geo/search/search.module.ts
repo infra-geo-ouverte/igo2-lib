@@ -19,6 +19,7 @@ import {
   IgoMapModule,
   IgoSearchModule,
   provideIChercheSearchSource,
+  provideWorkspaceSearchSource,
   provideILayerSearchSource,
   provideNominatimSearchSource,
   provideIChercheReverseSearchSource,
@@ -54,6 +55,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
   providers: [
     provideCoordinatesReverseSearchSource(),
     provideIChercheSearchSource(),
+    provideWorkspaceSearchSource(),
     provideILayerSearchSource(),
     provideNominatimSearchSource(),
     provideIChercheReverseSearchSource(),

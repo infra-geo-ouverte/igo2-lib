@@ -474,6 +474,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Imported data (vector)",
+          "restrictExtent": {
+            "map": "Map extent",
+            "whole": "Whole dataset"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {
@@ -500,8 +507,8 @@
             "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
-            "map": "À l'étendue de la carte",
-            "quebec": "Au Québec"
+            "map": "Map extent",
+            "quebec": "Whole Quebec"
           }
         },
         "coordinates": {
@@ -534,6 +541,7 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",
             "radius": "Search radius",
