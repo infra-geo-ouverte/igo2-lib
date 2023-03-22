@@ -8,7 +8,7 @@ import * as olProj from 'ol/proj';
 import { uuid, NumberUtils } from '@igo2/utils';
 
 import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './directions.interface';
-import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';

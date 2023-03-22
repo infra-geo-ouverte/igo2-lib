@@ -23,7 +23,7 @@ import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
-import { getCommonVectorSelectedStyle} from '../../utils';
+import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { WfsWorkspace } from './wfs-workspace';
 import { skipWhile, take } from 'rxjs/operators';

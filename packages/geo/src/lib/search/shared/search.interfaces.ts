@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { CommonVectorStyleOptions } from '../../utils/commonVectorStyle.interface';
+import { CommonVectorStyleOptions } from '../../style/shared/vector/vector-style.interface';
 import { SearchSource } from './sources/source';
 
 export interface Research {

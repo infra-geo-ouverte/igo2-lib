@@ -33,12 +33,13 @@
     "@igo2/common": "^1.14.2",
     "@igo2/core": "^1.14.2",
     "@igo2/utils": "^1.14.2",
-    "ngx-indexed-db": "^11.0.2",
-    "ol": "^7.1.0",
+    "flexsearch": "0.7.21",
+    "ol": "^7.3.0",
     "proj4": "^2.8.0",
     "rxjs": "^7.5.6",
     "striptags": "^3.2.0",
-    "ngx-color-picker": "^13.0.0"
+    "ngx-color-picker": "^13.0.0",
+    "ngx-indexed-db": "^11.0.2"
   },
   "optionalDependencies": {
     "file-saver": "^2.0.2",

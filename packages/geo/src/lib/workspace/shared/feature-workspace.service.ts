@@ -17,13 +17,14 @@ import {
   FeatureStoreInMapExtentStrategy,
   Feature,
   FeatureMotion,
-  FeatureStoreInMapResolutionStrategy
+  FeatureStoreInMapResolutionStrategy,
+  FeatureStoreSearchIndexStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
-import { getCommonVectorSelectedStyle} from '../../utils';
+import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
@@ -79,6 +80,10 @@ export class FeatureWorkspaceService {
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
+    const searchStrategy = new FeatureStoreSearchIndexStrategy({
+      percentDistinctValueRatio: 2,
+      sourceFields: layer.dataSource.options.sourceFields
+    });
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
@@ -101,6 +106,7 @@ export class FeatureWorkspaceService {
       many: true,
       dragBox: true
     });
+    store.addStrategy(searchStrategy, true);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
