@@ -1,7 +1,3 @@
-import * as olStyle from 'ol/style';
-import OlFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-
 import { MessageService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -15,13 +11,14 @@ import {
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { StyleService } from '../../layer/shared/style.service';
-import { StyleByAttribute } from '../../layer/shared/vector-style.interface';
-import { StyleListService } from '../style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
+import { StyleListService } from '../../style/style-list/style-list.service';
 import { ClusterParam } from '../../layer/shared/clusterParam';
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { uuid } from '@igo2/utils';
+import { featureRandomStyle, featureRandomStyleFunction } from '../../style/shared/feature/feature-style';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -38,11 +35,22 @@ export function addLayerAndFeaturesToMap(
   };
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
+  let randomStyle;
+  let editable: boolean = false;
+  if (
+    olFeatures[0].getKeys().includes('_style') ||
+    olFeatures[0].getKeys().includes('_mapTitle')) {
+    randomStyle = featureRandomStyleFunction();
+  } else {
+    randomStyle = featureRandomStyle();
+    editable = true;
+  }
   const layer = new VectorLayer({
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
-    style: createImportedLayerRandomStyle()
+    igoStyle: { editable },
+    style: randomStyle
   });
   layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
   map.addLayer(layer);
@@ -316,44 +324,3 @@ export function getFileExtension(file: File): string {
 export function computeLayerTitleFromFile(file: File): string {
   return file.name.substr(0, file.name.lastIndexOf('.'));
 }
-function createImportedLayerRandomStyle(): (olFeature: OlFeature<OlGeometry>) => olStyle.Style {
-  const r = Math.floor(Math.random() * 255);
-  const g = Math.floor(Math.random() * 255);
-  const b = Math.floor(Math.random() * 255);
-  const stroke = new olStyle.Stroke({
-    color: [r, g, b, 1],
-    width: 2
-  });
-  const fill = new olStyle.Fill({
-    color: [r, g, b, 0.4]
-  });
-
-  return (olFeature: OlFeature<OlGeometry>) => {
-      const customStyle = olFeature.get('_style');
-      if (customStyle) {
-        const styleService = new StyleService();
-        return styleService.createStyle(customStyle);
-      }
-
-      const style = new olStyle.Style({
-        stroke,
-        fill,
-        image: new olStyle.Circle({
-          radius: 5,
-          stroke,
-          fill
-        }),
-        text: olFeature.get('_mapTitle') ? new olStyle.Text({
-          text: olFeature.get('_mapTitle').toString(),
-          offsetX: 5,
-          offsetY: -5,
-          font: '12px Calibri,sans-serif',
-          fill: new olStyle.Fill({ color: '#000' }),
-          stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
-          overflow: true
-        }): undefined
-      });
-      return style;
-  };
-}
-

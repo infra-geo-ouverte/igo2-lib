@@ -1,4 +1,3 @@
-import * as olStyle from 'ol/style';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import {
@@ -12,7 +11,9 @@ import {
   StyleByAttribute,
   ClusterParam,
   ClusterDataSourceOptions,
-  ClusterDataSource
+  ClusterDataSource,
+  featureRandomStyle,
+  featureRandomStyleFunction
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext } from '../../context-manager/shared/context.interface';
@@ -144,36 +145,28 @@ export function addImportedFeaturesToMap(
   map: IgoMap,
   layerTitle: string
 ): VectorLayer {
-  const r = Math.floor(Math.random() * 255);
-  const g = Math.floor(Math.random() * 255);
-  const b = Math.floor(Math.random() * 255);
-  const stroke = new olStyle.Stroke({
-    color: [r, g, b, 1],
-    width: 2
-  });
-
-  const fill = new olStyle.Fill({
-    color: [r, g, b, 0.4]
-  });
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
     type: 'vector',
     queryable: true
   };
   const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
+  let randomStyle;
+  let editable: boolean = false;
+  if (
+    olFeatures[0].getKeys().includes('_style') ||
+    olFeatures[0].getKeys().includes('_mapTitle')) {
+    randomStyle = featureRandomStyleFunction();
+  } else {
+    randomStyle = featureRandomStyle();
+    editable = true;
+  }
   const layer = new VectorLayer({
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
-    style: new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: 5,
-        stroke,
-        fill
-      })
-    })
+    igoStyle: { editable },
+    style: randomStyle
   });
   map.addLayer(layer);
 

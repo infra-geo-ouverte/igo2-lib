@@ -30,6 +30,7 @@ export * from './lib/overlay/overlay.module';
 export * from './lib/print/print.module';
 export * from './lib/query/query.module';
 export * from './lib/search/search.module';
+export * from './lib/style/style.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
@@ -54,4 +55,5 @@ export * from './lib/toast';
 export * from './lib/utils';
 export * from './lib/wkt';
 export * from './lib/workspace';
+export * from './lib/style';
 export * from './lib/offline';

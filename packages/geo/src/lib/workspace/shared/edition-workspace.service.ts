@@ -28,7 +28,7 @@ import {
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
-import { StyleService } from '../../layer/shared/style.service';
+import { StyleService } from '../../style/style-service/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';

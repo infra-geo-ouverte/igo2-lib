@@ -40,8 +40,8 @@ import {
   handleFileImportSuccess,
   handleFileImportError
 } from '../shared/import.utils';
-import { StyleService } from '../../layer/shared/style.service';
-import { StyleListService } from '../style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { StyleListService } from '../../style/style-list/style-list.service';
 import { skipWhile } from 'rxjs/operators';
 import { EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
