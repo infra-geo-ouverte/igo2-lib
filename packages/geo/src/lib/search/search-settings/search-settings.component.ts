@@ -222,7 +222,7 @@ export class SearchSettingsComponent implements OnInit {
       default:{
         break;
       }
-    }    
+    }
 
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
