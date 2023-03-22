@@ -2,7 +2,7 @@ import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angul
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { MessageService, LanguageService, ConfigService } from '@igo2/core';
+import { MessageService, ConfigService } from '@igo2/core';
 import { DragAndDropDirective } from '@igo2/common';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -10,8 +10,8 @@ import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { ImportService } from './import.service';
 import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
-import { StyleService } from '../../layer/shared/style.service';
-import { StyleListService } from '../style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 @Directive({
@@ -32,7 +32,6 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   constructor(
     private component: MapBrowserComponent,
     private importService: ImportService,
-    private languageService: LanguageService,
     private styleListService: StyleListService,
     private styleService: StyleService,
     private config: ConfigService,
@@ -130,9 +129,9 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     if (!this.config.getConfig('importWithStyle')) {
-      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
+      handleFileImportSuccess(file, features, this.map, this.messageService);
     } else {
-      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService,
+      handleFileImportSuccess(file, features, this.map, this.messageService,
                                this.styleListService, this.styleService);
     }
   }
@@ -142,7 +141,6 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
       file,
       error,
       this.messageService,
-      this.languageService,
       this.config.getConfig('importExport.clientSideFileSizeMaxMb'));
   }
 }

@@ -269,6 +269,19 @@
         "saveFeatureInLayer": "Save selection in layer",
         "chooseOrSet": "Choose a layer or set a new layer name"
       },
+      "style": {
+        "styleModal": "Edit style",
+        "styleModalTooltipLayer": "Edit the style of the layer.",
+        "styleModalTooltipSelected": "Edit the style of the selected entities",
+        "colorPicker": "Click to open the color selector",
+        "cancel": "Cancel",
+        "fill": "Fill",
+        "stroke": "Stroke",    
+        "fontSize": "Font size",
+        "fontStyle": "Font style",
+        "offsetX": "Horizontal offset",
+        "offsetY": "Vertical offset"
+      },
       "download": {
         "action": "Download data",
         "title": "Downloading file",
@@ -461,6 +474,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Imported data (vector)",
+          "restrictExtent": {
+            "map": "Map extent",
+            "whole": "Whole dataset"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {
@@ -487,8 +507,8 @@
             "cycleStop": "Cycle stop"
           },
           "restrictExtent": {
-            "map": "À l'étendue de la carte",
-            "quebec": "Au Québec"
+            "map": "Map extent",
+            "quebec": "Whole Quebec"
           }
         },
         "coordinates": {
@@ -521,6 +541,7 @@
           "selectAll": "Select All",
           "unselectAll": "Unselect All",
           "settings": {
+            "datasets": "Datasets",
             "results type": "Results type",
             "ecmax": "Maximum deviation",
             "radius": "Search radius",
@@ -699,12 +720,10 @@
         "abort": "Abort current drawing",
         "cancel": "Cancel",
         "Circle": "Circle",
-        "colorPicker": "Click to open the color selector",
         "dialogInstruction": "Enter your drawing's label",
         "dialogTitle": "Label",
         "delete": "Remove Drawings from map",
         "drawing": "Drawings",
-        "fill": "Fill",
         "finish": "Finish current drawing",
         "freehandMode": "Freehand drawing",
         "icon": "Icons",
@@ -718,14 +737,9 @@
         "Polygon": "Polygon",
         "radius": "Radius",
         "shortcuts": "Keyboard shortcuts",
-        "stroke": "Stroke",
         "styleSelect": "Select style",
         "toggleMapTooltips": "Show map tooltips",
         "undo": "Remove last vertex",
-        "fontSize": "Font size",
-        "fontStyle": "Font style",
-        "offsetX": "Horizontal offset",
-        "offsetY": "Vertical offset",
         "layer": {
           "title": "Title",
           "createNewLayer": "Create new drawing layer",

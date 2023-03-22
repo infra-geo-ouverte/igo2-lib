@@ -20,7 +20,7 @@ export class GeoDBService {
   ) { }
 
   /**
-   * Only blob can be will be compressed
+   * Only blob can be compressed
    * @param url
    * @param regionID
    * @param object object to handle

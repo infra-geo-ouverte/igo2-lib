@@ -9,7 +9,7 @@ import { Projection } from '../../../map/shared/projection.interfaces';
 import { ProjectionService } from '../../../map/shared/projection.service';
 
 /**
- * ICherche search result formatter factory
+ * Coordinate search result formatter factory
  * @ignore
  */
 export function defaultCoordinatesSearchResultFormatterFactory(
@@ -19,7 +19,7 @@ export function defaultCoordinatesSearchResultFormatterFactory(
 }
 
 /**
- * Function that returns a provider for the ICherche search result formatter
+ * Function that returns a provider for the Coordinates search result formatter
  */
 export function provideDefaultCoordinatesSearchResultFormatter() {
   return {
@@ -48,7 +48,7 @@ export function CoordinatesReverseSearchSourceFactory(
 }
 
 /**
- * Function that returns a provider for the IChercheReverse search source
+ * Function that returns a provider for the Coordinate search source
  */
 export function provideCoordinatesReverseSearchSource() {
   return {

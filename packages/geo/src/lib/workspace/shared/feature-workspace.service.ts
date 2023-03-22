@@ -18,13 +18,14 @@ import {
   Feature,
   FeatureMotion,
   FeatureStoreInMapResolutionStrategy,
+  FeatureStoreSearchIndexStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
 import { LayerService, VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
-import { getCommonVectorSelectedStyle, PropertyTypeDetectorService} from '../../utils';
+import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
@@ -33,6 +34,7 @@ import { ConfigService, StorageService } from '@igo2/core';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { getGeoServiceAction } from './workspace.utils';
+import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +88,10 @@ export class FeatureWorkspaceService {
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
+    const searchStrategy = new FeatureStoreSearchIndexStrategy({
+      percentDistinctValueRatio: 2,
+      sourceFields: layer.dataSource.options.sourceFields
+    });
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
@@ -109,6 +115,7 @@ export class FeatureWorkspaceService {
       many: true,
       dragBox: true
     });
+    store.addStrategy(searchStrategy, true);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(geoPropertiesStrategy, true);

@@ -243,12 +243,8 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
               if (features.length >= 10000) {
                 this.messageService.alert(
-                  this.languageService.translate.instant(
-                    'igo.geo.spatialFilter.maxSizeAlert'
-                  ),
-                  this.languageService.translate.instant(
-                    'igo.geo.spatialFilter.warning'
-                  ),
+                  'igo.geo.spatialFilter.maxSizeAlert',
+                  'igo.geo.spatialFilter.warning',
                   { timeOut: 10000 }
                 );
               }
@@ -261,12 +257,8 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       this.loading = false;
       if (zeroResults) {
         this.messageService.alert(
-          this.languageService.translate.instant(
-            'igo.geo.spatialFilter.zeroResults'
-          ),
-          this.languageService.translate.instant(
-            'igo.geo.spatialFilter.warning'
-          ),
+          'igo.geo.spatialFilter.zeroResults',
+          'igo.geo.spatialFilter.warning',
           { timeOut: 10000 }
         );
       }

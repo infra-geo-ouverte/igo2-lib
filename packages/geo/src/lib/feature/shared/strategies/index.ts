@@ -4,3 +4,4 @@ export * from './geo-properties';
 export * from './loading';
 export * from './loading-layer';
 export * from './selection';
+export * from './search';
