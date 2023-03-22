@@ -15,7 +15,6 @@ export class LayerDBService {
   ) { }
 
   /**
-   * Only blob can be will be compressed
    * This method allow to update the stored layer into the indexeddb (layerData)
    * @param layerDBData
    * @returns
