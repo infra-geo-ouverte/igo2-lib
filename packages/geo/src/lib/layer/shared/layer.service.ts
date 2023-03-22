@@ -8,6 +8,7 @@ import { ObjectUtils } from '@igo2/utils';
 import olLayerVectorTile from 'ol/layer/VectorTile';
 
 import { Style } from 'ol/style';
+import * as olStyle from 'ol/style';
 
 import {
   OSMDataSource,
@@ -42,7 +43,7 @@ import {
 } from './layers';
 
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
-import { StyleService } from './style.service';
+import { StyleService } from '../../style/style-service/style.service';
 import { LanguageService, MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
@@ -137,21 +138,29 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
-    let style: Style[] | Style | OlStyleLike;
+    let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorLayer;
-    if (layerOptions.style !== undefined) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
+
+    if (!layerOptions.igoStyle) {
+      layerOptions.igoStyle = {};
+    }
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
+    // handling legacy property.
+    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
+
+    if (layerOptions.igoStyle.igoStyleObject) {
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
-    } else if (layerOptions.styleByAttribute) {
+    } else if (layerOptions.igoStyle?.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute,
+          layerOptions.igoStyle.styleByAttribute,
           resolution
         );
       };
@@ -160,7 +169,7 @@ export class LayerService {
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
-      const baseStyle = layerOptions.clusterBaseStyle;
+      const baseStyle = layerOptions.igoStyle.clusterBaseStyle;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createClusterStyle(
           feature,
@@ -185,22 +194,55 @@ export class LayerService {
     return igoLayer;
   }
 
+  private handleLegacyStyles(layerOptions, legacyStyleOptions: string[]) {
+    legacyStyleOptions.map(legacyOption => {
+      if (layerOptions[legacyOption]) {
+        let newKey = legacyOption;
+        if (legacyOption === 'style') {
+          if (layerOptions[legacyOption] instanceof olStyle.Style) {
+            return;
+          }
+          if (typeof layerOptions[legacyOption] === 'object') {
+            newKey = 'igoStyleObject';
+          } else {
+            return;
+          }
+        }
+        layerOptions.igoStyle[newKey] = layerOptions[legacyOption];
+        delete layerOptions[legacyOption];
+        console.warn(`
+        The location of this style option (${legacyOption}) is deprecated.
+        Please move this property within igoStyle property.
+        Ex: ${legacyOption}: {...} must be transfered to igoStyle: { ${newKey}: {...} }
+        This legacy conversion will be deleted in 2024.
+        `);
+      }
+    });
+  }
+
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
     let style: Style[] | Style | OlStyleLike;
     let igoLayer: VectorTileLayer;
 
-    if (layerOptions.style !== undefined) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.style, feature, resolution);
+    if (!layerOptions.igoStyle) {
+      layerOptions.igoStyle = {};
+    }
+    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'style'];
+    // handling legacy property.
+    this.handleLegacyStyles(layerOptions, legacyStyleOptions);
+
+    if (layerOptions.igoStyle.igoStyleObject) {
+      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     }
 
-    if (layerOptions.styleByAttribute) {
+    if (layerOptions.igoStyle.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature, resolution) => {
         return serviceStyle.createStyleByAttribute(
           feature,
-          layerOptions.styleByAttribute,
+          layerOptions.igoStyle.styleByAttribute,
           resolution
         );
       };
@@ -220,16 +262,16 @@ export class LayerService {
   }
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
-    if (layerOptions.mapboxStyle) {
-      this.getStuff(layerOptions.mapboxStyle.url).subscribe(res => {
+    if (layerOptions.igoStyle?.mapboxStyle) {
+      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe(res => {
         if (res.sprite){
-          const url = this.getAbsoluteUrl(layerOptions.mapboxStyle.url, res.sprite);
+          const url = this.getAbsoluteUrl(layerOptions.igoStyle.mapboxStyle.url, res.sprite);
           this.getStuff(url+'.json').subscribe(res2 => {
-            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source, undefined, res2,
+            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source, undefined, res2,
               url+'.png');
           });
         } else {
-          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.mapboxStyle.source);
+          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source);
         }
       });
     }

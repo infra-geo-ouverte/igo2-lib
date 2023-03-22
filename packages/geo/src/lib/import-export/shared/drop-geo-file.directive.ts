@@ -10,8 +10,8 @@ import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { ImportService } from './import.service';
 import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
-import { StyleService } from '../../layer/shared/style.service';
-import { StyleListService } from '../style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 @Directive({

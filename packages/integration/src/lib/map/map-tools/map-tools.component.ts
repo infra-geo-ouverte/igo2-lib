@@ -311,4 +311,14 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       }
     return false;
   }
+
+  isStyleEditButton(layer: Layer): boolean {
+    if (layer instanceof VectorLayer) {
+      if ((layer as VectorLayer).options.igoStyle.editable) {
+        return true;
+      }
+
+    }
+    return false;
+  }
 }

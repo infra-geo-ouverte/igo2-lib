@@ -542,17 +542,17 @@ export class ContextService {
       });
 
     layers.forEach((layer) => {
+      // Do not seem to work properly. layerFound is always undefined.
       const layerFound = currentContext.layers.find(
         (contextLayer) => {
           const source = contextLayer.source;
           return source && layer.id === source.id && !contextLayer.baseLayer;
         });
-
       if (layerFound) {
         let layerStyle = layerFound[`style`];
-        if (layerFound[`styleByAttribute`]) {
+        if (layerFound[`igoStyle`][`styleByAttribute`]) {
           layerStyle = undefined;
-        } else if (layerFound[`clusterBaseStyle`]) {
+        } else if (layerFound[`igoStyle`][`clusterBaseStyle`]) {
           layerStyle = undefined;
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
@@ -561,8 +561,10 @@ export class ContextService {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
-          styleByAttribute: layerFound[`styleByAttribute`],
-          clusterBaseStyle: layerFound[`clusterBaseStyle`],
+          igoStyle: {
+            styleByAttribute: layerFound[`igoStyle`][`styleByAttribute`],
+            clusterBaseStyle: layerFound[`igoStyle`][`clusterBaseStyle`],
+          },
           style: layerStyle,
           clusterParam: layerFound[`clusterParam`],
           visible: layer.visible,
