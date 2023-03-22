@@ -1,17 +1,34 @@
 textarea { resize: none; };
 
 mat-form-field  { padding: 10px 15px;  };
-mat-form-field.coordinates  { width: 120px; };
-mat-form-field.coordinates2  { width: 120px; padding: 0px 10px 0px 3px };
-mat-form-field.igo-input-container { width: 60%; padding: 0px 15px; };
+mat-form-field.coordinates2  { padding: 0px 10px 0px 3px };
+mat-form-field.igo-input-container { width: 100%; padding: 0px 15px; };
 
 .igo-form-button-group { padding: 0px 10px; margin: 0px 10px };
 
-.center-toggle { padding: 10px 15px 35px; };
-
-mat-slide-toggle {
-    font-size: small;
-  }
 .igo-zoom {
   padding: 0px 15px;
+}
+
+.advanced-coordinates__coordinates-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.advanced-coordinates__coordinates-container__inner {
+  flex: 1 1 0;
+}
+
+.advanced-coordinates__coordinates-container__inner .mat-form-field {
+  width: 50%;
+}
+
+.advanced-coordinates__form ::ng-deep .mat-slide-toggle {
+  padding: 10px 15px 35px;
+  width: 100%;
+}
+
+.advanced-coordinates__form ::ng-deep .mat-slide-toggle-content {
+  width: 100%
 }
