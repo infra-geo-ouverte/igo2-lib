@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, of, Subject } from 'rxjs';
-import { concatMap, first, map } from 'rxjs/operators';
+import { concatMap, first } from 'rxjs/operators';
 import { LayerDBData } from './layerDB.interface';
 
 @Injectable({
@@ -54,7 +54,7 @@ export class LayerDBService {
 
 
   /**
-   * This method retrieve an idb layer definition 
+   * This method retrieve an idb layer definition
    * @param layerId
    * @returns
    */
@@ -63,7 +63,7 @@ export class LayerDBService {
   }
 
   /**
-   * This method delete an idb layer definition 
+   * This method delete an idb layer definition
    * @param layerId
    * @returns
    */
@@ -72,7 +72,7 @@ export class LayerDBService {
   }
 
   /**
-   * This method retrive all idb layer definition 
+   * This method retrive all idb layer definition
    * @param layerId
    * @returns
    */
