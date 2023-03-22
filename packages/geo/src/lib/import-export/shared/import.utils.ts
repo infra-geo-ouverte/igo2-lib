@@ -25,6 +25,7 @@ import { ConfirmDialogService } from '@igo2/common';
 export function addLayerAndFeaturesToMap(
   features: Feature[],
   map: IgoMap,
+  contextUri: string,
   layerTitle: string,
   layerService: LayerService,
   storeToIdb: boolean = false
@@ -57,7 +58,7 @@ export function addLayerAndFeaturesToMap(
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
-    storeToIdb,
+    idbInfo: { firstLoad: true, storeToIdb, contextUri: contextUri || '*' },
     style: randomStyle
   }) as VectorLayer;
   layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
@@ -193,6 +194,7 @@ export function handleFileImportSuccess(
   file: File,
   features: Feature[],
   map: IgoMap,
+  contextUri: string,
   messageService: MessageService,
   languageService: LanguageService,
   layerService: LayerService,
@@ -209,7 +211,7 @@ export function handleFileImportSuccess(
 
   confirmDialogService.open('igo.geo.import.promptStoreToIdb').subscribe((confirm) => {
     if (!styleListService) {
-      addLayerAndFeaturesToMap(features, map, layerTitle, layerService, confirm);
+      addLayerAndFeaturesToMap(features, map, contextUri, layerTitle, layerService, confirm);
     } else {
       addLayerAndFeaturesStyledToMap(
         features,
@@ -219,7 +221,7 @@ export function handleFileImportSuccess(
         styleService
       );
     }
-  
+
   const translate = languageService.translate;
   const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');
   const message = translate.instant('igo.geo.dropGeoFile.success.text', {

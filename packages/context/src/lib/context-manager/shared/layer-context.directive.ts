@@ -1,6 +1,6 @@
 import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
-import { Subscription, merge } from 'rxjs';
+import { Subscription, merge, combineLatest } from 'rxjs';
 import { buffer, debounceTime, filter } from 'rxjs/operators';
 
 import { RouteService, ConfigService } from '@igo2/core';
@@ -88,10 +88,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       })
     );
 
+    combineLatest([this.layerService.createAsyncIdbLayers(context.uri),
     layersAndIndex$
-      .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))
-      .subscribe((layers: Layer[]) => {
-        layers = layers
+      .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))])
+      .subscribe((bunch: [Layer[], Layer[]]) => {
+        const layers = bunch[0].concat(bunch[1])
           .filter((layer: Layer) => layer !== undefined)
           .map((layer) => {
             layer.visible = this.computeLayerVisibilityFromUrl(layer);

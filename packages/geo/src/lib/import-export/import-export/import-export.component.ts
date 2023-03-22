@@ -107,6 +107,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Input() map: IgoMap;
 
+  @Input() contextUri: string;
+
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   @Input()
   set projectionsLimitations(value: ProjectionsLimitationsOptions) {
@@ -753,6 +755,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         file,
         features,
         this.map,
+        this.contextUri,
         this.messageService,
         this.languageService,
         this.layerService,
@@ -763,6 +766,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         file,
         features,
         this.map,
+        this.contextUri,
         this.messageService,
         this.languageService,
         this.layerService,

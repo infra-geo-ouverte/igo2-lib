@@ -26,10 +26,13 @@ import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs
 import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
-import { catchError, concatMap, first } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, first } from 'rxjs/operators';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
-import { of } from 'rxjs';
+import { fromEvent, of, zip } from 'rxjs';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
+import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
+import { LayerDBData } from '../../../offline';
+import BaseEvent from 'ol/events/Event';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -55,9 +58,10 @@ export class VectorLayer extends Layer {
     public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor,
     private geoNetworkService?: GeoNetworkService,
-    public geoDBService?: GeoDBService
+    public geoDBService?: GeoDBService,
+    public layerDBService?: LayerDBService
   ) {
-    super(options, messageService, authInterceptor, geoDBService);
+    super(options, messageService, authInterceptor, geoDBService, layerDBService);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -75,12 +79,16 @@ export class VectorLayer extends Layer {
         }.bind(this)
       );
     }
-    if (this.options.storeToIdb && this.geoDBService) {
-      this.maintainFeaturesInIdb();
-      this.dataSource.ol.on( 'addfeature',() =>{ this.maintainFeaturesInIdb()});
-      this.dataSource.ol.on( 'changefeature',() =>{ this.maintainFeaturesInIdb()});
-      this.dataSource.ol.on( 'clear',() =>{ this.maintainFeaturesInIdb()});
-      this.dataSource.ol.on( 'removefeature',() =>{ this.maintainFeaturesInIdb()});
+    if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+      if (this.options.idbInfo.firstLoad){
+        this.maintainFeaturesInIdb()
+      }
+      this.dataSource.ol.once('featuresloadend', () => {
+        this.dataSource.ol.on('addfeature', () => this.maintainFeaturesInIdb());
+        this.dataSource.ol.on('changefeature', () => this.maintainFeaturesInIdb());
+        this.dataSource.ol.on('clear', () => this.maintainFeaturesInIdb());
+        this.dataSource.ol.on('removefeature', () => this.maintainFeaturesInIdb());
+      });
     }
 
     if (this.options.trackFeature) {
@@ -123,17 +131,97 @@ export class VectorLayer extends Layer {
       if (loader) {
         vectorSource.setLoader(loader);
       }
-    } else {
-      console.log('this.options', this.options, vectorSource)
-      // todo ici to load data from idb
+    } else if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+      const idbLoader = (extent, resolution, proj, success, failure) => {
+        this.customIDBLoader(
+          vectorSource,
+          olOptions.id,
+          extent,
+          proj,
+          success,
+          failure
+        );
+      };
+      if (idbLoader) {
+        vectorSource.setLoader(idbLoader);
+      }
+    }
+
+    if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
+      vector.once('sourceready', () => {
+        if (this.options.idbInfo.firstLoad){
+          this.maintainOptionsInIdb()
+        }
+        fromEvent<BaseEvent>(vector, 'change').pipe(debounceTime(750)).subscribe(() => this.maintainOptionsInIdb())
+        vector.on('change:zIndex', () => this.maintainOptionsInIdb());
+      });
     }
     return vector;
   }
 
+  removeLayerFromIDB() {
+    zip(this.geoDBService.deleteByKey(this.id),
+    this.layerDBService.deleteByKey(this.id)).subscribe();
+  }
+
+  private olStyleToBasicIgoStyle() {
+    const layerOlStyle = this.ol.getStyle();
+    if (typeof layerOlStyle === 'function' || layerOlStyle instanceof Array) {
+      return;
+    }
+    
+    const rStyle = {
+      fill: {
+        color: layerOlStyle.getFill().getColor()
+      },
+      stroke: {
+        color: layerOlStyle.getStroke().getColor(),
+        width: 2
+      },
+      circle: {
+        fill: {
+          color: (layerOlStyle.getImage() as any).getFill().getColor()
+        },
+        stroke: {
+          color: (layerOlStyle.getImage() as any).getStroke().getColor(),
+          width: 2
+        },
+        radius: 5,
+      }
+    }
+    return rStyle;
+  }
+
+  private maintainOptionsInIdb() {
+    this.options.igoStyle.igoStyleObject = this.olStyleToBasicIgoStyle();
+    const layerData: LayerDBData = {
+      layerId: this.id,
+      detailedContextUri: this.options.idbInfo.contextUri,
+      sourceOptions: {
+        id: this.id,
+        type: 'vector',
+        queryable: true
+      },
+      layerOptions: {
+        zIndex: this.ol ? this.zIndex: 1000000,
+        id: this.id,
+        isIgoInternalLayer: this.isIgoInternalLayer,
+        title: this.title,
+        igoStyle: this.options.igoStyle,
+        idbInfo: Object.assign({}, this.options.idbInfo, { firstLoad: false })
+      },
+      insertEvent: `${this.title}-${this.id}-${new Date()}`
+    };
+    this.layerDBService.update(layerData);
+  }
+
   private maintainFeaturesInIdb() {
-    //todo + layer in idb too
-    const geojsonObject = JSON.parse(new olformat.GeoJSON().writeFeatures(this.dataSource.ol.getFeatures()));
-    this.geoDBService.update(this.id,this.id, geojsonObject, InsertSourceInsertDBEnum.User,`${this.title}-${this.id}-${new Date()}`)
+    const dsFeatures = this.dataSource.ol.getFeatures()
+    const geojsonObject = JSON.parse(new olformat.GeoJSON().writeFeatures(dsFeatures, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: this.dataSource.ol.getProjection() || 'EPSG:3857'
+    }));
+    this.geoDBService.update(this.id, this.id, geojsonObject, InsertSourceInsertDBEnum.User, `${this.title}-${this.id}-${new Date()}`);
   }
 
   protected flash(feature) {
@@ -516,4 +604,63 @@ export class VectorLayer extends Layer {
     xhr.send();
   }
   }
+
+
+  /**
+   * Custom loader for vector layer.
+   * @internal
+   * @param vectorSource the vector source to be created
+   * @param layerID the url string or function to retrieve the data
+   * @param interceptor the interceptor of the data
+   * @param extent the extent of the requested data
+   * @param resolution the current resolution
+   * @param projection the projection to retrieve the data
+   */
+  private customIDBLoader(
+    vectorSource,
+    layerID,
+    extent,
+    projection,
+    success,
+    failure
+  ) {
+
+
+    if (this.geoNetworkService) {
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+      this.geoNetworkService.geoDBService.get(layerID)
+      .subscribe((content) => {
+          if (content) {
+            const format = vectorSource.getFormat();
+            const type = format.getType();
+            let source;
+            if (type === 'json' || type === 'text') {
+              source = content;
+            } else if (type === 'xml') {
+              source = content;
+              if (!source) {
+                source = new DOMParser().parseFromString(
+                  content,
+                  'application/xml'
+                );
+              }
+            } else if (type === 'arraybuffer') {
+              source = content;
+            }
+            if (source) {
+              const features = format.readFeatures(source, { extent, featureProjection: projection });
+              vectorSource.addFeatures(features, format.readProjection(source));
+              success(features);
+            } else {
+              onError();
+            }
+          }
+        });
+
+    }
+  }
+
 }

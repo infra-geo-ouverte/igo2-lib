@@ -1,4 +1,4 @@
-import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Directive, HostListener, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -30,6 +30,8 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   get map(): IgoMap {
     return this.component.map;
   }
+
+  @Input() contextUri: string;
 
   constructor(
     private component: MapBrowserComponent,
@@ -134,9 +136,17 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     if (!this.config.getConfig('importWithStyle')) {
-      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService, this.layerService, this.confirmDialogService);
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.contextUri,
+        this.messageService,
+        this.languageService,
+        this.layerService,
+        this.confirmDialogService);
     } else {
-      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService,
+      handleFileImportSuccess(file, features, this.map, this.contextUri, this.messageService, this.languageService,
         this.layerService, this.confirmDialogService, this.styleListService, this.styleService);
     }
   }

@@ -59,13 +59,7 @@ export class LayerDBService {
   get(layerId: string): Observable<any> {
     return this.ngxIndexedDBService.getByID(this.dbName, layerId).pipe(
       map((data: LayerDBData) => {
-        if (data) {
-          const object = data.sourceOptions;
-          // todo constituer l'objet layer
-
-          return object;
-
-        }
+        return data;
       })
     );
   }
@@ -76,5 +70,9 @@ export class LayerDBService {
 
   deleteByKey(layerId: string): Observable<any> {
     return this.ngxIndexedDBService.deleteByKey(this.dbName, layerId);
+  }
+
+  getAll(): Observable<LayerDBData[]> {
+    return this.ngxIndexedDBService.getAll(this.dbName);
   }
 }

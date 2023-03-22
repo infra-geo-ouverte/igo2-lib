@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { map, catchError, concatMap } from 'rxjs/operators';
 import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
@@ -46,6 +46,7 @@ import { StyleService } from '../../style/style-service/style.service';
 import { LanguageService, MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 
 @Injectable({
   providedIn: 'root'
@@ -55,9 +56,10 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
-    private geoNetwork: GeoNetworkService,
+    private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
     private languageService: LanguageService,
+    private layerDBService: LayerDBService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
@@ -146,9 +148,11 @@ export class LayerService {
     const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-
-    if (layerOptions.igoStyle.igoStyleObject) {
+    if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
+    } else if (layerOptions.igoStyle.igoStyleObject && layerOptions.idbInfo?.storeToIdb) {
+      // temporary fix todo : handle it with geostyler.
+      style = this.styleService.parseStyle('style', layerOptions.igoStyle.igoStyleObject);
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
@@ -163,7 +167,13 @@ export class LayerService {
           resolution
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
+      igoLayer = new VectorLayer(
+        layerOptions,
+        this.messageService,
+        this.authInterceptor,
+        this.geoNetworkService,
+        this.geoNetworkService.geoDBService,
+        this.layerDBService);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -177,7 +187,13 @@ export class LayerService {
           baseStyle
         );
       };
-      igoLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
+      igoLayer = new VectorLayer(
+        layerOptions,
+        this.messageService,
+        this.authInterceptor,
+        this.geoNetworkService,
+        this.geoNetworkService.geoDBService,
+        this.layerDBService);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -185,7 +201,12 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor, this.geoNetwork, this.geoNetwork.geoDBService);
+      igoLayer = new VectorLayer(layerOptionsOl,
+        this.messageService,
+        this.authInterceptor,
+        this.geoNetworkService,
+        this.geoNetworkService.geoDBService,
+        this.layerDBService);
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
@@ -294,6 +315,16 @@ export class LayerService {
         return source + "/" + url;
       }
     }
+  }
+
+  createAsyncIdbLayers(detailedContextUri?: string): Observable<Layer[]>{
+    return this.layerDBService.getAll().pipe(
+      concatMap(res => {
+        const idbLayers = detailedContextUri ? res.filter(l => l.detailedContextUri === detailedContextUri) : res;
+        const layersToAdd = idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
+        return zip(layersToAdd.map(layerToAdd => this.createAsyncLayer(layerToAdd)));
+      })
+    )
   }
 
 }
