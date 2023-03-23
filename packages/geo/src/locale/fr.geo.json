@@ -118,7 +118,7 @@
         "combinedLayers": "couchesCombinees"
       },      
       "import": {
-        "promptStoreToIdb": "Est-ce que vous voulez sauvegarder cette couche d'information afin d'être utilisé ultérieurement dans une autre session?"
+        "promptStoreToIdb": "Est-ce que vous voulez sauvegarder cette couche d'information afin d'être utilisée ultérieurement dans une autre session?"
       },
       "importExportForm": {
         "exportButton": "Exporter",
