@@ -294,17 +294,17 @@ export function scaleExtent(
 /**
  * Return true if features are out of view.
  * If features are too close to the edge, they are considered out of view.
- * We define the edge as 5% of the extent size.
+ * By default, we define the edge as 5% (0.05) of the extent size.
  * @param map Map
  * @param featuresExtent The features's extent
  * @returns Return true if features are out of view
  */
 export function featuresAreOutOfView(
   map: IgoMap,
-  featuresExtent: [number, number, number, number]
+  featuresExtent: [number, number, number, number],
+  edgeRatio: number = 0.05
 ) {
   const mapExtent = map.viewController.getExtent();
-  const edgeRatio = 0.05;
   const scale = [-1, -1, -1, -1].map(x => x * edgeRatio);
   const viewExtent = scaleExtent(mapExtent, scale as [
     number,
