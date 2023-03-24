@@ -16,7 +16,7 @@ import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import { StorageService, ConfigService } from '@igo2/core';
 import { MapViewOptions } from '../map.interface';
 import { switchMap } from 'rxjs/operators';
-import { computeOlFeaturesExtent, featuresAreOutOfView, moveToOlFeatures } from '../../../feature/shared/feature.utils';
+import { computeOlFeaturesExtent, featuresAreOutOfView, hideOlFeature, moveToOlFeatures } from '../../../feature/shared/feature.utils';
 export interface MapGeolocationControllerOptions {
   //  todo keepPositionHistory?: boolean;
   projection: olproj.ProjectionLike
@@ -80,7 +80,7 @@ export class MapGeolocationController extends MapController {
     }),
   });
 
-  private get bufferStyle() {
+  private get bufferStyle(): olstyle.Style {
     return new olstyle.Style({
       stroke: new olstyle.Stroke({ width: 2, color: this.buffer.bufferStroke }),
       fill: new olstyle.Fill({ color: this.buffer.bufferFill }),
@@ -92,6 +92,21 @@ export class MapGeolocationController extends MapController {
         text: this.buffer.showBufferRadius ? `${this.buffer.bufferRadius}m` : '',
         fill: new olstyle.Fill({ color: '#000' }),
         stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
+      })
+    });
+  }
+
+  private get arrowStyle(): olstyle.Style {
+    return new olstyle.Style({
+      image: new olstyle.RegularShape({
+        radius: 35,
+        fill: new olstyle.Fill({
+          color: 'rgba(71, 209, 255, 0.4)'
+        }),
+        points: 3,
+        displacement: [0, -29],
+        rotation: this.arrowRotation,
+        rotateWithView: true
       })
     });
   }
@@ -282,19 +297,7 @@ export class MapGeolocationController extends MapController {
       theta += Math.PI;
       this.arrowRotation = theta;
       if(arrowFeature) {
-        arrowFeature.setStyle(new olstyle.Style({
-          image: new olstyle.RegularShape({
-            radius: 35,
-            fill: new olstyle.Fill({
-              color: 'rgba(71, 209, 255, 0.4)'
-            }),
-            points: 3,
-            displacement: [0,-29],
-            rotation: this.arrowRotation,
-            rotateWithView: true
-          }
-            ),
-        }));
+        arrowFeature.setStyle(this.arrowStyle);
       }
       this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
     }
@@ -432,7 +435,7 @@ export class MapGeolocationController extends MapController {
     if (!positionFeatureArrowExists) {
       positionFeatureArrow = new olFeature<Point>({ geometry: positionGeometry });
       positionFeatureArrow.setId(GeolocationOverlayType.PositionDirection);
-      positionFeatureArrow.setStyle(new olstyle.Style({}));
+      hideOlFeature(positionFeatureArrow);
     }
     if (!accuracyFeatureExists) {
       accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
