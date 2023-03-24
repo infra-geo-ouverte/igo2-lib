@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { combineLatest, Observable, of, zip } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, catchError, concatMap } from 'rxjs/operators';
 import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
