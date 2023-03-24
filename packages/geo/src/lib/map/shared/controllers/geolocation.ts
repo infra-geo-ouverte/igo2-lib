@@ -7,6 +7,7 @@ import olFeature from 'ol/Feature';
 import { MapController } from './controller';
 import { Point, Polygon } from 'ol/geom';
 import { fromCircle } from 'ol/geom/Polygon';
+import * as olSphere from 'ol/sphere';
 import OlCircle from 'ol/geom/Circle';
 import { IgoMap } from '../map';
 import * as olstyle from 'ol/style';
@@ -44,6 +45,7 @@ export interface GeolocationBuffer {
 
 enum GeolocationOverlayType {
   Position = 'position',
+  PositionDirection = 'positionDirection',
   Accuracy = 'accuracy',
   Buffer = 'buffer'
 }
@@ -53,6 +55,7 @@ enum GeolocationOverlayType {
  */
 export class MapGeolocationController extends MapController {
 
+  private arrowRotation: number = 0;
   private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
   private positionFeatureStyle: olstyle.Style | olstyle.Style[] = new olstyle.Style({
@@ -113,6 +116,7 @@ export class MapGeolocationController extends MapController {
    */
   public readonly followPosition$ = new BehaviorSubject<boolean>(undefined);
 
+  private lastPosition: {coordinates: number[], dateTime: Date};
 
   /**
    * History of positions
@@ -220,6 +224,7 @@ export class MapGeolocationController extends MapController {
 
   private deleteGeolocationFeatures() {
     this.deleteFeatureByType(GeolocationOverlayType.Position);
+    this.deleteFeatureByType(GeolocationOverlayType.PositionDirection);
     this.deleteFeatureByType(GeolocationOverlayType.Accuracy);
     this.deleteFeatureByType(GeolocationOverlayType.Buffer);
   }
@@ -257,6 +262,65 @@ export class MapGeolocationController extends MapController {
     this.geolocation.on('change', (evt) => {
       this.onPositionChange(false, false);
     });
+  }
+
+  updateArrowFeatureOrientation(position: MapGeolocationState) {
+    const tempPosition = olproj.transform(position.position, position.projection, 'EPSG:4326');
+    if(!this.lastPosition) {
+      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      return;
+    }
+    const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
+    if(this.geolocation.getAccuracy() <= this.accuracyThreshold
+        && this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003) {
+      // Calculate the heading using current position and last recorded
+      // because ol heading not returning right value
+      var dx = tempPosition[1] - this.lastPosition.coordinates[1];
+      var dy = tempPosition[0] - this.lastPosition.coordinates[0];
+      var theta = Math.atan2(dy, dx);
+      if (theta < 0) theta = (2*Math.PI) + theta;
+      theta += Math.PI;
+      this.arrowRotation = theta;
+      if(arrowFeature) {
+        arrowFeature.setStyle(new olstyle.Style({
+          image: new olstyle.RegularShape({
+            radius: 35,
+            fill: new olstyle.Fill({
+              color: 'rgba(71, 209, 255, 0.4)'
+            }),
+            points: 3,
+            displacement: [0,-29],
+            rotation: this.arrowRotation,
+            rotateWithView: true
+          }
+            ),
+        }));
+      }
+      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+    }
+    else {
+      if(arrowFeature && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
+        arrowFeature.setStyle(new olstyle.Style({}));
+    }
+  }
+
+  /**
+   * @returns distance in km between coord1 and coord2
+   */
+  private distanceBetweenPoints(coord1: number[], coord2: number[]): number{
+    return olSphere.getDistance(coord1, coord2) / 1000;
+  }
+
+  public addOnChangedListener(event: (geo: olGeolocation) => any) {
+    let listener = () => {
+      event(this.geolocation);
+    };
+    this.geolocation.on("change", listener);
+    return listener;
+  }
+
+  public deleteChangedListener(event: () => any) {
+    this.geolocation.un("change", event);
   }
 
   public updateGeolocationOptions(options: MapViewOptions) {
@@ -355,13 +419,20 @@ export class MapGeolocationController extends MapController {
     const positionGeometry = new Point(position.position);
     const accuracyGeometry = fromCircle(new OlCircle(position.position, position.accuracy || 0));
     let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
+    let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
     let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
     const positionFeatureExists = positionFeature ? true : false;
+    const positionFeatureArrowExists = positionFeatureArrow ? true : false;
     const accuracyFeatureExists = accuracyFeature ? true : false;
     if (!positionFeatureExists) {
       positionFeature = new olFeature<Point>({ geometry: positionGeometry });
       positionFeature.setId(GeolocationOverlayType.Position);
       positionFeature.setStyle(this.positionFeatureStyle);
+    }
+    if (!positionFeatureArrowExists) {
+      positionFeatureArrow = new olFeature<Point>({ geometry: positionGeometry });
+      positionFeatureArrow.setId(GeolocationOverlayType.PositionDirection);
+      positionFeatureArrow.setStyle(new olstyle.Style({}));
     }
     if (!accuracyFeatureExists) {
       accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
@@ -372,6 +443,9 @@ export class MapGeolocationController extends MapController {
     if (positionGeometry) {
       positionFeatureExists ?
         positionFeature.setGeometry(positionGeometry) : this.geolocationOverlay.addOlFeature(positionFeature, FeatureMotion.None);
+      positionFeatureArrowExists ?
+        positionFeatureArrow.setGeometry(positionGeometry) : this.geolocationOverlay.addOlFeature(positionFeatureArrow, FeatureMotion.None);
+      this.updateArrowFeatureOrientation(position);
       accuracyFeatureExists ?
         accuracyFeature.setGeometry(accuracyGeometry) : this.geolocationOverlay.addOlFeature(accuracyFeature, FeatureMotion.None);
 
@@ -393,10 +467,11 @@ export class MapGeolocationController extends MapController {
   }
   handleViewFromFeatures(zoomTo: boolean = false) {
     let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
+    let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
     let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
     let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
 
-    const features = [positionFeature, accuracyFeature, bufferFeature].filter(f => f);
+    const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
     if (features.length > 0) {
       const featuresExtent = computeOlFeaturesExtent(this.map, features);
       const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, 0.15);
