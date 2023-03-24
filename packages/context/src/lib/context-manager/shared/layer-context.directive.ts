@@ -102,7 +102,18 @@ export class LayerContextDirective implements OnInit, OnDestroy {
               dataProjection: 'EPSG:4326',
               featureProjection: 'EPSG:3857'
             });
-            if (!this.configService.getConfig('importWithStyle')) {
+            const importExportOptions = this.configService.getConfig('importExport');
+            const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
+            if (this.configService.getConfig('importWithStyle')) {
+              console.warn(`
+              The location of this config importWithStyle is deprecated.
+              Please move this property within importExport configuration.
+              Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+              Refer to environnement.ts OR config/config.json
+              This legacy conversion will be deleted in 2024.
+              `);
+            }
+            if (!importWithStyle) {
               addImportedFeaturesToMap(featureCollection, this.map, title);
             } else {
               addImportedFeaturesStyledToMap(

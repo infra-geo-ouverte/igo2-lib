@@ -7,4 +7,5 @@ export interface ImportExportServiceOptions {
   formats?: ExportFormat[];
   configFileToGeoDBService?: string;
   allowToStoreLayer?: boolean;
+  importWithStyle?: boolean;
 }

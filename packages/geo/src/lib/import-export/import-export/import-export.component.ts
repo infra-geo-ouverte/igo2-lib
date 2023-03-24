@@ -747,9 +747,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
-    const confirmDialogService = importConfig?.allowToStoreLayer ? this.confirmDialogService : undefined;
-    if (!this.config.getConfig('importWithStyle')) {
+    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
+    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
+    if (this.config.getConfig('importWithStyle')) {
+      console.warn(`
+      The location of this config importWithStyle is deprecated.
+      Please move this property within importExport configuration.
+      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+      Refer to environnement.ts OR config/config.json
+      This legacy conversion will be deleted in 2024.
+      `);
+    }
+    if (!importWithStyle) {
       handleFileImportSuccess(
         file,
         features,

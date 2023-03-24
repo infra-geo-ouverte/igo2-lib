@@ -301,7 +301,7 @@
         "zoomOut": "Dézoomer ({{zoom}})",
 				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
-        "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
+        "preventScreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
       },
       "metadata": {

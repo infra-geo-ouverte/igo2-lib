@@ -16,7 +16,6 @@ import { concatMap, first, skipWhile } from 'rxjs/operators';
 import { LayerService } from '../../layer/shared/layer.service';
 import { ImportExportServiceOptions } from './import.interface';
 
-
 @Directive({
   selector: '[igoDropGeoFile]'
 })
@@ -135,9 +134,19 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
-    const confirmDialogService = importConfig?.allowToStoreLayer ? this.confirmDialogService : undefined;
-    if (!this.config.getConfig('importWithStyle')) {
+    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
+    if (this.config.getConfig('importWithStyle')) {
+      console.warn(`
+      The location of this config importWithStyle is deprecated.
+      Please move this property within importExport configuration.
+      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+      Refer to environnement.ts OR config/config.json
+      This legacy conversion will be deleted in 2024.
+      `);
+    }
+    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
+    if (!importWithStyle) {
       handleFileImportSuccess(
         file,
         features,
