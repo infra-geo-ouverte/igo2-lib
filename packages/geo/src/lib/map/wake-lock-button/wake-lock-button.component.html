@@ -3,7 +3,7 @@
     <button 
       [color]="color"
       mat-icon-button
-      [matTooltip]="enabled ? ('igo.geo.mapButtons.preventSreenLock' | translate): ('igo.geo.mapButtons.letScreenLock' | translate)"
+      [matTooltip]="enabled ? ('igo.geo.mapButtons.preventScreenLock' | translate): ('igo.geo.mapButtons.letScreenLock' | translate)"
       matTooltipPosition="left"
       (click)="toggleWakeLock()">
       <mat-icon svgIcon="{{icon$ | async}}"></mat-icon>
