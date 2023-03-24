@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, zip } from 'rxjs';
+import { combineLatest, Observable, of, zip } from 'rxjs';
 import { map, catchError, concatMap } from 'rxjs/operators';
 import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
@@ -39,7 +39,8 @@ import {
   VectorLayerOptions,
   AnyLayerOptions,
   VectorTileLayer,
-  VectorTileLayerOptions
+  VectorTileLayerOptions,
+  LayerOptions
 } from './layers';
 
 import { computeMVTOptionsOnHover } from '../utils/layer.utils';
@@ -320,12 +321,12 @@ export class LayerService {
     }
   }
 
-  createAsyncIdbLayers(detailedContextUri?: string): Observable<Layer[]>{
+  createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
     return this.layerDBService.getAll().pipe(
       concatMap(res => {
-        const idbLayers = detailedContextUri ? res.filter(l => l.detailedContextUri === detailedContextUri) : res;
-        const layersToAdd = idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
-        return zip(layersToAdd.map(layerToAdd => this.createAsyncLayer(layerToAdd)));
+        const idbLayers = contextUri !== '*' ? res.filter(l => l.detailedContextUri === contextUri): res;
+        const layersOptions: LayerOptions[] = idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
+        return combineLatest(layersOptions.map(layerOptions => this.createAsyncLayer(layerOptions)));
       })
     );
   }
