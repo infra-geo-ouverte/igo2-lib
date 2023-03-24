@@ -72,7 +72,7 @@
                       (click)="checkUncheckAll($event, source, setting)">{{setting.allEnabled || setting.allEnabled === undefined  ? ('igo.geo.search.searchSources.settings.unselectAll' | translate): ('igo.geo.search.searchSources.settings.selectAll' | translate)}}</button>
                       
                     <!-----Bouton en haut de iCherche----------------------------------------------------------------------------------------------------------------------------------->
-                    <button mat-raised-button (click)="checkDefaultOptions($event, source, setting)">{{'igo.geo.search.searchSources.defaultSettings' | translate}} </button>
+                    <button mat-raised-button (click)="checkDefaultOptions($event, source, source, setting)">{{'igo.geo.search.searchSources.defaultSettings' | translate}} </button>
                     <!-----Bouton en haut de iCherche----------------------------------------------------------------------------------------------------------------------------------->
 
                     </div>

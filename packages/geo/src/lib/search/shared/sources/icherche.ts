@@ -108,11 +108,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   getType(): string {
     return IChercheSearchSource.type;
   }
-/////////////////////////////////////////////////////////////////////////////
+
   getDefaultOptionsExt(): SearchSourceOptions{
     return this.getDefaultOptions();
   }
-//////////////////////////////////////////////////////////////////////////////
+
   protected getDefaultOptions(): SearchSourceOptions {
     const limit =
       this.options.params && this.options.params.limit
@@ -679,6 +679,10 @@ export class IChercheReverseSearchSource extends SearchSource
 
   getType(): string {
     return IChercheReverseSearchSource.type;
+  }
+
+  getDefaultOptionsExt(): SearchSourceOptions{
+    return this.getDefaultOptions();
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

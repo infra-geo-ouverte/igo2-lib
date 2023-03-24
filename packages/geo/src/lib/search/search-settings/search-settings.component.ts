@@ -23,7 +23,7 @@ import {
   sourceCanReverseSearch
 } from '../shared/search.utils';
 import { MediaService, StorageService } from '@igo2/core';
-import { IChercheSearchSource } from '../shared';
+import { IChercheSearchSource, IChercheReverseSearchSource } from '../shared';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -200,33 +200,47 @@ export class SearchSettingsComponent implements OnInit {
    * Triggered when the default options is clicked
    * @internal
    */
-  checkDefaultOptions(event, source: IChercheSearchSource, setting: SearchSourceSettings){
+  checkDefaultOptions(event, iChercheSource: IChercheSearchSource, coordSource: IChercheReverseSearchSource, setting: SearchSourceSettings){
     event.stopPropagation();
-
     setting.allEnabled = true;
-    this.checkUncheckAll(event, source, setting);
+    this.checkUncheckAll(event, iChercheSource, setting);
 
-    switch(source.title){
+    switch(iChercheSource.title){
       case "iCherche":{
         if(setting.title === "results type"){
-          source.enabled = true;
+          iChercheSource.enabled = true;
           for(var index in setting.values){
-            setting.values[index].enabled = source.getDefaultOptionsExt().settings[0].values[index].enabled;
+            setting.values[index].enabled = iChercheSource.getDefaultOptionsExt().settings[0].values[index].enabled;
         }
+        iChercheSource.setParamFromSetting(setting);
+        this.searchSourceChange.emit(iChercheSource);
       }
       break;
     }
       case "Recherche par coordonnées":{
+        if(setting.title === "results type"){
+          coordSource.enabled = true;
+          for(var index in setting.values){
+            setting.values[index].enabled = coordSource.getDefaultOptionsExt().settings[0].values[index].enabled;
+        }
+        coordSource.setParamFromSetting(setting);
+        this.searchSourceChange.emit(coordSource);
+      }
         break;
       }
       default:{
         break;
       }
     }
+  }
 
-    source.setParamFromSetting(setting);
-    this.searchSourceChange.emit(source);
-
+  /**
+   * Triggered when the global default options is clicked
+   * @internal
+   */
+  checkAllDefaultOptions(event){
+    console.log("all default options button clicked");
+    event.stopPropagation();
   }
 
   /**
