@@ -99,12 +99,16 @@ export class MapGeolocationController extends MapController {
   private get arrowStyle(): olstyle.Style {
     return new olstyle.Style({
       image: new olstyle.RegularShape({
-        radius: 35,
+        radius: 5.5,
         fill: new olstyle.Fill({
-          color: 'rgba(71, 209, 255, 0.4)'
+          color: 'rgba(0, 132, 202)'
+        }),
+        stroke: new olstyle.Stroke({
+          color: '#fff',
+          width: 1.5,
         }),
         points: 3,
-        displacement: [0, -29],
+        displacement: [0, 9],
         rotation: this.arrowRotation,
         rotateWithView: true
       })
@@ -286,15 +290,14 @@ export class MapGeolocationController extends MapController {
       return;
     }
     const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
-    if(this.geolocation.getAccuracy() <= this.accuracyThreshold
-        && this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003) {
+    const isMoving = position.speed ? position.speed > 2 : this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003;
+    if(this.geolocation.getAccuracy() <= this.accuracyThreshold && isMoving) {
       // Calculate the heading using current position and last recorded
       // because ol heading not returning right value
       var dx = tempPosition[1] - this.lastPosition.coordinates[1];
       var dy = tempPosition[0] - this.lastPosition.coordinates[0];
       var theta = Math.atan2(dy, dx);
       if (theta < 0) theta = (2*Math.PI) + theta;
-      theta += Math.PI;
       this.arrowRotation = theta;
       if(arrowFeature) {
         arrowFeature.setStyle(this.arrowStyle);
@@ -303,7 +306,7 @@ export class MapGeolocationController extends MapController {
     }
     else {
       if(arrowFeature && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
-        arrowFeature.setStyle(new olstyle.Style({}));
+        hideOlFeature(arrowFeature);
     }
   }
 
@@ -427,15 +430,15 @@ export class MapGeolocationController extends MapController {
     const positionFeatureExists = positionFeature ? true : false;
     const positionFeatureArrowExists = positionFeatureArrow ? true : false;
     const accuracyFeatureExists = accuracyFeature ? true : false;
-    if (!positionFeatureExists) {
-      positionFeature = new olFeature<Point>({ geometry: positionGeometry });
-      positionFeature.setId(GeolocationOverlayType.Position);
-      positionFeature.setStyle(this.positionFeatureStyle);
-    }
     if (!positionFeatureArrowExists) {
       positionFeatureArrow = new olFeature<Point>({ geometry: positionGeometry });
       positionFeatureArrow.setId(GeolocationOverlayType.PositionDirection);
       hideOlFeature(positionFeatureArrow);
+    }
+    if (!positionFeatureExists) {
+      positionFeature = new olFeature<Point>({ geometry: positionGeometry });
+      positionFeature.setId(GeolocationOverlayType.Position);
+      positionFeature.setStyle(this.positionFeatureStyle);
     }
     if (!accuracyFeatureExists) {
       accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
