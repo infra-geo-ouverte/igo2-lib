@@ -324,8 +324,9 @@ export class LayerService {
   createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
     return this.layerDBService.getAll().pipe(
       concatMap(res => {
-        const idbLayers = contextUri !== '*' ? res.filter(l => l.detailedContextUri === contextUri): res;
-        const layersOptions: LayerOptions[] = idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
+        const idbLayers = contextUri !== '*' ? res.filter(l => l.detailedContextUri === contextUri) : res;
+        const layersOptions: LayerOptions[] =
+          idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
         return combineLatest(layersOptions.map(layerOptions => this.createAsyncLayer(layerOptions)));
       })
     );
