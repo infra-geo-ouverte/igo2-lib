@@ -472,7 +472,6 @@ export class MapGeolocationController extends MapController {
 
   }
   handleViewFromFeatures(position: MapGeolocationState, zoomTo: boolean = false) {
-    position
     let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
     let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
     let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
