@@ -118,22 +118,24 @@ export class FeatureStoreSearchIndexStrategy extends EntityStoreStrategy {
         return Object.assign({}, {field: sf2.name, tokenize: "full"}, sf2.searchIndex);
       });
     } else {
-      // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
-      const columns = Object.keys(featuresProperties[0]);
-      const columnsToIndex = [];
-      columnsToNotIndex = columns.map((column) => {
-        const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
-        // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
-        if (
-          (distinctValues.length / featuresProperties.length) * 100 <= ratio ||
-          distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
-          columnsToNotIndex.push(column);
-        } else {
-          columnsToIndex.push(column);
-        }
-      }).filter(f => f);
-      const keysToIndex = columnsToIndex.filter(f => f!== 'igoSearchID');
-      contentToIndex = keysToIndex.map(key => {return {field: key,tokenize: "full"};});
+      if (featuresProperties.length) {
+        // THIS METHOD COMPUTE COLUMN DISTINCT VALUE TO FILTER WHICH COLUMN TO INDEX BASED ON A RATIO or discard float columns
+        const columns = Object.keys(featuresProperties[0]);
+        const columnsToIndex = [];
+        columnsToNotIndex = columns.map((column) => {
+          const distinctValues = [...new Set(featuresProperties.map(item => item[column]))];
+          // identify column to not index based on a ratio distinctValues/nb of features OR discart exclusive float column (ex: lat, long)
+          if (
+            (distinctValues.length / featuresProperties.length) * 100 <= ratio ||
+            distinctValues.every(n => Number(n) === n && n % 1 !== 0)) {
+            columnsToNotIndex.push(column);
+          } else {
+            columnsToIndex.push(column);
+          }
+        }).filter(f => f);
+        const keysToIndex = columnsToIndex.filter(f => f !== 'igoSearchID');
+        contentToIndex = keysToIndex.map(key => { return { field: key, tokenize: "full" }; });
+      }
     }
     store.index.forEach((value, key) => {
       const propertiesToIndex = JSON.parse(JSON.stringify(value.properties));
