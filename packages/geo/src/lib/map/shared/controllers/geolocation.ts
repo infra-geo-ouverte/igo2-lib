@@ -397,7 +397,7 @@ export class MapGeolocationController extends MapController {
       timestamp: new Date()
     };
     this.handleFeatureCreation(position);
-    this.handleViewFromFeatures(zoomTo);
+    this.handleViewFromFeatures(position, zoomTo);
     if (emitEvent) {
       this.position$.next(position);
       /*if (this.keepPositionHistory === true) {
@@ -471,16 +471,16 @@ export class MapGeolocationController extends MapController {
     }
 
   }
-  handleViewFromFeatures(zoomTo: boolean = false) {
+  handleViewFromFeatures(position: MapGeolocationState, zoomTo: boolean = false) {
+    position
     let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
     let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
     let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
     let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
-
     const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
     if (features.length > 0) {
       const featuresExtent = computeOlFeaturesExtent(this.map, features);
-      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, 0.1);
+      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, position?.speed > 55 ? 0.25 : 0.1);
       let motion = this.followPosition && areOutOfView ? FeatureMotion.Move : FeatureMotion.None;
       if (zoomTo) {
         motion = FeatureMotion.Zoom;
