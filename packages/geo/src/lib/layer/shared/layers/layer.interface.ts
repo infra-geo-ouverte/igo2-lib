@@ -50,6 +50,7 @@ export interface GeoWorkspaceOptions {
   queryOptions?: GeoWorkspaceQueryOptions;
   pageSize?: number;
   pageSizeOptions?: number[];
+  searchIndexEnabled?: boolean;
 }
 
 export interface GeoWorkspaceQueryOptions {
