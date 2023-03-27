@@ -23,7 +23,7 @@ import {
   sourceCanReverseSearch
 } from '../shared/search.utils';
 import { MediaService, StorageService } from '@igo2/core';
-import { IChercheSearchSource, IChercheReverseSearchSource } from '../shared';
+import { IChercheSearchSource, IChercheReverseSearchSource, ILayerSearchSource } from '../shared';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -198,40 +198,24 @@ export class SearchSettingsComponent implements OnInit {
 
   /**
    * Triggered when the default options is clicked
+   * Only result type will change
    * @internal
    */
-  checkDefaultOptions(event, iChercheSource: IChercheSearchSource, coordSource: IChercheReverseSearchSource, setting: SearchSourceSettings){
+  checkDefaultOptions(event, source: SearchSource, setting: SearchSourceSettings){
     event.stopPropagation();
     setting.allEnabled = true;
-    this.checkUncheckAll(event, iChercheSource, setting);
+    this.checkUncheckAll(event, source, setting);
+    source.enabled = true;
+    if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource){
+        setting.allEnabled = true;
+        this.checkUncheckAll(event, source, setting);
+        for(var index in setting.values){
+          setting.values[index].enabled = source.getDefaultOptionsExt().settings[0].values[index].enabled;
+        }
+    }
+    source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
 
-    switch(iChercheSource.title){
-      case "iCherche":{
-        if(setting.title === "results type"){
-          iChercheSource.enabled = true;
-          for(var index in setting.values){
-            setting.values[index].enabled = iChercheSource.getDefaultOptionsExt().settings[0].values[index].enabled;
-        }
-        iChercheSource.setParamFromSetting(setting);
-        this.searchSourceChange.emit(iChercheSource);
-      }
-      break;
-    }
-      case "Recherche par coordonnées":{
-        if(setting.title === "results type"){
-          coordSource.enabled = true;
-          for(var index in setting.values){
-            setting.values[index].enabled = coordSource.getDefaultOptionsExt().settings[0].values[index].enabled;
-        }
-        coordSource.setParamFromSetting(setting);
-        this.searchSourceChange.emit(coordSource);
-      }
-        break;
-      }
-      default:{
-        break;
-      }
-    }
   }
 
   /**
@@ -239,8 +223,22 @@ export class SearchSettingsComponent implements OnInit {
    * @internal
    */
   checkAllDefaultOptions(event){
-    console.log("all default options button clicked");
     event.stopPropagation();
+    this.getSearchSources().map((source)=>{
+      source.enabled = true;
+      if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource || source instanceof ILayerSearchSource){
+        for(var settingIndex in source.settings){
+          if(source.settings[settingIndex].type === 'checkbox'){
+            source.settings[settingIndex].allEnabled = true;
+            this.checkUncheckAll(event, source, source.settings[settingIndex]);
+            for(var index in source.settings[settingIndex].values){
+              source.settings[settingIndex].values[index].enabled = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
+            }
+          }
+        }
+        this.searchSourceChange.emit(source);
+      }
+    });
   }
 
   /**
