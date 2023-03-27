@@ -78,6 +78,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   @Input() topPanelStateDefault: string = 'expanded';
 
   private hasFeatureEmphasisOnSelection: boolean = false;
+  public saveSearchResultInLayer: boolean = false;
 
   private showResultsGeometries$$: Subscription;
   private getRoute$$: Subscription;
@@ -166,6 +167,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   ) {
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
+    );
+    this.saveSearchResultInLayer = configService.getConfig(
+      'saveSearchResultInLayer'
     );
   }
 
