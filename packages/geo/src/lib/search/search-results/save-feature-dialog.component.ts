@@ -17,7 +17,7 @@ export class SaveFeatureDialogComponent implements OnInit {
   public form: UntypedFormGroup;
   feature: SearchResult;
   layers: Layer[] = [];
-  filteredLayers: Observable<Layer[]>;
+  filteredLayers$: Observable<Layer[]>;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -35,7 +35,7 @@ export class SaveFeatureDialogComponent implements OnInit {
   ngOnInit() {
     this.feature = this.data.feature;
     this.layers = this.data.layers;
-    this.filteredLayers = this.form.controls['layerName'].valueChanges.pipe(
+    this.filteredLayers$ = this.form.controls['layerName'].valueChanges.pipe(
       startWith(''),
       map(val => this.filter(val))
     );

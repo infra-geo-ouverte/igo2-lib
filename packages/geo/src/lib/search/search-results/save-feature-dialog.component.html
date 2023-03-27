@@ -19,7 +19,7 @@
           [matAutocomplete]="auto"
           formControlName="layerName">
         <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
-          <mat-option *ngFor="let layer of filteredLayers | async" [value]="layer">
+          <mat-option *ngFor="let layer of filteredLayers$ | async" [value]="layer">
             <p mat-line>{{layer.title}}</p>
           </mat-option>
         </mat-autocomplete>
