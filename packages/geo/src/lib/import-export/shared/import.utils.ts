@@ -56,6 +56,7 @@ export function addLayerAndFeaturesToMap(
   const layer = layerService.createLayer({
     id,
     title: layerTitle,
+    workspace: { enabled: true, searchIndexEnabled: true },
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },

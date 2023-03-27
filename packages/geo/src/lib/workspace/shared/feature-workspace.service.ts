@@ -106,7 +106,9 @@ export class FeatureWorkspaceService {
       many: true,
       dragBox: true
     });
-    store.addStrategy(searchStrategy, true);
+    if (layer.options.workspace?.searchIndexEnabled) {
+      store.addStrategy(searchStrategy, true);
+    }
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
