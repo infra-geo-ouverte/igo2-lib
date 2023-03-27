@@ -32,7 +32,6 @@ import OlOverlay from 'ol/Overlay';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { QueryableDataSourceOptions } from '../../query';
-import { createOverlayDefaultStyle } from '../../style/shared/overlay/overlay-style.utils';
 
 
 @Component({
@@ -334,12 +333,18 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
             id: 'igo-search-layer' + ++layerCounterID,
             title: layerTitle,
             source: dataSource,
-            style: createOverlayDefaultStyle({
-              text: '',
-              strokeWidth: 1,
-              fillColor: 'rgba(255,255,255,0.4)',
-              strokeColor: 'rgba(143,7,7,1)'
-            }),
+            igoStyle: {
+              editable: false,
+              igoStyleObject: {
+                fill: { color: 'rgba(255,255,255,0.4)' },
+                stroke: { color: 'rgba(143,7,7,1)', width: 1 },
+                circle: {
+                  fill: { color: 'rgba(255,255,255,0.4)', },
+                  stroke: { color: 'rgba(143,7,7,1)', width: 1 },
+                  radius: 5,
+                }
+              }
+            },
             showInLayerList: true,
             exportable: true,
             workspace: {
