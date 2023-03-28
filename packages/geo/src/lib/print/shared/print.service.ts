@@ -879,6 +879,13 @@ export class PrintService {
             legendPosition,
             format
           );
+        } else if(legendPosition === 'newpage') {
+          await this.getLayersLegendImage(
+            map,
+            format,
+            doZipFile,
+            resolution
+          );
         }
       }
 

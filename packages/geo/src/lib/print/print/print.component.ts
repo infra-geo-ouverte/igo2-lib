@@ -109,15 +109,13 @@ export class PrintComponent {
         nbFileToProcess++;
       }
 
+      if (data.legendPosition === 'newpage') {
+        nbFileToProcess++;
+      }
+
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
       const resolution = +data.resolution;
-
-      let nbRequests = data.showLegend ? 2 : 1;
-
-      if (data.legendPosition === 'newpage') {
-        nbRequests++;
-      }
 
       this.printService
         .downloadMapImage(
@@ -134,24 +132,7 @@ export class PrintComponent {
         )
         .pipe(take(1))
         .subscribe(() => {
-          nbRequests--;
-          if(data.legendPosition === 'newpage') {
-            this.printService.getLayersLegendImage(
-              this.map,
-              data.imageFormat,
-              data.doZipFile,
-              resolution
-            ).then(() => {
-              nbRequests--;
-              if (!nbRequests) {
-                this.disabled$.next(false);
-              }
-            });
-          } else {
-            if (!nbRequests) {
-              this.disabled$.next(false);
-            }
-          }
+          this.disabled$.next(false);
         });
     }
   }
