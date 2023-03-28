@@ -21,7 +21,7 @@ export class OfflineButtonComponent implements OnInit {
     this.map.forcedOffline$.next(this.enabled);
   }
 
-  onToggle() {
+  onClick() {
     this.enabled = !this.enabled;
     this.handleButtonStyle();
     this.map.forcedOffline$.next(this.enabled);
