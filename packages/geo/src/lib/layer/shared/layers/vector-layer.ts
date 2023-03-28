@@ -162,8 +162,10 @@ export class VectorLayer extends Layer {
   }
 
   removeLayerFromIDB() {
-    zip(this.geoDBService.deleteByKey(this.id),
-    this.layerDBService.deleteByKey(this.id)).subscribe();
+    if (this.geoDBService && this.layerDBService) {
+      zip(this.geoDBService.deleteByKey(this.id),
+        this.layerDBService.deleteByKey(this.id)).subscribe();
+    }
   }
 
   private maintainOptionsInIdb() {
