@@ -81,7 +81,7 @@ export class MapOfflineDirective implements AfterViewInit {
         return;
       }
       // detect if layer/source are offlinable by url/pathOffline properties
-      if ((layer.options.sourceOptions as OfflinableSourceOptions).pathOffline) {
+      if ((layer.options.sourceOptions as OfflinableSourceOptions)?.pathOffline) {
         offlinableByUrlSourceOptions = layer.options.sourceOptions;
       }
       if (offlinableByUrlSourceOptions) {
