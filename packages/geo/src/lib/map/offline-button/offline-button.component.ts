@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IgoMap } from '../shared/map';
 
 @Component({
