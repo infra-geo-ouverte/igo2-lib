@@ -96,7 +96,7 @@ export abstract class Layer {
   > = new BehaviorSubject(false);
 
   set maxResolution(value: number) {
-    this.ol.setMaxResolution(value !== undefined ? value : Infinity);
+    this.ol.setMaxResolution(value === 0 ? 0 : value || Infinity);
     this.updateInResolutionsRange();
   }
   get maxResolution(): number {
