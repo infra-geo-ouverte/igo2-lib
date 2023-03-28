@@ -91,13 +91,13 @@ export class AnalyticsService {
    * Traking function for adding layers to the map
    * @param otherParam Either the matrixSet or onmessage of a layer
    */
-  public trackLayer(type: string, layer: string, url?: string, otherParam?: string){
+  public trackLayer(category: string, action: string, type: string, parameters: any){
     if (this.options.provider === 'matomo'){
       switch (type){
         case 'wms':
           //layers
           //this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['trackEvent', 'layer', 'addWMSLayer', layer]);
+          this.paq.push(['trackEvent', category, action, type, parameters]);
           break;
 
         case 'wmts':
@@ -105,34 +105,31 @@ export class AnalyticsService {
           /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
           this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
           this.paq.push(['setCustomVariable', 4, 'matrixSet', otherParam, 'LayerAdded']);*/
-          this.paq.push(['trackEvent', 'layer', 'addWMTSLayer', layer]);
+          this.paq.push(['trackEvent', category, action, type, parameters]);
           break;
 
-        case 'webSocket':
+        case 'arcgisrest':
           //onmessage
           //this.paq.push(['setCustomVariable', 4, 'onmessage', otherParam, 'LayerAdded']);
-          this.paq.push(['trackEvent', 'layer', 'WebSocketLayer', layer]);
+          this.paq.push(['trackEvent', category, action, type, parameters]);
           break;
 
-        case 'cluster':
+        case 'tilearcgisrest':
+          this.paq.push(['trackEvent', category, action, type, parameters]);
+          break;
+
         case 'xyz':
           //type+url
           /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
           this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);*/
-          this.paq.push(['trackEvent', 'layer', 'addLayer', layer]);
+          this.paq.push(['trackEvent', category, action, type, parameters]);
           break;
 
-        case 'osm':
+        case 'imagearcgisrest':
           //type
           //this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
-          this.paq.push(['trackEvent', 'layer', 'addOSMLayer', layer]);
+          this.paq.push(['trackEvent', category, action, type, parameters]);
           break;
-
-        default:
-          //layer+name?
-          /*this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);*/
-          this.paq.push(['trackEvent', 'layer', 'addDefaultLayer', layer]);
       }
     }
   }
