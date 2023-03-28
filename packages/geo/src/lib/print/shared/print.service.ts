@@ -879,7 +879,7 @@ export class PrintService {
             legendPosition,
             format
           );
-        } else if(legendPosition === 'newpage') {
+        } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
             map,
             format,
