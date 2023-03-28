@@ -2,34 +2,26 @@ import { Directive, AfterViewInit } from '@angular/core';
 import {
   NetworkService,
   ConnectionState,
-  MessageService,
-  LanguageService
+  MessageService
 } from '@igo2/core';
 
 import { IgoMap } from './map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
-import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
-import { XYZDataSourceOptions } from '../../datasource/shared/datasources/xyz-datasource.interface';
-import { MVTDataSourceOptions } from '../../datasource/shared/datasources/mvt-datasource.interface';
-import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { Layer } from '../../layer/shared/layers/layer';
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { MVTDataSource } from '../../datasource/shared/datasources/mvt-datasource';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { XYZDataSource } from '../../datasource/shared/datasources/xyz-datasource';
+import { combineLatest } from 'rxjs';
+
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+
+interface OfflinableSourceOptions extends DataSourceOptions {
+  pathOffline?: string;
+}
+
 
 @Directive({
   selector: '[igoMapOffline]'
 })
 export class MapOfflineDirective implements AfterViewInit {
   private component: MapBrowserComponent;
-  private offlineButtonStatus: boolean = false;
-  private networkState: ConnectionState = {
-    connection: true
-  };
-  private offlineButtonState: ConnectionState = {
-    connection: true
-  };
 
   get map(): IgoMap {
     return this.component.map;
@@ -40,149 +32,76 @@ export class MapOfflineDirective implements AfterViewInit {
   constructor(
     component: MapBrowserComponent,
     private networkService: NetworkService,
-    private messageService: MessageService,
-    private languageService: LanguageService
+    private messageService: MessageService
   ) {
     this.component = component;
   }
 
   ngAfterViewInit() {
-    this.map.offlineButtonToggle$.subscribe((offlineButtonToggle: boolean) => {
-      if (this.previousMessageId) {
-        this.messageService.remove(this.previousMessageId);
-      }
-      this.offlineButtonStatus = offlineButtonToggle;
-      if (this.offlineButtonStatus && this.networkState.connection) {
-        const messageObj = this.messageService.info(
-          'igo.geo.network.offline.message',
-          'igo.geo.network.offline.title');
-        this.previousMessageId = messageObj.toastId;
-        this.offlineButtonState.connection = false;
-        this.changeLayer();
-      } else if (!this.offlineButtonStatus && !this.networkState.connection) {
-        const messageObj = this.messageService.info(
-          'igo.geo.network.offline.message',
-          'igo.geo.network.offline.title');
-        this.previousMessageId = messageObj.toastId;
-        this.offlineButtonState.connection = false;
-        this.changeLayer();
-      } else if (!this.offlineButtonStatus && this.networkState.connection) {
-        let message;
-        let title;
-        const translate = this.languageService.translate;
-        const messageObs = translate.get('igo.geo.network.online.message');
-        const titleObs = translate.get('igo.geo.network.online.title');
-        messageObs.subscribe((message1: string) => {
-          message = message1;
-        });
-        titleObs.subscribe((title1: string) => {
-          title = title1;
-        });
-        if (message) {
-          const messageObj = this.messageService.info(message, title);
+    const initialOnline = window.navigator.onLine;
+      this.map.forcedOffline$.subscribe((forcedOffline: boolean) => {
+        const online = window.navigator.onLine;
+        // prevent first online message if no state change.
+        if (initialOnline && initialOnline === online && !forcedOffline) { return;}
+        if (this.previousMessageId) {
+          this.messageService.remove(this.previousMessageId);
+        }
+        if (!forcedOffline && online) {
+          const messageObj = this.messageService.info('igo.geo.network.online.message', 'igo.geo.network.online.title');
+          this.previousMessageId = messageObj.toastId;
+        } else if (forcedOffline) {
+          const messageObj = this.messageService.info('igo.geo.network.offline.message', 'igo.geo.network.offline.title');
           this.previousMessageId = messageObj.toastId;
         }
-        this.offlineButtonState.connection = true;
-        this.changeLayer();
-      }
-    });
+      });
 
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.networkState = state;
-      if (!this.offlineButtonStatus) {
-        this.changeLayer();
-      }
-    });
+      combineLatest([this.networkService.currentState(), this.map.forcedOffline$, this.map.layers$])
+      .subscribe((bunch: [ConnectionState, boolean, Layer[]]) => {
+        const online = bunch[0].connection;
+        const forcedOffline = bunch[1];
+        const layers = bunch[2];
+        this.handleLayersOnlineState(online, forcedOffline, layers);
+        });
 
-    this.map.layers$.subscribe((layers: Layer[]) => {
-      this.changeLayer();
-    });
+
   }
 
-  private changeLayer() {
-    let sourceOptions;
-    const layerList = this.map.layers$.value;
-    layerList.forEach(layer => {
+  private handleNonOfflinableLayerResolution(online: boolean, forcedOffline: boolean, layer: Layer) {
+    if (!online || forcedOffline) {
+      layer.maxResolution = 0;
+    } else if (online || !forcedOffline) {
+      layer.maxResolution = layer.options.maxResolution || Infinity;
+    }
+  }
+
+  private handleLayersOnlineState(online: boolean, forcedOffline: boolean, layers: Layer[]) {
+    layers.forEach(layer => {
+      let offlinableByUrlSourceOptions;
       if (layer.isIgoInternalLayer) {
         return;
       }
-      if (layer.options.source instanceof MVTDataSource) {
-        sourceOptions = layer.options.sourceOptions as MVTDataSourceOptions;
-        layer.ol.getSource().refresh();
-      } else if (layer.options.source instanceof XYZDataSource) {
-        sourceOptions = layer.options.sourceOptions as XYZDataSourceOptions;
-      } else if (layer.options.source instanceof ClusterDataSource) {
-        sourceOptions = layer.options.sourceOptions as ClusterDataSourceOptions;
-      } else if (layer.options.source instanceof FeatureDataSource) {
-        sourceOptions = layer.options.sourceOptions as FeatureDataSourceOptions;
-      } else {
-        if (
-          this.networkState.connection === false ||
-          this.offlineButtonState.connection === false
-        ) {
-          layer.maxResolution = 0;
-          return;
-        } else if (
-          this.networkState.connection === true ||
-          this.offlineButtonState.connection === true
-        ) {
-          layer.maxResolution = layer.options.maxResolution || Infinity;
-          return;
-        }
+      // detect if layer/source are offlinable by url/pathOffline properties
+      if ((layer.options.sourceOptions as OfflinableSourceOptions).pathOffline) {
+        offlinableByUrlSourceOptions = layer.options.sourceOptions;
       }
-
-      if (sourceOptions) {
-        if (
-          (sourceOptions.pathOffline &&
-            this.networkState.connection === false) ||
-          (sourceOptions.pathOffline &&
-            this.offlineButtonState.connection === false)
-        ) {
-          if (
-            sourceOptions.type === 'vector' ||
-            sourceOptions.type === 'cluster'
-          ) {
-            return;
-          }
-          (layer.ol.getSource() as any).setUrl(sourceOptions.pathOffline);
-        } else if (
-          (sourceOptions.pathOffline &&
-            this.networkState.connection === false) ||
-          (sourceOptions.pathOffline &&
-            this.offlineButtonState.connection === true)
-        ) {
-          if (
-            sourceOptions.type === 'vector' ||
-            sourceOptions.type === 'cluster'
-          ) {
-            return;
-          }
-          (layer.ol.getSource() as any).setUrl(sourceOptions.url);
+      if (offlinableByUrlSourceOptions) {
+        const type = offlinableByUrlSourceOptions.type;
+        if (type === 'mvt') {
+          layer.ol.getSource().refresh();
+        }
+        if(!online || forcedOffline) {
+          if (['vector', 'cluster'].includes(type)) { return; }
+          (layer.ol.getSource() as any).setUrl(offlinableByUrlSourceOptions.pathOffline);
+        } else if (!online ||!forcedOffline) {
+          if (['vector', 'cluster'].includes(type)) { return; }
+          (layer.ol.getSource() as any).setUrl(offlinableByUrlSourceOptions.url);
         } else {
-          if (
-            this.networkState.connection === false ||
-            this.offlineButtonState.connection === false
-          ) {
-            layer.maxResolution = 0;
-          } else if (
-            this.networkState.connection === true ||
-            this.offlineButtonState.connection === true
-          ) {
-            layer.maxResolution = layer.options.maxResolution || Infinity;
-          }
+          this.handleNonOfflinableLayerResolution(online, forcedOffline, layer);
         }
       } else {
-        if (
-          this.networkState.connection === false ||
-          this.offlineButtonState.connection === false
-        ) {
-          layer.maxResolution = 0;
-        } else if (
-          this.networkState.connection === true ||
-          this.offlineButtonState.connection === true
-        ) {
-          layer.maxResolution = layer.options.maxResolution || Infinity;
-        }
+        // FOR ALL NON OFFLINABLE SOURCE (i.e. EXCEPT PREVIOUS);
+        this.handleNonOfflinableLayerResolution(online, forcedOffline, layer);
+        return;
       }
     });
   }

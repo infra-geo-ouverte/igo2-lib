@@ -218,7 +218,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     let offlineButtonState;
 
     if (this.map) {
-      this.map.offlineButtonToggle$.pipe(takeUntil(this.unsubscribe$)).subscribe(state => {
+      this.map.forcedOffline$.pipe(takeUntil(this.unsubscribe$)).subscribe(state => {
         offlineButtonState = state;
       });
     }
