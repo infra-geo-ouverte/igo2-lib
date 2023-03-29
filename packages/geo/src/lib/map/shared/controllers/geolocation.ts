@@ -55,7 +55,7 @@ enum GeolocationOverlayType {
  */
 export class MapGeolocationController extends MapController {
 
-  private arrowRotation: number = 0;
+  private arrowRotation: number;
   private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
   private positionFeatureStyle: olstyle.Style | olstyle.Style[] = new olstyle.Style({
@@ -284,25 +284,25 @@ export class MapGeolocationController extends MapController {
   }
 
   updateArrowFeatureOrientation(position: MapGeolocationState) {
-    const tempPosition = olproj.transform(position.position, position.projection, 'EPSG:4326');
+    const position4326 = olproj.transform(position.position, position.projection, 'EPSG:4326');
     if(!this.lastPosition) {
-      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      this.lastPosition = {coordinates: position4326, dateTime: new Date()};
       return;
     }
     const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
-    const isMoving = position.speed ? position.speed > 2 : this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003;
+    const isMoving = position?.speed > 2 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
     if(this.geolocation.getAccuracy() <= this.accuracyThreshold && isMoving) {
       // Calculate the heading using current position and last recorded
       // because ol heading not returning right value
-      var dx = tempPosition[1] - this.lastPosition.coordinates[1];
-      var dy = tempPosition[0] - this.lastPosition.coordinates[0];
+      var dx = position4326[1] - this.lastPosition.coordinates[1];
+      var dy = position4326[0] - this.lastPosition.coordinates[0];
       var theta = Math.atan2(dy, dx);
       if (theta < 0) theta = (2*Math.PI) + theta;
       this.arrowRotation = theta;
       if(arrowFeature) {
         arrowFeature.setStyle(this.arrowStyle);
       }
-      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      this.lastPosition = {coordinates: position4326, dateTime: new Date()};
     }
     else {
       if(arrowFeature && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
