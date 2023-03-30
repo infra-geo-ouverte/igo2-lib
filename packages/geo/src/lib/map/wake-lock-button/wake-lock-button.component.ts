@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { ConfigService, StorageService } from '@igo2/core';
 import { BehaviorSubject } from 'rxjs';
 import NoSleep from 'nosleep.js';
-import { IgoMap } from '../shared/map';
 import { userAgent } from '@igo2/utils';
 
 @Component({
@@ -23,7 +22,6 @@ import { userAgent } from '@igo2/utils';
 export class WakeLockButtonComponent {
 
   @Input() color: string = 'primary';
-  @Input() map: IgoMap;
   @Input()
   get enabled(): boolean {
     return this.storageService.get('wakeLockEnabled') as boolean;

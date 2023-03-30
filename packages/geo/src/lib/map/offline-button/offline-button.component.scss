@@ -1,7 +1,7 @@
 @import '../../../../../core/src/style/partial/media';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.baseStyle {
+.onlineStyle {
   width: $igo-icon-size;
   background-color: rgb(255, 255, 255);
   &:hover {
@@ -9,7 +9,7 @@
   }
 }
 
-.toggleStyle {
+.offlineStyle {
   width: $igo-icon-size;
   background-color: #b9b9b9;
 }
