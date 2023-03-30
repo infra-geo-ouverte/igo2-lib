@@ -169,9 +169,10 @@ export class StoredQueriesSearchSource extends SearchSource
     maxCacheCount: 20
   })
   search(
-    term: string,
+    originalTerm: string,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
+    const term = originalTerm.replace(/-/g,'');
     const storedqueriesParams = this.termSplitter(
       term,
       this.storedQueriesOptions.fields

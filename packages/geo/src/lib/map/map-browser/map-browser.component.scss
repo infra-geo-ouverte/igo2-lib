@@ -51,7 +51,7 @@
 
 :host ::ng-deep igo-wake-lock-button {
   position: absolute;
-  top: calc(2 * #{$igo-icon-size} + 2 * 5px + #{$igo-margin});
+  bottom: calc((4 * #{$igo-icon-size}) + 5px + (2.15 * #{$igo-margin}));
   right: $igo-margin;
   @include mobile {
     bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
@@ -138,14 +138,14 @@
   text-shadow: rgb(255, 255, 255) -1px -1px 3px,
   rgb(255, 255, 255) 1px -1px 3px,
   rgb(255, 255, 255) -1px 1px 3px,
-  rgb(255, 255, 255) 1px 1px 4px;; 
+  rgb(255, 255, 255) 1px 1px 4px;
 }
 
 :host ::ng-deep .ol-scale-step-text {
   text-shadow: rgb(255, 255, 255) -1px -1px 3px,
                rgb(255, 255, 255) 1px -1px 3px,
                rgb(255, 255, 255) -1px 1px 3px,
-               rgb(255, 255, 255) 1px 1px 4px;; 
+               rgb(255, 255, 255) 1px 1px 4px;
 }
 
 :host ::ng-deep canvas {
