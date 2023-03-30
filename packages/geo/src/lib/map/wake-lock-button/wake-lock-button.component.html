@@ -1,5 +1,4 @@
-<div *ngIf="visible" class="igo-wake-lock-button-container">
-  <div>
+<div class="igo-wake-lock-button-container">
     <button 
       [color]="color"
       mat-icon-button
@@ -8,5 +7,4 @@
       (click)="toggleWakeLock()">
       <mat-icon svgIcon="{{icon$ | async}}"></mat-icon>
     </button>
-  </div>
 </div>
