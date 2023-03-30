@@ -300,7 +300,7 @@
         "resetRotation": "Azimuth: {{azimuth}}°N. Rotation: {{rotation}}°. Set map to north",
         "record": "REC",
         "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map.",
-        "preventSreenLock": "Prevent the screen to enter in lock mode.",
+        "preventScreenLock": "Prevent the screen to enter in lock mode.",
         "letScreenLock": "Allow the screen to enter in lock mode."
       },
       "metadata": {
