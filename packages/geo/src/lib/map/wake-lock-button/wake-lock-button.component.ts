@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ConfigService, StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core';
 import { BehaviorSubject } from 'rxjs';
 import NoSleep from 'nosleep.js';
 import { IgoMap } from '../shared/map';
@@ -36,11 +36,7 @@ export class WakeLockButtonComponent {
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject('sleep');
   public visible = false;
 
-  constructor(
-    private config: ConfigService,
-    private storageService: StorageService
-  ) {
-    this.visible = this.config.getConfig('wakeLockApiButton') ? true : false;
+  constructor(private storageService: StorageService) {
     this.noSleep = new NoSleep();
     const nonWakeLockApiBrowser = userAgent.satisfies({
       ie: '>0',
@@ -56,7 +52,7 @@ export class WakeLockButtonComponent {
       window.onblur = () => {
         this.disableWakeLock();
         this.enabled = false;
-    };
+      };
     }
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }
