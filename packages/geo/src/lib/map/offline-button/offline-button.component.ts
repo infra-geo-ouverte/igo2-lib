@@ -1,6 +1,5 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IgoMap } from '../shared/map';
-import { ConfigService } from '@igo2/core';
 
 @Component({
   selector: 'igo-offline-button',
@@ -8,51 +7,31 @@ import { ConfigService } from '@igo2/core';
   styleUrls: ['./offline-button.component.scss']
 })
 
-export class OfflineButtonComponent {
+export class OfflineButtonComponent implements OnInit {
 
-  btnStyle: string = 'baseStyle';
-  colorOff: string = 'rgb(255,255,255)';
+  btnStyle: string = 'onlineStyle';
 
-  @Output() change = new EventEmitter<boolean>();
+  @Input() map: IgoMap;
+  @Input() color: IgoMap;
+  @Input() enabled: boolean = false;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  constructor() {}
 
-  @Input()
-  get color(): string {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color: string;
-
-  @Input() public check: boolean = false;
-
-  get checked(): boolean {
-    return this.check;
+  ngOnInit(): void {
+    this.map.forcedOffline$.next(this.enabled);
   }
 
-  public visible = false;
-
-  constructor(
-    private config: ConfigService
-    ) {
-    this.visible = this.config.getConfig('offlineButton') ? true : false;
+  onClick() {
+    this.enabled = !this.enabled;
+    this.handleButtonStyle();
+    this.map.forcedOffline$.next(this.enabled);
   }
 
-  onToggle() {
-    this.check = !this.check;
-    if (this.check) {
-      this.btnStyle = 'toggleStyle';
+  private handleButtonStyle() {
+    if (this.enabled) {
+      this.btnStyle = 'offlineStyle';
     } else {
-      this.btnStyle = 'baseStyle';
+      this.btnStyle = 'onlineStyle';
     }
   }
 }

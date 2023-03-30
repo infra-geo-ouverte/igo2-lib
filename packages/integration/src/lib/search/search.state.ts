@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { EntityRecord, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreStrategyFuncOptions } from '@igo2/common';
 import { ConfigService, StorageService } from '@igo2/core';
-import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
+import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions, FeatureWorkspace } from '@igo2/geo';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { WorkspaceState } from '../workspace/workspace.state';
 
@@ -73,7 +73,7 @@ export class SearchState {
     const wksSource = this.searchSourceService.getSources().find(source => source.getId() === 'workspace');
     this.workspaceState.store.entities$
     .subscribe(e => {
-      const searchableWks = e.filter(fw => (fw.entityStore as any).searchDocument);
+      const searchableWks = e.filter(fw => fw instanceof FeatureWorkspace && fw.layer.options.workspace.searchIndexEnabled);
       this.searchSourceService.setWorkspaces(wksSource, searchableWks);
     }
     );
