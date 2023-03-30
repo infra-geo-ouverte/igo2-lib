@@ -347,7 +347,7 @@ export class CatalogService {
             catalog.title ? 'igo.geo.catalog.unavailable' : 'igo.geo.catalog.someUnavailable',
             'igo.geo.catalog.unavailableTitle',
             undefined,
-            { value: catalog.title });
+            catalog.title ? { value: catalog.title } : undefined);
           console.error(e);
           return of(undefined);
         })
