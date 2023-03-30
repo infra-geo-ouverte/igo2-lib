@@ -32,7 +32,7 @@
       (resultMouseleave)="onResultUnfocus($event)"
       (moreResults)="onSearch($event)"
       [map]="map">
-      <ng-template #igoSearchItemToolbar let-result="result">
+      <ng-template #igoSearchItemToolbar let-result="result" *ngIf="saveSearchResultInLayer">
         <igo-search-add-button
           [map]="map"
           [store]="store"
