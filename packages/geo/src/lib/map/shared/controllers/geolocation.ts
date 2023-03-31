@@ -1,13 +1,13 @@
 import OlMap from 'ol/Map';
 import olGeolocation from 'ol/Geolocation';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
-import * as olSphere from 'ol/sphere';
-
+import Geometry from 'ol/geom/Geometry';
 import * as olproj from 'ol/proj';
 import olFeature from 'ol/Feature';
 import { MapController } from './controller';
 import { Point, Polygon } from 'ol/geom';
 import { fromCircle } from 'ol/geom/Polygon';
+import * as olSphere from 'ol/sphere';
 import OlCircle from 'ol/geom/Circle';
 import { IgoMap } from '../map';
 import * as olstyle from 'ol/style';
@@ -16,6 +16,7 @@ import { FeatureMotion } from '../../../feature/shared/feature.enums';
 import { StorageService, ConfigService } from '@igo2/core';
 import { MapViewOptions } from '../map.interface';
 import { switchMap } from 'rxjs/operators';
+import { computeOlFeaturesExtent, featuresAreOutOfView, hideOlFeature, moveToOlFeatures } from '../../../feature/shared/feature.utils';
 export interface MapGeolocationControllerOptions {
   //  todo keepPositionHistory?: boolean;
   projection: olproj.ProjectionLike
@@ -54,8 +55,7 @@ enum GeolocationOverlayType {
  */
 export class MapGeolocationController extends MapController {
 
-  private arrowRotation: number = 0;
-  private featureArrow: olFeature<Point>;
+  private arrowRotation: number;
   private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
   private positionFeatureStyle: olstyle.Style | olstyle.Style[] = new olstyle.Style({
@@ -80,6 +80,41 @@ export class MapGeolocationController extends MapController {
     }),
   });
 
+  private get bufferStyle(): olstyle.Style {
+    return new olstyle.Style({
+      stroke: new olstyle.Stroke({ width: 2, color: this.buffer.bufferStroke }),
+      fill: new olstyle.Fill({ color: this.buffer.bufferFill }),
+      text: new olstyle.Text({
+        textAlign: 'left',
+        offsetX: 10,
+        offsetY: -10,
+        font: '12px Calibri,sans-serif',
+        text: this.buffer.showBufferRadius ? `${this.buffer.bufferRadius}m` : '',
+        fill: new olstyle.Fill({ color: '#000' }),
+        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
+      })
+    });
+  }
+
+  private get arrowStyle(): olstyle.Style {
+    return new olstyle.Style({
+      image: new olstyle.RegularShape({
+        radius: 5.5,
+        fill: new olstyle.Fill({
+          color: 'rgba(0, 132, 202)'
+        }),
+        stroke: new olstyle.Stroke({
+          color: '#fff',
+          width: 1.5,
+        }),
+        points: 3,
+        displacement: [0, 9],
+        rotation: this.arrowRotation,
+        rotateWithView: true
+      })
+    });
+  }
+
   private geolocation: olGeolocation;
 
   /**
@@ -101,6 +136,7 @@ export class MapGeolocationController extends MapController {
   public readonly followPosition$ = new BehaviorSubject<boolean>(undefined);
 
   private lastPosition: {coordinates: number[], dateTime: Date};
+
   /**
    * History of positions
    */
@@ -230,9 +266,6 @@ export class MapGeolocationController extends MapController {
       },
       projection: this.options.projection,
     });
-    this.geolocation.on('change', () => {
-      this.updateArrowFeatureOrientation(this.geolocation.getPosition());
-    });
     let tracking = false;
     this.subscriptions$$.push(this.emissionIntervalSeconds$
       .pipe(switchMap(value => interval(value * 1000)))
@@ -244,49 +277,43 @@ export class MapGeolocationController extends MapController {
           this.onPositionChange(true, true);
         }
       }));
+
+    this.geolocation.on('change', (evt) => {
+      this.onPositionChange(false, false);
+    });
   }
 
-  updateArrowFeatureOrientation(position3857: number[]) {
-    const tempPosition = olproj.transform(position3857, 'EPSG:3857', 'EPSG:4326');
+  updateArrowFeatureOrientation(position: MapGeolocationState) {
+    const position4326 = olproj.transform(position.position, position.projection, 'EPSG:4326');
     if(!this.lastPosition) {
-      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      this.lastPosition = {coordinates: position4326, dateTime: new Date()};
       return;
     }
-    if(this.geolocation.getAccuracy() <= this.accuracyThreshold
-        && this.distanceBetweenPoints(this.lastPosition.coordinates, tempPosition) > 0.003) {
-      var dx = tempPosition[1] - this.lastPosition.coordinates[1];
-      var dy = tempPosition[0] - this.lastPosition.coordinates[0];
+    const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
+    const isMoving = position?.speed > 2 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
+    if(this.geolocation.getAccuracy() <= this.accuracyThreshold && isMoving) {
+      // Calculate the heading using current position and last recorded
+      // because ol heading not returning right value
+      var dx = position4326[1] - this.lastPosition.coordinates[1];
+      var dy = position4326[0] - this.lastPosition.coordinates[0];
       var theta = Math.atan2(dy, dx);
       if (theta < 0) theta = (2*Math.PI) + theta;
-      theta += Math.PI;
       this.arrowRotation = theta;
-      if(this.featureArrow) {
-        this.featureArrow.setStyle(new olstyle.Style({
-          image: new olstyle.RegularShape({
-            radius: 35,
-            fill: new olstyle.Fill({
-              color: 'rgba(71, 209, 255, 0.4)'
-            }),
-            points: 3,
-            displacement: [0,-29],
-            rotation: this.arrowRotation,
-            rotateWithView: true
-          }
-            ),
-        }));
+      if(arrowFeature) {
+        arrowFeature.setStyle(this.arrowStyle);
       }
-      this.lastPosition = {coordinates: tempPosition, dateTime: new Date()};
+      this.lastPosition = {coordinates: position4326, dateTime: new Date()};
     }
     else {
-      if(this.featureArrow && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
-        this.featureArrow.setStyle(new olstyle.Style({}));
+      if(arrowFeature && ((new Date()).getTime() - this.lastPosition.dateTime.getTime()) > 3000)
+        hideOlFeature(arrowFeature);
     }
   }
 
   /**
    * @returns distance in km between coord1 and coord2
    */
-   distanceBetweenPoints(coord1: number[], coord2: number[]): number{
+  private distanceBetweenPoints(coord1: number[], coord2: number[]): number{
     return olSphere.getDistance(coord1, coord2) / 1000;
   }
 
@@ -369,7 +396,8 @@ export class MapGeolocationController extends MapController {
       enableHighAccuracy: geolocateProperties.trackingOptions?.enableHighAccuracy ? true : false,
       timestamp: new Date()
     };
-    this.handleFeatureCreation(position, zoomTo);
+    this.handleFeatureCreation(position);
+    this.handleViewFromFeatures(position, zoomTo);
     if (emitEvent) {
       this.position$.next(position);
       /*if (this.keepPositionHistory === true) {
@@ -379,80 +407,84 @@ export class MapGeolocationController extends MapController {
     }
   }
 
+  private getFeatureByType(type: GeolocationOverlayType): olFeature<Geometry> {
+    return this.geolocationOverlay.dataSource.ol.getFeatureById(type);
+  }
+
   private deleteFeatureByType(type: GeolocationOverlayType) {
     const featureById = this.geolocationOverlay.dataSource.ol.getFeatureById(type);
     if (featureById) {
       this.geolocationOverlay.dataSource.ol.removeFeature(featureById);
     }
-
   }
 
-  private handleFeatureCreation(position: MapGeolocationState, zoomTo: boolean = false) {
+  private handleFeatureCreation(position: MapGeolocationState) {
     if (!position || !position.position) {
       return;
     }
-    this.deleteGeolocationFeatures();
     const positionGeometry = new Point(position.position);
     const accuracyGeometry = fromCircle(new OlCircle(position.position, position.accuracy || 0));
-
-    const positionFeatureArrow = new olFeature<Point>({ geometry: positionGeometry });
-    const positionFeatureCircle = new olFeature<Point>({ geometry: positionGeometry });
-    const accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
-
-    if (positionGeometry) {
-      let motion = this.followPosition ? FeatureMotion.Move : FeatureMotion.None;
-      if (zoomTo) {
-        motion = FeatureMotion.Zoom;
-      }
-      positionFeatureCircle.setId(GeolocationOverlayType.Position);
-      positionFeatureCircle.setStyle(this.positionFeatureStyle);
+    let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
+    let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
+    let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
+    const positionFeatureExists = positionFeature ? true : false;
+    const positionFeatureArrowExists = positionFeatureArrow ? true : false;
+    const accuracyFeatureExists = accuracyFeature ? true : false;
+    if (!positionFeatureArrowExists) {
+      positionFeatureArrow = new olFeature<Point>({ geometry: positionGeometry });
       positionFeatureArrow.setId(GeolocationOverlayType.PositionDirection);
-      if(this.arrowRotation) {
-        positionFeatureArrow.setStyle(new olstyle.Style({
-          image: new olstyle.RegularShape({
-            radius: 35,
-            fill: new olstyle.Fill({
-              color: 'rgba(71, 209, 255, 0.4)'
-            }),
-            points: 3,
-            displacement: [0,-29],
-            rotation: this.arrowRotation,
-            rotateWithView: true
-          }
-            ),
-        }));
+      hideOlFeature(positionFeatureArrow);
       }
-      else {
-        positionFeatureArrow.setStyle(new olstyle.Style({}));
-      }
-      this.geolocationOverlay.addOlFeature(positionFeatureArrow);
-      this.featureArrow = positionFeatureArrow;
-      this.updateArrowFeatureOrientation(position.position);
-      this.geolocationOverlay.addOlFeature(positionFeatureCircle, motion);
-      if (accuracyGeometry) {
+    if (!positionFeatureExists) {
+      positionFeature = new olFeature<Point>({ geometry: positionGeometry });
+      positionFeature.setId(GeolocationOverlayType.Position);
+      positionFeature.setStyle(this.positionFeatureStyle);
+    }
+    if (!accuracyFeatureExists) {
+      accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
         accuracyFeature.setId(GeolocationOverlayType.Accuracy);
         accuracyFeature.setStyle(this.accuracyFeatureStyle);
-        this.geolocationOverlay.addOlFeature(accuracyFeature, motion);
       }
+
+    if (positionGeometry) {
+      positionFeatureExists ?
+        positionFeature.setGeometry(positionGeometry) : this.geolocationOverlay.addOlFeature(positionFeature, FeatureMotion.None);
+      positionFeatureArrowExists ?
+        positionFeatureArrow.setGeometry(positionGeometry) : this.geolocationOverlay.addOlFeature(positionFeatureArrow, FeatureMotion.None);
+      this.updateArrowFeatureOrientation(position);
+      accuracyFeatureExists ?
+        accuracyFeature.setGeometry(accuracyGeometry) : this.geolocationOverlay.addOlFeature(accuracyFeature, FeatureMotion.None);
+
       if (this.buffer) {
-        const bufferFeature = new olFeature(new OlCircle(position.position, this.buffer.bufferRadius));
-        const bufferStyle = new olstyle.Style({
-          stroke: new olstyle.Stroke({ width: 2, color: this.buffer.bufferStroke }),
-          fill: new olstyle.Fill({ color: this.buffer.bufferFill }),
-          text: new olstyle.Text({
-            textAlign: 'left',
-            offsetX: 10,
-            offsetY: -10,
-            font: '12px Calibri,sans-serif',
-            text: this.buffer.showBufferRadius ? `${this.buffer.bufferRadius}m` : '',
-            fill: new olstyle.Fill({ color: '#000' }),
-            stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
-          })
-        });
+        let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
+        const bufferFeatureExists = bufferFeature ? true : false;
+        const bufferGeometry = new OlCircle(position.position, this.buffer.bufferRadius);
+        if (!bufferFeatureExists) {
+          bufferFeature = new olFeature(bufferGeometry);
         bufferFeature.setId(GeolocationOverlayType.Buffer);
-        bufferFeature.setStyle(bufferStyle);
-        this.geolocationOverlay.addOlFeature(bufferFeature, motion);
+          bufferFeature.setStyle(this.positionFeatureStyle);
       }
+        bufferFeature.setStyle(this.bufferStyle);
+        bufferFeatureExists ?
+          bufferFeature.setGeometry(bufferGeometry) : this.geolocationOverlay.addOlFeature(bufferFeature, FeatureMotion.None);
+    }
+    }
+
+  }
+  handleViewFromFeatures(position: MapGeolocationState, zoomTo: boolean = false) {
+    let positionFeature = this.getFeatureByType(GeolocationOverlayType.Position);
+    let positionFeatureArrow = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
+    let accuracyFeature = this.getFeatureByType(GeolocationOverlayType.Accuracy);
+    let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
+    const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
+    if (features.length > 0) {
+      const featuresExtent = computeOlFeaturesExtent(this.map, features);
+      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, position?.speed > 55 ? 0.25 : 0.1);
+      let motion = this.followPosition && areOutOfView ? FeatureMotion.Move : FeatureMotion.None;
+      if (zoomTo) {
+        motion = FeatureMotion.Zoom;
+}
+      motion !== FeatureMotion.None ? moveToOlFeatures(this.map, features, motion) : undefined;
     }
   }
 }
