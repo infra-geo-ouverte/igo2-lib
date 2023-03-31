@@ -343,18 +343,11 @@ export class CatalogService {
       .getCapabilities(sType as any, catalog.url, catalog.version)
       .pipe(
         catchError((e) => {
-          const title = this.languageService.translate.instant(
-            'igo.geo.catalog.unavailableTitle'
-          );
-          const message =
-          catalog.title ? this.languageService.translate.instant(
-            'igo.geo.catalog.unavailable',
-            { value: catalog.title }
-          ) : this.languageService.translate.instant(
-            'igo.geo.catalog.someUnavailable'
-          );
-
-          this.messageService.error(message, title);
+          this.messageService.error(
+            catalog.title ? 'igo.geo.catalog.unavailable' : 'igo.geo.catalog.someUnavailable',
+            'igo.geo.catalog.unavailableTitle',
+            undefined,
+            catalog.title ? { value: catalog.title } : undefined);
           console.error(e);
           return of(undefined);
         })
@@ -702,9 +695,8 @@ export class CatalogService {
     !capabilities.layers ? [] : capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
     if (!capabilities.layers) {
       this.messageService.error(
-        this.languageService.translate.instant('igo.geo.catalog.someUnavailable'),
-        this.languageService.translate.instant('igo.geo.catalog.unavailableTitle')
-      );
+        'igo.geo.catalog.someUnavailable',
+        'igo.geo.catalog.unavailableTitle');
     }
 
     const regexes = (catalog.regFilters || []).map(

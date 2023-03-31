@@ -106,12 +106,7 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
 
     const successful = Clipboard.copy(this.mapProximityState.currentPositionCoordinate$?.value.toString());
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.integration.map-proximity-tool.copyTitle'
-      );
-      const msg = translate.instant('igo.integration.map-proximity-tool.copyMsg');
-      this.messageService.success(msg, title);
+      this.messageService.success('igo.integration.map-proximity-tool.copyMsg', 'igo.integration.map-proximity-tool.copyTitle');
     }
   }
 }

@@ -89,15 +89,22 @@
       <span *ngIf="hasPointerReverseSearchSource && !isTouchScreen">
         <mat-divider></mat-divider>
         <span class="pointer-summary-slide-toggle-container mat-typography">
-          <mat-slide-toggle class="pointer-summary-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
+          <mat-slide-toggle class="search-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
             matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
             (click)="$event.stopPropagation()" [checked]="pointerSummaryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.pointerSearchSummary.title' | translate}}
           </mat-slide-toggle>
-          <mat-slide-toggle class="pointer-summary-option" (change)="changeSearchResultsGeometry($event)" tooltip-position="below"
+          <mat-slide-toggle class="search-option" (change)="changeSearchResultsGeometry($event)" tooltip-position="below"
             matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.searchResultsGeometry.tooltip' | translate"
             (click)="$event.stopPropagation()" [checked]="searchResultsGeometryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.searchResultsGeometry.title' | translate}}
+          </mat-slide-toggle>
+          <mat-slide-toggle class="search-option" (change)="reverseSearchCoordsFormat($event)" tooltip-position="below"
+            matTooltipShowDelay="500"
+            [matTooltip]="reverseSearchCoordsFormatEnabled ? ('igo.geo.search.reverseCoordFormat.tooltipLatLon' | translate)
+            : ('igo.geo.search.reverseCoordFormat.tooltipLonLat' | translate)"
+            (click)="$event.stopPropagation()" [checked]="reverseSearchCoordsFormatEnabled" [labelPosition]="'after'">
+            {{'igo.geo.search.reverseCoordFormat.title' | translate}}
           </mat-slide-toggle>
         </span>
       </span>

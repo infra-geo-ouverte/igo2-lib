@@ -2,6 +2,8 @@ import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olextent from 'ol/extent';
 
+import { Document } from 'flexsearch';
+
 import {
   getEntityId,
   EntityKey,
@@ -39,6 +41,19 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   get source(): FeatureDataSource {
     return this.layer ? this.layer.dataSource as FeatureDataSource : undefined;
   }
+
+  /**
+   * The searchable index of loaded feature. Computed if strategy is provided
+   */
+  set searchDocument(v: Document<T>) {
+    this._searchDocument = v;
+  }
+
+  get searchDocument(): Document<T> {
+    return this._searchDocument;
+  }
+  private _searchDocument: Document<T>;
+
 
   constructor(entities: T[], options: FeatureStoreOptions) {
     super(entities, options);

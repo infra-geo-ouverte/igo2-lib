@@ -4,7 +4,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 
-import { IgoImportExportModule } from '@igo2/geo';
+import { IgoImportExportModule, IgoStyleModule } from '@igo2/geo';
 import { ImportExportToolComponent } from './import-export-tool/import-export-tool.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -20,7 +20,8 @@ import { IgoContextImportExportModule } from '@igo2/context';
     CommonModule,
     IgoLanguageModule,
     MatButtonToggleModule,
-    MatTabsModule
+    MatTabsModule,
+    IgoStyleModule
   ],
   declarations: [ImportExportToolComponent],
   exports: [ImportExportToolComponent],

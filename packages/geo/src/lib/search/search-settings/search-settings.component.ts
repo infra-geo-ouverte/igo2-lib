@@ -54,6 +54,7 @@ export class SearchSettingsComponent implements OnInit {
 
   @Input() pointerSummaryEnabled: boolean = false;
   @Input() searchResultsGeometryEnabled: boolean = false;
+  @Input() reverseSearchCoordsFormatEnabled: boolean = false;
 
   /**
    * Event emitted when the enabled search source changes
@@ -69,6 +70,11 @@ export class SearchSettingsComponent implements OnInit {
    * Event emitted when the show geometry summary is changed
    */
   @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+
+  /**
+   * Event emitted when the coords format is changed
+   */
+  @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -306,5 +312,10 @@ export class SearchSettingsComponent implements OnInit {
   changeSearchResultsGeometry(event) {
     this.searchResultsGeometryEnabled = event.checked;
     this.searchResultsGeometryStatus.emit(this.searchResultsGeometryEnabled);
+  }
+
+  reverseSearchCoordsFormat(event) {
+    this.reverseSearchCoordsFormatEnabled = event.checked;
+    this.reverseSearchCoordsFormatStatus.emit(this.reverseSearchCoordsFormatEnabled);
   }
 }

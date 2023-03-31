@@ -15,3 +15,6 @@ export * from './storedqueries.providers';
 export * from './coordinates';
 export * from './coordinates.interfaces';
 export * from './coordinates.providers';
+export * from './workspace';
+export * from './workspace.interfaces';
+export * from './workspace.providers';

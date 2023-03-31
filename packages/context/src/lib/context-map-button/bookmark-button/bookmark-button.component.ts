@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from '../../context-manager/shared/context.service';
@@ -35,7 +35,6 @@ export class BookmarkButtonComponent {
   constructor(
     private dialog: MatDialog,
     private contextService: ContextService,
-    private languageService: LanguageService,
     private messageService: MessageService
   ) {}
 
@@ -49,17 +48,11 @@ export class BookmarkButtonComponent {
           const context = this.contextService.getContextFromMap(this.map);
           context.title = title;
           this.contextService.create(context).subscribe(() => {
-            const translate = this.languageService.translate;
-            const titleD = translate.instant(
-              'igo.context.bookmarkButton.dialog.createTitle'
-            );
-            const message = translate.instant(
+            this.messageService.success(
               'igo.context.bookmarkButton.dialog.createMsg',
-              {
-                value: context.title
-              }
-            );
-            this.messageService.success(message, titleD);
+              'igo.context.bookmarkButton.dialog.createTitle',
+              undefined,
+              { value: context.title });
             this.contextService.loadContext(context.uri);
           });
         }

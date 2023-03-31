@@ -5,6 +5,9 @@
         matInput
         formControlName="title"
         placeholder="{{'igo.geo.printForm.title' | translate}}">
+        <mat-error *ngIf="titleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.title' | translate, 
+          value: 130 } }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
@@ -13,6 +16,9 @@
         matInput
         formControlName="subtitle"
         placeholder="{{'igo.geo.printForm.subtitle' | translate}}">
+        <mat-error *ngIf="subtitleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.subtitle' | translate, 
+          value: 120 } }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
@@ -21,6 +27,9 @@
         matInput
         formControlName="comment"
         placeholder="{{'igo.geo.printForm.comment' | translate}}">
+        <mat-error *ngIf="commentField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
+          column: 'igo.geo.printForm.comment' | translate, 
+          value: maxLength } }}</mat-error>
     </mat-form-field>
   </div>
 
@@ -54,8 +63,16 @@
         formControlName="legendPosition"
         placeholder="{{'igo.geo.printForm.legendPosition' | translate}}">
         <mat-option *ngFor="let legendPosition of legendPositions | keyvalue " [value]="legendPosition.key">
+          <ng-container *ngIf="!['newpage', 'newimage'].includes(legendPosition.value)">
             {{'igo.geo.printForm.legendPositions.' + legendPosition.value | translate}}
+          </ng-container>
+
+          <ng-container *ngIf="['newpage', 'newimage'].includes(legendPosition.value)">
+            {{ ((outputFormat === 'Pdf') ? 'igo.geo.printForm.legendPositions.newpage' : 
+            'igo.geo.printForm.legendPositions.newimage') | translate}}
+          </ng-container>
         </mat-option>
+
       </mat-select>
     </mat-form-field>
   </div>
@@ -74,7 +91,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select
+      <mat-select (selectionChange)="changeCommentLength()"
         formControlName="paperFormat"
         placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
         <mat-option *ngFor="let paperFormat of paperFormats | keyvalue " [value]="paperFormat.key">
@@ -110,7 +127,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select
+      <mat-select (selectionChange)="changeCommentLength()"
         formControlName="orientation"
         placeholder="{{'igo.geo.printForm.orientation' | translate}}">
         <mat-option *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">

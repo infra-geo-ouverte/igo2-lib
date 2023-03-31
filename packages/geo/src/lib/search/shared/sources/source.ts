@@ -9,6 +9,8 @@ import {
   ReverseSearchOptions,
   SearchSourceSettings
 } from './source.interfaces';
+import { FeatureStore } from '../../../feature';
+import { Workspace } from '@igo2/common';
 
 /**
  * Base search source class
@@ -108,6 +110,38 @@ export class SearchSource {
    */
   get settings(): SearchSourceSettings[] {
     return this.options.settings === undefined ? [] : this.options.settings;
+  }
+
+  set featureStoresWithIndex(storesWithIndex: FeatureStore[]) {
+    this._featureStoresWithIndex = storesWithIndex;
+  }
+  get featureStoresWithIndex() {
+    return this._featureStoresWithIndex;
+  }
+  private _featureStoresWithIndex: FeatureStore[];
+
+  setWorkspaces(workspaces: Workspace[]) {
+    if (workspaces.filter(fw => (fw.entityStore as FeatureStore).searchDocument).length >= 1) {
+      this.options.available = true;
+    } else {
+      this.options.available = false;
+    }
+    const values = [];
+    this.featureStoresWithIndex = workspaces
+      .filter(fw => (fw.entityStore as FeatureStore).searchDocument)
+      .map(fw => {
+        values.push({
+          title: fw.title,
+          value: fw.title,
+          enabled: true
+        });
+        return fw.entityStore as FeatureStore;
+      });
+    const datasets = this.options.settings.find(s => s.title === 'datasets');
+    if (datasets) {
+      datasets.values = values;
+    }
+    this.setParamFromSetting(datasets);
   }
 
   /**
@@ -252,6 +286,7 @@ export interface ReverseSearch {
    */
   reverseSearch(
     lonLat: [number, number],
-    options?: ReverseSearchOptions
+    options?: ReverseSearchOptions,
+    reverseSearchCoordsFormat?: boolean
   ): Observable<SearchResult[]>;
 }

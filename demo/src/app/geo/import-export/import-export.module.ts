@@ -6,7 +6,8 @@ import { IgoMessageModule } from '@igo2/core';
 import {
   IgoMapModule,
   IgoImportExportModule,
-  provideStyleListOptions
+  provideStyleListOptions,
+  IgoStyleModule
 } from '@igo2/geo';
 
 import { AppImportExportComponent } from './import-export.component';
@@ -20,6 +21,7 @@ import { AppImportExportRoutingModule } from './import-export-routing.module';
     MatButtonModule,
     IgoMessageModule,
     IgoMapModule,
+    IgoStyleModule,
     IgoImportExportModule
   ],
   exports: [AppImportExportComponent],
