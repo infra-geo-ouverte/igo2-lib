@@ -589,11 +589,11 @@ export class PrintService {
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
         OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
-      // Find attributions by class and delete 
+      // Find attributions by class and delete
       // the collapsed class to open attribution Copyright
       const element = mapOverlayHTML.querySelector('.ol-attribution');
       const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if(olCollapsed) {
+      if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
       // Change the styles of hyperlink in the printed version
@@ -611,7 +611,7 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
       this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
-      if(olCollapsed) {
+      if (olCollapsed) {
         element.classList.add('ol-collapsed');
       }
  }
@@ -634,11 +634,11 @@ export class PrintService {
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
         OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
-      // Find attributions by class and delete 
+      // Find attributions by class and delete
       // the collapsed class to open attribution Copyright
       const element = mapOverlayHTML.querySelector('.ol-attribution');
       const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if(olCollapsed) {
+      if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
 
@@ -651,8 +651,7 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
       context.drawImage(canvasOverlayHTML, 0, 0);
-
-      if(olCollapsed) {
+      if (olCollapsed) {
         element.classList.add('ol-collapsed');
       }
   }
