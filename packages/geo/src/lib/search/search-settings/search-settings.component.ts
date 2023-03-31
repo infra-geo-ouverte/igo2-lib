@@ -215,7 +215,7 @@ export class SearchSettingsComponent implements OnInit {
               setting.values[index].enabled = source.getDefaultOptionsExt().settings[settingsIndex].values[index].enabled;
             }
           }
-        } 
+        }
     }
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
@@ -227,7 +227,7 @@ export class SearchSettingsComponent implements OnInit {
    */
   checkAllDefaultOptions(event){
     event.stopPropagation();
-    this.getSearchSources().map((source)=>{
+    this.getSearchSources().map((source) => {
       source.enabled = true;
       if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource || source instanceof ILayerSearchSource){
         for(var settingIndex in source.settings){
@@ -235,12 +235,14 @@ export class SearchSettingsComponent implements OnInit {
             source.settings[settingIndex].allEnabled = true;
             this.checkUncheckAll(event, source, source.settings[settingIndex]);
             for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
+              source.settings[settingIndex].values[index].enabled 
+                = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
             }
           }
           if(source.settings[settingIndex].type === 'radiobutton'){
             for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled = source.getDefaultOptionsExt(true).settings[settingIndex].values[index].enabled;
+              source.settings[settingIndex].values[index].enabled 
+                = source.getDefaultOptionsExt(true).settings[settingIndex].values[index].enabled;
             }
           }
         }

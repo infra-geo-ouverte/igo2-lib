@@ -114,7 +114,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
-    const limit = 
+    const limit =
       !forceReset && this.options.params && this.options.params.limit
       ? Number(this.options.params.limit)
         : undefined;
@@ -122,7 +122,6 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       !forceReset && this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
-        
     const types = this.options.params?.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : [
