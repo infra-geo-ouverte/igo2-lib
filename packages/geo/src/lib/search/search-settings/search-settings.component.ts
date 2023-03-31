@@ -235,13 +235,13 @@ export class SearchSettingsComponent implements OnInit {
             source.settings[settingIndex].allEnabled = true;
             this.checkUncheckAll(event, source, source.settings[settingIndex]);
             for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled 
+              source.settings[settingIndex].values[index].enabled
                 = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
             }
           }
           if(source.settings[settingIndex].type === 'radiobutton'){
             for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled 
+              source.settings[settingIndex].values[index].enabled
                 = source.getDefaultOptionsExt(true).settings[settingIndex].values[index].enabled;
             }
           }
