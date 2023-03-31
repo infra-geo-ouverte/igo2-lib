@@ -109,20 +109,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return IChercheSearchSource.type;
   }
 
-  getDefaultOptionsExt(): SearchSourceOptions{
-    return this.getDefaultOptions();
+  getDefaultOptionsExt(forceReset?: Boolean): SearchSourceOptions{
+    return this.getDefaultOptions(forceReset);
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
-    const limit =
-      this.options.params && this.options.params.limit
-        ? Number(this.options.params.limit)
+  protected getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
+    const limit = 
+      !forceReset && this.options.params && this.options.params.limit
+      ? Number(this.options.params.limit)
         : undefined;
     const ecmax =
-      this.options.params && this.options.params.ecmax
+      !forceReset && this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
-
+        
     const types = this.options.params?.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : [
@@ -681,13 +681,13 @@ export class IChercheReverseSearchSource extends SearchSource
     return IChercheReverseSearchSource.type;
   }
 
-  getDefaultOptionsExt(): SearchSourceOptions{
-    return this.getDefaultOptions();
+  getDefaultOptionsExt(forceReset?: Boolean): SearchSourceOptions{
+    return this.getDefaultOptions(forceReset);
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
     const types =
-      this.options.params && this.options.params.type
+      !forceReset && this.options.params && this.options.params.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : ['adresses', 'municipalites', 'mrc', 'regadmin'];
 

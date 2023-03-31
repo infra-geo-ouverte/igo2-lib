@@ -198,7 +198,7 @@ export class SearchSettingsComponent implements OnInit {
 
   /**
    * Triggered when the default options is clicked
-   * Only result type will change
+   * Only CheckBox type will change
    * @internal
    */
   checkDefaultOptions(event, source: SearchSource, setting: SearchSourceSettings){
@@ -209,13 +209,16 @@ export class SearchSettingsComponent implements OnInit {
     if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource){
         setting.allEnabled = true;
         this.checkUncheckAll(event, source, setting);
-        for(var index in setting.values){
-          setting.values[index].enabled = source.getDefaultOptionsExt().settings[0].values[index].enabled;
-        }
+        for(var settingsIndex in source.getDefaultOptionsExt().settings){
+          if(source.getDefaultOptionsExt().settings[settingsIndex].title === setting.title){
+            for(var index in setting.values){
+              setting.values[index].enabled = source.getDefaultOptionsExt().settings[settingsIndex].values[index].enabled;
+            }
+          }
+        } 
     }
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
-
   }
 
   /**
@@ -233,6 +236,11 @@ export class SearchSettingsComponent implements OnInit {
             this.checkUncheckAll(event, source, source.settings[settingIndex]);
             for(var index in source.settings[settingIndex].values){
               source.settings[settingIndex].values[index].enabled = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
+            }
+          }
+          if(source.settings[settingIndex].type === 'radiobutton'){
+            for(var index in source.settings[settingIndex].values){
+              source.settings[settingIndex].values[index].enabled = source.getDefaultOptionsExt(true).settings[settingIndex].values[index].enabled;
             }
           }
         }

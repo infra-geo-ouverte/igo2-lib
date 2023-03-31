@@ -99,17 +99,17 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return ILayerSearchSource.type;
   }
 
-  getDefaultOptionsExt(): ILayerSearchSourceOptions{
-    return this.getDefaultOptions();
+  getDefaultOptionsExt(forceReset?: Boolean): ILayerSearchSourceOptions{
+    return this.getDefaultOptions(forceReset);
   }
 
-  protected getDefaultOptions(): ILayerSearchSourceOptions {
+  protected getDefaultOptions(forceReset?: Boolean): ILayerSearchSourceOptions {
     const limit =
-      this.options.params && this.options.params.limit
+      !forceReset && this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)
         : undefined;
     const ecmax =
-      this.options.params && this.options.params.ecmax
+      !forceReset && this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
     return {
