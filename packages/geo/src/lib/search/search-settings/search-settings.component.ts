@@ -218,7 +218,6 @@ export class SearchSettingsComponent implements OnInit {
           if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
             for(var index in setting.values){
               setting.values[index].enabled = source.getDefaultOptions().settings[settingsIndex].values[index].enabled;
-              
             }
           }
         }
@@ -229,7 +228,7 @@ export class SearchSettingsComponent implements OnInit {
   /**
    * Triggered when the global default options is clicked
    * @internal
-   */ 
+   */
   checkAllDefaultOptions(event){
     event.stopPropagation();
     this.getSearchSources().map((source) => {
