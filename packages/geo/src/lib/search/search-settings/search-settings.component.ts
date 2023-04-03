@@ -229,7 +229,7 @@ export class SearchSettingsComponent implements OnInit {
   /**
    * Triggered when the global default options is clicked
    * @internal
-   */
+   */ 
   checkAllDefaultOptions(event){
     event.stopPropagation();
     this.getSearchSources().map((source) => {
