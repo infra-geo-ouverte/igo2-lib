@@ -21,14 +21,13 @@ mat-form-field.igo-input-container { width: 60%; padding: 0px 15px; };
   width: 90%;
   margin-left: 2px;
   padding: 5px;
+  mat-form-field.radius-field {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+  }
 }
 
-.radius-field {
-
-  display: flex;
-  flex-flow: column nowrap;
-  width: 60%;
-}
 .title-container {
   padding: 10px;
 }
