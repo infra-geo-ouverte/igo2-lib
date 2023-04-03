@@ -16,6 +16,7 @@ import olVectorSource from 'ol/source/Vector';
 import Geometry from 'ol/geom/Geometry';
 import olLineString from 'ol/geom/LineString';
 import * as olProj from 'ol/proj';
+import { StorageService } from '@igo2/core';
 /**
  * Service that holds the state of the direction module
  */
@@ -24,8 +25,11 @@ import * as olProj from 'ol/proj';
 })
 export class MapProximityState {
 
+  private defaultProximityRadiusValue: number = 30;
+
   public enabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public proximityRadiusValue$: BehaviorSubject<number> = new BehaviorSubject<number>(30);
+  public proximityRadiusValue$: BehaviorSubject<number> = new BehaviorSubject<number>(
+    this.storageService.get('mapProximityRadius') as number || this.defaultProximityRadiusValue);
   public proximitylocationType$: BehaviorSubject<string> = new BehaviorSubject<string>('geolocation');
   public proximityFeatureStore: FeatureStore<Feature> = new FeatureStore<Feature>([], { map: this.mapState.map });
   private subs$$: Subscription[] = [];
@@ -35,7 +39,9 @@ export class MapProximityState {
     return this.mapState.map;
   }
 
-  constructor(private mapState: MapState) {
+  constructor(
+    private mapState: MapState,
+    private storageService: StorageService) {
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.subscribeProximityMonitor();
@@ -59,6 +65,7 @@ export class MapProximityState {
         const currentPos = this.map.geolocationController.position$.value;
         const locationType = bunch[1];
         const proximityRadiusValue = bunch[2];
+        this.storageService.set('mapProximityRadius', proximityRadiusValue || this.defaultProximityRadiusValue);
 
         if (!enabled) {
           return;

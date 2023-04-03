@@ -64,8 +64,8 @@ export class ConfigFileToGeoDBService {
                             .then((zipped) => {
                               zipped.forEach((relativePath) => {
                                 if (relativePath.toLocaleLowerCase().endsWith('.geojson')) {
-                                  zipped.file(relativePath).async("base64").then((r) => {
-                                    const geojson = JSON.parse(atob(r));
+                                  zipped.file(relativePath).async("text").then((r) => {
+                                    const geojson = JSON.parse(r);
                                     const subUrl = geoData.zippedBaseUrl || '';
                                     const zippedUrl = subUrl + (subUrl.endsWith('/') ? '' : '/') + relativePath;
                                     observables$.push(
