@@ -24,7 +24,7 @@ export class QuerySearchSource extends SearchSource {
     return QuerySearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Carte'
     };

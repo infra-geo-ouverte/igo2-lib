@@ -41,7 +41,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
    */
-  protected getDefaultOptions(): SearchSourceOptions {
+  getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
       searchUrl: 'https://nominatim.openstreetmap.org/search',

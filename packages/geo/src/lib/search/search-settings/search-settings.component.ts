@@ -22,8 +22,7 @@ import {
   sourceCanSearch,
   sourceCanReverseSearch
 } from '../shared/search.utils';
-import { MediaService, StorageService } from '@igo2/core';
-import { IChercheSearchSource, IChercheReverseSearchSource, ILayerSearchSource } from '../shared';
+import { ConfigService, MediaService, StorageService } from '@igo2/core';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -87,7 +86,8 @@ export class SearchSettingsComponent implements OnInit {
   constructor(
     private searchSourceService: SearchSourceService,
     private mediaService: MediaService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private configService: ConfigService
   ) {}
 
   ngOnInit(): void {
@@ -212,17 +212,16 @@ export class SearchSettingsComponent implements OnInit {
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
     source.enabled = true;
-    if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource){
-        setting.allEnabled = true;
-        this.checkUncheckAll(event, source, setting);
-        for(var settingsIndex in source.getDefaultOptionsExt().settings){
-          if(source.getDefaultOptionsExt().settings[settingsIndex].title === setting.title){
+    const config = this.configService.getConfig('searchSources');
+    console.log(config);
+        for(var settingsIndex in source.getDefaultOptions().settings){
+          if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
             for(var index in setting.values){
-              setting.values[index].enabled = source.getDefaultOptionsExt().settings[settingsIndex].values[index].enabled;
+              setting.values[index].enabled = source.getDefaultOptions().settings[settingsIndex].values[index].enabled;
+              
             }
           }
         }
-    }
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
   }
@@ -235,25 +234,23 @@ export class SearchSettingsComponent implements OnInit {
     event.stopPropagation();
     this.getSearchSources().map((source) => {
       source.enabled = true;
-      if(source instanceof IChercheSearchSource || source instanceof IChercheReverseSearchSource || source instanceof ILayerSearchSource){
-        for(var settingIndex in source.settings){
-          if(source.settings[settingIndex].type === 'checkbox'){
-            source.settings[settingIndex].allEnabled = true;
-            this.checkUncheckAll(event, source, source.settings[settingIndex]);
-            for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled
-                = source.getDefaultOptionsExt().settings[settingIndex].values[index].enabled;
-            }
-          }
-          if(source.settings[settingIndex].type === 'radiobutton'){
-            for(var index in source.settings[settingIndex].values){
-              source.settings[settingIndex].values[index].enabled
-                = source.getDefaultOptionsExt(true).settings[settingIndex].values[index].enabled;
-            }
+      for(var settingIndex in source.settings){
+        if(source.settings[settingIndex].type === 'checkbox'){
+          source.settings[settingIndex].allEnabled = true;
+          this.checkUncheckAll(event, source, source.settings[settingIndex]);
+          for(var index in source.settings[settingIndex].values){
+            source.settings[settingIndex].values[index].enabled
+              = source.getDefaultOptions().settings[settingIndex].values[index].enabled;
           }
         }
-        this.searchSourceChange.emit(source);
+        if(source.settings[settingIndex].type === 'radiobutton'){
+          for(var index in source.settings[settingIndex].values){
+            source.settings[settingIndex].values[index].enabled
+              = source.getDefaultOptions(true).settings[settingIndex].values[index].enabled;
+          }
+        }
       }
+      this.searchSourceChange.emit(source);
     });
   }
 

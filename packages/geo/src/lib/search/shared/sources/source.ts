@@ -53,7 +53,7 @@ export class SearchSource {
    * Get search source's default options
    * @returns Search source default options
    */
-  protected getDefaultOptions(): SearchSourceOptions {
+  getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
     throw new Error('You have to implement the method "getDefaultOptions".');
   }
 

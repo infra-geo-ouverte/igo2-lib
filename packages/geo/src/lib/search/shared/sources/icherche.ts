@@ -109,11 +109,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return IChercheSearchSource.type;
   }
 
-  getDefaultOptionsExt(forceReset?: Boolean): SearchSourceOptions{
-    return this.getDefaultOptions(forceReset);
-  }
-
-  protected getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
+  getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
     const limit =
       !forceReset && this.options.params && this.options.params.limit
       ? Number(this.options.params.limit)
@@ -680,11 +676,7 @@ export class IChercheReverseSearchSource extends SearchSource
     return IChercheReverseSearchSource.type;
   }
 
-  getDefaultOptionsExt(forceReset?: Boolean): SearchSourceOptions{
-    return this.getDefaultOptions(forceReset);
-  }
-
-  protected getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
+  getDefaultOptions(forceReset?: Boolean): SearchSourceOptions {
     const types =
       !forceReset && this.options.params && this.options.params.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')

@@ -64,7 +64,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return CoordinatesReverseSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.coordinates.name',
       order: 1,

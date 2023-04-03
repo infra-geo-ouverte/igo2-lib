@@ -53,7 +53,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     return WorkspaceSearchSource.type;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  getDefaultOptions(): SearchSourceOptions {
     const limit: Number = 5;
 
     return {
