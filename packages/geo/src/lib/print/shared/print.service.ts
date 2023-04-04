@@ -156,7 +156,12 @@ export class PrintService {
 
           if (options.legendPosition !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
-              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
+              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition).
+              catch(() => {
+                this.activityService.unregister(this.activityId);
+                status$.next({legendHeightError: true});
+                return status$;
+              });
             } else if (options.legendPosition === 'newpage') {
               await this.addLegend(doc, map, margins, resolution);
             }
@@ -561,6 +566,13 @@ export class PrintService {
           marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
+        // check page Height and legend Height
+        const pageHeightMM = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+        const canvaHeightMM = Math.floor(canvas.height * 0.264583);
+        if (canvaHeightMM > pageHeightMM) {
+          throw false;
+        }
+
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
         await this.saveDoc(doc);
       }

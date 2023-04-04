@@ -72,7 +72,7 @@
             'igo.geo.printForm.legendPositions.newimage') | translate}}
           </ng-container>
         </mat-option>
-
+        <mat-error *ngIf="form.controls.legendPosition.hasError('legendHeightError')"> continuer sur d'autres pages</mat-error>
       </mat-select>
     </mat-form-field>
   </div>
