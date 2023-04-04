@@ -107,7 +107,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
           const field = foundIn.field;
           foundIn.result.map(index => {
             const feature = fswi.index.get(index);
-            const score = computeTermSimilarity(term.trim(), feature.properties[field]);
+            const score = computeTermSimilarity(termToUse.trim(), feature.properties[field]);
             results.push({ index, feature, layer: fswi.layer, field, score });
           });
         });
