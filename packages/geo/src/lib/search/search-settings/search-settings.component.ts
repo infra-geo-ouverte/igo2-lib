@@ -212,8 +212,6 @@ export class SearchSettingsComponent implements OnInit {
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
     source.enabled = true;
-    //const config = this.configService.getConfig('searchSources');
-    //console.log(config);
     for(var settingsIndex in source.getDefaultOptions().settings){
       if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
         for(var index in setting.values){
