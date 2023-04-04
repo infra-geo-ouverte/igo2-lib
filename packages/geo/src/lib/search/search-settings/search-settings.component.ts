@@ -212,15 +212,16 @@ export class SearchSettingsComponent implements OnInit {
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
     source.enabled = true;
-    const config = this.configService.getConfig('searchSources');
-    console.log(config);
-        for(var settingsIndex in source.getDefaultOptions().settings){
-          if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
-            for(var index in setting.values){
-              setting.values[index].enabled = source.getDefaultOptions().settings[settingsIndex].values[index].enabled;
-            }
-          }
+    //const config = this.configService.getConfig('searchSources');
+    //console.log(config);
+    for(var settingsIndex in source.getDefaultOptions().settings){
+      if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
+        for(var index in setting.values){
+          setting.values[index].enabled = source.getDefaultOptions().settings[settingsIndex].values[index].enabled;
         }
+      }
+    }
+    setting.allEnabled = true;
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
   }
@@ -248,6 +249,8 @@ export class SearchSettingsComponent implements OnInit {
               = source.getDefaultOptions(true).settings[settingIndex].values[index].enabled;
           }
         }
+        source.settings[settingIndex].allEnabled = true;
+        source.setParamFromSetting(source.settings[settingIndex]);
       }
       this.searchSourceChange.emit(source);
     });
