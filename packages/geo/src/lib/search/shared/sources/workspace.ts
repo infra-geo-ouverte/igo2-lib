@@ -110,7 +110,7 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
             const score = computeTermSimilarity(term.trim(), feature.properties[field]);
             results.push({ index, feature, layer: fswi.layer, field, score });
           });
-        })
+        });
       });
 
     results.sort((a, b) => (a.score > b.score) ? -1 : 1);
