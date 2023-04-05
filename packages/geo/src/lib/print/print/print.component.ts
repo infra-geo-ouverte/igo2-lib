@@ -99,7 +99,6 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe((res) => {
           // check legend height
-          console.log(res);
           if(res.legendHeightError) {
             this.legendHeightError$.next(res.legendHeightError);
           }
@@ -139,6 +138,28 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe(() => {
           this.disabled$.next(false);
+        .subscribe((res: any) => {
+          if(res.legendHeightError) {
+            this.legendHeightError$.next(res.legendHeightError);
+          }
+          nbRequests--;
+          if(data.legendPosition === 'newpage') {
+            this.printService.getLayersLegendImage(
+              this.map,
+              data.imageFormat,
+              data.doZipFile,
+              resolution
+            ).then(() => {
+              nbRequests--;
+              if (!nbRequests) {
+                this.disabled$.next(false);
+              }
+            });
+          } else {
+            if (!nbRequests) {
+              this.disabled$.next(false);
+            }
+          }
         });
     }
   }

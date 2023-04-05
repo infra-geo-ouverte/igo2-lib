@@ -156,7 +156,12 @@ export class PrintService {
 
           if (options.legendPosition !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
-              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition).
+              await this.addLegendSamePage(
+                doc, 
+                map, 
+                margins, 
+                resolution, 
+                options.legendPosition).
               catch(() => {
                 this.activityService.unregister(this.activityId);
                 status$.next({legendHeightError: true});
@@ -934,6 +939,7 @@ export class PrintService {
       await this.addCopyrightToImage(map, newCanvas);
 
       // Check the legendPosition
+      let legendHeightError: boolean = false;
       if (legendPosition !== 'none') {
         if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
@@ -942,6 +948,15 @@ export class PrintService {
             resolution,
             legendPosition,
             format
+          ).catch((e) => {
+            if(!e) {
+              this.activityService.unregister(this.activityId);
+              legendHeightError = true;
+              status$.next({legendHeightError: true});
+            }
+            return status$;
+          });
+        }
           );
         } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
@@ -953,6 +968,10 @@ export class PrintService {
         }
       }
 
+      if(legendHeightError) {
+        return status$;
+      }
+      console.log('wsal here');
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
       if (format.toLowerCase() === 'tiff') {
@@ -1060,6 +1079,11 @@ export class PrintService {
       } else if (legendPosition === 'topleft') {
         legendX = offset;
         legendY = offset;
+      }
+
+      // check map image Height and legend Height
+      if (legendHeight > canvas.height) {
+        throw false;
       }
 
       context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);
