@@ -154,20 +154,20 @@ export class PrintService {
           const res = 1;
           this.addGeoRef(doc, map, width, height, res, margins);
 
-          if (options.legendPosition !== 'none') {
+          if (legendPostion !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
               await this.addLegendSamePage(
-                doc, 
-                map, 
-                margins, 
-                resolution, 
-                options.legendPosition).
+                doc,
+                map,
+                margins,
+                resolution,
+                legendPostion).
               catch(() => {
                 this.activityService.unregister(this.activityId);
                 status$.next({legendHeightError: true});
                 return status$;
               });
-            } else if (options.legendPosition === 'newpage') {
+            } else if (legendPostion === 'newpage') {
               await this.addLegend(doc, map, margins, resolution);
             }
           } else {
