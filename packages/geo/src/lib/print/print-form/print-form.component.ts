@@ -224,6 +224,7 @@ export class PrintFormComponent implements OnInit {
   ngOnInit() {
     this.doZipFileField.setValue(false);
     this.legendHeightError$.subscribe((res) => {
+      console.log('legendHeightError$', res);
       if (res) {
         this.legendPositionField.setErrors({'legendHeightError' : true});
       }
@@ -285,5 +286,9 @@ export class PrintFormComponent implements OnInit {
 
     this.commentField.setValidators([Validators.maxLength(this.maxLength)]​);
     this.commentField.updateValueAndValidity();
+  }
+
+  resetLegendError() {
+    this.legendPositionField.updateValueAndValidity();
   }
 }

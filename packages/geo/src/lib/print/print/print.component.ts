@@ -99,7 +99,7 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe((res) => {
           // check legend height
-          console.log("handleFormSubmit res.legendHeightError: ", res.legendHeightError);
+          console.log(res);
           if(res.legendHeightError) {
             this.legendHeightError$.next(res.legendHeightError);
           }
