@@ -57,7 +57,7 @@
     </div>
   </div>
 
-  <div class="igo-input-container">
+  <div class="igo-input-container" [ngStyle]="{'margin-bottom.px': legendPositionField.errors?.legendHeightError ? '15': '0'}">
     <mat-form-field>
       <mat-select
         formControlName="legendPosition"
@@ -72,14 +72,22 @@
             'igo.geo.printForm.legendPositions.newimage') | translate}}
           </ng-container>
         </mat-option>
-        <mat-error *ngIf="form.controls.legendPosition.hasError('legendHeightError')"> continuer sur d'autres pages</mat-error>
       </mat-select>
+      <mat-error *ngIf="legendPositionField.errors?.legendHeightError">
+        <ng-container *ngIf="outputFormat === 'Pdf'">
+          the map legend is large than the page, please change the option to new page or change paper format
+        </ng-container>
+
+        <ng-container *ngIf="outputFormat === 'Image'">
+          the map legend is large than the image, please change the option to new image
+        </ng-container>
+      </mat-error>
     </mat-form-field>
   </div>
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-select (selectionChange)="toggleImageSaveProp()"
+      <mat-select (selectionChange)="toggleImageSaveProp(); resetLegendError();"
         formControlName="outputFormat"
         placeholder="{{'igo.geo.printForm.outputFormat' | translate}}">
         <mat-option *ngFor="let outputFormat of outputFormats | keyvalue " [value]="outputFormat.key">
@@ -91,7 +99,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select (selectionChange)="changeCommentLength()"
+      <mat-select (selectionChange)="changeCommentLength(); resetLegendError();"
         formControlName="paperFormat"
         placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
         <mat-option *ngFor="let paperFormat of paperFormats | keyvalue " [value]="paperFormat.key">
@@ -103,7 +111,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'none' : 'block'">
     <mat-form-field>
-      <mat-select
+      <mat-select (selectionChange)="resetLegendError()"
         formControlName="imageFormat"
         placeholder="{{'igo.geo.printForm.imageFormat' | translate}}">
         <mat-option *ngFor="let imageFormat of imageFormats | keyvalue " [value]="imageFormat.key">
@@ -127,7 +135,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
-      <mat-select (selectionChange)="changeCommentLength()"
+      <mat-select (selectionChange)="changeCommentLength(); resetLegendError();"
         formControlName="orientation"
         placeholder="{{'igo.geo.printForm.orientation' | translate}}">
         <mat-option *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
