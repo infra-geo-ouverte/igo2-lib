@@ -116,7 +116,7 @@ export class AnalyticsListenerService {
             const wmtsLayerName: string = wmtsDataSource.layer;
             const wmtsUrl: string = wmtsDataSource.url;
             const wmtsMatrixSet: string = wmtsDataSource.matrixSet;
-            wmtsParams = 'nom de la couche:' + ' ' + wmtsLayerName + ',' + ' ' + 'url:' + ' '
+            wmtsParams = 'nom de la couche:' + ' ' + wmtsLayerName + ',' + ' ' + 'url:' + ' ' +
             wmtsUrl + ',' + ' ' + 'référence spatiale:' + ' ' + wmtsDataSource.matrixSet;
             break;
           case 'arcgisrest':
