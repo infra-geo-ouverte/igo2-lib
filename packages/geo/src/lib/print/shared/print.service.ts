@@ -154,20 +154,10 @@ export class PrintService {
           const res = 1;
           this.addGeoRef(doc, map, width, height, res, margins);
 
-          if (legendPostion !== 'none') {
+          if (options.legendPosition !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
-              await this.addLegendSamePage(
-                doc,
-                map,
-                margins,
-                resolution,
-                legendPostion).
-              catch(() => {
-                this.activityService.unregister(this.activityId);
-                status$.next({legendHeightError: true});
-                return status$;
-              });
-            } else if (legendPostion === 'newpage') {
+              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
+            } else if (options.legendPosition === 'newpage') {
               await this.addLegend(doc, map, margins, resolution);
             }
           } else {
@@ -236,8 +226,7 @@ export class PrintService {
   getLayersLegendHtml(
     map: IgoMap,
     width: number,
-    resolution: number,
-    height?: number
+    resolution: number
   ): Observable<string> {
     return new Observable((observer) => {
       let html = '';
@@ -251,7 +240,7 @@ export class PrintService {
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-        console.log('width: ', width, 'height: ', height)
+
       if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
@@ -271,7 +260,6 @@ export class PrintService {
       html += '<div class="styleLegend">';
       html += '<table class="tableLegend" >';
 
-      this.chankImages(legends.filter(l => l.display && l.isInResolutionsRange === true), height);
       // For each legend, define an html table cell
       const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
       .map((legend) =>
@@ -296,71 +284,6 @@ export class PrintService {
   getDataImage(url: string): Observable<string> {
     const secureIMG = new SecureImagePipe(this.http, this.configService);
     return secureIMG.transform(url);
-  }
-
-  async getImageDimensions(file:string) {
-    return new Promise (function (resolved, rejected) {
-      var i = new Image();
-      i.src = file;
-      i.onload = function(){
-        const widthMM = Math.floor(i.width * 0.264583);
-        const heightMM = Math.floor(i.height * 0.264583);
-        resolved({w: widthMM, h: heightMM})
-      };
-    });
-  }
-
-  chankImages(legends, heightOfPage: number) {
-    // console.log('chankImages: ', legends);
-    const images$ = legends.map((legend) => 
-    this.getDataImage(legend.url).pipe(
-      rxMap((dataImage) => {
-        return dataImage;
-      })
-    ));
-
-    let imgAndD: Array<{img: string, dimensions}> = [];
-    let html = '<table class="tableLegend" >';
-
-    forkJoin(images$).subscribe(async (dataImages: Array<string>) => {
-      dataImages.forEach(async (element) => {
-        const dimensions = await this.getImageDimensions(element);
-        imgAndD.push({img: element, dimensions});
-      });
-
-      await this.timeout(1);
-      imgAndD.sort((a,b) => {
-        const hA = a.dimensions.h;
-        const hB = b.dimensions.h;
-        if (hA < hB) { return -1; }
-        if (hA > hB) { return 1; }
-        return 0;
-      });
-
-      let c: number = 0;
-      let chancked = [];
-      imgAndD.forEach(element => {
-        // let newArr = [];
-        // c = element.dimensions.h
-        console.log('ccccc: ', c);
-        c = c + element.dimensions.h;
-
-        /*if (c < heightOfPage) {
-          c = c + element.dimensions.h;
-          newArr.push(element);
-        } else {
-          c = 0;
-          chancked.push(newArr);
-        }*/
-      });
-      console.log('c final result', c)
-      console.log('heightOfPage: ', heightOfPage);
-      console.log('imgAndD: ', imgAndD);
-      // console.log('chancked: ', chancked);
-    });
-
-    html += '</table>';
-
   }
 
   /**
@@ -544,12 +467,10 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const height = doc.internal.pageSize.height;
     const html = await this.getLayersLegendHtml(
       map,
       width,
-      resolution,
-      height
+      resolution
     ).toPromise();
     // If no legend, save the map directly
     if (html === '') {
@@ -640,13 +561,6 @@ export class PrintService {
           marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
-        // check page Height and legend Height
-        const pageHeightMM = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
-        const canvaHeightMM = Math.floor(canvas.height * 0.264583);
-        if (canvaHeightMM > pageHeightMM) {
-          throw false;
-        }
-
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
         await this.saveDoc(doc);
       }
@@ -1008,7 +922,6 @@ export class PrintService {
       await this.addCopyrightToImage(map, newCanvas);
 
       // Check the legendPosition
-      let legendHeightError: boolean = false;
       if (legendPosition !== 'none') {
         if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
@@ -1017,15 +930,6 @@ export class PrintService {
             resolution,
             legendPosition,
             format
-          ).catch((e) => {
-            if(!e) {
-              this.activityService.unregister(this.activityId);
-              legendHeightError = true;
-              status$.next({legendHeightError: true});
-            }
-            return status$;
-          });
-        }
           );
         } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
@@ -1037,10 +941,6 @@ export class PrintService {
         }
       }
 
-      if(legendHeightError) {
-        return status$;
-      }
-      console.log('wsal here');
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
       if (format.toLowerCase() === 'tiff') {
@@ -1148,11 +1048,6 @@ export class PrintService {
       } else if (legendPosition === 'topleft') {
         legendX = offset;
         legendY = offset;
-      }
-
-      // check map image Height and legend Height
-      if (legendHeight > canvas.height) {
-        throw false;
       }
 
       context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);

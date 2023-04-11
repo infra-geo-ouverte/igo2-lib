@@ -22,7 +22,6 @@ import { PrintService } from '../shared/print.service';
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);
-  public legendHeightError$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -97,11 +96,7 @@ export class PrintComponent {
       this.printService
         .print(this.map, data)
         .pipe(take(1))
-        .subscribe((res) => {
-          // check legend height
-          if(res.legendHeightError) {
-            this.legendHeightError$.next(res.legendHeightError);
-          }
+        .subscribe(() => {
           this.disabled$.next(false);
         });
     } else {
@@ -138,28 +133,6 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe(() => {
           this.disabled$.next(false);
-        .subscribe((res: any) => {
-          if(res.legendHeightError) {
-            this.legendHeightError$.next(res.legendHeightError);
-          }
-          nbRequests--;
-          if(data.legendPosition === 'newpage') {
-            this.printService.getLayersLegendImage(
-              this.map,
-              data.imageFormat,
-              data.doZipFile,
-              resolution
-            ).then(() => {
-              nbRequests--;
-              if (!nbRequests) {
-                this.disabled$.next(false);
-              }
-            });
-          } else {
-            if (!nbRequests) {
-              this.disabled$.next(false);
-            }
-          }
         });
     }
   }
