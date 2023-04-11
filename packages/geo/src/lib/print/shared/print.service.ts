@@ -589,6 +589,13 @@ export class PrintService {
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
         OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
+      // Find attributions by class and delete
+      // the collapsed class to open attribution Copyright
+      const element = mapOverlayHTML.querySelector('.ol-attribution');
+      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
+      if (olCollapsed) {
+        element.classList.remove('ol-collapsed');
+      }
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
       // scale is necessary to make it in google chrome
@@ -604,7 +611,50 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
       this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
+      if (olCollapsed) {
+        element.classList.add('ol-collapsed');
+      }
  }
+
+ /**
+  * Add Copyrigh to the map canvas
+  * @param map - Map of the app
+  * @param canvas Canvas of the map
+  */
+  private async addCopyrightToImage(
+    map: IgoMap,
+    canvas : HTMLCanvasElement
+    ) {
+      const context = canvas.getContext('2d');
+      let canvasOverlayHTML;
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+      // Remove the UI buttons from the nodes
+      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
+      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
+        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+      }
+      // Find attributions by class and delete
+      // the collapsed class to open attribution Copyright
+      const element = mapOverlayHTML.querySelector('.ol-attribution');
+      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
+      if (olCollapsed) {
+        element.classList.remove('ol-collapsed');
+      }
+
+      await html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      }).then( e => {
+        canvasOverlayHTML = e;
+      });
+      context.drawImage(canvasOverlayHTML, 0, 0);
+      if (olCollapsed) {
+        element.classList.add('ol-collapsed');
+      }
+  }
 
   defineNbFileToProcess(nbFileToProcess) {
     this.nbFileToProcess = nbFileToProcess;
@@ -868,6 +918,8 @@ export class PrintService {
 
       // Add map to new canvas
       newContext.drawImage(oldCanvas, 0, positionHCanvas);
+      // Add copyrigh
+      await this.addCopyrightToImage(map, newCanvas);
 
       // Check the legendPosition
       if (legendPosition !== 'none') {
@@ -992,7 +1044,7 @@ export class PrintService {
         legendY = offset;
       } else if (legendPosition === 'bottomleft') {
         legendX = offset;
-        legendY = canvasHeight - legendHeight - offset;
+        legendY = canvasHeight - legendHeight - offset - 15;
       } else if (legendPosition === 'topleft') {
         legendX = offset;
         legendY = offset;
