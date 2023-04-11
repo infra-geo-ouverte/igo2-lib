@@ -22,6 +22,7 @@ import { PrintService } from '../shared/print.service';
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);
+  public legendHeightError$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -96,7 +97,11 @@ export class PrintComponent {
       this.printService
         .print(this.map, data)
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res) => {
+          // check legend height
+          if(res.legendHeightError) {
+            this.legendHeightError$.next(res.legendHeightError);
+          }
           this.disabled$.next(false);
         });
     } else {

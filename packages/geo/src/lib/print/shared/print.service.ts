@@ -154,10 +154,20 @@ export class PrintService {
           const res = 1;
           this.addGeoRef(doc, map, width, height, res, margins);
 
-          if (options.legendPosition !== 'none') {
+          if (legendPostion !== 'none') {
             if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
-              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
-            } else if (options.legendPosition === 'newpage') {
+              await this.addLegendSamePage(
+                doc,
+                map,
+                margins,
+                resolution,
+                legendPostion).
+              catch(() => {
+                this.activityService.unregister(this.activityId);
+                status$.next({legendHeightError: true});
+                return status$;
+              });
+            } else if (legendPostion === 'newpage') {
               await this.addLegend(doc, map, margins, resolution);
             }
           } else {
@@ -561,6 +571,13 @@ export class PrintService {
           marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
+        // check page Height and legend Height
+        const pageHeightMM = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+        const canvaHeightMM = Math.floor(canvas.height * 0.264583);
+        if (canvaHeightMM > pageHeightMM) {
+          throw false;
+        }
+
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
         await this.saveDoc(doc);
       }
@@ -922,6 +939,7 @@ export class PrintService {
       await this.addCopyrightToImage(map, newCanvas);
 
       // Check the legendPosition
+      let legendHeightError: boolean = false;
       if (legendPosition !== 'none') {
         if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
@@ -930,6 +948,15 @@ export class PrintService {
             resolution,
             legendPosition,
             format
+          ).catch((e) => {
+            if(!e) {
+              this.activityService.unregister(this.activityId);
+              legendHeightError = true;
+              status$.next({legendHeightError: true});
+            }
+            return status$;
+          });
+
           );
         } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
@@ -938,9 +965,14 @@ export class PrintService {
             doZipFile,
             resolution
           );
+
         }
       }
 
+      if(legendHeightError) {
+        return status$;
+      }
+      console.log('wsal here');
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
       if (format.toLowerCase() === 'tiff') {
@@ -1048,6 +1080,11 @@ export class PrintService {
       } else if (legendPosition === 'topleft') {
         legendX = offset;
         legendY = offset;
+      }
+
+      // check map image Height and legend Height
+      if (legendHeight > canvas.height) {
+        throw false;
       }
 
       context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);
