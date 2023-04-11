@@ -41,7 +41,9 @@ import {
   getCommonVectorSelectedStyle,
   computeOlFeaturesExtent,
   featuresAreOutOfView,
-  roundCoordTo
+  roundCoordTo,
+  FeatureWithDraw,
+  FeatureStore
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -49,6 +51,7 @@ import { MapState } from '../../map/map.state';
 import { SearchState } from '../search.state';
 import { ToolState } from '../../tool/tool.state';
 import { DirectionState } from '../../directions/directions.state';
+import { DrawState } from '../../draw';
 
 /**
  * Tool to browse the search results
@@ -75,6 +78,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   @Input() topPanelStateDefault: string = 'expanded';
 
   private hasFeatureEmphasisOnSelection: boolean = false;
+  public saveSearchResultInLayer: boolean = false;
 
   private showResultsGeometries$$: Subscription;
   private getRoute$$: Subscription;
@@ -148,16 +152,24 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
+  get stores(): FeatureStore<FeatureWithDraw>[] {
+    return this.drawState.searchLayerStores;
+  }
+
   constructor(
     private mapState: MapState,
     private searchState: SearchState,
     private elRef: ElementRef,
     public toolState: ToolState,
     private directionState: DirectionState,
-    configService: ConfigService
+    configService: ConfigService,
+    private drawState: DrawState
   ) {
     this.hasFeatureEmphasisOnSelection = configService.getConfig(
       'hasFeatureEmphasisOnSelection'
+    );
+    this.saveSearchResultInLayer = configService.getConfig(
+      'saveSearchResultInLayer'
     );
   }
 

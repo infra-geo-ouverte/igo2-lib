@@ -16,6 +16,7 @@ import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
 import { Layer, TooltipType } from '../../layer/shared/layers';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
+import { IgoMap } from '../../map';
 
 /**
  * Catalog browser layer item
@@ -29,7 +30,10 @@ import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private isPreview$$: Subscription;
+  private resolution$$: Subscription;
+  private layers$$: Subscription;
   private lastTimeoutRequest;
 
   public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -45,6 +49,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
    * Catalog layer
    */
   @Input() layer: CatalogItemLayer;
+
+  @Input() map: IgoMap;
 
   /**
    * Whether the layer is already added to the map
@@ -75,12 +81,22 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   constructor(private layerService: LayerService ) {}
 
   ngOnInit(): void {
-    this.isInResolutionsRange();
     this.isPreview$$ = this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
+
+    this.layers$$ = this.map.layers$.subscribe(() => {
+      this.isVisible();
+    });
+
+    this.resolution$$ = this.map.viewController.resolution$.subscribe((resolution) => {
+      this.isInResolutionsRange(resolution);
+      this.isVisible();
+    });
   }
 
   ngOnDestroy() {
     this.isPreview$$.unsubscribe();
+    this.resolution$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   computeTitleTooltip(): string {
@@ -191,22 +207,42 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     return !(!this.layer.address || this.layer.address.split('.').length === 1);
   }
 
-  isInResolutionsRange(): boolean {
-    const minResolution = this.layer.options.minResolution || 0;
-    const maxResolution = this.layer.options.maxResolution || Infinity;
+  isInResolutionsRange(resolution: number) {
+    const minResolution = (!this.layer.options.minResolution || Number.isNaN(this.layer.options.minResolution))
+      ? 0 : this.layer.options.minResolution;
+    const maxResolution = (!this.layer.options.maxResolution || Number.isNaN(this.layer.options.maxResolution))
+    ? Infinity : this.layer.options.maxResolution;
     this.inRange$.next(
-      this.resolution >= minResolution && this.resolution <= maxResolution
+      resolution >= minResolution && resolution <= maxResolution
     );
-    return this.inRange$.value;
+  }
+
+  isVisible() {
+    if (this.layer?.id) {
+      const oLayer = this.map.getLayerById(this.layer?.id);
+      oLayer ? this.isVisible$.next(oLayer.visible) : this.isVisible$.next(false);
+    }
+  }
+
+  getBadgeIcon() {
+    if (this.inRange$.getValue()) {
+      return this.isVisible$.getValue() ? '' : 'eye-off';
+    } else {
+      return 'eye-off';
+    }
   }
 
   computeTooltip(): string {
     if (this.added) {
-      return this.isPreview$.value
-        ? 'igo.geo.catalog.layer.addToMap'
-        : this.inRange$.value
+      if (this.isPreview$.value) {
+        return 'igo.geo.catalog.layer.addToMap';
+      } else if (this.inRange$.value) {
+        return this.isVisible$.value
         ? 'igo.geo.catalog.layer.removeFromMap'
-        : 'igo.geo.catalog.layer.removeFromMapOutRange';
+        : 'igo.geo.catalog.layer.removeFromMapNotVisible';
+      } else {
+        return 'igo.geo.catalog.layer.removeFromMapOutRange';
+      }
     } else {
       return this.inRange$.value
         ? 'igo.geo.catalog.layer.addToMap'

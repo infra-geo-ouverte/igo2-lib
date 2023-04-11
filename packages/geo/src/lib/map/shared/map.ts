@@ -43,7 +43,7 @@ import {
 // Move some stuff into controllers.
 export class IgoMap {
   public ol: olMap;
-  public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
+  public forcedOffline$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layersAddedByClick$ = new BehaviorSubject<Layer[]>(undefined);
   public status$: Subject<SubjectStatus>;
@@ -514,9 +514,5 @@ export class IgoMap {
    */
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex((_layer: Layer) => _layer === layer);
-  }
-
-  onOfflineToggle(offline: boolean) {
-    this.offlineButtonToggle$.next(offline);
   }
 }

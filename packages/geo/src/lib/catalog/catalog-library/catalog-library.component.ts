@@ -10,7 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntityStore } from '@igo2/common';
-import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { MessageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -72,7 +72,6 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   constructor(
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
-    private languageService: LanguageService,
     private storageService: StorageService,
     private dialog: MatDialog
   ) {}
@@ -137,13 +136,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     }
 
     if (this.store.get(id)) {
-      const title = this.languageService.translate.instant(
-        'igo.geo.catalog.library.inlist.title'
-      );
-      const message = this.languageService.translate.instant(
-        'igo.geo.catalog.library.inlist.message'
-      );
-      this.messageService.alert(message, title);
+      this.messageService.alert('igo.geo.catalog.library.inlist.message', 'igo.geo.catalog.library.inlist.title');
       return;
     }
     this.unsubscribeAddingCatalog();
@@ -152,14 +145,16 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     .getCapabilities(addedCatalog.type as any, addedCatalog.url, addedCatalog.version)
       .pipe(
         catchError((e) => {
-          const title = this.languageService.translate.instant('igo.geo.catalog.unavailableTitle');
           if (e.error) {
             this.addCatalogDialog(true, addedCatalog);
             e.error.caught = true;
             return e;
           }
-          const message = this.languageService.translate.instant('igo.geo.catalog.unavailable', { value: addedCatalog.url });
-          this.messageService.error(message, title);
+          this.messageService.error(
+            'igo.geo.catalog.unavailable',
+            'igo.geo.catalog.unavailableTitle',
+            undefined,
+            { value: addedCatalog.url });
           throw e;
         })
       )

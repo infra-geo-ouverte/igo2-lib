@@ -83,6 +83,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() withZoomButton = false;
 
   /**
+   * To check if the view for tabsMode for search-result-tools
+   */
+  @Input() tabsMode: boolean = false;
+
+  /**
    * Search term
    */
   @Input()
@@ -142,7 +147,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   constructor(private cdRef: ChangeDetectorRef,
               private searchService: SearchService,
-              private configService: ConfigService
+              private configService: ConfigService,
               ) {}
 
   /**

@@ -22,6 +22,10 @@ export class LongPressDirective {
 
   @HostListener('touchstart', ['$event'])
   public touchstart(e: TouchEvent) {
+    if (e.touches.length > 1) {
+      this.touchEnd();
+      return;
+    }
     this.touchTimeout = setTimeout(() => {
       if (this.onlyIOS) {
         if (userAgent.getOSName() === 'iOS') {

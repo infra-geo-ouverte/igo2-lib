@@ -30,6 +30,7 @@ import {
 
 import { AuthService } from '@igo2/auth';
 import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
+import { ExportService } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -76,6 +77,7 @@ export class ContextService {
     private config: ConfigService,
     private messageService: MessageService,
     private storageService: StorageService,
+    private exportService: ExportService,
     @Optional() private route: RouteService
   ) {
     this.options = Object.assign(
@@ -540,17 +542,17 @@ export class ContextService {
       });
 
     layers.forEach((layer) => {
+      // Do not seem to work properly. layerFound is always undefined.
       const layerFound = currentContext.layers.find(
         (contextLayer) => {
           const source = contextLayer.source;
           return source && layer.id === source.id && !contextLayer.baseLayer;
         });
-
       if (layerFound) {
         let layerStyle = layerFound[`style`];
-        if (layerFound[`styleByAttribute`]) {
+        if (layerFound[`igoStyle`][`styleByAttribute`]) {
           layerStyle = undefined;
-        } else if (layerFound[`clusterBaseStyle`]) {
+        } else if (layerFound[`igoStyle`][`clusterBaseStyle`]) {
           layerStyle = undefined;
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
@@ -559,8 +561,10 @@ export class ContextService {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
-          styleByAttribute: layerFound[`styleByAttribute`],
-          clusterBaseStyle: layerFound[`clusterBaseStyle`],
+          igoStyle: {
+            styleByAttribute: layerFound[`igoStyle`][`styleByAttribute`],
+            clusterBaseStyle: layerFound[`igoStyle`][`clusterBaseStyle`],
+          },
           style: layerStyle,
           clusterParam: layerFound[`clusterParam`],
           visible: layer.visible,
@@ -579,17 +583,22 @@ export class ContextService {
           const writer = new GeoJSON();
           if (layer.ol.getSource() instanceof Cluster) {
             const clusterSource = layer.ol.getSource() as Cluster;
+            let olFeatures = clusterSource.getFeatures();
+            olFeatures = (olFeatures as any).flatMap((cluster: any) => cluster.get('features'));
+            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
             features = writer.writeFeatures(
-              clusterSource.getFeatures(),
+              cleanedOlFeatures,
               {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:3857'
               }
             );
           } else {
-            const source = layer.ol.getSource() as any;
+            const source = layer.ol.getSource() as olVectorSource;
+            const olFeatures = source.getFeatures();
+            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
             features = writer.writeFeatures(
-              source.getFeatures(),
+              cleanedOlFeatures,
               {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:3857'
@@ -732,7 +741,9 @@ export class ContextService {
         'igo.context.contextManager.errors.addPermission'
       );
     }
-    this.messageService.error(error.error.message, error.error.title);
+    this.messageService.error(
+      'igo.context.contextManager.errors.addPermission',
+      'igo.context.contextManager.errors.addPermissionTitle');
   }
 
   private handleContextsChange(

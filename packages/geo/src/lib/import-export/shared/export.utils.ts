@@ -3,44 +3,32 @@ import {
   EntityTableColumn,
   EntityTableColumnRenderer
 } from '@igo2/common';
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { downloadContent } from '@igo2/utils';
 
 import { ExportNothingToExportError } from './export.errors';
 
 export function handleFileExportError(
   error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
   if (error instanceof ExportNothingToExportError) {
-    handleNothingToExportError(messageService, languageService);
+    handleNothingToExportError(messageService);
     return;
   }
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.export.failed.title');
-  const message = translate.instant('igo.geo.export.failed.text');
-  messageService.error(message, title);
+  messageService.error('igo.geo.export.failed.text', 'igo.geo.export.failed.title');
 }
 
 export function handleFileExportSuccess(
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.export.success.title');
-  const message = translate.instant('igo.geo.export.success.text');
-  messageService.success(message, title);
+  messageService.success('igo.geo.export.success.text', 'igo.geo.export.success.title');
 }
 
 export function handleNothingToExportError(
-  messageService: MessageService,
-  languageService: LanguageService
+  messageService: MessageService
 ) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.export.nothing.title');
-  const message = translate.instant('igo.geo.export.nothing.text');
-  messageService.error(message, title);
+  messageService.error('igo.geo.export.nothing.text', 'igo.geo.export.nothing.title');
 }
 
 /**

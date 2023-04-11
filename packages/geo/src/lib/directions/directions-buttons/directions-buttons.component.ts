@@ -40,14 +40,9 @@ export class DirectionsButtonsComponent {
   copyLinkToClipboard() {
     const successful = Clipboard.copy(this.getUrl());
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.geo.directionsForm.dialog.copyTitle'
-      );
-      const msg = translate.instant(
-        'igo.geo.directionsForm.dialog.copyMsgLink'
-      );
-      this.messageService.success(msg, title);
+      this.messageService.success(
+        'igo.geo.directionsForm.dialog.copyMsgLink',
+        'igo.geo.directionsForm.dialog.copyTitle');
     }
   }
 
@@ -59,12 +54,9 @@ export class DirectionsButtonsComponent {
     const directionsBody = this.directionsToText();
     const successful = Clipboard.copy(directionsBody);
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.geo.directionsForm.dialog.copyTitle'
-      );
-      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsg');
-      this.messageService.success(msg, title);
+      this.messageService.success(
+        'igo.geo.directionsForm.dialog.copyMsg',
+        'igo.geo.directionsForm.dialog.copyTitle');
     }
   }
 

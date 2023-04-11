@@ -50,6 +50,7 @@ export interface GeoWorkspaceOptions {
   queryOptions?: GeoWorkspaceQueryOptions;
   pageSize?: number;
   pageSizeOptions?: number[];
+  searchIndexEnabled?: boolean;
 }
 
 export interface GeoWorkspaceQueryOptions {
@@ -115,4 +116,5 @@ export interface OutputLayerLegend {
   title: string;
   url: string;
   display: boolean;
+  isInResolutionsRange: boolean;
 }

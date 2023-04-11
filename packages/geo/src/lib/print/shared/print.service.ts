@@ -20,6 +20,7 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
+import { PrintPaperFormat } from './print.type';
 
 declare global {
   interface Navigator {
@@ -43,7 +44,7 @@ export class PrintService {
     subtitleFontStyle: 'bold',
     commentFont: 'courier',
     commentFontStyle: 'normal',
-    commentFontSize: 16
+    commentFontSize: 12
   };
 
   constructor(
@@ -82,9 +83,14 @@ export class PrintService {
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
+    // if paper format A1 or A0 add margin top
+    if ((options.title !== '' || options.subtitle) &&
+      (paperFormat === PrintPaperFormat.A1 || paperFormat === PrintPaperFormat.A0)) {
+      margins[0] += 10;
+    }
     // PDF title
-    if (options.title !== undefined ) {
-      const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+    const fontSizeInPt = Math.round(2 * (height + 145) * 0.05) / 2; //calculate the fontSize title from the page height.
+    if (options.title !== undefined && options.title !== '') {
       titleSizes = this.getTextPdfObjectSizeAndMarg(options.title,
         margins,
         this.TEXTPDFFONT.titleFont,
@@ -101,15 +107,14 @@ export class PrintService {
         margins[0]);
 
       margins[0] = titleSizes.height + margins[0]; // cumulative margin top for next elem to place in pdf doc
-
     }
 
     // PDF subtitle
-    if (options.subtitle !== undefined) {
+    if (options.subtitle !== undefined && options.subtitle !== '') {
       subtitleSizes = this.getTextPdfObjectSizeAndMarg(options.subtitle,
         margins,
         this.TEXTPDFFONT.subtitleFont,
-        titleSizes.fontSize * 0.7, // 70% size of title
+        (options.title !== '') ? titleSizes.fontSize * 0.7 : fontSizeInPt * 0.7, // 70% size of title
         this.TEXTPDFFONT.subtitleFontStyle,
         doc);
 
@@ -134,7 +139,7 @@ export class PrintService {
         options.showScale
         );
     }
-    if (options.comment !== '') {
+    if (options.comment !== undefined && options.comment !== '') {
       this.addComment(doc, options.comment);
     }
 
@@ -235,6 +240,7 @@ export class PrintService {
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
+
       if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
@@ -255,7 +261,8 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
-      const images$ = legends.filter(l => l.display).map((legend) =>
+      const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
+      .map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
@@ -329,7 +336,6 @@ export class PrintService {
           // Add the canvas to zip
           this.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
         }
-        div.parentNode.removeChild(div); // remove temp div (IE)
       } catch (err) {
         status = SubjectStatus.Error;
       }
@@ -377,15 +383,16 @@ export class PrintService {
    * * @param  comment - Comment to add in the document
    */
   private addComment(doc: jsPDF, comment: string) {
-    const commentMarginLeft = 20; //margin left and bottom is fix
-    const commentMarginBottom = 5;
+    const commentMarginLeft = 10; //margin left and bottom is fix
+    const commentMarginBottom = 10;
     const marginTop = doc.internal.pageSize.height - commentMarginBottom;
     this. addTextInPdfDoc(doc,comment,
       this.TEXTPDFFONT.commentFont,
       this.TEXTPDFFONT.commentFontStyle,
       this.TEXTPDFFONT.commentFontSize,
       commentMarginLeft,
-      marginTop
+      marginTop,
+      true
     );
   }
 
@@ -395,10 +402,15 @@ export class PrintService {
     textFontStyle: string,
     textFontSize: number,
     textMarginLeft: number,
-    textMarginTop: number)
+    textMarginTop: number,
+    isComment: boolean = false)
     {
       doc.setFont(textFont, textFontStyle);
       doc.setFontSize(textFontSize);
+
+      if(isComment) {
+        textToAdd = doc.splitTextToSize(textToAdd, (doc.internal.pageSize.getWidth() - (textMarginLeft * 3)));
+      }
       doc.text(textToAdd, textMarginLeft, textMarginTop);
     }
 
@@ -418,8 +430,8 @@ export class PrintService {
     scale: boolean
   ) {
     const translate = this.languageService.translate;
-    const projScaleSize = 16;
-    const projScaleMarginLeft = 20;
+    const projScaleSize = 12;
+    const projScaleMarginLeft = 10;
     const marginBottom = 15;
     const heightPixels = doc.internal.pageSize.height - marginBottom;
 
@@ -487,7 +499,6 @@ export class PrintService {
       doc.addPage();
       imgData = canvas.toDataURL('image/png');
       doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
-      div.parentNode.removeChild(div); // remove temp div (IE style)
     }
 
     await this.saveDoc(doc);
@@ -551,7 +562,6 @@ export class PrintService {
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
-        div.parentNode.removeChild(div); // remove temp div (IE style)
         await this.saveDoc(doc);
       }
     }
@@ -579,6 +589,13 @@ export class PrintService {
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
         OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
       }
+      // Find attributions by class and delete
+      // the collapsed class to open attribution Copyright
+      const element = mapOverlayHTML.querySelector('.ol-attribution');
+      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
+      if (olCollapsed) {
+        element.classList.remove('ol-collapsed');
+      }
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
       // scale is necessary to make it in google chrome
@@ -594,7 +611,50 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
       this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
+      if (olCollapsed) {
+        element.classList.add('ol-collapsed');
+      }
  }
+
+ /**
+  * Add Copyrigh to the map canvas
+  * @param map - Map of the app
+  * @param canvas Canvas of the map
+  */
+  private async addCopyrightToImage(
+    map: IgoMap,
+    canvas : HTMLCanvasElement
+    ) {
+      const context = canvas.getContext('2d');
+      let canvasOverlayHTML;
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+      // Remove the UI buttons from the nodes
+      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
+      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
+        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+      }
+      // Find attributions by class and delete
+      // the collapsed class to open attribution Copyright
+      const element = mapOverlayHTML.querySelector('.ol-attribution');
+      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
+      if (olCollapsed) {
+        element.classList.remove('ol-collapsed');
+      }
+
+      await html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      }).then( e => {
+        canvasOverlayHTML = e;
+      });
+      context.drawImage(canvasOverlayHTML, 0, 0);
+      if (olCollapsed) {
+        element.classList.add('ol-collapsed');
+      }
+  }
 
   defineNbFileToProcess(nbFileToProcess) {
     this.nbFileToProcess = nbFileToProcess;
@@ -671,14 +731,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -698,14 +751,7 @@ export class PrintService {
           }
         } catch (err) {
           status = SubjectStatus.Error;
-          this.messageService.error(
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageBody'
-            ),
-            this.languageService.translate.instant(
-              'igo.geo.printForm.corsErrorMessageHeader'
-            )
-          );
+          this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
         this.renderMap(map, mapSize, extent);
         status$.next(status);
@@ -736,17 +782,17 @@ export class PrintService {
     format = 'png',
     projection = false,
     scale = false,
-    legend = false,
     title = '',
     subtitle = '',
     comment = '',
-    doZipFile = true
+    doZipFile = true,
+    legendPosition: string
   ) {
     const status$ = new Subject();
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
-    map.ol.once('rendercomplete', (event: any) => {
+    map.ol.once('rendercomplete', async (event: any) => {
       format = format.toLowerCase();
       const oldCanvas = event.target
         .getViewport()
@@ -755,8 +801,6 @@ export class PrintService {
       const newContext = newCanvas.getContext('2d');
       // Postion in height to set the canvas in new canvas
       let positionHCanvas = 0;
-      // Position in width to set the Proj/Scale in new canvas
-      let positionWProjScale = 10;
       // Get height/width of map canvas
       const width = oldCanvas.width;
       let height = oldCanvas.height;
@@ -778,12 +822,20 @@ export class PrintService {
       // Set the new canvas with the new calculated size
       newCanvas.width = width;
       newCanvas.height = height;
-      // Patch Jpeg default black background to white
-      if (format === 'jpeg') {
-        newContext.fillStyle = '#ffffff';
-        newContext.fillRect(0, 0, width, height);
-        newContext.fillStyle = '#000000';
+      if (['bmp','gif', 'jpeg', 'png', 'tiff'].indexOf(format) > -1) {
+        // Patch Jpeg default black background to white
+        if (format === 'jpeg') {
+          newContext.fillStyle = '#ffffff';
+          newContext.fillRect(0, 0, width, height);
+          newContext.fillStyle = '#000000';
+        } else if (title !== '' || subtitle !== '' || comment !== '' ||
+            projection !== false || scale !== false) {
+              newContext.fillStyle = '#ffffff';
+              newContext.fillRect(0, 0, width, height);
+              newContext.fillStyle = '#000000';
+        }
       }
+
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
@@ -803,29 +855,23 @@ export class PrintService {
       }
       // Set font for next section
       newContext.font = '20px Calibri';
-      // If projection need to be added to canvas
-      if (projection !== false) {
-        const projText = translate.instant('igo.geo.printForm.projection');
-        newContext.textAlign = 'start';
-        newContext.fillText(
-          projText + ': ' + map.projection,
-          positionWProjScale,
-          positionHProjScale
-        );
-        positionWProjScale += 200; // Width position change for scale position
+      // If projection or/end scale need to be added to canvas
+      if((projection !== false) || (scale !== false)) {
+        let projectionScaleText = '';
+        if (projection !== false) {
+          const projText = translate.instant('igo.geo.printForm.projection');
+          projectionScaleText = projText + ': ' + map.projection + '         ';
+        }
+
+        if (scale !== false) {
+          const scaleText = translate.instant('igo.geo.printForm.scale');
+          const mapScale = map.viewController.getScale(resolution);
+          projectionScaleText += scaleText + ': ~ 1 / ' + formatScale(mapScale);
+        }
+        newContext.textAlign = 'center';
+        newContext.fillText(projectionScaleText, width / 2, positionHProjScale, width * 0.9);
       }
 
-      // If scale need to be added to canvas
-      if (scale !== false) {
-        const scaleText = translate.instant('igo.geo.printForm.scale');
-        const mapScale = map.viewController.getScale(resolution);
-        newContext.textAlign = 'start';
-        newContext.fillText(
-          scaleText + ': ~ 1 / ' + formatScale(mapScale),
-          positionWProjScale,
-          positionHProjScale
-        );
-      }
       // If a comment need to be added to canvas
       if (comment !== '') {
         newContext.textAlign = 'center';
@@ -869,8 +915,31 @@ export class PrintService {
           }
         }
       }
+
       // Add map to new canvas
       newContext.drawImage(oldCanvas, 0, positionHCanvas);
+      // Add copyrigh
+      await this.addCopyrightToImage(map, newCanvas);
+
+      // Check the legendPosition
+      if (legendPosition !== 'none') {
+        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
+          await this.addLegendToImage(
+            newCanvas,
+            map,
+            resolution,
+            legendPosition,
+            format
+          );
+        } else if (legendPosition === 'newpage') {
+          await this.getLayersLegendImage(
+            map,
+            format,
+            doZipFile,
+            resolution
+          );
+        }
+      }
 
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
@@ -916,6 +985,78 @@ export class PrintService {
     return status$;
   }
 
+  /**
+   * Create and Add Legend to the map canvas
+   * @param  canvas Canvas of the map
+   * @param  map Map of the app
+   * @param  resolution Resolution of map
+   * @param  legendPosition Legend position
+   * @param  format Image format
+   */
+  private async addLegendToImage(
+      canvas: HTMLCanvasElement,
+      map: IgoMap,
+      resolution: number,
+      legendPosition: string,
+      format: string
+  ) {
+    const fileNameWithExt = 'map.' + format;
+    const context = canvas.getContext('2d');
+
+    // Get html code for the legend
+    const html = await this.getLayersLegendHtml(
+      map,
+      canvas.width,
+      resolution
+    ).toPromise();
+    // If no legend, save the map directly
+    if (html === '') {
+      await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);
+      return true;
+    }
+    // Create div to contain html code for legend
+    const div = window.document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.top = '0';
+    // Add html code to convert in the new window
+    window.document.body.appendChild(div);
+    div.innerHTML = html;
+    await this.timeout(1);
+    const canvasLegend = await html2canvas(div, { useCORS: true }).catch((e) => {
+      console.log(e);
+    });
+
+    if (canvasLegend) {
+      const canvasHeight = canvas.height;
+      const canvasWidth = canvas.width;
+      const legendHeight = canvasLegend.height;
+      const legendWidth = canvasLegend.width;
+      // Move the legend to the correct position on the page
+      const offset = canvasHeight * 0.01;
+      let legendX: number;
+      let legendY: number;
+
+      if (legendPosition === 'bottomright') {
+        legendX = canvasWidth - legendWidth - offset;
+        legendY = canvasHeight - legendHeight - offset;
+      } else if (legendPosition === 'topright') {
+        legendX = canvasWidth - legendWidth - offset;
+        legendY = offset;
+      } else if (legendPosition === 'bottomleft') {
+        legendX = offset;
+        legendY = canvasHeight - legendHeight - offset - 15;
+      } else if (legendPosition === 'topleft') {
+        legendX = offset;
+        legendY = offset;
+      }
+
+      context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);
+      context.strokeRect(legendX, legendY, legendWidth, legendHeight);
+      div.parentNode.removeChild(div); // remove temp div (IE style)
+      return true;
+    }
+  }
+
   private renderMap(map, size, extent) {
     map.ol.updateSize();
     map.ol.renderSync();
@@ -937,7 +1078,7 @@ export class PrintService {
    */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = this.pdf_units2points(canvas.height, 'mm');
     const canWidth = this.pdf_units2points(canvas.width, 'mm');
@@ -980,26 +1121,13 @@ export class PrintService {
 
     try {
       canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
-      // If navigator is Internet Explorer
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(canvas.msToBlob(), nameWithExt);
-        this.saveFileProcessing();
-      } else {
-        canvas.toBlob((blob) => {
-          // download image
-          saveAs(blob, nameWithExt);
-          that.saveFileProcessing();
-        }, blobFormat);
-      }
+      canvas.toBlob((blob) => {
+        // download image
+        saveAs(blob, nameWithExt);
+        that.saveFileProcessing();
+      }, blobFormat);
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 
@@ -1028,14 +1156,7 @@ export class PrintService {
         }, blobFormat);
       }
     } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageBody'
-        ),
-        this.languageService.translate.instant(
-          'igo.geo.printForm.corsErrorMessageHeader'
-        )
-      );
+      this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
     }
   }
 

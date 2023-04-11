@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olstyle from 'ol/style';
+import * as olStyle from 'ol/style';
 import OlFeature from 'ol/Feature';
-import { StyleByAttribute } from './vector-style.interface';
 
-import { ClusterParam } from './clusterParam';
-import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
+import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
 import RenderFeature from 'ol/render/Feature';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { StyleByAttribute } from '../shared/vector/vector-style.interface';
+import { ClusterParam } from '../../layer/shared/clusterParam';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StyleService {
-  public style: olstyle.Style;
+  public style: olStyle.Style;
 
   /**
    * Create a style based on a object as
@@ -56,7 +56,7 @@ export class StyleService {
     if (!options) {
       return createOverlayMarkerStyle();
     }
-    if (typeof options === 'function' || options instanceof olstyle.Style) {
+    if (typeof options === 'function' || options instanceof olStyle.Style) {
       return options;
     }
     const parsedStyle = this.parseStyle('style', options);
@@ -85,7 +85,7 @@ export class StyleService {
     return parsedStyle;
   }
 
-  private parseStyle(key: string, value: any) {
+  public parseStyle(key: string, value: any) {
     const styleOptions = {};
     const olCls = this.getOlCls(key);
 
@@ -116,15 +116,15 @@ export class StyleService {
   }
 
   private getOlCls(key: any) {
-    let olCls = olstyle[key.charAt(0).toUpperCase() + key.slice(1)];
+    let olCls = olStyle[key.charAt(0).toUpperCase() + key.slice(1)];
     if (key === 'regularshape') {
-      olCls = olstyle.RegularShape;
+      olCls = olStyle.RegularShape;
     }
     if (key === 'backgroundFill') {
-      olCls = olstyle.Fill;
+      olCls = olStyle.Fill;
     }
     if (key === 'backgroundStroke') {
-      olCls = olstyle.Stroke;
+      olCls = olStyle.Stroke;
     }
 
     return olCls;
@@ -157,7 +157,7 @@ export class StyleService {
 
     let labelStyle = styleByAttribute.label?.style ? this.parseStyle('text', styleByAttribute.label.style) : undefined;
     if (!labelStyle && label) {
-        labelStyle = new olstyle.Text();
+        labelStyle = new olStyle.Text();
     }
     const baseStyle = styleByAttribute.baseStyle;
 
@@ -178,31 +178,31 @@ export class StyleService {
         if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           if (icon) {
             style = [
-              new olstyle.Style({
-                image: new olstyle.Icon({
+              new olStyle.Style({
+                image: new olStyle.Icon({
                   color: fill ? fill[i] : undefined,
                   src: icon[i],
                   scale: scale ? scale[i] : 1,
                   anchor: anchor ? anchor[i] : [0.5, 0.5]
                 }),
-                text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
+                text: labelStyle instanceof olStyle.Text ? labelStyle : undefined
               })
             ];
             return style;
           }
           style = [
-            new olstyle.Style({
-              image: new olstyle.Circle({
+            new olStyle.Style({
+              image: new olStyle.Circle({
                 radius: radius ? radius[i] : 4,
-                stroke: new olstyle.Stroke({
+                stroke: new olStyle.Stroke({
                   color: stroke ? stroke[i] : 'black',
                   width: width ? width[i] : 1
                 }),
-                fill: new olstyle.Fill({
+                fill: new olStyle.Fill({
                   color: fill ? fill[i] : 'black'
                 })
               }),
-              text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
+              text: labelStyle instanceof olStyle.Text ? labelStyle : undefined
             })
           ];
           return style;
@@ -217,13 +217,13 @@ export class StyleService {
           return style;
         }
         style = [
-          new olstyle.Style({
-            image: new olstyle.Circle({
+          new olStyle.Style({
+            image: new olStyle.Circle({
               radius: 4,
-              stroke: new olstyle.Stroke({
+              stroke: new olStyle.Stroke({
                 color: 'black'
               }),
-              fill: new olstyle.Fill({
+              fill: new olStyle.Fill({
                 color: '#bbbbf2'
               })
             })
@@ -239,15 +239,15 @@ export class StyleService {
             : '';
         if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
           style = [
-            new olstyle.Style({
-              stroke: new olstyle.Stroke({
+            new olStyle.Style({
+              stroke: new olStyle.Stroke({
                 color: stroke ? stroke[i] : 'black',
                 width: width ? width[i] : 1
               }),
-              fill: new olstyle.Fill({
+              fill: new olStyle.Fill({
                 color: fill ? fill[i] : 'rgba(255,255,255,0.4)'
               }),
-              text: labelStyle instanceof olstyle.Text ? labelStyle : undefined
+              text: labelStyle instanceof olStyle.Text ? labelStyle : undefined
             })
           ];
           return style;
@@ -263,11 +263,11 @@ export class StyleService {
             return style;
           }
           style = [
-            new olstyle.Style({
-              stroke: new olstyle.Stroke({
+            new olStyle.Style({
+              stroke: new olStyle.Stroke({
                 color: 'black'
               }),
-              fill: new olstyle.Fill({
+              fill: new olStyle.Fill({
                 color: '#bbbbf2'
               })
             })
@@ -288,12 +288,12 @@ export class StyleService {
             (!r.minRadius || r.minRadius <= size) &&
             (!r.maxRadius || r.maxRadius >= size)
           ) {
-            style = this.createStyle(r.style) as olstyle.Circle;
+            style = this.createStyle(r.style) as olStyle.Circle;
 
             if (r.showRange) {
-              const text = new olstyle.Text({
+              const text = new olStyle.Text({
                 text: size.toString(),
-                fill: new olstyle.Fill({
+                fill: new olStyle.Fill({
                   color: '#fff'
                 })
               });
@@ -327,19 +327,19 @@ export class StyleService {
         }
 
         style = [
-          new olstyle.Style({
-            image: new olstyle.Circle({
+          new olStyle.Style({
+            image: new olStyle.Circle({
               radius: clusterRadius,
-              stroke: new olstyle.Stroke({
+              stroke: new olStyle.Stroke({
                 color: 'black'
               }),
-              fill: new olstyle.Fill({
+              fill: new olStyle.Fill({
                 color: 'rgba(24, 134, 45, 0.5)'
               })
             }),
-            text: new olstyle.Text({
+            text: new olStyle.Text({
               text: size.toString(),
-              fill: new olstyle.Fill({
+              fill: new olStyle.Fill({
                 color: '#fff'
               })
             })

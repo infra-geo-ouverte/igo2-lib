@@ -171,11 +171,7 @@ export class AuthService {
             this.languageService.setLanguage(tokenDecoded.user.locale);
           }
           if (tokenDecoded.user.isExpired) {
-            this.languageService.translate
-              .get('igo.auth.error.Password expired')
-              .subscribe((expiredAlert) =>
-                this.messageService.alert(expiredAlert)
-              );
+              this.messageService.alert('igo.auth.error.Password expired');
           }
         }
         this.authenticate$.next(true);
