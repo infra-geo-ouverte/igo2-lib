@@ -236,7 +236,8 @@ export class PrintService {
   getLayersLegendHtml(
     map: IgoMap,
     width: number,
-    resolution: number
+    resolution: number,
+    height?: number
   ): Observable<string> {
     return new Observable((observer) => {
       let html = '';
@@ -250,7 +251,7 @@ export class PrintService {
           size: map.ol.getSize()
         } as LegendMapViewOptions
       );
-
+        console.log('width: ', width, 'height: ', height)
       if (legends.filter(l => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
@@ -270,6 +271,7 @@ export class PrintService {
       html += '<div class="styleLegend">';
       html += '<table class="tableLegend" >';
 
+      this.chankImages(legends.filter(l => l.display && l.isInResolutionsRange === true), height);
       // For each legend, define an html table cell
       const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
       .map((legend) =>
@@ -294,6 +296,71 @@ export class PrintService {
   getDataImage(url: string): Observable<string> {
     const secureIMG = new SecureImagePipe(this.http, this.configService);
     return secureIMG.transform(url);
+  }
+
+  async getImageDimensions(file:string) {
+    return new Promise (function (resolved, rejected) {
+      var i = new Image();
+      i.src = file;
+      i.onload = function(){
+        const widthMM = Math.floor(i.width * 0.264583);
+        const heightMM = Math.floor(i.height * 0.264583);
+        resolved({w: widthMM, h: heightMM})
+      };
+    });
+  }
+
+  chankImages(legends, heightOfPage: number) {
+    // console.log('chankImages: ', legends);
+    const images$ = legends.map((legend) => 
+    this.getDataImage(legend.url).pipe(
+      rxMap((dataImage) => {
+        return dataImage;
+      })
+    ));
+
+    let imgAndD: Array<{img: string, dimensions}> = [];
+    let html = '<table class="tableLegend" >';
+
+    forkJoin(images$).subscribe(async (dataImages: Array<string>) => {
+      dataImages.forEach(async (element) => {
+        const dimensions = await this.getImageDimensions(element);
+        imgAndD.push({img: element, dimensions});
+      });
+
+      await this.timeout(1);
+      imgAndD.sort((a,b) => {
+        const hA = a.dimensions.h;
+        const hB = b.dimensions.h;
+        if (hA < hB) { return -1; }
+        if (hA > hB) { return 1; }
+        return 0;
+      });
+
+      let c: number = 0;
+      let chancked = [];
+      imgAndD.forEach(element => {
+        // let newArr = [];
+        // c = element.dimensions.h
+        console.log('ccccc: ', c);
+        c = c + element.dimensions.h;
+
+        /*if (c < heightOfPage) {
+          c = c + element.dimensions.h;
+          newArr.push(element);
+        } else {
+          c = 0;
+          chancked.push(newArr);
+        }*/
+      });
+      console.log('c final result', c)
+      console.log('heightOfPage: ', heightOfPage);
+      console.log('imgAndD: ', imgAndD);
+      // console.log('chancked: ', chancked);
+    });
+
+    html += '</table>';
+
   }
 
   /**
@@ -477,10 +544,12 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
+    const height = doc.internal.pageSize.height;
     const html = await this.getLayersLegendHtml(
       map,
       width,
-      resolution
+      resolution,
+      height
     ).toPromise();
     // If no legend, save the map directly
     if (html === '') {
