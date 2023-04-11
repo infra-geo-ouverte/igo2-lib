@@ -13,6 +13,7 @@ import { handleFileImportSuccess, handleFileImportError } from '../shared/import
 import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
+import { ImportExportServiceOptions } from './import.interface';
 
 @Directive({
   selector: '[igoDropGeoFile]'
@@ -128,7 +129,18 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    if (!this.config.getConfig('importWithStyle')) {
+    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
+    if (this.config.getConfig('importWithStyle')) {
+      console.warn(`
+      The location of this config importWithStyle is deprecated.
+      Please move this property within importExport configuration.
+      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+      Refer to environnement.ts OR config/config.json
+      This legacy conversion will be deleted in 2024.
+      `);
+    }
+    if (!importWithStyle) {
       handleFileImportSuccess(file, features, this.map, this.messageService);
     } else {
       handleFileImportSuccess(file, features, this.map, this.messageService,

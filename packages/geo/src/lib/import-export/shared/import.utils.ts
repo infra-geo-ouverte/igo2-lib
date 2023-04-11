@@ -47,6 +47,7 @@ export function addLayerAndFeaturesToMap(
   }
   const layer = new VectorLayer({
     title: layerTitle,
+    workspace: { enabled: true, searchIndexEnabled: true },
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },

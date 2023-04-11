@@ -56,6 +56,7 @@ import { computeProjectionsConstraints } from '../../map';
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { ImportExportServiceOptions } from '../shared/import.interface';
 
 @Component({
   selector: 'igo-import-export',
@@ -741,7 +742,18 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    if (!this.config.getConfig('importWithStyle')) {
+    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
+    if (this.config.getConfig('importWithStyle')) {
+      console.warn(`
+      The location of this config importWithStyle is deprecated.
+      Please move this property within importExport configuration.
+      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+      Refer to environnement.ts OR config/config.json
+      This legacy conversion will be deleted in 2024.
+      `);
+    }
+    if (!importWithStyle) {
       handleFileImportSuccess(
         file,
         features,
