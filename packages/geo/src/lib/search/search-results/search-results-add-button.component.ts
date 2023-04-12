@@ -78,6 +78,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
    */
   @Input() map: IgoMap;
 
+  /**
+   * show hide save search result in layer button
+   */
+  @Input() saveSearchResultInLayer: boolean = false;
+
   @Input()
   get color() {
     return this._color;
