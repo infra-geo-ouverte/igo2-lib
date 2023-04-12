@@ -86,6 +86,7 @@
               "@turf/line-intersect",
               "pbf",
               "geojson-rbush",
+              "flexsearch",
               "minimatch",
               "path",
               "pixelworks",
