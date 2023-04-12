@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, Subject, forkJoin } from 'rxjs';
-import { map as rxMap } from 'rxjs/operators';
+import { map as rxMap, take } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { default as JSZip } from 'jszip';
+import { default as JSZip, forEach } from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
 import { SecureImagePipe } from '@igo2/common';
@@ -155,7 +155,7 @@ export class PrintService {
           this.addGeoRef(doc, map, width, height, res, margins);
 
           if (legendPostion !== 'none') {
-            if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
+            if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPostion) > -1 ) {
               await this.addLegendSamePage(
                 doc,
                 map,
@@ -236,7 +236,8 @@ export class PrintService {
   getLayersLegendHtml(
     map: IgoMap,
     width: number,
-    resolution: number
+    resolution: number,
+    height?: number,
   ): Observable<string> {
     return new Observable((observer) => {
       let html = '';
@@ -271,6 +272,20 @@ export class PrintService {
       html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
+      console.log('doc height: ', height);
+      console.log('doc width: ', width);
+      console.log('legends: ', legends);
+
+      const imagesArray$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
+      .map((legend) =>
+        this.getDataImage(legend.url).pipe(
+          rxMap((dataImage) => {
+            return {title: legend.title, image:dataImage};
+          })
+        )
+      );
+      this.chunkImagesByHeightWidth(imagesArray$, height, width);
+
       const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
       .map((legend) =>
         this.getDataImage(legend.url).pipe(
@@ -296,6 +311,103 @@ export class PrintService {
     return secureIMG.transform(url);
   }
 
+  /*getImageDimensions(file: string): Observable<{w: number, h: number}> {
+    return new Observable ((observer) => {
+      const i = new Image();
+      i.src = file;
+      i.onload = function(){
+        const widthMM = Math.floor(i.width * 0.264583);
+        const heightMM = Math.floor(i.height * 0.264583);
+        observer.next({w: widthMM, h: heightMM});
+        observer.complete();
+        return;
+      };
+    });
+  }*/
+
+  getImageDimensions(file: string): Promise<{w: number, h: number}> {
+    return new Promise (function (resolved, rejected) {
+      const i = new Image();
+      i.src = file;
+      i.onload = function(){
+        const widthMM = Math.floor(i.width * 0.264583);
+        const heightMM = Math.floor(i.height * 0.264583);
+        resolved({w: widthMM, h: heightMM})
+      };
+    });
+  }
+
+  async chunkImagesByHeightWidth(images$, maxH, maxW) {
+    forkJoin(images$).subscribe(async (dataImages: [{title: string, image: string}]) => {
+      let imgsData: Array<{title: string, image: string, dimensions: {w: number, h: number}}> = [];
+
+      dataImages.forEach(async (element) => {
+        console.log('element: ', element);
+        
+        const dimensions = await this.getImageDimensions(element.image);
+        console.log('dimensions: ', dimensions);
+        imgsData.push({
+            title: element.title,
+            image: element.image,
+            dimensions
+          });
+      });
+
+      await this.timeout(1);
+      
+      imgsData.sort((a,b) => {
+        const hA = a.dimensions.h;
+        const hB = b.dimensions.h;
+        if (hA < hB) { return -1; }
+        if (hA > hB) { return 1; }
+        return 0;
+      });
+
+      console.log('imgsData; ', imgsData);
+
+      let chunks = [];
+      imgsData.forEach(img => {
+        // get the first chunk that the value can be added to
+        let chunk = chunks.find(c => {
+          const sumH = c.reduce((acc, obj) => { return  acc + obj.dimensions.h},0);
+          const sumW = c.reduce((acc, obj) => { return  acc + obj.dimensions.w},0);
+          return ((sumH + img.dimensions.h < maxH) && (sumW + img.dimensions.w <= maxW));
+        });
+        if (chunk) {chunk.push(img);} // found a chunk. Add value to that.
+        else {chunks.push([img]);} // Can't be added to existing chunks. Create new one.
+      });
+      console.log('chunks: ', chunks);
+
+      let html = '';
+      // Define important style to be sure that all container is convert
+      // to image not just visible part
+      html += '<style media="screen" type="text/css">';
+      html += '.html2canvas-container { width: ' + maxW + 'mm !important; height: 2000px !important; }';
+      html += 'table.tableLegend {table-layout: auto;}';
+      html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
+      html += '</style>';
+      // The font size will also be lowered afterwards (globally along the legend size)
+      // this allows having a good relative font size here and to keep ajusting the legend size
+      // while keeping good relative font size
+      html += '<font size="3" face="Times" >';
+      html += '<div class="styleLegend">';
+      html += '<table class="tableLegend"><tbody style="vertical-align: baseline;"><tr>';
+      for (let index = 0; index < chunks.length; index++) {
+        const element = chunks[index];
+        let table = '<table>';
+        for (let i = 0; i < element.length; i++) {
+          const el = element[i];
+          table += '<tr><td>' + el.title.toUpperCase() + '</td><tr>';
+          table += '<tr><td><img src="' + el.image + '"></td></tr>';
+        }
+        table += '</table>';
+        html += '<td>' + table + '</td>';
+      }
+      html += '</tr></tbody></table>';
+      console.log('chunks: ', html);
+    });
+  }
+  
   /**
    * Get all the legend in a single image
    * * @param  format - Image format. default value to "png"
@@ -477,10 +589,12 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
+    const height = doc.internal.pageSize.height;
     const html = await this.getLayersLegendHtml(
       map,
       width,
-      resolution
+      resolution,
+      height,
     ).toPromise();
     // If no legend, save the map directly
     if (html === '') {
@@ -956,8 +1070,6 @@ export class PrintService {
             }
             return status$;
           });
-
-          );
         } else if (legendPosition === 'newpage') {
           await this.getLayersLegendImage(
             map,
@@ -965,7 +1077,6 @@ export class PrintService {
             doZipFile,
             resolution
           );
-
         }
       }
 

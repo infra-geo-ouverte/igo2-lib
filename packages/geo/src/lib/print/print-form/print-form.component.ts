@@ -1,11 +1,18 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
   UntypedFormControl,
   Validators
 } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
 
@@ -23,7 +30,7 @@ import {
   templateUrl: './print-form.component.html',
   styleUrls: ['./print-form.component.scss']
 })
-export class PrintFormComponent implements OnInit {
+export class PrintFormComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
@@ -35,6 +42,7 @@ export class PrintFormComponent implements OnInit {
 
   @Input() disabled$: BehaviorSubject<boolean>;
   @Input() legendHeightError$: BehaviorSubject<boolean>;
+  private legendHeightError$$: Subscription;
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
@@ -223,8 +231,7 @@ export class PrintFormComponent implements OnInit {
 
   ngOnInit() {
     this.doZipFileField.setValue(false);
-    this.legendHeightError$.subscribe((res) => {
-      console.log('legendHeightError$', res);
+    this.legendHeightError$$ = this.legendHeightError$.subscribe((res) => {
       if (res) {
         this.legendPositionField.setErrors({'legendHeightError' : true});
       }
@@ -290,5 +297,9 @@ export class PrintFormComponent implements OnInit {
 
   resetLegendError() {
     this.legendPositionField.updateValueAndValidity();
+  }
+
+  ngOnDestroy() {
+    this.legendHeightError$$.unsubscribe();
   }
 }
