@@ -178,7 +178,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Debounce time between each keystroke
    */
-  @Input() debounce = 200;
+  @Input() debounce = 400;
 
   /**
    * Minimum term length required to trigger a research
@@ -481,15 +481,44 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * When the user clicks on the magnifying glass and
    * this find the first object on the map
    */
-  selectFirstElement(){
 
-    const firstResult = this.store.all().filter((result) => result.source.getId() === 'icherche'|| 'ilayer' || 'nominatim')[0];
-    console.log("premier element",firstResult);
-    if(firstResult){
-      this.store.state.update(firstResult,{focused:true,selected:true},true);
-      console.log("dans la conditionpremier element icherche",firstResult);
-      return;
+  filterResults(id: string): object {
+    return this.store.all().filter((result) => result.source.getId() === id)[0];
+    }
+
+
+    selectFirstElement(){
+
+      const firstResultIcherche = this.filterResults('icherche');
+      const firstResultIlayer = this.filterResults('ilayer');
+      const firstResultIcherchereverse = this.filterResults('icherchereverse');
+      const firstResultCoordinatesreverse = this.filterResults('coordinatesreverse');
+      const firstResultNominatim = this.filterResults('nominatim');
+
+     //Find the max value of scores
+      const maxScore = Math.max(...this.store.all().map(result => result.meta.score));
+
+      //Filter values who have the maxScore
+      const result = this.store.all().find(result => result.meta.score === maxScore);
+
+      if(result === firstResultIcherche){
+        this.store.state.update(result,{focused:true,selected:true},true);
+        return firstResultIcherche;
+      }else if(result === firstResultIlayer){
+       this.store.state.update(result,{focused:true,selected:true},true);
+       return firstResultIlayer;
+
+      }else if(result === firstResultCoordinatesreverse){
+        this.store.state.update(result,{focused:true,selected:true},true);
+        return firstResultCoordinatesreverse;
+
+      } else if(result === firstResultIcherchereverse){
+        this.store.state.update(result,{focused:true,selected:true},true);
+        return firstResultIcherchereverse;
+      }
+      else if(result === firstResultNominatim){
+        this.store.state.update(result,{focused:true,selected:true},true);
+        return firstResultNominatim;
     }
   }
-
 }
