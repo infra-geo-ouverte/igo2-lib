@@ -878,11 +878,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
     }
-    if (this.config.getConfig('importExport.formats') !== undefined) {
-      const validatedListFormat = this.validateListFormat(
-        this.config.getConfig('importExport.formats')
-      );
-      appliedformats = validatedListFormat;
+    const configImportExportFormats = this.config.getConfig('importExport.formats');
+    if (configImportExportFormats) {
+      const validatedListFormat = this.validateListFormat(configImportExportFormats);
+      appliedformats = appliedformats.filter(af => validatedListFormat.includes(af));
     }
     if (formatsType.customList) {
       let commonFormats;
