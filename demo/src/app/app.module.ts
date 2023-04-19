@@ -119,7 +119,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     HammerModule
   ],
   providers: [
-    {provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector,ApplicationRef], multi: true},
+    { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, ApplicationRef], multi: true },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions }
   ],
   bootstrap: [AppComponent]
@@ -136,19 +136,19 @@ export class AppModule {
 
 export function appInitializerFactory(injector: Injector,
   applicationRef: ApplicationRef) {
-    return () => new Promise<any>((resolve: any) => {
-      applicationRef.isStable.pipe(
-        first(isStable => isStable === true),
-        concatMap(() => {
-          const languageService = injector.get(LanguageService);
-          const lang = languageService.getLanguage();
-          return languageService.translate.getTranslation(lang);
-        }))
-        .subscribe((translations) => {
-          const languageService = injector.get(LanguageService);
-          const lang = languageService.getLanguage();
-          languageService.translate.setTranslation(lang, translations);
-          resolve();
-        });
-    });
+  return () => new Promise<any>((resolve: any) => {
+    applicationRef.isStable.pipe(
+      first(isStable => isStable === true),
+      concatMap(() => {
+        const languageService = injector.get(LanguageService);
+        const lang = languageService.getLanguage();
+        return languageService.translate.getTranslation(lang);
+      }))
+      .subscribe((translations) => {
+        const languageService = injector.get(LanguageService);
+        const lang = languageService.getLanguage();
+        languageService.translate.setTranslation(lang, translations);
+        resolve();
+      });
+  });
 }
