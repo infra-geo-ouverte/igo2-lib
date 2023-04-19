@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { debounceTime, forkJoin, map } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
@@ -35,7 +35,6 @@ export class LanguageLoader implements TranslateLoader {
     const locale$ = forkJoin([igoLocale$, ...appLocale$]);
 
     return locale$.pipe(
-      debounceTime(500),
       map((translations) => {
         return translations.reduce(
           (acc, current) => ObjectUtils.mergeDeep(acc, current),
