@@ -1,15 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, forkJoin, map } from 'rxjs';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
 import { ConfigService } from '../../config/config.service';
-
-declare function require(arg: string): any;
 
 export class LanguageLoader implements TranslateLoader {
   constructor(
@@ -35,9 +32,10 @@ export class LanguageLoader implements TranslateLoader {
       this.http.get(`${prefix}${lang}${this.suffix}`)
     );
 
-    const locale$ = combineLatest([igoLocale$, ...appLocale$]);
+    const locale$ = forkJoin([igoLocale$, ...appLocale$]);
 
     return locale$.pipe(
+      debounceTime(500),
       map((translations) => {
         return translations.reduce(
           (acc, current) => ObjectUtils.mergeDeep(acc, current),
