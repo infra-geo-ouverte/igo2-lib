@@ -1,6 +1,6 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ApplicationRef, Injector, NgModule } from '@angular/core';
 import { HammerModule } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
@@ -52,6 +52,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IgoCoreModule, LanguageService } from '@igo2/core';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
+import { concatMap, first } from 'rxjs';
 
 export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   showDelay: 500,
@@ -118,7 +119,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     HammerModule
   ],
   providers: [
-    {provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [LanguageService], multi: true},
+    {provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector,ApplicationRef], multi: true},
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions }
   ],
   bootstrap: [AppComponent]
@@ -133,14 +134,21 @@ export class AppModule {
   }
 }
 
-export function appInitializerFactory(languageService: LanguageService) {
-  return () => new Promise<any>((resolve: any) => {
-      languageService.translate.getTranslation(languageService.getLanguage()).subscribe(() => {
-        console.info(`Successfully initialized '${languageService.getLanguage()}' language.'`);
-      }, err => {
-        console.error(`Problem with '${languageService.getLanguage()}' language initialization.'`);
-      }, () => {
-        resolve(null);
-      });
-  });
+export function appInitializerFactory(injector: Injector,
+  applicationRef: ApplicationRef) {
+    return () => new Promise<any>((resolve: any) => {
+      applicationRef.isStable.pipe(
+        first(isStable => isStable === true),
+        concatMap(() => {
+          const languageService = injector.get(LanguageService);
+          const lang = languageService.getLanguage();
+          return languageService.translate.getTranslation(lang)
+        }))
+        .subscribe((translations) => {
+          const languageService = injector.get(LanguageService);
+          const lang = languageService.getLanguage();
+          languageService.translate.setTranslation(lang, translations);
+          resolve();
+        });
+    });
 }
