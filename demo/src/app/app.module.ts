@@ -142,7 +142,7 @@ export function appInitializerFactory(injector: Injector,
         concatMap(() => {
           const languageService = injector.get(LanguageService);
           const lang = languageService.getLanguage();
-          return languageService.translate.getTranslation(lang)
+          return languageService.translate.getTranslation(lang);
         }))
         .subscribe((translations) => {
           const languageService = injector.get(LanguageService);
