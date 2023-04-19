@@ -27,7 +27,8 @@
           "message": "Le catalogue à ajouter est déjà dans la liste"
         },
         "library.addTitle": "Ajout d'un catalogue",
-        "library.addBtn": "Ajouter un catalogue"
+        "library.addBtn": "Ajouter un catalogue",
+        "library.getCatalogList": "Obtenir la liste des services du catalogue"
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"

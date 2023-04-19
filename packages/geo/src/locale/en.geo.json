@@ -27,7 +27,8 @@
           "message": "The catalog is already contained in the list."
         },
         "library.addTitle": "Adding a catalog",
-        "library.addBtn": "Add a catalog"
+        "library.addBtn": "Add a catalog",
+        "library.getCatalogList": "Get the catalog services list"
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"

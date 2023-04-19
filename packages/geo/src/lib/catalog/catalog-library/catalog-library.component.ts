@@ -18,7 +18,10 @@ import { Md5 } from 'ts-md5';
 import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
+
 import { Catalog } from '../shared/catalog.abstract';
+import { CatalogItem } from '../shared/catalog.interface';
+import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 
 /**
@@ -73,7 +76,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private storageService: StorageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private catalogService: CatalogService
   ) {}
 
   /**
@@ -225,5 +229,54 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((catalog) => {
       this.addCatalog(catalog);
     });
+  }
+
+  getCatalogList(){
+    console.log("gatCatalogList() accessed");
+    /*console.log("store", this.store);
+    console.log("store.entities$", this.store.entities$);
+    //let myEntities = this.store.entities$.subscribe();
+    let myEntities = this.store.entities$.subscribe((newEntity)=>{
+      console.log("new entity", newEntity)
+    });
+    console.log("myEntities", myEntities);
+    console.log(this.store.entities$.getValue());
+    console.log(this.store.entities$.value);*/
+
+
+
+    
+    //const ca = this.store.entities$.getValue()[0]
+
+
+    /*
+    this.catalogService.loadCatalogItems(ca)
+      .subscribe((items: CatalogItem[]) => {
+        console.log(items)
+      });*/
+
+
+
+    // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
+
+    const listeCatalog = new Document;
+
+    for(var ca of this.store.entities$.getValue()){
+      this.catalogService.loadCatalogItems(ca)
+      .subscribe((items: CatalogItem[]) => {
+        console.log(items)
+        items.map(item=>{
+          console.log(item)
+        });
+
+
+
+
+      });
+    }
+    /*
+    var a;
+    a.msSaveBlob
+    */
   }
 }

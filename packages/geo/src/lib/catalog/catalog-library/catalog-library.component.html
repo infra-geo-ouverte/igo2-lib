@@ -22,3 +22,13 @@
     <mat-icon svgIcon="earth-plus"></mat-icon>
   </button>
 </div>
+<div class="btnGetCatalogList">
+  <button
+    mat-raised-button
+    [matTooltip]="'igo.geo.catalog.library.getCatalogList' | translate"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="getCatalogList()">
+    {{'igo.geo.catalog.library.getCatalogList' | translate}}
+  </button>
+</div>
