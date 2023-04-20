@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { debounceTime, forkJoin, map } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
