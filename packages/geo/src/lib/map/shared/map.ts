@@ -15,7 +15,7 @@ import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer } from '../../layer/shared/layers';
+import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
@@ -346,6 +346,9 @@ export class IgoMap {
     const newLayers = this.layers$.value.slice(0);
     const layersToRemove = [];
     layers.forEach((layer: Layer) => {
+      if (layer instanceof VectorLayer) {
+        layer.removeLayerFromIDB();
+      }
       const index = newLayers.indexOf(layer);
       if (index >= 0) {
         layersToRemove.push(layer);
