@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, Subject, forkJoin } from 'rxjs';
-import { map as rxMap, take } from 'rxjs/operators';
+import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
@@ -238,7 +238,8 @@ export class PrintService {
     width: number,
     resolution: number,
     height?: number,
-  ): Observable<string> {
+    margins?: Array<number>,
+  ): Observable<Array<string> | string> {
     return new Observable((observer) => {
       let html = '';
       const legends = getLayersLegends(
@@ -257,6 +258,22 @@ export class PrintService {
         observer.complete();
         return;
       }
+      
+      const imagesArray$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
+      .map((legend) =>
+        this.getDataImage(legend.url).pipe(
+          rxMap((dataImage) => {
+            return {title: legend.title, image:dataImage};
+          })
+        )
+      );
+
+      if (height) {
+        this.chunkImagesByHeightAndWidth(imagesArray$, height, width, observer, resolution);
+        return;
+      }
+
+      // For each legend, define an html table cell
       // Define important style to be sure that all container is convert
       // to image not just visible part
       html += '<style media="screen" type="text/css">';
@@ -270,21 +287,6 @@ export class PrintService {
       html += '<font size="3" face="Times" >';
       html += '<div class="styleLegend">';
       html += '<table class="tableLegend" >';
-
-      // For each legend, define an html table cell
-      console.log('doc height: ', height);
-      console.log('doc width: ', width);
-      console.log('legends: ', legends);
-
-      const imagesArray$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
-      .map((legend) =>
-        this.getDataImage(legend.url).pipe(
-          rxMap((dataImage) => {
-            return {title: legend.title, image:dataImage};
-          })
-        )
-      );
-      this.chunkImagesByHeightWidth(imagesArray$, height, width);
 
       const images$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
       .map((legend) =>
@@ -311,41 +313,26 @@ export class PrintService {
     return secureIMG.transform(url);
   }
 
-  /*getImageDimensions(file: string): Observable<{w: number, h: number}> {
-    return new Observable ((observer) => {
-      const i = new Image();
-      i.src = file;
-      i.onload = function(){
-        const widthMM = Math.floor(i.width * 0.264583);
-        const heightMM = Math.floor(i.height * 0.264583);
-        observer.next({w: widthMM, h: heightMM});
-        observer.complete();
-        return;
-      };
-    });
-  }*/
-
-  getImageDimensions(file: string): Promise<{w: number, h: number}> {
+  private async getImageDimensions(file: string, resolution: number): Promise<{w: number, h: number}> {
     return new Promise (function (resolved, rejected) {
       const i = new Image();
       i.src = file;
       i.onload = function(){
-        const widthMM = Math.floor(i.width * 0.264583);
-        const heightMM = Math.floor(i.height * 0.264583);
-        resolved({w: widthMM, h: heightMM})
+        // length[mm] = pixel * 25.4mm (1 in) / dpi
+        // 5 is the Height of title for every image
+        const heightMM = Math.floor(((i.height * 25.4) / resolution) + 5);
+        const widthMM = Math.floor((i.width * 25.4) / resolution);
+        resolved({w: widthMM, h: heightMM});
       };
     });
   }
 
-  async chunkImagesByHeightWidth(images$, maxH, maxW) {
+  private async chunkImagesByHeightAndWidth(images$, maxH, maxW, observer, resolution: number) {
     forkJoin(images$).subscribe(async (dataImages: [{title: string, image: string}]) => {
       let imgsData: Array<{title: string, image: string, dimensions: {w: number, h: number}}> = [];
-
+      // get image dimensions height, width
       dataImages.forEach(async (element) => {
-        console.log('element: ', element);
-        
-        const dimensions = await this.getImageDimensions(element.image);
-        console.log('dimensions: ', dimensions);
+        const dimensions = await this.getImageDimensions(element.image, resolution);
         imgsData.push({
             title: element.title,
             image: element.image,
@@ -354,7 +341,7 @@ export class PrintService {
       });
 
       await this.timeout(1);
-      
+      // Arrange the list of images from small to large height
       imgsData.sort((a,b) => {
         const hA = a.dimensions.h;
         const hB = b.dimensions.h;
@@ -362,23 +349,84 @@ export class PrintService {
         if (hA > hB) { return 1; }
         return 0;
       });
-
-      console.log('imgsData; ', imgsData);
-
+      // 
+      
+      console.log('maxH: ', maxH);
+      console.log('maxW: ', maxW);
+      // chunk images list by height
       let chunks = [];
       imgsData.forEach(img => {
         // get the first chunk that the value can be added to
         let chunk = chunks.find(c => {
           const sumH = c.reduce((acc, obj) => { return  acc + obj.dimensions.h},0);
-          const sumW = c.reduce((acc, obj) => { return  acc + obj.dimensions.w},0);
-          return ((sumH + img.dimensions.h < maxH) && (sumW + img.dimensions.w <= maxW));
+          return sumH + img.dimensions.h < maxH;
         });
         if (chunk) {chunk.push(img);} // found a chunk. Add value to that.
         else {chunks.push([img]);} // Can't be added to existing chunks. Create new one.
       });
-      console.log('chunks: ', chunks);
+      console.log('chunks:', chunks);
+      // start chunk images list by width
+      let chunksByWidth = [];
+      let chunkByWidth = [];
+      let sumMaxAllWidthInChunk = 0;
+      for (let index = 0; index < chunks.length; index++) {
+        const chunk = chunks[index];
+        const maxWidthInChunk = Math.max(...chunk.map(obj => obj.dimensions.w));
+        sumMaxAllWidthInChunk = sumMaxAllWidthInChunk + maxWidthInChunk;
 
-      let html = '';
+        if(sumMaxAllWidthInChunk <= maxW) {
+          chunkByWidth.push(chunk);
+        } else {
+          chunksByWidth.push(chunkByWidth);
+          chunkByWidth = [];
+          sumMaxAllWidthInChunk = maxWidthInChunk;
+          chunkByWidth.push(chunk);
+        }
+
+        if((chunks.length - 1) === index) {
+          chunksByWidth.push(chunkByWidth);
+        }
+      }
+
+      console.log('chunkByWidth: ', chunksByWidth);
+      let htmlArray = [];
+      for (let index = 0; index < chunksByWidth.length; index++) {
+        const tableData = chunksByWidth[index];
+        let html = '<style media="screen" type="text/css">';
+        html += '.html2canvas-container { width: ' + maxW + 'mm !important; height: 2000px !important; }';
+        html += 'table.tableLegend {table-layout: auto;}';
+        html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
+        html += '</style>';
+        // The font size will also be lowered afterwards (globally along the legend size)
+        // this allows having a good relative font size here and to keep ajusting the legend size
+        // while keeping good relative font size
+        html += '<font size="3" face="Times" >';
+        html += '<div class="styleLegend">';
+        let tableHtml = '<table class="tableLegend"><tbody style="vertical-align: top; border-spacing: 0px;">';
+        tableHtml += '<tr>';
+        for (let i = 0; i < tableData.length; i++) {
+          tableHtml += '<td>';
+          const newTabElementData = tableData[i];
+          let newTableElementHtml = '<table border="1" style="border-spacing: 0px;"><tbody>';
+          newTabElementData.forEach((data) => {
+            newTableElementHtml += '<tr><td>'+ data.title +'</td></tr>';
+            newTableElementHtml += '<tr><td><img src="'+ data.image +'"></td></tr>';
+          });
+          newTableElementHtml += '</tbody></table>';
+          tableHtml += newTableElementHtml;
+          tableHtml += '</td>';
+        }
+        tableHtml += '</tr>'
+        tableHtml += '</tbody></table>';
+        html += tableHtml;
+        html+= '</div></font>'
+        htmlArray.push(html);
+    }
+    observer.next(htmlArray);
+    observer.complete();
+    return
+
+      /*let html = '';
       // Define important style to be sure that all container is convert
       // to image not just visible part
       html += '<style media="screen" type="text/css">';
@@ -389,7 +437,7 @@ export class PrintService {
       // The font size will also be lowered afterwards (globally along the legend size)
       // this allows having a good relative font size here and to keep ajusting the legend size
       // while keeping good relative font size
-      html += '<font size="3" face="Times" >';
+      html += '<font size="1" face="Times" >';
       html += '<div class="styleLegend">';
       html += '<table class="tableLegend"><tbody style="vertical-align: baseline;"><tr>';
       for (let index = 0; index < chunks.length; index++) {
@@ -397,14 +445,17 @@ export class PrintService {
         let table = '<table>';
         for (let i = 0; i < element.length; i++) {
           const el = element[i];
-          table += '<tr><td>' + el.title.toUpperCase() + '</td><tr>';
+          table += '<tr><td>' + el.title.toUpperCase() + '</td></tr>';
           table += '<tr><td><img src="' + el.image + '"></td></tr>';
         }
         table += '</table>';
         html += '<td>' + table + '</td>';
       }
       html += '</tr></tbody></table>';
-      console.log('chunks: ', html);
+      html += '</div><font/>';
+      observer.next(html);
+      observer.complete();
+      return*/
     });
   }
   
@@ -426,7 +477,7 @@ export class PrintService {
       map,
       width,
       resolution
-    ).toPromise();
+    ).toPromise() as string;
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -595,14 +646,33 @@ export class PrintService {
       width,
       resolution,
       height,
-    ).toPromise();
+      margins
+    ).toPromise() as Array<string>;
+
     // If no legend, save the map directly
-    if (html === '') {
+    if (html.length === 0) {
       await this.saveDoc(doc);
       return true;
     }
+    
+    console.log('html: ', html);
+    await this.getImageCanvas(
+      html
+    ).then((canvasArray) => {
+      const pourcentageReduction = 0.85;
+      canvasArray.forEach((canvas) => {
+        const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution, pourcentageReduction
+        * (25.4 * canvas.height) / resolution];
+        doc.addPage();
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, 5, imageSize[0], imageSize[1]);
+      });
+    });
+
+    await this.saveDoc(doc);
+
     // Create div to contain html code for legend
-    const div = window.document.createElement('div');
+    /*const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
 
@@ -622,12 +692,48 @@ export class PrintService {
       let imgData;
       doc.addPage();
       imgData = canvas.toDataURL('image/png');
-      doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
+      doc.addImage(imgData, 'PNG', 0, 0, imageSize[0], imageSize[1]);
     }
 
-    await this.saveDoc(doc);
+    await this.saveDoc(doc);*/
 
   }
+
+  private async getImageCanvas(html: Array<string>): Promise<any> {
+    return new Promise(async (resolve, error) => {
+      let canvasArray = [];
+      for (const element of html) {
+        const div = window.document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        window.document.body.appendChild(div);
+        div.innerHTML = element;
+        await this.timeout(1);
+        const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+          console.log(e);
+        });
+        // const canvas = this.generateCanvas(element);
+        canvasArray.push(canvas);
+      }
+      resolve(canvasArray);
+    });
+  }
+
+  /*private async generateCanvas(htmlData: string): Promise<any> {
+    return new Promise( async (resolve, error) => {
+      console.log('htmlData: ', htmlData);
+      const div = window.document.createElement('div');
+      div.style.position = 'absolute';
+      div.style.top = '0';
+      window.document.body.appendChild(div);
+      div.innerHTML = htmlData;
+      await this.timeout(1);
+      const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+        console.log(e);
+      });
+      resolve(canvas);
+    });
+  }*/
 
   /**
    * Add the legend to the document
@@ -648,7 +754,7 @@ export class PrintService {
         map,
         width,
         resolution
-      ).toPromise();
+      ).toPromise() as string;
       // If no legend, save the map directly
       if (html === '') {
         await this.saveDoc(doc);
@@ -1151,7 +1257,7 @@ export class PrintService {
       map,
       canvas.width,
       resolution
-    ).toPromise();
+    ).toPromise() as string;
     // If no legend, save the map directly
     if (html === '') {
       await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);
