@@ -258,7 +258,7 @@ export class PrintService {
         observer.complete();
         return;
       }
-      
+
       const imagesArray$ = legends.filter(l => l.display && l.isInResolutionsRange === true)
       .map((legend) =>
         this.getDataImage(legend.url).pipe(
@@ -313,32 +313,50 @@ export class PrintService {
     return secureIMG.transform(url);
   }
 
-  private async getImageDimensions(file: string, resolution: number): Promise<{w: number, h: number}> {
+  /**
+   * Get base64 image Dimension in MM
+   * @param file - image base64
+   * @param resolution - number
+   * @return image Dimension height and width
+   */
+  private async getImageDimensions(
+    file: string,
+    resolution: number
+  ): Promise<{w: number, h: number}> {
     return new Promise (function (resolved, rejected) {
       const i = new Image();
       i.src = file;
       i.onload = function(){
         // length[mm] = pixel * 25.4mm (1 in) / dpi
-        // 5 is the Height of title for every image
-        const heightMM = Math.floor(((i.height * 25.4) / resolution) + 5);
+        const heightMM = Math.floor(((i.height * 25.4) / resolution));
         const widthMM = Math.floor((i.width * 25.4) / resolution);
         resolved({w: widthMM, h: heightMM});
       };
     });
   }
 
-  private async chunkImagesByHeightAndWidth(images$, maxH, maxW, observer, resolution: number) {
+  private async chunkImagesByHeightAndWidth(
+    images$,
+    height: number,
+    width: number,
+    observer,
+    resolution: number) {
     forkJoin(images$).subscribe(async (dataImages: [{title: string, image: string}]) => {
-      let imgsData: Array<{title: string, image: string, dimensions: {w: number, h: number}}> = [];
-      // get image dimensions height, width
-      dataImages.forEach(async (element) => {
-        const dimensions = await this.getImageDimensions(element.image, resolution);
-        imgsData.push({
-            title: element.title,
-            image: element.image,
-            dimensions
-          });
-      });
+      const imgsData = await Promise.all(
+        dataImages.map(
+          async (element): Promise<{
+            title: string,
+            image: string,
+            dimensions: {w: number, h: number}
+          }> => {
+            const dimensions = await this.getImageDimensions(element.image, resolution);
+            return {
+              title: element.title,
+              image: element.image,
+              dimensions
+            };
+          })
+      );
 
       await this.timeout(1);
       // Arrange the list of images from small to large height
@@ -349,23 +367,18 @@ export class PrintService {
         if (hA > hB) { return 1; }
         return 0;
       });
-      // 
-      
-      console.log('maxH: ', maxH);
-      console.log('maxW: ', maxW);
       // chunk images list by height
       let chunks = [];
       imgsData.forEach(img => {
         // get the first chunk that the value can be added to
         let chunk = chunks.find(c => {
-          const sumH = c.reduce((acc, obj) => { return  acc + obj.dimensions.h},0);
-          return sumH + img.dimensions.h < maxH;
+          const sumHeight = c.reduce((acc, obj) => { return acc + obj.dimensions.h; },0);
+          return sumHeight + img.dimensions.h < height;
         });
         if (chunk) {chunk.push(img);} // found a chunk. Add value to that.
         else {chunks.push([img]);} // Can't be added to existing chunks. Create new one.
       });
-      console.log('chunks:', chunks);
-      // start chunk images list by width
+      // chunk images list by width
       let chunksByWidth = [];
       let chunkByWidth = [];
       let sumMaxAllWidthInChunk = 0;
@@ -374,7 +387,7 @@ export class PrintService {
         const maxWidthInChunk = Math.max(...chunk.map(obj => obj.dimensions.w));
         sumMaxAllWidthInChunk = sumMaxAllWidthInChunk + maxWidthInChunk;
 
-        if(sumMaxAllWidthInChunk <= maxW) {
+        if (sumMaxAllWidthInChunk <= width) {
           chunkByWidth.push(chunk);
         } else {
           chunksByWidth.push(chunkByWidth);
@@ -383,17 +396,16 @@ export class PrintService {
           chunkByWidth.push(chunk);
         }
 
-        if((chunks.length - 1) === index) {
+        if ((chunks.length - 1) === index) {
           chunksByWidth.push(chunkByWidth);
         }
       }
 
-      console.log('chunkByWidth: ', chunksByWidth);
-      let htmlArray = [];
+      let htmlArray: Array<string> = [];
       for (let index = 0; index < chunksByWidth.length; index++) {
         const tableData = chunksByWidth[index];
         let html = '<style media="screen" type="text/css">';
-        html += '.html2canvas-container { width: ' + maxW + 'mm !important; height: 2000px !important; }';
+        html += '.html2canvas-container { width: ' + width + 'mm !important; height: 2000px !important; }';
         html += 'table.tableLegend {table-layout: auto;}';
         html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
         html += '</style>';
@@ -407,7 +419,7 @@ export class PrintService {
         for (let i = 0; i < tableData.length; i++) {
           tableHtml += '<td>';
           const newTabElementData = tableData[i];
-          let newTableElementHtml = '<table border="1" style="border-spacing: 0px;"><tbody>';
+          let newTableElementHtml = '<table style="border-spacing: 0px;"><tbody>';
           newTabElementData.forEach((data) => {
             newTableElementHtml += '<tr><td>'+ data.title +'</td></tr>';
             newTableElementHtml += '<tr><td><img src="'+ data.image +'"></td></tr>';
@@ -416,49 +428,18 @@ export class PrintService {
           tableHtml += newTableElementHtml;
           tableHtml += '</td>';
         }
-        tableHtml += '</tr>'
+        tableHtml += '</tr>';
         tableHtml += '</tbody></table>';
         html += tableHtml;
-        html+= '</div></font>'
+        html+= '</div></font>';
         htmlArray.push(html);
     }
     observer.next(htmlArray);
     observer.complete();
-    return
-
-      /*let html = '';
-      // Define important style to be sure that all container is convert
-      // to image not just visible part
-      html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: ' + maxW + 'mm !important; height: 2000px !important; }';
-      html += 'table.tableLegend {table-layout: auto;}';
-      html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
-      html += '</style>';
-      // The font size will also be lowered afterwards (globally along the legend size)
-      // this allows having a good relative font size here and to keep ajusting the legend size
-      // while keeping good relative font size
-      html += '<font size="1" face="Times" >';
-      html += '<div class="styleLegend">';
-      html += '<table class="tableLegend"><tbody style="vertical-align: baseline;"><tr>';
-      for (let index = 0; index < chunks.length; index++) {
-        const element = chunks[index];
-        let table = '<table>';
-        for (let i = 0; i < element.length; i++) {
-          const el = element[i];
-          table += '<tr><td>' + el.title.toUpperCase() + '</td></tr>';
-          table += '<tr><td><img src="' + el.image + '"></td></tr>';
-        }
-        table += '</table>';
-        html += '<td>' + table + '</td>';
-      }
-      html += '</tr></tbody></table>';
-      html += '</div><font/>';
-      observer.next(html);
-      observer.complete();
-      return*/
+    return;
     });
   }
-  
+
   /**
    * Get all the legend in a single image
    * * @param  format - Image format. default value to "png"
@@ -654,7 +635,7 @@ export class PrintService {
       await this.saveDoc(doc);
       return true;
     }
-    
+
     console.log('html: ', html);
     await this.getImageCanvas(
       html
