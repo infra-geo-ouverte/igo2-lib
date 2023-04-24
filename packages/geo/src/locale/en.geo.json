@@ -308,6 +308,8 @@
       "printForm": {
         "corsErrorMessageBody": "Unable to print due to non-owned access rights",
         "corsErrorMessageHeader": "Print",
+        "heighImageLegendtErrorMessageBody": "The legend height is bigger than the page, please change the page dimension or export it in new image",
+        "heighPdfLegendtErrorMessageBody": "The legend height is bigger than the page, please change the page dimension or export it in new page",
         "comment": "Comment",
         "doZipFile": "Zip file",
         "outputFormat": "Output format",

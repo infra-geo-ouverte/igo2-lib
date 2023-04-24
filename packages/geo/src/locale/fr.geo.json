@@ -307,6 +307,8 @@
       "printForm": {
         "corsErrorMessageBody": "Impossible d'imprimer dû à des droits d'accès non détenus",
         "corsErrorMessageHeader": "Impression",
+        "heighImageLegendtErrorMessageBody": "La hauteur de la légende est plus grande que la page, modifiez la taille de la page ou exportez dans une nouvelle image",
+        "heighPdfLegendtErrorMessageBody": "La hauteur de la légende est plus grande que la page, modifiez la taille de la page ou exportez dans une nouvelle page",
         "comment": "Commentaire",
         "doZipFile": "Compresser le fichier",
         "outputFormat": "Format de sortie",

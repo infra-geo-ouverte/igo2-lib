@@ -99,7 +99,7 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe((res) => {
           // check legend height
-          if(res.legendHeightError) {
+          if (res.legendHeightError) {
             this.legendHeightError$.next(res.legendHeightError);
           }
           this.disabled$.next(false);
@@ -136,7 +136,12 @@ export class PrintComponent {
           data.legendPosition
         )
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: any) => {
+          // check legend height
+          console.log('export image: ', res);
+          if (res.legendHeightError) {
+            this.legendHeightError$.next(res.legendHeightError);
+          }
           this.disabled$.next(false);
         });
     }

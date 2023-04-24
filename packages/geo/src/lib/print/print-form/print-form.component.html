@@ -75,11 +75,10 @@
       </mat-select>
       <mat-error *ngIf="legendPositionField.errors?.legendHeightError">
         <ng-container *ngIf="outputFormat === 'Pdf'">
-          the map legend is large than the page, please change the option to {{'igo.geo.printForm.legendPositions.newpage' | translate}} or change paper format
+          {{ 'igo.geo.printForm.heighPdfLegendtErrorMessageBody' | translate}}
         </ng-container>
-
         <ng-container *ngIf="outputFormat === 'Image'">
-          the map legend is large than the image, please change the option to {{'igo.geo.printForm.legendPositions.newimage' | translate}}
+          {{ 'igo.geo.printForm.heighImageLegendtErrorMessageBody' | translate}}  
         </ng-container>
       </mat-error>
     </mat-form-field>
