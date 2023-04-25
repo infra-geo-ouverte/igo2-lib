@@ -181,6 +181,10 @@ export class MapGeolocationController extends MapController {
   private _accuracyThreshold = this.options && this.options.accuracyThreshold ? this.options.accuracyThreshold : 5000;
 
 
+  get olGeolocation() {
+    return this.geolocation;
+  }
+
   /**
    * Whether the activate the geolocation.
    */
