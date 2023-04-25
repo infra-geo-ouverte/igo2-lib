@@ -24,7 +24,7 @@ matTooltipShowDelay="500"
 
 <button
 igoStopPropagation
-*ngIf="layer.meta.dataType === 'Feature'"
+*ngIf="layer.meta.dataType === 'Feature' && saveSearchResultInLayer"
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
