@@ -304,7 +304,7 @@ export function scaleExtent(
 export function featuresAreOutOfView(
   map: IgoMap,
   featuresExtent: [number, number, number, number],
-  edgeRatio:  number | number[] = 0.05
+  edgeRatio: number | number[] = 0.05
 ) {
   const edgesRatio = Array.isArray(edgeRatio) ? edgeRatio :[edgeRatio,edgeRatio,edgeRatio,edgeRatio];
   const mapExtent = map.viewController.getExtent();
