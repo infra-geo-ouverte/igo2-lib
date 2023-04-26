@@ -26,6 +26,7 @@ import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
 import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
+import { DrawState } from '../../draw';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -162,7 +163,8 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     public mapState: MapState,
     private searchSourceService: SearchSourceService,
-    private importExportState: ImportExportState
+    private importExportState: ImportExportState,
+    private drawState: DrawState
   ) {}
 
   ngOnInit(): void {
@@ -320,5 +322,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
     }
     return false;
+  }
+
+  onSearchLayerStoreRemoveLayer(layer: Layer) {
+    const index = this.drawState.searchLayerStores
+    .findIndex((store) => store.layer.id === layer.id);
+    if (index > -1) {
+      this.drawState.searchLayerStores.splice(index, 1);
+    }
   }
 }
