@@ -181,6 +181,10 @@ export class MapGeolocationController extends MapController {
   private _accuracyThreshold = this.options && this.options.accuracyThreshold ? this.options.accuracyThreshold : 5000;
 
 
+  get olGeolocation() {
+    return this.geolocation;
+  }
+
   /**
    * Whether the activate the geolocation.
    */
@@ -479,7 +483,8 @@ export class MapGeolocationController extends MapController {
     const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
     if (features.length > 0) {
       const featuresExtent = computeOlFeaturesExtent(this.map, features);
-      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, position?.speed > 15 ? 0.25 : 0.1);
+      const edgeRatios = position?.speed > 12.5 ? [0.25,0.25,0.25,0.25] : [0.15,0.1,0.1,0.1];
+      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, edgeRatios);
       let motion = this.followPosition && areOutOfView ? FeatureMotion.Move : FeatureMotion.None;
       if (zoomTo) {
         motion = FeatureMotion.Zoom;
