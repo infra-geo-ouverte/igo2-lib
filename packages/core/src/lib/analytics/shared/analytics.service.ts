@@ -88,49 +88,12 @@ export class AnalyticsService {
   }
 
   /**
-   * Traking function for adding layers to the map
-   * @param otherParam Either the matrixSet or onmessage of a layer
+   * Function that tracks layers added to the map
    */
-  public trackLayer(category: string, action: string, type: string, parameters: any){
-    if (this.options.provider === 'matomo'){
-      switch (type){
-        case 'wms':
-          //layers
-          //this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
+  public trackLayer(category: string, action: string, parameters: any){
+    if (this.options.provider === 'matomo')
+          this.paq.push(['trackEvent', category, action, parameters]);
 
-        case 'wmts':
-          //type, layer, matrixSet
-          /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 2, 'layer', layer, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 4, 'matrixSet', otherParam, 'LayerAdded']);*/
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
-
-        case 'arcgisrest':
-          //onmessage
-          //this.paq.push(['setCustomVariable', 4, 'onmessage', otherParam, 'LayerAdded']);
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
-
-        case 'tilearcgisrest':
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
-
-        case 'xyz':
-          //type+url
-          /*this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
-          this.paq.push(['setCustomVariable', 3, 'url', url, 'LayerAdded']);*/
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
-
-        case 'imagearcgisrest':
-          //type
-          //this.paq.push(['setCustomVariable', 1, 'type', type, 'LayerAdded']);
-          this.paq.push(['trackEvent', category, action, type, parameters]);
-          break;
       }
     }
-  }
-}
+

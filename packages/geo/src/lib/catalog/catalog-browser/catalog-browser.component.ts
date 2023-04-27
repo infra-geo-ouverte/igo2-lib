@@ -166,12 +166,12 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       }
       return this.layerService.createAsyncLayer(layer.options);
     });
-    zip(...layers$).subscribe((oLayers: Layer[]) => {
+    zip(...layers$).subscribe((Layers: Layer[]) => {
       if (event.event.type === 'click' && event.added) {
-        this.map.layersAddedByClick$.next(oLayers);
+        this.map.layersAddedByClick$.next(Layers);
       }
       this.store.state.updateMany(layers, { added: true });
-      this.map.addLayers(oLayers);
+      this.map.addLayers(Layers);
     });
   }
 
@@ -183,14 +183,14 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store.state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const oLayer = this.map.getLayerById(layer.options.id);
-        if (oLayer !== undefined) {
-          this.map.removeLayer(oLayer);
+        const Layer = this.map.getLayerById(layer.options.id);
+        if (Layer !== undefined) {
+          this.map.removeLayer(Layer);
         }
       } else {
-        const oLayer = this.map.getLayerById(layer.id);
-        if (oLayer !== undefined) {
-          this.map.removeLayer(oLayer);
+        const Layer = this.map.getLayerById(layer.id);
+        if (Layer !== undefined) {
+          this.map.removeLayer(Layer);
         }
       }
     });

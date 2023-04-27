@@ -99,51 +99,48 @@ export class AnalyticsListenerService {
       layers.map(layer => {
         let wmsParams: string;
         let wmtsParams: string;
-        let argisrestParams: string;
-        let tilearcgisrestParams: string;
         let xyzParams: string;
-        let imagearcgisrestParams: string;
+        let restParams: string;
 
         switch (layer.dataSource.options.type){
           case 'wms':
             const wmsDataSource = layer.dataSource.options as WMSDataSourceOptions;
             const wmsLayerName: string = wmsDataSource.params.LAYERS;
             const wmsUrl: string = wmsDataSource.url;
-            wmsParams = 'nom de la couche:'+' '+ wmsLayerName +','+' '+'url:'+' '+ wmsUrl ;
+            const wmsType: string = wmsDataSource.type;
+            wmsParams = JSON.stringify({layer: wmsLayerName, type: wmsType, url: wmsUrl});
             break;
          case 'wmts':
             const wmtsDataSource = layer.dataSource.options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
             const wmtsUrl: string = wmtsDataSource.url;
             const wmtsMatrixSet: string = wmtsDataSource.matrixSet;
-            wmtsParams = 'nom de la couche:' + ' ' + wmtsLayerName + ',' + ' ' + 'url:' + ' ' +
-            wmtsUrl + ',' + ' ' + 'référence spatiale:' + ' ' + wmtsDataSource.matrixSet;
+            const wmtsType: string = wmtsDataSource.type;
+            wmtsParams = JSON.stringify({layer: wmtsLayerName, type: wmtsType, url: wmtsUrl, EPSG: wmtsMatrixSet});
             break;
-          case 'arcgisrest':
-          case 'tilearcgisrest':
-          case 'imagearcgisrest':
-            const restDataSource = layer.dataSource.options as ArcGISRestDataSourceOptions |
-              TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions;
-            const arcgisrestName: string = restDataSource._layerOptionsFromSource.title;
-            const arcgisrestUrl: string = restDataSource.url;
-            const tilearcgisrestName: string = restDataSource._layerOptionsFromSource.title;
-            const tilearcgisrestUrl: string = restDataSource.url;
-            const imagearcgisrestName: string = restDataSource._layerOptionsFromSource.title;
-            const imagearcgisrestUrl: string = restDataSource.url;
-            argisrestParams = 'nom de la couche:' + ' ' + arcgisrestName || tilearcgisrestName || imagearcgisrestName +
-              ',' + ' ' + 'url:' + ' ' + arcgisrestUrl || tilearcgisrestUrl || imagearcgisrestUrl;
+            case 'arcgisrest':
+            case 'tilearcgisrest':
+            case 'imagearcgisrest':
+            const restDataSource = layer.options.sourceOptions as ArcGISRestDataSourceOptions | TileArcGISRestDataSourceOptions
+             | ArcGISRestImageDataSourceOptions;
+            const restName: string = restDataSource.layer;
+            const restUrl: string = restDataSource.url;
+            const restType: string = restDataSource.type;
+            restParams = JSON.stringify({layer: restName, type: restType, url: restUrl});
             break;
           case 'xyz':
-            const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
+           /* const xyzDataSource = layer.dataSource.options as XYZDataSourceOptions;
             const xyzName: string = layer.title;
             const xyzUrl: string = xyzDataSource.url;
-            xyzParams = 'nom de la couche:'+' '+xyzName +','+' '+'url:'+' '+xyzUrl;
+            const xyzType: string = layer.dataSource.options.type;
+            xyzParams = JSON.stringify({layer: xyzName, type: xyzType, url: xyzUrl});
+            */
+           // todo 
             break;
 
 
         }
-        this.analyticsService.trackLayer('layer', 'addLayer', layer.dataSource.options.type,
-          wmsParams || wmtsParams || argisrestParams || tilearcgisrestParams || xyzParams || imagearcgisrestParams);
+            this.analyticsService.trackLayer('layer', 'addLayer', wmsParams || wmtsParams || xyzParams || restParams);
       });
     });
   }
