@@ -12,7 +12,6 @@ import { MapState } from '../map/map.state';
 import {
   Layer,
   WMTSDataSourceOptions,
-  XYZDataSourceOptions,
   WMSDataSourceOptions,
   ArcGISRestDataSourceOptions,
   TileArcGISRestDataSourceOptions,
@@ -135,7 +134,7 @@ export class AnalyticsListenerService {
             const xyzType: string = layer.dataSource.options.type;
             xyzParams = JSON.stringify({layer: xyzName, type: xyzType, url: xyzUrl});
             */
-           // todo 
+           // todo
             break;
 
 
