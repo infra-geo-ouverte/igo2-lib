@@ -334,6 +334,15 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
             color: 'rgba(143,7,7,1)'
           })
         })
+      }),
+      new Style({
+        stroke: new Stroke({
+          width: 1,
+          color: 'rgba(143,7,7,1)'
+        }),
+        fill: new Fill({
+          color: 'rgba(0, 0, 255, 0.1)',
+        }),
       })
     ];
 
