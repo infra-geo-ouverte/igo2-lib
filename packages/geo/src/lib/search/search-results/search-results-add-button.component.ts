@@ -32,6 +32,7 @@ import OlOverlay from 'ol/Overlay';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { QueryableDataSourceOptions } from '../../query';
+import { Media, MediaService } from '@igo2/core';
 
 
 @Component({
@@ -99,16 +100,26 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       String(layer.id).includes('igo-search-layer')
     );
   }
-
+  private mediaService$$: Subscription;
+  public isMobile: boolean = false;
   constructor(
     private layerService: LayerService,
     private dialog: MatDialog,
-    private dataSourceService: DataSourceService) {}
+    private dataSourceService: DataSourceService,
+    private mediaService: MediaService) {}
 
   /**
    * @internal
    */
   ngOnInit(): void {
+    // check the view if is mobile or not
+    this.mediaService$$ = this.mediaService.media$.subscribe(
+      (media: Media) => {
+        if(media === Media.Mobile) {
+          this.isMobile = true;
+        }
+      }
+    );
     if (this.layer.meta.dataType === 'Layer') {
       this.added =
         this.map.layers.findIndex(
@@ -127,6 +138,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
     this.layers$$.unsubscribe();
+    if (this.mediaService$$) {
+      this.mediaService$$.unsubscribe();
+    }
   }
 
   /**
