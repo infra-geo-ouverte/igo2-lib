@@ -267,11 +267,11 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
     //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
     //Array.from(listCatalog)
-    let csvContent = "data:text/csv;charset=utf-8," + listCatalog.map(e => e.join(",")).join("\n");
+    let csvContent = listCatalog.map(e => e.join(",")).join("\n");
     
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
     link.setAttribute("download", "demo.csv");
     document.body.appendChild(link); // Required for FF
     
