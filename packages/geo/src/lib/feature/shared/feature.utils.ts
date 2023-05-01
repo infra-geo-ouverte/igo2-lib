@@ -297,15 +297,18 @@ export function scaleExtent(
  * By default, we define the edge as 5% (0.05) of the extent size.
  * @param map Map
  * @param featuresExtent The features's extent
+ * @param edgeRatio Number or Number[] Single value OR an array =>
+ *  [top,right,bottom,left] directions, in that order
  * @returns Return true if features are out of view
  */
 export function featuresAreOutOfView(
   map: IgoMap,
   featuresExtent: [number, number, number, number],
-  edgeRatio: number = 0.05
+  edgeRatio: number | number[] = 0.05
 ) {
+  const edgesRatio = Array.isArray(edgeRatio) ? edgeRatio :[edgeRatio,edgeRatio,edgeRatio,edgeRatio];
   const mapExtent = map.viewController.getExtent();
-  const scale = [-1, -1, -1, -1].map(x => x * edgeRatio);
+  const scale = [-1, -1, -1, -1].map((x,i) => x * edgesRatio[i]);
   const viewExtent = scaleExtent(mapExtent, scale as [
     number,
     number,
