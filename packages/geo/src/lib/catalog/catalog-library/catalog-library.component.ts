@@ -269,13 +269,38 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     //Array.from(listCatalog)
     let csvContent = "data:text/csv;charset=utf-8," + listCatalog.map(e => e.join(",")).join("\n");
     
-    //var myRows = [];
-    //myRows = clipboard["copy"].concat(myRows)
-    //var myObj = { "myrows": myRows };
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "demo.csv");
+    document.body.appendChild(link); // Required for FF
     
+    link.click(); // This will download the data file named "my_data.csv".
 
-/*
-    var saveText = function(filename, output){
+    document.body.removeChild(link);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //var myRows = [];
+    //myRows = Clipboard["copy"].concat(myRows)
+
+    /*var saveText = function(filename, output){
         const headersCSV = Object.keys(output[0]).join(";");
         const contentCSV = listCatalog.map(r => Object.values(r).join(";"));
         const textCVS = [headersCSV].concat(contentCSV).join("\\");
@@ -283,11 +308,12 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         var universalBOM = "\\uFEFF";
         var a = document.createElement('a');
         //a.setAttribute('href', 'data:text/json;charset=utf-8,'+encodeURIComponent(universalBOM+output));
-        a.setAttribute('href', 'data:text/csv;charset=utf-8,'+encodeURIComponent(universalBOM+textCVS));
         a.setAttribute('download', filename);
         a.click()
     
     };*/
+
+    //saveText( Clipboard["file"]+".csv", listCatalog );
     /*
     const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
     console.log(mainCSV);*/
