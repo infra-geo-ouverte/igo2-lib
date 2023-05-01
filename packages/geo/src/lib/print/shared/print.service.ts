@@ -47,6 +47,8 @@ export class PrintService {
     commentFontSize: 12
   };
 
+  private previousMessageId: number;
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
@@ -62,7 +64,9 @@ export class PrintService {
     const orientation = options.orientation;
     const legendPostion = options.legendPosition;
     this.activityId = this.activityService.register();
-
+    if(this.previousMessageId) {
+      this.messageService.remove(this.previousMessageId);
+    }
     GeoPdfPlugin(jsPDF.API);
 
     const doc = new jsPDF({
@@ -165,7 +169,10 @@ export class PrintService {
               catch(() => {
                 this.activityService.unregister(this.activityId);
                 status$.next({legendHeightError: true});
-                this.messageService.error('igo.geo.printForm.heighPdfLegendtErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
+                const messageErrorObj = this.messageService.error(
+                  'igo.geo.printForm.heighPdfLegendtErrorMessageBody',
+                  'igo.geo.printForm.corsErrorMessageHeader');
+                this.previousMessageId = messageErrorObj.toastId;
                 return status$;
               });
             } else if (legendPostion === 'newpage') {
@@ -978,6 +985,9 @@ export class PrintService {
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
+    if(this.previousMessageId) {
+      this.messageService.remove(this.previousMessageId);
+    }
     map.ol.once('rendercomplete', async (event: any) => {
       format = format.toLowerCase();
       const oldCanvas = event.target
@@ -1120,7 +1130,10 @@ export class PrintService {
           );
 
           if (addLegendResult && addLegendResult.heightError) {
-            this.messageService.error('igo.geo.printForm.heighImageLegendtErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
+            const messageErrorObj = this.messageService.error(
+              'igo.geo.printForm.heighImageLegendtErrorMessageBody',
+              'igo.geo.printForm.corsErrorMessageHeader');
+            this.previousMessageId = messageErrorObj.toastId;
             legendHeightError = addLegendResult.heightError;
           }
         } else if (legendPosition === 'newpage') {

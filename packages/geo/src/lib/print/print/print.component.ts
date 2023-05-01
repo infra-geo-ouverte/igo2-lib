@@ -138,7 +138,6 @@ export class PrintComponent {
         .pipe(take(1))
         .subscribe((res: any) => {
           // check legend height
-          console.log('export image: ', res);
           if (res.legendHeightError) {
             this.legendHeightError$.next(res.legendHeightError);
           }

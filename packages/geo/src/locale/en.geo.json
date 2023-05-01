@@ -311,8 +311,8 @@
       "printForm": {
         "corsErrorMessageBody": "Unable to print due to non-owned access rights",
         "corsErrorMessageHeader": "Print",
-        "heighImageLegendtErrorMessageBody": "The legend height is bigger than the page, please change the page dimension or export it in new image",
-        "heighPdfLegendtErrorMessageBody": "The legend height is bigger than the page, please change the page dimension or export it in new page",
+        "heighImageLegendtErrorMessageBody": "The space available for the legend in the chosen image is insufficien to contain all the map’s visible elements. For best results, choose the « New image » legend position.",
+        "heighPdfLegendtErrorMessageBody": "The space available for the legend in the chosen paper format is insufficient to contain all the map’s visible elements. For best results, please use a larger paper format or choose the « New page » legend position.",
         "comment": "Comment",
         "doZipFile": "Zip file",
         "outputFormat": "Output format",
