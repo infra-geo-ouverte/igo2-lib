@@ -29,6 +29,10 @@ import {
 import { EntityStore } from '@igo2/common';
 import { getTooltipsOfOlGeometry } from '../../measure';
 import OlOverlay from 'ol/Overlay';
+import Stroke from 'ol/style/Stroke';
+import Fill from 'ol/style/Fill';
+import Style from 'ol/style/Style';
+import Circle from 'ol/style/Circle';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
 import { QueryableDataSourceOptions } from '../../query';
@@ -319,10 +323,33 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   }
 
   createLayer(layerTitle: string, selectedFeature: SearchResult) {
-
     const activeStore: FeatureStore<Feature> = new FeatureStore<Feature>([], {
       map: this.map
     });
+
+    const styles = [
+      new Style({
+        image: new Circle({
+          radius: 5,
+          stroke: new Stroke({
+            width: 1,
+            color: 'rgba(143,7,7,1)'
+          }),
+          fill: new Fill({
+            color: 'rgba(143,7,7,1)'
+          })
+        })
+      }),
+      new Style({
+        stroke: new Stroke({
+          width: 1,
+          color: 'rgba(143,7,7,1)'
+        }),
+        fill: new Fill({
+          color: 'rgba(0, 0, 255, 0.1)',
+        }),
+      })
+    ];
 
     // set layer id
     let layerCounterID: number = 0;
@@ -355,6 +382,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
                 }
               }
             },
+            style: styles,
             showInLayerList: true,
             exportable: true,
             workspace: {
