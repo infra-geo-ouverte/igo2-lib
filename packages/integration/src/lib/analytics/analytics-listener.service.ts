@@ -113,9 +113,9 @@ export class AnalyticsListenerService {
             const wmtsDataSource = layer.dataSource.options as WMTSDataSourceOptions;
             const wmtsLayerName: string = wmtsDataSource.layer;
             const wmtsUrl: string = wmtsDataSource.url;
-            const wmtsMatrixSet: string = wmtsDataSource.matrixSet;
+            const matrixSet: string = wmtsDataSource.matrixSet;
             const wmtsType: string = wmtsDataSource.type;
-            wmtsParams = JSON.stringify({layer: wmtsLayerName, type: wmtsType, url: wmtsUrl, EPSG: wmtsMatrixSet});
+            wmtsParams = JSON.stringify({layer: wmtsLayerName, type: wmtsType, url: wmtsUrl, matrixSet});
             break;
             case 'arcgisrest':
             case 'tilearcgisrest':

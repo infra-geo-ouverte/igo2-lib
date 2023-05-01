@@ -183,14 +183,14 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store.state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const Layer = this.map.getLayerById(layer.options.id);
-        if (Layer !== undefined) {
-          this.map.removeLayer(Layer);
+        const currLayer = this.map.getLayerById(layer.options.id);
+        if (currLayer !== undefined) {
+          this.map.removeLayer(currLayer);
         }
       } else {
-        const Layer = this.map.getLayerById(layer.id);
-        if (Layer !== undefined) {
-          this.map.removeLayer(Layer);
+        const currLayer = this.map.getLayerById(layer.id);
+        if (currLayer !== undefined) {
+          this.map.removeLayer(currLayer);
         }
       }
     });
