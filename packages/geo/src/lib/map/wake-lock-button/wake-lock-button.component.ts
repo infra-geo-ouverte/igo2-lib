@@ -47,10 +47,10 @@ export class WakeLockButtonComponent {
     if (nonWakeLockApiBrowser) {
       this.disableWakeLock();
       this.enabled = false;
-      window.onblur = () => {
+      window.addEventListener('blur', () => {
         this.disableWakeLock();
         this.enabled = false;
-      };
+      });
     }
     this.enabled ? this.enableWakeLock() : this.disableWakeLock();
   }

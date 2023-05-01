@@ -1,9 +1,9 @@
-import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Directive, HostListener, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MessageService, ConfigService } from '@igo2/core';
-import { DragAndDropDirective } from '@igo2/common';
+import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -13,6 +13,7 @@ import { handleFileImportSuccess, handleFileImportError } from '../shared/import
 import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { concatMap, first, skipWhile } from 'rxjs/operators';
+import { LayerService } from '../../layer/shared/layer.service';
 import { ImportExportServiceOptions } from './import.interface';
 
 @Directive({
@@ -30,13 +31,17 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
     return this.component.map;
   }
 
+  @Input() contextUri: string;
+
   constructor(
     private component: MapBrowserComponent,
     private importService: ImportService,
     private styleListService: StyleListService,
     private styleService: StyleService,
     private config: ConfigService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private layerService: LayerService,
+    private confirmDialogService: ConfirmDialogService
   ) {
     super();
   }
@@ -140,11 +145,19 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
       This legacy conversion will be deleted in 2024.
       `);
     }
+    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
     if (!importWithStyle) {
-      handleFileImportSuccess(file, features, this.map, this.messageService);
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.contextUri,
+        this.messageService,
+        this.layerService,
+        confirmDialogService);
     } else {
-      handleFileImportSuccess(file, features, this.map, this.messageService,
-                               this.styleListService, this.styleService);
+      handleFileImportSuccess(file, features, this.map, this.contextUri, this.messageService,
+        this.layerService, confirmDialogService, this.styleListService, this.styleService);
     }
   }
 

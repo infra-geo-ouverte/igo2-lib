@@ -37,7 +37,7 @@ export class ConfigFileToGeoDBService {
         const currentDate = new Date();
         datasToIDB?.geoDatas.map((geoData) => {
           if (typeof geoData.triggerDate === 'string') {
-            geoData.triggerDate = new Date(Date.parse(geoData.triggerDate.replace(/-/g, ' ')));
+            geoData.triggerDate = new Date(Date.parse(geoData.triggerDate));
           }
           if (currentDate >= geoData.triggerDate) {
             if (geoData.action === 'update') {
@@ -64,8 +64,8 @@ export class ConfigFileToGeoDBService {
                             .then((zipped) => {
                               zipped.forEach((relativePath) => {
                                 if (relativePath.toLocaleLowerCase().endsWith('.geojson')) {
-                                  zipped.file(relativePath).async("base64").then((r) => {
-                                    const geojson = JSON.parse(atob(r));
+                                  zipped.file(relativePath).async("text").then((r) => {
+                                    const geojson = JSON.parse(r);
                                     const subUrl = geoData.zippedBaseUrl || '';
                                     const zippedUrl = subUrl + (subUrl.endsWith('/') ? '' : '/') + relativePath;
                                     observables$.push(
