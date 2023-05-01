@@ -233,50 +233,63 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   getCatalogList(){
     console.log("gatCatalogList() accessed");
-    /*console.log("store", this.store);
-    console.log("store.entities$", this.store.entities$);
-    //let myEntities = this.store.entities$.subscribe();
-    let myEntities = this.store.entities$.subscribe((newEntity)=>{
-      console.log("new entity", newEntity)
-    });
-    console.log("myEntities", myEntities);
-    console.log(this.store.entities$.getValue());
-    console.log(this.store.entities$.value);*/
-
-
-
-    
-    //const ca = this.store.entities$.getValue()[0]
-
-
-    /*
-    this.catalogService.loadCatalogItems(ca)
-      .subscribe((items: CatalogItem[]) => {
-        console.log(items)
-      });*/
-
-
-
     // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
-
-    const listeCatalog = new Document;
-
-    for(var ca of this.store.entities$.getValue()){
-      this.catalogService.loadCatalogItems(ca)
-      .subscribe((items: CatalogItem[]) => {
-        console.log(items)
-        items.map(item=>{
-          console.log(item)
+    /*id: string;
+    title: string;
+    type?: CatalogItemType;
+    address?: string;
+    externalProvider?:*/
+    //const listCatalog = new Document;
+    let listCatalog = [];
+    let index = 0;
+    let bufferArray = [];
+    for (var ca of this.store.entities$.getValue()) {
+        this.catalogService.loadCatalogItems(ca)
+            .subscribe((items) => {
+            //console.log(items);
+            /*listCatalog[index] = items;
+            index++;*/
+            items.map(item => {
+                bufferArray = [];
+                bufferArray.push(item.id);
+                bufferArray.push(item.type);
+                bufferArray.push(item.title);
+                bufferArray.push(item.address);
+                bufferArray.push(item.externalProvider);
+                //listCatalog[index] = item;
+                listCatalog[index] = bufferArray;
+                index++;
+            });
         });
-
-
-
-
-      });
     }
+    console.log("listCatalog", listCatalog);
+    
+    //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
+    //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
+    //Array.from(listCatalog)
+    let csvContent = "data:text/csv;charset=utf-8," + listCatalog.map(e => e.join(",")).join("\n");
+    
+    //var myRows = [];
+    //myRows = clipboard["copy"].concat(myRows)
+    //var myObj = { "myrows": myRows };
+    
+
+/*
+    var saveText = function(filename, output){
+        const headersCSV = Object.keys(output[0]).join(";");
+        const contentCSV = listCatalog.map(r => Object.values(r).join(";"));
+        const textCVS = [headersCSV].concat(contentCSV).join("\\");
+    
+        var universalBOM = "\\uFEFF";
+        var a = document.createElement('a');
+        //a.setAttribute('href', 'data:text/json;charset=utf-8,'+encodeURIComponent(universalBOM+output));
+        a.setAttribute('href', 'data:text/csv;charset=utf-8,'+encodeURIComponent(universalBOM+textCVS));
+        a.setAttribute('download', filename);
+        a.click()
+    
+    };*/
     /*
-    var a;
-    a.msSaveBlob
-    */
+    const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
+    console.log(mainCSV);*/
   }
 }
