@@ -743,9 +743,10 @@ export class PrintService {
         this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
         await this.saveDoc(doc);
         // check page Height and legend Height
-        const pageHeightMM = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
-        const canvaHeightMM = Math.floor(canvas.height * 0.264583);
-        if (canvaHeightMM > pageHeightMM) {
+        const pageHeightMM = Math.round(doc.internal.pageSize.getHeight() - (margins[0] + margins[2]));
+        const legendDimensionMM = Math.round((25.4 * canvas.height) / resolution);
+
+        if (legendDimensionMM > pageHeightMM) {
           throw false;
         }
       }
