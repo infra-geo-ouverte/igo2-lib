@@ -155,7 +155,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
           if (this.added) {
             this.remove();
           } else {
-            this.add();
+            this.add(event);
           }
         }
         this.isPreview$.next(false);
@@ -181,10 +181,10 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     }
   }
 
-  private add() {
+  private add(event?: Event) {
     if (!this.added) {
       this.added = true;
-      this.addLayerToMap();
+      this.addLayerToMap(event);
     }
   }
 
@@ -200,7 +200,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
   /**
    * Emit added change event with added = true
    */
-  private addLayerToMap() {
+  private addLayerToMap(event?: Event) {
     if (this.map === undefined) {
       return;
     }
@@ -216,7 +216,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     this.layersSubcriptions.push(
       this.layerService
         .createAsyncLayer(layerOptions)
-        .subscribe(layer => this.map.addLayer(layer))
+        .subscribe(layer => {
+          if (event.type === 'click') {
+            this.map.layersAddedByClick$.next([layer]);
+          }
+          this.map.addLayer(layer);
+        })
     );
   }
 
