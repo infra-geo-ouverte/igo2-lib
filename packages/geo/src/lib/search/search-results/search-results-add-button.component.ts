@@ -322,7 +322,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       map: this.map
     });
 
-    const style = [
+    const styles = [
       new Style({
         image: new Circle({
           radius: 5,
@@ -377,9 +377,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
                 }
               }
             },
-            style: function(feature) {
-              return style;
-            },
+            style: styles,
             showInLayerList: true,
             exportable: true,
             workspace: {
