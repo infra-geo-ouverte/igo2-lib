@@ -166,12 +166,12 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       }
       return this.layerService.createAsyncLayer(layer.options);
     });
-    zip(...layers$).subscribe((Layers: Layer[]) => {
+    zip(...layers$).subscribe((layers: Layer[]) => {
       if (event.event.type === 'click' && event.added) {
-        this.map.layersAddedByClick$.next(Layers);
+        this.map.layersAddedByClick$.next(layers);
       }
       this.store.state.updateMany(layers, { added: true });
-      this.map.addLayers(Layers);
+      this.map.addLayers(layers);
     });
   }
 
