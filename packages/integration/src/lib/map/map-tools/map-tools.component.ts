@@ -323,12 +323,4 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-
-  onSearchLayerStoreRemoveLayer(layer: Layer) {
-    const index = this.drawState.searchLayerStores
-    .findIndex((store) => store.layer.id === layer.id);
-    if (index > -1) {
-      this.drawState.searchLayerStores.splice(index, 1);
-    }
-  }
 }

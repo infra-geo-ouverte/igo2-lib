@@ -117,7 +117,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @Input() queryBadge: boolean = false;
 
   @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
-  @Output() searchLayerStoreRemoveLayer = new EventEmitter<Layer>();
 
   get keyword(): string {
     return this._keyword;
@@ -732,14 +731,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
       for (const layer of layers) {
         if (layer.options.removable !== false) {
           layer.map.removeLayer(layer);
-          this.searchLayerStoreRemoveLayer.emit(layer);
         } else {
           this.layersChecked.push(layer);
         }
       }
     } else if (!layers && this.activeLayer.options.removable !== false) {
       this.activeLayer.map.removeLayer(this.activeLayer);
-      this.searchLayerStoreRemoveLayer.emit(this.activeLayer);
       this.layerTool = false;
     }
   }

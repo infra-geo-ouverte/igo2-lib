@@ -14,8 +14,7 @@
       [floatLabel]="false"
       [queryBadge]="queryBadge"
       [map]="map"
-      (appliedFilterAndSort)= onLayerListChange($event)
-      (searchLayerStoreRemoveLayer)= onSearchLayerStoreRemoveLayer($event)>
+      (appliedFilterAndSort)="onLayerListChange($event)">
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <igo-style-modal-layer-button *ngIf="isStyleEditButton(layer)" [layer]="layer"></igo-style-modal-layer-button>

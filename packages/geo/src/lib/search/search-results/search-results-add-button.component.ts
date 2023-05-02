@@ -137,6 +137,17 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       this.isInResolutionsRange(value);
       this.isVisible();
     });
+    this.synchronizeLayersWithStores();
+  }
+
+  synchronizeLayersWithStores() {
+    this.stores.forEach((store) => {
+      let layer = this.allLayers.find(l => l.id === store.layer.id);
+      if(!layer) {
+        const index = this.stores.indexOf(store);
+        this.stores.splice(index, 1);
+      }
+    });
   }
 
   ngOnDestroy() {
