@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import {
   ActionStore,
   EntityRecord,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
   EntityStoreStrategyFuncOptions,
+  EntityTableButton,
   EntityTableColumnRenderer,
   EntityTableTemplate } from '@igo2/common';
 import { StorageService, ConfigService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
-import { RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { CapabilitiesService, RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -35,7 +35,9 @@ import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVe
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
-import { getGeoServiceAction } from './workspace.utils';
+import { ObjectUtils } from '@igo2/utils';
+import { generateIdFromSourceOptions } from '../../utils/id-generator';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +53,7 @@ export class WmsWorkspaceService {
   constructor(
     private layerService: LayerService,
     private storageService: StorageService,
+    private capabilitiesService: CapabilitiesService,
     private styleService: StyleService,
     private configService: ConfigService,
     private propertyTypeDetectorService: PropertyTypeDetectorService) { }
@@ -204,7 +207,7 @@ export class WmsWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
-    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService);
+    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService, this.capabilitiesService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
@@ -236,8 +239,82 @@ export class WmsWorkspaceService {
     return store;
   }
 
+  addLayer(map: IgoMap, url, type, layerName) {
+    const so = ObjectUtils.removeUndefined({
+      sourceOptions: {
+        type: type ,
+        url,
+        optionsFromCapabilities: true,
+        optionsFromApi: true,
+        params: {
+          LAYERS: layerName,
+          LAYER: layerName
+        }
+      }
+    });
+    this.layerService
+    .createAsyncLayer(so)
+    .subscribe(l => map.addLayer(l));
+  }
+
+  removeLayer(map: IgoMap, url, type, layerName) {
+    const so = ObjectUtils.removeUndefined({
+      sourceOptions: {
+        type: type ,
+        url,
+        optionsFromCapabilities: true,
+        optionsFromApi: true,
+        params: {
+          LAYERS: layerName,
+          LAYER: layerName
+        }
+      }
+    });
+    const addedLayerId = generateIdFromSourceOptions(so.sourceOptions);
+    map.removeLayer(map.layers.find(l => l.id === addedLayerId));
+
+  }
+
+
   private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
-    const geoServiceAction = getGeoServiceAction(workspace, this.layerService);
+    const geoServiceAction = [{
+      name: 'geoServiceAction',
+      title: undefined,
+      tooltip: '',
+      renderer: EntityTableColumnRenderer.ButtonGroup,
+      valueAccessor: (entity: Feature, record: EntityRecord<Feature>) => {
+        let geoServiceProperties = record.state.geoService;
+        if (
+          geoServiceProperties &&
+          geoServiceProperties.haveGeoServiceProperties &&
+          geoServiceProperties.url &&
+          geoServiceProperties.layerName
+        ) {
+          if (geoServiceProperties.added) {
+            return [{
+              icon: 'delete',
+              color: 'warn',
+              click: (row, record) => {
+                this.removeLayer(workspace.map, record.state.geoService.url,
+                  record.state.geoService.type, record.state.geoService.layerName);
+                geoServiceProperties.added = false;
+              }
+            }] as EntityTableButton[];
+          } else {
+            return [{
+              icon: 'plus',
+              color: 'primary',
+              click: (row, record) => {
+                this.addLayer(workspace.map, record.state.geoService.url, record.state.geoService.type, record.state.geoService.layerName);
+                geoServiceProperties.added = true;
+              }
+            }] as EntityTableButton[];
+          }
+        } else {
+          return [];
+        }
+      },
+    }];
     const fields = layer.dataSource.options.sourceFields || [];
 
     const relations = layer.dataSource.options.relations || [];

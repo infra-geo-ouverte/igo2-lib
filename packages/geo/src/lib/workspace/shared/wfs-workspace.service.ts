@@ -23,7 +23,7 @@ import {
 import { LayerService, VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
+import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions, CapabilitiesService } from '../../datasource';
 import { PropertyTypeDetectorService} from '../../utils';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
@@ -48,7 +48,8 @@ export class WfsWorkspaceService {
     private storageService: StorageService,
     private configService: ConfigService,
     private layerService: LayerService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService) {}
+    private propertyTypeDetectorService: PropertyTypeDetectorService,
+    private capabilitiesService: CapabilitiesService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
     if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
@@ -83,7 +84,7 @@ export class WfsWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
-    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService);
+    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService, this.capabilitiesService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');

@@ -1,5 +1,5 @@
 import { EntityStoreStrategy } from '@igo2/common';
-
+import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
 import { FeatureStore } from '../store';
 import { FeatureStorePropertyTypeStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
@@ -29,7 +29,8 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
 
   constructor(
     protected options: FeatureStorePropertyTypeStrategyOptions,
-    private propertyTypeDetectorService: PropertyTypeDetectorService) {
+    private propertyTypeDetectorService: PropertyTypeDetectorService,
+    private capabilitiesService: CapabilitiesService) {
     super(options);
     this.map = options.map;
   }
@@ -102,46 +103,54 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         isGeoService = this.propertyTypeDetectorService.isGeoService(value);
         if (isGeoService) {
           const geoService = this.propertyTypeDetectorService.getGeoService(value);
-          let layerName = entity.properties[geoService.columnForLayerName];
-          const appliedUrl = value;
-          let appliedLayerName = layerName;
-          let arcgisLayerName = undefined;
+          let layerName = entity.properties[geoService.columnForLayerName[0]];
+          let appliedUrl = value;
+          this.capabilitiesService.getCapabilities(geoService.type as any, value.replace('https://giin.mern.gouv.qc.ca', '')).subscribe(capabilities => {
+            appliedUrl = capabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+            let appliedLayerName = layerName;
+            let arcgisLayerName = undefined;
 
-          if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
-            arcgisLayerName = layerName;
-            appliedLayerName = undefined;
-          }
+            if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
+              arcgisLayerName = layerName;
+              appliedLayerName = undefined;
+            }
+            if (value.startsWith('https://giin.mern.gouv.qc.ca')) {
+              appliedLayerName = capabilities.Capability.Layer.Layer[0].Layer[0].Name;
+            }
 
-          const so = ObjectUtils.removeUndefined({
-            sourceOptions: {
-              type: geoService.type || 'wms',
-              url: appliedUrl,
-              optionsFromCapabilities: true,
-              optionsFromApi: true,
-              params: {
-                LAYERS: appliedLayerName,
-                LAYER: appliedLayerName
+            const so = ObjectUtils.removeUndefined({
+              sourceOptions: {
+                type: geoService.type || 'wms',
+                url: appliedUrl,
+                optionsFromCapabilities: true,
+                optionsFromApi: true,
+                params: {
+                  LAYERS: appliedLayerName,
+                  LAYER: appliedLayerName
+                }
               }
-            }
+            });
+
+
+            const potentialLayerId = generateIdFromSourceOptions(so.sourceOptions);
+
+            const ns = {
+              geoService: {
+                added: this.map.layers.find(l => l.id === potentialLayerId) !== undefined,
+                haveGeoServiceProperties: true,
+                type: geoService.type,
+                url: appliedUrl,
+                layerName: appliedLayerName || arcgisLayerName
+              }
+            };
+
+            store.state.update(e, ns, true);
           });
-          const potentialLayerId = generateIdFromSourceOptions(so.sourceOptions);
-
-          const ns = {
-            geoService: {
-              added: this.map.layers.find(l => l.id === potentialLayerId) !== undefined,
-              haveGeoServiceProperties: true,
-              type: geoService.type,
-              url: appliedUrl,
-              layerName: appliedLayerName || arcgisLayerName
-            }
-          };
-
-          store.state.update(e, ns, true);
           break;
-        }
-      }
+      }}
 
-    });
+
+      });
   }
 
   /**

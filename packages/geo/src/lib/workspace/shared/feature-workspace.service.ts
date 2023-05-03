@@ -24,7 +24,7 @@ import {
 import { LayerService, VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
+import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions, CapabilitiesService } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { FeatureWorkspace } from './feature-workspace';
@@ -51,7 +51,8 @@ export class FeatureWorkspaceService {
     private storageService: StorageService,
     private configService: ConfigService,
     private layerService: LayerService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService
+    private propertyTypeDetectorService: PropertyTypeDetectorService,
+    private capabilitiesService: CapabilitiesService
     ) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
@@ -93,7 +94,7 @@ export class FeatureWorkspaceService {
       sourceFields: layer.dataSource.options.sourceFields
     });
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
-    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService);
+    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService, this.capabilitiesService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
