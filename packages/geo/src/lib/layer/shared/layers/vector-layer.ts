@@ -82,7 +82,7 @@ export class VectorLayer extends Layer {
           this.options.minResolution = 0;
           this.options.maxResolution = Infinity;
         }
-        if (so.preload.bypassVisible && !this.options.visible) {
+        if (so.preload.bypassVisible && !initialVisibleValue) {
           this.options.visible = true;
         }
       }
