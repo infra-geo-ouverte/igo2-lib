@@ -103,7 +103,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         isGeoService = this.propertyTypeDetectorService.isGeoService(value);
         if (isGeoService) {
           const geoService = this.propertyTypeDetectorService.getGeoService(value);
-          let layerName = entity.properties[geoService.columnForLayerName[0]];
+          let layerName = entity.properties[geoService.columnForLayerName];
           let appliedUrl = value;
           this.capabilitiesService.getCapabilities(geoService.type as any, value).subscribe(capabilities => {
             appliedUrl = capabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
