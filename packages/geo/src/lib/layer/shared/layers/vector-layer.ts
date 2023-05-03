@@ -71,7 +71,7 @@ export class VectorLayer extends Layer {
 
   protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
     const initialOpacityValue = this.options.opacity || 1;
-    const initialVisibleValue = this.options.visible === true;
+    const initialVisibleValue = this.options.visible !== false;
     const initialMinResValue = this.options.minResolution || getResolutionFromScale(Number(this.options.minScaleDenom));
     const initialMaxResValue = this.options.maxResolution || getResolutionFromScale(Number(this.options.maxScaleDenom));
     const so = this.options.sourceOptions as FeatureDataSourceOptions;
