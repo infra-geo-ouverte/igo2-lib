@@ -104,9 +104,6 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         if (isGeoService) {
           const geoService = this.propertyTypeDetectorService.getGeoService(value);
           let layerName = entity.properties[geoService.columnForLayerName];
-          let appliedUrl = value;
-          this.capabilitiesService.getCapabilities(geoService.type as any, value).subscribe(capabilities => {
-            appliedUrl = capabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
             let appliedLayerName = layerName;
             let arcgisLayerName = undefined;
 
@@ -118,12 +115,12 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
             const so = ObjectUtils.removeUndefined({
               sourceOptions: {
                 type: geoService.type || 'wms',
-                url: appliedUrl,
+                url: value,
                 optionsFromCapabilities: true,
                 optionsFromApi: true,
                 params: {
                   LAYERS: appliedLayerName,
-                  LAYER: appliedLayerName
+                  LAYER: arcgisLayerName
                 }
               }
             });
@@ -136,13 +133,12 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
                 added: this.map.layers.find(l => l.id === potentialLayerId) !== undefined,
                 haveGeoServiceProperties: true,
                 type: geoService.type,
-                url: appliedUrl,
+                url: value,
                 layerName: appliedLayerName || arcgisLayerName
               }
             };
 
             store.state.update(e, ns, true);
-          });
           break;
       }}
 
