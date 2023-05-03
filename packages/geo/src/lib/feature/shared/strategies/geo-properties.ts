@@ -105,7 +105,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
           const geoService = this.propertyTypeDetectorService.getGeoService(value);
           let layerName = entity.properties[geoService.columnForLayerName[0]];
           let appliedUrl = value;
-          this.capabilitiesService.getCapabilities(geoService.type as any, value.replace('https://giin.mern.gouv.qc.ca', '')).subscribe(capabilities => {
+          this.capabilitiesService.getCapabilities(geoService.type as any, value).subscribe(capabilities => {
             appliedUrl = capabilities.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
             let appliedLayerName = layerName;
             let arcgisLayerName = undefined;
@@ -113,9 +113,6 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
             if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
               arcgisLayerName = layerName;
               appliedLayerName = undefined;
-            }
-            if (value.startsWith('https://giin.mern.gouv.qc.ca')) {
-              appliedLayerName = capabilities.Capability.Layer.Layer[0].Layer[0].Name;
             }
 
             const so = ObjectUtils.removeUndefined({
