@@ -91,17 +91,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     layersAndIndex$
       .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))
       .subscribe((layers: Layer[]) => {
-        layers = layers
-          .filter((layer: Layer) => layer !== undefined)
-          .map((layer) => {
-            layer.visible = this.computeLayerVisibilityFromUrl(layer);
-            layer.zIndex = layer.zIndex;
-
-            return layer;
-          });
-
-        this.contextLayers.concat(layers);
-        this.map.addLayers(layers);
+        this.handleAddLayers(layers);
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
@@ -112,7 +102,18 @@ export class LayerContextDirective implements OnInit, OnDestroy {
               dataProjection: 'EPSG:4326',
               featureProjection: 'EPSG:3857'
             });
-            if (!this.configService.getConfig('importWithStyle')) {
+            const importExportOptions = this.configService.getConfig('importExport');
+            const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
+            if (this.configService.getConfig('importWithStyle')) {
+              console.warn(`
+              The location of this config importWithStyle is deprecated.
+              Please move this property within importExport configuration.
+              Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
+              Refer to environnement.ts OR config/config.json
+              This legacy conversion will be deleted in 2024.
+              `);
+            }
+            if (!importWithStyle) {
               addImportedFeaturesToMap(featureCollection, this.map, title);
             } else {
               addImportedFeaturesStyledToMap(
@@ -126,6 +127,23 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           });
         }
       });
+
+      this.layerService.createAsyncIdbLayers(context.uri).pipe(debounceTime(500))
+      .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
+
+  }
+
+  private handleAddLayers(layers: Layer[]) {
+    layers = layers
+      .filter((layer: Layer) => layer !== undefined)
+      .map((layer) => {
+        layer.visible = this.computeLayerVisibilityFromUrl(layer);
+        layer.zIndex = layer.zIndex;
+
+        return layer;
+      });
+    this.contextLayers.concat(layers);
+    this.map.addLayers(layers);
   }
 
   private computeLayerVisibilityFromUrl(layer: Layer): boolean {

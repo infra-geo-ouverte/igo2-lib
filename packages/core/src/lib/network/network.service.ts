@@ -3,7 +3,6 @@ import { Observable, Subscription, fromEvent } from 'rxjs';
 import { debounceTime, startWith } from 'rxjs/operators';
 
 import { MessageService } from '../message/shared/message.service';
-import { LanguageService } from '../language/shared/language.service';
 import { ConnectionState } from './network.interfaces';
 
 @Injectable({
@@ -31,10 +30,9 @@ export class NetworkService implements OnDestroy {
       if (this.previousMessageId) {
         this.messageService.remove(this.previousMessageId);
       }
-      const translate = this.injector.get(LanguageService).translate;
-      const message = translate.instant('igo.core.network.online.message');
-      const title = translate.instant('igo.core.network.online.title');
-      const messageObj = this.messageService.info(message, title);
+      const messageObj = this.messageService.info(
+        'igo.core.network.online.message',
+        'igo.core.network.online.title');
       this.previousMessageId = messageObj.toastId;
       this.state.connection = true;
       this.emitEvent();
@@ -44,10 +42,9 @@ export class NetworkService implements OnDestroy {
       if (this.previousMessageId) {
         this.messageService.remove(this.previousMessageId);
       }
-      const translate = this.injector.get(LanguageService).translate;
-      const message = translate.instant('igo.core.network.offline.message');
-      const title = translate.instant('igo.core.network.offline.title');
-      const messageObj = this.messageService.info(message, title);
+      const messageObj = this.messageService.info(
+        'igo.core.network.offline.message',
+        'igo.core.network.offline.title');
       this.previousMessageId = messageObj.toastId;
       this.state.connection = false;
       this.emitEvent();

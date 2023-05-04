@@ -1,0 +1,90 @@
+<div mat-dialog-content>
+  <h2 mat-dialog-title class="mat-typography">{{ 'igo.geo.style.styleModal' | translate }}</h2>
+  <div
+  class="edition-drawing mat-typography">
+  <!-- [hidden]="data.features.length === 0"> -->
+    <form
+      class="igo-form"
+      [formGroup]="form">
+      <div class="fill-color-picker mat-typography" *ngIf="linestringOnly !== true">
+        <span>
+          <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
+          {{ 'igo.geo.style.fill' | translate }}
+        </span>
+
+        <mat-form-field
+          class="fill-field"
+          appearance="outline"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.style.colorPicker' | translate">
+          <mat-label>{{ getLayerFillColor() }}</mat-label>
+          <input
+            #fillColorInput
+            formControlName="fill"
+            matInput
+            type="text"
+            [style.background]="getLayerFillColor()"
+            [readonly]="true"
+            [colorPicker]="getLayerFillColor()"
+            [cpWidth]="'200px'"
+            [cpOutputFormat]="'rgba'"
+            [cpPosition]="'bottom'"
+            [cpPositionOffset]="'-75%'"
+            [cpCancelButton]="true"
+            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
+            [cpOKButton]="true"
+            (colorPickerChange)="setLayerFillColor($event)">
+        </mat-form-field>
+      </div>
+
+      <div class="stroke-color-picker mat-typography">
+        <span>
+          <mat-icon
+            class="stroke-palette-icon"
+            svgIcon="square-outline">
+          </mat-icon>
+          {{'igo.geo.style.stroke' | translate}}
+        </span>
+
+        <mat-form-field
+          class="stroke-field"
+          appearance="outline"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.style.colorPicker' | translate">
+          <mat-label>{{ getLayerStrokeColor() }}</mat-label>
+          <input
+            #strokeColorInput
+            formControlName="stroke"
+            matInput
+            type="text"
+            [style.background]="getLayerStrokeColor()"
+            [readonly]="true"
+            [colorPicker]="getLayerStrokeColor()"
+            [cpWidth]="'200px'"
+            [cpPosition]="'bottom'"
+            [cpPositionOffset]="'-75%'"
+            [cpOutputFormat]="'rgba'"
+            [cpCancelButton]="true"
+            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
+            [cpOKButton]="true"
+            (colorPickerChange)="setLayerStrokeColor($event)">
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button 
+    mat-raised-button 
+    (click)="cancel()">{{'igo.geo.style.cancel' | translate}}
+  </button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="confirm()">OK
+  </button>
+</div>

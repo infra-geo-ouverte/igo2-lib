@@ -1,6 +1,7 @@
 <mat-tab-group *ngIf="importExportShowBothType" >
   <mat-tab [label]="'igo.integration.importExportTool.importExportData' | translate">
     <igo-import-export  
+      [contextUri]="(contextState.context$ | async).uri"
       [map]="map"
       [selectFirstProj]="selectFirstProj"
       [projectionsLimitations]="projectionsLimitations"
@@ -18,6 +19,7 @@
 
 <igo-import-export  
   *ngIf="!importExportShowBothType && importExportType === 'layer'"
+  [contextUri]="(contextState.context$ | async).uri"
   [map]="map"
   [store]="workspaceStore"
   [selectedMode]="importExportState.selectedMode$ | async"

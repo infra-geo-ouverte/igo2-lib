@@ -1,9 +1,24 @@
 import { Injectable } from '@angular/core';
 
-import { EntityRecord, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreStrategyFuncOptions } from '@igo2/common';
+import {
+  EntityRecord,
+  EntityStore,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreStrategyFuncOptions
+} from '@igo2/common';
 import { ConfigService, StorageService } from '@igo2/core';
-import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
+import {
+  SearchResult,
+  SearchSourceService,
+  SearchSource,
+  CommonVectorStyleOptions,
+  FeatureWorkspace,
+  FeatureStore,
+  Feature
+} from '@igo2/geo';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { WorkspaceState } from '../workspace/workspace.state';
+import { MapState } from '../map';
 
 /**
  * Service that holds the state of the search module
@@ -12,6 +27,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchState {
+  public searchLayerStores: FeatureStore<Feature>[] = [];
   public searchOverlayStyle: CommonVectorStyleOptions = {};
   public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
   public searchOverlayStyleFocus: CommonVectorStyleOptions = {};
@@ -50,7 +66,9 @@ export class SearchState {
   constructor(
     private searchSourceService: SearchSourceService,
     private storageService: StorageService,
-    private configService: ConfigService) {
+    private workspaceState: WorkspaceState,
+    private configService: ConfigService,
+    private mapState: MapState) {
     const searchOverlayStyle = this.configService.getConfig('searchOverlayStyle') as {
       base?: CommonVectorStyleOptions,
       selection?: CommonVectorStyleOptions,
@@ -67,6 +85,28 @@ export class SearchState {
       this.searchResultsGeometryEnabled$.next(searchResultsGeometryEnabled);
     }
     this.store.addStrategy(this.createCustomFilterTermStrategy(), false);
+
+    const wksSource = this.searchSourceService.getSources().find(source => source.getId() === 'workspace');
+    this.workspaceState.store.entities$
+    .subscribe(e => {
+      const searchableWks = e.filter(fw => fw instanceof FeatureWorkspace && fw.layer.options.workspace.searchIndexEnabled);
+      this.searchSourceService.setWorkspaces(wksSource, searchableWks);
+    }
+    );
+    this.monitorLayerDeletion();
+  }
+
+  private monitorLayerDeletion() {
+    this.mapState.map.layers$
+      .subscribe((layers) => {
+        this.searchLayerStores.forEach((store) => {
+          let layer = layers.find(l => l.id === store.layer.id);
+          if (!layer) {
+            const index = this.searchLayerStores.indexOf(store);
+            this.searchLayerStores.splice(index, 1);
+          }
+        });
+      });
   }
 
   private createCustomFilterTermStrategy(): EntityStoreFilterCustomFuncStrategy {

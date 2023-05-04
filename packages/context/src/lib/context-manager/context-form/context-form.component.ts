@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 import { ObjectUtils, Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService } from '@igo2/core';
 import { Context } from '../shared/context.interface';
 
 @Component({
@@ -49,7 +49,6 @@ export class ContextFormComponent implements OnInit {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private languageService: LanguageService,
     private messageService: MessageService
   ) {}
 
@@ -73,14 +72,7 @@ export class ContextFormComponent implements OnInit {
     const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
     const successful = Clipboard.copy(text);
     if (successful) {
-      const translate = this.languageService.translate;
-      const title = translate.instant(
-        'igo.context.contextManager.dialog.copyTitle'
-      );
-      const msg = translate.instant(
-        'igo.context.contextManager.dialog.copyMsg'
-      );
-      this.messageService.success(msg, title);
+      this.messageService.success('igo.context.contextManager.dialog.copyMsg', 'igo.context.contextManager.dialog.copyTitle');
     }
   }
 

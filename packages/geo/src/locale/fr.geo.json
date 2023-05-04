@@ -116,6 +116,9 @@
           "UTF8": "UTF-8"
         },
         "combinedLayers": "couchesCombinees"
+      },      
+      "import": {
+        "promptStoreToIdb": "Est-ce que vous voulez sauvegarder cette couche d'information afin d'être utilisée ultérieurement dans une autre session?"
       },
       "importExportForm": {
         "exportButton": "Exporter",
@@ -268,6 +271,19 @@
         "saveFeatureInLayer": "Ajouter la sélection dans une couche",
         "chooseOrSet": "Choisir une couche ou définir un nouveau nom"
       },
+      "style": {
+        "styleModal": "Modifier le style",
+        "styleModalTooltipLayer": "Éditer le style des la présente couche.",
+        "styleModalTooltipSelected": "Éditer le style des entités sélectionnées",
+        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
+        "cancel": "Annuler",
+        "fill": "Remplissage",
+        "stroke": "Contour",
+        "fontSize": "Taille de police",
+        "fontStyle": "Style de police",
+        "offsetX": "Décalage horizontal",
+        "offsetY": "Décalage vertical"
+      },
       "download": {
         "action": "Télécharger les données associées",
         "title": "Téléchargement des données",
@@ -285,7 +301,7 @@
         "zoomOut": "Dézoomer ({{zoom}})",
 				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
-        "preventSreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
+        "preventScreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
       },
       "metadata": {
@@ -460,6 +476,13 @@
             "canada": "Canada"
           }
         },
+        "workspace": {
+          "name": "Données importées (vecteurs)",
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "whole": "L'entièreté du jeu de données"
+          }
+        },
         "icherche": {
           "name": "iCherche",
           "type": {
@@ -522,6 +545,7 @@
           "selectAll": "Tout sélectionner",
           "unselectAll": "Tout désélectionner",
           "settings": {
+            "datasets": "Jeu de données",
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
             "radius": "Rayon de recherche",
@@ -701,12 +725,10 @@
         "abort": "Annuler le dessin en cours",
         "cancel": "Annuler",
         "Circle": "Cercle",
-        "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
-        "fill": "Remplissage",
         "finish": "Terminer le dessin en cours",
         "freehandMode": "Dessiner à main levée",
         "icon": "Icônes",
@@ -720,14 +742,9 @@
         "Polygon": "Polygone",
         "radius": "Rayon",
         "shortcuts": "Raccourcis clavier",
-        "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
         "toggleMapTooltips": "Afficher les étiquettes",
         "undo": "Retirer le dernier sommet",
-        "fontSize": "Taille de police",
-        "fontStyle": "Style de police",
-        "offsetX": "Décalage horizontal",
-        "offsetY": "Décalage vertical",
         "layer": {
           "title": "Titre",
           "createNewLayer": "Créer une nouvelle couche de dessin",
