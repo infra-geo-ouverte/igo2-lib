@@ -18,11 +18,12 @@
           matInput
           [matAutocomplete]="auto"
           formControlName="layerName">
-        <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
+        <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete" (optionSelected)="onLayerSelected($event.option.value)">
           <mat-option *ngFor="let layer of filteredLayers$ | async" [value]="layer">
             <p mat-line>{{layer.title}}</p>
           </mat-option>
         </mat-autocomplete>
+        <mat-error *ngIf="form.controls['layerName'].errors?.featureTypeError"> Vous ne pouvez pas ajouter une résultats de recherche de type différent dans la même couche.</mat-error>
       </mat-form-field>
     </div>
   </form>
@@ -39,6 +40,7 @@
     <button
       id="createLayerBtnDialog"
       mat-raised-button
+      [disabled]="!form.valid"
       type="button"
       color="primary"
       (click)="save()">

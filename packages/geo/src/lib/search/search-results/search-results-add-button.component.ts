@@ -310,7 +310,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       width: '700px',
       data: {
         feature: selectedFeature,
-        layers: this.allLayers
+        layers: this.allLayers,
+        stores: this.stores
       }
     });
 
