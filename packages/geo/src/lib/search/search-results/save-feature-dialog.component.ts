@@ -67,6 +67,7 @@ export class SaveFeatureDialogComponent implements OnInit {
   }
 
   onLayerSelected(layer: Layer) {
+    console.log('layer');
     const activeStore = this.stores.find(store => store.layer.id === layer.id);
     if(activeStore && activeStore.entities$.value.length > 0) {
       const alreadySavedFeature = activeStore.entities$.value[0];
