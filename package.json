@@ -3,7 +3,7 @@
   "workspaces": [
     "./packages/*"
   ],
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
