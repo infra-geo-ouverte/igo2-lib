@@ -13,7 +13,7 @@
       "error": {
         "Password expired": "Votre mot de passe est expiré",
         "Maximun logins exceeded": "Nombre maximal de connexions dépassé",
-        "Login lockout": "Nombre maximal d'essai dépassé. Votre compte est verrouillé.",
+        "Login lockout": "Nombre maximal d'essais dépassés. Votre compte est verrouillé.",
         "Wrong password": "Mot de passe incorrect",
         "Invalid username": "Utilisateur invalide"
       },

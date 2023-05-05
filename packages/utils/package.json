@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "1.14.2",
+  "version": "1.15.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -18,7 +18,11 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@angular/common": "^14.1.2",
-    "@angular/core": "^14.1.2"
+    "@angular/common": "^14.3.0",
+    "@angular/core": "^14.3.0",
+    "@angular/platform-browser": "^14.3.0"
+  },
+  "engines": {
+    "node": ">=16.19.0"
   }
 }

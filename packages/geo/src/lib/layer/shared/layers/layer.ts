@@ -19,6 +19,8 @@ import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions } from './layer.interface';
 import { Message, MessageService } from '@igo2/core';
+import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -144,7 +146,9 @@ export abstract class Layer {
   constructor(
     public options: LayerOptions,
     protected messageService?: MessageService,
-    protected authInterceptor?: AuthInterceptor
+    protected authInterceptor?: AuthInterceptor,
+    protected geoDBService?: GeoDBService,
+    public layerDBService?: LayerDBService
   ) {
     this.dataSource = options.source;
 

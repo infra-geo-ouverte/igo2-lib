@@ -11,7 +11,6 @@ import { MapState } from '../map/map.state';
 })
 export class DrawState {
 
-  public searchLayerStores: FeatureStore<FeatureWithDraw>[] = [];
   public stores: FeatureStore<FeatureWithDraw>[] = [];
   public layersID: string[] = [];
   public drawControls: [string, DrawControl][] = [];

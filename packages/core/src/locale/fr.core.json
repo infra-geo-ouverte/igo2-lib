@@ -10,7 +10,7 @@
       "errors": {
         "uncaught": {
           "message":
-            "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
+            "Désolé! Le service que vous voulez utiliser n'est malheureusement pas disponible pour le moment. Essayez plus tard!",
           "title": "Erreur serveur"
         }
       },
