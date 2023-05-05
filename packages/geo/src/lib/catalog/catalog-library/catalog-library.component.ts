@@ -12,14 +12,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntityStore } from '@igo2/common';
 import { MessageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
-import { Observable, Subscription } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { forkJoin, Observable, Subscription } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
 
 import { Catalog } from '../shared/catalog.abstract';
+import { CatalogItemType } from '../shared/catalog.enum';
 import { CatalogItem } from '../shared/catalog.interface';
 import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
@@ -233,89 +234,37 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   getCatalogList(){
     console.log("gatCatalogList() accessed");
-    // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
-    /*id: string;
-    title: string;
-    type?: CatalogItemType;
-    address?: string;
-    externalProvider?:*/
-    //const listCatalog = new Document;
-    let listCatalog = [];
-    let index = 0;
-    let bufferArray = [];
-    for (var ca of this.store.entities$.getValue()) {
-        this.catalogService.loadCatalogItems(ca)
-            .subscribe((items) => {
-            //console.log(items);
-            /*listCatalog[index] = items;
-            index++;*/
-            items.map(item => {
-                bufferArray = [];
-                bufferArray.push(item.id);
-                bufferArray.push(item.type);
-                bufferArray.push(item.title);
-                bufferArray.push(item.address);
-                bufferArray.push(item.externalProvider);
-                //listCatalog[index] = item;
-                listCatalog[index] = bufferArray;
-                index++;
-            });
+        // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
+        /*id: string;
+        title: string;
+        type?: CatalogItemType;
+        address?: string;
+        externalProvider?:*/
+        //const listCatalog = new Document;
+        let listCatalog = [];
+        let index = 0;
+        let bufferArray = [["id", "type", "title", "address"]];
+        this.store.entities$.pipe(switchMap(catalogs => {
+            return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca)));
+        })).subscribe(res => {
+            //console.log('res', res);
+           
+           res.forEach(element=>{
+            element.forEach(item=>bufferArray.push(Object.keys(item).map(key => item[key])))
+            //bufferArray.push(Object.keys(element).map(key => element[key]));
+           });
+           
+           console.log("bufferArray", bufferArray);
+           let csvContent = bufferArray.map(e => e.join(";")).join("\n");           
+           //console.log("csvContent", csvContent);
+           var encodedUri = encodeURI(csvContent);
+           var link = document.createElement("a");
+           link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
+           link.setAttribute("download", "demo.csv");
+           document.body.appendChild(link); // Required for FF
+           link.click(); // This will download the data file named "my_data.csv".
+           document.body.removeChild(link);
+
         });
-    }
-    console.log("listCatalog", listCatalog);
-    
-    //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
-    //const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
-    //Array.from(listCatalog)
-    let csvContent = listCatalog.map(e => e.join(",")).join("\n");
-    
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
-    link.setAttribute("download", "demo.csv");
-    document.body.appendChild(link); // Required for FF
-    
-    link.click(); // This will download the data file named "my_data.csv".
-
-    document.body.removeChild(link);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //var myRows = [];
-    //myRows = Clipboard["copy"].concat(myRows)
-
-    /*var saveText = function(filename, output){
-        const headersCSV = Object.keys(output[0]).join(";");
-        const contentCSV = listCatalog.map(r => Object.values(r).join(";"));
-        const textCVS = [headersCSV].concat(contentCSV).join("\\");
-    
-        var universalBOM = "\\uFEFF";
-        var a = document.createElement('a');
-        //a.setAttribute('href', 'data:text/json;charset=utf-8,'+encodeURIComponent(universalBOM+output));
-        a.setAttribute('download', filename);
-        a.click()
-    
-    };*/
-
-    //saveText( Clipboard["file"]+".csv", listCatalog );
-    /*
-    const mainCSV = listCatalog.map(row => row.join(',')).join('\n');
-    console.log(mainCSV);*/
   }
 }
