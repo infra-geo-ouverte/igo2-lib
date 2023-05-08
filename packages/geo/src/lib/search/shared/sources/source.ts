@@ -214,7 +214,7 @@ export class SearchSource {
    * @param hashtag hashtag from query
    */
   getHashtagsValid(term: string, settingsName: string): string[] {
-    const hashtags = term.match(/(#[A-Za-z+]+)/g);
+    const hashtags = term.match(/(#[A-Za-zÀ-ú+]+)/g);//ajout pour reconnaitre hastags
     if (!hashtags) {
       return undefined;
     }
