@@ -136,7 +136,7 @@
     "@angular-eslint/schematics": "14.0.2",
     "@angular-eslint/template-parser": "14.0.2",
     "@angular/platform-browser-dynamic": "^14.3.0",
-    "@angular/cli": "^14.2.10",
+    "@angular/cli": "^16.0.0",
     "@angular/compiler-cli": "^14.3.0",
     "@babel/core": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
