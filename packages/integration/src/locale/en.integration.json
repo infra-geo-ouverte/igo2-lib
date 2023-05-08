@@ -111,7 +111,7 @@
           "nord": "North",
           "coordinates": "Coordinates",
           "copyMsg": "Coordinates copied to clipboard",
-          "copyTitle": "Coordinates of centre",
+          "copyTitle": "Coordinates of center",
           "center": "Display map center",
           "coordSystem": "Systeme of coordinates",
           "zoom": "Current zoom level: ",

@@ -16,8 +16,14 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   format?: olFormatFeature;
   url?: string;
   pathOffline?: string;
+  preload?: PreloadOptions;
   excludeAttribute?: Array<string>;
   excludeAttributeOffline?: Array<string>;
 
   ol?: olSourceVector<OlGeometry> | olSource;
+}
+
+export interface PreloadOptions {
+  bypassVisible?: boolean;
+  bypassResolution?: boolean;
 }
