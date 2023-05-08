@@ -35,6 +35,7 @@ import { LayerDBData } from '../../../offline';
 import BaseEvent from 'ol/events/Event';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
+import { ObjectUtils } from '@igo2/utils';
 
 export class VectorLayer extends Layer {
   public dataSource:
@@ -206,7 +207,7 @@ export class VectorLayer extends Layer {
 
   private maintainOptionsInIdb() {
     this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
-    const layerData: LayerDBData = {
+    const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo.contextUri,
       sourceOptions: {
@@ -215,6 +216,7 @@ export class VectorLayer extends Layer {
         queryable: true
       },
       layerOptions: {
+        workspace: this.options.workspace,
         zIndex: this.ol ? this.zIndex: 1000000,
         id: this.id,
         isIgoInternalLayer: this.isIgoInternalLayer,
@@ -223,7 +225,7 @@ export class VectorLayer extends Layer {
         idbInfo: Object.assign({}, this.options.idbInfo, { firstLoad: false })
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
-    };
+    });
     this.layerDBService.update(layerData);
   }
 
