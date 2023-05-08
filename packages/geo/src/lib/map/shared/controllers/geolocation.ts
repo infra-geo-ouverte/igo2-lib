@@ -290,7 +290,10 @@ export class MapGeolocationController extends MapController {
       return;
     }
     const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
-    const isMoving = position?.speed > 2 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
+    let isMoving = this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
+    if(position?.speed) {
+      isMoving = position?.speed > 1.2 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
+    }
     if(this.geolocation.getAccuracy() <= this.accuracyThreshold && isMoving) {
       // Calculate the heading using current position and last recorded
       // because ol heading not returning right value

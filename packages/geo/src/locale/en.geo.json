@@ -276,7 +276,7 @@
         "colorPicker": "Click to open the color selector",
         "cancel": "Cancel",
         "fill": "Fill",
-        "stroke": "Stroke",    
+        "stroke": "Stroke",
         "fontSize": "Font size",
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
@@ -357,6 +357,7 @@
         "record": "Record",
         "history": "History",
         "startRecord": "Start",
+        "delete": "Delete",
         "cancel": "Cancel",
         "save": "Save",
         "track": "Track",
@@ -375,7 +376,10 @@
         "invalidNumber": "The number must be valid and above 0",
         "noTraceFound": "No traces have been found",
         "badInputs": "The inputs you've entered weren't valid",
-        "confirmDeleteRecording": "Are you sure you want to delete this recording?"
+        "confirmDeleteRecording": "Are you sure you want to delete this recording?",
+        "continueRecording": "Continue",
+        "leaveAppWarning": "If you leave the application while recording a trace, the recording will be paused and you'll be able to unpause it in the application.",
+        "warning": "Warning"
       },
       "directionsForm": {
         "stopLayer": "Directions - stops",

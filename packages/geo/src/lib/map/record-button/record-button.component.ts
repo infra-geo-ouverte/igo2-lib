@@ -75,6 +75,11 @@ export class RecordButtonComponent implements OnInit {
         }
       });
     });
+    window.addEventListener('blur', () => {
+      if(this.isRecording) {
+        this.pauseRecording();
+      }
+    });
   }
 
   /**
@@ -187,7 +192,7 @@ export class RecordButtonComponent implements OnInit {
       let pointsNameNumber = -1;
       for(let file of fileArray) {
         const regexResult = regex.exec(file.name);
-        if(regexResult[1] === name+'_track') {
+        if(regexResult[1] === name+'_trace') {
           if(!regexResult[2] && trackNameNumber === -1)
             trackNameNumber = 1;
           else if(parseInt(regexResult[2]) >= trackNameNumber)
@@ -201,10 +206,10 @@ export class RecordButtonComponent implements OnInit {
         }
       }
       if(trackNameNumber !== -1) {
-        this.fileNames[0] = name + `_track (${trackNameNumber}).gpx`;
+        this.fileNames[0] = name + `_trace (${trackNameNumber}).gpx`;
       }
       else {
-        this.fileNames[0] = name + '_track.gpx';
+        this.fileNames[0] = name + '_trace.gpx';
       }
       if(pointsNameNumber !== -1) {
         this.fileNames[1] = name + `_points (${pointsNameNumber}).gpx`;
@@ -337,7 +342,7 @@ export class RecordButtonComponent implements OnInit {
     this.timePassed += this.currentTime.getTime() - this.startTime.getTime();
     this.currentTime = new Date();
     this.startTime = new Date();
-    this.isRecording = !this.isRecording;
+    this.isRecording = false;
     this.positionSubscription.unsubscribe();
   }
 
@@ -356,11 +361,6 @@ export class RecordButtonComponent implements OnInit {
     const time = this.currentTime.getTime() - this.startTime.getTime();
     let formattedTime = new Date(time + this.timePassed).toISOString().substring(11,19);
     return formattedTime;
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.timerKey);
-    clearInterval(this.pointIntervalKey);
   }
 
   /**

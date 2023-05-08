@@ -8,7 +8,7 @@ import { IgoConfirmDialogModule } from '@igo2/common';
 import { MapBrowserComponent } from './map-browser/map-browser.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
-import { RecordParametersComponent } from './record-button/record-parameters/record-parameters.component';
+import { RecordParametersComponent, WarningDialogComponent } from './record-button/record-parameters/record-parameters.component';
 import { PauseStopComponent, RecordButtonComponent } from './record-button/record-button.component';
 import { GpxSelectionComponent } from './record-button/gpx-selection/gpx-selection.component';
 
@@ -59,6 +59,7 @@ import { InfoSectionComponent } from './info-section/info-section.component';
     RecordButtonComponent,
     GpxSelectionComponent,
     PauseStopComponent,
+    WarningDialogComponent,
 
     GeolocateButtonComponent,
     HomeExtentButtonComponent,
@@ -83,6 +84,7 @@ import { InfoSectionComponent } from './info-section/info-section.component';
     RecordButtonComponent,
     GpxSelectionComponent,
     PauseStopComponent,
+    WarningDialogComponent,
 
     GeolocateButtonComponent,
     HomeExtentButtonComponent,

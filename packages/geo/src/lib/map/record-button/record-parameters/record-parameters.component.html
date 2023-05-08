@@ -35,7 +35,7 @@
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">{{ 'igo.geo.record-prompts.cancel' | translate }}</button>
-    <button mat-button [disabled]="!formReady()" [mat-dialog-close]="getInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
+    <button mat-button [disabled]="!formReady()" (click)="saveInputs()" cdkFocusInitial>{{ 'igo.geo.record-prompts.startRecord' | translate }}</button>
   </div>
 </div>
 

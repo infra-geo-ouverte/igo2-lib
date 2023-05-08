@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ConfirmDialogService } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService, MessageService, StorageScope, StorageService } from '@igo2/core';
 import { downloadContent } from '@igo2/utils';
 import { Feature } from '../../../feature';
 import { handleFileImportSuccess, ImportService } from '../../../import-export';
@@ -35,7 +35,9 @@ export class RecordParametersComponent implements OnInit{
               private messageService: MessageService,
               private languageService: LanguageService,
               private geoDBService: GeoDBService,
-              private confirmDialogService: ConfirmDialogService) { }
+              private confirmDialogService: ConfirmDialogService,
+              private storageService: StorageService,
+              private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.geoDBService.get('recordedTraces').subscribe((res) => {
@@ -117,17 +119,59 @@ export class RecordParametersComponent implements OnInit{
   /**
    * Returns object containing inputs from user
    */
-  getInputs(): any {
-    return {
+  saveInputs(): any {
+    this.showWarning();
+    this.dialogRef.close({
       fileName: this.fileName,
       amountInput: this.amountInput,
       intervalMode: this.intervalMode,
       confirmation: false
-    };
+    });
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
+  showWarning() {
+    // const dontShowAgain = localStorage.getItem('dontShowAgain') === 'true';
+    const dontShowAgain = this.storageService.get('warningGPXRecord.dontShowAgain', StorageScope.LOCAL) === 'true';
+
+    if (!dontShowAgain) {
+      const dialogRef = this.dialog.open(WarningDialogComponent, {
+        data: { dontShowAgain: dontShowAgain }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result && result.dontShowAgain) {
+          this.storageService.set('warningGPXRecord.dontShowAgain', 'true', StorageScope.LOCAL);
+        }
+      });
+    }
+  }
+
+}
+
+@Component({
+  selector: 'igo-warning-dialog',
+  template: `
+    <h2 mat-dialog-title>{{'igo.geo.record-prompts.warning' | translate}}</h2>
+    <div mat-dialog-content style='font-family:  Roboto, "Helvetica Neue", sans-serif;'>
+      <p>{{'igo.geo.record-prompts.leaveAppWarning' | translate}}</p>
+      <label>
+      <input id="doNotShowCheck" type="checkbox" [(ngModel)]="data.dontShowAgain">
+      {{'welcomeWindow.notShowCheck' | translate}}
+    </label>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-raised-button [mat-dialog-close]="{ dontShowAgain: data.dontShowAgain }">OK</button>
+    </div>
+  `
+})
+export class WarningDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<WarningDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { dontShowAgain: boolean }
+  ) {}
 }

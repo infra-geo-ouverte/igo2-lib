@@ -356,6 +356,7 @@
         "meter": "mètres.",
         "routeInputLabel": "Nom de la trace",
         "startRecord": "Commencer",
+        "delete": "Supprimer",
         "cancel": "Annuler",
         "save": "Télécharger",
         "track": "Trace",
@@ -374,7 +375,10 @@
         "invalidNumber": "Le nombre saisi doit être valide et supérieur à 0",
         "noTraceFound": "Aucune trace n'a été trouvée",
         "badInputs": "Les données que vous avez entrée n'étaient pas valides",
-        "confirmDeleteRecording": "Êtes-vous certain de vouloir supprimer cet enregistrement?"
+        "confirmDeleteRecording": "Êtes-vous certain de vouloir supprimer cet enregistrement?",
+        "continueRecording": "Continuer",
+        "leaveAppWarning": "Si vous quittez l'application lors de l'enregistrement d'une trace, l'enregistrement sera mis sur pause et vous pourrez le repartir en retournant dans l'application.",
+        "warning": "Avertissement"
       },
       "directionsForm": {
         "stopLayer": "Itinéraire - Arrêts",
