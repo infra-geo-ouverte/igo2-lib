@@ -21,7 +21,7 @@ import { standardizeUrl } from '../../utils/id-generator';
 
 import { Catalog } from '../shared/catalog.abstract';
 import { CatalogItemType } from '../shared/catalog.enum';
-import { CatalogItem } from '../shared/catalog.interface';
+import { CatalogItem, CatalogItemGroup } from '../shared/catalog.interface';
 import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 
@@ -235,23 +235,73 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   getCatalogList(){
     console.log("gatCatalogList() accessed");
         // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
-        /*id: string;
-        title: string;
-        type?: CatalogItemType;
-        address?: string;
-        externalProvider?:*/
-        //const listCatalog = new Document;
         let listCatalog = [];
         let index = 0;
-        let bufferArray = [["id", "type", "title", "address"]];
+        let bufferArray = [["id", "type", "title", "address", "external provider"]];
+        var dataArray = [];
         this.store.entities$.pipe(switchMap(catalogs => {
             return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca)));
         })).subscribe(res => {
-            //console.log('res', res);
-           
-           res.forEach(element=>{
-            element.forEach(item=>bufferArray.push(Object.keys(item).map(key => item[key])))
-            //bufferArray.push(Object.keys(element).map(key => element[key]));
+            console.log('res', res);
+            //element = catalogItem[]
+            res.forEach(element=>{
+            element.forEach(catalogItemGroup=>{
+              var catalogItems: CatalogItemGroup = catalogItemGroup;
+              if(catalogItems.items){
+                catalogItems.items.forEach(item=>{
+                  dataArray = [];
+                  var data = Object.keys(item).map(key => item[key]);
+                  console.log(data);
+                  for(var a of data){
+                      dataArray.push(a);}
+                  //dataArray.push(data); // itérer tous les items d'un gouvouvert
+                  var metadata = data[data.length - 1];
+                  //(metadata)
+                  console.log()
+                  for(var b of Object.keys(metadata).map(key => metadata[key])){
+                      dataArray.push(b);
+                  }
+
+
+                  // ajout metadata
+
+                  // sourceoptions
+
+                  // layer type data
+
+                  //dataArray.push(Object.keys(metadata).map(key => metadata[key]));
+                  //bufferArray.push(Object.keys(item[length-1]).map(key => item[length-1][key]));
+                  //console.log(Object.keys(item[length-1][length-1]).map(key => item[length-1][length-1][key]));
+                  //si item.options
+                  /*if(item.options){ // s'il y a un truc defined comme dernier element de l'item )S'il y a des metadata
+                    var metaDataArray = Object.keys(item[item.length-1]).map(key => item[item.length-1][key]);
+                    metaDataArray.forEach(value=>bufferArray.push(value));
+
+                  }*/
+                });
+
+                // ajouter metadata
+
+                //sourceOptions
+
+                //bufferArray.push(Object.keys(catalogItems.items[0]).map(key => catalogItems.items[0][key]));
+              }
+              else{
+                bufferArray.push(Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]));
+              }
+
+              
+
+              //Faire en sorte de refaire un forEach pour les items. Ceci push les Catégories dans GouvOuvert. Il faut les item d'item
+              //var myItem = Object.keys(catalogItemGroup).map(key=>catalogItemGroup[key]);
+              //myItem[myItem.length-1];
+              //bufferArray.push(Object.keys(myItem[myItem.length-1]).map(key => myItem[myItem.length-1][key]))
+              //console.log("test", myItem[myItem.length-1]);
+
+
+              // ligne pour tout ce qui est dans ex: GouvOuvert
+              //bufferArray.push(Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]))
+            });
            });
            
            console.log("bufferArray", bufferArray);
@@ -266,5 +316,9 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
            document.body.removeChild(link);
 
         });
+
+
+
+
   }
 }
