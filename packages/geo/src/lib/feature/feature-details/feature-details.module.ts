@@ -7,6 +7,7 @@ import { IgoKeyValueModule, IgoImageModule } from '@igo2/common';
 
 import { FeatureDetailsComponent } from './feature-details.component';
 import { FeatureDetailsDirective } from './feature-details.directive';
+import { MatButtonModule } from '@angular/material/button';
 
 /**
  * @ignore
@@ -15,6 +16,7 @@ import { FeatureDetailsDirective } from './feature-details.directive';
   imports: [
     CommonModule,
     MatIconModule,
+    MatButtonModule,
     IgoLanguageModule,
     IgoKeyValueModule,
     IgoImageModule
