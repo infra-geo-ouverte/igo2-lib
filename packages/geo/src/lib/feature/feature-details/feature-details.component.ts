@@ -105,7 +105,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.ready = true;
-    
+
     combineLatest([
       this.map.layers$,
       this.layerIdFromProperties$
@@ -218,7 +218,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     const geoService = this.propertyTypeDetectorService.getGeoService(url);
     let layerName = this.feature.properties[geoService.columnForLayerName];
 
-  
+
       let appliedLayerName = layerName;
       let arcgisLayerName = undefined;
 
@@ -227,7 +227,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         appliedLayerName = undefined;
       }
 
-    
+
       const so = ObjectUtils.removeUndefined({
         sourceOptions: {
           type: geoService.type || 'wms',
