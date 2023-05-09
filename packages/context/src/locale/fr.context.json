@@ -156,7 +156,7 @@
         "refreshBtn": "Actualiser le partage",
         "copy": "Copier le lien",
         "shareWithApi": "Partage par contexte",
-        "shareWithUrl": "Partage par url",
+        "shareWithUrl": "Partage par URL",
         "dialog": {
           "copyMsg": "Lien copié",
           "copyTitle": "Lien"
