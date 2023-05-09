@@ -37,7 +37,7 @@ export class ConfigFileToGeoDBService {
         const currentDate = new Date();
         datasToIDB?.geoDatas.map((geoData) => {
           if (typeof geoData.triggerDate === 'string') {
-            geoData.triggerDate = new Date(Date.parse(geoData.triggerDate.replace(/-/g, ' ')));
+            geoData.triggerDate = new Date(Date.parse(geoData.triggerDate));
           }
           if (currentDate >= geoData.triggerDate) {
             if (geoData.action === 'update') {

@@ -23,8 +23,9 @@ matTooltipShowDelay="500"
 </button>
 
 <button
+[id]="(!isMobile) ? 'hide-save-search-result-btn' : ''"
 igoStopPropagation
-*ngIf="layer.meta.dataType === 'Feature'"
+*ngIf="layer.meta.dataType === 'Feature' && saveSearchResultInLayer"
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"

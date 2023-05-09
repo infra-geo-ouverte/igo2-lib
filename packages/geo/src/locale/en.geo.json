@@ -117,6 +117,9 @@
         },
         "combinedLayers": "combinedLayers"
       },
+      "import": {
+        "promptStoreToIdb": "Do you want to save this layer to be used later in another session?"
+      },
       "importExportForm": {
         "exportButton": "Export",
         "exportButtonLink": "Open the link",

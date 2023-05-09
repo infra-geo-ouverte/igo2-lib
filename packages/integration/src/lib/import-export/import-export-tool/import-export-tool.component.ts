@@ -7,6 +7,7 @@ import { IgoMap, ExportOptions, ProjectionsLimitationsOptions } from '@igo2/geo'
 import { MapState } from '../../map/map.state';
 import { ImportExportMode, ImportExportState, ImportExportType } from '../import-export.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
+import { ContextState } from '../../context/context.state';
 
 @ToolComponent({
   name: 'importExport',
@@ -42,6 +43,7 @@ export class ImportExportToolComponent implements OnInit {
     private mapState: MapState,
     public importExportState: ImportExportState,
     private workspaceState: WorkspaceState,
+    public contextState: ContextState
   ) {}
 
   ngOnInit(): void {

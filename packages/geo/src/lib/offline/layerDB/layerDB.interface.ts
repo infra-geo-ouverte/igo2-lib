@@ -5,6 +5,7 @@ export interface LayerDBData {
     layerOptions: any
     sourceOptions: any;
     insertEvent: string;
+    detailedContextUri: string
 }
 
 

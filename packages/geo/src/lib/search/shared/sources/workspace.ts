@@ -100,15 +100,18 @@ export class WorkspaceSearchSource extends SearchSource implements TextSearch {
     const datasets = this.options.params.datasets.split(',');
     this.featureStoresWithIndex
       .filter(fswi => fswi.searchDocument && datasets.includes(fswi.layer.title))
-      .map(fswi => fswi.searchDocument.search(term, { limit: page * limitValue}).map(i => {
-        const foundIn: SimpleDocumentSearchResultSetUnit = i;
-        const field = foundIn.field;
-        foundIn.result.map(index => {
+      .map(fswi => {
+        const termToUse = term;
+        fswi.searchDocument.search(termToUse, { limit: page * limitValue }).map(i => {
+          const foundIn: SimpleDocumentSearchResultSetUnit = i;
+          const field = foundIn.field;
+          foundIn.result.map(index => {
             const feature = fswi.index.get(index);
-            const score = computeTermSimilarity(term.trim(), feature.properties[field]);
-            results.push({ index, feature , layer: fswi.layer, field, score});
+            const score = computeTermSimilarity(termToUse.trim(), feature.properties[field]);
+            results.push({ index, feature, layer: fswi.layer, field, score });
+          });
         });
-      }));
+      });
 
     results.sort((a, b) => (a.score > b.score) ? -1 : 1);
     const gettedIndex = [];

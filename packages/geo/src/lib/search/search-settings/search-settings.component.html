@@ -86,10 +86,10 @@
             </ng-container>
           </mat-menu>
       </ng-container>
-      <span *ngIf="hasPointerReverseSearchSource && !isTouchScreen">
         <mat-divider></mat-divider>
         <span class="pointer-summary-slide-toggle-container mat-typography">
           <mat-slide-toggle class="search-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
+            *ngIf="hasPointerReverseSearchSource && !isTouchScreen" 
             matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
             (click)="$event.stopPropagation()" [checked]="pointerSummaryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.pointerSearchSummary.title' | translate}}
@@ -107,6 +107,5 @@
             {{'igo.geo.search.reverseCoordFormat.title' | translate}}
           </mat-slide-toggle>
         </span>
-      </span>
   </mat-menu>
 </div>
