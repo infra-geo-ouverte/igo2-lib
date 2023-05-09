@@ -8,6 +8,7 @@ import { Feature } from '../../../feature';
 import { handleFileImportSuccess, ImportService } from '../../../import-export';
 import { GeoDBService, InsertSourceInsertDBEnum } from '../../../offline';
 import { MapService } from '../../shared';
+import { LayerService } from '../../../layer';
 
 enum Display {
   Choice = 1,
@@ -21,6 +22,7 @@ enum Display {
 })
 export class RecordParametersComponent implements OnInit{
 
+  contextUri: string;
   intervalMode: string = 'time';
   amountInput: number;
   fileName: string;
@@ -37,7 +39,9 @@ export class RecordParametersComponent implements OnInit{
               private geoDBService: GeoDBService,
               private confirmDialogService: ConfirmDialogService,
               private storageService: StorageService,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              public layerService: LayerService,
+              @Inject(MAT_DIALOG_DATA) private data: any) { }
 
   ngOnInit(): void {
     this.geoDBService.get('recordedTraces').subscribe((res) => {
@@ -46,6 +50,7 @@ export class RecordParametersComponent implements OnInit{
         this.trackFiles.sort((a, b) => a.name.localeCompare(b.name));
       }
     });
+    this.contextUri = this.data.contextUri;
   }
 
   loadFile(file: File) {
@@ -93,7 +98,9 @@ export class RecordParametersComponent implements OnInit{
       file,
       features,
       this.mapService.getMap(),
-      this.messageService
+      this.contextUri,
+      this.messageService,
+      this.layerService
     );
   }
 

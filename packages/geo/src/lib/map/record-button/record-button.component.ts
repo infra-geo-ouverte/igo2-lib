@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RecordParametersComponent } from './record-parameters/record-parameters.component';
 import { GpxSelectionComponent } from './gpx-selection/gpx-selection.component';
@@ -32,6 +32,7 @@ interface PositionDetailed {
 })
 export class RecordButtonComponent implements OnInit {
 
+  @Input() contextUri: string;
   isRecording = false;
   timerKey = null;
   pointIntervalKey = null;
@@ -97,7 +98,7 @@ export class RecordButtonComponent implements OnInit {
   record() {
     if(!this.isRecording) {
       if(!this.recordParameters) {
-        const dialogRef = this.dialog.open(RecordParametersComponent);
+        const dialogRef = this.dialog.open(RecordParametersComponent, {data: { contextUri: this.contextUri }});
         dialogRef.afterClosed().subscribe(result => {
           if(result) {
             this.setUpRecordListeners(result);
