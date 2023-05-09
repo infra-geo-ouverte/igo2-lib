@@ -15,7 +15,7 @@ import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer } from '../../layer/shared/layers';
+import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
@@ -45,6 +45,7 @@ export class IgoMap {
   public ol: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
+  public layersAddedByClick$ = new BehaviorSubject<Layer[]>(undefined);
   public status$: Subject<SubjectStatus>;
   public propertyChange$: Subject<{event:ObjectEvent, layer: Layer}>;
   public overlay: Overlay;
@@ -346,6 +347,9 @@ export class IgoMap {
     const newLayers = this.layers$.value.slice(0);
     const layersToRemove = [];
     layers.forEach((layer: Layer) => {
+      if (layer instanceof VectorLayer) {
+        layer.removeLayerFromIDB();
+      }
       const index = newLayers.indexOf(layer);
       if (index >= 0) {
         layersToRemove.push(layer);

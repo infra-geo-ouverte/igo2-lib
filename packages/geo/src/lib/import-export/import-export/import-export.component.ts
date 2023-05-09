@@ -43,7 +43,7 @@ import {
 import { StyleService } from '../../style/style-service/style.service';
 import { StyleListService } from '../../style/style-list/style-list.service';
 import { skipWhile } from 'rxjs/operators';
-import { EntityRecord, Workspace } from '@igo2/common';
+import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
@@ -56,6 +56,7 @@ import { computeProjectionsConstraints } from '../../map';
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { LayerService } from '../../layer/shared/layer.service';
 import { ImportExportServiceOptions } from '../shared/import.interface';
 
 @Component({
@@ -106,6 +107,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   @Input() selectFirstProj: boolean = false;
 
   @Input() map: IgoMap;
+
+  @Input() contextUri: string;
 
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   @Input()
@@ -165,7 +168,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private config: ConfigService,
     private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
-    private downloadService: DownloadService
+    private downloadService: DownloadService,
+    private layerService: LayerService,
+    private confirmDialogService: ConfirmDialogService
   ) {
     this.loadConfig();
     this.buildForm();
@@ -743,6 +748,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
+    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
     const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
     if (this.config.getConfig('importWithStyle')) {
       console.warn(`
@@ -758,14 +764,20 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         file,
         features,
         this.map,
-        this.messageService
+        this.contextUri,
+        this.messageService,
+        this.layerService,
+        confirmDialogService
       );
     } else {
       handleFileImportSuccess(
         file,
         features,
         this.map,
+        this.contextUri,
         this.messageService,
+        this.layerService,
+        confirmDialogService,
         this.styleListService,
         this.styleService
       );
@@ -878,11 +890,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
     }
-    if (this.config.getConfig('importExport.formats') !== undefined) {
-      const validatedListFormat = this.validateListFormat(
-        this.config.getConfig('importExport.formats')
-      );
-      appliedformats = validatedListFormat;
+    const configImportExportFormats = this.config.getConfig('importExport.formats');
+    if (configImportExportFormats) {
+      const validatedListFormat = this.validateListFormat(configImportExportFormats);
+      appliedformats = appliedformats.filter(af => validatedListFormat.includes(af));
     }
     if (formatsType.customList) {
       let commonFormats;

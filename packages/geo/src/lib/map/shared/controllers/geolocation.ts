@@ -181,6 +181,10 @@ export class MapGeolocationController extends MapController {
   private _accuracyThreshold = this.options && this.options.accuracyThreshold ? this.options.accuracyThreshold : 5000;
 
 
+  get olGeolocation() {
+    return this.geolocation;
+  }
+
   /**
    * Whether the activate the geolocation.
    */
@@ -290,11 +294,8 @@ export class MapGeolocationController extends MapController {
       return;
     }
     const arrowFeature = this.getFeatureByType(GeolocationOverlayType.PositionDirection);
-    let isMoving = this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
-    if(position?.speed) {
-      isMoving = position?.speed > 1.2 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
-    }
-    if(this.geolocation.getAccuracy() <= this.accuracyThreshold && isMoving) {
+    const isMoving = position?.speed > 1.25 && this.distanceBetweenPoints(this.lastPosition.coordinates, position4326) > 0.003;
+    if(position.accuracy <= this.accuracyThreshold && isMoving) {
       // Calculate the heading using current position and last recorded
       // because ol heading not returning right value
       var dx = position4326[1] - this.lastPosition.coordinates[1];
@@ -482,7 +483,8 @@ export class MapGeolocationController extends MapController {
     const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
     if (features.length > 0) {
       const featuresExtent = computeOlFeaturesExtent(this.map, features);
-      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, position?.speed > 55 ? 0.25 : 0.1);
+      const edgeRatios = position?.speed > 12.5 ? [0.25,0.25,0.25,0.25] : [0.15,0.1,0.1,0.1];
+      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, edgeRatios);
       let motion = this.followPosition && areOutOfView ? FeatureMotion.Move : FeatureMotion.None;
       if (zoomTo) {
         motion = FeatureMotion.Zoom;

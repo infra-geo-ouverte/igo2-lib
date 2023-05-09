@@ -91,17 +91,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     layersAndIndex$
       .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))
       .subscribe((layers: Layer[]) => {
-        layers = layers
-          .filter((layer: Layer) => layer !== undefined)
-          .map((layer) => {
-            layer.visible = this.computeLayerVisibilityFromUrl(layer);
-            layer.zIndex = layer.zIndex;
-
-            return layer;
-          });
-
-        this.contextLayers.concat(layers);
-        this.map.addLayers(layers);
+        this.handleAddLayers(layers);
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
@@ -137,6 +127,23 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           });
         }
       });
+
+      this.layerService.createAsyncIdbLayers(context.uri).pipe(debounceTime(500))
+      .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
+
+  }
+
+  private handleAddLayers(layers: Layer[]) {
+    layers = layers
+      .filter((layer: Layer) => layer !== undefined)
+      .map((layer) => {
+        layer.visible = this.computeLayerVisibilityFromUrl(layer);
+        layer.zIndex = layer.zIndex;
+
+        return layer;
+      });
+    this.contextLayers.concat(layers);
+    this.map.addLayers(layers);
   }
 
   private computeLayerVisibilityFromUrl(layer: Layer): boolean {
