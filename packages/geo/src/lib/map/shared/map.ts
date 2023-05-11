@@ -149,8 +149,6 @@ export class IgoMap {
           prevLayersId = prevLayers.map(l => l.id);
         }
         const layers = currentLayers.filter(l => !prevLayersId.includes(l.id));
-        console.log('layers', prevLayers, currentLayers, layers);
-
 
         for (const layer of layers) {
           if (layer.options.linkedLayers) {
