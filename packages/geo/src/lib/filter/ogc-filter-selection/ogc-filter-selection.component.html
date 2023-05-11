@@ -192,8 +192,7 @@
                 <mat-option *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async"
                 [value]="ogcAutocomplete">
                   <mat-checkbox
-                    [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below"
-                    matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+                    [matTooltip]="getToolTip(ogcAutocomplete)" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
                     [checked]="ogcAutocomplete.enabled"
                     (change)="onSelectionChange(ogcAutocomplete, selector.selectorType)"
                     [value]="ogcAutocomplete">
