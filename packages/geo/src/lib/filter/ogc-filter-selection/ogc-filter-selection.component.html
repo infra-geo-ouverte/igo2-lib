@@ -189,8 +189,16 @@
               [matAutocomplete]="auto" [placeholder]="bundle.title">
               <mat-autocomplete #auto="matAutocomplete" #autocomplete (optionSelected)="autocompleteOptionClick($event.option.value)"
               [displayWith]="displayFn">
-                <mat-option *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async" [value]="ogcAutocomplete">
-                  {{ ogcAutocomplete.value }}
+                <mat-option *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async"
+                [value]="ogcAutocomplete">
+                  <mat-checkbox
+                    [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below"
+                    matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+                    [checked]="ogcAutocomplete.enabled"
+                    (change)="onSelectionChange(ogcAutocomplete, selector.selectorType)"
+                    [value]="ogcAutocomplete">
+                    {{ogcAutocomplete.value}}
+                  </mat-checkbox>
                 </mat-option>
               </mat-autocomplete>
           </mat-form-field>
