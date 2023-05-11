@@ -81,7 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = false;
+  public showSearchButton: boolean = true;
 
   /**
    * List of available search types
@@ -275,7 +275,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
 
     const configValue = this.configService.getConfig("searchBar.showSearchButton");
-    this.showSearchButton = configValue !== undefined ? configValue : false;
+    this.showSearchButton = configValue !== undefined ? configValue : true;
   }
 
   /**
@@ -479,46 +479,30 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   /**
    * When the user clicks on the magnifying glass and
-   * this find the first object on the map
+   * this find the first object on the map otherwise the
+   * coordinate it will be the second option to be focused in the map
    */
 
-  filterResults(id: string): object {
-    return this.store.all().filter((result) => result.source.getId() === id)[0];
-    }
-
-
-    selectFirstElement(){
-
-      const firstResultIcherche = this.filterResults('icherche');
-      const firstResultIlayer = this.filterResults('ilayer');
-      const firstResultIcherchereverse = this.filterResults('icherchereverse');
-      const firstResultCoordinatesreverse = this.filterResults('coordinatesreverse');
-      const firstResultNominatim = this.filterResults('nominatim');
+ selectFirstElement(){
 
      //Find the max value of scores
       const maxScore = Math.max(...this.store.all().map(result => result.meta.score));
 
       //Filter values who have the maxScore
       const result = this.store.all().find(result => result.meta.score === maxScore);
+      //If the value has not a first maxScore it has to take the title
+      const coordInv=this.store.all().find(result => result.meta.title);
 
-      if(result === firstResultIcherche){
-        this.store.state.update(result,{focused:true,selected:true},true);
-        return firstResultIcherche;
-      }else if(result === firstResultIlayer){
-       this.store.state.update(result,{focused:true,selected:true},true);
-       return firstResultIlayer;
-
-      }else if(result === firstResultCoordinatesreverse){
-        this.store.state.update(result,{focused:true,selected:true},true);
-        return firstResultCoordinatesreverse;
-
-      } else if(result === firstResultIcherchereverse){
-        this.store.state.update(result,{focused:true,selected:true},true);
-        return firstResultIcherchereverse;
+      //function to reverse the value of the parameter
+      function reverseString(coordReInv) {
+        return coordReInv;
       }
-      else if(result === firstResultNominatim){
+
+      if(result){
         this.store.state.update(result,{focused:true,selected:true},true);
-        return firstResultNominatim;
-    }
+      }else{
+        reverseString(coordInv);
+        this.store.state.update(coordInv,{focused:true,selected:true},true);
+      }
   }
 }
