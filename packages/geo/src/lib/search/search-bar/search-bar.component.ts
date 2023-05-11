@@ -493,11 +493,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       //If the value has not a first maxScore it has to take the title
       const coordInv=this.store.all().find(result => result.meta.title);
 
-      //function to reverse the value of the parameter
+      //Function to reverse the value of the parameter
       function reverseString(coordReInv) {
         return coordReInv;
       }
-
+      //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
       if(result){
         this.store.state.update(result,{focused:true,selected:true},true);
       }else{
