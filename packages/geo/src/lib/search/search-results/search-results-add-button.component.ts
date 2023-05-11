@@ -159,10 +159,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
    * On toggle button click, emit the added change event
    * @internal
    */
-  onToggleClick(event) {
+  onToggleClick(currEvent: Event) {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
+    const event = currEvent ? currEvent : {} as Event;
 
     if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
       return;
@@ -181,7 +182,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       case 'mouseenter':
         if (!this.isPreview$.value && !this.added) {
           this.lastTimeoutRequest = setTimeout(() => {
-            this.add();
+            this.add(event);
             this.isPreview$.next(true);
           }, 500);
         }
@@ -199,7 +200,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     }
   }
 
-  private add(event?: Event) {
+  private add(event: Event) {
     if (!this.added) {
       this.added = true;
       this.addLayerToMap(event);
