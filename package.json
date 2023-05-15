@@ -132,7 +132,7 @@
     "@angular-devkit/build-angular": "^14.2.11",
     "@angular-eslint/builder": "14.0.2",
     "@angular-eslint/eslint-plugin": "14.0.2",
-    "@angular-eslint/eslint-plugin-template": "14.0.2",
+    "@angular-eslint/eslint-plugin-template": "16.0.1",
     "@angular-eslint/schematics": "14.0.2",
     "@angular-eslint/template-parser": "14.0.2",
     "@angular/platform-browser-dynamic": "^14.3.0",
