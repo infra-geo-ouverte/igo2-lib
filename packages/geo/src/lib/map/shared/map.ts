@@ -220,31 +220,34 @@ export class IgoMap {
       return;
     }
 
+    const currentControls = Object.assign([], this.ol.getControls().getArray());
     const controls = [];
+
     if (value.attribution) {
+      const attribution = currentControls.find(element => element.constructor.name === 'Attribution');
+      if (attribution) { this.ol.removeControl(attribution); }
       const attributionOpt = (value.attribution === true
         ? {}
         : value.attribution) as MapAttributionOptions;
       controls.push(new olControlAttribution(attributionOpt));
     }
     if (value.scaleLine) {
+      const ScaleLine = currentControls.find(element => element.constructor.name === 'ScaleLine');
+      if (ScaleLine) { this.ol.removeControl(ScaleLine); }
       const scaleLineOpt = (value.scaleLine === true
         ? {}
         : value.scaleLine) as MapScaleLineOptions;
       controls.push(new olControlScaleLine(scaleLineOpt));
     }
-
     if (value.rotate) {
+      const Rotate = currentControls.find(element => element.constructor.name === 'Rotate');
+      if (Rotate) { this.ol.removeControl(Rotate); }
       const rotateOpt = (value.rotate === true
         ? {}
-        : value.rotate) as MapRotateOptions;// todo
+        : value.rotate) as MapRotateOptions;
       controls.push(new olControlRotate(rotateOpt));
     }
 
-    const currentControls = Object.assign([], this.ol.getControls().getArray());
-    currentControls.forEach(control => {
-      this.ol.removeControl(control);
-    });
     controls.forEach(control => {
       this.ol.addControl(control);
     });

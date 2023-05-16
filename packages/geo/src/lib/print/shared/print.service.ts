@@ -757,7 +757,7 @@ export class PrintService {
       const mapResultCanvas = document.createElement('canvas');
       const mapContextResult = mapResultCanvas.getContext('2d');
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
-      
+
 
       mapResultCanvas.width = widthPixels;
       mapResultCanvas.height = heightPixels;
@@ -793,7 +793,7 @@ export class PrintService {
       }
       mapContextResult.drawImage(mapCanvas, 0, 0);
       mapContextResult.globalAlpha = 1;
-      
+
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
         if (mapStatus !== SubjectStatus.Done) {
@@ -816,7 +816,7 @@ export class PrintService {
 
         status$.next(status);
       });
-      
+
       // If no loading as started after 200ms, then probably no loading
       // is required.
       timeout = window.setTimeout(() => {
@@ -845,7 +845,7 @@ export class PrintService {
     const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
     map.ol.getView().setResolution(viewResolution / scaling);
     // this.renderMap(map, [widthPixels, heightPixels], extent);
-    return status$
+    return status$;
   }
 
   /**
@@ -880,11 +880,12 @@ export class PrintService {
     format = format.toLowerCase();
     // add rotation
     const span: HTMLElement = document.createElement("span");
-    span.innerHTML = '<span><svg viewBox="0 0 24 24" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"></path></svg></span>';
-    map.updateControls({scaleLine: true,
-      attribution: {
-        collapsed: true
-      },rotate: {label: span}});
+    let htmlText = '<span>';
+    htmlText += '<svg viewBox="0 0 24 24" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">';
+    htmlText += '<path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"></path>';
+    htmlText += '</path></svg></span>';
+    span.innerHTML = htmlText;
+    map.updateControls({rotate: {label: span}});
 
     map.ol.once('rendercomplete', async (event: any) => {
       // mapResultCanvas to save rotated map
