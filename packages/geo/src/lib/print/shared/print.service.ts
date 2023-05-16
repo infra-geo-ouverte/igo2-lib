@@ -614,25 +614,50 @@ export class PrintService {
       if (olCollapsed) {
         element.classList.add('ol-collapsed');
       }
- }
+    }
 
  /**
   * Add Copyrigh to the map canvas
   * @param map - Map of the app
   * @param canvas Canvas of the map
+  * @param position String - position of the legend
   */
   private async addCopyrightToImage(
     map: IgoMap,
-    canvas : HTMLCanvasElement
+    canvas : HTMLCanvasElement,
+    position: string
     ) {
       const context = canvas.getContext('2d');
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+
+      // this code to check the view mobile or tablet
+      const firstDisplay = (mapOverlayHTML as any).computedStyleMap().get('display').value;
+      // by defaulte display in mobile is none
+      // we need to show the div befor printing
+      // the div containes ol-attrebuts and ol-rotate arraow
+      if(firstDisplay === 'none') {
+        mapOverlayHTML.classList.remove('ol-overlaycontainer-stopevent');
+      }
+
+      const olRotate = mapOverlayHTML.getElementsByClassName('ol-rotate') as HTMLCollectionOf<HTMLElement>;
+      if(olRotate[0]) {
+        // by default the rotate arrow is none
+        // show rotate arrow befor printing
+        olRotate[0].style.display = 'block';
+        // in case legend position is topright
+        // we change rotate btn to topleft
+        if(position === 'topright') {
+          olRotate[0].style.width = 'inherit';
+        }
+      }
       // Remove the UI buttons from the nodes
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        if(!OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+          OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        }
       }
       // Find attributions by class and delete
       // the collapsed class to open attribution Copyright
@@ -650,9 +675,25 @@ export class PrintService {
       }).then( e => {
         canvasOverlayHTML = e;
       });
+
+      // reset canvas transform to initial
+      context.setTransform(1, 0, 0, 1, 0, 0);
       context.drawImage(canvasOverlayHTML, 0, 0);
       if (olCollapsed) {
         element.classList.add('ol-collapsed');
+      }
+
+      if(firstDisplay === 'none') {
+        mapOverlayHTML.classList.add('ol-overlaycontainer-stopevent');
+      }
+      // after adding rotate btn return to original style
+      if(olRotate[0]) {
+        // after changeing rotate btn to topleft
+        // we back to the original posiotn
+        if(position === 'topright') {
+          olRotate[0].style.width = 'initial';
+        }
+        olRotate[0].style.display = 'none';
       }
   }
 
@@ -701,42 +742,81 @@ export class PrintService {
     size: Array<number>,
     margins: Array<number>
   ) {
-    const status$ = new Subject();
 
     const mapSize = map.ol.getSize();
+    const viewResolution = map.ol.getView().getResolution();
+
     const extent = map.ol.getView().calculateExtent(mapSize);
 
     const widthPixels = Math.round((size[0] * resolution) / 25.4);
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
+    const status$ = new Subject();
 
     let timeout;
+    map.ol.once('rendercomplete', async (event: any) => {
+      const mapResultCanvas = document.createElement('canvas');
+      const mapContextResult = mapResultCanvas.getContext('2d');
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
+      
 
-    map.ol.once('rendercomplete', (event: any) => {
-      const canvases = event.target.getViewport().getElementsByTagName('canvas');
+      mapResultCanvas.width = widthPixels;
+      mapResultCanvas.height = heightPixels;
+      const opacity = mapCanvas.parentNode.style.opacity;
+      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+      let matrix;
+      const transform = mapCanvas.style.transform;
+      if (transform) {
+        // Get the transform parameters from the style's transform matrix
+        matrix = transform
+          .match(/^matrix\(([^\(]*)\)$/)[1]
+          .split(',')
+          .map(Number);
+      } else {
+        matrix = [
+          parseFloat(mapCanvas.style.width) / mapCanvas.width,
+          0,
+          0,
+          parseFloat(mapCanvas.style.height) / mapCanvas.height,
+          0,
+          0,
+        ];
+      }
+      // Apply the transform to the export map context
+      CanvasRenderingContext2D.prototype.setTransform.apply(
+        mapContextResult,
+        matrix
+      );
+      const backgroundColor = mapCanvas.parentNode.style.backgroundColor;
+      if (backgroundColor) {
+        mapContextResult.fillStyle = backgroundColor;
+        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+      }
+      mapContextResult.drawImage(mapCanvas, 0, 0);
+      mapContextResult.globalAlpha = 1;
+      
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
-
         if (mapStatus !== SubjectStatus.Done) {
           return;
         }
-
         mapStatus$$.unsubscribe();
-
         let status = SubjectStatus.Done;
         try {
-          for (const canvas of canvases) {
-            if (canvas.width !== 0) {
-              this.addCanvas(doc, canvas, margins);
-            }
+          if (mapCanvas.width !== 0) {
+            this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
+        // Reset original map size
+        map.ol.setSize(size);
+        map.ol.getView().setResolution(viewResolution);
         this.renderMap(map, mapSize, extent);
+
         status$.next(status);
       });
-
+      
       // If no loading as started after 200ms, then probably no loading
       // is required.
       timeout = window.setTimeout(() => {
@@ -744,23 +824,28 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          for (const canvas of canvases) {
-            if (canvas.width !== 0) {
-              this.addCanvas(doc, canvas, margins);
-            }
+          if (mapCanvas.width !== 0) {
+            this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
+        // Reset original map size
+        map.ol.setSize(size);
+        map.ol.getView().setResolution(viewResolution);
         this.renderMap(map, mapSize, extent);
         status$.next(status);
-      }, 200);
+      },200);
     });
 
-    this.renderMap(map, [widthPixels, heightPixels], extent);
-
-    return status$;
+    // Set print size
+    const printSize = [widthPixels, heightPixels];
+    map.ol.setSize(printSize);
+    const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
+    map.ol.getView().setResolution(viewResolution / scaling);
+    // this.renderMap(map, [widthPixels, heightPixels], extent);
+    return status$
   }
 
   /**
@@ -792,18 +877,86 @@ export class PrintService {
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
+    format = format.toLowerCase();
+    // add rotation
+    const span: HTMLElement = document.createElement("span");
+    span.innerHTML = '<span><svg viewBox="0 0 24 24" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"></path></svg></span>';
+    map.updateControls({scaleLine: true,
+      attribution: {
+        collapsed: true
+      },rotate: {label: span}});
+
     map.ol.once('rendercomplete', async (event: any) => {
-      format = format.toLowerCase();
-      const oldCanvas = event.target
-        .getViewport()
-        .getElementsByTagName('canvas')[0];
+      // mapResultCanvas to save rotated map
+      const mapResultCanvas = document.createElement('canvas');
+      const size = map.ol.getSize();
+      mapResultCanvas.width = size[0];
+      mapResultCanvas.height = size[1];
+      const mapContextResult = mapResultCanvas.getContext('2d');
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
+      const opacity =
+      mapCanvas.parentNode.style.opacity || mapCanvas.style.opacity;
+      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+      let matrix;
+      const transform = mapCanvas.style.transform;
+      if (transform) {
+        // Get the transform parameters from the style's transform matrix
+        matrix = transform
+          .match(/^matrix\(([^\(]*)\)$/)[1]
+          .split(',')
+          .map(Number);
+      } else {
+        matrix = [
+          parseFloat(mapCanvas.style.width) / mapCanvas.width,
+          0,
+          0,
+          parseFloat(mapCanvas.style.height) / mapCanvas.height,
+          0,
+          0,
+        ];
+      }
+      // Apply the transform to the export map context
+      CanvasRenderingContext2D.prototype.setTransform.apply(
+        mapContextResult,
+        matrix
+      );
+      const backgroundColor = mapCanvas.parentNode.style.backgroundColor;
+      if (backgroundColor) {
+        mapContextResult.fillStyle = backgroundColor;
+        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+      }
+
+      mapContextResult.drawImage(mapCanvas, 0, 0);
+
+      await this.addCopyrightToImage(map, mapResultCanvas, legendPosition);
+
+      // Check the legendPosition
+      if (legendPosition !== 'none') {
+        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
+          await this.addLegendToImage(
+            mapResultCanvas,
+            map,
+            resolution,
+            legendPosition,
+            format
+          );
+        } else if (legendPosition === 'newpage') {
+          await this.getLayersLegendImage(
+            map,
+            format,
+            doZipFile,
+            resolution
+          );
+        }
+      }
+      // add other information to final canvas before exporting
       const newCanvas = document.createElement('canvas');
       const newContext = newCanvas.getContext('2d');
       // Postion in height to set the canvas in new canvas
       let positionHCanvas = 0;
       // Get height/width of map canvas
-      const width = oldCanvas.width;
-      let height = oldCanvas.height;
+      const width = mapResultCanvas.width;
+      let height = mapResultCanvas.height;
       // Set Font to calculate comment width
       newContext.font = '20px Calibri';
       const commentWidth = newContext.measureText(comment).width;
@@ -822,20 +975,18 @@ export class PrintService {
       // Set the new canvas with the new calculated size
       newCanvas.width = width;
       newCanvas.height = height;
+
       if (['bmp','gif', 'jpeg', 'png', 'tiff'].indexOf(format) > -1) {
         // Patch Jpeg default black background to white
-        if (format === 'jpeg') {
+        if (
+          format === 'jpeg' || title !== '' || subtitle !== '' ||
+          comment !== '' || projection !== false || scale !== false
+          ) {
           newContext.fillStyle = '#ffffff';
           newContext.fillRect(0, 0, width, height);
           newContext.fillStyle = '#000000';
-        } else if (title !== '' || subtitle !== '' || comment !== '' ||
-            projection !== false || scale !== false) {
-              newContext.fillStyle = '#ffffff';
-              newContext.fillRect(0, 0, width, height);
-              newContext.fillStyle = '#000000';
         }
       }
-
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
@@ -845,6 +996,7 @@ export class PrintService {
         newContext.textAlign = 'center';
         newContext.fillText(title, width / 2, 20, width * 0.9);
       }
+
       if (subtitle !== '') {
         // Set font for subtitle
         // Adjust according to title length
@@ -853,6 +1005,7 @@ export class PrintService {
         newContext.textAlign = 'center';
         newContext.fillText(subtitle, width / 2, 50, width * 0.9);
       }
+
       // Set font for next section
       newContext.font = '20px Calibri';
       // If projection or/end scale need to be added to canvas
@@ -916,30 +1069,7 @@ export class PrintService {
         }
       }
 
-      // Add map to new canvas
-      newContext.drawImage(oldCanvas, 0, positionHCanvas);
-      // Add copyrigh
-      await this.addCopyrightToImage(map, newCanvas);
-
-      // Check the legendPosition
-      if (legendPosition !== 'none') {
-        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
-          await this.addLegendToImage(
-            newCanvas,
-            map,
-            resolution,
-            legendPosition,
-            format
-          );
-        } else if (legendPosition === 'newpage') {
-          await this.getLayersLegendImage(
-            map,
-            format,
-            doZipFile,
-            resolution
-          );
-        }
-      }
+      newContext.drawImage(mapResultCanvas, 0, positionHCanvas);
 
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
@@ -961,7 +1091,6 @@ export class PrintService {
       } catch (err) {
         status = SubjectStatus.Error;
       }
-
       status$.next(status);
 
       if (format.toLowerCase() === 'tiff') {
@@ -981,7 +1110,6 @@ export class PrintService {
       }
     });
     map.ol.renderSync();
-
     return status$;
   }
 

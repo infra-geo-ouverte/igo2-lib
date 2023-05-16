@@ -40,6 +40,7 @@ export interface MapOptions {
 export interface MapControlsOptions {
   attribution?: boolean | MapAttributionOptions;
   scaleLine?: boolean | MapScaleLineOptions;
+  rotate?: boolean | MapRotateOptions;
 }
 
 export interface MapScaleLineOptions {
@@ -55,6 +56,18 @@ export interface MapScaleLineOptions {
 export interface MapAttributionOptions {
   html?: string;
   collapsed: boolean;
+}
+
+export interface MapRotateOptions {
+  className?: string;
+  label?: string | HTMLElement;
+  tipLabel?: string;
+  compassClassName?: string;
+  duration?: number;
+  autoHide?: boolean;
+  render?: any;
+  resetNorth?: (() => void) | undefined;
+  target?: string | HTMLElement;
 }
 
 export interface Buffer {

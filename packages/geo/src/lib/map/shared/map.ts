@@ -2,6 +2,7 @@ import olMap from 'ol/Map';
 import olView from 'ol/View';
 import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
+import olControlRotate from 'ol/control/Rotate';
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 import OlProjection from 'ol/proj/Projection';
@@ -25,7 +26,8 @@ import {
   MapAttributionOptions,
   MapScaleLineOptions,
   MapExtent,
-  MapControlsOptions
+  MapControlsOptions,
+  MapRotateOptions
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -100,6 +102,12 @@ export class IgoMap {
           ? {}
           : this.options.controls.scaleLine) as MapScaleLineOptions;
         controls.push(new olControlScaleLine(scaleLineOpt));
+      }
+      if (this.options.controls.rotate) {
+        const rotateOpt = (this.options.controls.rotate === true
+          ? {}
+          : this.options.controls.rotate) as MapRotateOptions;
+        controls.push(new olControlRotate(rotateOpt));
       }
     }
     let interactions = {};
@@ -224,6 +232,13 @@ export class IgoMap {
         ? {}
         : value.scaleLine) as MapScaleLineOptions;
       controls.push(new olControlScaleLine(scaleLineOpt));
+    }
+
+    if (value.rotate) {
+      const rotateOpt = (value.rotate === true
+        ? {}
+        : value.rotate) as MapRotateOptions;// todo
+      controls.push(new olControlRotate(rotateOpt));
     }
 
     const currentControls = Object.assign([], this.ol.getControls().getArray());
