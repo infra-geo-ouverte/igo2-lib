@@ -610,6 +610,7 @@ export class PrintService {
       }).then( e => {
         canvasOverlayHTML = e;
       });
+
       this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
       if (olCollapsed) {
         element.classList.add('ol-collapsed');
@@ -631,26 +632,19 @@ export class PrintService {
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
 
-      // this code to check the view mobile or tablet
-      const firstDisplay = (mapOverlayHTML as any).computedStyleMap().get('display').value;
-      // by defaulte display in mobile is none
-      // we need to show the div befor printing
-      // the div containes ol-attrebuts and ol-rotate arraow
-      if(firstDisplay === 'none') {
-        mapOverlayHTML.classList.remove('ol-overlaycontainer-stopevent');
-      }
+      const rotateNorth = mapOverlayHTML.getElementsByClassName('rotate-north')[0] as HTMLElement;
 
-      const olRotate = mapOverlayHTML.getElementsByClassName('ol-rotate') as HTMLCollectionOf<HTMLElement>;
-      if(olRotate[0]) {
-        // by default the rotate arrow is none
-        // show rotate arrow befor printing
-        olRotate[0].style.display = 'block';
+      if(rotateNorth) {
+        // init North arrow position befor printing from 400px to 0px
+        rotateNorth.style.right = '0px';
         // in case legend position is topright
         // we change rotate btn to topleft
         if(position === 'topright') {
-          olRotate[0].style.width = 'inherit';
+          rotateNorth.style.width = 'inherit';
+          rotateNorth.style.paddingLeft = '10px';
         }
       }
+
       // Remove the UI buttons from the nodes
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
@@ -683,17 +677,15 @@ export class PrintService {
         element.classList.add('ol-collapsed');
       }
 
-      if(firstDisplay === 'none') {
-        mapOverlayHTML.classList.add('ol-overlaycontainer-stopevent');
-      }
-      // after adding rotate btn return to original style
-      if(olRotate[0]) {
+      if(rotateNorth) {
+        // after printing back to the original style
+        rotateNorth.style.removeProperty('right');
         // after changeing rotate btn to topleft
         // we back to the original posiotn
         if(position === 'topright') {
-          olRotate[0].style.width = 'initial';
+          rotateNorth.style.removeProperty('width');
+          rotateNorth.style.removeProperty('paddingLeft');
         }
-        olRotate[0].style.display = 'none';
       }
   }
 
@@ -729,7 +721,11 @@ export class PrintService {
         imageSize[0],
         imageSize[1]
       );
-      doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
+      if(!this.imgSizeAdded) {
+
+        doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
+      }
+
       this.imgSizeAdded = imageSize; // keep img size for georef later
     }
   }
@@ -757,7 +753,6 @@ export class PrintService {
       const mapResultCanvas = document.createElement('canvas');
       const mapContextResult = mapResultCanvas.getContext('2d');
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
-
 
       mapResultCanvas.width = widthPixels;
       mapResultCanvas.height = heightPixels;
@@ -844,7 +839,6 @@ export class PrintService {
     map.ol.setSize(printSize);
     const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
     map.ol.getView().setResolution(viewResolution / scaling);
-    // this.renderMap(map, [widthPixels, heightPixels], extent);
     return status$;
   }
 
@@ -879,13 +873,13 @@ export class PrintService {
     const translate = this.languageService.translate;
     format = format.toLowerCase();
     // add rotation
-    const span: HTMLElement = document.createElement("span");
+    /*const span: HTMLElement = document.createElement("span");
     let htmlText = '<span>';
     htmlText += '<svg viewBox="0 0 24 24" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">';
     htmlText += '<path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"></path>';
     htmlText += '</path></svg></span>';
     span.innerHTML = htmlText;
-    map.updateControls({rotate: {label: span}});
+    map.updateControls({rotate: {label: span}});*/
 
     map.ol.once('rendercomplete', async (event: any) => {
       // mapResultCanvas to save rotated map
