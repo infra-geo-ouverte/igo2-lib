@@ -1,3 +1,7 @@
+## [1.15.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.1...1.15.2) (2023-05-16)
+
+
+
 ## [1.15.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.0...1.15.1) (2023-05-05)
 
 
