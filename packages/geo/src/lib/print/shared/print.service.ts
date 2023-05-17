@@ -84,7 +84,7 @@ export class PrintService {
     let subtitleSizes: TextPdfSizeAndMargin;
 
     // if paper format A1 or A0 add margin top
-    if ((options.title !== '' || options.subtitle) &&
+    if ((options.title !== '' || options.subtitle !== '') &&
       (paperFormat === PrintPaperFormat.A1 || paperFormat === PrintPaperFormat.A0)) {
       margins[0] += 10;
     }
@@ -146,7 +146,7 @@ export class PrintService {
     this.addMap(doc, map, resolution, size, margins).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.addScale(doc, map, margins);
+          await this.addScale(doc, map, margins, options.legendPosition);
           await this.handleMeasureLayer(doc, map, margins);
 
           const width = this.imgSizeAdded[0];
@@ -571,11 +571,13 @@ export class PrintService {
    * @param  doc - Pdf document where legend will be added
    * @param  map - Map of the app
    * @param  margins - Page margins
+   * @param  position - Legend position
    */
   private async addScale(
     doc: jsPDF,
     map: IgoMap,
-    margins: Array<number>
+    margins: Array<number>,
+    position: string
     ) {
       const mapSize = map.ol.getSize();
       const extent = map.ol.getView().calculateExtent(mapSize);
@@ -583,11 +585,25 @@ export class PrintService {
       // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+
+      const rotateNorth = mapOverlayHTML.getElementsByClassName('rotate-north')[0] as HTMLElement;
+      if(rotateNorth) {
+        // init North arrow position befor printing from 400px to 0px
+        rotateNorth.style.right = '0px';
+        // in case legend position is topright
+        // we change rotate btn to topleft
+        if(position === 'topright') {
+          rotateNorth.style.width = 'inherit';
+          rotateNorth.style.paddingLeft = '10px';
+        }
+      }
       // Remove the UI buttons from the nodes
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        if(!OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+          OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        }
       }
       // Find attributions by class and delete
       // the collapsed class to open attribution Copyright
@@ -611,9 +627,34 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
 
-      this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
+      let image;
+      if (canvasOverlayHTML) {
+        image = canvasOverlayHTML.toDataURL('image/png');
+      }
+
+      doc.addImage(
+        image,
+        'PNG',
+        margins[3],
+        margins[0],
+        this.imgSizeAdded[0],
+        this.imgSizeAdded[1]
+      );
+
+      doc.rect(margins[3], margins[0], this.imgSizeAdded[0], this.imgSizeAdded[1]);
       if (olCollapsed) {
         element.classList.add('ol-collapsed');
+      }
+
+      if(rotateNorth) {
+        // after printing back to the original style
+        rotateNorth.style.removeProperty('right');
+        // after changeing rotate btn to topleft
+        // we back to the original posiotn
+        if(position === 'topright') {
+          rotateNorth.style.removeProperty('width');
+          rotateNorth.style.removeProperty('paddingLeft');
+        }
       }
     }
 
@@ -721,10 +762,8 @@ export class PrintService {
         imageSize[0],
         imageSize[1]
       );
-      if(!this.imgSizeAdded) {
 
-        doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
-      }
+      doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
 
       this.imgSizeAdded = imageSize; // keep img size for georef later
     }
@@ -805,7 +844,7 @@ export class PrintService {
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
         // Reset original map size
-        map.ol.setSize(size);
+        map.ol.setSize(mapSize);
         map.ol.getView().setResolution(viewResolution);
         this.renderMap(map, mapSize, extent);
 
@@ -827,7 +866,7 @@ export class PrintService {
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
         // Reset original map size
-        map.ol.setSize(size);
+        map.ol.setSize(mapSize);
         map.ol.getView().setResolution(viewResolution);
         this.renderMap(map, mapSize, extent);
         status$.next(status);
