@@ -146,7 +146,7 @@ export class PrintService {
     this.addMap(doc, map, resolution, size, margins).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.addScale(doc, map, margins, options.legendPosition);
+          await this.addScale(doc, map, margins, size, options.legendPosition, resolution);
           await this.handleMeasureLayer(doc, map, margins);
 
           const width = this.imgSizeAdded[0];
@@ -571,21 +571,25 @@ export class PrintService {
    * @param  doc - Pdf document where legend will be added
    * @param  map - Map of the app
    * @param  margins - Page margins
+   * @param  size - Page size
    * @param  position - Legend position
    */
   private async addScale(
     doc: jsPDF,
     map: IgoMap,
     margins: Array<number>,
-    position: string
+    size: Array<number>,
+    position: string,
+    resolution: number
     ) {
-      const mapSize = map.ol.getSize();
-      const extent = map.ol.getView().calculateExtent(mapSize);
+      const widthPixels = Math.round((size[0] * resolution) / 25.4);
+      const heightPixels = Math.round((size[1] * resolution) / 25.4);
       // Get the scale and attribution
       // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
       let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
-
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
+      mapOverlayHTML.id = 'print-doc';
+      // const mapOverlayHTML = mapOverlayHTMLclone.getRootNode() as HTMLElement;
       const rotateNorth = mapOverlayHTML.getElementsByClassName('rotate-north')[0] as HTMLElement;
       if(rotateNorth) {
         // init North arrow position befor printing from 400px to 0px
@@ -599,10 +603,15 @@ export class PrintService {
       }
       // Remove the UI buttons from the nodes
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons) as Array<HTMLElement>;
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
         if(!OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
           OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        }
+
+        if(OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+          OverlayHTMLButton.parentElement.style.background = 'transparent';
+          OverlayHTMLButton.style.color = '#000';
         }
       }
       // Find attributions by class and delete
@@ -612,13 +621,17 @@ export class PrintService {
       if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
+      // change the size of OverlayContainer to the print size
+      mapOverlayHTML.style.width = widthPixels+'px';
+      mapOverlayHTML.style.height = heightPixels+'px';
+      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
       // scale is necessary to make it in google chrome
       // background as null because otherwise it is white and cover the map
       // allowtaint is to allow rendering images in the attributions
       // useCORS: true pour permettre de renderer les images (ne marche pas en local)
-      const canvas = await html2canvas(mapOverlayHTML, {
+      await html2canvas(mapOverlayHTML, {
         scale: 1,
         backgroundColor: null,
         allowTaint: true,
@@ -627,35 +640,8 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
 
-      let image;
-      if (canvasOverlayHTML) {
-        image = canvasOverlayHTML.toDataURL('image/png');
-      }
-
-      doc.addImage(
-        image,
-        'PNG',
-        margins[3],
-        margins[0],
-        this.imgSizeAdded[0],
-        this.imgSizeAdded[1]
-      );
-
-      doc.rect(margins[3], margins[0], this.imgSizeAdded[0], this.imgSizeAdded[1]);
-      if (olCollapsed) {
-        element.classList.add('ol-collapsed');
-      }
-
-      if(rotateNorth) {
-        // after printing back to the original style
-        rotateNorth.style.removeProperty('right');
-        // after changeing rotate btn to topleft
-        // we back to the original posiotn
-        if(position === 'topright') {
-          rotateNorth.style.removeProperty('width');
-          rotateNorth.style.removeProperty('paddingLeft');
-        }
-      }
+      document.getElementById('print-doc').remove();
+      this.addCanvas(doc, canvasOverlayHTML, margins);
     }
 
  /**
@@ -827,6 +813,9 @@ export class PrintService {
       }
       mapContextResult.drawImage(mapCanvas, 0, 0);
       mapContextResult.globalAlpha = 1;
+      // reset canvas transform to initial
+      mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+      // mapContextResult.drawImage(canvasOverlayHTML, 0, 0);
 
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
@@ -911,14 +900,6 @@ export class PrintService {
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
-    // add rotation
-    /*const span: HTMLElement = document.createElement("span");
-    let htmlText = '<span>';
-    htmlText += '<svg viewBox="0 0 24 24" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">';
-    htmlText += '<path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"></path>';
-    htmlText += '</path></svg></span>';
-    span.innerHTML = htmlText;
-    map.updateControls({rotate: {label: span}});*/
 
     map.ol.once('rendercomplete', async (event: any) => {
       // mapResultCanvas to save rotated map

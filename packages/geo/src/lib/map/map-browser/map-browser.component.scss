@@ -103,17 +103,6 @@
   }
 }
 
-:host ::ng-deep .ol-rotate {
-  right: $igo-margin;
-  background-color: rgba(255, 255, 255, 0);
-  display: none;
-  button {
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0);
-  }
-}
-
 :host ::ng-deep .ol-scale-line-inner {
   color: rgba(black, 1);
   border-color: black;
