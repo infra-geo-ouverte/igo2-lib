@@ -232,19 +232,24 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCatalogList(){
-    console.log("gatCatalogList() accessed");
+  private getItemList(itemObject){
+    var returnItemObjectList = [];
+    for(var itemObjectList of Object.keys(itemObject).map(key => itemObject[key])){
+      if(typeof itemObjectList === 'object'){
+        returnItemObjectList.push(this.getItemList(itemObjectList));
+      }else
+        returnItemObjectList.push(itemObjectList);
+    }
+    return returnItemObjectList;
+  }
+
+  getCatalogList2(){
     console.log("gatCatalogList() accessed");
     // id | url_igo | source | index | layer | minscaledenom | maxscaledenom | extern | catalog | sort_s | parent | sort_p | title | abstract | ressource
-    /*id: string;
-    title: string;
-    type?: CatalogItemType;
-    address?: string;
-    externalProvider?:*/
-    //const listCatalog = new Document;
-    let listCatalog = [];
-    let index = 0;
-    let bufferArray = [["id", "type", "title", "address", "external provider"]];
+
+    let bufferArray = [["id", "Group type", "Group title", "Group address", "external provider", 
+        "item id", "item type", "item title", "item address", "external provider", "MaxRes", "MinRes", "Metadata url", 
+            "Extern", "abstract", "type", "source type", "source url", "optionsFromCapabilities", "params"]];
     var dataArray = [];
     this.store.entities$.pipe(switchMap(catalogs => {
         return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca)));
@@ -252,47 +257,69 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         console.log('res', res);
         res.forEach(element => {
             element.forEach(catalogItemGroup => {
-                
-                var catalogItems: CatalogItemGroup = catalogItemGroup;
-                if (catalogItems.items) {
-                    catalogItems.items.forEach(item => {
-                        dataArray = [];
-
-                        // max res, minRes, metadata, tooltip, sourceOptions
-                        var data = Object.keys(item).map(key => item[key]);
-                        //console.log(data);
-                        for(var a of data){
-                            if(a === data[data.length - 1]){
-                                var metadata = Object.keys(a).map(key => a[key]);
-                                console.log(metadata.length);
-                                for(var yolo of metadata){
-                                    //console.log("yolo",yolo, typeof yolo, yolo)
-                                    if(typeof yolo === 'object'){
-                                        for(var metadata2 of Object.keys(yolo).map(key => yolo[key])){
-                                            //console.log(metadata2);
-                                            dataArray.push(metadata2); 
-                                        }
-                                    }
-                                    else
-                                        dataArray.push(yolo);
-                                }
-                            }
-                            else{
-                                dataArray.push(a);
-                            }
+              var itemGroup: CatalogItemGroup = catalogItemGroup;
+                if (itemGroup.items) {
+                  itemGroup.items.forEach(item => {
+                    dataArray = [];
+                    //push data de catalogItemGroup
+                    var dataCatalogGroup = Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]);
+                    for(var dataCatalogGroupUnique of dataCatalogGroup){
+                        if((typeof dataCatalogGroupUnique != 'object') && (dataCatalogGroupUnique != undefined)){
+                            dataArray.push(dataCatalogGroupUnique);
                         }
-                    });
-                    bufferArray.push(dataArray);
+                    }
+                    // max res, minRes, metadata, tooltip, sourceOptions
+                    var data = Object.keys(item).map(key => item[key]);
+                    for (var a of data) {
+                        if (typeof a === 'object') {
+                            var metadata = Object.keys(a).map(key => a[key]);
+                            //Metadata and SourceOptions
+                            for (var metadataList of metadata) {
+                                if (typeof metadataList === 'object') {
+
+                                  //ajout de metadata et sourceoptions spécifiquement
+                                  //metadata
+                                  if(metadataList.abstract || metadataList.extern){
+                                    if(metadataList.url)
+                                      dataArray.push(metadataList.url, metadataList.extern, metadataList.abstract, metadataList.type);
+                                    else
+                                      dataArray.push(null, metadataList.extern, metadataList.abstract, metadataList.type);
+                                  }
+
+                                  //sourceOptions
+                                  if(metadataList.optionsFromCapabilities || metadataList.params){
+                                    dataArray.push(metadataList.type, metadataList.url, metadataList.optionsFromCapabilities);
+                                    //params
+                                    //var params = Object.keys(metadataList.params).map(key => metadataList.params[key]);
+                                    for(var params of (Object.keys(metadataList.params).map(key => metadataList.params[key]))){
+                                      dataArray.push(params);
+                                    }
+                                  }
+
+                                  /*
+                                    for (var metadataItem of Object.keys(metadataList).map(key => metadataList[key])) {
+                                        dataArray.push(metadataItem);     
+                                    }*/
+                                }
+                                else
+                                    dataArray.push(metadataList);
+                            }//Metadata and SourceOptions end
+                        }
+                        else {
+                            dataArray.push(a);
+                        }
+                    }
+                  });
+                  bufferArray.push(dataArray);
                 }
                 else {
                     dataArray.push(Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]));
                 }
             });
-            
         });
         console.log("bufferArray", bufferArray);
+
         let csvContent = bufferArray.map(e => e.join(";")).join("\n");
-        //console.log("csvContent", csvContent);
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
@@ -301,5 +328,98 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         link.click(); // This will download the data file named "my_data.csv".
         document.body.removeChild(link);
     });
-  }
+}
+
+  getCatalogList() {
+    let bufferArray = [["id", "Group type", "Group title", "Group address", "external provider", 
+        "item id", "item type", "item title", "item address", "external provider", "MaxRes", "MinRes", "Metadata url", 
+            "Extern", "abstract", "type", "source type", "source url", "optionsFromCapabilities", "params"]];
+    var dataArray = [];
+    this.store.entities$.pipe(switchMap(catalogs => {
+        return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca)));
+    })).subscribe(res => {
+        console.log('res', res);
+        res.forEach(element => {
+            element.forEach(catalogItemGroup => {
+              var itemGroup: CatalogItemGroup = catalogItemGroup;
+              if (itemGroup.items) {
+                itemGroup.items.forEach(item => {
+                    
+                    //à l'intérieur du array(22) Dans GouvOuvert
+                    dataArray = [];
+                    //push data de catalogItemGroup
+                    var dataCatalogGroup = Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]);
+                    for (var dataCatalogGroupUnique of dataCatalogGroup) {
+                        if ((typeof dataCatalogGroupUnique != 'object') && (dataCatalogGroupUnique != undefined)) {
+                            dataArray.push(dataCatalogGroupUnique);
+                        }
+                    }
+                    // max res, minRes, metadata, tooltip, sourceOptions
+                    var data = Object.keys(item).map(key => item[key]);
+                    for (var a of data) { // intérieur d'un item: address, external provider, id, options, title, type
+                        if(a === 'a8401b172111523b6b8bc3285b49b19f'){
+                            console.log("s");
+                        }
+                        if (typeof a === 'object') { // si c'est options
+                            var options = Object.keys(a).map(key => a[key]);
+                            for (var optionsObject of options) {
+                                if(typeof optionsObject === 'object'){
+                                    if (optionsObject.abstract || optionsObject.extern) {
+                                        //metadata
+                                        if (optionsObject.url)
+                                            dataArray.push(optionsObject.url, optionsObject.extern, optionsObject.abstract, optionsObject.type);
+                                        else
+                                            dataArray.push(null, optionsObject.extern, optionsObject.abstract, optionsObject.type);
+                                    }
+                                    else if (optionsObject.optionsFromCapabilities || optionsObject.params) {
+                                        //sourceOptions
+                                        if (optionsObject.url)
+                                            dataArray.push(optionsObject.type, optionsObject.url, optionsObject.optionsFromCapabilities, optionsObject.params);
+                                        else
+                                            dataArray.push(optionsObject.type, null, optionsObject.optionsFromCapabilities, optionsObject.params);
+                                    }
+                                }
+                                else
+                                    dataArray.push(optionsObject); // minRes, maxRes
+                            }
+                            
+                        } //Metadata and SourceOptions end
+                        else {
+                            dataArray.push(a);
+                        }
+                    }
+                    bufferArray.push(dataArray);
+                });
+            }
+            else {
+                  var itemGroupWMTS: any = itemGroup;
+                  if(!itemGroupWMTS.options){
+                    dataArray.push(Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]));
+                    bufferArray.push(dataArray);
+                }
+                else{ //wmts, items directement, avec options et 
+                    /*["id", "Group type", "Group title", "Group address", "external provider",
+                        "item id", "item type", "item title", "item address", "external provider", "MaxRes", "MinRes", "Metadata url",
+                        "Extern", "abstract", "type", "source type", "source url", "optionsFromCapabilities", "params"]*/
+                    dataArray = [];
+                    dataArray.push(null, null, null, null, null, itemGroup.id, itemGroup.type, itemGroup.title, itemGroup.address, 
+                        null, null, null, null, itemGroupWMTS.options.metadata.extern, null, itemGroupWMTS.options.metadata.type, itemGroupWMTS.options.sourceOptions.type, 
+                        null, itemGroupWMTS.options.sourceOptions.optionsFromCapabilities, itemGroupWMTS.options.sourceOptions.params);
+                    bufferArray.push(dataArray);
+                }
+                }
+            });
+        });
+        console.log("bufferArray", bufferArray);
+
+        let csvContent = bufferArray.map(e => e.join(";")).join("\n");
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
+        link.setAttribute("download", "demo.csv");
+        document.body.appendChild(link); // Required for FF
+        link.click(); // This will download the data file named "my_data.csv".
+        document.body.removeChild(link);
+    });
+}
 }
