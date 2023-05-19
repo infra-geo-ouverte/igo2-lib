@@ -10,7 +10,7 @@ import { Control } from 'ol/control.js';
   templateUrl: './rotation-button.component.html',
   styleUrls: ['./rotation-button.component.scss']
 })
-export class RotationButtonComponent implements AfterContentInit {
+export class RotationButtonComponent extends Control implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);
   public azimuthRounded: number = 0;
   public rotationRounded: number = 0;
@@ -22,12 +22,17 @@ export class RotationButtonComponent implements AfterContentInit {
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
 
-  constructor(private elRef: ElementRef) { }
+  constructor(private elRef: ElementRef) {
+    elRef.nativeElement.classList.add('north-direction', 'ol-unselectable');
+    super({
+      element: elRef.nativeElement
+    });
+  }
 
   ngAfterContentInit() {
     // add new custom controle rotation btn to map
     // we can access to this btn from OverlayContainerStopEvent
-    this.map.ol.addControl(new RotateNorthControl(this.elRef));
+    this.map.ol.addControl(new RotationButtonComponent(this.elRef));
     this.map.viewController.rotation$.subscribe(r => {
       const radians = r || 0;
       const deg = radians * 180 / Math.PI;
@@ -39,20 +44,5 @@ export class RotationButtonComponent implements AfterContentInit {
       this.rotated$.next(radians !== 0);
     }
     );
-  }
-}
-
-class RotateNorthControl extends Control {
-  /**
-   * @param {Object} [opt_options] Control options.
-   */
-
-  constructor(opt_options) {
-    const options = opt_options || {};
-    const el = opt_options as ElementRef;
-    el.nativeElement.classList.add('rotate-north', 'ol-unselectable');
-    super({
-      element: el.nativeElement
-    });
   }
 }

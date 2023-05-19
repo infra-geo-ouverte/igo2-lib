@@ -582,34 +582,33 @@ export class PrintService {
     position: string,
     resolution: number
     ) {
-      const widthPixels = Math.round((size[0] * resolution) / 25.4);
-      const heightPixels = Math.round((size[1] * resolution) / 25.4);
+      const printWidthPixels = Math.round((size[0] * resolution) / 25.4);
+      const printHeightPixels = Math.round((size[1] * resolution) / 25.4);
       // Get the scale and attribution
       // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
-      mapOverlayHTML.id = 'print-doc';
-      // const mapOverlayHTML = mapOverlayHTMLclone.getRootNode() as HTMLElement;
-      const rotateNorth = mapOverlayHTML.getElementsByClassName('rotate-north')[0] as HTMLElement;
-      if(rotateNorth) {
+      mapOverlayHTML.id = 'print-area';
+      const northDirection = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
+      if(northDirection) {
         // init North arrow position befor printing from 400px to 0px
-        rotateNorth.style.right = '0px';
+        northDirection.style.right = '0px';
         // in case legend position is topright
         // we change rotate btn to topleft
         if(position === 'topright') {
-          rotateNorth.style.width = 'inherit';
-          rotateNorth.style.paddingLeft = '10px';
+          northDirection.style.width = 'inherit';
+          northDirection.style.paddingLeft = '10px';
         }
       }
       // Remove the UI buttons from the nodes
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons) as Array<HTMLElement>;
+      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if(!OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+        if(!OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
         }
 
-        if(OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+        if(OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.parentElement.style.background = 'transparent';
           OverlayHTMLButton.style.color = '#000';
         }
@@ -621,9 +620,13 @@ export class PrintService {
       if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
-      // change the size of OverlayContainer to the print size
-      mapOverlayHTML.style.width = widthPixels+'px';
-      mapOverlayHTML.style.height = heightPixels+'px';
+      // set 'OverlayContainer' size to print size
+      mapOverlayHTML.style.width = printWidthPixels+'px';
+      mapOverlayHTML.style.height = printHeightPixels+'px';
+      // we add zindex -1 to not show modification to the user
+      mapOverlayHTML.style.zIndex = '-1';
+      // we append 'print-area' to 'ol-viewport' to load all design
+      // and make sure html2canvas to render the image correctly
       document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
       // Change the styles of hyperlink in the printed version
       // Transform the Overlay into a canvas
@@ -640,7 +643,8 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
 
-      document.getElementById('print-doc').remove();
+      // remove 'print-area' after generating canvas
+      document.getElementById('print-area').remove();
       this.addCanvas(doc, canvasOverlayHTML, margins);
     }
 
@@ -657,9 +661,11 @@ export class PrintService {
     ) {
       const context = canvas.getContext('2d');
       let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
-
-      const rotateNorth = mapOverlayHTML.getElementsByClassName('rotate-north')[0] as HTMLElement;
+      // const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
+      mapOverlayHTML.id = 'print-area';
+      mapOverlayHTML.style.zIndex = '-1';
+      const rotateNorth = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
 
       if(rotateNorth) {
         // init North arrow position befor printing from 400px to 0px
@@ -676,8 +682,12 @@ export class PrintService {
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if(!OverlayHTMLButton.classList.contains('ol-rotate-reset')) {
+        if(!OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+        }
+        if(OverlayHTMLButton.classList.contains('north-direction-reset')) {
+          OverlayHTMLButton.parentElement.style.background = 'transparent';
+          OverlayHTMLButton.style.color = '#000';
         }
       }
       // Find attributions by class and delete
@@ -687,6 +697,8 @@ export class PrintService {
       if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
+
+      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
 
       await html2canvas(mapOverlayHTML, {
         scale: 1,
@@ -700,20 +712,7 @@ export class PrintService {
       // reset canvas transform to initial
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.drawImage(canvasOverlayHTML, 0, 0);
-      if (olCollapsed) {
-        element.classList.add('ol-collapsed');
-      }
-
-      if(rotateNorth) {
-        // after printing back to the original style
-        rotateNorth.style.removeProperty('right');
-        // after changeing rotate btn to topleft
-        // we back to the original posiotn
-        if(position === 'topright') {
-          rotateNorth.style.removeProperty('width');
-          rotateNorth.style.removeProperty('paddingLeft');
-        }
-      }
+      document.getElementById('print-area').remove();
   }
 
   defineNbFileToProcess(nbFileToProcess) {
@@ -815,8 +814,6 @@ export class PrintService {
       mapContextResult.globalAlpha = 1;
       // reset canvas transform to initial
       mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
-      // mapContextResult.drawImage(canvasOverlayHTML, 0, 0);
-
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
         if (mapStatus !== SubjectStatus.Done) {
@@ -902,7 +899,7 @@ export class PrintService {
     format = format.toLowerCase();
 
     map.ol.once('rendercomplete', async (event: any) => {
-      // mapResultCanvas to save rotated map
+      // mapResultCanvas to store rotated map
       const mapResultCanvas = document.createElement('canvas');
       const size = map.ol.getSize();
       mapResultCanvas.width = size[0];
