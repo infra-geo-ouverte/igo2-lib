@@ -176,6 +176,7 @@
       </div>
       <ng-container *ngFor="let bundle of currentAutocompleteGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
+        <h3> Hello world</h3>
         <div class="groupsSelector">
           <mat-button *ngIf="bundle.unfiltered"
             mat-icon-button
@@ -186,16 +187,16 @@
           </mat-button>
           <mat-form-field *ngIf="filteredOgcAutocomplete[bundle.id]" [style.width.%]="bundle.width ? bundle.width : undefined">
             <input matInput type="text" formControlName="autocomplete" #autocomplete class="autocomplete"
-              [matAutocomplete]="auto" [placeholder]="bundle.title">
-              <mat-autocomplete #auto="matAutocomplete" #autocomplete (optionSelected)="autocompleteOptionClick($event.option.value)"
-              [displayWith]="displayFn">
+              [matAutocomplete]="auto" [placeholder]="filteredOgcAutocomplete[bundle.id].length">
+              <mat-autocomplete #auto="matAutocomplete" #autocomplete [displayWith]="displayFn">
                 <mat-option *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async"
-                [value]="ogcAutocomplete">
+                (click)="$event.stopPropagation(); autocompleteOptionClick(ogcAutocomplete)"
+                [value]="ogcAutocomplete.value">
                   <mat-checkbox
+                    (click)="$event.stopPropagation(); autocompleteOptionClick(ogcAutocomplete)"
                     [matTooltip]="getToolTip(ogcAutocomplete)" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
-                    [checked]="ogcAutocomplete.enabled"
-                    (change)="onSelectionChange(ogcAutocomplete, selector.selectorType)"
-                    [value]="ogcAutocomplete">
+                    [checked]="checkedStatus(ogcAutocomplete.value)"
+                    [value]="ogcAutocomplete.value">
                     {{ogcAutocomplete.value}}
                   </mat-checkbox>
                 </mat-option>

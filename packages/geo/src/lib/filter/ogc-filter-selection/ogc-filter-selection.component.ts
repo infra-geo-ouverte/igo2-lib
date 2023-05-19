@@ -1,3 +1,4 @@
+import { getLength } from 'ol/sphere';
 import {
   ChangeDetectorRef,
   Component,
@@ -68,8 +69,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   public selectAllSelected = false;
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
-  public autocompleteEnabled$ = new BehaviorSubject(undefined);
+  public autocompleteEnableds$ = new BehaviorSubject([])
   public filteredOgcAutocomplete = {};
+  public activeFilters = [];
 
   public applyFiltersTimeout;
 
@@ -175,22 +177,58 @@ export class OgcFilterSelectionComponent implements OnInit {
     }, 750);
   }
 
-  get autocompleteEnabled() {
-    return this.autocompleteEnabled$.value;
+  get autocompleteEnableds() {
+    return this.autocompleteEnableds$.value;
   }
 
-  set autocompleteEnabled(value) {
-    this.autocompleteEnabled$.next(value);
-    clearTimeout(this.applyFiltersTimeout);
-    this.currentAutocompleteGroup.computedSelectors.forEach(compSelect => {
-      compSelect.selectors?.forEach(selector => {
-        value === selector.title ? selector.enabled = true : selector.enabled = false;
+    // Updates the currentAutocompleteGroup and applies filters
+    set autocompleteEnableds(filterList) {
+      this.autocompleteEnableds$.next(filterList);
+      clearTimeout(this.applyFiltersTimeout);
+      this.currentAutocompleteGroup.computedSelectors.forEach(compSelect => {
+        compSelect.selectors?.forEach(selector => {
+          selector.enabled = false;
+          for(let filter of filterList){
+            if(filter === selector.title){
+              selector.enabled = true;
+            }
+          }
+        });
       });
-    });
 
     this.applyFiltersTimeout = setTimeout(() => {
       this.applyFilters();
     }, 750);
+  }
+
+  // checkedStatus(autocompleteFilter: any): Promise<boolean> {
+  // return new Promise<boolean>((resolve) => {
+  //   // Perform your computations and other asynchronous operations here
+  //   // You can use setTimeout, Promise, or any other asynchronous functions as needed
+
+  //   // Simulating an asynchronous operation
+  //   setTimeout(() => 
+  //     // Calculate the final checked state
+  //     console.log("autocompleteEnableds: ", JSON.stringify(this.autocompleteEnableds));
+  //     console.log("autocompleteFilter: ", autocompleteFilter);
+  //     console.log(this.autocompleteEnableds.includes(autocompleteFilter));
+
+  //     const checked = this.autocompleteEnableds.includes(autocompleteFilter);
+  //     resolve(checked);
+
+  //     // Trigger change detection to update the view
+  //     this.cdr.detectChanges();
+  //   }, 0);
+  // });
+// }
+
+
+  checkedStatus(autocompleteFilter): boolean{
+    console.log("this.autocompleteEnableds: ", JSON.stringify(this.autocompleteEnableds));
+    console.log("ogcAutocomplete.value: ", autocompleteFilter);
+    console.log("this bool: ", this.activeFilters.includes(autocompleteFilter));
+    console.log("ogcAutocomplete.enabled: ")
+    return this.activeFilters.includes(autocompleteFilter);
   }
 
   constructor(
@@ -277,7 +315,8 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.currentAutocompleteGroup =
           this.datasource.options.ogcFilters.autocomplete.groups.find(group => group.enabled) ||
           this.datasource.options.ogcFilters.autocomplete.groups[0];
-        this.getAutocompleteEnabled();
+        console.log("this.getAutocompleteEnableds: ", JSON.stringify(this.autocompleteEnableds));
+        this.getAutocompleteEnableds();
         await this.getAutocompleteDomValues();
       }
       this.applyFilters();
@@ -368,8 +407,8 @@ export class OgcFilterSelectionComponent implements OnInit {
     });
   }
 
-  private getAutocompleteEnabled() {
-    let enabled;
+  private getAutocompleteEnableds() {
+    let enabled = [];
     this.currentAutocompleteGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors?.forEach(selector => {
         if (selector.enabled) {
@@ -377,11 +416,11 @@ export class OgcFilterSelectionComponent implements OnInit {
             id: selector.filters.expression,
             value: selector.title
           };
-          enabled = selector.title;
+          enabled.push(selector.title);
           this.form.controls['autocomplete'].setValue(dom);
         }
       });
-      this.autocompleteEnabled = enabled;
+      this.autocompleteEnableds = enabled;
     });
   }
 
@@ -482,7 +521,7 @@ export class OgcFilterSelectionComponent implements OnInit {
             for (const value of domValues) {
               selector = {
                 title: value.value,
-                enabled: this.autocompleteEnabled && this.autocompleteEnabled === value.value ?
+                enabled: this.autocompleteEnableds && this.autocompleteEnableds.includes(value.value) ?
                   true : false,
                 filters: {
                   operator: domSelector.operator,
@@ -598,7 +637,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   emptyAutocomplete() {
-    this.autocompleteEnabled = undefined;
+    this.autocompleteEnableds = [];
     this.form.controls['autocomplete'].setValue('');
     this.form.controls['autocomplete'].markAsUntouched();
   }
@@ -654,14 +693,48 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  autocompleteOptionClick(value) {
-    this.autocompleteEnabled = value.value;
+  // Modifies autocompleteEnableds to reflect active filters
+  autocompleteOptionClick(toggledFilter) {
+    // const index = this.autocompleteEnableds.indexOf(toggledFilter.value);
+    // if (index > -1) {
+    //   // Filter is already selected, deselect it
+    //   this.autocompleteEnableds.splice(index, 1);
+    // } else {
+    //   // Filter is not selected, select it
+    //   this.autocompleteEnableds.push(toggledFilter.value);
+    // }
+
+    let removed = false;
+    for (let filter of this.autocompleteEnableds) {
+      if(toggledFilter.value === filter){
+        const temp = this.autocompleteEnableds.filter((element) => element !== toggledFilter.value);
+        this.autocompleteEnableds = temp;
+        removed = true;
+      }
+    }
+    if(!removed){
+      const temp = this.autocompleteEnableds;
+      temp.push(toggledFilter.value);
+      this.autocompleteEnableds = temp;
+    }
+
+    console.log("activeFilters before: ", this.activeFilters);
+    if(this.activeFilters.includes(toggledFilter.value)){
+      console.log("activeFilter REMOVING element");
+      this.activeFilters = this.activeFilters.filter((element) => element !== toggledFilter.value);
+    }else{
+      console.log("activeFilters ADDING element");
+      this.activeFilters.push(toggledFilter.value);
+    }
+    console.log("activeFilters after: ", this.activeFilters);
   }
 
+  // Value displayed in the autocomplete input box
   displayFn(dom): string {
-    return dom ? dom.value : undefined;
+    return "";
   }
 
+  // Applies filters based on the current group of all filter selection types
   private applyFilters() {
     let filterQueryString = '';
     const conditions = [];
