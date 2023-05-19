@@ -590,12 +590,12 @@ export class PrintService {
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
       mapOverlayHTML.id = 'print-area';
       const northDirection = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
-      if(northDirection) {
+      if (northDirection) {
         // init North arrow position befor printing from 400px to 0px
         northDirection.style.right = '0px';
         // in case legend position is topright
         // we change rotate btn to topleft
-        if(position === 'topright') {
+        if (position === 'topright') {
           northDirection.style.width = 'inherit';
           northDirection.style.paddingLeft = '10px';
         }
@@ -604,11 +604,11 @@ export class PrintService {
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if(!OverlayHTMLButton.classList.contains('north-direction-reset')) {
+        if (!OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
         }
 
-        if(OverlayHTMLButton.classList.contains('north-direction-reset')) {
+        if (OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.parentElement.style.background = 'transparent';
           OverlayHTMLButton.style.color = '#000';
         }
@@ -661,13 +661,12 @@ export class PrintService {
     ) {
       const context = canvas.getContext('2d');
       let canvasOverlayHTML;
-      // const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
       mapOverlayHTML.id = 'print-area';
       mapOverlayHTML.style.zIndex = '-1';
       const rotateNorth = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
 
-      if(rotateNorth) {
+      if (rotateNorth) {
         // init North arrow position befor printing from 400px to 0px
         rotateNorth.style.right = '0px';
         // in case legend position is topright
@@ -682,10 +681,10 @@ export class PrintService {
       const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
       const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
       for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if(!OverlayHTMLButton.classList.contains('north-direction-reset')) {
+        if (!OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
         }
-        if(OverlayHTMLButton.classList.contains('north-direction-reset')) {
+        if (OverlayHTMLButton.classList.contains('north-direction-reset')) {
           OverlayHTMLButton.parentElement.style.background = 'transparent';
           OverlayHTMLButton.style.color = '#000';
         }
