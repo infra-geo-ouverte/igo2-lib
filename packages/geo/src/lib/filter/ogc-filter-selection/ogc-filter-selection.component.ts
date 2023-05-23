@@ -1,4 +1,3 @@
-import { getLength } from 'ol/sphere';
 import {
   ChangeDetectorRef,
   Component,
@@ -70,7 +69,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public selectEnabled$ = new BehaviorSubject(undefined);
   public selectEnableds$ = new BehaviorSubject([]);
   public autocompleteEnableds$ = new BehaviorSubject([])
-  public filteredOgcAutocomplete = {};
+  public filteredOgcAutocomplete: {[key: string]: Observable<unknown> } = {};
   public activeFilters = [];
 
   public applyFiltersTimeout;
@@ -200,27 +199,6 @@ export class OgcFilterSelectionComponent implements OnInit {
       this.applyFilters();
     }, 750);
   }
-
-  // checkedStatus(autocompleteFilter: any): Promise<boolean> {
-  // return new Promise<boolean>((resolve) => {
-  //   // Perform your computations and other asynchronous operations here
-  //   // You can use setTimeout, Promise, or any other asynchronous functions as needed
-
-  //   // Simulating an asynchronous operation
-  //   setTimeout(() => 
-  //     // Calculate the final checked state
-  //     console.log("autocompleteEnableds: ", JSON.stringify(this.autocompleteEnableds));
-  //     console.log("autocompleteFilter: ", autocompleteFilter);
-  //     console.log(this.autocompleteEnableds.includes(autocompleteFilter));
-
-  //     const checked = this.autocompleteEnableds.includes(autocompleteFilter);
-  //     resolve(checked);
-
-  //     // Trigger change detection to update the view
-  //     this.cdr.detectChanges();
-  //   }, 0);
-  // });
-// }
 
 
   checkedStatus(autocompleteFilter): boolean{
@@ -637,9 +615,11 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   emptyAutocomplete() {
+    console.log("emptyAutocomplete");
     this.autocompleteEnableds = [];
     this.form.controls['autocomplete'].setValue('');
     this.form.controls['autocomplete'].markAsUntouched();
+    this.activeFilters = [];
   }
 
   toggleAllSelection() {
@@ -695,15 +675,6 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   // Modifies autocompleteEnableds to reflect active filters
   autocompleteOptionClick(toggledFilter) {
-    // const index = this.autocompleteEnableds.indexOf(toggledFilter.value);
-    // if (index > -1) {
-    //   // Filter is already selected, deselect it
-    //   this.autocompleteEnableds.splice(index, 1);
-    // } else {
-    //   // Filter is not selected, select it
-    //   this.autocompleteEnableds.push(toggledFilter.value);
-    // }
-
     let removed = false;
     for (let filter of this.autocompleteEnableds) {
       if(toggledFilter.value === filter){
