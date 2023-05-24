@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ElementRef, Input } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, HostBinding, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { bearingToAzimuth } from '@turf/helpers';
 
@@ -21,9 +21,9 @@ export class RotationButtonComponent extends Control implements AfterContentInit
   @Input() map: IgoMap;
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
+  @HostBinding('class') hostClass = 'north-direction ol-unselectable';
 
   constructor(private elRef: ElementRef) {
-    elRef.nativeElement.classList.add('north-direction', 'ol-unselectable');
     super({
       element: elRef.nativeElement
     });
