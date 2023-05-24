@@ -657,7 +657,8 @@ export class PrintService {
   private async addCopyrightToImage(
     map: IgoMap,
     canvas : HTMLCanvasElement,
-    position: string
+    position: string,
+    mapSize: Array<number>
     ) {
       const context = canvas.getContext('2d');
       let canvasOverlayHTML;
@@ -696,6 +697,9 @@ export class PrintService {
       if (olCollapsed) {
         element.classList.remove('ol-collapsed');
       }
+
+      mapOverlayHTML.style.width = mapSize[0] + 'px'; 
+      mapOverlayHTML.style.height = mapSize[1] + 'px'; 
 
       document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
 
@@ -890,27 +894,25 @@ export class PrintService {
     legendPosition: string
   ) {
     const status$ = new Subject();
-    const currentResolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
-    console.log('currentResolution: ', currentResolution);
-    console.log('resolution: ', resolution);
+
+    const mapSize = map.ol.getSize();
+    const extent = map.ol.getView().calculateExtent(mapSize);
     const scaleFactor = resolution / 96;
-    console.log('scaleFactor: ', scaleFactor);
+    const widthPixels = Math.round(mapSize[0] * scaleFactor);
+    const heightPixels = Math.round(mapSize[1] * scaleFactor);
+    const viewResolution = map.ol.getView().getResolution();
+    const imageSize = [widthPixels, heightPixels];
+
     map.ol.once('rendercomplete', async (event: any) => {
       // mapResultCanvas to store rotated map
       const mapResultCanvas = document.createElement('canvas');
-      const size = map.ol.getSize();
-      // mapResultCanvas.width = size[0];
-      // mapResultCanvas.height = size[1];
-
-      mapResultCanvas.width =  Math.ceil(size[0]*scaleFactor);
-      mapResultCanvas.height =  Math.ceil(size[1]*scaleFactor);
-
+      mapResultCanvas.width = widthPixels;
+      mapResultCanvas.height = heightPixels;
       const mapContextResult = mapResultCanvas.getContext('2d');
       mapContextResult.scale(scaleFactor, scaleFactor);
-
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
       const opacity =
       mapCanvas.parentNode.style.opacity || mapCanvas.style.opacity;
@@ -946,7 +948,11 @@ export class PrintService {
 
       mapContextResult.drawImage(mapCanvas, 0, 0);
 
-      await this.addCopyrightToImage(map, mapResultCanvas, legendPosition);
+      // Reset original map size
+      map.ol.setSize(mapSize);
+      map.ol.getView().setResolution(viewResolution);
+      this.renderMap(map, mapSize, extent);
+      await this.addCopyrightToImage(map, mapResultCanvas, legendPosition, imageSize);
 
       // Check the legendPosition
       if (legendPosition !== 'none') {
@@ -1127,6 +1133,10 @@ export class PrintService {
         }
       }
     });
+    // Set image size
+    map.ol.setSize(imageSize);
+    const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
+    map.ol.getView().setResolution(viewResolution / scaling);
     map.ol.renderSync();
     return status$;
   }
