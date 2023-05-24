@@ -23,6 +23,7 @@ import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchSourceService } from '../shared/search-source.service';
+import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -143,6 +144,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input() pointerSummaryEnabled: boolean = false;
   @Input() searchResultsGeometryEnabled: boolean = false;
+
+  /**
+   * Workaround, to invalidate the cache due to mishandling of cache settings
+   */
+  @Input() bustCacheOnSettingChange: boolean = false;
 
   /**
    * When reverse coordinates status change
@@ -333,8 +339,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSearchSettingsChange() {
-    this.doSearch(this.term);
     this.searchSettingsChange.emit();
+
+    if (this.bustCacheOnSettingChange) {
+      globalCacheBusterNotifier.next();
+    }
+
+    this.doSearch(this.term);
     this.handlePlaceholder();
   }
 
