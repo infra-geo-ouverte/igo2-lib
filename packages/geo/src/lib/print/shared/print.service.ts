@@ -698,8 +698,8 @@ export class PrintService {
         element.classList.remove('ol-collapsed');
       }
 
-      mapOverlayHTML.style.width = mapSize[0] + 'px'; 
-      mapOverlayHTML.style.height = mapSize[1] + 'px'; 
+      mapOverlayHTML.style.width = mapSize[0] + 'px';
+      mapOverlayHTML.style.height = mapSize[1] + 'px';
 
       document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
 
