@@ -763,14 +763,12 @@ export class PrintService {
   ) {
 
     const mapSize = map.ol.getSize();
-    const viewResolution = map.ol.getView().getResolution();
-
     const extent = map.ol.getView().calculateExtent(mapSize);
-
     const widthPixels = Math.round((size[0] * resolution) / 25.4);
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
-    const status$ = new Subject();
+    const viewResolution = map.ol.getView().getResolution();
 
+    const status$ = new Subject();
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
       const mapResultCanvas = document.createElement('canvas');
@@ -892,18 +890,27 @@ export class PrintService {
     legendPosition: string
   ) {
     const status$ = new Subject();
-    // const resolution = map.ol.getView().getResolution();
+    const currentResolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
-
+    console.log('currentResolution: ', currentResolution);
+    console.log('resolution: ', resolution);
+    const scaleFactor = resolution / 96;
+    console.log('scaleFactor: ', scaleFactor);
     map.ol.once('rendercomplete', async (event: any) => {
       // mapResultCanvas to store rotated map
       const mapResultCanvas = document.createElement('canvas');
       const size = map.ol.getSize();
-      mapResultCanvas.width = size[0];
-      mapResultCanvas.height = size[1];
+      // mapResultCanvas.width = size[0];
+      // mapResultCanvas.height = size[1];
+
+      mapResultCanvas.width =  Math.ceil(size[0]*scaleFactor);
+      mapResultCanvas.height =  Math.ceil(size[1]*scaleFactor);
+
       const mapContextResult = mapResultCanvas.getContext('2d');
+      mapContextResult.scale(scaleFactor, scaleFactor);
+
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
       const opacity =
       mapCanvas.parentNode.style.opacity || mapCanvas.style.opacity;
