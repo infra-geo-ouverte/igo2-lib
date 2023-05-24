@@ -176,6 +176,14 @@
       </div>
       <ng-container *ngFor="let bundle of currentAutocompleteGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
+        <mat-chip-list>
+          <mat-chip class="mat-chip" *ngFor="let filter of activeFilters">
+            {{filter}}
+            <button class="chip-remove"
+              (click)="$event.stopPropagation(); autocompleteOptionClick(filter)">
+            </button>
+          </mat-chip>
+        </mat-chip-list>
         <div class="groupsSelector">
           <mat-button *ngIf="bundle.unfiltered"
             mat-icon-button
@@ -189,9 +197,9 @@
               [matAutocomplete]="auto">
               <mat-autocomplete #auto="matAutocomplete" #autocomplete [displayWith]="displayFn">
                 <div *ngFor="let ogcAutocomplete of filteredOgcAutocomplete[bundle.id] | async">
-                  <mat-option>
-                    <div (click)="$event.stopPropagation(); autocompleteOptionClick(ogcAutocomplete)">
-                      <mat-checkbox
+                  <mat-option id="mat-option">
+                    <div (click)="$event.stopPropagation(); autocompleteOptionClick(ogcAutocomplete.value)">
+                      <mat-checkbox id="mat-checkbox"
                         #autocomplete
                         [disabled]="true"
                         [matTooltip]="getToolTip(ogcAutocomplete)"

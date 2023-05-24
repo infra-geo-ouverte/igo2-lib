@@ -1,3 +1,4 @@
+import { MatChipsModule } from '@angular/material/chips';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -98,6 +99,7 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-
     IgoDOMModule,
     IgoKeyValueModule,
     IgoGeometryModule,
+    MatChipsModule,
     MatBadgeModule
   ],
   exports: [

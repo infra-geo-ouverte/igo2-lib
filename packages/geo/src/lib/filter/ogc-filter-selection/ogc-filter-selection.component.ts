@@ -676,26 +676,27 @@ export class OgcFilterSelectionComponent implements OnInit {
   // Modifies autocompleteEnableds to reflect active filters
   autocompleteOptionClick(toggledFilter) {
     let removed = false;
+    console.log("autocompleteOptionClick autocompleteEnableds: ", this.autocompleteEnableds);
     for (let filter of this.autocompleteEnableds) {
-      if(toggledFilter.value === filter){
-        const temp = this.autocompleteEnableds.filter((element) => element !== toggledFilter.value);
+      if(toggledFilter === filter){
+        const temp = this.autocompleteEnableds.filter((element) => element !== toggledFilter);
         this.autocompleteEnableds = temp;
         removed = true;
       }
     }
     if(!removed){
       const temp = this.autocompleteEnableds;
-      temp.push(toggledFilter.value);
+      temp.push(toggledFilter);
       this.autocompleteEnableds = temp;
     }
 
     console.log("activeFilters before: ", this.activeFilters);
-    if(this.activeFilters.includes(toggledFilter.value)){
+    if(this.activeFilters.includes(toggledFilter)){
       console.log("activeFilter REMOVING element");
-      this.activeFilters = this.activeFilters.filter((element) => element !== toggledFilter.value);
+      this.activeFilters = this.activeFilters.filter((element) => element !== toggledFilter);
     }else{
       console.log("activeFilters ADDING element");
-      this.activeFilters.push(toggledFilter.value);
+      this.activeFilters.push(toggledFilter);
     }
     console.log("activeFilters after: ", this.activeFilters);
   }
