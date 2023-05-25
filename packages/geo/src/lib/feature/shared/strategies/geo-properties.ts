@@ -2,7 +2,7 @@ import { EntityStoreStrategy } from '@igo2/common';
 import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
 import { FeatureStore } from '../store';
 import { FeatureStorePropertyTypeStrategyOptions } from '../feature.interfaces';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { PropertyTypeDetectorService } from '../../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { ObjectUtils } from '@igo2/utils';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
@@ -83,7 +83,8 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
     }
 
     this.updateEntitiesPropertiesState(store);
-    this.states$$.push(store.entities$.subscribe((entities) => {
+    this.states$$.push(
+      combineLatest([this.map.layers$,store.entities$]).subscribe(() => {
       this.updateEntitiesPropertiesState(store);
     }));
   }
@@ -98,11 +99,13 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
       } else {
         entity = e;
       }
-      for (const key of Object.keys(entity.properties)) {
+      const keys = Object.keys(entity.properties);
+      for (const key of keys) {
         const value = entity.properties[key];
         isGeoService = this.propertyTypeDetectorService.isGeoService(value);
         if (isGeoService) {
-          const geoService = this.propertyTypeDetectorService.getGeoService(value);
+          const geoService = this.propertyTypeDetectorService.getGeoService(value, keys);
+          if (!geoService || !geoService.url || !geoService.columnForLayerName) { return; }
           let layerName = entity.properties[geoService.columnForLayerName];
             let appliedLayerName = layerName;
             let arcgisLayerName = undefined;

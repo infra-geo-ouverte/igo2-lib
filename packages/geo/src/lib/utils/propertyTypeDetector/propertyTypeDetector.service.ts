@@ -19,12 +19,12 @@ export class PropertyTypeDetectorService {
     return typeof value;
   }
 
-  private isUrl(value) {
+  private isUrl(value): boolean {
     const regex = /^https?:\/\//;
     return regex.test(value.toString());
   }
 
-  isGeoService(value) {
+  isGeoService(value): boolean {
     let isGeoService = false;
     if (!this.isUrl) {
       return;
@@ -39,21 +39,24 @@ export class PropertyTypeDetectorService {
     return isGeoService;
   }
 
-  getGeoService(value) {
-    if (!this.isGeoService(value)) {
+  getGeoService(url: string, availableFields: string[]): GeoServiceDefinition {
+    if (!this.isGeoService(url)) {
       return;
     }
+    let matchingGeoservice: GeoServiceDefinition;
     for (const geoServiceRegex of this.geoServiceRegexes) {
       const domainRegex = new RegExp(geoServiceRegex.url);
-      if (domainRegex.test(value)) {
-        return geoServiceRegex;
+      if (domainRegex.test(url)) {
+        // providing the the first matching regex;
+        matchingGeoservice = availableFields.includes(geoServiceRegex.columnForLayerName) ? geoServiceRegex: undefined;
+        if (matchingGeoservice) { break; }
       }
     }
-    return;
+    return matchingGeoservice;
   }
 
 
-  private getGeoServiceRegexes() {
+  private getGeoServiceRegexes(): GeoServiceDefinition[] {
     return this.regexService.get('geoservice') as GeoServiceDefinition[] | [];
   }
 
