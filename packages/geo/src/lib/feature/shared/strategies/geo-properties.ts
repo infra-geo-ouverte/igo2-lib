@@ -106,7 +106,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         if (isGeoService) {
           const geoService = this.propertyTypeDetectorService.getGeoService(value, keys);
           if (!geoService?.url || geoService?.propertiesForLayerName?.length === 0) { return; }
-          const propertiesForLayerName = keys.filter(p => geoService.propertiesForLayerName.includes(p))
+          const propertiesForLayerName = keys.filter(p => geoService.propertiesForLayerName.includes(p));
           // providing the the first matching regex;
           let layerName = entity.properties[propertiesForLayerName[0]];
           let appliedLayerName = layerName;

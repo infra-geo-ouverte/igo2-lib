@@ -48,7 +48,8 @@ export class PropertyTypeDetectorService {
       const domainRegex = new RegExp(geoServiceRegex.url);
       if (domainRegex.test(url)) {
         // providing the the first matching regex;
-        matchingGeoservice = availableProperties.filter(p => geoServiceRegex.propertiesForLayerName.includes(p)).length ? geoServiceRegex: undefined;
+        const matchingProperties = availableProperties.filter(p => geoServiceRegex.propertiesForLayerName.includes(p));
+        matchingGeoservice = matchingProperties ? geoServiceRegex: undefined;
         if (matchingGeoservice) { break; }
       }
     }
