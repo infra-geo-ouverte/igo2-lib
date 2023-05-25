@@ -9,9 +9,9 @@ import {
   OnDestroy
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject, Subject, combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ObjectUtils } from '@igo2/utils';
+
 import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
 import { ConfigService } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
@@ -20,11 +20,6 @@ import type { Toolbox } from '@igo2/common';
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
-import { LayerService } from '../../layer/shared/layer.service';
-import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
-import { generateIdFromSourceOptions } from '../../utils/id-generator';
-import { CapabilitiesService } from '../../datasource';
-
 import { HttpClient } from '@angular/common/http';
 import { Clipboard } from '@igo2/utils';
 @Component({
@@ -38,9 +33,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;
   private unsubscribe$ = new Subject<void>();
   ready = false;
-  public layerIdFromProperties$: BehaviorSubject<string> = new BehaviorSubject(undefined);
-  public computedSourceOptions$: BehaviorSubject<any> = new BehaviorSubject(undefined);
-  public layerAddedFromProperties$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input()
   get source(): SearchSource {
@@ -92,9 +84,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
     private networkService: NetworkService,
-    private layerService: LayerService,
-    private propertyTypeDetectorService: PropertyTypeDetectorService,
-    private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
     private configService: ConfigService
   ) {
@@ -105,19 +94,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.ready = true;
-
-    combineLatest([
-      this.map.layers$,
-      this.layerIdFromProperties$
-    ]).subscribe(bunch => {
-      const layers = bunch[0];
-      const id = bunch[1];
-
-      const layerAdded = layers.findIndex(
-        lay => lay.id === id
-      ) !== -1;
-      this.layerAddedFromProperties$.next(layerAdded);
-    });
   }
 
   ngOnDestroy() {
@@ -200,67 +176,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
         return regex.test(value.toLowerCase());
       } else {
         return false;
-      }
-    }
-  }
-
-  isGeoService(value) {
-    const isGeoService = this.propertyTypeDetectorService.isGeoService(value);
-    if (isGeoService) {
-      this.computeSourceOptionsFromProperties(value);
-    } else {
-      this.layerIdFromProperties$.next(undefined);
-    }
-    return isGeoService;
-  }
-
-  computeSourceOptionsFromProperties(url: string) {
-    const geoService = this.propertyTypeDetectorService.getGeoService(url);
-    let layerName = this.feature.properties[geoService.columnForLayerName];
-
-
-      let appliedLayerName = layerName;
-      let arcgisLayerName = undefined;
-
-      if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
-        arcgisLayerName = layerName;
-        appliedLayerName = undefined;
-      }
-
-
-      const so = ObjectUtils.removeUndefined({
-        sourceOptions: {
-          type: geoService.type || 'wms',
-          url: url,
-          optionsFromCapabilities: true,
-          optionsFromApi: true,
-          params: {
-            LAYERS: appliedLayerName,
-            LAYER: arcgisLayerName
-          }
-        }
-      });
-      this.layerIdFromProperties$.next(generateIdFromSourceOptions(so.sourceOptions));
-      this.computedSourceOptions$.next(so);
-
-
-  }
-
-  public handleLayer(url) {
-    if (this.map === undefined) {
-      return;
-    }
-    if (!this.layerAddedFromProperties$.value) {
-      this.computeSourceOptionsFromProperties(url);
-      this.layerService
-        .createAsyncLayer(this.computedSourceOptions$.value)
-        .subscribe(l => this.map.addLayer(l));
-    } else {
-      if (this.layerIdFromProperties$.value) {
-        const layerToRemove = this.map.getLayerById(this.layerIdFromProperties$.value);
-        if (layerToRemove) {
-          this.map.removeLayer(layerToRemove);
-        }
       }
     }
   }
