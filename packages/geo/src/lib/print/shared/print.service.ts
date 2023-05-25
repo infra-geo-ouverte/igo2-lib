@@ -145,6 +145,7 @@ export class PrintService {
 
     this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
       async (status: SubjectStatus) => {
+        this.showHideSearchPointerSummary(map, true);
         if (status === SubjectStatus.Done) {
 
           await this.handleMeasureLayer(doc, map, margins);
@@ -1018,9 +1019,14 @@ export class PrintService {
           this.addFileToZip(tfwFileNameWithExt,blob);
         }
       }
+      this.showHideSearchPointerSummary(map, true);
     });
     map.ol.renderSync();
     return status$;
+  }
+
+  showHideSearchPointerSummary(map: IgoMap, visible: boolean) {
+    map.getLayerById('searchPointerSummaryId').visible = visible;
   }
 
   /**
