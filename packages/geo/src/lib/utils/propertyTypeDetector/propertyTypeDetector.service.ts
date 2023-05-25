@@ -39,7 +39,7 @@ export class PropertyTypeDetectorService {
     return isGeoService;
   }
 
-  getGeoService(url: string, availableFields: string[]): GeoServiceDefinition {
+  getGeoService(url: string, availableProperties: string[]): GeoServiceDefinition {
     if (!this.isGeoService(url)) {
       return;
     }
@@ -48,7 +48,7 @@ export class PropertyTypeDetectorService {
       const domainRegex = new RegExp(geoServiceRegex.url);
       if (domainRegex.test(url)) {
         // providing the the first matching regex;
-        matchingGeoservice = availableFields.includes(geoServiceRegex.columnForLayerName) ? geoServiceRegex: undefined;
+        matchingGeoservice = availableProperties.filter(p => geoServiceRegex.propertiesForLayerName.includes(p)).length ? geoServiceRegex: undefined;
         if (matchingGeoservice) { break; }
       }
     }

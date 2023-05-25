@@ -15,5 +15,5 @@ export interface GeoServiceDefinition {
   | 'websocket'
   | 'mvt'
   | 'cluster';
-  columnForLayerName: string
+  propertiesForLayerName: string[]
 }

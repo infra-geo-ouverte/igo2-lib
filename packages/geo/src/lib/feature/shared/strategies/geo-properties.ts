@@ -84,9 +84,9 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesPropertiesState(store);
     this.states$$.push(
-      combineLatest([this.map.layers$,store.entities$]).subscribe(() => {
-      this.updateEntitiesPropertiesState(store);
-    }));
+      combineLatest([this.map.layers$, store.entities$]).subscribe(() => {
+        this.updateEntitiesPropertiesState(store);
+      }));
   }
 
   private updateEntitiesPropertiesState(store: FeatureStore) {
@@ -105,48 +105,51 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         isGeoService = this.propertyTypeDetectorService.isGeoService(value);
         if (isGeoService) {
           const geoService = this.propertyTypeDetectorService.getGeoService(value, keys);
-          if (!geoService || !geoService.url || !geoService.columnForLayerName) { return; }
-          let layerName = entity.properties[geoService.columnForLayerName];
-            let appliedLayerName = layerName;
-            let arcgisLayerName = undefined;
+          if (!geoService?.url || geoService?.propertiesForLayerName?.length === 0) { return; }
+          const propertiesForLayerName = keys.filter(p => geoService.propertiesForLayerName.includes(p))
+          // providing the the first matching regex;
+          let layerName = entity.properties[propertiesForLayerName[0]];
+          let appliedLayerName = layerName;
+          let arcgisLayerName = undefined;
 
-            if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
-              arcgisLayerName = layerName;
-              appliedLayerName = undefined;
+          if (['arcgisrest', 'imagearcgisrest', 'tilearcgisrest'].includes(geoService.type)) {
+            appliedLayerName = undefined;
+            arcgisLayerName = layerName;
+          }
+
+          const so = ObjectUtils.removeUndefined({
+            sourceOptions: {
+              type: geoService.type || 'wms',
+              url: value,
+              optionsFromCapabilities: true,
+              optionsFromApi: true,
+              params: {
+                LAYERS: appliedLayerName,
+                LAYER: arcgisLayerName
+              }
             }
-
-            const so = ObjectUtils.removeUndefined({
-              sourceOptions: {
-                type: geoService.type || 'wms',
-                url: value,
-                optionsFromCapabilities: true,
-                optionsFromApi: true,
-                params: {
-                  LAYERS: appliedLayerName,
-                  LAYER: arcgisLayerName
-                }
-              }
-            });
+          });
 
 
-            const potentialLayerId = generateIdFromSourceOptions(so.sourceOptions);
+          const potentialLayerId = generateIdFromSourceOptions(so.sourceOptions);
 
-            const ns = {
-              geoService: {
-                added: this.map.layers.find(l => l.id === potentialLayerId) !== undefined,
-                haveGeoServiceProperties: true,
-                type: geoService.type,
-                url: value,
-                layerName: appliedLayerName || arcgisLayerName
-              }
-            };
+          const ns = {
+            geoService: {
+              added: this.map.layers.find(l => l.id === potentialLayerId) !== undefined,
+              haveGeoServiceProperties: true,
+              type: geoService.type,
+              url: value,
+              layerName: appliedLayerName || arcgisLayerName
+            }
+          };
 
-            store.state.update(e, ns, true);
+          store.state.update(e, ns, true);
           break;
-      }}
+        }
+      }
 
 
-      });
+    });
   }
 
   /**

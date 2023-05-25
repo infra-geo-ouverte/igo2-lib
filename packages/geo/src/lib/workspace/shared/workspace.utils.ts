@@ -41,16 +41,22 @@ export function noElementSelected(ws: WfsWorkspace | FeatureWorkspace | EditionW
   );
 }
 
-export function addOrRemoveLayer(action: 'add' | 'remove', map: IgoMap, url, type, layerName, layerService: LayerService) {
+export function addOrRemoveLayer(
+  action: 'add' | 'remove',
+  map: IgoMap,
+  url: string,
+  type: string,
+  layerName: string,
+  layerService: LayerService) {
   const so = ObjectUtils.removeUndefined({
     sourceOptions: {
-      type: type ,
+      type: type,
       url,
       optionsFromCapabilities: true,
       optionsFromApi: true,
       params: {
-        LAYERS: layerName,
-        LAYER: layerName
+        LAYERS: type === 'wms' ? layerName : undefined,
+        LAYER: type === 'wms' ? undefined : layerName,
       }
     }
   });
@@ -93,8 +99,8 @@ export function getGeoServiceAction(workspace: FeatureWorkspace | WfsWorkspace, 
             icon: 'plus',
             color: 'primary',
             click: (row, record) => {
-              addOrRemoveLayer('add',workspace.map, record.state.geoService.url,
-                 record.state.geoService.type, record.state.geoService.layerName, layerService);
+              addOrRemoveLayer('add', workspace.map, record.state.geoService.url,
+                record.state.geoService.type, record.state.geoService.layerName, layerService);
               geoServiceProperties.added = true;
             }
           }] as EntityTableButton[];
