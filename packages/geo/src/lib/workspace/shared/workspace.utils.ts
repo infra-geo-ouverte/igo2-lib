@@ -63,7 +63,10 @@ export function addOrRemoveLayer(
   if (action === 'add') {
     layerService
       .createAsyncLayer(so)
-      .subscribe(l => map.addLayer(l));
+      .subscribe(layer => {
+        map.layersAddedByClick$.next([layer]);
+        map.addLayer(layer);
+      });
   } else if (action === 'remove') {
     const addedLayerId = generateIdFromSourceOptions(so.sourceOptions);
     map.removeLayer(map.layers.find(l => l.id === addedLayerId));
