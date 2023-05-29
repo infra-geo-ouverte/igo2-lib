@@ -328,8 +328,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         let formControlValue = item[key];
         column.domainValues.forEach(option => {
-          if (typeof formControlValue === 'string' && /^\d+$/.test(formControlValue) &&
-            (formControlValue.length > 1 && formControlValue.charAt(0) !== '0')) {
+          if (this.isStringValidNumber(formControlValue)) {
             formControlValue = parseInt(formControlValue);
           }
           if (option.value === formControlValue || option.id === formControlValue) {
@@ -678,8 +677,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
         } else {
           column.domainValues.forEach(option => {
-            if (typeof value === 'string' && /^\d+$/.test(value) &&
-              (value.length > 1 && value.charAt(0) !== '0')) {
+            if (this.isStringValidNumber(value)) {
               value = parseInt(value);
             }
             if (option.value === value || option.id === value) {
@@ -694,8 +692,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
       } else {
         column.domainValues.forEach(option => {
-          if (typeof value === 'string' && /^\d+$/.test(value) &&
-            (value.length > 1 && value.charAt(0) !== '0')) {
+          if (this.isStringValidNumber(value)) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
@@ -841,5 +838,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return column.split('.')[1];
     }
     return column;
+  }
+  /**
+   * Check if string is a valid number
+   * @param value string
+   * @returns boolean
+   */
+  private isStringValidNumber(value: string): boolean {
+    return typeof value === 'string' && /^\d+$/.test(value) && (value.length > 1 && value.charAt(0) !== '0');
   }
 }
