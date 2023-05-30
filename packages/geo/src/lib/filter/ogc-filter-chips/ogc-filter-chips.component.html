@@ -1,0 +1,14 @@
+<div *ngIf="size <= thresholdSize" class="selected-options">
+    <div class="chips-container">
+      <ng-container *ngFor="let filter of activeFilters">
+        <div *ngIf="filter.length" class="filter">
+          <div
+            class="option"
+            (click)="$event.stopPropagation(); onAutocompleteOptionClick(filter)">
+            <p class="option-value">{{ filter }}</p>
+              <mat-icon class="remove-icon" svgIcon="close"></mat-icon>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>

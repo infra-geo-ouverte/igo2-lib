@@ -1,0 +1,49 @@
+.remove-icon {
+    transform: scale(0.67);
+    color: #095797;
+  }
+
+  .chips-container {
+    display: flex;
+  }
+
+  .selected-options {
+    display: flex;
+    align-items: center;
+  }
+
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #DAE6F0;
+    border: 1px solid #DAE6F0;
+    transition: border-color 0.25s linear;
+    padding: 9.6px 8px;
+    margin: 4px;
+    cursor: pointer;
+  }
+
+  .option:hover {
+    border: 1px solid #6991D1;
+  }
+
+  .option-label, .option-value {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .option-label {
+    font-weight: bold;
+    margin: 0 28.8px 0 0;
+  }
+
+  .option-value  {
+    color: #095797;
+    font-weight: 600;
+  }

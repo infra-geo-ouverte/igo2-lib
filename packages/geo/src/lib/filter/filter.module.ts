@@ -63,6 +63,7 @@ import { SpatialFilterItemComponent } from './spatial-filter/spatial-filter-item
 import { SpatialFilterService } from './shared/spatial-filter.service';
 import { OgcFilterTimeComponent } from './ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-slider.component';
+import { OgcFilterChipsComponent } from './ogc-filter-chips/ogc-filter-chips.component';
 
 @NgModule({
   imports: [
@@ -140,7 +141,8 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-
     SpatialFilterListComponent,
     SpatialFilterItemComponent,
     OgcFilterTimeComponent,
-    OgcFilterTimeSliderComponent
+    OgcFilterTimeSliderComponent,
+    OgcFilterChipsComponent
   ],
   providers: [TimeFilterService, OGCFilterService, OGCFilterTimeService, SpatialFilterService]
 })
