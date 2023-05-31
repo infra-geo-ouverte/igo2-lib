@@ -802,7 +802,6 @@ export class PrintService {
    * @returns - HTMLElement | null
    */
   private async setUpNorthDirection(mapOverlayHTML: HTMLElement, position: PrintLegendPosition): Promise<HTMLElement | null> {
-    
     const northDirection = document.getElementsByTagName('igo-rotation-button')[0].cloneNode(true) as HTMLElement;
     const HTMLButton = northDirection.getElementsByTagName('button')[0] as HTMLElement;
     if (!HTMLButton) {
