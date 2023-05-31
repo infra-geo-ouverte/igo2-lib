@@ -745,7 +745,7 @@ export class PrintService {
    * @param map IgoMap
    * @param canvas HTMLCanvasElement
    * @param position legend position
-   * @returns Promise with canvas
+   * @returns {Promise} Promise object represents HTMLCanvasElement
    */
   private async drawMapControls (
     map: IgoMap,
@@ -758,8 +758,6 @@ export class PrintService {
       // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
-      mapOverlayHTML.id = 'print-area';
-
       // to add North Direction to mapOverly
       await this.setUpNorthDirection(mapOverlayHTML, position);
       // set up map Attribution designe to print
@@ -790,7 +788,7 @@ export class PrintService {
 
       context.drawImage(canvasOverlayHTML, 0, 0);
       // remove 'print-area' after generating canvas
-      document.getElementById('print-area').remove();
+      mapOverlayHTML.remove();
       res(canvas);
     });
   }
