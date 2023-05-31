@@ -877,6 +877,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('drawingStyle').stroke,
           feature.get('offsetX'),
           feature.get('offsetY'),
+          this.map.projection,
           this.icon
         );
       },
@@ -1347,6 +1348,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           feature.get('drawingStyle').stroke,
           feature.get('offsetX'),
           feature.get('offsetY'),
+          this.map.projection,
           this.icon
         );
       });
