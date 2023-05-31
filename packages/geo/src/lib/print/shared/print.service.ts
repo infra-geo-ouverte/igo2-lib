@@ -146,6 +146,7 @@ export class PrintService {
     this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
+
           await this.handleMeasureLayer(doc, map, margins);
 
           const width = this.imgSizeAdded[0];
@@ -625,11 +626,16 @@ export class PrintService {
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
       const mapResultCanvas = await this.drawMap(
-        map,
         [widthPixels, heightPixels],
-        mapCanvas,
-        legendPostion
+        mapCanvas
       );
+
+      // Reset original map size
+      map.ol.setSize(mapSize);
+      map.ol.getView().setResolution(viewResolution);
+      this.renderMap(map, mapSize, extent);
+
+      await this.drawMapControls(map, mapResultCanvas, legendPostion);
 
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
@@ -646,11 +652,6 @@ export class PrintService {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
-        // Reset original map size
-        map.ol.setSize(mapSize);
-        map.ol.getView().setResolution(viewResolution);
-        this.renderMap(map, mapSize, extent);
-
         status$.next(status);
       });
 
@@ -693,10 +694,8 @@ export class PrintService {
    * @returns promise of new canvas
    */
   private async drawMap(
-    map: IgoMap,
     size: Array<number>,
-    mapCanvas: any,
-    legendPosition: PrintLegendPosition
+    mapCanvas: any
   ): Promise<HTMLCanvasElement> {
     return new Promise( async (res) => {
       const mapResultCanvas = document.createElement('canvas');
@@ -737,9 +736,6 @@ export class PrintService {
       mapContextResult.globalAlpha = 1;
       // reset canvas transform to initial
       mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
-
-      await this.drawMapControls(map, mapResultCanvas, legendPosition);
-
       res(mapResultCanvas);
     });
   }
@@ -763,37 +759,12 @@ export class PrintService {
       let canvasOverlayHTML;
       const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
       mapOverlayHTML.id = 'print-area';
-      const northDirection = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
-      if (northDirection) {
-        // init North arrow position befor printing from 400px to 0px
-        northDirection.style.right = '0px';
-        // in case legend position is topright
-        // we change rotate btn to topleft
-        if (position === 'topright') {
-          northDirection.style.width = 'inherit';
-          northDirection.style.paddingLeft = '10px';
-        }
-      }
-      // Remove the UI buttons from the nodes
-      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
-      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if (!OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-        }
 
-        if (OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.parentElement.style.background = 'transparent';
-          OverlayHTMLButton.style.color = '#000';
-        }
-      }
-      // Find attributions by class and delete
-      // the collapsed class to open attribution Copyright
-      const element = mapOverlayHTML.querySelector('.ol-attribution');
-      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if (olCollapsed) {
-        element.classList.remove('ol-collapsed');
-      }
+      // to add North Direction to mapOverly
+      await this.setUpNorthDirection(mapOverlayHTML, position);
+      // set up map Attribution designe to print
+      await this.setUpAttribution(mapOverlayHTML);
+
       // set 'OverlayContainer' size to print size
       mapOverlayHTML.style.width = canvas.width+'px';
       mapOverlayHTML.style.height = canvas.height+'px';
@@ -817,13 +788,55 @@ export class PrintService {
         canvasOverlayHTML = e;
       });
 
-      // reset canvas transform to initial
-      context.setTransform(1, 0, 0, 1, 0, 0);
       context.drawImage(canvasOverlayHTML, 0, 0);
       // remove 'print-area' after generating canvas
       document.getElementById('print-area').remove();
       res(canvas);
     });
+  }
+
+  /**
+   * Init and add North Direction to mapOverlay
+   * @param mapOverlayHTML mapOverlay
+   * @param position - legend Position
+   * @returns - HTMLElement | null
+   */
+  private async setUpNorthDirection(mapOverlayHTML: HTMLElement, position: PrintLegendPosition): Promise<HTMLElement | null> {
+    
+    const northDirection = document.getElementsByTagName('igo-rotation-button')[0].cloneNode(true) as HTMLElement;
+    const HTMLButton = northDirection.getElementsByTagName('button')[0] as HTMLElement;
+    if (!HTMLButton) {
+      return null;
+    }
+    // in case legend position is topright
+    // we change rotate btn to topleft
+    if (position === 'topright') {
+      northDirection.style.width = 'inherit';
+      northDirection.style.left = '10px';
+    }
+    HTMLButton.parentElement.style.background = 'transparent';
+    HTMLButton.style.color = '#000';
+    mapOverlayHTML.appendChild(northDirection);
+    return mapOverlayHTML;
+  }
+
+  /**
+   * Init attribution design in mapOverlay
+   * @param mapOverlayHTML
+   * @returns mapOverlay
+   */
+  private async setUpAttribution(mapOverlayHTML: HTMLElement): Promise<HTMLElement | null> {
+    const HTMLattribution = mapOverlayHTML.getElementsByClassName('ol-attribution') [0];
+    const HTMLButton = HTMLattribution.getElementsByTagName('button')[0];
+    if (!HTMLButton) {
+      return null;
+    }
+    HTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+    const olCollapsed: boolean = HTMLattribution.classList.contains('ol-collapsed');
+    if (olCollapsed) {
+      HTMLattribution.classList.remove('ol-collapsed');
+    }
+    return mapOverlayHTML;
   }
 
   /**
@@ -860,7 +873,8 @@ export class PrintService {
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
-      const mapResultCanvas = await this.drawMap(map, size, mapCanvas, legendPosition);
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+      await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
      if (legendPosition !== 'none') {
         if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {

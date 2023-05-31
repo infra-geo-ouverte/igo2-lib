@@ -1,16 +1,15 @@
-import { AfterContentInit, Component, ElementRef, HostBinding, Input } from '@angular/core';
+import { AfterContentInit, Component, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { bearingToAzimuth } from '@turf/helpers';
 
 import { IgoMap } from '../shared/map';
-import { Control } from 'ol/control.js';
 
 @Component({
   selector: 'igo-rotation-button',
   templateUrl: './rotation-button.component.html',
   styleUrls: ['./rotation-button.component.scss']
 })
-export class RotationButtonComponent extends Control implements AfterContentInit {
+export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);
   public azimuthRounded: number = 0;
   public rotationRounded: number = 0;
@@ -21,18 +20,10 @@ export class RotationButtonComponent extends Control implements AfterContentInit
   @Input() map: IgoMap;
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
-  @HostBinding('class') hostClass = 'north-direction ol-unselectable';
 
-  constructor(private elRef: ElementRef) {
-    super({
-      element: elRef.nativeElement
-    });
-  }
+  constructor() { }
 
   ngAfterContentInit() {
-    // add new custom controle rotation btn to map
-    // we can access to this btn from OverlayContainerStopEvent
-    this.map.ol.addControl(new RotationButtonComponent(this.elRef));
     this.map.viewController.rotation$.subscribe(r => {
       const radians = r || 0;
       const deg = radians * 180 / Math.PI;
