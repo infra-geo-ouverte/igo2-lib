@@ -11,7 +11,7 @@ export class OgcFilterChipsComponent {
   @Input() size: number;
   @Output() autocompleteOptionClick: EventEmitter<string> = new EventEmitter<string>();
 
-  public thresholdSize: number = 2; // maximum filter options where the chip list will be represented (prevent clutter)
+  public thresholdSize: number = 5; // maximum filter options where the chip list will be represented (prevent clutter)
 
   onAutocompleteOptionClick(filter: string) {
     this.autocompleteOptionClick.emit(filter);
