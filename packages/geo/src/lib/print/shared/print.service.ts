@@ -719,7 +719,6 @@ export class PrintService {
         matrix
       );
       const backgroundColor = mapCanvas.parentElement.style.backgroundColor;
-      console.log('backgroundColor: ', backgroundColor);
       if (backgroundColor) {
         mapContextResult.fillStyle = backgroundColor;
         mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
