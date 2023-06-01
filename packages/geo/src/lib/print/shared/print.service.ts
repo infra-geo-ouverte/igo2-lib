@@ -687,14 +687,13 @@ export class PrintService {
 
   private async drawMap(
     size: Array<number>,
-    mapCanvas: any
+    mapCanvas: HTMLCanvasElement
   ): Promise<HTMLCanvasElement> {
       const mapResultCanvas = document.createElement('canvas');
       const mapContextResult = mapResultCanvas.getContext('2d');
       mapResultCanvas.width = size[0];
       mapResultCanvas.height = size[1];
-      console.log('mapCanvas.parentNode: ', mapCanvas.parentNode);
-      const opacity = mapCanvas.parentNode.style.opacity || mapCanvas.style.opacity;
+      const opacity = mapCanvas.parentElement.style.opacity || mapCanvas.style.opacity;
       mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
       let matrix: number[];
       const transform = mapCanvas.style.transform;
@@ -719,7 +718,8 @@ export class PrintService {
         mapContextResult,
         matrix
       );
-      const backgroundColor = mapCanvas.parentNode.style.backgroundColor;
+      const backgroundColor = mapCanvas.parentElement.style.backgroundColor;
+      console.log('backgroundColor: ', backgroundColor);
       if (backgroundColor) {
         mapContextResult.fillStyle = backgroundColor;
         mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
