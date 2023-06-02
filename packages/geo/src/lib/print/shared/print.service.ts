@@ -20,7 +20,7 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
-import { PrintPaperFormat } from './print.type';
+import { PrintLegendPosition, PrintPaperFormat } from './print.type';
 
 declare global {
   interface Navigator {
@@ -143,10 +143,10 @@ export class PrintService {
       this.addComment(doc, options.comment);
     }
 
-    this.addMap(doc, map, resolution, size, margins).subscribe(
+    this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.addScale(doc, map, margins, size, options.legendPosition, resolution);
+
           await this.handleMeasureLayer(doc, map, margins);
 
           const width = this.imgSizeAdded[0];
@@ -566,158 +566,6 @@ export class PrintService {
       }
     }
 
-  /**
-   * Add scale and attributions on the map on the document
-   * @param  doc - Pdf document where legend will be added
-   * @param  map - Map of the app
-   * @param  margins - Page margins
-   * @param  size - Page size
-   * @param  position - Legend position
-   */
-  private async addScale(
-    doc: jsPDF,
-    map: IgoMap,
-    margins: Array<number>,
-    size: Array<number>,
-    position: string,
-    resolution: number
-    ) {
-      const printWidthPixels = Math.round((size[0] * resolution) / 25.4);
-      const printHeightPixels = Math.round((size[1] * resolution) / 25.4);
-      // Get the scale and attribution
-      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
-      let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
-      mapOverlayHTML.id = 'print-area';
-      const northDirection = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
-      if (northDirection) {
-        // init North arrow position befor printing from 400px to 0px
-        northDirection.style.right = '0px';
-        // in case legend position is topright
-        // we change rotate btn to topleft
-        if (position === 'topright') {
-          northDirection.style.width = 'inherit';
-          northDirection.style.paddingLeft = '10px';
-        }
-      }
-      // Remove the UI buttons from the nodes
-      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
-      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if (!OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-        }
-
-        if (OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.parentElement.style.background = 'transparent';
-          OverlayHTMLButton.style.color = '#000';
-        }
-      }
-      // Find attributions by class and delete
-      // the collapsed class to open attribution Copyright
-      const element = mapOverlayHTML.querySelector('.ol-attribution');
-      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if (olCollapsed) {
-        element.classList.remove('ol-collapsed');
-      }
-      // set 'OverlayContainer' size to print size
-      mapOverlayHTML.style.width = printWidthPixels+'px';
-      mapOverlayHTML.style.height = printHeightPixels+'px';
-      // we add zindex -1 to not show modification to the user
-      mapOverlayHTML.style.zIndex = '-1';
-      // we append 'print-area' to 'ol-viewport' to load all design
-      // and make sure html2canvas to render the image correctly
-      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
-      // Change the styles of hyperlink in the printed version
-      // Transform the Overlay into a canvas
-      // scale is necessary to make it in google chrome
-      // background as null because otherwise it is white and cover the map
-      // allowtaint is to allow rendering images in the attributions
-      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
-      await html2canvas(mapOverlayHTML, {
-        scale: 1,
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-      }).then( e => {
-        canvasOverlayHTML = e;
-      });
-
-      // remove 'print-area' after generating canvas
-      document.getElementById('print-area').remove();
-      this.addCanvas(doc, canvasOverlayHTML, margins);
-    }
-
- /**
-  * Add Copyrigh to the map canvas
-  * @param map - Map of the app
-  * @param canvas Canvas of the map
-  * @param position String - position of the legend
-  */
-  private async addCopyrightToImage(
-    map: IgoMap,
-    canvas : HTMLCanvasElement,
-    position: string,
-    mapSize: Array<number>
-    ) {
-      const context = canvas.getContext('2d');
-      let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
-      mapOverlayHTML.id = 'print-area';
-      mapOverlayHTML.style.zIndex = '-1';
-      const rotateNorth = mapOverlayHTML.getElementsByClassName('north-direction')[0] as HTMLElement;
-
-      if (rotateNorth) {
-        // init North arrow position befor printing from 400px to 0px
-        rotateNorth.style.right = '0px';
-        // in case legend position is topright
-        // we change rotate btn to topleft
-        if(position === 'topright') {
-          rotateNorth.style.width = 'inherit';
-          rotateNorth.style.paddingLeft = '10px';
-        }
-      }
-
-      // Remove the UI buttons from the nodes
-      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
-      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        if (!OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-        }
-        if (OverlayHTMLButton.classList.contains('north-direction-reset')) {
-          OverlayHTMLButton.parentElement.style.background = 'transparent';
-          OverlayHTMLButton.style.color = '#000';
-        }
-      }
-      // Find attributions by class and delete
-      // the collapsed class to open attribution Copyright
-      const element = mapOverlayHTML.querySelector('.ol-attribution');
-      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if (olCollapsed) {
-        element.classList.remove('ol-collapsed');
-      }
-
-      mapOverlayHTML.style.width = mapSize[0] + 'px';
-      mapOverlayHTML.style.height = mapSize[1] + 'px';
-
-      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
-
-      await html2canvas(mapOverlayHTML, {
-        scale: 1,
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-      }).then( e => {
-        canvasOverlayHTML = e;
-      });
-
-      // reset canvas transform to initial
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.drawImage(canvasOverlayHTML, 0, 0);
-      document.getElementById('print-area').remove();
-  }
-
   defineNbFileToProcess(nbFileToProcess) {
     this.nbFileToProcess = nbFileToProcess;
   }
@@ -737,7 +585,7 @@ export class PrintService {
     }
 
     if (image !== undefined) {
-      if (image.length < 20 ) { //  img is corrupt    todo: fix addScale in mobile make a corrupt img
+      if (image.length < 20 ) {
         console.log('Warning: An image cannot be print in pdf file');
         return;
       }
@@ -763,58 +611,32 @@ export class PrintService {
     map: IgoMap,
     resolution: number,
     size: Array<number>,
-    margins: Array<number>
+    margins: Array<number>,
+    legendPostion: PrintLegendPosition
   ) {
 
     const mapSize = map.ol.getSize();
+    const viewResolution = map.ol.getView().getResolution();
     const extent = map.ol.getView().calculateExtent(mapSize);
     const widthPixels = Math.round((size[0] * resolution) / 25.4);
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
-    const viewResolution = map.ol.getView().getResolution();
 
     const status$ = new Subject();
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
-      const mapResultCanvas = document.createElement('canvas');
-      const mapContextResult = mapResultCanvas.getContext('2d');
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
-
-      mapResultCanvas.width = widthPixels;
-      mapResultCanvas.height = heightPixels;
-      const opacity = mapCanvas.parentNode.style.opacity;
-      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
-      let matrix;
-      const transform = mapCanvas.style.transform;
-      if (transform) {
-        // Get the transform parameters from the style's transform matrix
-        matrix = transform
-          .match(/^matrix\(([^\(]*)\)$/)[1]
-          .split(',')
-          .map(Number);
-      } else {
-        matrix = [
-          parseFloat(mapCanvas.style.width) / mapCanvas.width,
-          0,
-          0,
-          parseFloat(mapCanvas.style.height) / mapCanvas.height,
-          0,
-          0,
-        ];
-      }
-      // Apply the transform to the export map context
-      CanvasRenderingContext2D.prototype.setTransform.apply(
-        mapContextResult,
-        matrix
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapResultCanvas = await this.drawMap(
+        [widthPixels, heightPixels],
+        mapCanvas
       );
-      const backgroundColor = mapCanvas.parentNode.style.backgroundColor;
-      if (backgroundColor) {
-        mapContextResult.fillStyle = backgroundColor;
-        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-      }
-      mapContextResult.drawImage(mapCanvas, 0, 0);
-      mapContextResult.globalAlpha = 1;
-      // reset canvas transform to initial
-      mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+
+      // Reset original map size
+      map.ol.setSize(mapSize);
+      map.ol.getView().setResolution(viewResolution);
+      this.renderMap(map, mapSize, extent);
+
+      await this.drawMapControls(map, mapResultCanvas, legendPostion);
+
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
         if (mapStatus !== SubjectStatus.Done) {
@@ -830,11 +652,6 @@ export class PrintService {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
-        // Reset original map size
-        map.ol.setSize(mapSize);
-        map.ol.getView().setResolution(viewResolution);
-        this.renderMap(map, mapSize, extent);
-
         status$.next(status);
       });
 
@@ -868,6 +685,125 @@ export class PrintService {
     return status$;
   }
 
+  private async drawMap(
+    size: Array<number>,
+    mapCanvas: HTMLCanvasElement
+  ): Promise<HTMLCanvasElement> {
+      const mapResultCanvas = document.createElement('canvas');
+      const mapContextResult = mapResultCanvas.getContext('2d');
+      mapResultCanvas.width = size[0];
+      mapResultCanvas.height = size[1];
+      const opacity = mapCanvas.parentElement.style.opacity || mapCanvas.style.opacity;
+      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+      let matrix: number[];
+      const transform = mapCanvas.style.transform;
+      if (transform) {
+        // Get the transform parameters from the style's transform matrix
+        matrix = transform
+          .match(/^matrix\(([^\(]*)\)$/)[1]
+          .split(',')
+          .map(Number);
+      } else {
+        matrix = [
+          parseFloat(mapCanvas.style.width) / mapCanvas.width,
+          0,
+          0,
+          parseFloat(mapCanvas.style.height) / mapCanvas.height,
+          0,
+          0,
+        ];
+      }
+      // Apply the transform to the export map context
+      CanvasRenderingContext2D.prototype.setTransform.apply(
+        mapContextResult,
+        matrix
+      );
+      const backgroundColor = mapCanvas.parentElement.style.backgroundColor;
+      if (backgroundColor) {
+        mapContextResult.fillStyle = backgroundColor;
+        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+      }
+      mapContextResult.drawImage(mapCanvas, 0, 0);
+      mapContextResult.globalAlpha = 1;
+      // reset canvas transform to initial
+      mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+      return mapResultCanvas;
+  }
+
+  private async drawMapControls (
+    map: IgoMap,
+    canvas: HTMLCanvasElement,
+    position: PrintLegendPosition
+  ): Promise<void> {
+      const context = canvas.getContext('2d');
+      // Get the scale and attribution
+      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
+      // add North Direction to mapOverly
+      await this.addNorthDirection(mapOverlayHTML, position);
+      // add map Attribution designe to print
+      await this.addAttribution(mapOverlayHTML);
+
+      // set 'OverlayContainer' size to print size
+      mapOverlayHTML.style.width = canvas.width+'px';
+      mapOverlayHTML.style.height = canvas.height+'px';
+      // we add zindex -1 to not show modification to the user
+      mapOverlayHTML.style.zIndex = '-1';
+      // and make sure html2canvas to render the image correctly
+      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
+      // Change the styles of hyperlink in the printed version
+      // Transform the Overlay into a canvas
+      // scale is necessary to make it in google chrome
+      // background as null because otherwise it is white and cover the map
+      // allowtaint is to allow rendering images in the attributions
+      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
+      const canvasOverlayHTML = await html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      });
+
+      context.drawImage(canvasOverlayHTML, 0, 0);
+      // remove 'mapOverlayHTML' after generating canvas
+      mapOverlayHTML.remove();
+  }
+
+  private async addNorthDirection (
+    mapOverlayHTML: HTMLElement,
+    position: PrintLegendPosition
+  ): Promise<void> {
+    const northDirection = document.getElementsByTagName('igo-rotation-button')[0].cloneNode(true) as HTMLElement;
+    const HTMLButton = northDirection.getElementsByTagName('button')[0] as HTMLElement;
+    if (!HTMLButton) {
+      return null;
+    }
+    // in case legend position is topright
+    // we change rotate btn to topleft
+    if (position === 'topright') {
+      northDirection.style.width = 'inherit';
+      northDirection.style.left = '10px';
+    }
+    HTMLButton.parentElement.style.background = 'transparent';
+    HTMLButton.style.color = '#000';
+    mapOverlayHTML.appendChild(northDirection);
+  }
+
+  private async addAttribution (
+    mapOverlayHTML: HTMLElement
+  ): Promise<void> {
+    const HTMLattribution = mapOverlayHTML.getElementsByClassName('ol-attribution') [0];
+    const HTMLButton = HTMLattribution.getElementsByTagName('button')[0];
+    if (!HTMLButton) {
+      return null;
+    }
+    HTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+    const olCollapsed: boolean = HTMLattribution.classList.contains('ol-collapsed');
+    if (olCollapsed) {
+      HTMLattribution.classList.remove('ol-collapsed');
+    }
+  }
+
   /**
    * Download an image of the map with addition of informations
    * @param  map - Map of the app
@@ -891,7 +827,7 @@ export class PrintService {
     subtitle = '',
     comment = '',
     doZipFile = true,
-    legendPosition: string
+    legendPosition: PrintLegendPosition
   ) {
     const status$ = new Subject();
     this.activityId = this.activityService.register();
@@ -907,55 +843,12 @@ export class PrintService {
     const imageSize = [widthPixels, heightPixels];
 
     map.ol.once('rendercomplete', async (event: any) => {
-      // mapResultCanvas to store rotated map
-      const mapResultCanvas = document.createElement('canvas');
-      mapResultCanvas.width = widthPixels;
-      mapResultCanvas.height = heightPixels;
-      const mapContextResult = mapResultCanvas.getContext('2d');
-      mapContextResult.scale(scaleFactor, scaleFactor);
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0];
-      const opacity =
-      mapCanvas.parentNode.style.opacity || mapCanvas.style.opacity;
-      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
-      let matrix;
-      const transform = mapCanvas.style.transform;
-      if (transform) {
-        // Get the transform parameters from the style's transform matrix
-        matrix = transform
-          .match(/^matrix\(([^\(]*)\)$/)[1]
-          .split(',')
-          .map(Number);
-      } else {
-        matrix = [
-          parseFloat(mapCanvas.style.width) / mapCanvas.width,
-          0,
-          0,
-          parseFloat(mapCanvas.style.height) / mapCanvas.height,
-          0,
-          0,
-        ];
-      }
-      // Apply the transform to the export map context
-      CanvasRenderingContext2D.prototype.setTransform.apply(
-        mapContextResult,
-        matrix
-      );
-      const backgroundColor = mapCanvas.parentNode.style.backgroundColor;
-      if (backgroundColor) {
-        mapContextResult.fillStyle = backgroundColor;
-        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-      }
-
-      mapContextResult.drawImage(mapCanvas, 0, 0);
-
-      // Reset original map size
-      map.ol.setSize(mapSize);
-      map.ol.getView().setResolution(viewResolution);
-      this.renderMap(map, mapSize, extent);
-      await this.addCopyrightToImage(map, mapResultCanvas, legendPosition, imageSize);
-
+      const size = map.ol.getSize();
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+      await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
-      if (legendPosition !== 'none') {
+     if (legendPosition !== 'none') {
         if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
             mapResultCanvas,
