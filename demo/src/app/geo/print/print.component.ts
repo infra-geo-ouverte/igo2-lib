@@ -13,8 +13,7 @@ export class AppPrintComponent {
     controls: {
       attribution: {
         collapsed: false
-      },
-      scaleLine: true
+      }
     }
   });
 
