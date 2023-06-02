@@ -21,6 +21,8 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
 import { PrintLegendPosition, PrintPaperFormat } from './print.type';
+import olVectorSource from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 declare global {
   interface Navigator {
@@ -623,6 +625,7 @@ export class PrintService {
     const status$ = new Subject();
 
     let timeout;
+    this.hideSearchPointerSummary(map);
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
       const mapResultCanvas = await this.drawMap(
@@ -834,7 +837,7 @@ export class PrintService {
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
-
+    this.hideSearchPointerSummary(map);
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
@@ -1023,7 +1026,7 @@ export class PrintService {
     return status$;
   }
 
-  showHideSearchPointerSummary(map: IgoMap) {
+  private hideSearchPointerSummary(map: IgoMap) {
     const ol = map.getLayerById('searchPointerSummaryId').dataSource.ol as olVectorSource<OlGeometry>;
     ol.removeFeature(ol.getFeatureById('searchPointerSummaryFeatureId'));
   }
