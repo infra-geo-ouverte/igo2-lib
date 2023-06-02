@@ -158,7 +158,7 @@
     "angular-cli-ghpages": "^1.0.3",
     "conventional-changelog-cli": "^2.0.12",
     "copy-newer": "^2.1.2",
-    "cypress": "latest",
+    "cypress": "12.13.0",
     "del": "^6.0.0",
     "eslint": "^8.21.0",
     "eslint-plugin-unused-imports": "^2.0.0",
