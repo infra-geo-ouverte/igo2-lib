@@ -834,18 +834,24 @@ export class PrintService {
     const translate = this.languageService.translate;
     format = format.toLowerCase();
 
-    const mapSize = map.ol.getSize();
-    const extent = map.ol.getView().calculateExtent(mapSize);
+    const initialMapSize = map.ol.getSize();
     const scaleFactor = resolution / 96;
-    const widthPixels = Math.round(mapSize[0] * scaleFactor);
-    const heightPixels = Math.round(mapSize[1] * scaleFactor);
     const viewResolution = map.ol.getView().getResolution();
-    const imageSize = [widthPixels, heightPixels];
+    const newMapSize = [
+      Math.round(initialMapSize[0] * scaleFactor), // width
+      Math.round(initialMapSize[1] * scaleFactor) // height
+    ];
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
+
+      // Reset original map size
+      map.ol.setSize(initialMapSize);
+      map.ol.getView().setResolution(viewResolution);
+      map.ol.renderSync();
+
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
      if (legendPosition !== 'none') {
@@ -1026,9 +1032,9 @@ export class PrintService {
         }
       }
     });
-    // Set image size
-    map.ol.setSize(imageSize);
-    const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
+    // Set map image size
+    map.ol.setSize(newMapSize);
+    const scaling = Math.min(newMapSize[0] / initialMapSize[0], newMapSize[1] / initialMapSize[1]);
     map.ol.getView().setResolution(viewResolution / scaling);
     map.ol.renderSync();
     return status$;
