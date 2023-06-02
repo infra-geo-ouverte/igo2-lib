@@ -15,7 +15,7 @@
       "path": "./demo/src/tsconfig.spec.json"
     },
     {
-      "path": "./e2e/tsconfig.e2e.json"
+      "path": "./cypress/tsconfig.json"
     },
     {
       "path": "./packages/auth/tsconfig.lib.json"
