@@ -4,3 +4,13 @@
   [store]="store"
   (catalogSelectChange)="onCatalogSelectChange($event)">
 </igo-catalog-library>
+<div class="btnGetCatalogList">
+  <button
+    mat-raised-button
+    [matTooltip]="'igo.integration.catalog.library.getCatalogList' | translate"
+    matTooltipPosition="below"
+    color="primary"
+    (click)="getCatalogList()">
+    {{'igo.integration.catalog.library.getCatalogList' | translate}}
+  </button>
+</div>

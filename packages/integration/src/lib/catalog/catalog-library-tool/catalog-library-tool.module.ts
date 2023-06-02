@@ -3,6 +3,10 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { IgoCatalogLibraryModule } from '@igo2/geo';
 import { CatalogLibraryToolComponent } from './catalog-library-tool.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { IgoLanguageModule } from '@igo2/core';
+import { MatButtonModule } from '@angular/material/button';
+import { IgoListModule } from '@igo2/common';
 
 /**
  * @ignore
@@ -10,7 +14,11 @@ import { CatalogLibraryToolComponent } from './catalog-library-tool.component';
 @NgModule({
   imports: [
     CommonModule,
-    IgoCatalogLibraryModule
+    IgoCatalogLibraryModule,
+    MatButtonModule,
+    MatTooltipModule,
+    IgoListModule,
+    IgoLanguageModule
   ],
   declarations: [CatalogLibraryToolComponent],
   exports: [CatalogLibraryToolComponent],

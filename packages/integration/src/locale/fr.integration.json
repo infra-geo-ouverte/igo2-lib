@@ -21,6 +21,9 @@
         "advancedMap": "Outils avancés",
         "closestFeature": "Entités à proximité"
       },
+      "catalog":{
+        "library.getCatalogList": "Obtenir la liste des services du catalogue"
+      },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
         "doSearch": "Veuillez effectuer une recherche dans la barre de recherche ci-dessus.",
