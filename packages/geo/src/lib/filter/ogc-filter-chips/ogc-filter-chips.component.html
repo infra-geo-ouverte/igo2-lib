@@ -4,7 +4,9 @@
         <div *ngIf="filter.length" class="filter">
           <div
             class="option"
-            (click)="$event.stopPropagation(); onAutocompleteOptionClick(filter)">
+            (click)="$event.stopPropagation(); onAutocompleteOptionClick(filter)"
+            [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+            tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip">
             <p class="option-value">{{ filter }}</p>
               <mat-icon class="remove-icon" svgIcon="close"></mat-icon>
           </div>
