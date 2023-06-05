@@ -24,6 +24,7 @@ import { ContextService, DetailedContext } from '@igo2/context';
 @Component({
   selector: 'igo-catalog-library-tool',
   templateUrl: './catalog-library-tool.component.html',
+  styleUrls: ['./catalog-library-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibraryToolComponent implements OnInit {
@@ -117,8 +118,8 @@ export class CatalogLibraryToolComponent implements OnInit {
         res.forEach((catalogs:Object) => {
           //console.log(catalogs[1])
           var catalogsList = Object.keys(catalogs[1]).map(key => catalogs[1][key]);
-          var catalogTitle = Object.keys(catalogs[0]).map(key => catalogs[0][key])[1];
-          console.log(catalogs[0], catalogs[0].title);
+          var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
+          //console.log(catalogs[0], catalogs[0].title);
           catalogsList.forEach(catalogItemGroup=>{
             //console.log(catalogItemGroup);
             if (catalogItemGroup.items) {
@@ -129,9 +130,7 @@ export class CatalogLibraryToolComponent implements OnInit {
                 if(item.externalProvider !== undefined){
                     if(item.externalProvider === true)
                         gestionnaire = "Externe";
-                }//cataloggroup.address
-                //catalogs[0].title
-                
+                }
                 const absUrl = item.options.sourceOptions.url.charAt(0) === '/' ? window.location.origin + item.options.sourceOptions.url : item.options.sourceOptions.url;
                 dataArray.push(catalogRank, item.title, catalogItemGroup.title, catalogTitle, gestionnaire, absUrl, 
                   item.options.sourceOptions.params.LAYERS, "", item.options.metadata.abstract);
@@ -155,8 +154,8 @@ export class CatalogLibraryToolComponent implements OnInit {
                     if(itemGroupWMTS.externalProvider === true)
                         gestionnaire = "Externe";
                 }
-                dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, itemGroupWMTS.address, gestionnaire, itemGroupWMTS.options.sourceOptions.url, 
-                  itemGroupWMTS.options.sourceOptions.layer, "contextethematique planiactifs", itemGroupWMTS.options.metadata.abstract);
+                dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire, itemGroupWMTS.options.sourceOptions.url, 
+                  itemGroupWMTS.options.sourceOptions.layer, "", itemGroupWMTS.options.metadata.abstract);
 
                 bufferArray.push(dataArray);
                 dataArray = [];
@@ -173,16 +172,19 @@ export class CatalogLibraryToolComponent implements OnInit {
             console.log("contextLayers", contextLayers);
           //itérer bufferArray
           for (var index in bufferArray) {
-              for(var layerContextList of contextLayers){
-              //contextLayers.forEach(layerContextList => {
-                  layerContextList.layers.forEach(layersName => {
-                      if (bufferArray[index][6] === layersName.title) {
-                          console.log("bufferArrayElement === layersName");
-                          bufferArray[index][7] = layersName.title;
-                      }
-                  });
-              };
-          }
+            if(index==="1"){
+            var contextLayersList = [];
+            for(var layerContextList of contextLayers){
+            //contextLayers.forEach(layerContextList => {
+                layerContextList.layers.forEach(layersName => {
+                    if (bufferArray[index][6] === layersName.title) {
+                        console.log("bufferArrayElement === layersName");
+                        contextLayersList.push(layerContextList.uri);
+                    }
+                });
+            };
+            bufferArray[index][7] = contextLayersList.toString();
+          }}
           let csvContent = bufferArray.map(e => e.join(";")).join("\n");
           var encodedUri = encodeURI(csvContent);
           var link = document.createElement("a");
