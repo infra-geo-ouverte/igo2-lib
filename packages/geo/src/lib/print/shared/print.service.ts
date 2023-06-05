@@ -1279,4 +1279,62 @@ export class PrintService {
     return n * k;
   }
 
+
+  async downloadDirection(): Promise<any> {
+ 
+    GeoPdfPlugin(jsPDF.API);
+
+    const doc = new jsPDF({
+      orientation: 'p',
+      format: 'a4',
+      unit: 'pt' // default
+    });
+    
+    const directionsResults = document.getElementsByTagName('igo-directions-results')[0];
+    const cloneDirection = directionsResults.cloneNode(true) as HTMLElement;
+    // to do draw map
+    // this.drawMap([],)
+    directionsResults.appendChild(cloneDirection);
+    const matList = cloneDirection.getElementsByTagName('mat-list')[0] as HTMLElement;
+    
+    const result  = await this.replaceIcons(matList);
+
+  
+    doc.html(result, {
+      x:10,
+      y: 10,
+      callback: function(pdf) {
+        pdf.save('test-direction.pdf');
+        cloneDirection.remove();
+
+      },
+      
+    });
+
+    const status$ = new Subject();
+    let status = SubjectStatus.Done;
+
+    status$.next(status);
+    return status$;
+  }
+
+  private async replaceIcons(directions): Promise<any> {
+
+    for await (const element of directions.children) {
+
+      const matIcon = element.querySelectorAll('mat-icon')[0] as HTMLElement;
+      if(matIcon) {
+        element.style.height = '40px';
+        const canvas = await html2canvas(matIcon);
+        const img = document.createElement("img");
+        img.src = canvas.toDataURL();       
+        img.style.marginTop = '-10px';
+        img.style.width = '30px';
+        img.style.height = '30px';
+        matIcon.replaceWith(img);
+      }
+    }
+    return directions;
+  }
+
 }

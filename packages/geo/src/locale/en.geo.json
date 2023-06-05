@@ -372,6 +372,7 @@
         "copy": "Copy directions",
         "geolocate": "Use current localisation as stop",
         "link": "Link",
+        "print": "Print",
         "dialog": {
           "copyMsg": "Directions copied to clipboard",
           "copyMsgLink": "Link for directions copied to clipboard",

@@ -7,6 +7,7 @@ import { FeatureWithDirection } from '../shared/directions.interface';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
 import { RoutesFeatureStore, StopsStore } from '../shared/store';
+import { PrintService } from '../../print';
 
 @Component({
   selector: 'igo-directions-buttons',
@@ -25,7 +26,8 @@ export class DirectionsButtonsComponent {
   constructor(
     private languageService: LanguageService,
     private messageService: MessageService,
-    @Optional() private route: RouteService) { }
+    @Optional() private route: RouteService,
+    private printService: PrintService) { }
 
   resetStops() {
     this.stopsStore.clearStops();
@@ -175,5 +177,15 @@ export class DirectionsButtonsComponent {
       return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;
+  }
+
+  printDirections() {
+    /*const activeDirection = this.routesFeatureStore.entities$.value.find(entity =>
+      entity.properties.active === true
+    );*/
+    this.printService.downloadDirection()
+    .then((status) => {
+      console.log('status: ', status);
+    });
   }
 }

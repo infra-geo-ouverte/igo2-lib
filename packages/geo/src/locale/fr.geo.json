@@ -371,6 +371,7 @@
         "copy": "Copier l'itinéraire",
         "geolocate": "Utiliser sa localisation comme point d'arrêt",
         "link": "Lien",
+        "print": "Imprimer",
         "dialog": {
           "copyMsg": "Itinéraire copié dans le presse-papier",
           "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
