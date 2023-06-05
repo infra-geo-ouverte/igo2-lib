@@ -140,12 +140,13 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
       const [key, values] = entry;
       values.map(value => {
         const geoService = this.propertyTypeDetectorService.getGeoService(value, allKeys);
-        const propertiesForLayerName = allKeys.filter(p => geoService.propertiesForLayerName.includes(p));
-        // providing the the first matching regex;
-        const propertyForLayerName = propertiesForLayerName.length ? propertiesForLayerName[0] : undefined;
-        if (propertyForLayerName) {
-          geoServiceAssociations.push({ url: value, urlProperty: key, layerNameProperty: propertyForLayerName, geoService });
-
+        if (geoService) {
+          const propertiesForLayerName = allKeys.filter(p => geoService.propertiesForLayerName.includes(p));
+          // providing the the first matching regex;
+          const propertyForLayerName = propertiesForLayerName.length ? propertiesForLayerName[0] : undefined;
+          if (propertyForLayerName) {
+            geoServiceAssociations.push({ url: value, urlProperty: key, layerNameProperty: propertyForLayerName, geoService });
+          }
         }
       });
     });

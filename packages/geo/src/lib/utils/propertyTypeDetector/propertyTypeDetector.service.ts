@@ -7,7 +7,7 @@ import { GeoServiceDefinition } from './propertyTypeDetector.interface';
 })
 export class PropertyTypeDetectorService {
 
-  public geoServiceRegexes: GeoServiceDefinition[];
+  public geoServiceRegexes: GeoServiceDefinition[] = [];
 
   constructor(
     private regexService: RegexService
