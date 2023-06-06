@@ -1,3 +1,18 @@
+## [1.15.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.1...1.15.2) (2023-05-16)
+
+
+
+## [1.15.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.0...1.15.1) (2023-05-05)
+
+
+### Bug Fixes
+
+* **map-tools:** error on some layer deletion ([bae5f0f](https://github.com/infra-geo-ouverte/igo2-lib/commit/bae5f0fcdb96064429ec528c66e78524f64d7fe1))
+* **searchOptions:** show options for mobile ([#1237](https://github.com/infra-geo-ouverte/igo2-lib/issues/1237)) ([a9d0836](https://github.com/infra-geo-ouverte/igo2-lib/commit/a9d0836f2af79aad0f913291120d8eda01ef5754))
+* **vector-layer:** stored layer can now be searchable on app reload ([7a3c717](https://github.com/infra-geo-ouverte/igo2-lib/commit/7a3c7179eda5dff85407a13a4d04caf7f180ac22))
+
+
+
 # [1.15.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.2...1.15.0) (2023-05-03)
 
 
