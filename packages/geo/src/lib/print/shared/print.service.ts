@@ -622,7 +622,6 @@ export class PrintService {
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
     const status$ = new Subject();
 
-    const status$ = new Subject();
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
