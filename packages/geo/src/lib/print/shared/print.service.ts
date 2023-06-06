@@ -1280,42 +1280,64 @@ export class PrintService {
   }
 
 
-  async downloadDirection(): Promise<any> {
- 
-    GeoPdfPlugin(jsPDF.API);
+  async downloadDirection(map: IgoMap): Promise<any> {
 
+    GeoPdfPlugin(jsPDF.API);
     const doc = new jsPDF({
       orientation: 'p',
       format: 'a4',
       unit: 'pt' // default
     });
-    
-    const directionsResults = document.getElementsByTagName('igo-directions-results')[0];
-    const cloneDirection = directionsResults.cloneNode(true) as HTMLElement;
-    // to do draw map
-    // this.drawMap([],)
-    directionsResults.appendChild(cloneDirection);
-    const matList = cloneDirection.getElementsByTagName('mat-list')[0] as HTMLElement;
-    
-    const result  = await this.replaceIcons(matList);
 
-  
-    doc.html(result, {
-      x:10,
-      y: 10,
-      callback: function(pdf) {
-        pdf.save('test-direction.pdf');
-        cloneDirection.remove();
+    // map.ol.setSize([(doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3)]);
+    // map.ol.updateSize();
+    // map.ol.renderSync();
+    const mapSize = map.ol.getSize();
+    map.ol.once('rendercomplete', async (event: any) => {
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapResultCanvas = await this.drawMap(
+        mapSize,
+        mapCanvas
+      );
 
-      },
+    
       
+
+      const directionsResults = document.getElementsByTagName('igo-directions-results')[0];
+      const cloneDirection = directionsResults.cloneNode(true) as HTMLElement;
+      
+      // const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
+      const imageSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [100,10,100,40]);
+      console.log('imageSize: ', imageSize);
+      // doc.addImage(mapResultCanvas.toDataURL(),20, 15, (doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3));
+      doc.addImage(mapResultCanvas.toDataURL(), 20, 15, imageSize[0], imageSize[1]);
+      //doc.rect(20, 15, (doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3));
+      doc.rect(20, 15, imageSize[0], imageSize[1]);
+
+      document.body.appendChild(cloneDirection);
+
+      const matList = cloneDirection.getElementsByTagName('mat-list')[0] as HTMLElement;
+      
+      const result  = await this.replaceIcons(matList);
+
+      doc.html(result, {
+        x:10,
+        y: (doc.internal.pageSize.height / 3) + 5,
+        margin:10,
+        callback: function(pdf) {
+          pdf.save('test-direction.pdf');
+          cloneDirection.remove();
+
+        },
+
+      });
+
+      const status$ = new Subject();
+      let status = SubjectStatus.Done;
+
+      status$.next(status);
+      return status$;
     });
-
-    const status$ = new Subject();
-    let status = SubjectStatus.Done;
-
-    status$.next(status);
-    return status$;
   }
 
   private async replaceIcons(directions): Promise<any> {

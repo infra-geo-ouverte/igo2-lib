@@ -180,10 +180,7 @@ export class DirectionsButtonsComponent {
   }
 
   printDirections() {
-    /*const activeDirection = this.routesFeatureStore.entities$.value.find(entity =>
-      entity.properties.active === true
-    );*/
-    this.printService.downloadDirection()
+    this.printService.downloadDirection(this.routesFeatureStore.map)
     .then((status) => {
       console.log('status: ', status);
     });
