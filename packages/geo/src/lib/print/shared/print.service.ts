@@ -620,6 +620,7 @@ export class PrintService {
     const extent = map.ol.getView().calculateExtent(mapSize);
     const widthPixels = Math.round((size[0] * resolution) / 25.4);
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
+    const status$ = new Subject();
 
     const status$ = new Subject();
     let timeout;
