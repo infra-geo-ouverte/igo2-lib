@@ -1,4 +1,4 @@
-<mat-list-item>
+<mat-list-item (mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)">
   <mat-icon *ngIf="icon" mat-list-avatar svgIcon="{{showIcons ? icon : 'blank'}}"></mat-icon>
 
   <h4 matLine *ngIf="titleHtml" [innerHtml]="titleHtml" matTooltipShowDelay="500" [matTooltip]="tooltipHtml" matTooltipClass="search-result-tooltip"></h4>

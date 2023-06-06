@@ -10,7 +10,7 @@ import {
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
-import { CatalogItemLayer } from '../shared';
+import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
@@ -60,10 +60,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the add/remove button is clicked
    */
-  @Output() addedChange = new EventEmitter<{
-    added: boolean;
-    layer: CatalogItemLayer;
-  }>();
+  @Output() addedChange = new EventEmitter<AddedChangeEmitter>();
 
   @Output() addedLayerIsPreview = new EventEmitter<boolean>();
 
@@ -158,9 +155,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
       case 'click':
         if (!this.isPreview$.value) {
           if (this.added) {
-            this.remove();
+            this.remove(event);
           } else {
-            this.add();
+            this.add(event);
           }
         }
         this.isPreview$.next(false);
@@ -168,7 +165,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
       case 'mouseenter':
         if (!this.isPreview$.value && !this.added) {
           this.lastTimeoutRequest = setTimeout(() => {
-            this.add();
+            this.add(event);
             this.isPreview$.next(true);
           }, 500);
         }
@@ -176,7 +173,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
         break;
       case 'mouseleave':
         if (this.isPreview$.value) {
-          this.remove();
+          this.remove(event);
           this.isPreview$.next(false);
         }
         this.mouseInsideAdd = false;
@@ -189,20 +186,20 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   /**
    * Emit added change event with added = true
    */
-  private add() {
+  private add(event: Event) {
     if (!this.added) {
       this.added = true;
-      this.addedChange.emit({ added: true, layer: this.layer });
+      this.addedChange.emit({ added: true, layer: this.layer, event });
     }
   }
 
   /**
    * Emit added change event with added = false
    */
-  private remove() {
+  private remove(event: Event) {
     if (this.added) {
       this.added = false;
-      this.addedChange.emit({ added: false, layer: this.layer });
+      this.addedChange.emit({ added: false, layer: this.layer, event });
     }
   }
 

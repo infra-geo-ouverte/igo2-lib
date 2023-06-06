@@ -1,3 +1,63 @@
+## [1.15.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.1...1.15.2) (2023-05-16)
+
+
+
+## [1.15.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.0...1.15.1) (2023-05-05)
+
+
+### Bug Fixes
+
+* **map-tools:** error on some layer deletion ([bae5f0f](https://github.com/infra-geo-ouverte/igo2-lib/commit/bae5f0fcdb96064429ec528c66e78524f64d7fe1))
+* **searchOptions:** show options for mobile ([#1237](https://github.com/infra-geo-ouverte/igo2-lib/issues/1237)) ([a9d0836](https://github.com/infra-geo-ouverte/igo2-lib/commit/a9d0836f2af79aad0f913291120d8eda01ef5754))
+* **vector-layer:** stored layer can now be searchable on app reload ([7a3c717](https://github.com/infra-geo-ouverte/igo2-lib/commit/7a3c7179eda5dff85407a13a4d04caf7f180ac22))
+
+
+
+# [1.15.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.2...1.15.0) (2023-05-03)
+
+
+### Bug Fixes
+
+* **catalog:** error message on catalog crash ([e2d72e4](https://github.com/infra-geo-ouverte/igo2-lib/commit/e2d72e4eecaa13b173ab261ab98ef428de9e32f0))
+* **ConfigFileToGeoDBService:** date parsing was wrong on iOS ([7d2c7e0](https://github.com/infra-geo-ouverte/igo2-lib/commit/7d2c7e0f833c4641371893ba9f3a4f74adc766e3))
+* **core:** Missing languageService randomly occur ([#1223](https://github.com/infra-geo-ouverte/igo2-lib/issues/1223)) ([80e090d](https://github.com/infra-geo-ouverte/igo2-lib/commit/80e090da860cd00eed6dfad33f2dbe92de2fedc9))
+* **datasource:** prevent service request when offline ([#1226](https://github.com/infra-geo-ouverte/igo2-lib/issues/1226)) ([1d44c5c](https://github.com/infra-geo-ouverte/igo2-lib/commit/1d44c5c327cc268e271f1c5c20804cc4363f3122))
+* **demo:** fix error due to style refactor ([086c1d7](https://github.com/infra-geo-ouverte/igo2-lib/commit/086c1d7a5841956b9b8501e18e7bf0cca20b4553))
+* **draw:** error with layers with numeric id ([#1195](https://github.com/infra-geo-ouverte/igo2-lib/issues/1195)) ([327e5d3](https://github.com/infra-geo-ouverte/igo2-lib/commit/327e5d3f9b7061c563d140a8c89170543543707e))
+* **drawing guide:** Fix a regression to the drawing guide that wasn't working with certain draw style definition ([#1201](https://github.com/infra-geo-ouverte/igo2-lib/issues/1201)) ([7bfb646](https://github.com/infra-geo-ouverte/igo2-lib/commit/7bfb646b04b5b37bd55f16f12ff3a189719779e9))
+* **export:** export formats were wrong if allowed formats were imposed in config ([#1221](https://github.com/infra-geo-ouverte/igo2-lib/issues/1221)) ([566d0f4](https://github.com/infra-geo-ouverte/igo2-lib/commit/566d0f450469d3185fcf86361a8d4eecce73e731))
+* **geo, integration:** solve bug - save search results in new layer aft… ([#1229](https://github.com/infra-geo-ouverte/igo2-lib/issues/1229)) ([f7f55dc](https://github.com/infra-geo-ouverte/igo2-lib/commit/f7f55dc63b09b2983116e89cc2f8647080e244a4))
+* **geo, integration:** solve config bug save search result in layer ([#1222](https://github.com/infra-geo-ouverte/igo2-lib/issues/1222)) ([dab8166](https://github.com/infra-geo-ouverte/igo2-lib/commit/dab8166067ddf963a787ccd4b2b1a3c8dd2e0d42))
+* **geo:** add attribution and copyright if export pdf or image ([#1215](https://github.com/infra-geo-ouverte/igo2-lib/issues/1215)) ([25da649](https://github.com/infra-geo-ouverte/igo2-lib/commit/25da6493056b45e63eba05917082338a99211ddd))
+* **geo:** export map and legend in the same file zip ([#1212](https://github.com/infra-geo-ouverte/igo2-lib/issues/1212)) ([f8bd55b](https://github.com/infra-geo-ouverte/igo2-lib/commit/f8bd55ba50413ef386f68a8fe535fb9a4bbf413e))
+* **longpress:** prevent multitouch event emissioon ([#1205](https://github.com/infra-geo-ouverte/igo2-lib/issues/1205)) ([4b89f11](https://github.com/infra-geo-ouverte/igo2-lib/commit/4b89f11296b1020531ddebeed388f2ddc5da5f51))
+* **search-results-add-button:** error with layers with numeric id ([331d998](https://github.com/infra-geo-ouverte/igo2-lib/commit/331d99825dcfa99d64e0e1ef980ebabd392ce5a7))
+* **translations:** missing interpolated value ([f7bc3d8](https://github.com/infra-geo-ouverte/igo2-lib/commit/f7bc3d8e32c0ed2839ebfd181fc7f89513a803e9))
+* **zippedGeojson:** fix utf8 encoding error ([#1217](https://github.com/infra-geo-ouverte/igo2-lib/issues/1217)) ([fce88f7](https://github.com/infra-geo-ouverte/igo2-lib/commit/fce88f72cb4f65694aabaae27c0eeaf50df5628c))
+
+
+### Features
+
+* **confirm-dialog:** now support translations ([#1203](https://github.com/infra-geo-ouverte/igo2-lib/issues/1203)) ([3171e3f](https://github.com/infra-geo-ouverte/igo2-lib/commit/3171e3faf69ca7008536584fc729bd65c45de76e))
+* **feature-datasource:** add a preload options on vector source ([#1231](https://github.com/infra-geo-ouverte/igo2-lib/issues/1231)) ([c303d57](https://github.com/infra-geo-ouverte/igo2-lib/commit/c303d5740559cbd614514bdd2e200a8b6925d4c3))
+* **geo:** add splitTextToSize to optimise long comment on more lines ([#1193](https://github.com/infra-geo-ouverte/igo2-lib/issues/1193)) ([b6b77b9](https://github.com/infra-geo-ouverte/igo2-lib/commit/b6b77b98b2296ab177873c3d13b394597e6230ec))
+* **geo:** add style and change color in feature store ([#1228](https://github.com/infra-geo-ouverte/igo2-lib/issues/1228)) ([ce14056](https://github.com/infra-geo-ouverte/igo2-lib/commit/ce14056587a4db8836c1c4c76c8363c2c403863c))
+* **geo:** allow query results to show results as tab instead of a list ([#1156](https://github.com/infra-geo-ouverte/igo2-lib/issues/1156)) ([1a79c2d](https://github.com/infra-geo-ouverte/igo2-lib/commit/1a79c2d6c2ddfc72b72af2fbd4a6f5b2e6dde228))
+* **geolocation:** better handling view zoom/move + show movement direction ([#1209](https://github.com/infra-geo-ouverte/igo2-lib/issues/1209)) ([7e82ee4](https://github.com/infra-geo-ouverte/igo2-lib/commit/7e82ee4a4b9b55861295389cff26b3cb72d6d592))
+* **geo:** Show add results icon only when hovering over the result ([#1230](https://github.com/infra-geo-ouverte/igo2-lib/issues/1230)) ([bdd304a](https://github.com/infra-geo-ouverte/igo2-lib/commit/bdd304a4d378692df2a08e263b994b7bd7b7cbc5))
+* **imported vector:** allow to store vector data and layer in indexeddb ([#1204](https://github.com/infra-geo-ouverte/igo2-lib/issues/1204)) ([7862664](https://github.com/infra-geo-ouverte/igo2-lib/commit/7862664e077ebef187ce4f016b209d8de3d5f1b2))
+* **indexeddb:** adding a store to save layers ([#1198](https://github.com/infra-geo-ouverte/igo2-lib/issues/1198)) ([ebe27b7](https://github.com/infra-geo-ouverte/igo2-lib/commit/ebe27b7eda8ef1bfb38c9bfd4057dd019448b344))
+* **integration:** Make the save search result option configurable ([#1206](https://github.com/infra-geo-ouverte/igo2-lib/issues/1206)) ([ebb3f21](https://github.com/infra-geo-ouverte/igo2-lib/commit/ebb3f21203925c14fbc2e50b00d0392acec08c8f))
+* **map-proximity:** keep radius distance into storage ([#1216](https://github.com/infra-geo-ouverte/igo2-lib/issues/1216)) ([ee63921](https://github.com/infra-geo-ouverte/igo2-lib/commit/ee639216ff704317e49bd31d8b2fc8c51913fc59))
+* **search:** search within imported data or vector data  ([#1185](https://github.com/infra-geo-ouverte/igo2-lib/issues/1185)) ([8f5889f](https://github.com/infra-geo-ouverte/igo2-lib/commit/8f5889fb41f9eec7d2607bc8053e58376e3b4673))
+
+
+### Reverts
+
+* **mapOffline:** partial revert for language service linked to message service. ([#1210](https://github.com/infra-geo-ouverte/igo2-lib/issues/1210)) ([21e29e9](https://github.com/infra-geo-ouverte/igo2-lib/commit/21e29e99ccbe64a940d4709601d4a32cc38b4623))
+
+
+
 ## [1.14.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.14.1...1.14.2) (2023-03-15)
 
 
