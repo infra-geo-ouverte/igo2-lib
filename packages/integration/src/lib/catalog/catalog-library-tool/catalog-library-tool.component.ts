@@ -1,17 +1,16 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
-import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
 
 import { EntityStore } from '@igo2/common';
-import { Catalog, CatalogItem, CatalogItemGroup, CatalogService, DDtoDMS } from '@igo2/geo';
+import { Catalog, CatalogItem, CatalogItemGroup, CatalogService } from '@igo2/geo';
 import { StorageService } from '@igo2/core';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import { forkJoin, of, zip } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { ContextService, DetailedContext } from '@igo2/context';
+import { forkJoin } from 'rxjs';
+import { ContextService } from '@igo2/context';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -47,7 +46,6 @@ export class CatalogLibraryToolComponent implements OnInit {
   @Input() predefinedCatalogs: Catalog[] = [];
 
   constructor(
-    private http: HttpClient,
     private contextService: ContextService,
     private catalogService: CatalogService,
     private catalogState: CatalogState,
@@ -132,8 +130,15 @@ export class CatalogLibraryToolComponent implements OnInit {
                         gestionnaire = "Externe";
                 }
                 const absUrl = item.options.sourceOptions.url.charAt(0) === '/' ? window.location.origin + item.options.sourceOptions.url : item.options.sourceOptions.url;
-                dataArray.push(catalogRank, item.title, catalogItemGroup.title, catalogTitle, gestionnaire, absUrl, 
-                  item.options.sourceOptions.params.LAYERS, "", item.options.metadata.abstract);
+                var description = "";
+                if(item.options.metadata.abstract.includes("\n")){
+                    description = item.options.metadata.abstract.replaceAll("\n", "");
+                }
+                else{
+                    description = item.options.metadata.abstract;
+                }
+                dataArray.push(catalogRank, item.title, catalogItemGroup.title, catalogTitle, gestionnaire, absUrl, item.options.sourceOptions.params.LAYERS, "", description);
+ 
                 bufferArray.push(dataArray);
                 dataArray = [];
                 catalogRank++;
@@ -154,8 +159,16 @@ export class CatalogLibraryToolComponent implements OnInit {
                     if(itemGroupWMTS.externalProvider === true)
                         gestionnaire = "Externe";
                 }
+                var description = "";
+                if(itemGroupWMTS.options.metadata.abstract.includes("\n")){
+                    description = itemGroupWMTS.options.metadata.abstract.replaceAll("\n", "");
+                }
+                else{
+                    description = itemGroupWMTS.options.metadata.abstract;
+                }
+
                 dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire, itemGroupWMTS.options.sourceOptions.url, 
-                  itemGroupWMTS.options.sourceOptions.layer, "", itemGroupWMTS.options.metadata.abstract);
+                  itemGroupWMTS.options.sourceOptions.layer, "", description);
 
                 bufferArray.push(dataArray);
                 dataArray = [];
