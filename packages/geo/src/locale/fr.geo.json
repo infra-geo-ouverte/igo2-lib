@@ -258,7 +258,7 @@
           "selectStyle": "Sélectionner le style de la légende",
           "showAll": "Montrer toutes les couches (non visible et hors échelle)",
           "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
-          "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
+          "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci-haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
         },
@@ -273,7 +273,7 @@
       },
       "style": {
         "styleModal": "Modifier le style",
-        "styleModalTooltipLayer": "Éditer le style des la présente couche.",
+        "styleModalTooltipLayer": "Éditer le style de la présente couche.",
         "styleModalTooltipSelected": "Éditer le style des entités sélectionnées",
         "colorPicker": "Cliquer pour ouvrir le sélecteur de couleurs",
         "cancel": "Annuler",
@@ -301,8 +301,8 @@
         "zoomOut": "Dézoomer ({{zoom}})",
 				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
-        "preventScreenLock": "Prévient l'écran d'entrer en mode verrouillé.",
-        "letScreenLock": "Permet l'écran d'entrer en mode verrouillé."
+        "preventScreenLock": "Préviens l'écran d'entrer en mode verrouillé.",
+        "letScreenLock": "Permets l'écran d'entrer en mode verrouillé."
       },
       "metadata": {
         "show": "Montrer les métadonnées"
@@ -528,7 +528,7 @@
         },
         "pointerSearchSummary": {
           "title": "Position du curseur",
-          "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
+          "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activés. Utiliser F2 pour activer / désactiver."
         },
         "searchResultsGeometry": {
           "title": "Montrer tous les résultats",
@@ -549,7 +549,7 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "restrictExtent": "Restreint l'étendue",
+            "restrictExtent": "Restreins l'étendue",
             "selectAll": "Tout sélectionner",
             "unselectAll": "Tout désélectionner",
             "true": "Oui",
@@ -581,7 +581,7 @@
       },
       "spatialFilter": {
         "spatialFilter": "Filtre spatial",
-        "predefined": "Zone Prédéfinie",
+        "predefined": "Zone prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",
         "point": "Cercle",
@@ -647,7 +647,7 @@
         "sites": "Sites patrimoniaux",
         "service-garde": "Services de garde",
         "public": "Écoles publiques",
-        "prive": "Écoles privés",
+        "prive": "Écoles privées",
         "gouvernemental": "Écoles gouvernementales",
         "colleges": "Collèges",
         "universites": "Universités",
@@ -798,7 +798,7 @@
       },
       "indexedDb": {
         "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
-        "data-download-completed": "Téléchargement des données terminée."
+        "data-download-completed": "Téléchargement des données terminées."
       }
     }
   }

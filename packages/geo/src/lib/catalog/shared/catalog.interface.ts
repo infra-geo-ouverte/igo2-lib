@@ -6,6 +6,17 @@ import { QueryFormat } from '../../query';
 
 import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
+export interface AddedChangeEmitter {
+  added: boolean;
+  layer: CatalogItemLayer
+  event: Event
+}
+export interface AddedChangeGroupEmitter {
+  added: boolean;
+  group: CatalogItemGroup
+  event: Event
+}
+
 export interface ICatalog {
   id: string;
   title?: string;

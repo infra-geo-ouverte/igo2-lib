@@ -20,7 +20,9 @@ import {
   CatalogItemLayer,
   CatalogItemGroup,
   CatalogItemState,
-  CatalogItemType
+  CatalogItemType,
+  AddedChangeEmitter,
+  AddedChangeGroupEmitter
 } from '../shared';
 
 /**
@@ -117,10 +119,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added event
    */
-  onLayerAddedChange(event: { added: boolean; layer: CatalogItemLayer }) {
+  onLayerAddedChange(event: AddedChangeEmitter) {
     const layer = event.layer;
     this.store.state.update(layer, { added: event.added }, false);
-    event.added ? this.addLayerToMap(layer) : this.removeLayerFromMap(layer);
+    event.added ? this.addLayerToMap(layer, event) : this.removeLayerFromMap(layer);
   }
 
   /**
@@ -128,18 +130,18 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Group added event
    */
-  onGroupAddedChange(event: { added: boolean; group: CatalogItemGroup }) {
+  onGroupAddedChange(event: AddedChangeGroupEmitter) {
     const group = event.group;
     this.store.state.update(group, { added: event.added }, false);
-    event.added ? this.addGroupToMap(group) : this.removeGroupFromMap(group);
+    event.added ? this.addGroupToMap(group, event) : this.removeGroupFromMap(group);
   }
 
   /**
    * Add layer to map
    * @param layer Catalog layer
    */
-  private addLayerToMap(layer: CatalogItemLayer) {
-    this.addLayersToMap([layer]);
+  private addLayerToMap(layer: CatalogItemLayer, event?: AddedChangeEmitter) {
+    this.addLayersToMap([layer], event);
   }
 
   /**
@@ -154,7 +156,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add multiple layers to map
    * @param layers Catalog layers
    */
-  private addLayersToMap(layers: CatalogItemLayer[]) {
+  private addLayersToMap(layers: CatalogItemLayer[], event: AddedChangeEmitter | AddedChangeGroupEmitter) {
     const layers$ = layers.map((layer: CatalogItemLayer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
@@ -164,10 +166,12 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       }
       return this.layerService.createAsyncLayer(layer.options);
     });
-
-    zip(...layers$).subscribe((oLayers: Layer[]) => {
+    zip(...layers$).subscribe((layers: Layer[]) => {
+      if (event.event.type === 'click' && event.added) {
+        this.map.layersAddedByClick$.next(layers);
+      }
       this.store.state.updateMany(layers, { added: true });
-      this.map.addLayers(oLayers);
+      this.map.addLayers(layers);
     });
   }
 
@@ -179,14 +183,14 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store.state.update(layer, { added: false });
       if (layer.options.baseLayer === true) {
-        const oLayer = this.map.getLayerById(layer.options.id);
-        if (oLayer !== undefined) {
-          this.map.removeLayer(oLayer);
+        const currLayer = this.map.getLayerById(layer.options.id);
+        if (currLayer !== undefined) {
+          this.map.removeLayer(currLayer);
         }
       } else {
-        const oLayer = this.map.getLayerById(layer.id);
-        if (oLayer !== undefined) {
-          this.map.removeLayer(oLayer);
+        const currLayer = this.map.getLayerById(layer.id);
+        if (currLayer !== undefined) {
+          this.map.removeLayer(currLayer);
         }
       }
     });
@@ -223,7 +227,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add all the layers of a group to map
    * @param group Catalog group
    */
-  private addGroupToMap(group: CatalogItemGroup) {
+  private addGroupToMap(group: CatalogItemGroup, event: AddedChangeGroupEmitter) {
     let layers = group.items.filter((item: CatalogItem) => {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;
@@ -231,7 +235,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     if (group.sortDirection !== undefined) {
       layers = this.sortCatalogItemsByTitle(layers, group.sortDirection);
     }
-    this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
+    this.addLayersToMap(layers.reverse() as CatalogItemLayer[], event);
   }
 
   /**

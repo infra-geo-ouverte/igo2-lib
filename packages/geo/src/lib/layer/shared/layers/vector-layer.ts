@@ -17,7 +17,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { VectorWatcher } from '../../utils';
-import { IgoMap, MapExtent } from '../../../map';
+import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
@@ -34,6 +34,8 @@ import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import { LayerDBData } from '../../../offline';
 import BaseEvent from 'ol/events/Event';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
+import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
+import { ObjectUtils } from '@igo2/utils';
 
 export class VectorLayer extends Layer {
   public dataSource:
@@ -69,6 +71,24 @@ export class VectorLayer extends Layer {
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
+    const initialOpacityValue = this.options.opacity || 1;
+    const initialVisibleValue = this.options.visible !== false;
+    const initialMinResValue = this.options.minResolution || getResolutionFromScale(Number(this.options.minScaleDenom));
+    const initialMaxResValue = this.options.maxResolution || getResolutionFromScale(Number(this.options.maxScaleDenom));
+    const so = this.options.sourceOptions as FeatureDataSourceOptions;
+    if (this.dataSource instanceof FeatureDataSource) {
+      if (so?.preload?.bypassResolution || so?.preload?.bypassVisible) {
+        this.options.opacity = 0;
+        if (so.preload.bypassResolution && (this.options.minResolution || this.options.maxResolution)) {
+          this.options.minResolution = 0;
+          this.options.maxResolution = Infinity;
+        }
+        if (so.preload.bypassVisible && !initialVisibleValue) {
+          this.options.visible = true;
+        }
+      }
+    }
+
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVector<OlGeometry>
     });
@@ -90,6 +110,23 @@ export class VectorLayer extends Layer {
         this.dataSource.ol.on('changefeature', () => this.maintainFeaturesInIdb());
         this.dataSource.ol.on('clear', () => this.maintainFeaturesInIdb());
         this.dataSource.ol.on('removefeature', () => this.maintainFeaturesInIdb());
+      });
+    }
+
+    if (
+      this.dataSource instanceof FeatureDataSource &&
+      (so?.preload?.bypassResolution || so?.preload?.bypassVisible)) {
+      this.dataSource.ol.once('featuresloadend', () => {
+        if (initialOpacityValue) {
+          this.opacity = initialOpacityValue;
+        }
+        if (so.preload.bypassResolution) {
+          this.minResolution = initialMinResValue;
+          this.maxResolution = initialMaxResValue;
+        }
+        if (so.preload.bypassVisible) {
+          this.visible = initialVisibleValue;
+        }
       });
     }
 
@@ -170,7 +207,7 @@ export class VectorLayer extends Layer {
 
   private maintainOptionsInIdb() {
     this.options.igoStyle.igoStyleObject = olStyleToBasicIgoStyle(this.ol);
-    const layerData: LayerDBData = {
+    const layerData: LayerDBData = ObjectUtils.removeUndefined({
       layerId: this.id,
       detailedContextUri: this.options.idbInfo.contextUri,
       sourceOptions: {
@@ -179,6 +216,7 @@ export class VectorLayer extends Layer {
         queryable: true
       },
       layerOptions: {
+        workspace: this.options.workspace,
         zIndex: this.ol ? this.zIndex: 1000000,
         id: this.id,
         isIgoInternalLayer: this.isIgoInternalLayer,
@@ -187,7 +225,7 @@ export class VectorLayer extends Layer {
         idbInfo: Object.assign({}, this.options.idbInfo, { firstLoad: false })
       },
       insertEvent: `${this.title}-${this.id}-${new Date()}`
-    };
+    });
     this.layerDBService.update(layerData);
   }
 

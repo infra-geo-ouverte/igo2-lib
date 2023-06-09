@@ -17,12 +17,14 @@ import {
   FeatureStoreInMapExtentStrategy,
   Feature,
   FeatureMotion,
-  FeatureStoreInMapResolutionStrategy
+  FeatureStoreInMapResolutionStrategy,
+  GeoPropertiesStrategy
 } from '../../feature';
-import { VectorLayer } from '../../layer';
+import { LayerService, VectorLayer } from '../../layer';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions } from '../../datasource';
+import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions, CapabilitiesService } from '../../datasource';
+import { PropertyTypeDetectorService} from '../../utils';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { WfsWorkspace } from './wfs-workspace';
@@ -30,6 +32,7 @@ import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, ConfigService } from '@igo2/core';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { getGeoServiceAction } from './workspace.utils';
 @Injectable({
   providedIn: 'root'
 })
@@ -41,7 +44,12 @@ export class WfsWorkspaceService {
 
   public ws$ = new BehaviorSubject<string>(undefined);
 
-  constructor(private storageService: StorageService, private configService: ConfigService) {}
+  constructor(
+    private storageService: StorageService,
+    private configService: ConfigService,
+    private layerService: LayerService,
+    private propertyTypeDetectorService: PropertyTypeDetectorService,
+    private capabilitiesService: CapabilitiesService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
     if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
@@ -76,6 +84,7 @@ export class WfsWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
+    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService, this.capabilitiesService);
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
@@ -99,6 +108,7 @@ export class WfsWorkspaceService {
     });
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
+    store.addStrategy(geoPropertiesStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
@@ -107,6 +117,7 @@ export class WfsWorkspaceService {
   }
 
   private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
+    const geoServiceAction = getGeoServiceAction(workspace, this.layerService);
     const fields = layer.dataSource.options.sourceFields || [];
 
     const relations = layer.dataSource.options.relations || [];
@@ -130,6 +141,7 @@ export class WfsWorkspaceService {
             renderer: EntityTableColumnRenderer.UnsanitizedHTML
           };
         });
+        columnsFromFeatures.unshift(...geoServiceAction);
         workspace.meta.tableTemplate = {
           selection: true,
           sort: true,
@@ -166,6 +178,7 @@ export class WfsWorkspaceService {
     });
 
     columns.push(...relationsColumn);
+    columns.unshift(...geoServiceAction);
     workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
