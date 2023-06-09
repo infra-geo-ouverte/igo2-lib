@@ -114,7 +114,7 @@ export class CatalogLibraryToolComponent implements OnInit {
         res.forEach((catalogs:Object) => {
           var catalogsList = Object.keys(catalogs[1]).map(key => catalogs[1][key]);
           var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
-          catalogsList.forEach(catalogItemGroup=>{
+          catalogsList.forEach(catalogItemGroup => {
             if (catalogItemGroup.items) {
               catalogItemGroup.items.forEach((item: any) => {
                 dataArray = [];
@@ -123,8 +123,8 @@ export class CatalogLibraryToolComponent implements OnInit {
                     if(item.externalProvider === true)
                         gestionnaire = "Externe";
                 }
-                const absUrl = item.options.sourceOptions.url.charAt(0) === '/' ? window.location.origin + 
-                item.options.sourceOptions.url : item.options.sourceOptions.url;
+                const absUrl = item.options.sourceOptions.url.charAt(0) === '/' ? window.location.origin +
+                  item.options.sourceOptions.url : item.options.sourceOptions.url;
                 dataArray.push(catalogRank, item.title, catalogItemGroup.title, catalogTitle, gestionnaire,
                   absUrl, item.options.sourceOptions.params.LAYERS, "", this.getDescription(item));
                 bufferArray.push(dataArray);
@@ -139,15 +139,16 @@ export class CatalogLibraryToolComponent implements OnInit {
                 bufferArray.push(dataArray);
                 dataArray = [];
               }
-              else{ 
+              else{
                 dataArray = [];
                 var gestionnaire = "MTQ";
                 if(itemGroupWMTS.externalProvider !== undefined){
                     if(itemGroupWMTS.externalProvider === true)
                         gestionnaire = "Externe";
                 }
-                dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire, itemGroupWMTS.options.sourceOptions.url, 
-                  itemGroupWMTS.options.sourceOptions.layer, "", this.getDescription(itemGroupWMTS));
+                dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire,
+                  itemGroupWMTS.options.sourceOptions.url, itemGroupWMTS.options.sourceOptions.layer, "", 
+                  this.getDescription(itemGroupWMTS));
                 bufferArray.push(dataArray);
                 dataArray = [];
                 catalogRank++;
