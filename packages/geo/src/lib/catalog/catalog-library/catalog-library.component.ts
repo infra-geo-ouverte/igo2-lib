@@ -12,16 +12,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntityStore } from '@igo2/common';
 import { MessageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
-import { forkJoin, Observable, Subscription } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
 
 import { Catalog } from '../shared/catalog.abstract';
-import { CatalogItemType } from '../shared/catalog.enum';
-import { CatalogItem, CatalogItemGroup } from '../shared/catalog.interface';
 import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 

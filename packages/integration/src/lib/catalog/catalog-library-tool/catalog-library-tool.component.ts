@@ -147,7 +147,7 @@ export class CatalogLibraryToolComponent implements OnInit {
                         gestionnaire = "Externe";
                 }
                 dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire,
-                  itemGroupWMTS.options.sourceOptions.url, itemGroupWMTS.options.sourceOptions.layer, "", 
+                  itemGroupWMTS.options.sourceOptions.url, itemGroupWMTS.options.sourceOptions.layer, "",
                   this.getDescription(itemGroupWMTS));
                 bufferArray.push(dataArray);
                 dataArray = [];
@@ -156,10 +156,10 @@ export class CatalogLibraryToolComponent implements OnInit {
             }
           });
         });
-        this.contextService.getLocalContexts().pipe(switchMap(contextsList => forkJoin(contextsList.ours.map(context => 
+        this.contextService.getLocalContexts().pipe(switchMap(contextsList => forkJoin(contextsList.ours.map(context =>
           this.contextService.getLocalContext(context.uri))))).subscribe(contextLayers => {
             for (var index in bufferArray) {
-              if(index!="0"){
+              if(index !== "0"){
               var contextLayersList = [];
               for(var layerContextList of contextLayers){
                   layerContextList.layers.forEach(layersName => {
