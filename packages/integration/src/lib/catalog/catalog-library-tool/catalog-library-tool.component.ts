@@ -4,7 +4,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { ToolComponent } from '@igo2/common';
 
 import { EntityStore } from '@igo2/common';
-import { Catalog, CatalogItem, CatalogItemGroup, CatalogService } from '@igo2/geo';
+import { Catalog, CatalogService } from '@igo2/geo';
 import { StorageService } from '@igo2/core';
 
 import { ToolState } from '../../tool/tool.state';
@@ -109,8 +109,8 @@ export class CatalogLibraryToolComponent implements OnInit {
       "Contexte/Thématique PlaniActifs", "Description de la donnée"]];
     var dataArray = [];
     this.store.entities$.pipe(switchMap(catalogs => {
-        return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca).pipe(map(lci => [ca, lci]))    ));
-    })).subscribe(res=> {
+        return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca).pipe(map(lci => [ca, lci]))));
+    })).subscribe(res => {
         res.forEach((catalogs:Object) => {
           var catalogsList = Object.keys(catalogs[1]).map(key => catalogs[1][key]);
           var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
