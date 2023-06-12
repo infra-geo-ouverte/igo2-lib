@@ -182,7 +182,7 @@
     "typescript": "~4.6.4",
     "wait-on": "^6.0.0",
     "webdriver-manager": "^12.1.6",
-    "webpack": "^5.76.0"
+    "webpack": "^5.86.0"
   },
   "engines": {
     "node": ">=16.19.0"
