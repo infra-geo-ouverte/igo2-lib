@@ -6,7 +6,7 @@ import { roundCoordTo } from '../../map/shared/map.utils';
 import { FeatureWithDirection } from '../shared/directions.interface';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
-import { RoutesFeatureStore, StopsStore } from '../shared/store';
+import { RoutesFeatureStore, StepFeatureStore, StopsStore } from '../shared/store';
 import { PrintService } from '../../print';
 
 @Component({
@@ -23,6 +23,7 @@ export class DirectionsButtonsComponent {
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
+  @Input() stepFeatureStore: StepFeatureStore;
   constructor(
     private languageService: LanguageService,
     private messageService: MessageService,
@@ -180,8 +181,11 @@ export class DirectionsButtonsComponent {
   }
 
   printDirections() {
-    this.printService.downloadDirection(this.routesFeatureStore.map)
-    .then((status) => {
+    this.stepFeatureStore.clear();
+    this.printService.downloadDirection(
+      this.routesFeatureStore.map, 
+      this.activeRoute.properties.direction
+    ).then((status) => {
       console.log('status: ', status);
     });
   }

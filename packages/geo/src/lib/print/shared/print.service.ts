@@ -21,6 +21,9 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
 import { PrintLegendPosition, PrintPaperFormat } from './print.type';
+import { default as moment } from 'moment';
+import { Direction, formatDistance, formatDuration, formatInstruction } from '../../directions';
+
 
 declare global {
   interface Navigator {
@@ -837,6 +840,7 @@ export class PrintService {
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
+      
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
@@ -1280,83 +1284,171 @@ export class PrintService {
   }
 
 
-  async downloadDirection(map: IgoMap): Promise<any> {
+  async downloadDirection(map: IgoMap, direction: Direction): Promise<any> {
 
+    const status$ = new Subject();
     GeoPdfPlugin(jsPDF.API);
     const doc = new jsPDF({
       orientation: 'p',
-      format: 'a4',
+      format: 'Letter',
       unit: 'pt' // default
     });
 
-    // map.ol.setSize([(doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3)]);
-    // map.ol.updateSize();
-    // map.ol.renderSync();
-    const mapSize = map.ol.getSize();
+    const size = map.ol.getSize();
     map.ol.once('rendercomplete', async (event: any) => {
+      
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-      const mapResultCanvas = await this.drawMap(
-        mapSize,
-        mapCanvas
-      );
-
     
       
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+      // Reset original map size
+      await this.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
 
-      const directionsResults = document.getElementsByTagName('igo-directions-results')[0];
-      const cloneDirection = directionsResults.cloneNode(true) as HTMLElement;
+      const margins = [60, 30, 30, 30]
+      const imageSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, margins);
+
+      doc.addImage(
+        mapResultCanvas.toDataURL(),
+        'PNG',
+        margins[3],
+        margins[0],
+        imageSize[0],
+        imageSize[1]
+      );
+
+      doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
+
+      this.addCanvas(doc, mapResultCanvas, [
+        60, 
+        30, // L
+        30,
+        30 // R
+      ])
+
+      doc.setFontSize(14);
+      const xOffset = (doc.internal.pageSize.width / 2) - (doc.getStringUnitWidth(direction.title) * doc.getFontSize() / 2); 
+      doc.text(direction.title, xOffset, imageSize[1] + 70, { baseline: 'top' });
+
+      const newDirections = await this.directionsInstruction(direction);
       
-      // const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
-      const imageSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [100,10,100,40]);
-      console.log('imageSize: ', imageSize);
-      // doc.addImage(mapResultCanvas.toDataURL(),20, 15, (doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3));
-      doc.addImage(mapResultCanvas.toDataURL(), 20, 15, imageSize[0], imageSize[1]);
-      //doc.rect(20, 15, (doc.internal.pageSize.width - 40), (doc.internal.pageSize.height / 3));
-      doc.rect(20, 15, imageSize[0], imageSize[1]);
+      doc.setFontSize(12);
+      doc.setDrawColor('#fff');
+      const between = (x, min, max) => {
+        return x >= min && x <= max;
+      }
+      let index = 0;
+      let currentH = 0;
+      const pageHeight = doc.internal.pageSize.height - 60;
+      let imagePosY = 40;
 
-      document.body.appendChild(cloneDirection);
+      for (const iterator of newDirections) {
+        const textToSize = doc.splitTextToSize(iterator.instruction, (doc.internal.pageSize.width - 60)).length
+        const calculH = ((textToSize > 2) ? textToSize-1 : textToSize) * 20;
+        currentH = currentH + calculH;
+        index++;
 
-      const matList = cloneDirection.getElementsByTagName('mat-list')[0] as HTMLElement;
-      
-      const result  = await this.replaceIcons(matList);
+        if (doc.getCurrentPageInfo().pageNumber === 1) {
+          console.log('pageHeight', pageHeight);
+          let startFrom = pageHeight/2; // start add from this Y
+          doc.text('------------------------------', 30 ,imageSize[1] + 60 + 20 + 40)
+          if(between(currentH, 0, startFrom)) {
+            doc.addImage(iterator.icon, 30,  (imagePosY + startFrom), 20, 20);
+            doc.cell(50, startFrom, (doc.internal.pageSize.width - 60),  calculH, iterator.instruction, index, 'left');
+          } else {
+            currentH = 0 + calculH;
+            doc.cellAddPage();
+            imagePosY = 40;
+            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
+          }
+         } else {
+          if (between(currentH,0,pageHeight)) {
+            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
+          }else {
+            currentH = 0 + calculH;
+            doc.cellAddPage();
+            imagePosY = 40;
+            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
+          }
+         }
+        imagePosY = imagePosY + calculH;
+      }
 
-      doc.html(result, {
-        x:10,
-        y: (doc.internal.pageSize.height / 3) + 5,
-        margin:10,
-        callback: function(pdf) {
-          pdf.save('test-direction.pdf');
-          cloneDirection.remove();
+      const today =  moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      const pageCount = doc.getNumberOfPages();
+      //set page header and footer
+      doc.setFontSize(8);
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        const pageSize = doc.internal.pageSize;
+        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+        const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        
+        // Header
+        doc.text(today, 10, 10, { baseline: 'top' });
+        doc.text('IGO Lib', pageWidth - 40, 10, { baseline: 'top' });
+        // Footer
+        const footer = `${i} of ${pageCount}`;
+        doc.text(footer, pageWidth - 40, pageHeight - 10, { baseline: 'bottom' });
+        doc.text(today, 10, pageHeight - 10, { baseline: 'bottom' });
+      }
 
-        },
+      status$.next(SubjectStatus.Done);
+      await this.saveDoc(doc);
 
-      });
-
-      const status$ = new Subject();
-      let status = SubjectStatus.Done;
-
-      status$.next(status);
+      // doc.save('test-direction.pdf');
       return status$;
+
+      
     });
+
   }
 
-  private async replaceIcons(directions): Promise<any> {
+  async directionsInstruction(
+    direction: Direction
+  ): Promise<Array<{ instruction: string, icon: string }>> {
 
-    for await (const element of directions.children) {
-
-      const matIcon = element.querySelectorAll('mat-icon')[0] as HTMLElement;
-      if(matIcon) {
-        element.style.height = '40px';
-        const canvas = await html2canvas(matIcon);
-        const img = document.createElement("img");
-        img.src = canvas.toDataURL();       
-        img.style.marginTop = '-10px';
-        img.style.width = '30px';
-        img.style.height = '30px';
-        matIcon.replaceWith(img);
+    const listE = document.getElementsByTagName('igo-directions-results')[0].getElementsByTagName('mat-list')[0];
+    const matListItem = listE.getElementsByTagName('mat-list-item');
+    // convert icon list to base64
+    let iconsArray: Array<{name: string, icon: string}> = [];
+    for (let index = 0; index < matListItem.length; index++) {
+      const element = matListItem[index];
+      const icon = element.getElementsByTagName('mat-icon')[0] as HTMLElement;
+      const iconName = icon.getAttribute('data-mat-icon-name') as string;
+      const found = iconsArray.some(el => el.name === iconName);
+      if(!found) {
+        const iconCanvas = await html2canvas(icon, { scale: 3});
+        iconsArray.push({name: iconName, icon: iconCanvas.toDataURL()});
       }
     }
-    return directions;
+
+    let formattedDirection: Array<{ instruction: string, icon: string }> = [];
+    for (let i = 0; i < direction.steps.length; i++) {
+      const step = direction.steps[i];
+      const instruction = formatInstruction(
+        step.maneuver.type,
+        step.maneuver.modifier,
+        step.name,
+        step.maneuver.bearing_after,
+        i,
+        (step.maneuver as any).exit,
+        this.languageService,
+        i === direction.steps.length - 1
+      );
+
+      const distance = formatDistance(step.distance); 
+
+      formattedDirection.push({
+        instruction: (i+1)+'. '+instruction.instruction + ((distance) ? ' ('+ distance +')' : ''),
+        icon: iconsArray.find((icon) => icon.name === instruction.image).icon,
+      });
+    }
+
+    return formattedDirection;
   }
+
 
 }
