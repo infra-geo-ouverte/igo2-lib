@@ -11,7 +11,7 @@ import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
+import { BehaviorSubject, pairwise, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -141,11 +141,19 @@ export class IgoMap {
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
-      this.layers$.subscribe((layers) => {
+      this.layers$
+      .pipe(pairwise())
+      .subscribe(([prevLayers, currentLayers]) => {
+        let prevLayersId;
+        if (prevLayers){
+          prevLayersId = prevLayers.map(l => l.id);
+        }
+        const layers = currentLayers.filter(l => !prevLayersId.includes(l.id));
+
         for (const layer of layers) {
           if (layer.options.linkedLayers) {
             layer.ol.once('postrender', () => {
-              initLayerSyncFromRootParentLayers(this, this.layers);
+              initLayerSyncFromRootParentLayers(this, layers);
             });
           }
         }
