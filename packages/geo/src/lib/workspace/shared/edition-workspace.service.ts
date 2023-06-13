@@ -4,10 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import {
   ActionStore,
-  EntityRecord,
-  EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
-  EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
