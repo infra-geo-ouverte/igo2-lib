@@ -6,6 +6,9 @@ import {
   EntityStoreFilterSelectionStrategy
 } from '@igo2/common';
 
+import * as jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   FeatureWorkspace,
@@ -13,7 +16,7 @@ import {
   noElementSelected,
   ExportOptions
 } from '@igo2/geo';
-import { StorageService, StorageServiceEvent, StorageServiceEventEnum, LanguageService, MediaService} from '@igo2/core';
+import { StorageService, StorageServiceEvent, StorageServiceEventEnum, LanguageService, MediaService } from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
 import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
@@ -44,7 +47,7 @@ export class FeatureActionsService implements OnDestroy {
     public languageService: LanguageService,
     private toolState: ToolState,
     private mediaService: MediaService
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -56,12 +59,12 @@ export class FeatureActionsService implements OnDestroy {
     workspace: FeatureWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
-    ) {
+  ) {
     const actions = this.buildActions(
       workspace,
       rowsInMapExtentCheckCondition$,
       selectOnlyCheckCondition$
-      );
+    );
     workspace.actionStore.load(actions);
   }
 
@@ -69,7 +72,7 @@ export class FeatureActionsService implements OnDestroy {
     workspace: FeatureWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
-    ): Action[] {
+  ): Action[] {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
       .pipe(
@@ -82,7 +85,7 @@ export class FeatureActionsService implements OnDestroy {
         this.zoomAuto$.next(this.zoomAuto);
         handleZoomAuto(workspace, this.storageService);
       });
-    return [
+    const actions = [
       {
         id: 'zoomAuto',
         checkbox: true,
@@ -183,7 +186,25 @@ export class FeatureActionsService implements OnDestroy {
         handler: () => {
           this.maximize$.next(false);
         }
+      },
+      {
+        id: 'print',
+        icon: 'printer',
+        title: 'igo.integration.workspace.print.title',
+        tooltip: 'igo.integration.workspace.print.tooltip',
+        handler: (ws: FeatureWorkspace) => {
+          const cwt = document.getElementById("currentWorkspaceTable");
+          const dims = [cwt.offsetHeight / 227 * 3, cwt.offsetWidth / 227 * 3];
+          const doc = new jsPDF.default('l', 'in', dims);
+          (doc as any).autoTable({ html: '#currentWorkspaceTable' });
+          doc.save(`${ws.layer.title}.pdf`);
+        },
+        args: [workspace]
       }
     ];
+
+    const returnActions = (workspace.layer.options.workspace.printable !== false) ?
+      actions : actions.filter(action => action.id !== 'print');
+    return returnActions;
   }
 }

@@ -100,7 +100,8 @@ export class WmsWorkspaceService {
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
 
     let wks;
-    let wksLayerOption = {
+    let wksLayerOption: GeoWorkspaceOptions = {
+      printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,
       enabled: false,

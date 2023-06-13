@@ -7,6 +7,9 @@ import {
   Widget
 } from '@igo2/common';
 
+import * as jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   WfsWorkspace,
@@ -182,9 +185,26 @@ export class WfsActionsService implements OnDestroy {
         handler: () => {
           this.maximize$.next(false);
         }
+      },
+      {
+        id: 'print',
+        icon: 'printer',
+        title: 'igo.integration.workspace.print.title',
+        tooltip: 'igo.integration.workspace.print.tooltip',
+        handler: (ws: WfsWorkspace) => {
+          const cwt = document.getElementById("currentWorkspaceTable");
+          const dims = [cwt.offsetHeight / 227 * 3, cwt.offsetWidth / 227 * 3];
+          const doc = new jsPDF.default('l', 'in', dims);
+          (doc as any).autoTable({ html: '#currentWorkspaceTable' });
+          doc.save(`${ws.layer.title}.pdf`);
+        },
+        args: [workspace]
       }
     ];
-    return (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
-    actions : actions.filter(action => action.id !== 'ogcFilter');
+    let returnActions = (workspace.layer.dataSource as OgcFilterableDataSource).options.ogcFilters?.enabled ?
+      actions : actions.filter(action => action.id !== 'ogcFilter');
+    returnActions = (workspace.layer.options.workspace.printable !== false) ?
+      actions : actions.filter(action => action.id !== 'print');
+    return returnActions;
   }
 }
