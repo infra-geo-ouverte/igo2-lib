@@ -20,6 +20,10 @@
     "@igo2/context": "1.15.2",
     "rxjs": "^7.5.6"
   },
+  "optionalDependencies": {
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.29"
+  },
   "dependencies": {
     "tslib": "^2.4.0"
   },
