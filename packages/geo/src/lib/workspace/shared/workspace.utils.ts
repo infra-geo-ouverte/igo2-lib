@@ -199,7 +199,8 @@ export function createTableTemplate(workspace: FeatureWorkspace | WfsWorkspace, 
   workspace.meta.tableTemplate = {
     selection: true,
     sort: true,
-    columns
+    columns,
+    tableHeight: '100%'
   };
 }
 
