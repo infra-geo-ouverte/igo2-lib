@@ -2,7 +2,7 @@ import { WfsWorkspace } from './wfs-workspace';
 import { FeatureWorkspace } from './feature-workspace';
 import { EditionWorkspace } from './edition-workspace';
 import { Observable } from 'rxjs';
-import { EntityStoreFilterCustomFuncStrategy, EntityRecord, EntityTableColumnRenderer, EntityTableButton, EntityStoreStrategyFuncOptions } from '@igo2/common';
+import { EntityStoreFilterCustomFuncStrategy, EntityRecord, EntityTableColumnRenderer, EntityTableButton, EntityStoreStrategyFuncOptions, EntityTableTemplate } from '@igo2/common';
 import { map, skipWhile, take } from 'rxjs/operators';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { StorageScope } from '@igo2/core';
@@ -149,8 +149,9 @@ export function createTableTemplate(workspace: FeatureWorkspace | WfsWorkspace, 
       workspace.meta.tableTemplate = {
         selection: true,
         sort: true,
-        columns: columnsFromFeatures
-      };
+        columns: columnsFromFeatures,
+        tableHeight: '100%'
+      } as EntityTableTemplate;
     });
     return;
   }
