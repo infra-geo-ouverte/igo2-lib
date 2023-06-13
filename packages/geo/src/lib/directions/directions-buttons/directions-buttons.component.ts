@@ -183,7 +183,7 @@ export class DirectionsButtonsComponent {
   printDirections() {
     this.stepFeatureStore.clear();
     this.printService.downloadDirection(
-      this.routesFeatureStore.map, 
+      this.routesFeatureStore.map,
       this.activeRoute.properties.direction
     ).then((status) => {
       console.log('status: ', status);

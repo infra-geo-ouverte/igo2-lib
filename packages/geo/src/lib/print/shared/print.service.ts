@@ -22,8 +22,7 @@ import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
 import { PrintLegendPosition, PrintPaperFormat } from './print.type';
 import { default as moment } from 'moment';
-import { Direction, formatDistance, formatDuration, formatInstruction } from '../../directions';
-
+import { Direction, formatDistance, formatInstruction } from '../../directions';
 
 declare global {
   interface Navigator {
@@ -840,7 +839,6 @@ export class PrintService {
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
-      
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
@@ -1296,15 +1294,12 @@ export class PrintService {
 
     const size = map.ol.getSize();
     map.ol.once('rendercomplete', async (event: any) => {
-      
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-    
-      
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
       // Reset original map size
       await this.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
 
-      const margins = [60, 30, 30, 30]
+      const margins = [60, 30, 30, 30];
       const imageSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, margins);
 
       doc.addImage(
@@ -1319,64 +1314,62 @@ export class PrintService {
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
 
       this.addCanvas(doc, mapResultCanvas, [
-        60, 
+        60,
         30, // L
         30,
         30 // R
-      ])
+      ]);
 
       doc.setFontSize(14);
-      const xOffset = (doc.internal.pageSize.width / 2) - (doc.getStringUnitWidth(direction.title) * doc.getFontSize() / 2); 
+      const xOffset = (doc.internal.pageSize.width / 2) - (doc.getStringUnitWidth(direction.title) * doc.getFontSize() / 2);
       doc.text(direction.title, xOffset, imageSize[1] + 70, { baseline: 'top' });
 
       const newDirections = await this.directionsInstruction(direction);
-      
+
       doc.setFontSize(12);
       doc.setDrawColor('#fff');
       const between = (x, min, max) => {
         return x >= min && x <= max;
-      }
+      };
       let index = 0;
       let currentH = 0;
       const pageHeight = doc.internal.pageSize.height - 60;
       let imagePosY = 40;
 
       for (const iterator of newDirections) {
-        const textToSize = doc.splitTextToSize(iterator.instruction, (doc.internal.pageSize.width - 60)).length
+        const textToSize = doc.splitTextToSize(iterator.instruction, (doc.internal.pageSize.width - 60)).length;
         const calculH = ((textToSize > 2) ? textToSize-1 : textToSize) * 20;
         currentH = currentH + calculH;
         index++;
 
         if (doc.getCurrentPageInfo().pageNumber === 1) {
-          console.log('pageHeight', pageHeight);
           let startFrom = pageHeight/2; // start add from this Y
-          doc.text('------------------------------', 30 ,imageSize[1] + 60 + 20 + 40)
-          if(between(currentH, 0, startFrom)) {
-            doc.addImage(iterator.icon, 30,  (imagePosY + startFrom), 20, 20);
-            doc.cell(50, startFrom, (doc.internal.pageSize.width - 60),  calculH, iterator.instruction, index, 'left');
+          if (between(currentH, 0, startFrom)) {
+            doc.addImage(iterator.icon, 30, (imagePosY + startFrom), 20, 20);
+            doc.cell(50, startFrom, (doc.internal.pageSize.width - 60), calculH, iterator.instruction, index, 'left');
           } else {
             currentH = 0 + calculH;
             doc.cellAddPage();
             imagePosY = 40;
-            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
-            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
+            doc.addImage(iterator.icon, 30, imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100), calculH, iterator.instruction, index, 'left');
           }
          } else {
           if (between(currentH,0,pageHeight)) {
-            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
-            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
-          }else {
+            doc.addImage(iterator.icon, 30, imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100), calculH, iterator.instruction, index, 'left');
+          } else {
             currentH = 0 + calculH;
             doc.cellAddPage();
             imagePosY = 40;
-            doc.addImage(iterator.icon, 30,  imagePosY, 20, 20);
-            doc.cell(50, 40, (doc.internal.pageSize.width - 100),  calculH, iterator.instruction, index, 'left');
+            doc.addImage(iterator.icon, 30, imagePosY, 20, 20);
+            doc.cell(50, 40, (doc.internal.pageSize.width - 100), calculH, iterator.instruction, index, 'left');
           }
          }
         imagePosY = imagePosY + calculH;
       }
 
-      const today =  moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
       const pageCount = doc.getNumberOfPages();
       //set page header and footer
       doc.setFontSize(8);
@@ -1385,7 +1378,6 @@ export class PrintService {
         const pageSize = doc.internal.pageSize;
         const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
         const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-        
         // Header
         doc.text(today, 10, 10, { baseline: 'top' });
         doc.text('IGO Lib', pageWidth - 40, 10, { baseline: 'top' });
@@ -1397,11 +1389,7 @@ export class PrintService {
 
       status$.next(SubjectStatus.Done);
       await this.saveDoc(doc);
-
-      // doc.save('test-direction.pdf');
       return status$;
-
-      
     });
 
   }
@@ -1439,8 +1427,7 @@ export class PrintService {
         i === direction.steps.length - 1
       );
 
-      const distance = formatDistance(step.distance); 
-
+      const distance = formatDistance(step.distance);
       formattedDirection.push({
         instruction: (i+1)+'. '+instruction.instruction + ((distance) ? ' ('+ distance +')' : ''),
         icon: iconsArray.find((icon) => icon.name === instruction.image).icon,
