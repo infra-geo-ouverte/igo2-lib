@@ -40,6 +40,7 @@ import olFeature from 'ol/Feature';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -233,7 +234,7 @@ export class EditionWorkspaceService {
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
+    store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
   }
 
@@ -376,13 +377,6 @@ export class EditionWorkspaceService {
       sort: true,
       columns
     };
-  }
-
-  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
-    const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true && record.state.inMapResolution === true;
-    };
-    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
   public saveFeature(feature, workspace: EditionWorkspace) {
