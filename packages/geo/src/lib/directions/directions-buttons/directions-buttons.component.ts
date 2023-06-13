@@ -24,6 +24,9 @@ export class DirectionsButtonsComponent {
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
+
+  public disablePrint: boolean = false;
+
   constructor(
     private languageService: LanguageService,
     private messageService: MessageService,
@@ -182,11 +185,12 @@ export class DirectionsButtonsComponent {
 
   printDirections() {
     this.stepFeatureStore.clear();
+    this.disablePrint = true;
     this.printService.downloadDirection(
       this.routesFeatureStore.map,
       this.activeRoute.properties.direction
-    ).then((status) => {
-      console.log('status: ', status);
+    ).subscribe(() => {
+      this.disablePrint = false;
     });
   }
 }
