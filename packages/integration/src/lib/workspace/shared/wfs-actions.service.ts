@@ -23,7 +23,7 @@ import { StorageService, StorageServiceEvent, StorageServiceEventEnum, LanguageS
 import { StorageState } from '../../storage/storage.state';
 import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
-import { handleZoomAuto } from './workspace.utils';
+import { getCurrentDateString, handleZoomAuto } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -193,10 +193,11 @@ export class WfsActionsService implements OnDestroy {
         tooltip: 'igo.integration.workspace.print.tooltip',
         handler: (ws: WfsWorkspace) => {
           const cwt = document.getElementById("currentWorkspaceTable");
+          const title = `${ws.layer.title} (${getCurrentDateString()})`;
           const dims = [cwt.offsetHeight / 227 * 3, cwt.offsetWidth / 227 * 3];
           const doc = new jsPDF.default('l', 'in', dims);
           (doc as any).autoTable({ html: '#currentWorkspaceTable' });
-          doc.save(`${ws.layer.title}.pdf`);
+          doc.save(`${title}.pdf`);
         },
         args: [workspace]
       }
