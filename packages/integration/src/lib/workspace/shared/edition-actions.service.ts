@@ -212,7 +212,7 @@ export class EditionActionsService implements OnDestroy {
             }
         });
           if (typeof doc.putTotalPages === 'function') {
-            doc.putTotalPages(totalPagesExp)
+            doc.putTotalPages(totalPagesExp);
           }
           doc.save(`${title}.pdf`);
         },
