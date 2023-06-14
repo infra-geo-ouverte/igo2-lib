@@ -845,6 +845,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns boolean
    */
   private isStringValidNumber(value: string): boolean {
-    return typeof value === 'string' && /^\d+$/.test(value) && (value.length > 1 && value.charAt(0) !== '0');
+    const isOctalNumber = value.startsWith("0") && value.length > 1;
+    return typeof value === 'string' && /^\d+$/.test(value) && !isOctalNumber;
   }
 }
