@@ -192,11 +192,30 @@ export class WfsActionsService implements OnDestroy {
         title: 'igo.integration.workspace.print.title',
         tooltip: 'igo.integration.workspace.print.tooltip',
         handler: (ws: WfsWorkspace) => {
-          const cwt = document.getElementById("currentWorkspaceTable");
           const title = `${ws.layer.title} (${getCurrentDateString()})`;
-          const dims = [cwt.offsetHeight / 227 * 3, cwt.offsetWidth / 227 * 3];
-          const doc = new jsPDF.default('l', 'in', dims);
-          (doc as any).autoTable({ html: '#currentWorkspaceTable' });
+          const doc: any = new jsPDF.default('landscape');
+          const totalPagesExp = '{total_pages_count_string}';
+          doc.text(title, 14, 20);
+          doc.autoTable({
+            startY: 25,
+            tableWidth: 'wrap',
+            html: '#currentWorkspaceTable',
+            horizontalPageBreak: true,
+            styles: {cellPadding: 0.5, minCellWidth: 20, fontSize: 6 },
+            didDrawPage: function (data) {
+                var str = 'Page ' + doc.internal.getNumberOfPages();
+                if (typeof doc.putTotalPages === 'function') {
+                    str = str + ' / ' + totalPagesExp;
+                }
+                doc.setFontSize(6);
+                var pageSize = doc.internal.pageSize;
+                var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                doc.text(str, data.settings.margin.left, pageHeight - 10);
+            }
+        });
+          if (typeof doc.putTotalPages === 'function') {
+            doc.putTotalPages(totalPagesExp)
+          }
           doc.save(`${title}.pdf`);
         },
         args: [workspace]
