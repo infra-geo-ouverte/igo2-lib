@@ -203,13 +203,13 @@ export class WfsActionsService implements OnDestroy {
             horizontalPageBreak: true,
             styles: {cellPadding: 0.5, minCellWidth: 20, fontSize: 6 },
             didDrawPage: function (data) {
-                var str = 'Page ' + doc.internal.getNumberOfPages();
+                let str = 'Page ' + doc.internal.getNumberOfPages();
                 if (typeof doc.putTotalPages === 'function') {
                     str = str + ' / ' + totalPagesExp;
                 }
                 doc.setFontSize(6);
-                var pageSize = doc.internal.pageSize;
-                var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
                 doc.text(str, data.settings.margin.left, pageHeight - 10);
             }
         });
