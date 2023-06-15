@@ -51,6 +51,7 @@ export interface GeoWorkspaceOptions {
   pageSize?: number;
   pageSizeOptions?: number[];
   searchIndexEnabled?: boolean;
+  printable?: boolean;
 }
 
 export interface GeoWorkspaceQueryOptions {
