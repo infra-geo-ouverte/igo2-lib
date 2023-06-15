@@ -21,8 +21,6 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
 import { PrintLegendPosition, PrintPaperFormat } from './print.type';
-import olVectorSource from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 declare global {
   interface Navigator {
