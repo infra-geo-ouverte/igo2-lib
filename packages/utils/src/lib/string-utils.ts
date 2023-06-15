@@ -115,4 +115,12 @@ export class StringUtils {
     }
     return res;
   }
+
+  static isValidNumber(value: string): boolean {
+    return !isNaN(Number(value));
+  }
+
+  static isOctalNumber(value: string): boolean {
+    return StringUtils.isValidNumber(value) && value.startsWith("0") && value.length > 1;
+  }
 }
