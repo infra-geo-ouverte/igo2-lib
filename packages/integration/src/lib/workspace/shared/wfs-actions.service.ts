@@ -10,6 +10,7 @@ import { StorageState } from '../../storage/storage.state';
 import { skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,8 @@ export class WfsActionsService implements OnDestroy {
     private storageState: StorageState,
     public languageService: LanguageService,
     private mediaService: MediaService,
-    private toolState: ToolState) {}
+    private toolState: ToolState,
+    private datePipe: DatePipe) {}
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -82,6 +84,7 @@ export class WfsActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState);
+      this.toolState,
+      this.datePipe);
   }
 }

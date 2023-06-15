@@ -17,6 +17,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { ToolState } from '../../tool';
+import { DatePipe } from '@angular/common';
 
 export function handleZoomAuto(workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace, storageService) {
     const zoomStrategy = workspace.entityStore
@@ -24,21 +25,6 @@ export function handleZoomAuto(workspace: FeatureWorkspace | WfsWorkspace | Edit
     zoomStrategy.setMotion(storageService.get('zoomAuto') as boolean ? FeatureMotion.Default : FeatureMotion.None);
 }
 
-function padTo2Digits(num) {
-    return num.toString().padStart(2, '0');
-}
-
-export function getCurrentDateString() {
-
-    const d = new Date();
-    const dformat =
-        [d.getFullYear(),
-        padTo2Digits(d.getMonth() + 1),
-        padTo2Digits(d.getDate()),].join('/') +
-        ' ' +
-        [padTo2Digits(d.getHours()), padTo2Digits(d.getMinutes())].join(':');
-    return dformat;
-}
 
 export function getWorkspaceActions(
     workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,
@@ -50,7 +36,8 @@ export function getWorkspaceActions(
     storageService: StorageService,
     languageService: LanguageService,
     mediaService: MediaService,
-    toolState: ToolState
+    toolState: ToolState,
+    datePipe: DatePipe
 ): Action[] {
 
     const actions = [
@@ -159,7 +146,7 @@ export function getWorkspaceActions(
             title: 'igo.integration.workspace.print.title',
             tooltip: 'igo.integration.workspace.print.tooltip',
             handler: (ws: FeatureWorkspace | WfsWorkspace | EditionWorkspace) => {
-                const title = `${ws.layer.title} (${getCurrentDateString()})`;
+                const title = `${ws.layer.title} (${datePipe.transform(Date.now(),'YYYY-MM-dd-H_mm')})`;
                 const doc: any = new jsPDF.default('landscape');
                 const totalPagesExp = '{total_pages_count_string}';
                 doc.text(title, 14, 20);

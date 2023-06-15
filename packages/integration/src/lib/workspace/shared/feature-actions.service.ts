@@ -9,6 +9,7 @@ import { StorageState } from '../../storage/storage.state';
 import { skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,8 @@ export class FeatureActionsService implements OnDestroy {
     private storageState: StorageState,
     public languageService: LanguageService,
     private toolState: ToolState,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnDestroy(): void {
@@ -79,6 +81,7 @@ export class FeatureActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState);
+      this.toolState,
+      this.datePipe);
   }
 }
