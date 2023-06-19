@@ -150,7 +150,7 @@
     "@types/jasmine": "^3.5.11",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^14.18.23",
-    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.33.0",
     "@types/flexsearch": "^0.7.3",
     "angular-cli-ghpages": "^1.0.3",
