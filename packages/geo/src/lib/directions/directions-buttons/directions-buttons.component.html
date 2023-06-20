@@ -25,7 +25,7 @@
   </button>
 
   <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-    *ngIf="(routesFeatureStore.count$ | async)>=1" (click)="printDirections()"
+     (click)="printDirections()"
     [disabled]="disablePrint" 
     [matTooltip]="'igo.geo.directionsForm.print' | translate" color="primary">
     <mat-icon svgIcon="printer"></mat-icon>

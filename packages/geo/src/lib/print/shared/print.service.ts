@@ -6,6 +6,7 @@ import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable'
 import html2canvas from 'html2canvas';
 import { default as JSZip } from 'jszip';
 
@@ -1128,7 +1129,7 @@ export class PrintService {
     const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
     const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
     const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
-
+    console.log([imgWidth, imgHeigh]);
     return [imgWidth, imgHeigh];
   }
 
@@ -1439,4 +1440,162 @@ export class PrintService {
     }
     return formattedDirection;
   }
+
+  newPrintDirection(map: IgoMap, direction: Direction): Observable<SubjectStatus> {
+
+    const status$ = new Subject<SubjectStatus>();
+
+    GeoPdfPlugin(jsPDF.API);
+    const doc = new jsPDF({
+      orientation: 'p',
+      format: 'Letter',
+      unit: 'mm' // default
+    });
+
+    const between = (x: number, min: number, max: number) => {
+      return x >= min && x <= max;
+    }
+    
+    const s = document.getElementsByTagName('igo-map-browser')[0] as HTMLElement;
+    const offsetHeight = s.offsetHeight;
+
+    s.style.height = '300px';
+
+    const size = map.ol.getSize();
+    
+    map.ol.once('rendercomplete', async (event: any) => {
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+      const data = await this.directionsInstruction(direction);
+
+      
+      console.log("old s.offsetHeight: ", s.offsetHeight);
+
+      console.log('mapCanvas.toDataURL(): ', mapCanvas.toDataURL());
+
+
+      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
+
+      const docW = doc.internal.pageSize.width - 20; // 20 margin L10/R10 mm
+      const docH = doc.internal.pageSize.height - 20; // 20 margin T10/B10 mm
+
+      const mapH = (imgSize[1] <= 80) ? imgSize[1] : 80; // unit mm
+      console.log('image size', imgSize);
+      doc.addImage(mapResultCanvas.toDataURL(), 'png', 10, 10, imgSize[0], imgSize[1]);
+      doc.rect(10, 10, imgSize[0], mapH);
+
+      doc.setFontSize(14);
+      const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
+      doc.text(title, docW/2 ,(mapH + 20), {align: 'center'});
+
+      // mapH + marginbetwin map and title + margin betwin title and instruction
+      const startFromFirstPage = mapH + 20 + 10;
+      const marginText = 10;
+
+      const counNumberOflinesFirstPage = Math.round((docH - startFromFirstPage) / marginText);
+      console.log('counNumberOflinesFirstPage: ', counNumberOflinesFirstPage);
+
+      const startFromNewPage = 15;
+      const counNumberOflinesbyPage = Math.round((docH - startFromNewPage) / marginText);
+      console.log('counNumberOflinesbyPage: ', counNumberOflinesbyPage);
+
+      const textPX = 20;
+      let textPY = 0;
+      let countLinesPerPage = 0;
+      
+      doc.setFontSize(12);
+      
+      data.forEach(element => {
+        // first page
+        const instructionWidth = doc.getTextWidth(element.instruction);
+
+        if (doc.getCurrentPageInfo().pageNumber === 1) {
+          if (between(countLinesPerPage, 0, counNumberOflinesFirstPage)) {
+            textPY = (textPY === 0) ? startFromFirstPage : textPY + marginText;
+            doc.addImage(element.icon, 10, textPY - 5, 8,8);
+            doc.text(element.instruction, textPX, textPY);
+            if (element.distance) { 
+              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
+            }
+            countLinesPerPage++;
+          } else {
+            doc.addPage();
+            textPY = startFromNewPage;
+            doc.addImage(element.icon, 10, textPY - 5, 8,8);
+            doc.text(element.instruction, textPX, textPY);
+            if (element.distance) {
+              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
+            }
+            countLinesPerPage = 1;
+          }
+        } else {
+          if (between(countLinesPerPage, 0, counNumberOflinesbyPage)) {
+            textPY = (textPY === 0) ? startFromNewPage : textPY + marginText;
+            doc.addImage(element.icon, 10, textPY - 5, 8,8);
+            doc.text(element.instruction, textPX, textPY);
+            if (element.distance) {
+              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
+            }
+            countLinesPerPage++;
+          } else {
+            doc.addPage();
+            textPY = startFromNewPage;
+            doc.addImage(element.icon, 10, textPY - 5, 8,8);
+            doc.text(element.instruction, textPX, textPY);
+            if (element.distance) {
+              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
+            }
+            countLinesPerPage = 1;
+          }
+        }
+      });
+
+      await this.saveDoc(doc);
+      status$.next(SubjectStatus.Done);
+    });
+
+    return status$;
+  }
+
+
+  exportWithAutoTable(
+    // map: IgoMap,
+    // direction: Direction
+  ): Observable<SubjectStatus> {
+    
+    const status$ = new Subject<SubjectStatus>();
+    GeoPdfPlugin(jsPDF.API);
+    const doc = new jsPDF({
+      orientation: 'p',
+      format: 'Letter',
+      unit: 'mm' // default
+    });
+
+   const data = 
+    autoTable(doc, {
+      columnStyles: { europe: { halign: 'left' } }, // European countries centered
+      body: [
+        { europe: 'Sweden' },
+        { europe: 'Norway' },
+      ],
+    })
+    doc.save('test-autotable');
+    
+    status$.next(SubjectStatus.Done);
+  
+
+    return status$;
+  }
+
 }
+
+
+
+
+
+
+
+
+
+

@@ -120,7 +120,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   ],
   providers: [
     { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, ApplicationRef], multi: true },
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions }
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
   ],
   bootstrap: [AppComponent]
 })

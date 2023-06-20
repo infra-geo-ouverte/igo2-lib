@@ -186,9 +186,16 @@ export class DirectionsButtonsComponent {
   printDirections() {
     this.stepFeatureStore.clear();
     this.disablePrint = true;
-    this.printService.downloadDirection(
+    /*this.printService.downloadDirection(
       this.routesFeatureStore.map,
       this.activeRoute.properties.direction
+    ).subscribe(() => {
+      this.disablePrint = false;
+    });*/
+
+    this.printService.exportWithAutoTable(
+      // this.routesFeatureStore.map,
+      //this.activeRoute.properties.direction
     ).subscribe(() => {
       this.disablePrint = false;
     });
