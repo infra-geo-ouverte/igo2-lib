@@ -1,4 +1,4 @@
-import { 
+import {
     EntityStoreFilterCustomFuncStrategy,
     EntityStoreFilterSelectionStrategy,
     Widget,
