@@ -53,6 +53,7 @@ import { AppComponent } from './app.component';
 import { IgoCoreModule, LanguageService } from '@igo2/core';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { concatMap, first } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   showDelay: 500,
@@ -121,6 +122,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   providers: [
     { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, ApplicationRef], multi: true },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })
