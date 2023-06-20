@@ -9,13 +9,10 @@
   "files": [],
   "references": [
     {
-      "path": "./demo/src/tsconfig.app.json"
+      "path": "./demo/tsconfig.app.json"
     },
     {
-      "path": "./demo/src/tsconfig.spec.json"
-    },
-    {
-      "path": "./cypress/tsconfig.json"
+      "path": "./demo/tsconfig.spec.json"
     },
     {
       "path": "./packages/auth/tsconfig.lib.json"

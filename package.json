@@ -47,7 +47,7 @@
     "test.common": "ng test common --watch=false --code-coverage",
     "test.geo": "ng test geo --watch=false --code-coverage",
     "test.context": "ng test context --watch=false --code-coverage",
-    "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
+    "test.demo": "ng test demo --watch=false --code-coverage && npm run e2e.run",
     "watch.libs": "rimraf ./dist && run-p _watch.*",
     "_watch.utils": "ng build utils --watch",
     "_watch.core": "wait-on dist/utils/package.json && ng build core --watch",
@@ -76,8 +76,8 @@
     "preghpages.win": "gulp core:bundleLocale && npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
     "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
     "postghpages.win": "rimraf ./dist/ghpages",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "e2e.open": "ng run demo:e2e:local",
+    "e2e.run": "ng run demo:e2e:production"
   },
   "private": true,
   "dependencies": {
