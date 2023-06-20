@@ -1,5 +1,9 @@
-import { EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy, Widget } from '@igo2/common';
-import { Action } from '@igo2/common/lib/action/shared/action.interfaces';
+import { 
+    EntityStoreFilterCustomFuncStrategy,
+    EntityStoreFilterSelectionStrategy,
+    Widget,
+    Action
+} from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
 import {
     FeatureMotion,
