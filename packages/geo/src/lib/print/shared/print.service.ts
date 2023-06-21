@@ -1560,8 +1560,8 @@ export class PrintService {
 
 
   exportWithAutoTable(
-    // map: IgoMap,
-    // direction: Direction
+    map: IgoMap,
+    direction: Direction
   ): Observable<SubjectStatus> {
     
     const status$ = new Subject<SubjectStatus>();
@@ -1572,19 +1572,92 @@ export class PrintService {
       unit: 'mm' // default
     });
 
-   const data = 
-    autoTable(doc, {
-      columnStyles: { europe: { halign: 'left' } }, // European countries centered
-      body: [
-        { europe: 'Sweden' },
-        { europe: 'Norway' },
-      ],
-    })
-    doc.save('test-autotable');
-    
-    status$.next(SubjectStatus.Done);
-  
+    const size = map.ol.getSize();
+    map.ol.once('rendercomplete', async (event: any) => {
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
 
+      doc.addImage(mapResultCanvas.toDataURL(), 'png', 10, 10, imgSize[0], imgSize[1]);
+      doc.rect(10, 10, imgSize[0], imgSize[1]);
+      doc.setFontSize(14);
+      const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
+      const titleP = (imgSize[1] + 20);
+      doc.text(title, (doc.internal.pageSize.width/2) ,titleP, {align: 'center'});
+      const data = await this.directionsInstruction(direction);
+      const tbl = document.createElement("table");
+      const tblBody = document.createElement("tbody");
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        var row = document.createElement("tr");
+        var cellImage = document.createElement("td");
+        var cellText = document.createElement("td");
+        // icon
+        const img = document.createElement("img") as HTMLImageElement;
+        img.src = element.icon;
+        // instruction text
+        const span = document.createElement("span") as HTMLElement;
+        span.innerHTML = element.instruction;
+        cellImage.appendChild(img);
+        cellText.appendChild(span);
+        if(element.distance) {
+          const spanDistance = document.createElement("span") as HTMLElement;
+          spanDistance.style.verticalAlign = 'middle';
+          spanDistance.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + element.distance;
+          cellText.appendChild(spanDistance);
+        }
+        row.append(cellImage);
+        row.append(cellText);
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+
+      const tablePos = titleP + 5;
+
+      autoTable(doc, {
+        html: tbl,
+        startY: tablePos,
+        columnStyles: {
+          0: {cellWidth: 10,},
+        },
+        theme:'plain',
+        styles: {
+          fontSize: 12
+        },
+        didDrawCell: function(data) {
+          if (data.column.index === 0 && data.cell.section === 'body') {
+            data.row.height = 10;
+            var td = data.cell.raw as HTMLElement;
+            var img = td.getElementsByTagName('img')[0];
+            doc.addImage(img.src, data.cell.x,  data.cell.y, 8, 8);
+          }
+        },
+        
+      });
+
+      doc.setFontSize(8);
+      //set page header and footer
+      const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        const pageSize = doc.internal.pageSize;
+        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+            // Header
+            doc.text(today, 10, 5, { baseline: 'top' });
+            doc.text('IGO Lib', pageWidth - 20, 5, { baseline: 'top' });
+            // Footer
+            const footer = `${i} of ${pageCount}`;
+            doc.text(footer, pageWidth - 20, pageHeight - 5, { baseline: 'bottom' });
+            doc.text(today, 10, pageHeight - 5, { baseline: 'bottom' });
+          }
+          await this.saveDoc(doc);
+
+      status$.next(SubjectStatus.Done);
+      doc.save('test-autotable');
+    });
+    
     return status$;
   }
 

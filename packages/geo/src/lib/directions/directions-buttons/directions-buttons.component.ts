@@ -194,8 +194,8 @@ export class DirectionsButtonsComponent {
     });*/
 
     this.printService.exportWithAutoTable(
-      // this.routesFeatureStore.map,
-      //this.activeRoute.properties.direction
+      this.routesFeatureStore.map,
+      this.activeRoute.properties.direction
     ).subscribe(() => {
       this.disablePrint = false;
     });
