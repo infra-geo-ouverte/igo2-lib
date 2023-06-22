@@ -5,8 +5,8 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { default as JSZip } from 'jszip';
 
@@ -1456,10 +1456,10 @@ export class PrintService {
       return x >= min && x <= max;
     }
     
-    const s = document.getElementsByTagName('igo-map-browser')[0] as HTMLElement;
-    const offsetHeight = s.offsetHeight;
+    // const s = document.getElementsByTagName('igo-map-browser')[0] as HTMLElement;
+    // const offsetHeight = s.offsetHeight;
 
-    s.style.height = '300px';
+    // s.style.height = '300px';
 
     const size = map.ol.getSize();
     
@@ -1470,7 +1470,7 @@ export class PrintService {
       const data = await this.directionsInstruction(direction);
 
       
-      console.log("old s.offsetHeight: ", s.offsetHeight);
+      // console.log("old s.offsetHeight: ", s.offsetHeight);
 
       console.log('mapCanvas.toDataURL(): ', mapCanvas.toDataURL());
 
@@ -1480,9 +1480,10 @@ export class PrintService {
       const docW = doc.internal.pageSize.width - 20; // 20 margin L10/R10 mm
       const docH = doc.internal.pageSize.height - 20; // 20 margin T10/B10 mm
 
-      const mapH = (imgSize[1] <= 80) ? imgSize[1] : 80; // unit mm
-      console.log('image size', imgSize);
-      doc.addImage(mapResultCanvas.toDataURL(), 'png', 10, 10, imgSize[0], imgSize[1]);
+      const mapH = 108.3517699115044; // unit mm
+      
+
+      doc.addImage(mapResultCanvas, 'png', 10, 10, 195.89999999999998, 108.3517699115044);
       doc.rect(10, 10, imgSize[0], mapH);
 
       doc.setFontSize(14);
@@ -1563,26 +1564,34 @@ export class PrintService {
     map: IgoMap,
     direction: Direction
   ): Observable<SubjectStatus> {
-    
+
     const status$ = new Subject<SubjectStatus>();
-    GeoPdfPlugin(jsPDF.API);
-    const doc = new jsPDF({
+
+    const doc: any = new jsPDF({
       orientation: 'p',
       format: 'Letter',
       unit: 'mm' // default
     });
 
+    console.log('layers: ', map.layers);
     const size = map.ol.getSize();
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
-      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
+      this.renderMap(map, size, 5);
 
-      doc.addImage(mapResultCanvas.toDataURL(), 'png', 10, 10, imgSize[0], imgSize[1]);
-      doc.rect(10, 10, imgSize[0], imgSize[1]);
+      await this.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
+
+      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
+     
+      
+      doc.addImage(mapResultCanvas, 10, 20, imgSize[0], imgSize[1]);
+      doc.rect(10, 20, imgSize[0], imgSize[1]);
+
       doc.setFontSize(14);
       const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
-      const titleP = (imgSize[1] + 20);
+      const titleP = (imgSize[1] + 10 + 20);
       doc.text(title, (doc.internal.pageSize.width/2) ,titleP, {align: 'center'});
       const data = await this.directionsInstruction(direction);
       const tbl = document.createElement("table");
@@ -1613,8 +1622,9 @@ export class PrintService {
       tbl.appendChild(tblBody);
 
       const tablePos = titleP + 5;
-
-      autoTable(doc, {
+      const totalPagesExp = '{total_pages_count_string}';
+      const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      doc.autoTable({
         html: tbl,
         startY: tablePos,
         columnStyles: {
@@ -1632,35 +1642,34 @@ export class PrintService {
             doc.addImage(img.src, data.cell.x,  data.cell.y, 8, 8);
           }
         },
-        
+        didDrawPage: (data) => {
+          let str = 'Page ' + doc.getNumberOfPages();
+          if (typeof doc.putTotalPages === 'function') {
+            str = str + ' / ' + totalPagesExp;
+          }
+          doc.setFontSize(8);
+          const pageSize = doc.internal.pageSize;
+          const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+          const width = pageSize.width ? pageSize.width : pageSize.getWidth();
+
+          doc.text(today, 10, 10, { baseline: 'top' });
+
+          doc.text(str, width - 20, pageHeight - 10);
+          doc.text(today, data.settings.margin.left, pageHeight - 10);
+        }
       });
 
-      doc.setFontSize(8);
-      //set page header and footer
-      const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
-      const pageCount = doc.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        const pageSize = doc.internal.pageSize;
-        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
-            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-            // Header
-            doc.text(today, 10, 5, { baseline: 'top' });
-            doc.text('IGO Lib', pageWidth - 20, 5, { baseline: 'top' });
-            // Footer
-            const footer = `${i} of ${pageCount}`;
-            doc.text(footer, pageWidth - 20, pageHeight - 5, { baseline: 'bottom' });
-            doc.text(today, 10, pageHeight - 5, { baseline: 'bottom' });
-          }
-          await this.saveDoc(doc);
+      if (typeof doc.putTotalPages === 'function') {
+        doc.putTotalPages(totalPagesExp);
+      }
+
+      await this.saveDoc(doc);
 
       status$.next(SubjectStatus.Done);
-      doc.save('test-autotable');
     });
     
     return status$;
   }
-
 }
 
 
