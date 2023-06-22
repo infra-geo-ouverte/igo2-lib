@@ -733,7 +733,6 @@ export class PrintService {
           mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
         }
       }
-    
       return mapResultCanvas;
   }
 
