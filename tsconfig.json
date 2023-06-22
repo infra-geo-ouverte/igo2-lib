@@ -42,6 +42,9 @@
       "path": "./packages/utils/tsconfig.lib.json"
     },
     {
+      "path": "./packages/utils/tsconfig.spec.json"
+    },
+    {
       "path": "./packages/context/tsconfig.lib.json"
     },
     {
@@ -49,6 +52,9 @@
     },
     {
       "path": "./packages/integration/tsconfig.lib.json"
-    }
+    },
+    {
+      "path": "./packages/integration/tsconfig.spec.json"
+    },
   ]
 }

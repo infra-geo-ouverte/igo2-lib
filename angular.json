@@ -186,7 +186,8 @@
             "karmaConfig": "demo/karma.conf.js",
             "styles": ["demo/src/styles.scss"],
             "scripts": [],
-            "assets": ["demo/src/favicon.ico", "demo/src/assets"]
+            "assets": ["demo/src/favicon.ico", "demo/src/assets"],
+            "codeCoverage": true
           }
         },
         "e2e": {
@@ -238,7 +239,8 @@
           "options": {
             "main": "packages/auth/src/test.ts",
             "tsConfig": "packages/auth/tsconfig.spec.json",
-            "karmaConfig": "packages/auth/karma.conf.js"
+            "karmaConfig": "packages/auth/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -282,7 +284,8 @@
           "options": {
             "main": "packages/common/src/test.ts",
             "tsConfig": "packages/common/tsconfig.spec.json",
-            "karmaConfig": "packages/common/karma.conf.js"
+            "karmaConfig": "packages/common/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -326,7 +329,8 @@
           "options": {
             "main": "packages/core/src/test.ts",
             "tsConfig": "packages/core/tsconfig.spec.json",
-            "karmaConfig": "packages/core/karma.conf.js"
+            "karmaConfig": "packages/core/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -370,7 +374,8 @@
           "options": {
             "main": "packages/geo/src/test.ts",
             "tsConfig": "packages/geo/tsconfig.spec.json",
-            "karmaConfig": "packages/geo/karma.conf.js"
+            "karmaConfig": "packages/geo/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -411,6 +416,15 @@
               "packages/utils/**/*.html"
             ]
           }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "packages/utils/tsconfig.spec.json",
+            "karmaConfig": "packages/utils/karma.conf.js",
+            "main": "packages/utils/src/test.ts",
+            "codeCoverage": true
+          }
         }
       }
     },
@@ -444,7 +458,8 @@
           "options": {
             "main": "packages/context/src/test.ts",
             "tsConfig": "packages/context/tsconfig.spec.json",
-            "karmaConfig": "packages/context/karma.conf.js"
+            "karmaConfig": "packages/context/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
