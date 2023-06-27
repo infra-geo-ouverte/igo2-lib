@@ -1061,7 +1061,7 @@ export class PrintService {
     return status$;
   }
 
-  setMapImageResolution(
+  private setMapImageResolution(
     map: IgoMap,
     initialMapSize: [number, number],
     resolution: number,
