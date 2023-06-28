@@ -1,7 +1,10 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-tour-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $warn: map-get($theme, warn);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $warn: map.get($theme, warn);
 
   igo-interactive-tour > button.mat-raised-button.tour-button-tool-icon {
     box-shadow: none;

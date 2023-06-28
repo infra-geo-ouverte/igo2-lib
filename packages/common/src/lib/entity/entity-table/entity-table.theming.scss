@@ -1,6 +1,9 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-entity-table-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
 
   igo-entity-table table.igo-entity-table-with-selection tr.igo-entity-table-row-highlighted {
     background-color: mat.get-color-from-palette($primary, A100);

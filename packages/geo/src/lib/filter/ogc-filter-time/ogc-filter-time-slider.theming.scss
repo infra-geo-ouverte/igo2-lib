@@ -1,9 +1,14 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-ogc-filter-time-slider-theming($theme) {
-    $primary: map-get($theme, primary);    
+    $primary: map.get($theme, primary);    
     $color: mat.define-palette(mat.$yellow-palette);
 
-    .mat-slider-thumb-label {
-        transform: rotate(45deg) !important;
-        border-radius: 50% 50% 0 !important;
-      }
+    igo-ogc-filter-time-slider {
+        .mat-slider-thumb-label {
+            transform: rotate(45deg) !important;
+            border-radius: 50% 50% 0 !important;
+        }
+    }
   }

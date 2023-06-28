@@ -1,3 +1,5 @@
+@use './entity-table/entity-table.theming.scss' as entity-table-theme;
+
 @mixin igo-entity-theming($theme) {
-  @include igo-entity-table-theming($theme);
+  @include entity-table-theme.igo-entity-table-theming($theme);
 }

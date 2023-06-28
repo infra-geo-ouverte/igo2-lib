@@ -1,5 +1,0 @@
-@mixin igo-all-theming($theme, $typography: $igo-typography) {
-  @include igo-theming($theme, $typography);
-  @include igo-common-theming($theme, $typography);
-  @include igo-geo-theming($theme, $typography);
-}

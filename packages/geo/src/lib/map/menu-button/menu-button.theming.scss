@@ -1,5 +1,8 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-menu-button-theming($theme) {
-  $primary: map-get($theme, primary);
+  $primary: map.get($theme, primary);
 
   igo-menu-button > #menu-button {
     color: mat.get-color-from-palette($primary);

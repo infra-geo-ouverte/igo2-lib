@@ -12,5 +12,12 @@
     "@turf/helpers",
     "@turf/line-intersect",
     "@turf/point-on-feature"
+  ],
+  "assets": [
+    { "input": "src", "glob": "*.scss", "output": "" },
+    { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
+    { "input": "src/assets", "glob": "**/*", "output": "assets" },
+    { "input": "src/style", "glob": "**/*", "output": "style" },
+    { "input": "src/locale", "glob": "*", "output": "locale" }
   ]
 }

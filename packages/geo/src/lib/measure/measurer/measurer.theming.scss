@@ -1,5 +1,8 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-measurer-theming($theme, $typography) {
-  $foreground: map-get($theme, foreground);
+  $foreground: map.get($theme, foreground);
 
   .igo-map-tooltip {
     position: relative;

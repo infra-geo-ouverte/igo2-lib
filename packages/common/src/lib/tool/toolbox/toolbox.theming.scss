@@ -1,7 +1,10 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-toolbox-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $foreground: map-get($theme, foreground);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $foreground: map.get($theme, foreground);
 
   igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
     &:hover {
