@@ -10,7 +10,7 @@
     { "input": "src", "glob": "*.scss", "output": "" },
     { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
     { "input": "src/assets", "glob": "**/*", "output": "assets" },
-    { "input": "src/style", "glob": "**/*", "output": "style" },
+    { "input": "src/style/partial", "glob": "**/*.scss", "output": "style/partial" },
     { "input": "src/locale", "glob": "*", "output": "locale" },
     { "input": "node_modules/@mdi/angular-material", "glob": "mdi.svg", "output": "assets/icons" }
   ]

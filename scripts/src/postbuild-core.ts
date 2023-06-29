@@ -51,10 +51,10 @@ async function compileAllBaseStyle(): Promise<void> {
 }
 
 async function prebuiltThemes(): Promise<void> {
-  const destination = path.join(distPath, '/style/theming/prebuilt-themes');
+  const destination = path.join(distPath, '/theming/prebuilt-themes');
   const themeFolder = path.join(
     packagesPath,
-    '/src/style/theming/prebuilt-themes'
+    '/src/theming/prebuilt-themes'
   );
 
   const files = await readdir(themeFolder);

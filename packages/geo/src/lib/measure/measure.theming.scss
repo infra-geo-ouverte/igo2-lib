@@ -1,5 +1,5 @@
 @use './measurer/measurer.theming.scss' as measurer;
 
-@mixin igo-measure-theming($theme, $typography) {
-  @include measurer.igo-measurer-theming($theme, $typography);
+@mixin igo-measure-theming($theme) {
+  @include measurer.igo-measurer-theming($theme);
 }

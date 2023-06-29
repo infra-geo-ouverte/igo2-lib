@@ -1,7 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use './foreground';
-@use '../../../index' as igo;
+@use '../../index' as igo;
 
 $qcca-palette: (
   50: #f2f1f1,
@@ -46,7 +46,7 @@ $success: mat.define-palette($qcca-palette, 900);
 $background: mat.define-palette($qcca-palette, 100, 100, 100);
 $foreground: mat.define-palette($qcca-palette, 700, 700, 700);
 
-$temp-theme: mat.define-light-theme(
+$theme: mat.define-light-theme(
   (
     color: (
       primary: $primary,
@@ -54,38 +54,23 @@ $temp-theme: mat.define-light-theme(
       warn: $warn,
       success: $success,
       background: $background
-    )
+    ),
+    typography: igo.$igo-typography,
+    density: 0
   )
-);
-
-$theme-foreground: (
-  base: #223654,
-  divider: #f2f1f1,
-  dividers: #f2f1f1,
-  disabled: #f2f1f1,
-  disabled-button: #f2f1f1,
-  disabled-text: #f2f1f1,
-  hint-text: #f2f1f1,
-  secondary-text: #f2f1f1,
-  icon: #f2f1f1,
-  icons: #f2f1f1,
-  text: #223654,
-  slider-min: #f2f1f1,
-  slider-off: #f2f1f1,
-  slider-off-active: #f2f1f1
 );
 
 $foreground: foreground.theme-foreground(
   mat.define-palette($qcca-palette, 500, 100, 700)
 );
 $theme: map.merge(
-  $temp-theme,
+  $theme,
   (
     foreground: $foreground
   )
 );
 
-@include mat.strong-focus-indicators-theme($theme);
+@include mat.all-component-colors($theme);
 @include igo.all-component-themes($theme);
 
 /* For the non-Angular Material items */

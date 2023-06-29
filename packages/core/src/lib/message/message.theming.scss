@@ -1,10 +1,11 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@mixin igo-message-theming($theme, $typography) {
+@mixin igo-message-theming($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $warn: map.get($theme, warn);
+  $typography: mat.get-typography-config($theme);
 
   .toast-error {
     background-color: mat.get-color-from-palette($warn) !important;

@@ -7,13 +7,13 @@
 @use './lib/measure/measure.theming.scss' as measure-theme;
 @use './lib/workspace/workspace.theming.scss' as workspace-theme;
 
-@mixin geo-component-themes($theme, $typography) {
+@mixin geo-component-themes($theme) {
   @include directions-theme.igo-directions-theming($theme);
-  @include draw-theme.igo-draw-theming($theme, $typography);
+  @include draw-theme.igo-draw-theming($theme);
   @include feature-theme.igo-feature-theming($theme);
-  @include filter-theme.igo-filter-theming($theme, $typography);
+  @include filter-theme.igo-filter-theming($theme);
   @include layer-theme.igo-layer-theming($theme);
-  @include map-theme.igo-map-theming($theme, $typography);
-  @include measure-theme.igo-measure-theming($theme, $typography);
-  @include workspace-theme.igo-workspace-theming($theme, $typography);
+  @include map-theme.igo-map-theming($theme);
+  @include measure-theme.igo-measure-theming($theme);
+  @include workspace-theme.igo-workspace-theming($theme);
 }

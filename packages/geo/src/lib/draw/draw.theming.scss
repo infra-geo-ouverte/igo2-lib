@@ -1,8 +1,9 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@mixin igo-draw-theming($theme, $typography) {
+@mixin igo-draw-theming($theme) {
   $foreground: map.get($theme, foreground);
+  $typography: mat.get-typography-config($theme);
 
   igo-draw-popup-component, igo-draw-popup-component, igo-draw-shorcuts, igo-draw {
     .igo-map-tooltip {

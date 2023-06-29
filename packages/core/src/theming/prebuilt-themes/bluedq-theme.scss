@@ -1,7 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use './foreground';
-@use '../../../index' as igo;
+@use '../../index' as igo;
 
 $dq-palette: (
   50: #e1f5fd,
@@ -46,7 +46,9 @@ $theme: mat.define-light-theme(
       primary: $primary,
       accent: $accent,
       warn: $warn
-    )
+    ),
+    typography: igo.$igo-typography,
+    density: 0
   )
 );
 
@@ -58,4 +60,5 @@ $theme: map.merge(
   )
 );
 
+@include mat.all-component-colors($theme);
 @include igo.all-component-themes($theme);

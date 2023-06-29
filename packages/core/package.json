@@ -27,7 +27,7 @@
       "sass": "./core-theme.scss"
     },
     "./prebuilt-themes/*": {
-      "style": "./style/theming/prebuilt-themes/*.css"
+      "style": "./theming/prebuilt-themes/*.css"
     }
   },
   "dependencies": {

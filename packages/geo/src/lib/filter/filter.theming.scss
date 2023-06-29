@@ -2,7 +2,7 @@
 @use './ogc-filter-time/ogc-filter-time-slider.theming.scss' as ogc-filter-slider;
 @use './ogc-filter-selection/ogc-filter-selection.theming.scss' as ogc-filter-selection;
 
-@mixin igo-filter-theming($theme, $typography) {
+@mixin igo-filter-theming($theme) {
   @include time-filter.igo-time-filter-form-theming($theme);
   @include ogc-filter-slider.igo-ogc-filter-time-slider-theming($theme);
   @include ogc-filter-selection.igo-ogc-filter-selection-theming($theme);

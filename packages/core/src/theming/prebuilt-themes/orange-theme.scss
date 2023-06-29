@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@use '../../../index' as igo;
+@use '../../index' as igo;
 
 $primary: mat.define-palette(mat.$orange-palette, 800);
 $accent: mat.define-palette(mat.$light-blue-palette, 600, 100, 800);
@@ -10,7 +10,10 @@ $theme: mat.define-light-theme((
         primary: $primary,
         accent: $accent,
         warn: $warn
-    )
+    ),
+    typography: igo.$igo-typography,
+    density: 0,
 ));
 
+@include mat.all-component-colors($theme);
 @include igo.all-component-themes($theme);
