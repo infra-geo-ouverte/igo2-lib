@@ -540,6 +540,8 @@ export class PrintService {
       div.style.position = 'absolute';
       div.style.top = '0';
       div.style.zIndex = '-1';
+      
+      console.log('test');
       // Add html code to convert in the new window
       window.document.body.appendChild(div);
       div.innerHTML = html;
