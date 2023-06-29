@@ -1,5 +1,5 @@
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatLegacyCheckboxChange as MatCheckboxChange } from '@angular/material/legacy-checkbox';
+import { MatLegacyRadioChange as MatRadioChange } from '@angular/material/legacy-radio';
 
 import {
   Component,

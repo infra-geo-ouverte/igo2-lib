@@ -8,7 +8,7 @@ import { IgoImportExportModule, IgoStyleModule } from '@igo2/geo';
 import { ImportExportToolComponent } from './import-export-tool/import-export-tool.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoContextImportExportModule } from '@igo2/context';

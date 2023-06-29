@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { LegacyFloatLabelType as FloatLabelType } from '@angular/material/legacy-form-field';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import {

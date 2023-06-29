@@ -7,7 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
-import { MatSlider } from '@angular/material/slider';
+import { MatLegacySlider as MatSlider } from '@angular/material/legacy-slider';
 import { default as moment } from 'moment';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 

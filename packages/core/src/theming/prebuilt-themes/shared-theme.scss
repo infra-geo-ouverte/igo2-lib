@@ -1,13 +1,13 @@
 @use '@angular/material' as mat;
 @use '../../index' as igo;
 
-$typography: igo.$igo-typography;
 $config: (
-    typography: $typography,
+    typography: igo.$igo-typography,
     density: 0
 );
 
-@include mat.core($typography);
+@include mat.legacy-core();
+@include mat.all-legacy-component-typographies($config);
+@include mat.legacy-typography-hierarchy($config);
 
-@include mat.all-component-typographies($config);
-@include mat.private-all-component-densities($config);
+@include mat.private-all-legacy-component-densities($config);

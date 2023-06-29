@@ -15,5 +15,5 @@ $theme: mat.define-dark-theme((
     density: 0,
 ));
 
-@include mat.all-component-colors($theme);
+@include mat.all-legacy-component-colors($theme);
 @include igo.all-component-themes($theme);

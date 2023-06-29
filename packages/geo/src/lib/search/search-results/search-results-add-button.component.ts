@@ -13,7 +13,7 @@ import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
 import { Subscription, BehaviorSubject, take } from 'rxjs';
 import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { DataSourceService, FeatureDataSource } from '../../datasource';
 import {

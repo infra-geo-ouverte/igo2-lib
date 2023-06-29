@@ -13,7 +13,7 @@ import type { TemplateRef } from '@angular/core';
 
 import scrollIntoView from 'scroll-into-view-if-needed';
 
-import { FloatLabelType } from '@angular/material/form-field';
+import { LegacyFloatLabelType as FloatLabelType } from '@angular/material/legacy-form-field';
 import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
 import {
@@ -32,7 +32,7 @@ import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.int
 import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties } from '../shared/layers/layer.interface';
-import { MatSliderChange } from '@angular/material/slider';
+import { MatLegacySliderChange as MatSliderChange } from '@angular/material/legacy-slider';
 import * as olextent from 'ol/extent';
 import { getAllChildLayersByProperty, getRootParentByProperty } from '../../map/shared/linkedLayers.utils';
 

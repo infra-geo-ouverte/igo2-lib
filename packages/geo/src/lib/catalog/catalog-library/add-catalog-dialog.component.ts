@@ -1,6 +1,6 @@
 import { LanguageService, ConfigService } from '@igo2/core';
 import { Component, OnInit, OnDestroy, Optional, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
