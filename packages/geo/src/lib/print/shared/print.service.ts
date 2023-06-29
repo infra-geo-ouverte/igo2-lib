@@ -1142,7 +1142,6 @@ export class PrintService {
     const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
     const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
     const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
-    console.log([imgWidth, imgHeigh]);
     return [imgWidth, imgHeigh];
   }
 
@@ -1295,122 +1294,6 @@ export class PrintService {
     return n * k;
   }
 
-  downloadDirection(map: IgoMap, direction: Direction): Observable<SubjectStatus> {
-
-    const status$ = new Subject<SubjectStatus>();
-
-    GeoPdfPlugin(jsPDF.API);
-    const doc = new jsPDF({
-      orientation: 'p',
-      format: 'Letter',
-      unit: 'pt' // default
-    });
-
-    const size = map.ol.getSize();
-    map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-      const mapResultCanvas = await this.drawMap(size, mapCanvas);
-      const data = await this.directionsInstruction(direction);
-
-      // container
-      const newDiv = document.createElement("div") as HTMLElement;
-      newDiv.style.margin = '10px';
-      newDiv.style.maxWidth = (doc.internal.pageSize.width - 20) + 'px';
-      newDiv.style.width = '100%';
-      newDiv.style.fontSize = '12px';
-      newDiv.style.color = '#000';
-      newDiv.style.zIndex = '-1';
-      // map image
-      const imgMap = document.createElement("img") as HTMLImageElement;
-      imgMap.src = mapResultCanvas.toDataURL();
-      imgMap.style.objectFit = 'cover';
-      imgMap.style.width = '95%';
-      imgMap.style.height = 'auto';
-      imgMap.style.maxHeight = '300px';
-      imgMap.style.display = 'block';
-      imgMap.style.marginLeft = 'auto';
-      imgMap.style.marginRight = 'auto';
-      imgMap.style.border = 'solid';
-      imgMap.style.borderWidth = '1px';
-      // titel
-      const h4 = document.createElement("h4") as HTMLElement;
-      h4.innerHTML = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
-      h4.style.textAlign = 'center';
-
-      // list of instructions
-      const ul = document.createElement("ul") as HTMLElement;
-      ul.style.listStyleType = 'none';
-      ul.style.paddingInlineStart = '5px';
-
-      data.forEach(element => {
-        const li = document.createElement("li") as HTMLElement;
-        li.style.height = '30px';
-        ul.appendChild(li);
-        // icon
-        const img = document.createElement("img") as HTMLImageElement;
-        img.src = element.icon;
-        img.style.width = '25px';
-        img.style.height = '25px';
-        img.style.verticalAlign = 'middle';
-        // instruction text
-        const span = document.createElement("span") as HTMLElement;
-        span.style.verticalAlign = 'middle';
-        span.style.marginLeft = '15px';
-        span.innerHTML = element.instruction;
-
-        li.appendChild(img);
-        li.appendChild(span);
-        // instruction distance
-        if(element.distance) {
-          const spanDistance = document.createElement("span") as HTMLElement;
-          spanDistance.style.verticalAlign = 'middle';
-          spanDistance.style.marginLeft = '15px';
-          spanDistance.innerHTML = element.distance;
-          li.appendChild(spanDistance);
-        }
-      });
-
-      newDiv.appendChild(imgMap);
-      newDiv.appendChild(h4);
-      newDiv.appendChild(ul);
-      // add div to DOM before printing
-      document.getElementsByTagName('body')[0].appendChild(newDiv);
-      // genetare pdf from HTML
-      doc.html(newDiv, {
-        x: 0,
-        y: 0,
-        autoPaging: 'text',
-        margin: [30, 0, 30, 0],
-        callback: async () => {
-          // remove div from DOM
-          newDiv.remove();
-          //set page header and footer
-          const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
-          const pageCount = doc.getNumberOfPages();
-          doc.setFontSize(8);
-          for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            const pageSize = doc.internal.pageSize;
-            const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
-            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-            // Header
-            doc.text(today, 10, 10, { baseline: 'top' });
-            doc.text('IGO Lib', pageWidth - 40, 10, { baseline: 'top' });
-            // Footer
-            const footer = `${i} of ${pageCount}`;
-            doc.text(footer, pageWidth - 40, pageHeight - 10, { baseline: 'bottom' });
-            doc.text(today, 10, pageHeight - 10, { baseline: 'bottom' });
-          }
-          await this.saveDoc(doc);
-          status$.next(SubjectStatus.Done);
-        },
-      }).catch(() => {
-        status$.next(SubjectStatus.Error);
-      });
-    });
-    return status$;
-  }
-
   async directionsInstruction(
     direction: Direction
   ): Promise<Array<{ instruction: string, icon: string, distance: string }>> {
@@ -1454,126 +1337,7 @@ export class PrintService {
     return formattedDirection;
   }
 
-  newPrintDirection(map: IgoMap, direction: Direction): Observable<SubjectStatus> {
-
-    const status$ = new Subject<SubjectStatus>();
-
-    GeoPdfPlugin(jsPDF.API);
-    const doc = new jsPDF({
-      orientation: 'p',
-      format: 'Letter',
-      unit: 'mm' // default
-    });
-
-    const between = (x: number, min: number, max: number) => {
-      return x >= min && x <= max;
-    }
-    
-    // const s = document.getElementsByTagName('igo-map-browser')[0] as HTMLElement;
-    // const offsetHeight = s.offsetHeight;
-
-    // s.style.height = '300px';
-
-    const size = map.ol.getSize();
-    
-    map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-
-      const mapResultCanvas = await this.drawMap(size, mapCanvas);
-      const data = await this.directionsInstruction(direction);
-
-      
-      // console.log("old s.offsetHeight: ", s.offsetHeight);
-
-      console.log('mapCanvas.toDataURL(): ', mapCanvas.toDataURL());
-
-
-      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
-
-      const docW = doc.internal.pageSize.width - 20; // 20 margin L10/R10 mm
-      const docH = doc.internal.pageSize.height - 20; // 20 margin T10/B10 mm
-
-      const mapH = 108.3517699115044; // unit mm
-      
-
-      doc.addImage(mapResultCanvas, 'png', 10, 10, 195.89999999999998, 108.3517699115044);
-      doc.rect(10, 10, imgSize[0], mapH);
-
-      doc.setFontSize(14);
-      const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
-      doc.text(title, docW/2 ,(mapH + 20), {align: 'center'});
-
-      // mapH + marginbetwin map and title + margin betwin title and instruction
-      const startFromFirstPage = mapH + 20 + 10;
-      const marginText = 10;
-
-      const counNumberOflinesFirstPage = Math.round((docH - startFromFirstPage) / marginText);
-      console.log('counNumberOflinesFirstPage: ', counNumberOflinesFirstPage);
-
-      const startFromNewPage = 15;
-      const counNumberOflinesbyPage = Math.round((docH - startFromNewPage) / marginText);
-      console.log('counNumberOflinesbyPage: ', counNumberOflinesbyPage);
-
-      const textPX = 20;
-      let textPY = 0;
-      let countLinesPerPage = 0;
-      
-      doc.setFontSize(12);
-      
-      data.forEach(element => {
-        // first page
-        const instructionWidth = doc.getTextWidth(element.instruction);
-
-        if (doc.getCurrentPageInfo().pageNumber === 1) {
-          if (between(countLinesPerPage, 0, counNumberOflinesFirstPage)) {
-            textPY = (textPY === 0) ? startFromFirstPage : textPY + marginText;
-            doc.addImage(element.icon, 10, textPY - 5, 8,8);
-            doc.text(element.instruction, textPX, textPY);
-            if (element.distance) { 
-              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
-            }
-            countLinesPerPage++;
-          } else {
-            doc.addPage();
-            textPY = startFromNewPage;
-            doc.addImage(element.icon, 10, textPY - 5, 8,8);
-            doc.text(element.instruction, textPX, textPY);
-            if (element.distance) {
-              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
-            }
-            countLinesPerPage = 1;
-          }
-        } else {
-          if (between(countLinesPerPage, 0, counNumberOflinesbyPage)) {
-            textPY = (textPY === 0) ? startFromNewPage : textPY + marginText;
-            doc.addImage(element.icon, 10, textPY - 5, 8,8);
-            doc.text(element.instruction, textPX, textPY);
-            if (element.distance) {
-              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
-            }
-            countLinesPerPage++;
-          } else {
-            doc.addPage();
-            textPY = startFromNewPage;
-            doc.addImage(element.icon, 10, textPY - 5, 8,8);
-            doc.text(element.instruction, textPX, textPY);
-            if (element.distance) {
-              doc.text(element.distance, (instructionWidth + textPX + 5), textPY);
-            }
-            countLinesPerPage = 1;
-          }
-        }
-      });
-
-      await this.saveDoc(doc);
-      status$.next(SubjectStatus.Done);
-    });
-
-    return status$;
-  }
-
-
-  exportWithAutoTable(
+  downloadDirection(
     map: IgoMap,
     direction: Direction
   ): Observable<SubjectStatus> {
@@ -1586,19 +1350,15 @@ export class PrintService {
       unit: 'mm' // default
     });
 
-    console.log('layers: ', map.layers);
     const size = map.ol.getSize();
     map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
-      
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
       this.renderMap(map, size, 5);
-
       await this.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
 
       const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
-     
-      
+
       doc.addImage(mapResultCanvas, 10, 20, imgSize[0], imgSize[1]);
       doc.rect(10, 20, imgSize[0], imgSize[1]);
 
@@ -1606,42 +1366,20 @@ export class PrintService {
       const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
       const titleP = (imgSize[1] + 10 + 20);
       doc.text(title, (doc.internal.pageSize.width/2) ,titleP, {align: 'center'});
-      const data = await this.directionsInstruction(direction);
-      const tbl = document.createElement("table");
-      const tblBody = document.createElement("tbody");
-      for (let index = 0; index < data.length; index++) {
-        const element = data[index];
-        var row = document.createElement("tr");
-        var cellImage = document.createElement("td");
-        var cellText = document.createElement("td");
-        // icon
-        const img = document.createElement("img") as HTMLImageElement;
-        img.src = element.icon;
-        // instruction text
-        const span = document.createElement("span") as HTMLElement;
-        span.innerHTML = element.instruction;
-        cellImage.appendChild(img);
-        cellText.appendChild(span);
-        if(element.distance) {
-          const spanDistance = document.createElement("span") as HTMLElement;
-          spanDistance.style.verticalAlign = 'middle';
-          spanDistance.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + element.distance;
-          cellText.appendChild(spanDistance);
-        }
-        row.append(cellImage);
-        row.append(cellText);
-        tblBody.appendChild(row);
-      }
-      tbl.appendChild(tblBody);
 
+      const HTMLtable = await this.setHTMLTableContent(direction);
       const tablePos = titleP + 5;
       const totalPagesExp = '{total_pages_count_string}';
-      const today = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      const date = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
+      const appName = (this.configService.getConfig('title')) ?
+      this.configService.getConfig('title') : 'IGO Lib';
+
       doc.autoTable({
-        html: tbl,
+        html: HTMLtable,
         startY: tablePos,
+        margin: {top: 20, bottom: 20},
         columnStyles: {
-          0: {cellWidth: 10,},
+          0: {cellWidth: 10},
         },
         theme:'plain',
         styles: {
@@ -1652,23 +1390,11 @@ export class PrintService {
             data.row.height = 10;
             var td = data.cell.raw as HTMLElement;
             var img = td.getElementsByTagName('img')[0];
-            doc.addImage(img.src, data.cell.x,  data.cell.y, 8, 8);
+            doc.addImage(img.src, data.cell.x, data.cell.y, 8, 8);
           }
         },
         didDrawPage: (data) => {
-          let str = 'Page ' + doc.getNumberOfPages();
-          if (typeof doc.putTotalPages === 'function') {
-            str = str + ' / ' + totalPagesExp;
-          }
-          doc.setFontSize(8);
-          const pageSize = doc.internal.pageSize;
-          const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-          const width = pageSize.width ? pageSize.width : pageSize.getWidth();
-
-          doc.text(today, 10, 10, { baseline: 'top' });
-
-          doc.text(str, width - 20, pageHeight - 10);
-          doc.text(today, data.settings.margin.left, pageHeight - 10);
+          this.setPageHeaderFooter(doc, data, [date, totalPagesExp, appName]);
         }
       });
 
@@ -1680,17 +1406,64 @@ export class PrintService {
 
       status$.next(SubjectStatus.Done);
     });
-    
+
     return status$;
   }
+
+  private async setHTMLTableContent (
+    direction: Direction
+  ): Promise<HTMLTableElement> {
+    const data = await this.directionsInstruction(direction);
+    const table = document.createElement("table");
+    const tblBody = document.createElement("tbody");
+    for (let index = 0; index < data.length; index++) {
+      const element = data[index];
+      var row = document.createElement("tr");
+      var cellImage = document.createElement("td");
+      var cellText = document.createElement("td");
+      // icon
+      const img = document.createElement("img") as HTMLImageElement;
+      img.src = element.icon;
+      // instruction text
+      const span = document.createElement("span") as HTMLElement;
+      span.innerHTML = element.instruction;
+      cellImage.appendChild(img);
+      cellText.appendChild(span);
+      if(element.distance) {
+        const spanDistance = document.createElement("span") as HTMLElement;
+        spanDistance.style.verticalAlign = 'middle';
+        spanDistance.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + element.distance;
+        cellText.appendChild(spanDistance);
+      }
+      row.append(cellImage);
+      row.append(cellText);
+      tblBody.appendChild(row);
+    }
+    table.appendChild(tblBody);
+    return table;
+  }
+
+  /**
+   * @param doc - PDF
+   * @param data - HookData
+   * @param text - [date: string, totalPageExp: string]
+   */
+  private setPageHeaderFooter(
+    doc: jsPDF,
+    data,
+    text: [date: string, totalPageExp: string, appName: string]
+  ): void {
+    let str = 'Page ' + doc.getNumberOfPages();
+    if (typeof doc.putTotalPages === 'function') {
+      str = str + ' / ' + text[1];
+    }
+    doc.setFontSize(8);
+    const pageSize = doc.internal.pageSize;
+    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+    const width = pageSize.width ? pageSize.width : pageSize.getWidth();
+    doc.text(text[0], 10, 10, { baseline: 'top' });
+    doc.text(text[2], width - 20, 10);
+    doc.text(str, width - 20, pageHeight - 10);
+    doc.text(text[0], data.settings.margin.left, pageHeight - 10);
+  }
 }
-
-
-
-
-
-
-
-
-
-
