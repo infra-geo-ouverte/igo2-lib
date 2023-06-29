@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  Renderer2
 } from '@angular/core';
 
 import { userAgent } from '@igo2/utils';
@@ -19,19 +18,15 @@ export class AppComponent implements OnDestroy {
 
   public title = 'IGO';
   public version = version;
-  private themeClass = 'deeppurple-theme';
   private _mobileQueryListener: () => void;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
-    private renderer: Renderer2
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
-
-    this.renderer.addClass(document.body, this.themeClass);
 
     this.detectOldBrowser();
   }

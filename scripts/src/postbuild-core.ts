@@ -6,53 +6,51 @@ import { readdir } from 'fs/promises';
 
 const distPath = 'dist/core';
 const packagesPath = 'packages/core';
+const styleDest = path.join(distPath, '/style');
 
-(() => {
+(async () => {
   fixPackagesThemesImport();
 
   copyExternalAssets();
 
-  prebuiltThemes();
+  await prebuiltThemes();
 
-  compileBaseStyle();
+  await compileBaseStyle();
 
-  compileAllBaseStyle();
+  await compileAllBaseStyle();
 })();
 
-function copyExternalAssets() {
+async function copyExternalAssets(): Promise<void> {
   const input = 'node_modules/@mdi/angular-material/mdi.svg';
   const output = path.join(distPath, 'assets/icons/mdi.svg');
-  copyFile(input, output);
+  await copyFile(input, output);
 }
 
-function fixPackagesThemesImport() {
-  const fileName = 'themes-import';
-  const indexPath = path.join(distPath, `${fileName}.scss`);
-  const indexProdPath = path.join(distPath, `${fileName}.prod.scss`);
+// Allow to import styles in production or in local. This will give us the flexibility to extends our style and debug.
+function fixPackagesThemesImport(): void {
+  const localImport = path.join(distPath, 'themes-import.scss');
+  const prodImport = path.join(distPath, 'themes-import.prod.scss');
 
   // Handle the case when we trigger manually the script
-  if (!pathExist(indexProdPath)) {
+  if (!pathExist(prodImport)) {
     return;
   }
 
-  if (!pathExist(distPath)) {
-    throw new Error("Dist folder doesn't exist");
-  }
-
-  renameSync(indexProdPath, indexPath);
+  // Replace the theme-import file by theme-import.prod
+  renameSync(prodImport, localImport);
 }
 
-async function compileBaseStyle() {
+async function compileBaseStyle(): Promise<void> {
   const input = path.join(packagesPath, '/src/style/style.scss');
-  await compileStyle(input, path.join(distPath, '/style'), 'style.css');
+  await compileStyle(input, styleDest, 'style.css');
 }
 
-async function compileAllBaseStyle() {
+async function compileAllBaseStyle(): Promise<void> {
   const input = path.join(packagesPath, '/src/style/all-style.scss');
-  await compileStyle(input, path.join(distPath, '/style'), 'all-style.css');
+  await compileStyle(input, styleDest, 'all-style.css');
 }
 
-async function prebuiltThemes() {
+async function prebuiltThemes(): Promise<void> {
   const destination = path.join(distPath, '/style/theming/prebuilt-themes');
   const themeFolder = path.join(
     packagesPath,

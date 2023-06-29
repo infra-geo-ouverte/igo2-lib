@@ -1,1 +1,3 @@
-@import '../../dist/core/style/index.theming.scss';
+@use 'packages/core/src/style/all-style';
+
+@use 'style/theme.scss';

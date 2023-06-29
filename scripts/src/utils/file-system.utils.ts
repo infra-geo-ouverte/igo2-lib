@@ -1,5 +1,10 @@
 import { existsSync } from 'fs';
-import { copyFile as fsCopyFile, mkdir, readFile, writeFile } from 'fs/promises';
+import {
+  copyFile as fsCopyFile,
+  mkdir,
+  readFile,
+  writeFile
+} from 'fs/promises';
 import { normalize } from 'path';
 
 const BUFFER_ENCODING: BufferEncoding = 'utf-8';
@@ -11,15 +16,15 @@ export async function readFileContent<T>(path: string): Promise<T> {
 
 export async function createFile(
   fileName: string,
-  destination: string,
+  dest: string,
   body: string
 ): Promise<void> {
-  const path = `${destination}/${fileName}`;
+  const path = `${dest}/${fileName}`;
   try {
     await writeFile(path, body, BUFFER_ENCODING);
-  } catch (err) {
-    if (!pathExist(destination)) {
-      await createFolder(destination);
+  } catch (err: any) {
+    if (err.code === 'ENOENT') {
+      await createFolderRecursively(dest);
       await writeFile(path, body, BUFFER_ENCODING);
     }
   }
@@ -36,19 +41,21 @@ export async function copyFile(src: string, dest: string): Promise<void> {
   }
 }
 
-export async function createFolder(destination: string): Promise<void> {
+export async function createFolderRecursively(dest: string): Promise<void> {
   try {
-    await mkdir(destination);
-  } catch (error) {
-    await createPreviousFolder(destination);
-    await createFolder(destination);
+    await mkdir(dest);
+  } catch (err: any) {
+    if (err.code === 'ENOENT') {
+      await createPreviousFolder(dest);
+      await createFolderRecursively(dest);
+    }
   }
 }
 
-async function createPreviousFolder(destination: string) {
-  const folders = normalize(destination).split('\\');
+async function createPreviousFolder(dest: string): Promise<void> {
+  const folders = normalize(dest).split('\\');
   folders.pop();
-  await createFolder(folders.join('\\'));
+  await createFolderRecursively(folders.join('\\'));
 }
 
 export function pathExist(path: string): boolean {
