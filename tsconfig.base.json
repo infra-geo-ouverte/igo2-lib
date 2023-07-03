@@ -6,16 +6,17 @@
     "baseUrl": "./",
     "downlevelIteration": true,
     "importHelpers": true,
-    "module": "es2020",
+    "module": "ES2022",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2015",
+    "useDefineForClassFields": false,
+    "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["ES2022", "dom"],
     "paths": {
       "@igo2/*": ["dist/*"]
     }

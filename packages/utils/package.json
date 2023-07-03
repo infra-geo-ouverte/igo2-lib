@@ -18,9 +18,9 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/platform-browser": "^14.3.0"
+    "@angular/common": "^15.0.0",
+    "@angular/core": "^15.0.0",
+    "@angular/platform-browser": "^15.0.0"
   },
   "engines": {
     "node": ">=16.19.0"

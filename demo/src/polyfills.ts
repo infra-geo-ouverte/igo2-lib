@@ -20,13 +20,6 @@
  * BROWSER POLYFILLS
  */ // Run `npm install --save classlist.js`.
 
-/** IE10 and IE11 requires the following for string normalization */
-import 'unorm/lib/unorm.js';
-
-/** IE10 and IE11 requires the following for some object management */
-import 'core-js/es/object';
-import 'core-js/es/string'; // Run `npm install --save web-animations-js`.
-
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
  * user can disable parts of macroTask/DomEvents patch by setting following
@@ -40,11 +33,6 @@ import 'core-js/es/string'; // Run `npm install --save web-animations-js`.
 // disable patch specified eventNames
 // (window as any).__zone_symbol__BLACK_LISTED_EVENTS = ['scroll', 'mousemove'];
 
-/*
- * in IE/Edge developer tools, the addEventListener will also be wrapped by
- * zone.js. With the following flag, it will bypass `zone.js` patch for IE/Edge
- */
-// (window as any).__Zone_enable_cross_context_check = true;
 
 /*******************************************************************************
  * Zone JS is required by default for Angular itself.

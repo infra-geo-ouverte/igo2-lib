@@ -2,8 +2,8 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
       "outDir": "../../out-tsc/app",
-      "target": "es2015",
-      "module": "es2020",
+      "target": "ES2022",
+      "module": "ES2022",
       "moduleResolution": "node",
       "declaration": true,
       "sourceMap": true,
@@ -12,7 +12,7 @@
       "experimentalDecorators": true,
       "importHelpers": true,
       "types": [],
-      "lib": ["dom","es2015","es2017.object"]
+      "lib": ["dom","ES2022"]
     },
     "angularCompilerOptions": {
       "skipTemplateCodegen": true,
