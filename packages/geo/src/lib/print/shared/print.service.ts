@@ -385,75 +385,97 @@ export class PrintService {
               if (hA > hB) { return 1; }
               return 0;
             });
-            // chunk images list by height
-            let chunks = [];
-            imgsData.forEach(img => {
-              // get the first chunk that the value can be added to
-              let chunk = chunks.find(c => {
-                const sumHeight = c.reduce((acc, obj) => { return acc + obj.dimensions.h; },0);
-                return sumHeight + img.dimensions.h < height;
-              });
-              if (chunk) {chunk.push(img);} // found a chunk. Add value to that.
-              else {chunks.push([img]);} // Can't be added to existing chunks. Create new one.
-            });
-            // chunk images list by width
-            let chunksByWidth = [];
-            let chunkByWidth = [];
-            let sumMaxAllWidthInChunk = 0;
-            for (let index = 0; index < chunks.length; index++) {
-              const chunk = chunks[index];
-              const maxWidthInChunk = Math.max(...chunk.map(obj => obj.dimensions.w));
-              sumMaxAllWidthInChunk = sumMaxAllWidthInChunk + maxWidthInChunk;
-              if (sumMaxAllWidthInChunk <= width) {
-                chunkByWidth.push(chunk);
-              } else {
-                chunksByWidth.push(chunkByWidth);
-                chunkByWidth = [];
-                sumMaxAllWidthInChunk = maxWidthInChunk;
-                chunkByWidth.push(chunk);
-              }
-              if ((chunks.length - 1) === index) {
-                chunksByWidth.push(chunkByWidth);
-              }
-            }
 
-            let htmlArray: Array<string> = [];
-            for (let index = 0; index < chunksByWidth.length; index++) {
-              const tableData = chunksByWidth[index];
-              let html = '<style media="screen" type="text/css">';
-              html += '.html2canvas-container { width: ' + width + 'mm !important; height: 2000px !important; }';
-              html += 'table.tableLegend {table-layout: auto;}';
-              html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
-              html += '</style>';
-              // The font size will also be lowered afterwards (globally along the legend size)
-              // this allows having a good relative font size here and to keep ajusting the legend size
-              // while keeping good relative font size
-              html += '<font size="3" face="Times" >';
-              html += '<div class="styleLegend">';
-              let tableHtml = '<table class="tableLegend"><tbody style="vertical-align: top; border-spacing: 0px;">';
-              tableHtml += '<tr>';
-              for (let i = 0; i < tableData.length; i++) {
-                tableHtml += '<td>';
-                const newTabElementData = tableData[i];
-                let newTableElementHtml = '<table style="border-spacing: 0px;"><tbody>';
-                newTabElementData.forEach((data) => {
-                  newTableElementHtml += '<tr><td>'+ data.title +'</td></tr>';
-                  newTableElementHtml += '<tr><td><img src="'+ data.image +'"></td></tr>';
-                });
-                newTableElementHtml += '</tbody></table>';
-                tableHtml += newTableElementHtml;
-                tableHtml += '</td>';
-              }
-              tableHtml += '</tr>';
-              tableHtml += '</tbody></table>';
-              html += tableHtml;
-              html+= '</div></font>';
-              htmlArray.push(html);
-            }
+            // chunk images list by height
+            const chunksByHeight = await this.chunkImagesByHeight(imgsData, height);
+            // chunk images list by width
+            const chunksByWidth = await this.chunkImagesByWidth(chunksByHeight, width);
+
+            const htmlArray = await this.getHtmlLegendByPage(chunksByWidth, width);
+
             observer.next(htmlArray);
             observer.complete();
             return;
       });
+  }
+
+  private async chunkImagesByHeight(
+    imgsData: Array<{title: string, image: string, dimensions: {w: number, h: number}}>,
+    height: number
+  ) {
+    let chunks = [];
+    imgsData.forEach(img => {
+      // get the first chunk that the value can be added to
+      let chunk = chunks.find(c => {
+        const sumHeight = c.reduce((acc, obj) => { return acc + obj.dimensions.h; },0);
+        return sumHeight + img.dimensions.h < height;
+      });
+      if (chunk) {chunk.push(img);} // found a chunk. Add value to that.
+      else {chunks.push([img]);} // Can't be added to existing chunks. Create new one.
+    });
+    return chunks;
+  }
+
+  private async chunkImagesByWidth(chunks, width: number) {
+    // chunk images list by width
+    let chunksByWidth = [];
+    let chunkByWidth = [];
+    let sumMaxAllWidthInChunk = 0;
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index];
+      const maxWidthInChunk = Math.max(...chunk.map(obj => obj.dimensions.w));
+      sumMaxAllWidthInChunk = sumMaxAllWidthInChunk + maxWidthInChunk;
+      if (sumMaxAllWidthInChunk <= width) {
+        chunkByWidth.push(chunk);
+      } else {
+        chunksByWidth.push(chunkByWidth);
+        chunkByWidth = [];
+        sumMaxAllWidthInChunk = maxWidthInChunk;
+        chunkByWidth.push(chunk);
+      }
+      if ((chunks.length - 1) === index) {
+        chunksByWidth.push(chunkByWidth);
+      }
+    }
+
+    return chunksByWidth;
+  }
+
+  private async getHtmlLegendByPage(chunksByWidth, width: number) {
+    let htmlArray: Array<string> = [];
+    for (let index = 0; index < chunksByWidth.length; index++) {
+      const tableData = chunksByWidth[index];
+      let html = '<style media="screen" type="text/css">';
+      html += '.html2canvas-container { width: ' + width + 'mm !important; height: 2000px !important; }';
+      html += 'table.tableLegend {table-layout: auto;}';
+      html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
+      html += '</style>';
+      // The font size will also be lowered afterwards (globally along the legend size)
+      // this allows having a good relative font size here and to keep ajusting the legend size
+      // while keeping good relative font size
+      html += '<font size="3" face="Times" >';
+      html += '<div class="styleLegend">';
+      let tableHtml = '<table class="tableLegend"><tbody style="vertical-align: top; border-spacing: 0px;">';
+      tableHtml += '<tr>';
+      for (let i = 0; i < tableData.length; i++) {
+        tableHtml += '<td>';
+        const newTabElementData = tableData[i];
+        let newTableElementHtml = '<table style="border-spacing: 0px;"><tbody>';
+        newTabElementData.forEach((data) => {
+          newTableElementHtml += '<tr><td>'+ data.title +'</td></tr>';
+          newTableElementHtml += '<tr><td><img src="'+ data.image +'"></td></tr>';
+        });
+        newTableElementHtml += '</tbody></table>';
+        tableHtml += newTableElementHtml;
+        tableHtml += '</td>';
+      }
+      tableHtml += '</tr>';
+      tableHtml += '</tbody></table>';
+      html += tableHtml;
+      html+= '</div></font>';
+      htmlArray.push(html);
+    }
+    return htmlArray;
   }
 
   /**
@@ -1187,9 +1209,7 @@ export class PrintService {
       }
 
       // Add map to new canvas
-      newContext.drawImage(oldCanvas, 0, positionHCanvas);
-      // Add copyrigh
-      await this.addCopyrightToImage(map, newCanvas);
+      newContext.drawImage(mapResultCanvas, 0, positionHCanvas);
 
       // Check the legendPosition
       let legendHeightError: boolean = false;
