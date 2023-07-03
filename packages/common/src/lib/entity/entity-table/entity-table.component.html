@@ -1,5 +1,5 @@
 <div class="table-container" [ngStyle]="{'height': tableHeight}">
-  <table mat-table matSort [ngClass]="getTableClass()" [dataSource]="dataSource" [trackBy]="getTrackByFunction()" (matSortChange)="onSort($event)">
+  <table id="currentWorkspaceTable" mat-table matSort [ngClass]="getTableClass()" [dataSource]="dataSource" [trackBy]="getTrackByFunction()" (matSortChange)="onSort($event)">
       <ng-container matColumnDef="selectionCheckbox" class="mat-cell-checkbox">
           <th mat-header-cell *matHeaderCellDef>
               <ng-container *ngIf="selectMany">

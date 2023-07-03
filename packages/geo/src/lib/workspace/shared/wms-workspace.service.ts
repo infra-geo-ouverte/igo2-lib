@@ -1,19 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
   ActionStore,
-  EntityRecord,
-  EntityStoreFilterCustomFuncStrategy,
-  EntityStoreFilterSelectionStrategy,
-  EntityStoreStrategyFuncOptions,
-  EntityTableColumnRenderer,
-  EntityTableTemplate } from '@igo2/common';
+  EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { StorageService, ConfigService } from '@igo2/core';
-import { skipWhile, take } from 'rxjs/operators';
-import { CapabilitiesService, RelationOptions, SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
+import { CapabilitiesService, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
-  Feature,
   FeatureMotion,
   FeatureStore,
   FeatureStoreInMapExtentStrategy,
@@ -31,11 +24,9 @@ import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces'
 import { WfsWorkspace } from './wfs-workspace';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
-import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { getGeoServiceAction } from './workspace.utils';
+import { createFilterInMapExtentOrResolutionStrategy, createTableTemplate } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -100,7 +91,8 @@ export class WmsWorkspaceService {
     interface WFSoptions extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
 
     let wks;
-    let wksLayerOption = {
+    let wksLayerOption: GeoWorkspaceOptions = {
+      printable: layer.options.workspace?.printable,
       srcId: layer.id,
       workspaceId: undefined,
       enabled: false,
@@ -175,7 +167,7 @@ export class WmsWorkspaceService {
             tableTemplate: undefined
           }
         });
-        this.createTableTemplate(wks, workspaceLayer);
+        createTableTemplate(wks, workspaceLayer, this.layerService, this.ws$);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
         layer.options.workspace = Object.assign({}, layer.options.workspace,
@@ -233,84 +225,7 @@ export class WmsWorkspaceService {
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
+    store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
-  }
-
-  private createTableTemplate(workspace: WfsWorkspace, layer: VectorLayer): EntityTableTemplate {
-    const geoServiceAction = getGeoServiceAction(workspace, this.layerService);
-    const fields = layer.dataSource.options.sourceFields || [];
-
-    const relations = layer.dataSource.options.relations || [];
-
-    if (fields.length === 0) {
-      workspace.entityStore.entities$.pipe(
-        skipWhile(val => val.length === 0),
-        take(1)
-      ).subscribe(entities => {
-        const ol = (entities[0] as Feature).ol as olFeature<OlGeometry>;
-        const columnsFromFeatures = ol.getKeys()
-          .filter(
-            col => !col.startsWith('_') &&
-              col !== 'geometry' &&
-              col !== ol.getGeometryName() &&
-              !col.match(/boundedby/gi))
-          .map(key => {
-            return {
-              name: `properties.${key}`,
-              title: key,
-              renderer: EntityTableColumnRenderer.UnsanitizedHTML
-            };
-          });
-        columnsFromFeatures.unshift(...geoServiceAction);
-        workspace.meta.tableTemplate = {
-          selection: true,
-          sort: true,
-          columns: columnsFromFeatures
-        };
-      });
-      return;
-    }
-    const columns = fields.map((field: SourceFieldsOptionsParams) => {
-      return {
-        name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
-        tooltip: field.tooltip
-      };
-    });
-
-    const relationsColumn = relations.map((relation: RelationOptions) => {
-      return {
-        name: `properties.${relation.name}`,
-        title: relation.alias ? relation.alias : relation.name,
-        renderer: EntityTableColumnRenderer.Icon,
-        icon: relation.icon,
-        parent: relation.parent,
-        type: 'relation',
-        tooltip: relation.tooltip,
-        onClick: () => {
-            this.ws$.next(relation.title);
-        },
-        cellClassFunc: () => {
-          return { 'class_icon': true };
-        }
-      };
-    });
-
-    columns.push(...relationsColumn);
-    columns.unshift(...geoServiceAction);
-    workspace.meta.tableTemplate = {
-      selection: true,
-      sort: true,
-      columns
-    };
-  }
-
-  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
-    const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true && record.state.inMapResolution === true;
-    };
-    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 }

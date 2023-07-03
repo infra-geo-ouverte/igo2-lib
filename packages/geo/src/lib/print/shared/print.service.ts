@@ -817,7 +817,7 @@ export class PrintService {
 
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(
         [widthPixels, heightPixels],
         mapCanvas
@@ -838,7 +838,7 @@ export class PrintService {
         mapStatus$$.unsubscribe();
         let status = SubjectStatus.Done;
         try {
-          if (mapCanvas.width !== 0) {
+          if (mapResultCanvas.width !== 0) {
             this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
@@ -855,7 +855,7 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          if (mapCanvas.width !== 0) {
+          if (mapResultCanvas.width !== 0) {
             this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
@@ -880,47 +880,60 @@ export class PrintService {
 
   private async drawMap(
     size: Array<number>,
-    mapCanvas: HTMLCanvasElement
+    mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
+
       const mapResultCanvas = document.createElement('canvas');
-      const mapContextResult = mapResultCanvas.getContext('2d');
       mapResultCanvas.width = size[0];
       mapResultCanvas.height = size[1];
-      const opacity = mapCanvas.parentElement.style.opacity || mapCanvas.style.opacity;
-      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
-      let matrix: number[];
-      const transform = mapCanvas.style.transform;
-      if (transform) {
-        // Get the transform parameters from the style's transform matrix
-        matrix = transform
-          .match(/^matrix\(([^\(]*)\)$/)[1]
-          .split(',')
-          .map(Number);
-      } else {
-        matrix = [
-          parseFloat(mapCanvas.style.width) / mapCanvas.width,
-          0,
-          0,
-          parseFloat(mapCanvas.style.height) / mapCanvas.height,
-          0,
-          0,
-        ];
+
+      for (let index = 0; index < mapCanvas.length; index++) {
+        const canvas = mapCanvas[index];
+        if (canvas.width > 0) {
+          this.handleCanvas(canvas, mapResultCanvas);
+        }
       }
-      // Apply the transform to the export map context
-      CanvasRenderingContext2D.prototype.setTransform.apply(
-        mapContextResult,
-        matrix
-      );
-      const backgroundColor = mapCanvas.parentElement.style.backgroundColor;
-      if (backgroundColor) {
-        mapContextResult.fillStyle = backgroundColor;
-        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-      }
-      mapContextResult.drawImage(mapCanvas, 0, 0);
-      mapContextResult.globalAlpha = 1;
-      // reset canvas transform to initial
-      mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
       return mapResultCanvas;
+  }
+
+  private handleCanvas(
+    canvas: HTMLCanvasElement,
+    mapResultCanvas: HTMLCanvasElement
+  ) {
+    const mapContextResult = mapResultCanvas.getContext('2d');
+    const opacity = canvas.parentElement.style.opacity || canvas.style.opacity;
+    mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+    const transform = canvas.style.transform;
+    let matrix: number[];
+    if (transform) {
+      // Get the transform parameters from the style's transform matrix
+      matrix = transform
+        .match(/^matrix\(([^\(]*)\)$/)[1]
+        .split(',')
+        .map(Number);
+    } else {
+      matrix = [
+        parseFloat(canvas.style.width) / canvas.width,
+        0,
+        0,
+        parseFloat(canvas.style.height) / canvas.height,
+        0,
+        0,
+      ];
+    }
+    CanvasRenderingContext2D.prototype.setTransform.apply(
+      mapContextResult,
+      matrix
+    );
+    const backgroundColor = canvas.parentElement.style.backgroundColor;
+    if (backgroundColor) {
+      mapContextResult.fillStyle = backgroundColor;
+      mapContextResult.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    mapContextResult.drawImage(canvas, 0, 0);
+    mapContextResult.globalAlpha = 1;
+    // reset canvas transform to initial
+    mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   private async drawMapControls (
@@ -1031,7 +1044,7 @@ export class PrintService {
     }
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
