@@ -5,7 +5,7 @@ import {
   readFile,
   writeFile
 } from 'fs/promises';
-import { normalize } from 'path';
+import { normalize, sep } from 'path';
 
 const BUFFER_ENCODING: BufferEncoding = 'utf-8';
 
@@ -53,9 +53,9 @@ export async function createFolderRecursively(dest: string): Promise<void> {
 }
 
 async function createPreviousFolder(dest: string): Promise<void> {
-  const folders = normalize(dest).split('\\');
+  const folders = normalize(dest).split(sep);
   folders.pop();
-  await createFolderRecursively(folders.join('\\'));
+  await createFolderRecursively(folders.join(sep));
 }
 
 export function pathExist(path: string): boolean {
