@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": [
-    "projects/**/*"
+    "packages/**/*"
   ],
   "plugins": ["unused-imports"],
   "overrides": [
@@ -21,7 +21,6 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        // https://eslint.org/docs/rules/
         "arrow-spacing": "error",
         "max-len": [
           "error",
