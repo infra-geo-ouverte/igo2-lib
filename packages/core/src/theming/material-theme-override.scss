@@ -3,8 +3,8 @@
 
 // @todo fix the import in Angular v15 to get the button-toggle.density from the index.scss
 // if your start the demo change the import:
-@use '../../../../node_modules/@angular/material/button-toggle/_button-toggle-theme.scss';
-// @use '@angular/material/button-toggle/_button-toggle-theme.scss';
+// @use '../../../../node_modules/@angular/material/button-toggle/_button-toggle-theme.scss';
+@use '@angular/material/button-toggle/_button-toggle-theme.scss';
 
 @mixin material-override($theme) {
   @include mat-button-toggle($theme);
