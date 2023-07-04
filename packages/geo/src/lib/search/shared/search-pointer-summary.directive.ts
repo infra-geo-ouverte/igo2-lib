@@ -73,8 +73,8 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    */
   @Input() igoSearchPointerSummaryEnabled: boolean = false;
 
-  @HostListener('mouseout')
-  mouseout() {
+  @HostListener('mouseleave')
+  mouseleave() {
     clearTimeout(this.lastTimeoutRequest);
     this.clearLayer();
   }
