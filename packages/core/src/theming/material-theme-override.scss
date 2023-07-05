@@ -4,32 +4,32 @@
 // @todo fix the import in Angular v15 to get the button-toggle.density from the index.scss
 // if your start the demo change the import:
 // @use '../../../../node_modules/@angular/material/button-toggle/_button-toggle-theme.scss';
-@use '@angular/material/button-toggle/_button-toggle-theme.scss';
+// @use '@angular/material/button-toggle/_button-toggle-theme.scss';
 
 @mixin material-override($theme) {
-  @include mat-button-toggle($theme);
+  // @include mat-button-toggle($theme);
 }
 
-@mixin mat-button-toggle($theme) {
-  $accent: map.get($theme, accent);
-  $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
-  $density: mat.get-density-config($theme);
+// @mixin mat-button-toggle($theme) {
+//   $accent: map.get($theme, accent);
+//   $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
+//   $density: mat.get-density-config($theme);
 
-  $theme: map.merge(
-    $theme,
-    (
-      density: $density - 3
-    )
-  );
+//   $theme: map.merge(
+//     $theme,
+//     (
+//       density: $density - 3
+//     )
+//   );
 
-  @include button-toggle-theme.density($theme);
+//   @include button-toggle-theme.density($theme);
 
-  mat-button-toggle {
-    color: black !important;
+//   mat-button-toggle {
+//     color: black !important;
 
-    &.mat-button-toggle-checked {
-      background-color: mat.get-color-from-palette($accent);
-      color: mat.get-color-from-palette($dark);
-    }
-  }
-}
+//     &.mat-button-toggle-checked {
+//       background-color: mat.get-color-from-palette($accent);
+//       color: mat.get-color-from-palette($dark);
+//     }
+//   }
+// }
