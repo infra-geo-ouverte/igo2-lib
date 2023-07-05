@@ -21,7 +21,7 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
-import { PrintLegendPosition, PrintPaperFormat } from './print.type';
+import { PrintLegendPosition, PrintPaperFormat, PrintResolution } from './print.type';
 import { default as moment } from 'moment';
 import { Direction, formatDistance, formatDuration, formatInstruction } from '../../directions';
 
@@ -82,7 +82,7 @@ export class PrintService {
     const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
-    const size = [width, height];
+    const size: [number, number] = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
@@ -613,30 +613,25 @@ export class PrintService {
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
-    size: Array<number>,
+    docSize: [number, number],
     margins: Array<number>,
     legendPostion: PrintLegendPosition
   ) {
 
-    const mapSize = map.ol.getSize();
+    const mapSize = map.ol.getSize() as [number, number];
     const viewResolution = map.ol.getView().getResolution();
-    const extent = map.ol.getView().calculateExtent(mapSize);
-    const widthPixels = Math.round((size[0] * resolution) / 25.4);
-    const heightPixels = Math.round((size[1] * resolution) / 25.4);
+    const dimensionPixels = this.setMapResolution(map, docSize, resolution, viewResolution);
     const status$ = new Subject();
 
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(
-        [widthPixels, heightPixels],
+        dimensionPixels,
         mapCanvas
       );
 
-      // Reset original map size
-      map.ol.setSize(mapSize);
-      map.ol.getView().setResolution(viewResolution);
-      this.renderMap(map, mapSize, extent);
+      this.resetOriginalMapSize(map, mapSize, viewResolution);
 
       await this.drawMapControls(map, mapResultCanvas, legendPostion);
 
@@ -672,20 +667,43 @@ export class PrintService {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
-        // Reset original map size
-        map.ol.setSize(mapSize);
-        map.ol.getView().setResolution(viewResolution);
-        this.renderMap(map, mapSize, extent);
+        this.resetOriginalMapSize(map, mapSize, viewResolution);
         status$.next(status);
       },200);
     });
+
+    return status$;
+  }
+
+  private setMapResolution(
+    map: IgoMap,
+    initialSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): [number, number] {
+
+    const mapSize = map.ol.getSize();
+    const widthPixels = Math.round((initialSize[0] * resolution) / 25.4);
+    const heightPixels = Math.round((initialSize[1] * resolution) / 25.4);
 
     // Set print size
     const printSize = [widthPixels, heightPixels];
     map.ol.setSize(printSize);
     const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
     map.ol.getView().setResolution(viewResolution / scaling);
-    return status$;
+
+    return [widthPixels, heightPixels];
+  }
+
+  private resetOriginalMapSize(
+    map: IgoMap,
+    initialSize: [number, number],
+    viewResolution: number
+  ) {
+    map.ol.setSize(initialSize);
+    map.ol.getView().setResolution(viewResolution);
+    map.ol.updateSize();
+    map.ol.renderSync();
   }
 
   private async drawMap(
@@ -835,7 +853,7 @@ export class PrintService {
    */
   downloadMapImage(
     map: IgoMap,
-    resolution: number,
+    printResolution: PrintResolution,
     format = 'png',
     projection = false,
     scale = false,
@@ -846,15 +864,20 @@ export class PrintService {
     legendPosition: PrintLegendPosition
   ) {
     const status$ = new Subject();
-    // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
+    const resolution = +printResolution;
+    const initialMapSize = map.ol.getSize() as [number, number];
+    const viewResolution = map.ol.getView().getResolution();
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
+
+      this.resetOriginalMapSize(map, initialMapSize, viewResolution);
+
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
      if (legendPosition !== 'none') {
@@ -1035,8 +1058,28 @@ export class PrintService {
         }
       }
     });
-    map.ol.renderSync();
+
+    this.setMapImageResolution(map, initialMapSize, resolution, viewResolution);
+
     return status$;
+  }
+
+  private setMapImageResolution(
+    map: IgoMap,
+    initialMapSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): void {
+    const scaleFactor = resolution / 96;
+    const newMapSize = [
+      Math.round(initialMapSize[0] * scaleFactor), // width
+      Math.round(initialMapSize[1] * scaleFactor) // height
+    ];
+    map.ol.setSize(newMapSize);
+    const scaling = Math.min(newMapSize[0] / initialMapSize[0], newMapSize[1] / initialMapSize[1]);
+    const view = map.ol.getView();
+    view.setResolution(viewResolution / scaling);
+    map.ol.renderSync();
   }
 
   /**
