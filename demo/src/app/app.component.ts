@@ -1,10 +1,10 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { OnInit, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 
 import { userAgent, DomUtils } from '@igo2/utils';
 import { version } from '@igo2/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { first, timeout } from 'rxjs';
+import { delay, first } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
@@ -12,7 +12,7 @@ import { DOCUMENT } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
 
   public title = 'IGO';
@@ -30,15 +30,17 @@ export class AppComponent implements OnDestroy {
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
 
     this.detectOldBrowser();
+  }
 
-    this.handleSplashScreen();
+  ngOnInit(): void {
+      this.handleSplashScreen();
   }
 
   private handleSplashScreen(): void {
     this.router.events
       .pipe(
         first((events) => events instanceof NavigationEnd),
-        timeout(1000)
+        delay(300),
       )
       .subscribe(() => {
         this._removeSplashScreen();

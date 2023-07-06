@@ -1,6 +1,6 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './foreground';
+@use './utils/foreground';
 @use '../../index' as igo;
 
 $qcca-palette: (
@@ -45,6 +45,7 @@ $warn: mat.define-palette($qcca-palette, 800);
 $success: mat.define-palette($qcca-palette, 900);
 $background: mat.define-palette($qcca-palette, 100, 100, 100);
 $foreground: mat.define-palette($qcca-palette, 700, 700, 700);
+$typography: igo.$igo-typography;
 
 $theme: mat.define-light-theme(
   (
@@ -55,7 +56,7 @@ $theme: mat.define-light-theme(
       success: $success,
       background: $background
     ),
-    typography: igo.$igo-typography,
+    typography: $typography,
     density: 0
   )
 );
@@ -70,8 +71,12 @@ $theme: map.merge(
   )
 );
 
-@include mat.all-component-colors($theme);
+@include mat.core($typography);
+
+@include mat.all-component-themes($theme);
+
 @include igo.all-component-themes($theme);
+
 
 /* For the non-Angular Material items */
 body {

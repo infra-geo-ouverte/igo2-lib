@@ -4,6 +4,7 @@
 $primary: mat.define-palette(mat.$orange-palette, 800);
 $accent: mat.define-palette(mat.$light-blue-palette, 600, 100, 800);
 $warn: mat.define-palette(mat.$red-palette, 600);
+$typography: igo.$igo-typography;
 
 $theme: mat.define-light-theme((
     color: (
@@ -11,9 +12,12 @@ $theme: mat.define-light-theme((
         accent: $accent,
         warn: $warn
     ),
-    typography: igo.$igo-typography,
+    typography: $typography,
     density: 0,
 ));
 
-@include mat.all-component-colors($theme);
+@include mat.core($typography);
+
+@include mat.all-component-themes($theme);
+
 @include igo.all-component-themes($theme);
