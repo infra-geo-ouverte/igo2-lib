@@ -1,6 +1,6 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './foreground';
+@use './utils/foreground';
 @use '../../index' as igo;
 
 $primary: mat.define-palette(mat.$blue-palette, 700, 400, 900);
@@ -30,5 +30,8 @@ $theme: map.merge(
   )
 );
 
-@include mat.all-legacy-component-colors($theme);
+@include mat.core($typography);
+
+@include mat.all-component-themes($theme);
+
 @include igo.all-component-themes($theme);

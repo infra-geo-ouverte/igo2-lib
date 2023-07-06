@@ -5,7 +5,8 @@ import {
   OnDestroy,
   Self,
   OnInit,
-  AfterContentChecked
+  AfterContentChecked,
+  HostListener
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
@@ -71,6 +72,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * If the user has enabled or not the directive
    */
   @Input() igoSearchPointerSummaryEnabled: boolean = false;
+
+  @HostListener('mouseleave')
+  mouseleave() {
+    clearTimeout(this.lastTimeoutRequest);
+    this.clearLayer();
+  }
 
   /**
    * IGO map

@@ -1,3 +1,13 @@
 @use 'packages/core/src/style/all-style';
 
 @use 'style/theme.scss';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
