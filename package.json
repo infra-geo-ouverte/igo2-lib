@@ -140,7 +140,6 @@
     "@compodoc/compodoc": "^1.1.15",
     "@types/flexsearch": "^0.7.3",
     "@types/geojson": "^7946.0.10",
-    "@types/hammerjs": "^2.0.36",
     "@types/html2canvas": "0.0.35",
     "@types/jasmine": "^3.5.11",
     "@types/jasminewd2": "~2.0.3",

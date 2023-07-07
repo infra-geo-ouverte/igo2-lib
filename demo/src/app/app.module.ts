@@ -51,7 +51,10 @@ import { AppContextModule } from './context/context/context.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IgoCoreModule, LanguageService } from '@igo2/core';
-import { MatLegacyTooltipDefaultOptions as MatTooltipDefaultOptions, MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/legacy-tooltip';
+import {
+  MatLegacyTooltipDefaultOptions as MatTooltipDefaultOptions,
+  MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS
+} from '@angular/material/legacy-tooltip';
 import { concatMap, first } from 'rxjs';
 import { DatePipe } from '@angular/common';
 
