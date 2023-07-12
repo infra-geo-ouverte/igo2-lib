@@ -10,8 +10,8 @@
       ],
       "parserOptions": {
         "project": [
-          "demo/src/tsconfig.eslint.json",
-          "demo/src/tsconfig.spec.json"
+          "demo/tsconfig.eslint.json",
+          "demo/tsconfig.spec.json"
         ],
         "createDefaultProgram": true
       },
