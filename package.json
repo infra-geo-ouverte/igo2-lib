@@ -25,7 +25,7 @@
     "e2e": "ng e2e",
     "postinstall": "ngcc --tsconfig ./tsconfig.json",
     "build.all": "npm run build.libs && npm run build.demo",
-    "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && npm run build.locale && gulp bumpVersion",
+    "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && npm run build.locale",
     "build.utils": "ng build utils --configuration production",
     "build.core": "ng build core --configuration production",
     "build.common": "ng build common --configuration production",
