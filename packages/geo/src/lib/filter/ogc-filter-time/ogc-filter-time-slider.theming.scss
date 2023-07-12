@@ -6,6 +6,7 @@
     $color: mat.define-palette(mat.$yellow-palette);
 
     igo-ogc-filter-time-slider {
+        /* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version. */
         .mat-slider-thumb-label {
             transform: rotate(45deg) !important;
             border-radius: 50% 50% 0 !important;

@@ -48,7 +48,7 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
-import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
 import { computeProjectionsConstraints } from '../../map';

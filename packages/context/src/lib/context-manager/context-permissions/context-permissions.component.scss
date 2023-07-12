@@ -6,6 +6,7 @@
   width: 100%;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 mat-radio-button {
   padding: 14px 14px 14px 0;
 }
@@ -14,6 +15,7 @@ mat-radio-button {
   padding: 5px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
 mat-option ::ng-deep .mat-option-text {
   line-height: initial;
 }

@@ -4,7 +4,7 @@
   height: auto;
 }
 
-.table-compact ::ng-deep .mat-header-cell.mat-column-selectionCheckbox {
+.table-compact ::ng-deep .mat-mdc-header-cell.mat-column-selectionCheckbox {
   width: 52px;
 }
 
@@ -37,13 +37,13 @@ mat-form-field.igo-input-container { width: 60%; padding: 0px 15px; };
   font-size: initial;
 }
 
-.mat-radio-group {
+.mat-mdc-radio-group {
   display: flex;
   flex-direction: column;
   padding-top: 10px;
 }
 
-.mat-radio-button {
+.mat-mdc-radio-button {
   display: inline-flex;
   position: relative;
   margin-left: 16px;

@@ -1,28 +1,32 @@
-.mat-form-field {
+.mat-mdc-form-field {
     padding: 5px;
     width: 95%;
     margin-left: 2px;
 }
 
-.mat-tab-group ::ng-deep .mat-tab-body-content {
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+.mat-mdc-tab-group ::ng-deep .mat-tab-body-content {
     overflow: hidden;
 }
 
-.mat-tab-group ::ng-deep .mat-tab-label {
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+.mat-mdc-tab-group ::ng-deep .mat-tab-label {
     padding: 10px;
 }
 
-.mat-tab-group ::ng-deep .mat-tab-body-wrapper {
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+.mat-mdc-tab-group ::ng-deep .mat-tab-body-wrapper {
     margin-top: 5px;
 }
 
 .spatial-type-toggle {
     padding: 10px;
     text-align: center;
-
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     mat-button-toggle-group {
       width: 50%;
-
+      /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
       mat-button-toggle {
         width: 50%;
       }

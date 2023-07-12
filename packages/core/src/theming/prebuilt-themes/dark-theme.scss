@@ -16,9 +16,9 @@ $theme: mat.define-dark-theme((
     density: 0,
 ));
 
-@include mat.legacy-core();
-@include mat.all-legacy-component-typographies($theme);
-@include mat.all-legacy-component-themes($theme);
+@include mat.core();
+@include mat.all-component-typographies($theme);
+@include mat.all-component-themes($theme);
 
 @include igo.all-component-themes($theme);
 

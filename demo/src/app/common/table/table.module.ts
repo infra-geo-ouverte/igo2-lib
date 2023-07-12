@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatCardModule } from '@angular/material/card';
 
 import { IgoTableModule } from '@igo2/common';
 

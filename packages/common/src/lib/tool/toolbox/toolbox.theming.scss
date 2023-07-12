@@ -6,7 +6,7 @@
   $accent: map.get($theme, accent);
   $foreground: map.get($theme, foreground);
 
-  igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
+  igo-toolbox > igo-actionbar mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
     &:hover {
       background-color: mat.get-color-from-palette($accent, lighter);
     }
@@ -53,8 +53,9 @@
 
   igo-toolbox.color-primary,
   igo-toolbox.color-grey {
-    & > igo-actionbar:not(.with-title) mat-list.mat-list-base {
-      .mat-list-item.mat-list-item-with-avatar {
+    & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
+      /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+      .mat-mdc-list-item.mat-list-item-with-avatar {
         color: white;
         &:hover {
           color: black;

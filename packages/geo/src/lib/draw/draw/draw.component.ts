@@ -22,7 +22,7 @@ import {
 } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { FontType } from '../../style/shared/font.enum';
 import { IgoMap } from '../../map/shared/map';

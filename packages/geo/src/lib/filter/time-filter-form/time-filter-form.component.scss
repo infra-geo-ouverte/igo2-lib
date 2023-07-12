@@ -5,12 +5,14 @@
   padding-left: $igo-padding;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version. */
 mat-slider ::ng-deep div.mat-slider-thumb-label {
   width: 32px;
   height: 32px;
   margin: 0 auto;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of slider that may no longer apply for the MDC version. */
 mat-slider ::ng-deep span.mat-slider-thumb-label-text {
   font-size: 10px;
 }
@@ -37,7 +39,7 @@ mat-datetimepicker-toggle ::ng-deep .mat-icon {
   padding-bottom: 30px;
 }
 
-.igo-layer-actions-container > .mat-slide-toggle {
+.igo-layer-actions-container > .mat-mdc-slide-toggle {
   vertical-align: middle;
 }
 

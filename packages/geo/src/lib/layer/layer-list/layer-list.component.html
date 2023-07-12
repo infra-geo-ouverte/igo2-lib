@@ -12,7 +12,7 @@
 
 <mat-list-item *ngIf="selection" class="select-all">
   <mat-checkbox
-    class="select-all-checkbox mat-subheading-2"
+    class="select-all-checkbox mat-subtitle-1"
     [color]="!selectAllCheck && layersChecked.length > 0 ? 'accent' : 'primary'"
     (change)="selectAll()"
     [checked]="selectAllCheck"
@@ -98,20 +98,18 @@
 
     <mat-menu #opacityMenu="matMenu" class="mat-menu-opacity-slider">
       <div id="opacity-menu">
+        <!-- TODO: The 'tickInterval' property no longer exists -->
         <mat-slider
           id="opacity-slider"
           color="primary"
           thumbLabel
-          tickInterval="5"
           step="5"
           [min]="0"
           [max]="100"
-          [value]="opacity"
-          (input)="changeOpacity($event)"
           [matTooltip]="'igo.geo.layer.opacity' | translate"
           (click) = "$event.stopPropagation()"
           matTooltipShowDelay="500"
-          tooltip-position="below">
+          tooltip-position="below" #ngSlider><input matSliderThumb [value]="opacity" (input)="changeOpacity({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" />
         </mat-slider>
       </div>
     </mat-menu>
@@ -204,11 +202,11 @@
 
     <mat-menu #opacityMenu="matMenu"  class="mat-menu-opacity-slider">
       <div id="opacity-menu">
+        <!-- TODO: The 'tickInterval' property no longer exists -->
         <mat-slider *ngIf="layersChecked.length"
           id="opacity-slider"
           color="primary"
           thumbLabel
-          tickInterval="5"
           step="5"
           [min]="0"
           [max]="100"
@@ -216,7 +214,7 @@
           [matTooltip]="'igo.geo.layer.opacity' | translate"
           matTooltipShowDelay="500"
           tooltip-position="below"
-          (click) = "$event.stopPropagation()">
+          (click) = "$event.stopPropagation()"><input matSliderThumb />
         </mat-slider>
       </div>
     </mat-menu>

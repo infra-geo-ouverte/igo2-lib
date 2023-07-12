@@ -12,7 +12,7 @@ import {
 import {
   EntityStore
 } from '../shared';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LanguageService, MediaService } from '@igo2/core';
 import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';

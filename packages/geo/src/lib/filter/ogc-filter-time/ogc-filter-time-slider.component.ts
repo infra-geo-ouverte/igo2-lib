@@ -9,7 +9,7 @@ import {
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 
 import { default as moment } from 'moment';
-import { MatLegacySlider as MatSlider } from '@angular/material/legacy-slider';
+import { MatSlider } from '@angular/material/slider';
 
 @Component({
   selector: 'igo-ogc-filter-time-slider',

@@ -36,8 +36,10 @@ mat-sidenav-content {
   box-sizing: border-box;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tooltip that may no longer apply for the MDC version.*/
 :ng-deep .mat-tooltip-hide { display: none!important; } // temporary fix (https://github.com/angular/components/issues/24614)
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 ::ng-deep .mat-form-field-suffix {
   ::ng-deep mat-icon  {
     width: auto !important;

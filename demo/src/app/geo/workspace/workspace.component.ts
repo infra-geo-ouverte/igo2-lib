@@ -18,7 +18,7 @@ import {
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { WorkspaceState } from '@igo2/integration';
 
 @Component({

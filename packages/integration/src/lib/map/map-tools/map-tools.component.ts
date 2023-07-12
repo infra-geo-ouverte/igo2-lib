@@ -20,7 +20,7 @@ import {
 } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';

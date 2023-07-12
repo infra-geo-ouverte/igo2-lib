@@ -16,15 +16,15 @@ $igo-actionbar-item-icon-padding: 8px;
   padding-top: 0;
   padding-bottom: 0;
 
-  .mat-list {
+  .mat-mdc-list {
     padding-top: 0
   }
-
-  .mat-list .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text {
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+  .mat-mdc-list .mat-mdc-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text {
     padding-right: 16px;
   }
 
-  .mat-menu-content:not(:empty) {
+  .mat-mdc-menu-content:not(:empty) {
     padding-top: 0;
     padding-bottom: 0;
   }
@@ -38,6 +38,7 @@ button {
   margin: 0px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list {
   padding-top: 0;
 }
@@ -45,6 +46,7 @@ mat-list {
 :host.horizontal {
   max-width: 100%;
   overflow: unset;
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
   mat-list {
     width: auto;
     white-space: nowrap;
@@ -55,7 +57,8 @@ mat-list {
   }
 }
 
-:host ::ng-deep .mat-list .mat-list-item .mat-list-text > * {
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mat-list-text > * {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -66,15 +69,16 @@ mat-list {
   -webkit-line-clamp: 2;
 }
 
-:host ::ng-deep .mat-list-base .mat-list-item.mat-list-item-with-avatar {
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+:host ::ng-deep .mat-mdc-list-base .mat-mdc-list-item.mat-list-item-with-avatar {
   height: $igo-actionbar-item-height;
-
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
   .mat-list-item-content {
     display: -webkit-flex;
     height: $igo-actionbar-item-height;
     padding: $igo-actionbar-item-padding;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
   .mat-list-item-content > mat-icon {
     padding: $igo-actionbar-item-icon-padding;
   }

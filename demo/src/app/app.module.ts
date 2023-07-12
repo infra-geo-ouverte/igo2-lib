@@ -2,9 +2,9 @@ import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_INITIALIZER, ApplicationRef, Injector, NgModule } from '@angular/core';
 import { HammerModule } from '@angular/platform-browser';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppHomeModule } from './core/home/home.module';
@@ -52,9 +52,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IgoCoreModule, LanguageService } from '@igo2/core';
 import {
-  MatLegacyTooltipDefaultOptions as MatTooltipDefaultOptions,
-  MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS
-} from '@angular/material/legacy-tooltip';
+  MatTooltipDefaultOptions,
+  MAT_TOOLTIP_DEFAULT_OPTIONS
+} from '@angular/material/tooltip';
 import { concatMap, first } from 'rxjs';
 import { DatePipe } from '@angular/common';
 

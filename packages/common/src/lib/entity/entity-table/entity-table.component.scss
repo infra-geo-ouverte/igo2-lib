@@ -5,12 +5,14 @@
 }
 
 :host.table-compact {
+    /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
     tr.mat-header-row,
-     ::ng-deep .mat-checkbox .mat-checkbox-ripple {
+     ::ng-deep .mat-mdc-checkbox .mat-checkbox-ripple {
         height: 36px;
     }
+    /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
     tr.mat-row,
-     ::ng-deep .mat-checkbox .mat-checkbox-ripple {
+     ::ng-deep .mat-mdc-checkbox .mat-checkbox-ripple {
         height: 28px;
     }
 }
@@ -28,9 +30,9 @@
     word-wrap: break-word;
 }
 
-th.mat-header-cell,
-td.mat-cell,
-td.mat-footer-cell {
+th.mat-mdc-header-cell,
+td.mat-mdc-cell,
+td.mat-mdc-footer-cell {
     padding: 0 3px;
 }
 

@@ -6,7 +6,7 @@
   $accent: map.get($theme, accent);
   $warn: map.get($theme, warn);
 
-  igo-interactive-tour > button.mat-raised-button.tour-button-tool-icon {
+  igo-interactive-tour > button.mat-mdc-raised-button.tour-button-tool-icon {
     box-shadow: none;
   }
 

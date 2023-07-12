@@ -5,6 +5,7 @@
   padding: 0 5px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
 .igo-search-settings-button ::ng-deep div.mat-button-ripple-round  {
   border-radius: 0;
 }
@@ -41,7 +42,7 @@
 
 .pointer-summary-slide-toggle-container {
   overflow-x: hidden;
-
+  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
   mat-slide-toggle {
     margin: 10px;
   }

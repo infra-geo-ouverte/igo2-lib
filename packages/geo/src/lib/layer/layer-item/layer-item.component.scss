@@ -5,6 +5,7 @@
   overflow: hidden;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list-item ::ng-deep .mat-list-item-content .layerCheck {
   align-self: baseline;
   width: 16px;
