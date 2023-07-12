@@ -1,10 +1,10 @@
 <button
     mat-icon-button
     id= "menu-button"
-    [ngClass]="menuButtonClass"
+    [ngClass]="menuButtonClass$ | async"
     tooltip-position="below"
     matTooltipShowDelay="500"
-    [matTooltip]="(sidenavOpened ? 'menu.close' : 'menu.open') | translate"
+    [matTooltip]="((sidenavOpened$ | async) ? 'menu.close' : 'menu.open') | translate"
     (click)="onToggleSidenavClick()">
     <mat-icon svgIcon="menu"></mat-icon>
 </button>

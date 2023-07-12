@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-menu-button',
@@ -15,39 +16,37 @@ export class MenuButtonComponent {
   }
   set sidenavOpened(value: boolean) {
     this._sidenavOpenend = value;
+    this.sidenavOpened$.next(value);
     this.getClassMenuButton();
   }
   private _sidenavOpenend: boolean;
 
   @Output() openSidenav = new EventEmitter<any>();
 
-  public menuButtonReverseColor = false;
+  public menuButtonReverseColor: boolean;
 
-  public menuButtonClass;
+  public menuButtonClass$: BehaviorSubject<{ [key: string]: any }> = new BehaviorSubject(undefined);
+  public sidenavOpened$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
 
-  constructor(public configService: ConfigService) {
-    if (
-      typeof this.configService.getConfig('menuButtonReverseColor') !==
-      'undefined'
-    ) {
-      this.menuButtonReverseColor = this.configService.getConfig(
-        'menuButtonReverseColor'
-      );
-    }
-  }
+  constructor(public configService: ConfigService) { }
 
   getClassMenuButton() {
+    if (this.menuButtonReverseColor === undefined) {
+      this.menuButtonReverseColor = this.configService.getConfig('menuButtonReverseColor') || false;
+    }
+    let menuButtonClass: { [key: string]: any };
     if (this.sidenavOpened) {
-      this.menuButtonClass = {
+      menuButtonClass = {
         'menu-button': this.menuButtonReverseColor === false,
         'menu-button-reverse-color': this.menuButtonReverseColor === true
       };
     } else {
-      this.menuButtonClass = {
+      menuButtonClass = {
         'menu-button': this.menuButtonReverseColor === false,
         'menu-button-reverse-color-close': this.menuButtonReverseColor === true
       };
     }
+    this.menuButtonClass$.next(menuButtonClass);
   }
 
   onToggleSidenavClick() {
