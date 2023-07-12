@@ -17,7 +17,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
+    "start": "ng serve --hmr --proxy-config proxy.conf.json",
     "start.watch": "run-p watch.libs \"_start.watch -- -- {@}\" --",
     "build": "ng build",
     "lint": "ng lint",
