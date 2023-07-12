@@ -1,12 +1,14 @@
 <button *ngIf="showTourButton"
   (click) = "startInteractiveTour()"
   [ngClass]="getClass()"
+  color="primary"
   mat-raised-button
   tooltip-position="below"
   matTooltipShowDelay="500"
-  [disabled]=disabledTourButton>
-  <span class="interactive-tour-button-title">{{'igo.common.interactiveTour.buttonTitle' | translate}} {{(discoverTitleInLocale$ | async) | translate}}</span>
+  [disabled]="disabledTourButton">
+  {{'igo.common.interactiveTour.buttonTitle' | translate}} {{(discoverTitleInLocale$ | async) | translate}}
   <mat-icon
+    iconPositionEnd
     svgIcon="presentation-play"
     [matTooltip]="disabledTourButton ?
     ('igo.common.interactiveTour.disaledTooltipTourToolButton' | translate) :

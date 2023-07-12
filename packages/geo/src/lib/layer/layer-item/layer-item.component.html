@@ -1,68 +1,92 @@
-<mat-list-item class= "igo-layer-list-item">
-  <mat-checkbox *ngIf="selectionMode"
+<mat-list-item class="igo-layer-list-item">
+  <mat-checkbox
+    *ngIf="selectionMode"
     class="layerCheck"
-    mat-list-icon
+    matListItemIcon
     (change)="check()"
-    [checked]="layerCheck">
+    [checked]="layerCheck"
+  >
   </mat-checkbox>
-  <h4 (click)="toggleLegendOnClick()" matLine class="igo-layer-title" [matTooltip]="tooltipText" matTooltipShowDelay="500">{{layer.title}}</h4>
-
-  <button *ngIf="!selectionMode"
-    mat-icon-button
-    [color]="layer.visible ? 'primary' : 'default'"
-    collapsibleButton
-    tooltip-position="below"
+  <span
+    matListItemTitle
+    class="igo-layer-title"
+    [matTooltip]="tooltipText"
     matTooltipShowDelay="500"
-    [matTooltip]="eyeTooltip | translate"
-    (click)="toggleVisibility()">
-    <mat-icon
-      matBadge="?"
-      matBadgeColor="accent"
-      matBadgeSize="small"
-      matBadgePosition="after"
-      [matBadgeHidden]="queryBadgeHidden$ | async"
-      [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
-      [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'">
-    </mat-icon>
-  </button>
+    (click)="toggleLegendOnClick()"
+  >
+    {{ layer.title }}
+  </span>
 
-  <button *ngIf="selectionMode" class="selection-eye"
-  mat-icon-button
-  [color]="layer.visible ? 'primary' : 'default'"
-  collapsibleButton
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="layer.visible ?
-                ('igo.geo.layer.hideLayer' | translate) :
-                ('igo.geo.layer.showLayer' | translate)"
-  (click)="toggleVisibility()">
-  <mat-icon
-    matBadge="?"
-    matBadgeColor="accent"
-    matBadgeSize="small"
-    matBadgePosition="after"
-    [matBadgeHidden]="queryBadgeHidden$ | async"
-    [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
-    [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
-  </mat-icon>
-</button>
+  <div matListItemMeta>
+    <button
+      *ngIf="!selectionMode"
+      mat-icon-button
+      [color]="layer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="eyeTooltip | translate"
+      (click)="toggleVisibility($event)"
+    >
+      <mat-icon
+        matBadge="?"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        matBadgePosition="after"
+        [matBadgeHidden]="queryBadgeHidden$ | async"
+        [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+        [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'"
+      >
+      </mat-icon>
+    </button>
 
-  <button *ngIf="!selectionMode"
-    class="actions-button"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]= "'igo.geo.layer.moreOptions' | translate"
-    mat-icon-button
-    color="primary"
-    (click)="toggleLayerTool()">
-    <mat-icon svgIcon="dots-horizontal"></mat-icon>
-  </button>
+    <button
+      *ngIf="selectionMode"
+      class="selection-eye"
+      mat-icon-button
+      [color]="layer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="
+        layer.visible
+          ? ('igo.geo.layer.hideLayer' | translate)
+          : ('igo.geo.layer.showLayer' | translate)
+      "
+      (click)="toggleVisibility($event)"
+    >
+      <mat-icon
+        matBadge="?"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        matBadgePosition="after"
+        [matBadgeHidden]="queryBadgeHidden$ | async"
+        [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+        [svgIcon]="layer.visible ? 'eye' : 'eye-off'"
+      >
+      </mat-icon>
+    </button>
+
+    <button
+      *ngIf="!selectionMode"
+      class="actions-button"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.layer.moreOptions' | translate"
+      mat-icon-button
+      color="primary"
+      (click)="toggleLayerTool()"
+    >
+      <mat-icon svgIcon="dots-horizontal"></mat-icon>
+    </button>
+  </div>
 </mat-list-item>
 
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend
     *ngIf="showLegend$ | async"
     [layer]="layer"
-    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
+    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
+  >
   </igo-layer-legend>
 </div>

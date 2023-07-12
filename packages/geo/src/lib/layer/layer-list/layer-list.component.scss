@@ -1,94 +1,95 @@
-:host .igo-list-no-tools {
-  height: calc(100% - 57px);
-  padding-top: 8px;
-}
-
-:host .igo-list-tools-single {
-  height: calc(100% - 153px);
-  padding-top: 8px;
-}
-
-:host .igo-list-tools-multi {
-  height: calc(100% - 191px);
-  padding-top: 8px;
-}
-
-mat-form-field.inputFilter {
-  width: calc(100% - 100px);
-  max-width: 200px;
-}
-
-.igo-layer-actions-container {
-  width: calc(100% - 5px);
-  padding-left: 4px;
-}
-
-.igo-layer-actions-container > div {
-  text-align: center;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-mat-list-item ::ng-deep .mat-list-item-content {
-  margin-bottom: 10px;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-mat-checkbox ::ng-deep .mat-checkbox-inner-container {
-  margin-left: 8px;
-  margin-right: 16px;
-}
-
-#opacity-slider {
-  float: left;
-  min-width: unset;
-  width: 110px;
-  left: 10px;
-  top: 10px
-}
-
-.igo-layer-button-group, .actions-buttons-multi {
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  &::-webkit-scrollbar {
-    height: 4px;
+:host {
+  .igo-list-no-tools {
+    height: calc(100% - 57px);
+    padding-top: 8px;
   }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  .igo-list-tools-single {
+    height: calc(100% - 153px);
+    padding-top: 8px;
   }
-
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-
-    &:hover {
-      background: #555;
+  .igo-list-tools-multi {
+    height: calc(100% - 191px);
+    padding-top: 8px;
+  }
+  mat-form-field.inputFilter {
+    width: calc(100% - 100px);
+    max-width: 200px;
+  }
+  
+  .igo-layer-actions-container {
+    width: calc(100% - 5px);
+    padding-left: 4px;
+  }
+  
+  .igo-layer-actions-container > div {
+    text-align: center;
+  }
+  
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
+  mat-list-item ::ng-deep .mat-list-item-content {
+    margin-bottom: 10px;
+  }
+  
+  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+  mat-checkbox ::ng-deep .mat-checkbox-inner-container {
+    margin-left: 8px;
+    margin-right: 16px;
+  }
+  
+  #opacity-slider {
+    float: left;
+    min-width: unset;
+    width: 110px;
+    left: 10px;
+    top: 10px
+  }
+  
+  .igo-layer-button-group, .actions-buttons-multi {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    overflow-x: auto;
+    overflow-y: hidden;
+  
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+  
+      &:hover {
+        background: #555;
+      }
     }
   }
-}
-
-.igo-layer-button-group {
-  padding-top: 5px;
-}
-
-:host igo-panel {
-  height: unset;
-}
-
-#opacity-menu {
-  max-width: unset;
-  width: 132px;
-  height: 50px;
-
-  .mat-mdc-menu-content:not(:empty) {
-    padding-top: 20px;
+  
+  .igo-layer-button-group {
+    padding-top: 5px;
   }
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-.select-all ::ng-deep .mat-list-item-content {
-  margin: 0px;
+  
+  :host igo-panel {
+    height: unset;
+  }
+  
+  #opacity-menu {
+    max-width: unset;
+    width: 132px;
+    height: 50px;
+  
+    .mat-mdc-menu-content:not(:empty) {
+      padding-top: 20px;
+    }
+  }
+  
+  .select-all {
+    display: flex;
+    align-items: center;
+    height: 48px;
+  }
+  
 }

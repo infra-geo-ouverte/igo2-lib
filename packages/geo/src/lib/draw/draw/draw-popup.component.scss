@@ -1,50 +1,53 @@
-.mat-mdc-radio-button ~ .mat-radio-button {
+:host {
+  .mat-mdc-radio-button ~ .mat-radio-button {
     margin-left: 16px;
   }
 
-.readOnly-Input {
-  width: 200px !important;
-}  
+  .readOnly-Input {
+    width: 200px !important;
+  }
 
-.unit-field {
-  width: 50px;
-  margin-left: 10px;
-  margin-top: 10px;
-}
+  
+  .unit-field {
+    margin-left: 12px;
+    
+    ::ng-deep {
+      .mat-mdc-form-field-infix {
+        width: fit-content;
+      }
+  
+      .mat-mdc-select-min-line {
+        padding-right: 4px + 20px; // 20px for the mdc check icon in the select-dropdown
+      }
+    }
+  }
 
-.mat-mdc-form-field {
-  position: sticky !important;
-}
-.coordinatesInputView {
-  top: 5em !important;
-}
+  .mat-mdc-form-field {
+    position: sticky !important;
+  }
+  .coordinatesInputView {
+    top: 5em !important;
+  }
 
-/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-::ng-deep .mat-form-field-wrapper {
-  margin-bottom: -1.25em;
-  margin-top: 0.25em;
-}
+  .mat-mdc-dialog-actions {
+    display: flex !important;
+    justify-content: end;
+  }
 
-.geometry-type-toggle {
-  display: flex !important;
-  justify-content: center;
-}
+  .input {
+    width: auto !important;
+  }
 
-.mat-mdc-dialog-actions {
-  display: flex !important;
-  justify-content: center;
-}
+  .mat-button-toggle-group,
+  .mat-button-toggle {
+    width: 100%;
+  }
 
-.input {
-  width: auto !important;
-}
+  mat-checkbox {
+    margin-right: 10px;
+  }
 
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-.mat-button-toggle-group, .mat-button-toggle {
-  width: 100%;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-mat-checkbox {
-  margin-right: 10px;
+  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }

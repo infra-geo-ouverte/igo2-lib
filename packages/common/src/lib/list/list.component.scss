@@ -6,34 +6,21 @@
   height: 100%;
   overflow: auto;
   position: relative;
+
+  mat-list {
+    padding-top: 0;
+  }
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
-mat-list {
-  padding-top: 0;
-}
-
-// We need to make sure the firs ancestor with a
-// position other than static is the host itself
-// to properly scroll to the focused list item
-:host {
-  position: static;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
-:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mat-list-text > * {
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text > * {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
   max-height: 36px;
   line-height: 18px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
-:host ::ng-deep .mat-mdc-list .mat-mdc-list-item.mat-list-item-with-avatar .mat-list-item-content {
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item.mat-list-item-with-avatar .mdc-list-item__content {
   display: -webkit-flex;
   height: $igo-list-item-height;
   padding: $igo-list-item-padding;
@@ -45,7 +32,7 @@ mat-list {
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
-:host ::ng-deep .mat-mdc-list ::ng-deep igo-collapsible > .mat-mdc-list-item > .mat-list-item-content > .mat-list-text > .mat-line {
+:host ::ng-deep .mat-mdc-list ::ng-deep igo-collapsible > .mat-mdc-list-item > .mat-list-item-content > .mat-list-text > .mat-mdc-list-item {
   font-weight: bold;
   opacity: 0.9;
 }
@@ -59,9 +46,16 @@ mat-list {
   padding: $igo-list-item-icon-padding;
 }
 
-:host ::ng-deep [igolistitem] mat-list-item [mat-list-avatar] {
-  height: auto;
-  width: 40px;
+:host ::ng-deep [igolistitem] mat-list-item {
+  [matListItemAvatar] {
+    height: auto;
+    width: 40px;
+  }
+
+  button[matListItemAvatar] {
+      width: 48px;
+      height: 48px;
+  }
 }
 
 :host mat-list.selectable ::ng-deep [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {

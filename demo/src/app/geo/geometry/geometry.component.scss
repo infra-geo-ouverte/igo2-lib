@@ -1,17 +1,24 @@
-pre,
-code {
-  font-family: monospace, monospace;
-}
-pre {
-  overflow: auto;
-}
-pre > code {
-  display: block;
-  padding: 1rem;
-  word-wrap: normal;
-}
+:host {
+  pre,
+  code {
+    font-family: monospace, monospace;
+  }
+  pre {
+    overflow: auto;
+  }
+  pre > code {
+    display: block;
+    padding: 1rem;
+    word-wrap: normal;
+  }
 
-igo-map-browser {
-  width: 500px;
-  height: 500px;
+  igo-map-browser {
+    flex: 1;
+    height: 500px;
+  }
+
+  .container {
+    display: flex;
+    gap: 16px;
+  }
 }

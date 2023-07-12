@@ -1,55 +1,61 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Workspace</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/workspace">code of this example</a>
-  </mat-card-content>
+<app-doc-viewer title="Workspace" subtitle="Geo">
+  <app-example-viewer codeFolder="geo/workspace">
+    <igo-map-browser [map]="map" [view]="view" class="m-b-16">
+      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    </igo-map-browser>
 
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
+    <igo-workspace-selector
+      igoWorkspaceSelector
+      [store]="workspaceStore"
+      [map]="map"
+    >
+    </igo-workspace-selector>
 
-  <igo-workspace-selector
-    igoWorkspaceSelector
-    [store]="workspaceStore"
-    [map]="map">
-  </igo-workspace-selector>
+    <ng-container *ngIf="selectedWorkspace$ | async as workspace">
+      <igo-entity-table-paginator
+        *ngIf="workspace.inResolutionRange$ | async"
+        [store]="workspace.entityStore"
+        [paginatorOptions]="paginatorOptions"
+        [entitySortChange$]="entitySortChange$"
+        (paginatorChange)="paginatorChange($event)"
+      >
+      </igo-entity-table-paginator>
+    </ng-container>
 
-  <ng-container *ngIf="selectedWorkspace$ | async as workspace">
-    <igo-entity-table-paginator
-      *ngIf="workspace.inResolutionRange$ | async"
-      [store]="workspace.entityStore"
-      [paginatorOptions]="paginatorOptions"
-      [entitySortChange$]="entitySortChange$"
-      (paginatorChange)="paginatorChange($event)">
-    </igo-entity-table-paginator>
-  </ng-container>
+    <ng-container *ngIf="selectedWorkspace$ | async as workspace">
+      <igo-actionbar
+        *ngIf="workspace.actionStore"
+        [store]="workspace.actionStore"
+        [horizontal]="true"
+        [withToggleButton]="true"
+        [withTitle]="true"
+        [mode]="actionbarMode"
+      >
+      </igo-actionbar>
 
-  <ng-container *ngIf="selectedWorkspace$ | async as workspace">
-    <igo-actionbar
-      *ngIf="workspace.actionStore"
-      [store]="workspace.actionStore"
-      [horizontal]="true"
-      [withToggleButton]="true"
-      [withTitle]="true"
-      [mode]="actionbarMode">
-    </igo-actionbar>
+      <igo-entity-table
+        *ngIf="
+          workspace.entityStore &&
+          workspace.meta &&
+          workspace.meta.tableTemplate &&
+          (workspace.inResolutionRange$ | async)
+        "
+        class="table-compact table-centered"
+        [paginator]="workspacePaginator"
+        [scrollBehavior]="scrollBehavior"
+        [store]="workspace.entityStore"
+        [template]="workspace.meta.tableTemplate"
+      >
+      </igo-entity-table>
+      <mat-card-content
+        *ngIf="(workspace.inResolutionRange$ | async) === false"
+      >
+        No data available at this scale. Please zoom in.
+      </mat-card-content>
 
-    <igo-entity-table
-      *ngIf="workspace.entityStore && workspace.meta && workspace.meta.tableTemplate && (workspace.inResolutionRange$ | async)"
-      class="table-compact table-centered"
-      [paginator]="workspacePaginator"
-      [scrollBehavior]="scrollBehavior"
-      [store]="workspace.entityStore"
-      [template]="workspace.meta.tableTemplate">
-    </igo-entity-table>
-    <mat-card-content
-    *ngIf="(workspace.inResolutionRange$ | async) === false">
-      No data available at this scale. Please zoom in. 
-    </mat-card-content>
-
-    <igo-workspace-widget-outlet [workspace]="workspace"></igo-workspace-widget-outlet>
-
-  </ng-container>
-
-</mat-card>
+      <igo-workspace-widget-outlet
+        [workspace]="workspace"
+      ></igo-workspace-widget-outlet>
+    </ng-container>
+  </app-example-viewer>
+</app-doc-viewer>

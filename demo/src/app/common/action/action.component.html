@@ -1,34 +1,32 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Action</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/action">code of this example</a>
-  </mat-card-content>
+<app-doc-viewer title="Action" subtitle="Common">
+  <app-example-viewer title="Action Bar" codeFolder="common/action">
+    <igo-actionbar
+      [store]="store"
+      [withIcon]="true"
+      [withTitle]="actionbarMode === 'overlay'"
+      [horizontal]="true"
+      [mode]="actionbarMode"
+    >
+    </igo-actionbar>
+  </app-example-viewer>
 
-  <igo-actionbar
-    [store]="store"
-    [withIcon]="true"
-    [withTitle]="actionbarMode === 'overlay'"
-    [horizontal]="true"
-    [mode]="actionbarMode">
-  </igo-actionbar>
+  <!-- <app-example-viewer title="Action context-menu" codeFolder="common/action">
+    <mat-card [igoContextMenu]="actionbarMenu">
+      <mat-card-header>
+        <mat-card-subtitle>Common</mat-card-subtitle>
+        <mat-card-title>Action context-menu</mat-card-title>
+      </mat-card-header>
+      <div></div>
+    </mat-card>
 
-</mat-card>
-<p></p>
-
-<mat-card appearance="outlined" [igoContextMenu]= actionbarMenu>
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Action context-menu</mat-card-title>
-  <div></div>
-</mat-card>
-
-
-
-<ng-template #actionbarMenu>
-  <igo-actionbar
-    [store]="store"
-    [withIcon]="true"
-    [horizontal]="true"
-    [mode]="'context'">
-  </igo-actionbar>
-</ng-template>
+    <ng-template #actionbarMenu>
+      <igo-actionbar
+        [store]="store"
+        [withIcon]="true"
+        [horizontal]="true"
+        [mode]="'context'"
+      >
+      </igo-actionbar>
+    </ng-template>
+  </app-example-viewer> -->
+</app-doc-viewer>

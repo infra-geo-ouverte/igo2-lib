@@ -1,21 +1,14 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Core</mat-card-subtitle>
-  <mat-card-title>Request</mat-card-title>
-  <mat-card-content>
-    <p>Register http calls in console</p>
+<app-doc-viewer title="Request" subtitle="Core">
+  <p>Register http calls in console</p>
 
-    <li>Import <code>IgoLoggingModule</code> only if you want register http calls in console</li>
-    <li>Import <code>IgoErrorModule</code> only if you want register errors from http call in console</li>
-    <li>Import modules only once</li>
+  <li>Import <code>IgoLoggingModule</code> only if you want register http calls in console</li>
+  <li>Import <code>IgoErrorModule</code> only if you want register errors from http call in console</li>
+  <li>Import modules only once</li>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/core/request">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <mat-card-actions>
-    <button mat-raised-button (click)="callHttp()">Log</button>
-    <button mat-raised-button (click)="callHttpError()">Error</button>
-  </mat-card-actions>
-
-</mat-card>
+  <app-example-viewer codeFolder="core/core">
+    <div class="actions-container">
+      <button mat-raised-button (click)="callHttp()">Log</button>
+      <button mat-raised-button (click)="callHttpError()">Error</button>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

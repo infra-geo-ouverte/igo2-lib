@@ -1,8 +1,18 @@
-mat-form-field.inputFilter {
-  width: calc(100% - 100px);
-  max-width: 200px;
-}
+:host {
+  display: flex;
+  align-items: center;
+  padding: 4px 16px;
 
-.selection-mode {
-  margin-left: 5px;
+  & > :not(:last-child) {
+    margin-right: 4px;
+  }
+
+  .inputFilter {
+    width: calc(100% - 100px);
+    max-width: 200px;
+  }
+
+  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }

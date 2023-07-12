@@ -1,11 +1,11 @@
 @import '../../../../../core/src/style/partial/media';
 
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+:host {
   .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
     box-shadow: none !important;
-    width: 95%
+    width: 95%;
   }
 
   .checkboxes {
@@ -17,8 +17,6 @@
     text-align: center;
   }
 
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   mat-button-toggle {
     display: inline-flex;
     border: 1.5px solid black;
@@ -37,15 +35,14 @@
     @include mobile {
       width: 45%;
     }
-
   }
 
   ::ng-deep .material-tooltip {
     white-space: pre-wrap;
   }
 
-  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-  mat-checkbox, mat-radio-button {
+  mat-checkbox,
+  mat-radio-button {
     margin: 7px;
     width: 95%;
     display: inline-flex;
@@ -67,7 +64,7 @@
     cursor: pointer;
   }
 
-  h4 {
+  h3 {
     margin: 7px;
     text-align: left;
   }
@@ -81,4 +78,4 @@
   p {
     margin: unset;
   }
-
+}

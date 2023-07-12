@@ -5,14 +5,12 @@
 }
 
 :host.table-compact {
-    /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-    tr.mat-header-row,
-     ::ng-deep .mat-mdc-checkbox .mat-checkbox-ripple {
+    tr.mat-mdc-header-row,
+     ::ng-deep mat-checkbox .mat-ripple {
         height: 36px;
     }
-    /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-    tr.mat-row,
-     ::ng-deep .mat-mdc-checkbox .mat-checkbox-ripple {
+    tr.mat-mdc-row,
+     ::ng-deep mat-checkbox .mat-ripple {
         height: 28px;
     }
 }

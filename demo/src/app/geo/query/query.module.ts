@@ -14,15 +14,13 @@ import {
 
 import { AppQueryComponent } from './query.component';
 import { AppQueryRoutingModule } from './query-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppQueryComponent],
   imports: [
     AppQueryRoutingModule,
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
+    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoOverlayModule,

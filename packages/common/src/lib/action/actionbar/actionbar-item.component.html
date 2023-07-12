@@ -5,13 +5,14 @@
   [ngClass]="ngClass$ | async"
   (click)="onClick()">
   <button *ngIf="withIcon"
-    mat-list-avatar
+    matListItemAvatar
     mat-icon-button
     [color]="color"
-    [disabled]="disabled$ | async">
+    [disabled]="disabled$ | async"
+    [disableRipple]="true">
     <mat-icon *ngIf="withIcon" svgIcon="{{icon$ | async}}"></mat-icon>
   </button>
-  <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
+  <span *ngIf="withTitle" matLine class="p-l-16">{{title | translate}}</span>
 </mat-list-item>
 
 <mat-list-item class="item-checkbox" *ngIf="action.checkbox"

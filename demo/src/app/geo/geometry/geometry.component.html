@@ -1,44 +1,47 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Geometry Form</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/form">code of this example</a>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
-
-  <igo-form
-    *ngIf="form$ | async as form"
-    [form]="form"
-    [formData]="data$ | async"
-    (submitForm)="onSubmit($event)">
-
-    <igo-form-group [group]="form.groups[0]"></igo-form-group>
-
-    <div formButtons>
-      <button
-        mat-stroked-button
-        type="button"
-        color="primary"
-        (click)="fillForm()">
-        Fill Form
-      </button>
-      <button
-        mat-stroked-button
-        type="button"
-        color="primary"
-        (click)="clearForm()">
-        Clear Form
-      </button>
-      <button
-        mat-flat-button
-        type="submit"
-        color="primary"
-        [disabled]="submitDisabled">
-        Submit
-      </button>
+<app-doc-viewer title="Geometry Form" subtitle="Geo">
+  <app-example-viewer
+    codeFolder="geo/geometry"
+  >
+    <div class="container">
+      <igo-map-browser [map]="map" [view]="view">
+        <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+      </igo-map-browser>
+  
+      <igo-form
+        *ngIf="form$ | async as form"
+        [form]="form"
+        [formData]="data$ | async"
+        (submitForm)="onSubmit($event)"
+      >
+        <igo-form-group [group]="form.groups[0]"></igo-form-group>
+  
+        <div formButtons class="actions-container">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            (click)="fillForm()"
+          >
+            Fill Form
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            (click)="clearForm()"
+          >
+            Clear Form
+          </button>
+          <button
+            mat-flat-button
+            type="submit"
+            color="primary"
+            [disabled]="submitDisabled"
+          >
+            Submit
+          </button>
+        </div>
+      </igo-form>
     </div>
-  </igo-form>
-</mat-card>
+  </app-example-viewer>
+</app-doc-viewer>

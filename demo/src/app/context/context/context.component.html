@@ -1,35 +1,46 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Context</mat-card-title>
-  <mat-card-content>
-    <p>* Dependencies: LanguageService</p>
+<app-doc-viewer
+  title="Context"
+  subtitle="Context"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="context/context" configFolder="contexts">
+    <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
+      <mat-grid-tile>
+        <igo-map-browser [map]="map" [view]="view">
+          <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+          <igo-geolocate-button
+            [map]="map"
+            color="primary"
+          ></igo-geolocate-button>
+          <igo-home-extent-button
+            [map]="map"
+            color="primary"
+          ></igo-home-extent-button>
+          <igo-rotation-button
+            [map]="map"
+            [showIfNoRotation]="true"
+            color="primary"
+          ></igo-rotation-button>
+        </igo-map-browser>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="flex flex-col align-start h-100 w-100">
+          <igo-panel title="Contexts list" class="w-100">
+            <igo-context-list
+              igoContextListBinding
+              [map]="map"
+            ></igo-context-list>
+          </igo-panel>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/context/context">code of this example</a><br>
-    See <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/contexts"> contexts</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser
-    igoMapContext
-    igoLayerContext
-    [map]="map">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-    <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
-    <igo-home-extent-button [map]="map" color="primary"></igo-home-extent-button>
-    <igo-rotation-button [map]="map" [showIfNoRotation]="true" color="primary"></igo-rotation-button>
-  </igo-map-browser>
-
-  <igo-panel title="Contexts list">
-    <igo-context-list igoContextListBinding [map]="map"></igo-context-list>
-  </igo-panel>
-
-  <igo-panel title="Layers">
-    <igo-layer-list igoLayerListBinding [map]="map">
-      <ng-template #igoLayerItemToolbar let-layer="layer">
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
-      </ng-template>
-    </igo-layer-list>
-  </igo-panel>
-
-</mat-card>
+          <igo-panel title="Layers" class="w-100">
+            <igo-layer-list igoLayerListBinding [map]="map">
+              <ng-template #igoLayerItemToolbar let-layer="layer">
+                <igo-metadata-button [layer]="layer"></igo-metadata-button>
+              </ng-template>
+            </igo-layer-list>
+          </igo-panel>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

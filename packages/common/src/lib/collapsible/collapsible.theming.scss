@@ -1,5 +1,5 @@
 @mixin igo-collapsible-theming($theme) {
-  mat-icon[mat-list-avatar][igocollapse] {
+  mat-icon[igocollapse] {
     &:hover {
       cursor: pointer;
     }

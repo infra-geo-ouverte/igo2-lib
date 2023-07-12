@@ -6,29 +6,18 @@ $slide-toggle-width: 60px;
 .measure-type-toggle {
   padding: 10px;
   text-align: center;
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   mat-button-toggle-group {
     width: 100%;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     mat-button-toggle {
       width: 50%;
     }
   }
 }
 
-
 .measure-options {
-  overflow-x: hidden;
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
   mat-slide-toggle {
     width: 100%;
     margin: 10px;
-    /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
-    }
   }
 }
 
@@ -52,28 +41,28 @@ $slide-toggle-width: 60px;
     border: 1px solid rgb(255, 205, 51);
     color: black;
     font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subtitle-1);
   }
   .igo-map-tooltip-measure-area {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
     color: black;
     font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subtitle-1);
   }
   .igo-map-tooltip-measure-line-segments {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
     color: black;
     font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subtitle-1);
   }
   .igo-map-tooltip-measure-polygone-segments {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
     color: black;
     font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+    font-size: mat.font-size($typography, subtitle-1);
   }
   .igo-map-tooltip-hidden {
     display: none;

@@ -1,6 +1,11 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_INITIALIZER, ApplicationRef, Injector, NgModule } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationRef,
+  Injector,
+  NgModule
+} from '@angular/core';
 import { HammerModule } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
@@ -57,6 +62,7 @@ import {
 } from '@angular/material/tooltip';
 import { concatMap, first } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   showDelay: 500,
@@ -123,7 +129,16 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     HammerModule
   ],
   providers: [
-    { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, ApplicationRef], multi: true },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'outline' }
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFactory,
+      deps: [Injector, ApplicationRef],
+      multi: true
+    },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: defaultTooltipOptions },
     DatePipe
   ],
@@ -139,21 +154,26 @@ export class AppModule {
   }
 }
 
-export function appInitializerFactory(injector: Injector,
-  applicationRef: ApplicationRef) {
-  return () => new Promise<any>((resolve: any) => {
-    applicationRef.isStable.pipe(
-      first(isStable => isStable === true),
-      concatMap(() => {
-        const languageService = injector.get(LanguageService);
-        const lang = languageService.getLanguage();
-        return languageService.translate.getTranslation(lang);
-      }))
-      .subscribe((translations) => {
-        const languageService = injector.get(LanguageService);
-        const lang = languageService.getLanguage();
-        languageService.translate.setTranslation(lang, translations);
-        resolve();
-      });
-  });
+export function appInitializerFactory(
+  injector: Injector,
+  applicationRef: ApplicationRef
+) {
+  return () =>
+    new Promise<any>((resolve: any) => {
+      applicationRef.isStable
+        .pipe(
+          first((isStable) => isStable === true),
+          concatMap(() => {
+            const languageService = injector.get(LanguageService);
+            const lang = languageService.getLanguage();
+            return languageService.translate.getTranslation(lang);
+          })
+        )
+        .subscribe((translations) => {
+          const languageService = injector.get(LanguageService);
+          const lang = languageService.getLanguage();
+          languageService.translate.setTranslation(lang, translations);
+          resolve();
+        });
+    });
 }

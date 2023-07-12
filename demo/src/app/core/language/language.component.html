@@ -1,23 +1,23 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Core</mat-card-subtitle>
-  <mat-card-title>language</mat-card-title>
-  <mat-card-content>
-    <p>Translate your angular application</p>
+<app-doc-viewer title="Language" subtitle="Core">
+  <p>Translate your angular application</p>
 
-    <li>Import <code>IgoLanguageModule</code> only once</li>
+  <li>Import <code>IgoLanguageModule</code> only once</li>
+  <li>
+    Configure the
+    <a
+      href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/locale"
+      >locale files</a
+    >
+  </li>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/core/language">code of this example</a><br>
-    See language section of the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/environments"> environment config</a><br>
-    See <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/locale">locale files</a>
-    <hr>
-  </mat-card-content>
+  <app-example-viewer codeFolder="core/language">
+    <div class="d-flex actions-container">
+      <button mat-raised-button (click)="changeLanguage('en')">English</button>
+      <button mat-raised-button (click)="changeLanguage('fr')">Français</button>
+    </div>
 
-  <mat-card-actions>
-    <button mat-raised-button (click)="changeLanguage('en')">English</button>
-    <button mat-raised-button (click)="changeLanguage('fr')">Français</button>
-  </mat-card-actions>
-
-  <p>{{'welcome' | translate: app}}<p>
-
-</mat-card>
+    <div class="m-t-12">
+      {{ 'welcome' | translate : app }}
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

@@ -10,3 +10,9 @@ pre > code {
   padding: 1rem;
   word-wrap: normal;
 }
+
+:host {
+  igo-form {
+    max-width: 500px;
+  }
+}

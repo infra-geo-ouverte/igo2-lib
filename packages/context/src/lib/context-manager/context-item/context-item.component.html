@@ -1,51 +1,81 @@
 <mat-list-item
   class="mat-list-item"
-  [ngClass]="{'mat-list-item-light': hidden}">
-  <button mat-list-avatar
+  [ngClass]="{ 'mat-list-item-light': hidden }"
+>
+  <button
+    matListItemAvatar
     *ngIf="auth.authenticated"
     mat-icon-button
     igoStopPropagation
-    [matTooltip]="auth.authenticated ? ('igo.context.contextManager.favorite' | translate) : ''"
+    [matTooltip]="
+      auth.authenticated
+        ? ('igo.context.contextManager.favorite' | translate)
+        : ''
+    "
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
-    (click)="favoriteClick(context)">
-    <mat-icon *ngIf="!context.iconImage" svgIcon="{{context.icon ? context.icon : context.scope === 'public' ? 'earth' : 'star'}}"></mat-icon>
-    <img *ngIf="context.iconImage" [src]="context.iconImage">
+    (click)="favoriteClick(context)"
+  >
+    <mat-icon
+      *ngIf="!context.iconImage"
+      svgIcon="{{
+        context.icon
+          ? context.icon
+          : context.scope === 'public'
+          ? 'earth'
+          : 'star'
+      }}"
+    ></mat-icon>
+    <img *ngIf="context.iconImage" [src]="context.iconImage" />
   </button>
-  <button mat-list-avatar
+  <button
+    matListItemAvatar
     *ngIf="!auth.authenticated && showFavorite"
     mat-icon-button
     igoStopPropagation
     [matTooltip]="'igo.context.contextManager.favorite' | translate"
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
-    (click)="favoriteClick(context)">
+    (click)="favoriteClick(context)"
+  >
     <mat-icon svgIcon="star"></mat-icon>
   </button>
-  <h4 matLine>{{context.title}}</h4>
+  <span matListItemTitle>{{ context.title }}</span>
 
-  <div *ngIf="auth.authenticated"
-       igoStopPropagation
-       class="igo-actions-container">
-
-     <button *ngIf="collapsed && selected && (context.permission === typePermission[typePermission.write] || context.imported)"
-       class="save-button"
-       mat-icon-button
-       [matTooltip]="'igo.context.contextManager.save' | translate"
-       matTooltipShowDelay="500"
-       [color]="color"
-       (click)="save.emit(context)">
-       <mat-icon svgIcon="content-save"></mat-icon>
-     </button>
+  <div
+    *ngIf="auth.authenticated"
+    matListItemMeta
+    igoStopPropagation
+    class="igo-actions-container"
+  >
+    <button
+      *ngIf="
+        collapsed &&
+        selected &&
+        (context.permission === typePermission[typePermission.write] ||
+          context.imported)
+      "
+      class="save-button"
+      mat-icon-button
+      [matTooltip]="'igo.context.contextManager.save' | translate"
+      matTooltipShowDelay="500"
+      [color]="color"
+      (click)="save.emit(context)"
+    >
+      <mat-icon svgIcon="content-save"></mat-icon>
+    </button>
 
     <div #actions class="igo-actions-expand-container">
-
-      <button *ngIf="canShare && !context.imported"
+      <button
+        *ngIf="canShare && !context.imported"
         mat-icon-button
-        [matTooltip]="'igo.context.contextManager.managePermissions' | translate"
+        [matTooltip]="
+          'igo.context.contextManager.managePermissions' | translate
+        "
         matTooltipShowDelay="500"
         [color]="color"
-        (click)="managePermissions.emit(context)">
+        (click)="managePermissions.emit(context)"
+      >
         <mat-icon svgIcon="account-arrow-right"></mat-icon>
       </button>
 
@@ -57,53 +87,69 @@
         <mat-icon svgIcon="widgets"></mat-icon>
       </button-->
 
-      <button *ngIf="!context.imported"
+      <button
+        *ngIf="!context.imported"
         class="clone-button"
         mat-icon-button
         [matTooltip]="'igo.context.contextManager.clone' | translate"
         matTooltipShowDelay="500"
         [color]="color"
-        (click)="clone.emit(context)">
+        (click)="clone.emit(context)"
+      >
         <mat-icon svgIcon="content-copy"></mat-icon>
       </button>
 
-      <button *ngIf="context.permission === typePermission[typePermission.write] && !context.imported"
+      <button
+        *ngIf="
+          context.permission === typePermission[typePermission.write] &&
+          !context.imported
+        "
         class="edit-button"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.edit' | translate"
         matTooltipShowDelay="500"
-        (click)="edit.emit(context)">
+        (click)="edit.emit(context)"
+      >
         <mat-icon svgIcon="pencil"></mat-icon>
       </button>
 
-      <button *ngIf="!context.hidden && !context.imported"
+      <button
+        *ngIf="!context.hidden && !context.imported"
         class="hide-button"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.hide' | translate"
         matTooltipShowDelay="500"
-        (click)="hide.emit(context)">
+        (click)="hide.emit(context)"
+      >
         <mat-icon svgIcon="eye"></mat-icon>
       </button>
 
-      <button *ngIf="context.hidden && !context.imported"
+      <button
+        *ngIf="context.hidden && !context.imported"
         class="hide-button"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.show' | translate"
         matTooltipShowDelay="500"
-        (click)="show.emit(context)">
+        (click)="show.emit(context)"
+      >
         <mat-icon svgIcon="eye-off"></mat-icon>
       </button>
 
-      <button *ngIf="context.permission === typePermission[typePermission.write] || context.imported"
+      <button
+        *ngIf="
+          context.permission === typePermission[typePermission.write] ||
+          context.imported
+        "
         class="delete-button"
         mat-icon-button
         color="warn"
         [matTooltip]="'igo.context.contextManager.delete' | translate"
         matTooltipShowDelay="500"
-        (click)="delete.emit(context)">
+        (click)="delete.emit(context)"
+      >
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
     </div>
@@ -114,11 +160,10 @@
       igoCollapse
       [color]="color"
       [target]="actions"
-      [collapsed]=collapsed
-      (click)="collapsed = !collapsed">
+      [collapsed]="collapsed"
+      (click)="collapsed = !collapsed"
+    >
       <mat-icon svgIcon="dots-horizontal"></mat-icon>
     </button>
-
   </div>
-
 </mat-list-item>

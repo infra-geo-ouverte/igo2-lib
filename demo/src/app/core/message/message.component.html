@@ -1,22 +1,21 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Core</mat-card-subtitle>
-  <mat-card-title>Message</mat-card-title>
-  <mat-card-content>
-    <p>Show message to user.</p>
+<app-doc-viewer title="Message" subtitle="Core">
+  <p>Show message to user.</p>
 
-    <li>Import <code>IgoMessageModule</code> only once</li>
-    <li>Dependencies: BrowserAnimationsModule </li>
+  <li>Import <code>IgoMessageModule</code> only once</li>
+  <li>Dependencies: BrowserAnimationsModule</li>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/core/message">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <mat-card-actions>
-    <button mat-raised-button (click)="success()">Success message</button>
-    <button mat-raised-button color='primary' (click)="info()">Info message</button>
-    <button mat-raised-button color='accent' (click)="alert()">Alert message</button>
-    <button mat-raised-button color='warn' (click)="error()">Error message</button>
-  </mat-card-actions>
-</mat-card>
-
+  <app-example-viewer codeFolder="core/message">
+    <div class="d-flex m-t-16 actions-container">
+      <button mat-raised-button (click)="success()">Success message</button>
+      <button mat-raised-button color="primary" (click)="info()">
+        Info message
+      </button>
+      <button mat-raised-button color="accent" (click)="alert()">
+        Alert message
+      </button>
+      <button mat-raised-button color="warn" (click)="error()">
+        Error message
+      </button>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

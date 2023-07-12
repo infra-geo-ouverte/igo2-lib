@@ -160,9 +160,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Whether a float label should be displayed
    */
-  @Input() floatLabel: FloatLabelType = 'never';
+  @Input() floatLabel: FloatLabelType = 'auto';
 
-  @Input() appearance: MatFormFieldAppearance = 'legacy';
+  @Input() appearance: MatFormFieldAppearance = 'fill';
 
   @Input() placeholder: string;
 

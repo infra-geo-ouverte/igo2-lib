@@ -1,12 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use './layer-legend/layer-legend.theming.scss' as layer-legend;
+@use './layer-list-tool/layer-list-tool.theming.scss' as layer-list-tool;
 
 @mixin igo-layer-theming($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
 
   @include layer-legend.igo-layer-legend-theming($theme);
+  @include layer-list-tool.theme($theme);
 
   igo-layer-item.igo-layer-item-focused > mat-list-item {
     background-color: mat.get-color-from-palette($accent, lighter);

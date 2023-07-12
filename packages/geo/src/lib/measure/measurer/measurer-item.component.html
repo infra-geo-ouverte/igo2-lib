@@ -5,6 +5,7 @@
   <mat-label>{{placeholder}}</mat-label>
   <input
     matInput
+    [disabled]="true"
     [readonly]="true"
     [value]="((measure$ | async) || 0) | measureFormat: measureUnit">
 </mat-form-field>

@@ -1,15 +1,13 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Widget</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/widget">code of this example</a>
-  </mat-card-content>
-
-  <igo-widget-outlet
-    [widget]="widget"
-    [inputs]="inputs"
-    (complete)="onWidgetComplete($event)"
-    (cancel)="onWidgetCancel()">
-  </igo-widget-outlet>
-
-</mat-card>
+<app-doc-viewer title="Widget" subtitle="Common">
+  <app-example-viewer
+    codeFolder="common/widget"
+  >
+    <igo-widget-outlet
+      [widget]="widget"
+      [inputs]="inputs"
+      (complete)="onWidgetComplete($event)"
+      (cancel)="onWidgetCancel()"
+    >
+    </igo-widget-outlet>
+  </app-example-viewer>
+</app-doc-viewer>

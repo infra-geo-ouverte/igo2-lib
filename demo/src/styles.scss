@@ -1,6 +1,7 @@
 @use 'packages/core/src/style/all-style';
 
 @use 'style/theme.scss';
+@use 'style/layout.scss';
 
 html,
 body {
@@ -10,4 +11,16 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+mat-card {
+  .mat-mdc-card-content>:last-child:is(hr) {
+    margin-bottom: 0.5em !important;
+  }
+}
+
+mat-card-actions, .actions-container {
+  button:not(:last-child) {
+    margin-right: 8px;
+  }
 }

@@ -1,29 +1,32 @@
-.context-filter-max-width {
-  width: calc(100% - 100px);
-  margin: 5px;
-  padding-left: 6px;
-}
+:host {
+  .context-filter-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 4px;
 
-.context-filter-min-width {
-  width: calc(100% - 135px);
-  margin: 5px;
-  padding-left: 6px;
-}
-
-mat-form-field {
-  height: 40px;
-}
-
-.profilsMenu {
-  display: flex;
-  & > mat-checkbox {
-    width: 8px;
+    mat-form-field {
+      flex: 1;
+    }
   }
-}
+  
+  .context-filter-min-width {
+    width: calc(100% - 135px);
+    margin: 5px;
+    padding-left: 6px;
+  }
+  
+  .profilsMenu {
+    display: flex;
+  }
+  
+  .add-context-button {
+    margin: 0px;
+    width: 40px;
+    display: inline-flex;
+    overflow: hidden;
+  }
 
-.add-context-button {
-  margin: 0px;
-  width: 40px;
-  display: inline-flex;
-  overflow: hidden;
+  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }

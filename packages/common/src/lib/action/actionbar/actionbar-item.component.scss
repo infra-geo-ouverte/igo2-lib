@@ -1,25 +1,35 @@
+:host {
+  ::ng-deep mat-list-item:hover {
+    cursor: pointer;
+  }
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-mat-list-item.igo-actionbar-item-disabled {
-  color: rgba(0, 0, 0, 0.26);
-  cursor: default !important;
-}
+  mat-list-item {
+    padding-left: 3px;
+    padding-right: 3px;
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-mat-list-item.igo-actionbar-item-no-display {
-  display: none;
-}
+    &.igo-actionbar-item-disabled {
+      color: rgba(0, 0, 0, 0.26);
+      cursor: default !important;
+    }
 
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-mat-checkbox {
-  padding: 12px;
-}
+    &.igo-actionbar-item-no-display {
+      display: none;
+    }
 
-.item-checkbox {
-  height: 56px;
-}
+    ::ng-deep button .mat-mdc-button-persistent-ripple {
+      display: none;
+    }
+  }
 
-/* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-.item-checkbox ::ng-deep .mat-checkbox-label {
-  margin-left: 20px;
+  mat-checkbox {
+    padding: 12px;
+  }
+
+  .item-checkbox {
+    height: 56px;
+  }
+
+  .item-checkbox ::ng-deep .mat-checkbox label {
+    margin-left: 20px;
+  }
 }

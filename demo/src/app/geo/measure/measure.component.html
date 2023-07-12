@@ -1,18 +1,15 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Simple Map</mat-card-title>
-  <mat-card-content>
-    <li>Dependencies: LanguageService</li>
+<app-doc-viewer
+  title="Measure"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer
+    codeFolder="geo/measure"
+  >
+    <igo-map-browser [map]="map" [view]="view">
+      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    </igo-map-browser>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/measure">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
-
-  <igo-measurer [store]="store" [map]="map"></igo-measurer>
-
-</mat-card>
+    <igo-measurer [store]="store" [map]="map"></igo-measurer>
+  </app-example-viewer>
+</app-doc-viewer>

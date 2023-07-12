@@ -7,16 +7,9 @@ mat-form-field {
 }
 
 .print-slide-toggle-container {
-  overflow-x: hidden;
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
   mat-slide-toggle {
     width: 100%;
     margin: 10px;
-    /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
-    }
   }
 }
 

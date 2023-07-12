@@ -1,35 +1,45 @@
-<mat-card appearance="outlined">
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Simple Map</mat-card-title>
-  <mat-card-content>
-    <li>Dependencies: LanguageService</li>
-
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/layer">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
-
-  <igo-panel title="Layers">
-    <igo-layer-list
-    [map]="map"
-    [layers]="map.layers"
-    [expandLegendOfVisibleLayers]="false"
-    floatLabel="never"
-    [queryBadge]="true">
-
-      <ng-template #igoLayerItemToolbar let-layer="layer">
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
-        <igo-download-button [layer]="layer"></igo-download-button>
-        <igo-ogc-filter-button [header]="true" [layer]="layer"></igo-ogc-filter-button>
-        <igo-time-filter-button [header]="true" [layer]="layer"></igo-time-filter-button>
-        <igo-track-feature-button [layer]="layer" [trackFeature]="true"></igo-track-feature-button>
-      </ng-template>
-
-    </igo-layer-list>
-  </igo-panel>
-
-</mat-card>
+<app-doc-viewer
+  title="Layer"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/layer">
+    <mat-grid-list cols="2" rowHeight="600px" gutterSize="16px">
+      <mat-grid-tile>
+        <igo-map-browser [map]="map" [view]="view">
+          <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+        </igo-map-browser>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="flex align-start h-100 w-100">
+          <igo-panel title="Layers" class="w-100">
+            <igo-layer-list
+              [map]="map"
+              [layers]="map.layers"
+              [expandLegendOfVisibleLayers]="false"
+              floatLabel="never"
+              [queryBadge]="true"
+            >
+              <ng-template #igoLayerItemToolbar let-layer="layer">
+                <igo-metadata-button [layer]="layer"></igo-metadata-button>
+                <igo-download-button [layer]="layer"></igo-download-button>
+                <igo-ogc-filter-button
+                  [header]="true"
+                  [layer]="layer"
+                ></igo-ogc-filter-button>
+                <igo-time-filter-button
+                  [header]="true"
+                  [layer]="layer"
+                ></igo-time-filter-button>
+                <igo-track-feature-button
+                  [layer]="layer"
+                  [trackFeature]="true"
+                ></igo-track-feature-button>
+              </ng-template>
+            </igo-layer-list>
+          </igo-panel>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>
