@@ -1,6 +1,6 @@
 :host {
   .mat-mdc-radio-button ~ .mat-radio-button {
-    margin-left: 16px;
+    margin-left: 12px;
   }
 
   .readOnly-Input {
@@ -31,7 +31,7 @@
 
   .mat-mdc-dialog-actions {
     display: flex !important;
-    justify-content: end;
+    justify-content: flex-end;
   }
 
   .input {

@@ -1,13 +1,13 @@
-.close-button {
-  top: 5px;
-  right: 5px;
-  padding: 7px;
-  line-height: 10px;
-  position: absolute !important;
-  min-width: auto;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version. */
-mat-dialog-container {
+:host {
   position: relative;
+  display: block;
+  
+  .close-button {
+    top: 5px;
+    right: 5px;
+    padding: 7px;
+    line-height: 10px;
+    position: absolute !important;
+    min-width: auto;
+  }  
 }

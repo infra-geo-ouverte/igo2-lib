@@ -1,21 +1,14 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/media';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-rotation-button-container {
-  width: $igo-icon-size;
-  background-color: #fff;
-  &:hover {
-    background-color: #efefef;
-  }
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
-  &:disabled {
-    @include mobile {
-      display: none;
+:host {
+  @include common-utils.square-button();
+  .igo-rotation-button-container {
+    width: $igo-icon-size;
+    background-color: #fff;
+    &:hover {
+      background-color: #efefef;
     }
   }
 }

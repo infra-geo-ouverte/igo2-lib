@@ -1,40 +1,37 @@
-
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-mat-select {
-  width: 150px;
-  background-color: white;
-  height: 40px;
-  padding-top: 0;
-  & ::ng-deep {
-    /* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-    .mat-select-trigger {
-      height: 40px;
-    }
-    /* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-    .mat-select-value-text,
-    .mat-select-placeholder {
-      padding: 5px;
-      position: relative;
+:host {
+  mat-select {
+    width: 150px;
+    background-color: white;
+    height: 40px;
+    padding-top: 0;
+    & ::ng-deep {
+      .mat-mdc-select-trigger {
+        height: 40px;
+      }
+      .mat-mdc-select-value-text,
+      .mat-mdc-select-placeholder {
+        padding: 5px;
+        position: relative;
+      }
     }
   }
-}
 
-.mat-mdc-option {
-  text-overflow: inherit;
-}
+  .mat-mdc-option {
+    text-overflow: inherit;
+  }
 
-.titlePoi {
-  max-width: 135px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  float: left;
-}
+  .titlePoi {
+    max-width: 135px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
+  }
 
-.buttonPoi {
-  float: right;
-  margin: 4px -10px 4px 0;
-  & ::ng-deep .mat-icon {
-    margin: 0 8px;
+  .buttonPoi {
+    float: right;
+    margin: 4px -10px 4px 0;
+    & ::ng-deep .mat-icon {
+      margin: 0 8px;
+    }
   }
 }

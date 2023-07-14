@@ -12,5 +12,6 @@
 
   igo-actionbar-item {
     @include mat.icon-button-density($theme);
+    @include mat.list-density($theme);
   }
 }

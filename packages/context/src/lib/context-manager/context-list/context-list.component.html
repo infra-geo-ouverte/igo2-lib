@@ -1,6 +1,6 @@
 <igo-list [navigation]="true">
   <div class="context-filter-container">
-    <mat-form-field *ngIf="showFilter()" class="m-r-4">
+    <mat-form-field *ngIf="showFilter()" floatLabel="always" class="m-r-4">
       <mat-label>{{'igo.context.contextManager.filterPlaceHolder' | translate}}</mat-label>
       <input
         matInput
@@ -11,7 +11,6 @@
         [(ngModel)]="term"
       />
       <button
-        mat-button
         mat-icon-button
         matSuffix
         class="clear-button"

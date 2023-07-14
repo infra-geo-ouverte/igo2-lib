@@ -11,17 +11,19 @@
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
       (touchend)="onKeyup($event)">
-  </mat-form-field>
-
-  <div class="search-bar-buttons">
     <button *ngIf="(empty$ | async)===false"
       mat-icon-button
+      matSuffix
       [color]="color"
       (click)="onClearButtonClick()"
       [matTooltip]="'igo.geo.search.clearSearch' | translate">
       <mat-icon svgIcon="close"></mat-icon>
     </button>
-    
+  </mat-form-field>
+
+  <mat-divider [vertical]="true"></mat-divider>
+
+  <div class="search-bar-buttons">
     <button *ngIf="showSearchButton"
       mat-icon-button
       [color]="color">

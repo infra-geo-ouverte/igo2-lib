@@ -1,0 +1,5 @@
+@use './lib/context-manager/context-list/context-list.theming.scss' as context-list;
+
+@mixin context-component-themes($theme) {
+  @include context-list.theme($theme);
+}

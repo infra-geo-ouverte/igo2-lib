@@ -15,7 +15,7 @@
     )
   );
 
-  igo-layer-list-tool {
+  igo-context-list {
     @include mat.icon-button-density($theme);
     @include mat.form-field-density($theme);
   }

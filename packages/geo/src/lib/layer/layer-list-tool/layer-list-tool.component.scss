@@ -3,10 +3,6 @@
   align-items: center;
   padding: 4px 16px;
 
-  & > :not(:last-child) {
-    margin-right: 4px;
-  }
-
   .inputFilter {
     width: calc(100% - 100px);
     max-width: 200px;

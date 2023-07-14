@@ -25,15 +25,8 @@
     text-align: center;
   }
   
-  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-  mat-list-item ::ng-deep .mat-list-item-content {
+  mat-list-item ::ng-deep .mdc-list-item__content {
     margin-bottom: 10px;
-  }
-  
-  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
-  mat-checkbox ::ng-deep .mat-checkbox-inner-container {
-    margin-left: 8px;
-    margin-right: 16px;
   }
   
   #opacity-slider {
@@ -91,5 +84,4 @@
     align-items: center;
     height: 48px;
   }
-  
 }

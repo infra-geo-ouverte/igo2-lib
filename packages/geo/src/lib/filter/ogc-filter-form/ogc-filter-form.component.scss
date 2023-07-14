@@ -16,8 +16,7 @@
   width: 100%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-.mat-select-arrow {
+.mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -40,13 +39,11 @@
   margin-left: 5px;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .logical .mat-select-arrow {
+::ng-deep .logical .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .logicalHidden .mat-select-arrow {
+::ng-deep .logicalHidden .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -54,8 +51,7 @@
   width: 20%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .field .mat-select-arrow {
+::ng-deep .field .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -65,8 +61,7 @@
   text-align: center;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .operator .mat-select-arrow {
+::ng-deep .operator .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -75,8 +70,7 @@
   margin-left: 5px;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .spatialSelector .mat-select-arrow {
+::ng-deep .spatialSelector .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -93,8 +87,7 @@
   margin-left: 5px;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .singleInput .mat-select-arrow {
+::ng-deep .singleInput .mat-mdc-select-arrow {
   visibility: hidden;
 }
 
@@ -102,8 +95,8 @@
   width: 20%;
   margin-left: 5px;
 }
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-::ng-deep .dualInput .mat-select-arrow {
+
+::ng-deep .dualInput .mat-mdc-select-arrow {
   visibility: hidden;
 }
 

@@ -40,20 +40,17 @@
     <div class="print-slide-toggle-container">
       <mat-slide-toggle
         class="print-option"
-        formControlName="showProjection"
-        [labelPosition]="'before'">
+        formControlName="showProjection">
         {{'igo.geo.printForm.showProjection' | translate}}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
-        formControlName="showScale"
-        [labelPosition]="'before'">
+        formControlName="showScale">
         {{'igo.geo.printForm.showScale' | translate}}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
         formControlName="doZipFile"
-        [labelPosition]="'before'"
         [style.display]="isPrintService ? 'none' : ''">
         {{'igo.geo.printForm.doZipFile' | translate}}
       </mat-slide-toggle>

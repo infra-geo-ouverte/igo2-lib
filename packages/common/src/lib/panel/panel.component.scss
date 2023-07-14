@@ -2,23 +2,18 @@
 @import '../../style/partial/common.variables';
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
 
-  // &.igo-panel-with-header {
-  //   .igo-panel-content {
-  //     height: calc(100% - #{$igo-panel-header-height});
-  //   }
-  // }
-  
-  // *:not(.igo-panel-with-header) {
-  //   .igo-panel-content {
-  //     height: 100%;
-  //   }
-  // }
-  
+  igo-interactive-tour {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
   .igo-panel-title {
     display: block;
-    width: calc(100% - 80px);
+    width: calc(100% - 88px);
     margin-left: 40px;
     height: 100%;
     text-overflow: ellipsis;
@@ -27,37 +22,35 @@
     line-height: 40px;
     float: left;
     font-weight: 500;
-    font-size: 1.17em;
+    font-size: 16px;
   }
-  
-  
-.igo-panel-header {
-  height: $igo-panel-header-height;
-  padding: $igo-panel-header-padding;
-  text-align: center;
-}
 
-.igo-panel-header h3 {
-  margin: 0;
-  height: $igo-icon-size;
-}
+  .igo-panel-header {
+    height: $igo-panel-header-height;
+    padding: $igo-panel-header-padding;
+    text-align: center;
+  }
 
-.igo-panel-header ::ng-deep [panelleftbutton] {
-  float: left;
-  margin-right: -40px;
-}
+  .igo-panel-header h3 {
+    margin: 0;
+    height: $igo-icon-size;
+  }
 
-.igo-panel-header ::ng-deep [panelrightbutton] {
-  float: right;
-}
+  .igo-panel-header ::ng-deep [panelleftbutton] {
+    float: left;
+    margin-right: -40px;
+  }
 
-.igo-panel-content {
-  overflow: auto;
-}
+  .igo-panel-header ::ng-deep [panelrightbutton] {
+    float: right;
+  }
 
-.igo-cursor-pointer {
-  cursor: pointer;
-}
+  .igo-panel-content {
+    flex: 1;
+    overflow: auto;
+  }
 
+  .igo-cursor-pointer {
+    cursor: pointer;
+  }
 }
-

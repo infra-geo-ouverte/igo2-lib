@@ -1,15 +1,14 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-wake-lock-button-container {
-  width: $igo-icon-size;
-  background-color: #fff;
-  &:hover {
-    background-color: #efefef;
-  }
-}
+:host {
+  @include common-utils.square-button();
 
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
+  .igo-wake-lock-button-container {
+    width: $igo-icon-size;
+    background-color: #fff;
+    &:hover {
+      background-color: #efefef;
+    }
+  }
 }

@@ -1,21 +1,20 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-zoom-button-container {
-  width: $igo-icon-size;
-  button {
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
+:host {
+  @include common-utils.square-button();
+
+  .igo-zoom-button-container {
+    width: $igo-icon-size;
+    button {
+      background-color: #fff;
+      &:hover {
+        background-color: #efefef;
+      }
     }
   }
-}
 
-.igo-zoom-button-container button:first-child {
-  margin-bottom: 2px;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
+  .igo-zoom-button-container button:first-child {
+    margin-bottom: 2px;
+  }
 }

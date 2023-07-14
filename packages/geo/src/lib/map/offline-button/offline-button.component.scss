@@ -1,21 +1,20 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/media';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.onlineStyle {
-  width: $igo-icon-size;
-  background-color: rgb(255, 255, 255);
-  &:hover {
-    background-color: #efefef;
+:host {
+  @include common-utils.square-button();
+
+  .onlineStyle {
+    width: $igo-icon-size;
+    background-color: rgb(255, 255, 255);
+    &:hover {
+      background-color: #efefef;
+    }
   }
-}
 
-.offlineStyle {
-  width: $igo-icon-size;
-  background-color: #b9b9b9;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
+  .offlineStyle {
+    width: $igo-icon-size;
+    background-color: #b9b9b9;
+  }
 }

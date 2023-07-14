@@ -5,7 +5,7 @@
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.layer.legend.showAll' | translate"
   [checked]="showAllLegendsValue" class="mat-typography" 
-  *ngIf="(layersInUi$ | async).length && allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
+  *ngIf="(layersInUi$ | async).length && allowShowAllLegends" (change)="toggleShowAllLegends($event.checked)">
     {{'igo.geo.layer.legend.showAll' | translate}}
   </mat-slide-toggle>
   <mat-divider *ngIf="(layersInUi$ | async).length && allowShowAllLegends"></mat-divider>

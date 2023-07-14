@@ -5,5 +5,5 @@
 @mixin igo-map-theming($theme) {
   @include map-browser.igo-map-browser-theming($theme);
   @include zoom-button.igo-zoom-button-theming($theme);
-  @include menu-button.igo-menu-button-theming($theme);
+  @include menu-button.theme($theme);
 }

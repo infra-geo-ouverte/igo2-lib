@@ -26,7 +26,6 @@
     min-height: 40px;
     height: auto;
     width: 142px;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     ::ng-deep .mat-button-toggle-label-content {
       line-height: unset;
       font-size: small;
@@ -53,12 +52,10 @@
     }
   }
 
-  /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
   mat-checkbox {
     vertical-align: middle;
   }
 
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   mat-button {
     padding-right: 10px;
     cursor: pointer;

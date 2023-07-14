@@ -8,11 +8,8 @@ mat-option.igo-export-layer-mat-option {
 .import-export-toggle {
   padding: 10px;
   text-align: center;
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   mat-button-toggle-group {
     width: 100%;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
     mat-button-toggle {
       width: 50%;
     }
@@ -46,12 +43,9 @@ igo-spinner {
 
 .export-options, .export-combine-layers, .export-separator {
   overflow-x: hidden;
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
   mat-slide-toggle {
     width: 100%;
     margin: 10px;
-    /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
     ::ng-deep .mat-slide-toggle-content {
       width: calc(100% - #{$slide-toggle-width});
     }

@@ -1,19 +1,19 @@
-@use './lib/action/action.theming.scss' as action-theme;
-@use './lib/collapsible/collapsible.theming.scss' as collapsible-theme;
-@use './lib/entity/entity.theming.scss' as entity-theme;
-@use './lib/list/list.theming.scss' as list-theme;
-@use './lib/panel/panel.theming.scss' as panel-theme;
-@use './lib/tool/tool.theming.scss' as tool-theme;
-@use './lib/interactive-tour/interactive-tour.theming.scss' as tour-theme;
-@use './lib/home-button/home-button.theming.scss' as home-button-theme;
+@use './lib/action/action.theming.scss' as action;
+@use './lib/collapsible/collapsible.theming.scss' as collapsible;
+@use './lib/entity/entity.theming.scss' as entity;
+@use './lib/list/list.theming.scss' as list;
+@use './lib/panel/panel.theming.scss' as panel;
+@use './lib/tool/tool.theming.scss' as tool;
+@use './lib/interactive-tour/interactive-tour.theming.scss' as interactive-tour;
+@use './lib/home-button/home-button.theming.scss' as home-button;
 
 @mixin common-component-themes($theme) {
-  @include action-theme.igo-action-theming($theme);
-  @include collapsible-theme.igo-collapsible-theming($theme);
-  @include entity-theme.igo-entity-theming($theme);
-  @include list-theme.igo-list-theming($theme);
-  @include panel-theme.igo-panel-theming($theme);
-  @include tool-theme.igo-tool-theming($theme);
-  @include tour-theme.igo-tour-theming($theme);
-  @include home-button-theme.igo-home-button-theming($theme);
+  @include action.igo-action-theming($theme);
+  @include collapsible.igo-collapsible-theming($theme);
+  @include entity.igo-entity-theming($theme);
+  @include list.igo-list-theming($theme);
+  @include panel.igo-panel-theming($theme);
+  @include tool.igo-tool-theming($theme);
+  @include interactive-tour.theme($theme);
+  @include home-button.theme($theme);
 }

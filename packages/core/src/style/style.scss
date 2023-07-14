@@ -1,3 +1,4 @@
+@use './partial/layout.scss';
 @import 'ngx-toastr/toastr';
 
 button.mat-mdc-menu-item {
@@ -7,11 +8,6 @@ button.mat-mdc-menu-item {
 a.mat-mdc-menu-item > mat-icon {
   margin-bottom: 14px;
 }
-
-// .mat-icon svg {
-//   height: 24px;
-//   width: 24px;
-// }
 
 button.mat-mdc-icon-button.mat-mdc-button-base[disabled='true'] {
   color: rgba(0, 0, 0, 0.26);

@@ -10,6 +10,14 @@
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $foreground: map.get($theme, foreground);
+  $darker-contrast: mat.get-color-from-palette(
+    $primary,
+    darker-contrast
+  );
+  $lighter-contrast: mat.get-color-from-palette(
+    $primary,
+    lighter-contrast
+  );
 
   igo-toolbox > igo-actionbar mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
     &:hover {
@@ -18,20 +26,27 @@
 
     &.tool-activated,
     &.children-tool-activated {
-      background-color: mat.get-color-from-palette($accent);
-      cursor: default;
+      color: $lighter-contrast;
+      background-color: $darker-contrast;
+
       button {
         cursor: default;
       }
     }
   }
 
-  igo-toolbox > igo-actionbar:not(.with-title) > mat-list {
-    & > #lowChevron,
-    & > #topChevron {
-      &:hover {
-        background-color: mat.get-color-from-palette($accent, lighter);
-        color: black;
+  igo-toolbox > igo-actionbar:not(.with-title) {
+    > mat-list {
+      & > #lowChevron,
+      & > #topChevron {
+        &:hover {
+          background-color: mat.get-color-from-palette($accent, lighter);
+          color: black;
+        }
+      }
+
+      mat-list-item {
+        color: $lighter-contrast;
       }
     }
   }
@@ -59,8 +74,7 @@
   igo-toolbox.color-primary,
   igo-toolbox.color-grey {
     & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
-      /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-      .mat-mdc-list-item.mat-list-item-with-avatar {
+      .mat-mdc-list-item.mdc-list-item--with-leading-avatar {
         color: white;
         &:hover {
           color: black;
@@ -85,7 +99,9 @@
     )
   );
 
-  igo-actionbar-item {
-    @include mat.list-density($theme);
+  igo-toolbox {
+    igo-actionbar-item {
+      @include mat.list-density($theme);
+    }
   }
 }

@@ -1,13 +1,10 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.checkAllButton{
+// This component is projected, the style need to be apply outside is scope
+.checkAllButton {
   text-align: center;
   padding: 0 5px;
-}
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-.igo-search-settings-button ::ng-deep div.mat-button-ripple-round  {
-  border-radius: 0;
 }
 
 .igo-search-settings-radio-group {
@@ -28,7 +25,7 @@
   width: 100%;
 }
 
-.igo-search-settings-search-source mat-checkbox{
+.igo-search-settings-search-source mat-checkbox {
   display: flex;
   margin-left: $igo-margin;
   margin-right: $igo-margin;
@@ -42,8 +39,11 @@
 
 .pointer-summary-slide-toggle-container {
   overflow-x: hidden;
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
   mat-slide-toggle {
     margin: 10px;
   }
+}
+
+.igo-search-settings-button {
+  @include common-utils.square-button();
 }
