@@ -45,6 +45,14 @@
                 "glob": "**/*",
                 "input": "./dist/geo/assets/",
                 "output": "./assets/igo2/geo/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./dist/core/locale/",
+                "output": "./locale/libs_locale",
+                "ignore": [
+                  "**/*.core.json"
+              ]
               }
             ],
             "styles": [
