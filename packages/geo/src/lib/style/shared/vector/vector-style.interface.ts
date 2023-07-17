@@ -16,6 +16,36 @@ export interface IgoStyleBase {
   igoStyleObject?: { [key: string]: any };
   mapboxStyle ?: MapboxStyle;
   styleByAttribute?: StyleByAttribute;
+  geoStylerStyle?: GeoStylerStyleInterfaceOptions;
+
+}
+
+export interface GeoStylerStyleInterfaceOptions {
+  basic: GeoStylerStyleInterfaceFromGeoStyler; 
+  ProjetB: GeoStylerStyleInterfaceFromGeoStyler;  
+  hover: GeoStylerStyleInterfaceFromGeoStyler;
+  /*
+  name
+  ruleName
+  kind
+  color
+  width
+  minScale
+  maxScale
+  filter
+  */
+}
+
+export interface GeoStylerStyleInterfaceFromGeoStyler extends GeoStylerStyleInterfaceOptions{
+  // todo check reuse their inferface.
+  name?: string;
+  ruleName?: string;
+  kind?: string;
+  wellKnownName?: string;
+  color?: string;
+  width?: string;
+  minScale?: number;
+  maxScale?: number;
 }
 
 export interface CommonVectorStyleOptions {

@@ -165,7 +165,7 @@ export function addImportedFeaturesToMap(
     title: layerTitle,
     isIgoInternalLayer: true,
     source,
-    igoStyle: { editable },
+    igoStyle: { editable/*, geoStylerStyle: {...}*/ },
     style: randomStyle
   });
   map.addLayer(layer);

@@ -56,6 +56,14 @@ export class VectorLayer extends Layer {
   get exportable(): boolean {
     return this.options.exportable !== false;
   }
+/*
+  get gsStyle() {
+    this.options.igoStyle.geostyler
+  }  
+  
+  set gsStyle(value: any) {
+    this.ol.setStyle(value)
+  }*/
 
   constructor(
     options: VectorLayerOptions,
@@ -71,6 +79,8 @@ export class VectorLayer extends Layer {
   }
 
   protected createOlLayer(): olLayerVector<olSourceVector<OlGeometry>> {
+    // convertir cet objet this.options.igoStyle.geoStylerStyle en objet ol qui sera appliqué 
+    // ex : this.options.style =  this.options.igoStyle.geoStylerStyle
     const initialOpacityValue = this.options.opacity || 1;
     const initialVisibleValue = this.options.visible !== false;
     const initialMinResValue = this.options.minResolution || getResolutionFromScale(Number(this.options.minScaleDenom));

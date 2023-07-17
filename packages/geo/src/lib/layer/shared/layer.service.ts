@@ -49,6 +49,7 @@ import { MessageService } from '@igo2/core';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
+import { GeostylerStyleService } from '../../style/geostyler-service/geostyler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,7 @@ export class LayerService {
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
+    private geostylerService: GeostylerStyleService, 
     private dataSourceService: DataSourceService,
     private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
@@ -149,6 +151,15 @@ export class LayerService {
     const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
+
+    if (layerOptions.igoStyle.geoStylerStyle) {
+      //const myOlStyle = this.geostylerService.gsToOL(layerOptions.igoStyle.geoStylerStyle.basic)
+     // style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle)jjjjjjjj
+      style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle, "ol")       
+    }
+
+    
+
     if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     } else if (layerOptions.igoStyle.igoStyleObject && layerOptions.idbInfo?.storeToIdb) {
