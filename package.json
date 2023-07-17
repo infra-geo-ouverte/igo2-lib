@@ -24,7 +24,7 @@
     "lint.fix": "ng lint --fix",
     "e2e": "ng e2e",
     "build.all": "npm run build.libs && npm run build.demo",
-    "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && npm run build.locale && gulp bumpVersion",
+    "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && npm run build.locale",
     "build.utils": "ng build utils --configuration production",
     "build.core": "ng build core --configuration production",
     "build.common": "ng build common --configuration production",
@@ -35,6 +35,10 @@
     "build.demo": "ng build demo --configuration=production",
     "build.ghpages": "ng build demo --configuration=production --output-path ./dist/ghpages --base-href /igo2-lib/",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
+    "build.locale": "ts-node scripts/src/locale-merge.ts",
+    "postbuild.core": "ts-node scripts/src/postbuild-core.ts",
+    "postbuild.common": "ts-node scripts/src/postbuild-common.ts",
+    "postbuild.geo": "ts-node scripts/src/postbuild-geo.ts",
     "copy": "copy-newer --cwd dist ** \"..\\igo2\\node_modules\\@igo2\"",
     "doc": "npm run build.doc && compodoc -s --port 4220",
     "pretest": "ng lint",
@@ -73,11 +77,7 @@
     "postghpages": "rimraf ./dist/ghpages",
     "preghpages.win": "gulp bundleLocale && npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
     "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
-    "postghpages.win": "rimraf ./dist/ghpages",
-    "postbuild.core": "ts-node scripts/src/postbuild-core.ts",
-    "postbuild.common": "ts-node scripts/src/postbuild-common.ts",
-    "postbuild.geo": "ts-node scripts/src/postbuild-geo.ts",
-    "build.locale": "ts-node scripts/src/locale-merge.ts"
+    "postghpages.win": "rimraf ./dist/ghpages"
   },
   "private": true,
   "dependencies": {
