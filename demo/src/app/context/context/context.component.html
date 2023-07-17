@@ -6,7 +6,12 @@
   <app-example-viewer codeFolder="context/context" configFolder="contexts">
     <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
       <mat-grid-tile>
-        <igo-map-browser [map]="map" [view]="view">
+        <igo-map-browser
+          igoMapContext
+          igoLayerContext
+          [map]="map"
+          [view]="view"
+        >
           <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
           <igo-geolocate-button
             [map]="map"

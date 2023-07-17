@@ -3,7 +3,6 @@
 
 @mixin theme($theme) {
   @include color($theme);
-  @include density($theme);
 }
 
 @mixin color($theme) {
@@ -26,24 +25,8 @@
       }
     }
 
-    
-
     .mat-primary .mat-mdc-icon-button {
       color: white;
     }
-  }
-}
-
-@mixin density($theme) {
-  $density: mat.get-density-config($theme);
-  $theme: map.merge(
-    $theme,
-    (
-      density: $density - 2
-    )
-  );
-
-  igo-interactive-tour {
-    @include mat.icon-button-density($theme);
   }
 }

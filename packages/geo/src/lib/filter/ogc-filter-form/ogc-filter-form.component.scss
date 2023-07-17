@@ -4,108 +4,108 @@
 :host {
   width: 100%;
   padding: 5px 10px;
-}
 
-::ng-deep .mat-mdc-form-field .mat-icon svg {
-  width: 1em;
-  height: 1em;
-  color: lightgray;
-}
-
-.mat-mdc-form-field {
-  width: 100%;
-}
-
-.mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-.mat-mdc-slide-toggle {
-  margin-top: 10px;
-}
-
-.logical {
-  flex-flow: column nowrap;
-  width: 10%;
-  max-width: 45px;
-  margin-left: 5px;
-}
-
-.logicalHidden {
-  flex-flow: column nowrap;
-  width: 10%;
-  visibility: hidden;
-  max-width: 45px;
-  margin-left: 5px;
-}
-
-::ng-deep .logical .mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-::ng-deep .logicalHidden .mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-.field {
-  width: 20%;
-}
-
-::ng-deep .field .mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-.operator {
-  width: 12%;
-  margin-left: 10px;
-  text-align: center;
-}
-
-::ng-deep .operator .mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-.spatialSelector {
-  width: 15%;
-  margin-left: 5px;
-}
-
-::ng-deep .spatialSelector .mat-mdc-select-arrow {
-  visibility: hidden;
-}
-
-.singleInput {
-  width: 30%;
-  margin-left: 5px;
-  @include mobile {
-    width: 27%;
+  ::ng-deep .mat-mdc-form-field .mat-icon svg {
+    width: 1em;
+    height: 1em;
+    color: lightgray;
   }
-}
 
-.snrc {
-  width: 20%;
-  margin-left: 5px;
-}
+  .mat-mdc-form-field {
+    width: 100%;
+  }
 
-::ng-deep .singleInput .mat-mdc-select-arrow {
-  visibility: hidden;
-}
+  .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
 
-.dualInput {
-  width: 20%;
-  margin-left: 5px;
-}
+  .mat-mdc-slide-toggle {
+    margin-top: 10px;
+  }
 
-::ng-deep .dualInput .mat-mdc-select-arrow {
-  visibility: hidden;
-}
+  .logical {
+    flex-flow: column nowrap;
+    width: 10%;
+    max-width: 84px;
+    margin-left: 5px;
+  }
 
-.igo-layer-button-group {
-  display: flex;
-  float: right;
-  padding-top: 5px;
-}
+  .logicalHidden {
+    flex-flow: column nowrap;
+    width: 10%;
+    visibility: hidden;
+    max-width: 45px;
+    margin-left: 5px;
+  }
 
-.container {
-  display: flex;
+  ::ng-deep .logical .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  ::ng-deep .logicalHidden .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .field {
+    width: 20%;
+  }
+
+  ::ng-deep .field .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .operator {
+    width: 12%;
+    min-width: 150px;
+    margin-left: 10px;
+    text-align: center;
+  }
+
+  ::ng-deep .operator .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .spatialSelector {
+    width: 15%;
+    margin-left: 5px;
+  }
+
+  ::ng-deep .spatialSelector .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .singleInput {
+    width: 30%;
+    margin-left: 5px;
+    @include mobile {
+      width: 27%;
+    }
+  }
+
+  .snrc {
+    width: 20%;
+    margin-left: 5px;
+  }
+
+  ::ng-deep .singleInput .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .dualInput {
+    width: 20%;
+    margin-left: 5px;
+  }
+
+  ::ng-deep .dualInput .mat-mdc-select-arrow {
+    visibility: hidden;
+  }
+
+  .igo-layer-button-group {
+    display: flex;
+    padding-top: 5px;
+  }
+
+  .container {
+    display: flex;
+  }
 }

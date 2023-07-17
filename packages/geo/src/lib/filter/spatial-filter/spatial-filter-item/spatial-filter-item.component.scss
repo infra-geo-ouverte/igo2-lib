@@ -44,7 +44,6 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 0 8px;
     margin: 16px 0;
   }
 
@@ -70,8 +69,8 @@
   .radius-unit {
     display: flex;
     width: 100%;
-    margin-left: 2px;
     padding: 5px;
+    box-sizing: border-box;
   }
 
   .radius,

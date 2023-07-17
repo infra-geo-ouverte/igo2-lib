@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use '@mat-datetimepicker/core/datetimepicker/datetimepicker-theme';
 
 @use '../packages-import' as igo;
 @use './material-theme-override';
@@ -6,6 +7,8 @@
 
 @mixin all-component-themes($config) {
   @include material-theme-override.material-override($config);
+  
+  @include datetimepicker-theme.mat-datetimepicker-theme($config);
 
   @include igo.core-component-themes($config);
   @include igo.common-component-themes($config);

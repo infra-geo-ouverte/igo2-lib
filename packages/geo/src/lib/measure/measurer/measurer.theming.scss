@@ -3,21 +3,7 @@
 
 @mixin igo-measurer-theming($theme) {
   @include color($theme);
-  @include density($theme);
   @include typography($theme);
-
-  .igo-map-tooltip {
-    position: relative;
-    border-radius: 4px;
-    padding: 4px 8px;
-    white-space: nowrap;
-  }
-  .igo-map-tooltip-hidden {
-    display: none;
-  }
-  .igo-map-tooltip-measure-by-display{
-    display: none;
-  }
 }
 
 @mixin color($theme) {
@@ -36,19 +22,5 @@
 
   .igo-map-tooltip-measure {
     font-size: mat.font-size($typography, subtitle-1);
-  }
-}
-
-@mixin density($theme) {
-  $density: mat.get-density-config($theme);
-  $theme: map.merge(
-    $theme,
-    (
-      density: $density - 2
-    )
-  );
-
-  igo-measurer-item {
-    @include mat.form-field-density($theme);
   }
 }

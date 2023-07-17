@@ -1,4 +1,4 @@
-<form class="form-list">
+<div class="form-list">
     <mat-form-field class="zone-list">
         <input #input type="text" placeholder="{{'igo.geo.spatialFilter.listLabel' | translate}}" matInput
         [formControl]="formControl" [matAutocomplete]="auto">
@@ -9,15 +9,13 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-<form>
+<div>
 
 <div class="buffer-div">
-    <form class="buffer-form">
-        <mat-form-field class="buffer">
-            <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
-            [value]="0" [readonly]="!zone">
-        </mat-form-field>
-    </form>
+    <mat-form-field class="buffer">
+        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
+        [value]="0" [readonly]="!zone">
+    </mat-form-field>
 
     <mat-form-field class="unit-field">
         <mat-select

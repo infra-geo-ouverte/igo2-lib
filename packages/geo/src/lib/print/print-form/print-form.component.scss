@@ -1,32 +1,31 @@
 @import '../../../../../core/src/style/partial/media';
 
-$slide-toggle-width: 60px;
-
-mat-form-field {
-  width: 100%;
-}
-
-.print-slide-toggle-container {
-  mat-slide-toggle {
+:host {
+  mat-form-field {
     width: 100%;
-    margin: 10px;
   }
-}
 
-.print-option {
-  display: block;
-  margin-right: 10px;
-  margin-bottom: 15px;
-}
+  .print-slide-toggle-container {
+    mat-slide-toggle {
+      width: 100%;
+      padding: 0 8px;
+    }
+  }
 
-.print-button-top-padding {
-  padding-top: 25px;
-}
+  .print-option {
+    display: block;
+    margin-bottom: 12px;
+  }
 
-.igo-form {
-  padding: 10px 5px 5px;
-}
+  .print-button-top-padding {
+    padding-top: 25px;
+  }
 
-.igo-form-button-group {
-  text-align: center;
+  .igo-form {
+    padding: 10px 5px 5px;
+  }
+
+  .igo-form-button-group {
+    text-align: center;
+  }
 }

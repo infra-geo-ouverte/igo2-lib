@@ -89,7 +89,7 @@ export class ContextService {
       this.config.getConfig('context')
     );
 
-    this.baseUrl = this.options.url;
+    this.baseUrl = this.options.url ?? '';
 
     this.readParamsFromRoute();
 

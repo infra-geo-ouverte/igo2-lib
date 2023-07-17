@@ -3,7 +3,7 @@ $slide-toggle-width: 60px;
 :host {
   mat-slide-toggle {
     width: 100%;
-    margin: 10px;
+    padding: 10px;
     ::ng-deep .mat-slide-toggle-content {
       width: calc(100% - #{$slide-toggle-width});
     }
@@ -23,5 +23,4 @@ $slide-toggle-width: 60px;
     max-height: 100%;
     overflow: auto;
   }
-  
 }

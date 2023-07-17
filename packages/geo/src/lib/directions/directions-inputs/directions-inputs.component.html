@@ -8,12 +8,12 @@
     (cdkDragStarted)="stopIsDragged = true"
     (cdkDragEnded)="stopIsDragged = false"
     cdkDragLockAxis="y"
-    class="stop-box mat-typography"
+    class="stop-box"
     *ngFor="let stop of stopsStore.view.all$() | async; let i = index"
     cdkDrag
   >
     <div [ngClass]="getNgClass(stop)">
-      <mat-form-field>
+      <mat-form-field subscriptSizing="dynamic">
         <mat-label>{{ getPlaceholder(stop) }}</mat-label>
         <input
           id="{{ stop.id }}"

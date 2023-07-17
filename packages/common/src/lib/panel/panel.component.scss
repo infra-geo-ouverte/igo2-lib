@@ -4,6 +4,7 @@
 :host {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   igo-interactive-tour {
     position: absolute;
@@ -11,38 +12,19 @@
     right: 0;
   }
 
-  .igo-panel-title {
-    display: block;
-    width: calc(100% - 88px);
-    margin-left: 40px;
-    height: 100%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    line-height: 40px;
-    float: left;
-    font-weight: 500;
-    font-size: 16px;
-  }
-
   .igo-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     height: $igo-panel-header-height;
-    padding: $igo-panel-header-padding;
     text-align: center;
   }
 
-  .igo-panel-header h3 {
+  .igo-panel-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     margin: 0;
-    height: $igo-icon-size;
-  }
-
-  .igo-panel-header ::ng-deep [panelleftbutton] {
-    float: left;
-    margin-right: -40px;
-  }
-
-  .igo-panel-header ::ng-deep [panelrightbutton] {
-    float: right;
   }
 
   .igo-panel-content {

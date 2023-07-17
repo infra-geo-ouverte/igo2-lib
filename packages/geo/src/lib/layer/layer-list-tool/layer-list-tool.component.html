@@ -1,4 +1,4 @@
-<mat-form-field class="inputFilter" appearance="fill" [floatLabel]="floatLabel">
+<mat-form-field class="inputFilter" [floatLabel]="floatLabel">
   <input
     matInput
     [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
@@ -19,39 +19,35 @@
   </button>
 </mat-form-field>
 
-<div
-  [matTooltip]="
-    sortAlpha
-      ? ('igo.geo.layer.sortMapOrder' | translate)
-      : ('igo.geo.layer.sortAlphabetically' | translate)
-  "
-  matTooltipShowDelay="500"
->
+<div class="actions-container">
   <button
     class="sort-alpha"
     [color]="sortAlpha ? 'warn' : 'primary'"
     mat-icon-button
+    [matTooltip]="
+      sortAlpha
+        ? ('igo.geo.layer.sortMapOrder' | translate)
+        : ('igo.geo.layer.sortAlphabetically' | translate)
+    "
+    matTooltipShowDelay="500"
     (click)="toggleSortAlpha()"
   >
     <mat-icon
       [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"
     ></mat-icon>
   </button>
-</div>
 
-<div
-  [matTooltip]="
-    onlyVisible
-      ? ('igo.geo.layer.resetLayersList' | translate)
-      : ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)
-  "
-  matTooltipShowDelay="500"
->
   <button
     class="only-visible"
     mat-icon-button
     [disabled]="layersAreAllVisible && !onlyVisible"
     [color]="onlyVisible ? 'warn' : 'primary'"
+    [matTooltip]="
+      onlyVisible
+        ? ('igo.geo.layer.resetLayersList' | translate)
+        : ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)
+    "
+    matTooltipShowDelay="500"
     (click)="toggleOnlyVisible()"
   >
     <mat-icon
@@ -63,20 +59,17 @@
     >
     </mat-icon>
   </button>
-</div>
 
-<div
-  [matTooltip]="
-    selectionMode
-      ? ('igo.geo.layer.deactivateSelectionMode' | translate)
-      : ('igo.geo.layer.activateSelectionMode' | translate)
-  "
-  matTooltipShowDelay="500"
->
   <button
     class="selection-mode"
     mat-icon-button
     color="primary"
+    [matTooltip]="
+      selectionMode
+        ? ('igo.geo.layer.deactivateSelectionMode' | translate)
+        : ('igo.geo.layer.activateSelectionMode' | translate)
+    "
+    matTooltipShowDelay="500"
     (click)="toggleSelectionMode()"
   >
     <mat-icon

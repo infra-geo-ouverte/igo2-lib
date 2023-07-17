@@ -19,11 +19,10 @@
   </div>
 
   <div *ngIf="!sliderMode">
-
     <div class="year-input-container" *ngIf="calendarTypeYear">
       <!-- to emulate a year-picker, 2 input: first input to show user just year and second input hiden and bind 
         with the datepicker  -->
-      <mat-form-field  class="year-input">
+      <mat-form-field  class="year-input" subscriptSizing="dynamic">
         <mat-label>{{'igo.geo.timeFilter.startYear'| translate}}</mat-label>
         <input
           matInput
@@ -55,7 +54,7 @@
           >
       </mat-form-field>
 
-      <mat-form-field  class="year-input">
+      <mat-form-field  class="year-input" subscriptSizing="dynamic">
         <mat-label>{{'igo.geo.timeFilter.endYear'| translate}}</mat-label>
         <input
           matInput
@@ -84,7 +83,8 @@
           [max]="handleDate(datasource.options.maxDate)"
           >
       </mat-form-field>
-      <button class="reset-button" 
+      <div class="actions-container">
+        <button class="reset-button" 
         mat-icon-button
         color="primary" 
         (click)="resetFilter()" 
@@ -100,12 +100,12 @@
         matTooltipShowDelay="500"
         [checked]="!filterStateDisable">
       </mat-slide-toggle>
-
+      </div>
     </div>
 
     <div class="datetime-input-container" *ngIf="calendarType()!=='year'">
       <div class="datetime-input">
-        <mat-form-field class="date-input">
+        <mat-form-field class="date-input" subscriptSizing="dynamic">
           <mat-datepicker-toggle matSuffix [for]="beginDatepicker" [disabled]= "filterStateDisable"></mat-datepicker-toggle>
           <input #begin
             matInput
@@ -128,8 +128,8 @@
           </mat-datepicker>
         </mat-form-field>
 
-        <div class="time-input">
-          <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'">
+        <div *ngIf="calendarType()==='datetime'"  class="time-input">
+          <mat-form-field class="hour-input" subscriptSizing="dynamic">
             <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
             <mat-select
               [formControl]="beginHourFormControl"
@@ -138,7 +138,7 @@
               <mat-option *ngFor="let hour of beginHours" [value]="hour">{{hour}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
+          <mat-form-field class="minute-input" subscriptSizing="dynamic">
             <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
             <mat-select
               [formControl]="beginMinuteFormControl"
@@ -150,8 +150,8 @@
         </div>
       </div>
 
-      <div class="datetime-input" *ngIf="!restrictedToStep()">
-        <mat-form-field class="date-input">
+      <div *ngIf="!restrictedToStep()" class="datetime-input">
+        <mat-form-field class="date-input" subscriptSizing="dynamic">
           <mat-datepicker-toggle matSuffix [for]="endDatepicker" [disabled]= "filterStateDisable"></mat-datepicker-toggle>
             <input #end
               matInput
@@ -173,8 +173,8 @@
           </mat-datepicker>
         </mat-form-field>
 
-        <div class="time-input">
-          <mat-form-field class="hour-input" *ngIf="calendarType()==='datetime'" >
+        <div *ngIf="calendarType()==='datetime'" class="time-input">
+          <mat-form-field class="hour-input" subscriptSizing="dynamic">
             <mat-label>{{'igo.geo.timeFilter.hour' | translate}}</mat-label>
             <mat-select
               [formControl]="endHourFormControl"
@@ -183,7 +183,7 @@
               <mat-option *ngFor="let hour of endHours" [value]="hour">{{hour}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field class="minute-input" *ngIf="calendarType()==='datetime'">
+          <mat-form-field class="minute-input" subscriptSizing="dynamic">
             <mat-label>{{'igo.geo.timeFilter.minute' | translate}}</mat-label>
             <mat-select
               [formControl]="endMinuteFormControl"
@@ -195,21 +195,23 @@
         </div>
       </div>
 
-      <button class="reset-button" 
-        mat-icon-button color="primary"
-        (click)="resetFilter()" 
-        [matTooltip]="'igo.geo.filter.resetFilters' | translate" 
-        [disabled]= "filterStateDisable">
-        <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
-      </button>
-      <mat-slide-toggle 
-        class="toggle-filter-state" 
-        (change)="toggleFilterState()" 
-        tooltip-position="below" 
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" 
-        [checked]= "!filterStateDisable">
-      </mat-slide-toggle>
+      <div class="actions-container">
+        <button class="reset-button" 
+          mat-icon-button color="primary"
+          (click)="resetFilter()" 
+          [matTooltip]="'igo.geo.filter.resetFilters' | translate" 
+          [disabled]= "filterStateDisable">
+          <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+        </button>
+        <mat-slide-toggle 
+          class="toggle-filter-state" 
+          (change)="toggleFilterState()" 
+          tooltip-position="below" 
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" 
+          [checked]= "!filterStateDisable">
+        </mat-slide-toggle>
+     </div>
     </div>
   </div>
 </div>

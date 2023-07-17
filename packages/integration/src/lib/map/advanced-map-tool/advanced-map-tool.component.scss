@@ -13,10 +13,11 @@ $slide-toggle-width: 60px;
 }
 
 .geolocation-slide-toggle-container {
-  overflow-x: hidden;
+  margin-top: 8px;
+
   mat-slide-toggle {
     width: 100%;
-    margin: 10px;
+    padding: 0 12px;
     /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
     ::ng-deep .mat-slide-toggle-content {
       width: calc(100% - #{$slide-toggle-width});

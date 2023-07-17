@@ -1,7 +1,8 @@
 :host {
   display: flex;
   align-items: center;
-  padding: 4px 16px;
+  justify-content: space-between;
+  padding: 8px 12px;
 
   .inputFilter {
     width: calc(100% - 100px);

@@ -1,22 +1,21 @@
-.mat-mdc-form-field {
-    padding: 5px;
-    width: 95%;
-    margin-left: 2px;
-}
+:host {
+  .mat-mdc-form-field {
+    width: 100%;
+  }
 
-.mat-mdc-tab-group ::ng-deep .mat-mdc-tab-body-content {
+  .mat-mdc-tab-group ::ng-deep .mat-mdc-tab-body-content {
     overflow: hidden;
-}
+  }
 
-.mat-mdc-tab-group ::ng-deep .mat-mdc-tab-label {
+  .mat-mdc-tab-group ::ng-deep .mat-mdc-tab-label {
     padding: 10px;
-}
+  }
 
-.mat-mdc-tab-group ::ng-deep .mat-mdc-tab-body-wrapper {
+  .mat-mdc-tab-group ::ng-deep .mat-mdc-tab-body-wrapper {
     margin-top: 5px;
-}
+  }
 
-.spatial-type-toggle {
+  .spatial-type-toggle {
     padding: 10px;
     text-align: center;
     mat-button-toggle-group {
@@ -26,3 +25,4 @@
       }
     }
   }
+}

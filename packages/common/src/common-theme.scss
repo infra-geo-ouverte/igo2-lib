@@ -12,7 +12,7 @@
   @include collapsible.igo-collapsible-theming($theme);
   @include entity.igo-entity-theming($theme);
   @include list.igo-list-theming($theme);
-  @include panel.igo-panel-theming($theme);
+  @include panel.theme($theme);
   @include tool.igo-tool-theming($theme);
   @include interactive-tour.theme($theme);
   @include home-button.theme($theme);

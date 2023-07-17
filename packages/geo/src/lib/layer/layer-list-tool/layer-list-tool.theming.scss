@@ -17,6 +17,5 @@
 
   igo-layer-list-tool {
     @include mat.icon-button-density($theme);
-    @include mat.form-field-density($theme);
   }
 }

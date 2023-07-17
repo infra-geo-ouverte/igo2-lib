@@ -1,5 +1,3 @@
-$slide-toggle-width: 60px;
-
 :host {
   .geometry-type-toggle {
       padding: 10px;
@@ -14,10 +12,9 @@ $slide-toggle-width: 60px;
   }
   
   .draw-options {
-    overflow-x: hidden;
     mat-slide-toggle {
       width: 100%;
-      margin: 10px;
+      padding: 10px;
     }
   }
   
@@ -81,8 +78,7 @@ $slide-toggle-width: 60px;
   .radius-unit {
     display: flex;
     width: 100%;
-    margin-left: 2px;
-    padding: 5px;
+    padding: 4px 8px;
   }
   
   ::ng-deep igo-entity-table {

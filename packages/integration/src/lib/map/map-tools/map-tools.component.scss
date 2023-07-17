@@ -23,8 +23,8 @@
     padding-left: 5px;
   }
   
-  :host ::ng-deep  .mat-mdc-tab-body-content  {
-    overflow: hidden;
+  ::ng-deep .mat-tab-body  {
+    margin-top: 8px;
   }
   
 }
