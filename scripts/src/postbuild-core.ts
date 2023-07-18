@@ -38,8 +38,9 @@ async function copyExternalAssets(): Promise<void> {
 // Allow to import styles in production or in local. This will give us the flexibility to extends our style and debug.
 function fixPackagesThemesImport(): void {
   const startTime = performance.now();
-  const localImport = path.join(distPath, 'themes-import.scss');
-  const prodImport = path.join(distPath, 'themes-import.prod.scss');
+
+  const localImport = path.join(distPath, 'packages-import.scss');
+  const prodImport = path.join(distPath, 'packages-import.prod.scss');
 
   // Handle the case when we trigger manually the script
   if (!pathExist(prodImport)) {
