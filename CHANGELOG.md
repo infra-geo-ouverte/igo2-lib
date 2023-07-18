@@ -7,6 +7,15 @@
 
 
 
+## [1.15.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.2...1.15.3) (2023-06-12)
+
+
+### Bug Fixes
+
+* **draw:** drawing circle crash whole drawing component. ([#1273](https://github.com/infra-geo-ouverte/igo2-lib/issues/1273)) ([e3ee3b5](https://github.com/infra-geo-ouverte/igo2-lib/commit/e3ee3b593e4afde201fc601373478aa8cf8556a3))
+
+
+
 ## [1.15.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.1...1.15.2) (2023-05-16)
 
 
