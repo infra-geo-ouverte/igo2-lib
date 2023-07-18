@@ -11,7 +11,6 @@
     { "input": "src/assets", "glob": "**/*", "output": "assets" },
     { "input": "src/style/partial", "glob": "**/*.scss", "output": "style/partial" },
     { "input": "src/theming", "glob": "*.scss", "output": "theming" },
-    { "input": "src/locale", "glob": "*", "output": "locale" },
-    { "input": "node_modules/@mdi/angular-material", "glob": "mdi.svg", "output": "assets/icons" }
+    { "input": "src/locale", "glob": "*", "output": "locale" }
   ]
 }

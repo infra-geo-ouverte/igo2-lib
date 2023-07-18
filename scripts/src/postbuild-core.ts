@@ -1,6 +1,6 @@
 import { renameSync } from 'fs';
 import path from 'path';
-import { pathExist } from './utils/file-system.utils';
+import { copyFile, pathExist } from './utils/file-system.utils';
 import { compileStyle } from './utils/style.utils';
 import { readdir } from 'fs/promises';
 import { performance } from 'perf_hooks';
@@ -14,6 +14,8 @@ const styleDest = path.join(distPath, '/style');
 
   fixPackagesThemesImport();
 
+  copyExternalAssets();
+
   await prebuiltThemes();
 
   await compileBaseStyle();
@@ -22,6 +24,16 @@ const styleDest = path.join(distPath, '/style');
 
   printPerformance('Postbuild excuted in', startTime);
 })();
+
+async function copyExternalAssets(): Promise<void> {
+  const startTime = performance.now();
+  const input = 'node_modules/@mdi/angular-material/mdi.svg';
+  const output = path.join(distPath, 'assets/icons/mdi.svg');
+
+  await copyFile(input, output);
+
+  printPerformance('Copy external asset in', startTime);
+}
 
 // Allow to import styles in production or in local. This will give us the flexibility to extends our style and debug.
 function fixPackagesThemesImport(): void {
