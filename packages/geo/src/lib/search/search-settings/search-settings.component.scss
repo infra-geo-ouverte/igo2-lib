@@ -1,6 +1,11 @@
 @use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
+:host {
+  display: flex;
+  align-items: center;
+}
+
 // This component is projected, the style need to be apply outside is scope
 .checkAllButton {
   text-align: center;
@@ -10,10 +15,6 @@
 .igo-search-settings-radio-group {
   display: flex;
   flex-direction: column;
-}
-
-.igo-search-settings-radio-group mat-radio-button {
-  margin: $igo-margin;
 }
 
 .igo-search-settings-checkbox mat-radio-button {

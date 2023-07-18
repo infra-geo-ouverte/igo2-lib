@@ -4,11 +4,6 @@
 :host {
   overflow: hidden;
 
-  .igo-layer-list-item {
-    height: $igo-list-item-height;
-    clear: both;
-  }
-
   ::ng-deep .igo-layer-title {
     display: block;
     width: 100%;

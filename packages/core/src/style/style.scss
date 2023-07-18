@@ -12,3 +12,9 @@ a.mat-mdc-menu-item > mat-icon {
 button.mat-mdc-icon-button.mat-mdc-button-base[disabled='true'] {
   color: rgba(0, 0, 0, 0.26);
 }
+
+.mat-mdc-menu-content {
+  mat-list {
+    padding: 0;
+  }
+}

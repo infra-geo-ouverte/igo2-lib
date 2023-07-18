@@ -29,18 +29,6 @@
   opacity: 0.9;
 }
 
-:host ::ng-deep [igolistitem] mat-list-item {
-  [matListItemAvatar] {
-    height: auto;
-    width: 40px;
-  }
-
-  button[matListItemAvatar] {
-      width: 48px;
-      height: 48px;
-  }
-}
-
 :host mat-list.selectable ::ng-deep [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {
   cursor: pointer;
 }

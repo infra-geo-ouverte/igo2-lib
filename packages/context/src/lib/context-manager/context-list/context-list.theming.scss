@@ -17,5 +17,7 @@
 
   igo-context-list {
     @include mat.icon-button-density($theme);
+    @include mat.list-density($theme);
+    @include mat.form-field-density($theme);
   }
 }

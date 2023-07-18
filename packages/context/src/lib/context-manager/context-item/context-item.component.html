@@ -3,9 +3,10 @@
   [ngClass]="{ 'mat-list-item-light': hidden }"
 >
   <button
-    matListItemAvatar
     *ngIf="auth.authenticated"
+    matListItemAvatar
     mat-icon-button
+    class="m-h-8"
     igoStopPropagation
     [matTooltip]="
       auth.authenticated

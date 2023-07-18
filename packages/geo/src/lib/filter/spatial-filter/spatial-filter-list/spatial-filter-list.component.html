@@ -1,29 +1,54 @@
 <div class="form-list">
-    <mat-form-field class="zone-list">
-        <input #input type="text" placeholder="{{'igo.geo.spatialFilter.listLabel' | translate}}" matInput
-        [formControl]="formControl" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onZoneChange($event.option.value)"
-        [displayWith]="displayFn">
-            <mat-option *ngFor="let entities of this.store.view.all$() | async" [value]="entities">
-                {{entities.properties.nom}}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
-<div>
+  <mat-form-field class="zone-list">
+    <mat-label>{{ 'igo.geo.spatialFilter.listLabel' | translate }}</mat-label>
+    <input
+      #input
+      type="text"
+      placeholder="{{ 'igo.geo.spatialFilter.listLabel' | translate }}"
+      matInput
+      [formControl]="formControl"
+      [matAutocomplete]="auto"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="onZoneChange($event.option.value)"
+      [displayWith]="displayFn"
+    >
+      <mat-option
+        *ngFor="let entities of this.store.view.all$() | async"
+        [value]="entities"
+      >
+        {{ entities.properties.nom }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <div>
+    <div class="buffer-div">
+      <mat-form-field class="buffer">
+        <mat-label>{{ 'igo.geo.spatialFilter.buffer' | translate }}</mat-label>
+        <input
+          type="number"
+          matInput
+          placeholder="{{ 'igo.geo.spatialFilter.buffer' | translate }}"
+          [formControl]="bufferFormControl"
+          [value]="0"
+          [readonly]="!zone"
+        />
+      </mat-form-field>
 
-<div class="buffer-div">
-    <mat-form-field class="buffer">
-        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
-        [value]="0" [readonly]="!zone">
-    </mat-form-field>
-
-    <mat-form-field class="unit-field">
+      <mat-form-field class="unit-field">
         <mat-select
-        [value]="measureUnit"
-        (selectionChange)="onMeasureUnitChange($event.value)">
-        <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-            {{('igo.geo.measure.' + measureUnit) | translate}}
-        </mat-option>
+          [value]="measureUnit"
+          (selectionChange)="onMeasureUnitChange($event.value)"
+        >
+          <mat-option
+            *ngFor="let measureUnit of measureUnits"
+            [value]="measureUnit"
+          >
+            {{ 'igo.geo.measure.' + measureUnit | translate }}
+          </mat-option>
         </mat-select>
-    </mat-form-field>
+      </mat-form-field>
+    </div>
+  </div>
 </div>

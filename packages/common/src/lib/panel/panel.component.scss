@@ -25,6 +25,7 @@
     white-space: nowrap;
     overflow: hidden;
     margin: 0;
+    font-weight: 600;
   }
 
   .igo-panel-content {
@@ -34,5 +35,10 @@
 
   .igo-cursor-pointer {
     cursor: pointer;
+  }
+
+  .panel-left, .panel-right {
+    display: flex;
+    min-width: 40px; // button widht at denstiy -2 
   }
 }

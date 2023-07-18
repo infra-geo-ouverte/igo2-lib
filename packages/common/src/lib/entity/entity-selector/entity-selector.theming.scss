@@ -2,22 +2,7 @@
 @use '@angular/material' as mat;
 
 @mixin theme($theme) {
-  @include color($theme);
   @include density($theme);
-}
-
-@mixin color($theme) {
-  igo-search-bar {
-    mat-form-field {
-        .mat-mdc-text-field-wrapper {
-            background-color: white !important;
-        }
-        
-        .mdc-line-ripple {
-            display: none;
-        }
-    }
-  }
 }
 
 @mixin density($theme) {
@@ -30,7 +15,7 @@
     )
   );
 
-  igo-search-bar {
+  igo-entity-selector {
     @include mat.form-field-density($theme);
   }
 }
