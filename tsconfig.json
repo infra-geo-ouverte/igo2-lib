@@ -5,16 +5,14 @@
   To learn more about this file see: https://angular.io/config/solution-tsconfig.
 */
 {
+  "extends": "./tsconfig.base",
   "files": [],
   "references": [
     {
-      "path": "./demo/src/tsconfig.app.json"
+      "path": "./demo/tsconfig.app.json"
     },
     {
-      "path": "./demo/src/tsconfig.spec.json"
-    },
-    {
-      "path": "./e2e/tsconfig.e2e.json"
+      "path": "./demo/tsconfig.spec.json"
     },
     {
       "path": "./packages/auth/tsconfig.lib.json"
@@ -44,6 +42,9 @@
       "path": "./packages/utils/tsconfig.lib.json"
     },
     {
+      "path": "./packages/utils/tsconfig.spec.json"
+    },
+    {
       "path": "./packages/context/tsconfig.lib.json"
     },
     {
@@ -51,6 +52,9 @@
     },
     {
       "path": "./packages/integration/tsconfig.lib.json"
-    }
+    },
+    {
+      "path": "./packages/integration/tsconfig.spec.json"
+    },
   ]
 }
