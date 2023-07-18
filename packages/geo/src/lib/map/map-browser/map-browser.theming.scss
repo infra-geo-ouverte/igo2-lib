@@ -1,6 +1,10 @@
-@mixin igo-map-browser-theming($theme, $typography) {
-  $primary: map-get($theme, primary);
-  $is-dark: map-get($theme, is-dark);
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin igo-map-browser-theming($theme) {
+  $primary: map.get($theme, primary);
+  $is-dark: map.get($theme, is-dark);
+  $typography: mat.get-typography-config($theme);
 
   igo-map-browser div.ol-attribution > button {
     color: mat.get-color-from-palette($primary, if($is-dark, default-contrast, default));

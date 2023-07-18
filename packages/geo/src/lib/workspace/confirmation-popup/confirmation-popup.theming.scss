@@ -1,5 +1,9 @@
-@mixin igo-confirmation-popup-theming($theme, $typography) {
-    $foreground: map-get($theme, foreground);
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin igo-confirmation-popup-theming($theme) {
+    $foreground: map.get($theme, foreground);
+    $typography: mat.get-typography-config($theme);
 
     igo-confirmation-popup-component {
       h1 {

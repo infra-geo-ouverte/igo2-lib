@@ -1,0 +1,29 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin igo-draw-theming($theme) {
+  $foreground: map.get($theme, foreground);
+  $typography: mat.get-typography-config($theme);
+
+  igo-draw-popup-component, igo-draw-popup-component, igo-draw-shorcuts, igo-draw {
+    .igo-map-tooltip {
+      position: relative;
+      border-radius: 4px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+  
+    .igo-map-tooltip-draw {
+      color: mat.get-color-from-palette($foreground, text);
+      font-weight: bold;
+      font-size: mat.font-size($typography, subheading-2);
+    }
+  }
+  
+  igo-draw-popup-component {
+    h1 {
+      font-size: mat.font-size($typography, display-1);
+      font-family:  Roboto, "Helvetica Neue", sans-serif;
+    }
+  }
+}

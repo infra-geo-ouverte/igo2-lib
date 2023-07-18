@@ -1,7 +1,10 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-home-button-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $foreground: map-get($theme, foreground);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $foreground: map.get($theme, foreground);
 
   igo-home-button > #homeButton {
     background-color: mat.get-color-from-palette($primary);

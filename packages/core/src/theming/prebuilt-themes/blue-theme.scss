@@ -1,0 +1,37 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use './utils/foreground';
+@use '../../index' as igo;
+
+$primary: mat.define-palette(mat.$blue-palette, 700, 400, 900);
+$accent: mat.define-palette(mat.$blue-palette, 200);
+$warn: mat.define-palette(mat.$red-palette);
+$typography: igo.$igo-typography;
+
+$theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+      warn: $warn
+    ),
+    typography: $typography,
+    density: 0
+  )
+);
+
+$foreground: foreground.theme-foreground(
+  mat.define-palette(mat.$grey-palette, 900)
+);
+$theme: map.merge(
+  $theme,
+  (
+    foreground: $foreground
+  )
+);
+
+@include mat.core($typography);
+
+@include mat.all-component-themes($theme);
+
+@include igo.all-component-themes($theme);

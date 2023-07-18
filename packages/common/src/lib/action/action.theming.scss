@@ -1,3 +1,5 @@
+@use './actionbar/actionbar.theming.scss' as ActionBar;
+
 @mixin igo-action-theming($theme) {
-  @include igo-actionbar-theming($theme);
+  @include ActionBar.igo-actionbar-theming($theme);
 }

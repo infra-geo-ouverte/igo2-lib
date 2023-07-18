@@ -11,6 +11,25 @@ $igo-actionbar-item-icon-padding: 8px;
   position: relative;
 }
 
+.igo-actionbar-overlay {
+  min-width: inherit !important;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  .mat-list {
+    padding-top: 0
+  }
+
+  .mat-list .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text {
+    padding-right: 16px;
+  }
+
+  .mat-menu-content:not(:empty) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
 button {
   margin: 4px;
 }

@@ -1,14 +1,19 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-ogc-filter-selection-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
   $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
-
-  mat-button-toggle.mat-button-toggle-checked {
-    background-color: mat.get-color-from-palette($accent);
-    color: mat.get-color-from-palette($dark);
-  }
-
-  mat-button-toggle {
-    color: black !important;
+  
+  igo-ogc-filter-selection {
+    mat-button-toggle.mat-button-toggle-checked {
+      background-color: mat.get-color-from-palette($accent);
+      color: mat.get-color-from-palette($dark);
+    }
+  
+    mat-button-toggle {
+      color: black !important;
+    }
   }
 }

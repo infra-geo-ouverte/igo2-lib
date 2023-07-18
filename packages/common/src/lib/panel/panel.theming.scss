@@ -1,5 +1,8 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-panel-theming($theme) {
-  $primary: map-get($theme, primary);
+  $primary: map.get($theme, primary);
 
   igo-panel > div.igo-panel-header {
     background-color: mat.get-color-from-palette($primary);

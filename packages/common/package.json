@@ -13,6 +13,14 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "exports": {
+    "./style": {
+      "style": "./style/style.css"
+    },
+    "./theming": {
+      "sass": "./common-theme.scss"
+    }
+  },
   "peerDependencies": {
     "@angular/common": "^14.3.0",
     "@angular/core": "^14.3.0",

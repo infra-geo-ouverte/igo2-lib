@@ -1,6 +1,9 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-list-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
 
   igo-list [igolistitem][color="primary"].igo-list-item-selected > mat-list-item {
     background-color: mat.get-color-from-palette($primary);
