@@ -24,7 +24,7 @@
     "lint.fix": "ng lint --fix",
     "e2e": "ng run demo:e2e:production",
     "e2e.local": "ng run demo:e2e:local",
-    "postinstall": "gulp fixLibs && ngcc --tsconfig ./tsconfig.json",
+    "postinstall": "ngcc --tsconfig ./tsconfig.json",
     "build.all": "npm run build.libs && npm run build.demo",
     "build.libs": "rimraf ./dist && npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.integration && npm run build.locale",
     "build.utils": "ng build utils --configuration production",
