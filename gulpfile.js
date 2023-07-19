@@ -155,4 +155,3 @@ gulp.task(
     'bumpVersion-integration'
   ])
 );
-
