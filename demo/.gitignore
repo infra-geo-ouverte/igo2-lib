@@ -1,0 +1,4 @@
+/e2e/dist
+
+# bundled locale for the demo
+/src/locale/libs_locale
