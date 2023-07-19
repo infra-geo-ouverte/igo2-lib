@@ -94,25 +94,26 @@
                   }}
                 </button>
               </div>
-              <mat-checkbox
-                *ngFor="let settingValue of getAvailableValues(setting)"
-                class="mat-menu-item"
-                [style.display]="displayBlock"
-                [checked]="settingValue.enabled"
-                [value]="setting"
-                [matTooltip]="getAvailableHashtagsValues(settingValue)"
-                (click)="$event.stopPropagation()"
-                (change)="
-                  settingsValueCheckedCheckbox(
-                    $event,
-                    source,
-                    setting,
-                    settingValue
-                  )
-                "
-              >
-                {{ settingValue.title | translate }}
-              </mat-checkbox>
+              <div mat-menu-item>
+                <mat-checkbox
+                  *ngFor="let settingValue of getAvailableValues(setting)"
+                  [style.display]="displayBlock"
+                  [checked]="settingValue.enabled"
+                  [value]="setting"
+                  [matTooltip]="getAvailableHashtagsValues(settingValue)"
+                  (click)="$event.stopPropagation()"
+                  (change)="
+                    settingsValueCheckedCheckbox(
+                      $event,
+                      source,
+                      setting,
+                      settingValue
+                    )
+                  "
+                >
+                  {{ settingValue.title | translate }}
+                </mat-checkbox>
+              </div>
             </span>
           </mat-menu>
         </ng-container>

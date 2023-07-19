@@ -76,14 +76,15 @@
       <mat-menu #accountMenu="matMenu">
         <ng-container *ngFor="let user of users">
           <span class="profilsMenu">
-            <mat-checkbox
-              class="mat-menu-item"
-              [checked]="getPermission(user).checked"
-              [indeterminate]="getPermission(user).indeterminate"
-              (click)="$event.stopPropagation()"
-              (change)="userSelection(user)"
-            >
-            </mat-checkbox>
+            <div mat-menu-item>
+              <mat-checkbox
+                [checked]="getPermission(user).checked"
+                [indeterminate]="getPermission(user).indeterminate"
+                (click)="$event.stopPropagation()"
+                (change)="userSelection(user)"
+              >
+              </mat-checkbox>
+            </div>
             <button
               *ngIf="user.childs"
               [matMenuTriggerFor]="subAccountMenu"
@@ -97,26 +98,28 @@
           </span>
 
           <mat-menu #subAccountMenu="matMenu">
-            <mat-checkbox
-              *ngFor="let child of user.childs"
-              class="mat-menu-item"
-              [checked]="getPermission(child).checked"
-              (click)="$event.stopPropagation()"
-              (change)="userSelection(child, user)"
-            >
-              {{ child.title }}
-            </mat-checkbox>
+            <div mat-menu-item>
+              <mat-checkbox
+                *ngFor="let child of user.childs"
+                [checked]="getPermission(child).checked"
+                (click)="$event.stopPropagation()"
+                (change)="userSelection(child, user)"
+              >
+                {{ child.title }}
+              </mat-checkbox>
+            </div>
           </mat-menu>
         </ng-container>
 
         <span class="profilsMenu">
-          <mat-checkbox
-            class="mat-menu-item"
-            [checked]="showHidden"
-            (click)="$event.stopPropagation()"
-            (change)="showHiddenContexts.emit()"
-          >
-          </mat-checkbox>
+          <div mat-menu-item>
+            <mat-checkbox
+              [checked]="showHidden"
+              (click)="$event.stopPropagation()"
+              (change)="showHiddenContexts.emit()"
+            >
+            </mat-checkbox>
+          </div>
           <button mat-menu-item>
             {{ 'igo.context.contextManager.showHidden' | translate }}
           </button>

@@ -1,18 +1,13 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   
-  .igo-list-no-tools {
-    height: calc(100% - 57px);
+  igo-list {
+    flex: 1;
     padding-top: 8px;
   }
-  .igo-list-tools-single {
-    height: calc(100% - 153px);
-    padding-top: 8px;
-  }
-  .igo-list-tools-multi {
-    height: calc(100% - 191px);
-    padding-top: 8px;
-  }
+
   mat-form-field.inputFilter {
     width: calc(100% - 100px);
     max-width: 200px;

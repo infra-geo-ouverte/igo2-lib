@@ -41,4 +41,10 @@
     display: flex;
     min-width: 40px; // button widht at denstiy -2 
   }
+
+  .panel-right {
+    &:not(:empty) {
+      padding-right: 4px;
+    }
+  }
 }

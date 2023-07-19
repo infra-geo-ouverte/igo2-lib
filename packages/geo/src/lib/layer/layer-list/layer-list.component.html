@@ -29,11 +29,6 @@
 
 <igo-list
   #igoList
-  [ngClass]="{
-    'igo-list-tools-multi': selection,
-    'igo-list-tools-single': layerTool && !selection,
-    'igo-list-no-tools': !layerTool && !selection
-  }"
   [navigation]="false"
   [selection]="false"
 >
@@ -92,7 +87,9 @@
           : ('igo.geo.layer.lowerLayer' | translate)
       "
       [disabled]="lowerDisabled"
-      (click)="moveActiveLayer(activeLayer, layerListDisplacement.Lower, true)"
+      (click)="
+        moveActiveLayer(activeLayer, layerListDisplacement.Lower, true)
+      "
     >
       <mat-icon
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
@@ -115,7 +112,9 @@
           : ('igo.geo.layer.raiseLayer' | translate)
       "
       [disabled]="raiseDisabled"
-      (click)="moveActiveLayer(activeLayer, layerListDisplacement.Raise, true)"
+      (click)="
+        moveActiveLayer(activeLayer, layerListDisplacement.Raise, true)
+      "
     >
       <mat-icon
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
@@ -335,7 +334,8 @@
 
     <button
       *ngIf="
-        layersChecked.length !== 0 && activeLayersExtentAreValid(layersChecked)
+        layersChecked.length !== 0 &&
+        activeLayersExtentAreValid(layersChecked)
       "
       class="zoomLayer-button"
       color="primary"
