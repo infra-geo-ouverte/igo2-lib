@@ -1,16 +1,16 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MatButtonModule } from '@angular/material/button';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { ContextImportExportComponent } from './context-import-export/context-import-export.component';

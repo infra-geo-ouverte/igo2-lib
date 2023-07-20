@@ -5,36 +5,6 @@ const replace = require('gulp-replace');
 const package = require('./package.json');
 const version = package.version;
 
-gulp.task('geo:copyNGCC', done => {
-  gulp
-    .src('./packages/geo/ngcc.config.js', {
-      base: './packages/geo/'
-    })
-    .pipe(gulp.dest('./dist/geo'));
-
-  done();
-});
-
-gulp.task('context:copyNGCC', done => {
-  gulp
-    .src('./packages/context/ngcc.config.js', {
-      base: './packages/context/'
-    })
-    .pipe(gulp.dest('./dist/context'));
-
-  done();
-});
-
-gulp.task('integration:copyNGCC', done => {
-  gulp
-    .src('./packages/integration/ngcc.config.js', {
-      base: './packages/integration/'
-    })
-    .pipe(gulp.dest('./dist/integration'));
-
-  done();
-});
-
 // ==========================================================
 
 gulp.task('prepublishOnly', done => {
@@ -184,26 +154,4 @@ gulp.task(
     'bumpVersion-context',
     'bumpVersion-integration'
   ])
-);
-
-// ==========================================================
-gulp.task(
-  'geo',
-  gulp.series(
-    'geo:copyNGCC',
-  )
-);
-
-gulp.task(
-  'context',
-  gulp.series(
-    gulp.parallel(['context:copyNGCC']),
-  )
-);
-
-gulp.task(
-  'integration',
-  gulp.series(
-    gulp.parallel(['integration:copyNGCC']),
-  )
 );

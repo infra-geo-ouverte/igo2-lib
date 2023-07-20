@@ -17,7 +17,8 @@ $theme-config: mat.define-light-theme((
     density: 0,
 ));
 
-@include mat.core();
-@include mat.all-component-themes($theme-config);
+@include mat.legacy-core();
+@include mat.all-legacy-component-typographies($theme-config);
+@include mat.all-legacy-component-themes($theme-config);
 
 @include igo.all-component-themes($theme-config);

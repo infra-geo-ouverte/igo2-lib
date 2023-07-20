@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { ConfigService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';

@@ -1,20 +1,10 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "packages/**/*"
-  ],
-  "plugins": ["unused-imports"],
+  "ignorePatterns": ["packages/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
-      "parserOptions": {
-        "project": [
-          "tsconfig.json"
-        ],
-        "createDefaultProgram": true
-      },
+      "files": ["*.ts"],
+      "plugins": ["unused-imports"],
       "extends": [
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
@@ -59,12 +49,8 @@
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended"
-      ],
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }
   ]

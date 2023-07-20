@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatLegacyRadioChange as MatRadioChange } from '@angular/material/legacy-radio';
 import { EntityTableComponent, EntityTableTemplate, ToolComponent } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';

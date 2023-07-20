@@ -24,8 +24,8 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { debounceTime, map } from 'rxjs/operators';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { MatLegacySelect as MatSelect } from '@angular/material/legacy-select';
+import { MatLegacyOption as MatOption } from '@angular/material/legacy-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({

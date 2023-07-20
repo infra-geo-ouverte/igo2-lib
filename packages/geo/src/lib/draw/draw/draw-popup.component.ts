@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { LanguageService } from '@igo2/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { transform } from 'ol/proj';
 import { IgoMap, roundCoordTo } from '../../map/shared';

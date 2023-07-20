@@ -7,7 +7,7 @@ import {
   OnInit,
   OnDestroy
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { EntityStore } from '@igo2/common';
 import { MessageService, StorageService } from '@igo2/core';

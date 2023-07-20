@@ -8,7 +8,7 @@ import {
   EntityTableColumnRenderer,
   EntityTablePaginatorOptions
 } from '@igo2/common';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

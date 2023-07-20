@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 
 import { IgoEntityTableModule, IgoEntityTablePaginatorModule } from '@igo2/common';
 

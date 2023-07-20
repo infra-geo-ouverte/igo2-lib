@@ -7,7 +7,7 @@ import {
   Output,
   OnDestroy
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { LegacyFloatLabelType as FloatLabelType } from '@angular/material/legacy-form-field';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerListControlsOptions } from './layer-list-tool.interface';
 

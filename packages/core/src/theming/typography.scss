@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
 
-$igo-typography: mat.define-typography-config(
+$igo-typography: mat.define-legacy-typography-config(
   $display-4: mat.define-typography-level(110px, 110px, 300),
   $display-3: mat.define-typography-level(54px, 54px, 400),
   $display-2: mat.define-typography-level(43px, 46px, 400),

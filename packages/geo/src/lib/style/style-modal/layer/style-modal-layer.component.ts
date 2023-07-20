@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 import { asArray as ColorAsArray } from 'ol/color';

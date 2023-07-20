@@ -5,12 +5,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoLayerModule,
@@ -27,18 +27,18 @@ import { MapToolsComponent } from './map-tools/map-tools.component';
 import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
 import { IgoAppWorkspaceModule } from '../workspace/workspace.module';
 import { AdvancedMapToolComponent } from './advanced-map-tool/advanced-map-tool.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
+import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { IgoEntityTableModule, IgoSpinnerModule } from '@igo2/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdvancedSwipeComponent } from './advanced-map-tool/advanced-swipe/advanced-swipe.component';
 import { AdvancedCoordinatesComponent } from './advanced-map-tool/advanced-coordinates/advanced-coordinates.component';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
 import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-tool.component';
 
 @NgModule({
