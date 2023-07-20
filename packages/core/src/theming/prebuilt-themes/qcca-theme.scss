@@ -1,6 +1,5 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './utils/foreground';
 @use '../../index' as igo;
 
 $qcca-palette: (
@@ -61,7 +60,7 @@ $theme: mat.define-light-theme(
   )
 );
 
-$foreground: foreground.theme-foreground(
+$foreground: igo.theme-foreground(
   mat.define-palette($qcca-palette, 500, 100, 700)
 );
 $theme: map.merge(

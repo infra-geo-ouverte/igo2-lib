@@ -1,6 +1,5 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './utils/foreground';
 @use '../../index' as igo;
 
 $bluedark-palette: (
@@ -53,7 +52,7 @@ $theme: mat.define-light-theme(
   )
 );
 
-$foreground: foreground.theme-foreground(
+$foreground: igo.theme-foreground(
   mat.define-palette(mat.$grey-palette, 900)
 );
 $theme: map.merge(

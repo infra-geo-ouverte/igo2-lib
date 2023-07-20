@@ -1,6 +1,5 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './utils/foreground';
 @use '../../index' as igo;
 
 $dq-palette: (
@@ -57,7 +56,7 @@ $theme: map.merge(
   $theme,
   (
     foreground:
-      foreground.theme-foreground(mat.define-palette(mat.$grey-palette, 900))
+      igo.theme-foreground(mat.define-palette(mat.$grey-palette, 900))
   )
 );
 
