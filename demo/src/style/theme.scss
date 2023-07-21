@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use '@angular/material' as mat;
 
 @use 'packages/core/src/index' as igo;
@@ -5,6 +6,7 @@
 $primary: mat.define-palette(mat.$deep-purple-palette);
 $accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
 $warn: mat.define-palette(mat.$red-palette);
+// $typography: mat.define-typography-config($font-family: 'Roboto, 'Helvetica Neue', sans-serif',);
 $typography: igo.$igo-typography;
 
 $theme-config: mat.define-light-theme((
@@ -17,8 +19,24 @@ $theme-config: mat.define-light-theme((
     density: 0,
 ));
 
-@include mat.legacy-core();
-@include mat.all-legacy-component-typographies($theme-config);
-@include mat.all-legacy-component-themes($theme-config);
+@include mat.core();
+@include mat.typography-hierarchy($typography);
 
+@include mat.all-component-themes($theme-config);
 @include igo.all-component-themes($theme-config);
+
+
+@mixin mat-toolbar($theme) {
+    $density: mat.get-density-config($theme);
+  
+    $theme: map.merge(
+      $theme,
+      (
+        density: $density - 2
+      )
+    );
+  
+    @include mat.toolbar-density($theme);
+}
+
+@include mat-toolbar($theme-config);

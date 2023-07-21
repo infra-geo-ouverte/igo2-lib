@@ -14,7 +14,6 @@
 
         <mat-form-field
           class="fill-field"
-          appearance="outline"
           floatLabel="always"
           tooltip-position="below"
           matTooltipShowDelay="500"
@@ -50,7 +49,6 @@
 
         <mat-form-field
           class="stroke-field"
-          appearance="outline"
           floatLabel="always"
           tooltip-position="below"
           matTooltipShowDelay="500"
@@ -76,7 +74,7 @@
       </div>
 
       <div class="igo-input-container">
-        <mat-form-field appearance="outline" class="igo-form-input-box">
+        <mat-form-field class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.style.fontSize' | translate }}</mat-label>
           <input
             matInput
@@ -89,7 +87,7 @@
             (input)="styleModalData.fontSize = $event.target.value">
           <span matSuffix>px</span>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="igo-form-input-box">
+        <mat-form-field class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.style.fontStyle' | translate }}</mat-label>
           <mat-select
             #testFontStyle
@@ -105,7 +103,7 @@
       </div>
 
       <div class="igo-input-container">
-        <mat-form-field appearance="outline" class="igo-form-input-box">
+        <mat-form-field class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.style.offsetX' | translate }}</mat-label>
           <input
             matInput
@@ -115,7 +113,7 @@
             [value]="getFeatureOffsetX()"
             (input)="styleModalData.offsetX = $event.target.value">
         </mat-form-field>
-        <mat-form-field appearance="outline" class="igo-form-input-box">
+        <mat-form-field class="igo-form-input-box">
           <mat-label>{{ 'igo.geo.style.offsetY' | translate }}</mat-label>
           <input
             matInput

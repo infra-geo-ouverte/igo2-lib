@@ -2,27 +2,25 @@
 @use '@angular/material' as mat;
 
 @mixin igo-measurer-theming($theme) {
-  $foreground: map.get($theme, foreground);
-  $typography: mat.get-typography-config($theme);
+  @include color($theme);
+  @include typography($theme);
+}
 
-  .igo-map-tooltip {
-    position: relative;
-    border-radius: 4px;
-    padding: 4px 8px;
-    white-space: nowrap;
-  }
+@mixin color($theme) {
+  $foreground: map.get($theme, foreground);
 
   .igo-map-tooltip-measure {
     background-color: rgba(255, 204, 51, 0.7);
     border: 1px solid rgb(255, 205, 51);
     color: black;
     font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
   }
-  .igo-map-tooltip-hidden {
-    display: none;
-  }
-  .igo-map-tooltip-measure-by-display{
-    display: none;
+}
+
+@mixin typography($theme) {
+  $typography: mat.get-typography-config($theme);
+
+  .igo-map-tooltip-measure {
+    font-size: mat.font-size($typography, subtitle-1);
   }
 }

@@ -1,9 +1,3 @@
-h1 {
-  width: 100%;
-  text-align: center;
-  font-size: 26px;
-}
-
 .example-container {
   display: flex;
   flex-direction: column;
@@ -12,6 +6,16 @@ h1 {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.example-toolbar {
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+
+  h5 {
+    margin: 0;
+  }
 }
 
 .example-is-mobile .example-toolbar {
@@ -34,13 +38,4 @@ h1 {
 mat-sidenav-content {
   padding: 10px;
   box-sizing: border-box;
-}
-
-:ng-deep .mat-tooltip-hide { display: none!important; } // temporary fix (https://github.com/angular/components/issues/24614)
-
-::ng-deep .mat-form-field-suffix {
-  ::ng-deep mat-icon  {
-    width: auto !important;
-    height: -webkit-fill-available !important;
-  }
 }

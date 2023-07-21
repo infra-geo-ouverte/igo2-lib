@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import { IgoPanelModule } from '@igo2/common';
@@ -14,10 +14,12 @@ import {
 
 import { AppLayerComponent } from './layer.component';
 import { AppLayerRoutingModule } from './layer-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppLayerComponent],
   imports: [
+    SharedModule,
     AppLayerRoutingModule,
     MatCardModule,
     MatButtonModule,

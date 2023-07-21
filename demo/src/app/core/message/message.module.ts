@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 
 import { IgoMessageModule } from '@igo2/core';
 
 import { AppMessageComponent } from './message.component';
 import { AppMessageRoutingModule } from './message-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppMessageComponent],
   imports: [
     AppMessageRoutingModule,
-    MatCardModule,
-    MatButtonModule,
+    SharedModule,
     IgoMessageModule.forRoot()
   ],
   exports: [AppMessageComponent]

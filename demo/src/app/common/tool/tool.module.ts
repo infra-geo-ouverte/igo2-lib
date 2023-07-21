@@ -1,8 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatIconModule } from '@angular/material/icon';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoPanelModule, IgoToolModule } from '@igo2/common';
@@ -13,6 +9,7 @@ import {
   AppAboutToolComponent
 } from './tool.component';
 import { AppToolRoutingModule } from './tool-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -21,11 +18,8 @@ import { AppToolRoutingModule } from './tool-routing.module';
         AppAboutToolComponent
     ],
     imports: [
-        CommonModule,
+        SharedModule,
         AppToolRoutingModule,
-        MatButtonModule,
-        MatIconModule,
-        MatCardModule,
         IgoLanguageModule,
         IgoPanelModule,
         IgoToolModule.forRoot()

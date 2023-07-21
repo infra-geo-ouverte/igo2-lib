@@ -1,8 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatIconModule } from '@angular/material/icon';
 
 import {
   IgoActionModule,
@@ -17,15 +13,13 @@ import {
 
 import { AppWorkspaceComponent } from './workspace.component';
 import { AppWorkspaceRoutingModule } from './workspace-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppWorkspaceComponent],
   imports: [
-    CommonModule,
+    SharedModule,
     AppWorkspaceRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
     IgoActionModule,
     IgoEntityModule,
     IgoWorkspaceModule,

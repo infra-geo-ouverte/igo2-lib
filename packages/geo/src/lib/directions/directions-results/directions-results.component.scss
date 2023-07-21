@@ -1,6 +1,8 @@
 .igo-input-container {
   width: 100%;
   padding: 20px 10px;
+  box-sizing: border-box;
+  
   mat-form-field {
     width: 70%;  
   }
@@ -13,13 +15,9 @@
     cursor: pointer;
   }
 
-  .mat-line {
+  .mat-mdc-list-item {
     word-wrap: break-word !important;
     white-space: pre-wrap !important;
-  }
-  
-  .mat-line.right {
-    text-align: right;
   }
   
   .rotate-90 {

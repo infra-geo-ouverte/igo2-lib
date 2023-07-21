@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { LegacyFloatLabelType as FloatLabelType } from '@angular/material/legacy-form-field';
+import { FloatLabelType } from '@angular/material/form-field';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import {
@@ -66,7 +66,7 @@ export class OgcFilterFormComponent implements OnInit {
 
   private _snrc = '';
 
-  @Input() floatLabel: FloatLabelType = 'never';
+  @Input() floatLabel: FloatLabelType;
 
   get activeFilters() {
     return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(

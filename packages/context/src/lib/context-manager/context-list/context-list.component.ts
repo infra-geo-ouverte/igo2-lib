@@ -29,7 +29,7 @@ import {
 } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';

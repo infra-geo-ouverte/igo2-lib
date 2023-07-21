@@ -41,6 +41,7 @@
     "@igo2/common": "^1.15.4",
     "@igo2/core": "^1.15.4",
     "@igo2/utils": "^1.15.4",
+    "@mat-datetimepicker/core": "~11.0.0",
     "flexsearch": "0.7.21",
     "ol": "^7.3.0",
     "proj4": "^2.8.0",

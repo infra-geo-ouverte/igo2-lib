@@ -16,13 +16,13 @@
     .igo-map-tooltip-draw {
       color: mat.get-color-from-palette($foreground, text);
       font-weight: bold;
-      font-size: mat.font-size($typography, subheading-2);
+      font-size: mat.font-size($typography, subtitle-1);
     }
   }
   
   igo-draw-popup-component {
     h1 {
-      font-size: mat.font-size($typography, display-1);
+      font-size: mat.font-size($typography, headline-4);
       font-family:  Roboto, "Helvetica Neue", sans-serif;
     }
   }

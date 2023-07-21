@@ -1,19 +1,17 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 
 import { IgoMessageModule } from '@igo2/core';
 import { IgoMapModule, IgoPrintModule } from '@igo2/geo';
 
 import { AppPrintComponent } from './print.component';
 import { AppPrintRoutingModule } from './print-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppPrintComponent],
   imports: [
+    SharedModule,
     AppPrintRoutingModule,
-    MatCardModule,
-    MatButtonModule,
     IgoMessageModule,
     IgoMapModule,
     IgoPrintModule

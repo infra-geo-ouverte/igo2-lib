@@ -6,9 +6,8 @@
     [max]="calculatedStep"
     [(ngModel)]="sliderValue"
     [displayWith]="sliderDisplayWith"
-    (input)="handleSliderInput($event)"
     thumbLabel
-    >
+     #ngSlider><input matSliderThumb (input)="handleSliderInput({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" />
   </mat-slider>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
     <mat-icon [svgIcon]="playIcon"></mat-icon>

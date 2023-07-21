@@ -10,9 +10,9 @@ import {
   ElementRef
 } from '@angular/core';
 import {
-  LegacyFloatLabelType as FloatLabelType,
-  MatLegacyFormFieldAppearance as MatFormFieldAppearance
-} from '@angular/material/legacy-form-field';
+  FloatLabelType,
+  MatFormFieldAppearance
+} from '@angular/material/form-field';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -88,6 +88,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() searchTypes: string[] = SEARCH_TYPES;
 
+  @Input() withDivider: boolean;
+
   /**
    * Search term
    */
@@ -160,9 +162,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Whether a float label should be displayed
    */
-  @Input() floatLabel: FloatLabelType = 'never';
+  @Input() floatLabel: FloatLabelType = 'auto';
 
-  @Input() appearance: MatFormFieldAppearance = 'legacy';
+  @Input() appearance: MatFormFieldAppearance = 'fill';
 
   @Input() placeholder: string;
 

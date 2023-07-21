@@ -1,38 +1,31 @@
 @import '../../../../../core/src/style/partial/media';
 
-$slide-toggle-width: 60px;
-
-mat-form-field {
-  width: 100%;
-}
-
-.print-slide-toggle-container {
-  overflow-x: hidden;
-
-  mat-slide-toggle {
+:host {
+  mat-form-field {
     width: 100%;
-    margin: 10px;
+  }
 
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
+  .slide-toggle-container {
+    margin-bottom: 16px;
+  }
+  
+  .print-slide-toggle-container {
+    mat-slide-toggle {
+      width: 100%;
+      padding: 0 8px;
     }
   }
-}
 
-.print-option {
-  display: block;
-  margin-right: 10px;
-  margin-bottom: 15px;
-}
+  .print-option {
+    display: block;
+    margin-bottom: 12px;
+  }
+  
+  .igo-form {
+    padding: 10px 5px 5px;
+  }
 
-.print-button-top-padding {
-  padding-top: 25px;
-}
-
-.igo-form {
-  padding: 10px 5px 5px;
-}
-
-.igo-form-button-group {
-  text-align: center;
+  .igo-form-button-group {
+    text-align: center;
+  }
 }

@@ -1,43 +1,32 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@mixin igo-tour-theming($theme) {
+@mixin theme($theme) {
+  @include color($theme);
+}
+
+@mixin color($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $warn: map.get($theme, warn);
 
-  igo-interactive-tour > button.mat-raised-button.tour-button-tool-icon {
-    box-shadow: none;
-  }
+  igo-interactive-tour {
+    button {
+      &.tour-button-tool-icon {
+        color: mat.get-color-from-palette(
+          $primary,
+          darker-contrast
+        );
+        
+        &:hover {
+          background-color: mat.get-color-from-palette($primary, default-contrast);
+          color: mat.get-color-from-palette($primary);
+        }
+      }
+    }
 
-  igo-interactive-tour > button.tour-button-tool-icon {
-    background-color: mat.get-color-from-palette($primary);
-    color: mat.get-color-from-palette($primary, default-contrast);
-
-    box-shadow: none;
-    border:none;
-    border-radius: 50%;
-    padding: 0;
-    min-width: 0;
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-    line-height: 40px;
-  }
-
-  igo-interactive-tour > button.tour-button-tool-icon span.interactive-tour-button-title {
-    display: none;
-  }
-
-  igo-interactive-tour > button.tour-button-tool {
-    background-color: mat.get-color-from-palette($primary);
-    color: mat.get-color-from-palette($primary, default-contrast);
-    border: none;
-  }
-
-  igo-interactive-tour > button.tour-button-tool-icon:hover {
-    background-color: mat.get-color-from-palette($primary, default-contrast);
-    color: mat.get-color-from-palette($primary);
-    cursor: pointer;
+    .mat-primary .mat-mdc-icon-button {
+      color: white;
+    }
   }
 }

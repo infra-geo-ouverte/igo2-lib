@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
-import { IgoMap, OverlayService, MapService } from '@igo2/geo';
+import { IgoMap, MapService } from '@igo2/geo';
 
 @Component({
   selector: 'app-context',
@@ -25,7 +25,6 @@ export class AppContextComponent {
   constructor(
     private languageService: LanguageService,
     private mapService: MapService,
-    private overlayService: OverlayService
   ) {
     this.mapService.setMap(this.map);
   }

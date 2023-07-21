@@ -1,20 +1,16 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 
 import { IgoMapModule } from '@igo2/geo';
 
 import { AppHoverComponent } from './hover.component';
 import { AppHoverRoutingModule } from './hover-routing.module';
-import { CommonModule } from '@angular/common';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppHoverComponent],
   imports: [
-    CommonModule,
+    SharedModule,
     AppHoverRoutingModule,
-    MatCardModule,
-    MatButtonModule,
     IgoMapModule
   ],
   exports: [AppHoverComponent]

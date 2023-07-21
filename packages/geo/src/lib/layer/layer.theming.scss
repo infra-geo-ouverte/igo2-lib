@@ -1,18 +1,20 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use './layer-legend/layer-legend.theming.scss' as layer-legend;
+@use './layer-list-tool/layer-list-tool.theming.scss' as layer-list-tool;
 
 @mixin igo-layer-theming($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
 
   @include layer-legend.igo-layer-legend-theming($theme);
+  @include layer-list-tool.theme($theme);
 
   igo-layer-item.igo-layer-item-focused > mat-list-item {
     background-color: mat.get-color-from-palette($accent, lighter);
     color: mat.get-color-from-palette($primary, default-contrast);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of menu that may no longer apply for the MDC version. */
   .mat-menu-opacity-slider{
     box-shadow: 0 2px 4px -1px rgba(0,0,0,.5), 0 4px 5px 0 rgba(0,0,0,.15), 0 1px 10px 0 rgba(0,0,0,.4)
   }

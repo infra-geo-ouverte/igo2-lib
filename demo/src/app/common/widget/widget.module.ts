@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 import { IgoWidgetModule } from '@igo2/common';
 
@@ -9,6 +9,7 @@ import {
   AppWidgetComponent
 } from './widget.component';
 import { AppWidgetRoutingModule } from './widget-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -16,6 +17,7 @@ import { AppWidgetRoutingModule } from './widget-routing.module';
         AppWidgetComponent
     ],
     imports: [
+        SharedModule,
         AppWidgetRoutingModule,
         MatButtonModule,
         MatCardModule,

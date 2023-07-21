@@ -14,7 +14,6 @@
 
     <mat-slide-toggle class="swipe-toggle mat-typography"
         [checked]="swipe"
-        [labelPosition]="'before'"
         (change)="startSwipe($event.checked)">
         {{'igo.integration.advanced-map-tool.advanced-swipe.swipe' | translate}}
     </mat-slide-toggle> 
@@ -27,22 +26,22 @@
         <p class="map-empty mat-typography">
             {{'igo.integration.advanced-map-tool.advanced-swipe.customize' | translate}}</p>
         <mat-list-item>
-            <mat-icon mat-list-icon svgIcon="magnify"></mat-icon>
-            <h4 matLine class="search-tool mat-typography" (click)="searchEmit()">
+            <mat-icon matListItemIcon svgIcon="magnify"></mat-icon>
+            <span matListItemTitle class="search-tool mat-typography" (click)="searchEmit()">
                 {{'igo.integration.advanced-map-tool.advanced-swipe.search-tool' | translate}}
-            </h4>
+            </span>
         </mat-list-item>
         <mat-list-item>
-            <mat-icon mat-list-icon svgIcon="layers-plus"></mat-icon>
-            <h4 matLine class="catalog-tool mat-typography" (click)="catalogEmit()">
+            <mat-icon matListItemIcon svgIcon="layers-plus"></mat-icon>
+            <span matListItemTitle class="catalog-tool mat-typography" (click)="catalogEmit()">
                 {{'igo.integration.advanced-map-tool.advanced-swipe.catalog-tool' | translate}}
-            </h4>
+            </span>
         </mat-list-item>
         <mat-list-item>
-            <mat-icon mat-list-icon svgIcon="star"></mat-icon>
-            <h4 matLine class="context-tool mat-typography" (click)="contextEmit()">
+            <mat-icon matListItemIcon svgIcon="star"></mat-icon>
+            <span matListItemTitle class="context-tool mat-typography" (click)="contextEmit()">
                 {{'igo.integration.advanced-map-tool.advanced-swipe.context-tool' | translate}}
-            </h4>
+            </span>
         </mat-list-item>
     </mat-list>
 </ng-template>

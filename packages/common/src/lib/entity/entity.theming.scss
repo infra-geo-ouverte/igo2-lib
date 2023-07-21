@@ -1,5 +1,9 @@
-@use './entity-table/entity-table.theming.scss' as entity-table-theme;
+@use './entity-table/entity-table.theming' as entity-table;
+@use './entity-table-paginator/entity-table-paginator.theming' as entity-table-paginator;
+@use './entity-selector/entity-selector.theming' as entity-selector;
 
 @mixin igo-entity-theming($theme) {
-  @include entity-table-theme.igo-entity-table-theming($theme);
+  @include entity-table.theme($theme);
+  @include entity-table-paginator.theme($theme);
+  @include entity-selector.theme($theme);
 }

@@ -1,77 +1,42 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-$slide-toggle-width: 60px;
-
-.measure-type-toggle {
-  padding: 10px;
-  text-align: center;
-
-  mat-button-toggle-group {
-    width: 100%;
-
-    mat-button-toggle {
-      width: 50%;
+:host {
+  .measure-type-toggle {
+    padding: 10px;
+    text-align: center;
+    mat-button-toggle-group {
+      width: 100%;
+      mat-button-toggle {
+        width: 50%;
+      }
     }
   }
-}
 
-
-.measure-options {
-  overflow-x: hidden;
-
-  mat-slide-toggle {
-    width: 100%;
-    margin: 10px;
-
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
+  .measure-options {
+    mat-slide-toggle {
+      width: 100%;
+      padding: 10px;
     }
   }
-}
 
-.measure-store-buttons {
-  margin-left: -2px;
-}
-
-.measure-store-buttons button:first-of-type {
-  margin-left: 14px;
-}
-
-.table-compact ::ng-deep .mat-header-cell.mat-column-selectionCheckbox {
-  width: 52px;
-}
-
-@mixin igo-measurer-theming($theme, $typography) {
-  $foreground: map.get($theme, foreground);
-
-  .igo-map-tooltip-measure {
-    background-color: rgba(255, 204, 51, 0.7);
-    border: 1px solid rgb(255, 205, 51);
-    color: black;
-    font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+  .measure-store-buttons {
+    margin-left: -2px;
   }
-  .igo-map-tooltip-measure-area {
-    background-color: rgba(255, 204, 51, 0.7);
-    border: 1px solid rgb(255, 205, 51);
-    color: black;
-    font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+
+  .measure-store-buttons button:first-of-type {
+    margin-left: 14px;
   }
-  .igo-map-tooltip-measure-line-segments {
-    background-color: rgba(255, 204, 51, 0.7);
-    border: 1px solid rgb(255, 205, 51);
-    color: black;
-    font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+
+  .table-compact ::ng-deep .mat-mdc-header-cell.mat-column-selectionCheckbox {
+    width: 52px;
   }
-  .igo-map-tooltip-measure-polygone-segments {
-    background-color: rgba(255, 204, 51, 0.7);
-    border: 1px solid rgb(255, 205, 51);
-    color: black;
-    font-weight: bold;
-    font-size: mat.font-size($typography, subheading-2);
+
+  .igo-map-tooltip {
+    position: relative;
+    border-radius: 4px;
+    padding: 4px 8px;
+    white-space: nowrap;
   }
   .igo-map-tooltip-hidden {
     display: none;

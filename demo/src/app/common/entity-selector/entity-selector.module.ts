@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 
 import { IgoEntitySelectorModule } from '@igo2/common';
 
 import { AppEntitySelectorComponent } from './entity-selector.component';
 import { AppEntitySelectorRoutingModule } from './entity-selector-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppEntitySelectorComponent],
   imports: [
-    CommonModule,
+    SharedModule,
     AppEntitySelectorRoutingModule,
-    MatCardModule,
     IgoEntitySelectorModule
   ],
   exports: [AppEntitySelectorComponent]

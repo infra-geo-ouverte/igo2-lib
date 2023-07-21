@@ -1,7 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatIconModule } from '@angular/material/icon';
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { IgoPanelModule } from '@igo2/common';
 import {
@@ -16,15 +13,14 @@ import { IgoContextManagerModule } from '@igo2/context';
 
 import { AppContextComponent } from './context.component';
 import { AppContextRoutingModule } from './context-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppContextComponent],
   imports: [
     HttpClientJsonpModule,
     AppContextRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
+    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoLayerModule,

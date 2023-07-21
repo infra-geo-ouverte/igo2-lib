@@ -1,6 +1,6 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatLegacyProgressSpinner as MatProgressSpinner } from '@angular/material/legacy-progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import { SpinnerComponent } from './spinner.component';
 

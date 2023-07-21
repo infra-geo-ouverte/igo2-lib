@@ -1,21 +1,20 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.checkAllButton{
-  text-align: center;
-  padding: 0 5px;
+:host {
+  display: flex;
+  align-items: center;
 }
 
-.igo-search-settings-button ::ng-deep div.mat-button-ripple-round  {
-  border-radius: 0;
+// This component is projected, the style need to be apply outside is scope
+.checkAllButton {
+  text-align: center;
+  padding: 0 5px;
 }
 
 .igo-search-settings-radio-group {
   display: flex;
   flex-direction: column;
-}
-
-.igo-search-settings-radio-group mat-radio-button {
-  margin: $igo-margin;
 }
 
 .igo-search-settings-checkbox mat-radio-button {
@@ -27,7 +26,7 @@
   width: 100%;
 }
 
-.igo-search-settings-search-source mat-checkbox{
+.igo-search-settings-search-source mat-checkbox {
   display: flex;
   margin-left: $igo-margin;
   margin-right: $igo-margin;
@@ -41,8 +40,11 @@
 
 .pointer-summary-slide-toggle-container {
   overflow-x: hidden;
-
   mat-slide-toggle {
-    margin: 10px;
+    margin: 10px 0;
   }
+}
+
+.igo-search-settings-button {
+  @include common-utils.square-button();
 }

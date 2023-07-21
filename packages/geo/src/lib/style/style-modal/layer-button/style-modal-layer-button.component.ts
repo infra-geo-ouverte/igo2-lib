@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 
 import { StyleModalLayerComponent } from '../layer/style-modal-layer.component';

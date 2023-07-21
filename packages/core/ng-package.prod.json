@@ -7,9 +7,10 @@
   "allowedNonPeerDependencies": ["@ngx-translate"],
   "assets": [
     { "input": "src", "glob": "*.scss", "output": "" },
+    { "input": "src/theming/utils", "glob": "*.scss", "output": "theming/utils" },
     { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
     { "input": "src/assets", "glob": "**/*", "output": "assets" },
-    { "input": "src/style/partial", "glob": "**/*.scss", "output": "style/partial" },
+    { "input": "src/style", "glob": "**/*.scss", "output": "style" },
     { "input": "src/theming", "glob": "*.scss", "output": "theming" },
     { "input": "src/locale", "glob": "*", "output": "locale" }
   ]

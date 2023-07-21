@@ -1,10 +1,11 @@
 @import '../../../../../core/src/style/partial/media';
 
+:host {
   .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
     box-shadow: none !important;
-    width: 95%
+    width: 95%;
   }
 
   .checkboxes {
@@ -25,7 +26,6 @@
     min-height: 40px;
     height: auto;
     width: 142px;
-
     ::ng-deep .mat-button-toggle-label-content {
       line-height: unset;
       font-size: small;
@@ -34,14 +34,14 @@
     @include mobile {
       width: 45%;
     }
-
   }
 
   ::ng-deep .material-tooltip {
     white-space: pre-wrap;
   }
 
-  mat-checkbox, mat-radio-button {
+  mat-checkbox,
+  mat-radio-button {
     margin: 7px;
     width: 95%;
     display: inline-flex;
@@ -61,7 +61,7 @@
     cursor: pointer;
   }
 
-  h4 {
+  h3 {
     margin: 7px;
     text-align: left;
   }
@@ -75,4 +75,4 @@
   p {
     margin: unset;
   }
-
+}

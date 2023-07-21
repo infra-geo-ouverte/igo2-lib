@@ -6,14 +6,14 @@
           <mat-icon
             id="legend-toggle"
             class="igo-chevron"
-            mat-list-avatar
+            matListItemIcon
             igoCollapse
             [target]="legend"
             [collapsed]="(item.collapsed)"
             (toggle)="toggleLegendItem($event, item)"
             svgIcon="chevron-up">
           </mat-icon>
-          <h4 matLine>{{computeItemTitle(item) | async}} </h4>
+          <span matListItemTitle>{{computeItemTitle(item) | async}} </span>
         </mat-list-item>
         <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
           <div *ngIf="currentStyle !== undefined">
