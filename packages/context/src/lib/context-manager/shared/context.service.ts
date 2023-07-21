@@ -550,20 +550,27 @@ export class ContextService {
         });
       if (layerFound) {
         let layerStyle = layerFound[`style`];
-        if (layerFound[`igoStyle`][`styleByAttribute`]) {
+        if (layerFound[`igoStyle`] && layerFound[`igoStyle`][`styleByAttribute`]) {
           layerStyle = undefined;
-        } else if (layerFound[`igoStyle`][`clusterBaseStyle`]) {
+        } else if (layerFound[`igoStyle`] && layerFound[`igoStyle`][`clusterBaseStyle`]) {
           layerStyle = undefined;
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
         }
+
+        const styleByAttribute = (layerFound[`igoStyle`] && layerFound[`igoStyle`][`styleByAttribute`]) ?
+        layerFound[`igoStyle`][`styleByAttribute`] : undefined;
+
+        const clusterBaseStyle = (layerFound[`igoStyle`] && layerFound[`igoStyle`][`clusterBaseStyle`]) ?
+        layerFound[`igoStyle`][`clusterBaseStyle`] : undefined;
+
         const opts = {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
           igoStyle: {
-            styleByAttribute: layerFound[`igoStyle`][`styleByAttribute`],
-            clusterBaseStyle: layerFound[`igoStyle`][`clusterBaseStyle`],
+            styleByAttribute: styleByAttribute,
+            clusterBaseStyle: clusterBaseStyle,
           },
           style: layerStyle,
           clusterParam: layerFound[`clusterParam`],
@@ -576,6 +583,7 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
+          catalogLayer.opacity = layer.opacity;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
