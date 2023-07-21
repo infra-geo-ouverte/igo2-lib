@@ -28,4 +28,10 @@
   .item-checkbox ::ng-deep mat-checkbox label {
     margin-left: 28px;
   }
+
+  .actionbar-item {
+    [matline] {
+      padding-left: 16px;
+    }
+  }
 }

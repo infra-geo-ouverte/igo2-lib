@@ -23,6 +23,9 @@
     "./all-style": {
       "style": "./style/all-style.css"
     },
+    "./layout": {
+      "sass": "./style/layout.scss"
+    },
     "./theming": {
       "sass": "./core-theme.scss"
     },

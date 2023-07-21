@@ -21,7 +21,7 @@
     </button>
   </mat-form-field>
 
-  <mat-divider [vertical]="true"></mat-divider>
+  <mat-divider *ngIf="withDivider" [vertical]="true"></mat-divider>
 
   <div class="search-bar-buttons">
     <button *ngIf="showSearchButton"

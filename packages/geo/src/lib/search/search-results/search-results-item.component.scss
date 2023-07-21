@@ -1,5 +1,13 @@
-:host ::ng-deep small {
-  color: #8C8C8C;
+:host {
+  ::ng-deep small {
+    color: #8C8C8C;
+  }
+
+  div[matlistitemmeta] {
+    &:empty {
+      display: none;
+    }
+  }
 }
 
 ::ng-deep .search-result-tooltip {

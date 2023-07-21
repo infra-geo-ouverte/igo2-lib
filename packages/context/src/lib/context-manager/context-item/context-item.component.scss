@@ -12,4 +12,8 @@
   mat-icon.disabled {
     color: rgba(0, 0, 0, 0.38);
   }
+
+  button[matlistitemavatar] {
+    margin-right: 8px;
+  }
 }

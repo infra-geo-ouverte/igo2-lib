@@ -10,7 +10,7 @@ import { GlobalConfig, ToastrModule } from 'ngx-toastr';
       timeOut: 10000,
       extendedTimeOut: 10000,
       titleClass: 'mat-subtitle-2',
-      messageClass: 'toast-message mat-body-1',
+      messageClass: 'toast-message',
       closeButton: true,
       progressBar: true,
       enableHtml: true,

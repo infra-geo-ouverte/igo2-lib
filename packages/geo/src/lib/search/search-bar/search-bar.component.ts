@@ -88,6 +88,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() searchTypes: string[] = SEARCH_TYPES;
 
+  @Input() withDivider: boolean;
+
   /**
    * Search term
    */

@@ -1,5 +1,6 @@
 <mat-list-item
   *ngIf="!action.checkbox"
+  class="actionbar-item"
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
   [matTooltip]="withTooltip ? ((tooltip$ | async) || title | translate) : ''"
@@ -16,7 +17,7 @@
   >
     <mat-icon *ngIf="withIcon" svgIcon="{{ icon$ | async }}"></mat-icon>
   </button>
-  <span *ngIf="withTitle" matLine class="p-l-16">{{ title | translate }}</span>
+  <span *ngIf="withTitle" matLine>{{ title | translate }}</span>
 </mat-list-item>
 
 <mat-list-item

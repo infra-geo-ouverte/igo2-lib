@@ -4,7 +4,7 @@
 
 <ng-container *ngIf="labelFlag !== labelType.Custom">
   <div mat-dialog-content class="geometry-type-toggle">
-    <div class="m-b-12">
+    <div class="button-toggle-container">
       <mat-button-toggle-group
         (change)="onLabelTypeChange($event.value)"
         [value]="customOrPredefined"
@@ -127,7 +127,7 @@
 
 <ng-container *ngIf="labelFlag === labelType.Custom">
   <div mat-dialog-content class="geometry-type-toggle">
-    <div class="m-b-12">
+    <div class="button-toggle-container">
       <mat-button-toggle-group
         (change)="onLabelTypeChange($event.value)"
         [value]="customOrPredefined"

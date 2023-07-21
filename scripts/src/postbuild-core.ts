@@ -39,8 +39,8 @@ async function copyExternalAssets(): Promise<void> {
 function fixPackagesThemesImport(): void {
   const startTime = performance.now();
 
-  const localImport = path.join(distPath, 'packages-import.scss');
-  const prodImport = path.join(distPath, 'packages-import.prod.scss');
+  const localImport = path.join(distPath, 'packages.import.scss');
+  const prodImport = path.join(distPath, 'packages-prod.import.scss');
 
   // Handle the case when we trigger manually the script
   if (!pathExist(prodImport)) {

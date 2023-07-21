@@ -6,12 +6,10 @@
     position: relative;
     width: 100%;
     display: flex;
-    overflow: hidden;
   }
 
   mat-form-field {
     flex: 1;
-    margin-right: 4px;
   }
 
   mat-divider {
