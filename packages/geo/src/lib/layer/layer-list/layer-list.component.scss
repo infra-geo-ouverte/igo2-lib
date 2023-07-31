@@ -14,8 +14,7 @@
   }
   
   .igo-layer-actions-container {
-    width: calc(100% - 5px);
-    padding-left: 4px;
+    padding: 0px 6px 0px 4px;
   }
   
   .igo-layer-actions-container > div {
@@ -62,7 +61,7 @@
     padding-top: 5px;
   }
   
-  :host igo-panel {
+  igo-panel {
     height: unset;
   }
   
