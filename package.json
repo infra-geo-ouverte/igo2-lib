@@ -141,7 +141,7 @@
     "@angular-eslint/eslint-plugin-template": "^15.2.1",
     "@angular-eslint/schematics": "^15.2.1",
     "@angular-eslint/template-parser": "^15.2.1",
-    "@angular/cli": "^15.2.9",
+    "@angular/cli": "^16.1.6",
     "@angular/compiler-cli": "^15.2.9",
     "@compodoc/compodoc": "^1.1.15",
     "@cypress/schematic": "^2.5.0",
