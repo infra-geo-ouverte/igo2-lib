@@ -18,11 +18,9 @@
     "@angular/core": "^16.1.7",
     "@igo2/geo": "1.15.4",
     "@igo2/context": "1.15.4",
-    "rxjs": "^7.8.0"
-  },
-  "optionalDependencies": {
     "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.5.29"
+    "jspdf-autotable": "^3.5.29",
+    "rxjs": "^7.8.0"
   },
   "dependencies": {
     "tslib": "^2.6.0"
