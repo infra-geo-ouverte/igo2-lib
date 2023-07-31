@@ -26,11 +26,11 @@
       "@igo2/integration": ["packages/integration/src/public_api"]
     }
   },
-  "exclude": ["dist", "scripts"],
+  "exclude": ["dist", "scripts", "demo/e2e/**/*"],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,
     "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true,
+    "strictInjectionParameters": true
   }
 }
