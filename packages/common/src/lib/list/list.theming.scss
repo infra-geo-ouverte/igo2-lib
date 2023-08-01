@@ -5,29 +5,36 @@
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
 
-  igo-list [igolistitem][color="primary"].igo-list-item-selected > mat-list-item {
-    background-color: mat.get-color-from-palette($primary);
-    color: mat.get-color-from-palette($primary, default-contrast);
-  }
-
-  igo-list [igolistitem][color="accent"].igo-list-item-selected > mat-list-item {
-    background-color: mat.get-color-from-palette($accent);
-    color: mat.get-color-from-palette($accent, default-contrast);
-  }
-
-  igo-list [igolistitem].igo-list-item-disabled > mat-list-item {
-    color: rgba(0, 0, 0, 0.38);
-  }
-
-  igo-list [igolistitem][color="primary"]:not(.igo-list-item-disabled):hover > mat-list-item,
-  igo-list [igolistitem][color="primary"].igo-list-item-focused > mat-list-item {
-    background-color: mat.get-color-from-palette($primary, lighter);
-    color: mat.get-color-from-palette($primary, default-contrast);
-  }
-
-  igo-list [igolistitem][color="accent"]:not(.igo-list-item-disabled):hover > mat-list-item,
-  igo-list [igolistitem][color="accent"].igo-list-item-focused > mat-list-item {
-    background-color: mat.get-color-from-palette($accent, lighter);
-    color: mat.get-color-from-palette($accent, default-contrast);
+  igo-list {
+    [igolistitem] {
+      &[color="primary"] {
+        &.igo-list-item-selected > mat-list-item {
+          background-color: mat.get-color-from-palette($primary);
+          color: mat.get-color-from-palette($primary, default-contrast);
+        }
+        &:not(.igo-list-item-disabled):hover > mat-list-item,
+        &.igo-list-item-focused > mat-list-item {
+          background-color: mat.get-color-from-palette($primary, lighter);
+          color: mat.get-color-from-palette($primary, default-contrast);
+        }
+      }
+  
+      &[color="accent"] {
+        &.igo-list-item-selected > mat-list-item {
+          background-color: mat.get-color-from-palette($accent);
+          color: mat.get-color-from-palette($accent, default-contrast);
+        }
+  
+        &:not(.igo-list-item-disabled):hover > mat-list-item,
+        &.igo-list-item-focused > mat-list-item {
+          background-color: mat.get-color-from-palette($accent, lighter);
+          color: mat.get-color-from-palette($accent, default-contrast);
+        }
+      }
+  
+      &.igo-list-item-disabled > mat-list-item {
+        color: rgba(0, 0, 0, 0.38);
+      }
+    }  
   }
 }

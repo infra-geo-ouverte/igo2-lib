@@ -22,19 +22,20 @@
     }
   },
   "peerDependencies": {
-    "@angular/common": "^15.2.9",
-    "@angular/core": "^15.2.9",
-    "@angular/material": "^15.2.9",
-    "@angular/platform-browser": "^15.2.9",
+    "@angular/common": "^16.1.7",
+    "@angular/core": "^16.1.7",
+    "@angular/material": "^16.1.6",
+    "@angular/platform-browser": "^16.1.7",
     "@igo2/core": "^1.15.4",
     "@igo2/utils": "^1.15.4",
-    "scroll-into-view-if-needed": "^2.2.29",
+    "angular-shepherd": "16.0.0",
+    "scroll-into-view-if-needed": "^3.0.0",
     "typy": "^3.3.0"
   },
   "dependencies": {
-    "tslib": "^2.4.0"
+    "tslib": "^2.6.0"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

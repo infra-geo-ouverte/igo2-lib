@@ -27,10 +27,6 @@ $igo-actionbar-item-icon-padding: 8px;
     padding-top: 0;
   }
   
-  button {
-    margin: 4px;
-  }
-  
   .buttonOverlay {
     margin: 0px;
   }
@@ -78,16 +74,15 @@ $igo-actionbar-item-icon-padding: 8px;
       padding-bottom: 0;
     }
   }
+  
+  ::ng-deep .mdc-list-item__primary-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    max-height: 36px;
+    line-height: 18px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 }
-
-:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text > * {
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  max-height: 36px;
-  line-height: 18px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-

@@ -23,7 +23,7 @@
   }
   
   .deleteBtn {
-    margin-left: 12px;
+    margin-left: 16px;
   }
   
   .edition-drawing{
@@ -48,9 +48,8 @@
   }
   
   .layer-select {
-    width: 85%;
-    padding: 10px;
-    padding-bottom: 0%;
+    flex: 1;
+    margin-right: 8px;
   }
   
   .input-button-container {
@@ -88,5 +87,14 @@
         margin: 0% !important;
       }
     }
+  }
+
+  .layer-select-container {
+    margin: 16px 8px;
+  }
+
+  .actions-container, .layer-select-container {
+    display: flex;
+    align-items: center;
   }
 }

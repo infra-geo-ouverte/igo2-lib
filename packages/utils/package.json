@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "bowser": "^2.10.0",
-    "tslib": "^2.4.0"
+    "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^15.2.9",
-    "@angular/core": "^15.2.9",
-    "@angular/platform-browser": "^15.2.9"
+    "@angular/common": "^16.1.7",
+    "@angular/core": "^16.1.7",
+    "@angular/platform-browser": "^16.1.7"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }
