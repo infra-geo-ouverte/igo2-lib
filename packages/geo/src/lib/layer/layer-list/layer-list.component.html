@@ -27,11 +27,7 @@
 </div>
 <mat-divider></mat-divider>
 
-<igo-list
-  #igoList
-  [navigation]="false"
-  [selection]="false"
->
+<igo-list #igoList [navigation]="false" [selection]="false">
   <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item
       *ngIf="!(excludeBaseLayers && layer.baseLayer)"
@@ -87,9 +83,7 @@
           : ('igo.geo.layer.lowerLayer' | translate)
       "
       [disabled]="lowerDisabled"
-      (click)="
-        moveActiveLayer(activeLayer, layerListDisplacement.Lower, true)
-      "
+      (click)="moveActiveLayer(activeLayer, layerListDisplacement.Lower, true)"
     >
       <mat-icon
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
@@ -112,9 +106,7 @@
           : ('igo.geo.layer.raiseLayer' | translate)
       "
       [disabled]="raiseDisabled"
-      (click)="
-        moveActiveLayer(activeLayer, layerListDisplacement.Raise, true)
-      "
+      (click)="moveActiveLayer(activeLayer, layerListDisplacement.Raise, true)"
     >
       <mat-icon
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
@@ -143,35 +135,32 @@
       ></mat-icon>
     </button>
 
-    <mat-menu #opacityMenu="matMenu" class="mat-menu-opacity-slider">
-      <div id="opacity-menu">
-        <!-- TODO: The 'tickInterval' property no longer exists -->
-        <mat-slider
-          id="opacity-slider"
-          color="primary"
-          thumbLabel
-          step="5"
-          [min]="0"
-          [max]="100"
-          [matTooltip]="'igo.geo.layer.opacity' | translate"
-          (click)="$event.stopPropagation()"
-          matTooltipShowDelay="500"
-          tooltip-position="below"
-          #ngSlider
-          ><input
-            matSliderThumb
-            [value]="opacity"
-            (input)="
-              changeOpacity({
-                source: ngSliderThumb,
-                parent: ngSlider,
-                value: ngSliderThumb.value
-              })
-            "
-            #ngSliderThumb="matSliderThumb"
-          />
-        </mat-slider>
-      </div>
+    <mat-menu #opacityMenu="matMenu" class="panel-opacity-menu">
+      <mat-slider
+        id="opacity-slider"
+        color="primary"
+        discrete
+        step="5"
+        [min]="0"
+        [max]="100"
+        [matTooltip]="'igo.geo.layer.opacity' | translate"
+        (click)="$event.stopPropagation()"
+        matTooltipShowDelay="500"
+        tooltip-position="below"
+        #ngSlider
+        ><input
+          matSliderThumb
+          [value]="opacity"
+          (input)="
+            changeOpacity({
+              source: ngSliderThumb,
+              parent: ngSlider,
+              value: ngSliderThumb.value
+            })
+          "
+          #ngSliderThumb="matSliderThumb"
+        />
+      </mat-slider>
     </mat-menu>
 
     <button
@@ -319,6 +308,7 @@
           id="opacity-slider"
           color="primary"
           thumbLabel
+          showTickMarks
           step="5"
           [min]="0"
           [max]="100"
@@ -334,8 +324,7 @@
 
     <button
       *ngIf="
-        layersChecked.length !== 0 &&
-        activeLayersExtentAreValid(layersChecked)
+        layersChecked.length !== 0 && activeLayersExtentAreValid(layersChecked)
       "
       class="zoomLayer-button"
       color="primary"

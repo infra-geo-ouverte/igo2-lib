@@ -34,7 +34,7 @@
           {{ getProperLengthLabel(option.value) }}
         </mat-radio-button>
       </mat-radio-group>
-      <ng-container class="mat-typography" *ngIf="olGeometryType === 'Polygon'">
+      <ng-container *ngIf="olGeometryType === 'Polygon'">
         <mat-checkbox
           *ngFor="let option of arrayBuiltInType"
           class="mat-typography"
@@ -46,7 +46,7 @@
           {{ getProperLengthLabel(option.value) }}
         </mat-checkbox>
       </ng-container>
-      <div *ngIf="labelFlag === labelType.Coordinates">
+      <div *ngIf="labelFlag === labelType.Coordinates" class="fields-container">
         <mat-form-field class="readOnly-Input">
           <mat-label>(Latitude, Longitude)</mat-label>
           <input
@@ -68,7 +68,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div *ngIf="labelFlag === labelType.Length || polygonCheck === 2">
+      <div *ngIf="labelFlag === labelType.Length || polygonCheck === 2" class="fields-container">
         <mat-form-field class="readOnly-Input">
           <mat-label>{{ lengthLabelT }}</mat-label>
           <input
@@ -90,7 +90,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div *ngIf="labelFlag === labelType.Area || polygonCheck === 2">
+      <div *ngIf="labelFlag === labelType.Area || polygonCheck === 2" class="fields-container">
         <mat-form-field class="readOnly-Input">
           <mat-label>{{ 'igo.geo.draw.labelType.Area' | translate }}</mat-label>
           <input
