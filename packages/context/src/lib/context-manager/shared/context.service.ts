@@ -29,8 +29,8 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
-import { ExportService } from '@igo2/geo';
+import type { IgoMap, Layer, LayerOptions, VectorLayerOptions } from '@igo2/geo';
+import { ExportService, VectorLayer } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -549,36 +549,27 @@ export class ContextService {
           return source && layer.id === source.id && !contextLayer.baseLayer;
         });
       if (layerFound) {
-        let layerStyle = layerFound[`style`];
-        if (layerFound[`igoStyle`] && layerFound[`igoStyle`][`styleByAttribute`]) {
-          layerStyle = undefined;
-        } else if (layerFound[`igoStyle`] && layerFound[`igoStyle`][`clusterBaseStyle`]) {
-          layerStyle = undefined;
-          delete layerFound.sourceOptions[`source`];
-          delete layerFound.sourceOptions[`format`];
-        }
 
-        const styleByAttribute = (layerFound[`igoStyle`] && layerFound[`igoStyle`][`styleByAttribute`]) ?
-        layerFound[`igoStyle`][`styleByAttribute`] : undefined;
-
-        const clusterBaseStyle = (layerFound[`igoStyle`] && layerFound[`igoStyle`][`clusterBaseStyle`]) ?
-        layerFound[`igoStyle`][`clusterBaseStyle`] : undefined;
-
-        const opts = {
+        let baseOpts = {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
           igoStyle: {
-            styleByAttribute: styleByAttribute,
-            clusterBaseStyle: clusterBaseStyle,
+            styleByAttribute: undefined,
+            clusterBaseStyle: undefined,
           },
-          style: layerStyle,
-          clusterParam: layerFound[`clusterParam`],
+          style: undefined,
+          clusterParam: undefined,
           visible: layer.visible,
           opacity: layer.opacity,
           sourceOptions: layerFound.sourceOptions
         };
-        context.layers.push(opts);
+
+        if(this.isVectorLayerOptions(layer)) {
+           baseOpts = this.addVectorLayerStyle(baseOpts, layerFound as VectorLayerOptions);
+        }
+
+        context.layers.push(baseOpts);
       } else {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
@@ -624,6 +615,32 @@ export class ContextService {
     context.tools = this.tools;
 
     return context;
+  }
+
+  private isVectorLayerOptions(layer: Layer): boolean {
+    return layer instanceof VectorLayer
+  }
+
+  private addVectorLayerStyle (options, vectorLayerOptions: VectorLayerOptions) {
+    let layerStylex = vectorLayerOptions.style;
+    const igoStyle = vectorLayerOptions.igoStyle;
+
+    if(igoStyle) {
+      if (igoStyle.styleByAttribute) {
+        layerStylex = undefined;
+      } else if (igoStyle.clusterBaseStyle) {
+        layerStylex = undefined;
+        delete vectorLayerOptions.source;
+        delete vectorLayerOptions.sourceOptions.format;
+      }
+
+      options.igoStyle.styleByAttribute = igoStyle?.styleByAttribute;
+      options.igoStyle.clusterBaseStyle = igoStyle?.clusterBaseStyle;
+    }
+    options.style = layerStylex;
+    options.clusterParam = vectorLayerOptions?.clusterParam;
+
+    return options;
   }
 
   setTools(tools: Tool[]) {
