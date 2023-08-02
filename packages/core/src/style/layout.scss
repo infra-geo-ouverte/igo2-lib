@@ -145,4 +145,19 @@ $layout-sides: (
   &-y-auto {
     overflow-y: auto;
   }
+  &-y-hidden {
+    overflow-y: hidden;
+  }
+  &-x-auto {
+    overflow-x: auto;
+  }
+  &-x-hidden {
+    overflow-x: hidden;
+  }
+  &-auto {
+    overflow: auto;
+  }
+  &-hidden {
+    overflow: hidden;
+  }
 }
