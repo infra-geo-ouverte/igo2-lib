@@ -19,71 +19,75 @@
     lighter-contrast
   );
 
-  igo-toolbox > igo-actionbar mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
-    &:hover {
-      background-color: mat.get-color-from-palette($accent, lighter);
-    }
-
-    &.tool-activated,
-    &.children-tool-activated {
-      color: $lighter-contrast;
-      background-color: $darker-contrast;
-
-      button {
-        cursor: default;
+  igo-toolbox {
+    &.color-primary > igo-actionbar:not(.with-title) {
+      box-shadow: unset;
+      background-color: mat.get-color-from-palette($primary);
+      #lowChevron,
+      #topChevron {
+        background-color: mat.get-color-from-palette($primary);
+        color: white;
       }
     }
-  }
 
-  igo-toolbox > igo-actionbar:not(.with-title) {
-    > mat-list {
-      & > #lowChevron,
-      & > #topChevron {
+    &.color-grey > igo-actionbar:not(.with-title) {
+      box-shadow: unset;
+      background-color: #737475;
+      #lowChevron,
+      #topChevron {
+        background-color: #737475;
+        color: white;
+      }
+    }
+
+    &.color-primary,
+    &.color-grey {
+      & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
+        .mat-mdc-list-item.mdc-list-item--with-leading-avatar {
+          color: white;
+          &:hover {
+            color: black;
+          }
+  
+          &.tool-activated,
+          &.children-tool-activated {
+            background-color: white;
+            color: black;
+          }
+        }
+      }
+    }
+
+    > igo-actionbar {
+      &:not(.with-title) {
+        > mat-list {
+          & > #lowChevron,
+          & > #topChevron {
+            &:hover {
+              background-color: mat.get-color-from-palette($accent, lighter);
+              color: black;
+            }
+          }
+    
+          mat-list-item {
+            color: $lighter-contrast;
+          }
+        }
+      }
+
+      mat-list.mat-mdc-list-base igo-actionbar-item mat-list-item {
         &:hover {
           background-color: mat.get-color-from-palette($accent, lighter);
-          color: black;
         }
-      }
-
-      mat-list-item {
-        color: $lighter-contrast;
-      }
-    }
-  }
-
-  igo-toolbox.color-primary > igo-actionbar:not(.with-title) {
-    box-shadow: unset;
-    background-color: mat.get-color-from-palette($primary);
-    #lowChevron,
-    #topChevron {
-      background-color: mat.get-color-from-palette($primary);
-      color: white;
-    }
-  }
-
-  igo-toolbox.color-grey > igo-actionbar:not(.with-title) {
-    box-shadow: unset;
-    background-color: #737475;
-    #lowChevron,
-    #topChevron {
-      background-color: #737475;
-      color: white;
-    }
-  }
-
-  igo-toolbox.color-primary,
-  igo-toolbox.color-grey {
-    & > igo-actionbar:not(.with-title) mat-list.mat-mdc-list-base {
-      .mat-mdc-list-item.mdc-list-item--with-leading-avatar {
-        color: white;
-        &:hover {
-          color: black;
-        }
-
+    
         &.tool-activated,
         &.children-tool-activated {
-          background-color: white;
-          color: black;
+          color: $lighter-contrast;
+          background-color: $darker-contrast;
+    
+          button {
+            cursor: default;
+          }
         }
       }
     }

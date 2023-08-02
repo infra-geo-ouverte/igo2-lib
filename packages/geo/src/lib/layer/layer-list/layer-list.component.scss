@@ -14,8 +14,7 @@
   }
   
   .igo-layer-actions-container {
-    width: calc(100% - 5px);
-    padding-left: 4px;
+    padding: 0px 6px 0px 4px;
   }
   
   .igo-layer-actions-container > div {
@@ -24,14 +23,6 @@
   
   mat-list-item ::ng-deep .mdc-list-item__content {
     margin-bottom: 10px;
-  }
-  
-  #opacity-slider {
-    float: left;
-    min-width: unset;
-    width: 110px;
-    left: 10px;
-    top: 10px
   }
   
   .igo-layer-button-group, .actions-buttons-multi {
@@ -62,18 +53,8 @@
     padding-top: 5px;
   }
   
-  :host igo-panel {
+  igo-panel {
     height: unset;
-  }
-  
-  #opacity-menu {
-    max-width: unset;
-    width: 132px;
-    height: 50px;
-  
-    .mat-mdc-menu-content:not(:empty) {
-      padding-top: 20px;
-    }
   }
   
   .select-all {
@@ -81,5 +62,13 @@
     align-items: center;
     height: 48px;
     padding: 0 16px;
+  }
+}
+
+::ng-deep .panel-opacity-menu {
+  overflow: visible !important;
+
+  #opacity-slider {
+    margin: 0 16px;
   }
 }

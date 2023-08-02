@@ -133,7 +133,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "demo:build",
+            "host": "127.0.0.1"
           },
           "configurations": {
             "production": {

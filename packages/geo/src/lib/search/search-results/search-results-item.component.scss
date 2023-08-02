@@ -1,6 +1,6 @@
 :host {
   ::ng-deep small {
-    color: #8C8C8C;
+    color: #8c8c8c;
   }
 
   div[matlistitemmeta] {
@@ -8,8 +8,18 @@
       display: none;
     }
   }
-}
 
-::ng-deep .search-result-tooltip {
-   white-space: pre-line;
+  ::ng-deep .mdc-list-item__primary-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    max-height: 36px;
+    line-height: 18px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  ::ng-deep .search-result-tooltip {
+    white-space: pre-line;
+  }
 }
