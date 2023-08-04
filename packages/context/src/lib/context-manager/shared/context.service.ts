@@ -570,8 +570,6 @@ export class ContextService {
            baseOpts = this.addVectorLayerStyle(baseOpts, layerFound as VectorLayerOptions);
         }
 
-        console.log('baseOpts', baseOpts);
-
         context.layers.push(baseOpts);
       } else {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
