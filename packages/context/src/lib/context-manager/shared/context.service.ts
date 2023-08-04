@@ -513,7 +513,7 @@ export class ContextService {
       'EPSG:4326'
     );
 
-    const context = {
+    const context: DetailedContext = {
       uri: name,
       title: name,
       map: {
@@ -543,6 +543,7 @@ export class ContextService {
 
     layers.forEach((layer) => {
       // Do not seem to work properly. layerFound is always undefined.
+      // layerFound can be VectorLayer imageLAyer...
       const layerFound = currentContext.layers.find(
         (contextLayer) => {
           const source = contextLayer.source;
@@ -574,6 +575,7 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
+          catalogLayer.visible = layer.visible,
           catalogLayer.opacity = layer.opacity;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
@@ -606,6 +608,8 @@ export class ContextService {
           }
           features = JSON.parse(features);
           features.name = layer.options.title;
+          features.opacity = layer.opacity;
+          features.visible = layer.visible;
           context.extraFeatures.push(features);
         }
       }
