@@ -153,9 +153,9 @@ export function addImportedFeaturesToMap(
   source.ol.addFeatures(olFeatures);
   let randomStyle;
   let editable: boolean = false;
-  if (
-    olFeatures[0].getKeys().includes('_style') ||
-    olFeatures[0].getKeys().includes('_mapTitle')) {
+  const featureKeys = olFeatures[0]?.getKeys() ?? [];
+
+  if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
     randomStyle = featureRandomStyleFunction();
   } else {
     randomStyle = featureRandomStyle();
