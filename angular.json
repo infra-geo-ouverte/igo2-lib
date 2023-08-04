@@ -516,7 +516,6 @@
   },
   "cli": {
     "schematicCollections": [
-      "@cypress/schematic",
       "@angular-eslint/schematics",
       "@schematics/angular"
     ],
