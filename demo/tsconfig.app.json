@@ -9,6 +9,6 @@
     "src/polyfills.ts"
   ],
   "include": [
-    "demo/src/**/*.d.ts"
+    "src/**/*.d.ts"
   ]
 }
