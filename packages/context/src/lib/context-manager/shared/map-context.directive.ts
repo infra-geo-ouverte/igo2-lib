@@ -3,7 +3,7 @@ import { Directive, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { MapViewOptions, MapBrowserComponent, MapControlsOptions, MapScaleLineOptions } from '@igo2/geo';
+import { MapBrowserComponent, MapControlsOptions, MapScaleLineOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
