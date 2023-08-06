@@ -1,0 +1,76 @@
+@use 'sass:map';
+
+// Design Quebec colors
+// https://design.quebec.ca/bases/couleurs#c118192
+$color: (
+  blue: (
+    light: #dae6f0,
+    light-2: #4a98d9,
+    normal: #1479cc,
+    normal-piv: #095797,
+    medium: #19406c,
+    dark: #223654
+  ),
+  grey: (
+    light: #f1f1f2,
+    light-2: #c5cad2,
+    normal: #8893a2,
+    medium: #6b778a,
+    dark: #4e5662
+  ),
+  red: (
+    pink-light: #ffdbd6,
+    pink: #e58271,
+    normal: #cb381f,
+    dark: #692519
+  ),
+  green: (
+    light: #d7f0bb,
+    normal: #4f813d,
+    dark: #2c4024
+  ),
+  yellow: (
+    light: #f8e69a,
+    normal: #e0ad03,
+    dark: #ad781c
+  )
+);
+
+$primary: map.get($color, blue, normal-piv);
+$accent: map.get($color, red, pink);
+
+$dark-primary-text: rgba(black, 0.87);
+$light-primary-text: white;
+
+$palette: (
+  50: #dae6f0,
+  100: #e5f2fa,
+  200: #99cbec,
+  300: #4a98d9,
+  400: #1479cc,
+  500: #095797,
+  600: #265b8b,
+  700: #19406c,
+  800: #273f61,
+  900: #223654,
+  A100: #1479cc,
+  A200: #1479cc,
+  A400: #dae6f0,
+  A700: #f2f1f1,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text
+  )
+);
