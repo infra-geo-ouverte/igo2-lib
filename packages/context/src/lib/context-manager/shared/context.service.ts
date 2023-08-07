@@ -568,8 +568,6 @@ export class ContextService {
           baseOpts = this.addVectorLayerStyle(baseOpts, layerFound);
         }
 
-        console.log('baseOpts', baseOpts);
-
         context.layers.push(baseOpts);
       } else {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
@@ -628,7 +626,7 @@ export class ContextService {
   }
 
   private addVectorLayerStyle (
-    options: AnyLayerOptions, 
+    options: AnyLayerOptions,
     vectorLayerOptions: VectorLayerOptions
   ): VectorLayerOptions {
     let layerStyle = vectorLayerOptions.style;
