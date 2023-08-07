@@ -65,6 +65,12 @@ export const environment: Environment = {
         }
       ]
     },
+    monitoring: {
+      provider: 'sentry',
+      publicKey: 'examplePublicKey',
+      host: 'o0.ingest.sentry.io',
+      id: '0',
+    },
     searchSources: {
       storedqueriesreverse: { enabled: false},
       nominatim: {

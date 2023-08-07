@@ -50,7 +50,7 @@ export interface ForcedProperty {
   metadataUrlAll?: string;
 }
 
-export interface ICompositeCatalog extends ICatalog {
+export interface ICompositeCatalog extends Omit<ICatalog, 'url'> {
   composite: ICatalog[];
 }
 

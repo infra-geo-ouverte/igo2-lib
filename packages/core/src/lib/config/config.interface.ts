@@ -1,4 +1,7 @@
+import { IgoOptions } from '../environment/environment.interface';
+
 export interface ConfigOptions {
-  default?: { [key: string]: any };
+  default?: IgoOptions;
   path?: string;
 }
+
