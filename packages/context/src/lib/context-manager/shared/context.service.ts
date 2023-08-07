@@ -29,7 +29,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer, LayerOptions, VectorLayerOptions } from '@igo2/geo';
+import type { AnyLayerOptions, IgoMap, Layer, LayerOptions, VectorLayerOptions } from '@igo2/geo';
 import { ExportService, VectorLayer } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
@@ -542,8 +542,6 @@ export class ContextService {
       });
 
     layers.forEach((layer) => {
-      // Do not seem to work properly. layerFound is always undefined.
-      // layerFound can be VectorLayer imageLAyer...
       const layerFound = currentContext.layers.find(
         (contextLayer) => {
           const source = contextLayer.source;
@@ -551,7 +549,7 @@ export class ContextService {
         });
       if (layerFound) {
 
-        let baseOpts = {
+        let baseOpts: AnyLayerOptions = {
           baseLayer: layerFound.baseLayer,
           title: layer.options.title,
           zIndex: layer.zIndex,
@@ -566,9 +564,11 @@ export class ContextService {
           sourceOptions: layerFound.sourceOptions
         };
 
-        if(this.isVectorLayerOptions(layer)) {
-           baseOpts = this.addVectorLayerStyle(baseOpts, layerFound as VectorLayerOptions);
+        if(this.isVectorLayerOptions(layer, layerFound)) {
+          baseOpts = this.addVectorLayerStyle(baseOpts, layerFound);
         }
+
+        console.log('baseOpts', baseOpts);
 
         context.layers.push(baseOpts);
       } else {
@@ -621,30 +621,37 @@ export class ContextService {
     return context;
   }
 
-  private isVectorLayerOptions(layer: Layer): boolean {
+  private isVectorLayerOptions(layer: Layer, options: LayerOptions)
+  :options is VectorLayerOptions
+  {
     return layer instanceof VectorLayer;
   }
 
-  private addVectorLayerStyle (options, vectorLayerOptions: VectorLayerOptions) {
-    let layerStylex = vectorLayerOptions.style;
+  private addVectorLayerStyle (
+    options: AnyLayerOptions, 
+    vectorLayerOptions: VectorLayerOptions
+  ): VectorLayerOptions {
+    let layerStyle = vectorLayerOptions.style;
     const igoStyle = vectorLayerOptions.igoStyle;
-
+    const newOptions: VectorLayerOptions = {
+      ...options,
+      ol: vectorLayerOptions.ol,
+      sourceOptions: vectorLayerOptions.sourceOptions,
+      source: vectorLayerOptions.source
+    }
     if(igoStyle) {
-      if (igoStyle.styleByAttribute) {
-        layerStylex = undefined;
-      } else if (igoStyle.clusterBaseStyle) {
-        layerStylex = undefined;
+      layerStyle = undefined;
+      if (igoStyle.clusterBaseStyle) {
         delete vectorLayerOptions.source;
         delete vectorLayerOptions.sourceOptions.format;
       }
-
-      options.igoStyle.styleByAttribute = igoStyle?.styleByAttribute;
-      options.igoStyle.clusterBaseStyle = igoStyle?.clusterBaseStyle;
+      newOptions.igoStyle.styleByAttribute = igoStyle?.styleByAttribute;
+      newOptions.igoStyle.clusterBaseStyle = igoStyle?.clusterBaseStyle;
     }
-    options.style = layerStylex;
-    options.clusterParam = vectorLayerOptions?.clusterParam;
+    newOptions.style = layerStyle;
+    newOptions.clusterParam = vectorLayerOptions?.clusterParam;
 
-    return options;
+    return newOptions;
   }
 
   setTools(tools: Tool[]) {
