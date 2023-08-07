@@ -22,7 +22,7 @@ interface ActiveMessageTranslation {
 })
 export class MessageService {
   public messages$ = new BehaviorSubject<Message[]>([]);
-  private options: MessageOptions;
+  private options?: MessageOptions;
   private activeMessageTranslations: ActiveMessageTranslation[] = [];
 
   constructor(
@@ -30,7 +30,7 @@ export class MessageService {
     private configService: ConfigService,
     private languageService: LanguageService
   ) {
-    this.options = this.configService.getConfig('message') || {};
+    this.options = this.configService.getConfig('message');
     this.languageService.language$.pipe(debounceTime(500)).subscribe(r => {
       if (this.toastr.toasts.length === 0) {
         this.activeMessageTranslations = [];
@@ -278,11 +278,11 @@ export class MessageService {
   }
 
   private handleTemplate(message: Message): Message {
-    if (!this.options.template || message.html) {
+    if (!this.options?.template || message.html) {
       return message;
     }
 
-    let html = this.options.template;
+    let html = this.options?.template;
     html = html.replace('${text}', message.text);
     html = html.replace('${title}', message.title);
 
