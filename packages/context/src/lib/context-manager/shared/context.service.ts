@@ -638,7 +638,7 @@ export class ContextService {
       ol: vectorLayerOptions.ol,
       sourceOptions: vectorLayerOptions.sourceOptions,
       source: vectorLayerOptions.source
-    }
+    };
     if(igoStyle) {
       layerStyle = undefined;
       if (igoStyle.clusterBaseStyle) {
