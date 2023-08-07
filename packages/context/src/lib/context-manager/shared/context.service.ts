@@ -40,7 +40,8 @@ import {
   DetailedContext,
   ContextMapView,
   ContextPermission,
-  ContextProfils
+  ContextProfils,
+  ContextVectorLayerOptions
 } from './context.interface';
 
 @Injectable({
@@ -631,11 +632,9 @@ export class ContextService {
   ): VectorLayerOptions {
     let layerStyle = vectorLayerOptions.style;
     const igoStyle = vectorLayerOptions.igoStyle;
-    const newOptions: VectorLayerOptions = {
+    const newOptions: ContextVectorLayerOptions = {
       ...options,
-      ol: vectorLayerOptions.ol,
-      sourceOptions: vectorLayerOptions.sourceOptions,
-      source: vectorLayerOptions.source
+      sourceOptions: vectorLayerOptions.sourceOptions
     };
     if(igoStyle) {
       layerStyle = undefined;
