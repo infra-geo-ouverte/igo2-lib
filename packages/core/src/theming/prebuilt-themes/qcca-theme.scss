@@ -3,6 +3,7 @@
 @use '../../' as igo;
 @use './qcca';
 
+// https://design.quebec.ca/a-propos-systeme-design
 $primary: mat.define-palette(qcca.$palette, 500, 400, 700);
 $accent: mat.define-palette(qcca.$palette, 400, 100, 700);
 $warn: mat.define-palette(qcca.$palette, 800);

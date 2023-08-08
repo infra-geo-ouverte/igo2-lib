@@ -44,7 +44,7 @@ a {
   word-break: break-word;
   overflow-wrap: break-word;
   cursor: pointer;
-  color: #095797;
+  color: palette.$primary;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -93,7 +93,7 @@ h1 {
     margin: 0;
     width: 48px;
     padding-top: 4px;
-    border-bottom: 4px solid #e58271;
+    border-bottom: 4px solid palette.$accent;
   }
 
   @media (max-width: 1200px) {
