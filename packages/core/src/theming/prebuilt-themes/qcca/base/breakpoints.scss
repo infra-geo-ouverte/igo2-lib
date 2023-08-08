@@ -1,0 +1,17 @@
+// TODO, validate the breakpoints with the design team
+$device-breakpoints: (
+  mobile: (
+    max: 599px
+  ),
+  tablet: (
+    min: 600px,
+    max: 1239px
+  ),
+  laptop: (
+    min: 1240px,
+    max: 1439px
+  ),
+  desktop: (
+    min: 1440px
+  )
+);

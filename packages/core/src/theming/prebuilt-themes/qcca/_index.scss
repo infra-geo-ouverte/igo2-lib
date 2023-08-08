@@ -1,4 +1,2 @@
-@forward './palette';
-@forward './typography';
-@forward './igo-override' as igo-override-*;
-@forward './material-override';
+@forward './base';
+@forward './components';

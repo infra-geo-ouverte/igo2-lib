@@ -1,6 +1,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './palette';
+@use '../palette';
+@use './typography.utils' as typo-utils;
 
 // https://design.quebec.ca/bases/polices-caracteres
 // https://design.quebec.ca/bases/niveaux-titres
@@ -87,21 +88,13 @@ h1 {
   margin-top: 72px !important;
   margin-bottom: 32px !important;
 
-  &:after {
-    content: '';
-    display: block;
-    margin: 0;
-    width: 48px;
-    padding-top: 4px;
-    border-bottom: 4px solid palette.$accent;
-  }
+  @include typo-utils.title-border;
 
   @media (max-width: 1200px) {
       margin-top: 48px !important;
       margin-bottom: 16px !important;
   }  
 }
-
 
 h2 {
   margin-top: 48px !important;
@@ -116,9 +109,7 @@ h3 {
 // WORKAROUND, mat-typography area of intersection h4 is using mat-body-1
 // https://github.com/angular/components/issues/26351
 h4 {
-  font-size: 21px !important;
-  line-height: 24px !important;
-  font-weight: bold !important;
+  @include typo-utils.title-level-4;
 }
 
 h4 {

@@ -1,0 +1,6 @@
+@use 'sass:map';
+@use '../base';
+
+.mat-mdc-input-element {
+  color: map.get(base.$color, grey, medium) !important;
+}
