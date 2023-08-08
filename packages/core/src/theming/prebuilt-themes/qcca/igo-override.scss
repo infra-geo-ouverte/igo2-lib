@@ -1,0 +1,91 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use './palette';
+
+@mixin themes($theme) {
+  @include search-bar-density($theme);
+}
+
+@mixin search-bar-density($theme) {
+  $density: mat.get-density-config($theme);
+
+  $theme4: map.merge(
+    $theme,
+    (
+      density: $density - 4
+    )
+  );
+
+  $theme2: map.merge(
+    $theme,
+    (
+      density: $density - 2
+    )
+  );
+  igo-search-bar {
+    @include mat.form-field-density($theme4);
+    @include mat.icon-button-density($theme2);
+  }
+}
+
+$color-500: map.get(palette.$palette, 500);
+$color-500-contrast: map.get(palette.$palette, contrast, 500);
+$color-400: map.get(palette.$palette, 400);
+
+igo-search-bar {
+  // Workaroung, OPEN SANS font add a mysterious 1px for the height
+  .mat-mdc-form-field-infix {
+    max-height: 40px;
+  }
+
+  button[mat-icon-button] {
+    background-color: $color-500;
+
+    &:hover {
+      background-color: $color-400;
+    }
+  }
+
+  mat-icon {
+    color: $color-500-contrast;
+  }
+}
+
+igo-search-results-item {
+  .mdc-list-item__primary-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: unset !important;
+    line-height: 18px !important;
+  }
+}
+
+.igo-panel-header,
+.igo-panel-title {
+  color: $color-500-contrast !important;
+}
+
+igo-list [igolistitem][color='accent'].igo-list-item-selected > mat-list-item {
+  background-color: $color-400;
+
+  h4,
+  small {
+    color: $color-500-contrast !important;
+  }
+}
+
+igo-panel-header,
+igo-panel-title,
+igo-panel-header button {
+  color: $color-500-contrast !important;
+}
+
+igo-rotation-button,
+igo-zoom-button,
+igo-offline-button,
+igo-home-extent-button,
+igo-baselayers-switcher,
+igo-geolocate-button {
+  @include mat.elevation(2);
+}

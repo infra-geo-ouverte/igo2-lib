@@ -1,0 +1,6 @@
+@use 'sass:map';
+@use '../palette';
+
+.mat-mdc-input-element {
+  color: map.get(palette.$color, grey, medium) !important;
+}
