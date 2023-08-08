@@ -1,13 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 @use '../palette';
+@use '../breakpoints';
 @use './typography.utils' as typo-utils;
 
 // https://design.quebec.ca/bases/polices-caracteres
 // https://design.quebec.ca/bases/niveaux-titres
 // https://material.angular.io/guide/typography
 $typography: mat.define-typography-config(
-    $font-family: '"Open Sans", sans-serif',
+  $font-family: '"Open Sans", sans-serif',
   $headline-1: mat.define-typography-level(110px, 110px, 500),
   $headline-2: mat.define-typography-level(54px, 54px, 500),
   $headline-3: mat.define-typography-level(43px, 46px, 500),
@@ -90,10 +91,10 @@ h1 {
 
   @include typo-utils.title-border;
 
-  @media (max-width: 1200px) {
-      margin-top: 48px !important;
-      margin-bottom: 16px !important;
-  }  
+  @include breakpoints.media-breakpoint-down(tablet) {
+    margin-top: 48px !important;
+    margin-bottom: 16px !important;
+  }
 }
 
 h2 {
@@ -127,7 +128,8 @@ h6 {
   line-height: 20px !important;
 }
 
-h5, h6 {
+h5,
+h6 {
   font-weight: bold !important;
   margin-top: 16px !important;
   margin-bottom: 0px !important;
