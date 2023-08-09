@@ -10,7 +10,7 @@ import { MsalModule } from '@azure/msal-angular';
 
 import { StorageService, IgoLanguageModule } from '@igo2/core';
 
-import { AuthStorageService } from './shared/storage.service';
+import { AuthStorageService } from './shared/auth-storage.service';
 import { ProtectedDirective } from './shared/protected.directive';
 import { AuthInterceptor } from './shared/auth.interceptor';
 import { provideAuthMicrosoft } from './shared/auth-microsoft.provider';
@@ -21,6 +21,7 @@ import { AuthGoogleComponent } from './auth-form/auth-google.component';
 import { AuthFacebookComponent } from './auth-form/auth-facebook.component';
 import { AuthMicrosoftComponent } from './auth-form/auth-microsoft.component';
 import { AuthMicrosoftb2cComponent } from './auth-form/auth-microsoftb2c.component';
+import { provideAuthUserMonitoring } from './auth-monitoring/auth-monitoring.provider';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ export class IgoAuthModule {
           useClass: AuthStorageService
         },
         ...provideAuthMicrosoft('add'),
-        ...provideAuthMicrosoft('b2c')
+        ...provideAuthMicrosoft('b2c'),
+        provideAuthUserMonitoring(),
       ]
     };
   }

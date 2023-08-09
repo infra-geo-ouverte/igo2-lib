@@ -26,6 +26,11 @@ export class AuthService {
     return this.config.getConfig('auth.url') !== undefined;
   }
 
+  get user(): User | null {
+    const { user = null } = this.decodeToken();
+    return user;
+  }
+
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
@@ -171,7 +176,7 @@ export class AuthService {
             this.languageService.setLanguage(tokenDecoded.user.locale);
           }
           if (tokenDecoded.user.isExpired) {
-              this.messageService.alert('igo.auth.error.Password expired');
+            this.messageService.alert('igo.auth.error.Password expired');
           }
         }
         this.authenticate$.next(true);

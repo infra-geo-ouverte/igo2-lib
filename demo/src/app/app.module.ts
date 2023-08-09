@@ -63,6 +63,7 @@ import {
 import { concatMap, first } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MonitoringModule } from './core/monitoring/monitoring.module';
 
 export const defaultTooltipOptions: MatTooltipDefaultOptions = {
   showDelay: 500,
@@ -121,6 +122,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppOgcFilterModule,
     AppSpatialFilterModule,
     AppWorkspaceModule,
+    MonitoringModule,
 
     AppContextModule,
 

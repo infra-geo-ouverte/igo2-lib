@@ -9,8 +9,7 @@ export const environment: EnvironmentOptions = {
       {
         code: 'EPSG:32198',
         alias: 'Quebec Lambert',
-        def:
-          '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
+        def: '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
         extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
       }
     ],
@@ -44,8 +43,8 @@ export const environment: EnvironmentOptions = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
-          // TODO PIERRE-ETIENNE, corriger l'interface
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          // TODO pelord, serais-tu en mesure de corriger l'interface?
           // queryFormat: {
           //   html: '*',
           //   'application/json': [
@@ -282,9 +281,8 @@ export const environment: EnvironmentOptions = {
     },
     monitoring: {
       provider: 'sentry',
-      publicKey: 'examplePublicKey',
-      host: 'o0.ingest.sentry.io',
-      id: '0',
+      dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      identifyUser: true
     },
     searchSources: {
       storedqueriesreverse: { enabled: false },

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { StorageService, StorageScope, ConfigService } from '@igo2/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
-import { AuthStorageOptions } from './storage.interface';
+import { AuthStorageOptions } from './auth-storage.interface';
 
 @Injectable({
   providedIn: 'root'
