@@ -13,12 +13,14 @@ import {
   ClusterDataSourceOptions,
   ClusterDataSource,
   featureRandomStyle,
-  featureRandomStyleFunction
+  featureRandomStyleFunction,
+  LayerOptions
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
 import OlFeature from 'ol/Feature';
+import * as olStyle from 'ol/style';
 
 export function handleFileImportSuccess(
   file: File,
@@ -143,7 +145,7 @@ export function computeLayerTitleFromFile(file: File): string {
 export function addImportedFeaturesToMap(
   olFeatures: OlFeature<OlGeometry>[],
   map: IgoMap,
-  layerTitle: string
+  layerOptions: LayerOptions
 ): VectorLayer {
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
     type: 'vector',
@@ -154,7 +156,6 @@ export function addImportedFeaturesToMap(
   let randomStyle;
   let editable: boolean = false;
   const featureKeys = olFeatures[0]?.getKeys() ?? [];
-
   if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
     randomStyle = featureRandomStyleFunction();
   } else {
@@ -162,11 +163,13 @@ export function addImportedFeaturesToMap(
     editable = true;
   }
   const layer = new VectorLayer({
-    title: layerTitle,
+    title: layerOptions.title,
     isIgoInternalLayer: true,
     source,
     igoStyle: { editable },
-    style: randomStyle
+    style: randomStyle,
+    visible: layerOptions.visible,
+    opacity: layerOptions.opacity
   });
   map.addLayer(layer);
 
@@ -176,7 +179,7 @@ export function addImportedFeaturesToMap(
 export function addImportedFeaturesStyledToMap(
   olFeatures: OlFeature<OlGeometry>[],
   map: IgoMap,
-  layerTitle: string,
+  layerOptions: LayerOptions,
   styleListService: StyleListService,
   styleService: StyleService
 ): VectorLayer {
@@ -184,34 +187,34 @@ export function addImportedFeaturesStyledToMap(
   let distance: number;
 
   if (
-    styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')
+    styleListService.getStyleList(layerOptions.title.toString() + '.styleByAttribute')
   ) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
-      layerTitle.toString() + '.styleByAttribute'
+      layerOptions.title.toString() + '.styleByAttribute'
     );
 
     style = (feature, resolution) => {
       return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
     };
   } else if (
-    styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')
+    styleListService.getStyleList(layerOptions.title.toString() + '.clusterStyle')
   ) {
     const clusterParam: ClusterParam = styleListService.getStyleList(
-      layerTitle.toString() + '.clusterParam'
+      layerOptions.title.toString() + '.clusterParam'
     );
     distance = styleListService.getStyleList(
-      layerTitle.toString() + '.distance'
+      layerOptions.title.toString() + '.distance'
     );
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'), feature, resolution
+        styleListService.getStyleList(layerOptions.title.toString() + '.clusterStyle'), feature, resolution
       );
       return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
-  } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
+  } else if (styleListService.getStyleList(layerOptions.title.toString() + '.style')) {
     style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.style'), feature, resolution
+      styleListService.getStyleList(layerOptions.title.toString() + '.style'), feature, resolution
     );
   } else {
     style = (feature, resolution) => styleService.createStyle(
@@ -220,7 +223,7 @@ export function addImportedFeaturesStyledToMap(
   }
   let source;
 
-  if (styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')) {
+  if (styleListService.getStyleList(layerOptions.title.toString() + '.clusterStyle')) {
     const sourceOptions: ClusterDataSourceOptions &
       QueryableDataSourceOptions = {
       distance,
@@ -228,7 +231,7 @@ export function addImportedFeaturesStyledToMap(
       queryable: true
     };
     source = new ClusterDataSource(sourceOptions);
-    source.ol.source.addFeatures(olFeatures);
+    source.ol.source.addFeatures(setCustomFeaturesStyle(olFeatures));
   } else {
     const sourceOptions: FeatureDataSourceOptions &
       QueryableDataSourceOptions = {
@@ -236,16 +239,34 @@ export function addImportedFeaturesStyledToMap(
       queryable: true
     };
     source = new FeatureDataSource(sourceOptions);
-    source.ol.addFeatures(olFeatures);
+    source.ol.addFeatures(setCustomFeaturesStyle(olFeatures));
   }
 
   const layer = new VectorLayer({
-    title: layerTitle,
+    title: layerOptions.title,
     isIgoInternalLayer: true,
+    opacity: layerOptions.opacity,
+    visible: layerOptions.visible,
     source,
     style
   });
   map.addLayer(layer);
 
   return layer;
+}
+
+function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+  let features: OlFeature<OlGeometry>[] = [];
+  for (let index = 0; index < olFeatures.length; index++) {
+    const feature: OlFeature<OlGeometry> = olFeatures[index];
+    feature.setStyle(
+      new olStyle.Style({
+          fill: new olStyle.Fill({ color: feature.getProperties().drawingStyle.fill }),
+          stroke: new olStyle.Stroke({ color: feature.getProperties().drawingStyle.stroke }),
+          text: new olStyle.Text({ text: feature.getProperties().draw, font: feature.getProperties().fontStyle })
+      })
+    );
+    features.push(feature);
+  }
+  return features
 }
