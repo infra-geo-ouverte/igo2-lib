@@ -268,5 +268,5 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
     );
     features.push(feature);
   }
-  return features
+  return features;
 }

@@ -12,7 +12,7 @@ import {
   StyleListService,
   StyleService
 } from '@igo2/geo';
-import type { IgoMap, VectorLayerOptions } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
 import { ContextService } from './context.service';
