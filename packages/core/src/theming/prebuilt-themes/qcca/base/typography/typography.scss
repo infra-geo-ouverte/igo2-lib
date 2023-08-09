@@ -1,12 +1,14 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use './palette';
+@use '../palette';
+@use '../breakpoints';
+@use './typography.utils' as typo-utils;
 
 // https://design.quebec.ca/bases/polices-caracteres
 // https://design.quebec.ca/bases/niveaux-titres
 // https://material.angular.io/guide/typography
 $typography: mat.define-typography-config(
-    $font-family: '"Open Sans", sans-serif',
+  $font-family: '"Open Sans", sans-serif',
   $headline-1: mat.define-typography-level(110px, 110px, 500),
   $headline-2: mat.define-typography-level(54px, 54px, 500),
   $headline-3: mat.define-typography-level(43px, 46px, 500),
@@ -34,7 +36,7 @@ $typography-mobile: mat.define-typography-config(
   $subtitle-1: mat.define-typography-level(25px, 32px, bold)
 );
 
-$font-color: map.get(palette.$palette, 700);
+$font-color: map.get(palette.$palette, 900);
 
 body {
   color: $font-color;
@@ -87,21 +89,13 @@ h1 {
   margin-top: 72px !important;
   margin-bottom: 32px !important;
 
-  &:after {
-    content: '';
-    display: block;
-    margin: 0;
-    width: 48px;
-    padding-top: 4px;
-    border-bottom: 4px solid palette.$accent;
+  @include typo-utils.title-border;
+
+  @include breakpoints.media-breakpoint-down(tablet) {
+    margin-top: 48px !important;
+    margin-bottom: 16px !important;
   }
-
-  @media (max-width: 1200px) {
-      margin-top: 48px !important;
-      margin-bottom: 16px !important;
-  }  
 }
-
 
 h2 {
   margin-top: 48px !important;
@@ -116,9 +110,7 @@ h3 {
 // WORKAROUND, mat-typography area of intersection h4 is using mat-body-1
 // https://github.com/angular/components/issues/26351
 h4 {
-  font-size: 21px !important;
-  line-height: 24px !important;
-  font-weight: bold !important;
+  @include typo-utils.title-level-4;
 }
 
 h4 {
@@ -136,7 +128,8 @@ h6 {
   line-height: 20px !important;
 }
 
-h5, h6 {
+h5,
+h6 {
   font-weight: bold !important;
   margin-top: 16px !important;
   margin-bottom: 0px !important;
