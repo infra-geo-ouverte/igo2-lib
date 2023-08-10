@@ -28,7 +28,7 @@ import { Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthMicrosoftComponent {
-  private options: AuthMicrosoftOptions;
+  private options?: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
   private broadcastService: MsalBroadcastService;
@@ -40,7 +40,7 @@ export class AuthMicrosoftComponent {
     private msalService: MsalService,
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MSPMsalGuardConfiguration[],
   ) {
-    this.options = this.config.getConfig('auth.microsoft') || {};
+    this.options = this.config.getConfig('auth.microsoft');
 
     this.msalService.instance = new PublicClientApplication({
       auth: this.options,
@@ -51,7 +51,7 @@ export class AuthMicrosoftComponent {
 
     this.broadcastService = new MsalBroadcastService(this.msalService.instance, this.msalService);
 
-    if (this.options.clientId) {
+    if (this.options?.clientId) {
       this.broadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
