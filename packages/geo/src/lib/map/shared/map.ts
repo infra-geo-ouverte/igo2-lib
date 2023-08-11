@@ -175,15 +175,16 @@ export class IgoMap {
 
   updateView(options: MapViewOptions) {
     const currentView = this.ol.getView();
-    // to update the zoom we need to delete 'resolution' property
-    const {resolution, ...viewOptions} = Object.assign(
-      {
-        zoom: currentView.getZoom()
-      },
-      currentView.getProperties()
-    );
+    const viewOptions: MapViewOptions = {
+      ...currentView.getProperties(),
+      ...options
+    };
 
-    this.setView(Object.assign(viewOptions, options));
+    if (options.zoom && options.resolution === null) {
+      viewOptions.resolution = undefined;
+    }
+
+    this.setView(viewOptions);
     if (options.maxZoomOnExtent) {
       this.viewController.maxZoomOnExtent = options.maxZoomOnExtent;
     }
