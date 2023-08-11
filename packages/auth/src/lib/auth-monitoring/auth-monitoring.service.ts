@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
-import { AuthService } from '@igo2/auth';
 import {
   AnyMonitoringOptions,
   MONITORING_OPTIONS,
   identifySentryUser
 } from '@igo2/core';
+import { AuthService } from '../shared';
 
 @Injectable({
   providedIn: 'root'

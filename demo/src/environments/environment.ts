@@ -1,4 +1,4 @@
-import { EnvironmentOptions } from '@igo2/core';
+import { EnvironmentOptions } from '@igo2/integration';
 import { TooltipType } from '@igo2/geo';
 
 export const environment: EnvironmentOptions = {
