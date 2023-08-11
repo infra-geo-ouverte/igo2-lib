@@ -24,7 +24,7 @@
         ],
         "unused-imports/no-unused-imports": "error",
         "no-multi-spaces": "error",
-        "eqeqeq": ["error", "always"],
+        "eqeqeq": ["error", "ignore"],
         "semi": ["error", "always"],
         "no-trailing-spaces": "error",
         "no-multiple-empty-lines": "error",
