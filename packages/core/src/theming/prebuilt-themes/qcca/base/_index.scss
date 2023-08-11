@@ -1,4 +1,4 @@
 @forward './breakpoints';
-@forward './colors';
+@forward './colors' as colors-*;
 @forward './palette';
 @forward './typography';
