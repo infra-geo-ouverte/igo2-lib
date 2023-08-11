@@ -110,6 +110,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
             const importExportOptions = this.configService.getConfig('importExport');
             const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
+
             if (this.configService.getConfig('importWithStyle')) {
               console.warn(`
               The location of this config importWithStyle is deprecated.

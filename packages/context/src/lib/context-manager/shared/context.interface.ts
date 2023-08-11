@@ -1,6 +1,6 @@
 import { Message } from '@igo2/core';
 import { Tool } from '@igo2/common';
-import { MapViewOptions, LayerOptions, MapScaleLineOptions, MapAttributionOptions, MapExtent } from '@igo2/geo';
+import { MapViewOptions, LayerOptions, MapScaleLineOptions, MapAttributionOptions, MapExtent, VectorLayerOptions } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 
@@ -85,3 +85,6 @@ export interface ContextProfils {
   title: string;
   childs?: ContextProfils[];
 }
+
+type ContextLayerOptions<T = LayerOptions> = Omit<T, 'source' | 'ol'>;
+export type ContextVectorLayerOptions = ContextLayerOptions<VectorLayerOptions>;
