@@ -180,7 +180,7 @@ export class IgoMap {
       ...options
     };
 
-    if (options.zoom && options.resolution === null) {
+    if (options.zoom && options.resolution == null) {
       viewOptions.resolution = undefined;
     }
 
