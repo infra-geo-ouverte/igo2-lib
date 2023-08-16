@@ -1,4 +1,9 @@
-import { APP_INITIALIZER, ErrorHandler, Provider } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ConstructorProvider,
+  ErrorHandler,
+  FactoryProvider
+} from '@angular/core';
 import { TraceService } from '@sentry/angular-ivy';
 import { Router } from '@angular/router';
 import { SentryMonitoringOptions } from './sentry.interface';
@@ -8,7 +13,7 @@ import { isTracingEnabled } from './sentry.utils';
 export const provideSentryMonitoring = (
   options: SentryMonitoringOptions,
   isProd: boolean
-): Provider[] => {
+): (FactoryProvider | ConstructorProvider)[] => {
   const isEnabled = options.enabled !== undefined ? options.enabled : true;
   if (!isEnabled) {
     return [];
@@ -33,6 +38,6 @@ export const provideSentryMonitoring = (
       useFactory: () => () => {},
       deps: [TraceService],
       multi: true
-    },
+    }
   ].filter(Boolean);
 };

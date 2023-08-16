@@ -4,7 +4,7 @@ import {
   MONITORING_OPTIONS,
   identifySentryUser
 } from '@igo2/core';
-import { AuthService } from '../shared';
+import { AuthService, User } from '../shared';
 
 @Injectable({
   providedIn: 'root'
@@ -24,15 +24,18 @@ export class AuthMonitoringService {
     }
     this.authService.authenticate$.subscribe((isAuthenticated) => {
       const user = isAuthenticated ? this.authService.user : null;
-
-      switch (this.monitoringOptions.provider) {
-        case 'sentry':
-          identifySentryUser(user);
-          break;
-
-        default:
-          break;
-      }
+      this._identifyUser(user);
     });
+  }
+
+  private _identifyUser(user: User | null): void {
+    switch (this.monitoringOptions.provider) {
+      case 'sentry':
+        identifySentryUser(user);
+        break;
+
+      default:
+        break;
+    }
   }
 }

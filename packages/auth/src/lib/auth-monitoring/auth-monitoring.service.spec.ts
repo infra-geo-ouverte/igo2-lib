@@ -2,24 +2,66 @@ import { TestBed } from '@angular/core/testing';
 
 import { AuthMonitoringService } from './auth-monitoring.service';
 import { HttpClientModule } from '@angular/common/http';
-import { IgoLanguageModule, MONITORING_OPTIONS } from '@igo2/core';
+import {
+  AnyMonitoringOptions,
+  IgoLanguageModule,
+  MONITORING_OPTIONS,
+  MessageService
+} from '@igo2/core';
 import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
+import { AuthService } from '../shared';
+import { IgoAuthModule } from '../auth.module';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 
-
-describe('AuthMonitoringService', () => {
-  let service: AuthMonitoringService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientModule, IgoLanguageModule],
-      providers: [
-        { provide: MONITORING_OPTIONS, useValue: MOCK_MONITORING_OPTIONS }
-      ]
-    });
-    service = TestBed.inject(AuthMonitoringService);
+const initialize = (
+  options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
+) => {
+  TestBed.configureTestingModule({
+    imports: [HttpClientModule, IgoAuthModule, IgoLanguageModule, ToastrModule],
+    providers: [
+      { provide: MONITORING_OPTIONS, useValue: options },
+      { provide: ToastrService, useValue: ToastrService },
+      { provide: MessageService, useValue: MessageService }
+    ]
   });
 
+  const authService = TestBed.inject(AuthService);
+  const authMonitoringService = TestBed.inject(AuthMonitoringService);
+
+  spyOn<any>(authMonitoringService, '_identifyUser');
+
+  return { authMonitoringService, authService };
+};
+
+describe('AuthMonitoringService', () => {
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    const { authMonitoringService } = initialize();
+    expect(authMonitoringService).toBeTruthy();
+  });
+
+  it('should not identify user if monitoring options are not set', () => {
+    const { authMonitoringService } = initialize({
+      ...MOCK_MONITORING_OPTIONS,
+      identifyUser: false
+    });
+    expect(authMonitoringService['_identifyUser']).not.toHaveBeenCalled();
+  });
+
+  it('should identify user if monitoring options are set', () => {
+    const { authMonitoringService, authService } = initialize();
+    authService.authenticate$.next(true);
+    expect(authMonitoringService['_identifyUser']).toHaveBeenCalled();
+  });
+
+  it('should reset user if the user logout', () => {
+    const { authMonitoringService, authService } = initialize();
+
+    // Login simulation
+    authService.authenticate$.next(true);
+    expect(authMonitoringService['_identifyUser']).toHaveBeenCalled();
+
+    // Logout simulation
+    authService.authenticate$.next(false);
+    expect(authMonitoringService['_identifyUser']).toHaveBeenCalledWith(null);
   });
 });
