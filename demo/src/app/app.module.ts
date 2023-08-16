@@ -123,7 +123,6 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppWorkspaceModule,
 
     AppContextModule,
-
     AppRoutingModule,
 
     HammerModule

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MessageService, ConfigService } from '@igo2/core';
@@ -23,7 +23,7 @@ import { DetailedContext } from '../../context-manager/shared/context.interface'
   templateUrl: './context-import-export.component.html',
   styleUrls: ['./context-import-export.component.scss']
 })
-export class ContextImportExportComponent implements OnInit {
+export class ContextImportExportComponent implements OnInit, OnDestroy  {
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
@@ -35,6 +35,8 @@ export class ContextImportExportComponent implements OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
   public activeImportExport: string = 'import';
+
+  private layers$$: Subscription;
 
   @Input() map: IgoMap;
 
@@ -56,8 +58,13 @@ export class ContextImportExportComponent implements OnInit {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
-    this.layerList = this.contextService.getContextLayers(this.map);
-    this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
+    // this.layerList = this.contextService.getContextLayers(this.map);
+    // this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
+    this.layers$$ = this.map.layers$.subscribe(() => {
+      console.log('here...');
+      this.layerList = this.contextService.getContextLayers(this.map);
+      this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
+    });
   }
 
   importFiles(files: File[]) {
@@ -138,5 +145,9 @@ export class ContextImportExportComponent implements OnInit {
 
   onImportExportChange(event) {
     this.activeImportExport = event.value;
+  }
+
+  ngOnDestroy(): void {
+    this.layers$$.unsubscribe();
   }
 }
