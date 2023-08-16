@@ -6,8 +6,8 @@ import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export class FeatureDataSource extends DataSource {
-  public options: FeatureDataSourceOptions;
-  public ol: olSourceVector<OlGeometry>;
+  public declare options: FeatureDataSourceOptions;
+  public declare ol: olSourceVector<OlGeometry>;
   protected createOlSource(): olSourceVector<OlGeometry> {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)

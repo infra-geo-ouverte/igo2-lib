@@ -10,7 +10,7 @@ import { AuthStorageOptions } from './storage.interface';
   providedIn: 'root'
 })
 export class AuthStorageService extends StorageService {
-  protected options: AuthStorageOptions;
+  protected declare options: AuthStorageOptions;
 
   constructor(
     config: ConfigService,

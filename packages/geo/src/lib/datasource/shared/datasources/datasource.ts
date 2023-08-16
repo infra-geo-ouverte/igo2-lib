@@ -13,7 +13,6 @@ import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { LegendMapViewOptions, LegendOptions } from '../../../layer/shared/layers/layer.interface';
 
 export abstract class DataSource {
-
   public id: string;
   public ol: olSource | olVectorSource<OlGeometry> | olClusterSource ;
   private legend: Legend[];

@@ -22,24 +22,32 @@ export class DirectionState {
   /**
    * Store that holds the driving stops as feature
    */
-  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
-    map: this.mapState.map
-  });
+  public stopsFeatureStore: StopsFeatureStore;
 
   /**
    * Store that holds the driving route as feature
    */
-  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
-    map: this.mapState.map
-  });
+  public routesFeatureStore: RoutesFeatureStore;
 
-  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
-    map: this.mapState.map
-  });
+  public stepFeatureStore: StepFeatureStore;
 
   public debounceTime: number = 200;
 
   constructor(private mapState: MapState) {
+    this.stopsFeatureStore = new StopsFeatureStore([], {
+      map: this.mapState.map
+    });
+
+    /**
+     * Store that holds the driving route as feature
+     */
+    this.routesFeatureStore = new RoutesFeatureStore([], {
+      map: this.mapState.map
+    });
+
+    this.stepFeatureStore = new StepFeatureStore([], {
+      map: this.mapState.map
+    });
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {

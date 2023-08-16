@@ -20,7 +20,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 
 export class WMSDataSource extends DataSource {
-  public ol: olSourceImageWMS;
+  public declare ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;

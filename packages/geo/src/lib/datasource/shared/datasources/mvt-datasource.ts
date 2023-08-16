@@ -9,8 +9,8 @@ import { DataSource } from './datasource';
 import { MVTDataSourceOptions } from './mvt-datasource.interface';
 
 export class MVTDataSource extends DataSource {
-  public options: MVTDataSourceOptions;
-  public ol: olSourceVectorTile;
+  public declare options: MVTDataSourceOptions;
+  public declare ol: olSourceVectorTile;
 
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
