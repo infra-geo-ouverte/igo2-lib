@@ -22,6 +22,17 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
         const styleService = new StyleService();
         return styleService.createStyle(customStyle);
       }
+
+      const title = olFeature.get('_mapTitle') ? olFeature.get('_mapTitle').toString() : olFeature.getProperties().draw;
+      const textStyle = new olStyle.Text({
+        text: title,
+        offsetX: 5,
+        offsetY: -5,
+        font: '12px Calibri,sans-serif',
+        fill: new olStyle.Fill({ color: '#000' }),
+        stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
+        overflow: true
+      });
       const style = new olStyle.Style({
         stroke,
         fill,
@@ -30,15 +41,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
           stroke,
           fill
         }),
-        text: olFeature.get('_mapTitle') ? new olStyle.Text({
-          text: olFeature.get('_mapTitle').toString(),
-          offsetX: 5,
-          offsetY: -5,
-          font: '12px Calibri,sans-serif',
-          fill: new olStyle.Fill({ color: '#000' }),
-          stroke: new olStyle.Stroke({ color: '#fff', width: 3 }),
-          overflow: true
-        }): undefined
+        text: textStyle
       });
       return style;
   };

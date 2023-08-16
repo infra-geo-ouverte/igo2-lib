@@ -3,6 +3,8 @@ import { Tool } from '@igo2/common';
 import { MapViewOptions, LayerOptions, MapScaleLineOptions, MapAttributionOptions, MapExtent, VectorLayerOptions } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
+import OlFeature from 'ol/Feature';
+import { FeatureCollection } from 'geojson';
 
 export interface Context {
   id?: string;
@@ -23,6 +25,7 @@ export interface ContextsList {
   public?: Context[];
 }
 
+export type ExtraFeatures = FeatureCollection & {name: string; opacity: number; visible: boolean;} 
 export interface DetailedContext extends Context {
   base?: string;
   map?: ContextMap;
@@ -32,7 +35,7 @@ export interface DetailedContext extends Context {
   message?: Message;
   messages?: Message[];
   removeLayersOnContextChange?: boolean;
-  extraFeatures?: any[];
+  extraFeatures?: ExtraFeatures[];
 }
 
 export interface ContextMapView extends MapViewOptions {
