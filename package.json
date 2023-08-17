@@ -55,15 +55,14 @@
     "test.geo": "ng test geo --watch=false",
     "test.utils": "ng test utils --watch=false",
     "test.demo": "ng test demo --watch=false",
-    "watch.libs": "rimraf ./dist && run-p _watch.*",
+    "watch.libs": "ts-node scripts/src/watch-library.ts",
     "_watch.utils": "ng build utils --watch",
-    "_watch.core": "wait-on dist/utils/package.json && ng build core --watch",
-    "_watch.common": "wait-on dist/core/package.json && ng build common --watch",
-    "_watch.auth": "wait-on dist/common/package.json && ng build auth --watch",
-    "_watch.geo": "wait-on dist/auth/package.json && ng build geo --watch",
-    "_watch.context": "wait-on dist/geo/package.json && ng build context --watch",
-    "_watch.integration": "wait-on dist/context/package.json && ng build integration --watch",
-    "_start.watch": "wait-on dist/core/locale/fr.json && npm start",
+    "_watch.core": "ng build core --watch",
+    "_watch.common": "ng build common --watch",
+    "_watch.auth": "ng build auth --watch",
+    "_watch.geo": "ng build geo --watch",
+    "_watch.context": "ng build context --watch",
+    "_watch.integration": "ng build integration --watch",
     "gulp": "gulp",
     "circular-deps.check": "madge --circular --extensions ts packages",
     "clean": "rimraf ./dist && rimraf ./node_modules && npm cache clean --force && git checkout -- package.json && git checkout -- package-lock.json",
@@ -177,7 +176,6 @@
     "npm-run-all": "^4.1.5",
     "sass": "^1.64.0",
     "ts-node": "^10.9.1",
-    "typescript": "~5.1.0",
-    "wait-on": "^7.0.0"
+    "typescript": "~5.1.0"
   }
 }
