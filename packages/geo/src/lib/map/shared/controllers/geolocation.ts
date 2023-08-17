@@ -1,6 +1,7 @@
+import { BehaviorSubject, interval, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import OlMap from 'ol/Map';
 import olGeolocation from 'ol/Geolocation';
-import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import Geometry from 'ol/geom/Geometry';
 import * as olproj from 'ol/proj';
 import olFeature from 'ol/Feature';
@@ -9,52 +10,18 @@ import { Point, Polygon } from 'ol/geom';
 import { fromCircle } from 'ol/geom/Polygon';
 import * as olSphere from 'ol/sphere';
 import OlCircle from 'ol/geom/Circle';
-import { IgoMap } from '../map';
 import * as olstyle from 'ol/style';
+import { StorageService, ConfigService } from '@igo2/core';
 import { Overlay } from '../../../overlay/shared/overlay';
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
-import { StorageService, ConfigService } from '@igo2/core';
-import { MapViewOptions } from '../map.interface';
-import { switchMap } from 'rxjs/operators';
+import { BaseMap, MapViewOptions } from '../map.interface';
 import { computeOlFeaturesExtent, featuresAreOutOfView, hideOlFeature, moveToOlFeatures } from '../../../feature/shared/feature.utils';
-export interface MapGeolocationControllerOptions {
-  //  todo keepPositionHistory?: boolean;
-  projection: olproj.ProjectionLike
-  accuracyThreshold?: number;
-  followPosition?: boolean;
-  buffer?: GeolocationBuffer;
-}
-export interface MapGeolocationState {
-  position: number[];
-  projection: string;
-  accuracy: number;
-  altitude: number;
-  altitudeAccuracy: number;
-  heading: number;
-  speed: number;
-  enableHighAccuracy: boolean;
-  timestamp: Date;
-}
-export interface GeolocationBuffer {
-  bufferRadius?: number;
-  bufferStroke?: [number, number, number, number];
-  bufferFill?: [number, number, number, number];
-  showBufferRadius?: boolean;
-}
-
-
-enum GeolocationOverlayType {
-  Position = 'position',
-  PositionDirection = 'positionDirection',
-  Accuracy = 'accuracy',
-  Buffer = 'buffer'
-}
+import { GeolocationBuffer, GeolocationOverlayType, MapGeolocationControllerOptions, MapGeolocationState } from './geolocation.interface';
 
 /**
  * Controller to handle map view interactions
  */
 export class MapGeolocationController extends MapController {
-
   private arrowRotation: number;
   private subscriptions$$: Subscription[] = [];
   private geolocationOverlay: Overlay;
@@ -138,24 +105,6 @@ export class MapGeolocationController extends MapController {
   private lastPosition: {coordinates: number[], dateTime: Date};
 
   /**
-   * History of positions
-   */
-  // private positions: MapGeolocationState[] = [];
-
-  /**
-   * Whether the geolocate controller should keep the position history
-   */
-  /*
-  // todo: refine this method
-  set keepPositionHistory(value) {
-    this._keepPositionHistory = value;
-  }
-  get keepPositionHistory(): boolean {
-    return this._keepPositionHistory;
-  }
-  private _keepPositionHistory: boolean = this.options && this.options.keepPositionHistory ? this.options.keepPositionHistory : true;
-*/
-  /**
    * Whether the geolocate should show a buffer around the current position
    */
   set buffer(value: GeolocationBuffer) {
@@ -228,7 +177,7 @@ export class MapGeolocationController extends MapController {
 
 
   constructor(
-    private map: IgoMap,
+    private map: BaseMap,
     private options?: MapGeolocationControllerOptions,
     private storageService?: StorageService,
     private configService?: ConfigService
@@ -370,15 +319,6 @@ export class MapGeolocationController extends MapController {
   }
 
   /**
-   * Clear the position  history
-   */
-  /*
-  // todo
-  clearPositionsHistory() {
-    this.positions = [];
-  }*/
-
-  /**
    * On position change, get the position, show it on the map and record it.
    * @param emitEvent Map event
    */
@@ -409,10 +349,6 @@ export class MapGeolocationController extends MapController {
     this.handleViewFromFeatures(position, zoomTo);
     if (emitEvent) {
       this.position$.next(position);
-      /*if (this.keepPositionHistory === true) {
-        // handle position diff to store only true diff;
-        this.positions.push(position);
-      }*/
     }
   }
 
@@ -487,14 +423,14 @@ export class MapGeolocationController extends MapController {
     let bufferFeature = this.getFeatureByType(GeolocationOverlayType.Buffer);
     const features = [positionFeature, positionFeatureArrow, accuracyFeature, bufferFeature].filter(f => f);
     if (features.length > 0) {
-      const featuresExtent = computeOlFeaturesExtent(this.map, features);
+      const featuresExtent = computeOlFeaturesExtent(features, this.map.viewProjection);
       const edgeRatios = position?.speed > 12.5 ? [0.25,0.25,0.25,0.25] : [0.15,0.1,0.1,0.1];
-      const areOutOfView = featuresAreOutOfView(this.map, featuresExtent, edgeRatios);
+      const areOutOfView = featuresAreOutOfView(this.map.getExtent(), featuresExtent, edgeRatios);
       let motion = this.followPosition && areOutOfView ? FeatureMotion.Move : FeatureMotion.None;
       if (zoomTo) {
         motion = FeatureMotion.Zoom;
       }
-      motion !== FeatureMotion.None ? moveToOlFeatures(this.map, features, motion) : undefined;
+      motion !== FeatureMotion.None ? moveToOlFeatures(this.map.viewController, features, motion) : undefined;
     }
   }
 }

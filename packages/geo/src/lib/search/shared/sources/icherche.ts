@@ -13,8 +13,8 @@ import pointOnFeature from '@turf/point-on-feature';
 import { FEATURE, Feature } from '../../../feature';
 import { GoogleLinks } from './../../../utils/googleLinks';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch, ReverseSearch } from './source';
+import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,

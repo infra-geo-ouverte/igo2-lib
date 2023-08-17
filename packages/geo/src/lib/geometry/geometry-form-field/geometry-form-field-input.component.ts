@@ -25,7 +25,7 @@ import OlOverlay from 'ol/Overlay';
 import * as olproj from 'ol/proj';
 import Point from 'ol/geom/Point';
 
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import {
   MeasureLengthUnit,
   updateOlGeometryMidpoints,

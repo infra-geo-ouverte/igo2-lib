@@ -8,8 +8,8 @@ import olWKT from 'ol/format/WKT';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService, StorageService } from '@igo2/core';

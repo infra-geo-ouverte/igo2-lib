@@ -1,12 +1,7 @@
-import { Observable } from 'rxjs';
-
 import { ObjectUtils } from '@igo2/utils';
 import { StorageService } from '@igo2/core';
-import { SearchResult } from '../search.interfaces';
 import {
   SearchSourceOptions,
-  TextSearchOptions,
-  ReverseSearchOptions,
   SearchSourceSettings
 } from './source.interfaces';
 import { FeatureStore } from '../../../feature';
@@ -256,37 +251,4 @@ export class SearchSource {
       }
     );
   }
-}
-
-/**
- * Search sources that allow searching by text implement this class
- */
-export interface TextSearch {
-  /**
-   * Search by text
-   * @param term Text
-   * @param options Optional: TextSearchOptions
-   * @returns Observable or search results
-   */
-  search(
-    term: string | undefined,
-    options?: TextSearchOptions
-  ): Observable<SearchResult[]>;
-}
-
-/**
- * Search sources that allow searching by coordinates implement this class
- */
-export interface ReverseSearch {
-  /**
-   * Search by text
-   * @param lonLat Coordinates
-   * @param options Optional: ReverseSearchOptions
-   * @returns Observable or search results
-   */
-  reverseSearch(
-    lonLat: [number, number],
-    options?: ReverseSearchOptions,
-    reverseSearchCoordsFormat?: boolean
-  ): Observable<SearchResult[]>;
 }

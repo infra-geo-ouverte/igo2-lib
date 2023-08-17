@@ -10,7 +10,7 @@ import {
 
 import { DataService } from './data.service';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
-import { LegendMapViewOptions, LegendOptions } from '../../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions, LegendOptions } from '../../../layer/shared/layers/legend.interface';
 
 export abstract class DataSource {
   public id: string;

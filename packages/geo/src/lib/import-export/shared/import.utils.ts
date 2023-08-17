@@ -63,9 +63,9 @@ export function addLayerAndFeaturesToMap(
     idbInfo: { firstLoad: true, storeToIdb, contextUri: contextUri || '*' },
     style: randomStyle
   }) as VectorLayer;
-  layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
+  layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
   map.addLayer(layer);
-  moveToOlFeatures(map, olFeatures);
+  moveToOlFeatures(map.viewController, olFeatures);
 
   return layer;
 }
@@ -187,7 +187,7 @@ export function addLayerAndFeaturesStyledToMap(
     }, imposedLayerOptions));
   map.addLayer(layer);
   if (zoomTo){
-    moveToOlFeatures(map, olFeatures);
+    moveToOlFeatures(map.viewController, olFeatures);
   }
   return layer;
 }

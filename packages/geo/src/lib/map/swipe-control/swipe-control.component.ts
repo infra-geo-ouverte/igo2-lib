@@ -1,5 +1,5 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
-import { Layer } from '../../layer';
+import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared/map';
 import { getRenderPixel } from 'ol/render';
 import { Subscription } from 'rxjs';

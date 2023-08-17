@@ -17,7 +17,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { VectorWatcher } from '../../utils';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map';
+import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';

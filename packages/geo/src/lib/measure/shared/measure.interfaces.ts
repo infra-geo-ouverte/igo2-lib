@@ -1,5 +1,5 @@
 import { Feature } from '../../feature';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 export interface Measure {
   area?: number;

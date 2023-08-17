@@ -12,8 +12,8 @@ import {
   WMTSDataSourceOptions,
   ArcGISRestDataSourceOptions
 } from '../../datasource';
-import { LayerOptions, ImageLayerOptions } from '../../layer';
-import { getResolutionFromScale } from '../../map';
+import { LayerOptions, ImageLayerOptions } from '../../layer/shared';
+import { getResolutionFromScale } from '../../map/shared';
 
 import {
   CatalogItem,
@@ -21,10 +21,11 @@ import {
   CatalogItemGroup,
   ForcedProperty
 } from './catalog.interface';
-import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
+import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
-import { QueryFormat } from '../../query';
+import { QueryFormat } from '../../query/shared';
 import { generateIdFromSourceOptions } from '../../utils';
+import { ArcGISRestCatalog, BaselayersCatalog, CompositeCatalog, TileOrImageArcGISRestCatalog, WMSCatalog, WMTSCatalog } from './catalogs';
 
 @Injectable({
   providedIn: 'root'
@@ -837,5 +838,39 @@ export class CatalogService {
       }
     });
     return layersQueryFormat;
+  }
+}
+
+class CatalogFactory {
+  public static createInstanceCatalog(
+    options: Catalog,
+    catalogService: CatalogService
+  ): Catalog {
+    let catalog: Catalog;
+    if (options.hasOwnProperty('composite')) {
+      catalog = new CompositeCatalog(options, catalogService.loadCatalogCompositeLayerItems);
+    } else if (options.type === TypeCatalog[TypeCatalog.baselayers]) {
+      catalog = new BaselayersCatalog(options, catalogService.loadCatalogBaseLayerItems);
+    } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
+      catalog = new ArcGISRestCatalog(options, catalogService.loadCatalogArcGISRestItems);
+    } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
+      catalog = new TileOrImageArcGISRestCatalog(
+        options,
+        catalogService.loadCatalogArcGISRestItems,
+        TypeCatalog.tilearcgisrest
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.imagearcgisrest]) {
+      catalog = new TileOrImageArcGISRestCatalog(
+        options,
+        catalogService.loadCatalogArcGISRestItems,
+        TypeCatalog.imagearcgisrest
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
+      catalog = new WMTSCatalog(options, catalogService.loadCatalogWMTSLayerItems);
+    } else {
+      catalog = new WMSCatalog(options, catalogService.loadCatalogWMSLayerItems);
+    }
+
+    return catalog;
   }
 }

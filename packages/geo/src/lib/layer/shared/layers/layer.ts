@@ -14,13 +14,13 @@ import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
 
 import { DataSource, Legend } from '../../../datasource';
-import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions } from './layer.interface';
 import { Message, MessageService } from '@igo2/core';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
+import { BaseMap } from '../../../map/shared/map.interface';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -28,7 +28,7 @@ export abstract class Layer {
   public legend: Legend[];
   public legendCollapsed: boolean = true;
   public firstLoadComponent: boolean = true;
-  public map: IgoMap;
+  public map: BaseMap;
   public ol: olLayer<olSource>;
   public olLoadingProblem: boolean = false;
   public status$: Subject<SubjectStatus>;
@@ -185,11 +185,11 @@ export abstract class Layer {
 
   protected abstract createOlLayer(): olLayer<olSource>;
 
-  setMap(igoMap: IgoMap | undefined) {
-    this.map = igoMap;
+  setMap(map: BaseMap | undefined) {
+    this.map = map;
 
     this.unobserveResolution();
-    if (igoMap !== undefined) {
+    if (map !== undefined) {
       this.observeResolution();
       this.hasBeenVisible$$ = this.hasBeenVisible$.subscribe(() => {
         if (this.options.messages && this.visible) {
