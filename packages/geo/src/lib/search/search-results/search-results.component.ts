@@ -17,7 +17,7 @@ import { debounce, map } from 'rxjs/operators';
 import { ConfigService } from '@igo2/core';
 import { EntityState, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreWatcher } from '@igo2/common';
 
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 import { TextSearchOptions } from '../shared/sources/source.interfaces';
 import { SearchService } from '../shared/search.service';

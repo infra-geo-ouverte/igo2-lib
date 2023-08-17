@@ -7,7 +7,7 @@ import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 import { MessageService } from '@igo2/core';
 import VectorTile from 'ol/VectorTile';
 

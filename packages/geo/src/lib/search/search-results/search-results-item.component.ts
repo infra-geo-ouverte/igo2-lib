@@ -9,7 +9,7 @@ import {
 
 import { SearchResult } from '../shared/search.interfaces';
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 /**
  * Search results list item
@@ -82,7 +82,7 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
-    moveToOlFeatures(this.map, [olFeature], FeatureMotion.Default);
+    moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Default);
   }
 
   /**

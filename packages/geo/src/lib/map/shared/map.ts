@@ -25,7 +25,8 @@ import {
   MapAttributionOptions,
   MapScaleLineOptions,
   MapExtent,
-  MapControlsOptions
+  MapControlsOptions,
+  BaseMap
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -41,7 +42,7 @@ import {
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
-export class IgoMap {
+export class IgoMap implements BaseMap {
   public ol: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
@@ -70,8 +71,17 @@ export class IgoMap {
     return this.layers$.value;
   }
 
+  /** @deprecated use projectionCode */
   get projection(): string {
-    return this.viewController.getOlProjection().getCode();
+    return this.projectionCode;
+  }
+
+  get viewProjection(): olproj.Projection {
+    return this.viewController.getOlProjection();
+  }
+
+  get projectionCode(): string {
+    return this.viewProjection.getCode();
   }
 
   constructor(

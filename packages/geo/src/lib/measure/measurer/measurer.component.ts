@@ -38,8 +38,8 @@ import {
   tryAddSelectionStrategy
 } from '../../feature';
 import { DrawControl, ModifyControl } from '../../geometry/shared';
-import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 
 import { Measure, MeasurerDialogData, FeatureWithMeasure } from '../shared/measure.interfaces';
 import {

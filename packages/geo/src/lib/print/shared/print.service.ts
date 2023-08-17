@@ -15,7 +15,7 @@ import { MessageService, ActivityService, LanguageService, ConfigService } from 
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';

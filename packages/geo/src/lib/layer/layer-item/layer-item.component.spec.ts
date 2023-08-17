@@ -4,12 +4,12 @@
 // import { IgoSharedModule } from '../../shared';
 // import { OSMDataSource } from '../../datasource';
 // import { MetadataService } from '../../metadata';
-// import { MapService } from '../../map';
+// import { MapService } from '../../map/shared';
 // import { FeatureService } from '../../feature';
 // import { DownloadService } from '../../download';
 //
 // import { TileLayer } from '../shared';
-// import { IgoFilterModule } from '../../filter';
+// import { IgoFilterModule } from '../../filter/shared';
 // import { LayerItemComponent } from './layer-item.component';
 // import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
 //

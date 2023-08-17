@@ -13,13 +13,16 @@ import {
   FEATURE,
   FeatureStore,
   FeatureStoreSelectionStrategy,
-  tryBindStoreLayer,
   tryAddLoadingStrategy,
   tryAddSelectionStrategy,
   FeatureMotion,
   FeatureStoreLoadingStrategy,
   featureToOl
 } from '../../feature';
+
+import {
+  tryBindStoreLayer,
+} from '../../feature/shared/feature-store.utils';
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-filter.enum';
 import { SelectionModel } from '@angular/cdk/collections';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { UntypedFormControl } from '@angular/forms';

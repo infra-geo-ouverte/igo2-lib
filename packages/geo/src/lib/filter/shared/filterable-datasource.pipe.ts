@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Layer } from '../../layer/shared/layers/layer';
 
 import { OgcFilterableDataSource } from './ogc-filter.interface';
-import { TimeFilterableDataSource } from './time-filter.interface';
+import { TimeFilterableDataSource } from '../../datasource';
 
 @Pipe({
   name: 'filterableDataSource'
