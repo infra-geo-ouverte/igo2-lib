@@ -270,14 +270,15 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
       offsetX: feature.getProperties().offsetX,
       offsetY: feature.getProperties().offsetY
     });
+    const radius = (feature.getProperties().rad) ? (feature.getProperties().rad / 1000) : 5;
     feature.setStyle(
       new olStyle.Style({
           fill: fill,
           stroke: stroke,
           image: new olStyle.Circle({
-            radius: 5,
+            radius: radius,
             stroke: stroke,
-            fill: fill
+            fill: fill,
           }),
           text: text
       })

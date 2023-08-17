@@ -24,6 +24,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
       }
 
       const title = olFeature.get('_mapTitle') ? olFeature.get('_mapTitle').toString() : olFeature.getProperties().draw;
+      const radius = (olFeature.getProperties().rad) ? (olFeature.getProperties().rad / 1000) : 5;
       const textStyle = new olStyle.Text({
         text: title,
         offsetX: 5,
@@ -37,7 +38,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
         stroke,
         fill,
         image: new olStyle.Circle({
-          radius: 5,
+          radius: radius,
           stroke,
           fill
         }),
