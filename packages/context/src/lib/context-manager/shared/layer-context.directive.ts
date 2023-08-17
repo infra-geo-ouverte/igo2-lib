@@ -21,7 +21,6 @@ import {
   addImportedFeaturesToMap,
   addImportedFeaturesStyledToMap
 } from '../../context-import-export/shared/context-import.utils';
-import GeoJSON from 'ol/format/GeoJSON';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -95,19 +94,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            const format = new GeoJSON();
-            /*const layerOptions: LayerOptions = {
-              title: featureCollection.name,
-              opacity: featureCollection.opacity,
-              visible: featureCollection.visible
-            };*/
-
-            // featureCollection = JSON.stringify(featureCollection);
-            /*const features = format.readFeatures(featureCollection, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });*/
-
 
             const importExportOptions = this.configService.getConfig('importExport');
             const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
@@ -124,27 +110,13 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             if (!importWithStyle) {
               addImportedFeaturesToMap(featureCollection, this.map);
             } else {
-              console.log('featureCollection', featureCollection);
-              /*addImportedFeaturesStyledToMap(
-                features,
-                this.map,
-                layerOptions,
-                this.styleListService,
-                this.styleService
-              );*/
-            }
-            /*if (!importWithStyle) {
-              addImportedFeaturesToMap(features, this.map, layerOptions);
-            } else {
-              console.log('featureCollection', featureCollection);
               addImportedFeaturesStyledToMap(
-                features,
+                featureCollection,
                 this.map,
-                layerOptions,
                 this.styleListService,
                 this.styleService
               );
-            }*/
+            }
           });
         }
       });

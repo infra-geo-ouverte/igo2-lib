@@ -579,6 +579,7 @@ export class ContextService {
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
+          // to do code refactoring
           let features;
           const writer = new GeoJSON();
           if (layer.ol.getSource() instanceof Cluster) {

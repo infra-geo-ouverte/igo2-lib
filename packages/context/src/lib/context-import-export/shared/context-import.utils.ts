@@ -12,9 +12,7 @@ import {
   ClusterParam,
   ClusterDataSourceOptions,
   ClusterDataSource,
-  featureRandomStyle,
   featureRandomStyleFunction,
-  LayerOptions
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/context.interface';
@@ -153,26 +151,11 @@ export function addImportedFeaturesToMap(
   };
 
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  console.log('olFeatures', olFeatures);
-
-
   const source = new FeatureDataSource(sourceOptions);
-
   source.ol.addFeatures(olFeatures);
-  let randomStyle;
-  let editable: boolean = false;
   const featureKeys = olFeatures[0]?.getKeys() ?? [];
-  console.log('featureKeys', featureKeys);
-  // if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
-    randomStyle = featureRandomStyleFunction();
-  /*} else {
-    randomStyle = featureRandomStyle();
-    editable = true;
-  }*/
-
- 
-  
-  console.log('randomStyle', randomStyle);
+  const editable: boolean = (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) ? true : false;
+  const randomStyle = featureRandomStyleFunction();
   const layer = new VectorLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
@@ -186,44 +169,10 @@ export function addImportedFeaturesToMap(
 
   return layer;
 }
-/*export function addImportedFeaturesToMap(
-  olFeatures: OlFeature<OlGeometry>[],
-  map: IgoMap,
-  layerOptions: LayerOptions
-): VectorLayer {
-  const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-    type: 'vector',
-    queryable: true
-  };
-  const source = new FeatureDataSource(sourceOptions);
-  source.ol.addFeatures(olFeatures);
-  let randomStyle;
-  let editable: boolean = false;
-  const featureKeys = olFeatures[0]?.getKeys() ?? [];
-  if (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) {
-    randomStyle = featureRandomStyleFunction();
-  } else {
-    randomStyle = featureRandomStyle();
-    editable = true;
-  }
-  const layer = new VectorLayer({
-    title: layerOptions.title,
-    isIgoInternalLayer: true,
-    source,
-    igoStyle: { editable },
-    style: randomStyle,
-    visible: layerOptions.visible,
-    opacity: layerOptions.opacity
-  });
-  map.addLayer(layer);
-
-  return layer;
-}*/
 
 export function addImportedFeaturesStyledToMap(
-  olFeatures: OlFeature<OlGeometry>[],
+  extraFeatures: ExtraFeatures,
   map: IgoMap,
-  layerOptions: LayerOptions,
   styleListService: StyleListService,
   styleService: StyleService
 ): VectorLayer {
@@ -231,34 +180,34 @@ export function addImportedFeaturesStyledToMap(
   let distance: number;
 
   if (
-    styleListService.getStyleList(layerOptions.title + '.styleByAttribute')
+    styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')
   ) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
-      layerOptions.title + '.styleByAttribute'
+      extraFeatures.name + '.styleByAttribute'
     );
 
     style = (feature, resolution) => {
       return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
     };
   } else if (
-    styleListService.getStyleList(layerOptions.title + '.clusterStyle')
+    styleListService.getStyleList(extraFeatures.name + '.clusterStyle')
   ) {
     const clusterParam: ClusterParam = styleListService.getStyleList(
-      layerOptions.title + '.clusterParam'
+      extraFeatures.name + '.clusterParam'
     );
     distance = styleListService.getStyleList(
-      layerOptions.title + '.distance'
+      extraFeatures.name + '.distance'
     );
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(layerOptions.title + '.clusterStyle'), feature, resolution
+        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'), feature, resolution
       );
       return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
-  } else if (styleListService.getStyleList(layerOptions.title + '.style')) {
+  } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
     style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList(layerOptions.title + '.style'), feature, resolution
+      styleListService.getStyleList(extraFeatures.name + '.style'), feature, resolution
     );
   } else {
     style = (feature, resolution) => styleService.createStyle(
@@ -266,7 +215,7 @@ export function addImportedFeaturesStyledToMap(
     );
   }
   let source;
-  if (styleListService.getStyleList(layerOptions.title + '.clusterStyle')) {
+  if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
     const sourceOptions: ClusterDataSourceOptions &
       QueryableDataSourceOptions = {
       distance,
@@ -283,14 +232,15 @@ export function addImportedFeaturesStyledToMap(
     source = new FeatureDataSource(sourceOptions);
   }
 
+  const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
   const newFeatures = setCustomFeaturesStyle(olFeatures);
   source.ol.addFeatures(newFeatures);
 
   const layer = new VectorLayer({
-    title: layerOptions.title,
+    title: extraFeatures.name,
     isIgoInternalLayer: true,
-    opacity: layerOptions.opacity,
-    visible: layerOptions.visible,
+    opacity: extraFeatures.opacity,
+    visible: extraFeatures.visible,
     source,
     style
   });
@@ -312,11 +262,24 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
   let features: OlFeature<OlGeometry>[] = [];
   for (let index = 0; index < olFeatures.length; index++) {
     const feature: OlFeature<OlGeometry> = olFeatures[index];
+    const fill = new olStyle.Fill({ color: feature.getProperties().drawingStyle.fill });
+    const stroke = new olStyle.Stroke({ color: feature.getProperties().drawingStyle.stroke });
+    const text = new olStyle.Text({
+      text: feature.getProperties().draw,
+      font: feature.getProperties().fontStyle,
+      offsetX: feature.getProperties().offsetX,
+      offsetY: feature.getProperties().offsetY
+    });
     feature.setStyle(
       new olStyle.Style({
-          fill: new olStyle.Fill({ color: feature.getProperties().drawingStyle.fill }),
-          stroke: new olStyle.Stroke({ color: feature.getProperties().drawingStyle.stroke }),
-          text: new olStyle.Text({ text: feature.getProperties().draw, font: feature.getProperties().fontStyle })
+          fill: fill,
+          stroke: stroke,
+          image: new olStyle.Circle({
+            radius: 5,
+            stroke: stroke,
+            fill: fill
+          }),
+          text: text
       })
     );
     features.push(feature);
