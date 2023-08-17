@@ -65,7 +65,7 @@
     "_watch.integration": "wait-on dist/context/package.json && ng build integration --watch",
     "_start.watch": "wait-on dist/core/locale/fr.json && npm start",
     "gulp": "gulp",
-    "circular-dependencies": "madge --circular --extensions ts packages",
+    "circular-deps.check": "madge --circular --extensions ts packages",
     "clean": "rimraf ./dist && rimraf ./node_modules && npm cache clean --force && git checkout -- package.json && git checkout -- package-lock.json",
     "compodoc": "npx compodoc -p tsconfig.json",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
