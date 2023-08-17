@@ -582,7 +582,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
     }
   }
 

@@ -82,9 +82,9 @@ export class SidenavComponent {
     if (this.feature.geometry) {
       const olFeature = this.format.readFeature(this.feature, {
         dataProjection: this.feature.projection,
-        featureProjection: this.map.projection
+        featureProjection: this.map.viewProjection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
     }
   }
 

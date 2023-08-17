@@ -7,7 +7,7 @@ import { Document } from 'flexsearch';
 import {
   getEntityId,
   EntityKey,
-  EntityStore
+  EntityStoreWithStrategy
 } from '@igo2/common';
 
 import { FeatureDataSource } from '../../datasource';
@@ -23,7 +23,7 @@ import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures, co
  * features and the map layer to display them on. Synchronization
  * between the store and the layer is handled by strategies.
  */
-export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
+export class FeatureStore<T extends Feature = Feature> extends EntityStoreWithStrategy<T> {
 
   /**
    * Vector layer to display the features on

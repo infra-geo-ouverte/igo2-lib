@@ -25,7 +25,7 @@ import OlPoint from 'ol/geom/Point';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
-import { EntityStore, EntityStoreFilterSelectionStrategy, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
+import { EntityStoreFilterSelectionStrategy, EntityStoreWithStrategy, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
 import { Layer, VectorLayer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
@@ -142,14 +142,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() loading;
 
   @Input()
-  get store(): EntityStore<Feature> {
+  get store(): EntityStoreWithStrategy<Feature> {
     return this._store;
   }
-  set store(store: EntityStore<Feature>) {
+  set store(store: EntityStoreWithStrategy<Feature>) {
     this._store = store;
     this._store.entities$.subscribe(() => { this.cdRef.detectChanges(); });
   }
-  private _store: EntityStore<Feature>;
+  private _store: EntityStoreWithStrategy<Feature>;
 
   /**
    * Available measure units for the measure type given
