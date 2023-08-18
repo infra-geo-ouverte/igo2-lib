@@ -23,7 +23,7 @@ import { DetailedContext } from '../../context-manager/shared/context.interface'
   templateUrl: './context-import-export.component.html',
   styleUrls: ['./context-import-export.component.scss']
 })
-export class ContextImportExportComponent implements OnInit, OnDestroy  {
+export class ContextImportExportComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
