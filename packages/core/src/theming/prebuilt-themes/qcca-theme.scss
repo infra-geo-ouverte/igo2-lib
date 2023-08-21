@@ -20,7 +20,7 @@ $theme: mat.define-light-theme(
       success: $success,
       background: $background
     ),
-    typography: qcca.$typography,
+    typography: qcca.$typo-typography,
     density: 0
   )
 );
@@ -34,12 +34,14 @@ $theme: map.merge(
 );
 
 @include mat.core();
-@include mat.typography-hierarchy(qcca.$typography);
+@include mat.typography-hierarchy(qcca.$typo-typography);
 @include mat.all-component-themes($theme);
 
 @include igo.all-component-themes($theme);
 @include qcca.all-component-themes($theme);
 
 @media (max-width: 1200px) {
-  @include mat.typography-hierarchy(qcca.$typography-mobile);
+  @include mat.typography-hierarchy(qcca.$typo-typography-mobile);
 }
+
+@include qcca.typo-set-base-styles();
