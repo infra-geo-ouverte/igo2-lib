@@ -37,7 +37,7 @@ export interface VectorLayerOptions extends LayerOptions {
     | ArcGISRestDataSourceOptions
     | WebSocketDataSourceOptions
     | ClusterDataSourceOptions;
-  style?: olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);
+  style?: VectorStyleLayer;
   browsable?: boolean;
   exportable?: boolean;
   ol?: olLayerVector<olSourceVector<OlGeometry>>;
@@ -58,3 +58,5 @@ export interface VectorAnimation {
   duration?: number;
   color?: olColor.Color;
 }
+
+export type VectorStyleLayer = olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);

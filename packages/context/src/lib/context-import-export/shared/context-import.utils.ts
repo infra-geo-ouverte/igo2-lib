@@ -13,6 +13,7 @@ import {
   ClusterDataSourceOptions,
   ClusterDataSource,
   featureRandomStyleFunction,
+  VectorStyleLayer,
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/context.interface';
@@ -176,7 +177,7 @@ export function addImportedFeaturesStyledToMap(
   styleListService: StyleListService,
   styleService: StyleService
 ): VectorLayer {
-  let style;
+  let style: VectorStyleLayer;
   let distance: number;
 
   if (
