@@ -582,7 +582,7 @@ export class ContextService {
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
-          const extraFeatures = this.extraFeatures(layer);
+          const extraFeatures = this.getExtraFeatures(layer);
           extraFeatures.name = layer.options.title;
           extraFeatures.opacity = layer.opacity;
           extraFeatures.visible = layer.visible;
@@ -597,7 +597,7 @@ export class ContextService {
     return context;
   }
 
-  private extraFeatures(layer: Layer): ExtraFeatures {
+  private getExtraFeatures(layer: Layer): ExtraFeatures {
     const writer = new GeoJSON();
     let olFeatures: Feature<Geometry>[];
     if (layer.ol.getSource() instanceof Cluster) {

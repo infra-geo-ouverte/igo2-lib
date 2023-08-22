@@ -14,6 +14,7 @@ import {
   ClusterDataSource,
   featureRandomStyleFunction,
   VectorStyleLayer,
+  FeatureWithDrawProperties
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/context.interface';
@@ -215,7 +216,7 @@ export function addImportedFeaturesStyledToMap(
       styleListService.getStyleList('default.style'), feature, resolution
     );
   }
-  let source;
+  let source: ClusterDataSource | FeatureDataSource;
   if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
     const sourceOptions: ClusterDataSourceOptions &
       QueryableDataSourceOptions = {
@@ -263,13 +264,14 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
   let features: OlFeature<OlGeometry>[] = [];
   for (let index = 0; index < olFeatures.length; index++) {
     const feature: OlFeature<OlGeometry> = olFeatures[index];
-    const fill = new olStyle.Fill({ color: feature.getProperties().drawingStyle.fill });
-    const stroke = new olStyle.Stroke({ color: feature.getProperties().drawingStyle.stroke });
+    const featureProperties = feature.getProperties() as FeatureWithDrawProperties;
+    const fill = new olStyle.Fill({ color: featureProperties.drawingStyle?.fill });
+    const stroke = new olStyle.Stroke({ color: featureProperties.drawingStyle?.stroke });
     const text = new olStyle.Text({
-      text: feature.getProperties().draw,
-      font: feature.getProperties().fontStyle,
-      offsetX: feature.getProperties().offsetX,
-      offsetY: feature.getProperties().offsetY
+      text: featureProperties?.draw,
+      font: featureProperties?.fontStyle,
+      offsetX: featureProperties?.offsetX,
+      offsetY: featureProperties?.offsetY
     });
     const radius = (feature.getProperties().rad) ? (feature.getProperties().rad / 1000) : 5;
     feature.setStyle(
