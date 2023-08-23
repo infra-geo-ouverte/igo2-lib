@@ -22,9 +22,8 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
         const styleService = new StyleService();
         return styleService.createStyle(customStyle);
       }
-
+      // to do circle radius calculation
       const title = olFeature.get('_mapTitle') ? olFeature.get('_mapTitle').toString() : olFeature.getProperties().draw;
-      const radius = (olFeature.getProperties().rad) ? (olFeature.getProperties().rad / 1000) : 5;
       const textStyle = new olStyle.Text({
         text: title
       });
@@ -32,7 +31,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
         stroke,
         fill,
         image: new olStyle.Circle({
-          radius: radius,
+          radius: 5,
           stroke,
           fill
         }),

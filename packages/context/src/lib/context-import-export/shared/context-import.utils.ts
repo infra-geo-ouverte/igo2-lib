@@ -273,13 +273,13 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
       offsetX: featureProperties?.offsetX,
       offsetY: featureProperties?.offsetY
     });
-    const radius = (feature.getProperties().rad) ? (feature.getProperties().rad / 1000) : 5;
+    // to do circle radius calculation
     feature.setStyle(
       new olStyle.Style({
           fill: fill,
           stroke: stroke,
           image: new olStyle.Circle({
-            radius: radius,
+            radius: 5,
             stroke: stroke,
             fill: fill,
           }),
