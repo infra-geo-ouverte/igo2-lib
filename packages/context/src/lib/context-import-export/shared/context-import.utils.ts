@@ -21,6 +21,8 @@ import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/con
 import { ContextService } from '../../context-manager/shared/context.service';
 import OlFeature from 'ol/Feature';
 import * as olStyle from 'ol/style';
+import * as olproj from 'ol/proj';
+import OlPoint from 'ol/geom/Point';
 import GeoJSON from 'ol/format/GeoJSON';
 
 export function handleFileImportSuccess(
@@ -235,7 +237,7 @@ export function addImportedFeaturesStyledToMap(
   }
 
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  const newFeatures = setCustomFeaturesStyle(olFeatures);
+  const newFeatures = setCustomFeaturesStyle(olFeatures, map, map.ol.getView().getResolution());
   source.ol.addFeatures(newFeatures);
 
   const layer = new VectorLayer({
@@ -260,7 +262,8 @@ function collectFeaturesFromExtraFeatures(featureCollection: ExtraFeatures): OlF
   return features;
 }
 
-function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[], map: IgoMap, resolution: number): OlFeature<OlGeometry>[] {
+  console.log('here... resolution', resolution);
   let features: OlFeature<OlGeometry>[] = [];
   for (let index = 0; index < olFeatures.length; index++) {
     const feature: OlFeature<OlGeometry> = olFeatures[index];
@@ -274,12 +277,16 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
       offsetY: featureProperties?.offsetY
     });
     // to do circle radius calculation
+    const geom = feature.getGeometry() as OlPoint;
+    const coordinates = olproj.transform(geom.getCoordinates(), map.projection, 'EPSG:4326');
+    const radius = featureProperties.rad / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution; // Latitude correction
+    console.log('radius', radius);
     feature.setStyle(
       new olStyle.Style({
           fill: fill,
           stroke: stroke,
           image: new olStyle.Circle({
-            radius: 5,
+            radius: radius,
             stroke: stroke,
             fill: fill,
           }),
