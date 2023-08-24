@@ -1,21 +1,10 @@
 <app-doc-viewer
   title="Context"
   subtitle="Context"
-  [dependencies]="['LanguageService','contextService','mapService']"
+  [dependencies]="['LanguageService','mapService']"
 >
+
   <app-example-viewer codeFolder="context/context" configFolder="contexts">
-    <mat-grid-list cols="1" rowHeight="300px" gutterSize="16px">
-      <mat-grid-tile>
-        <div class="flex flex-col align-start h-100 w-100">
-          <igo-panel title="Import Export Contexts" class="w-100">
-            <igo-context-import-export 
-          
-              [map]="map">
-            </igo-context-import-export>
-          </igo-panel>
-        </div>
-      </mat-grid-tile>
-    </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
       <mat-grid-tile>
         <igo-map-browser
@@ -60,5 +49,9 @@
       </mat-grid-tile>
     </mat-grid-list>
 
+  </app-example-viewer>
+
+  <app-example-viewer title="Import/Export context" codeFolder="context/context" configFolder="contexts">
+    <igo-context-import-export [map]="map"></igo-context-import-export>
   </app-example-viewer>
 </app-doc-viewer>
