@@ -20,13 +20,13 @@
 
       <ng-container [matColumnDef]="column.name" *ngFor="let column of template.columns">
           <ng-container *ngIf="columnIsSortable(column)">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header [matTooltip]="column.tooltip ? column.tooltip : undefined">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header [matTooltip]="column.tooltip ? column.tooltip : undefined" class="mat-body-1">
                   {{column.title}}
               </th>
           </ng-container>
 
           <ng-container *ngIf="!columnIsSortable(column)">
-              <th mat-header-cell *matHeaderCellDef [matTooltip]="column.tooltip ? column.tooltip : undefined">
+              <th mat-header-cell *matHeaderCellDef [matTooltip]="column.tooltip ? column.tooltip : undefined" class="mat-body-1">
                   {{column.title}}
               </th>
           </ng-container>

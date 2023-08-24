@@ -12,7 +12,6 @@
     <mat-slide-toggle 
       class="geolocation-option mat-typography"
       [checked]="tracking$ | async"
-      [labelPosition]="'before'"
       (change)="toggleTracking($event.checked)">
       {{'igo.integration.advanced-map-tool.geolocation.tracking' | translate}}
     </mat-slide-toggle>
@@ -21,7 +20,6 @@
       class="geolocation-option mat-typography"
       [disabled]="(tracking$ | async) !== true"
       [checked]="followPosition$ | async"
-      [labelPosition]="'before'"
       (change)="toggleFollow($event.checked)">
       {{'igo.integration.advanced-map-tool.geolocation.follow' | translate}}
     </mat-slide-toggle>

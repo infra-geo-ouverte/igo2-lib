@@ -15,13 +15,11 @@
 <div class="header">
     <mat-slide-toggle *ngIf="!isPredefined()"
       [checked]="drawControlIsActive"
-      [labelPosition]="'before'"
       (change)="onDrawControlChange()">
       {{'igo.geo.spatialFilter.drawControl' | translate}}
     </mat-slide-toggle>
     <mat-slide-toggle *ngIf="!isPredefined()"
       [checked]="freehandDrawIsActive"
-      [labelPosition]="'before'"
       (change)="onfreehandControlChange()">
       {{'igo.geo.spatialFilter.freehandControl' | translate}}
     </mat-slide-toggle>

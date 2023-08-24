@@ -1,0 +1,4 @@
+@forward './core-theme' show core-component-themes;
+@forward '../../common/src/common-theme' show common-component-themes;
+@forward '../../context/src/context-theme' show context-component-themes;
+@forward '../../geo/src/geo-theme' show geo-component-themes;

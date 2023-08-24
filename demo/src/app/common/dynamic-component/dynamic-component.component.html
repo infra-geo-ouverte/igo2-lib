@@ -1,16 +1,13 @@
-<mat-card>
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Dynamic Component</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/dynamic-component">code of this example</a>
-  </mat-card-content>
+<app-doc-viewer title="Dynamic Component" subtitle="Common">
+  <app-example-viewer codeFolder="common/dynamic-component">
+    <igo-dynamic-outlet
+      [component]="component"
+      [inputs]="inputs"
+    >
+    </igo-dynamic-outlet>
 
-  <igo-dynamic-outlet
-    [component]="component"
-    [inputs]="inputs">
-  </igo-dynamic-outlet>
-
-  <button mat-flat-button color="primary" (click)="toggleComponent()">Toggle Component</button>
-</mat-card>
-
-
+    <button mat-flat-button color="primary" (click)="toggleComponent()">
+      Toggle Component
+    </button>
+  </app-example-viewer>
+</app-doc-viewer>

@@ -1,3 +1,4 @@
+@use './feature-details/feature-details.theming.scss' as feature-details;
 @mixin igo-feature-theming($theme) {
-  @include igo-feature-details-theming($theme);
+  @include feature-details.igo-feature-details-theming($theme);
 }

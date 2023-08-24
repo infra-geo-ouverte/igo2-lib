@@ -1,53 +1,83 @@
-  <mat-list-item>
-      <mat-form-field class="inputFilter" [floatLabel]="floatLabel">
-        <input
-          matInput
-          [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
-          [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
-          matTooltipShowDelay="500"
-          type="text" [(ngModel)]="term">
-        <button
-          mat-button
-          *ngIf="term"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          color="warn"
-          (click)="clearTerm()">
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
-      </mat-form-field>
+<mat-form-field class="inputFilter" [floatLabel]="floatLabel">
+  <input
+    matInput
+    [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
+    [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
+    matTooltipShowDelay="500"
+    type="text"
+    [(ngModel)]="term"
+  />
+  <button
+    *ngIf="term"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    color="warn"
+    (click)="clearTerm()"
+  >
+    <mat-icon svgIcon="close"></mat-icon>
+  </button>
+</mat-form-field>
 
-      <div [matTooltip]="sortAlpha ?
-      ('igo.geo.layer.sortMapOrder' | translate) :
-      ('igo.geo.layer.sortAlphabetically' | translate)" matTooltipShowDelay="500">
-        <button class="sort-alpha" [color]="sortAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
-          <mat-icon [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"></mat-icon>
-        </button>
-      </div>
+<div class="actions-container">
+  <button
+    class="sort-alpha"
+    [color]="sortAlpha ? 'warn' : 'primary'"
+    mat-icon-button
+    [matTooltip]="
+      sortAlpha
+        ? ('igo.geo.layer.sortMapOrder' | translate)
+        : ('igo.geo.layer.sortAlphabetically' | translate)
+    "
+    matTooltipShowDelay="500"
+    (click)="toggleSortAlpha()"
+  >
+    <mat-icon
+      [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"
+    ></mat-icon>
+  </button>
 
-       <div [matTooltip]="onlyVisible ?
-        ('igo.geo.layer.resetLayersList' | translate) :
-        ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)" matTooltipShowDelay="500">
-         <button class="only-visible" mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
-           [color]="onlyVisible ? 'warn' : 'primary'" (click)="toggleOnlyVisible()">
-           <mat-icon
-             matBadge="icon"
-             igoMatBadgeIcon="eye"
-             igoMatBadgeInverseColor="true"
-             igoMatBadgeInheritColor="true"
-             [svgIcon]="onlyVisible ? 'filter-remove' : 'filter'">
-           </mat-icon>
-         </button>
-       </div>
+  <button
+    class="only-visible"
+    mat-icon-button
+    [disabled]="layersAreAllVisible && !onlyVisible"
+    [color]="onlyVisible ? 'warn' : 'primary'"
+    [matTooltip]="
+      onlyVisible
+        ? ('igo.geo.layer.resetLayersList' | translate)
+        : ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)
+    "
+    matTooltipShowDelay="500"
+    (click)="toggleOnlyVisible()"
+  >
+    <mat-icon
+      matBadge="icon"
+      igoMatBadgeIcon="eye"
+      igoMatBadgeInverseColor="true"
+      igoMatBadgeInheritColor="true"
+      [svgIcon]="onlyVisible ? 'filter-remove' : 'filter'"
+    >
+    </mat-icon>
+  </button>
 
-       <div [matTooltip]="selectionMode ?
-        ('igo.geo.layer.deactivateSelectionMode' | translate) :
-        ('igo.geo.layer.activateSelectionMode' | translate)" matTooltipShowDelay="500">
-         <button class="selection-mode" mat-icon-button
-           color="primary" (click)="toggleSelectionMode()">
-           <mat-icon [svgIcon]="selectionMode ? 'checkbox-multiple-marked-outline' : 'checkbox-multiple-blank-outline'"></mat-icon>
-         </button>
-       </div>
-
-</mat-list-item>
+  <button
+    class="selection-mode"
+    mat-icon-button
+    color="primary"
+    [matTooltip]="
+      selectionMode
+        ? ('igo.geo.layer.deactivateSelectionMode' | translate)
+        : ('igo.geo.layer.activateSelectionMode' | translate)
+    "
+    matTooltipShowDelay="500"
+    (click)="toggleSelectionMode()"
+  >
+    <mat-icon
+      [svgIcon]="
+        selectionMode
+          ? 'checkbox-multiple-marked-outline'
+          : 'checkbox-multiple-blank-outline'
+      "
+    ></mat-icon>
+  </button>
+</div>

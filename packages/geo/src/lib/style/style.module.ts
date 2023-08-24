@@ -15,6 +15,7 @@ import { StyleModalLayerComponent } from './style-modal/layer/style-modal-layer.
 import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style-modal-layer-button.component';
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { StyleService } from './style-service/style.service';
     MatFormFieldModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule,
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,

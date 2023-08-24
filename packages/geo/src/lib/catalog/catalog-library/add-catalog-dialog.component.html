@@ -32,7 +32,7 @@
             *ngFor="let type of typeCapabilities"
             [value]="type"
             (click)="$event.stopPropagation()">
-              <p mat-line>{{type}}</p>
+              <p matListItemTitle>{{type}}</p>
           </mat-option>
         </mat-select>
       </mat-form-field>

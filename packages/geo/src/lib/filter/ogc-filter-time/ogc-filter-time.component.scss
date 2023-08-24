@@ -1,95 +1,89 @@
 @import '../../../../../core/src/style/partial/media';
 
-::ng-deep input {
-  text-align: center !important;
-  margin: auto 5px auto 5px !important;
-}
-
-.slider-container {
-  text-align: center;
-}
-
-.datetime-input {
-  display: inline-block;
-  width: 100px; 
-  margin: 10px 0px 5px 10px;
-
-  @include mobile {
-    width: 36%;
-    margin: 0px 0px;
+:host {
+  ::ng-deep input {
+    text-align: center !important;
+    margin: auto 5px auto 5px !important;
   }
-}
 
-.date-input {
-  width: 100px;
-  margin-right: 25px;
-}
-
-.time-input {
-  margin-right: 25px;
+  .slider-container {
+    text-align: center;
+  }
   
-  @include mobile {
-    margin-right: 5px;
+  .datetime-input-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > :not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+
+  .datetime-input {
+    display: block;
+  }
+
+  .date-input {    
+    width: 154px;
+  }
+
+  .actions-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .time-input {
+    margin-top: 16px;
+
+    > :not(:last-child) {
+      margin-right: 8px;
+    }
+
+    @include mobile {
+      margin-top: 4px;
+    }
+  }
+
+  .hour-input,
+  .minute-input {
+    width: 100px;
+  }
+
+  .year-input-container {
+    display: flex;
+    width: 100%;
+
+    mat-form-field:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+
+  .year-input-hide {
+    width: 120px;
+    margin-right: 25px;
+    display: none;
+  }
+
+  .year-input-only-year {
+    width: 120px;
+    margin-right: 25px;
+  }
+
+  // to disable selection month and day for year picker
+  ::ng-deep .datepicker-year ::ng-deep .mat-calendar-arrow {
+    display: none;
+  }
+
+  ::ng-deep .datepicker-year ::ng-deep .mat-calendar-period-button {
+    pointer-events: none;
+  }
+
+  ::ng-deep
+    .datepicker-year
+    ::ng-deep
+    .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
+    background-color: rgba(0, 0, 0, 0.12);
+    border-radius: 999px;
   }
 }
-
-.hour-input, .minute-input {
-  width: 35px;
-  margin-left: 7px;
-}
-
-.year-input {
-  width: 98px;
-  margin: 10px 14px 5px 4px;
-  
-  @include mobile {
-    width: 32%;
-    margin: 0px 0px 0px 10px;
-  }
-}
-
-.year-input-hide {
-  width: 120px;
-  margin-right: 25px;
-  display: none;
-}
-
-
-.year-input-only-year {
-  width: 120px;
-  margin-right: 25px;
-}
-
-.reset-button {
-  width: 25px;
-  padding-left:8px;
-  
-  @include mobile {
-    padding-left: 8px;
-  }
-}
-
-.toggle-filter-state {
-  padding-left: 20px;
-
-  @include mobile {
-    padding-left: 12px;
-  }
-}
-
-
-// to disable selection month and day for year picker
-::ng-deep .datepicker-year ::ng-deep .mat-calendar-arrow {
-  display: none;
-}
-
-::ng-deep .datepicker-year ::ng-deep .mat-calendar-period-button {
-  pointer-events: none;
-}
-
-::ng-deep .datepicker-year ::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover {
-  background-color: rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-}
-
-

@@ -1,3 +1,5 @@
+@use './toolbox/toolbox.theming.scss' as toolbox-theme;
+
 @mixin igo-tool-theming($theme) {
-  @include igo-toolbox-theming($theme);
+  @include toolbox-theme.igo-toolbox-theming($theme);
 }

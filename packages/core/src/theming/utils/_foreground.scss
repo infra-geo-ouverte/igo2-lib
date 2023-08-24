@@ -1,0 +1,22 @@
+@use '@angular/material' as mat;
+
+@function theme-foreground($palette) {
+  $color: mat.get-color-from-palette($palette, 500);
+  @return (
+    base: $color,
+    divider: rgba($color, 0.12),
+    dividers: rgba($color, 0.12),
+    disabled: rgba($color, 0.38),
+    disabled-button: rgba($color, 0.26),
+    disabled-text: rgba($color, 0.38),
+    elevation: $color,
+    hint-text: rgba($color, 0.38),
+    secondary-text: rgba($color, 0.54),
+    icon: rgba($color, 0.54),
+    icons: rgba($color, 0.54),
+    text: rgba($color, 0.87),
+    slider-min: rgba($color, 0.87),
+    slider-off: rgba($color, 0.26),
+    slider-off-active: rgba($color, 0.38)
+  );
+}

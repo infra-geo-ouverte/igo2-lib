@@ -1,0 +1,39 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin material-override($theme) {
+  @include mat-button-toggle($theme);
+  @include mat-tab-group($theme);
+}
+
+@mixin mat-tab-group($theme) {
+  mat-tab-group,
+  mat-tab-group ::ng-deep .mat-mdc-tab-body-wrapper {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+@mixin mat-button-toggle($theme) {
+  $accent: map.get($theme, accent);
+  $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
+  $density: mat.get-density-config($theme);
+
+  $theme: map.merge(
+    $theme,
+    (
+      density: $density - 3
+    )
+  );
+
+  @include mat.button-toggle-density($theme);
+  
+  mat-button-toggle {
+    color: black !important;
+    
+    &.mat-button-toggle-checked {
+      background-color: mat.get-color-from-palette($accent);
+      color: mat.get-color-from-palette($dark);
+    }
+  }
+}

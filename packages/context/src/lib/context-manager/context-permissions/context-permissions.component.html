@@ -70,8 +70,8 @@
 
         <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
           <mat-list-item>
-            <mat-icon mat-list-avatar svgIcon="account-outline"></mat-icon>
-            <h4 mat-line>{{permission.profilTitle}} <small class="mat-typography">{{permission.profil}}</small></h4>
+            <mat-icon matListItemIcon svgIcon="account-outline"></mat-icon>
+            <h4 matListItemTitle>{{permission.profilTitle}} <small class="mat-typography">{{permission.profil}}</small></h4>
 
             <div igoStopPropagation
                  class="igo-actions-container">

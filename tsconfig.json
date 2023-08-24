@@ -1,56 +1,36 @@
-/*
-  This is a "Solution Style" tsconfig.json file, and is used by editors and TypeScript’s language server to improve development experience.
-  It is not intended to be used to perform a compilation.
-
-  To learn more about this file see: https://angular.io/config/solution-tsconfig.
-*/
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./demo/src/tsconfig.app.json"
-    },
-    {
-      "path": "./demo/src/tsconfig.spec.json"
-    },
-    {
-      "path": "./e2e/tsconfig.e2e.json"
-    },
-    {
-      "path": "./packages/auth/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/auth/tsconfig.spec.json"
-    },
-    {
-      "path": "./packages/common/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/common/tsconfig.spec.json"
-    },
-    {
-      "path": "./packages/core/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/core/tsconfig.spec.json"
-    },
-    {
-      "path": "./packages/geo/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/geo/tsconfig.spec.json"
-    },
-    {
-      "path": "./packages/utils/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/context/tsconfig.lib.json"
-    },
-    {
-      "path": "./packages/context/tsconfig.spec.json"
-    },
-    {
-      "path": "./packages/integration/tsconfig.lib.json"
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "allowSyntheticDefaultImports": true, // for jspdf and moment
+    "useDefineForClassFields": false,
+    "skipLibCheck": true,
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "sourceMap": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "module": "ES2022",
+    "target": "ES2022",
+    "lib": ["ES2022", "dom"],
+    "paths": {
+      "@igo2/utils": ["packages/utils/src/public_api"],
+      "@igo2/core": ["packages/core/src/public_api"],
+      "@igo2/common": ["packages/common/src/public_api"],
+      "@igo2/auth": ["packages/auth/src/public_api"],
+      "@igo2/geo": ["packages/geo/src/public_api"],
+      "@igo2/context": ["packages/context/src/public_api"],
+      "@igo2/integration": ["packages/integration/src/public_api"]
     }
-  ]
+  },
+  "exclude": ["dist", "scripts", "demo/e2e/**/*"],
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  }
 }

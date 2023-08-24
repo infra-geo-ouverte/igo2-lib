@@ -1,16 +1,9 @@
-<mat-card>
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Overlay</mat-card-title>
-  <mat-card-content>
-    <li>Dependencies: LanguageService</li>
-
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/overlay">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
-
-</mat-card>
+<app-doc-viewer title="Overlay" subtitle="Geo">
+  <app-example-viewer
+    codeFolder="geo/overlay"
+  >
+    <igo-map-browser [map]="map" [view]="view">
+      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    </igo-map-browser>
+  </app-example-viewer>
+</app-doc-viewer>
