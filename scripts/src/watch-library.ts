@@ -36,10 +36,7 @@ const packagesDep: Map<PackageName, PackageOptions> = new Map([
 
   packagesDep.forEach(async ({ relateOn, observer }, name) => {
     if (relateOn) {
-      const relatedObserver = packagesDep.get(relateOn)!.observer;
-      await firstValueFrom(
-        relatedObserver.pipe(first((value) => value === true))
-      );
+      await waitOnPackageDependencies(relateOn);
     }
 
     handleWatchCommand(name, observer);
@@ -63,4 +60,11 @@ function handleWatchCommand(
   cmd.stderr.on('data', (data: Buffer) => {
     console.error(data.toString());
   });
+}
+
+function waitOnPackageDependencies(name: PackageName): Promise<boolean> {
+  const observer = packagesDep
+    .get(name)!
+    .observer.pipe(first((value) => value === true));
+  return firstValueFrom(observer);
 }

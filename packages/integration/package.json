@@ -3,7 +3,9 @@
   "version": "1.15.4",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -14,10 +16,10 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "peerDependencies": {
-    "@angular/common": "^16.1.7",
-    "@angular/core": "^16.1.7",
-    "@igo2/geo": "1.15.4",
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
     "@igo2/context": "1.15.4",
+    "@igo2/geo": "1.15.4",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.29",
     "rxjs": "^7.8.0"

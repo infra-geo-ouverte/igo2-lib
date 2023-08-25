@@ -3,7 +3,9 @@
   "version": "1.15.4",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -18,9 +20,9 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^16.1.7",
-    "@angular/core": "^16.1.7",
-    "@angular/platform-browser": "^16.1.7"
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/platform-browser": "^16.2.0"
   },
   "engines": {
     "node": ">=18.10.0"
