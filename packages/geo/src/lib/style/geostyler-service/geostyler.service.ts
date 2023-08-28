@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olStyle from 'ol/style';
-import OlFeature from 'ol/Feature';
-
-import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
-import RenderFeature from 'ol/render/Feature';
-import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { StyleByAttribute } from '../shared/vector/vector-style.interface';
-import { ClusterParam } from '../../layer/shared/clusterParam';
 
 //import OlStyleParser from "geostyler-openlayers-parser";
-import OpenLayersParser from "geostyler-openlayers-parser";
-
-import OlLayerVector from "ol/layer/Vector";
+// import OpenLayersParser from "geostyler-openlayers-parser";
+import * as olp from "geostyler-openlayers-parser";
 
 
 @Injectable({
@@ -48,8 +38,8 @@ export class GeostylerStyleService {
 
 
     createGeostyle(options: { [key: string]: any }, destStyle: string){
-    
-    
+
+
       options.name;
       let style: any;
       /*style = [
@@ -83,7 +73,7 @@ export class GeostylerStyleService {
                   ]
               }
           ]
-        }
+        };
         if(destStyle === "ol"){
           //const parser = new OpenLayersParser();
           //return parser.writeStyle(style);
@@ -92,9 +82,8 @@ export class GeostylerStyleService {
         else{
           return style;
         }
-      
-      
-        
+
+
     }
 
     parseStyle(){
@@ -105,7 +94,7 @@ export class GeostylerStyleService {
       //geostyle to OpenLayer
       let style;
 
-      const parser = new OpenLayersParser();
+      const parser = new olp.OlStyleParser();
       //const parser = new OlStyleParser();
       return parser.writeStyle(gsStyle);
 /*
@@ -136,16 +125,16 @@ export class GeostylerStyleService {
           return;
         }
         const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
-    
+
         labelToGet.forEach(v => {
           label = label.replace(v[0], feature.get(v[1]));
         });
-    
+
         // Nothing done? check feature's attribute
         if (labelToGet.length === 0 && label === labelMatch) {
           label = feature.get(labelMatch) || labelMatch;
         }
-    
+
         return label;
       }
 
@@ -159,19 +148,6 @@ export class GeostylerStyleService {
             return 'regular';
         }
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

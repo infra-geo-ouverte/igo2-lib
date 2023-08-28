@@ -21,8 +21,8 @@ export interface IgoStyleBase {
 }
 
 export interface GeoStylerStyleInterfaceOptions {
-  basic: GeoStylerStyleInterfaceFromGeoStyler; 
-  ProjetB: GeoStylerStyleInterfaceFromGeoStyler;  
+  basic: GeoStylerStyleInterfaceFromGeoStyler;
+  ProjetB: GeoStylerStyleInterfaceFromGeoStyler;
   hover: GeoStylerStyleInterfaceFromGeoStyler;
   /*
   name

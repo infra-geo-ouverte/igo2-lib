@@ -58,7 +58,7 @@ export class LayerService {
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
-    private geostylerService: GeostylerStyleService, 
+    private geostylerService: GeostylerStyleService,
     private dataSourceService: DataSourceService,
     private geoNetworkService: GeoNetworkService,
     private messageService: MessageService,
@@ -155,10 +155,9 @@ export class LayerService {
     if (layerOptions.igoStyle.geoStylerStyle) {
       //const myOlStyle = this.geostylerService.gsToOL(layerOptions.igoStyle.geoStylerStyle.basic)
      // style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle)jjjjjjjj
-      style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle, "ol")       
+      style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle, "ol");
     }
 
-    
 
     if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
