@@ -3,6 +3,7 @@ import * as olGeom from 'ol/geom';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { StyleService } from '../../style-service/style.service';
+import { circular } from 'ol/geom/Polygon';
 
 
 export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>) => olStyle.Style {
@@ -42,6 +43,10 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
           overflow: true
         }): undefined
       });
+      // set feature Geometry if is circle
+      if(olFeature.get('rad')) {
+        setCircleGeometry(olFeature);
+      }
       return style;
   };
 }
@@ -151,4 +156,12 @@ export function pointerPositionSummaryMarkerStyle(feature: olFeature<OlGeometry>
         padding: [2.5, 2.5, 2.5, 2.5]
       })
     });
+  }
+
+  function setCircleGeometry(feature: olFeature<OlGeometry>): void {
+      const radius: number = feature.get('rad');
+      const lonLat: [number, number] = [feature.get('longitude'), feature.get('latitude')];
+      const circle = circular(lonLat, radius, 500);
+      circle.transform('EPSG:4326', feature.get('_projection'));
+      feature.setGeometry(circle);
   }
