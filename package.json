@@ -140,7 +140,7 @@
     "@angular-eslint/schematics": "^16.1.0",
     "@angular-eslint/template-parser": "^16.1.0",
     "@angular/cli": "^16.1.6",
-    "@angular/compiler-cli": "^16.1.7",
+    "@angular/compiler-cli": "^16.2.2",
     "@compodoc/compodoc": "^1.1.15",
     "@cypress/schematic": "^2.5.0",
     "@types/flexsearch": "^0.7.3",
