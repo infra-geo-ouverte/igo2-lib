@@ -14,7 +14,8 @@ import {
   ClusterDataSource,
   featureRandomStyleFunction,
   VectorStyleLayer,
-  FeatureWithDrawProperties
+  FeatureWithDrawProperties,
+  setCircleGeometry
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
 import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/context.interface';
@@ -22,7 +23,6 @@ import { ContextService } from '../../context-manager/shared/context.service';
 import OlFeature from 'ol/Feature';
 import * as olStyle from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
-import { circular } from 'ol/geom/Polygon';
 
 export function handleFileImportSuccess(
   file: File,
@@ -289,7 +289,6 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
     );
     // set feature Geometry if is circle
     if(feature.get('rad')) {
-      console.log('has rad: ', feature.get('rad'));
       setCircleGeometry(feature);
     }
     features.push(feature);
@@ -297,10 +296,4 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
   return features;
 }
 
-export function setCircleGeometry(feature: OlFeature<OlGeometry>): void {
-  const radius: number = feature.get('rad');
-  const lonLat: [number, number] = [feature.get('longitude'), feature.get('latitude')];
-  const circle = circular(lonLat, radius, 500);
-  circle.transform('EPSG:4326', feature.get('_projection'));
-  feature.setGeometry(circle);
-}
+

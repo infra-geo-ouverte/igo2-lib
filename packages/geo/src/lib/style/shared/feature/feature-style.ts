@@ -158,10 +158,10 @@ export function pointerPositionSummaryMarkerStyle(feature: olFeature<OlGeometry>
     });
   }
 
-  function setCircleGeometry(feature: olFeature<OlGeometry>): void {
-      const radius: number = feature.get('rad');
-      const lonLat: [number, number] = [feature.get('longitude'), feature.get('latitude')];
-      const circle = circular(lonLat, radius, 500);
-      circle.transform('EPSG:4326', feature.get('_projection'));
-      feature.setGeometry(circle);
+  export function setCircleGeometry(feature: olFeature<OlGeometry>): void {
+    const radius: number = feature.get('rad');
+    const lonLat: [number, number] = [feature.get('longitude'), feature.get('latitude')];
+    const circle = circular(lonLat, radius, 500);
+    circle.transform('EPSG:4326', feature.get('_projection'));
+    feature.setGeometry(circle);
   }
