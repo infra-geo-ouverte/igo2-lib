@@ -165,3 +165,4 @@ export function pointerPositionSummaryMarkerStyle(feature: olFeature<OlGeometry>
     circle.transform('EPSG:4326', feature.get('_projection'));
     feature.setGeometry(circle);
   }
+  
