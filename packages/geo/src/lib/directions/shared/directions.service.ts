@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from '../directions-sources/directions-source';
@@ -6,12 +6,14 @@ import { DirectionsSourceService } from './directions-source.service';
 import { SubjectStatus } from '@igo2/utils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { CellHookData } from 'jspdf-autotable';
 import { IgoMap } from '../../map';
 import { PrintLegendPosition, PrintService } from '../../print';
 import { formatDistance, formatDuration, formatInstruction } from './directions.utils';
 import moment from 'moment';
 import { ConfigService, LanguageService } from '@igo2/core';
 import html2canvas from 'html2canvas';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +22,8 @@ export class DirectionsService {
   constructor(private directionsSourceService: DirectionsSourceService,
     private configService: ConfigService,
     private languageService: LanguageService,
-    private printService: PrintService) {}
+    private printService: PrintService,
+    @Inject(DOCUMENT) private document: Document) {}
 
   route(coordinates: [number, number][], directionsOptions: DirectionOptions = {}): Observable<Direction[]>[] {
     if (coordinates.length === 0) {
@@ -98,7 +101,7 @@ export class DirectionsService {
             doc.addImage(img.src, data.cell.x, data.cell.y, 8, 8);
           }
         },
-        didDrawPage: (data) => {
+        didDrawPage: (data: CellHookData) => {
           this.setPageHeaderFooter(doc, data, [date, totalPagesExp, appName]);
         }
       });
@@ -148,12 +151,12 @@ export class DirectionsService {
     return table;
   }
 
-  async directionsInstruction(
+  private async directionsInstruction(
     direction: Direction
   ): Promise<Array<{ instruction: string, icon: string, distance: string }>> {
 
-    const listE = document.getElementsByTagName('igo-directions-results')[0].getElementsByTagName('mat-list')[0];
-    const matListItem = listE.getElementsByTagName('mat-list-item');
+    const matListItems = this.document.getElementsByTagName('igo-directions-results')[0].getElementsByTagName('mat-list')[0];
+    const matListItem = matListItems.getElementsByTagName('mat-list-item');
     // convert icon list to base64
     let iconsArray: Array<{name: string, icon: string}> = [];
     for (let index = 0; index < matListItem.length; index++) {
@@ -193,12 +196,12 @@ export class DirectionsService {
 
   /**
    * @param doc - PDF
-   * @param data - HookData
+   * @param data - CellHookData
    * @param text - [date: string, totalPageExp: string]
    */
   private setPageHeaderFooter(
     doc: jsPDF,
-    data,
+    data: CellHookData,
     text: [date: string, totalPageExp: string, appName: string]
   ): void {
     let str = 'Page ' + doc.getNumberOfPages();
