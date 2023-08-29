@@ -148,15 +148,47 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
+
+    if (layerOptions.igoStyle?.geoStylerStyle?.global) {
+      let layerOptionsOl = layerOptions;
+
+
+     let writeStyleResult$ = this.geostylerService.geostylerToOl(layerOptions.igoStyle.geoStylerStyle.global);
+      writeStyleResult$.subscribe(res => {
+        // n'oublie pas de voir comment gérer les cluster directement par geostyler.
+        console.log(res);
+        if (res.warnings) {
+          console.warn(res.warnings);
+        }
+        if (res.errors) {
+          console.error(res.errors);
+        }
+        if (res.unsupportedProperties) {
+          console.warn(res.unsupportedProperties);
+        }
+
+        if (res.output) {
+          layerOptionsOl = Object.assign({}, layerOptions, {
+            style: res.output
+          });
+        }
+        igoLayer = new VectorLayer(layerOptionsOl,
+          this.messageService,
+          this.authInterceptor,
+          this.geoNetworkService,
+          this.geoNetworkService.geoDBService,
+          this.layerDBService);
+          // pas sur que ca va fonctionner.. 
+          return igoLayer;
+      });
+
+    } else {
+      // Tout le legacy handling... donc les bout de code d'ici bas.
+    }
+
     const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-
-    if (layerOptions.igoStyle.geoStylerStyle) {
-      //const myOlStyle = this.geostylerService.gsToOL(layerOptions.igoStyle.geoStylerStyle.basic)
-     // style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle)jjjjjjjj
-      style = this.geostylerService.createGeostyle(layerOptions.igoStyle.geoStylerStyle, "ol");
-    }
 
 
     if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {

@@ -2,7 +2,7 @@ import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { Feature } from '../../../feature/shared/feature.interfaces';
 import olStyle from 'ol/style/Style';
-
+import { Style as GeoStylerStyle } from 'geostyler-style';
 export interface FeatureCommonVectorStyleOptions extends CommonVectorStyleOptions {
   feature: Feature | olFeature<OlGeometry>;
 }
@@ -21,31 +21,8 @@ export interface IgoStyleBase {
 }
 
 export interface GeoStylerStyleInterfaceOptions {
-  basic: GeoStylerStyleInterfaceFromGeoStyler;
-  ProjetB: GeoStylerStyleInterfaceFromGeoStyler;
-  hover: GeoStylerStyleInterfaceFromGeoStyler;
-  /*
-  name
-  ruleName
-  kind
-  color
-  width
-  minScale
-  maxScale
-  filter
-  */
-}
-
-export interface GeoStylerStyleInterfaceFromGeoStyler extends GeoStylerStyleInterfaceOptions{
-  // todo check reuse their inferface.
-  name?: string;
-  ruleName?: string;
-  kind?: string;
-  wellKnownName?: string;
-  color?: string;
-  width?: string;
-  minScale?: number;
-  maxScale?: number;
+  global: GeoStylerStyle;
+  hover: GeoStylerStyle;
 }
 
 export interface CommonVectorStyleOptions {
