@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { combineLatest, Observable, of } from 'rxjs';
-import { map, catchError, concatMap } from 'rxjs/operators';
+import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
 import {stylefunction} from "ol-mapbox-style";
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
@@ -121,16 +121,39 @@ export class LayerService {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
 
-    return this.dataSourceService
-      .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
-      .pipe(
-        map(source => {
-          if (source === undefined) {
-            return undefined;
-          }
-          return this.createLayer(Object.assign(layerOptions, { source }));
-        })
-      );
+    const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions
+    const geostylerStyleGlobal = stylableLayerOptions.igoStyle?.geoStylerStyle?.global
+    const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
+
+    return globalWriteStyleResult$.pipe(
+      mergeMap(writeStyleResult => {
+        // n'oublie pas de voir comment gérer les cluster directement par geostyler.
+        if (writeStyleResult?.warnings) {
+          console.warn(writeStyleResult.warnings);
+          // intéressant de présenter via le message service? aucune idée? réfléchis y!
+        }
+        if (writeStyleResult?.errors) {
+          console.error(writeStyleResult.errors);
+        }
+        if (writeStyleResult?.unsupportedProperties) {
+          console.warn(writeStyleResult.unsupportedProperties);
+        }
+
+        if (writeStyleResult?.output) {
+          stylableLayerOptions.style = writeStyleResult.output;
+        }
+
+        return this.dataSourceService
+          .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
+          .pipe(
+            map(source => {
+              if (source === undefined) {
+                return undefined;
+              }
+              return this.createLayer(Object.assign(layerOptions, { source }));
+            })
+          );
+      }))
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
@@ -148,49 +171,9 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
-
-    if (layerOptions.igoStyle?.geoStylerStyle?.global) {
-      let layerOptionsOl = layerOptions;
-
-
-     let writeStyleResult$ = this.geostylerService.geostylerToOl(layerOptions.igoStyle.geoStylerStyle.global);
-      writeStyleResult$.subscribe(res => {
-        // n'oublie pas de voir comment gérer les cluster directement par geostyler.
-        console.log(res);
-        if (res.warnings) {
-          console.warn(res.warnings);
-        }
-        if (res.errors) {
-          console.error(res.errors);
-        }
-        if (res.unsupportedProperties) {
-          console.warn(res.unsupportedProperties);
-        }
-
-        if (res.output) {
-          layerOptionsOl = Object.assign({}, layerOptions, {
-            style: res.output
-          });
-        }
-        igoLayer = new VectorLayer(layerOptionsOl,
-          this.messageService,
-          this.authInterceptor,
-          this.geoNetworkService,
-          this.geoNetworkService.geoDBService,
-          this.layerDBService);
-          // pas sur que ca va fonctionner..
-          return igoLayer;
-      });
-
-    } else {
-      // Tout le legacy handling... donc les bout de code d'ici bas.
-    }
-
     const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-
-
     if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {
       style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
     } else if (layerOptions.igoStyle.igoStyleObject && layerOptions.idbInfo?.storeToIdb) {
@@ -286,7 +269,7 @@ export class LayerService {
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
-    let style: Style[] | Style | OlStyleLike;
+    let style: Style[] | Style | OlStyleLike = layerOptions.style;
     let igoLayer: VectorTileLayer;
 
     if (!layerOptions.igoStyle) {
