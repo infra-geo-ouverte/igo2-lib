@@ -128,14 +128,3 @@ export function DDtoDMS(value: [number, number], unit: CoordinatesUnit): string[
 
   return conversion ? conversion(value) : undefined;
 }
-
-/**
- * 
- * @param radius radius of the circle in meters
- * @param coordinates An array of numbers, longitude and latitude
- * @param resolution the current resolution
- * @returns radius
- */
-export function calculateCircleRadius(radius: number, latitude: number, resolution): number {
-  return radius / (Math.cos((Math.PI / 180) * latitude)) / resolution;
-}
