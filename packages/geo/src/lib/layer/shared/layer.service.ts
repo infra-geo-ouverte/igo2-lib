@@ -121,8 +121,8 @@ export class LayerService {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
 
-    const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions
-    const geostylerStyleGlobal = stylableLayerOptions.igoStyle?.geoStylerStyle?.global
+    const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions;
+    const geostylerStyleGlobal = stylableLayerOptions.igoStyle?.geoStylerStyle?.global;
     const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
 
     return globalWriteStyleResult$.pipe(
@@ -153,7 +153,7 @@ export class LayerService {
               return this.createLayer(Object.assign(layerOptions, { source }));
             })
           );
-      }))
+      }));
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
