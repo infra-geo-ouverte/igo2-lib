@@ -6,7 +6,7 @@ import { StyleService } from '../../style-service/style.service';
 import { circular } from 'ol/geom/Polygon';
 
 
-export function featureRandomStyleFunction(projectionCode?: string): (olFeature: olFeature<OlGeometry>) => olStyle.Style {
+export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>) => olStyle.Style {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
@@ -45,7 +45,7 @@ export function featureRandomStyleFunction(projectionCode?: string): (olFeature:
       });
       // set feature Geometry if is circle
       if(olFeature.get('rad')) {
-        setCircleGeometry(olFeature, projectionCode);
+        setCircleGeometry(olFeature);
       }
       return style;
   };
@@ -160,7 +160,7 @@ export function pointerPositionSummaryMarkerStyle(feature: olFeature<OlGeometry>
 
   export function setCircleGeometry(
     feature: olFeature<OlGeometry>,
-    projectionCode: string
+    projectionCode: string = 'EPSG:4326'
   ): void {
     const radius: number = feature.get('rad');
     const lonLat: [number, number] = [feature.get('longitude'), feature.get('latitude')];

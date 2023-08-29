@@ -158,7 +158,7 @@ export function addImportedFeaturesToMap(
   source.ol.addFeatures(olFeatures);
   const featureKeys = olFeatures[0]?.getKeys() ?? [];
   const editable: boolean = (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) ? true : false;
-  const randomStyle = featureRandomStyleFunction(map.viewController.getOlProjection().getCode());
+  const randomStyle = featureRandomStyleFunction();
   const layer = new VectorLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
@@ -295,7 +295,7 @@ function setCustomFeaturesStyle(
     );
     // set feature Geometry if is circle
     if(feature.get('rad')) {
-      setCircleGeometry(feature, projectionCode);
+      setCircleGeometry(feature);
     }
     features.push(feature);
   }
