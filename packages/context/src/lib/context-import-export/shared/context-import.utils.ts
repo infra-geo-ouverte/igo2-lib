@@ -158,7 +158,7 @@ export function addImportedFeaturesToMap(
   source.ol.addFeatures(olFeatures);
   const featureKeys = olFeatures[0]?.getKeys() ?? [];
   const editable: boolean = (featureKeys.includes('_style') || featureKeys.includes('_mapTitle')) ? true : false;
-  const randomStyle = featureRandomStyleFunction();
+  const randomStyle = featureRandomStyleFunction(map.viewController.getOlProjection().getCode());
   const layer = new VectorLayer({
     title: extraFeatures.name,
     isIgoInternalLayer: true,
@@ -236,7 +236,10 @@ export function addImportedFeaturesStyledToMap(
   }
 
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  const newFeatures = setCustomFeaturesStyle(olFeatures);
+  const newFeatures = setCustomFeaturesStyle(
+    olFeatures,
+    map.viewController.getOlProjection().getCode()
+  );
   source.ol.addFeatures(newFeatures);
 
   const layer = new VectorLayer({
@@ -261,7 +264,10 @@ function collectFeaturesFromExtraFeatures(featureCollection: ExtraFeatures): OlF
   return features;
 }
 
-function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+function setCustomFeaturesStyle(
+  olFeatures: OlFeature<OlGeometry>[],
+  projectionCode: string
+): OlFeature<OlGeometry>[] {
   let features: OlFeature<OlGeometry>[] = [];
   for (let index = 0; index < olFeatures.length; index++) {
     const feature: OlFeature<OlGeometry> = olFeatures[index];
@@ -289,7 +295,7 @@ function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<
     );
     // set feature Geometry if is circle
     if(feature.get('rad')) {
-      setCircleGeometry(feature);
+      setCircleGeometry(feature, projectionCode);
     }
     features.push(feature);
   }
