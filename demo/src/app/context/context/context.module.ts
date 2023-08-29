@@ -9,7 +9,7 @@ import {
   IgoQueryModule,
   IgoFeatureModule
 } from '@igo2/geo';
-import { IgoContextManagerModule } from '@igo2/context';
+import { IgoContextModule } from '@igo2/context';
 
 import { AppContextComponent } from './context.component';
 import { AppContextRoutingModule } from './context-routing.module';
@@ -28,7 +28,7 @@ import { SharedModule } from '../../shared/shared.module';
     IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
-    IgoContextManagerModule
+    IgoContextModule
   ],
   exports: [AppContextComponent]
 })
