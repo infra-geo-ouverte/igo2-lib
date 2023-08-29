@@ -5,8 +5,7 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
 import { saveAs } from 'file-saver';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { default as JSZip } from 'jszip';
 
@@ -22,8 +21,6 @@ import { getLayersLegends } from '../../layer/utils/outputLegend';
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
 import { PrintLegendPosition, PrintPaperFormat, PrintResolution } from './print.type';
-import { default as moment } from 'moment';
-import { Direction, formatDistance, formatDuration, formatInstruction } from '../../directions';
 
 declare global {
   interface Navigator {
@@ -706,7 +703,7 @@ export class PrintService {
     map.ol.renderSync();
   }
 
-  private async drawMap(
+  async drawMap(
     size: Array<number>,
     mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
@@ -764,7 +761,7 @@ export class PrintService {
     mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
   }
 
-  private async drawMapControls (
+  async drawMapControls (
     map: IgoMap,
     canvas: HTMLCanvasElement,
     position: PrintLegendPosition
@@ -1173,7 +1170,7 @@ export class PrintService {
    * @param canvas - Canvas of image
    * @param margins - Page margins
    */
-  private getImageSizeToFitPdf(doc, canvas, margins) {
+  getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
@@ -1335,178 +1332,5 @@ export class PrintService {
     }
 
     return n * k;
-  }
-
-  async directionsInstruction(
-    direction: Direction
-  ): Promise<Array<{ instruction: string, icon: string, distance: string }>> {
-
-    const listE = document.getElementsByTagName('igo-directions-results')[0].getElementsByTagName('mat-list')[0];
-    const matListItem = listE.getElementsByTagName('mat-list-item');
-    // convert icon list to base64
-    let iconsArray: Array<{name: string, icon: string}> = [];
-    for (let index = 0; index < matListItem.length; index++) {
-      const element = matListItem[index];
-      const icon = element.getElementsByTagName('mat-icon')[0] as HTMLElement;
-      const iconName = icon.getAttribute('data-mat-icon-name') as string;
-      const found = iconsArray.some(el => el.name === iconName);
-      if(!found) {
-        const iconCanvas = await html2canvas(icon, { scale: 3});
-        iconsArray.push({name: iconName, icon: iconCanvas.toDataURL()});
-      }
-    }
-
-    let formattedDirection: Array<{ instruction: string, icon: string, distance: string }> = [];
-    for (let i = 0; i < direction.steps.length; i++) {
-      const step = direction.steps[i];
-      const instruction = formatInstruction(
-        step.maneuver.type,
-        step.maneuver.modifier,
-        step.name,
-        step.maneuver.bearing_after,
-        i,
-        (step.maneuver as any).exit,
-        this.languageService,
-        i === direction.steps.length - 1
-      );
-
-      const distance = formatDistance(step.distance);
-      formattedDirection.push({
-        instruction: (i+1)+'. '+instruction.instruction,
-        icon: iconsArray.find((icon) => icon.name === instruction.image).icon,
-        distance:  (distance) ? '('+ distance +')' : undefined
-      });
-    }
-    return formattedDirection;
-  }
-
-  downloadDirection(
-    map: IgoMap,
-    direction: Direction
-  ): Observable<SubjectStatus> {
-
-    const status$ = new Subject<SubjectStatus>();
-
-    const doc: any = new jsPDF({
-      orientation: 'p',
-      format: 'Letter',
-      unit: 'mm' // default
-    });
-
-    const size = map.ol.getSize();
-    map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
-      const mapResultCanvas = await this.drawMap(size, mapCanvas);
-      this.renderMap(map, size, 5);
-      await this.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
-
-      const imgSize = this.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
-
-      doc.addImage(mapResultCanvas, 10, 20, imgSize[0], imgSize[1]);
-      doc.rect(10, 20, imgSize[0], imgSize[1]);
-
-      doc.setFontSize(14);
-      const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
-      const titleP = (imgSize[1] + 10 + 20);
-      doc.text(title, (doc.internal.pageSize.width/2) ,titleP, {align: 'center'});
-
-      const HTMLtable = await this.setHTMLTableContent(direction);
-      const tablePos = titleP + 5;
-      const totalPagesExp = '{total_pages_count_string}';
-      const date = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
-      const appName = (this.configService.getConfig('title')) ?
-      this.configService.getConfig('title') : 'IGO Lib';
-
-      doc.autoTable({
-        html: HTMLtable,
-        startY: tablePos,
-        margin: {top: 20, bottom: 20},
-        columnStyles: {
-          0: {cellWidth: 10},
-        },
-        theme:'plain',
-        styles: {
-          fontSize: 12
-        },
-        didDrawCell: function(data) {
-          if (data.column.index === 0 && data.cell.section === 'body') {
-            data.row.height = 10;
-            var td = data.cell.raw as HTMLElement;
-            var img = td.getElementsByTagName('img')[0];
-            doc.addImage(img.src, data.cell.x, data.cell.y, 8, 8);
-          }
-        },
-        didDrawPage: (data) => {
-          this.setPageHeaderFooter(doc, data, [date, totalPagesExp, appName]);
-        }
-      });
-
-      if (typeof doc.putTotalPages === 'function') {
-        doc.putTotalPages(totalPagesExp);
-      }
-
-      await this.saveDoc(doc);
-
-      status$.next(SubjectStatus.Done);
-    });
-
-    return status$;
-  }
-
-  private async setHTMLTableContent (
-    direction: Direction
-  ): Promise<HTMLTableElement> {
-    const data = await this.directionsInstruction(direction);
-    const table = document.createElement("table");
-    const tblBody = document.createElement("tbody");
-    for (let index = 0; index < data.length; index++) {
-      const element = data[index];
-      var row = document.createElement("tr");
-      var cellImage = document.createElement("td");
-      var cellText = document.createElement("td");
-      // icon
-      const img = document.createElement("img") as HTMLImageElement;
-      img.src = element.icon;
-      // instruction text
-      const span = document.createElement("span") as HTMLElement;
-      span.innerHTML = element.instruction;
-      cellImage.appendChild(img);
-      cellText.appendChild(span);
-      if(element.distance) {
-        const spanDistance = document.createElement("span") as HTMLElement;
-        spanDistance.style.verticalAlign = 'middle';
-        spanDistance.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + element.distance;
-        cellText.appendChild(spanDistance);
-      }
-      row.append(cellImage);
-      row.append(cellText);
-      tblBody.appendChild(row);
-    }
-    table.appendChild(tblBody);
-    return table;
-  }
-
-  /**
-   * @param doc - PDF
-   * @param data - HookData
-   * @param text - [date: string, totalPageExp: string]
-   */
-  private setPageHeaderFooter(
-    doc: jsPDF,
-    data,
-    text: [date: string, totalPageExp: string, appName: string]
-  ): void {
-    let str = 'Page ' + doc.getNumberOfPages();
-    if (typeof doc.putTotalPages === 'function') {
-      str = str + ' / ' + text[1];
-    }
-    doc.setFontSize(8);
-    const pageSize = doc.internal.pageSize;
-    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-    const width = pageSize.width ? pageSize.width : pageSize.getWidth();
-    doc.text(text[0], 10, 10, { baseline: 'top' });
-    doc.text(text[2], width - 20, 10);
-    doc.text(str, width - 20, pageHeight - 10);
-    doc.text(text[0], data.settings.margin.left, pageHeight - 10);
   }
 }
