@@ -38,99 +38,101 @@ $typography-mobile: mat.define-typography-config(
 
 $font-color: map.get(palette.$palette, 900);
 
-body {
-  color: $font-color;
-}
+@mixin set-base-styles {
+  body {
+    color: $font-color;
+  }
 
-a {
-  word-break: break-word;
-  overflow-wrap: break-word;
-  cursor: pointer;
-  color: palette.$primary;
-  text-decoration: underline;
-  background-color: transparent;
-}
+  a {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    cursor: pointer;
+    color: palette.$primary;
+    text-decoration: underline;
+    background-color: transparent;
+  }
 
-p,
-ul,
-li,
-u,
-.text {
-  color: $font-color;
-  font-size: 16px;
-  line-height: 24px;
-}
+  p,
+  ul,
+  li,
+  u,
+  .text {
+    color: $font-color;
+    font-size: 16px;
+    line-height: 24px;
+  }
 
-p {
-  margin-bottom: 24px;
-}
+  p {
+    margin-bottom: 24px;
+  }
 
-strong {
-  font-weight: 600;
-}
+  strong {
+    font-weight: 600;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-  font-family: Roboto, sans-serif !important;
-  color: $font-color;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5,
+  .h6 {
+    font-family: Roboto, sans-serif !important;
+    color: $font-color;
+  }
 
-h1 {
-  margin-top: 72px !important;
-  margin-bottom: 32px !important;
+  h1 {
+    margin-top: 72px !important;
+    margin-bottom: 32px !important;
 
-  @include typo-utils.title-border;
+    @include typo-utils.title-border;
 
-  @include breakpoints.media-breakpoint-down(tablet) {
+    @include breakpoints.media-breakpoint-down(tablet) {
+      margin-top: 48px !important;
+      margin-bottom: 16px !important;
+    }
+  }
+
+  h2 {
     margin-top: 48px !important;
     margin-bottom: 16px !important;
   }
-}
 
-h2 {
-  margin-top: 48px !important;
-  margin-bottom: 16px !important;
-}
+  h3 {
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+  }
 
-h3 {
-  margin-top: 24px !important;
-  margin-bottom: 16px !important;
-}
+  // WORKAROUND, mat-typography area of intersection h4 is using mat-body-1
+  // https://github.com/angular/components/issues/26351
+  h4 {
+    @include typo-utils.title-level-4;
+  }
 
-// WORKAROUND, mat-typography area of intersection h4 is using mat-body-1
-// https://github.com/angular/components/issues/26351
-h4 {
-  @include typo-utils.title-level-4;
-}
+  h4 {
+    margin-top: 24px !important;
+    margin-bottom: 8px !important;
+  }
 
-h4 {
-  margin-top: 24px !important;
-  margin-bottom: 8px !important;
-}
+  h5 {
+    font-size: 19px !important;
+    line-height: 24px !important;
+  }
 
-h5 {
-  font-size: 19px !important;
-  line-height: 24px !important;
-}
+  h6 {
+    font-size: 16px !important;
+    line-height: 20px !important;
+  }
 
-h6 {
-  font-size: 16px !important;
-  line-height: 20px !important;
-}
-
-h5,
-h6 {
-  font-weight: bold !important;
-  margin-top: 16px !important;
-  margin-bottom: 0px !important;
+  h5,
+  h6 {
+    font-weight: bold !important;
+    margin-top: 16px !important;
+    margin-bottom: 0px !important;
+  }
 }

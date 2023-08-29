@@ -1,9 +1,11 @@
+@use 'sass:map';
+
 // https://design.quebec.ca/bases/couleurs#c118192
-$color: (
+$colors: (
   blue: (
     light: #dae6f0,
     light-2: #4a98d9,
-    normal: #1479cc,
+    normal: #1472bf,
     normal-piv: #095797,
     medium: #19406c,
     dark: #223654
@@ -32,3 +34,7 @@ $color: (
     dark: #ad781c
   )
 );
+
+@function get($color, $name) {
+  @return map.get($colors, $color, $name);
+}

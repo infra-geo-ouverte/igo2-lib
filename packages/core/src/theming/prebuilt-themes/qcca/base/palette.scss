@@ -1,28 +1,36 @@
 @use 'sass:map';
+@use 'sass:color';
 @use './colors';
 
-// Design Quebec colors
-$primary: map.get(colors.$color, blue, normal-piv);
-$accent: map.get(colors.$color, red, pink);
+$blue-light: colors.get(blue, light);
+$blue-light-2: colors.get(blue, light-2);
+$blue-normal: colors.get(blue, normal);
+$blue-normal-piv: colors.get(blue, normal-piv);
+$blue-medium: colors.get(blue, medium);
+$blue-dark: colors.get(blue, dark);
 
-$dark-primary-text: rgba(black, 0.87);
+// Design Quebec colors
+$primary: $blue-normal-piv;
+$accent: colors.get(red, pink);
+
+$dark-primary-text: $blue-dark;
 $light-primary-text: white;
 
 $palette: (
-  50: map.get(colors.$color, blue, light),
-  100: #e5f2fa,
-  200: #99cbec,
-  300: map.get(colors.$color, blue, light-2),
-  400: map.get(colors.$color, blue, normal),
+  50: $blue-light,
+  100: color.adjust($blue-light-2, $lightness: 20%),
+  200: color.adjust($blue-light-2, $lightness: 10%),
+  300: $blue-light-2,
+  400: $blue-normal,
   500: $primary,
-  600: #265b8b,
-  700: map.get(colors.$color, blue, medium),
-  800: #273f61,
-  900: map.get(colors.$color, blue, dark),
-  A100: map.get(colors.$color, blue, normal),
-  A200: map.get(colors.$color, blue, normal),
-  A400: map.get(colors.$color, grey, light-2),
-  A700: map.get(colors.$color, grey, light),
+  600: color.adjust($primary, $lightness: -10%),
+  700: $blue-medium,
+  800: color.adjust($blue-medium, $lightness: -10%),
+  900: $blue-dark,
+  A100: $blue-normal,
+  A200: color.adjust($blue-normal, $lightness: 10%),
+  A400: colors.get(grey, light-2),
+  A700: colors.get(grey, light),
   contrast: (
     50: $dark-primary-text,
     100: $dark-primary-text,
