@@ -178,7 +178,7 @@ export class LayerService {
           this.geoNetworkService,
           this.geoNetworkService.geoDBService,
           this.layerDBService);
-          // pas sur que ca va fonctionner.. 
+          // pas sur que ca va fonctionner..
           return igoLayer;
       });
 
