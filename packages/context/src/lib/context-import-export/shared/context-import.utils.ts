@@ -236,10 +236,7 @@ export function addImportedFeaturesStyledToMap(
   }
 
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  const newFeatures = setCustomFeaturesStyle(
-    olFeatures,
-    map.viewController.getOlProjection().getCode()
-  );
+  const newFeatures = setCustomFeaturesStyle(olFeatures);
   source.ol.addFeatures(newFeatures);
 
   const layer = new VectorLayer({
@@ -264,10 +261,8 @@ function collectFeaturesFromExtraFeatures(featureCollection: ExtraFeatures): OlF
   return features;
 }
 
-function setCustomFeaturesStyle(
-  olFeatures: OlFeature<OlGeometry>[],
-  projectionCode: string
-): OlFeature<OlGeometry>[] {
+function setCustomFeaturesStyle(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+
   let features: OlFeature<OlGeometry>[] = [];
   for (let index = 0; index < olFeatures.length; index++) {
     const feature: OlFeature<OlGeometry> = olFeatures[index];
@@ -280,7 +275,6 @@ function setCustomFeaturesStyle(
       offsetX: featureProperties?.offsetX,
       offsetY: featureProperties?.offsetY
     });
-
     feature.setStyle(
       new olStyle.Style({
           fill: fill,
