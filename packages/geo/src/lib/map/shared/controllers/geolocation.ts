@@ -357,7 +357,7 @@ export class MapGeolocationController extends MapController {
   }
 
   private deleteFeatureByType(type: GeolocationOverlayType) {
-    const featureById = this.geolocationOverlay.dataSource.ol.getFeatureById(type);
+    const featureById = this.geolocationOverlay?.dataSource.ol.getFeatureById(type);
     if (featureById) {
       this.geolocationOverlay.dataSource.ol.removeFeature(featureById);
     }
