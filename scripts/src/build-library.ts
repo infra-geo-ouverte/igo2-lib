@@ -6,13 +6,14 @@ import * as log from './utils/log';
 import { getDuration } from './utils/performance.utils';
 import { execWorkspaceCmd } from './utils/exec.utils';
 
-const baseCmdName = 'Watching all library';
+const baseCmdName = 'Build all library';
 
 (async () => {
   const startTime = performance.now();
   log.startMsg(baseCmdName);
 
   if (pathExist(PATHS.dist)) {
+    log.info('Deleting dist folder...');
     await rm(PATHS.dist, { recursive: true });
   }
 
@@ -22,7 +23,7 @@ const baseCmdName = 'Watching all library';
         await waitOnPackageRelations(dependsOn);
       }
 
-      await execWorkspaceCmd(name, 'Compilation complete', ['run', `watch`]);
+      await execWorkspaceCmd(name, 'Build at', ['run', 'build']);
 
       observer.next(true);
     }
@@ -31,5 +32,5 @@ const baseCmdName = 'Watching all library';
   await Promise.all(promises);
 
   const duration = getDuration(startTime);
-  log.info(`${baseCmdName} excuted in ${duration}`);
+  log.info(`${baseCmdName} in ${duration}`);
 })();

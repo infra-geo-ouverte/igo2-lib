@@ -15,17 +15,23 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
-  "peerDependencies": {
-    "@angular/common": "^16.2.0",
-    "@angular/core": "^16.2.0",
-    "@igo2/context": "1.15.4",
-    "@igo2/geo": "1.15.4",
-    "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.5.29",
-    "rxjs": "^7.8.0"
+  "scripts": {
+    "build": "ng build integration --configuration production",
+    "publish": "npm publish ../../dist/integration",
+    "test": "",
+    "watch": "ng build integration --watch"
   },
   "dependencies": {
     "tslib": "^2.6.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@igo2/context": "*",
+    "@igo2/geo": "*",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.29",
+    "rxjs": "^7.8.0"
   },
   "engines": {
     "node": ">=18.10.0"

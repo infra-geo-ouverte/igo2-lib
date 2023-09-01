@@ -16,19 +16,14 @@
     "target": "ES2022",
     "lib": ["ES2022", "dom"],
     "paths": {
-      "@igo2/utils": ["packages/utils/src/public_api"],
-      "@igo2/core": ["packages/core/src/public_api"],
-      "@igo2/common": ["packages/common/src/public_api"],
-      "@igo2/auth": ["packages/auth/src/public_api"],
-      "@igo2/geo": ["packages/geo/src/public_api"],
-      "@igo2/context": ["packages/context/src/public_api"],
-      "@igo2/integration": ["packages/integration/src/public_api"]
+      "@igo2/*": ["packages/*/src/public_api"]
     }
   },
   "exclude": ["dist", "scripts", "demo/e2e/**/*"],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,
+    "strictTemplates": false,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
   }

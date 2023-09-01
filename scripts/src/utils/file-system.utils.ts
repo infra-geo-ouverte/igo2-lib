@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import {
   copyFile as fsCopyFile,
   mkdir,
@@ -11,6 +11,11 @@ const BUFFER_ENCODING: BufferEncoding = 'utf-8';
 
 export async function readFileContent<T>(path: string): Promise<T> {
   const body = await readFile(path, BUFFER_ENCODING);
+  return JSON.parse(body) as T;
+}
+
+export function readFileContentSync<T>(path: string): T {
+  const body = readFileSync(path, BUFFER_ENCODING);
   return JSON.parse(body) as T;
 }
 

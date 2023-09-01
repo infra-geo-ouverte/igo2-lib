@@ -15,6 +15,13 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build geo --configuration production",
+    "postbuild": "ts-node ../../scripts/src/geo/postbuild-geo.ts",
+    "publish": "npm publish ../../dist/geo",
+    "test": "ng test geo --watch=false",
+    "watch": "ng build geo --watch"
+  },
   "exports": {
     "./style": {
       "sass": "./style/style.scss"
@@ -40,9 +47,9 @@
     "@angular/forms": "^16.2.0",
     "@angular/material": "^16.2.0",
     "@angular/platform-browser": "^16.2.0",
-    "@igo2/common": "^1.15.4",
-    "@igo2/core": "^1.15.4",
-    "@igo2/utils": "^1.15.4",
+    "@igo2/common": "*",
+    "@igo2/core": "*",
+    "@igo2/utils": "*",
     "@mat-datetimepicker/core": "~12.0.0",
     "file-saver": "^2.0.2",
     "flexsearch": "0.7.21",
@@ -56,6 +63,10 @@
     "proj4": "^2.9.0",
     "rxjs": "^7.8.0",
     "striptags": "^3.2.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.10.0"

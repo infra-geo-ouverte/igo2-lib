@@ -5,33 +5,39 @@ import {
   createFile,
   pathExist,
   readFileContent
-} from './utils/file-system.utils';
-
-const ROOT_FOLDER = 'packages';
+} from '../../utils/file-system.utils';
+import { PATHS } from '../../config/paths';
+import * as log from '../../utils/log';
+import { getDuration } from '../../utils/performance.utils';
 
 const LANGS: { key: string; definitions: { [key: string]: string } }[] = [
   { key: 'fr', definitions: {} },
   { key: 'en', definitions: {} }
 ];
 
-(async () => {
-  const directories = await readdir(ROOT_FOLDER);
+export const bundleLocalization = async () => {
+  const startTime = performance.now();
+  const directories = await readdir(PATHS.packages);
   for (const directory of directories) {
-    await handlePackage(directory);
+    await handleLocalePackage(directory);
   }
 
   for (const lang of LANGS) {
-    const destination = `dist/core/locale/`;
+    const destination = join(PATHS.dist, 'core', 'locale');
     await createFile(
       `${lang.key}.json`,
       destination,
       JSON.stringify(lang.definitions)
     );
+    log.success(`Built locale ${lang.key}.json file`);
   }
-})();
 
-async function handlePackage(directory: string) {
-  const directoryPath = `${ROOT_FOLDER}/${directory}/src/locale`;
+  const duration = getDuration(startTime);
+  log.info(`All locales built in ${duration}`);
+};
+
+async function handleLocalePackage(directory: string) {
+  const directoryPath = join(PATHS.packages, directory, 'src/locale');
   if (!pathExist(directoryPath)) {
     return;
   }

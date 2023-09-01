@@ -33,8 +33,13 @@
               "demo/src/locale",
               {
                 "glob": "**/*",
-                "input": "./dist/common/assets/",
+                "input": "./packages/common/src/assets/",
                 "output": "./assets/igo2/common/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./packages/geo/src/assets/",
+                "output": "./assets/igo2/geo/"
               },
               {
                 "glob": "**/*",
@@ -43,19 +48,16 @@
               },
               {
                 "glob": "**/*",
-                "input": "./dist/geo/assets/",
-                "output": "./assets/igo2/geo/"
-              },
-              {
-                "glob": "**/*",
                 "input": "./dist/core/locale/",
                 "output": "./locale/libs_locale",
                 "ignore": [
                   "**/*.core.json"
-              ]
+                ]
               }
             ],
-            "styles": ["demo/src/styles.scss"],
+            "styles": [
+              "demo/src/styles.scss"
+            ],
             "scripts": [],
             "allowedCommonJsDependencies": [
               "@turf",
@@ -151,7 +153,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["demo/src/**/*.ts", "demo/src/**/*.html"]
+            "lintFilePatterns": [
+              "demo/src/**/*.ts",
+              "demo/src/**/*.html"
+            ]
           }
         },
         "test": {
@@ -164,9 +169,14 @@
             ],
             "tsConfig": "demo/tsconfig.spec.json",
             "karmaConfig": "demo/karma.conf.js",
-            "styles": ["demo/src/styles.scss"],
+            "styles": [
+              "demo/src/styles.scss"
+            ],
             "scripts": [],
-            "assets": ["demo/src/favicon.ico", "demo/src/assets"],
+            "assets": [
+              "demo/src/favicon.ico",
+              "demo/src/assets"
+            ],
             "codeCoverage": true
           }
         },

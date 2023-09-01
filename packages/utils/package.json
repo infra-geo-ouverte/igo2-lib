@@ -15,6 +15,12 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build utils --configuration production",
+    "publish": "npm publish ../../dist/utils",
+    "test": "ng test utils --watch=false",
+    "watch": "ng build utils --watch"
+  },
   "dependencies": {
     "bowser": "^2.10.0",
     "tslib": "^2.6.0"

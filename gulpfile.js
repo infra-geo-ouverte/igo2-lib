@@ -6,19 +6,6 @@ const package = require('./package.json');
 const version = package.version;
 
 // ==========================================================
-
-gulp.task('prepublishOnly', done => {
-  gulp.src('./dist/auth/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/auth'));
-  gulp.src('./dist/common/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/common'));
-  gulp.src('./dist/context/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/context'));
-  gulp.src('./dist/core/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/core'));
-  gulp.src('./dist/geo/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/geo'));
-  gulp.src('./dist/integration/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/integration'));
-  gulp.src('./dist/utils/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/utils'));
-  done();
-});
-
-// ==========================================================
 gulp.task('bumpVersion-utils', done => {
   gulp
     .src('./packages/utils/package.json')

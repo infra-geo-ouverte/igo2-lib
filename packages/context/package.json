@@ -15,6 +15,15 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build context --configuration production",
+    "publish": "npm publish ../../dist/context",
+    "test": "ng test context --watch=false",
+    "watch": "ng build context --watch"
+  },
+  "dependencies": {
+    "tslib": "^2.6.0"
+  },
   "peerDependencies": {
     "@angular/animations": "^16.2.0",
     "@angular/common": "^16.2.0",
@@ -22,16 +31,13 @@
     "@angular/forms": "^16.2.0",
     "@angular/material": "^16.2.0",
     "@angular/platform-browser": "^16.2.0",
-    "@igo2/auth": "^1.15.4",
-    "@igo2/common": "^1.15.4",
-    "@igo2/core": "^1.15.4",
-    "@igo2/geo": "^1.15.4",
-    "@igo2/utils": "^1.15.4",
+    "@igo2/auth": "*",
+    "@igo2/common": "*",
+    "@igo2/core": "*",
+    "@igo2/geo": "*",
+    "@igo2/utils": "*",
     "ol": "^7.4.0",
     "rxjs": "^7.8.0"
-  },
-  "dependencies": {
-    "tslib": "^2.6.0"
   },
   "engines": {
     "node": ">=18.10.0"

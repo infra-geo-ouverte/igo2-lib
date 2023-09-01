@@ -10,8 +10,8 @@
     { "input": "src", "glob": "*.scss", "output": "", "ignore": ["*.import.scss"] },
     { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
     { "input": "src/assets", "glob": "**/*", "output": "assets" },
-    { "input": "src/style", "glob": "**/*.scss", "output": "style" },
-    { "input": "src/theming", "glob": "**/*.scss", "output": "theming" },
+    { "input": "src/style", "glob": "**/*.scss", "output": "src/style" },
+    { "input": "src/theming", "glob": "**/*.scss", "output": "src/theming" },
     { "input": "src/locale", "glob": "*", "output": "locale" }
   ]
 }

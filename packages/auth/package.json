@@ -15,6 +15,12 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build auth --configuration production",
+    "publish": "npm publish ../../dist/auth",
+    "test": "ng test auth --watch=false",
+    "watch": "ng build auth --watch"
+  },
   "dependencies": {
     "jwt-decode": "^2.2.0",
     "ts-cacheable": "^1.0.6",
@@ -30,9 +36,9 @@
     "@angular/router": "^16.2.0",
     "@azure/msal-angular": "^3.0.1",
     "@azure/msal-browser": "^3.0.1",
-    "@igo2/core": "^1.15.4",
-    "@igo2/utils": "^1.15.4",
-    "rxjs": "^7.5.6"
+    "@igo2/core": "*",
+    "@igo2/utils": "*",
+    "rxjs": "^7.8.0"
   },
   "engines": {
     "node": ">=18.10.0"

@@ -1,17 +1,27 @@
-import path, { join } from 'path';
+import { join } from 'path';
 import { copyFile, pathExist } from '../utils/file-system.utils';
 import { compileStyle } from '../utils/style.utils';
 import { readdir } from 'fs/promises';
 import { performance } from 'perf_hooks';
-import { printPerformance } from '../utils/performance.utils';
-import { PATHS } from '../paths';
+import { getDuration } from '../utils/performance.utils';
+import { resolveDist, resolvePackage } from '../config/paths';
+import { PackageName } from '../config/packages';
+import * as log from '../utils/log';
+import { bundleLocalization } from './utils/localization';
+import { copyAssets, copyExternalAssets } from './utils/assets';
+
+const packageName: PackageName = 'core';
+const distPath = resolveDist(packageName);
+const distStylePath = join(distPath, 'style');
+const packagePath = resolvePackage(packageName);
+const srcPath = join(packagePath, 'src');
+const baseCmdName = `Postbuild @igo2/${packageName}`;
 
 (async () => {
   const startTime = performance.now();
+  log.startMsg(baseCmdName);
 
-  copyProdImportationFile();
-
-  copyExternalAssets();
+  await copyProdImportationFile();
 
   await prebuiltThemes();
 
@@ -19,7 +29,13 @@ import { PATHS } from '../paths';
 
   await compileAllBaseStyle();
 
-  printPerformance('Postbuild excuted in', startTime);
+  await bundleLocalization();
+
+  await copyExternalAssets();
+  await copyAssets();
+
+  const duration = getDuration(startTime);
+  log.info(`${baseCmdName} excuted in ${duration}`);
 })();
 
 /**
@@ -29,8 +45,8 @@ import { PATHS } from '../paths';
 async function copyProdImportationFile(): Promise<void> {
   const startTime = performance.now();
 
-  const importationFile = join(PATHS.distCore, 'packages.import.scss');
-  const prodImport = join(PATHS.coreSrc, 'packages-prod.import.scss');
+  const importationFile = join(distPath, 'packages.import.scss');
+  const prodImport = join(srcPath, 'packages-prod.import.scss');
 
   if (pathExist(importationFile)) {
     return;
@@ -39,39 +55,34 @@ async function copyProdImportationFile(): Promise<void> {
   // Replace the theme-import file by theme-import.prod
   await copyFile(prodImport, importationFile);
 
-  printPerformance('Provide packages style importation for production in', startTime);
-}
-
-async function copyExternalAssets(): Promise<void> {
-  const startTime = performance.now();
-  const input = 'node_modules/@mdi/angular-material/mdi.svg';
-  const output = path.join(PATHS.distCore, 'assets/icons/mdi.svg');
-
-  await copyFile(input, output);
-
-  printPerformance('Copy external asset in', startTime);
+  const duration = getDuration(startTime);
+  log.success(
+    `✔ Provide packages style importation for production in ${duration}`
+  );
 }
 
 async function compileBaseStyle(): Promise<void> {
   const startTime = performance.now();
-  const input = path.join(PATHS.coreSrc, '/style/style.scss');
-  await compileStyle(input, PATHS.distCoreStyle, 'style.css');
+  const input = join(srcPath, '/style/style.scss');
+  await compileStyle(input, distStylePath, 'style.css');
 
-  printPerformance('Compile base style in', startTime);
+  const duration = getDuration(startTime);
+  log.success(`✔ Compile base style in ${duration}`);
 }
 
 async function compileAllBaseStyle(): Promise<void> {
   const startTime = performance.now();
-  const input = path.join(PATHS.coreSrc, '/style/all-style.scss');
-  await compileStyle(input, PATHS.distCoreStyle, 'all-style.css');
+  const input = join(srcPath, '/style/all-style.scss');
+  await compileStyle(input, distStylePath, 'all-style.css');
 
-  printPerformance('Compile all base style in', startTime);
+  const duration = getDuration(startTime);
+  log.success(`✔ Compile all base style in ${duration}`);
 }
 
 async function prebuiltThemes(): Promise<void> {
   const startTime = performance.now();
-  const destination = path.join(PATHS.distCore, '/theming/prebuilt-themes');
-  const themeFolder = path.join(PATHS.coreSrc, '/theming/prebuilt-themes');
+  const destination = join(distPath, '/theming/prebuilt-themes');
+  const themeFolder = join(srcPath, '/theming/prebuilt-themes');
 
   const files = await readdir(themeFolder);
   const themeFiles = files.filter((filePath) =>
@@ -82,8 +93,11 @@ async function prebuiltThemes(): Promise<void> {
     const input = `${themeFolder}/${theme}`;
     const fileName = theme.replace('scss', 'css');
     await compileStyle(input, destination, fileName);
-    printPerformance(`Prebuilt ${theme} in`, startBuiltTime);
+
+    const duration = getDuration(startBuiltTime);
+    log.success(`✔ Prebuilt ${theme} in ${duration}`);
   }
 
-  printPerformance('Prebuilt all themes in', startTime);
+  const duration = getDuration(startTime);
+  log.info(`Prebuilt all themes in ${duration}`);
 }

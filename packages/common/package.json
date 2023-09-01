@@ -15,6 +15,13 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build common --configuration production",
+    "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
+    "publish": "npm publish ../../dist/common",
+    "test": "ng test common --watch=false",
+    "watch": "ng build common --watch"
+  },
   "exports": {
     "./style": {
       "style": "./style/style.css"
@@ -23,19 +30,23 @@
       "sass": "./common-theme.scss"
     }
   },
+  "dependencies": {
+    "tslib": "^2.6.0"
+  },
   "peerDependencies": {
     "@angular/common": "^16.2.0",
     "@angular/core": "^16.2.0",
     "@angular/material": "^16.2.0",
     "@angular/platform-browser": "^16.2.0",
-    "@igo2/core": "^1.15.4",
-    "@igo2/utils": "^1.15.4",
+    "@igo2/core": "*",
+    "@igo2/utils": "*",
     "angular-shepherd": "16.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "typy": "^3.3.0"
   },
-  "dependencies": {
-    "tslib": "^2.6.0"
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.10.0"
