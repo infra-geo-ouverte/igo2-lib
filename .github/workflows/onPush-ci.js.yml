@@ -29,6 +29,6 @@ jobs:
     - run: npm ci
     - run: npm run circular-deps.check
     - run: npm run lint
-    - run: npm run build.libs --if-present
+    - run: npm run build.libs
     - run: npm run e2e
     - run: npm run test

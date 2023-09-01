@@ -13,7 +13,7 @@ export function execCmd(
   args: string[]
 ): Promise<void> {
   return new Promise((resolve) => {
-    const cmd = spawn('npm.cmd', [...args], {
+    const cmd = spawn(process.platform === 'linux' ? 'npm' : 'npm.cmd', [...args], {
       stdio: ['inherit', 'pipe', 'inherit']
     });
 
@@ -21,7 +21,6 @@ export function execCmd(
       const msg = data.toString();
       if (msg.includes(endsPattern)) {
         resolve();
-        return;
       }
       console.log(msg);
     });
