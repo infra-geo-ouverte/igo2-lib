@@ -220,7 +220,7 @@ export class EntityStateManager<
    * @returns Set of keys
    */
   private getAllKeys(): Set<EntityKey> {
-    const storeKeys = Array.from(this.options?.index.keys() ?? []);
+    const storeKeys = Array.from(this.options?.index?.keys() ?? []);
     return new Set(Array.from(this.index.keys()).concat(storeKeys));
   }
 
