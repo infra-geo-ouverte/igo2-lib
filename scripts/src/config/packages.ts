@@ -26,7 +26,7 @@ function getPackagesRelations(): Map<PackageName, PackageOptions> {
     if (!folder) {
       continue;
     }
-    const file = getPackageJson(folder);
+    const file = getPackageJson('packages', folder);
     const igoDependencies = Object.keys({...file.peerDependencies, ...file.dependencies})
       .filter((key) => key.includes('@igo2'))
       .map((key) => key.split('/')[1]) as PackageName[];
