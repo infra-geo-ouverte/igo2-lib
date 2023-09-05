@@ -1,36 +1,42 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-baselayers-switcher-container {
-  height: auto;
-  position: relative;
-}
-
-.container-expand {
-  overflow: hidden;
-  border-width: 0;
-}
-
-.more-baselayers {
-  width: 80px;
-  height: 20px;
-  background-color: white;
-  text-align: center;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #efefef;
+:host {
+  @include common-utils.square-button();
+  
+  .igo-baselayers-switcher-container {
+    height: auto;
+    position: relative;
   }
-}
-
-.igo-baselayers-switcher-button-container {
-  width: $igo-icon-size;
-  background-color: #fff;
-  &:hover {
-    background-color: #efefef;
+  
+  .container-expand {
+    overflow: hidden;
+    border-width: 0;
   }
-}
-
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
+  
+  .more-baselayers {
+    width: 80px;
+    height: 20px;
+    background-color: white;
+    text-align: center;
+    cursor: pointer;
+  
+    &:hover {
+      background-color: #efefef;
+    }
+  }
+  
+  .igo-baselayers-switcher-button-container {
+    width: $igo-icon-size;
+    background-color: #fff;
+    &:hover {
+      background-color: #efefef;
+    }
+  }
+  
+  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+  button,
+  :host ::ng-deep button .mat-button-ripple-round {
+    border-radius: 0;
+  }
 }

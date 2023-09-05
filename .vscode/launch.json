@@ -8,9 +8,10 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Demo",
-            "url": "http://localhost:4200/",
+            "url": "http://127.0.0.1:4200/",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "npm: start"
+            "preLaunchTask": "npm: start",
+            "sourceMaps": true,
         },
     ]
 }

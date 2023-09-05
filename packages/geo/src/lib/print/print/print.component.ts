@@ -120,12 +120,10 @@ export class PrintComponent {
 
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
-      const resolution = +data.resolution;
-
       this.printService
         .downloadMapImage(
           this.map,
-          resolution,
+          data.resolution,
           data.imageFormat,
           data.showProjection,
           data.showScale,

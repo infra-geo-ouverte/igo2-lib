@@ -1,6 +1,7 @@
 <form class="igo-form" [formGroup]="form">
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.title' | translate}}</mat-label>
       <input
         matInput
         formControlName="title"
@@ -12,6 +13,7 @@
   </div>
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.subtitle' | translate}}</mat-label>
       <input
         matInput
         formControlName="subtitle"
@@ -23,6 +25,7 @@
   </div>
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.comment' | translate}}</mat-label>
       <input
         matInput
         formControlName="comment"
@@ -33,24 +36,21 @@
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container">
-    <div class="print-slide-toggle-container mat-typography">
+  <div class="igo-input-container slide-toggle-container">
+    <div class="print-slide-toggle-container">
       <mat-slide-toggle
         class="print-option"
-        formControlName="showProjection"
-        [labelPosition]="'before'">
+        formControlName="showProjection">
         {{'igo.geo.printForm.showProjection' | translate}}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
-        formControlName="showScale"
-        [labelPosition]="'before'">
+        formControlName="showScale">
         {{'igo.geo.printForm.showScale' | translate}}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
         formControlName="doZipFile"
-        [labelPosition]="'before'"
         [style.display]="isPrintService ? 'none' : ''">
         {{'igo.geo.printForm.doZipFile' | translate}}
       </mat-slide-toggle>
@@ -59,6 +59,7 @@
 
   <div class="igo-input-container" [ngStyle]="{'margin-bottom.px': legendPositionField.errors?.legendHeightError ? '40': '0'}">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.legendPosition' | translate}}</mat-label>
       <mat-select
         formControlName="legendPosition"
         placeholder="{{'igo.geo.printForm.legendPosition' | translate}}">
@@ -86,6 +87,7 @@
 
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.outputFormat' | translate}}</mat-label>
       <mat-select (selectionChange)="toggleImageSaveProp(); resetLegendError();"
         formControlName="outputFormat"
         placeholder="{{'igo.geo.printForm.outputFormat' | translate}}">
@@ -98,6 +100,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.paperFormat' | translate}}</mat-label>
       <mat-select (selectionChange)="changeCommentLength(); resetLegendError();"
         formControlName="paperFormat"
         placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
@@ -110,6 +113,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'none' : 'block'">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.imageFormat' | translate}}</mat-label>
       <mat-select (selectionChange)="resetLegendError()"
         formControlName="imageFormat"
         placeholder="{{'igo.geo.printForm.imageFormat' | translate}}">
@@ -120,8 +124,9 @@
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container" style="display: none;">
+  <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.resolution' | translate}}</mat-label>
       <mat-select
         formControlName="resolution"
         placeholder="{{'igo.geo.printForm.resolution' | translate}}">
@@ -134,6 +139,7 @@
 
   <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-form-field>
+      <mat-label>{{'igo.geo.printForm.orientation' | translate}}</mat-label>
       <mat-select (selectionChange)="changeCommentLength(); resetLegendError();"
         formControlName="orientation"
         placeholder="{{'igo.geo.printForm.orientation' | translate}}">

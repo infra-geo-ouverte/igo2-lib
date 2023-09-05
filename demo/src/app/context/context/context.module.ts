@@ -1,7 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { HttpClientJsonpModule } from '@angular/common/http';
 import { IgoPanelModule } from '@igo2/common';
 import {
@@ -12,19 +9,18 @@ import {
   IgoQueryModule,
   IgoFeatureModule
 } from '@igo2/geo';
-import { IgoContextManagerModule } from '@igo2/context';
+import { IgoContextModule } from '@igo2/context';
 
 import { AppContextComponent } from './context.component';
 import { AppContextRoutingModule } from './context-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppContextComponent],
   imports: [
     HttpClientJsonpModule,
     AppContextRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
+    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoLayerModule,
@@ -32,7 +28,7 @@ import { AppContextRoutingModule } from './context-routing.module';
     IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
-    IgoContextManagerModule
+    IgoContextModule
   ],
   exports: [AppContextComponent]
 })

@@ -83,18 +83,15 @@
   <br>
   <div *ngIf="!isRange && style === 'slider' && type === 'year'" class="igo-col igo-col-100 igo-col-100-m mat-typography">
     <span>{{startYear}}</span>
+    <!-- TODO: The 'tickInterval' property no longer exists -->
     <mat-slider
         id="time-slider"
-        tickInterval="auto"
         step="{{step}}"
         [min]="startYear"
         [max]="endYear"
-        [value]="handleSliderValue()"
         [color]="color"
         thumbLabel
-        (input)="handleSliderYearChange($event)"
-        (change)="handleSliderYearChange($event)"
-        [disabled]= "!options.enabled || !layer.visible">
+        [disabled]= "!options.enabled || !layer.visible" #ngSlider><input matSliderThumb [value]="handleSliderValue()" (input)="handleSliderYearChange({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" (change)="handleSliderYearChange({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" />
     </mat-slider>
     <span>{{endYear}}</span>
     <p *ngIf= "options.enabled" class="date-below">{{year}}</p>
@@ -113,16 +110,14 @@
   </div>
 
 <div *ngIf="style === 'slider' && type !== 'year'" class="igo-col igo-col-100 igo-col-100-m">
+  <!-- TODO: The 'tickInterval' property no longer exists -->
   <mat-slider
       id="time-slider"
-      tickInterval="auto"
       step="{{step}}"
       [min]="dateToNumber(min)"
       [max]="dateToNumber(max)"
-      [value]="handleSliderValue()"
       thumbLabel
-      (input)="handleSliderDateChange($event)"
-      (selectionChange)="handleSliderDateChange($event)">
+      (selectionChange)="handleSliderDateChange($event)" #ngSlider><input matSliderThumb [value]="handleSliderValue()" (input)="handleSliderDateChange({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" />
   </mat-slider>
   <p class="date-below">{{handleSliderTooltip()}}</p>
   <button mat-icon-button color="primary" (click)="playFilter($event)">

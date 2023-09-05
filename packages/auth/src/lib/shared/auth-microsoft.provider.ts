@@ -18,11 +18,10 @@ import { AuthMicrosoftOptions, MSPMsalGuardConfiguration } from './auth.interfac
 import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
 
 export function MSALConfigFactory(config: ConfigService): PublicClientApplication {
+  const msConf: BrowserAuthOptions | null = config.getConfig('auth.microsoft');
 
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoft') || {};
-
-  msConf.redirectUri = msConf.redirectUri || window.location.href;
-  msConf.authority = msConf.authority || 'https://login.microsoftonline.com/organizations';
+  msConf.redirectUri = msConf?.redirectUri || window.location.href;
+  msConf.authority = msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
   const myMsalObj = new PublicClientApplication({
     auth: msConf,
@@ -35,10 +34,9 @@ export function MSALConfigFactory(config: ConfigService): PublicClientApplicatio
 }
 
 export function MSALConfigFactoryb2c(config: ConfigService): PublicClientApplication {
-
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoftb2c.browserAuthOptions') || {};
-  msConf.redirectUri = msConf.redirectUri || window.location.href;
-  msConf.authority = msConf.authority || 'https://login.microsoftonline.com/organizations';
+  const msConf: BrowserAuthOptions | null = config.getConfig('auth.microsoftb2c.browserAuthOptions');
+  msConf.redirectUri = msConf?.redirectUri || window.location.href;
+  msConf.authority = msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
   const myMsalObj = new PublicClientApplication({
     auth: msConf,
@@ -51,8 +49,7 @@ export function MSALConfigFactoryb2c(config: ConfigService): PublicClientApplica
 }
 
 export function MSALAngularConfigFactory(config: ConfigService): MSPMsalGuardConfiguration {
-
-  const msConf: AuthMicrosoftOptions = config.getConfig('auth.microsoft') || {};
+  const msConf: AuthMicrosoftOptions = config.getConfig('auth.microsoft');
 
   return {
     interactionType: InteractionType.Popup,
@@ -65,13 +62,12 @@ export function MSALAngularConfigFactory(config: ConfigService): MSPMsalGuardCon
 }
 
 export function MSALAngularConfigFactoryb2c(config: ConfigService): MSPMsalGuardConfiguration {
-
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoftb2c.browserAuthOptions') || {};
+  const msConf: BrowserAuthOptions | null = config.getConfig('auth.microsoftb2c.browserAuthOptions');
 
   return {
     interactionType: InteractionType.Popup,
     authRequest: {
-      scopes: [msConf.clientId]
+      scopes: [msConf?.clientId]
     },
     type: 'b2c'
   };

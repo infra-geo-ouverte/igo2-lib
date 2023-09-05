@@ -279,7 +279,7 @@
         "colorPicker": "Click to open the color selector",
         "cancel": "Cancel",
         "fill": "Fill",
-        "stroke": "Stroke",    
+        "stroke": "Stroke",
         "fontSize": "Font size",
         "fontStyle": "Font style",
         "offsetX": "Horizontal offset",
@@ -509,7 +509,8 @@
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
             "restArea": "Rest area",
-            "cycleStop": "Cycle stop"
+            "cycleStop": "Cycle stop",
+            "cultpatri":"Culture and heritage"
           },
           "restrictExtent": {
             "map": "Map extent",

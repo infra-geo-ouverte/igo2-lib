@@ -320,7 +320,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         if(this.stores.length > 0) {
           this.stores.map((store) => {
             store.state.updateAll({selected: false});
-            (store?.layer).visible = false;
+            if (store?.layer) {
+              store.layer.visible = false;
+            }
             return store;
           });
         }

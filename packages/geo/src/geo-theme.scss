@@ -1,0 +1,21 @@
+@use './lib/directions/directions.theming.scss' as directions-theme;
+@use './lib/draw/draw.theming.scss' as draw-theme;
+@use './lib/feature/feature.theming.scss' as feature-theme;
+@use './lib/filter/filter.theming.scss' as filter-theme;
+@use './lib/layer/layer.theming.scss' as layer-theme;
+@use './lib/map/map.theming.scss' as map-theme;
+@use './lib/measure/measure.theming.scss' as measure-theme;
+@use './lib/search/search.theming.scss' as search;
+@use './lib/workspace/workspace.theming.scss' as workspace-theme;
+
+@mixin geo-component-themes($theme) {
+  @include directions-theme.igo-directions-theming($theme);
+  @include draw-theme.igo-draw-theming($theme);
+  @include feature-theme.igo-feature-theming($theme);
+  @include filter-theme.igo-filter-theming($theme);
+  @include layer-theme.igo-layer-theming($theme);
+  @include map-theme.igo-map-theming($theme);
+  @include measure-theme.igo-measure-theming($theme);
+  @include search.theme($theme);
+  @include workspace-theme.igo-workspace-theming($theme);
+}

@@ -1,148 +1,11 @@
-/*jshint esversion: 6 */
 const gulp = require('gulp');
-const del = require('del');
-const exec = require('gulp-exec');
-const merge = require('gulp-merge-json');
-wait = require('gulp-wait')
 const jeditor = require('gulp-json-editor');
 const replace = require('gulp-replace');
-const concat = require('gulp-concat');
 
 const package = require('./package.json');
 const version = package.version;
 
-gulp.task('core:clean', done => {
-  return del([
-    'dist/core/assets/**/*',
-    'dist/core/style/**/*',
-    'dist/core/locale/**/*'
-  ]);
-});
-
-gulp.task('common:clean', done => {
-  return del(['dist/common/assets/**/*', 'dist/common/style/**/*']);
-});
-
-gulp.task('auth:clean', done => {
-  return del(['dist/auth/assets/**/*', 'dist/auth/style/**/*']);
-});
-
-gulp.task('geo:clean', done => {
-  return del(['dist/geo/assets/**/*', 'dist/geo/style/**/*']);
-});
-
 // ==========================================================
-
-gulp.task('core:copyIcons', done => {
-  gulp
-    .src('./node_modules/@mdi/angular-material/mdi.svg')
-    .pipe(gulp.dest('./dist/core/assets/icons'));
-
-  done();
-});
-
-gulp.task('core:copyAssets', done => {
-  gulp
-    .src('./packages/core/src/assets/**/*', {
-      base: './packages/core/src/assets/'
-    })
-    .pipe(gulp.dest('./dist/core/assets'));
-
-  done();
-});
-
-gulp.task('common:copyAssets', done => {
-  gulp
-    .src('./packages/common/src/assets/**/*', {
-      base: './packages/common/src/assets/',
-      allowEmpty: true
-    })
-    .pipe(gulp.dest('./dist/common/assets'));
-
-  done();
-});
-
-gulp.task('auth:copyAssets', done => {
-  gulp
-    .src('./packages/auth/src/assets/**/*', {
-      base: './packages/auth/src/assets/',
-      allowEmpty: true
-    })
-    .pipe(gulp.dest('./dist/auth/assets'));
-
-  done();
-});
-
-gulp.task('geo:copyAssets', done => {
-  gulp
-    .src('./packages/geo/src/assets/**/*', {
-      base: './packages/geo/src/assets/'
-    })
-    .pipe(gulp.dest('./dist/geo/assets'));
-
-  done();
-});
-
-gulp.task('geo:copyNGCC', done => {
-  gulp
-    .src('./packages/geo/ngcc.config.js', {
-      base: './packages/geo/'
-    })
-    .pipe(gulp.dest('./dist/geo'));
-
-  done();
-});
-
-gulp.task('context:copyNGCC', done => {
-  gulp
-    .src('./packages/context/ngcc.config.js', {
-      base: './packages/context/'
-    })
-    .pipe(gulp.dest('./dist/context'));
-
-  done();
-});
-
-gulp.task('integration:copyNGCC', done => {
-  gulp
-    .src('./packages/integration/ngcc.config.js', {
-      base: './packages/integration/'
-    })
-    .pipe(gulp.dest('./dist/integration'));
-
-  done();
-});
-
-// ==========================================================
-
-gulp.task('core:copyStyles', done => {
-  gulp
-    .src('./packages/core/src/style/**/*')
-    .pipe(gulp.dest('./dist/core/style'));
-
-  done();
-});
-
-gulp.task('common:copyStyles', done => {
-  gulp
-    .src('./packages/common/src/style/**/*')
-    .pipe(gulp.dest('./dist/common/style'));
-
-  done();
-});
-
-gulp.task('auth:copyStyles', done => {
-  gulp
-    .src('./packages/auth/src/style/**/*')
-    .pipe(gulp.dest('./dist/auth/style'));
-
-  done();
-});
-
-gulp.task('geo:copyStyles', done => {
-  gulp.src('./packages/geo/src/style/**/*').pipe(gulp.dest('./dist/geo/style'));
-  done();
-});
 
 gulp.task('prepublishOnly', done => {
   gulp.src('./dist/auth/package.json').pipe(replace(/.*prepublishOnly[^\n]*/g, '')).pipe(gulp.dest('./dist/auth'));
@@ -156,190 +19,7 @@ gulp.task('prepublishOnly', done => {
 });
 
 // ==========================================================
-
-// https://github.com/stylus/stylus/pull/2538
-gulp.task('libs:fixUseAngularMaterialCDK', done => {
-  gulp.src(['./node_modules/@angular/material/core/focus-indicators/_private.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/focus-indicators/'));
-  gulp.src(['./node_modules/@angular/material/core/style/_menu-common.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/style/'));
-  gulp.src(['./node_modules/@angular/material/core/_core.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/'));
-  gulp.src(['./node_modules/@angular/material/core/ripple/_ripple.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/core/ripple'));
-  gulp.src(['./node_modules/@angular/material/badge/_badge-theme.scss']).pipe(replace(`@use '@angular/cdk';`, `@use './node_modules/@angular/cdk/_index.scss' as cdk;`)).pipe(gulp.dest('./node_modules/@angular/material/badge'));
-
-  done();
-});
-
-
-
-gulp.task('core:concatStyles', done => {
-  gulp
-    .src([
-      './packages/core/src/style/setup.scss',
-      './packages/core/src/style/typography.scss',
-      './packages/core/src/style/all.theming.scss',
-      './packages/core/src/style/foreground.scss',
-      './packages/core/src/style/theming.scss',
-      './packages/core/src/style/core.theming.scss',
-      './packages/core/src/lib/message/message.theming.scss',
-      './packages/common/src/style/common.theming.scss',
-      './packages/common/src/lib/action/action.theming.scss',
-      './packages/common/src/lib/action/actionbar/actionbar.theming.scss',
-      './packages/common/src/lib/collapsible/collapsible.theming.scss',
-      './packages/common/src/lib/entity/entity.theming.scss',
-      './packages/common/src/lib/entity/entity-table/entity-table.theming.scss',
-      './packages/common/src/lib/home-button/home-button.theming.scss',
-      './packages/common/src/lib/list/list.theming.scss',
-      './packages/common/src/lib/panel/panel.theming.scss',
-      './packages/common/src/lib/tool/tool.theming.scss',
-      './packages/common/src/lib/tool/toolbox/toolbox.theming.scss',
-      './packages/common/src/lib/interactive-tour/interactive-tour.theming.scss',
-      './packages/geo/src/style/geo.theming.scss',
-      './packages/geo/src/lib/directions/directions.theming.scss',
-      './packages/geo/src/lib/directions/directions-results/directions-results.theming.scss',
-      './packages/geo/src/lib/draw/drawingTool.theming.scss',
-      './packages/geo/src/lib/draw/draw/draw.theming.scss',
-      './packages/geo/src/lib/feature/feature.theming.scss',
-      './packages/geo/src/lib/feature/feature-details/feature-details.theming.scss',
-      './packages/geo/src/lib/filter/filter.theming.scss',
-      './packages/geo/src/lib/filter/ogc-filter-selection/ogc-filter-selection.theming.scss',
-      './packages/geo/src/lib/filter/ogc-filter-time/ogc-filter-time-slider.theming.scss',
-      './packages/geo/src/lib/filter/time-filter-form/time-filter-form.theming.scss',
-      './packages/geo/src/lib/layer/layer.theming.scss',
-      './packages/geo/src/lib/layer/layer-legend/layer-legend.theming.scss',
-      './packages/geo/src/lib/map/map.theming.scss',
-      './packages/geo/src/lib/map/map-browser/map-browser.theming.scss',
-      './packages/geo/src/lib/map/zoom-button/zoom-button.theming.scss',
-      './packages/geo/src/lib/map/menu-button/menu-button.theming.scss',
-      './packages/geo/src/lib/measure/measure.theming.scss',
-      './packages/geo/src/lib/measure/measurer/measurer.theming.scss',
-      './packages/geo/src/lib/workspace/workspace.theming.scss',
-      './packages/geo/src/lib/workspace/confirmation-popup/confirmation-popup.theming.scss',
-      './packages/core/src/style/themes/blue.theme.scss',
-      './packages/core/src/style/themes/bluedark.theme.scss',
-      './packages/core/src/style/themes/bluedq.theme.scss',
-      './packages/core/src/style/themes/bluegrey.theme.scss',
-      './packages/core/src/style/themes/deeppurple.theme.scss',
-      './packages/core/src/style/themes/indigo.theme.scss',
-      './packages/core/src/style/themes/orange.theme.scss',
-      './packages/core/src/style/themes/dark.theme.scss',
-      './packages/core/src/style/themes/teal.theme.scss',
-      './packages/core/src/style/themes/qcca.theme.scss'
-    ])
-    .pipe(concat('index.theming.scss'))
-    .pipe(gulp.dest('./packages/core/src/style'), { overwrite: true })
-    .pipe(exec(
-      'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/index.theming.scss -o ./dist/core/style/index.theming.scss'
-    ))
-    .pipe(wait(500)).on('end', function() {
-      del(['packages/core/src/style/index.theming.scss'], { force: true });
-    })
-
-  done();
-});
-
-
-// ==========================================================
-
-gulp.task('core:copyLocale', done => {
-  gulp
-    .src('./packages/core/src/locale/*')
-    .pipe(gulp.dest('./dist/core/locale'));
-  done();
-});
-
-gulp.task('common:copyLocale', done => {
-  gulp
-    .src('./packages/common/src/locale/*')
-    .pipe(gulp.dest('./dist/core/locale'));
-  done();
-});
-
-gulp.task('auth:copyLocale', done => {
-  gulp
-    .src('./packages/auth/src/locale/*')
-    .pipe(gulp.dest('./dist/core/locale'));
-  done();
-});
-
-gulp.task('geo:copyLocale', done => {
-  gulp.src('./packages/geo/src/locale/*').pipe(gulp.dest('./dist/core/locale'));
-  done();
-});
-
-gulp.task('context:copyLocale', done => {
-  gulp
-    .src('./packages/context/src/locale/*')
-    .pipe(gulp.dest('./dist/core/locale'));
-
-  done();
-});
-
-gulp.task('integration:copyLocale', done => {
-  gulp
-    .src('./packages/integration/src/locale/*')
-    .pipe(gulp.dest('./dist/core/locale'));
-
-  done();
-});
-
-gulp.task('core:bundleLocale.fr', done => {
-  gulp
-    .src('./dist/core/locale/fr.*.json')
-    .pipe(
-      merge({
-        fileName: 'fr.json'
-      })
-    )
-    .pipe(gulp.dest('./dist/core/locale'));
-
-  done();
-});
-
-gulp.task('core:bundleLocale.en', done => {
-  gulp
-    .src('./dist/core/locale/en.*.json')
-    .pipe(
-      merge({
-        fileName: 'en.json'
-      })
-    )
-    .pipe(gulp.dest('./dist/core/locale'));
-
-  done();
-});
-
-gulp.task('core:copyBundleLocale', done => {
-  gulp
-    .src('./dist/core/locale/*')
-    .pipe(gulp.dest('./dist/core/__ivy_ngcc__/locale'));
-
-  done();
-});
-
-gulp.task('copyBundleLocaleToDemo', done => {
-  gulp
-    .src('./dist/core/locale/@(fr|en).json', { "allowEmpty": true })
-    .pipe(gulp.dest('./demo/src/locale/libs_locale'));
-
-  done(); //
-}); //
-
-gulp.task('sleep', done => {
-  setTimeout(() => done(), 1000);
-});
-
-gulp.task(
-  'core:bundleLocale',
-  gulp.series(
-    gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
-    'sleep',
-    'core:copyBundleLocale',
-    'copyBundleLocaleToDemo'
-  )
-);
-
-// ==========================================================
-
-gulp.task('utils:bumpVersion', done => {
+gulp.task('bumpVersion-utils', done => {
   gulp
     .src('./packages/utils/package.json')
     .pipe(
@@ -352,7 +32,7 @@ gulp.task('utils:bumpVersion', done => {
   done();
 });
 
-gulp.task('core:bumpVersion', done => {
+gulp.task('bumpVersion-core', done => {
   gulp
     .src('./packages/core/package.json')
     .pipe(
@@ -374,7 +54,7 @@ gulp.task('core:bumpVersion', done => {
   done();
 });
 
-gulp.task('common:bumpVersion', done => {
+gulp.task('bumpVersion-common', done => {
   gulp
     .src('./packages/common/package.json')
     .pipe(
@@ -391,7 +71,7 @@ gulp.task('common:bumpVersion', done => {
   done();
 });
 
-gulp.task('auth:bumpVersion', done => {
+gulp.task('bumpVersion-auth', done => {
   gulp
     .src('./packages/auth/package.json')
     .pipe(
@@ -408,7 +88,7 @@ gulp.task('auth:bumpVersion', done => {
   done();
 });
 
-gulp.task('geo:bumpVersion', done => {
+gulp.task('bumpVersion-geo', done => {
   gulp
     .src('./packages/geo/package.json')
     .pipe(
@@ -426,7 +106,7 @@ gulp.task('geo:bumpVersion', done => {
   done();
 });
 
-gulp.task('context:bumpVersion', done => {
+gulp.task('bumpVersion-context', done => {
   gulp
     .src('./packages/context/package.json')
     .pipe(
@@ -446,7 +126,7 @@ gulp.task('context:bumpVersion', done => {
   done();
 });
 
-gulp.task('integration:bumpVersion', done => {
+gulp.task('bumpVersion-integration', done => {
   gulp
     .src('./packages/integration/package.json')
     .pipe(
@@ -466,111 +146,12 @@ gulp.task('integration:bumpVersion', done => {
 gulp.task(
   'bumpVersion',
   gulp.parallel([
-    'utils:bumpVersion',
-    'core:bumpVersion',
-    'common:bumpVersion',
-    'auth:bumpVersion',
-    'geo:bumpVersion',
-    'context:bumpVersion',
-    'integration:bumpVersion'
+    'bumpVersion-utils',
+    'bumpVersion-core',
+    'bumpVersion-common',
+    'bumpVersion-auth',
+    'bumpVersion-geo',
+    'bumpVersion-context',
+    'bumpVersion-integration'
   ])
-);
-
-// ==========================================================
-
-// https://github.com/stylus/stylus/pull/2538
-gulp.task('libs:fixStylus', done => {
-  gulp
-    .src(['./node_modules/stylus/lib/nodes/index.js'])
-    .pipe(
-      replace(
-        `/**
- * Constructors
- */`,
-        `exports.lineno = null;
-exports.column = null;
-exports.filename = null;`
-      )
-    )
-    .pipe(gulp.dest('./node_modules/stylus/lib/nodes/'));
-
-  done();
-});
-
-
-gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixUseAngularMaterialCDK']));
-
-// ==========================================================
-
-gulp.task(
-  'core',
-  gulp.series(
-    'core:clean',
-    gulp.parallel(['core:copyAssets', 'core:copyStyles', 'core:copyLocale']),
-    'core:concatStyles',
-    gulp.parallel(['core:copyIcons']),
-    'core:bundleLocale'
-  )
-);
-
-gulp.task(
-  'common',
-  gulp.series(
-    'common:clean',
-    gulp.parallel([
-      'common:copyAssets',
-      'common:copyStyles',
-      'common:copyLocale'
-    ]),
-    'core:bundleLocale',
-    'core:concatStyles'
-  )
-);
-
-gulp.task(
-  'auth',
-  gulp.series(
-    'auth:clean',
-    gulp.parallel(['auth:copyAssets', 'auth:copyStyles', 'auth:copyLocale']),
-    'core:bundleLocale',
-    'core:concatStyles'
-  )
-);
-
-gulp.task(
-  'geo',
-  gulp.series(
-    'geo:clean',
-    gulp.parallel([
-      'geo:copyAssets',
-      'geo:copyStyles',
-      'geo:copyLocale',
-      'geo:copyNGCC'
-    ]),
-    'core:bundleLocale',
-    'core:concatStyles'
-  )
-);
-
-gulp.task(
-  'context',
-  gulp.series(
-    gulp.parallel(['context:copyLocale', 'context:copyNGCC']),
-    'core:bundleLocale',
-    'core:concatStyles'
-  )
-);
-
-gulp.task(
-  'integration',
-  gulp.series(
-    gulp.parallel(['integration:copyLocale', 'integration:copyNGCC']),
-    'core:bundleLocale',
-    'core:concatStyles'
-  )
-);
-
-gulp.task(
-  'default',
-  gulp.series(['core', 'common', 'auth', 'geo', 'context', 'integration'])
 );
