@@ -24,12 +24,14 @@
     <mat-slide-toggle
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
       (change)="onToggleDrawControl($event.checked)">
-      {{'igo.geo.spatialFilter.drawControl' | translate}}
+      {{'igo.geo.draw.drawControl' | translate}}
     </mat-slide-toggle>
 
     <mat-slide-toggle
       [checked]="labelsAreShown"
+      [labelPosition]="'before'"
       (change)="onToggleLabels()">
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
@@ -37,6 +39,7 @@
     <mat-slide-toggle
       *ngIf="!isPoint()"
       [checked]="freehandMode"
+      [labelPosition]="'before'"
       (change)="onToggleFreehandMode($event)">
       {{ 'igo.geo.draw.freehandMode' | translate }}
     </mat-slide-toggle>
