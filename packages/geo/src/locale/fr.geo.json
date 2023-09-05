@@ -721,6 +721,7 @@
         }
       },
       "draw": {
+        "drawControl": "Activer le contrôle de dessin",
         "abort": "Annuler le dessin en cours",
         "cancel": "Annuler",
         "Circle": "Cercle",
