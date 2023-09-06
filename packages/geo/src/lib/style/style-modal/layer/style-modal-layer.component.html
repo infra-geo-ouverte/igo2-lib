@@ -12,33 +12,15 @@
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
-
-        <mat-form-field
-          class="fill-field"
-          floatLabel="always"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.style.colorPicker' | translate"
-        >
-          <mat-label>{{ getLayerFillColor() }}</mat-label>
-          <!--input
-            #fillColorInput
-            formControlName="fill"
-            matInput
-            type="text"
-            [style.background]="getLayerFillColor()"
-            [readonly]="true"
-            [colorPicker]="getLayerFillColor()"
-            [cpWidth]="'200px'"
-            [cpOutputFormat]="'rgba'"
-            [cpPosition]="'bottom'"
-            [cpPositionOffset]="'-75%'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-            [cpOKButton]="true"
-            (colorPickerChange)="setLayerFillColor($event)"
-          /-->
-        </mat-form-field>
+        <igo-x-color-picker 
+        [color]="getLayerFillColor()"
+        [(ngModel)]="this.styleModalData.fillColor"
+        formControlName="fill"
+        (colorClick)="handleColorClicked()"
+        (colorClose)="handleColorClosed()"
+        outputFormat="rgba"
+        setAlpha=".4"
+        ></igo-x-color-picker>
       </div>
 
       <div class="stroke-color-picker mat-typography">
@@ -47,33 +29,15 @@
           </mat-icon>
           {{ 'igo.geo.style.stroke' | translate }}
         </span>
-
-        <mat-form-field
-          class="stroke-field"
-          floatLabel="always"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.style.colorPicker' | translate"
-        >
-          <mat-label>{{ getLayerStrokeColor() }}</mat-label>
-          <!--input
-            #strokeColorInput
-            formControlName="stroke"
-            matInput
-            type="text"
-            [style.background]="getLayerStrokeColor()"
-            [readonly]="true"
-            [colorPicker]="getLayerStrokeColor()"
-            [cpWidth]="'200px'"
-            [cpPosition]="'bottom'"
-            [cpPositionOffset]="'-75%'"
-            [cpOutputFormat]="'rgba'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-            [cpOKButton]="true"
-            (colorPickerChange)="setLayerStrokeColor($event)"
-          /-->
-        </mat-form-field>
+        <igo-x-color-picker 
+          [color]="getLayerStrokeColor()"
+          [(ngModel)]="this.styleModalData.strokeColor"
+          formControlName="stroke"
+          (colorClick)="handleColorClicked()"
+          (colorClose)="handleColorClosed()"
+          outputFormat="rgba"
+          setAlpha="1"
+          ></igo-x-color-picker>
       </div>
     </form>
   </div>

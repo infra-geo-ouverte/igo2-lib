@@ -151,10 +151,7 @@ export class StyleModalDrawingComponent implements OnInit {
 
   confirm() {
     this.confirmFlag = true;
-    console.log('this.styleModalData.fillColor', this.styleModalData.fillColor);
-    console.log('this.styleModalData', this.styleModalData);
-
-    // this.dialogRef.close(this.styleModalData);
+    this.dialogRef.close(this.styleModalData);
   }
 
   handleColorClicked() {

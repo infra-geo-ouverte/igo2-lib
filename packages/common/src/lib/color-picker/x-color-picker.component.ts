@@ -1,4 +1,4 @@
-import { Component, OnChanges, forwardRef } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { Input, Output, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import tinycolor from "tinycolor2";
@@ -15,15 +15,13 @@ import tinycolor from "tinycolor2";
     }
   ]
 })
-export class XcolorPickerComponent implements ControlValueAccessor, OnChanges {
+export class XcolorPickerComponent implements ControlValueAccessor {
 
   @Input() color: string;
   @Input() setAlpha: '.4' | '1' = '.4';
   @Input() outputFormat: 'hex'| 'rgba'| 'hsla' = 'rgba';
   @Output() colorClick = new EventEmitter<null>();
   @Output() colorClose = new EventEmitter<null>();
-
-  constructor() { }
 
   onChange: any = () => {};
   onTouch: any = () => {};
@@ -35,8 +33,16 @@ export class XcolorPickerComponent implements ControlValueAccessor, OnChanges {
       this.val = val;
       this.onChange(val);
       this.onTouch(val);
+    } else {
+      this.val = this.color;
     }
   }
+
+  get value () {
+    return tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
+  }
+
+  constructor() { }
 
   writeValue(value: any){
     this.value = value;
@@ -67,18 +73,4 @@ export class XcolorPickerComponent implements ControlValueAccessor, OnChanges {
     }
     return color;
   }
-
-  ngOnChanges(): void {
-
-    this.color = this.setFormat(this.color);
-    // console.log('color: ', this.color);
-
-    // this.val = tinycolor(this.val).setAlpha(.4).toRgbString();
-    // console.log('VAL: ', this.val);
-    console.log('VALUE: ', this.value);
-  }
-
-  /*handleColor($event: Event) {
-    console.log('event', $event);
-  }*/
 }

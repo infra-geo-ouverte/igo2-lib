@@ -25,45 +25,6 @@
         outputFormat="rgba"
         setAlpha=".4"
         ></igo-x-color-picker>
-
-
-        <!--mat-form-field
-          class="fill-field"
-          floatLabel="always"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          subscriptSizing="dynamic"
-          [matTooltip]="'igo.geo.style.colorPicker' | translate"
-        >
-          <mat-label>{{ getFeatureFillColor() }}</mat-label>
-          
-          <input type="color"
-            formControlName="fill"
-            matInput
-            [readonly]="true"
-            [(ngModel)]="color"
-            [value]="'rgb(143, 7, 7)'"
-            [style.background]="color"
-            (click)="handleColor($event)"
-          />
-          <input
-            #fillColorInput
-            formControlName="fill"
-            matInput
-            type="text"
-            [style.background]="getFeatureFillColor()"
-            [readonly]="true"
-            [colorPicker]="getFeatureFillColor()"
-            [cpWidth]="'200px'"
-            [cpOutputFormat]="'rgba'"
-            cpPosition="bottom"
-            cpDialogDisplay="popup"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-            [cpOKButton]="true"
-            (colorPickerChange)="styleModalData.fillColor = $event"
-          />
-        </mat-form-field-->
       </ng-container>
 
       <span>
@@ -81,35 +42,6 @@
           outputFormat="rgba"
           setAlpha="1"
           ></igo-x-color-picker>
-
-      <!--mat-form-field
-        class="stroke-field"
-        floatLabel="always"
-        tooltip-position="below"
-        subscriptSizing="dynamic"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.style.colorPicker' | translate"
-      >
-        <mat-label>{{ getFeatureStrokeColor() }}</mat-label>
-
-        <input
-          #strokeColorInput
-          formControlName="stroke"
-          matInput
-          type="text"
-          [style.background]="getFeatureStrokeColor()"
-          [readonly]="true"
-          [colorPicker]="getFeatureStrokeColor()"
-          [cpWidth]="'200px'"
-          [cpPosition]="'bottom'"
-          [cpPositionOffset]="'-75%'"
-          [cpOutputFormat]="'rgba'"
-          [cpCancelButton]="true"
-          [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-          [cpOKButton]="true"
-          (colorPickerChange)="styleModalData.strokeColor = $event"
-        />
-      </mat-form-field-->
     </div>
 
     <div class="igo-input-container">
