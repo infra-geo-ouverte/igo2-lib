@@ -5,6 +5,7 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { DrawStyleService } from '../../style-service/draw-style.service';
 import { FontType } from '../../shared/font.enum';
 import { DrawingMatDialogData, StyleModalData } from '../shared/style-modal.interface';
+// import tinycolor from "tinycolor2";
 
 @Component({
   selector: 'igo-style-modal-drawing',
@@ -150,6 +151,19 @@ export class StyleModalDrawingComponent implements OnInit {
 
   confirm() {
     this.confirmFlag = true;
-    this.dialogRef.close(this.styleModalData);
+    console.log('this.styleModalData.fillColor', this.styleModalData.fillColor);
+    console.log('this.styleModalData', this.styleModalData);
+
+    // this.dialogRef.close(this.styleModalData);
+  }
+
+  handleColorClicked() {
+    this.dialogRef.disableClose = true;
+  }
+
+  handleColorClosed() {
+    setTimeout(() => {
+      this.dialogRef.disableClose = false;
+    }, 300);
   }
 }

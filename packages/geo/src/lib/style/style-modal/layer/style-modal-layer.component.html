@@ -21,7 +21,7 @@
           [matTooltip]="'igo.geo.style.colorPicker' | translate"
         >
           <mat-label>{{ getLayerFillColor() }}</mat-label>
-          <input
+          <!--input
             #fillColorInput
             formControlName="fill"
             matInput
@@ -37,7 +37,7 @@
             [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
             [cpOKButton]="true"
             (colorPickerChange)="setLayerFillColor($event)"
-          />
+          /-->
         </mat-form-field>
       </div>
 
@@ -56,7 +56,7 @@
           [matTooltip]="'igo.geo.style.colorPicker' | translate"
         >
           <mat-label>{{ getLayerStrokeColor() }}</mat-label>
-          <input
+          <!--input
             #strokeColorInput
             formControlName="stroke"
             matInput
@@ -72,7 +72,7 @@
             [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
             [cpOKButton]="true"
             (colorPickerChange)="setLayerStrokeColor($event)"
-          />
+          /-->
         </mat-form-field>
       </div>
     </form>

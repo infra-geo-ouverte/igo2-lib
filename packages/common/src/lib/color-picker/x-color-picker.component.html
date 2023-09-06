@@ -1,0 +1,18 @@
+<mat-form-field
+          class="fill-field"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          subscriptSizing="dynamic"
+          >
+          <mat-label>{{ color }}</mat-label>
+          <input matInput 
+            [readonly]="true"
+            (click)="colorClick.emit()"
+            (change)="colorClose.emit()"
+            [style.background]="value"
+            [(ngModel)]="value" 
+            type="color"
+            />
+</mat-form-field>
+

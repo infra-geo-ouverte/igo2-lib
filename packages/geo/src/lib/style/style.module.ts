@@ -16,6 +16,7 @@ import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { XcolorPickerModule } from 'packages/common/src/lib/color-picker/x-color-picker.module';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSelectModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    XcolorPickerModule,
     IgoStyleListModule.forRoot()
   ],
   exports: [IgoStyleListModule, StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent],
