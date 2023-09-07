@@ -234,6 +234,7 @@ export class MapGeolocationController extends MapController {
     private configService?: ConfigService
   ) {
     super();
+    this.geolocationOverlay = new Overlay(this.map);
     this._followPosition = this.options && this.options.followPosition ? this.options.followPosition : false;
 
     this._buffer = this.options && this.options.buffer ? this.options.buffer : undefined;
