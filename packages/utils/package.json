@@ -21,6 +21,11 @@
     "test": "ng test utils --watch=false",
     "watch": "ng build utils --watch"
   },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
+  },
   "dependencies": {
     "bowser": "^2.10.0",
     "tslib": "^2.6.0"

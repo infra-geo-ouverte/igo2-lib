@@ -4,6 +4,7 @@ import { readFileContentSync } from '../utils/file-system.utils';
 export interface IPackageJson {
   name: string;
   version: string;
+  exports: { [key: string]: string | { [key: string]: string } };
   dependencies: { [key: string]: string };
   peerDependencies: { [key: string]: string };
 }

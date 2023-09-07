@@ -21,6 +21,11 @@
     "test": "",
     "watch": "ng build integration --watch"
   },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
+  },
   "dependencies": {
     "tslib": "^2.6.0"
   },

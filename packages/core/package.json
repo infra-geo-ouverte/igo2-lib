@@ -25,6 +25,7 @@
   },
   "exports": {
     ".": {
+      "import": "./src/public_api.ts",
       "sass": "./index.scss"
     },
     "./style": {

@@ -21,6 +21,11 @@
     "test": "ng test context --watch=false",
     "watch": "ng build context --watch"
   },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
+  },
   "dependencies": {
     "tslib": "^2.6.0"
   },
