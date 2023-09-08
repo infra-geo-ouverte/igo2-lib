@@ -207,7 +207,7 @@ export class WmsWorkspaceService {
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {
-          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle?.selection || {}));
         },
         showInLayerList: false,
         exportable: false,
