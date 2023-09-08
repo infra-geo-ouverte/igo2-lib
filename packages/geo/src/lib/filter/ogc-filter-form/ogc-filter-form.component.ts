@@ -66,7 +66,7 @@ export class OgcFilterFormComponent implements OnInit {
 
   private _snrc = '';
 
-  @Input() floatLabel: FloatLabelType = 'never';
+  @Input() floatLabel: FloatLabelType;
 
   get activeFilters() {
     return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(

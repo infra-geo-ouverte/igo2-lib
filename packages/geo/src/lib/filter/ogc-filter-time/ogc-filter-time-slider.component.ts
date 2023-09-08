@@ -95,7 +95,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
       this.interval = setInterval(
         that => {
 
-          if (this.slider.value < this.calculatedStep) {
+          if (this.slider.step < this.calculatedStep) {
             const _increment = '_increment';
             const _emitInputEvent = '_emitInputEvent';
             this.slider[_increment](1);
@@ -124,7 +124,7 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     }
     this.interval = undefined;
     this.playIcon = 'play-circle';
-    this.slider.value = 1;
+    this.slider.step = 1;
     const _increment = '_increment';
     const _emitInputEvent = '_emitInputEvent';
     this.slider[_emitInputEvent]();

@@ -261,6 +261,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'sorties-autoroute',
               enabled: types.indexOf('sorties-autoroute') !== -1,
               hashtags: ['sortie', 'sorties', 'exit']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.cultpatri',
+              value: 'culture',
+              enabled: types.indexOf('culture') !== -1,
+              hashtags: ['grille', 'culture']
             }
           ]
         },

@@ -1,8 +1,8 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-toolbar color="primary" class="example-toolbar">
+  <mat-toolbar color="primary" class="example-toolbar mat-elevation-z6">
     <button mat-icon-button (click)="snav.toggle()"><mat-icon svgIcon="menu"></mat-icon></button>
     <h1>{{title}}</h1>
-    <h5>{{version.lib}}</h5>
+    <h5 class="mat-subtitle-1 m-b-0">{{version.lib}}</h5>
   </mat-toolbar>
 
   <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">

@@ -1,7 +1,7 @@
 <div *ngIf="baseLayers.length > 0"
      class="igo-baselayers-switcher-container"
      [ngClass]="{'container-expand': expand}"
-     [@baseLayerSwitcherState]="expand ? 'expand' : useStaticIcon ? 'collapseIcon' : 'collapseMap'"
+     [@baseLayerSwitcherState]="expand ? 'expand' : useStaticIcon ? 'collapseIcon' : ''"
      (@baseLayerSwitcherState.start)="showButton=false"
      (@baseLayerSwitcherState.done)="showButton=true"
      (click)="collapseOrExpand()">
@@ -24,8 +24,8 @@
        [disabled]="!expand && baseLayers.length > 1">
      </igo-mini-basemap>
 
-    <div class="more-baselayers">
-      <mat-icon class="material-icons mat-icon mat-list-avatar" color="primary" svgIcon="menu-down"></mat-icon>
+    <div *ngIf="hasMoreThanTwo" class="more-baselayers">
+      <mat-icon class="material-icons mat-icon" color="primary" svgIcon="menu-down"></mat-icon>
     </div>
 
 </div>

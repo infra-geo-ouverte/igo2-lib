@@ -1,0 +1,8 @@
+@use 'sass:map';
+@use '../base';
+
+.igo-panel-header,
+.igo-panel-header button,
+.igo-panel-title {
+  color: map.get(base.$palette, contrast, 500) !important;
+}

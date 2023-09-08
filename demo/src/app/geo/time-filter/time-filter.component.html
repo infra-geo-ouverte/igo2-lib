@@ -1,22 +1,22 @@
-<mat-card>
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Time filter</mat-card-title>
-  <mat-card-content>
-    <li>npm install --save moment@2.22.2</li>
-    <li>npm install --save @mat-datetimepicker/core@3.0.0-beta.0</li>
-    <li>Dependencies: LanguageService</li>
-
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/time-filter">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-  </igo-map-browser>
-
-  <igo-panel title="Layers">
-    <igo-time-filter-list [layers]="map.layers"></igo-time-filter-list>
-  </igo-panel>
-
-</mat-card>
+<app-doc-viewer
+  title="Time filter"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/time-filter">
+    <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
+      <mat-grid-tile>
+        <igo-map-browser [map]="map" [view]="view">
+          <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+        </igo-map-browser>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="flex align-start h-100 w-100">
+          <igo-panel title="Layers" class="w-100">
+            <igo-time-filter-list [layers]="map.layers"></igo-time-filter-list>
+          </igo-panel>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

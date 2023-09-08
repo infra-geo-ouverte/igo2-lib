@@ -1,17 +1,9 @@
-<mat-card>
-  <mat-card-subtitle>Core</mat-card-subtitle>
-  <mat-card-title>config</mat-card-title>
-  <mat-card-content>
-    <p>Load config in your angular application</p>
+<app-doc-viewer title="Config" subtitle="Core">
+  <p>Load config in your angular application</p>
 
-    <li>Import <code>IgoConfigModule</code> only once</li>
+  <li>Import <code>IgoConfigModule</code> only once</li>
 
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/core/config"> code of this example</a> <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/environments"> environment config</a>
-    <hr>
-  </mat-card-content>
-
-  <p>Config language: {{configLanguage | json }}<p>
-
-</mat-card>
+  <app-example-viewer title="Simple config" codeFolder="core/config" configFolder="environments">
+    <p class="mat-body-1">Config language: {{ configLanguage | json }}</p>
+  </app-example-viewer>
+</app-doc-viewer>

@@ -1,3 +1,5 @@
+@use './directions-results/directions-results.theming' as directions-results-theme;
+
 @mixin igo-directions-theming($theme) {
-  @include igo-directions-results-theming($theme);
+  @include directions-results-theme.igo-directions-results-theming($theme);
 }

@@ -1,39 +1,66 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  Renderer2
-} from '@angular/core';
+import { OnInit, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 
-import { userAgent } from '@igo2/utils';
+import { userAgent, DomUtils } from '@igo2/utils';
 import { version } from '@igo2/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { delay, first } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
 
   public title = 'IGO';
   public version = version;
-  private themeClass = 'deeppurple-theme';
   private _mobileQueryListener: () => void;
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
-    private renderer: Renderer2
+    private router: Router,
   ) {
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
 
-    this.renderer.addClass(document.body, this.themeClass);
-
     this.detectOldBrowser();
+  }
+
+  ngOnInit(): void {
+      this.handleSplashScreen();
+  }
+
+  private handleSplashScreen(): void {
+    this.router.events
+      .pipe(
+        first((events) => events instanceof NavigationEnd),
+        delay(300),
+      )
+      .subscribe(() => {
+        this._removeSplashScreen();
+      });
+  }
+
+  private _removeSplashScreen(): void {
+    const intro = this.document.getElementById('splash-screen');
+    if (!intro) {
+      return;
+    }
+    intro.classList.add('is-destroying');
+
+    const destroyingAnimationTime = 300;
+    const stylesheet = this.document.getElementById('splash-screen-stylesheet');
+
+    setTimeout(() => {
+      DomUtils.remove(intro);
+      DomUtils.remove(stylesheet);
+    }, destroyingAnimationTime);
   }
 
   ngOnDestroy(): void {

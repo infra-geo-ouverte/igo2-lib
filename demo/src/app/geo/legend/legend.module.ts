@@ -14,10 +14,12 @@ import {
 
 import { AppLegendComponent } from './legend.component';
 import { AppLegendRoutingModule } from './legend-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppLegendComponent],
   imports: [
+    SharedModule,
     AppLegendRoutingModule,
     MatCardModule,
     MatButtonModule,

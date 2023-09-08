@@ -116,7 +116,7 @@
           "UTF8": "UTF-8"
         },
         "combinedLayers": "couchesCombinees"
-      },      
+      },
       "import": {
         "promptStoreToIdb": "Est-ce que vous voulez sauvegarder cette couche d'information afin d'être utilisée ultérieurement dans une autre session?"
       },
@@ -506,7 +506,8 @@
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
             "restArea": "Halte routière",
-            "cycleStop": "Halte cyclable"
+            "cycleStop": "Halte cyclable",
+            "cultpatri":"Culture et patrimoine"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -720,6 +721,7 @@
         }
       },
       "draw": {
+        "drawControl": "Activer le contrôle de dessin",
         "abort": "Annuler le dessin en cours",
         "cancel": "Annuler",
         "Circle": "Cercle",

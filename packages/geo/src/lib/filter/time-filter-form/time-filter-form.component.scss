@@ -1,46 +1,27 @@
 @import '../../../../../core/src/style/partial/media';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-layer-filters-container {
-  padding-left: $igo-padding;
-}
-
-mat-slider ::ng-deep div.mat-slider-thumb-label {
-  width: 32px;
-  height: 32px;
-  margin: 0 auto;
-}
-
-mat-slider ::ng-deep span.mat-slider-thumb-label-text {
-  font-size: 10px;
-}
-
-#time-slider {
-  width: 70%;
-  margin: 0 auto;
-
-  @include mobile {
-    width: 60%;
-    margin: 0 auto;
+:host {
+  .igo-layer-filters-container {
+    padding-left: $igo-padding;
   }
-}
 
-.date-below {
-  margin: 0;
-}
+  #time-slider {
+    width: 70%;
 
-mat-form-field {
-  text-align: center;
-}
+    @include mobile {
+      width: 60%;
+    }
+  }
 
-mat-datetimepicker-toggle ::ng-deep .mat-icon {
-  padding-bottom: 30px;
-}
+  .date-below {
+    margin: 0;
+  }
 
-.igo-layer-actions-container > .mat-slide-toggle {
-  vertical-align: middle;
-}
+  .igo-layer-actions-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.time-filter-mat-datetimepicker-toggle ::ng-deep .mat-icon {
-  width: auto;
 }

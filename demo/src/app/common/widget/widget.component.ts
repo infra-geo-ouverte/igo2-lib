@@ -41,11 +41,13 @@ export class AppSalutationWidgetComponent implements OnUpdateInputs, WidgetCompo
 })
 export class AppWidgetComponent {
 
-  widget: DynamicComponent<WidgetComponent> = this.widgetService.create(AppSalutationWidgetComponent);
+  widget: DynamicComponent<WidgetComponent>;
 
   inputs = {name: 'Bob'};
 
-  constructor(private widgetService: WidgetService) {}
+  constructor(private widgetService: WidgetService) {
+    this.widget = this.widgetService.create(AppSalutationWidgetComponent);
+  }
 
   onWidgetComplete(name: string) {
     alert(`${name} emitted event 'complete' then got automatically destroyed.`);

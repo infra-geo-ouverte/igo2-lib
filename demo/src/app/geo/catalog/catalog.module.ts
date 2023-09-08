@@ -1,9 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoConfigModule, provideConfigOptions } from '@igo2/core';
 import { IgoPanelModule } from '@igo2/common';
@@ -12,16 +7,13 @@ import { IgoMapModule, IgoCatalogModule } from '@igo2/geo';
 import { environment } from '../../../environments/environment';
 import { AppCatalogComponent } from './catalog.component';
 import { AppCatalogRoutingModule } from './catalog-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppCatalogComponent],
   imports: [
-    CommonModule,
+    SharedModule,
     AppCatalogRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
     IgoConfigModule,
     IgoPanelModule,
     IgoMapModule,

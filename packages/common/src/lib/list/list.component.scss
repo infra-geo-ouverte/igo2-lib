@@ -6,56 +6,26 @@
   height: 100%;
   overflow: auto;
   position: relative;
+
+  mat-list {
+    padding-top: 0;
+  }
 }
 
-mat-list {
-  padding-top: 0;
-}
-
-// We need to make sure the firs ancestor with a
-// position other than static is the host itself
-// to properly scroll to the focused list item
-:host {
-  position: static;
-}
-
-:host ::ng-deep .mat-list .mat-list-item .mat-list-text > * {
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text > * {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  max-height: 36px;
   line-height: 18px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
-:host ::ng-deep .mat-list .mat-list-item.mat-list-item-with-avatar .mat-list-item-content {
-  display: -webkit-flex;
-  height: $igo-list-item-height;
-  padding: $igo-list-item-padding;
-}
-
-:host ::ng-deep .mat-list .mat-list-item.mat-list-item-with-avatar {
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item.mdc-list-item--with-leading-icon {
   height: $igo-list-item-height;
 }
 
-:host ::ng-deep .mat-list ::ng-deep igo-collapsible > .mat-list-item > .mat-list-item-content > .mat-list-text > .mat-line {
+:host ::ng-deep .mat-mdc-list ::ng-deep igo-collapsible > .mat-mdc-list-item > .mdc-list-item__primary-text > .mat-mdc-list-item {
   font-weight: bold;
   opacity: 0.9;
-}
-
-:host
-  ::ng-deep .mat-list
-  .mat-list-item.mat-list-item-with-avatar
-  .mat-list-item-content
-  > mat-icon {
-  padding: $igo-list-item-icon-padding;
-}
-
-:host ::ng-deep [igolistitem] mat-list-item [mat-list-avatar] {
-  height: auto;
-  width: 40px;
 }
 
 :host mat-list.selectable ::ng-deep [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {

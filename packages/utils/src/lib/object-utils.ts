@@ -281,4 +281,8 @@ export class ObjectUtils {
 
     return newObj;
   }
+
+  static isEmpty(obj: object): boolean {
+    return Object.keys(obj).length === 0;
+  }
 }
