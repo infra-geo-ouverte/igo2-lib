@@ -8,8 +8,8 @@ import { Legend } from './datasource.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
-  public ol: olSourceVector<OlGeometry>;
-  public options: ArcGISRestDataSourceOptions;
+  public declare ol: olSourceVector<OlGeometry>;
+  public declare options: ArcGISRestDataSourceOptions;
 
   protected createOlSource(): olSourceVector<OlGeometry> {
     const esrijsonFormat = new olFormatEsriJSON();

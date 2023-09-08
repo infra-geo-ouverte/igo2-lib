@@ -5,8 +5,8 @@ import { DataSource } from './datasource';
 import { TileDebugDataSourceOptions } from './tiledebug-datasource.interface';
 
 export class TileDebugDataSource extends DataSource {
-  public options: TileDebugDataSourceOptions;
-  public ol: TileDebug;
+  public declare options: TileDebugDataSourceOptions;
+  public declare ol: TileDebug;
 
   protected createOlSource(): TileDebug {
     const baseOptions = JSON.parse(JSON.stringify(this.options)); // to avoid to alter the original options

@@ -49,7 +49,7 @@ export class AboutToolComponent implements OnInit {
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
-  private _headerHtml: string = this.languageService.translate.instant('igo.integration.aboutTool.headerHtml');
+  private _headerHtml: string;
 
   private baseUrlProfil;
   private baseUrlGuide;
@@ -61,7 +61,9 @@ export class AboutToolComponent implements OnInit {
     public auth: AuthService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService) {
+    private languageService: LanguageService
+  ) {
+    this.headerHtml = this.languageService.translate.instant('igo.integration.aboutTool.headerHtml');
     this.version = configService.getConfig('version');
     this.baseUrlProfil = configService.getConfig('storage.url');
     this.baseUrlGuide = configService.getConfig('depot.url') + configService.getConfig('depot.guideUrl');

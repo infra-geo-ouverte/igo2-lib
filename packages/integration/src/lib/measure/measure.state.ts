@@ -14,11 +14,12 @@ export class MeasureState {
   /**
    * Store that holds the measures
    */
-  public store: FeatureStore<FeatureWithMeasure> = new FeatureStore<FeatureWithMeasure>([], {
-    map: this.mapState.map
-  });
+  public store: FeatureStore<FeatureWithMeasure>;
 
   constructor(private mapState: MapState) {
+    this.store = new FeatureStore<FeatureWithMeasure>([], {
+      map: this.mapState.map
+    });
 
     this.mapState.map.layers$.subscribe((layers) => {
       if ((layers.filter(l => l.id?.startsWith('igo-measures-')).length === 0)) {

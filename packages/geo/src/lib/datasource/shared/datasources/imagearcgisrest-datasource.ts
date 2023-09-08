@@ -5,8 +5,8 @@ import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 export class ImageArcGISRestDataSource extends DataSource {
-  public ol: ImageArcGISRest;
-  public options: ArcGISRestImageDataSourceOptions;
+  public declare ol: ImageArcGISRest;
+  public declare options: ArcGISRestImageDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
