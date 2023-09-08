@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ContextService } from '@igo2/context';
 
 import { LanguageService } from '@igo2/core';
 import { IgoMap, MapService } from '@igo2/geo';
@@ -25,7 +26,10 @@ export class AppContextComponent {
   constructor(
     private languageService: LanguageService,
     private mapService: MapService,
+    private contextService: ContextService,
   ) {
     this.mapService.setMap(this.map);
+    this.contextService.loadDefaultContext();
+    this.contextService.loadContexts();
   }
 }
