@@ -18,15 +18,15 @@ import { TileLayerOptions } from './tile-layer.interface';
 import { MessageService } from '@igo2/core';
 import { AuthInterceptor } from '@igo2/auth';
 export class TileLayer extends Layer {
-  public dataSource:
+  public declare dataSource:
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
     | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
-  public options: TileLayerOptions;
-  public ol: olLayerTile<olSourceTile>;
+  public declare options: TileLayerOptions;
+  public declare ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 

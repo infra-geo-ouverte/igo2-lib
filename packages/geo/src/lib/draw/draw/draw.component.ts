@@ -120,38 +120,7 @@ export class DrawComponent implements OnInit, OnDestroy {
    * Table template
    * @internal
    */
-  public tableTemplate: EntityTableTemplate = {
-    selection: true,
-    selectMany: true,
-    selectionCheckbox: true,
-    sort: true,
-    fixedHeader: true,
-    tableHeight: 'auto',
-    columns: [
-      {
-        name: 'Drawing',
-        title: this.languageService.translate.instant('igo.geo.draw.labels'),
-        valueAccessor: (feature: FeatureWithDraw) => {
-          return feature.properties.draw;
-        }
-      },
-      {
-        name: 'Edition',
-        title: '',
-        sort: false,
-        valueAccessor: (feature: FeatureWithDraw) => {
-          return [{
-            editMode: false,
-            icon: 'pencil',
-            color: 'primary',
-            click: () => { this.editLabelDrawing(feature);},
-            style: 'mat-icon-button'
-          }] as EntityTableButton[];
-        },
-        renderer: EntityTableColumnRenderer.ButtonGroup,
-      }
-    ]
-  };
+  public tableTemplate: EntityTableTemplate;
 
   public geometryType = GeometryType; // Reference to the GeometryType enum
   @Input() map: IgoMap; // Map to draw on
@@ -244,6 +213,38 @@ export class DrawComponent implements OnInit, OnDestroy {
     private drawIconService: DrawIconService
 
   ) {
+    this.tableTemplate = {
+      selection: true,
+      selectMany: true,
+      selectionCheckbox: true,
+      sort: true,
+      fixedHeader: true,
+      tableHeight: 'auto',
+      columns: [
+        {
+          name: 'Drawing',
+          title: this.languageService.translate.instant('igo.geo.draw.labels'),
+          valueAccessor: (feature: FeatureWithDraw) => {
+            return feature.properties.draw;
+          }
+        },
+        {
+          name: 'Edition',
+          title: '',
+          sort: false,
+          valueAccessor: (feature: FeatureWithDraw) => {
+            return [{
+              editMode: false,
+              icon: 'pencil',
+              color: 'primary',
+              click: () => { this.editLabelDrawing(feature);},
+              style: 'mat-icon-button'
+            }] as EntityTableButton[];
+          },
+          renderer: EntityTableColumnRenderer.ButtonGroup,
+        }
+      ]
+    };
     this.buildForm();
     this.fillColor = this.drawStyleService.getFillColor();
     this.strokeColor = this.drawStyleService.getStrokeColor();

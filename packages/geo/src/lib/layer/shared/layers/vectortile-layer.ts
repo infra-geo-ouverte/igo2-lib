@@ -12,9 +12,9 @@ import { MessageService } from '@igo2/core';
 import VectorTile from 'ol/VectorTile';
 
 export class VectorTileLayer extends Layer {
-  public dataSource: MVTDataSource;
-  public options: VectorTileLayerOptions;
-  public ol: olLayerVectorTile;
+  public declare dataSource: MVTDataSource;
+  public declare options: VectorTileLayerOptions;
+  public declare ol: olLayerVectorTile;
 
   private watcher: TileWatcher;
 

@@ -68,7 +68,7 @@ export class SidenavComponent {
       this._title = value;
     }
   }
-  private _title: string = this.titleService.getTitle();
+  private _title: string;
 
   public topPanelState: FlexibleState = 'initial';
 
@@ -76,7 +76,9 @@ export class SidenavComponent {
     return this.feature ? getEntityTitle(this.feature) : undefined;
   }
 
-  constructor(public titleService: Title) {}
+  constructor(public titleService: Title) {
+    this._title = this.titleService.getTitle();
+  }
 
   zoomToFeatureExtent() {
     if (this.feature.geometry) {

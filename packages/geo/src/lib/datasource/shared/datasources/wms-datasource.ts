@@ -28,7 +28,7 @@ export interface TimeFilterableDataSource extends WMSDataSource {
 }
 
 export class WMSDataSource extends DataSource {
-  public ol: olSourceImageWMS;
+  public declare ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;

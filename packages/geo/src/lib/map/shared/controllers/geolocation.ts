@@ -114,7 +114,7 @@ export class MapGeolocationController extends MapController {
   get buffer(): GeolocationBuffer {
     return this._buffer;
   }
-  private _buffer: GeolocationBuffer = this.options && this.options.buffer ? this.options.buffer : undefined;
+  private _buffer: GeolocationBuffer;
 
   /**
    * Whether the geolocate controller accuracy threshold to store/show the position.
@@ -127,7 +127,7 @@ export class MapGeolocationController extends MapController {
   get accuracyThreshold(): number {
     return this._accuracyThreshold;
   }
-  private _accuracyThreshold = this.options && this.options.accuracyThreshold ? this.options.accuracyThreshold : 5000;
+  private _accuracyThreshold;
 
 
   get olGeolocation() {
@@ -173,17 +173,23 @@ export class MapGeolocationController extends MapController {
   }
 
 
-  private _followPosition = this.options && this.options.followPosition ? this.options.followPosition : false;
+  private _followPosition;
 
 
   constructor(
     private map: BaseMap,
     private options?: MapGeolocationControllerOptions,
     private storageService?: StorageService,
-    private configService?: ConfigService) {
+    private configService?: ConfigService
+  ) {
     super();
     this.geolocationOverlay = new Overlay(this.map);
+    this._followPosition = this.options && this.options.followPosition ? this.options.followPosition : false;
+
+    this._buffer = this.options && this.options.buffer ? this.options.buffer : undefined;
+    this._accuracyThreshold = this.options && this.options.accuracyThreshold ? this.options.accuracyThreshold : 5000;
   }
+
 
   /**
    * Add or remove this controller to/from a map.

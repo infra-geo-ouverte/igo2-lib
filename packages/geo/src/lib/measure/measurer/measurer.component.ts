@@ -75,42 +75,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Table template
    * @internal
    */
-  public tableTemplate: EntityTableTemplate = {
-    selection: true,
-    selectMany: true,
-    selectionCheckbox: true,
-    sort: true,
-    columns: [
-      {
-        name: 'length',
-        title: this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
-        valueAccessor: (localFeature: FeatureWithMeasure) => {
-          const unit = this.activeLengthUnit;
-          const measure = metersToUnit(localFeature.properties.measure.length, unit);
-          return formatMeasure(measure, {
-            decimal: 1,
-            unit,
-            unitAbbr: false,
-            locale: 'fr'
-          });
-        }
-      },
-      {
-        name: 'area',
-        title: this.languageService.translate.instant('igo.geo.measure.areaHeader'),
-        valueAccessor: (localFeature: FeatureWithMeasure) => {
-          const unit = this.activeAreaUnit;
-          const measure = squareMetersToUnit(localFeature.properties.measure.area, unit);
-          return measure ? formatMeasure(measure, {
-            decimal: 1,
-            unit,
-            unitAbbr: false,
-            locale: 'fr'
-          }) : '';
-        }
-      }
-    ]
-  };
+  public tableTemplate: EntityTableTemplate;
 
   private subscriptions$$: Subscription[] = [];
 
@@ -321,7 +286,44 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     private languageService: LanguageService,
     private dialog: MatDialog,
     private storageService: StorageService
-  ) {}
+  ) {
+    this.tableTemplate = {
+      selection: true,
+      selectMany: true,
+      selectionCheckbox: true,
+      sort: true,
+      columns: [
+        {
+          name: 'length',
+          title: this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
+          valueAccessor: (localFeature: FeatureWithMeasure) => {
+            const unit = this.activeLengthUnit;
+            const measure = metersToUnit(localFeature.properties.measure.length, unit);
+            return formatMeasure(measure, {
+              decimal: 1,
+              unit,
+              unitAbbr: false,
+              locale: 'fr'
+            });
+          }
+        },
+        {
+          name: 'area',
+          title: this.languageService.translate.instant('igo.geo.measure.areaHeader'),
+          valueAccessor: (localFeature: FeatureWithMeasure) => {
+            const unit = this.activeAreaUnit;
+            const measure = squareMetersToUnit(localFeature.properties.measure.area, unit);
+            return measure ? formatMeasure(measure, {
+              decimal: 1,
+              unit,
+              unitAbbr: false,
+              locale: 'fr'
+            }) : '';
+          }
+        }
+      ]
+    };
+  }
 
   /**
    * Add draw controls and activate one
