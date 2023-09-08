@@ -80,7 +80,9 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Display a swipe-element and render the layers
    */
   displaySwipe() {
-    this.swipeId.style.visibility = 'visible';
+    if (this.swipeId) {
+      this.swipeId.style.visibility = 'visible';
+    }
     this.layers.map(layer => layer.ol.on('prerender', this.boundPrerender));
     this.layers.map(layer => layer.ol.on('postrender', this.postrender));
     this.map.ol.render();
@@ -90,7 +92,9 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Clear a swipe-element and render the layers on the initial state
    */
   displaySwipeOff() {
-    this.swipeId.style.visibility = 'hidden';
+    if (this.swipeId) {
+      this.swipeId.style.visibility = 'hidden';
+    }
     this.layers.map(layer => layer.ol.un('prerender', this.boundPrerender));
     this.layers.map(layer => layer.ol.un('postrender', this.postrender));
     this.map.ol.render();
