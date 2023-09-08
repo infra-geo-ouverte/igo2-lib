@@ -6,13 +6,13 @@ import { Layer, LinkedProperties } from "../../layer/shared/layers";
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { TimeFilterableDataSource, TimeFilterableDataSourceOptions } from "../../datasource";
-import { BaseMap } from "../shared/map.interface";
+import { MapBase } from "../shared/map.abstract";
 
 export function getLinkedLayersOptions(layer: Layer) {
     return layer.options.linkedLayers;
 }
 
-export function getIgoLayerByLinkId(map: BaseMap, id: string) {
+export function getIgoLayerByLinkId(map: MapBase, id: string) {
     return map.layers.find(l => l.options.linkedLayers?.linkId === id);
 }
 
@@ -36,7 +36,7 @@ export function layerHasLinkDeletion(layer: Layer): boolean {
   return hasLinkWithSyncedDelete;
 }
 
-export function getRootParentByProperty(map: BaseMap, layer: Layer, property: LinkedProperties): Layer {
+export function getRootParentByProperty(map: MapBase, layer: Layer, property: LinkedProperties): Layer {
     let layerToUse = layer;
     let parentLayer = layerToUse;
     let hasParentLayer = true;
@@ -53,7 +53,7 @@ export function getRootParentByProperty(map: BaseMap, layer: Layer, property: Li
     return hasParentLayer ? parentLayer : layerToUse;
 }
 
-export function getDirectParentLayerByProperty(map: BaseMap, layer: Layer, property: LinkedProperties): Layer {
+export function getDirectParentLayerByProperty(map: MapBase, layer: Layer, property: LinkedProperties): Layer {
     if (layer?.options.linkedLayers?.linkId) {
         const currentLinkId = layer.options.linkedLayers.linkId;
         let parents = map.layers.filter(pl => {
@@ -71,7 +71,7 @@ export function getDirectParentLayerByProperty(map: BaseMap, layer: Layer, prope
     }
 }
 
-export function getDirectChildLayersByProperty(map: BaseMap, layer: Layer, property: LinkedProperties): Layer[] {
+export function getDirectChildLayersByProperty(map: MapBase, layer: Layer, property: LinkedProperties): Layer[] {
     let linkedIds = [];
     if (layer?.options.linkedLayers?.links) {
         layer.options.linkedLayers.links
@@ -82,7 +82,7 @@ export function getDirectChildLayersByProperty(map: BaseMap, layer: Layer, prope
     return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
 }
 
-export function getAllChildLayersByProperty(map: BaseMap, layer: Layer, knownChildLayers: Layer[], property: LinkedProperties): Layer[] {
+export function getAllChildLayersByProperty(map: MapBase, layer: Layer, knownChildLayers: Layer[], property: LinkedProperties): Layer[] {
     let childLayers = getDirectChildLayersByProperty(map, layer,property);
     childLayers.map(cl => {
         knownChildLayers.push(cl);
@@ -95,7 +95,7 @@ export function getAllChildLayersByProperty(map: BaseMap, layer: Layer, knownChi
     return knownChildLayers;
 }
 
-export function getRootParentByDeletion(map: BaseMap, layer: Layer): Layer {
+export function getRootParentByDeletion(map: MapBase, layer: Layer): Layer {
   let layerToUse = layer;
   let parentLayer = layerToUse;
   let hasParentLayer = true;
@@ -112,7 +112,7 @@ export function getRootParentByDeletion(map: BaseMap, layer: Layer): Layer {
   return hasParentLayer ? parentLayer : layerToUse;
 }
 
-export function getDirectParentLayerByDeletion(map: BaseMap, layer: Layer): Layer {
+export function getDirectParentLayerByDeletion(map: MapBase, layer: Layer): Layer {
   if (layer.options.linkedLayers?.linkId) {
       const currentLinkId = layer.options.linkedLayers.linkId;
       let parents = map.layers.filter(pl => {
@@ -130,7 +130,7 @@ export function getDirectParentLayerByDeletion(map: BaseMap, layer: Layer): Laye
   }
 }
 
-export function getDirectChildLayersByDeletion(map: BaseMap, layer: Layer): Layer[] {
+export function getDirectChildLayersByDeletion(map: MapBase, layer: Layer): Layer[] {
   let linkedIds = [];
   if (layer?.options.linkedLayers?.links) {
       layer.options.linkedLayers.links
@@ -141,7 +141,7 @@ export function getDirectChildLayersByDeletion(map: BaseMap, layer: Layer): Laye
   return linkedIds.map(lid => getIgoLayerByLinkId(map, lid));
 }
 
-export function getAllChildLayersByDeletion(map: BaseMap, layer: Layer, knownChildLayers: Layer[]): Layer[] {
+export function getAllChildLayersByDeletion(map: MapBase, layer: Layer, knownChildLayers: Layer[]): Layer[] {
   let childLayers = getDirectChildLayersByDeletion(map, layer);
   childLayers.map(cl => {
       knownChildLayers.push(cl);
@@ -154,7 +154,7 @@ export function getAllChildLayersByDeletion(map: BaseMap, layer: Layer, knownChi
   return knownChildLayers;
 }
 
-export function initLayerSyncFromRootParentLayers(map: BaseMap, layers: Layer[]) {
+export function initLayerSyncFromRootParentLayers(map: MapBase, layers: Layer[]) {
     const rootLayersByProperty = {};
     const keys = Object.keys(LinkedProperties);
     keys.map(k => {
@@ -179,7 +179,7 @@ export function initLayerSyncFromRootParentLayers(map: BaseMap, layers: Layer[])
     });
   }
 
-  export function handleLayerPropertyChange(map: BaseMap, propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
+  export function handleLayerPropertyChange(map: MapBase, propertyChange: ObjectEvent, initiatorIgoLayer: Layer) {
     if (!propertyChange) {
       return;
     }

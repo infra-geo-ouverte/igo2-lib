@@ -11,7 +11,7 @@ import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 
 import { createOverlayLayer } from './overlay.utils';
-import { BaseMap } from '../../map';
+import { MapBase } from '../../map/shared/map.abstract';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -19,7 +19,7 @@ import { BaseMap } from '../../map';
  * a defautl style based on the geometry type of the features it contains.
  * @todo Enhance that by using a FeatureStore and strategies.
  */
-export class Overlay<T extends BaseMap = BaseMap> {
+export class Overlay<T extends MapBase = MapBase> {
   /**
    * The map to add the layer to
    */

@@ -26,8 +26,8 @@ import {
   MapScaleLineOptions,
   MapExtent,
   MapControlsOptions,
-  BaseMap
 } from './map.interface';
+import { MapBase } from './map.abstract';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
@@ -42,7 +42,7 @@ import {
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
-export class IgoMap implements BaseMap {
+export class IgoMap implements MapBase {
   public ol: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);

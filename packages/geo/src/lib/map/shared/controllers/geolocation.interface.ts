@@ -1,7 +1,6 @@
 import { ProjectionLike } from 'ol/proj';
 
 export interface MapGeolocationControllerOptions {
-  //  todo keepPositionHistory?: boolean;
   projection: ProjectionLike;
   accuracyThreshold?: number;
   followPosition?: boolean;
