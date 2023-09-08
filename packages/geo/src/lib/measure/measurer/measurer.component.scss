@@ -1,6 +1,8 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
+$slide-toggle-width: 60px;
+
 :host {
   .measure-type-toggle {
     padding: 10px;
@@ -17,6 +19,15 @@
     mat-slide-toggle {
       width: 100%;
       padding: 10px;
+
+      ::ng-deep .mdc-form-field{
+        width: 100%;
+      }
+
+      ::ng-deep .mdc-label  {
+        margin-left: 0;
+        width: calc(100% - #{$slide-toggle-width});
+      }
     }
   }
 

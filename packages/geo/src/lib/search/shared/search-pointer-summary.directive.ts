@@ -9,7 +9,7 @@ import {
   HostListener
 } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Subscription, first } from 'rxjs';
 
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 
@@ -27,7 +27,6 @@ import { SearchResult, Research } from './search.interfaces';
 import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { take } from 'rxjs/operators';
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
@@ -36,6 +35,7 @@ import { sourceCanReverseSearchAsSummary } from './search.utils';
 import { MediaService } from '@igo2/core';
 import { unByKey } from 'ol/Observable';
 import { pointerPositionSummaryMarkerStyle } from '../../style/shared/feature/feature-style';
+import { SubjectStatus } from '@igo2/utils';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -106,10 +106,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     this.listenToMapPointerMove();
     this.subscribeToPointerStore();
 
-    this.map.status$.pipe(take(1)).subscribe(() => {
-      this.store = new FeatureStore<Feature>([], {map: this.map});
-      this.initStore();
-    });
+    this.map.status$
+      .pipe(first(status => status === SubjectStatus.Done))
+      .subscribe(() => {
+        this.store = new FeatureStore<Feature>([], { map: this.map });
+        this.initStore();
+      });
 
     // To handle context change without using the contextService.
     this.layers$$ = this.map.layers$.subscribe((layers) => {

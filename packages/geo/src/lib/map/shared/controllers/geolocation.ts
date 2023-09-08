@@ -14,7 +14,8 @@ import * as olstyle from 'ol/style';
 import { StorageService, ConfigService } from '@igo2/core';
 import { Overlay } from '../../../overlay/shared/overlay';
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
-import { BaseMap, MapViewOptions } from '../map.interface';
+import { MapViewOptions } from '../map.interface';
+import { MapBase } from '../map.abstract';
 import { computeOlFeaturesExtent, featuresAreOutOfView, hideOlFeature, moveToOlFeatures } from '../../../feature/shared/feature.utils';
 import { GeolocationBuffer, GeolocationOverlayType, MapGeolocationControllerOptions, MapGeolocationState } from './geolocation.interface';
 
@@ -177,7 +178,7 @@ export class MapGeolocationController extends MapController {
 
 
   constructor(
-    private map: BaseMap,
+    private map: MapBase,
     private options?: MapGeolocationControllerOptions,
     private storageService?: StorageService,
     private configService?: ConfigService

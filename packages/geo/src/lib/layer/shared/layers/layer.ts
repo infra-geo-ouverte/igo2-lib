@@ -20,7 +20,7 @@ import { LayerOptions } from './layer.interface';
 import { Message, MessageService } from '@igo2/core';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
-import { BaseMap } from '../../../map/shared/map.interface';
+import { MapBase } from '../../../map/shared/map.abstract';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -28,7 +28,7 @@ export abstract class Layer {
   public legend: Legend[];
   public legendCollapsed: boolean = true;
   public firstLoadComponent: boolean = true;
-  public map: BaseMap;
+  public map: MapBase;
   public ol: olLayer<olSource>;
   public olLoadingProblem: boolean = false;
   public status$: Subject<SubjectStatus>;
@@ -185,7 +185,7 @@ export abstract class Layer {
 
   protected abstract createOlLayer(): olLayer<olSource>;
 
-  setMap(map: BaseMap | undefined) {
+  setMap(map: MapBase | undefined) {
     this.map = map;
 
     this.unobserveResolution();

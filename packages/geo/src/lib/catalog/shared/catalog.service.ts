@@ -848,27 +848,27 @@ class CatalogFactory {
   ): Catalog {
     let catalog: Catalog;
     if (options.hasOwnProperty('composite')) {
-      catalog = new CompositeCatalog(options, catalogService.loadCatalogCompositeLayerItems);
+      catalog = new CompositeCatalog(options, (catalog: Catalog) => catalogService.loadCatalogCompositeLayerItems(catalog));
     } else if (options.type === TypeCatalog[TypeCatalog.baselayers]) {
-      catalog = new BaselayersCatalog(options, catalogService.loadCatalogBaseLayerItems);
+      catalog = new BaselayersCatalog(options, (catalog: Catalog) => catalogService.loadCatalogBaseLayerItems(catalog));
     } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
-      catalog = new ArcGISRestCatalog(options, catalogService.loadCatalogArcGISRestItems);
+      catalog = new ArcGISRestCatalog(options, (catalog: Catalog) => catalogService.loadCatalogArcGISRestItems(catalog));
     } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
       catalog = new TileOrImageArcGISRestCatalog(
         options,
-        catalogService.loadCatalogArcGISRestItems,
+        (catalog: Catalog) => catalogService.loadCatalogArcGISRestItems(catalog),
         TypeCatalog.tilearcgisrest
       );
     } else if (options.type === TypeCatalog[TypeCatalog.imagearcgisrest]) {
       catalog = new TileOrImageArcGISRestCatalog(
         options,
-        catalogService.loadCatalogArcGISRestItems,
+        (catalog: Catalog) => catalogService.loadCatalogArcGISRestItems(catalog),
         TypeCatalog.imagearcgisrest
       );
     } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
-      catalog = new WMTSCatalog(options, catalogService.loadCatalogWMTSLayerItems);
+      catalog = new WMTSCatalog(options, (catalog: Catalog) => catalogService.loadCatalogWMTSLayerItems(catalog));
     } else {
-      catalog = new WMSCatalog(options, catalogService.loadCatalogWMSLayerItems);
+      catalog = new WMSCatalog(options, (catalog: Catalog) => catalogService.loadCatalogWMSLayerItems(catalog));
     }
 
     return catalog;

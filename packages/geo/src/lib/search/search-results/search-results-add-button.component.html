@@ -9,6 +9,7 @@ matTooltipShowDelay="500"
 [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="onToggleClick($event)">
 <mat-icon
+  aria-hidden="false"
   matBadge="icon"
   [igoMatBadgeIcon]="getBadgeIcon()"
   igoMatBadgeColor="rgba(0,0,0,0.87)"
@@ -32,6 +33,7 @@ matTooltipShowDelay="500"
 [matTooltip]="(addFeatureToLayerTooltip$ | async) | translate"
 (click)="addFeatureToLayer()">
 <mat-icon
+  aria-hidden="false"
   matBadge="icon"
   igoMatBadgeIcon="eye-off"
   igoMatBadgeInverseColor="true"

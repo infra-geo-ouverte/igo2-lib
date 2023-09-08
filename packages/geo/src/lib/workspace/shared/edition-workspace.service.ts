@@ -27,7 +27,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.i
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer/shared';
 import { StyleService } from '../../style/style-service/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { BaseMap, IgoMap } from '../../map/shared';
+import { MapBase, IgoMap } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspace } from './edition-workspace';
 
@@ -43,7 +43,6 @@ import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
   providedIn: 'root'
 })
 export class EditionWorkspaceService {
-
   public ws$ = new BehaviorSubject<string>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);
   public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(undefined);
@@ -176,20 +175,24 @@ export class EditionWorkspaceService {
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
 
-        wks = new EditionWorkspace({
-          id: layer.id,
-          title: layer.title,
-          layer: workspaceLayer,
-          map,
-          entityStore: this.createFeatureStore(workspaceLayer, map),
-          actionStore: new ActionStore([]),
-          meta: {
-            tableTemplate: undefined
-          },
-          adding$: this.adding$,
-          deleteFeature: this.deleteFeature,
-          getDomainValues: this.getDomainValues
-        }, this.dialog, this.configService);
+        wks = new EditionWorkspace(
+          this.dialog,
+          this.configService,
+          this.adding$,
+          this.deleteFeature,
+          this.getDomainValues,
+          {
+            id: layer.id,
+            title: layer.title,
+            layer: workspaceLayer,
+            map,
+            entityStore: this.createFeatureStore(workspaceLayer, map),
+            actionStore: new ActionStore([]),
+            meta: {
+              tableTemplate: undefined
+            },
+          }
+        );
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
@@ -619,7 +622,7 @@ export class EditionWorkspaceService {
    * A new wfs loader is used to ensure cache is not retrieving old data
    * WMS params are updated to ensure layer is correctly refreshed
    */
-  refreshMap(layer: VectorLayer, map: BaseMap) {
+  refreshMap(layer: VectorLayer, map: MapBase) {
     const wfsOlLayer = layer.dataSource.ol;
     const loader = (extent, resolution, proj, success, failure) => {
       layer.customWFSLoader(
