@@ -14,8 +14,7 @@
         </span>
         <igo-color-picker-form-field
           formControlName="fill"
-          (colorClick)="handleColorClicked()"
-          (colorClose)="handleColorClosed()"
+          [dialogRef] = "dialogRef"
           outputFormat="rgba"
           setAlpha=".4"
         ></igo-color-picker-form-field>
@@ -29,8 +28,7 @@
         </span>
         <igo-color-picker-form-field
           formControlName="stroke"
-          (colorClick)="handleColorClicked()"
-          (colorClose)="handleColorClosed()"
+          [dialogRef] = "dialogRef"
           outputFormat="rgba"
           setAlpha="1"
         ></igo-color-picker-form-field>

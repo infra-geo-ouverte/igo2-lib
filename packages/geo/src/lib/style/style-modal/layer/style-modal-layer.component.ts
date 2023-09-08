@@ -115,14 +115,4 @@ export class StyleModalLayerComponent implements OnInit {
     this.confirmFlag = true;
     this.dialogRef.close(this.styleModalData);
   }
-
-  handleColorClicked() {
-    this.dialogRef.disableClose = true;
-  }
-
-  handleColorClosed() {
-    setTimeout(() => {
-      this.dialogRef.disableClose = false;
-    }, 300);
-  }
 }

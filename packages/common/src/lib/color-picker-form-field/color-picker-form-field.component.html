@@ -9,8 +9,8 @@
   <input
     matInput
     [readonly]="true"
-    (click)="colorClick.emit()"
-    (change)="colorClose.emit()"
+    (click)="colorFieldClick()"
+    (blur)="colorFieldBlur()"
     [(ngModel)]="value"
     type="color"
   />

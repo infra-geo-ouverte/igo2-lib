@@ -15,9 +15,8 @@
         </span>
         <igo-color-picker-form-field
         [(ngModel)]="this.styleModalData.fillColor"
+        [dialogRef] = "dialogRef"
         formControlName="fill"
-        (colorClick)="handleColorClicked()"
-        (colorClose)="handleColorClosed()"
         outputFormat="rgba"
         setAlpha=".4"
         ></igo-color-picker-form-field>
@@ -31,9 +30,8 @@
 
       <igo-color-picker-form-field
           [(ngModel)]="this.styleModalData.strokeColor"
+          [dialogRef] = "dialogRef"
           formControlName="stroke"
-          (colorClick)="handleColorClicked()"
-          (colorClose)="handleColorClosed()"
           outputFormat="rgba"
           setAlpha="1"
           ></igo-color-picker-form-field>

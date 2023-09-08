@@ -154,14 +154,4 @@ export class StyleModalDrawingComponent implements OnInit {
     console.log(this.styleModalData);
     // this.dialogRef.close(this.styleModalData);
   }
-
-  handleColorClicked() {
-    this.dialogRef.disableClose = true;
-  }
-
-  handleColorClosed() {
-    setTimeout(() => {
-      this.dialogRef.disableClose = false;
-    }, 300);
-  }
 }

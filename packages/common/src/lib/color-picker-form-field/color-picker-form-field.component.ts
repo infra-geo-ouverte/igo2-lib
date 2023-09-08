@@ -1,6 +1,7 @@
-import { Component, forwardRef } from '@angular/core';
-import { Input, Output, EventEmitter } from '@angular/core';
+import { Component, forwardRef, OnInit } from '@angular/core';
+import { Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import tinycolor from "tinycolor2";
 
 @Component({
@@ -15,12 +16,18 @@ import tinycolor from "tinycolor2";
     }
   ]
 })
-export class ColorPickerFormFieldComponent implements ControlValueAccessor {
+export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnInit {
 
+  // native color picker can't give transparency
+  // set transparency manually
   @Input() setAlpha: number = 1;
+
+  // by default native color picker gives hex result
   @Input() outputFormat: 'hex'| 'rgba'| 'hsla' = 'rgba';
-  @Output() colorClick = new EventEmitter<null>();
-  @Output() colorClose = new EventEmitter<null>();
+
+  // if this component loaded inside MatDialog
+  // pass MatDialogRef to eliminate closing the dialog if we click outside
+  @Input() dialogRef: MatDialogRef<Component>;
 
   onChange: any = () => {};
   onTouch: any = () => {};
@@ -49,6 +56,10 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   public _value: string = "";
 
   constructor() { }
+
+  ngOnInit(): void {
+    console.log('this.value: ', this.value);
+  }
 
   writeValue(value: any){
     this.value = value;
@@ -82,5 +93,21 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   hexFormt(): string {
     return tinycolor(this.value).toHexString();
+  }
+
+  // change disableClose to true if native color picker opend
+  colorFieldClick(): void {
+    if (this.dialogRef) {
+      this.dialogRef.disableClose = true;
+    }
+  }
+
+  // change disableClose to false if native color picker closed
+  colorFieldBlur(): void {
+    if (this.dialogRef) {
+      setTimeout(() => {
+       this.dialogRef.disableClose = false;
+      }, 300);
+    }
   }
 }
