@@ -5,7 +5,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService, StorageService } from '@igo2/core';
-import { ObjectUtils } from '@igo2/utils';
+import { customCacheHasher, ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
@@ -204,10 +204,6 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Layer name or keyword
    * @returns Observable of <SearchResult<LayerOptions>[]
    */
-
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string | undefined,
     options?: TextSearchOptions
@@ -217,11 +213,23 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       return of([]);
     }
     this.options.params.page = params.get('page') || '1';
+    return this.getSearch(term, params);
+  }
 
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getSearch(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<ILayerItemResponse>[]> {
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
-        map((response: ILayerServiceResponse) => this.extractResults(response, term))
+        map((response: ILayerServiceResponse) =>
+          this.extractResults(response, term)
+        )
       );
   }
 
