@@ -6,25 +6,21 @@
   mat-dialog-content
   [hidden]="data.features.length === 0"
 >
-
-
   <form class="igo-form" [formGroup]="form">
     <div class="color-picker">
-
       <ng-container *ngIf="linestringOnly !== true">
         <span>
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
-        <igo-x-color-picker 
-        [color]="getFeatureFillColor()"
+        <igo-color-picker-form-field
         [(ngModel)]="this.styleModalData.fillColor"
         formControlName="fill"
         (colorClick)="handleColorClicked()"
         (colorClose)="handleColorClosed()"
         outputFormat="rgba"
         setAlpha=".4"
-        ></igo-x-color-picker>
+        ></igo-color-picker-form-field>
       </ng-container>
 
       <span>
@@ -33,15 +29,14 @@
         {{ 'igo.geo.style.stroke' | translate }}
       </span>
 
-      <igo-x-color-picker 
-          [color]="getFeatureStrokeColor()"
+      <igo-color-picker-form-field
           [(ngModel)]="this.styleModalData.strokeColor"
           formControlName="stroke"
           (colorClick)="handleColorClicked()"
           (colorClose)="handleColorClosed()"
           outputFormat="rgba"
           setAlpha="1"
-          ></igo-x-color-picker>
+          ></igo-color-picker-form-field>
     </div>
 
     <div class="igo-input-container">

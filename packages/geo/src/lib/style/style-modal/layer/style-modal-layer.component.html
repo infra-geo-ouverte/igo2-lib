@@ -12,15 +12,13 @@
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
-        <igo-x-color-picker 
-        [color]="getLayerFillColor()"
-        [(ngModel)]="this.styleModalData.fillColor"
-        formControlName="fill"
-        (colorClick)="handleColorClicked()"
-        (colorClose)="handleColorClosed()"
-        outputFormat="rgba"
-        setAlpha=".4"
-        ></igo-x-color-picker>
+        <igo-color-picker-form-field
+          formControlName="fill"
+          (colorClick)="handleColorClicked()"
+          (colorClose)="handleColorClosed()"
+          outputFormat="rgba"
+          setAlpha=".4"
+        ></igo-color-picker-form-field>
       </div>
 
       <div class="stroke-color-picker mat-typography">
@@ -29,15 +27,13 @@
           </mat-icon>
           {{ 'igo.geo.style.stroke' | translate }}
         </span>
-        <igo-x-color-picker 
-          [color]="getLayerStrokeColor()"
-          [(ngModel)]="this.styleModalData.strokeColor"
+        <igo-color-picker-form-field
           formControlName="stroke"
           (colorClick)="handleColorClicked()"
           (colorClose)="handleColorClosed()"
           outputFormat="rgba"
           setAlpha="1"
-          ></igo-x-color-picker>
+        ></igo-color-picker-form-field>
       </div>
     </form>
   </div>

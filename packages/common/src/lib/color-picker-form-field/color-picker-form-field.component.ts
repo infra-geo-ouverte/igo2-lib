@@ -4,43 +4,49 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import tinycolor from "tinycolor2";
 
 @Component({
-  selector: 'igo-x-color-picker',
-  templateUrl: './x-color-picker.component.html',
-  styleUrls: ['./x-color-picker.component.scss'],
+  selector: 'igo-color-picker-form-field',
+  templateUrl: './color-picker-form-field.component.html',
+  styleUrls: ['./color-picker-form-field.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => XcolorPickerComponent),
+      useExisting: forwardRef(() => ColorPickerFormFieldComponent),
       multi: true,
     }
   ]
 })
-export class XcolorPickerComponent implements ControlValueAccessor {
+export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
-  @Input() color: string;
-  @Input() setAlpha: '.4' | '1' = '.4';
+  @Input() setAlpha: number = 1;
   @Input() outputFormat: 'hex'| 'rgba'| 'hsla' = 'rgba';
   @Output() colorClick = new EventEmitter<null>();
   @Output() colorClose = new EventEmitter<null>();
 
   onChange: any = () => {};
   onTouch: any = () => {};
-  val= "";
 
-  set value(val){
-    if( val !== undefined && this.val !== val){
+  set value(value: string) {
+    /*if( val !== undefined && this.val !== val){
       val = this.setFormat(val);
       this.val = val;
       this.onChange(val);
       this.onTouch(val);
     } else {
       this.val = this.color;
-    }
+    }*/
+    value = this.setFormat(value);
+    this.onChange(value);
+    this.onTouch(value);
+    // console.log('aaa', value);
+    this._value = value;
   }
 
-  get value () {
-    return tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
+  get value (): string {
+    return this._value;
+    // return tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
   }
+
+  public _value: string = "";
 
   constructor() { }
 
@@ -56,7 +62,7 @@ export class XcolorPickerComponent implements ControlValueAccessor {
     this.onTouch = fn;
   }
 
-  setFormat(color: string): string {
+  private setFormat(color: string): string {
     switch (this.outputFormat) {
       case 'hex':
         color = tinycolor(color).setAlpha(this.setAlpha).toHexString();
@@ -72,5 +78,9 @@ export class XcolorPickerComponent implements ControlValueAccessor {
       break;
     }
     return color;
+  }
+
+  hexFormt(): string {
+    return tinycolor(this.value).toHexString();
   }
 }
