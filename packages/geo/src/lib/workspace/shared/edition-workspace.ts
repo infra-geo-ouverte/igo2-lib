@@ -5,11 +5,10 @@ import {
   EntityRecord
 } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 
-import { ImageLayer, VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
-import { EditionWorkspaceService } from './edition-workspace.service';
+import { ImageLayer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 import { DrawControl } from '../../geometry';
 import { createInteractionStyle, GeometryType } from '../../draw';
@@ -23,7 +22,7 @@ import * as OlStyle from 'ol/style';
 import OlModify from 'ol/interaction/Modify';
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
-import { FeatureDataSource } from '../../datasource/shared';
+import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -78,10 +77,13 @@ export class EditionWorkspace extends Workspace {
   public strokeWidth: number;
 
   constructor(
-    protected options: EditionWorkspaceOptions,
-    private editionWorkspaceService: EditionWorkspaceService,
     private dialog: MatDialog,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private adding$: BehaviorSubject<boolean>,
+    private _deleteFeature: (workspace: EditionWorkspace, url: string) => void,
+    private getDomainValues: (relation: RelationOptions) => Observable<any>,
+    protected options: EditionWorkspaceOptions,
+  ) {
     super(options);
     this.map.viewController.resolution$.subscribe((mapResolution) => {
       if (mapResolution > this.layer.minResolution && mapResolution < this.layer.maxResolution) {
@@ -148,7 +150,7 @@ export class EditionWorkspace extends Workspace {
           }
           if (url) {
             url += id;
-            this.editionWorkspaceService.deleteFeature(workspace, url);
+            this.deleteFeature(workspace, url);
           }
         }
       });
@@ -164,7 +166,7 @@ export class EditionWorkspace extends Workspace {
 
       // Update domain list
       if (column.type === 'list' || column.type === 'autocomplete') {
-        this.editionWorkspaceService.getDomainValues(column.relation).subscribe(result => {
+        this.getDomainValues(column.relation).subscribe(result => {
           column.domainValues = result;
         });
       }
@@ -193,7 +195,7 @@ export class EditionWorkspace extends Workspace {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
         feature.newFeature = true;
-        this.editionWorkspaceService.adding$.next(true);
+        this.adding$.next(true);
         workspace.entityStore.state.updateAll({ newFeature: false });
         workspace.entityStore.stateView.filter(this.newFeaturefilterClauseFunc);
         if (editionOpt.addWithDraw) {

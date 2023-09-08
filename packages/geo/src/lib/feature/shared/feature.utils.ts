@@ -22,12 +22,9 @@ import {
   getEntityProperty
 } from '@igo2/common';
 
-import { IgoMap } from '../../map';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureDataSource } from '../../datasource';
+import { MapExtent, MapViewController } from '../../map/shared';
 import { FEATURE, FeatureMotion } from './feature.enums';
 import { Feature, FeatureGeometry } from './feature.interfaces';
-import { FeatureStore } from './store';
 
 /**
  * Create an Openlayers feature object out of a feature definition.
@@ -229,8 +226,8 @@ export function featureFromOl(
  * @returns Extent in the map projection
  */
 export function computeOlFeatureExtent(
-  map: IgoMap,
-  olFeature: OlFeature<OlGeometry>
+  olFeature: OlFeature<OlGeometry>,
+  projection: olproj.Projection,
 ): [number, number, number, number] {
   let olExtent = olextent.createEmpty();
 
@@ -240,7 +237,7 @@ export function computeOlFeatureExtent(
     olExtent = olproj.transformExtent(
       olFeatureExtent,
       olFeatureProjection,
-      map.projection
+      projection
     );
   } else {
     const olGeometry = olFeature.getGeometry();
@@ -259,13 +256,13 @@ export function computeOlFeatureExtent(
  * @returns Extent in the map projection
  */
 export function computeOlFeaturesExtent(
-  map: IgoMap,
-  olFeatures: OlFeature<OlGeometry>[]
+  olFeatures: OlFeature<OlGeometry>[],
+  projection: olproj.Projection,
 ): [number, number, number, number] {
   const extent = olextent.createEmpty();
 
   olFeatures.forEach((olFeature: OlFeature<OlGeometry>) => {
-    const featureExtent = computeOlFeatureExtent(map, olFeature);
+    const featureExtent = computeOlFeatureExtent(olFeature, projection);
     olextent.extend(extent, featureExtent);
   });
 
@@ -302,14 +299,13 @@ export function scaleExtent(
  * @returns Return true if features are out of view
  */
 export function featuresAreOutOfView(
-  map: IgoMap,
+  extent: MapExtent,
   featuresExtent: [number, number, number, number],
   edgeRatio: number | number[] = 0.05
 ) {
   const edgesRatio = Array.isArray(edgeRatio) ? edgeRatio :[edgeRatio,edgeRatio,edgeRatio,edgeRatio];
-  const mapExtent = map.viewController.getExtent();
   const scale = [-1, -1, -1, -1].map((x,i) => x * edgesRatio[i]);
-  const viewExtent = scaleExtent(mapExtent, scale as [
+  const viewExtent = scaleExtent(extent, scale as [
     number,
     number,
     number,
@@ -330,18 +326,18 @@ export function featuresAreOutOfView(
  * @returns Return true if features are too deep in the view
  */
 export function featuresAreTooDeepInView(
-  map: IgoMap,
+  viewController: MapViewController,
   featuresExtent: [number, number, number, number],
   areaRatio?: number
 ) {
   // An area ratio of 0.004 means that the feature extent's width and height
   // should be about 1/16 of the map extent's width and height
   areaRatio = areaRatio ? areaRatio : 0.004;
-  const mapExtent = map.viewController.getExtent();
+  const mapExtent = viewController.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
 
-  if (featuresExtentArea === 0 && map.viewController.getZoom() > 13) {
+  if (featuresExtentArea === 0 && viewController.getZoom() > 13) {
     // In case it's a point
     return false;
   }
@@ -359,28 +355,30 @@ export function featuresAreTooDeepInView(
  *  by that factor before any logic is applied.
  */
 export function moveToOlFeatures(
-  map: IgoMap,
+  viewController: MapViewController,
   olFeatures: OlFeature<OlGeometry>[],
   motion: FeatureMotion = FeatureMotion.Default,
   scale?: [number, number, number, number],
   areaRatio?: number
 ) {
-  const featuresExtent = computeOlFeaturesExtent(map, olFeatures);
+  const extent = viewController.getExtent();
+  const projection = viewController.getOlProjection();
+  const featuresExtent = computeOlFeaturesExtent(olFeatures, projection);
   let viewExtent = featuresExtent;
   if (scale !== undefined) {
     viewExtent = scaleExtent(viewExtent, scale);
   }
 
   if (motion === FeatureMotion.Zoom) {
-    map.viewController.zoomToExtent(viewExtent);
+    viewController.zoomToExtent(viewExtent);
   } else if (motion === FeatureMotion.Move) {
-    map.viewController.moveToExtent(viewExtent);
+    viewController.moveToExtent(viewExtent);
   } else if (motion === FeatureMotion.Default) {
     if (
-      featuresAreOutOfView(map, featuresExtent) ||
-      featuresAreTooDeepInView(map, featuresExtent, areaRatio)
+      featuresAreOutOfView(extent, featuresExtent) ||
+      featuresAreTooDeepInView(viewController, featuresExtent, areaRatio)
     ) {
-      map.viewController.zoomToExtent(viewExtent);
+      viewController.zoomToExtent(viewExtent);
     }
   }
 }
@@ -391,32 +389,6 @@ export function moveToOlFeatures(
  */
 export function hideOlFeature(olFeature: OlFeature<OlGeometry>) {
   olFeature.setStyle(new olstyle.Style({}));
-}
-
-/**
- * Try to bind a layer to a store if none is bound already.
- * The layer will also be added to the store's map.
- * If no layer is given to that function, a basic one will be created.
- * @param store The store to bind the layer
- * @param layer An optional VectorLayer
- */
-export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
-  if (store.layer !== undefined) {
-    if (store.layer.map === undefined) {
-      store.map.addLayer(store.layer);
-    }
-    return;
-  }
-
-  layer = layer
-    ? layer
-    : new VectorLayer({
-        source: new FeatureDataSource()
-      });
-  store.bindLayer(layer);
-  if (store.layer.map === undefined) {
-    store.map.addLayer(store.layer);
-  }
 }
 
 /**

@@ -1,11 +1,11 @@
 import { WfsWorkspace } from './wfs-workspace';
 import { FeatureWorkspace } from './feature-workspace';
-import { EditionWorkspace } from './edition-workspace';
 import { Observable } from 'rxjs';
 import {
   EntityStoreFilterCustomFuncStrategy, EntityRecord,
   EntityTableColumnRenderer, EntityTableButton, EntityStoreStrategyFuncOptions,
-  EntityTableTemplate
+  EntityTableTemplate,
+  Workspace
 } from '@igo2/common';
 import { map, skipWhile, take } from 'rxjs/operators';
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -35,13 +35,13 @@ export function setSelectedOnly(value, layerId, storageService) {
   storageService.set(`workspace.selectedOnly.${layerId}`, value, StorageScope.SESSION);
 }
 
-export function mapExtentStrategyActiveToolTip(ws: WfsWorkspace | FeatureWorkspace | EditionWorkspace): Observable<string> {
+export function mapExtentStrategyActiveToolTip(ws: Workspace): Observable<string> {
   return ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy).active$.pipe(
     map((active: boolean) => active ? 'igo.geo.workspace.inMapExtent.active.tooltip' : 'igo.geo.workspace.inMapExtent.inactive.tooltip')
   );
 }
 
-export function noElementSelected(ws: WfsWorkspace | FeatureWorkspace | EditionWorkspace): Observable<boolean> {
+export function noElementSelected(ws: Workspace): Observable<boolean> {
   return ws.entityStore.stateView.manyBy$((record: EntityRecord<Feature>) => {
     return record.state.selected === true;
   }).pipe(

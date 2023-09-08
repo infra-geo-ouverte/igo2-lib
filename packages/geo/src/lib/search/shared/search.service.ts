@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
-import { stringToLonLat } from '../../map';
+import { stringToLonLat } from '../../map/shared';
 import { MapService } from '../../map/shared/map.service';
 
-import { SearchSource, TextSearch, ReverseSearch } from './sources/source';
+import { SearchSource } from './sources/source';
 import {
   TextSearchOptions,
   ReverseSearchOptions
 } from './sources/source.interfaces';
 import { SearchSourceService } from './search-source.service';
-import { Research } from './search.interfaces';
+import { Research, TextSearch, ReverseSearch } from './search.interfaces';
 import {
   sourceCanSearch,
   sourceCanReverseSearch,

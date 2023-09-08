@@ -4,7 +4,7 @@ import olSourceImage from 'ol/source/Image';
 import { AuthInterceptor } from '@igo2/auth';
 
 import { ImageWatcher } from '../../utils';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
 

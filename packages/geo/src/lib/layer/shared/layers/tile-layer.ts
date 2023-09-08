@@ -3,7 +3,7 @@ import olSourceTile from 'ol/source/Tile';
 import Tile from 'ol/Tile';
 
 import { TileWatcher } from '../../utils';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 
 import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
