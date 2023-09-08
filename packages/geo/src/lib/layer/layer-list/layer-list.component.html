@@ -86,6 +86,7 @@
       (click)="moveActiveLayer(activeLayer, layerListDisplacement.Lower, true)"
     >
       <mat-icon
+        aria-hidden="false"
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
@@ -109,6 +110,7 @@
       (click)="moveActiveLayer(activeLayer, layerListDisplacement.Raise, true)"
     >
       <mat-icon
+        aria-hidden="false"
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
@@ -128,6 +130,7 @@
       [matTooltip]="'igo.geo.layer.opacity' | translate"
     >
       <mat-icon
+        aria-hidden="false"
         [matBadge]="badgeOpacity"
         matBadgeColor="primary"
         matBadgeSize="medium"
@@ -212,6 +215,7 @@
       (click)="removeLayers(layersChecked)"
     >
       <mat-icon
+        aria-hidden="false"        
         [matBadge]="'!'"
         matBadgeColor="warn"
         matBadgeSize="medium"
@@ -256,6 +260,7 @@
       (click)="lowerLayers(layersChecked)"
     >
       <mat-icon
+        aria-hidden="false"
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
@@ -279,6 +284,7 @@
       (click)="raiseLayers(layersChecked)"
     >
       <mat-icon
+        aria-hidden="false"
         [matBadge]="sortAlpha || onlyVisible || keyword ? '!' : ''"
         matBadgeColor="warn"
         matBadgeSize="medium"
