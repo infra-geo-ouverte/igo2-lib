@@ -1,4 +1,4 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, forwardRef, OnInit, Output } from '@angular/core';
 import { Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -29,28 +29,22 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
   // pass MatDialogRef to eliminate closing the dialog if we click outside
   @Input() dialogRef: MatDialogRef<Component>;
 
+  @Output() color: string;
+
   onChange: any = () => {};
   onTouch: any = () => {};
 
   set value(value: string) {
-    /*if( val !== undefined && this.val !== val){
-      val = this.setFormat(val);
-      this.val = val;
-      this.onChange(val);
-      this.onTouch(val);
-    } else {
-      this.val = this.color;
-    }*/
-    value = this.setFormat(value);
-    this.onChange(value);
-    this.onTouch(value);
-    // console.log('aaa', value);
-    this._value = value;
+
+      this.onChange(value);
+      this.onTouch(value);
+      console.log('value: ', value);
+      this._value = value;
+
   }
 
   get value (): string {
     return this._value;
-    // return tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
   }
 
   public _value: string = "";
@@ -58,22 +52,22 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
   constructor() { }
 
   ngOnInit(): void {
-    console.log('this.value: ', this.value);
+    console.log('ngOnInit: ', this.value);
   }
 
-  writeValue(value: any){
-    this.value = value;
+  writeValue(value: string) {
+    this.value = this.setFormat(value);
   }
 
-  registerOnChange(fn: any){
+  registerOnChange(fn: any) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any){
+  registerOnTouched(fn: any) {
     this.onTouch = fn;
   }
 
-  private setFormat(color: string): string {
+  setFormat(color: string): string {
     switch (this.outputFormat) {
       case 'hex':
         color = tinycolor(color).setAlpha(this.setAlpha).toHexString();
@@ -104,6 +98,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
 
   // change disableClose to false if native color picker closed
   colorFieldBlur(): void {
+    this.color = this.setFormat(this.value);
     if (this.dialogRef) {
       setTimeout(() => {
        this.dialogRef.disableClose = false;
