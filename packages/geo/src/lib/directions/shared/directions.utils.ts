@@ -11,7 +11,7 @@ import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './direct
 import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';

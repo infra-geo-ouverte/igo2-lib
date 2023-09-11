@@ -15,10 +15,10 @@ import {
   FeatureStoreSearchIndexStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
-import { LayerService, VectorLayer } from '../../layer';
+import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map';
-import { FeatureDataSource, CapabilitiesService } from '../../datasource';
+import { IgoMap } from '../../map/shared';
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { FeatureWorkspace } from './feature-workspace';
@@ -95,7 +95,7 @@ export class FeatureWorkspaceService {
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {
-          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle?.selection || {}));
         },
         showInLayerList: false,
         exportable: false,

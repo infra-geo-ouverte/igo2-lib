@@ -8,7 +8,7 @@ import {
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 

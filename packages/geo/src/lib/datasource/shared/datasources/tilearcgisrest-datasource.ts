@@ -7,8 +7,8 @@ import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.int
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class TileArcGISRestDataSource extends DataSource {
-  public ol: olSourceTileArcGISRest;
-  public options: TileArcGISRestDataSourceOptions;
+  public declare ol: olSourceTileArcGISRest;
+  public declare options: TileArcGISRestDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;

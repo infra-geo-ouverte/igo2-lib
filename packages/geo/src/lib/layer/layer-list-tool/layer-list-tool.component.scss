@@ -1,3 +1,5 @@
+@import '../../../../../core/src/style/partial/media';
+
 :host {
   display: flex;
   align-items: center;
@@ -7,6 +9,10 @@
   .inputFilter {
     width: calc(100% - 100px);
     max-width: 200px;
+
+    @include mobile {
+      width: 50%;
+    }
   }
 
   ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {

@@ -5,8 +5,8 @@ import type { QueryList } from '@angular/core';
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
-import { Layer, ItemStyleOptions } from '../shared/layers';
-import { LegendMapViewOptions } from '../shared/layers/layer.interface';
+import { Layer } from '../shared/layers';
+import { LegendMapViewOptions, ItemStyleOptions } from '../shared/layers/legend.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { catchError, map } from 'rxjs/operators';
 import { LanguageService, ConfigService } from '@igo2/core';
