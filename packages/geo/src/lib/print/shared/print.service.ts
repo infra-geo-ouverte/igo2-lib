@@ -316,7 +316,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
-
+    div.style.zIndex = '-1';
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
@@ -325,7 +325,7 @@ export class PrintService {
     const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
       console.log(e);
     });
-
+    this.removeHtmlElement(div);
     if (canvas) {
       let status = SubjectStatus.Done;
       try {
@@ -343,6 +343,10 @@ export class PrintService {
     }
 
     return status$;
+  }
+
+  private removeHtmlElement(element: HTMLElement) {
+    element.parentNode.removeChild(element);
   }
 
 
@@ -481,6 +485,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
+    div.style.zIndex = '-1';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
@@ -490,7 +495,7 @@ export class PrintService {
     const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
       console.log(e);
     });
-
+    this.removeHtmlElement(div);
     if (canvas) {
       const pourcentageReduction = 0.85;
       const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution, pourcentageReduction
@@ -534,6 +539,7 @@ export class PrintService {
       const div = window.document.createElement('div');
       div.style.position = 'absolute';
       div.style.top = '0';
+      div.style.zIndex = '-1';
       // Add html code to convert in the new window
       window.document.body.appendChild(div);
       div.innerHTML = html;
@@ -541,6 +547,7 @@ export class PrintService {
       const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
         console.log(e);
       });
+      this.removeHtmlElement(div);
       let marginsLegend;
       if (canvas) {
         const pourcentageReduction = 0.85;
@@ -1112,6 +1119,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
+    div.style.zIndex = '-1';
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
@@ -1146,7 +1154,7 @@ export class PrintService {
 
       context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);
       context.strokeRect(legendX, legendY, legendWidth, legendHeight);
-      div.parentNode.removeChild(div); // remove temp div (IE style)
+      this.removeHtmlElement(div);
       return true;
     }
   }
