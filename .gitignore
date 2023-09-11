@@ -6,6 +6,7 @@
 /out-tsc
 .metadata.json
 /documentation
+/projects
 
 # dependencies
 /node_modules
