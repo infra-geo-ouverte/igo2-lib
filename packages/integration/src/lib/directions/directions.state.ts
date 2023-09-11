@@ -38,9 +38,6 @@ export class DirectionState {
       map: this.mapState.map
     });
 
-    /**
-     * Store that holds the driving route as feature
-     */
     this.routesFeatureStore = new RoutesFeatureStore([], {
       map: this.mapState.map
     });
