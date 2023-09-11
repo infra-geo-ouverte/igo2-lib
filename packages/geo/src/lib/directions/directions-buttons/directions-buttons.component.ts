@@ -1,7 +1,7 @@
 import { Component, Input, Optional } from '@angular/core';
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { roundCoordTo } from '../../map/shared/map.utils';
 import { FeatureWithDirection } from '../shared/directions.interface';
 
@@ -25,7 +25,7 @@ export class DirectionsButtonsComponent {
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
 
-  public disablePrint: boolean = false;
+  public disabled$ = new BehaviorSubject(false);
 
   constructor(
     private languageService: LanguageService,
@@ -186,12 +186,12 @@ export class DirectionsButtonsComponent {
 
   printDirections() {
     this.stepFeatureStore.clear();
-    this.disablePrint = true;
+    this.disabled$.next(true);
     this.directionsService.downloadDirection(
       this.routesFeatureStore.map,
       this.activeRoute.properties.direction
     ).subscribe(() => {
-      this.disablePrint = false;
+      this.disabled$.next(false);
     });
   }
 }

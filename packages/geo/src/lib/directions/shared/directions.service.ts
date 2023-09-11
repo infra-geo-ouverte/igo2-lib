@@ -57,15 +57,21 @@ export class DirectionsService {
     });
 
     const size = map.ol.getSize();
-
+    console.log('here 0', size);
     map.ol.once('rendercomplete', async (event: any) => {
+      console.log('here 1');
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.printService.drawMap(size, mapCanvas);
+      console.log('here 2');
+      console.log('mapResultCanvas', mapResultCanvas);
       map.ol.updateSize();
       map.ol.renderSync();
+      console.log('here 3');
       await this.printService.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
 
       const imgSize = this.printService.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
+      console.log('here 4');
+      console.log('mapResultCanvas', mapResultCanvas.toDataURL());
       doc.addImage(mapResultCanvas, 10, 20, imgSize[0], imgSize[1]);
       doc.rect(10, 20, imgSize[0], imgSize[1]);
       doc.setFontSize(14);
@@ -110,7 +116,7 @@ export class DirectionsService {
         doc.putTotalPages(totalPagesExp);
       }
 
-      await doc.save('map_georef.pdf', { returnPromise: true });
+      await doc.save(`${title}.pdf`, { returnPromise: true });
 
       status$.next(SubjectStatus.Done);
     });
