@@ -5,7 +5,7 @@ import { DirectionsSource } from '../directions-sources/directions-source';
 import { DirectionsSourceService } from './directions-source.service';
 import { SubjectStatus } from '@igo2/utils';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import 'jspdf-autotable';
 import { CellHookData } from 'jspdf-autotable';
 import { IgoMap } from '../../map';
 import { PrintLegendPosition, PrintService } from '../../print';
@@ -50,13 +50,14 @@ export class DirectionsService {
 
     const status$ = new Subject<SubjectStatus>();
 
-    const doc = new jsPDF({
+    const doc: any = new jsPDF({
       orientation: 'p',
       format: 'Letter',
       unit: 'mm' // default
     });
 
     const size = map.ol.getSize();
+
     map.ol.once('rendercomplete', async (event: any) => {
       const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.printService.drawMap(size, mapCanvas);
@@ -65,7 +66,6 @@ export class DirectionsService {
       await this.printService.drawMapControls(map, mapResultCanvas, PrintLegendPosition.none);
 
       const imgSize = this.printService.getImageSizeToFitPdf(doc, mapResultCanvas, [10, 10, 10, 10]);
-
       doc.addImage(mapResultCanvas, 10, 20, imgSize[0], imgSize[1]);
       doc.rect(10, 20, imgSize[0], imgSize[1]);
       doc.setFontSize(14);
@@ -82,7 +82,7 @@ export class DirectionsService {
       const appName = (this.configService.getConfig('title')) ?
       this.configService.getConfig('title') : 'IGO Lib';
 
-      autoTable(doc, {
+      doc.autoTable({
         html: HTMLtable,
         startY: tablePos,
         margin: {top: 20, bottom: 20},

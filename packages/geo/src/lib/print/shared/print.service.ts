@@ -707,7 +707,6 @@ export class PrintService {
     size: Array<number>,
     mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
-
       const mapResultCanvas = document.createElement('canvas');
       mapResultCanvas.width = size[0];
       mapResultCanvas.height = size[1];
