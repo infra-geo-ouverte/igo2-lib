@@ -18,7 +18,6 @@ import { Md5 } from 'ts-md5';
 import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map';
 import { standardizeUrl } from '../../utils/id-generator';
-
 import { Catalog } from '../shared/catalog.abstract';
 import { CatalogService } from '../shared/catalog.service';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
@@ -229,5 +228,4 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       this.addCatalog(catalog);
     });
   }
-
 }
