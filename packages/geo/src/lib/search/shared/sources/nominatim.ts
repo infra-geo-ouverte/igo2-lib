@@ -7,8 +7,8 @@ import { map } from 'rxjs/operators';
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
 import { StorageService } from '@igo2/core';
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
 import { computeTermSimilarity } from '../search.utils';

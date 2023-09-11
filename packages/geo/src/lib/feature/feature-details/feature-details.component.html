@@ -3,7 +3,7 @@
     <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
-        <mat-icon mat-list-avatar svgIcon="{{icon}}"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="{{icon}}"></mat-icon>
       </td>
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">

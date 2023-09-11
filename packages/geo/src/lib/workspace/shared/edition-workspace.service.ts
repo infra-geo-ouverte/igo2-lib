@@ -4,10 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import {
   ActionStore,
-  EntityRecord,
-  EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
-  EntityStoreStrategyFuncOptions,
   EntityTableColumnRenderer,
   EntityTableTemplate,
   EntityTableButton} from '@igo2/common';
@@ -27,10 +24,10 @@ import {
   FeatureStoreSelectionStrategy} from '../../feature';
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
-import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer/shared';
 import { StyleService } from '../../style/style-service/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map';
+import { MapBase, IgoMap } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspace } from './edition-workspace';
 
@@ -40,12 +37,12 @@ import olFeature from 'ol/Feature';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EditionWorkspaceService {
-
   public ws$ = new BehaviorSubject<string>(undefined);
   public adding$ = new BehaviorSubject<boolean>(false);
   public relationLayers$ = new BehaviorSubject<ImageLayer[] | VectorLayer[]>(undefined);
@@ -178,17 +175,24 @@ export class EditionWorkspaceService {
         layer.ol.setProperties({ linkedLayers: { linkId: layer.options.linkedLayers.linkId, links: clonedLinks } }, false);
         workspaceLayer.dataSource.ol.refresh();
 
-        wks = new EditionWorkspace({
-          id: layer.id,
-          title: layer.title,
-          layer: workspaceLayer,
-          map,
-          entityStore: this.createFeatureStore(workspaceLayer, map),
-          actionStore: new ActionStore([]),
-          meta: {
-            tableTemplate: undefined
+        wks = new EditionWorkspace(
+          this.dialog,
+          this.configService,
+          this.adding$,
+          this.deleteFeature,
+          this.getDomainValues,
+          {
+            id: layer.id,
+            title: layer.title,
+            layer: workspaceLayer,
+            map,
+            entityStore: this.createFeatureStore(workspaceLayer, map),
+            actionStore: new ActionStore([]),
+            meta: {
+              tableTemplate: undefined
+            },
           }
-        }, this, this.dialog, this.configService);
+        );
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
@@ -233,7 +237,7 @@ export class EditionWorkspaceService {
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
+    store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
   }
 
@@ -376,13 +380,6 @@ export class EditionWorkspaceService {
       sort: true,
       columns
     };
-  }
-
-  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
-    const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true && record.state.inMapResolution === true;
-    };
-    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 
   public saveFeature(feature, workspace: EditionWorkspace) {
@@ -625,7 +622,7 @@ export class EditionWorkspaceService {
    * A new wfs loader is used to ensure cache is not retrieving old data
    * WMS params are updated to ensure layer is correctly refreshed
    */
-  refreshMap(layer: VectorLayer, map: IgoMap) {
+  refreshMap(layer: VectorLayer, map: MapBase) {
     const wfsOlLayer = layer.dataSource.ol;
     const loader = (extent, resolution, proj, success, failure) => {
       layer.customWFSLoader(

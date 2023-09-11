@@ -12,7 +12,7 @@ import { zip, BehaviorSubject } from 'rxjs';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
 import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 import {
   Catalog,
@@ -21,8 +21,8 @@ import {
   CatalogItemGroup,
   CatalogItemState,
   CatalogItemType,
-  addedChangeEmitter,
-  addedChangeGroupEmitter
+  AddedChangeEmitter,
+  AddedChangeGroupEmitter
 } from '../shared';
 
 /**
@@ -119,7 +119,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added event
    */
-  onLayerAddedChange(event: addedChangeEmitter) {
+  onLayerAddedChange(event: AddedChangeEmitter) {
     const layer = event.layer;
     this.store.state.update(layer, { added: event.added }, false);
     event.added ? this.addLayerToMap(layer, event) : this.removeLayerFromMap(layer);
@@ -130,7 +130,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Group added event
    */
-  onGroupAddedChange(event: addedChangeGroupEmitter) {
+  onGroupAddedChange(event: AddedChangeGroupEmitter) {
     const group = event.group;
     this.store.state.update(group, { added: event.added }, false);
     event.added ? this.addGroupToMap(group, event) : this.removeGroupFromMap(group);
@@ -140,7 +140,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add layer to map
    * @param layer Catalog layer
    */
-  private addLayerToMap(layer: CatalogItemLayer, event?: addedChangeEmitter) {
+  private addLayerToMap(layer: CatalogItemLayer, event?: AddedChangeEmitter) {
     this.addLayersToMap([layer], event);
   }
 
@@ -156,7 +156,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add multiple layers to map
    * @param layers Catalog layers
    */
-  private addLayersToMap(layers: CatalogItemLayer[], event?: addedChangeEmitter | addedChangeGroupEmitter) {
+  private addLayersToMap(layers: CatalogItemLayer[], event: AddedChangeEmitter | AddedChangeGroupEmitter) {
     const layers$ = layers.map((layer: CatalogItemLayer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
@@ -227,7 +227,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add all the layers of a group to map
    * @param group Catalog group
    */
-  private addGroupToMap(group: CatalogItemGroup, event: addedChangeGroupEmitter) {
+  private addGroupToMap(group: CatalogItemGroup, event: AddedChangeGroupEmitter) {
     let layers = group.items.filter((item: CatalogItem) => {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;

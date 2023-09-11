@@ -1,0 +1,5 @@
+@use "./search-bar/search-bar.theming" as search-bar;
+
+@mixin theme($theme) {
+    @include search-bar.theme($theme);
+}

@@ -16,7 +16,7 @@ import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 import { CapabilitiesService } from '../../datasource';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';

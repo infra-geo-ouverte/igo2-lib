@@ -10,7 +10,7 @@
 
 <div
   *ngIf="activeTool$ | async as tool"
-  class="igo-tool-container"
+  class="igo-tool-container mat-body-1"
   [ngClass]="{'igo-tool-container-with-toolbar': !actionStore.empty, 'igo-tool-container-with-animation': animate}"
   [@toolSlideInOut]="animation$ | async"
   (@toolSlideInOut.start)="onAnimationStart()"

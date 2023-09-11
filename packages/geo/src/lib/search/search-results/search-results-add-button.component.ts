@@ -35,7 +35,7 @@ import Style from 'ol/style/Style';
 import Circle from 'ol/style/Circle';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
-import { QueryableDataSourceOptions } from '../../query';
+import { QueryableDataSourceOptions } from '../../query/shared';
 import { Media, MediaService } from '@igo2/core';
 
 
@@ -159,10 +159,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
    * On toggle button click, emit the added change event
    * @internal
    */
-  onToggleClick(event) {
+  onToggleClick(currEvent: Event) {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
+    const event = currEvent ? currEvent : {} as Event;
 
     if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
       return;
@@ -181,7 +182,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
       case 'mouseenter':
         if (!this.isPreview$.value && !this.added) {
           this.lastTimeoutRequest = setTimeout(() => {
-            this.add();
+            this.add(event);
             this.isPreview$.next(true);
           }, 500);
         }
@@ -199,7 +200,7 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
     }
   }
 
-  private add(event?: Event) {
+  private add(event: Event) {
     if (!this.added) {
       this.added = true;
       this.addLayerToMap(event);
@@ -319,7 +320,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         if(this.stores.length > 0) {
           this.stores.map((store) => {
             store.state.updateAll({selected: false});
-            (store?.layer).visible = false;
+            if (store?.layer) {
+              store.layer.visible = false;
+            }
             return store;
           });
         }

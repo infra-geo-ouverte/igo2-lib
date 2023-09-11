@@ -6,8 +6,8 @@ import { LanguageService, StorageService } from '@igo2/core';
 
 import { FEATURE, Feature } from '../../../feature';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions

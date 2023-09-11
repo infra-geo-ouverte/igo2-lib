@@ -3,7 +3,7 @@ import olSourceTile from 'ol/source/Tile';
 import Tile from 'ol/Tile';
 
 import { TileWatcher } from '../../utils';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 
 import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
@@ -18,15 +18,15 @@ import { TileLayerOptions } from './tile-layer.interface';
 import { MessageService } from '@igo2/core';
 import { AuthInterceptor } from '@igo2/auth';
 export class TileLayer extends Layer {
-  public dataSource:
+  public declare dataSource:
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
     | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
-  public options: TileLayerOptions;
-  public ol: olLayerTile<olSourceTile>;
+  public declare options: TileLayerOptions;
+  public declare ol: olLayerTile<olSourceTile>;
 
   private watcher: TileWatcher;
 

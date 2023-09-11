@@ -7,8 +7,8 @@ import * as olformat from 'ol/format';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, ReverseSearch } from './source';
+import { SearchResult, ReverseSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import { SearchSourceOptions, ReverseSearchOptions } from './source.interfaces';
 
 import { LanguageService, StorageService } from '@igo2/core';

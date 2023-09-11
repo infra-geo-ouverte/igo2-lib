@@ -152,6 +152,8 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   }
   private _overlayClass = '';
 
+  @HostBinding('class.is-collapsed') isCollapsed = this.collapsed;
+
   /**
    * @ignore
    */

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 @Component({
   selector: 'igo-ogc-filterable-form',

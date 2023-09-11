@@ -1,62 +1,65 @@
 $slide-toggle-width: 60px;
 
-mat-option.igo-export-layer-mat-option {
-  height: 5em;
-  line-height: 1em;
-}
+:host {
+  mat-option.igo-export-layer-mat-option {
+    height: 5em;
+    line-height: 1em;
+  }
 
-.import-export-toggle {
-  padding: 10px;
-  text-align: center;
-
-  mat-button-toggle-group {
-    width: 100%;
-
-    mat-button-toggle {
-      width: 50%;
+  .import-export-toggle {
+    padding: 10px;
+    text-align: center;
+    mat-button-toggle-group {
+      width: 100%;
+      mat-button-toggle {
+        width: 50%;
+      }
     }
   }
-}
 
-h4 {
-  padding: 0 5px;
-}
-
-.igo-form {
-  padding: 15px 5px;
-
-}
-
-.igo-input-container {
-  mat-form-field {
-    width: 100%;
+  h4 {
+    padding: 0 5px;
   }
-}
 
-.igo-form-button-group {
-  text-align: center;
-  padding-top: 10px;
-}
+  .igo-form {
+    padding: 15px 5px;
+  }
 
-igo-spinner {
-  position: absolute;
-  padding-left: 10px;
-}
-
-.export-options, .export-combine-layers, .export-separator {
-  overflow-x: hidden;
-
-  mat-slide-toggle {
-    width: 100%;
-    margin: 10px;
-
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
+  .igo-input-container {
+    mat-form-field {
+      width: 100%;
     }
   }
-}
 
-.export-select-trigger {
-  opacity: 0.75;
-  font-size: 0.75em;
+  .igo-form-button-group {
+    text-align: center;
+    padding-top: 10px;
+  }
+
+  igo-spinner {
+    position: absolute;
+    padding-left: 10px;
+  }
+
+  .export-options,
+  .export-combine-layers,
+  .export-separator {
+    mat-slide-toggle {
+      width: 100%;
+      padding: 10px;
+      ::ng-deep .mdc-form-field{
+        width: 100%;
+      }
+
+      ::ng-deep .mdc-label  {
+        margin-left: 0;
+        width: calc(100% - #{$slide-toggle-width});
+      }
+    }
+  }
+
+  .export-select-trigger {
+    opacity: 0.75;
+    font-size: 0.75em;
+  }
 }

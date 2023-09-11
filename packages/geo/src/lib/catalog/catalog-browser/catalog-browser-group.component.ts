@@ -14,15 +14,15 @@ import { EntityStore } from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
 
 import {
-  addedChangeEmitter,
-  addedChangeGroupEmitter,
+  AddedChangeEmitter,
+  AddedChangeGroupEmitter,
   Catalog,
   CatalogItem,
   CatalogItemGroup,
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 /**
  * Catalog browser group item
@@ -91,12 +91,12 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the add/remove button of the group is clicked
    */
-  @Output() addedChange = new EventEmitter<addedChangeGroupEmitter>();
+  @Output() addedChange = new EventEmitter<AddedChangeGroupEmitter>();
 
   /**
    * Event emitted when the add/remove button of a layer is clicked
    */
-  @Output() layerAddedChange = new EventEmitter<addedChangeEmitter>();
+  @Output() layerAddedChange = new EventEmitter<AddedChangeEmitter>();
 
   /**
    * @internal
@@ -161,7 +161,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added change event
    */
-  onLayerAddedChange(event: addedChangeEmitter) {
+  onLayerAddedChange(event: AddedChangeEmitter) {
     this.layerAddedChange.emit(event);
     this.tryToggleGroup(event);
   }
@@ -198,7 +198,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * If all the layers of the group added or removed, add or remove the group itself.
    * @param event The last layer added change event to occur
    */
-  private tryToggleGroup(event: addedChangeEmitter) {
+  private tryToggleGroup(event: AddedChangeEmitter) {
     const added = event.added;
     const layer = event.layer;
 

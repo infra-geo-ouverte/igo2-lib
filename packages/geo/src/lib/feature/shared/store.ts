@@ -7,12 +7,12 @@ import { Document } from 'flexsearch';
 import {
   getEntityId,
   EntityKey,
-  EntityStore
+  EntityStoreWithStrategy
 } from '@igo2/common';
 
 import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
-import { IgoMap, MapExtent } from '../../map';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap, MapExtent } from '../../map/shared';
 
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
@@ -23,7 +23,7 @@ import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures, co
  * features and the map layer to display them on. Synchronization
  * between the store and the layer is handled by strategies.
  */
-export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
+export class FeatureStore<T extends Feature = Feature> extends EntityStoreWithStrategy<T> {
 
   /**
    * Vector layer to display the features on
@@ -145,10 +145,10 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     if (diff.add.length > 0) {
       // If features are added, do a motion toward the newly added features
-      moveToOlFeatures(this.map, diff.add, motion, viewScale, areaRatio);
+      moveToOlFeatures(this.map.viewController, diff.add, motion, viewScale, areaRatio);
     } else if (diff.remove.length > 0) {
       // Else, do a motion toward all the features
-      moveToOlFeatures(this.map, olFeatures, motion, viewScale, areaRatio);
+      moveToOlFeatures(this.map.viewController, olFeatures, motion, viewScale, areaRatio);
     }
   }
 
@@ -160,7 +160,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));
     });
-    const featuresExtent = computeOlFeaturesExtent(this.map, olFeatures);
+    const featuresExtent = computeOlFeaturesExtent(olFeatures, this.map.viewProjection);
     olextent.extend(extent, featuresExtent);
     this.layer.setExtent(extent);
   }

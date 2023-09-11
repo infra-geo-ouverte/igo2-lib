@@ -30,7 +30,15 @@ export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
   type?: string;
   options?: FormFieldOptions;
   inputs?: T;
-  subscribers?: {[key: string]: ({field: FormField, control: FormControl}) => void};
+  subscribers?: FormFieldSubscribers;
+}
+
+export type FormFieldSubscribers = {[key: string]: FormFieldSubscriber}
+type FormFieldSubscriber = (options: FormFieldSubscriberOptions) => void;
+
+interface FormFieldSubscriberOptions {
+  field: FormField;
+  control: UntypedFormControl;
 }
 
 export interface FormField<T extends FormFieldInputs = FormFieldInputs> extends FormFieldConfig<T> {

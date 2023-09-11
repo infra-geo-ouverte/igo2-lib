@@ -25,7 +25,7 @@ import {
   ExportOptions,
   MeasureLengthUnit
 } from '@igo2/geo';
-import { EntityStore, ToolComponent } from '@igo2/common';
+import { EntityStore, EntityStoreWithStrategy, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olSourceVector from 'ol/source/Vector';
 import olSourceCluster from 'ol/source/Cluster';
@@ -82,7 +82,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
-  public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
+  public store: EntityStoreWithStrategy<Feature> = new EntityStoreWithStrategy<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -582,7 +582,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
     }
   }
 

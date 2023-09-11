@@ -1,3 +1,5 @@
+$slide-toggle-width: 60px;
+
 textarea { resize: none; };
 
 mat-form-field  { padding: 10px 15px;  };
@@ -20,15 +22,25 @@ mat-form-field.igo-input-container { width: 100%; padding: 0px 15px; };
   flex: 1 1 0;
 }
 
-.advanced-coordinates__coordinates-container__inner .mat-form-field {
+.advanced-coordinates__coordinates-container__inner .mat-mdc-form-field {
   width: 50%;
 }
 
-.advanced-coordinates__form ::ng-deep .mat-slide-toggle {
+.advanced-coordinates__form ::ng-deep .mat-mdc-slide-toggle {
   padding: 10px 15px 35px;
   width: 100%;
 }
 
-.advanced-coordinates__form ::ng-deep .mat-slide-toggle-content {
-  width: 100%
+mat-slide-toggle {
+  width: 100%;
+  padding: 0 8px;
+
+  ::ng-deep .mdc-form-field{
+    width: 100%;
+  }
+
+  ::ng-deep .mdc-label  {
+    margin-left: 0;
+    width: calc(100% - #{$slide-toggle-width});
+  }
 }

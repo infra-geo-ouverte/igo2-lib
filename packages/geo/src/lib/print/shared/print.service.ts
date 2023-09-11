@@ -15,12 +15,12 @@ import { MessageService, ActivityService, LanguageService, ConfigService } from 
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
-import { PrintPaperFormat } from './print.type';
+import { PrintLegendPosition, PrintPaperFormat, PrintResolution } from './print.type';
 
 declare global {
   interface Navigator {
@@ -79,12 +79,12 @@ export class PrintService {
     const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
-    const size = [width, height];
+    const size: [number, number] = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
     // if paper format A1 or A0 add margin top
-    if ((options.title !== '' || options.subtitle) &&
+    if ((options.title !== '' || options.subtitle !== '') &&
       (paperFormat === PrintPaperFormat.A1 || paperFormat === PrintPaperFormat.A0)) {
       margins[0] += 10;
     }
@@ -143,10 +143,10 @@ export class PrintService {
       this.addComment(doc, options.comment);
     }
 
-    this.addMap(doc, map, resolution, size, margins).subscribe(
+    this.addMap(doc, map, resolution, size, margins, legendPostion).subscribe(
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.addScale(doc, map, margins);
+
           await this.handleMeasureLayer(doc, map, margins);
 
           const width = this.imgSizeAdded[0];
@@ -566,96 +566,6 @@ export class PrintService {
       }
     }
 
-  /**
-   * Add scale and attributions on the map on the document
-   * @param  doc - Pdf document where legend will be added
-   * @param  map - Map of the app
-   * @param  margins - Page margins
-   */
-  private async addScale(
-    doc: jsPDF,
-    map: IgoMap,
-    margins: Array<number>
-    ) {
-      const mapSize = map.ol.getSize();
-      const extent = map.ol.getView().calculateExtent(mapSize);
-      // Get the scale and attribution
-      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
-      let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
-      // Remove the UI buttons from the nodes
-      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
-      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-      }
-      // Find attributions by class and delete
-      // the collapsed class to open attribution Copyright
-      const element = mapOverlayHTML.querySelector('.ol-attribution');
-      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if (olCollapsed) {
-        element.classList.remove('ol-collapsed');
-      }
-      // Change the styles of hyperlink in the printed version
-      // Transform the Overlay into a canvas
-      // scale is necessary to make it in google chrome
-      // background as null because otherwise it is white and cover the map
-      // allowtaint is to allow rendering images in the attributions
-      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
-      const canvas = await html2canvas(mapOverlayHTML, {
-        scale: 1,
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-      }).then( e => {
-        canvasOverlayHTML = e;
-      });
-      this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
-      if (olCollapsed) {
-        element.classList.add('ol-collapsed');
-      }
- }
-
- /**
-  * Add Copyrigh to the map canvas
-  * @param map - Map of the app
-  * @param canvas Canvas of the map
-  */
-  private async addCopyrightToImage(
-    map: IgoMap,
-    canvas : HTMLCanvasElement
-    ) {
-      const context = canvas.getContext('2d');
-      let canvasOverlayHTML;
-      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
-      // Remove the UI buttons from the nodes
-      const OverlayHTMLButtons = mapOverlayHTML.getElementsByTagName('button');
-      const OverlayHTMLButtonsarr = Array.from(OverlayHTMLButtons);
-      for (const OverlayHTMLButton of OverlayHTMLButtonsarr) {
-        OverlayHTMLButton.setAttribute('data-html2canvas-ignore', 'true');
-      }
-      // Find attributions by class and delete
-      // the collapsed class to open attribution Copyright
-      const element = mapOverlayHTML.querySelector('.ol-attribution');
-      const olCollapsed: boolean = element.classList.contains('ol-collapsed');
-      if (olCollapsed) {
-        element.classList.remove('ol-collapsed');
-      }
-
-      await html2canvas(mapOverlayHTML, {
-        scale: 1,
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-      }).then( e => {
-        canvasOverlayHTML = e;
-      });
-      context.drawImage(canvasOverlayHTML, 0, 0);
-      if (olCollapsed) {
-        element.classList.add('ol-collapsed');
-      }
-  }
-
   defineNbFileToProcess(nbFileToProcess) {
     this.nbFileToProcess = nbFileToProcess;
   }
@@ -675,7 +585,7 @@ export class PrintService {
     }
 
     if (image !== undefined) {
-      if (image.length < 20 ) { //  img is corrupt    todo: fix addScale in mobile make a corrupt img
+      if (image.length < 20 ) {
         console.log('Warning: An image cannot be print in pdf file');
         return;
       }
@@ -688,7 +598,9 @@ export class PrintService {
         imageSize[0],
         imageSize[1]
       );
+
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
+
       this.imgSizeAdded = imageSize; // keep img size for georef later
     }
   }
@@ -698,42 +610,43 @@ export class PrintService {
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
-    size: Array<number>,
-    margins: Array<number>
+    docSize: [number, number],
+    margins: Array<number>,
+    legendPostion: PrintLegendPosition
   ) {
+
+    const mapSize = map.ol.getSize() as [number, number];
+    const viewResolution = map.ol.getView().getResolution();
+    const dimensionPixels = this.setMapResolution(map, docSize, resolution, viewResolution);
     const status$ = new Subject();
 
-    const mapSize = map.ol.getSize();
-    const extent = map.ol.getView().calculateExtent(mapSize);
-
-    const widthPixels = Math.round((size[0] * resolution) / 25.4);
-    const heightPixels = Math.round((size[1] * resolution) / 25.4);
-
     let timeout;
+    map.ol.once('rendercomplete', async (event: any) => {
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
+      const mapResultCanvas = await this.drawMap(
+        dimensionPixels,
+        mapCanvas
+      );
 
-    map.ol.once('rendercomplete', (event: any) => {
-      const canvases = event.target.getViewport().getElementsByTagName('canvas');
+      this.resetOriginalMapSize(map, mapSize, viewResolution);
+
+      await this.drawMapControls(map, mapResultCanvas, legendPostion);
+
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
-
         if (mapStatus !== SubjectStatus.Done) {
           return;
         }
-
         mapStatus$$.unsubscribe();
-
         let status = SubjectStatus.Done;
         try {
-          for (const canvas of canvases) {
-            if (canvas.width !== 0) {
-              this.addCanvas(doc, canvas, margins);
-            }
+          if (mapResultCanvas.width !== 0) {
+            this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody','igo.geo.printForm.corsErrorMessageHeader');
         }
-        this.renderMap(map, mapSize, extent);
         status$.next(status);
       });
 
@@ -744,23 +657,182 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          for (const canvas of canvases) {
-            if (canvas.width !== 0) {
-              this.addCanvas(doc, canvas, margins);
-            }
+          if (mapResultCanvas.width !== 0) {
+            this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
-        this.renderMap(map, mapSize, extent);
+        this.resetOriginalMapSize(map, mapSize, viewResolution);
         status$.next(status);
-      }, 200);
+      },200);
     });
 
-    this.renderMap(map, [widthPixels, heightPixels], extent);
-
     return status$;
+  }
+
+  private setMapResolution(
+    map: IgoMap,
+    initialSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): [number, number] {
+
+    const mapSize = map.ol.getSize();
+    const widthPixels = Math.round((initialSize[0] * resolution) / 25.4);
+    const heightPixels = Math.round((initialSize[1] * resolution) / 25.4);
+
+    // Set print size
+    const printSize = [widthPixels, heightPixels];
+    map.ol.setSize(printSize);
+    const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
+    map.ol.getView().setResolution(viewResolution / scaling);
+
+    return [widthPixels, heightPixels];
+  }
+
+  private resetOriginalMapSize(
+    map: IgoMap,
+    initialSize: [number, number],
+    viewResolution: number
+  ) {
+    map.ol.setSize(initialSize);
+    map.ol.getView().setResolution(viewResolution);
+    map.ol.updateSize();
+    map.ol.renderSync();
+  }
+
+  private async drawMap(
+    size: Array<number>,
+    mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
+  ): Promise<HTMLCanvasElement> {
+
+      const mapResultCanvas = document.createElement('canvas');
+      mapResultCanvas.width = size[0];
+      mapResultCanvas.height = size[1];
+
+      for (let index = 0; index < mapCanvas.length; index++) {
+        const canvas = mapCanvas[index];
+        if (canvas.width > 0) {
+          this.handleCanvas(canvas, mapResultCanvas);
+        }
+      }
+      return mapResultCanvas;
+  }
+
+  private handleCanvas(
+    canvas: HTMLCanvasElement,
+    mapResultCanvas: HTMLCanvasElement
+  ) {
+    const mapContextResult = mapResultCanvas.getContext('2d');
+    const opacity = canvas.parentElement.style.opacity || canvas.style.opacity;
+    mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+    const transform = canvas.style.transform;
+    let matrix: number[];
+    if (transform) {
+      // Get the transform parameters from the style's transform matrix
+      matrix = transform
+        .match(/^matrix\(([^\(]*)\)$/)[1]
+        .split(',')
+        .map(Number);
+    } else {
+      matrix = [
+        parseFloat(canvas.style.width) / canvas.width,
+        0,
+        0,
+        parseFloat(canvas.style.height) / canvas.height,
+        0,
+        0,
+      ];
+    }
+    CanvasRenderingContext2D.prototype.setTransform.apply(
+      mapContextResult,
+      matrix
+    );
+    const backgroundColor = canvas.parentElement.style.backgroundColor;
+    if (backgroundColor) {
+      mapContextResult.fillStyle = backgroundColor;
+      mapContextResult.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    mapContextResult.drawImage(canvas, 0, 0);
+    mapContextResult.globalAlpha = 1;
+    // reset canvas transform to initial
+    mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  private async drawMapControls (
+    map: IgoMap,
+    canvas: HTMLCanvasElement,
+    position: PrintLegendPosition
+  ): Promise<void> {
+      const context = canvas.getContext('2d');
+      // Get the scale and attribution
+      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent().cloneNode(true) as HTMLElement;
+      // add North Direction to mapOverly
+      await this.addNorthDirection(mapOverlayHTML, position);
+      // add map Attribution designe to print
+      await this.addAttribution(mapOverlayHTML);
+
+      // set 'OverlayContainer' size to print size
+      mapOverlayHTML.style.width = canvas.width+'px';
+      mapOverlayHTML.style.height = canvas.height+'px';
+      // we add zindex -1 to not show modification to the user
+      mapOverlayHTML.style.zIndex = '-1';
+      // and make sure html2canvas to render the image correctly
+      document.getElementsByClassName("ol-viewport")[0].appendChild(mapOverlayHTML);
+      // Change the styles of hyperlink in the printed version
+      // Transform the Overlay into a canvas
+      // scale is necessary to make it in google chrome
+      // background as null because otherwise it is white and cover the map
+      // allowtaint is to allow rendering images in the attributions
+      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
+      const canvasOverlayHTML = await html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      });
+
+      context.drawImage(canvasOverlayHTML, 0, 0);
+      // remove 'mapOverlayHTML' after generating canvas
+      mapOverlayHTML.remove();
+  }
+
+  private async addNorthDirection (
+    mapOverlayHTML: HTMLElement,
+    position: PrintLegendPosition
+  ): Promise<void> {
+    const northDirection = document.getElementsByTagName('igo-rotation-button')[0].cloneNode(true) as HTMLElement;
+    const HTMLButton = northDirection.getElementsByTagName('button')[0] as HTMLElement;
+    if (!HTMLButton) {
+      return null;
+    }
+    // in case legend position is topright
+    // we change rotate btn to topleft
+    if (position === 'topright') {
+      northDirection.style.width = 'inherit';
+      northDirection.style.left = '10px';
+    }
+    HTMLButton.parentElement.style.background = 'transparent';
+    HTMLButton.style.color = '#000';
+    mapOverlayHTML.appendChild(northDirection);
+  }
+
+  private async addAttribution (
+    mapOverlayHTML: HTMLElement
+  ): Promise<void> {
+    const HTMLattribution = mapOverlayHTML.getElementsByClassName('ol-attribution') [0];
+    const HTMLButton = HTMLattribution.getElementsByTagName('button')[0];
+    if (!HTMLButton) {
+      return null;
+    }
+    HTMLButton.setAttribute('data-html2canvas-ignore', 'true');
+    const olCollapsed: boolean = HTMLattribution.classList.contains('ol-collapsed');
+    if (olCollapsed) {
+      HTMLattribution.classList.remove('ol-collapsed');
+    }
   }
 
   /**
@@ -778,7 +850,7 @@ export class PrintService {
    */
   downloadMapImage(
     map: IgoMap,
-    resolution: number,
+    printResolution: PrintResolution,
     format = 'png',
     projection = false,
     scale = false,
@@ -786,24 +858,51 @@ export class PrintService {
     subtitle = '',
     comment = '',
     doZipFile = true,
-    legendPosition: string
+    legendPosition: PrintLegendPosition
   ) {
     const status$ = new Subject();
-    // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
+    format = format.toLowerCase();
+    const resolution = +printResolution;
+    const initialMapSize = map.ol.getSize() as [number, number];
+    const viewResolution = map.ol.getView().getResolution();
+
     map.ol.once('rendercomplete', async (event: any) => {
-      format = format.toLowerCase();
-      const oldCanvas = event.target
-        .getViewport()
-        .getElementsByTagName('canvas')[0];
+      const size = map.ol.getSize();
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
+      const mapResultCanvas = await this.drawMap(size, mapCanvas);
+
+      this.resetOriginalMapSize(map, initialMapSize, viewResolution);
+
+      await this.drawMapControls(map, mapResultCanvas, legendPosition);
+      // Check the legendPosition
+     if (legendPosition !== 'none') {
+        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
+          await this.addLegendToImage(
+            mapResultCanvas,
+            map,
+            resolution,
+            legendPosition,
+            format
+          );
+        } else if (legendPosition === 'newpage') {
+          await this.getLayersLegendImage(
+            map,
+            format,
+            doZipFile,
+            resolution
+          );
+        }
+      }
+      // add other information to final canvas before exporting
       const newCanvas = document.createElement('canvas');
       const newContext = newCanvas.getContext('2d');
       // Postion in height to set the canvas in new canvas
       let positionHCanvas = 0;
       // Get height/width of map canvas
-      const width = oldCanvas.width;
-      let height = oldCanvas.height;
+      const width = mapResultCanvas.width;
+      let height = mapResultCanvas.height;
       // Set Font to calculate comment width
       newContext.font = '20px Calibri';
       const commentWidth = newContext.measureText(comment).width;
@@ -822,20 +921,18 @@ export class PrintService {
       // Set the new canvas with the new calculated size
       newCanvas.width = width;
       newCanvas.height = height;
+
       if (['bmp','gif', 'jpeg', 'png', 'tiff'].indexOf(format) > -1) {
         // Patch Jpeg default black background to white
-        if (format === 'jpeg') {
+        if (
+          format === 'jpeg' || title !== '' || subtitle !== '' ||
+          comment !== '' || projection !== false || scale !== false
+          ) {
           newContext.fillStyle = '#ffffff';
           newContext.fillRect(0, 0, width, height);
           newContext.fillStyle = '#000000';
-        } else if (title !== '' || subtitle !== '' || comment !== '' ||
-            projection !== false || scale !== false) {
-              newContext.fillStyle = '#ffffff';
-              newContext.fillRect(0, 0, width, height);
-              newContext.fillStyle = '#000000';
         }
       }
-
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
@@ -845,6 +942,7 @@ export class PrintService {
         newContext.textAlign = 'center';
         newContext.fillText(title, width / 2, 20, width * 0.9);
       }
+
       if (subtitle !== '') {
         // Set font for subtitle
         // Adjust according to title length
@@ -853,6 +951,7 @@ export class PrintService {
         newContext.textAlign = 'center';
         newContext.fillText(subtitle, width / 2, 50, width * 0.9);
       }
+
       // Set font for next section
       newContext.font = '20px Calibri';
       // If projection or/end scale need to be added to canvas
@@ -916,30 +1015,7 @@ export class PrintService {
         }
       }
 
-      // Add map to new canvas
-      newContext.drawImage(oldCanvas, 0, positionHCanvas);
-      // Add copyrigh
-      await this.addCopyrightToImage(map, newCanvas);
-
-      // Check the legendPosition
-      if (legendPosition !== 'none') {
-        if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(legendPosition) > -1) {
-          await this.addLegendToImage(
-            newCanvas,
-            map,
-            resolution,
-            legendPosition,
-            format
-          );
-        } else if (legendPosition === 'newpage') {
-          await this.getLayersLegendImage(
-            map,
-            format,
-            doZipFile,
-            resolution
-          );
-        }
-      }
+      newContext.drawImage(mapResultCanvas, 0, positionHCanvas);
 
       let status = SubjectStatus.Done;
       let fileNameWithExt = 'map.' + format;
@@ -961,7 +1037,6 @@ export class PrintService {
       } catch (err) {
         status = SubjectStatus.Error;
       }
-
       status$.next(status);
 
       if (format.toLowerCase() === 'tiff') {
@@ -980,9 +1055,28 @@ export class PrintService {
         }
       }
     });
-    map.ol.renderSync();
+
+    this.setMapImageResolution(map, initialMapSize, resolution, viewResolution);
 
     return status$;
+  }
+
+  private setMapImageResolution(
+    map: IgoMap,
+    initialMapSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): void {
+    const scaleFactor = resolution / 96;
+    const newMapSize = [
+      Math.round(initialMapSize[0] * scaleFactor), // width
+      Math.round(initialMapSize[1] * scaleFactor) // height
+    ];
+    map.ol.setSize(newMapSize);
+    const scaling = Math.min(newMapSize[0] / initialMapSize[0], newMapSize[1] / initialMapSize[1]);
+    const view = map.ol.getView();
+    view.setResolution(viewResolution / scaling);
+    map.ol.renderSync();
   }
 
   /**

@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 @Component({
   selector: 'igo-ogc-filterable-list',

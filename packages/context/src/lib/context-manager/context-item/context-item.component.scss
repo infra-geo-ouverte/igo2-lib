@@ -1,24 +1,19 @@
 :host {
   overflow: hidden;
-}
+  
+  .igo-actions-container {
+    flex-shrink: 0;
+  }
+  
+  .igo-actions-expand-container {
+    display: inline-flex;
+  }  
+  
+  mat-icon.disabled {
+    color: rgba(0, 0, 0, 0.38);
+  }
 
-.igo-actions-container {
-  flex-shrink: 0;
-}
-
-.igo-actions-expand-container {
-  display: inline-flex;
-}
-
-mat-list-item ::ng-deep .mat-list-item-content .mat-list-text {
-  padding: 0;
-}
-
-
-mat-icon.disabled {
-  color: rgba(0, 0, 0, 0.38);
-}
-
-mat-list-item.mat-list-item-light ::ng-deep .mat-list-item-content {
-  color: rgba(150, 150, 150, 1);
+  button[matlistitemavatar] {
+    margin-right: 8px;
+  }
 }

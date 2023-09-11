@@ -11,7 +11,7 @@ import olLayer from 'ol/layer/Layer';
 import olSource from 'ol/source/Source';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, skipWhile, Subject } from 'rxjs';
+import { BehaviorSubject, pairwise, skipWhile, Subject } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -25,8 +25,9 @@ import {
   MapAttributionOptions,
   MapScaleLineOptions,
   MapExtent,
-  MapControlsOptions
+  MapControlsOptions,
 } from './map.interface';
+import { MapBase } from './map.abstract';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
@@ -41,7 +42,7 @@ import {
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
-export class IgoMap {
+export class IgoMap implements MapBase {
   public ol: olMap;
   public forcedOffline$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
@@ -70,8 +71,17 @@ export class IgoMap {
     return this.layers$.value;
   }
 
+  /** @deprecated use projectionCode */
   get projection(): string {
-    return this.viewController.getOlProjection().getCode();
+    return this.projectionCode;
+  }
+
+  get viewProjection(): olproj.Projection {
+    return this.viewController.getOlProjection();
+  }
+
+  get projectionCode(): string {
+    return this.viewProjection.getCode();
   }
 
   constructor(
@@ -141,11 +151,19 @@ export class IgoMap {
       if (this.geolocationController) {
         this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
       }
-      this.layers$.subscribe((layers) => {
+      this.layers$
+      .pipe(pairwise())
+      .subscribe(([prevLayers, currentLayers]) => {
+        let prevLayersId;
+        if (prevLayers){
+          prevLayersId = prevLayers.map(l => l.id);
+        }
+        const layers = currentLayers.filter(l => !prevLayersId.includes(l.id));
+
         for (const layer of layers) {
           if (layer.options.linkedLayers) {
             layer.ol.once('postrender', () => {
-              initLayerSyncFromRootParentLayers(this, this.layers);
+              initLayerSyncFromRootParentLayers(this, layers);
             });
           }
         }

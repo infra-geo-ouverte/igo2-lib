@@ -1,16 +1,16 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-bookmark-button-container {
-  width: $igo-icon-size;
-  button {
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
+:host {
+  @include common-utils.square-button();
+  
+  .igo-bookmark-button-container {
+    width: $igo-icon-size;
+    button {
+      background-color: #fff;
+      &:hover {
+        background-color: #efefef;
+      }
     }
   }
-}
-
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
 }

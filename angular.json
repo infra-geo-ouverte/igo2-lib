@@ -24,7 +24,7 @@
             "index": "demo/src/index.html",
             "main": "demo/src/main.ts",
             "polyfills": "demo/src/polyfills.ts",
-            "tsConfig": "demo/src/tsconfig.app.json",
+            "tsConfig": "demo/tsconfig.app.json",
             "assets": [
               "demo/src/favicon.ico",
               "demo/src/assets",
@@ -45,65 +45,39 @@
                 "glob": "**/*",
                 "input": "./dist/geo/assets/",
                 "output": "./assets/igo2/geo/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./dist/core/locale/",
+                "output": "./locale/libs_locale",
+                "ignore": [
+                  "**/*.core.json"
+              ]
               }
             ],
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
             "allowedCommonJsDependencies": [
-              "hammerjs",
-              "typy",
-              "jspdf",
-              "file-saver",
-              "jwt-decode",
-              "canvg",
-              "core-js-pure/features/array/from",
-              "core-js-pure/features/array/is-array",
-              "core-js-pure/features/instance/slice",
-              "core-js-pure/features/object/create",
-              "core-js-pure/features/object/define-property",
-              "core-js-pure/features/object/get-own-property-descriptor",
-              "core-js-pure/features/object/get-prototype-of",
-              "core-js-pure/features/object/set-prototype-of",
-              "core-js-pure/features/promise",
-              "core-js-pure/features/reflect/get",
-              "core-js-pure/features/symbol",
-              "core-js-pure/features/symbol/iterator",
-              "core-js/modules/es.array.index-of.js",
-              "core-js/modules/es.array.iterator.js",
-              "core-js/modules/es.array.reduce.js",
-              "core-js/modules/es.array.reverse.js",
-              "core-js/modules/es.promise.js",
-              "core-js/modules/es.regexp.to-string.js",
-              "core-js/modules/web.dom-collections.iterator.js",
-              "canvg/lib/index.es.js",
-              "html-entities",
-              "@turf/helpers",
-              "@turf/line-segment",
-              "@turf/meta",
-              "@turf/invariant",
-              "@turf/line-intersect",
-              "pbf",
-              "geojson-rbush",
-              "flexsearch",
-              "minimatch",
-              "path",
-              "pixelworks",
-              "brace-expansion",
-              "raf",
-              "pako/lib/inflate",
-              "txml",
-              "lru-cache",
-              "striptags",
-              "nosleep.js",
-              "ts-md5",
-              "moment",
-              "html2canvas",
-              "jszip",
+              "@turf",
               "bowser",
+              "canvg",
+              "core-js",
+              "file-saver",
+              "flexsearch",
+              "html-entities",
+              "html2canvas",
+              "jspdf",
+              "jspdf-autotable",
+              "jszip",
+              "jwt-decode",
+              "moment",
+              "nosleep.js",
+              "raf",
+              "rbush",
               "rgbcolor",
-              "rbush"
+              "striptags",
+              "ts-md5",
+              "typy"
             ]
           },
           "configurations": {
@@ -159,7 +133,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "demo:build",
+            "host": "127.0.0.1"
           },
           "configurations": {
             "production": {
@@ -173,51 +148,43 @@
             "browserTarget": "demo:build"
           }
         },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["demo/src/**/*.ts", "demo/src/**/*.html"]
+          }
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "demo/src/test.ts",
-            "polyfills": "demo/src/polyfills.ts",
-            "tsConfig": "demo/src/tsconfig.spec.json",
-            "karmaConfig": "demo/src/karma.conf.js",
-            "styles": [
-              "demo/src/styles.scss"
+            "polyfills": [
+              "demo/src/polyfills.ts",
+              "zone.js/testing"
             ],
+            "tsConfig": "demo/tsconfig.spec.json",
+            "karmaConfig": "demo/karma.conf.js",
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
-            "assets": [
-              "demo/src/favicon.ico",
-              "demo/src/assets"
-            ]
+            "assets": ["demo/src/favicon.ico", "demo/src/assets"],
+            "codeCoverage": true
           }
         },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "demo/src/**/*.ts",
-              "demo/src/**/*.html"
-            ]
-          }
-        }
-      }
-    },
-    "demo-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "architect": {
         "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "demo:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "e2e/**/*.ts"
-            ]
+            "configFile": "demo/e2e/cypress.config.ts",
+            "devServerTarget": "demo:serve",
+            "browser": "chrome"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "demo:serve:production"
+            },
+            "local": {
+              "watch": true,
+              "headless": false
+            }
           }
         }
       }
@@ -251,8 +218,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/auth/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "packages/auth/tsconfig.spec.json",
-            "karmaConfig": "packages/auth/karma.conf.js"
+            "karmaConfig": "packages/auth/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -295,8 +267,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/common/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "packages/common/tsconfig.spec.json",
-            "karmaConfig": "packages/common/karma.conf.js"
+            "karmaConfig": "packages/common/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -339,8 +316,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/core/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "packages/core/tsconfig.spec.json",
-            "karmaConfig": "packages/core/karma.conf.js"
+            "karmaConfig": "packages/core/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -383,8 +365,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/geo/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "packages/geo/tsconfig.spec.json",
-            "karmaConfig": "packages/geo/karma.conf.js"
+            "karmaConfig": "packages/geo/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -425,6 +412,19 @@
               "packages/utils/**/*.html"
             ]
           }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "packages/utils/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "packages/utils/tsconfig.spec.json",
+            "karmaConfig": "packages/utils/karma.conf.js",
+            "codeCoverage": true
+          }
         }
       }
     },
@@ -457,8 +457,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/context/src/test.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "packages/context/tsconfig.spec.json",
-            "karmaConfig": "packages/context/karma.conf.js"
+            "karmaConfig": "packages/context/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
@@ -508,14 +513,16 @@
         }
       }
     }
-  }
-,"cli": {
+  },
+  "cli": {
     "schematicCollections": [
-      "@angular-eslint/schematics"
+      "@angular-eslint/schematics",
+      "@schematics/angular"
     ],
     "cache": {
       "enabled": false,
       "environment": "all"
-    }
+    },
+    "analytics": false
   }
 }

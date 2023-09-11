@@ -19,7 +19,7 @@ import {
 import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
-  public ol: olSourceVector<OlGeometry>;
+  public declare ol: olSourceVector<OlGeometry>;
   public mostRecentIdCallOGCFilter: number = 0;
 
   set ogcFilters(value: OgcFiltersOptions) {

@@ -21,8 +21,8 @@
           *ngFor="let projection of (projections$ | async)"
           [value]="projection"
           (click)="$event.stopPropagation()">
-          <p mat-line *ngIf="projection.translateKey">{{('igo.geo.importExportForm.projections.' + projection.translateKey) | translate: projection}}</p>
-          <p mat-line *ngIf="!projection.translateKey">{{projection.alias}}</p>
+          <p matListItemTitle *ngIf="projection.translateKey">{{('igo.geo.importExportForm.projections.' + projection.translateKey) | translate: projection}}</p>
+          <p matListItemTitle *ngIf="!projection.translateKey">{{projection.alias}}</p>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -85,10 +85,9 @@
           [ngClass]="{'igo-export-layer-mat-option': layerHasSelectedFeatures(layer)}"
           [value]="layer.id"
           (click)="$event.stopPropagation()">
-          <p mat-line>{{layer.title}}</p>
-          <p mat-line>
+          <p matListItemTitle>{{layer.title}}</p>
+          <p matListItemTitle>
             <mat-slide-toggle *ngIf="layerHasSelectedFeatures(layer)"
-              [labelPosition]="'after'"
               (click)="onlySelectedClick($event,layer.id)"
               (checked)="inLayersIdToExportSelectionOnly(layer)"
               (change)="onlySelected($event,layer.id)">

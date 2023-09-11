@@ -12,8 +12,8 @@ import { LAYER } from '../../../layer';
 import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
 import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import { TextSearchOptions } from './source.interfaces';
 import {
   ILayerSearchSourceOptions,
