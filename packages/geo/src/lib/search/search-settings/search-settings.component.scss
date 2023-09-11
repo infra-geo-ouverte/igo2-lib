@@ -7,7 +7,13 @@
 }
 
 // This component is projected, the style need to be apply outside is scope
-.checkAllButton.checkDefaultButton {
+.checkDefaultButton {
+  text-align: center;
+  padding: 0 5px;
+}
+
+// This component is projected, the style need to be apply outside is scope
+.checkAllButton {
   text-align: center;
   padding: 0 5px;
 }
