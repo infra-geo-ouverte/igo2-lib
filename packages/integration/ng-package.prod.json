@@ -3,5 +3,8 @@
   "dest": "../../dist/integration",
   "lib": {
     "entryFile": "src/public_api.ts"
-  }
+  },
+  "assets": [
+    { "input": "src/locale", "glob": "*", "output": "locale" }
+  ]
 }

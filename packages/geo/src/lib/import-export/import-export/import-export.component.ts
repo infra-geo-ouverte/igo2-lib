@@ -51,7 +51,7 @@ import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
-import { computeProjectionsConstraints } from '../../map';
+import { computeProjectionsConstraints } from '../../map/shared';
 
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';

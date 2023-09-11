@@ -36,6 +36,7 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { map } from 'rxjs/operators';
 import { default as moment } from 'moment';
+import { StringUtils } from '@igo2/utils';
 
 @Component({
   selector: 'igo-entity-table',
@@ -328,7 +329,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
         let formControlValue = item[key];
         column.domainValues.forEach(option => {
-          if (this.isStringValidNumber(formControlValue)) {
+          if (
+            typeof formControlValue === "string" &&
+            StringUtils.isValidNumber(formControlValue) &&
+            !StringUtils.isOctalNumber(formControlValue)
+          ) {
             formControlValue = parseInt(formControlValue);
           }
           if (option.value === formControlValue || option.id === formControlValue) {
@@ -677,7 +682,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
         } else {
           column.domainValues.forEach(option => {
-            if (this.isStringValidNumber(value)) {
+            if (typeof value === "string" && StringUtils.isValidNumber(value) && !StringUtils.isOctalNumber(value)) {
               value = parseInt(value);
             }
             if (option.value === value || option.id === value) {
@@ -692,7 +697,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
       } else {
         column.domainValues.forEach(option => {
-          if (this.isStringValidNumber(value)) {
+          if (typeof value === "string" && StringUtils.isValidNumber(value) && !StringUtils.isOctalNumber(value)) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
@@ -838,13 +843,5 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return column.split('.')[1];
     }
     return column;
-  }
-  /**
-   * Check if string is a valid number
-   * @param value string
-   * @returns boolean
-   */
-  private isStringValidNumber(value: string): boolean {
-    return typeof value === 'string' && /^\d+$/.test(value) && (value.length > 1 && value.charAt(0) !== '0');
   }
 }

@@ -29,6 +29,10 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   activeTool$: BehaviorSubject<Tool> = new BehaviorSubject(undefined);
 
+  get isActive(): boolean {
+    return !!this.activeTool$.value;
+  }
+
   /**
    * Store of actions that toggle tools
    */

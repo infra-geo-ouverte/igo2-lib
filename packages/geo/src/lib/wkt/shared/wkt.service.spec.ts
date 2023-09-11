@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { MapService } from '../../map';
+import { MapService } from '../../map/shared';
 import { WktService } from './wkt.service';
 
 describe('WktService', () => {

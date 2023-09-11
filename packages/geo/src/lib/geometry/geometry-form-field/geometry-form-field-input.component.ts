@@ -25,7 +25,7 @@ import OlOverlay from 'ol/Overlay';
 import * as olproj from 'ol/proj';
 import Point from 'ol/geom/Point';
 
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import {
   MeasureLengthUnit,
   updateOlGeometryMidpoints,
@@ -317,7 +317,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
   registerOnChange(fn: Function) {
     this.onChange = fn;
   }
@@ -326,7 +325,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
   registerOnTouched(fn: Function) {
     this.onTouched = fn;
   }

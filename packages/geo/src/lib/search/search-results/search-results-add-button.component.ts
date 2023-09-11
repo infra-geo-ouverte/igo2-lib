@@ -35,7 +35,7 @@ import Style from 'ol/style/Style';
 import Circle from 'ol/style/Circle';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { default as OlGeometry } from 'ol/geom/Geometry';
-import { QueryableDataSourceOptions } from '../../query';
+import { QueryableDataSourceOptions } from '../../query/shared';
 import { Media, MediaService } from '@igo2/core';
 
 
@@ -320,7 +320,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy{
         if(this.stores.length > 0) {
           this.stores.map((store) => {
             store.state.updateAll({selected: false});
-            (store?.layer).visible = false;
+            if (store?.layer) {
+              store.layer.visible = false;
+            }
             return store;
           });
         }

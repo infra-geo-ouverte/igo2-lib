@@ -17,7 +17,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { VectorWatcher } from '../../utils';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map';
+import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
@@ -38,14 +38,14 @@ import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources
 import { ObjectUtils } from '@igo2/utils';
 
 export class VectorLayer extends Layer {
-  public dataSource:
+  public declare dataSource:
     | FeatureDataSource
     | WFSDataSource
     | ArcGISRestDataSource
     | WebSocketDataSource
     | ClusterDataSource;
-  public options: VectorLayerOptions;
-  public ol: olLayerVector<olSourceVector<OlGeometry>>;
+  public declare options: VectorLayerOptions;
+  public declare ol: olLayerVector<olSourceVector<OlGeometry>>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 

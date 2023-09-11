@@ -2,12 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
   ActionStore,
-  EntityTableTemplate,
-  EntityStoreFilterCustomFuncStrategy,
-  EntityRecord,
-  EntityStoreStrategyFuncOptions,
-  EntityStoreFilterSelectionStrategy,
-  EntityTableColumnRenderer
+  EntityStoreFilterSelectionStrategy
 } from '@igo2/common';
 
 import {
@@ -15,25 +10,21 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
   FeatureStoreInMapExtentStrategy,
-  Feature,
   FeatureMotion,
   FeatureStoreInMapResolutionStrategy,
   FeatureStoreSearchIndexStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
-import { LayerService, VectorLayer } from '../../layer';
+import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams, FeatureDataSource, RelationOptions, CapabilitiesService } from '../../datasource';
+import { IgoMap } from '../../map/shared';
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 
 import { FeatureWorkspace } from './feature-workspace';
-import { skipWhile, take } from 'rxjs/operators';
 import { ConfigService, StorageService } from '@igo2/core';
 
-import olFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { getGeoServiceAction } from './workspace.utils';
+import { createFilterInMapExtentOrResolutionStrategy, createTableTemplate } from './workspace.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 
 @Injectable({
@@ -79,7 +70,7 @@ export class FeatureWorkspaceService {
         tableTemplate: undefined
       }
     });
-    this.createTableTemplate(wks, layer);
+    createTableTemplate(wks, layer, this.layerService, this.ws$);
     return wks;
 
   }
@@ -104,7 +95,7 @@ export class FeatureWorkspaceService {
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {
-          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle.selection || {}));
+          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle?.selection || {}));
         },
         showInLayerList: false,
         exportable: false,
@@ -125,84 +116,7 @@ export class FeatureWorkspaceService {
     store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
+    store.addStrategy(createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
-  }
-
-  private createTableTemplate(workspace: FeatureWorkspace, layer: VectorLayer): EntityTableTemplate {
-    const geoServiceAction = getGeoServiceAction(workspace, this.layerService);
-    const fields = layer.dataSource.options.sourceFields || [];
-
-    const relations = layer.dataSource.options.relations || [];
-
-    if (fields.length === 0) {
-      workspace.entityStore.entities$.pipe(
-        skipWhile(val => val.length === 0),
-        take(1)
-      ).subscribe(entities => {
-        const ol = (entities[0] as Feature).ol as olFeature<OlGeometry>;
-        const columnsFromFeatures = ol.getKeys()
-        .filter(
-          col => !col.startsWith('_') &&
-          col !== 'geometry' &&
-          col !== ol.getGeometryName() &&
-          !col.match(/boundedby/gi))
-        .map(key => {
-          return {
-            name: `properties.${key}`,
-            title: key,
-            renderer: EntityTableColumnRenderer.UnsanitizedHTML
-          };
-        });
-        columnsFromFeatures.unshift(...geoServiceAction);
-        workspace.meta.tableTemplate = {
-          selection: true,
-          sort: true,
-          columns: columnsFromFeatures
-        };
-      });
-      return;
-    }
-    const columns = fields.map((field: SourceFieldsOptionsParams) => {
-      return {
-        name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name,
-        renderer: EntityTableColumnRenderer.UnsanitizedHTML,
-        tooltip: field.tooltip
-      };
-    });
-
-    const relationsColumn = relations.map((relation: RelationOptions) => {
-      return {
-        name: `properties.${relation.name}`,
-        title: relation.alias ? relation.alias : relation.name,
-        renderer: EntityTableColumnRenderer.Icon,
-        icon: relation.icon,
-        parent: relation.parent,
-        type: 'relation',
-        tooltip: relation.tooltip,
-        onClick: () => {
-            this.ws$.next(relation.title);
-        },
-        cellClassFunc: () => {
-          return { 'class_icon': true };
-        }
-      };
-    });
-
-    columns.push(...relationsColumn);
-    columns.unshift(...geoServiceAction);
-    workspace.meta.tableTemplate = {
-      selection: true,
-      sort: true,
-      columns
-    };
-  }
-
-  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
-    const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true && record.state.inMapResolution === true;
-    };
-    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
 }

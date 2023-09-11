@@ -1,13 +1,14 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-.igo-home-extent-button-container {
-  width: $igo-icon-size;
-  background-color: #fff;
-  &:hover {
-    background-color: #efefef;
-}
-}
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-    border-radius: 0;
+:host {
+  @include common-utils.square-button();
+
+  .igo-home-extent-button-container {
+    width: $igo-icon-size;
+    background-color: #fff;
+    &:hover {
+      background-color: #efefef;
+    }
+  }
 }

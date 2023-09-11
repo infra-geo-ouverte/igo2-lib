@@ -62,6 +62,8 @@
         "inMapExtent.inactive.tooltip": "Montrer toutes les entités",
         "zoomAuto.title": "Zoom auto",
         "zoomAuto.tooltip": "Zoom auto",
+        "print.title": "Imprimer la présente table (PDF)",
+        "print.tooltip": "Imprimer la présente table (PDF)",
         "selected.title": "Montrer les entités sélectionnées",
         "selected.tooltip": "Montrer les entités sélectionnées",
         "clearSelection.title": "Tout désélectionner",

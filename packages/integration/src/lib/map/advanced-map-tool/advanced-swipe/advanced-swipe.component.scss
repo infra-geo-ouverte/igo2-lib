@@ -1,53 +1,78 @@
-.nameOfTool{
+$slide-toggle-width: 60px;
+
+:host {
+  .nameOfTool {
     text-align: center;
     font-weight: bold;
     font-size: small;
     margin: 15px 10px 0px;
-}
+  }
 
-.igo-swipe-select-container {
+  .igo-swipe-select-container {
     padding: 10px;
-  
+
     mat-form-field {
       width: 100%;
     }
   }
+
+  .igo-form {
+    padding: 1px 5px;
+    width: 100%;
+  }
+
+
+    mat-slide-toggle {
+      width: 100%;
+      padding: 0 8px;
   
-.igo-form {
-padding: 1px 5px;
-width: 100%
-}
+      ::ng-deep .mdc-form-field{
+        width: 100%;
+      }
+  
+      ::ng-deep .mdc-label  {
+        margin-left: 0;
+        width: calc(100% - #{$slide-toggle-width});
+      }
+    }
 
-.swipe-toggle{
-padding: 10px 5px 35px;
-}
 
-.map-empty, .search-tool, .catalog-tool, .context-tool {
-margin: 5px;
-}
+  .map-empty,
+  .search-tool,
+  .catalog-tool,
+  .context-tool {
+    margin: 5px;
+  }
 
-.map-empty {
-padding: 10px;
-text-align: justify;
-}
+  .map-empty {
+    padding: 10px;
+    text-align: justify;
+  }
 
-.search-tool, .catalog-tool, .context-tool {
-cursor: pointer;
-}
+  .search-tool,
+  .catalog-tool,
+  .context-tool {
+    cursor: pointer;
+  }
 
-mat-list mat-list-item h4 {
-font-weight: bold;
-}
+  mat-list mat-list-item h4 {
+    font-weight: bold;
+  }
 
-mat-list-item ::ng-deep .mat-list-text {
-font-size: smaller;
-}
+  mat-list-item ::ng-deep .mdc-list-item__primary-text {
+    font-size: smaller;
+  }
 
-mat-list.mat-list-base mat-list-item.mat-list-item ::ng-deep div.mat-list-item-content div.mat-list-text {
-padding-left: 15px;
-}
+  mat-list.mat-mdc-list-base
+    mat-list-item.mat-mdc-list-item
+    ::ng-deep
+    div.mdc-list-item__content
+    div.mdc-list-item__primary-text {
+    padding-left: 15px;
+  }
 
-.advanced-tool-line {
-height: 2px;
-background-color: gray;
+  .advanced-tool-line {
+    height: 2px;
+    background-color: gray;
+  }
 }

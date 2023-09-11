@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 
 import { IgoMessageModule } from '@igo2/core';
 import {
@@ -11,13 +9,13 @@ import {
 
 import { AppDirectionsComponent } from './directions.component';
 import { AppDirectionsRoutingModule } from './directions-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppDirectionsComponent],
   imports: [
     AppDirectionsRoutingModule,
-    MatCardModule,
-    MatButtonModule,
+    SharedModule,
     IgoMessageModule,
     IgoMapModule,
     IgoDirectionsModule

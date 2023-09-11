@@ -1,5 +1,4 @@
 <div class="igo-search-settings">
-
   <button
     mat-icon-button
     class="igo-search-settings-button"
@@ -7,100 +6,169 @@
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.search.menu.tooltip' | translate"
-    [matMenuTriggerFor]="searchSettingsMenu">
+    [matMenuTriggerFor]="searchSettingsMenu"
+  >
     <mat-icon svgIcon="chevron-down"></mat-icon>
   </button>
-  <mat-menu
-    #searchSettingsMenu="matMenu"
-    class="no-border-radius">
-    <div class="checkAllButton" *ngIf="getSearchSources().length>4">
-      <button mat-raised-button
-        (click)="checkUncheckAllSources($event)">{{!searchSourcesAllEnabled  ? ('igo.geo.search.searchSources.unselectAll' | translate): ('igo.geo.search.searchSources.selectAll' | translate)}}</button>
+  <mat-menu #searchSettingsMenu="matMenu" class="no-border-radius">
+    <div class="checkAllButton" *ngIf="getSearchSources().length > 4">
+      <button mat-raised-button (click)="checkUncheckAllSources($event)">
+        {{
+          !searchSourcesAllEnabled
+            ? ('igo.geo.search.searchSources.unselectAll' | translate)
+            : ('igo.geo.search.searchSources.selectAll' | translate)
+        }}
+      </button>
     </div>
-      <ng-container *ngFor="let source of getSearchSources()">
-        <span class="igo-search-settings-search-source">
-          <mat-checkbox
-            class="igo-search-settings-checkbox"
-            [checked]="source.enabled"
-            [value]="source"
-            (click)="$event.stopPropagation()"
-            (change)="onCheckSearchSource($event, source)">
-          </mat-checkbox>
-          <button *ngIf="source.settings.length > 0"
-            [matMenuTriggerFor]="sub_menu"
-            mat-menu-item>{{source.title}}
+    <ng-container *ngFor="let source of getSearchSources()">
+      <span class="igo-search-settings-search-source">
+        <mat-checkbox
+          class="igo-search-settings-checkbox"
+          [checked]="source.enabled"
+          [value]="source"
+          (click)="$event.stopPropagation()"
+          (change)="onCheckSearchSource($event, source)"
+        >
+        </mat-checkbox>
+        <button
+          *ngIf="source.settings.length > 0"
+          [matMenuTriggerFor]="sub_menu"
+          mat-menu-item
+        >
+          {{ source.title }}
+        </button>
+        <button mat-menu-item *ngIf="source.settings.length === 0">
+          {{ source.title }}
+        </button>
+      </span>
+      <mat-menu #sub_menu="matMenu">
+        <ng-container *ngFor="let setting of source.settings">
+          <button mat-menu-item [matMenuTriggerFor]="test_sub_menu">
+            {{
+              'igo.geo.search.searchSources.settings.' + setting.title
+                | translate
+            }}
           </button>
-          <button
-            mat-menu-item
-            *ngIf="source.settings.length === 0">
-            {{source.title}}
-          </button>
-        </span>
-          <mat-menu #sub_menu="matMenu">
-            <ng-container *ngFor="let setting of source.settings">
-              <button
-                  mat-menu-item
-                  [matMenuTriggerFor]="test_sub_menu">
-                {{'igo.geo.search.searchSources.settings.'+ setting.title | translate}}
-              </button>
-              <mat-menu #test_sub_menu="matMenu"
-                [ngSwitch]="setting.type"
-                yPosition="above">
-                <span *ngSwitchCase="'radiobutton'">
-                  <mat-radio-group
-                    class="igo-search-settings-radio-group"
-                    [value]="setting">
-                    <mat-radio-button *ngFor="let settingValue of setting.values"
-                      class="mat-typography"
-                      [value]="settingValue"
-                      [matTooltip]="getAvailableHashtagsValues(settingValue)"
-                      [checked]="settingValue.enabled"
-                      (click)="$event.stopPropagation()"
-                      (change)="settingsValueCheckedRadioButton($event, source, setting, settingValue)">
-                      {{settingValue.title | translate}}
-                    </mat-radio-button>
-                  </mat-radio-group>
-                </span>
-                <span *ngSwitchCase="'checkbox'">
-                  <div class="checkAllButton" *ngIf="setting.values.length > 3">
-                    <button mat-raised-button
-                      (click)="checkUncheckAll($event, source, setting)">{{setting.allEnabled || setting.allEnabled === undefined  ? ('igo.geo.search.searchSources.settings.unselectAll' | translate): ('igo.geo.search.searchSources.settings.selectAll' | translate)}}</button>
-                  </div>
-                  <mat-checkbox *ngFor="let settingValue of getAvailableValues(setting)"
-                    class="mat-menu-item"
-                    [style.display]="displayBlock"
-                    [checked]="settingValue.enabled"
-                    [value]="setting"
-                    [matTooltip]="getAvailableHashtagsValues(settingValue)"
-                    (click)="$event.stopPropagation()"
-                    (change)="settingsValueCheckedCheckbox($event, source, setting, settingValue)">
-                    {{settingValue.title | translate}}
-                  </mat-checkbox>
-                </span>
-              </mat-menu>
-            </ng-container>
+          <mat-menu
+            #test_sub_menu="matMenu"
+            [ngSwitch]="setting.type"
+            yPosition="above"
+          >
+            <span *ngSwitchCase="'radiobutton'">
+              <mat-radio-group
+                class="igo-search-settings-radio-group"
+                [value]="setting"
+              >
+                <mat-radio-button
+                  *ngFor="let settingValue of setting.values"
+                  class="mat-typography"
+                  [value]="settingValue"
+                  [matTooltip]="getAvailableHashtagsValues(settingValue)"
+                  [checked]="settingValue.enabled"
+                  (click)="$event.stopPropagation()"
+                  (change)="
+                    settingsValueCheckedRadioButton(
+                      $event,
+                      source,
+                      setting,
+                      settingValue
+                    )
+                  "
+                >
+                  {{ settingValue.title | translate }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </span>
+            <span *ngSwitchCase="'checkbox'">
+              <div class="checkAllButton" *ngIf="setting.values.length > 3">
+                <button
+                  mat-raised-button
+                  (click)="checkUncheckAll($event, source, setting)"
+                >
+                  {{
+                    setting.allEnabled || setting.allEnabled === undefined
+                      ? ('igo.geo.search.searchSources.settings.unselectAll'
+                        | translate)
+                      : ('igo.geo.search.searchSources.settings.selectAll'
+                        | translate)
+                  }}
+                </button>
+              </div>
+              <div mat-menu-item>
+                <mat-checkbox
+                  *ngFor="let settingValue of getAvailableValues(setting)"
+                  [style.display]="displayBlock"
+                  [checked]="settingValue.enabled"
+                  [value]="setting"
+                  [matTooltip]="getAvailableHashtagsValues(settingValue)"
+                  (click)="$event.stopPropagation()"
+                  (change)="
+                    settingsValueCheckedCheckbox(
+                      $event,
+                      source,
+                      setting,
+                      settingValue
+                    )
+                  "
+                >
+                  {{ settingValue.title | translate }}
+                </mat-checkbox>
+              </div>
+            </span>
           </mat-menu>
-      </ng-container>
-        <mat-divider></mat-divider>
-        <span class="pointer-summary-slide-toggle-container mat-typography">
-          <mat-slide-toggle class="search-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
-            *ngIf="hasPointerReverseSearchSource && !isTouchScreen" 
-            matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
-            (click)="$event.stopPropagation()" [checked]="pointerSummaryEnabled" [labelPosition]="'after'">
-            {{'igo.geo.search.pointerSearchSummary.title' | translate}}
-          </mat-slide-toggle>
-          <mat-slide-toggle class="search-option" (change)="changeSearchResultsGeometry($event)" tooltip-position="below"
-            matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.searchResultsGeometry.tooltip' | translate"
-            (click)="$event.stopPropagation()" [checked]="searchResultsGeometryEnabled" [labelPosition]="'after'">
-            {{'igo.geo.search.searchResultsGeometry.title' | translate}}
-          </mat-slide-toggle>
-          <mat-slide-toggle class="search-option" (change)="reverseSearchCoordsFormat($event)" tooltip-position="below"
-            matTooltipShowDelay="500"
-            [matTooltip]="reverseSearchCoordsFormatEnabled ? ('igo.geo.search.reverseCoordFormat.tooltipLatLon' | translate)
-            : ('igo.geo.search.reverseCoordFormat.tooltipLonLat' | translate)"
-            (click)="$event.stopPropagation()" [checked]="reverseSearchCoordsFormatEnabled" [labelPosition]="'after'">
-            {{'igo.geo.search.reverseCoordFormat.title' | translate}}
-          </mat-slide-toggle>
-        </span>
+        </ng-container>
+      </mat-menu>
+    </ng-container>
+    <mat-divider></mat-divider>
+    <span class="pointer-summary-slide-toggle-container">
+      <div mat-menu-item>
+        <mat-slide-toggle
+          class="search-option"
+          (change)="changePointerReverseSearch($event)"
+          tooltip-position="below"
+          *ngIf="hasPointerReverseSearchSource && !isTouchScreen"
+          matTooltipShowDelay="500"
+          [matTooltip]="
+            'igo.geo.search.pointerSearchSummary.tooltip' | translate
+          "
+          (click)="$event.stopPropagation()"
+          [checked]="pointerSummaryEnabled"
+        >
+          {{ 'igo.geo.search.pointerSearchSummary.title' | translate }}
+        </mat-slide-toggle>
+      </div>
+      <div mat-menu-item>
+        <mat-slide-toggle
+          class="search-option"
+          (change)="changeSearchResultsGeometry($event)"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="
+            'igo.geo.search.searchResultsGeometry.tooltip' | translate
+          "
+          (click)="$event.stopPropagation()"
+          [checked]="searchResultsGeometryEnabled"
+        >
+          {{ 'igo.geo.search.searchResultsGeometry.title' | translate }}
+        </mat-slide-toggle>
+      </div>
+      <div mat-menu-item>
+        <mat-slide-toggle
+          class="search-option"
+          (change)="reverseSearchCoordsFormat($event)"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="
+            reverseSearchCoordsFormatEnabled
+              ? ('igo.geo.search.reverseCoordFormat.tooltipLatLon' | translate)
+              : ('igo.geo.search.reverseCoordFormat.tooltipLonLat' | translate)
+          "
+          (click)="$event.stopPropagation()"
+          [checked]="reverseSearchCoordsFormatEnabled"
+        >
+          {{ 'igo.geo.search.reverseCoordFormat.title' | translate }}
+        </mat-slide-toggle>
+      </div>
+    </span>
   </mat-menu>
 </div>

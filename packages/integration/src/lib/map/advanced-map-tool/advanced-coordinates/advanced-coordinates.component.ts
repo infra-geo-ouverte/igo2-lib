@@ -22,16 +22,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
-  public center: boolean = this.storageService.get('centerToggle') as boolean;
+  public center: boolean;
   private inMtmZone: boolean = true;
   private inLambert2 = {32198: true, 3798: true};
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
-  private defaultProj: InputProjections = {
-    translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.wgs84', { code: 'EPSG:4326' }),
-    translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: ''
-  };
+  private defaultProj: InputProjections;
   private currentZones = { utm: undefined, mtm: undefined };
   public units: boolean = true;
   get map(): IgoMap {
@@ -60,7 +57,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private storageService: StorageService,
     private config: ConfigService,
-    private formBuilder: UntypedFormBuilder) {
+    private formBuilder: UntypedFormBuilder
+  ) {
+    this.defaultProj = {
+      translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.wgs84', { code: 'EPSG:4326' }),
+      translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: ''
+    };
+    this.center = this.storageService.get('centerToggle') as boolean;
       this.computeProjections();
       this.buildForm();
     }

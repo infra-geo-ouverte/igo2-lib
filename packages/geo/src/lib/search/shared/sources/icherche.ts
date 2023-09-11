@@ -13,8 +13,8 @@ import pointOnFeature from '@turf/point-on-feature';
 import { FEATURE, Feature } from '../../../feature';
 import { GoogleLinks } from './../../../utils/googleLinks';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch, ReverseSearch } from './source';
+import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,
@@ -261,6 +261,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               value: 'sorties-autoroute',
               enabled: types.indexOf('sorties-autoroute') !== -1,
               hashtags: ['sortie', 'sorties', 'exit']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.cultpatri',
+              value: 'culture',
+              enabled: types.indexOf('culture') !== -1,
+              hashtags: ['grille', 'culture']
             }
           ]
         },

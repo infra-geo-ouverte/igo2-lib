@@ -7,7 +7,7 @@ import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
 
 export class WebSocketDataSource extends FeatureDataSource {
   public ws: WebSocket;
-  public options: WebSocketDataSourceOptions;
+  public declare options: WebSocketDataSourceOptions;
 
   protected createOlSource(): olSourceVector<OlGeometry> {
     this.createWebSocket();

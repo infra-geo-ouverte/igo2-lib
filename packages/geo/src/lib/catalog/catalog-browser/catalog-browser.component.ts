@@ -12,7 +12,7 @@ import { zip, BehaviorSubject } from 'rxjs';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
 import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 import {
   Catalog,

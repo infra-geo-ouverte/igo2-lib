@@ -1,12 +1,18 @@
-.igo-catalog-group-title  {
+.igo-catalog-group-title {
   cursor: pointer;
-  opacity: 0.9;
 }
 
-#catalog-group-title {
-  font-weight: bold;
+.igo-cataloggroup-external-icon {
+  cursor: help;
 }
 
-.igo-cataloggroup-external-icon  {
-    cursor: help;
+.igo-catalog-group-title {
+  font-weight: 500;
+}
+
+:host {
+  .mdc-list-item__end,
+  .mdc-list-item__start {
+    color: black;
   }
+}
