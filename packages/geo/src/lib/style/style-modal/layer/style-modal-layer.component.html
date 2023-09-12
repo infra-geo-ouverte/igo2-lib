@@ -14,9 +14,11 @@
         </span>
         <igo-color-picker-form-field
           formControlName="fill"
-          [dialogRef] = "dialogRef"
           outputFormat="rgba"
           setAlpha=".4"
+          (open)="openPicker()"
+          (close)="closePicker()"
+          [color]="getLayerFillColor()"
         ></igo-color-picker-form-field>
       </div>
 
@@ -28,9 +30,11 @@
         </span>
         <igo-color-picker-form-field
           formControlName="stroke"
-          [dialogRef] = "dialogRef"
           outputFormat="rgba"
           setAlpha="1"
+          (open)="openPicker()"
+          (close)="closePicker()"
+          [color]="getLayerStrokeColor()"
         ></igo-color-picker-form-field>
       </div>
     </form>

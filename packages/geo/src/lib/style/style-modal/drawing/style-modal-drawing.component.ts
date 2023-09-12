@@ -151,7 +151,21 @@ export class StyleModalDrawingComponent implements OnInit {
 
   confirm() {
     this.confirmFlag = true;
-    console.log(this.styleModalData);
-    // this.dialogRef.close(this.styleModalData);
+    if (this.form.get('fill').value) {
+      this.styleModalData.fillColor = this.form.get('fill').value;
+    }
+
+    if (this.form.get('stroke').value) {
+      this.styleModalData.strokeColor = this.form.get('stroke').value;
+    }
+    this.dialogRef.close(this.styleModalData);
+  }
+
+  openPicker() {
+    this.dialogRef.disableClose = true;
+  }
+
+  closePicker() {
+    this.dialogRef.disableClose = false;
   }
 }

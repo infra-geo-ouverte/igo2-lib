@@ -5,13 +5,13 @@
   matTooltipShowDelay="500"
   subscriptSizing="dynamic"
 >
-  <mat-label>{{ setFormat(value) }}</mat-label>
+  <mat-label>{{ value }}</mat-label>
   <input
     matInput
     [readonly]="true"
-    (click)="colorFieldClick()"
-    (blur)="colorFieldBlur()"
-    [(ngModel)]="value"
+    (click)="open.emit(true)"
+    (blur)="closePicker()"
+    [(ngModel)]="hexColor"
     type="color"
   />
 </mat-form-field>
