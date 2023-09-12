@@ -16,7 +16,7 @@ import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
 import { Layer, TooltipType } from '../../layer/shared/layers';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 /**
  * Catalog browser layer item

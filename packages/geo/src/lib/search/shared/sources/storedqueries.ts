@@ -7,8 +7,8 @@ import { map } from 'rxjs/operators';
 import { ObjectUtils } from '@igo2/utils';
 import { FEATURE, Feature } from '../../../feature';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch, ReverseSearch } from './source';
+import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,

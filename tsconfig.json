@@ -3,8 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
-    "allowSyntheticDefaultImports": true, // for jspdf and moment
-    "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "downlevelIteration": true,
     "importHelpers": true,

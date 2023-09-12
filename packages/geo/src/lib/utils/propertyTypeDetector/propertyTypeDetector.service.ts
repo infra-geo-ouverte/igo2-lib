@@ -58,7 +58,7 @@ export class PropertyTypeDetectorService {
 
 
   private getGeoServiceRegexes(): GeoServiceDefinition[] {
-    return this.regexService.get('geoservice') as GeoServiceDefinition[] | [];
+    return (this.regexService.get('geoservice') || []) as GeoServiceDefinition[];
   }
 
 }

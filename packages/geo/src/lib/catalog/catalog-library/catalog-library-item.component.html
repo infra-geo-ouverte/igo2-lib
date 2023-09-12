@@ -2,20 +2,19 @@
   <span matListItemTitle>
     {{ title }}
   </span>
-  <mat-icon
-    *ngIf="catalog.externalProvider"
-    matListItemIcon
-    class="igo-external-provider"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
-    color="primary"
-    (click)="$event.stopPropagation()"
-    svgIcon="earth-arrow-right"
-  >
-  </mat-icon>
-
   <div matListItemMeta>
+    <mat-icon
+      *ngIf="catalog.externalProvider"
+      matListItemIcon
+      class="igo-external-provider"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
+      color="primary"
+      (click)="$event.stopPropagation()"
+      svgIcon="earth-arrow-right"
+    >
+    </mat-icon>
     <button
       *ngIf="catalog.removable"
       mat-icon-button

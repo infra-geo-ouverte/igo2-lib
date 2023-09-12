@@ -1,4 +1,5 @@
 export * from './map';
+export * from './map.abstract';
 export * from './map.enums';
 export * from './map.interface';
 export * from './map.service';

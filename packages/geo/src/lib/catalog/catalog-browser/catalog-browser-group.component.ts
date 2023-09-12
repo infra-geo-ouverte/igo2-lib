@@ -22,7 +22,7 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 /**
  * Catalog browser group item
