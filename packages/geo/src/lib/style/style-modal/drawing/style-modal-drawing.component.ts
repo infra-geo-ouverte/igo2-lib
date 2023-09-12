@@ -5,7 +5,6 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { DrawStyleService } from '../../style-service/draw-style.service';
 import { FontType } from '../../shared/font.enum';
 import { DrawingMatDialogData, StyleModalData } from '../shared/style-modal.interface';
-// import tinycolor from "tinycolor2";
 
 @Component({
   selector: 'igo-style-modal-drawing',
