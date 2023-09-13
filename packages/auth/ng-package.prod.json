@@ -4,5 +4,8 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["jwt-decode", "ts-cacheable", "ts-md5"]
+  "allowedNonPeerDependencies": ["jwt-decode", "ts-cacheable", "ts-md5"],
+  "assets": [
+    { "input": "src/locale", "glob": "*", "output": "locale" }
+  ]
 }

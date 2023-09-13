@@ -1,27 +1,38 @@
-<mat-list-item *ngIf="!action.checkbox"
+<mat-list-item
+  *ngIf="!action.checkbox"
+  class="actionbar-item"
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
   [matTooltip]="withTooltip ? ((tooltip$ | async) || title | translate) : ''"
   [ngClass]="ngClass$ | async"
-  (click)="onClick()">
-  <button *ngIf="withIcon"
-    mat-list-avatar
+  (click)="onClick()"
+>
+  <button
+    *ngIf="withIcon"
+    matListItemAvatar
     mat-icon-button
     [color]="color"
-    [disabled]="disabled$ | async">
-    <mat-icon *ngIf="withIcon" svgIcon="{{icon$ | async}}"></mat-icon>
+    [disabled]="disabled$ | async"
+    [disableRipple]="true"
+  >
+    <mat-icon *ngIf="withIcon" svgIcon="{{ icon$ | async }}"></mat-icon>
   </button>
-  <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
+  <span *ngIf="withTitle" matLine>{{ title | translate }}</span>
 </mat-list-item>
 
-<mat-list-item class="item-checkbox" *ngIf="action.checkbox"
+<mat-list-item
+  class="item-checkbox"
+  *ngIf="action.checkbox"
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
   [matTooltip]="withTooltip ? ((tooltip$ | async) || title | translate) : ''"
-  [ngClass]="ngClass$ | async">
-  <mat-checkbox *ngIf="withTitle"
-      (change)="action.handler()"
-      [checked]="checkCondition$ | async">
-      {{title | translate}}
+  [ngClass]="ngClass$ | async"
+>
+  <mat-checkbox
+    *ngIf="withTitle"
+    (change)="action.handler()"
+    [checked]="checkCondition$ | async"
+  >
+    {{ title | translate }}
   </mat-checkbox>
 </mat-list-item>

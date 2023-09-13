@@ -5,10 +5,10 @@ import { debounceTime } from 'rxjs/operators';
 
 import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/common';
 
-import { Layer, ImageLayer, VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { Layer, ImageLayer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
-import { OgcFilterableDataSourceOptions } from '../../filter';
+import { OgcFilterableDataSourceOptions } from '../../filter/shared';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';

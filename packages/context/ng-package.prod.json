@@ -4,5 +4,10 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["ts-md5"]
+  "allowedNonPeerDependencies": ["ts-md5"],
+  "assets": [
+    { "input": "src", "glob": "*.scss", "output": "" },
+    { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
+    { "input": "src/locale", "glob": "*", "output": "locale" }
+  ]
 }

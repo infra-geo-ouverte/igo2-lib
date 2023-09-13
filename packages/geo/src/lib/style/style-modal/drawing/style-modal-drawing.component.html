@@ -1,142 +1,102 @@
-<div mat-dialog-content>
-  <h2 mat-dialog-title class="mat-typography">{{ 'igo.geo.style.styleModal' | translate }}</h2>
-  <div
-  class="edition-drawing mat-typography"
-  [hidden]="data.features.length === 0">
-    <form
-      class="igo-form"
-      [formGroup]="form">
-      <div class="fill-color-picker mat-typography" *ngIf="linestringOnly !== true">
+<h2 mat-dialog-title>
+  {{ 'igo.geo.style.styleModal' | translate }}
+</h2>
+<div
+  class="edition-drawing"
+  mat-dialog-content
+  [hidden]="data.features.length === 0"
+>
+  <form class="igo-form" [formGroup]="form">
+    <div class="color-picker">
+      <ng-container *ngIf="linestringOnly !== true">
         <span>
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
+        <igo-color-picker-form-field
+          formControlName="fill"
+          outputFormat="rgba"
+          setAlpha=".4"
+          (open)="openPicker()"
+          (close)="closePicker()"
+          [color]="getFeatureFillColor()"
+        ></igo-color-picker-form-field>
+      </ng-container>
 
-        <mat-form-field
-          class="fill-field"
-          appearance="outline"
-          floatLabel="always"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.style.colorPicker' | translate">
-          <mat-label>{{ getFeatureFillColor() }}</mat-label>
-          <input
-            #fillColorInput
-            formControlName="fill"
-            matInput
-            type="text"
-            [style.background]="getFeatureFillColor()"
-            [readonly]="true"
-            [colorPicker]="getFeatureFillColor()"
-            [cpWidth]="'200px'"
-            [cpOutputFormat]="'rgba'"
-            [cpPosition]="'bottom'"
-            [cpPositionOffset]="'-75%'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-            [cpOKButton]="true"
-            (colorPickerChange)="styleModalData.fillColor = $event">
-        </mat-form-field>
-      </div>
+      <span>
+        <mat-icon class="stroke-palette-icon" svgIcon="square-outline">
+        </mat-icon>
+        {{ 'igo.geo.style.stroke' | translate }}
+      </span>
 
-      <div class="stroke-color-picker mat-typography">
-        <span>
-          <mat-icon
-            class="stroke-palette-icon"
-            svgIcon="square-outline">
-          </mat-icon>
-          {{'igo.geo.style.stroke' | translate}}
-        </span>
+      <igo-color-picker-form-field
+        formControlName="stroke"
+        outputFormat="rgba"
+        setAlpha="1"
+        (open)="openPicker()"
+        (close)="closePicker()"
+        [color]="getFeatureStrokeColor()"
+      ></igo-color-picker-form-field>
+    </div>
 
-        <mat-form-field
-          class="stroke-field"
-          appearance="outline"
-          floatLabel="always"
-          tooltip-position="below"
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.style.colorPicker' | translate">
-          <mat-label>{{ getFeatureStrokeColor() }}</mat-label>
-          <input
-            #strokeColorInput
-            formControlName="stroke"
-            matInput
-            type="text"
-            [style.background]="getFeatureStrokeColor()"
-            [readonly]="true"
-            [colorPicker]="getFeatureStrokeColor()"
-            [cpWidth]="'200px'"
-            [cpPosition]="'bottom'"
-            [cpPositionOffset]="'-75%'"
-            [cpOutputFormat]="'rgba'"
-            [cpCancelButton]="true"
-            [cpCancelButtonText]="'igo.geo.style.cancel' | translate"
-            [cpOKButton]="true"
-            (colorPickerChange)="styleModalData.strokeColor = $event">
-        </mat-form-field>
-      </div>
-
-      <div class="igo-input-container">
-        <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.style.fontSize' | translate }}</mat-label>
-          <input
-            matInput
-            #testFontSize
-            type="number"
-            placeholder="10"
-            min="10"
-            onkeydown="return event.keyCode !== 69"
-            [value]="getFeatureFontSize()"
-            (input)="styleModalData.fontSize = $event.target.value">
-          <span matSuffix>px</span>
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.style.fontStyle' | translate }}</mat-label>
-          <mat-select
-            #testFontStyle
-            [value]="getFeatureFontStyle()"
-            (selectionChange)="styleModalData.fontStyle = $event.value">
-            <mat-option
-              *ngFor="let fontSelect of allFontStyles"
-              [value]="fontSelect">
-              {{ fontSelect }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="igo-input-container">
-        <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.style.offsetX' | translate }}</mat-label>
-          <input
-            matInput
-            #offsetXInput
-            type="number"
-            onkeydown="return event.keyCode !== 69"
-            [value]="getFeatureOffsetX()"
-            (input)="styleModalData.offsetX = $event.target.value">
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="igo-form-input-box">
-          <mat-label>{{ 'igo.geo.style.offsetY' | translate }}</mat-label>
-          <input
-            matInput
-            #offsetYInput
-            type="number"
-            onkeydown="return event.keyCode !== 69"
-            [value]="getFeatureOffsetY()"
-            (input)="styleModalData.offsetY= $event.target.value">
-        </mat-form-field>
-      </div>
-    </form>
-  </div>
+    <div class="igo-input-container">
+      <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
+        <mat-label>{{ 'igo.geo.style.fontSize' | translate }}</mat-label>
+        <input
+          matInput
+          #testFontSize
+          type="number"
+          placeholder="10"
+          min="10"
+          onkeydown="return event.keyCode !== 69"
+          [value]="getFeatureFontSize()"
+          (input)="styleModalData.fontSize = $event.target.value"
+        />
+        <span matTextSuffix>px</span>
+      </mat-form-field>
+      <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
+        <mat-label>{{ 'igo.geo.style.fontStyle' | translate }}</mat-label>
+        <mat-select
+          #testFontStyle
+          [value]="getFeatureFontStyle()"
+          (selectionChange)="styleModalData.fontStyle = $event.value"
+        >
+          <mat-option
+            *ngFor="let fontSelect of allFontStyles"
+            [value]="fontSelect"
+          >
+            {{ fontSelect }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
+        <mat-label>{{ 'igo.geo.style.offsetX' | translate }}</mat-label>
+        <input
+          matInput
+          #offsetXInput
+          type="number"
+          onkeydown="return event.keyCode !== 69"
+          [value]="getFeatureOffsetX()"
+          (input)="styleModalData.offsetX = $event.target.value"
+        />
+      </mat-form-field>
+      <mat-form-field class="igo-form-input-box" subscriptSizing="dynamic">
+        <mat-label>{{ 'igo.geo.style.offsetY' | translate }}</mat-label>
+        <input
+          matInput
+          #offsetYInput
+          type="number"
+          onkeydown="return event.keyCode !== 69"
+          [value]="getFeatureOffsetY()"
+          (input)="styleModalData.offsetY = $event.target.value"
+        />
+      </mat-form-field>
+    </div>
+  </form>
 </div>
 <div mat-dialog-actions>
-  <button 
-    mat-raised-button 
-    (click)="cancelDrawing()">{{'igo.geo.style.cancel' | translate}}
+  <button mat-raised-button (click)="cancelDrawing()">
+    {{ 'igo.geo.style.cancel' | translate }}
   </button>
-  <button 
-    mat-raised-button 
-    color="primary" 
-    (click)="confirm()">OK
-  </button>
+  <button mat-raised-button color="primary" (click)="confirm()">OK</button>
 </div>

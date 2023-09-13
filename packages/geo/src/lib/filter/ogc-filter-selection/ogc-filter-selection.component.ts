@@ -18,7 +18,7 @@ import {
 
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';

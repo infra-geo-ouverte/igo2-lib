@@ -7,14 +7,14 @@ import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 import { MessageService } from '@igo2/core';
 import VectorTile from 'ol/VectorTile';
 
 export class VectorTileLayer extends Layer {
-  public dataSource: MVTDataSource;
-  public options: VectorTileLayerOptions;
-  public ol: olLayerVectorTile;
+  public declare dataSource: MVTDataSource;
+  public declare options: VectorTileLayerOptions;
+  public declare ol: olLayerVectorTile;
 
   private watcher: TileWatcher;
 

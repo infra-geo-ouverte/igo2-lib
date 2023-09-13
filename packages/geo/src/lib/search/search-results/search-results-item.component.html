@@ -1,18 +1,41 @@
-<mat-list-item (mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)">
-  <mat-icon *ngIf="icon" mat-list-avatar svgIcon="{{showIcons ? icon : 'blank'}}"></mat-icon>
+<mat-list-item
+  (mouseenter)="onMouseEvent($event)"
+  (mouseleave)="onMouseEvent($event)"
+>
+  <mat-icon
+    *ngIf="icon"
+    matListItemIcon
+    [svgIcon]="showIcons ? icon : 'blank'"
+  ></mat-icon>
 
-  <h4 matLine *ngIf="titleHtml" [innerHtml]="titleHtml" matTooltipShowDelay="500" [matTooltip]="tooltipHtml" matTooltipClass="search-result-tooltip"></h4>
-  <h4 matLine *ngIf="!titleHtml" matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
+  <div
+    matListItemTitle
+    *ngIf="titleHtml; else normalTitle"
+    [innerHtml]="titleHtml"
+    matTooltipShowDelay="500"
+    [matTooltip]="tooltipHtml"
+    matTooltipClass="search-result-tooltip"
+  ></div>
+  <ng-template #normalTitle>
+    <span
+      matListItemTitle
+      *ngIf="!titleHtml"
+      matTooltipShowDelay="500"
+      [matTooltip]="title"
+      >{{ title }}</span
+    >
+  </ng-template>
 
-  <button *ngIf="withZoomButton"
-    igoStopPropagation
-    mat-icon-button
-    (click)="onZoomHandler()">
-    <mat-icon svgIcon="magnify"></mat-icon>
-  </button>
-
-  <ng-content
-    select=[igoSearchItemToolbar]>
-  </ng-content>
-
+  <div matListItemMeta>
+    <button
+      *ngIf="withZoomButton"
+      igoStopPropagation
+      mat-icon-button
+      (click)="onZoomHandler()"
+    >
+      <mat-icon svgIcon="magnify"></mat-icon>
+    </button>
+  
+    <ng-content select="[igoSearchItemToolbar]"> </ng-content>
+  </div>
 </mat-list-item>

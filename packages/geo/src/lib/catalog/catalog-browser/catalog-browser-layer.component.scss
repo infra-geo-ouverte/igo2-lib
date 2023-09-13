@@ -13,3 +13,10 @@
 .igo-cataloglayer-external-icon  {
   cursor: help;
 }
+
+:host {
+  .mdc-list-item__end,
+  .mdc-list-item__start {
+    color: black;
+  }
+}

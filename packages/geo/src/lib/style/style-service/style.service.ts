@@ -74,13 +74,16 @@ export class StyleService {
         labelMinResolution = labelMinResolutionFromScale || minResolution;
         labelMaxResolution = labelMaxResolutionFromScale || maxResolution;
       }
-      if (feature && resolution >= labelMinResolution && resolution <= labelMaxResolution) {
-        if (feature && options.text.attribute) {
-          parsedStyle.getText().setText(this.getLabel(feature, options.text.attribute));
+      if (options.text?.minScaleDenom || options.text?.maxScaleDenom || options.text?.minResolution || options.text?.maxResolution) {
+        if (feature && resolution >= labelMinResolution && resolution <= labelMaxResolution) {
+          if (feature && options.text.attribute) {
+            parsedStyle.getText().setText(this.getLabel(feature, options.text.attribute));
+          }
+        } else {
+          parsedStyle.setText();
         }
-      } else {
-        parsedStyle.setText();
       }
+
     }
     return parsedStyle;
   }

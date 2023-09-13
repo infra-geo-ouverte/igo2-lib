@@ -8,7 +8,7 @@ import { IgoFormFieldComponent } from '@igo2/common';
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 
 /**

@@ -1,5 +1,21 @@
-<igo-directions-buttons [contextUri]="contextUri" [zoomToActiveRoute$]="zoomToActiveRoute$" [routesFeatureStore]="routesFeatureStore" [stopsStore]="stopsStore"></igo-directions-buttons>
+<igo-directions-buttons
+  [contextUri]="contextUri"
+  [zoomToActiveRoute$]="zoomToActiveRoute$"
+  [routesFeatureStore]="routesFeatureStore"
+  [stopsStore]="stopsStore"
+></igo-directions-buttons>
 
-<igo-directions-inputs (stopInputHasFocus)="onStopInputHasFocusChange($event)" [coordRoundedDecimals]="coordRoundedDecimals" [projection]="projection" [stopsFeatureStore]="stopsFeatureStore" [stopsStore]="stopsStore" [debounce]="debounce" [length]="length"></igo-directions-inputs>
-<br>
-<igo-directions-results [stepFeatureStore]="stepFeatureStore" [routesFeatureStore]="routesFeatureStore"></igo-directions-results>
+<igo-directions-inputs
+  (stopInputHasFocus)="onStopInputHasFocusChange($event)"
+  [coordRoundedDecimals]="coordRoundedDecimals"
+  [projection]="projection"
+  [stopsFeatureStore]="stopsFeatureStore"
+  [stopsStore]="stopsStore"
+  [debounce]="debounce"
+  [length]="length"
+></igo-directions-inputs>
+
+<igo-directions-results
+  [stepFeatureStore]="stepFeatureStore"
+  [routesFeatureStore]="routesFeatureStore"
+></igo-directions-results>

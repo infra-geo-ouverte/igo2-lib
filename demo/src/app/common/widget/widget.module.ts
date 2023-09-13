@@ -9,6 +9,7 @@ import {
   AppWidgetComponent
 } from './widget.component';
 import { AppWidgetRoutingModule } from './widget-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -16,6 +17,7 @@ import { AppWidgetRoutingModule } from './widget-routing.module';
         AppWidgetComponent
     ],
     imports: [
+        SharedModule,
         AppWidgetRoutingModule,
         MatButtonModule,
         MatCardModule,

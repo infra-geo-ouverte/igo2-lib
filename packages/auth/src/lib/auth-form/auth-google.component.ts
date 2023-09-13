@@ -17,7 +17,7 @@ import { AuthService } from '../shared/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthGoogleComponent {
-  private options: AuthGoogleOptions;
+  private options?: AuthGoogleOptions;
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -27,9 +27,9 @@ export class AuthGoogleComponent {
     private languageService: LanguageService,
     private appRef: ApplicationRef
   ) {
-    this.options = this.config.getConfig('auth.google') || {};
+    this.options = this.config.getConfig('auth.google');
 
-    if (this.options.apiKey && this.options.clientId) {
+    if (this.options?.apiKey && this.options?.clientId) {
       this.loadSDKGoogle();
       this.loadPlatform();
     } else {
@@ -52,8 +52,8 @@ export class AuthGoogleComponent {
   private initClient() {
     (window as any).gapi.client
       .init({
-        apiKey: this.options.apiKey,
-        clientId: this.options.clientId,
+        apiKey: this.options?.apiKey,
+        clientId: this.options?.clientId,
         discoveryDocs: [
           'https://people.googleapis.com/$discovery/rest?version=v1'
         ],

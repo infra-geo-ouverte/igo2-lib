@@ -1,7 +1,10 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-zoom-button-theming($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $is-dark: map-get($theme, is-dark);
+  $primary: map.get($theme, primary);
+  $accent: map.get($theme, accent);
+  $is-dark: map.get($theme, is-dark);
 
   igo-zoom-button > div.igo-zoom-button-container > button {
     &.mat-primary {

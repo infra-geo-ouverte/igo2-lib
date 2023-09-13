@@ -30,9 +30,7 @@ export class WorkspaceState implements OnDestroy {
   readonly rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   readonly selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  readonly workspaceMaximize$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.storageService.get('workspaceMaximize') as boolean
-  );
+  readonly workspaceMaximize$: BehaviorSubject<boolean>;
   private actionMaximize$$: Subscription[] = [];
 
   private rowsInMapExtentCheckCondition$$: Subscription;
@@ -80,6 +78,9 @@ export class WorkspaceState implements OnDestroy {
     private editionActionsService: EditionActionsService,
     private storageService: StorageService
   ) {
+    this.workspaceMaximize$ = new BehaviorSubject(
+      this.storageService.get('workspaceMaximize') as boolean
+    );
     this.initWorkspaces();
   }
 

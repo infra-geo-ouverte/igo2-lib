@@ -1,7 +1,9 @@
-#hide-save-search-result-btn {
-    display: none;
-}
-
-#show-save-search-result-btn {
-    display: block;
+:host {
+    #hide-save-search-result-btn {
+        display: none;
+    }
+    
+    #show-save-search-result-btn {
+        display: block;
+    }
 }

@@ -11,7 +11,7 @@ import {
   OgcInterfaceFilterOptions
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 import { OgcFilterWriter } from '../shared/ogc-filter';
 import { BehaviorSubject, Subscription } from 'rxjs';
 

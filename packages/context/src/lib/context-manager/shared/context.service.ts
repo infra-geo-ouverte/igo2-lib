@@ -29,7 +29,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
+import type { IgoMap, Layer, LayerOptions, VectorLayerOptions, VectorTileLayerOptions } from '@igo2/geo';
 import { ExportService } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
@@ -89,7 +89,7 @@ export class ContextService {
       this.config.getConfig('context')
     );
 
-    this.baseUrl = this.options.url;
+    this.baseUrl = this.options.url ?? '';
 
     this.readParamsFromRoute();
 
@@ -549,10 +549,11 @@ export class ContextService {
           return source && layer.id === source.id && !contextLayer.baseLayer;
         });
       if (layerFound) {
-        let layerStyle = layerFound[`style`];
-        if (layerFound[`igoStyle`][`styleByAttribute`]) {
+        let layerFoundAs = layerFound as VectorLayerOptions | VectorTileLayerOptions;
+        let layerStyle = layerFoundAs.style;
+        if (layerFoundAs.igoStyle?.styleByAttribute) {
           layerStyle = undefined;
-        } else if (layerFound[`igoStyle`][`clusterBaseStyle`]) {
+        } else if (layerFoundAs.igoStyle?.clusterBaseStyle) {
           layerStyle = undefined;
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
@@ -562,8 +563,8 @@ export class ContextService {
           title: layer.options.title,
           zIndex: layer.zIndex,
           igoStyle: {
-            styleByAttribute: layerFound[`igoStyle`][`styleByAttribute`],
-            clusterBaseStyle: layerFound[`igoStyle`][`clusterBaseStyle`],
+            styleByAttribute: layerFoundAs.igoStyle?.styleByAttribute,
+            clusterBaseStyle: layerFoundAs.igoStyle?.clusterBaseStyle,
           },
           style: layerStyle,
           clusterParam: layerFound[`clusterParam`],

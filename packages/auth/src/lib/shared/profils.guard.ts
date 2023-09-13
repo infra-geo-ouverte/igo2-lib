@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-  CanActivate,
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot
@@ -13,7 +12,7 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ProfilsGuard implements CanActivate {
+export class ProfilsGuard {
   constructor(
     private authService: AuthService,
     private config: ConfigService,
@@ -27,7 +26,7 @@ export class ProfilsGuard implements CanActivate {
         if (
           profils &&
           profils.profils &&
-          profils.profils.some(v => authConfig.profilsGuard.indexOf(v) !== -1)
+          profils.profils.some((v) => authConfig.profilsGuard.indexOf(v) !== -1)
         ) {
           return true;
         }
