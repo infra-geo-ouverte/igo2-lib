@@ -613,7 +613,7 @@ export class PrintService {
   }
 
   // TODO fix printing with image resolution
-  private addMap(
+  addMap(
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
