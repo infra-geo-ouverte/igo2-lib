@@ -81,7 +81,7 @@ export class DirectionsService {
         }
 
         this.activityService.unregister(activityId);
-        status$.next(SubjectStatus.Done);
+        status$.next(status);
 
     });
 
