@@ -16,6 +16,7 @@ import { LanguageService, StorageService } from '@igo2/core';
 import { computeTermSimilarity } from '../search.utils';
 import { Cacheable } from 'ts-cacheable';
 import { GeoJsonGeometryTypes } from 'geojson';
+import { customCacheHasher } from '@igo2/utils';
 
 /**
  * Cadastre search source
@@ -57,9 +58,6 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
    * @param term Place name
    * @returns Observable of <SearchResult<Feature>[]
    */
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string | undefined,
     options?: TextSearchOptions
@@ -72,6 +70,17 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
       return of([]);
     }
+    return this.getCadastre(term, params);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getCadastre(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
     return this.http
       .get(this.searchUrl, { params, responseType: 'text' })
       .pipe(map((response: string) => this.extractResults(response, term)));

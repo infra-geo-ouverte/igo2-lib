@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { Cacheable } from 'ts-cacheable';
 
-import { uuid } from '@igo2/utils';
+import { customCacheHasher, uuid } from '@igo2/utils';
 import { ConfigService } from '@igo2/core';
 
 import { Direction, DirectionOptions } from '../shared/directions.interface';
@@ -37,16 +37,27 @@ export class OsrmDirectionsSource extends DirectionsSource {
     return OsrmDirectionsSource._name;
   }
 
-  @Cacheable({
-    maxCacheCount: 20
-  })
-  route(coordinates: [number, number][], directionsOptions: DirectionOptions = {}): Observable<Direction[]> {
+  route(
+    coordinates: [number, number][],
+    directionsOptions: DirectionOptions = {}
+  ): Observable<Direction[]> {
     const directionsParams = this.getRouteParams(directionsOptions);
+    return this.getRoute(coordinates, directionsParams);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getRoute(
+    coordinates: [number, number][],
+    params: HttpParams
+  ): Observable<Direction[]> {
     return this.http
       .get<JSON[]>(this.directionsUrl + coordinates.join(';'), {
-        params: directionsParams
+        params
       })
-      .pipe(map(res => this.extractRoutesData(res)));
+      .pipe(map((res) => this.extractRoutesData(res)));
   }
 
   private extractRoutesData(response): Direction[] {
