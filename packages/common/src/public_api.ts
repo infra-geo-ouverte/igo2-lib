@@ -43,6 +43,7 @@ export * from './lib/widget/widget-outlet/widget-outlet.module';
 export * from './lib/workspace/workspace.module';
 export * from './lib/workspace/workspace-selector/workspace-selector.module';
 export * from './lib/workspace/workspace-widget-outlet/workspace-widget-outlet.module';
+export * from './lib/color-picker-form-field/color-picker-form-field.module';
 
 export * from './lib/action';
 export * from './lib/backdrop';
@@ -73,3 +74,4 @@ export * from './lib/table';
 export * from './lib/tool';
 export * from './lib/widget';
 export * from './lib/workspace';
+export * from './lib/color-picker-form-field';
