@@ -30,7 +30,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>,
           customStyle.circle.radius = radius;
         }
         const styleService = new StyleService();
-        return styleService.createStyle(customStyle, undefined,  resolution);
+        return styleService.createStyle(customStyle, undefined, resolution);
       }
       const style = new olStyle.Style({
         stroke,
