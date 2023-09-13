@@ -1,4 +1,4 @@
-import { Component, EventEmitter, forwardRef, Output } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Output, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import tinycolor from "tinycolor2";
@@ -15,7 +15,7 @@ import tinycolor from "tinycolor2";
     }
   ]
 })
-export class ColorPickerFormFieldComponent implements ControlValueAccessor {
+export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnInit {
 
   // native color picker can't give transparency
   // set transparency manually
@@ -52,12 +52,15 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
     this._hexColor = value;
   }
   get hexColor (): string {
-    if(this.color) {
-      this._hexColor = tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
-    }
     return this._hexColor;
   }
   public _hexColor: string;
+
+  ngOnInit(): void {
+    if(this.color) {
+      this._hexColor = tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
+    }
+  }
 
   writeValue(value: string) {
     this.value = value;
