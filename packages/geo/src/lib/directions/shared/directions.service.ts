@@ -13,6 +13,7 @@ import moment from 'moment';
 import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
 import html2canvas from 'html2canvas';
 import { DOCUMENT } from '@angular/common';
+import { UserOptions } from 'jspdf-autotable';
 
 @Injectable({
   providedIn: 'root'
@@ -165,7 +166,7 @@ export class DirectionsService {
   }
 
   private async addInstructions (
-    doc: any,
+    doc: jsPDF,
     direction: Direction,
     title: string
   ) {
@@ -174,7 +175,7 @@ export class DirectionsService {
     doc.text(title, (doc.internal.pageSize.width/2), titlePosition, {align: 'center'});
     const HTMLtable = await this.setHTMLTableContent(direction);
     const tablePos = titlePosition + 5;
-    doc.autoTable({
+    (doc as any).autoTable({
       html: HTMLtable,
       startY: tablePos,
       margin: {top: 20, bottom: 20},
@@ -193,7 +194,7 @@ export class DirectionsService {
           doc.addImage(img.src, data.cell.x, data.cell.y, 8, 8);
         }
       }
-    });
+    } satisfies UserOptions);
   }
 
   private setPageHeaderFooter(doc: jsPDF) {
