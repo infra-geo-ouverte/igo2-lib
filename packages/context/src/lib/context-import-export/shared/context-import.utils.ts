@@ -187,34 +187,34 @@ export function addImportedFeaturesStyledToMap(
   let distance: number;
 
   if (
-    styleListService.getStyleList(extraFeatures.name.toString() + '.styleByAttribute')
+    styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')
   ) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
-      extraFeatures.name.toString() + '.styleByAttribute'
+      extraFeatures.name + '.styleByAttribute'
     );
 
     style = (feature, resolution) => {
       return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
     };
   } else if (
-    styleListService.getStyleList(extraFeatures.name.toString() + '.clusterStyle')
+    styleListService.getStyleList(extraFeatures.name + '.clusterStyle')
   ) {
     const clusterParam: ClusterParam = styleListService.getStyleList(
-      extraFeatures.name.toString() + '.clusterParam'
+      extraFeatures.name + '.clusterParam'
     );
     distance = styleListService.getStyleList(
-      extraFeatures.name.toString() + '.distance'
+      extraFeatures.name + '.distance'
     );
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name.toString() + '.clusterStyle'), feature, resolution
+        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'), feature, resolution
       );
       return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
     };
-  } else if (styleListService.getStyleList(extraFeatures.name.toString() + '.style')) {
+  } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
     style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList(extraFeatures.name.toString() + '.style'), feature, resolution
+      styleListService.getStyleList(extraFeatures.name + '.style'), feature, resolution
     );
   } else {
     style = (feature, resolution) => styleService.createStyle(
@@ -223,7 +223,7 @@ export function addImportedFeaturesStyledToMap(
   }
   let source;
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
-  if (styleListService.getStyleList(extraFeatures.name.toString() + '.clusterStyle')) {
+  if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
     const sourceOptions: ClusterDataSourceOptions &
       QueryableDataSourceOptions = {
       distance,
