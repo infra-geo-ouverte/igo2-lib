@@ -223,7 +223,7 @@ export class IgoMap implements MapBase {
         view.setCenter(center);
       }
       if (options.zoom) {
-          view.setZoom(options.zoom)
+          view.setZoom(options.zoom);
       }
     }
   }
