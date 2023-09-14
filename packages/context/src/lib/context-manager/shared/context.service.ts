@@ -506,7 +506,8 @@ export class ContextService {
   getContextFromLayers(
     igoMap: IgoMap,
     layers: Layer[],
-    name: string
+    name: string,
+    keepCurrentView? : boolean
   ): DetailedContext {
     const currentContext = this.context$.getValue();
     const view = igoMap.ol.getView();
@@ -523,7 +524,8 @@ export class ContextService {
         view: {
           center: center.getCoordinates(),
           zoom: view.getZoom(),
-          projection: proj
+          projection: proj,
+          keepCurrentView
         }
       },
       layers: [],

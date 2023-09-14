@@ -222,6 +222,9 @@ export class IgoMap implements MapBase {
         const center = olproj.fromLonLat(options.center, projection);
         view.setCenter(center);
       }
+      if (options.zoom) {
+          view.setZoom(options.zoom)
+      }
     }
   }
 
