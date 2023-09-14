@@ -6,12 +6,20 @@ import { BehaviorSubject } from 'rxjs';
 import {
   EntityKey,
   EntityTransactionOptions,
-  EntityOperation,
   EntityOperationState
 } from './entity.interfaces';
 import { EntityStore } from './store';
 import { EntityOperationType } from './entity.enums';
 import { getEntityId } from './entity.utils';
+
+interface EntityOperation<E extends object = object> {
+  key: EntityKey;
+  type: EntityOperationType;
+  previous: E | undefined;
+  current: E | undefined;
+  store?: EntityStore<E>;
+  meta?: { [key: string]: any };
+}
 
 export type EntityTransactionCommitHandler = (
   transaction: EntityTransaction,

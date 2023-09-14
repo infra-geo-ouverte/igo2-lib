@@ -1,0 +1,17 @@
+<mat-form-field
+  class="fill-field"
+  floatLabel="always"
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  subscriptSizing="dynamic"
+>
+  <mat-label>{{ value }}</mat-label>
+  <input
+    matInput
+    [readonly]="true"
+    (click)="open.emit(true)"
+    (blur)="closePicker()"
+    [(ngModel)]="hexColor"
+    type="color"
+  />
+</mat-form-field>

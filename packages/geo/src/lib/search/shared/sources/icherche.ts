@@ -6,15 +6,15 @@ import { map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService, StorageService } from '@igo2/core';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
 
 import { FEATURE, Feature } from '../../../feature';
 import { GoogleLinks } from './../../../utils/googleLinks';
 
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch, ReverseSearch } from './source';
+import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,
@@ -360,9 +360,6 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string,
     options?: TextSearchOptions
@@ -373,6 +370,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     }
     this.options.params.page = params.get('page') || '1';
 
+    return this.getSearch(term, params);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher,
+  })
+  private getSearch(term: string, params: HttpParams): Observable<SearchResult<Feature>[]> {
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
       map((response: IChercheResponse) => this.extractResults(response, term)),
       catchError((err) => {
@@ -384,7 +389,6 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       })
     );
   }
-
   private getAllowedTypes() {
     return this.http
       .get(`${this.searchUrl}/types`)
@@ -773,9 +777,6 @@ export class IChercheReverseSearchSource extends SearchSource
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
-  @Cacheable({
-    maxCacheCount: 20
-  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
@@ -784,6 +785,14 @@ export class IChercheReverseSearchSource extends SearchSource
     if (!params.get('type').length) {
       return of([]);
     }
+    return this.getReverseSearch(params);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher,
+  })
+  private getReverseSearch(params: HttpParams): Observable<SearchResult<Feature>[]> {
     return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
       map((response: IChercheReverseResponse) => {
         return this.extractResults(response);

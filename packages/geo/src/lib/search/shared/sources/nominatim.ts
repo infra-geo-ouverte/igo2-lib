@@ -7,12 +7,13 @@ import { map } from 'rxjs/operators';
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
 import { StorageService } from '@igo2/core';
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { Cacheable } from 'ts-cacheable';
+import { customCacheHasher } from '@igo2/utils';
 
 /**
  * Nominatim search source
@@ -142,9 +143,6 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Place name
    * @returns Observable of <SearchResult<Feature>[]
    */
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string | undefined,
     options?: TextSearchOptions
@@ -153,6 +151,14 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     if (!params.get('q')) {
       return of([]);
     }
+    return this.getSearch(term, params);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher,
+  })
+  private getSearch(term: string, params: HttpParams): Observable<SearchResult<Feature>[]> {
     return this.http
       .get(this.searchUrl, { params })
       .pipe(map((response: NominatimData[]) => this.extractResults(response, term)));

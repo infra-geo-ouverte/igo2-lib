@@ -4,8 +4,8 @@ import {
 } from '@igo2/common';
 import { BehaviorSubject } from 'rxjs';
 
-import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 
 export interface WfsWorkspaceOptions extends WorkspaceOptions {
   layer: VectorLayer;

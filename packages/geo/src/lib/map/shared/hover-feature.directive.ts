@@ -26,7 +26,7 @@ import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { VectorLayer, Layer, VectorTileLayer } from '../../layer/shared/layers';
 import { first } from 'rxjs/operators';
-import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';

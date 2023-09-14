@@ -16,6 +16,7 @@
     <mat-slide-toggle
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
       (change)="onToggleDrawControl($event.checked)">
       {{'igo.geo.measure.toggleActive' | translate}}
     </mat-slide-toggle>
@@ -24,6 +25,7 @@
 
     <mat-slide-toggle *ngIf="(hasLine$ | async)"
       [checked]="displayLines"
+      [labelPosition]="'before'"
       (change)="onToggleDisplayLines($event.checked)">
       {{'igo.geo.measure.toggleDisplayLines' | translate}}
     </mat-slide-toggle>
@@ -32,12 +34,14 @@
 
     <mat-slide-toggle *ngIf="(hasArea$ | async)"
       [checked]="displayDistance"
+      [labelPosition]="'before'"
       (change)="onToggleDisplayDistance($event.checked)">
       {{'igo.geo.measure.toggleDisplayDistance' | translate}}
     </mat-slide-toggle>
 
     <mat-slide-toggle *ngIf="(hasArea$ | async)"
       [checked]="displayAreas"
+      [labelPosition]="'before'"
       (change)="onToggleDisplayAreas($event.checked)">
       {{'igo.geo.measure.toggleDisplayAreas' | translate}}
     </mat-slide-toggle>
@@ -46,6 +50,7 @@
 
     <mat-slide-toggle
       [checked]="measureUnitsAuto"
+      [labelPosition]="'before'"
       (change)="onToggleMeasureUnitsAuto($event.checked)">
       {{'igo.geo.measure.toggleAutoUnits' | translate}}
     </mat-slide-toggle>

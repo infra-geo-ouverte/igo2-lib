@@ -6,8 +6,8 @@ import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class CartoDataSource extends DataSource {
-  public ol: olSourceCarto;
-  public options: CartoDataSourceOptions;
+  public declare ol: olSourceCarto;
+  public declare options: CartoDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;

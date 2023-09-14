@@ -1,5 +1,5 @@
 import { Layer } from '../shared/layers/layer';
-import { LegendMapViewOptions, OutputLayerLegend } from '../shared/layers/layer.interface';
+import { LegendMapViewOptions, OutputLayerLegend } from '../shared/layers/legend.interface';
 
 /**
  * Get all the layers legend

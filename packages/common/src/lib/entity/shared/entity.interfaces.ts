@@ -1,10 +1,6 @@
 import { Observable } from 'rxjs';
 
-import {
-  EntityOperationType,
-  EntityTableColumnRenderer
-} from './entity.enums';
-import { EntityStore } from './store';
+import { EntityTableColumnRenderer } from './entity.enums';
 
 export type EntityKey = string | number;
 
@@ -12,7 +8,10 @@ export interface EntityState {
   [key: string]: any;
 }
 
-export interface EntityRecord<E extends object, S extends EntityState = EntityState> {
+export interface EntityRecord<
+  E extends object,
+  S extends EntityState = EntityState
+> {
   entity: E;
   state: S;
   revision: number;
@@ -20,19 +19,10 @@ export interface EntityRecord<E extends object, S extends EntityState = EntitySt
   edition?: boolean;
 }
 
-export interface EntityStoreOptions {
-  getKey?: (entity: object) => EntityKey;
-  getProperty?: (entity: object, property: string) => any;
-}
-
-export interface EntityStateManagerOptions {
-  getKey?: (entity: object) => EntityKey;
-  store?: EntityStore<object>;
-}
-
 export interface EntityStoreStrategyOptions {}
 
-export interface EntityStoreStrategyFuncOptions extends EntityStoreStrategyOptions {
+export interface EntityStoreStrategyFuncOptions
+  extends EntityStoreStrategyOptions {
   filterClauseFunc: EntityFilterClause;
 }
 
@@ -58,15 +48,6 @@ export interface EntityJoinClause {
   reduce: (param1: object, param2: any) => object;
 }
 
-export interface EntityOperation<E extends object = object> {
-  key: EntityKey;
-  type: EntityOperationType;
-  previous: E | undefined;
-  current: E | undefined;
-  store?: EntityStore<E>;
-  meta?: {[key: string]: any};
-}
-
 export interface EntityOperationState {
   added: boolean;
   canceled: boolean;
@@ -79,15 +60,26 @@ export interface EntityTableTemplate {
   selectMany?: boolean;
   sort?: boolean;
   fixedHeader?: boolean;
-  tableHeight?:string;
-  valueAccessor?: (entity: object, property: string, record: EntityRecord<object>) => any;
+  tableHeight?: string;
+  valueAccessor?: (
+    entity: object,
+    property: string,
+    record: EntityRecord<object>
+  ) => any;
   headerClassFunc?: () => {
     [key: string]: boolean;
   };
-  rowClassFunc?: (entity: object, record: EntityRecord<object>) => {
+  rowClassFunc?: (
+    entity: object,
+    record: EntityRecord<object>
+  ) => {
     [key: string]: boolean;
   };
-  cellClassFunc?: (entity: object, column: EntityTableColumn, record: EntityRecord<object>) => {
+  cellClassFunc?: (
+    entity: object,
+    column: EntityTableColumn,
+    record: EntityRecord<object>
+  ) => {
     [key: string]: boolean;
   };
 }
@@ -119,7 +111,10 @@ export interface EntityTableColumn {
   domainValues?: Array<SelectOption>;
   relation?: TableRelation;
   tooltip?: string;
-  cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
+  cellClassFunc?: (
+    entity: object,
+    record: EntityRecord<object>
+  ) => {
     [key: string]: boolean;
   };
 }
@@ -132,7 +127,7 @@ export interface SelectOption {
 export interface EntityTableButton {
   icon: string;
   click: (entity: object, record: EntityRecord<object>) => void;
-  color?: 'primary' | 'accent' | 'warn';
+  color?: 'primary' | 'accent' | 'warn';
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';
   editMode?: boolean;

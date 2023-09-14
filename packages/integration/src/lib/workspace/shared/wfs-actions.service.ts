@@ -17,9 +17,7 @@ import { DatePipe } from '@angular/common';
 })
 export class WfsActionsService implements OnDestroy {
 
-  public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.storageService.get('workspaceMaximize') as boolean
-  );
+  public maximize$: BehaviorSubject<boolean>;
 
   selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -40,7 +38,11 @@ export class WfsActionsService implements OnDestroy {
     public languageService: LanguageService,
     private mediaService: MediaService,
     private toolState: ToolState,
-    private datePipe: DatePipe) {}
+    private datePipe: DatePipe) {
+      this.maximize$ = new BehaviorSubject(
+        this.storageService.get('workspaceMaximize') as boolean
+      );
+    }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
