@@ -66,7 +66,7 @@ export class DirectionsService {
     const size: [number, number] = [width, height];
 
     const title = `${direction.title} (${formatDistance(direction.distance)}, ${formatDuration(direction.duration)})`;
-    const titlePosition = 20;
+    const titlePosition = 25;
 
     doc.text(title, (doc.internal.pageSize.width/2), titlePosition, {align: 'center'});
 
@@ -171,7 +171,7 @@ export class DirectionsService {
     title: string
   ) {
     doc.addPage();
-    const titlePosition = 20;
+    const titlePosition = 25;
     doc.text(title, (doc.internal.pageSize.width/2), titlePosition, {align: 'center'});
     const HTMLtable = await this.setHTMLTableContent(direction);
     const tablePos = titlePosition + 5;
@@ -200,9 +200,9 @@ export class DirectionsService {
   private setPageHeaderFooter(doc: jsPDF) {
     const pageCount = doc.getNumberOfPages();
     const date = moment(Date.now()).format("DD/MM/YYYY hh:mm").toString();
-    // TODO customize App logo
-    const appName = (this.configService.getConfig('title')) ?
-    this.configService.getConfig('title') : 'IGO Lib';
+
+    const logo = (this.configService.getConfig('directionsSources.logo')) ?
+    this.configService.getConfig('directionsSources.logo') : 'assets/logo.png';
 
     for (let index = 0; index < pageCount; index++) {
       doc.setPage(index);
@@ -211,7 +211,7 @@ export class DirectionsService {
       const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
       const width = pageSize.width ? pageSize.width : pageSize.getWidth();
       doc.text(date, 10, 10, { baseline: 'top' });
-      doc.text(appName, width - 20, 10, { baseline: 'top' });
+      doc.addImage(logo,'PNG', width - 20, 5, 10, 10);
       doc.text(date, 10, pageHeight - 10);
       doc.text('Page '+ doc.getCurrentPageInfo().pageNumber + ' / '+ pageCount, width - 20, pageHeight - 10);
     }
