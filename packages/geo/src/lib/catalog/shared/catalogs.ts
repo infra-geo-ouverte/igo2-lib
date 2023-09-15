@@ -72,7 +72,7 @@ export class TileOrImageArcGISRestCatalog extends Catalog {
 }
 
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
-  composite: ICatalog[];
+  declare composite: ICatalog[];
 
   constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
     super(options);

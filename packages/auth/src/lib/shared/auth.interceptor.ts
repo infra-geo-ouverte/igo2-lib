@@ -31,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
     this.trustHosts.push(window.location.hostname);
 
     this.hostsWithCredentials = this.config.getConfig('auth.hostsWithCredentials') || [];
-    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsWithCredhostsByKeyentials') || [];
+    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsByKey') || [];
   }
 
   intercept(

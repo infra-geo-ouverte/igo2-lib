@@ -5,7 +5,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { StyleService } from '../../style-service/style.service';
 
 
-export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>) => olStyle.Style {
+export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>, resolution: number) => olStyle.Style {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
@@ -16,11 +16,21 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>)
   const fill = new olStyle.Fill({
     color: [r, g, b, 0.4]
   });
-  return (olFeature: olFeature<OlGeometry>) => {
+  return (olFeature: olFeature<OlGeometry>, resolution: number) => {
       const customStyle = olFeature.get('_style');
       if (customStyle) {
+        if (
+          customStyle.circle &&
+          olFeature.get('rad') &&
+          olFeature.get('longitude') &&
+          olFeature.get('latitude')
+        ) {
+          const lonLat: [number, number] = [olFeature.get('longitude'), olFeature.get('latitude')];
+          const radius = olFeature.get('rad') / Math.cos((Math.PI / 180) * lonLat[1]) / resolution;
+          customStyle.circle.radius = radius;
+        }
         const styleService = new StyleService();
-        return styleService.createStyle(customStyle);
+        return styleService.createStyle(customStyle, undefined, resolution);
       }
       const style = new olStyle.Style({
         stroke,

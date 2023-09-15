@@ -40,8 +40,11 @@ import {
   DetailedContext,
   ContextMapView,
   ContextPermission,
-  ContextProfils
+  ContextProfils,
+  ExtraFeatures
 } from './context.interface';
+import { Geometry } from 'ol/geom';
+import { Feature } from 'ol';
 
 @Injectable({
   providedIn: 'root'
@@ -513,7 +516,7 @@ export class ContextService {
       'EPSG:4326'
     );
 
-    const context = {
+    const context: DetailedContext = {
       uri: name,
       title: name,
       map: {
@@ -577,38 +580,16 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
+          catalogLayer.visible = layer.visible,
+          catalogLayer.opacity = layer.opacity;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
-          let features;
-          const writer = new GeoJSON();
-          if (layer.ol.getSource() instanceof Cluster) {
-            const clusterSource = layer.ol.getSource() as Cluster;
-            let olFeatures = clusterSource.getFeatures();
-            olFeatures = (olFeatures as any).flatMap((cluster: any) => cluster.get('features'));
-            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
-            features = writer.writeFeatures(
-              cleanedOlFeatures,
-              {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-              }
-            );
-          } else {
-            const source = layer.ol.getSource() as olVectorSource;
-            const olFeatures = source.getFeatures();
-            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
-            features = writer.writeFeatures(
-              cleanedOlFeatures,
-              {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-              }
-            );
-          }
-          features = JSON.parse(features);
-          features.name = layer.options.title;
-          context.extraFeatures.push(features);
+          const extraFeatures = this.getExtraFeatures(layer);
+          extraFeatures.name = layer.options.title;
+          extraFeatures.opacity = layer.opacity;
+          extraFeatures.visible = layer.visible;
+          context.extraFeatures.push(extraFeatures);
         }
       }
     });
@@ -617,6 +598,28 @@ export class ContextService {
     context.tools = this.tools;
 
     return context;
+  }
+
+  private getExtraFeatures(layer: Layer): ExtraFeatures {
+    const writer = new GeoJSON();
+    let olFeatures: Feature<Geometry>[];
+    if (layer.ol.getSource() instanceof Cluster) {
+      const clusterSource = layer.ol.getSource() as Cluster;
+      olFeatures = clusterSource.getFeatures();
+      olFeatures = (olFeatures as any).flatMap((cluster: any) => cluster.get('features'));
+    } else {
+      const source = layer.ol.getSource() as olVectorSource;
+      olFeatures = source.getFeatures();
+    }
+    const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
+    const features = writer.writeFeatures(
+      cleanedOlFeatures,
+      {
+        dataProjection: 'EPSG:4326',
+        featureProjection: 'EPSG:3857'
+      }
+    );
+    return JSON.parse(features);
   }
 
   setTools(tools: Tool[]) {
