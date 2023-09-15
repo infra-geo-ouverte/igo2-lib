@@ -6,7 +6,8 @@ import { map } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { TableDatabase, TableModel } from './index';
+import { TableModel } from './table-model.interface';
+import { TableDatabase } from './table-database';
 
 export class TableDataSource extends DataSource<any> {
   get filter(): string {

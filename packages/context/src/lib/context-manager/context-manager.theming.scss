@@ -1,0 +1,7 @@
+@use './context-list/context-list.theming.scss' as context-list;
+@use './context-item/context-item.theming.scss' as context-item;
+
+@mixin themes($theme) {
+  @include context-list.theme($theme);
+  @include context-item.theme($theme);
+}

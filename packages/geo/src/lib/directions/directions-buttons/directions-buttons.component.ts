@@ -1,12 +1,13 @@
 import { Component, Input, Optional } from '@angular/core';
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { roundCoordTo } from '../../map/shared/map.utils';
 import { FeatureWithDirection } from '../shared/directions.interface';
 
 import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
-import { RoutesFeatureStore, StopsStore } from '../shared/store';
+import { RoutesFeatureStore, StepFeatureStore, StopsStore } from '../shared/store';
+import { DirectionsService } from '../shared';
 
 @Component({
   selector: 'igo-directions-buttons',
@@ -22,10 +23,16 @@ export class DirectionsButtonsComponent {
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
   @Input() stopsStore: StopsStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
+  @Input() stepFeatureStore: StepFeatureStore;
+
+  public disabled$ = new BehaviorSubject(false);
+
   constructor(
     private languageService: LanguageService,
     private messageService: MessageService,
-    @Optional() private route: RouteService) { }
+    @Optional() private route: RouteService,
+    private directionsService: DirectionsService
+  ) {}
 
   resetStops() {
     this.stopsStore.clearStops();
@@ -175,5 +182,16 @@ export class DirectionsButtonsComponent {
       return `${location.origin}${location.pathname}?${context}tool=directions&sidenav=1&${directionsUrl}${routingOptions}`;
     }
     return;
+  }
+
+  printDirections() {
+    this.stepFeatureStore.clear();
+    this.disabled$.next(true);
+    this.directionsService.downloadDirection(
+      this.routesFeatureStore.map,
+      this.activeRoute.properties.direction
+    ).subscribe(() => {
+      this.disabled$.next(false);
+    });
   }
 }

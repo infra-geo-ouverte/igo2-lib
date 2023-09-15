@@ -1,31 +1,43 @@
 <mat-list-item *ngIf="header">
   <mat-icon
     class="igo-chevron"
-    mat-list-avatar
+    matListItemIcon
     igoCollapse
     [target]="filters"
     [collapsed]="filtersCollapsed"
     (click)="toggleFiltersCollapsed()"
-    svgIcon="chevron-up" >
+    svgIcon="chevron-up"
+  >
   </mat-icon>
-  <h4 (click)="toggleLegendOnClick()" [ngStyle]="{'cursor': filtersCollapsed ? 'default' : 'pointer'}"  matLine>{{layer.title}}</h4>
   
-  <button *ngIf="header"
+  <span
+    matListItemTitle
+    (click)="toggleLegendOnClick()"
+    [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
+    >{{ layer.title }}</span
+  >
+
+  <button
+    *ngIf="header"
     mat-icon-button
+    matListItemMeta
     [color]="layer.visible ? 'primary' : 'default'"
     collapsibleButton
     tooltip-position="below"
     matTooltipShowDelay="500"
-    [matTooltip]="layer.visible ?
-                  ('igo.geo.layer.hideLayer' | translate) :
-                  ('igo.geo.layer.showLayer' | translate)"
-    (click)="layer.visible = !layer.visible">
+    [matTooltip]="
+      layer.visible
+        ? ('igo.geo.layer.hideLayer' | translate)
+        : ('igo.geo.layer.showLayer' | translate)
+    "
+    (click)="layer.visible = !layer.visible"
+  >
     <mat-icon
-      [ngClass]="{disabled: (inResolutionRange$ | async)===false}"
-      [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
+      [ngClass]="{ disabled: (inResolutionRange$ | async) === false }"
+      [svgIcon]="layer.visible ? 'eye' : 'eye-off'"
+    >
     </mat-icon>
   </button>
-
 </mat-list-item>
 
 <div #filters class="igo-datasource-filters-container">
@@ -34,10 +46,11 @@
     </igo-layer-legend>
   </div>
   <igo-time-filter-form
-    [layer]= "layer"
+    [layer]="layer"
     [options]="datasource.options.timeFilter"
     [currentValue]="datasource.options.params.TIME"
     (change)="handleDateChange($event)"
-    (yearChange)="handleYearChange($event)">
+    (yearChange)="handleYearChange($event)"
+  >
   </igo-time-filter-form>
 </div>

@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { TimeFilterableDataSource } from '../shared/time-filter.interface';
 import { TimeFilterService } from '../shared/time-filter.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { TimeFilterableDataSource } from '../../datasource';
 
 @Component({
   selector: 'igo-time-filter-item',

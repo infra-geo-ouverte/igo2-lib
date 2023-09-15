@@ -2,7 +2,7 @@ import { LanguageService } from '@igo2/core';
 import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Layer } from '../../layer';
+import { Layer } from '../../layer/shared';
 import { SearchResult } from '../shared';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';

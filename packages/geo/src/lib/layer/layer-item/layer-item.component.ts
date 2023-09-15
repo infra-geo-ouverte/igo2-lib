@@ -177,7 +177,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.toggleLegend(this.showLegend$.value);
   }
 
-  toggleVisibility() {
+  toggleVisibility(event: Event) {
+    event.stopPropagation();
     this.layer.visible = !this.layer.visible;
     if (this.toggleLegendOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);

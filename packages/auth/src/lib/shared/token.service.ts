@@ -8,9 +8,14 @@ import { AuthOptions } from './auth.interface';
   providedIn: 'root'
 })
 export class TokenService {
-  private options: AuthOptions;
+  private options?: AuthOptions;
+  private tokenKey: string;
 
-  constructor(private injector: Injector) {}
+  constructor(private injector: Injector) {
+    const config = this.injector.get<ConfigService>(ConfigService);
+    this.options = config.getConfig('auth');
+    this.tokenKey = this.options?.tokenKey;
+  }
 
   set(token: string) {
     localStorage.setItem(this.tokenKey, token);
@@ -39,11 +44,5 @@ export class TokenService {
       return false;
     }
     return true;
-  }
-
-  private get tokenKey() {
-    const config = this.injector.get<ConfigService>(ConfigService);
-    this.options = config.getConfig('auth') || {};
-    return this.options.tokenKey;
   }
 }

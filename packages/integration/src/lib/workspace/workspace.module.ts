@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { IgoLanguageModule } from '@igo2/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @NgModule({
   imports: [
@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
     IgoLanguageModule
   ],
   declarations: [WorkspaceButtonComponent],
-  exports: [WorkspaceButtonComponent]
+  exports: [WorkspaceButtonComponent],
+  providers: [DatePipe]
 })
 export class IgoAppWorkspaceModule {}

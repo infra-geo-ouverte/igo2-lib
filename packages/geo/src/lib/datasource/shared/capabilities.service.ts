@@ -31,7 +31,7 @@ import {
 import {
   LegendOptions,
   ItemStyleOptions
-} from '../../layer/shared/layers/layer.interface';
+} from '../../layer/shared/layers/legend.interface';
 import {
   TimeFilterType,
   TimeFilterStyle

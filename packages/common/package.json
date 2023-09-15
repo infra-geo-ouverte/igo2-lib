@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "1.15.2",
+  "version": "1.15.4",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -13,20 +13,30 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "exports": {
+    "./style": {
+      "style": "./style/style.css"
+    },
+    "./theming": {
+      "sass": "./common-theme.scss"
+    }
+  },
   "peerDependencies": {
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/material": "^14.2.7",
-    "@angular/platform-browser": "^14.3.0",
-    "@igo2/core": "^1.15.2",
-    "@igo2/utils": "^1.15.2",
-    "scroll-into-view-if-needed": "^2.2.20",
-    "typy": "^3.3.0"
+    "@angular/common": "^16.1.7",
+    "@angular/core": "^16.1.7",
+    "@angular/material": "^16.1.6",
+    "@angular/platform-browser": "^16.1.7",
+    "@igo2/core": "^1.15.4",
+    "@igo2/utils": "^1.15.4",
+    "angular-shepherd": "16.0.0",
+    "scroll-into-view-if-needed": "^3.0.0",
+    "typy": "^3.3.0",
+    "tinycolor2": "^1.6.0"
   },
   "dependencies": {
-    "tslib": "^2.4.0"
+    "tslib": "^2.6.0"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

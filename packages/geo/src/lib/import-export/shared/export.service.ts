@@ -53,7 +53,7 @@ export class ExportService {
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
-    const exportOlFeatures = this.generateFeature(olFeatures, format);
+    const exportOlFeatures = this.generateFeature(olFeatures, format,'_featureStore');
 
     return this.exportAsync(exportOlFeatures, format, title, encoding, projectionIn, projectionOut);
   }

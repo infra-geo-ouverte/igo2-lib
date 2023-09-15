@@ -9,8 +9,8 @@ import {
   EntityStoreStrategyOptions
 } from '@igo2/common';
 
-import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';

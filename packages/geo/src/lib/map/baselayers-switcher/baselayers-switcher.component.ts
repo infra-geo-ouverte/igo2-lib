@@ -2,7 +2,7 @@ import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { MediaService, Media } from '@igo2/core';
-import { Layer } from '../../layer';
+import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
 
@@ -22,6 +22,10 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
 
   private layers$$: Subscription;
 
+  get hasMoreThanTwo(): boolean {
+    return this.baseLayers.length > 1;
+  }
+
   constructor(private mediaService: MediaService) {
     const media = this.mediaService.media$.value;
     if (media === Media.Mobile && this.useStaticIcon === undefined) {
@@ -40,7 +44,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   collapseOrExpand() {
-    if (this.baseLayers.length > 1 || this.useStaticIcon) {
+    if (this.hasMoreThanTwo || this.useStaticIcon) {
       this.expand = !this.expand;
     } else {
       this.expand = false;

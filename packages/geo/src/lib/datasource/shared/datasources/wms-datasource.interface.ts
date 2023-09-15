@@ -5,6 +5,7 @@ import type { ServerType } from 'ol/source/wms';
 
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
+import { TimeFilterOptions } from '../../../filter';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';
@@ -33,4 +34,9 @@ export interface WMSDataSourceOptionsParams {
   DPI?: number;
   MAP_RESOLUTION?: number;
   FORMAT_OPTIONS?: string;
+}
+
+export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
+  timeFilterable?: boolean;
+  timeFilter?: TimeFilterOptions;
 }

@@ -15,12 +15,12 @@ import { MessageService, ActivityService, LanguageService, ConfigService } from 
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { LegendMapViewOptions } from '../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import GeoPdfPlugin from './geopdf';
-import { PrintLegendPosition, PrintPaperFormat } from './print.type';
+import { PrintLegendPosition, PrintPaperFormat, PrintResolution } from './print.type';
 
 declare global {
   interface Navigator {
@@ -79,7 +79,7 @@ export class PrintService {
     const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
-    const size = [width, height];
+    const size: [number, number] = [width, height];
     let titleSizes: TextPdfSizeAndMargin;
     let subtitleSizes: TextPdfSizeAndMargin;
 
@@ -316,7 +316,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
-
+    div.style.zIndex = '-1';
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
@@ -325,7 +325,7 @@ export class PrintService {
     const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
       console.log(e);
     });
-
+    this.removeHtmlElement(div);
     if (canvas) {
       let status = SubjectStatus.Done;
       try {
@@ -343,6 +343,10 @@ export class PrintService {
     }
 
     return status$;
+  }
+
+  private removeHtmlElement(element: HTMLElement) {
+    element.parentNode.removeChild(element);
   }
 
 
@@ -481,6 +485,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
+    div.style.zIndex = '-1';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
@@ -490,7 +495,7 @@ export class PrintService {
     const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
       console.log(e);
     });
-
+    this.removeHtmlElement(div);
     if (canvas) {
       const pourcentageReduction = 0.85;
       const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution, pourcentageReduction
@@ -534,6 +539,7 @@ export class PrintService {
       const div = window.document.createElement('div');
       div.style.position = 'absolute';
       div.style.top = '0';
+      div.style.zIndex = '-1';
       // Add html code to convert in the new window
       window.document.body.appendChild(div);
       div.innerHTML = html;
@@ -541,6 +547,7 @@ export class PrintService {
       const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
         console.log(e);
       });
+      this.removeHtmlElement(div);
       let marginsLegend;
       if (canvas) {
         const pourcentageReduction = 0.85;
@@ -606,34 +613,29 @@ export class PrintService {
   }
 
   // TODO fix printing with image resolution
-  private addMap(
+  addMap(
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
-    size: Array<number>,
+    docSize: [number, number],
     margins: Array<number>,
     legendPostion: PrintLegendPosition
   ) {
 
-    const mapSize = map.ol.getSize();
+    const mapSize = map.ol.getSize() as [number, number];
     const viewResolution = map.ol.getView().getResolution();
-    const extent = map.ol.getView().calculateExtent(mapSize);
-    const widthPixels = Math.round((size[0] * resolution) / 25.4);
-    const heightPixels = Math.round((size[1] * resolution) / 25.4);
+    const dimensionPixels = this.setMapResolution(map, docSize, resolution, viewResolution);
     const status$ = new Subject();
 
     let timeout;
     map.ol.once('rendercomplete', async (event: any) => {
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(
-        [widthPixels, heightPixels],
+        dimensionPixels,
         mapCanvas
       );
 
-      // Reset original map size
-      map.ol.setSize(mapSize);
-      map.ol.getView().setResolution(viewResolution);
-      this.renderMap(map, mapSize, extent);
+      this.resetOriginalMapSize(map, mapSize, viewResolution);
 
       await this.drawMapControls(map, mapResultCanvas, legendPostion);
 
@@ -645,7 +647,7 @@ export class PrintService {
         mapStatus$$.unsubscribe();
         let status = SubjectStatus.Done;
         try {
-          if (mapCanvas.width !== 0) {
+          if (mapResultCanvas.width !== 0) {
             this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
@@ -662,75 +664,110 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          if (mapCanvas.width !== 0) {
+          if (mapResultCanvas.width !== 0) {
             this.addCanvas(doc, mapResultCanvas, margins);
           }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error('igo.geo.printForm.corsErrorMessageBody', 'igo.geo.printForm.corsErrorMessageHeader');
         }
-        // Reset original map size
-        map.ol.setSize(mapSize);
-        map.ol.getView().setResolution(viewResolution);
-        this.renderMap(map, mapSize, extent);
+        this.resetOriginalMapSize(map, mapSize, viewResolution);
         status$.next(status);
       },200);
     });
+
+    return status$;
+  }
+
+  private setMapResolution(
+    map: IgoMap,
+    initialSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): [number, number] {
+
+    const mapSize = map.ol.getSize();
+    const widthPixels = Math.round((initialSize[0] * resolution) / 25.4);
+    const heightPixels = Math.round((initialSize[1] * resolution) / 25.4);
 
     // Set print size
     const printSize = [widthPixels, heightPixels];
     map.ol.setSize(printSize);
     const scaling = Math.min(widthPixels / mapSize[0], heightPixels / mapSize[1]);
     map.ol.getView().setResolution(viewResolution / scaling);
-    return status$;
+
+    return [widthPixels, heightPixels];
   }
 
-  private async drawMap(
+  private resetOriginalMapSize(
+    map: IgoMap,
+    initialSize: [number, number],
+    viewResolution: number
+  ) {
+    map.ol.setSize(initialSize);
+    map.ol.getView().setResolution(viewResolution);
+    map.ol.updateSize();
+    map.ol.renderSync();
+  }
+
+  async drawMap(
     size: Array<number>,
-    mapCanvas: HTMLCanvasElement
+    mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
       const mapResultCanvas = document.createElement('canvas');
-      const mapContextResult = mapResultCanvas.getContext('2d');
       mapResultCanvas.width = size[0];
       mapResultCanvas.height = size[1];
-      const opacity = mapCanvas.parentElement.style.opacity || mapCanvas.style.opacity;
-      mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
-      let matrix: number[];
-      const transform = mapCanvas.style.transform;
-      if (transform) {
-        // Get the transform parameters from the style's transform matrix
-        matrix = transform
-          .match(/^matrix\(([^\(]*)\)$/)[1]
-          .split(',')
-          .map(Number);
-      } else {
-        matrix = [
-          parseFloat(mapCanvas.style.width) / mapCanvas.width,
-          0,
-          0,
-          parseFloat(mapCanvas.style.height) / mapCanvas.height,
-          0,
-          0,
-        ];
+
+      for (let index = 0; index < mapCanvas.length; index++) {
+        const canvas = mapCanvas[index];
+        if (canvas.width > 0) {
+          this.handleCanvas(canvas, mapResultCanvas);
+        }
       }
-      // Apply the transform to the export map context
-      CanvasRenderingContext2D.prototype.setTransform.apply(
-        mapContextResult,
-        matrix
-      );
-      const backgroundColor = mapCanvas.parentElement.style.backgroundColor;
-      if (backgroundColor) {
-        mapContextResult.fillStyle = backgroundColor;
-        mapContextResult.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-      }
-      mapContextResult.drawImage(mapCanvas, 0, 0);
-      mapContextResult.globalAlpha = 1;
-      // reset canvas transform to initial
-      mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
       return mapResultCanvas;
   }
 
-  private async drawMapControls (
+  private handleCanvas(
+    canvas: HTMLCanvasElement,
+    mapResultCanvas: HTMLCanvasElement
+  ) {
+    const mapContextResult = mapResultCanvas.getContext('2d');
+    const opacity = canvas.parentElement.style.opacity || canvas.style.opacity;
+    mapContextResult.globalAlpha = opacity === '' ? 1 : Number(opacity);
+    const transform = canvas.style.transform;
+    let matrix: number[];
+    if (transform) {
+      // Get the transform parameters from the style's transform matrix
+      matrix = transform
+        .match(/^matrix\(([^\(]*)\)$/)[1]
+        .split(',')
+        .map(Number);
+    } else {
+      matrix = [
+        parseFloat(canvas.style.width) / canvas.width,
+        0,
+        0,
+        parseFloat(canvas.style.height) / canvas.height,
+        0,
+        0,
+      ];
+    }
+    CanvasRenderingContext2D.prototype.setTransform.apply(
+      mapContextResult,
+      matrix
+    );
+    const backgroundColor = canvas.parentElement.style.backgroundColor;
+    if (backgroundColor) {
+      mapContextResult.fillStyle = backgroundColor;
+      mapContextResult.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    mapContextResult.drawImage(canvas, 0, 0);
+    mapContextResult.globalAlpha = 1;
+    // reset canvas transform to initial
+    mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  async drawMapControls (
     map: IgoMap,
     canvas: HTMLCanvasElement,
     position: PrintLegendPosition
@@ -819,7 +856,7 @@ export class PrintService {
    */
   downloadMapImage(
     map: IgoMap,
-    resolution: number,
+    printResolution: PrintResolution,
     format = 'png',
     projection = false,
     scale = false,
@@ -830,15 +867,20 @@ export class PrintService {
     legendPosition: PrintLegendPosition
   ) {
     const status$ = new Subject();
-    // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     format = format.toLowerCase();
+    const resolution = +printResolution;
+    const initialMapSize = map.ol.getSize() as [number, number];
+    const viewResolution = map.ol.getView().getResolution();
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
-      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas')[0] as HTMLCanvasElement;
+      const mapCanvas = event.target.getViewport().getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(size, mapCanvas);
+
+      this.resetOriginalMapSize(map, initialMapSize, viewResolution);
+
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
      if (legendPosition !== 'none') {
@@ -1019,8 +1061,28 @@ export class PrintService {
         }
       }
     });
-    map.ol.renderSync();
+
+    this.setMapImageResolution(map, initialMapSize, resolution, viewResolution);
+
     return status$;
+  }
+
+  private setMapImageResolution(
+    map: IgoMap,
+    initialMapSize: [number, number],
+    resolution: number,
+    viewResolution: number
+  ): void {
+    const scaleFactor = resolution / 96;
+    const newMapSize = [
+      Math.round(initialMapSize[0] * scaleFactor), // width
+      Math.round(initialMapSize[1] * scaleFactor) // height
+    ];
+    map.ol.setSize(newMapSize);
+    const scaling = Math.min(newMapSize[0] / initialMapSize[0], newMapSize[1] / initialMapSize[1]);
+    const view = map.ol.getView();
+    view.setResolution(viewResolution / scaling);
+    map.ol.renderSync();
   }
 
   /**
@@ -1056,6 +1118,7 @@ export class PrintService {
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
+    div.style.zIndex = '-1';
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
@@ -1090,7 +1153,7 @@ export class PrintService {
 
       context.drawImage(canvasLegend, legendX, legendY, legendWidth, legendHeight);
       context.strokeRect(legendX, legendY, legendWidth, legendHeight);
-      div.parentNode.removeChild(div); // remove temp div (IE style)
+      this.removeHtmlElement(div);
       return true;
     }
   }
@@ -1114,7 +1177,7 @@ export class PrintService {
    * @param canvas - Canvas of image
    * @param margins - Page margins
    */
-  private getImageSizeToFitPdf(doc, canvas, margins) {
+  getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
@@ -1126,7 +1189,6 @@ export class PrintService {
     const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
     const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
     const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
-
     return [imgWidth, imgHeigh];
   }
 
@@ -1278,5 +1340,4 @@ export class PrintService {
 
     return n * k;
   }
-
 }

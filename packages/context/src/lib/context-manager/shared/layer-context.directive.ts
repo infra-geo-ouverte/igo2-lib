@@ -1,7 +1,7 @@
 import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
 import { Subscription, merge } from 'rxjs';
-import { buffer, debounceTime, filter } from 'rxjs/operators';
+import { buffer, debounceTime, filter, first } from 'rxjs/operators';
 
 import { RouteService, ConfigService } from '@igo2/core';
 import {
@@ -13,6 +13,7 @@ import {
   StyleService
 } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
+import { ObjectUtils } from '@igo2/utils';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
@@ -20,7 +21,6 @@ import {
   addImportedFeaturesToMap,
   addImportedFeaturesStyledToMap
 } from '../../context-import-export/shared/context-import.utils';
-import GeoJSON from 'ol/format/GeoJSON';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -58,12 +58,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       this.route.options.visibleOffLayersKey &&
       this.route.options.contextKey
     ) {
-      const queryParams$$ = this.route.queryParams.subscribe((params) => {
-        if (Object.keys(params).length > 0) {
-          this.queryParams = params;
-          queryParams$$.unsubscribe();
-        }
-      });
+      this.route.queryParams
+        .pipe(first(params => !ObjectUtils.isEmpty(params)))
+        .subscribe((params) => {
+            this.queryParams = params;
+        });
     }
   }
 
@@ -95,13 +94,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            const format = new GeoJSON();
-            const title = featureCollection.name;
-            featureCollection = JSON.stringify(featureCollection);
-            featureCollection = format.readFeatures(featureCollection, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });
             const importExportOptions = this.configService.getConfig('importExport');
             const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
             if (this.configService.getConfig('importWithStyle')) {
@@ -114,12 +106,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
               `);
             }
             if (!importWithStyle) {
-              addImportedFeaturesToMap(featureCollection, this.map, title);
+              addImportedFeaturesToMap(featureCollection, this.map);
             } else {
+              console.log('importWithStyle', importWithStyle);
               addImportedFeaturesStyledToMap(
                 featureCollection,
                 this.map,
-                title,
                 this.styleListService,
                 this.styleService
               );

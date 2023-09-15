@@ -18,26 +18,21 @@ import { AuthByKeyOptions, WithCredentialsOptions } from './auth.interface';
 })
 export class AuthInterceptor implements HttpInterceptor {
   private refreshInProgress = false;
-
-  private get trustHosts() {
-    const trustHosts = this.config.getConfig('auth.trustHosts') || [];
-    trustHosts.push(window.location.hostname);
-    return trustHosts;
-  }
-
-  private get hostsWithCredentials(): WithCredentialsOptions[] {
-    return this.config.getConfig('auth.hostsWithCredentials') || [];
-  }
-
-  private get hostsWithAuthByKey(): AuthByKeyOptions[] {
-    return this.config.getConfig('auth.hostsByKey') || [];
-  }
+  private trustHosts: string[];
+  private hostsWithCredentials: WithCredentialsOptions[];
+  private hostsWithAuthByKey: AuthByKeyOptions[];
 
   constructor(
     private config: ConfigService,
     private tokenService: TokenService,
     private http: HttpClient
-  ) {}
+  ) {
+    this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
+    this.trustHosts.push(window.location.hostname);
+
+    this.hostsWithCredentials = this.config.getConfig('auth.hostsWithCredentials') || [];
+    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsByKey') || [];
+  }
 
   intercept(
     originalReq: HttpRequest<any>,

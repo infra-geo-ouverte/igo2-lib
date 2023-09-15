@@ -43,34 +43,36 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
    * Table template
    * @internal
    */
-  public tableTemplate: EntityTableTemplate = {
-    selection: true,
-    selectMany: false,
-    selectionCheckbox: false,
-    sort: true,
-    columns: [
-      {
-        name: 'element',
-        title: this.languageService.translate.instant('igo.integration.map-proximity-tool.feature'),
-        valueAccessor: (localFeature: Feature) => {
-          return localFeature.properties.element;
-        }
-      },
-      {
-        name: 'distance',
-        title: this.languageService.translate.instant('igo.integration.map-proximity-tool.distance'),
-        valueAccessor: (localFeature: Feature) => {
-          return `${NumberUtils.roundToNDecimal(localFeature.properties.distance, 1)}m`;
-        }
-      }
-    ]
-  };
+  public tableTemplate: EntityTableTemplate;
 
   constructor(
     public mapState: MapState,
     public mapProximityState: MapProximityState,
     private languageService: LanguageService,
-    private messageService: MessageService) {
+    private messageService: MessageService
+  ) {
+    this.tableTemplate = {
+      selection: true,
+      selectMany: false,
+      selectionCheckbox: false,
+      sort: true,
+      columns: [
+        {
+          name: 'element',
+          title: this.languageService.translate.instant('igo.integration.map-proximity-tool.feature'),
+          valueAccessor: (localFeature: Feature) => {
+            return localFeature.properties.element;
+          }
+        },
+        {
+          name: 'distance',
+          title: this.languageService.translate.instant('igo.integration.map-proximity-tool.distance'),
+          valueAccessor: (localFeature: Feature) => {
+            return `${NumberUtils.roundToNDecimal(localFeature.properties.distance, 1)}m`;
+          }
+        }
+      ]
+    };
   }
 
   ngOnInit(): void {
