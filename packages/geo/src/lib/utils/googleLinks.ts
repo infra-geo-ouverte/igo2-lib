@@ -4,7 +4,7 @@ export class GoogleLinks {
   }
 
   static getGoogleStreetViewLink(lon, lat) {
-    return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat}%2C${lon}`
+    return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat}%2C${lon}`;
   }
 
   static getGoogleMapsNameLink(name) {
