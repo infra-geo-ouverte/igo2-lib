@@ -512,7 +512,7 @@
           },
           "restrictExtent": {
             "map": "Map extent",
-            "quebec": "Whole Quebec"
+            "quebec": "Quebec"
           }
         },
         "coordinates": {
@@ -551,7 +551,7 @@
             "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
-            "restrictExtent": "Restrict the extent",
+            "restrictExtent": "Search limit",
             "selectAll": "Select All",
             "unselectAll": "Unselect All",
             "true": "Yes",

@@ -18,7 +18,8 @@ import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 import {
   IChercheData,
@@ -110,27 +111,24 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
-    const limit =
-      this.options.params && this.options.params.limit
-        ? Number(this.options.params.limit)
-        : undefined;
-    const ecmax =
-      this.options.params && this.options.params.ecmax
-        ? Number(this.options.params.ecmax)
-        : undefined;
+    const params = this.options.params;
+    const limit = params && params.limit ? Number(params.limit) : undefined;
+    const ecmax = params && params.ecmax ? Number(params.ecmax) : undefined;
 
-    const types = this.options.params?.type
-        ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-        : [
-            'adresses',
-            'codes-postaux',
-            'routes',
-            'intersections',
-            'municipalites',
-            'mrc',
-            'regadmin',
-            'lieux'
-          ];
+    const types = params?.type
+      ? params.type.replace(/\s/g, '').toLowerCase().split(',')
+      : [
+          'adresses',
+          'codes-postaux',
+          'routes',
+          'intersections',
+          'municipalites',
+          'mrc',
+          'regadmin',
+          'lieux'
+        ];
+
+    const showAdvancedParams = params != null ? params.showAdvanced : true;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -302,7 +300,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         },
-        {
+        showAdvancedParams && {
           type: 'radiobutton',
           title: 'ecmax',
           name: 'ecmax',
@@ -351,7 +349,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         }
-      ]
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 

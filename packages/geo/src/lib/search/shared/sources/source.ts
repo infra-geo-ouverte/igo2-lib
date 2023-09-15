@@ -1,6 +1,7 @@
 import { ObjectUtils } from '@igo2/utils';
 import { StorageService } from '@igo2/core';
 import {
+  ISearchSourceParams,
   SearchSourceOptions,
   SearchSourceSettings
 } from './source.interfaces';
@@ -96,8 +97,8 @@ export class SearchSource {
   /**
    * Search query params
    */
-  get params(): { [key: string]: string } {
-    return this.options.params === undefined ? {} : this.options.params;
+  get params(): ISearchSourceParams | null {
+    return this.options.params;
   }
 
   /**

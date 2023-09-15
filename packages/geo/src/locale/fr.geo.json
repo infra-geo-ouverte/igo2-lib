@@ -510,8 +510,8 @@
             "cultpatri":"Culture et patrimoine"
           },
           "restrictExtent": {
-            "map": "À l'étendue de la carte",
-            "quebec": "Au Québec"
+            "map": "Étendue de la carte",
+            "quebec": "Québec"
           }
         },
         "coordinates": {
@@ -550,7 +550,7 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "restrictExtent": "Restreins l'étendue",
+            "restrictExtent": "Limite de recherche",
             "selectAll": "Tout sélectionner",
             "unselectAll": "Tout désélectionner",
             "true": "Oui",
