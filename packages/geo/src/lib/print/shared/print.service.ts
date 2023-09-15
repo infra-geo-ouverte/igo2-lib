@@ -613,7 +613,7 @@ export class PrintService {
   }
 
   // TODO fix printing with image resolution
-  private addMap(
+  addMap(
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
@@ -710,11 +710,10 @@ export class PrintService {
     map.ol.renderSync();
   }
 
-  private async drawMap(
+  async drawMap(
     size: Array<number>,
     mapCanvas: HTMLCollectionOf<HTMLCanvasElement>
   ): Promise<HTMLCanvasElement> {
-
       const mapResultCanvas = document.createElement('canvas');
       mapResultCanvas.width = size[0];
       mapResultCanvas.height = size[1];
@@ -768,7 +767,7 @@ export class PrintService {
     mapContextResult.setTransform(1, 0, 0, 1, 0, 0);
   }
 
-  private async drawMapControls (
+  async drawMapControls (
     map: IgoMap,
     canvas: HTMLCanvasElement,
     position: PrintLegendPosition
@@ -1178,7 +1177,7 @@ export class PrintService {
    * @param canvas - Canvas of image
    * @param margins - Page margins
    */
-  private getImageSizeToFitPdf(doc, canvas, margins) {
+  getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2] + 10);
     const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
@@ -1190,7 +1189,6 @@ export class PrintService {
     const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
     const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
     const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
-
     return [imgWidth, imgHeigh];
   }
 
@@ -1342,5 +1340,4 @@ export class PrintService {
 
     return n * k;
   }
-
 }
