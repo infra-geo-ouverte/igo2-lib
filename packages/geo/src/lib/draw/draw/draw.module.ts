@@ -14,7 +14,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoEntityTableModule } from '@igo2/common';
@@ -52,7 +51,6 @@ import { MatRadioModule } from '@angular/material/radio';
     MatDialogModule,
     IgoLanguageModule,
     IgoEntityTableModule,
-    ColorPickerModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatRadioModule,
