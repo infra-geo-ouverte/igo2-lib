@@ -141,7 +141,6 @@ export function pointerPositionSummaryMarkerStyle(feature: olFeature<OlGeometry>
     return new olStyle.Style({
       image: new olStyle.Icon({
         src: './assets/igo2/geo/icons/cross_black_18px.svg',
-        imgSize: [18, 18], // for ie
       }),
 
       text: new olStyle.Text({
