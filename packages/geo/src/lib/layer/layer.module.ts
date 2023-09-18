@@ -15,8 +15,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ColorPickerModule } from 'ngx-color-picker';
-
 import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoListModule,
@@ -58,7 +56,6 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     MatSliderModule,
     MatBadgeModule,
     MatCheckboxModule,
-    ColorPickerModule,
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,
