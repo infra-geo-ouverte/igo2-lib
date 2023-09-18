@@ -18,7 +18,8 @@ import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 import {
   IChercheData,
@@ -131,6 +132,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             'regadmin',
             'lieux'
           ];
+
+    const showAdvancedParams = this.options.showAdvancedSettings ?? true;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -302,7 +305,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         },
-        {
+        showAdvancedParams && {
           type: 'radiobutton',
           title: 'ecmax',
           name: 'ecmax',
@@ -351,7 +354,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         }
-      ]
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 

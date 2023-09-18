@@ -299,8 +299,9 @@ export const environment: Environment = {
         order: 2,
         enabled: true,
         params: {
-          limit: '8'
-        }
+          limit: '8',
+        },
+        showAdvancedSettings: true
       },
       coordinatesreverse: {
         showInPointerSummary: true
