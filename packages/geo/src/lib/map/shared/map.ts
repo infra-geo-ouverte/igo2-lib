@@ -210,23 +210,16 @@ export class IgoMap implements MapBase {
       this.viewController.clearStateHistory();
     }
 
-    const viewOptions = this.handleMapViewOptions(options);
+    const viewOptions: ViewOptions = { constrainResolution: true, ...options };
+    if (options.center) {
+      viewOptions.center = olproj.fromLonLat(options.center, this.projectionCode);
+    }
+
     this.ol.setView(new olView(viewOptions));
 
     if (options.maxLayerZoomExtent) {
       this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
     }
-  }
-
-  private handleMapViewOptions(options: MapViewOptions): ViewOptions {
-    const viewOptions: ViewOptions = { constrainResolution: true, ...options };
-
-    if (options.center) {
-      const projection = olproj.createProjection(options.projection, 'EPSG:3857');
-      viewOptions.center = olproj.fromLonLat(options.center, projection);
-    }
-
-    return viewOptions;
   }
 
   updateControls(value: MapControlsOptions) {
