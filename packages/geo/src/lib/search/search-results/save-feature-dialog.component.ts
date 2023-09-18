@@ -6,7 +6,8 @@ import { Layer } from '../../layer/shared';
 import { SearchResult } from '../shared';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-
+import olVectorSource from 'ol/source/Vector';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 @Component({
   selector: 'igo-save-feature-dialog',
   templateUrl: './save-feature-dialog.component.html',
@@ -25,7 +26,7 @@ export class SaveFeatureDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<SaveFeatureDialogComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    public data: { feature: SearchResult; layers: Layer[]}
+    public data: { feature: SearchResult; layers: Layer[] }
   ) {
     this.form = this.formBuilder.group({
       layerName: ['', [Validators.required]],
@@ -34,11 +35,22 @@ export class SaveFeatureDialogComponent implements OnInit {
 
   ngOnInit() {
     this.feature = this.data.feature;
-    this.layers = this.data.layers;
+    this.setUpLayersList(this.data.layers);
     this.filteredLayers$ = this.form.controls['layerName'].valueChanges.pipe(
       startWith(''),
       map(val => this.filter(val))
     );
+  }
+
+  // filter layers list by feature type
+  // exemple: if feature type is 'address'
+  // show layers contains feature with address type
+  private setUpLayersList(layers: Layer[]) {
+    this.layers = layers.filter((element) => {
+      const ol = element.dataSource.ol as olVectorSource<OlGeometry>;
+      const feature = ol.getFeatures()[0].getProperties();
+      return feature.type === this.feature.data.properties.type;
+    });
   }
 
   private filter(val): Layer[] {
@@ -54,7 +66,7 @@ export class SaveFeatureDialogComponent implements OnInit {
   }
 
   save() {
-    const data: {layer: string | Layer, feature: SearchResult} = {layer: this.form.value.layerName, feature: this.feature};
+     const data: {layer: string | Layer, feature: SearchResult} = {layer: this.form.value.layerName, feature: this.feature};
     this.dialogRef.close(data);
   }
 
