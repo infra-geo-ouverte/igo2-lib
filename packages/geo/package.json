@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build": "ng build geo --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/geo/postbuild-geo.ts",
     "publish": "npm publish ../../dist/geo",
     "test": "ng test geo --watch=false",

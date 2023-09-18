@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build": "ng build context --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "publish": "npm publish ../../dist/context",
     "test": "ng test context --watch=false",
     "watch": "ng build context --watch"
@@ -39,7 +40,6 @@
     "@igo2/geo": "*",
     "@igo2/utils": "*",
     "ol": "^8.1.0",
-    "ol-mapbox-style": "^12.0.0",
     "rxjs": "^7.8.0"
   },
   "dependencies": {

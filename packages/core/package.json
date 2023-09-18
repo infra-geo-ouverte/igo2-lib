@@ -18,6 +18,7 @@
   "scripts": {
     "prestart": "ts-node ../../scripts/src/core/prestart-core.ts",
     "build": "ng build core --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "publish": "npm publish ../../dist/core --dry-run",
     "test": "ng test core --watch=false",
