@@ -300,8 +300,8 @@ export const environment: Environment = {
         enabled: true,
         params: {
           limit: '8',
-          showAdvanced: true
-        }
+        },
+        showAdvancedSettings: true
       },
       coordinatesreverse: {
         showInPointerSummary: true
