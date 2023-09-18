@@ -5,10 +5,12 @@ export interface SearchSourceOptions {
   enabled?: boolean;
   order?: number;
   distance?: number;
-  params?: ISearchSourceParams & Partial<SettingOptions>;
+  params?: ISearchSourceParams;
   settings?: SearchSourceSettings[];
   showInPointerSummary?: boolean;
   showInSettings?: boolean;
+  /** Default value is true */
+  showAdvancedSettings?: boolean;
 }
 
 export interface SearchSourceSettings {
@@ -25,7 +27,6 @@ export interface ISearchSourceParams {
   ecmax?: string;
   page?: string;
   type?: string;
-  showAdvanced?: boolean;
 }
 
 export interface SettingOptions {
