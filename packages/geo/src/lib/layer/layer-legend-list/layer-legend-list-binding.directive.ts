@@ -26,22 +26,21 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
     this.component.layers = [];
     this.layersOrResolutionChange$$ = combineLatest([
       this.mapService.getMap().layers$,
-      this.mapService.getMap().viewController.resolution$]
-    ).pipe(
-      debounceTime(10)
-    ).subscribe((bunch: [Layer[], number]) => {
-      const shownLayers = bunch[0].filter((layer: Layer) => {
-        return layer.showInLayerList === true;
-      });
-      this.component.layers = shownLayers;
+      this.mapService.getMap().viewController.resolution$
+    ])
+      .pipe(debounceTime(10))
+      .subscribe((bunch: [Layer[], number]) => {
+        const shownLayers = bunch[0].filter((layer: Layer) => {
+          return layer.showInLayerList === true;
+        });
+        this.component.layers = shownLayers;
 
-      this.layersVisibility$$ = combineLatest(shownLayers
-        .map((layer: Layer) => layer.visible$))
-        .subscribe((r) => {
+        this.layersVisibility$$ = combineLatest(
+          shownLayers.map((layer: Layer) => layer.visible$)
+        ).subscribe((r) => {
           this.component.change$.next();
-        }
-        );
-    });
+        });
+      });
   }
 
   ngOnDestroy() {
@@ -51,5 +50,4 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
       this.layersVisibility$$ = undefined;
     }
   }
-
 }

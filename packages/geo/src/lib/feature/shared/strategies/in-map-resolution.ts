@@ -4,13 +4,11 @@ import { FeatureStore } from '../store';
 import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
 
-
 /**
  * This strategy maintain the store features updated while the map is scrolled.
  * The features's state inside the map's resolution are tagged inMapResolution = true;
  */
 export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
-
   /**
    * Subscription to the store's OL source changes
    */
@@ -31,8 +29,12 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
     if (this.active === true) {
       this.watchStore(store);
     }
-    this.empty$$ = store.empty$
-      .subscribe(() => this.updateEntitiesInResolution(store, store.layer.map.viewController.getResolution()));
+    this.empty$$ = store.empty$.subscribe(() =>
+      this.updateEntitiesInResolution(
+        store,
+        store.layer.map.viewController.getResolution()
+      )
+    );
   }
 
   /**
@@ -71,14 +73,22 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
       return;
     }
 
-    this.updateEntitiesInResolution(store, store.layer.map.viewController.getResolution());
-    this.resolution$$.push(store.layer.map.viewController.resolution$.subscribe((res) => {
-      this.updateEntitiesInResolution(store, res);
-    }));
+    this.updateEntitiesInResolution(
+      store,
+      store.layer.map.viewController.getResolution()
+    );
+    this.resolution$$.push(
+      store.layer.map.viewController.resolution$.subscribe((res) => {
+        this.updateEntitiesInResolution(store, res);
+      })
+    );
   }
 
   private updateEntitiesInResolution(store, mapResolution: number) {
-    if (mapResolution > store.layer.minResolution && mapResolution < store.layer.maxResolution) {
+    if (
+      mapResolution > store.layer.minResolution &&
+      mapResolution < store.layer.maxResolution
+    ) {
       store.state.updateAll({ inMapResolution: true });
     } else {
       store.state.updateAll({ inMapResolution: false });
@@ -101,7 +111,9 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    */
   private unwatchAll() {
     this.stores$$.clear();
-    this.resolution$$.map(state => state.unsubscribe());
-    if (this.empty$$) { this.empty$$.unsubscribe(); }
+    this.resolution$$.map((state) => state.unsubscribe());
+    if (this.empty$$) {
+      this.empty$$.unsubscribe();
+    }
   }
 }

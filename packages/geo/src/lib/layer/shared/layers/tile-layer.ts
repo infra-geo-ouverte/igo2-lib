@@ -33,7 +33,8 @@ export class TileLayer extends Layer {
   constructor(
     options: TileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor) {
+    public authInterceptor?: AuthInterceptor
+  ) {
     super(options, messageService);
 
     this.watcher = new TileWatcher(this);
@@ -59,8 +60,7 @@ export class TileLayer extends Layer {
    * @param tile the current tile
    * @param url the url string or function to retrieve the data
    */
-  customLoader(tile, url: string, interceptor: AuthInterceptor ) {
-
+  customLoader(tile, url: string, interceptor: AuthInterceptor) {
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
     if (alteredUrlWithKeyAuth) {

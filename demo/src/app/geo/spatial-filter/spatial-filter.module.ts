@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 
 import { IgoPanelModule, IgoFormModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureModule, IgoFeatureDetailsModule } from '@igo2/geo';
+import {
+  IgoMapModule,
+  IgoFilterModule,
+  IgoQueryModule,
+  IgoFeatureModule,
+  IgoFeatureDetailsModule
+} from '@igo2/geo';
 import { IgoMessageModule } from '@igo2/core';
 
 import { AppSpatialFilterComponent } from './spatial-filter.component';

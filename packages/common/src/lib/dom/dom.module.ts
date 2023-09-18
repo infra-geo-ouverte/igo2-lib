@@ -9,9 +9,7 @@ export class IgoDOMModule {
   static forRoot(): ModuleWithProviders<IgoDOMModule> {
     return {
       ngModule: IgoDOMModule,
-      providers: [
-        DOMService
-      ]
+      providers: [DOMService]
     };
   }
 }

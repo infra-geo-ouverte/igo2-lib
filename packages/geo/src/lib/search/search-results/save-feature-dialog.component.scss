@@ -1,32 +1,31 @@
 :host {
-   mat-form-field {
-      width: 100%;
-    }
-   
-   .create-layer-button-top-padding {
-      padding-top: 25px;
-   }
-   
-   .igo-form {
-      padding: 10px 5px 5px;
-   }
-   
-   .igo-form-button-group {
-      text-align: center;
-   }
-   
-   button {
-     cursor: pointer;
-   }
-   
-   button#createLayerBtnDialog[disabled=true] {
-     cursor: default;
-     background-color: rgba(0,0,0,.12);
-     color: rgba(0,0,0,.26);
-   }
-   
-   .error {
-      color: red;
-   }
-   
+  mat-form-field {
+    width: 100%;
+  }
+
+  .create-layer-button-top-padding {
+    padding-top: 25px;
+  }
+
+  .igo-form {
+    padding: 10px 5px 5px;
+  }
+
+  .igo-form-button-group {
+    text-align: center;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button#createLayerBtnDialog[disabled='true'] {
+    cursor: default;
+    background-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.26);
+  }
+
+  .error {
+    color: red;
+  }
 }

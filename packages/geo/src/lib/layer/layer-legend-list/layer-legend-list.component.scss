@@ -5,26 +5,26 @@ $slide-toggle-width: 60px;
     width: 100%;
     padding: 10px;
 
-    ::ng-deep .mdc-form-field{
+    ::ng-deep .mdc-form-field {
       width: 100%;
     }
 
-    ::ng-deep .mdc-label  {
+    ::ng-deep .mdc-label {
       margin-left: 0;
       width: calc(100% - #{$slide-toggle-width});
     }
   }
-  
+
   igo-list {
-     /* autoprefixer: ignore next */
+    /* autoprefixer: ignore next */
     display: contents;
   }
-  
+
   .layers-empty {
     text-align: justify;
     margin: 10px;
   }
-  
+
   .layer-legend-list-container {
     max-height: 100%;
     overflow: auto;

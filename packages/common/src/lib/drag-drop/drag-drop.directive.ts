@@ -11,7 +11,6 @@ import {
   selector: '[igoDragAndDrop]'
 })
 export class DragAndDropDirective {
-
   @Input() allowedExtensions: Array<string> = [];
 
   @Output() protected filesDropped: EventEmitter<File[]> = new EventEmitter();
@@ -64,10 +63,7 @@ export class DragAndDropDirective {
         const ext = file.name.split('.')[file.name.split('.').length - 1];
         if (
           this.allowedExtensions.length === 0 ||
-          (
-            this.allowedExtensions.lastIndexOf(ext) !== -1 &&
-            file.size !== 0
-          )
+          (this.allowedExtensions.lastIndexOf(ext) !== -1 && file.size !== 0)
         ) {
           filesObj.valid.push(file);
         } else {

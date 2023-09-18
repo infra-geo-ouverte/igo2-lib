@@ -12,98 +12,145 @@ import { InsertSourceInsertDBEnum } from './geoDB.enums';
   providedIn: 'root'
 })
 export class ConfigFileToGeoDBService {
-
-
   constructor(
     private http: HttpClient,
     private geoDBService: GeoDBService,
     private messageService: MessageService
-  ) { }
-
+  ) {}
 
   load(url: string) {
     let downloadMessage;
-    this.http.get(url).pipe(
-
-      catchError((error: any): any => {
-        console.log(`GeoData file ${url} could not be read`);
-        error.error.caught = true;
-        throw error;
-      }),
-      concatMap((datasToIDB: DatasToIDB) => {
-      const datas$ = [];
-      let firstDownload = true;
-      if (datasToIDB?.geoDatas) {
-        const currentDate = new Date();
-        datasToIDB?.geoDatas.map((geoData) => {
-          if (typeof geoData.triggerDate === 'string') {
-            geoData.triggerDate = new Date(Date.parse(geoData.triggerDate));
-          }
-          if (currentDate >= geoData.triggerDate) {
-            if (geoData.action === 'update') {
-              const insertEvent = `${geoData.source || InsertSourceInsertDBEnum.System} (${geoData.triggerDate})`;
-              geoData.urls.map((url) => {
-                datas$.push(
-                  this.geoDBService.getByID(url).pipe(concatMap((res: GeoDBData) => {
-                    if (res?.insertEvent !== insertEvent) {
-                      if (firstDownload) {
-                        downloadMessage = this.messageService
-                        .info('igo.geo.indexedDb.data-download-start', undefined,
-                        { disableTimeOut: true, progressBar: false, closeButton: true, tapToDismiss: false });
-                        firstDownload = false;
-                      }
-                      let responseType: any = 'json';
-                      const isZip = this.isZip(url);
-                      if (isZip) {
-                        responseType = 'arraybuffer';
-                      }
-                      return this.http.get(url, { responseType }).pipe(concatMap(r => {
-                        if (isZip) {
-                          const observables$ = [this.geoDBService.update(url, url, {}, InsertSourceInsertDBEnum.System, insertEvent)];
-                          JSZip.loadAsync(r)
-                            .then((zipped) => {
-                              zipped.forEach((relativePath) => {
-                                if (relativePath.toLocaleLowerCase().endsWith('.geojson')) {
-                                  zipped.file(relativePath).async("text").then((r) => {
-                                    const geojson = JSON.parse(r);
-                                    const subUrl = geoData.zippedBaseUrl || '';
-                                    const zippedUrl = subUrl + (subUrl.endsWith('/') ? '' : '/') + relativePath;
-                                    observables$.push(
-                                      this.geoDBService.update(zippedUrl, url, geojson, InsertSourceInsertDBEnum.System, insertEvent)
-                                    );
-                                  }
-                                  );
+    this.http
+      .get(url)
+      .pipe(
+        catchError((error: any): any => {
+          console.log(`GeoData file ${url} could not be read`);
+          error.error.caught = true;
+          throw error;
+        }),
+        concatMap((datasToIDB: DatasToIDB) => {
+          const datas$ = [];
+          let firstDownload = true;
+          if (datasToIDB?.geoDatas) {
+            const currentDate = new Date();
+            datasToIDB?.geoDatas.map((geoData) => {
+              if (typeof geoData.triggerDate === 'string') {
+                geoData.triggerDate = new Date(Date.parse(geoData.triggerDate));
+              }
+              if (currentDate >= geoData.triggerDate) {
+                if (geoData.action === 'update') {
+                  const insertEvent = `${
+                    geoData.source || InsertSourceInsertDBEnum.System
+                  } (${geoData.triggerDate})`;
+                  geoData.urls.map((url) => {
+                    datas$.push(
+                      this.geoDBService.getByID(url).pipe(
+                        concatMap((res: GeoDBData) => {
+                          if (res?.insertEvent !== insertEvent) {
+                            if (firstDownload) {
+                              downloadMessage = this.messageService.info(
+                                'igo.geo.indexedDb.data-download-start',
+                                undefined,
+                                {
+                                  disableTimeOut: true,
+                                  progressBar: false,
+                                  closeButton: true,
+                                  tapToDismiss: false
                                 }
-                              });
-                            });
-                          return zip(observables$);
-                        }
-                        return this.geoDBService.update(url, url, r, InsertSourceInsertDBEnum.System, insertEvent);
-                      }));
-                    } else {
-                      return of(false);
-                    }
-                  }))
-                );
-              });
-            } else if (geoData.action === 'delete') {
-              geoData.urls.map((url) => {
-                datas$.push(this.geoDBService.deleteByKey(url));
-              });
-            }
+                              );
+                              firstDownload = false;
+                            }
+                            let responseType: any = 'json';
+                            const isZip = this.isZip(url);
+                            if (isZip) {
+                              responseType = 'arraybuffer';
+                            }
+                            return this.http.get(url, { responseType }).pipe(
+                              concatMap((r) => {
+                                if (isZip) {
+                                  const observables$ = [
+                                    this.geoDBService.update(
+                                      url,
+                                      url,
+                                      {},
+                                      InsertSourceInsertDBEnum.System,
+                                      insertEvent
+                                    )
+                                  ];
+                                  JSZip.loadAsync(r).then((zipped) => {
+                                    zipped.forEach((relativePath) => {
+                                      if (
+                                        relativePath
+                                          .toLocaleLowerCase()
+                                          .endsWith('.geojson')
+                                      ) {
+                                        zipped
+                                          .file(relativePath)
+                                          .async('text')
+                                          .then((r) => {
+                                            const geojson = JSON.parse(r);
+                                            const subUrl =
+                                              geoData.zippedBaseUrl || '';
+                                            const zippedUrl =
+                                              subUrl +
+                                              (subUrl.endsWith('/')
+                                                ? ''
+                                                : '/') +
+                                              relativePath;
+                                            observables$.push(
+                                              this.geoDBService.update(
+                                                zippedUrl,
+                                                url,
+                                                geojson,
+                                                InsertSourceInsertDBEnum.System,
+                                                insertEvent
+                                              )
+                                            );
+                                          });
+                                      }
+                                    });
+                                  });
+                                  return zip(observables$);
+                                }
+                                return this.geoDBService.update(
+                                  url,
+                                  url,
+                                  r,
+                                  InsertSourceInsertDBEnum.System,
+                                  insertEvent
+                                );
+                              })
+                            );
+                          } else {
+                            return of(false);
+                          }
+                        })
+                      )
+                    );
+                  });
+                } else if (geoData.action === 'delete') {
+                  geoData.urls.map((url) => {
+                    datas$.push(this.geoDBService.deleteByKey(url));
+                  });
+                }
+              }
+            });
           }
-        });
-      }
-      return zip(...datas$);
-    })
-    ).subscribe(() => {
-      if (downloadMessage) {
-        setTimeout(() => {
-          this.messageService.remove((downloadMessage as any).toastId);
-          this.messageService.success('igo.geo.indexedDb.data-download-completed', undefined, { timeOut: 40000 });
-        }, 2500);
-      }
-    });
+          return zip(...datas$);
+        })
+      )
+      .subscribe(() => {
+        if (downloadMessage) {
+          setTimeout(() => {
+            this.messageService.remove((downloadMessage as any).toastId);
+            this.messageService.success(
+              'igo.geo.indexedDb.data-download-completed',
+              undefined,
+              { timeOut: 40000 }
+            );
+          }, 2500);
+        }
+      });
   }
 
   private isZip(value) {

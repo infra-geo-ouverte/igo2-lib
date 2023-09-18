@@ -46,7 +46,10 @@ export class StyleListService {
           })
         )
         .subscribe((styleListResponse: object) => {
-          this.styleList = ObjectUtils.mergeDeep(baseStyleList, styleListResponse);
+          this.styleList = ObjectUtils.mergeDeep(
+            baseStyleList,
+            styleListResponse
+          );
           resolve(true);
         });
     });

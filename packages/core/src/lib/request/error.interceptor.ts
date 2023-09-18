@@ -16,9 +16,7 @@ import { MessageService } from '../message/shared/message.service';
   providedIn: 'root'
 })
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(
-    private injector: Injector
-  ) {}
+  constructor(private injector: Injector) {}
 
   intercept(
     originalReq: HttpRequest<any>,
@@ -33,7 +31,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
     const errorContainer = { httpError: undefined };
     return next.handle(req).pipe(
-      catchError(error => this.handleError(error, errorContainer)),
+      catchError((error) => this.handleError(error, errorContainer)),
       finalize(() => {
         this.handleCaughtError(errorContainer);
         this.handleUncaughtError(errorContainer);
@@ -68,7 +66,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     if (httpError && httpError.error.toDisplay) {
       httpError.error.caught = true;
       const messageService = this.injector.get(MessageService);
-       messageService.error(httpError.error.message, httpError.error.title);
+      messageService.error(httpError.error.message, httpError.error.title);
     }
   }
 
@@ -79,7 +77,10 @@ export class ErrorInterceptor implements HttpInterceptor {
     if (httpError && !httpError.error.caught) {
       const messageService = this.injector.get(MessageService);
       httpError.error.caught = true;
-      messageService.error('igo.core.errors.uncaught.message', 'igo.core.errors.uncaught.title');
+      messageService.error(
+        'igo.core.errors.uncaught.message',
+        'igo.core.errors.uncaught.title'
+      );
     }
   }
 }

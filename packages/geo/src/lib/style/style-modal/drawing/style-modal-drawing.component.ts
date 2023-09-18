@@ -4,7 +4,10 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 import { DrawStyleService } from '../../style-service/draw-style.service';
 import { FontType } from '../../shared/font.enum';
-import { DrawingMatDialogData, StyleModalData } from '../shared/style-modal.interface';
+import {
+  DrawingMatDialogData,
+  StyleModalData
+} from '../shared/style-modal.interface';
 
 @Component({
   selector: 'igo-style-modal-drawing',
@@ -23,9 +26,10 @@ export class StyleModalDrawingComponent implements OnInit {
     public dialogRef: MatDialogRef<StyleModalDrawingComponent>,
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
-    @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData) {
-      this.buildForm();
-    }
+    @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData
+  ) {
+    this.buildForm();
+  }
 
   ngOnInit() {
     this.linestringOnly = true;
@@ -48,31 +52,32 @@ export class StyleModalDrawingComponent implements OnInit {
     this.styleModalData = {
       fillColor:
         this.data.features.length > 0
-        ? this.data.features[0].properties.drawingStyle.fill
-        : 'rgba(255,255,255,0.4)',
+          ? this.data.features[0].properties.drawingStyle.fill
+          : 'rgba(255,255,255,0.4)',
       strokeColor:
         this.data.features.length > 0
-        ? this.data.features[0].properties.drawingStyle.stroke
-        : 'rgba(143,7,7,1)',
+          ? this.data.features[0].properties.drawingStyle.stroke
+          : 'rgba(143,7,7,1)',
       fontSize:
         this.data.features.length > 0
-        ? this.data.features[0].properties.fontStyle
-            .split(' ')[0]
-            .replace('px', '')
-        : '20',
+          ? this.data.features[0].properties.fontStyle
+              .split(' ')[0]
+              .replace('px', '')
+          : '20',
       fontStyle:
         this.data.features.length > 0
-        ? this.data.features[0].properties.fontStyle.substring(
-            this.data.features[0].properties.fontStyle.indexOf(' ') + 1)
-        : FontType.Arial,
+          ? this.data.features[0].properties.fontStyle.substring(
+              this.data.features[0].properties.fontStyle.indexOf(' ') + 1
+            )
+          : FontType.Arial,
       offsetX:
         this.data.features.length > 0
-        ? this.data.features[0].properties.offsetX
-        : this.drawStyleService.getOffsetX(),
+          ? this.data.features[0].properties.offsetX
+          : this.drawStyleService.getOffsetX(),
       offsetY:
         this.data.features.length > 0
-        ? this.data.features[0].properties.offsetY
-        : this.drawStyleService.getOffsetY()
+          ? this.data.features[0].properties.offsetY
+          : this.drawStyleService.getOffsetY()
     };
   }
 
@@ -83,10 +88,10 @@ export class StyleModalDrawingComponent implements OnInit {
   getFeatureFontSize(): string {
     if (!this.styleModalData.fontSize) {
       return this.data.features.length > 0
-      ? this.data.features[0].properties.fontStyle
-          .split(' ')[0]
-          .replace('px', '')
-      : '20';
+        ? this.data.features[0].properties.fontStyle
+            .split(' ')[0]
+            .replace('px', '')
+        : '20';
     } else {
       return this.styleModalData.fontSize;
     }
@@ -95,10 +100,10 @@ export class StyleModalDrawingComponent implements OnInit {
   getFeatureFontStyle() {
     if (!this.styleModalData.fontStyle) {
       return this.data.features.length > 0
-      ? this.data.features[0].properties.fontStyle.substring(
-        this.data.features[0].properties.fontStyle.indexOf(' ') + 1
-        )
-      : FontType.Arial;
+        ? this.data.features[0].properties.fontStyle.substring(
+            this.data.features[0].properties.fontStyle.indexOf(' ') + 1
+          )
+        : FontType.Arial;
     } else {
       return this.styleModalData.fontStyle;
     }
@@ -137,8 +142,8 @@ export class StyleModalDrawingComponent implements OnInit {
   getFeatureOffsetY() {
     if (!this.styleModalData.offsetY) {
       return this.data.features.length > 0
-      ? this.data.features[0].properties.offsetY
-      : this.drawStyleService.getOffsetY();
+        ? this.data.features[0].properties.offsetY
+        : this.drawStyleService.getOffsetY();
     } else {
       return this.styleModalData.offsetY;
     }

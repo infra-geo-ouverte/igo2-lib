@@ -81,7 +81,6 @@ export class EntityStore<
   }
   private _pristine: boolean = true;
 
-
   constructor(entities: E[], options: EntityStoreOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty

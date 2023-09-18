@@ -16,12 +16,16 @@ import { IgoMap } from '@igo2/geo';
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
-
   @Input() toolToOpenOnContextChange: string = 'mapTools';
 
-  get map(): IgoMap { return this.mapState.map; }
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
-  constructor(private toolState: ToolState, private mapState: MapState) {}
+  constructor(
+    private toolState: ToolState,
+    private mapState: MapState
+  ) {}
 
   editContext() {
     this.toolState.toolbox.activateTool('contextEditor');

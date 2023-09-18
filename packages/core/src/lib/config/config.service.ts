@@ -36,7 +36,6 @@ export class ConfigService<T = { [key: string]: any }> {
       return true;
     }
 
-
     return new Promise((resolve, _reject) => {
       this.httpClient
         .get(options.path)

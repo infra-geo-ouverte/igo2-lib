@@ -16,7 +16,10 @@ import {
   featureRandomStyleFunction
 } from '@igo2/geo';
 import { MessageService } from '@igo2/core';
-import { DetailedContext, ExtraFeatures } from '../../context-manager/shared/context.interface';
+import {
+  DetailedContext,
+  ExtraFeatures
+} from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
 import OlFeature from 'ol/Feature';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -38,9 +41,12 @@ export function handleFileImportSuccess(
 
   messageService.success(
     'igo.context.contextImportExport.import.success.text',
-    'igo.context.contextImportExport.import.success.title', undefined, {
+    'igo.context.contextImportExport.import.success.title',
+    undefined,
+    {
       value: contextTitle
-    });
+    }
+  );
 }
 
 export function handleFileImportError(
@@ -55,18 +61,13 @@ export function handleFileImportError(
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError
   };
-  errMapping[error.message](
-    file,
-    error,
-    messageService,
-    sizeMb
-  );
+  errMapping[error.message](file, error, messageService, sizeMb);
 }
 
 export function handleInvalidFileImportError(
   file: File,
   error: Error,
-  messageService: MessageService,
+  messageService: MessageService
 ) {
   messageService.error(
     'igo.context.contextImportExport.import.invalid.text',
@@ -92,7 +93,8 @@ export function handleSizeFileImportError(
     {
       value: file.name,
       size: sizeMb
-    });
+    }
+  );
 }
 
 export function handleUnreadbleFileImportError(
@@ -106,7 +108,8 @@ export function handleUnreadbleFileImportError(
     undefined,
     {
       value: file.name
-    });
+    }
+  );
 }
 
 export function handleNothingToImportError(
@@ -117,7 +120,8 @@ export function handleNothingToImportError(
     'igo.context.contextImportExport.import.empty.text',
     'igo.context.contextImportExport.import.empty.title',
     undefined,
-    { value: file.name });
+    { value: file.name }
+  );
 }
 
 export function addContextToContextList(
@@ -143,7 +147,7 @@ export function computeLayerTitleFromFile(file: File): string {
 
 export function addImportedFeaturesToMap(
   extraFeatures: ExtraFeatures,
-  map: IgoMap,
+  map: IgoMap
 ): VectorLayer {
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
     type: 'vector',
@@ -186,15 +190,17 @@ export function addImportedFeaturesStyledToMap(
   let style;
   let distance: number;
 
-  if (
-    styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')
-  ) {
+  if (styleListService.getStyleList(extraFeatures.name + '.styleByAttribute')) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(
       extraFeatures.name + '.styleByAttribute'
     );
 
     style = (feature, resolution) => {
-      return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
+      return styleService.createStyleByAttribute(
+        feature,
+        styleByAttribute,
+        resolution
+      );
     };
   } else if (
     styleListService.getStyleList(extraFeatures.name + '.clusterStyle')
@@ -202,42 +208,53 @@ export function addImportedFeaturesStyledToMap(
     const clusterParam: ClusterParam = styleListService.getStyleList(
       extraFeatures.name + '.clusterParam'
     );
-    distance = styleListService.getStyleList(
-      extraFeatures.name + '.distance'
-    );
+    distance = styleListService.getStyleList(extraFeatures.name + '.distance');
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'), feature, resolution
+        styleListService.getStyleList(extraFeatures.name + '.clusterStyle'),
+        feature,
+        resolution
       );
-      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
+      return styleService.createClusterStyle(
+        feature,
+        resolution,
+        clusterParam,
+        baseStyle
+      );
     };
   } else if (styleListService.getStyleList(extraFeatures.name + '.style')) {
-    style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList(extraFeatures.name + '.style'), feature, resolution
-    );
+    style = (feature, resolution) =>
+      styleService.createStyle(
+        styleListService.getStyleList(extraFeatures.name + '.style'),
+        feature,
+        resolution
+      );
   } else {
-    style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList('default.style'), feature, resolution
-    );
+    style = (feature, resolution) =>
+      styleService.createStyle(
+        styleListService.getStyleList('default.style'),
+        feature,
+        resolution
+      );
   }
   let source;
   const olFeatures = collectFeaturesFromExtraFeatures(extraFeatures);
   if (styleListService.getStyleList(extraFeatures.name + '.clusterStyle')) {
-    const sourceOptions: ClusterDataSourceOptions &
-      QueryableDataSourceOptions = {
-      distance,
-      type: 'cluster',
-      queryable: true
-    };
+    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
+      {
+        distance,
+        type: 'cluster',
+        queryable: true
+      };
     source = new ClusterDataSource(sourceOptions);
     source.ol.source.addFeatures(olFeatures);
   } else {
-    const sourceOptions: FeatureDataSourceOptions &
-      QueryableDataSourceOptions = {
-      type: 'vector',
-      queryable: true
-    };
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
+      {
+        type: 'vector',
+        queryable: true
+      };
     source = new FeatureDataSource(sourceOptions);
     source.ol.addFeatures(olFeatures);
   }
@@ -248,14 +265,16 @@ export function addImportedFeaturesStyledToMap(
     source,
     style,
     opacity: extraFeatures.opacity,
-    visible: extraFeatures.visible,
+    visible: extraFeatures.visible
   });
   map.addLayer(layer);
 
   return layer;
 }
 
-function collectFeaturesFromExtraFeatures(featureCollection: ExtraFeatures): OlFeature<OlGeometry>[]{
+function collectFeaturesFromExtraFeatures(
+  featureCollection: ExtraFeatures
+): OlFeature<OlGeometry>[] {
   const format = new GeoJSON();
   const features = format.readFeatures(featureCollection, {
     dataProjection: 'EPSG:4326',

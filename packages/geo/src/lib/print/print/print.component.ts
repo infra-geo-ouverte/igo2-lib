@@ -89,7 +89,6 @@ export class PrintComponent {
   constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
-
     this.disabled$.next(true);
 
     if (data.isPrintService === true) {

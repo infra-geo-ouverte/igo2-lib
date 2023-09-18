@@ -81,7 +81,8 @@ export const environment: EnvironmentOptions = {
         enabled: true,
         params: {
           limit: '8'
-        }
+        },
+        showAdvancedSettings: true
       },
       coordinatesreverse: {
         showInPointerSummary: true

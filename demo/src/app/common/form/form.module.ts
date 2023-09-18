@@ -8,11 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppFormComponent],
-  imports: [
-    SharedModule,
-    AppFormRoutingModule,
-    IgoFormModule
-  ],
+  imports: [SharedModule, AppFormRoutingModule, IgoFormModule],
   exports: [AppFormComponent]
 })
 export class AppFormModule {}

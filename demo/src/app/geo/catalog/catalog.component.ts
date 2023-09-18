@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
 import { LanguageService, ConfigService, StorageService } from '@igo2/core';
-import { IgoMap, LayerService, Catalog, CatalogItem, CatalogService, MapService } from '@igo2/geo';
+import {
+  IgoMap,
+  LayerService,
+  Catalog,
+  CatalogItem,
+  CatalogService,
+  MapService
+} from '@igo2/geo';
 import { EntityRecord, EntityStore } from '@igo2/common';
 
 @Component({
@@ -48,7 +55,7 @@ export class AppCatalogComponent implements OnInit {
           type: 'osm'
         }
       })
-      .subscribe(layer => this.map.addLayer(layer));
+      .subscribe((layer) => this.map.addLayer(layer));
 
     this.loadCatalogs();
 
@@ -70,7 +77,7 @@ export class AppCatalogComponent implements OnInit {
    * @internal
    * @param event Select event
    */
-  onCatalogSelectChange(event: {selected: boolean; catalog: Catalog}) {
+  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }) {
     this.loadCatalogItems(event.catalog);
   }
 
@@ -79,11 +86,14 @@ export class AppCatalogComponent implements OnInit {
    * load them into the store.
    */
   private loadCatalogs() {
-    this.catalogService.loadCatalogs()
-      .subscribe((catalogs: Catalog[]) => {
-        this.catalogStore.clear();
-        this.catalogStore.load(catalogs.concat((this.storageService.get('addedCatalogs') || []) as Catalog[]));
-      });
+    this.catalogService.loadCatalogs().subscribe((catalogs: Catalog[]) => {
+      this.catalogStore.clear();
+      this.catalogStore.load(
+        catalogs.concat(
+          (this.storageService.get('addedCatalogs') || []) as Catalog[]
+        )
+      );
+    });
   }
 
   /**
@@ -92,7 +102,8 @@ export class AppCatalogComponent implements OnInit {
    * @param catalog Selected catalog
    */
   private loadCatalogItems(catalog: Catalog) {
-    this.catalogService.loadCatalogItems(catalog)
+    this.catalogService
+      .loadCatalogItems(catalog)
       .subscribe((items: CatalogItem[]) => {
         this.catalogItemStore.clear();
         this.catalogItemStore.load(items);

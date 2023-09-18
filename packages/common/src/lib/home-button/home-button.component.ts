@@ -6,7 +6,6 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./home-button.component.scss']
 })
 export class HomeButtonComponent {
-
   @Output() unselectButton = new EventEmitter<any>();
 
   constructor() {}

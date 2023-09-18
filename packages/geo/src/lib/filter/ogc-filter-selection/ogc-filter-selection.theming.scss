@@ -5,7 +5,7 @@
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $dark: mat.define-palette(mat.$grey-palette, 800, 700, 900);
-  
+
   igo-ogc-filter-selection {
     mat-button-toggle.mat-button-toggle-checked {
       background-color: mat.get-color-from-palette($accent);

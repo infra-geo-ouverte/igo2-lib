@@ -1,5 +1,6 @@
 @use './entity-table/entity-table.theming' as entity-table;
-@use './entity-table-paginator/entity-table-paginator.theming' as entity-table-paginator;
+@use './entity-table-paginator/entity-table-paginator.theming' as
+  entity-table-paginator;
 @use './entity-selector/entity-selector.theming' as entity-selector;
 
 @mixin igo-entity-theming($theme) {

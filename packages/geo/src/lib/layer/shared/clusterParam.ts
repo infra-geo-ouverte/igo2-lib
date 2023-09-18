@@ -9,5 +9,4 @@ export interface ClusterRange {
   showRange?: boolean;
   dynamicRadius?: boolean;
   style: { [key: string]: any };
-
 }

@@ -3,7 +3,6 @@ import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
 import { ImageLayer } from '../shared/layers/image-layer';
 
-
 export class ImageWatcher extends Watcher {
   protected id: string;
   protected loaded = 0;
@@ -21,17 +20,17 @@ export class ImageWatcher extends Watcher {
   }
 
   protected watch() {
-    this.source.on(`imageloadstart`, e => this.handleLoadStart(e));
-    this.source.on(`imageloadend`, e => this.handleLoadEnd(e));
-    this.source.on(`imageloaderror`, e => this.handleLoadEnd(e));
-    this.source.on(`imageloaderror`, e => this.handleLoadError(e));
+    this.source.on(`imageloadstart`, (e) => this.handleLoadStart(e));
+    this.source.on(`imageloadend`, (e) => this.handleLoadEnd(e));
+    this.source.on(`imageloaderror`, (e) => this.handleLoadEnd(e));
+    this.source.on(`imageloaderror`, (e) => this.handleLoadError(e));
   }
 
   protected unwatch() {
-    this.source.un(`imageloadstart`, e => this.handleLoadStart(e));
-    this.source.un(`imageloadend`, e => this.handleLoadEnd(e));
-    this.source.un(`imageloaderror`, e => this.handleLoadEnd(e));
-    this.source.un(`imageloaderror`, e => this.handleLoadError(e));
+    this.source.un(`imageloadstart`, (e) => this.handleLoadStart(e));
+    this.source.un(`imageloadend`, (e) => this.handleLoadEnd(e));
+    this.source.un(`imageloaderror`, (e) => this.handleLoadEnd(e));
+    this.source.un(`imageloaderror`, (e) => this.handleLoadError(e));
   }
 
   private handleLoadStart(event: any) {
@@ -68,7 +67,6 @@ export class ImageWatcher extends Watcher {
   }
 
   private handleLoadError(event) {
-
     if (!event.image.__watchers__) {
       return;
     }
@@ -76,10 +74,10 @@ export class ImageWatcher extends Watcher {
       'igo.geo.dataSource.unavailable',
       'igo.geo.dataSource.unavailableTitle',
       undefined,
-      { value: event.target.params_.LAYERS });
+      { value: event.target.params_.LAYERS }
+    );
     this.loaded = -1;
     this.loading = 0;
     this.status = SubjectStatus.Error;
-
   }
 }

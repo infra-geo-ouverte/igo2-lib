@@ -31,7 +31,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     return this._activeLayer;
   }
   set activeLayer(value) {
-    if (value && this.layer && value.id === this.layer.id && !this.selectionMode) {
+    if (
+      value &&
+      this.layer &&
+      value.id === this.layer.id &&
+      !this.selectionMode
+    ) {
       this.layerTool$.next(true);
       this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
     } else {
@@ -111,7 +116,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     if (this.inResolutionRange$.getValue() === false) {
       return 'igo.geo.layer.notInResolution';
     } else {
-      return this.layer.visible ? 'igo.geo.layer.hideLayer' : 'igo.geo.layer.showLayer';
+      return this.layer.visible
+        ? 'igo.geo.layer.hideLayer'
+        : 'igo.geo.layer.showLayer';
     }
   }
 
@@ -125,7 +132,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     private networkService: NetworkService,
     private renderer: Renderer2,
     private elRef: ElementRef,
-    private cdRef: ChangeDetectorRef) {}
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     if (
@@ -145,10 +153,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.state = state;
-      this.onResolutionChange();
-    });
+    this.network$$ = this.networkService
+      .currentState()
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
+        this.onResolutionChange();
+      });
 
     this.layers$$ = this.layers$.subscribe(() => {
       if (this.layer && this.layer.options.active) {
@@ -244,6 +254,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   public check() {
     this.layerCheck = !this.layerCheck;
-    this.checkbox.emit({layer: this.layer, check: this.layerCheck});
+    this.checkbox.emit({ layer: this.layer, check: this.layerCheck });
   }
 }

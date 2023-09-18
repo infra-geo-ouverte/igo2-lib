@@ -11,14 +11,12 @@ describe('CollapsibleComponent', () => {
   let component: CollapsibleComponent;
   let fixture: ComponentFixture<CollapsibleComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [MatListModule, MatIconModule, MatIconTestingModule],
-        declarations: [CollapsibleComponent, CollapseDirective]
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [MatListModule, MatIconModule, MatIconTestingModule],
+      declarations: [CollapsibleComponent, CollapseDirective]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CollapsibleComponent);

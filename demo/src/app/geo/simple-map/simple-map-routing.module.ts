@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppSimpleMapComponent } from './simple-map.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppSimpleMapRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppSimpleMapRoutingModule = RouterModule.forChild(routes);

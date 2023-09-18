@@ -21,7 +21,7 @@ export class ChangeUtils {
     const obj2Clone: any = [...obj2];
 
     for (const fromItem of obj1Clone) {
-      const index = obj2Clone.findIndex(s => s.id === fromItem.id);
+      const index = obj2Clone.findIndex((s) => s.id === fromItem.id);
 
       if (index === -1) {
         items.deleted.push({
@@ -55,7 +55,7 @@ export class ChangeUtils {
       }
     }
 
-    items.added = obj2Clone.map(itemAdded => {
+    items.added = obj2Clone.map((itemAdded) => {
       return {
         change: { type: ChangeType.ADDED },
         value: itemAdded
@@ -74,7 +74,7 @@ export class ChangeUtils {
       ...Object.keys(toItem)
     ]);
     let keysChanged = [];
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const keyString = baseKey ? `${baseKey}.${key}` : key;
       if (ignoreKeys.indexOf(keyString) !== -1) {
         return;

@@ -11,20 +11,9 @@ import { FormFieldService } from './shared/form-field.service';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoFormGroupModule,
-    IgoFormFieldModule
-  ],
-  exports: [
-    IgoFormFormModule,
-    IgoFormGroupModule,
-    IgoFormFieldModule
-  ],
+  imports: [CommonModule, IgoFormGroupModule, IgoFormFieldModule],
+  exports: [IgoFormFormModule, IgoFormGroupModule, IgoFormFieldModule],
   declarations: [],
-  providers: [
-    FormService,
-    FormFieldService
-  ]
+  providers: [FormService, FormFieldService]
 })
 export class IgoFormModule {}

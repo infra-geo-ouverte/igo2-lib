@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppFeatureComponent } from './feature.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppFeatureRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppFeatureRoutingModule = RouterModule.forChild(routes);

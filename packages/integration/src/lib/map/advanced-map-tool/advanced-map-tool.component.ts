@@ -7,7 +7,6 @@ import { MapState } from '../map.state';
   title: 'igo.integration.tools.advancedMap',
   icon: 'toolbox'
 })
-
 /**
  * Tool to handle the advanced map tools
  */
@@ -16,9 +15,7 @@ import { MapState } from '../map.state';
   templateUrl: './advanced-map-tool.component.html',
   styleUrls: ['./advanced-map-tool.component.scss']
 })
-
 export class AdvancedMapToolComponent {
-
   get tracking$() {
     return this.mapState.map.geolocationController.tracking$;
   }
@@ -26,8 +23,7 @@ export class AdvancedMapToolComponent {
     return this.mapState.map.geolocationController.followPosition$;
   }
 
-  constructor(
-    public mapState: MapState) {}
+  constructor(public mapState: MapState) {}
 
   toggleTracking(value) {
     this.mapState.map.geolocationController.tracking = value;

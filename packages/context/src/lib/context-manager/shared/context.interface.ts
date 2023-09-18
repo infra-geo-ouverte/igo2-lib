@@ -1,6 +1,12 @@
 import { Message } from '@igo2/core';
 import { Tool } from '@igo2/common';
-import { MapViewOptions, LayerOptions, MapScaleLineOptions, MapAttributionOptions, MapExtent } from '@igo2/geo';
+import {
+  MapViewOptions,
+  LayerOptions,
+  MapScaleLineOptions,
+  MapAttributionOptions,
+  MapExtent
+} from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import { FeatureCollection } from 'geojson';
@@ -24,7 +30,11 @@ export interface ContextsList {
   public?: Context[];
 }
 
-export type ExtraFeatures = FeatureCollection & {name: string; opacity: number; visible: boolean;}
+export type ExtraFeatures = FeatureCollection & {
+  name: string;
+  opacity: number;
+  visible: boolean;
+};
 export interface DetailedContext extends Context {
   base?: string;
   map?: ContextMap;
@@ -39,11 +49,11 @@ export interface DetailedContext extends Context {
 
 export interface ContextMapView extends MapViewOptions {
   keepCurrentView?: boolean;
-  homeExtent?: ContextHomeExtent
+  homeExtent?: ContextHomeExtent;
 }
 
 export interface ContextHomeExtent {
-  extent?: MapExtent
+  extent?: MapExtent;
   center?: [number, number];
   zoom?: number;
 }

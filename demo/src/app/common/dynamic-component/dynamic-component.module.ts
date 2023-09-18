@@ -11,16 +11,16 @@ import { AppDynamicComponentRoutingModule } from './dynamic-component-routing.mo
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        AppSalutationComponent,
-        AppDynamicComponentComponent,
-        AppExplanationComponent
-    ],
-    imports: [
-        SharedModule,
-        AppDynamicComponentRoutingModule,
-        IgoDynamicComponentModule
-    ],
-    exports: [AppDynamicComponentComponent]
+  declarations: [
+    AppSalutationComponent,
+    AppDynamicComponentComponent,
+    AppExplanationComponent
+  ],
+  imports: [
+    SharedModule,
+    AppDynamicComponentRoutingModule,
+    IgoDynamicComponentModule
+  ],
+  exports: [AppDynamicComponentComponent]
 })
 export class AppDynamicComponentModule {}

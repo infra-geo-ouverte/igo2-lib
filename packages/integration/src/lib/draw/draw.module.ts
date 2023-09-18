@@ -5,8 +5,6 @@ import { IgoAppDrawingToolModule } from './drawing-tool/drawing-tool.module';
 
 @NgModule({
   imports: [IgoDrawingToolModule],
-  exports: [
-    IgoAppDrawingToolModule
-  ]
+  exports: [IgoAppDrawingToolModule]
 })
 export class IgoAppDrawModule {}

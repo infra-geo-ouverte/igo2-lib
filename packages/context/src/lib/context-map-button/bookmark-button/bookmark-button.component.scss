@@ -3,7 +3,7 @@
 
 :host {
   @include common-utils.square-button();
-  
+
   .igo-bookmark-button-container {
     width: $igo-icon-size;
     button {

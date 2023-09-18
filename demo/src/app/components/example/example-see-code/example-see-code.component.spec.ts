@@ -8,9 +8,8 @@ describe('ExampleSeeCodeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ExampleSeeCodeComponent ]
-    })
-    .compileComponents();
+      declarations: [ExampleSeeCodeComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ExampleSeeCodeComponent);
     component = fixture.componentInstance;

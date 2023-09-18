@@ -9,15 +9,17 @@ $warn: mat.define-palette(mat.$red-palette);
 // $typography: mat.define-typography-config($font-family: 'Roboto, 'Helvetica Neue', sans-serif',);
 $typography: igo.$igo-typography;
 
-$theme-config: mat.define-light-theme((
+$theme-config: mat.define-light-theme(
+  (
     color: (
-        primary: $primary,
-        accent: $accent,
-        warn: $warn
+      primary: $primary,
+      accent: $accent,
+      warn: $warn
     ),
     typography: $typography,
-    density: 0,
-));
+    density: 0
+  )
+);
 
 @include mat.core();
 @include mat.typography-hierarchy($typography);
@@ -25,18 +27,17 @@ $theme-config: mat.define-light-theme((
 @include mat.all-component-themes($theme-config);
 @include igo.all-component-themes($theme-config);
 
-
 @mixin mat-toolbar($theme) {
-    $density: mat.get-density-config($theme);
-  
-    $theme: map.merge(
-      $theme,
-      (
-        density: $density - 2
-      )
-    );
-  
-    @include mat.toolbar-density($theme);
+  $density: mat.get-density-config($theme);
+
+  $theme: map.merge(
+    $theme,
+    (
+      density: $density - 2
+    )
+  );
+
+  @include mat.toolbar-density($theme);
 }
 
 @include mat-toolbar($theme-config);

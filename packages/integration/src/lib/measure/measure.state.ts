@@ -10,7 +10,6 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class MeasureState {
-
   /**
    * Store that holds the measures
    */
@@ -22,13 +21,18 @@ export class MeasureState {
     });
 
     this.mapState.map.layers$.subscribe((layers) => {
-      if ((layers.filter(l => l.id?.startsWith('igo-measures-')).length === 0)) {
+      if (
+        layers.filter((l) => l.id?.startsWith('igo-measures-')).length === 0
+      ) {
         this.store.deleteMany(this.store.all());
-        this.mapState.map.ol.getOverlays().getArray()
-          .filter(overlay => (overlay as any).options.className.includes('igo-map-tooltip'))
-          .map(overlay => this.mapState.map.ol.removeOverlay(overlay));
+        this.mapState.map.ol
+          .getOverlays()
+          .getArray()
+          .filter((overlay) =>
+            (overlay as any).options.className.includes('igo-map-tooltip')
+          )
+          .map((overlay) => this.mapState.map.ol.removeOverlay(overlay));
       }
     });
   }
-
 }

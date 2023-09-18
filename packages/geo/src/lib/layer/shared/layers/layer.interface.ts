@@ -39,7 +39,7 @@ export interface LayerOptions {
 }
 
 export interface LayerSecurityOptions {
-  profils?: string[]
+  profils?: string[];
 }
 
 export interface GeoWorkspaceOptions {

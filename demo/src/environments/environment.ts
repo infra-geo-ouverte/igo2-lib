@@ -43,7 +43,7 @@ export const environment: EnvironmentOptions = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
           // TODO pelord, serais-tu en mesure de corriger l'interface?
           // queryFormat: {
           //   html: '*',
@@ -306,7 +306,8 @@ export const environment: EnvironmentOptions = {
         enabled: true,
         params: {
           limit: '8'
-        }
+        },
+        showAdvancedSettings: true
       },
       coordinatesreverse: {
         showInPointerSummary: true

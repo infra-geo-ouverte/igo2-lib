@@ -10,7 +10,6 @@ import { AuthStorageOptions } from './auth-storage.interface';
   providedIn: 'root'
 })
 export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
-
   constructor(
     config: ConfigService,
     private http: HttpClient,
@@ -19,7 +18,7 @@ export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
   ) {
     super(config);
 
-    this.authService.authenticate$.subscribe(isAuthenticated => {
+    this.authService.authenticate$.subscribe((isAuthenticated) => {
       if (isAuthenticated && this.options.url) {
         this.http
           .get(this.options.url)
@@ -71,11 +70,17 @@ export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
       this.authService.authenticated &&
       this.options.url
     ) {
-      this.http.patch(this.options.url, { preference: {}}, {
-        params: {
-          mergePreference: 'false'
-        }
-      }).subscribe();
+      this.http
+        .patch(
+          this.options.url,
+          { preference: {} },
+          {
+            params: {
+              mergePreference: 'false'
+            }
+          }
+        )
+        .subscribe();
     }
 
     let token: string;

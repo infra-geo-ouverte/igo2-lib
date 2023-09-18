@@ -141,7 +141,12 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-
     OgcFilterTimeComponent,
     OgcFilterTimeSliderComponent
   ],
-  providers: [TimeFilterService, OGCFilterService, OGCFilterTimeService, SpatialFilterService]
+  providers: [
+    TimeFilterService,
+    OGCFilterService,
+    OGCFilterTimeService,
+    SpatialFilterService
+  ]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders<IgoFilterModule> {

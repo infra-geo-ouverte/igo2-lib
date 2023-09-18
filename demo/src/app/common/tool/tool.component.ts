@@ -22,17 +22,14 @@ import {
   name: 'demo-salutation',
   title: 'Salutation',
   icon: 'account',
-  options: {name: 'Jack'}
+  options: { name: 'Jack' }
 })
 @Component({
   selector: 'app-salutation-tool',
-  template: `
-    <p>Hello, my name is {{name}}.</p>
-  `,
+  template: ` <p>Hello, my name is {{ name }}.</p> `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
-
   @Input() name: string;
 
   constructor(private cdRef: ChangeDetectorRef) {}
@@ -40,7 +37,6 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
   onUpdateInputs() {
     this.cdRef.detectChanges();
   }
-
 }
 
 @ToolComponent({
@@ -50,9 +46,7 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 })
 @Component({
   selector: 'app-about-tool',
-  template: `
-    <p>I'm a tool inside a toolbox.</p>
-  `,
+  template: ` <p>I'm a tool inside a toolbox.</p> `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppAboutToolComponent {}
@@ -63,7 +57,6 @@ export class AppAboutToolComponent {}
   styleUrls: ['./tool.component.scss']
 })
 export class AppToolComponent implements OnInit, OnDestroy {
-
   toolbox = new Toolbox();
 
   get activeTool$(): BehaviorSubject<Tool> {
@@ -89,7 +82,6 @@ export class AppToolComponent implements OnInit, OnDestroy {
   }
 
   activateSalutationTool() {
-    this.toolbox.activateTool('demo-salutation', {name: 'Bob'});
+    this.toolbox.activateTool('demo-salutation', { name: 'Bob' });
   }
-
 }

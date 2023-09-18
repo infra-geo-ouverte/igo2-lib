@@ -19,11 +19,11 @@ export interface ProjectionsLimitationsOptions {
   utm?: boolean;
   mtm?: boolean;
   utmZone?: {
-    minZone?: number,
-    maxZone?: number
+    minZone?: number;
+    maxZone?: number;
   };
   mtmZone?: {
-    minZone?: number,
-    maxZone?: number
+    minZone?: number;
+    maxZone?: number;
   };
 }

@@ -20,11 +20,11 @@ $slide-toggle-width: 60px;
       width: 100%;
       padding: 10px;
 
-      ::ng-deep .mdc-form-field{
+      ::ng-deep .mdc-form-field {
         width: 100%;
       }
 
-      ::ng-deep .mdc-label  {
+      ::ng-deep .mdc-label {
         margin-left: 0;
         width: calc(100% - #{$slide-toggle-width});
       }
@@ -52,7 +52,7 @@ $slide-toggle-width: 60px;
   .igo-map-tooltip-hidden {
     display: none;
   }
-  .igo-map-tooltip-measure-by-display{
+  .igo-map-tooltip-measure-by-display {
     display: none;
   }
 }

@@ -37,14 +37,20 @@ export interface VectorLayerOptions extends LayerOptions {
     | ArcGISRestDataSourceOptions
     | WebSocketDataSourceOptions
     | ClusterDataSourceOptions;
-  style?: olStyle | olStyle[] | ((arg0: RenderFeature | Feature<any>, arg1: number) => void | olStyle | olStyle[]);
+  style?:
+    | olStyle
+    | olStyle[]
+    | ((
+        arg0: RenderFeature | Feature<any>,
+        arg1: number
+      ) => void | olStyle | olStyle[]);
   browsable?: boolean;
   exportable?: boolean;
   ol?: olLayerVector<olSourceVector<OlGeometry>>;
   animation?: VectorAnimation;
   clusterParam?: ClusterParam;
-  trackFeature?: string | number;
-  idbInfo?: IdbInfo
+  trackFeature?: string | number;
+  idbInfo?: IdbInfo;
   igoStyle?: IgoStyle;
 }
 

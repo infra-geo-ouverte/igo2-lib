@@ -4,7 +4,13 @@ export enum CatalogItemType {
 }
 
 export enum TypeCatalog {
-  wms, wmts, baselayers, arcgisrest, tilearcgisrest, imagearcgisrest, composite
+  wms,
+  wmts,
+  baselayers,
+  arcgisrest,
+  tilearcgisrest,
+  imagearcgisrest,
+  composite
 }
 
 export type TypeCatalogStrings = keyof typeof TypeCatalog;
