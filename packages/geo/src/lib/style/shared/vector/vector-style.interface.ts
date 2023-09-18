@@ -17,12 +17,13 @@ export interface IgoStyleBase {
   mapboxStyle ?: MapboxStyle;
   styleByAttribute?: StyleByAttribute;
   geoStylerStyle?: GeoStylerStyleInterfaceOptions;
+  geoStylerStyleHover?: GeoStylerStyleInterfaceOptions;
 
 }
 
 export interface GeoStylerStyleInterfaceOptions {
-  global: GeoStylerStyle;
-  hover: GeoStylerStyle;
+  global?: GeoStylerStyle;
+  hover?: GeoStylerStyle;
 }
 
 export interface CommonVectorStyleOptions {

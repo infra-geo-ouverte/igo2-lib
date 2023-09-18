@@ -123,7 +123,13 @@ export class LayerService {
 
     const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions;
     const geostylerStyleGlobal = stylableLayerOptions.igoStyle?.geoStylerStyle?.global;
-    const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
+    const geostylerStyleHover = stylableLayerOptions.igoStyle?.geoStylerStyle?.hover;
+    //const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
+
+    // temporaire, penser à une meilleure logique pour l'ajout d'un type (global, hover, etc.)
+    const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : (geostylerStyleHover ? this.geostylerService.geostylerToOl(geostylerStyleHover) : of(undefined));
+
+
 
     return globalWriteStyleResult$.pipe(
       mergeMap(writeStyleResult => {

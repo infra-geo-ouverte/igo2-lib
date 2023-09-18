@@ -40,9 +40,16 @@ export class GeostylerStyleService {
     let parser: OpenLayersParser; // Ajouter les autres parser géré OU créer un type
     if (destStyle === StyleSourceType.OpenLayers) {
       parser = new OpenLayersParser();
+    } else
+    if(destStyle === StyleSourceType.HoverStyle){
+      parser = new OpenLayersParser();
     }
     if (parser) {
       return from(parser.writeStyle(options));
     }
+  }
+
+  private hoverStyleToGeostyler(){
+    
   }
 }

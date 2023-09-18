@@ -1,3 +1,4 @@
 export enum StyleSourceType {
-  OpenLayers = 'ol'
+  OpenLayers = 'ol',
+  HoverStyle = 'hs'
 }
