@@ -2,10 +2,10 @@
   .igo-layer-legend.with-title {
     padding-left: 18px;
   }
-  
+
   img {
     max-width: 100%;
-    
+
     &:after {
       content: ' ';
       position: relative;
@@ -20,15 +20,19 @@
       animation: 2s linear infinite spin;
     }
   }
-  
+
   @-moz-document url-prefix() {
     img:after {
-       margin-left: 19px;
+      margin-left: 19px;
     }
   }
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

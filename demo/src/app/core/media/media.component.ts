@@ -21,5 +21,4 @@ export class AppMediaComponent {
   get isTouchScreen() {
     return this.mediaService.isTouchScreen();
   }
-
 }

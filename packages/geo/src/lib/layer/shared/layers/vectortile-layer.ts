@@ -21,7 +21,8 @@ export class VectorTileLayer extends Layer {
   constructor(
     options: VectorTileLayerOptions,
     public messageService?: MessageService,
-    public authInterceptor?: AuthInterceptor) {
+    public authInterceptor?: AuthInterceptor
+  ) {
     super(options, messageService, authInterceptor);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
@@ -36,12 +37,16 @@ export class VectorTileLayer extends Layer {
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
     vectorTileSource.setTileLoadFunction((tile: VectorTile, url: string) => {
-      const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
+      const loader = this.customLoader(
+        url,
+        tile.getFormat(),
+        this.authInterceptor,
+        tile.onLoad.bind(tile)
+      );
       if (loader) {
         tile.setLoader(loader);
       }
-    }
-    );
+    });
 
     return vectorTile;
   }
@@ -56,7 +61,7 @@ export class VectorTileLayer extends Layer {
    * @param failure On failure event action to trigger TODO
    */
   customLoader(url, format, interceptor, success, failure?) {
-    return ((extent, resolution, projection) => {
+    return (extent, resolution, projection) => {
       const xhr = new XMLHttpRequest();
       let modifiedUrl = url;
       if (typeof url !== 'function') {
@@ -67,7 +72,7 @@ export class VectorTileLayer extends Layer {
       } else {
         modifiedUrl = url(extent, resolution, projection);
       }
-      xhr.open( 'GET', modifiedUrl);
+      xhr.open('GET', modifiedUrl);
       if (interceptor) {
         interceptor.interceptXhr(xhr, modifiedUrl);
       }
@@ -76,28 +81,32 @@ export class VectorTileLayer extends Layer {
         xhr.responseType = 'arraybuffer';
       }
       xhr.onload = (event) => {
-        if (!xhr.status || xhr.status >= 200 && xhr.status < 300) {
+        if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
           const type = format.getType();
           let source;
           if (type === 'json' || type === 'text') {
             source = xhr.responseText;
-          }
-          else if (type === 'xml') {
+          } else if (type === 'xml') {
             source = xhr.responseXML;
             if (!source) {
-              source = new DOMParser().parseFromString(xhr.responseText, 'application/xml');
+              source = new DOMParser().parseFromString(
+                xhr.responseText,
+                'application/xml'
+              );
             }
-          }
-          else if (type === 'arraybuffer') {
+          } else if (type === 'arraybuffer') {
             source = xhr.response;
           }
           if (source) {
-            success.call(this, format.readFeatures(source, {
-              extent,
-              featureProjection: projection
-            }), format.readProjection(source));
-          }
-          else {
+            success.call(
+              this,
+              format.readFeatures(source, {
+                extent,
+                featureProjection: projection
+              }),
+              format.readProjection(source)
+            );
+          } else {
             // TODO
             failure.call(this);
           }
@@ -111,7 +120,7 @@ export class VectorTileLayer extends Layer {
         failure.call(this);
       };
       xhr.send();
-    });
+    };
   }
 
   public setMap(map: IgoMap | undefined) {

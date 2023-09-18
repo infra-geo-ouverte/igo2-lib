@@ -1,4 +1,4 @@
-// In production use @igo2/core/all-style 
+// In production use @igo2/core/all-style
 @use 'packages/core/src/style/all-style';
 // In production use @igo2/core/layout
 @use 'packages/core/src/style/layout';
@@ -16,12 +16,13 @@ body {
 }
 
 mat-card {
-  .mat-mdc-card-content>:last-child:is(hr) {
+  .mat-mdc-card-content > :last-child:is(hr) {
     margin-bottom: 0.5em !important;
   }
 }
 
-mat-card-actions, .actions-container {
+mat-card-actions,
+.actions-container {
   button:not(:last-child) {
     margin-right: 8px;
   }

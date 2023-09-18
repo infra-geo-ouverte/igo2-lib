@@ -42,7 +42,8 @@ export class ExportButtonComponent {
   layerIsExportable(): boolean {
     if (
       (this.layer instanceof VectorLayer && this.layer.exportable === true) ||
-      (this.layer.dataSource.options.download && this.layer.dataSource.options.download.url) ||
+      (this.layer.dataSource.options.download &&
+        this.layer.dataSource.options.download.url) ||
       (this.layer.options.workspace?.enabled &&
         this.layer.options.workspace?.workspaceId !== this.layer.id)
     ) {

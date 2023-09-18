@@ -10,21 +10,21 @@
     </thead>
     <tbody>
       <tr>
-        <td>{{ data.length | measureFormat : measureLengthUnit.Meters }}</td>
+        <td>{{ data.length | measureFormat: measureLengthUnit.Meters }}</td>
         <td>{{ 'igo.geo.measure.dialog.lengthInMeters' | translate }}</td>
       </tr>
       <tr>
         <td>
-          {{ data.length | measureFormat : measureLengthUnit.Kilometers }}
+          {{ data.length | measureFormat: measureLengthUnit.Kilometers }}
         </td>
         <td>{{ 'igo.geo.measure.dialog.lengthInKilometers' | translate }}</td>
       </tr>
       <tr>
-        <td>{{ data.length | measureFormat : measureLengthUnit.Miles }}</td>
+        <td>{{ data.length | measureFormat: measureLengthUnit.Miles }}</td>
         <td>{{ 'igo.geo.measure.dialog.lengthInMiles' | translate }}</td>
       </tr>
       <tr>
-        <td>{{ data.length | measureFormat : measureLengthUnit.Feet }}</td>
+        <td>{{ data.length | measureFormat: measureLengthUnit.Feet }}</td>
         <td>{{ 'igo.geo.measure.dialog.lengthInFeet' | translate }}</td>
       </tr>
     </tbody>
@@ -40,32 +40,32 @@
     </thead>
     <tbody>
       <tr>
-        <td>{{ data.area | measureFormat : measureAreaUnit.SquareMeters }}</td>
+        <td>{{ data.area | measureFormat: measureAreaUnit.SquareMeters }}</td>
         <td>{{ 'igo.geo.measure.dialog.areaInSquareMeters' | translate }}</td>
       </tr>
       <tr>
         <td>
-          {{ data.area | measureFormat : measureAreaUnit.SquareKilometers }}
+          {{ data.area | measureFormat: measureAreaUnit.SquareKilometers }}
         </td>
         <td>
           {{ 'igo.geo.measure.dialog.areaInSquareKilometers' | translate }}
         </td>
       </tr>
       <tr>
-        <td>{{ data.area | measureFormat : measureAreaUnit.SquareMiles }}</td>
+        <td>{{ data.area | measureFormat: measureAreaUnit.SquareMiles }}</td>
         <td>{{ 'igo.geo.measure.dialog.areaInSquareMiles' | translate }}</td>
       </tr>
       <tr>
-        <td>{{ data.area | measureFormat : measureAreaUnit.Acres }}</td>
+        <td>{{ data.area | measureFormat: measureAreaUnit.Acres }}</td>
         <td>{{ 'igo.geo.measure.dialog.areaInAcres' | translate }}</td>
       </tr>
       <tr>
-        <td>{{ data.area | measureFormat : measureAreaUnit.Hectares }}</td>
+        <td>{{ data.area | measureFormat: measureAreaUnit.Hectares }}</td>
         <td>{{ 'igo.geo.measure.dialog.areaInHectares' | translate }}</td>
       </tr>
       <tr>
         <td>{{ 'igo.geo.measure.dialog.perimeterInMeters' | translate }}</td>
-        <td>{{ data.perimeter | measureFormat : measureLengthUnit.Meters }}</td>
+        <td>{{ data.perimeter | measureFormat: measureLengthUnit.Meters }}</td>
       </tr>
     </tbody>
   </table>

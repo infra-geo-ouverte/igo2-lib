@@ -21,9 +21,7 @@
       <p>
         {{ 'igo.geo.draw.builtInInstructions' | translate }}
       </p>
-      <mat-radio-group
-        *ngIf="olGeometryType !== 'Polygon'"
-      >
+      <mat-radio-group *ngIf="olGeometryType !== 'Polygon'">
         <mat-radio-button
           *ngFor="let option of arrayBuiltInType"
           [value]="option.value"
@@ -68,7 +66,10 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div *ngIf="labelFlag === labelType.Length || polygonCheck === 2" class="fields-container">
+      <div
+        *ngIf="labelFlag === labelType.Length || polygonCheck === 2"
+        class="fields-container"
+      >
         <mat-form-field class="readOnly-Input">
           <mat-label>{{ lengthLabelT }}</mat-label>
           <input
@@ -90,7 +91,10 @@
           </mat-select>
         </mat-form-field>
       </div>
-      <div *ngIf="labelFlag === labelType.Area || polygonCheck === 2" class="fields-container">
+      <div
+        *ngIf="labelFlag === labelType.Area || polygonCheck === 2"
+        class="fields-container"
+      >
         <mat-form-field class="readOnly-Input">
           <mat-label>{{ 'igo.geo.draw.labelType.Area' | translate }}</mat-label>
           <input

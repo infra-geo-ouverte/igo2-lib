@@ -12,7 +12,8 @@ import { ConfigService } from '@igo2/core';
 export class SecureImagePipe implements PipeTransform {
   constructor(
     private http: HttpClient,
-    private configService?: ConfigService) {}
+    private configService?: ConfigService
+  ) {}
 
   @Cacheable({
     maxCacheCount: 20
@@ -24,7 +25,9 @@ export class SecureImagePipe implements PipeTransform {
       interceptError: 'false'
     });
 
-    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
+    const regexDepot = new RegExp(
+      this.configService?.getConfig('depot.url') + '.*?(?="|$)'
+    );
     if (regexDepot.test(url)) {
       url = url.match(regexDepot)[0];
     }

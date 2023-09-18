@@ -8,7 +8,6 @@ import { ConfigService } from '@igo2/core';
   styleUrls: ['./menu-button.component.scss']
 })
 export class MenuButtonComponent {
-
   @Input()
   get sidenavOpened(): boolean {
     return this._sidenavOpenend;

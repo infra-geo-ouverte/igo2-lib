@@ -37,12 +37,7 @@ import { SearchUrlParamDirective } from './search-url-param.directive';
     IgoSearchSelectorModule,
     IgoSearchSettingsModule
   ],
-  exports: [
-    SearchBarComponent,
-  ],
-  declarations: [
-    SearchBarComponent,
-    SearchUrlParamDirective
-  ]
+  exports: [SearchBarComponent],
+  declarations: [SearchBarComponent, SearchUrlParamDirective]
 })
 export class IgoSearchBarModule {}

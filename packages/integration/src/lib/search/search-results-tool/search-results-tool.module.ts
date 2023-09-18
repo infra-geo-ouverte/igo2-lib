@@ -7,7 +7,11 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoFlexibleModule, IgoCustomHtmlModule, IgoPanelModule } from '@igo2/common';
+import {
+  IgoFlexibleModule,
+  IgoCustomHtmlModule,
+  IgoPanelModule
+} from '@igo2/common';
 import {
   IgoFeatureModule,
   IgoSearchModule,

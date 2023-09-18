@@ -19,7 +19,7 @@ export function cadastreSearchSourceFactory(
     http,
     languageService,
     storageService,
-    config.getConfig(`searchSources.${CadastreSearchSource.id}`),
+    config.getConfig(`searchSources.${CadastreSearchSource.id}`)
   );
 }
 

@@ -8,12 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppDrawComponent],
-  imports: [
-    AppDrawRoutingModule,
-    SharedModule,
-    IgoMapModule,
-    IgoDrawModule
-  ],
+  imports: [AppDrawRoutingModule, SharedModule, IgoMapModule, IgoDrawModule],
   exports: [AppDrawComponent]
 })
 export class AppDrawModule {}

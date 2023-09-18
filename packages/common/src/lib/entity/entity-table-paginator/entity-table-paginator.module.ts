@@ -6,14 +6,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
  * @ignore
  */
 @NgModule({
-  imports: [
-    MatPaginatorModule,
-  ],
-  exports: [
-    EntityTablePaginatorComponent
-  ],
-  declarations: [
-    EntityTablePaginatorComponent,
-  ]
+  imports: [MatPaginatorModule],
+  exports: [EntityTablePaginatorComponent],
+  declarations: [EntityTablePaginatorComponent]
 })
 export class IgoEntityTablePaginatorModule {}

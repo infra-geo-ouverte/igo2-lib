@@ -8,7 +8,6 @@ import { BaseStorage } from './storage';
   providedIn: 'root'
 })
 export class StorageService extends BaseStorage<StorageOptions> {
-
   constructor(private config: ConfigService) {
     super(config);
   }

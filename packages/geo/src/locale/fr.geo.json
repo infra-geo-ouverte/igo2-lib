@@ -299,7 +299,7 @@
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
+        "resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventScreenLock": "Préviens l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permets l'écran d'entrer en mode verrouillé."
@@ -395,16 +395,16 @@
         "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
         "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
         "arrive": {
-          "lastStep" : "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
-          "intermediate" : "Vous atteignez le point intermédiaire sur {{route}}"
+          "lastStep": "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
+          "intermediate": "Vous atteignez le point intermédiaire sur {{route}}"
         },
         "merge": "Continuer sur {{route}}",
         "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",
         "off ramp": "Prendre la sortie d'autoroute {{aggregatedDirection}}",
         "fork": {
-          "left" : "Garder la gauche sur {{route}}",
-          "right" : "Garder la droite sur {{route}}",
-          "else" : "Continuer sur {{route}}"
+          "left": "Garder la gauche sur {{route}}",
+          "right": "Garder la droite sur {{route}}",
+          "else": "Continuer sur {{route}}"
         },
         "end of road": "À la fin de la route, tourner {{translatedModifier}} sur {{route}}",
         "use lane": "Prendre la voie de ...",
@@ -508,7 +508,7 @@
             "cadastre": "Cadastre",
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
-            "cultpatri":"Culture et patrimoine"
+            "cultpatri": "Culture et patrimoine"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",

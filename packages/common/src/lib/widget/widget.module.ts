@@ -5,16 +5,9 @@ import { IgoWidgetOutletModule } from './widget-outlet/widget-outlet.module';
 import { WidgetService } from './shared/widget.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoWidgetOutletModule
-  ],
-  exports: [
-    IgoWidgetOutletModule
-  ],
+  imports: [CommonModule, IgoWidgetOutletModule],
+  exports: [IgoWidgetOutletModule],
   declarations: [],
-  providers: [
-    WidgetService
-  ]
+  providers: [WidgetService]
 })
 export class IgoWidgetModule {}

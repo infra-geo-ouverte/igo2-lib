@@ -41,11 +41,15 @@ import { DrawControl, ModifyControl } from '../../geometry/shared';
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
 
-import { Measure, MeasurerDialogData, FeatureWithMeasure } from '../shared/measure.interfaces';
+import {
+  Measure,
+  MeasurerDialogData,
+  FeatureWithMeasure
+} from '../shared/measure.interfaces';
 import {
   MeasureType,
   MeasureAreaUnit,
-  MeasureLengthUnit,
+  MeasureLengthUnit
 } from '../shared/measure.enum';
 import {
   measureOlGeometry,
@@ -70,7 +74,6 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeasurerComponent implements OnInit, OnDestroy {
-
   /**
    * Table template
    * @internal
@@ -125,7 +128,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Observable of line boolean
    * @internal
    */
-   public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public hasLine$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Observable of area boolean
@@ -143,7 +146,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Observable of selected features
    * @internal
    */
-  public selectedFeatures$: BehaviorSubject<FeatureWithMeasure[]> = new BehaviorSubject([]);
+  public selectedFeatures$: BehaviorSubject<FeatureWithMeasure[]> =
+    new BehaviorSubject([]);
 
   /**
    * OL draw source
@@ -258,8 +262,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   @Input()
-  set activeMeasureType(value: MeasureType) { this.setActiveMeasureType(value); }
-  get activeMeasureType(): MeasureType { return this._activeMeasureType; }
+  set activeMeasureType(value: MeasureType) {
+    this.setActiveMeasureType(value);
+  }
+  get activeMeasureType(): MeasureType {
+    return this._activeMeasureType;
+  }
   private _activeMeasureType: MeasureType;
 
   /**
@@ -295,10 +303,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       columns: [
         {
           name: 'length',
-          title: this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
+          title: this.languageService.translate.instant(
+            'igo.geo.measure.lengthHeader'
+          ),
           valueAccessor: (localFeature: FeatureWithMeasure) => {
             const unit = this.activeLengthUnit;
-            const measure = metersToUnit(localFeature.properties.measure.length, unit);
+            const measure = metersToUnit(
+              localFeature.properties.measure.length,
+              unit
+            );
             return formatMeasure(measure, {
               decimal: 1,
               unit,
@@ -309,16 +322,23 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         },
         {
           name: 'area',
-          title: this.languageService.translate.instant('igo.geo.measure.areaHeader'),
+          title: this.languageService.translate.instant(
+            'igo.geo.measure.areaHeader'
+          ),
           valueAccessor: (localFeature: FeatureWithMeasure) => {
             const unit = this.activeAreaUnit;
-            const measure = squareMetersToUnit(localFeature.properties.measure.area, unit);
-            return measure ? formatMeasure(measure, {
-              decimal: 1,
-              unit,
-              unitAbbr: false,
-              locale: 'fr'
-            }) : '';
+            const measure = squareMetersToUnit(
+              localFeature.properties.measure.area,
+              unit
+            );
+            return measure
+              ? formatMeasure(measure, {
+                  decimal: 1,
+                  unit,
+                  unitAbbr: false,
+                  locale: 'fr'
+                })
+              : '';
           }
         }
       ]
@@ -348,7 +368,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.setActiveMeasureType(undefined);
     this.deactivateModifyControl();
     this.freezeStore();
-    this.subscriptions$$.map(s => s.unsubscribe());
+    this.subscriptions$$.map((s) => s.unsubscribe());
   }
 
   /**
@@ -371,12 +391,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /**
    * Activate or deactivate the current draw control
    * @internal
    */
-   onToggleMeasureUnitsAuto(toggle: boolean) {
+  onToggleMeasureUnitsAuto(toggle: boolean) {
     this.measureUnitsAuto = toggle;
   }
 
@@ -387,8 +406,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayDistance(toggle: boolean) {
     this.displayDistance = toggle;
     this.onDisplayDistance();
-    toggle ? (this.storageService.set('distanceToggle', true, StorageScope.SESSION)) :
-     (this.storageService.set('distanceToggle', false, StorageScope.SESSION));
+    toggle
+      ? this.storageService.set('distanceToggle', true, StorageScope.SESSION)
+      : this.storageService.set('distanceToggle', false, StorageScope.SESSION);
   }
 
   /**
@@ -398,8 +418,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayLines(toggle: boolean) {
     this.displayLines = toggle;
     this.onDisplayLines();
-    toggle ? (this.storageService.set('linesToggle', true, StorageScope.SESSION)) :
-     (this.storageService.set('linesToggle', false, StorageScope.SESSION));
+    toggle
+      ? this.storageService.set('linesToggle', true, StorageScope.SESSION)
+      : this.storageService.set('linesToggle', false, StorageScope.SESSION);
   }
 
   /**
@@ -409,22 +430,23 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayAreas(toggle: boolean) {
     this.displayAreas = toggle;
     this.onDisplayAreas();
-    toggle ? (this.storageService.set('areasToggle', true, StorageScope.SESSION)) :
-     (this.storageService.set('areasToggle', false, StorageScope.SESSION));
+    toggle
+      ? this.storageService.set('areasToggle', true, StorageScope.SESSION)
+      : this.storageService.set('areasToggle', false, StorageScope.SESSION);
   }
 
   /**
    * Set display parametres in current values
    * @internal
    */
-  checkDistanceAreaToggle(){
-    if (this.storageService.get('distanceToggle') === false){
+  checkDistanceAreaToggle() {
+    if (this.storageService.get('distanceToggle') === false) {
       this.displayDistance = false;
     }
-    if (this.storageService.get('linesToggle') === false){
+    if (this.storageService.get('linesToggle') === false) {
       this.displayLines = false;
     }
-    if (this.storageService.get('areasToggle') === false){
+    if (this.storageService.get('areasToggle') === false) {
       this.displayAreas = false;
     }
   }
@@ -435,11 +457,19 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onDisplayDistance() {
     if (this.displayDistance) {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
-        value.classList.remove('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName(
+          'igo-map-tooltip-measure-polygone-segments'
+        )
+      ).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden')
+      );
     } else {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
-        value.classList.add('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName(
+          'igo-map-tooltip-measure-polygone-segments'
+        )
+      ).map((value: Element) => value.classList.add('igo-map-tooltip-hidden'));
     }
   }
 
@@ -449,11 +479,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onDisplayLines() {
     if (this.displayLines) {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-line-segments')).map((value: Element) =>
-        value.classList.remove('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName('igo-map-tooltip-measure-line-segments')
+      ).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden')
+      );
     } else {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-line-segments')).map((value: Element) =>
-        value.classList.add('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName('igo-map-tooltip-measure-line-segments')
+      ).map((value: Element) => value.classList.add('igo-map-tooltip-hidden'));
     }
   }
 
@@ -463,11 +497,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onDisplayAreas() {
     if (this.displayAreas) {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-area')).map((value: Element) =>
-        value.classList.remove('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName('igo-map-tooltip-measure-area')
+      ).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden')
+      );
     } else {
-      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-area')).map((value: Element) =>
-        value.classList.add('igo-map-tooltip-hidden'));
+      Array.from(
+        document.getElementsByClassName('igo-map-tooltip-measure-area')
+      ).map((value: Element) => value.classList.add('igo-map-tooltip-hidden'));
     }
   }
 
@@ -499,21 +537,30 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   onCalculateClick() {
     const features = this.selectedFeatures$.value;
-    const area = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
-      return sum + localFeature.properties.measure.area || 0;
-    }, 0);
-    const length = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
-      if (localFeature.geometry.type === 'Polygon') {
-        return sum;
-      }
-      return sum + localFeature.properties.measure.length || 0;
-    }, 0);
-    const perimeter = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
-      if (localFeature.geometry.type === 'LineString') {
-        return sum;
-      }
-      return sum + localFeature.properties.measure.length || 0;
-    }, 0);
+    const area = features.reduce(
+      (sum: number, localFeature: FeatureWithMeasure) => {
+        return sum + localFeature.properties.measure.area || 0;
+      },
+      0
+    );
+    const length = features.reduce(
+      (sum: number, localFeature: FeatureWithMeasure) => {
+        if (localFeature.geometry.type === 'Polygon') {
+          return sum;
+        }
+        return sum + localFeature.properties.measure.length || 0;
+      },
+      0
+    );
+    const perimeter = features.reduce(
+      (sum: number, localFeature: FeatureWithMeasure) => {
+        if (localFeature.geometry.type === 'LineString') {
+          return sum;
+        }
+        return sum + localFeature.properties.measure.length || 0;
+      },
+      0
+    );
 
     this.openDialog({
       area,
@@ -524,8 +571,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   onDeleteClick() {
     this.store.deleteMany(this.selectedFeatures$.value);
-    this.selectedFeatures$.value.forEach(selectedFeature => {
-      this.olDrawSource.getFeatures().forEach(drawingLayerFeature => {
+    this.selectedFeatures$.value.forEach((selectedFeature) => {
+      this.olDrawSource.getFeatures().forEach((drawingLayerFeature) => {
         const geometry = drawingLayerFeature.getGeometry() as any;
         if (selectedFeature.properties.id === geometry.ol_uid) {
           this.olDrawSource.removeFeature(drawingLayerFeature);
@@ -535,7 +582,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   onModifyClick() {
-    if (this.selectedFeatures$.value.length !== 1) { return; }
+    if (this.selectedFeatures$.value.length !== 1) {
+      return;
+    }
 
     if (this.modifyControl.active === true) {
       this.deactivateModifyControl();
@@ -552,14 +601,14 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         this.activateModifyControl();
 
         const olGeometry = olFeature.getGeometry();
-        this.clearTooltipsOfOlGeometry(olGeometry as (OlLineString | OlPolygon));
+        this.clearTooltipsOfOlGeometry(olGeometry as OlLineString | OlPolygon);
         this.modifyControl.setOlGeometry(olGeometry);
       }
     }
   }
 
   private openDialog(data: MeasurerDialogData): void {
-    this.dialog.open(MeasurerDialogComponent, {data});
+    this.dialog.open(MeasurerDialogComponent, { data });
   }
 
   /**
@@ -570,7 +619,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     const store = this.store;
 
     const layer = new VectorLayer({
-      title: this.languageService.translate.instant('igo.geo.measure.layerTitle'),
+      title: this.languageService.translate.instant(
+        'igo.geo.measure.layerTitle'
+      ),
       isIgoInternalLayer: true,
       id: `igo-measures-${uuid()}`,
       zIndex: 200,
@@ -583,67 +634,95 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     });
     tryBindStoreLayer(store, layer);
     store.layer.visible = true;
-    layer.visible$.subscribe(visible => {
+    layer.visible$.subscribe((visible) => {
       if (visible) {
-        Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>
-        value.classList.remove('igo-map-tooltip-measure-by-display'));
-      }
-      else {
-        Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>
-        value.classList.add('igo-map-tooltip-measure-by-display'));
+        Array.from(
+          document.getElementsByClassName('igo-map-tooltip-measure')
+        ).map((value: Element) =>
+          value.classList.remove('igo-map-tooltip-measure-by-display')
+        );
+      } else {
+        Array.from(
+          document.getElementsByClassName('igo-map-tooltip-measure')
+        ).map((value: Element) =>
+          value.classList.add('igo-map-tooltip-measure-by-display')
+        );
       }
     });
 
     tryAddLoadingStrategy(store);
 
-    tryAddSelectionStrategy(store, new FeatureStoreSelectionStrategy({
-      map: this.map,
-      many: true
-    }));
+    tryAddSelectionStrategy(
+      store,
+      new FeatureStoreSelectionStrategy({
+        map: this.map,
+        many: true
+      })
+    );
 
-    this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent<OlGeometry>) => {
-      const localFeature = event.feature;
-      const olGeometry = localFeature.getGeometry() as any;
-      this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
-      this.onDisplayDistance();
-    });
-
-    this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent<OlGeometry>) => {
-      const olGeometry = event.feature.getGeometry() as any;
-      this.clearTooltipsOfOlGeometry(olGeometry);
-    });
-
-    this.selectedFeatures$$ = store.stateView.manyBy$((record: EntityRecord<FeatureWithMeasure>) => {
-      return record.state.selected === true;
-    }).pipe(
-      skip(1) // Skip initial emission
-    )
-    .subscribe((records: EntityRecord<FeatureWithMeasure>[]) => {
-      if (this.modifyControl.active === true) {
-        this.deactivateModifyControl();
+    this.onFeatureAddedKey = store.source.ol.on(
+      'addfeature',
+      (event: OlVectorSourceEvent<OlGeometry>) => {
+        const localFeature = event.feature;
+        const olGeometry = localFeature.getGeometry() as any;
+        this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
+        this.onDisplayDistance();
       }
-      this.selectedFeatures$.next(records.map(record => record.entity));
-    });
+    );
 
-    this.subscriptions$$.push(this.store.entities$.subscribe(objectsExists => {
-      if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
-        this.hasArea$.next(true);
-      } else {
-        this.hasArea$.next(false);
+    this.onFeatureRemovedKey = store.source.ol.on(
+      'removefeature',
+      (event: OlVectorSourceEvent<OlGeometry>) => {
+        const olGeometry = event.feature.getGeometry() as any;
+        this.clearTooltipsOfOlGeometry(olGeometry);
       }
+    );
 
-      if (objectsExists.find(objectExist => objectExist.geometry.type === 'LineString')){
-        this.hasLine$.next(true);
-      } else {
-        this.hasLine$.next(false);
-      }
-    }));
+    this.selectedFeatures$$ = store.stateView
+      .manyBy$((record: EntityRecord<FeatureWithMeasure>) => {
+        return record.state.selected === true;
+      })
+      .pipe(
+        skip(1) // Skip initial emission
+      )
+      .subscribe((records: EntityRecord<FeatureWithMeasure>[]) => {
+        if (this.modifyControl.active === true) {
+          this.deactivateModifyControl();
+        }
+        this.selectedFeatures$.next(records.map((record) => record.entity));
+      });
 
-    this.subscriptions$$.push(this.store.count$.subscribe(cnt => {
-      cnt >= 1 ?
-        this.store.layer.options.showInLayerList = true :
-        this.store.layer.options.showInLayerList = false;
-    }));
+    this.subscriptions$$.push(
+      this.store.entities$.subscribe((objectsExists) => {
+        if (
+          objectsExists.find(
+            (objectExist) => objectExist.geometry.type === 'Polygon'
+          )
+        ) {
+          this.hasArea$.next(true);
+        } else {
+          this.hasArea$.next(false);
+        }
+
+        if (
+          objectsExists.find(
+            (objectExist) => objectExist.geometry.type === 'LineString'
+          )
+        ) {
+          this.hasLine$.next(true);
+        } else {
+          this.hasLine$.next(false);
+        }
+      })
+    );
+
+    this.subscriptions$$.push(
+      this.store.count$.subscribe((cnt) => {
+        cnt >= 1
+          ? (this.store.layer.options.showInLayerList = true)
+          : (this.store.layer.options.showInLayerList = false);
+      })
+    );
   }
 
   /**
@@ -715,17 +794,21 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private activateDrawControl(drawControl: DrawControl) {
     this.drawControlIsDisabled = false;
     this.activeDrawControl = drawControl;
-    this.drawStart$$ = drawControl.start$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawStart(olGeometry));
-    this.drawEnd$$ = drawControl.end$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawEnd(olGeometry));
-    this.drawChanges$$ = drawControl.changes$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onDrawChanges(olGeometry));
-    this.drawChanges$$ = drawControl.abort$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => {
+    this.drawStart$$ = drawControl.start$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onDrawStart(olGeometry)
+    );
+    this.drawEnd$$ = drawControl.end$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onDrawEnd(olGeometry)
+    );
+    this.drawChanges$$ = drawControl.changes$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onDrawChanges(olGeometry)
+    );
+    this.drawChanges$$ = drawControl.abort$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => {
         this.clearTooltipsOfOlGeometry(olGeometry);
         this.clearMeasures();
-      });
+      }
+    );
     drawControl.setOlMap(this.map.ol, false);
   }
 
@@ -738,9 +821,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     this.olDrawSource.clear();
-    if (this.drawStart$$ !== undefined ) { this.drawStart$$.unsubscribe(); }
-    if (this.drawEnd$$ !== undefined ) { this.drawEnd$$.unsubscribe(); }
-    if (this.drawChanges$$ !== undefined ) { this.drawChanges$$.unsubscribe(); }
+    if (this.drawStart$$ !== undefined) {
+      this.drawStart$$.unsubscribe();
+    }
+    if (this.drawEnd$$ !== undefined) {
+      this.drawEnd$$.unsubscribe();
+    }
+    if (this.drawChanges$$ !== undefined) {
+      this.drawChanges$$.unsubscribe();
+    }
 
     this.clearTooltipsOfOlSource(this.olDrawSource);
     if (this.activeOlGeometry !== undefined) {
@@ -783,9 +872,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   private onDrawChanges(olGeometry: OlLineString | OlPolygon) {
     const measure = measureOlGeometry(olGeometry, this.projection);
-    this.updateMeasureOfOlGeometry(olGeometry, Object.assign({}, measure, {
-      area: undefined // We don't want to display an area tooltip while drawing.
-    }));
+    this.updateMeasureOfOlGeometry(
+      olGeometry,
+      Object.assign({}, measure, {
+        area: undefined // We don't want to display an area tooltip while drawing.
+      })
+    );
     this.measure$.next(measure);
   }
 
@@ -794,16 +886,21 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param modifyControl Modify control
    */
   private activateModifyControl() {
-    const selection = this.store.getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+    const selection = this.store.getStrategyOfType(
+      FeatureStoreSelectionStrategy
+    ) as FeatureStoreSelectionStrategy;
     selection.deactivate();
     selection.clear();
 
-    this.modifyStart$$ = this.modifyControl.start$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onModifyStart(olGeometry));
-    this.modifyEnd$$ = this.modifyControl.end$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onModifyEnd(olGeometry));
-    this.modifyChanges$$ = this.modifyControl.changes$
-      .subscribe((olGeometry: OlLineString | OlPolygon) => this.onModifyChanges(olGeometry));
+    this.modifyStart$$ = this.modifyControl.start$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onModifyStart(olGeometry)
+    );
+    this.modifyEnd$$ = this.modifyControl.end$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onModifyEnd(olGeometry)
+    );
+    this.modifyChanges$$ = this.modifyControl.changes$.subscribe(
+      (olGeometry: OlLineString | OlPolygon) => this.onModifyChanges(olGeometry)
+    );
     this.modifyControl.setOlMap(this.map.ol);
   }
 
@@ -811,9 +908,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Deactivate the active modify control
    */
   private deactivateModifyControl() {
-    if (this.modifyStart$$ !== undefined ) { this.modifyStart$$.unsubscribe(); }
-    if (this.modifyEnd$$ !== undefined ) { this.modifyEnd$$.unsubscribe(); }
-    if (this.modifyChanges$$ !== undefined ) { this.modifyChanges$$.unsubscribe(); }
+    if (this.modifyStart$$ !== undefined) {
+      this.modifyStart$$.unsubscribe();
+    }
+    if (this.modifyEnd$$ !== undefined) {
+      this.modifyEnd$$.unsubscribe();
+    }
+    if (this.modifyChanges$$ !== undefined) {
+      this.modifyChanges$$.unsubscribe();
+    }
 
     if (this.activeOlGeometry !== undefined) {
       if (this.selectedFeatures$.value.length === 1) {
@@ -865,8 +968,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param olGeometry Ol linestring or polygon
    * @param measure Measure
    */
-  private updateMeasureOfOlGeometry(olGeometry: OlLineString | OlPolygon, measure: Measure) {
-    olGeometry.setProperties({_measure: measure}, true);
+  private updateMeasureOfOlGeometry(
+    olGeometry: OlLineString | OlPolygon,
+    measure: Measure
+  ) {
+    olGeometry.setProperties({ _measure: measure }, true);
     this.updateTooltipsOfOlGeometry(olGeometry);
   }
 
@@ -883,7 +989,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   private addFeatureToStore(olGeometry, localFeature?: FeatureWithMeasure) {
-    const featureId = localFeature ? localFeature.properties.id : olGeometry.ol_uid;
+    const featureId = localFeature
+      ? localFeature.properties.id
+      : olGeometry.ol_uid;
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
@@ -943,11 +1051,13 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Show the map tooltips of a geoemtry
    */
   private showTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
-    getTooltipsOfOlGeometry(olGeometry).forEach((olTooltip: OlOverlay | undefined) => {
-      if (this.shouldShowTooltip(olTooltip)) {
-        this.map.ol.addOverlay(olTooltip);
+    getTooltipsOfOlGeometry(olGeometry).forEach(
+      (olTooltip: OlOverlay | undefined) => {
+        if (this.shouldShowTooltip(olTooltip)) {
+          this.map.ol.addOverlay(olTooltip);
+        }
       }
-    });
+    );
   }
 
   /**
@@ -955,11 +1065,13 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param olGeometry OL geometry with tooltips
    */
   private clearTooltipsOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
-    getTooltipsOfOlGeometry(olGeometry).forEach((olTooltip: OlOverlay | undefined) => {
-      if (olTooltip !== undefined && olTooltip.getMap() !== undefined) {
-        this.map.ol.removeOverlay(olTooltip);
+    getTooltipsOfOlGeometry(olGeometry).forEach(
+      (olTooltip: OlOverlay | undefined) => {
+        if (olTooltip !== undefined && olTooltip.getMap() !== undefined) {
+          this.map.ol.removeOverlay(olTooltip);
+        }
       }
-    });
+    );
   }
 
   /**
@@ -1005,7 +1117,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     unit: MeasureAreaUnit | MeasureLengthUnit,
     type: MeasureType
   ) {
-    olTooltip.setProperties({_measure: measure, _unit: unit, _type: type}, true);
+    olTooltip.setProperties(
+      { _measure: measure, _unit: unit, _type: type },
+      true
+    );
     olTooltip.getElement().innerHTML = this.computeTooltipInnerHTML(olTooltip);
     if (this.shouldShowTooltip(olTooltip)) {
       this.map.ol.addOverlay(olTooltip);
@@ -1019,12 +1134,16 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   private computeTooltipInnerHTML(olTooltip: OlOverlay): string {
     const properties = olTooltip.getProperties() as any;
-    return formatMeasure(properties._measure, {
-      decimal: 1,
-      unit: properties._unit,
-      unitAbbr: true,
-      locale: 'fr'
-    }, this.languageService);
+    return formatMeasure(
+      properties._measure,
+      {
+        decimal: 1,
+        unit: properties._unit,
+        unitAbbr: true,
+        locale: 'fr'
+      },
+      this.languageService
+    );
   }
 
   /**
@@ -1045,7 +1164,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     if (properties._unit === MeasureType.Length) {
-      const minSegmentLength = metersToUnit(this.minSegmentLength, properties._unit) || 0;
+      const minSegmentLength =
+        metersToUnit(this.minSegmentLength, properties._unit) || 0;
       return measure > Math.max(minSegmentLength, 0);
     }
 

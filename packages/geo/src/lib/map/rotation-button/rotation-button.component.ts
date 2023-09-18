@@ -21,19 +21,18 @@ export class RotationButtonComponent implements AfterContentInit {
   @Input() showIfNoRotation: boolean;
   @Input() color: string;
 
-  constructor() { }
+  constructor() {}
 
   ngAfterContentInit() {
-    this.map.viewController.rotation$.subscribe(r => {
+    this.map.viewController.rotation$.subscribe((r) => {
       const radians = r || 0;
-      const deg = radians * 180 / Math.PI;
+      const deg = (radians * 180) / Math.PI;
       this.rotationRounded = Math.round(deg);
       this.azimuthRounded = Math.round(bearingToAzimuth(deg * -1));
       this.currentStyle$.next({
         transform: 'rotate(' + radians + 'rad)'
       });
       this.rotated$.next(radians !== 0);
-    }
-    );
+    });
   }
 }

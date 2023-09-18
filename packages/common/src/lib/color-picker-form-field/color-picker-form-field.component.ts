@@ -1,7 +1,13 @@
-import { Component, EventEmitter, forwardRef, Output, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  forwardRef,
+  Output,
+  OnInit
+} from '@angular/core';
 import { Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import tinycolor from "tinycolor2";
+import tinycolor from 'tinycolor2';
 
 @Component({
   selector: 'igo-color-picker-form-field',
@@ -11,18 +17,19 @@ import tinycolor from "tinycolor2";
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => ColorPickerFormFieldComponent),
-      multi: true,
+      multi: true
     }
   ]
 })
-export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnInit {
-
+export class ColorPickerFormFieldComponent
+  implements ControlValueAccessor, OnInit
+{
   // native color picker can't give transparency
   // set transparency manually
   @Input() setAlpha: number = 1;
 
   // by default native color picker gives hex result
-  @Input() outputFormat: 'hex'| 'rgba'| 'hsla' = 'rgba';
+  @Input() outputFormat: 'hex' | 'rgba' | 'hsla' = 'rgba';
 
   // default color
   @Input() color: string = '#000';
@@ -36,12 +43,12 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
 
   // final value we get as result with custom format
   set value(value: string) {
-    value = (!value) ? this.color : value ;
+    value = !value ? this.color : value;
     this.onChange(value);
     this.onTouch(value);
     this._value = value;
   }
-  get value (): string {
+  get value(): string {
     return this._value;
   }
   public _value: string;
@@ -51,14 +58,16 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
     this.value = this.setFormat(value);
     this._hexColor = value;
   }
-  get hexColor (): string {
+  get hexColor(): string {
     return this._hexColor;
   }
   public _hexColor: string;
 
   ngOnInit(): void {
-    if(this.color) {
-      this._hexColor = tinycolor(this.color).setAlpha(this.setAlpha).toHexString();
+    if (this.color) {
+      this._hexColor = tinycolor(this.color)
+        .setAlpha(this.setAlpha)
+        .toHexString();
     }
   }
 
@@ -78,16 +87,16 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
     switch (this.outputFormat) {
       case 'hex':
         color = tinycolor(color).setAlpha(this.setAlpha).toHexString();
-      break;
+        break;
       case 'rgba':
-      color = tinycolor(color).setAlpha(this.setAlpha).toRgbString();
-      break;
+        color = tinycolor(color).setAlpha(this.setAlpha).toRgbString();
+        break;
       case 'hsla':
-      color = tinycolor(color).setAlpha(this.setAlpha).toHsvString();
-      break;
+        color = tinycolor(color).setAlpha(this.setAlpha).toHsvString();
+        break;
       default:
         color = tinycolor(color).setAlpha(this.setAlpha).toRgbString();
-      break;
+        break;
     }
     return color;
   }
@@ -95,6 +104,6 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor, OnIn
   closePicker() {
     setTimeout(() => {
       this.close.emit(true);
-     }, 300);
+    }, 300);
   }
 }

@@ -35,8 +35,17 @@ import { ColorPickerFormFieldModule } from '@igo2/common';
     ColorPickerFormFieldModule,
     IgoStyleListModule.forRoot()
   ],
-  exports: [IgoStyleListModule, StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent],
-  declarations: [StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent]
+  exports: [
+    IgoStyleListModule,
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ],
+  declarations: [
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ]
 })
 export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {

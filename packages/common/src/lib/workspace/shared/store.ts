@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs';
  * workspaces.
  */
 export class WorkspaceStore extends EntityStore<Workspace> {
-
   activeWorkspace$: BehaviorSubject<Workspace> = new BehaviorSubject(undefined);
 
   /**
@@ -22,7 +21,7 @@ export class WorkspaceStore extends EntityStore<Workspace> {
 
     this.deactivateWorkspace();
     if (workspace !== undefined) {
-      this.state.update(workspace, {active: true, selected: true}, true);
+      this.state.update(workspace, { active: true, selected: true }, true);
       this.activeWorkspace$.next(workspace);
       workspace.activate();
     }
@@ -39,5 +38,4 @@ export class WorkspaceStore extends EntityStore<Workspace> {
       this.activeWorkspace$.next(undefined);
     }
   }
-
 }

@@ -54,6 +54,12 @@ export function provideILayerSearchSource() {
     provide: SearchSource,
     useFactory: ilayerSearchSourceFactory,
     multi: true,
-    deps: [HttpClient, LanguageService, StorageService, ConfigService, ILayerSearchResultFormatter]
+    deps: [
+      HttpClient,
+      LanguageService,
+      StorageService,
+      ConfigService,
+      ILayerSearchResultFormatter
+    ]
   };
 }

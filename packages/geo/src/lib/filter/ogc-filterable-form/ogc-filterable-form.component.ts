@@ -7,7 +7,6 @@ import { IgoMap } from '../../map/shared';
   templateUrl: './ogc-filterable-form.component.html'
 })
 export class OgcFilterableFormComponent {
-
   @Input() datasource: OgcFilterableDataSource;
 
   @Input() map: IgoMap;
@@ -26,8 +25,9 @@ export class OgcFilterableFormComponent {
   }
 
   get currentFilter(): any {
-    return this.datasource.options.ogcFilters.interfaceOgcFilters ?
-    this.datasource.options.ogcFilters.interfaceOgcFilters[0] : undefined;
+    return this.datasource.options.ogcFilters.interfaceOgcFilters
+      ? this.datasource.options.ogcFilters.interfaceOgcFilters[0]
+      : undefined;
   }
 
   public color = 'primary';

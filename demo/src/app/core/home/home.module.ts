@@ -7,11 +7,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppHomeComponent],
-  imports: [
-    AppHomeRoutingModule,
-    IgoInteractiveTourModule,
-    SharedModule
-  ],
+  imports: [AppHomeRoutingModule, IgoInteractiveTourModule, SharedModule],
   exports: [AppHomeComponent]
 })
 export class AppHomeModule {}

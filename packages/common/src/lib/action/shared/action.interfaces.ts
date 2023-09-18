@@ -11,7 +11,7 @@ export interface Action {
   checkCondition?: boolean | Observable<boolean>;
   display?: (...args: any[]) => Observable<boolean>;
   availability?: (...args: any[]) => Observable<boolean>;
-  ngClass?: (...args: any[]) => Observable<{[key: string]: boolean}>;
+  ngClass?: (...args: any[]) => Observable<{ [key: string]: boolean }>;
 }
 
 export type ActionHandler = (...args: any[]) => void;

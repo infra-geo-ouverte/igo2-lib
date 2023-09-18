@@ -25,7 +25,8 @@ export class OptionsApiService extends OptionsService {
   ) {
     super();
     this.urlApi = options.url || this.urlApi;
-    this.provideContextUri = options.provideContextUri || this.provideContextUri;
+    this.provideContextUri =
+      options.provideContextUri || this.provideContextUri;
   }
 
   getWMSOptions(
@@ -69,11 +70,17 @@ export class OptionsApiService extends OptionsService {
     );
   }
 
-
   getArcgisRestOptions(
-    baseOptions: ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions,
+    baseOptions:
+      | ArcGISRestDataSourceOptions
+      | ArcGISRestImageDataSourceOptions
+      | TileArcGISRestDataSourceOptions,
     detailedContextUri?: string
-  ): Observable<ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
+  ): Observable<
+    | ArcGISRestDataSourceOptions
+    | ArcGISRestImageDataSourceOptions
+    | TileArcGISRestDataSourceOptions
+  > {
     if (!this.urlApi) {
       return of({} as ArcGISRestImageDataSourceOptions);
     }
@@ -96,11 +103,17 @@ export class OptionsApiService extends OptionsService {
     return request.pipe(
       map(
         (res: {
-          sourceOptions: ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions;
+          sourceOptions:
+            | ArcGISRestDataSourceOptions
+            | ArcGISRestImageDataSourceOptions
+            | TileArcGISRestDataSourceOptions;
           layerOptions: { [keys: string]: string };
         }) => {
           if (!res || !res.sourceOptions) {
-            return {} as ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions;
+            return {} as
+              | ArcGISRestDataSourceOptions
+              | ArcGISRestImageDataSourceOptions
+              | TileArcGISRestDataSourceOptions;
           }
           if (res.layerOptions) {
             res.sourceOptions._layerOptionsFromSource = res.layerOptions;

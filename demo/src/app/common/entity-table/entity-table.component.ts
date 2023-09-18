@@ -21,7 +21,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
   public paginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  public paginatorOptions: EntityTablePaginatorOptions = {pageSize: 10};
+  public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 
   public template = {
     selection: true,
@@ -67,11 +67,15 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'action',
         title: '',
         valueAccessor: (entity: object) => {
-          return [{
-            icon: 'home',
-            color: 'warn',
-            click: (row) => { console.log(row); }
-          }] as EntityTableButton[];
+          return [
+            {
+              icon: 'home',
+              color: 'warn',
+              click: (row) => {
+                console.log(row);
+              }
+            }
+          ] as EntityTableButton[];
         },
         renderer: EntityTableColumnRenderer.ButtonGroup
       }
@@ -83,11 +87,23 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const ids = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-    const entities = ids.map(id => {
+    const entities = ids.map((id) => {
       if (id === 3) {
-        return { id , name: `Name ${id}`, description: `<b>Description ${id}</b>`, url: 'https://igouverte.org', image: 'https://www.igouverte.org/assets/img/NONEXISTINGIMAGE.png'};
+        return {
+          id,
+          name: `Name ${id}`,
+          description: `<b>Description ${id}</b>`,
+          url: 'https://igouverte.org',
+          image: 'https://www.igouverte.org/assets/img/NONEXISTINGIMAGE.png'
+        };
       }
-      return { id , name: `Name ${id}`, description: `<b>Description ${id}</b>`, url: 'https://igouverte.org', image: 'https://www.igouverte.org/assets/img/Igo_logoavec.png'};
+      return {
+        id,
+        name: `Name ${id}`,
+        description: `<b>Description ${id}</b>`,
+        url: 'https://igouverte.org',
+        image: 'https://www.igouverte.org/assets/img/Igo_logoavec.png'
+      };
     });
     this.store.load(entities);
   }

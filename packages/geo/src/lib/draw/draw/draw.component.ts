@@ -20,9 +20,7 @@ import {
   featureToOl
 } from '../../feature';
 
-import {
-  tryBindStoreLayer,
-} from '../../feature/shared/feature-store.utils';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 
 import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +29,11 @@ import { FontType } from '../../style/shared/font.enum';
 import { IgoMap } from '../../map/shared/map';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Draw, FeatureWithDraw } from '../shared/draw.interface';
-import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
+import {
+  UntypedFormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl
+} from '@angular/forms';
 import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -86,10 +88,9 @@ import {
   MeasureLengthUnit,
   MeasureLengthUnitAbbreviation,
   MeasureAreaUnit,
-  MeasureAreaUnitAbbreviation,
+  MeasureAreaUnitAbbreviation
 } from '../../measure/shared/measure.enum';
 import Polygon, { fromCircle } from 'ol/geom/Polygon';
-
 
 @Component({
   selector: 'igo-draw',
@@ -132,13 +133,13 @@ export class DrawComponent implements OnInit, OnDestroy {
   set stores(value: FeatureStore<FeatureWithDraw>[]) {
     this._stores = value;
   }
-  private _stores:FeatureStore<FeatureWithDraw>[] = [];
+  private _stores: FeatureStore<FeatureWithDraw>[] = [];
 
   @Input()
-  get drawControls(): [string, DrawControl][]{
+  get drawControls(): [string, DrawControl][] {
     return this._drawControls;
   }
-  set drawControls(value: [string, DrawControl][]){
+  set drawControls(value: [string, DrawControl][]) {
     this._drawControls = value;
   }
   private _drawControls = [];
@@ -188,9 +189,12 @@ export class DrawComponent implements OnInit, OnDestroy {
   public radiusFormControl = new UntypedFormControl(1000);
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   public radiusFormControlChange$$: Subscription = new Subscription();
-  public predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(undefined);
-  public radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(undefined);
-
+  public predefinedRadius$: BehaviorSubject<number> = new BehaviorSubject(
+    undefined
+  );
+  public radiusDrawEnd$: BehaviorSubject<number> = new BehaviorSubject(
+    undefined
+  );
 
   /**
    * Available measure units for the measure type given
@@ -211,7 +215,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     private drawStyleService: DrawStyleService,
     private dialog: MatDialog,
     private drawIconService: DrawIconService
-
   ) {
     this.tableTemplate = {
       selection: true,
@@ -233,15 +236,19 @@ export class DrawComponent implements OnInit, OnDestroy {
           title: '',
           sort: false,
           valueAccessor: (feature: FeatureWithDraw) => {
-            return [{
-              editMode: false,
-              icon: 'pencil',
-              color: 'primary',
-              click: () => { this.editLabelDrawing(feature);},
-              style: 'mat-icon-button'
-            }] as EntityTableButton[];
+            return [
+              {
+                editMode: false,
+                icon: 'pencil',
+                color: 'primary',
+                click: () => {
+                  this.editLabelDrawing(feature);
+                },
+                style: 'mat-icon-button'
+              }
+            ] as EntityTableButton[];
           },
-          renderer: EntityTableColumnRenderer.ButtonGroup,
+          renderer: EntityTableColumnRenderer.ButtonGroup
         }
       ]
     };
@@ -272,28 +279,33 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawControl.setGeometryType(this.geometryType.Point as any);
       this.toggleDrawControl();
       this.stores.push(this.activeStore);
-      this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
+      this.drawControls.push([
+        this.activeDrawingLayer.id,
+        this.activeDrawControl
+      ]);
       this.drawControlsEvent.emit(this.drawControls);
       this.layersIDEvent.emit(this.activeDrawingLayer.id);
       this.onLayerChange(this.activeDrawingLayer);
     } else {
-      this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
-      this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
+      this.activeStore = this.stores.find(
+        (store) => store.layer.id === this.activeDrawingLayer.id
+      );
+      this.activeDrawControl = this.drawControls.find(
+        (dc) => dc[0] === this.activeDrawingLayer.id
+      )[1];
       this.deactivateDrawControl();
-      this.allLayers.forEach(layer => {
+      this.allLayers.forEach((layer) => {
         if (layer.id !== this.activeDrawingLayer.id) {
           layer.opacity = 0;
         }
-        let store = this.stores.find(s => s.layer.id === layer.id);
+        let store = this.stores.find((s) => s.layer.id === layer.id);
 
         this.subscriptions$$.push(
           store.stateView
             .manyBy$((record: EntityRecord<FeatureWithDraw>) => {
               return record.state.selected === true;
             })
-            .pipe(
-              first()
-            )
+            .pipe(first())
             .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
               records.forEach((record) => {
                 record.state.selected = false;
@@ -310,7 +322,9 @@ export class DrawComponent implements OnInit, OnDestroy {
               skip(1) // Skip initial emission
             )
             .subscribe((records: EntityRecord<FeatureWithDraw>[]) => {
-              this.selectedFeatures$.next(records.map((record) => record.entity));
+              this.selectedFeatures$.next(
+                records.map((record) => record.entity)
+              );
             })
         );
 
@@ -325,11 +339,12 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.onLayerChange(this.activeDrawingLayer);
     }
 
-    this.radiusFormControlChange$$ = this.radiusFormControl.valueChanges.subscribe(value => {
-      if (this.activeDrawControl.ispredefinedRadius$.getValue()) {
-        this.changeRadius(value);
-      }
-    });
+    this.radiusFormControlChange$$ =
+      this.radiusFormControl.valueChanges.subscribe((value) => {
+        if (this.activeDrawControl.ispredefinedRadius$.getValue()) {
+          this.changeRadius(value);
+        }
+      });
   }
 
   /**
@@ -337,8 +352,8 @@ export class DrawComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    this.allLayers.forEach(layer => layer.opacity = 1);
-    this.activeStore.state.updateAll({selected: false});
+    this.allLayers.forEach((layer) => (layer.opacity = 1));
+    this.activeStore.state.updateAll({ selected: false });
     this.deactivateDrawControl();
     this.subscriptions$$.map((s) => s.unsubscribe());
     this.radiusFormControlChange$$.unsubscribe();
@@ -397,9 +412,9 @@ export class DrawComponent implements OnInit, OnDestroy {
     );
   }
 
-/**
- * Open the style modal dialog box
- */
+  /**
+   * Open the style modal dialog box
+   */
   openStyleModalDialog() {
     setTimeout(() => {
       // open the dialog box used to style features
@@ -418,8 +433,17 @@ export class DrawComponent implements OnInit, OnDestroy {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
           this.onFontChange(this.labelsAreShown, data.fontSize, data.fontStyle);
-          this.onColorChange(this.labelsAreShown, this.icon ? true : false, data.fillColor, data.strokeColor);
-          this.onOffsetLabelChange(this.labelsAreShown, data.offsetX, data.offsetY);
+          this.onColorChange(
+            this.labelsAreShown,
+            this.icon ? true : false,
+            data.fillColor,
+            data.strokeColor
+          );
+          this.onOffsetLabelChange(
+            this.labelsAreShown,
+            data.offsetX,
+            data.offsetY
+          );
         }
       });
     }, 250);
@@ -435,19 +459,21 @@ export class DrawComponent implements OnInit, OnDestroy {
       // open the dialog box used to enter label
       const dialogRef = this.dialog.open(DrawPopupComponent, {
         disableClose: false,
-        data: {olGeometry: olGeometry, map: this.map}
+        data: { olGeometry: olGeometry, map: this.map }
       });
 
       // when dialog box is closed, get label and set it to geometry
       dialogRef.afterClosed().subscribe((result) => {
         // checks if the user clicked ok
         if (dialogRef.componentInstance.confirmFlag) {
-
           this.updateLabelOfOlGeometry(olGeometry, result.label);
-          this.updateLabelType(olGeometry, dialogRef.componentInstance.labelFlag);
+          this.updateLabelType(
+            olGeometry,
+            dialogRef.componentInstance.labelFlag
+          );
           this.updateMeasureUnit(olGeometry, result.measureUnit);
 
-          if (!(olGeometry instanceof OlFeature)){
+          if (!(olGeometry instanceof OlFeature)) {
             this.updateFontSizeAndStyle(olGeometry, '15', FontType.Arial);
             this.updateFillAndStrokeColor(
               olGeometry,
@@ -457,12 +483,16 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.updateOffset(
               olGeometry,
               0,
-              (olGeometry instanceof OlPoint) ? -15 : 0
+              olGeometry instanceof OlPoint ? -15 : 0
             );
           }
 
-          isDrawEnd ? this.onDrawEnd(olGeometry): this.onSelectDraw(olGeometry, result.label,
-            [dialogRef.componentInstance.labelFlag, result.measureUnit]);
+          isDrawEnd
+            ? this.onDrawEnd(olGeometry)
+            : this.onSelectDraw(olGeometry, result.label, [
+                dialogRef.componentInstance.labelFlag,
+                result.measureUnit
+              ]);
           this.updateHeightTable();
         }
         // deletes the feature
@@ -500,59 +530,81 @@ export class DrawComponent implements OnInit, OnDestroy {
       const olGeometryId = olGeometry.ol_uid;
 
       if (entityId === olGeometryId) {
-        if (entity.properties.labelType === LabelType.Coordinates){
-          let longLat = DDtoDMS([entity.properties.longitude, entity.properties.latitude],
-            entity.properties.measureUnit as CoordinatesUnit);
-          this.updateLabelOfOlGeometry(olGeometry, '(' + longLat[1] + ', ' + longLat[0] + ')');
-        }
-        else if (entity.properties.labelType === LabelType.Length){
-          if (olGeometry instanceof OlCircle){
+        if (entity.properties.labelType === LabelType.Coordinates) {
+          let longLat = DDtoDMS(
+            [entity.properties.longitude, entity.properties.latitude],
+            entity.properties.measureUnit as CoordinatesUnit
+          );
+          this.updateLabelOfOlGeometry(
+            olGeometry,
+            '(' + longLat[1] + ', ' + longLat[0] + ')'
+          );
+        } else if (entity.properties.labelType === LabelType.Length) {
+          if (olGeometry instanceof OlCircle) {
             let circularPolygon = fromCircle(olGeometry, 10000);
-            const radius = metersToUnit(this.getRadius(circularPolygon), entity.properties.measureUnit as MeasureLengthUnit);
-            const unit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
-            const radiusLabel = 'R: ' + radius.toFixed(2).toString() + ' ' + unit;
+            const radius = metersToUnit(
+              this.getRadius(circularPolygon),
+              entity.properties.measureUnit as MeasureLengthUnit
+            );
+            const unit =
+              MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
+            const radiusLabel =
+              'R: ' + radius.toFixed(2).toString() + ' ' + unit;
             this.updateLabelOfOlGeometry(olGeometry, radiusLabel);
-          }
-          else {
-            let olGeometryLength = measureOlGeometryLength(olGeometry, this.map.ol.getView().getProjection().getCode());
+          } else {
+            let olGeometryLength = measureOlGeometryLength(
+              olGeometry,
+              this.map.ol.getView().getProjection().getCode()
+            );
             let measureUnit: any;
-            const temp: MeasureLengthUnit = entity.properties.measureUnit as MeasureLengthUnit;
-            measureUnit = MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
+            const temp: MeasureLengthUnit = entity.properties
+              .measureUnit as MeasureLengthUnit;
+            measureUnit =
+              MeasureLengthUnitAbbreviation[entity.properties.measureUnit];
             olGeometryLength = metersToUnit(olGeometryLength, temp);
-            let lengthLabel = olGeometry instanceof Polygon ?
-              'P: ' + olGeometryLength.toFixed(2).toString() + ' ' + measureUnit
-              : olGeometryLength.toFixed(2).toString() + ' ' + measureUnit;
+            let lengthLabel =
+              olGeometry instanceof Polygon
+                ? 'P: ' +
+                  olGeometryLength.toFixed(2).toString() +
+                  ' ' +
+                  measureUnit
+                : olGeometryLength.toFixed(2).toString() + ' ' + measureUnit;
             this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
           }
-        }
-        else if (entity.properties.labelType === LabelType.Area){
-          if (olGeometry instanceof OlCircle){
+        } else if (entity.properties.labelType === LabelType.Area) {
+          if (olGeometry instanceof OlCircle) {
             let circularPolygon = fromCircle(olGeometry, 10000);
-            let circleArea = measureOlGeometryArea(circularPolygon, this.map.ol.getView().getProjection().getCode());
-            const unit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
-            const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
+            let circleArea = measureOlGeometryArea(
+              circularPolygon,
+              this.map.ol.getView().getProjection().getCode()
+            );
+            const unit =
+              MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
+            const temp: MeasureAreaUnit = entity.properties
+              .measureUnit as MeasureAreaUnit;
             circleArea = squareMetersToUnit(circleArea, temp);
             const areaLabel = circleArea.toFixed(2).toString() + ' ' + unit;
             this.updateLabelOfOlGeometry(olGeometry, areaLabel);
-          }
-          else {
-            let olGeometryArea = measureOlGeometryArea(olGeometry, this.map.ol.getView().getProjection().getCode());
+          } else {
+            let olGeometryArea = measureOlGeometryArea(
+              olGeometry,
+              this.map.ol.getView().getProjection().getCode()
+            );
             let measureUnit: any;
-            const temp: MeasureAreaUnit = entity.properties.measureUnit as MeasureAreaUnit;
-            measureUnit = MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
+            const temp: MeasureAreaUnit = entity.properties
+              .measureUnit as MeasureAreaUnit;
+            measureUnit =
+              MeasureAreaUnitAbbreviation[entity.properties.measureUnit];
             olGeometryArea = squareMetersToUnit(olGeometryArea, temp);
-            const lengthLabel = olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
+            const lengthLabel =
+              olGeometryArea.toFixed(2).toString() + ' ' + measureUnit;
             this.updateLabelOfOlGeometry(olGeometry, lengthLabel);
           }
-        }
-        else {
+        } else {
           this.updateLabelOfOlGeometry(olGeometry, entity.properties.draw);
         }
 
-        this.updateLabelType(
-          olGeometry,
-          entity.properties.labelType
-        );
+        this.updateLabelType(olGeometry, entity.properties.labelType);
         this.updateMeasureUnit(olGeometry, entity.properties.measureUnit);
         this.updateFontSizeAndStyle(
           olGeometry,
@@ -576,7 +628,11 @@ export class DrawComponent implements OnInit, OnDestroy {
     });
   }
 
-  private onSelectDraw(olFeature: OlFeature<OlGeometry>, label: string, labelTypeAndUnit?) {
+  private onSelectDraw(
+    olFeature: OlFeature<OlGeometry>,
+    label: string,
+    labelTypeAndUnit?
+  ) {
     const entities = this.activeStore.all();
 
     const olGeometry = olFeature.getGeometry() as any;
@@ -625,7 +681,7 @@ export class DrawComponent implements OnInit, OnDestroy {
   private addFeatureToStore(
     olGeometry,
     radius?: number,
-    feature?: FeatureWithDraw,
+    feature?: FeatureWithDraw
   ) {
     let rad: number;
     let center4326: Array<number>;
@@ -668,7 +724,6 @@ export class DrawComponent implements OnInit, OnDestroy {
         rad = getDistance(center4326, extent4326);
         this.radiusFormControl.setValue(Math.round(rad));
       }
-
     }
     if (this.activeDrawControl.radiusDrawEnd$.getValue()) {
       rad = this.activeDrawControl.radiusDrawEnd$.getValue();
@@ -723,12 +778,14 @@ export class DrawComponent implements OnInit, OnDestroy {
   public setupLayer(isNewLayer?: boolean) {
     setTimeout(() => {
       const dialogRef = this.dialog.open(DrawLayerPopupComponent, {
-        disableClose: false,
+        disableClose: false
       });
       dialogRef.afterClosed().subscribe((label: string) => {
         if (dialogRef.componentInstance.confirmFlag) {
-          this.activeStore.state.updateAll({selected: false});
-          this.activeStore = new FeatureStore<FeatureWithDraw>([], { map: this.map });
+          this.activeStore.state.updateAll({ selected: false });
+          this.activeStore = new FeatureStore<FeatureWithDraw>([], {
+            map: this.map
+          });
           this.activeDrawingLayerSource = new OlVectorSource();
           this.activeDrawingLayer.opacity = 0;
           this.deactivateDrawControl();
@@ -741,11 +798,14 @@ export class DrawComponent implements OnInit, OnDestroy {
           this.activeDrawControl.setGeometryType(this.currGeometryType);
           this.toggleDrawControl();
           this.stores.push(this.activeStore);
-          this.drawControls.push([this.activeDrawingLayer.id, this.activeDrawControl]);
+          this.drawControls.push([
+            this.activeDrawingLayer.id,
+            this.activeDrawControl
+          ]);
           this.drawControlsEvent.emit(this.drawControls);
           this.layersIDEvent.emit(this.activeDrawingLayer.id);
           this.isCreatingNewLayer = false;
-          if (!this.labelsAreShown){
+          if (!this.labelsAreShown) {
             this.onToggleLabels();
           }
           this.activeLayerChange.emit(this.activeDrawingLayer);
@@ -768,7 +828,6 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.map.ol.getView().getProjection().getCode()
     );
     this.openDrawDialog(olGeometryFeature, false);
-
   }
 
   openShorcutsDialog() {
@@ -798,14 +857,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     this.drawStyleService.toggleLabelsAreShown();
     this.labelsAreShown = !this.labelsAreShown;
     this.icon
-      ? this.elementStyle(
-          this.labelsAreShown,
-          true
-        )
-      : this.elementStyle(
-          this.labelsAreShown,
-          false
-        );
+      ? this.elementStyle(this.labelsAreShown, true)
+      : this.elementStyle(this.labelsAreShown, false);
     this.createDrawControl();
   }
 
@@ -822,7 +875,13 @@ export class DrawComponent implements OnInit, OnDestroy {
       this.activeDrawControl.ispredefinedRadius$.next(true);
       this.changeRadius(this.radiusFormControl.value);
     } else {
-      this.activeDrawControl.setOlInteractionStyle(createInteractionStyle(this.fillColor, this.strokeColor, this.strokeWidth));
+      this.activeDrawControl.setOlInteractionStyle(
+        createInteractionStyle(
+          this.fillColor,
+          this.strokeColor,
+          this.strokeWidth
+        )
+      );
       this.activeDrawControl.ispredefinedRadius$.next(false);
     }
     this.freehandMode = event.checked;
@@ -838,18 +897,23 @@ export class DrawComponent implements OnInit, OnDestroy {
 
   public onLayerChange(currLayer?: VectorLayer) {
     if (currLayer) {
-      this.activeStore.state.updateAll({selected: false});
+      this.activeStore.state.updateAll({ selected: false });
       this.isCreatingNewLayer = false;
       this.activeDrawingLayer.opacity = 0;
       this.activeDrawingLayer = currLayer;
       this.activeDrawingLayer.opacity = 1;
       this.deactivateDrawControl();
-      if (!this.labelsAreShown){
+      if (!this.labelsAreShown) {
         this.onToggleLabels();
       }
-      this.activeStore = this.stores.find(store => store.layer.id === this.activeDrawingLayer.id);
-      this.activeDrawControl = this.drawControls.find(dc => dc[0] === this.activeDrawingLayer.id)[1];
-      this.activeDrawingLayerSource = this.activeDrawControl.olDrawingLayerSource;
+      this.activeStore = this.stores.find(
+        (store) => store.layer.id === this.activeDrawingLayer.id
+      );
+      this.activeDrawControl = this.drawControls.find(
+        (dc) => dc[0] === this.activeDrawingLayer.id
+      )[1];
+      this.activeDrawingLayerSource =
+        this.activeDrawControl.olDrawingLayerSource;
       this.activeDrawControl.setGeometryType(this.currGeometryType);
       this.toggleDrawControl();
     } else {
@@ -859,9 +923,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   public createLayer(newTitle?, isNewLayer?) {
-    for (const layer of this.allLayers){
-      let numberId = Number(layer.id.replace('igo-draw-layer',''));
-      this.layerCounterID = Math.max(numberId,this.layerCounterID);
+    for (const layer of this.allLayers) {
+      let numberId = Number(layer.id.replace('igo-draw-layer', ''));
+      this.layerCounterID = Math.max(numberId, this.layerCounterID);
     }
     this.activeDrawingLayer = new VectorLayer({
       isIgoInternalLayer: true,
@@ -974,7 +1038,10 @@ export class DrawComponent implements OnInit, OnDestroy {
           .find((e) => e.meta.id === olFeature.getId());
         entity.properties.fontStyle = olFeature.get('fontStyle_');
         this.activeStore.update(entity);
-        olFeature = this.activeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === entity.meta.id);
+        olFeature = this.activeStore.layer.ol
+          .getSource()
+          .getFeatures()
+          .find((f) => f.getId() === entity.meta.id);
         olFeature.setProperties({ fontStyle: entity.properties.fontStyle });
         olFeature.changed();
       });
@@ -1014,8 +1081,14 @@ export class DrawComponent implements OnInit, OnDestroy {
         entity.properties.offsetX = olFeature.get('offsetX_');
         entity.properties.offsetY = olFeature.get('offsetY_');
         this.activeStore.update(entity);
-        olFeature = this.activeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === entity.meta.id);
-        olFeature.setProperties({ offsetX: entity.properties.offsetX, offsetY: entity.properties.offsetY });
+        olFeature = this.activeStore.layer.ol
+          .getSource()
+          .getFeatures()
+          .find((f) => f.getId() === entity.meta.id);
+        olFeature.setProperties({
+          offsetX: entity.properties.offsetX,
+          offsetY: entity.properties.offsetY
+        });
         olFeature.changed();
       });
       this.elementStyle(labelsAreShown);
@@ -1035,9 +1108,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   onGeometryTypeChange(geometryType: Type) {
     this.currGeometryType = geometryType;
     this.activeDrawControl.setGeometryType(geometryType);
-    this.freehandMode ?
-      this.onToggleFreehandMode({ checked: true }) :
-      this.onToggleFreehandMode({ checked: false });
+    this.freehandMode
+      ? this.onToggleFreehandMode({ checked: true })
+      : this.onToggleFreehandMode({ checked: false });
     this.toggleDrawControl();
   }
 
@@ -1101,10 +1174,10 @@ export class DrawComponent implements OnInit, OnDestroy {
   private updateLabelType(
     olFeature: OlFeature<OlGeometry>,
     typeOfLabel: LabelType | [LabelType, LabelType]
-  ){
+  ) {
     olFeature.setProperties(
       {
-        labelType_:typeOfLabel
+        labelType_: typeOfLabel
       },
       true
     );
@@ -1113,14 +1186,13 @@ export class DrawComponent implements OnInit, OnDestroy {
   private updateMeasureUnit(
     olFeature: OlFeature<OlGeometry>,
     measureUnit: MeasureLengthUnit | MeasureAreaUnit | CoordinatesUnit | []
-  ){
+  ) {
     olFeature.setProperties(
       {
         measureUnit_: measureUnit
       },
       true
     );
-
   }
 
   // Updates values of the selected element on the HTML view
@@ -1184,7 +1256,9 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   updateActiveLayer() {
-    let currLayer = this.allLayers.find(layer => layer.title === this.activeDrawingLayer.title);
+    let currLayer = this.allLayers.find(
+      (layer) => layer.title === this.activeDrawingLayer.title
+    );
     return currLayer ? currLayer : this.allLayers[0];
   }
 
@@ -1277,15 +1351,21 @@ export class DrawComponent implements OnInit, OnDestroy {
   }
 
   isLineString() {
-    return this.activeDrawControl.getGeometryType() === this.geometryType.LineString;
+    return (
+      this.activeDrawControl.getGeometryType() === this.geometryType.LineString
+    );
   }
 
   isPolygon() {
-    return this.activeDrawControl.getGeometryType() === this.geometryType.Polygon;
+    return (
+      this.activeDrawControl.getGeometryType() === this.geometryType.Polygon
+    );
   }
 
   isCircle() {
-    return this.activeDrawControl.getGeometryType() === this.geometryType.Circle;
+    return (
+      this.activeDrawControl.getGeometryType() === this.geometryType.Circle
+    );
   }
 
   /**
@@ -1297,17 +1377,23 @@ export class DrawComponent implements OnInit, OnDestroy {
     let radiusMeters: number;
 
     if (radius) {
-      this.measureUnit === MeasureLengthUnit.Meters ? radiusMeters = radius :
-        radiusMeters = radius * 1000;
+      this.measureUnit === MeasureLengthUnit.Meters
+        ? (radiusMeters = radius)
+        : (radiusMeters = radius * 1000);
     } else {
       radiusMeters = undefined;
     }
 
     const pointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
       const geom = feature.getGeometry() as OlPoint;
-      const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
+      const coordinates = olproj.transform(
+        geom.getCoordinates(),
+        this.map.projection,
+        'EPSG:4326'
+      );
 
-      const radius = radiusMeters / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution;
+      const radius =
+        radiusMeters / Math.cos((Math.PI / 180) * coordinates[1]) / resolution;
       this.activeDrawControl.predefinedRadius$.next(radiusMeters);
       return new OlStyle.Style({
         image: new OlStyle.Circle({
@@ -1332,8 +1418,9 @@ export class DrawComponent implements OnInit, OnDestroy {
       return;
     } else {
       this.measureUnit = selectedMeasureUnit;
-      this.measureUnit === MeasureLengthUnit.Meters ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
-        this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+      this.measureUnit === MeasureLengthUnit.Meters
+        ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000)
+        : this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
     }
   }
 
@@ -1373,9 +1460,8 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getRadius(olGeometry): number{
+  private getRadius(olGeometry): number {
     const length = getLength(olGeometry);
     return Number(length / (2 * Math.PI));
   }
-
 }

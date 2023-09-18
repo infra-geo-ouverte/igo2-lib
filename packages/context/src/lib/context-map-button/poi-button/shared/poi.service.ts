@@ -9,7 +9,10 @@ import { Poi } from './poi.interface';
 export class PoiService {
   private baseUrl: string;
 
-  constructor(private http: HttpClient, private config: ConfigService) {
+  constructor(
+    private http: HttpClient,
+    private config: ConfigService
+  ) {
     this.baseUrl = this.config.getConfig('context.url');
   }
 

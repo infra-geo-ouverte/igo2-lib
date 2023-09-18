@@ -50,7 +50,7 @@ export class CartoDataSource extends DataSource {
 
     let htmlString = '<table>';
     if (this.options.config.layers[0].legend !== null) {
-      this.options.config.layers[0].legend.items.forEach(f => {
+      this.options.config.layers[0].legend.items.forEach((f) => {
         if (f.visible === true) {
           htmlString +=
             '<tr><td>' +

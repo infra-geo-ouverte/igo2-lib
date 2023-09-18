@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy, Inject, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  Inject,
+  ViewEncapsulation
+} from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { Layer } from '../../layer/shared/layers/layer';
@@ -36,7 +42,8 @@ export class MetadataButtonComponent {
 
   constructor(
     private metadataService: MetadataService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog
+  ) {}
 
   openMetadata(metadata: MetadataOptions) {
     if (metadata.extern) {

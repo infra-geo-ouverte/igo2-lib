@@ -47,7 +47,7 @@ import { DirectionsResultsComponent } from './directions-results/directions-resu
     DirectionsResultsComponent
   ],
   declarations: [
-     DirectionsComponent,
+    DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
     DirectionsResultsComponent

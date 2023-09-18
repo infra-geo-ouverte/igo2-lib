@@ -9,10 +9,7 @@ describe('MediaService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([MediaService], (service: MediaService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([MediaService], (service: MediaService) => {
+    expect(service).toBeTruthy();
+  }));
 });

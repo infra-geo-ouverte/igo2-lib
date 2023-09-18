@@ -3,18 +3,18 @@ import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import {
-  DataSourceOptions,
-  Legend
-} from './datasource.interface';
+import { DataSourceOptions, Legend } from './datasource.interface';
 
 import { DataService } from './data.service';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
-import { LegendMapViewOptions, LegendOptions } from '../../../layer/shared/layers/legend.interface';
+import {
+  LegendMapViewOptions,
+  LegendOptions
+} from '../../../layer/shared/layers/legend.interface';
 
 export abstract class DataSource {
   public id: string;
-  public ol: olSource | olVectorSource<OlGeometry> | olClusterSource ;
+  public ol: olSource | olVectorSource<OlGeometry> | olClusterSource;
   private legend: Legend[];
 
   constructor(
@@ -22,7 +22,7 @@ export abstract class DataSource {
     protected dataService?: DataService
   ) {
     this.options = options;
-    this.id = this.options.id || this.generateId();
+    this.id = this.options.id || this.generateId();
     this.ol = this.createOlSource();
   }
 
@@ -38,9 +38,9 @@ export abstract class DataSource {
 
   public setLegend(options: LegendOptions): Legend[] {
     if (options.url) {
-      this.legend = [{ url: options.url} ];
+      this.legend = [{ url: options.url }];
     } else if (options.html) {
-      this.legend = [{ html: options.html} ];
+      this.legend = [{ html: options.html }];
     } else {
       this.legend = [];
     }

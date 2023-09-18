@@ -1,10 +1,31 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Input } from '@angular/core';
-import { formatScale, IgoMap, InputProjections, ProjectionsLimitationsOptions } from '@igo2/geo';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  Input
+} from '@angular/core';
+import {
+  formatScale,
+  IgoMap,
+  InputProjections,
+  ProjectionsLimitationsOptions
+} from '@igo2/geo';
 import { MapState } from '../../map.state';
 import { Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService, StorageService, StorageScope, ConfigService } from '@igo2/core';
+import {
+  MessageService,
+  LanguageService,
+  StorageService,
+  StorageScope,
+  ConfigService
+} from '@igo2/core';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { zoneMtm, zoneUtm, computeProjectionsConstraints } from '@igo2/geo';
 import * as olproj from 'ol/proj';
@@ -18,13 +39,14 @@ import * as olproj from 'ol/proj';
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');
-  public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
+  public projections$: BehaviorSubject<InputProjections[]> =
+    new BehaviorSubject([]);
   public form: UntypedFormGroup;
   public coordinates: string[];
   private currentCenterDefaultProj: [number, number];
   public center: boolean;
   private inMtmZone: boolean = true;
-  private inLambert2 = {32198: true, 3798: true};
+  private inLambert2 = { 32198: true, 3798: true };
   private mapState$$: Subscription;
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   private projectionsConstraints: ProjectionsLimitationsOptions;
@@ -60,22 +82,32 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     private formBuilder: UntypedFormBuilder
   ) {
     this.defaultProj = {
-      translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.wgs84', { code: 'EPSG:4326' }),
-      translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: ''
+      translatedValue: this.languageService.translate.instant(
+        'igo.geo.importExportForm.projections.wgs84',
+        { code: 'EPSG:4326' }
+      ),
+      translateKey: 'wgs84',
+      alias: 'WGS84',
+      code: 'EPSG:4326',
+      zone: ''
     };
     this.center = this.storageService.get('centerToggle') as boolean;
-      this.computeProjections();
-      this.buildForm();
-    }
+    this.computeProjections();
+    this.buildForm();
+  }
 
   /**
    * Listen a state of the map, a state of a form, update the coordinates
    */
   ngOnInit(): void {
-    this.mapState$$ = combineLatest([this.map.viewController.state$.pipe(debounceTime(50)), this.form.valueChanges])
-        .subscribe(() => {
+    this.mapState$$ = combineLatest([
+      this.map.viewController.state$.pipe(debounceTime(50)),
+      this.form.valueChanges
+    ]).subscribe(() => {
       this.setScaleValue(this.map);
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+      this.currentCenterDefaultProj = this.map.viewController.getCenter(
+        this.defaultProj.code
+      );
       const currentMtmZone = zoneMtm(this.currentCenterDefaultProj[0]);
       const currentUtmZone = zoneUtm(this.currentCenterDefaultProj[0]);
       if (!this.inMtmZone && currentMtmZone !== this.currentZones.mtm) {
@@ -96,20 +128,27 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       this.checkLambert(this.currentCenterDefaultProj);
       this.coordinates = this.getCoordinates();
       this.cdRef.detectChanges();
-      this.storageService.set('currentProjection', this.inputProj, StorageScope.SESSION);
+      this.storageService.set(
+        'currentProjection',
+        this.inputProj,
+        StorageScope.SESSION
+      );
     });
 
-    const tempInputProj = this.storageService.get('currentProjection') as InputProjections;
+    const tempInputProj = this.storageService.get(
+      'currentProjection'
+    ) as InputProjections;
     this.inputProj = this.projections$.value[0];
-    if (tempInputProj !== null)
-    {
+    if (tempInputProj !== null) {
       const pos = this.positionInList(tempInputProj);
       this.inputProj = this.projections$.value[pos];
       this.updateZoneMtmUtm();
     }
     this.map.mapCenter$.next(this.center);
     this.coordinates = this.getCoordinates();
-    this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+    this.currentCenterDefaultProj = this.map.viewController.getCenter(
+      this.defaultProj.code
+    );
   }
 
   ngOnDestroy(): void {
@@ -118,7 +157,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   }
 
   setScaleValue(map: IgoMap) {
-    this.formattedScale$.next(': ~ 1 / ' + formatScale(map.viewController.getScale()));
+    this.formattedScale$.next(
+      ': ~ 1 / ' + formatScale(map.viewController.getScale())
+    );
   }
   /**
    * Coordinates of the center of the map on the appropriate systeme of coordinates
@@ -133,8 +174,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     if (code.includes('EPSG:4326') || code.includes('EPSG:4269')) {
       decimal = 5;
     }
-    this.units = (code === 'EPSG:4326' || code === 'EPSG:4269');
-    coord = this.map.viewController.getCenter(code).map(c => c.toFixed(decimal));
+    this.units = code === 'EPSG:4326' || code === 'EPSG:4269';
+    coord = this.map.viewController
+      .getCenter(code)
+      .map((c) => c.toFixed(decimal));
     return coord;
   }
 
@@ -146,7 +189,8 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
     if (successful) {
       this.messageService.success(
         'igo.integration.advanced-map-tool.advanced-coordinates.copyMsg',
-        'igo.integration.advanced-map-tool.advanced-coordinates.copyTitle');
+        'igo.integration.advanced-map-tool.advanced-coordinates.copyTitle'
+      );
     }
   }
 
@@ -174,7 +218,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   private updateProjectionsZoneChange(): void {
     let modifiedProj = this.projections$.value;
     const translate = this.languageService.translate;
-    modifiedProj.map(p => {
+    modifiedProj.map((p) => {
       if (p.translateKey === 'mtm') {
         const zone = zoneMtm(this.currentCenterDefaultProj[0]);
         if (zone) {
@@ -182,9 +226,11 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
           p.alias = `MTM ${zone}`;
           p.code = code;
           p.zone = `${zone}`;
-          p.translatedValue = translate.instant('igo.geo.importExportForm.projections.mtm', p);
-        }
-        else {
+          p.translatedValue = translate.instant(
+            'igo.geo.importExportForm.projections.mtm',
+            p
+          );
+        } else {
           p.alias = '';
           this.inMtmZone = false;
           if (this.inputProj.translateKey === 'mtm') {
@@ -198,10 +244,13 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         p.alias = `UTM ${zone}`;
         p.code = code;
         p.zone = `${zone}`;
-        p.translatedValue = translate.instant('igo.geo.importExportForm.projections.utm', p);
+        p.translatedValue = translate.instant(
+          'igo.geo.importExportForm.projections.utm',
+          p
+        );
       }
     });
-    modifiedProj = modifiedProj.filter(p => p.alias !== '');
+    modifiedProj = modifiedProj.filter((p) => p.alias !== '');
     this.projections$.next(modifiedProj);
   }
 
@@ -209,32 +258,54 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * Create a list of currents projections
    */
   private computeProjections(): void {
-    this.projectionsConstraints = computeProjectionsConstraints(this.projectionsLimitations);
+    this.projectionsConstraints = computeProjectionsConstraints(
+      this.projectionsLimitations
+    );
     const projections: InputProjections[] = [];
 
     if (!this.currentCenterDefaultProj) {
-      this.currentCenterDefaultProj = this.map.viewController.getCenter(this.defaultProj.code);
+      this.currentCenterDefaultProj = this.map.viewController.getCenter(
+        this.defaultProj.code
+      );
     }
 
     const translate = this.languageService.translate;
     if (this.projectionsConstraints.wgs84) {
       projections.push({
-        translatedValue: translate.instant('igo.geo.importExportForm.projections.wgs84', { code: 'EPSG:4326' }),
-        translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: ''
+        translatedValue: translate.instant(
+          'igo.geo.importExportForm.projections.wgs84',
+          { code: 'EPSG:4326' }
+        ),
+        translateKey: 'wgs84',
+        alias: 'WGS84',
+        code: 'EPSG:4326',
+        zone: ''
       });
     }
 
     if (this.projectionsConstraints.nad83) {
       projections.push({
-        translatedValue: translate.instant('igo.geo.importExportForm.projections.nad83', { code: 'EPSG:4269' }),
-        translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4269', zone: ''
+        translatedValue: translate.instant(
+          'igo.geo.importExportForm.projections.nad83',
+          { code: 'EPSG:4269' }
+        ),
+        translateKey: 'nad83',
+        alias: 'NAD83',
+        code: 'EPSG:4269',
+        zone: ''
       });
     }
 
     if (this.projectionsConstraints.webMercator) {
       projections.push({
-        translatedValue: translate.instant('igo.geo.importExportForm.projections.webMercator', { code: 'EPSG:3857' }),
-        translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: ''
+        translatedValue: translate.instant(
+          'igo.geo.importExportForm.projections.webMercator',
+          { code: 'EPSG:3857' }
+        ),
+        translateKey: 'webMercator',
+        alias: 'Web Mercator',
+        code: 'EPSG:3857',
+        zone: ''
       });
     }
     if (this.projectionsConstraints.mtm) {
@@ -244,11 +315,16 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         this.inMtmZone = true;
         const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
         projections.splice(3, 0, {
-          translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
-          translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}`
+          translatedValue: this.languageService.translate.instant(
+            'igo.geo.importExportForm.projections.mtm',
+            { code, zone }
+          ),
+          translateKey: 'mtm',
+          alias: `MTM ${zone}`,
+          code,
+          zone: `${zone}`
         });
-      }
-      else {
+      } else {
         this.inMtmZone = false;
       }
     }
@@ -257,8 +333,14 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       const zone = zoneUtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
       projections.splice(order, 0, {
-        translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone }),
-        translateKey: 'utm', alias: `UTM ${zone}`, code, zone: `${zone}`
+        translatedValue: this.languageService.translate.instant(
+          'igo.geo.importExportForm.projections.utm',
+          { code, zone }
+        ),
+        translateKey: 'utm',
+        alias: `UTM ${zone}`,
+        code,
+        zone: `${zone}`
       });
     }
     let configProjection = [];
@@ -277,8 +359,15 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       const zone = zoneMtm(this.currentCenterDefaultProj[0]);
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
       projections.splice(3, 0, {
-          translatedValue: this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone }),
-          translateKey: 'mtm', alias: `MTM ${zone}`, code, zone: `${zone}`});
+        translatedValue: this.languageService.translate.instant(
+          'igo.geo.importExportForm.projections.mtm',
+          { code, zone }
+        ),
+        translateKey: 'mtm',
+        alias: `MTM ${zone}`,
+        code,
+        zone: `${zone}`
+      });
     }
   }
 
@@ -302,7 +391,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       const code = zone < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + zone}`;
       this.inputProj.code = code;
       this.inputProj.zone = `${zone}`;
-      this.inputProj.translatedValue = this.languageService.translate.instant('igo.geo.importExportForm.projections.mtm', { code, zone });
+      this.inputProj.translatedValue = this.languageService.translate.instant(
+        'igo.geo.importExportForm.projections.mtm',
+        { code, zone }
+      );
     }
     if (this.inputProj.translateKey === 'utm') {
       const zone = zoneUtm(this.currentCenterDefaultProj[0]);
@@ -310,7 +402,10 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       const code = zone < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
       this.inputProj.code = code;
       this.inputProj.zone = `${zone}`;
-      this.inputProj.translatedValue = this.languageService.translate.instant('igo.geo.importExportForm.projections.utm', { code, zone });
+      this.inputProj.translatedValue = this.languageService.translate.instant(
+        'igo.geo.importExportForm.projections.utm',
+        { code, zone }
+      );
     }
   }
 
@@ -329,8 +424,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         if (tk === projection.translateKey) {
           position = iter;
         }
-      }
-      else if (alias === projection.alias) {
+      } else if (alias === projection.alias) {
         position = iter;
       }
       iter++;
@@ -345,26 +439,33 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    */
   checkLambert(coordinates: [number, number]) {
     const lambertProjections = this.config.getConfig('projections');
-    lambertProjections.forEach(projection => {
-        let modifiedProj = this.projections$.value;
-        const extent = projection.extent;
-        const code = projection.code.match(/\d+/);
-        const currentExtentWGS = olproj.transformExtent(extent, projection.code, this.defaultProj.code);
-        if (coordinates[0] < currentExtentWGS[0] || coordinates[0] > currentExtentWGS[2] ||
-            coordinates[1] < currentExtentWGS[1] || coordinates[1] > currentExtentWGS[3]) {
-            this.inLambert2[code] = false;
-            if (this.inputProj.alias === projection.alias) {
-              this.inputProj = this.projections$.value[0];
-            }
-            modifiedProj = modifiedProj.filter(p => p.alias !== projection.alias);
-            this.projections$.next(modifiedProj);
+    lambertProjections.forEach((projection) => {
+      let modifiedProj = this.projections$.value;
+      const extent = projection.extent;
+      const code = projection.code.match(/\d+/);
+      const currentExtentWGS = olproj.transformExtent(
+        extent,
+        projection.code,
+        this.defaultProj.code
+      );
+      if (
+        coordinates[0] < currentExtentWGS[0] ||
+        coordinates[0] > currentExtentWGS[2] ||
+        coordinates[1] < currentExtentWGS[1] ||
+        coordinates[1] > currentExtentWGS[3]
+      ) {
+        this.inLambert2[code] = false;
+        if (this.inputProj.alias === projection.alias) {
+          this.inputProj = this.projections$.value[0];
         }
-        else {
-            if (!this.inLambert2[code]) {
-                this.projections$.next(modifiedProj.concat(projection));
-                this.inLambert2[code] = true;
-            }
+        modifiedProj = modifiedProj.filter((p) => p.alias !== projection.alias);
+        this.projections$.next(modifiedProj);
+      } else {
+        if (!this.inLambert2[code]) {
+          this.projections$.next(modifiedProj.concat(projection));
+          this.inLambert2[code] = true;
         }
+      }
     });
   }
 }

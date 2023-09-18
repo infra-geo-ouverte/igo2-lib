@@ -229,7 +229,7 @@ export class EsriStyleGenerator {
       const style = this._converters[symbol.type].call(this, symbol);
       styles.push(
         (() => {
-          return function(feature, resolution) {
+          return function (feature, resolution) {
             let visible = true;
             if (this.minResolution !== null && this.maxResolution !== null) {
               visible =

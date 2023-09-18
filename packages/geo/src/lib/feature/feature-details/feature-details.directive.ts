@@ -1,23 +1,27 @@
-import { OnInit, Directive, Self, HostListener, ElementRef, Output, EventEmitter } from '@angular/core';
+import {
+  OnInit,
+  Directive,
+  Self,
+  HostListener,
+  ElementRef,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { FeatureDetailsComponent } from './feature-details.component';
 
 import { BehaviorSubject } from 'rxjs';
-
 
 @Directive({
   // This directive allow to view the route between the user coordinates and the feature
   selector: '[igoFeatureDetailsDirective]'
 })
-
 export class FeatureDetailsDirective implements OnInit {
   private component: FeatureDetailsComponent;
-
 
   get feature() {
     return this.component.feature;
   }
   feature$ = new BehaviorSubject(undefined);
-
 
   @Output() routingEvent = new EventEmitter<void>();
 
@@ -34,7 +38,6 @@ export class FeatureDetailsDirective implements OnInit {
   }
 
   ngOnInit() {
-
     this.feature$.subscribe(() => {
       if (this.feature.geometry) {
         this.bindClicking();

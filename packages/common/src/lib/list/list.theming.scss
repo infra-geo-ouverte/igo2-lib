@@ -7,7 +7,7 @@
 
   igo-list {
     [igolistitem] {
-      &[color="primary"] {
+      &[color='primary'] {
         &.igo-list-item-selected > mat-list-item {
           background-color: mat.get-color-from-palette($primary);
           color: mat.get-color-from-palette($primary, default-contrast);
@@ -18,23 +18,23 @@
           color: mat.get-color-from-palette($primary, default-contrast);
         }
       }
-  
-      &[color="accent"] {
+
+      &[color='accent'] {
         &.igo-list-item-selected > mat-list-item {
           background-color: mat.get-color-from-palette($accent);
           color: mat.get-color-from-palette($accent, default-contrast);
         }
-  
+
         &:not(.igo-list-item-disabled):hover > mat-list-item,
         &.igo-list-item-focused > mat-list-item {
           background-color: mat.get-color-from-palette($accent, lighter);
           color: mat.get-color-from-palette($accent, default-contrast);
         }
       }
-  
+
       &.igo-list-item-disabled > mat-list-item {
         color: rgba(0, 0, 0, 0.38);
       }
-    }  
+    }
   }
 }

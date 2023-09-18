@@ -8,18 +8,8 @@ import { FormComponent } from './form.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  exports: [
-    FormComponent,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  declarations: [
-    FormComponent
-  ]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  exports: [FormComponent, FormsModule, ReactiveFormsModule],
+  declarations: [FormComponent]
 })
 export class IgoFormFormModule {}

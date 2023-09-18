@@ -1,10 +1,11 @@
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-import { FormField, FormFieldInputs, FormFieldOptions, FormFieldSubscribers } from '../shared/form.interfaces';
+import {
+  FormField,
+  FormFieldInputs,
+  FormFieldOptions,
+  FormFieldSubscribers
+} from '../shared/form.interfaces';
 import { FormFieldService } from '../shared/form-field.service';
 import { getDefaultErrorMessages } from '../shared';
 
@@ -19,7 +20,6 @@ import { getDefaultErrorMessages } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldComponent {
-
   /**
    * Field configuration
    */

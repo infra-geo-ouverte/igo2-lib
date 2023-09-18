@@ -14,8 +14,8 @@
   .toast-info {
     background-color: mat.get-color-from-palette($primary) !important;
   }
-  
-  .toast-no-icon { 
+
+  .toast-no-icon {
     background-image: none;
     padding-left: 6%;
   }
@@ -23,5 +23,4 @@
   .toast-title {
     font-weight: bold;
   }
-
 }

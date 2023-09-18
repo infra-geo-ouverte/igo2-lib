@@ -8,6 +8,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppHoverRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppHoverRoutingModule = RouterModule.forChild(routes);

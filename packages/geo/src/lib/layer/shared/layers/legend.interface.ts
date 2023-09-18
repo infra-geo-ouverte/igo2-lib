@@ -8,7 +8,7 @@ export interface LegendOptions {
   stylesAvailable?: ItemStyleOptions[];
 }
 
-export interface LegendMapViewOptions extends MapViewOptions{
+export interface LegendMapViewOptions extends MapViewOptions {
   scale?: number;
   size?: [number, number];
 }

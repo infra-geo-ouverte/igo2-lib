@@ -51,12 +51,9 @@ import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
     MatSelectModule,
     MatTabsModule,
     MatTooltipModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
-  exports: [
-    SearchResultsComponent,
-    SearchResultAddButtonComponent
-  ],
+  exports: [SearchResultsComponent, SearchResultAddButtonComponent],
   declarations: [
     SearchResultsComponent,
     SearchResultsItemComponent,

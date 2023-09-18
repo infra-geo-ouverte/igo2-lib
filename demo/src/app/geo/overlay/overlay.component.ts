@@ -41,7 +41,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -74,7 +74,11 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
       properties: {},
       geometry: {
         type: 'LineString',
-        coordinates: [[-72, 47.8], [-73.5, 47.4], [-72.4, 48.6]]
+        coordinates: [
+          [-72, 47.8],
+          [-73.5, 47.4],
+          [-72.4, 48.6]
+        ]
       }
     };
 
@@ -87,7 +91,13 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
       properties: {},
       geometry: {
         type: 'Polygon',
-        coordinates: [[[-71, 46.8], [-73, 47], [-71.2, 46.6]]]
+        coordinates: [
+          [
+            [-71, 46.8],
+            [-73, 47],
+            [-71.2, 46.6]
+          ]
+        ]
       }
     };
 

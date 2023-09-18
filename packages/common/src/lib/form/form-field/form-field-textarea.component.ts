@@ -8,7 +8,10 @@ import type { UntypedFormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
+import {
+  formControlIsRequired,
+  getControlErrorMessage
+} from '../shared/form.utils';
 import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
@@ -21,7 +24,6 @@ import { IgoFormFieldComponent } from '../shared/form-field-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldTextareaComponent implements OnInit {
-
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
@@ -37,7 +39,7 @@ export class FormFieldTextareaComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: {[key: string]: string};
+  @Input() errors: { [key: string]: string };
 
   /**
    * Wheter a disable switch should be available
@@ -75,5 +77,4 @@ export class FormFieldTextareaComponent implements OnInit {
     }
     this.disabled$.next(disabled);
   }
-
 }

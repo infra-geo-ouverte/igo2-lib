@@ -318,10 +318,11 @@ export class ModifyControl {
     this.onModifyKey = olGeometry.on(
       'change',
       (olGeometryEvent: BasicEvent) => {
-        this.mousePosition = getMousePositionFromOlGeometryEvent(
-          olGeometryEvent
+        this.mousePosition =
+          getMousePositionFromOlGeometryEvent(olGeometryEvent);
+        this.changes$.next(
+          olGeometryEvent.target as OlLineString | OlCircle | OlPolygon
         );
-        this.changes$.next(olGeometryEvent.target as OlLineString | OlCircle | OlPolygon);
       }
     );
     this.subscribeToKeyDown();
@@ -612,24 +613,21 @@ export class ModifyControl {
     const olGeometry = event.feature.getGeometry();
     this.olOuterGeometry = this.getOlGeometry().clone();
 
-    const linearRingCoordinates = ((olGeometry as any).getLinearRing() as any).getCoordinates();
+    const linearRingCoordinates = (
+      (olGeometry as any).getLinearRing() as any
+    ).getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
     this.start$.next(this.getOlGeometry());
 
-    this.onDrawKey = olGeometry.on(
-      'change',
-      (olGeometryEvent: BasicEvent) => {
-        this.mousePosition = getMousePositionFromOlGeometryEvent(
-          olGeometryEvent
-        );
-        const olGeometryTarget = olGeometryEvent.target as OlPolygon;
-        const _linearRingCoordinates = olGeometryTarget
-          .getLinearRing(0)
-          .getCoordinates();
-        this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
-        this.changes$.next(this.getOlGeometry());
-      }
-    );
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
+      const olGeometryTarget = olGeometryEvent.target as OlPolygon;
+      const _linearRingCoordinates = olGeometryTarget
+        .getLinearRing(0)
+        .getCoordinates();
+      this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
+      this.changes$.next(this.getOlGeometry());
+    });
     this.subscribeToKeyDown();
   }
 
@@ -641,10 +639,9 @@ export class ModifyControl {
     unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
-    const linearRingCoordinates = ((event.feature
-      .getGeometry() as any)
-      .getLinearRing() as any)
-      .getCoordinates();
+    const linearRingCoordinates = (
+      (event.feature.getGeometry() as any).getLinearRing() as any
+    ).getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();
     this.end$.next(this.getOlGeometry());

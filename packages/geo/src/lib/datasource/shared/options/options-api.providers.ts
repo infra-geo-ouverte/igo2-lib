@@ -9,10 +9,7 @@ export function optionsApiFactory(
   http: HttpClient,
   configService: ConfigService
 ) {
-  return new OptionsApiService(
-    http,
-    configService.getConfig('optionsApi'),
-  );
+  return new OptionsApiService(http, configService.getConfig('optionsApi'));
 }
 
 export function provideOptionsApi() {

@@ -4,7 +4,10 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
-import { LayerMatDialogData, StyleModalData } from '../shared/style-modal.interface';
+import {
+  LayerMatDialogData,
+  StyleModalData
+} from '../shared/style-modal.interface';
 
 @Component({
   selector: 'igo-style-modal-layer',
@@ -34,9 +37,10 @@ export class StyleModalLayerComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StyleModalLayerComponent>,
     private formBuilder: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData) {
-      this.buildForm();
-    }
+    @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData
+  ) {
+    this.buildForm();
+  }
 
   ngOnInit() {
     this.linestringOnly = true;
@@ -46,7 +50,6 @@ export class StyleModalLayerComponent implements OnInit {
       }
     }
     this.buildStyleData();
-
   }
 
   private buildForm() {
@@ -61,7 +64,7 @@ export class StyleModalLayerComponent implements OnInit {
       fillColor: this.getLayerFillColor(),
       strokeColor: this.getLayerStrokeColor()
     };
-    this.initialValues ={
+    this.initialValues = {
       fillColor: this.getLayerFillColor(),
       strokeColor: this.getLayerStrokeColor()
     };
@@ -72,7 +75,9 @@ export class StyleModalLayerComponent implements OnInit {
     const style = this.layerOlStyle;
     if (style?.getFill()?.getColor()) {
       const arrayColor = style.getFill().getColor();
-      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${arrayColor[3]|| 0.4})`;
+      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
+        arrayColor[3] || 0.4
+      })`;
     }
     return fillColor;
   }
@@ -82,7 +87,9 @@ export class StyleModalLayerComponent implements OnInit {
     const style = this.layerOlStyle;
     if (style?.getStroke()?.getColor()) {
       const arrayColor = style.getStroke().getColor();
-      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${arrayColor[3]|| 1})`;
+      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
+        arrayColor[3] || 1
+      })`;
     }
     return strokeColor;
   }

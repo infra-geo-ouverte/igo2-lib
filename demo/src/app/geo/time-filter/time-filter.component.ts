@@ -38,7 +38,7 @@ export class AppTimeFilterComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -87,7 +87,7 @@ export class AppTimeFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceYear)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle YEAR',
