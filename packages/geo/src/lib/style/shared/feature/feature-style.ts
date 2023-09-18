@@ -5,7 +5,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { StyleService } from '../../style-service/style.service';
 
 
-export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>, resolution) => olStyle.Style {
+export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>, resolution: number) => olStyle.Style {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
@@ -16,7 +16,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>,
   const fill = new olStyle.Fill({
     color: [r, g, b, 0.4]
   });
-  return (olFeature: olFeature<OlGeometry>, resolution) => {
+  return (olFeature: olFeature<OlGeometry>, resolution: number) => {
       const customStyle = olFeature.get('_style');
       if (customStyle) {
         if (
@@ -30,7 +30,7 @@ export function featureRandomStyleFunction(): (olFeature: olFeature<OlGeometry>,
           customStyle.circle.radius = radius;
         }
         const styleService = new StyleService();
-        return styleService.createStyle(customStyle, resolution);
+        return styleService.createStyle(customStyle, undefined, resolution);
       }
       const style = new olStyle.Style({
         stroke,

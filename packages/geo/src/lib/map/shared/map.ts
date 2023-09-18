@@ -1,5 +1,5 @@
 import olMap from 'ol/Map';
-import olView from 'ol/View';
+import olView, { ViewOptions } from 'ol/View';
 import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olproj from 'ol/proj';
@@ -185,14 +185,16 @@ export class IgoMap implements MapBase {
 
   updateView(options: MapViewOptions) {
     const currentView = this.ol.getView();
-    const viewOptions = Object.assign(
-      {
-        zoom: currentView.getZoom()
-      },
-      currentView.getProperties()
-    );
+    const viewOptions: MapViewOptions = {
+      ...currentView.getProperties(),
+      ...options
+    };
 
-    this.setView(Object.assign(viewOptions, options));
+    if (options.zoom && options.resolution == null) {
+      viewOptions.resolution = undefined;
+    }
+
+    this.setView(viewOptions);
     if (options.maxZoomOnExtent) {
       this.viewController.maxZoomOnExtent = options.maxZoomOnExtent;
     }
@@ -208,20 +210,15 @@ export class IgoMap implements MapBase {
       this.viewController.clearStateHistory();
     }
 
-    options = Object.assign({ constrainResolution: true }, options);
-    const view = new olView(options);
-    this.ol.setView(view);
+    const viewOptions: ViewOptions = { constrainResolution: true, ...options };
+    if (options.center) {
+      viewOptions.center = olproj.fromLonLat(options.center, options.projection);
+    }
 
-    if (options) {
-      if (options.maxLayerZoomExtent) {
-        this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
-      }
+    this.ol.setView(new olView(viewOptions));
 
-      if (options.center) {
-        const projection = view.getProjection().getCode();
-        const center = olproj.fromLonLat(options.center, projection);
-        view.setCenter(center);
-      }
+    if (options.maxLayerZoomExtent) {
+      this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
     }
   }
 

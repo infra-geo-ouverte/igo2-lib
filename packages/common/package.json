@@ -30,7 +30,8 @@
     "@igo2/utils": "^1.15.4",
     "angular-shepherd": "16.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
-    "typy": "^3.3.0"
+    "typy": "^3.3.0",
+    "tinycolor2": "^1.6.0"
   },
   "dependencies": {
     "tslib": "^2.6.0"
