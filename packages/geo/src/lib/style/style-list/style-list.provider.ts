@@ -3,7 +3,9 @@ import { APP_INITIALIZER, InjectionToken } from '@angular/core';
 import { StyleListService } from './style-list.service';
 import { StyleListOptions } from './style-list.interface';
 
-export let STYLELIST_OPTIONS = new InjectionToken<StyleListOptions>('styleListOptions');
+export let STYLELIST_OPTIONS = new InjectionToken<StyleListOptions>(
+  'styleListOptions'
+);
 
 export function provideStyleListOptions(options: StyleListOptions) {
   return {

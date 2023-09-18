@@ -29,8 +29,9 @@ import { SearchSourceService } from '../shared/search-source.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
-
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
+    undefined
+  );
 
   /**
    * Subscription to the search type
@@ -46,8 +47,12 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    * The search type enabled
    */
   @Input()
-  set searchType(value: string) { this.setSearchType(value); }
-  get searchType(): string { return this.searchType$.value; }
+  set searchType(value: string) {
+    this.setSearchType(value);
+  }
+  get searchType(): string {
+    return this.searchType$.value;
+  }
 
   /**
    * Event emitted when the enabled search type changes
@@ -102,5 +107,4 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
     this.searchSourceService.enableSourcesByType(searchType);
     this.searchTypeChange.emit(searchType);
   }
-
 }

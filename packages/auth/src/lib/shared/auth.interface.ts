@@ -73,12 +73,11 @@ export interface AuthByKeyOptions {
   domainRegFilters?: string;
   keyProperty?: string;
   keyValue?: string;
-
 }
 export interface WithCredentialsOptions {
   withCredentials?: boolean;
   domainRegFilters?: string;
- }
+}
 
 export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
   type: string;

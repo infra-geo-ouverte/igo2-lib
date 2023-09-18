@@ -1,6 +1,8 @@
 <div *ngIf="visible" class="igo-user-button-container">
-  <div class="igo-user-button-more-container" [@userButtonState]="expand ? 'expand' : 'collapse'">
-
+  <div
+    class="igo-user-button-more-container"
+    [@userButtonState]="expand ? 'expand' : 'collapse'"
+  >
     <igo-poi-button *ngIf="hasApi" [color]="color" [map]="map"></igo-poi-button>
 
     <button
@@ -8,25 +10,27 @@
       [matTooltip]="'igo.context.userButton.infoTitle' | translate"
       matTooltipPosition="above"
       [color]="color"
-      (click)="infoUser()">
+      (click)="infoUser()"
+    >
       <mat-icon svgIcon="information-outline"></mat-icon>
     </button>
 
     <button
       mat-icon-button
-      [matTooltip]="'igo.context.userButton.logout' | translate"
+      [matTooltip]="'igo.context.userButton.logout' | translate"
       matTooltipPosition="above"
       [color]="color"
-      (click)="logout()">
+      (click)="logout()"
+    >
       <mat-icon svgIcon="power"></mat-icon>
     </button>
-
   </div>
 
   <button
     mat-icon-button
     [color]="auth.authenticated ? color : 'warn'"
-    (click)="accountClick()">
+    (click)="accountClick()"
+  >
     <mat-icon svgIcon="account-box"></mat-icon>
   </button>
 </div>

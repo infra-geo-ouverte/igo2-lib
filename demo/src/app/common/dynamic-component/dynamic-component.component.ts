@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 
 import { OnUpdateInputs } from '@igo2/common';
 
@@ -8,7 +13,6 @@ import { OnUpdateInputs } from '@igo2/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSalutationComponent implements OnUpdateInputs {
-
   @Input() name: string;
 
   constructor(private cdRef: ChangeDetectorRef) {}
@@ -16,22 +20,20 @@ export class AppSalutationComponent implements OnUpdateInputs {
   onUpdateInputs() {
     this.cdRef.detectChanges();
   }
-
 }
 
 @Component({
   selector: 'app-explanation-component',
-  template: '<p>I am a dynamic component, rendered into an IgoDynamicOutlet.</p>',
+  template:
+    '<p>I am a dynamic component, rendered into an IgoDynamicOutlet.</p>',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppExplanationComponent implements OnUpdateInputs {
-
   constructor(private cdRef: ChangeDetectorRef) {}
 
   onUpdateInputs() {
     this.cdRef.detectChanges();
   }
-
 }
 
 @Component({
@@ -40,15 +42,14 @@ export class AppExplanationComponent implements OnUpdateInputs {
   styleUrls: ['./dynamic-component.component.scss']
 })
 export class AppDynamicComponentComponent {
-
   component: any = AppSalutationComponent;
 
-  inputs = {name: 'Bob'};
+  inputs = { name: 'Bob' };
 
   toggleComponent() {
-    this.component = this.component === AppSalutationComponent ?
-      AppExplanationComponent :
-      AppSalutationComponent;
+    this.component =
+      this.component === AppSalutationComponent
+        ? AppExplanationComponent
+        : AppSalutationComponent;
   }
-
 }

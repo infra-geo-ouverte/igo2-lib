@@ -74,8 +74,8 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
 
     if (this.model) {
       this.displayedColumns = this.model.columns
-        .filter(c => c.displayed !== false)
-        .map(c => c.name);
+        .filter((c) => c.displayed !== false)
+        .map((c) => c.name);
 
       if (this.model.selectionCheckbox) {
         this.displayedColumns.unshift('selectionCheckbox');
@@ -85,16 +85,13 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
       }
     }
 
-    this.selection.changed.subscribe(e => this.select.emit(e));
+    this.selection.changed.subscribe((e) => this.select.emit(e));
   }
 
   ngAfterViewInit() {
     if (this.filter) {
       fromEvent(this.filter.nativeElement, 'keyup')
-        .pipe(
-          debounceTime(150),
-          distinctUntilChanged()
-        )
+        .pipe(debounceTime(150), distinctUntilChanged())
         .subscribe(() => {
           if (!this.dataSource) {
             return;
@@ -134,7 +131,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   masterToggle() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.database.data.forEach(row => this.selection.select(row));
+      : this.database.data.forEach((row) => this.selection.select(row));
   }
 
   handleClickAction(event, action, row) {

@@ -21,4 +21,4 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule
   ]
 })
-export class ExampleModule { }
+export class ExampleModule {}

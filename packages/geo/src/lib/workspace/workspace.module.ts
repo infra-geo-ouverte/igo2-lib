@@ -28,8 +28,6 @@ import { IgoConfirmationPopupModule } from './confirmation-popup/confirmation-po
     IgoConfirmationPopupModule
   ],
   declarations: [],
-  providers: [
-    provideOgcFilterWidget()
-  ]
+  providers: [provideOgcFilterWidget()]
 })
 export class IgoGeoWorkspaceModule {}

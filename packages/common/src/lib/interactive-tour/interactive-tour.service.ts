@@ -29,7 +29,9 @@ export class InteractiveTourService {
   }
 
   public isAppHaveTour() {
-    const haveTour = this.configService.getConfig('interactiveTour.activateInteractiveTour');
+    const haveTour = this.configService.getConfig(
+      'interactiveTour.activateInteractiveTour'
+    );
     if (haveTour === undefined) {
       return true;
     } else {
@@ -38,9 +40,8 @@ export class InteractiveTourService {
   }
 
   public isToolHaveTourConfig(toolName: string): boolean {
-    const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const checkTourActiveOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
     if (checkTourActiveOptions === undefined) {
       return false;
     } else {
@@ -49,9 +50,8 @@ export class InteractiveTourService {
   }
 
   public disabledTourButton(toolName: string): boolean {
-    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const stepConfig: InteractiveTourOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
 
     if (stepConfig?.conditions) {
       for (const condition of stepConfig?.conditions) {
@@ -158,15 +158,22 @@ export class InteractiveTourService {
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
-        if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
+        if (
+          self.getCurrentStep().options.attachTo.element &&
+          !document.querySelector(
+            self.getCurrentStep().options.attachTo.element
+          )
+        ) {
           self.cancel();
           clearInterval(checkExist);
           return;
         } else {
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
-            const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
-            shepherdList.forEach(element => {
+            const shepherdList = currentStepElement.querySelectorAll(
+              '.shepherd-content, .shepherd-text'
+            );
+            shepherdList.forEach((element) => {
               element.classList.add('mat-typography');
             });
           }
@@ -198,7 +205,10 @@ export class InteractiveTourService {
 
   private checkNext(index, tour, service) {
     if (tour.getCurrentStep()) {
-      if (tour.getCurrentStep().options.attachTo.element && document.querySelector(tour.getCurrentStep().options.attachTo.element)) {
+      if (
+        tour.getCurrentStep().options.attachTo.element &&
+        document.querySelector(tour.getCurrentStep().options.attachTo.element)
+      ) {
         tour.complete();
         return;
       }
@@ -210,7 +220,10 @@ export class InteractiveTourService {
 
       tour.steps.splice(index.index, 1);
       const nextStep = tour.steps[index.index];
-      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
+      if (
+        nextStep.options.attachTo.element &&
+        !document.querySelector(nextStep.options.attachTo.element)
+      ) {
         service.checkNext(index, tour, service);
       } else {
         tour._setupModal();
@@ -326,9 +339,8 @@ export class InteractiveTourService {
   }
 
   public startTour(toolName: string) {
-    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const stepConfig: InteractiveTourOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
 
     this.shepherdService.defaultStepOptions = {
       classes: stepConfig.class,
@@ -348,7 +360,7 @@ export class InteractiveTourService {
     this.shepherdService.addSteps(shepherdSteps);
 
     this.shepherdService.tourObject.on('show', this.addProgress);
-    this.shepherdService.tourObject.on('cancel', (index) => {
+    this.shepherdService.tourObject.on('cancel', (index) => {
       this.checkNext(index, this.shepherdService.tourObject, this);
     });
 

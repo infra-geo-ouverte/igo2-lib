@@ -10,12 +10,9 @@ describe('ListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        MatListModule
-      ],
-      declarations: [ ListComponent ]
-    })
-    .compileComponents();
+      imports: [MatListModule],
+      declarations: [ListComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

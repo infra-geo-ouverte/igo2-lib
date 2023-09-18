@@ -6,7 +6,6 @@ import { unByKey } from 'ol/Observable';
  * Base map controller
  */
 export class MapController {
-
   /**
    * OL Map
    */
@@ -50,5 +49,4 @@ export class MapController {
     this.observerKeys.forEach((key: EventsKey) => unByKey(key));
     this.observerKeys = [];
   }
-
 }

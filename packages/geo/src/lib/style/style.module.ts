@@ -16,6 +16,7 @@ import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ColorPickerFormFieldModule } from '@igo2/common';
 
 @NgModule({
   imports: [
@@ -31,10 +32,20 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSelectModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    ColorPickerFormFieldModule,
     IgoStyleListModule.forRoot()
   ],
-  exports: [IgoStyleListModule, StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent],
-  declarations: [StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent]
+  exports: [
+    IgoStyleListModule,
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ],
+  declarations: [
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ]
 })
 export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {

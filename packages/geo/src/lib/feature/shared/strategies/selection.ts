@@ -234,7 +234,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
-      layerFilter: olLayer => {
+      layerFilter: (olLayer) => {
         const storeOlLayer = this.stores.find((store: FeatureStore) => {
           return store.layer?.ol === olLayer;
         });
@@ -317,8 +317,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const olOverlayFeatures = this.overlayStore.layer.ol
       .getSource()
       .getFeatures();
-    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature<OlGeometry>) =>
-      olFeature.getId()
+    const overlayFeaturesKeys = olOverlayFeatures.map(
+      (olFeature: OlFeature<OlGeometry>) => olFeature.getId()
     );
     const featuresKeys = features.map(this.overlayStore.getKey);
 

@@ -24,7 +24,11 @@ export function createOverlayMarkerStyle({
   const newColor = ColorAsArray(markerColor).slice(0);
   const newOutlineColor = ColorAsArray(markerOutlineColor).slice(0);
 
-  if (newColor.length === 4 && (typeof markerColor !== 'string' || /^#[0-9A-F]{8}$/i.test(markerColor as string))) {
+  if (
+    newColor.length === 4 &&
+    (typeof markerColor !== 'string' ||
+      /^#[0-9A-F]{8}$/i.test(markerColor as string))
+  ) {
     opacity = newColor[3];
   }
 

@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 
-import { IgoEntityTableModule, IgoEntityTablePaginatorModule } from '@igo2/common';
+import {
+  IgoEntityTableModule,
+  IgoEntityTablePaginatorModule
+} from '@igo2/common';
 
 import { AppEntityTableComponent } from './entity-table.component';
 import { AppEntityTableRoutingModule } from './entity-table-routing.module';

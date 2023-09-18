@@ -1,14 +1,15 @@
 <mat-list-item>
   <mat-icon
-    svgIcon="chevron-up" 
+    svgIcon="chevron-up"
     class="igo-chevron"
     matListItemIcon
     igoCollapse
     [target]="content"
     [collapsed]="collapsed"
-    (toggle)="collapsed = $event">
+    (toggle)="collapsed = $event"
+  >
   </mat-icon>
-  <span matListItemTitle>{{title}}</span>
+  <span matListItemTitle>{{ title }}</span>
 </mat-list-item>
 
 <div #content>

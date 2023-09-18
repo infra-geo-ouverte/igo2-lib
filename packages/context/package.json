@@ -26,23 +26,24 @@
       "import": "./src/public_api.ts"
     }
   },
-  "dependencies": {
-    "tslib": "^2.6.0"
-  },
   "peerDependencies": {
-    "@angular/animations": "^16.2.0",
-    "@angular/common": "^16.2.0",
-    "@angular/core": "^16.2.0",
-    "@angular/forms": "^16.2.0",
-    "@angular/material": "^16.2.0",
-    "@angular/platform-browser": "^16.2.0",
+    "@angular/animations": "^16.2.5",
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@angular/forms": "^16.2.5",
+    "@angular/material": "^16.2.4",
+    "@angular/platform-browser": "^16.2.5",
     "@igo2/auth": "*",
     "@igo2/common": "*",
     "@igo2/core": "*",
     "@igo2/geo": "*",
     "@igo2/utils": "*",
-    "ol": "^7.4.0",
+    "ol": "^8.1.0",
+    "ol-mapbox-style": "^12.0.0",
     "rxjs": "^7.8.0"
+  },
+  "dependencies": {
+    "tslib": "^2.6.0"
   },
   "engines": {
     "node": ">=18.10.0"

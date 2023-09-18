@@ -36,7 +36,7 @@ export class AppTableComponent implements OnInit {
       {
         icon: 'file-document',
         color: TableActionColor.primary,
-        click: row => this.showName(row.name)
+        click: (row) => this.showName(row.name)
       }
     ],
     selectionCheckbox: true

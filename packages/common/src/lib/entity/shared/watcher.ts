@@ -22,7 +22,6 @@ import { EntityStore } from './store';
  * entities and their state.
  */
 export class EntityStoreWatcher<E extends object> {
-
   /**
    * Component change detector
    */
@@ -36,7 +35,7 @@ export class EntityStoreWatcher<E extends object> {
   /**
    * Component inner state
    */
-  private innerStateIndex = new Map<EntityKey, {[key: string]: any}>();
+  private innerStateIndex = new Map<EntityKey, { [key: string]: any }>();
 
   /**
    * Subscription to the store's entities
@@ -91,8 +90,9 @@ export class EntityStoreWatcher<E extends object> {
   private setupObservers() {
     this.teardownObservers();
 
-    this.entities$$ = this.store.entities$
-      .subscribe((entities: E[]) => this.onEntitiesChange(entities));
+    this.entities$$ = this.store.entities$.subscribe((entities: E[]) =>
+      this.onEntitiesChange(entities)
+    );
 
     this.state$$ = this.store.state.change$
       .pipe(skip(1))
@@ -159,5 +159,4 @@ export class EntityStoreWatcher<E extends object> {
     }
     return true;
   }
-
 }

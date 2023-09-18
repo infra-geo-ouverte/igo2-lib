@@ -6,9 +6,7 @@ import { IgoEntityTableModule } from './entity-table/entity-table.module';
 import { IgoEntityTablePaginatorModule } from './entity-table-paginator/entity-table-paginator.module';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   exports: [
     IgoEntitySelectorModule,
     IgoEntityTableModule,

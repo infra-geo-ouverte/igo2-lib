@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 import { FEATURE, Feature } from '../../../feature';
 
 import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
@@ -33,8 +33,10 @@ import { Cacheable } from 'ts-cacheable';
  * StoredQueries search source
  */
 @Injectable()
-export class StoredQueriesSearchSource extends SearchSource
-  implements TextSearch {
+export class StoredQueriesSearchSource
+  extends SearchSource
+  implements TextSearch
+{
   static id = 'storedqueries';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [
@@ -99,7 +101,8 @@ export class StoredQueriesSearchSource extends SearchSource
     this.storedQueriesOptions.srsname =
       this.storedQueriesOptions.srsname || 'EPSG:4326';
 
-    const storedQueryId = this.storedQueriesOptions.storedquery_id.toLowerCase();
+    const storedQueryId =
+      this.storedQueriesOptions.storedquery_id.toLowerCase();
     if (
       storedQueryId.includes('getfeaturebyid') &&
       this.storedQueriesOptions.outputformat
@@ -153,10 +156,10 @@ export class StoredQueriesSearchSource extends SearchSource
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
- /* eslint-disable max-len */
+  /* eslint-disable max-len */
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
- /* eslint-disable max-len */
+  /* eslint-disable max-len */
   //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
@@ -164,10 +167,6 @@ export class StoredQueriesSearchSource extends SearchSource
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
-
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string,
     options?: TextSearchOptions
@@ -183,38 +182,56 @@ export class StoredQueriesSearchSource extends SearchSource
     this.options.params = this.options.params ? this.options.params : {};
     this.options.params.page = options.page ? String(options.page) : '1';
 
-    if (
-      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
-    ) {
-      return this.http
-        .get(this.searchUrl, { params, responseType: 'text' })
-        .pipe(
-          map(response => {
-            let resultArray = this.extractResults(this.extractWFSData(response), term);
+    return this.getSearch(term, params);
+  }
+
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getSearch(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
+    return new RegExp('.*?gml.*?', 'i').test(
+      this.storedQueriesOptions.outputformat
+    )
+      ? this.http.get(this.searchUrl, { params, responseType: 'text' }).pipe(
+          map((response) => {
+            let resultArray = this.extractResults(
+              this.extractWFSData(response),
+              term
+            );
             resultArray.sort((a, b) =>
-              (a.meta.score > b.meta.score) ? 1 :
-              (a.meta.score === b.meta.score) ? ((a.meta.titleHtml < b.meta.titleHtml) ? 1 : -1) : -1);
+              a.meta.score > b.meta.score
+                ? 1
+                : a.meta.score === b.meta.score
+                ? a.meta.titleHtml < b.meta.titleHtml
+                  ? 1
+                  : -1
+                : -1
+            );
             resultArray.reverse();
             if (resultArray.length > Number(this.options.params.limit)) {
-              const idxEnd = Number(this.options.params.limit) * Number(this.options.params.page);
+              const idxEnd =
+                Number(this.options.params.limit) *
+                Number(this.options.params.page);
               const resultTotLenght = resultArray.length;
               resultArray = resultArray.slice(0, idxEnd);
               if (idxEnd < resultTotLenght) {
-                resultArray[resultArray.length - 1 ].meta.nextPage = true;
+                resultArray[resultArray.length - 1].meta.nextPage = true;
               } else {
-                resultArray[resultArray.length - 1 ].meta.nextPage = false;
+                resultArray[resultArray.length - 1].meta.nextPage = false;
               }
             }
             return resultArray;
           })
+        )
+      : this.http.get(this.searchUrl, { params }).pipe(
+          map((response) => {
+            return this.extractResults(this.extractWFSData(response), term);
+          })
         );
-    } else {
-      return this.http.get(this.searchUrl, { params }).pipe(
-        map(response => {
-          return this.extractResults(this.extractWFSData(response), term);
-        })
-      );
-    }
   }
 
   private getFormatFromOptions() {
@@ -248,7 +265,7 @@ export class StoredQueriesSearchSource extends SearchSource
     let cnt = 0;
 
     // Used to build the default values
-    fields.forEach(field => {
+    fields.forEach((field) => {
       splittedTerm[field.name] = field.defaultValue;
       const splitterRegex = new RegExp(field.splitPrefix + '(.+)', 'i');
       if (splitterRegex.test(remainingTerm)) {
@@ -262,7 +279,7 @@ export class StoredQueriesSearchSource extends SearchSource
     }
     remainingTerm = term;
     const localFields = [...fields].reverse();
-    localFields.forEach(field => {
+    localFields.forEach((field) => {
       const splitterRegex = new RegExp(field.splitPrefix || '' + '(.+)', 'i');
       if (remainingTerm || remainingTerm !== '') {
         const values = remainingTerm.split(splitterRegex);
@@ -302,14 +319,18 @@ export class StoredQueriesSearchSource extends SearchSource
   }
 
   private extractResults(
-    response: StoredQueriesResponse, term: string
+    response: StoredQueriesResponse,
+    term: string
   ): SearchResult<Feature>[] {
     return response.features.map((data: StoredQueriesData) => {
       return this.dataToResult(data, term);
     });
   }
 
-  private dataToResult(data: StoredQueriesData, term: string): SearchResult<Feature> {
+  private dataToResult(
+    data: StoredQueriesData,
+    term: string
+  ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
     const title = data.properties[this.storedQueriesOptions.resultTitle]
@@ -334,10 +355,9 @@ export class StoredQueriesSearchSource extends SearchSource
         title: data.properties.title,
         titleHtml: data.properties[title],
         icon: 'map-marker',
-        score: (data.properties.title) ?
-        computeTermSimilarity(term.trim(), data.properties.title) :
-        computeTermSimilarity(term.trim(), data.properties[title]),
-
+        score: data.properties.title
+          ? computeTermSimilarity(term.trim(), data.properties.title)
+          : computeTermSimilarity(term.trim(), data.properties[title])
       }
     };
   }
@@ -349,7 +369,12 @@ export class StoredQueriesSearchSource extends SearchSource
         data.properties,
         StoredQueriesSearchSource.propertiesBlacklist
       ),
-      { Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>' }
+      {
+        Route:
+          '<span class="routing"> <u>' +
+          this.languageService.translate.instant('igo.geo.seeRouting') +
+          '</u> </span>'
+      }
     );
     return properties;
   }
@@ -360,13 +385,15 @@ export class StoredQueriesSearchSource extends SearchSource
  */
 
 // EXAMPLE CALLS
- /* eslint-disable max-len */
+/* eslint-disable max-len */
 // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
 //
 
 @Injectable()
-export class StoredQueriesReverseSearchSource extends SearchSource
-  implements ReverseSearch {
+export class StoredQueriesReverseSearchSource
+  extends SearchSource
+  implements ReverseSearch
+{
   static id = 'storedqueriesreverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -381,9 +408,13 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options, storageService);
-    this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions;
+    this.storedQueriesOptions =
+      options as StoredQueriesReverseSearchSourceOptions;
 
-    if (!this.storedQueriesOptions || (this.storedQueriesOptions && !this.storedQueriesOptions.available) ) {
+    if (
+      !this.storedQueriesOptions ||
+      (this.storedQueriesOptions && !this.storedQueriesOptions.available)
+    ) {
       return;
     }
 
@@ -432,32 +463,32 @@ export class StoredQueriesReverseSearchSource extends SearchSource
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
-  @Cacheable({
-    maxCacheCount: 20
-  })
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
+    return this.getReverseSearch(params);
+  }
 
-    if (
-      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
-    ) {
-      return this.http
-        .get(this.searchUrl, { params, responseType: 'text' })
-        .pipe(
-          map(response => {
-            return this.extractResults(this.extractWFSData(response));
-          })
-        );
-    } else {
-      return this.http.get(this.searchUrl, { params }).pipe(
-        map(response => {
-          return this.extractResults(this.extractWFSData(response));
-        })
-      );
-    }
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getReverseSearch(
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
+    const isGml = new RegExp('.*?gml.*?', 'i').test(
+      this.storedQueriesOptions.outputformat
+    );
+    const request$ = isGml
+      ? this.http.get(this.searchUrl, { params, responseType: 'text' })
+      : this.http.get(this.searchUrl, { params });
+    return request$.pipe(
+      map((response) => {
+        return this.extractResults(this.extractWFSData(response));
+      })
+    );
   }
 
   private getFormatFromOptions() {
@@ -546,16 +577,23 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     };
   }
 
-  private computeProperties(
-    data: StoredQueriesReverseData
-  ): { [key: string]: any } {
+  private computeProperties(data: StoredQueriesReverseData): {
+    [key: string]: any;
+  } {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist
     );
     const routing = {
-      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+      Route:
+        '<span class="routing"> <u>' +
+        this.languageService.translate.instant('igo.geo.seeRouting') +
+        '</u> </span>'
     };
-    return Object.assign(properties, { type: data.properties.doc_type }, routing);
+    return Object.assign(
+      properties,
+      { type: data.properties.doc_type },
+      routing
+    );
   }
 }

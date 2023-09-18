@@ -37,7 +37,11 @@ export class TileArcGISRestDataSource extends DataSource {
   getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
       return legend;
     }
 

@@ -15,7 +15,6 @@ import {
   styleUrls: ['./measure.component.scss']
 })
 export class AppMeasureComponent {
-
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -31,7 +30,7 @@ export class AppMeasureComponent {
     projection: 'EPSG:3857'
   };
 
-  public store = new FeatureStore<FeatureWithMeasure>([], {map: this.map});
+  public store = new FeatureStore<FeatureWithMeasure>([], { map: this.map });
 
   constructor(
     private languageService: LanguageService,
@@ -42,7 +41,7 @@ export class AppMeasureComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',

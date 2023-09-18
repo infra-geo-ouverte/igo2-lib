@@ -9,13 +9,13 @@
 @mixin color($theme) {
   igo-search-bar {
     mat-form-field {
-        .mat-mdc-text-field-wrapper {
-            background-color: white !important;
-        }
-        
-        .mdc-line-ripple {
-            display: none;
-        }
+      .mat-mdc-text-field-wrapper {
+        background-color: white !important;
+      }
+
+      .mdc-line-ripple {
+        display: none;
+      }
     }
   }
 }

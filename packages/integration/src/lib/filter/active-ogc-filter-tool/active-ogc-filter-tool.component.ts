@@ -18,7 +18,6 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   animations: [toolSlideInOut()]
 })
 export class ActiveOgcFilterToolComponent {
-
   get map(): IgoMap {
     return this.mapState.map;
   }

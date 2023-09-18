@@ -12,17 +12,14 @@ import { AppWidgetRoutingModule } from './widget-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        AppSalutationWidgetComponent,
-        AppWidgetComponent
-    ],
-    imports: [
-        SharedModule,
-        AppWidgetRoutingModule,
-        MatButtonModule,
-        MatCardModule,
-        IgoWidgetModule
-    ],
-    exports: [AppWidgetComponent]
+  declarations: [AppSalutationWidgetComponent, AppWidgetComponent],
+  imports: [
+    SharedModule,
+    AppWidgetRoutingModule,
+    MatButtonModule,
+    MatCardModule,
+    IgoWidgetModule
+  ],
+  exports: [AppWidgetComponent]
 })
 export class AppWidgetModule {}

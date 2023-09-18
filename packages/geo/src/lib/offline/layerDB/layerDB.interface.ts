@@ -1,11 +1,7 @@
-
-
 export interface LayerDBData {
-    layerId: string;
-    layerOptions: any
-    sourceOptions: any;
-    insertEvent: string;
-    detailedContextUri: string
+  layerId: string;
+  layerOptions: any;
+  sourceOptions: any;
+  insertEvent: string;
+  detailedContextUri: string;
 }
-
-

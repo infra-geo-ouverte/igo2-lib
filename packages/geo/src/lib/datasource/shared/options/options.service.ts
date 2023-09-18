@@ -13,7 +13,14 @@ export abstract class OptionsService {
     detailedContextUri?: string
   ): Observable<WMSDataSourceOptions>;
   abstract getArcgisRestOptions(
-    _baseOptions: ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions,
+    _baseOptions:
+      | ArcGISRestDataSourceOptions
+      | ArcGISRestImageDataSourceOptions
+      | TileArcGISRestDataSourceOptions,
     detailedContextUri?: string
-  ): Observable<ArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions>;
+  ): Observable<
+    | ArcGISRestDataSourceOptions
+    | ArcGISRestImageDataSourceOptions
+    | TileArcGISRestDataSourceOptions
+  >;
 }

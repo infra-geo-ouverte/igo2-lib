@@ -1,17 +1,12 @@
-<mat-sidenav
-  #sidenav
-  igoSidenavShim
-  mode="side"
-  [opened]="opened">
-
+<mat-sidenav #sidenav igoSidenavShim mode="side" [opened]="opened">
   <div class="igo-sidenav-content">
-
     <igo-flexible
       #topPanel
-      initial="50%" initialMobile="100%"
+      initial="50%"
+      initialMobile="100%"
       expanded="calc(100% - 58px)"
-      [state]="topPanelState">
-
+      [state]="topPanelState"
+    >
       <div class="igo-content">
         <igo-panel [title]="tool ? (tool.title | translate) : title">
           <button
@@ -20,7 +15,8 @@
             tooltip-position="below"
             matTooltipShowDelay="500"
             [matTooltip]="'igo.context.sidenav.goBack' | translate"
-            *ngIf="tool">
+            *ngIf="tool"
+          >
             <mat-icon svgIcon="arrow-back"></mat-icon>
           </button>
 
@@ -30,24 +26,28 @@
             tooltip-position="below"
             matTooltipShowDelay="500"
             [matTooltip]="'igo.context.sidenav.mainMenu' | translate"
-            *ngIf="tool">
+            *ngIf="tool"
+          >
             <mat-icon svgIcon="menu"></mat-icon>
           </button>
-
         </igo-panel>
       </div>
 
       <div igoFlexibleFill class="igo-content">
-        <igo-panel
-          [title]="featureTitle"
-          *ngIf="feature && media !== 'mobile'">
-
+        <igo-panel [title]="featureTitle" *ngIf="feature && media !== 'mobile'">
           <button
             mat-icon-button
             panelLeftButton
             class="igo-icon-button"
-            (click)="toggleTopPanel()">
-            <mat-icon [svgIcon]="['collapsed', 'initial'].indexOf(topPanel.state) >= 0 ? 'arrow_downward' : 'arrow_upward'"></mat-icon>
+            (click)="toggleTopPanel()"
+          >
+            <mat-icon
+              [svgIcon]="
+                ['collapsed', 'initial'].indexOf(topPanel.state) >= 0
+                  ? 'arrow_downward'
+                  : 'arrow_upward'
+              "
+            ></mat-icon>
           </button>
 
           <button
@@ -55,18 +55,18 @@
             panelRightButton
             class="igo-icon-button"
             (click)="zoomToFeatureExtent()"
-            *ngIf="feature.geometry">
+            *ngIf="feature.geometry"
+          >
             <mat-icon svgIcon="zoom-in"></mat-icon>
           </button>
 
           <igo-feature-details
             [feature]="feature"
-            *ngIf="['collapsed', 'initial'].indexOf(topPanel.state) >= 0">
+            *ngIf="['collapsed', 'initial'].indexOf(topPanel.state) >= 0"
+          >
           </igo-feature-details>
         </igo-panel>
       </div>
-
     </igo-flexible>
-
   </div>
 </mat-sidenav>

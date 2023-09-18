@@ -23,7 +23,7 @@
         "attribute": "abbrev",
         "data": ["Can."],
         "stroke": ["red"],
-        "width" : [5],
+        "width": [5],
         "label": "geounit",
         "baseStyle": {
           "stroke": {
@@ -42,7 +42,7 @@
     {
       "title": "Zone",
       "visible": false,
-      "opacity":0.7,
+      "opacity": 0.7,
       "style": {
         "stroke": {
           "color": "red"
@@ -80,8 +80,7 @@
               "type": "cartodb",
               "options": {
                 "cartocss_version": "2.3.0",
-                "cartocss":
-                  "#layer { line-width: 3; line-color: ramp([yr], (#5F4690, #1D6996, #38A6A5, #0F8554, #73AF48, #EDAD08, #E17C05, #CC503E, #94346E, #6F4070, #666666), (\"2004\", \"2008\", \"2011\", \"1998\", \"2003\", \"1999\", \"1992\", \"2010\", \"2005\", \"1995\"), \"=\"); }",
+                "cartocss": "#layer { line-width: 3; line-color: ramp([yr], (#5F4690, #1D6996, #38A6A5, #0F8554, #73AF48, #EDAD08, #E17C05, #CC503E, #94346E, #6F4070, #666666), (\"2004\", \"2008\", \"2011\", \"1998\", \"2003\", \"1999\", \"1992\", \"2010\", \"2005\", \"1995\"), \"=\"); }",
                 "sql": "select * from tornado"
               }
             }

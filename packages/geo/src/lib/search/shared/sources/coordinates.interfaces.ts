@@ -1,4 +1,3 @@
-
 export interface CoordinatesData {
   coord: [number, number];
 }

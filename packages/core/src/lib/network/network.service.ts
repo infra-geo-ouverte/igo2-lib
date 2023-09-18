@@ -22,7 +22,7 @@ export class NetworkService implements OnDestroy {
     private messageService: MessageService,
     private injector: Injector
   ) {
-      this.checkNetworkState();
+    this.checkNetworkState();
   }
 
   private checkNetworkState() {
@@ -32,7 +32,8 @@ export class NetworkService implements OnDestroy {
       }
       const messageObj = this.messageService.info(
         'igo.core.network.online.message',
-        'igo.core.network.online.title');
+        'igo.core.network.online.title'
+      );
       this.previousMessageId = messageObj.toastId;
       this.state.connection = true;
       this.emitEvent();
@@ -44,7 +45,8 @@ export class NetworkService implements OnDestroy {
       }
       const messageObj = this.messageService.info(
         'igo.core.network.offline.message',
-        'igo.core.network.offline.title');
+        'igo.core.network.offline.title'
+      );
       this.previousMessageId = messageObj.toastId;
       this.state.connection = false;
       this.emitEvent();

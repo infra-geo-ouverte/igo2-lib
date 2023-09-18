@@ -32,9 +32,10 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
         'igo.context.contextManager.dialog.saveMsg',
         'igo.context.contextManager.dialog.saveTitle',
         undefined,
-      {
-        value: context.title || this.component.context.title
-      });
+        {
+          value: context.title || this.component.context.title
+        }
+      );
       this.contextService.setEditedContext(undefined);
       this.submitSuccessed.emit(context);
     });
@@ -50,7 +51,7 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editedContext$$ = this.contextService.editedContext$.subscribe(
-      context => this.handleEditedContextChange(context)
+      (context) => this.handleEditedContextChange(context)
     );
   }
 

@@ -6,10 +6,7 @@ import {
   IgoWorkspaceModule,
   IgoPanelModule
 } from '@igo2/common';
-import {
-  IgoMapModule,
-  IgoGeoWorkspaceModule
-} from '@igo2/geo';
+import { IgoMapModule, IgoGeoWorkspaceModule } from '@igo2/geo';
 
 import { AppWorkspaceComponent } from './workspace.component';
 import { AppWorkspaceRoutingModule } from './workspace-routing.module';

@@ -1,5 +1,5 @@
-import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -13,8 +13,11 @@ import { version } from './version';
 })
 export class ConfigService {
   private config: object = {};
+  private httpClient: HttpClient;
 
-  constructor(private injector: Injector) {}
+  constructor(handler: HttpBackend) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   /**
    * Use to get the data found in config file
@@ -33,10 +36,8 @@ export class ConfigService {
       return true;
     }
 
-    const http = this.injector.get(HttpClient);
-
     return new Promise((resolve, _reject) => {
-      http
+      this.httpClient
         .get(options.path)
         .pipe(
           catchError((error: any): any => {

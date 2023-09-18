@@ -8,11 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppMessageComponent],
-  imports: [
-    AppMessageRoutingModule,
-    SharedModule,
-    IgoMessageModule.forRoot()
-  ],
+  imports: [AppMessageRoutingModule, SharedModule, IgoMessageModule.forRoot()],
   exports: [AppMessageComponent]
 })
 export class AppMessageModule {}

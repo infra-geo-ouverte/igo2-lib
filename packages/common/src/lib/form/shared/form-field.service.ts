@@ -7,8 +7,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class FormFieldService {
-
-  static fields: {[key: string]: any} = {};
+  static fields: { [key: string]: any } = {};
 
   static register(type: string, component: any) {
     FormFieldService.fields[type] = component;
@@ -24,5 +23,4 @@ export class FormFieldService {
   getFieldByType(type: string): any {
     return FormFieldService.fields[type];
   }
-
 }

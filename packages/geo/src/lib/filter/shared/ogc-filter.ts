@@ -91,8 +91,14 @@ export class OgcFilterWriter {
     ogcFiltersOptions.geometryName = fieldNameGeometry;
 
     ogcFiltersOptions.advancedOgcFilters = true;
-    if (ogcFiltersOptions.enabled && (ogcFiltersOptions.pushButtons || ogcFiltersOptions.checkboxes
-      || ogcFiltersOptions.radioButtons || ogcFiltersOptions.select || ogcFiltersOptions.autocomplete)) {
+    if (
+      ogcFiltersOptions.enabled &&
+      (ogcFiltersOptions.pushButtons ||
+        ogcFiltersOptions.checkboxes ||
+        ogcFiltersOptions.radioButtons ||
+        ogcFiltersOptions.select ||
+        ogcFiltersOptions.autocomplete)
+    ) {
       ogcFiltersOptions.advancedOgcFilters = false;
     }
     return ogcFiltersOptions;
@@ -242,7 +248,7 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsBetween.toLowerCase():
         return olfilter.between(
           wfsPropertyName,
-          wfsLowerBoundary || 1e40*-1,
+          wfsLowerBoundary || 1e40 * -1,
           wfsUpperBoundary || 1e40
         );
       case OgcFilterOperator.Contains.toLowerCase():
@@ -266,7 +272,9 @@ export class OgcFilterWriter {
       case OgcFilterOperator.PropertyIsLike.toLowerCase():
         return olfilter.like(
           wfsPropertyName,
-          wfsPattern ? wfsPattern.replace(/[()_]/gi, wfsSingleChar): wfsWildCard,
+          wfsPattern
+            ? wfsPattern.replace(/[()_]/gi, wfsSingleChar)
+            : wfsWildCard,
           wfsWildCard,
           wfsSingleChar,
           wfsEscapeChar,
@@ -660,9 +668,7 @@ export class OgcFilterWriter {
     let selector: IgoOgcSelector;
     if (selectors.groups && selectors.bundles) {
       if (!selectors.bundles.every((bundle) => bundle.id !== undefined)) {
-        throw new Error(
-          'You must set an id for each of your bundles'
-        );
+        throw new Error('You must set an id for each of your bundles');
       }
       selector = ObjectUtils.copyDeep(selectors);
       selector.groups.forEach((group) => {
@@ -715,8 +721,14 @@ export class OgcFilterWriter {
     const conditions = [];
     let filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
-    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons || ogcFilters.select
-      || ogcFilters.autocomplete)) {
+    if (
+      ogcFilters.enabled &&
+      (ogcFilters.pushButtons ||
+        ogcFilters.checkboxes ||
+        ogcFilters.radioButtons ||
+        ogcFilters.select ||
+        ogcFilters.autocomplete)
+    ) {
       let selectors;
       if (ogcFilters.pushButtons) {
         selectors = ogcFilters.pushButtons;
@@ -727,7 +739,10 @@ export class OgcFilterWriter {
       }
       if (ogcFilters.checkboxes) {
         selectors = ogcFilters.checkboxes;
-        const checkboxConditions = this.formatGroupAndFilter(ogcFilters, selectors);
+        const checkboxConditions = this.formatGroupAndFilter(
+          ogcFilters,
+          selectors
+        );
         for (const condition of checkboxConditions) {
           conditions.push(condition);
         }
@@ -735,7 +750,10 @@ export class OgcFilterWriter {
       if (ogcFilters.radioButtons) {
         selectors = ogcFilters.radioButtons;
         const selectorsCorr = this.verifyMultipleEnableds(selectors);
-        const radioConditions = this.formatGroupAndFilter(ogcFilters, selectorsCorr);
+        const radioConditions = this.formatGroupAndFilter(
+          ogcFilters,
+          selectorsCorr
+        );
         for (const condition of radioConditions) {
           conditions.push(condition);
         }
@@ -743,14 +761,20 @@ export class OgcFilterWriter {
       if (ogcFilters.select) {
         selectors = ogcFilters.select;
         const selectorsCorr = this.verifyMultipleEnableds(selectors);
-        const selectConditions = this.formatGroupAndFilter(ogcFilters, selectorsCorr);
+        const selectConditions = this.formatGroupAndFilter(
+          ogcFilters,
+          selectorsCorr
+        );
         for (const condition of selectConditions) {
           conditions.push(condition);
         }
       }
       if (ogcFilters.autocomplete) {
         selectors = ogcFilters.autocomplete;
-        const selectConditions = this.formatGroupAndFilter(ogcFilters, selectors);
+        const selectConditions = this.formatGroupAndFilter(
+          ogcFilters,
+          selectors
+        );
         for (const condition of selectConditions) {
           conditions.push(condition);
         }
@@ -799,12 +823,16 @@ export class OgcFilterWriter {
   }
 
   public verifyMultipleEnableds(selectors) {
-    selectors.bundles.forEach(bundle => {
+    selectors.bundles.forEach((bundle) => {
       if (!bundle.multiple && bundle.selectors) {
-        const enableds = bundle.selectors.reduce((list, filter, index) => (filter.enabled) === true ? list.concat(index) : list, []);
+        const enableds = bundle.selectors.reduce(
+          (list, filter, index) =>
+            filter.enabled === true ? list.concat(index) : list,
+          []
+        );
         if (enableds.length > 1) {
           enableds.splice(0, 1);
-          enableds.forEach(index => {
+          enableds.forEach((index) => {
             bundle.selectors[index].enabled = false;
           });
         }
@@ -814,9 +842,7 @@ export class OgcFilterWriter {
   }
 
   public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, selectors) {
-    selectors = this.computeIgoSelector(
-      selectors
-    );
+    selectors = this.computeIgoSelector(selectors);
     const selectorBundle = selectors.groups.find(
       (g) => g.enabled
     ).computedSelectors;
@@ -829,7 +855,9 @@ export class OgcFilterWriter {
       }
       selectorsType
         .filter((ogcselector) => ogcselector.enabled === true)
-        .forEach((enabledSelector) => bundleCondition.push(enabledSelector.filters));
+        .forEach((enabledSelector) =>
+          bundleCondition.push(enabledSelector.filters)
+        );
       if (bundleCondition.length === 1) {
         conditions.push(bundleCondition[0]);
       } else if (bundleCondition.length > 1) {
@@ -858,8 +886,9 @@ export class OgcFilterWriter {
     processedFilter: string,
     layersOrTypenames: string
   ): string {
-
-    if (!processedFilter) {return undefined;};
+    if (!processedFilter) {
+      return undefined;
+    }
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;

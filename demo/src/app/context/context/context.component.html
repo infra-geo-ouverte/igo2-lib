@@ -1,9 +1,8 @@
 <app-doc-viewer
   title="Context"
   subtitle="Context"
-  [dependencies]="['LanguageService','mapService']"
+  [dependencies]="['LanguageService', 'mapService']"
 >
-
   <app-example-viewer codeFolder="context/context" configFolder="contexts">
     <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
       <mat-grid-tile>
@@ -48,10 +47,13 @@
         </div>
       </mat-grid-tile>
     </mat-grid-list>
-
   </app-example-viewer>
 
-  <app-example-viewer title="Import/Export context" codeFolder="context/context" configFolder="contexts">
+  <app-example-viewer
+    title="Import/Export context"
+    codeFolder="context/context"
+    configFolder="contexts"
+  >
     <igo-context-import-export [map]="map"></igo-context-import-export>
   </app-example-viewer>
 </app-doc-viewer>

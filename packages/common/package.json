@@ -37,15 +37,16 @@
     "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^16.2.0",
-    "@angular/core": "^16.2.0",
-    "@angular/material": "^16.2.0",
-    "@angular/platform-browser": "^16.2.0",
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@angular/material": "^16.2.4",
+    "@angular/platform-browser": "^16.2.5",
     "@igo2/core": "*",
     "@igo2/utils": "*",
     "angular-shepherd": "16.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
-    "typy": "^3.3.0"
+    "typy": "^3.3.0",
+    "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",

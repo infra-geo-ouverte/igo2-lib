@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 
 import { forkJoin, map } from 'rxjs';
 
@@ -9,15 +9,19 @@ import { ObjectUtils } from '@igo2/utils';
 import { ConfigService } from '../../config/config.service';
 
 export class LanguageLoader implements TranslateLoader {
+  private httpClient: HttpClient;
+
   constructor(
-    private http: HttpClient,
+    handler: HttpBackend,
     private prefix?: string | string[],
     private suffix: string = '.json',
     private config?: ConfigService
-  ) {}
+  ) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   public getTranslation(lang: string): any {
-    const igoLocale$ = this.http.get(`locale/libs_locale/${lang}.json`);
+    const igoLocale$ = this.httpClient.get(`locale/libs_locale/${lang}.json`);
 
     if (this.config && !this.prefix) {
       const prefix = this.config.getConfig('language.prefix');
@@ -29,7 +33,7 @@ export class LanguageLoader implements TranslateLoader {
     }
 
     const appLocale$ = (this.prefix as string[]).map((prefix) =>
-      this.http.get(`${prefix}${lang}${this.suffix}`)
+      this.httpClient.get(`${prefix}${lang}${this.suffix}`)
     );
 
     const locale$ = forkJoin([igoLocale$, ...appLocale$]);

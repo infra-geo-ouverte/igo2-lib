@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppWidgetComponent } from './widget.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppWidgetRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppWidgetRoutingModule = RouterModule.forChild(routes);

@@ -8,14 +8,12 @@ describe('AboutToolComponent', () => {
   let component: AboutToolComponent;
   let fixture: ComponentFixture<AboutToolComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [IgoLanguageModule, IgoCustomHtmlModule],
-        declarations: [AboutToolComponent]
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [IgoLanguageModule, IgoCustomHtmlModule],
+      declarations: [AboutToolComponent]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AboutToolComponent);

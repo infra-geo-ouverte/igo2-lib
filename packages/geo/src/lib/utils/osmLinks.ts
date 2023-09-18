@@ -1,6 +1,5 @@
 export class OsmLinks {
   static getOpenStreetMapLink(lon, lat, zoom: number = 17) {
-    // return 'https://www.google.com/maps?q=' + lat + ',' + lon;
     return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
   }
 

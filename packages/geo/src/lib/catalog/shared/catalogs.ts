@@ -9,7 +9,10 @@ import {
 } from './catalog.interface';
 
 export class WMSCatalog extends Catalog {
-  constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
+  constructor(
+    options: Catalog,
+    private _collectCatlogItems: CollectCatalogItemsFn
+  ) {
     super(options);
     const sType: string = TypeCatalog[TypeCatalog.wms];
     this.type = TypeCatalog[sType];
@@ -21,7 +24,10 @@ export class WMSCatalog extends Catalog {
 }
 
 export class WMTSCatalog extends Catalog {
-  constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
+  constructor(
+    options: Catalog,
+    private _collectCatlogItems: CollectCatalogItemsFn
+  ) {
     super(options);
     const sType: string = TypeCatalog[TypeCatalog.wmts];
     this.type = TypeCatalog[sType];
@@ -33,7 +39,10 @@ export class WMTSCatalog extends Catalog {
 }
 
 export class BaselayersCatalog extends Catalog {
-  constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
+  constructor(
+    options: Catalog,
+    private _collectCatlogItems: CollectCatalogItemsFn
+  ) {
     super(options);
     const sType: string = TypeCatalog[TypeCatalog.baselayers];
     this.type = TypeCatalog[sType];
@@ -45,7 +54,10 @@ export class BaselayersCatalog extends Catalog {
 }
 
 export class ArcGISRestCatalog extends Catalog {
-  constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
+  constructor(
+    options: Catalog,
+    private _collectCatlogItems: CollectCatalogItemsFn
+  ) {
     super(options);
     const sType: string = TypeCatalog[TypeCatalog.arcgisrest];
     this.type = TypeCatalog[sType];
@@ -72,9 +84,12 @@ export class TileOrImageArcGISRestCatalog extends Catalog {
 }
 
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
-  composite: ICatalog[];
+  declare composite: ICatalog[];
 
-  constructor(options: Catalog, private _collectCatlogItems: CollectCatalogItemsFn) {
+  constructor(
+    options: Catalog,
+    private _collectCatlogItems: CollectCatalogItemsFn
+  ) {
     super(options);
     const sType: string = TypeCatalog[TypeCatalog.composite];
     this.type = TypeCatalog[sType];

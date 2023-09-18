@@ -1,74 +1,98 @@
-<div class='table-box'>
-  <div class='table-header' *ngIf="hasFilterInput">
-    <mat-form-field floatPlaceholder='never'>
-      <input matInput #filter [placeholder]="'igo.common.table.filter' | translate">
+<div class="table-box">
+  <div class="table-header" *ngIf="hasFilterInput">
+    <mat-form-field floatPlaceholder="never">
+      <input
+        matInput
+        #filter
+        [placeholder]="'igo.common.table.filter' | translate"
+      />
     </mat-form-field>
   </div>
 
-  <div class='table-container'>
-    <table mat-table #table [dataSource]='dataSource' matSort>
-
+  <div class="table-container">
+    <table mat-table #table [dataSource]="dataSource" matSort>
       <!-- Checkbox Column -->
       <ng-container matColumnDef="selectionCheckbox">
         <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          >
           </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()"
-                        (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)"
+          >
           </mat-checkbox>
         </td>
       </ng-container>
 
-      <ng-container [matColumnDef]='column.name' *ngFor='let column of model.columns'>
-        <ng-container *ngIf='column.sortable'>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column.title}} </th>
+      <ng-container
+        [matColumnDef]="column.name"
+        *ngFor="let column of model.columns"
+      >
+        <ng-container *ngIf="column.sortable">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ column.title }}
+          </th>
         </ng-container>
 
-        <ng-container *ngIf='!column.sortable'>
-          <th mat-header-cell *matHeaderCellDef> {{column.title}} </th>
+        <ng-container *ngIf="!column.sortable">
+          <th mat-header-cell *matHeaderCellDef>{{ column.title }}</th>
         </ng-container>
 
         <ng-container *ngIf="!column.html; else cellHTML">
-          <td mat-cell *matCellDef='let row' class="mat-cell-text"
-            [ngClass]="model.cellClassFunc ? model.cellClassFunc(row, column) : {}">
-            {{getValue(row, column.name)}}
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="mat-cell-text"
+            [ngClass]="
+              model.cellClassFunc ? model.cellClassFunc(row, column) : {}
+            "
+          >
+            {{ getValue(row, column.name) }}
           </td>
         </ng-container>
 
         <ng-template #cellHTML>
-          <td mat-cell *matCellDef='let row' class="mat-cell-text"
-            [ngClass]="model.cellClassFunc ? model.cellClassFunc(row, column) : {}"
-            [innerHTML]="getValue(row, column.name)">
-          </td>
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="mat-cell-text"
+            [ngClass]="
+              model.cellClassFunc ? model.cellClassFunc(row, column) : {}
+            "
+            [innerHTML]="getValue(row, column.name)"
+          ></td>
         </ng-template>
       </ng-container>
 
       <!-- Action Column -->
-      <ng-container matColumnDef='action'>
+      <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef='let row'>
-          <button *ngFor='let action of model.actions'
-          mat-mini-fab
-          [color]='getActionColor(action.color)'
-          (click)='handleClickAction($event, action, row)'>
-            <mat-icon svgIcon="{{action.icon}}"></mat-icon>
+        <td mat-cell *matCellDef="let row">
+          <button
+            *ngFor="let action of model.actions"
+            mat-mini-fab
+            [color]="getActionColor(action.color)"
+            (click)="handleClickAction($event, action, row)"
+          >
+            <mat-icon svgIcon="{{ action.icon }}"></mat-icon>
           </button>
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef='displayedColumns;'></tr>
-      <tr mat-row
-        *matRowDef='let row; columns: displayedColumns;'
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
         [ngClass]="model.rowClassFunc ? model.rowClassFunc(row) : {}"
-        (click)="selection.toggle(row)">
-      </tr>
-
+        (click)="selection.toggle(row)"
+      ></tr>
     </table>
   </div>
-
 </div>

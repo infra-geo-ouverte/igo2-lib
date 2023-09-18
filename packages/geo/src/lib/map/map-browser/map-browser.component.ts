@@ -53,7 +53,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private activityService: ActivityService) {}
 
   ngOnInit() {
-    this.status$$ = this.map.status$.subscribe(status =>
+    this.status$$ = this.map.status$.subscribe((status) =>
       this.handleStatusChange(status)
     );
   }

@@ -9,14 +9,11 @@ import type { IgoMap } from '@igo2/geo';
   styleUrls: ['./share-map.component.scss']
 })
 export class ShareMapComponent {
-
   @Input() map: IgoMap;
 
   public hasApi = false;
 
-  constructor(
-    private config: ConfigService
-  ) {
+  constructor(private config: ConfigService) {
     this.hasApi = this.config.getConfig('context.url') ? true : false;
   }
 }

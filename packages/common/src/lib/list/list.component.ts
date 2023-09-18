@@ -239,7 +239,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscribe() {
     this.unsubscribe();
 
-    this.listItems.toArray().forEach(item => {
+    this.listItems.toArray().forEach((item) => {
       this.subscriptions.push(
         item.beforeSelect.subscribe((item2: ListItemDirective) =>
           this.handleItemBeforeSelect(item2)
@@ -292,17 +292,17 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private findSelectedItem() {
-    return this.listItems.toArray().find(item => item.selected);
+    return this.listItems.toArray().find((item) => item.selected);
   }
 
   private findFocusedItem() {
-    return this.listItems.toArray().find(item => item.focused);
+    return this.listItems.toArray().find((item) => item.focused);
   }
 
   private getFocusedIndex() {
     return this.listItems
       .toArray()
-      .findIndex(item => item === this.focusedItem);
+      .findIndex((item) => item === this.focusedItem);
   }
 
   private navigate(key: string) {
