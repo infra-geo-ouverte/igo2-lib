@@ -150,7 +150,7 @@
     "@types/html2canvas": "1.0.0",
     "@types/jasmine": "~4.3.0",
     "@types/lodash": "^4.14.195",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.6.2",
     "@types/tinycolor2": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
