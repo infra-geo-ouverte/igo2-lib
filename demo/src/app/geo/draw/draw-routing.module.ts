@@ -9,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppDrawRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppDrawRoutingModule = RouterModule.forChild(routes);

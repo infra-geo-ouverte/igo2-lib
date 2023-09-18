@@ -73,7 +73,7 @@ export class ContextMenuDirective {
 
     this.sub = fromEvent<MouseEvent>(document, 'click')
       .pipe(
-        filter(event => {
+        filter((event) => {
           const clickTarget = event.target as HTMLElement;
           this.close();
           return (
@@ -87,7 +87,7 @@ export class ContextMenuDirective {
 
     this.sub = fromEvent<MouseEvent>(document, 'contextmenu')
       .pipe(
-        filter(event => {
+        filter((event) => {
           const clickTarget = event.target as HTMLElement;
           if (
             clickTarget &&

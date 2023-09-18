@@ -5,8 +5,17 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { roundCoordTo } from '../../map/shared/map.utils';
 import { FeatureWithDirection } from '../shared/directions.interface';
 
-import { addStopToStore, formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
-import { RoutesFeatureStore, StepFeatureStore, StopsStore } from '../shared/store';
+import {
+  addStopToStore,
+  formatDistance,
+  formatDuration,
+  formatInstruction
+} from '../shared/directions.utils';
+import {
+  RoutesFeatureStore,
+  StepFeatureStore,
+  StopsStore
+} from '../shared/store';
 import { DirectionsService } from '../shared';
 
 @Component({
@@ -15,9 +24,10 @@ import { DirectionsService } from '../shared';
   styleUrls: ['./directions-buttons.component.scss']
 })
 export class DirectionsButtonsComponent {
-
   get activeRoute() {
-    return this.routesFeatureStore.all().find(route => route.properties.active);
+    return this.routesFeatureStore
+      .all()
+      .find((route) => route.properties.active);
   }
   @Input() contextUri: string;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
@@ -43,13 +53,13 @@ export class DirectionsButtonsComponent {
     addStopToStore(this.stopsStore);
   }
 
-
   copyLinkToClipboard() {
     const successful = Clipboard.copy(this.getUrl());
     if (successful) {
       this.messageService.success(
         'igo.geo.directionsForm.dialog.copyMsgLink',
-        'igo.geo.directionsForm.dialog.copyTitle');
+        'igo.geo.directionsForm.dialog.copyTitle'
+      );
     }
   }
 
@@ -63,7 +73,8 @@ export class DirectionsButtonsComponent {
     if (successful) {
       this.messageService.success(
         'igo.geo.directionsForm.dialog.copyMsg',
-        'igo.geo.directionsForm.dialog.copyTitle');
+        'igo.geo.directionsForm.dialog.copyTitle'
+      );
     }
   }
 
@@ -98,16 +109,14 @@ export class DirectionsButtonsComponent {
       this.getUrl();
 
     let wayPointsCnt = 1;
-    this.stopsStore.view.all().forEach(stop => {
+    this.stopsStore.view.all().forEach((stop) => {
       let coord = '';
       let stopText = '';
       if (stop.text !== roundCoordTo(stop.coordinates).join(',')) {
         stopText = stop.text;
         coord = ` ( ${roundCoordTo(stop.coordinates).join(',')} )`;
       } else {
-        stopText = roundCoordTo(stop.coordinates).join(
-          ','
-        );
+        stopText = roundCoordTo(stop.coordinates).join(',');
       }
 
       wayPointList =
@@ -122,7 +131,7 @@ export class DirectionsButtonsComponent {
     });
 
     let localCnt = 0;
-    this.activeRoute.properties.direction.steps.forEach(step => {
+    this.activeRoute.properties.direction.steps.forEach((step) => {
       const instruction = this.formatStep(step, localCnt).instruction;
       const distance =
         formatDistance(step.distance) === undefined
@@ -167,15 +176,19 @@ export class DirectionsButtonsComponent {
       context = `context=${this.contextUri}&`;
     }
 
-    const pos = this.routesFeatureStore.all()
-    .map((direction: FeatureWithDirection) => direction.properties.id).indexOf(this.activeRoute.properties.id);
+    const pos = this.routesFeatureStore
+      .all()
+      .map((direction: FeatureWithDirection) => direction.properties.id)
+      .indexOf(this.activeRoute.properties.id);
     let routingOptions = '';
     if (pos !== 0) {
       const routingOptionsKey = this.route.options.directionsOptionsKey;
       routingOptions = `&${routingOptionsKey}=result:${pos}`;
     }
     const directionsKey = this.route.options.directionsCoordKey;
-    const stopsCoordinates = this.stopsStore.view.all().map(stop => roundCoordTo(stop.coordinates, 6));
+    const stopsCoordinates = this.stopsStore.view
+      .all()
+      .map((stop) => roundCoordTo(stop.coordinates, 6));
     let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
@@ -187,11 +200,13 @@ export class DirectionsButtonsComponent {
   printDirections() {
     this.stepFeatureStore.clear();
     this.disabled$.next(true);
-    this.directionsService.downloadDirection(
-      this.routesFeatureStore.map,
-      this.activeRoute.properties.direction
-    ).subscribe(() => {
-      this.disabled$.next(false);
-    });
+    this.directionsService
+      .downloadDirection(
+        this.routesFeatureStore.map,
+        this.activeRoute.properties.direction
+      )
+      .subscribe(() => {
+        this.disabled$.next(false);
+      });
   }
 }

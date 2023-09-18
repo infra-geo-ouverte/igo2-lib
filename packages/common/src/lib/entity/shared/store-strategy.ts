@@ -91,5 +91,4 @@ export class EntityStoreWithStrategy<
       strategy.deactivate();
     }
   }
-
 }

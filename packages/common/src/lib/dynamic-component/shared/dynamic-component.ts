@@ -13,7 +13,6 @@ import { Observable, Subscription } from 'rxjs';
  * and to subscribe to outputs.
  */
 export class DynamicComponent<C> {
-
   /**
    * Component reference
    */
@@ -33,17 +32,17 @@ export class DynamicComponent<C> {
   /**
    * Component inputs
    */
-  private inputs: {[key: string]: any} = {};
+  private inputs: { [key: string]: any } = {};
 
   /**
    * Subscriptions to the component's async inputs
    */
-  private inputs$$: {[key: string]: Subscription} = {};
+  private inputs$$: { [key: string]: Subscription } = {};
 
   /**
    * Subscribers to the component's outputs
    */
-  private subscribers: {[key: string]: (event: any) => void} = {};
+  private subscribers: { [key: string]: (event: any) => void } = {};
 
   constructor(private componentFactory: ComponentFactory<C>) {}
 
@@ -79,7 +78,7 @@ export class DynamicComponent<C> {
    * Update the component inputs. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateInputs(inputs: {[key: string]: any}) {
+  updateInputs(inputs: { [key: string]: any }) {
     this.inputs = inputs;
     if (this.componentRef === undefined) {
       return;
@@ -87,20 +86,22 @@ export class DynamicComponent<C> {
 
     const instance = this.componentRef.instance;
     const allowedInputs = this.componentFactory.inputs;
-    allowedInputs.forEach((value: {propName: string; templateName: string; }) => {
-      const key = value.propName;
+    allowedInputs.forEach(
+      (value: { propName: string; templateName: string }) => {
+        const key = value.propName;
 
-      this.unobserveInput(key);
+        this.unobserveInput(key);
 
-      const inputValue = inputs[key];
-      if (inputs.hasOwnProperty(key)) {
-        if (inputValue instanceof Observable) {
-          this.observeInput(key, inputValue);
-        } else {
-          this.setInputValue(instance, key, inputValue);
+        const inputValue = inputs[key];
+        if (inputs.hasOwnProperty(key)) {
+          if (inputValue instanceof Observable) {
+            this.observeInput(key, inputValue);
+          } else {
+            this.setInputValue(instance, key, inputValue);
+          }
         }
       }
-    });
+    );
 
     if (typeof (instance as any).onUpdateInputs === 'function') {
       (instance as any).onUpdateInputs();
@@ -132,7 +133,7 @@ export class DynamicComponent<C> {
    * Update the component subscribers. This is an update so any
    * key not defined won't be overwritten.
    */
-  updateSubscribers(subscribers: {[key: string]: (event: any) => void}) {
+  updateSubscribers(subscribers: { [key: string]: (event: any) => void }) {
     this.subscribers = subscribers;
     if (this.componentRef === undefined) {
       return;
@@ -140,20 +141,22 @@ export class DynamicComponent<C> {
 
     const instance = this.componentRef.instance;
     const allowedSubscribers = this.componentFactory.outputs;
-    allowedSubscribers.forEach((value: {propName: string; templateName: string; }) => {
-      const key = value.propName;
-      if (subscribers.hasOwnProperty(key)) {
-        const emitter = instance[key];
-        const subscriber = subscribers[key];
-        if (Array.isArray(subscriber)) {
-          subscriber.forEach((_subscriber) => {
-            this.subscriptions.push(emitter.subscribe(_subscriber));
-          });
-        } else {
-          this.subscriptions.push(emitter.subscribe(subscriber));
+    allowedSubscribers.forEach(
+      (value: { propName: string; templateName: string }) => {
+        const key = value.propName;
+        if (subscribers.hasOwnProperty(key)) {
+          const emitter = instance[key];
+          const subscriber = subscribers[key];
+          if (Array.isArray(subscriber)) {
+            subscriber.forEach((_subscriber) => {
+              this.subscriptions.push(emitter.subscribe(_subscriber));
+            });
+          } else {
+            this.subscriptions.push(emitter.subscribe(subscriber));
+          }
         }
       }
-    });
+    );
   }
 
   /**
@@ -203,5 +206,4 @@ export class DynamicComponent<C> {
     this.subscriptions.forEach((s: Subscription) => s.unsubscribe());
     this.subscriptions = [];
   }
-
 }

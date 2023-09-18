@@ -8,11 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppConfigComponent],
-  imports: [
-    AppConfigRoutingModule,
-    SharedModule,
-    IgoConfigModule.forRoot()
-  ],
+  imports: [AppConfigRoutingModule, SharedModule, IgoConfigModule.forRoot()],
   exports: [AppConfigComponent],
   providers: [
     provideConfigOptions({

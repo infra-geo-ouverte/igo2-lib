@@ -9,5 +9,4 @@ export class DocViewerComponent {
   @Input() title: string;
   @Input() subtitle: string;
   @Input() dependencies: string[];
-
 }

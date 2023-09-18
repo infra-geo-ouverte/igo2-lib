@@ -14,9 +14,9 @@ export class DrawLayerPopupComponent {
   @Input() confirmFlag: boolean = false;
 
   constructor(
-    public dialogRef: MatDialogRef<DrawLayerPopupComponent>,
-    // @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string }
-  ) {}
+    public dialogRef: MatDialogRef<DrawLayerPopupComponent>
+  ) // @Inject(MAT_DIALOG_DATA) public data: { currentLabel: string }
+  {}
 
   cancelDrawing() {
     this.dialogRef.close();

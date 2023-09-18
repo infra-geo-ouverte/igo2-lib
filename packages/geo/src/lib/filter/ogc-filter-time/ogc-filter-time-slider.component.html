@@ -7,13 +7,23 @@
     [(ngModel)]="sliderValue"
     [displayWith]="sliderDisplayWith"
     thumbLabel
-     #ngSlider><input matSliderThumb (input)="handleSliderInput({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" />
+    #ngSlider
+    ><input
+      matSliderThumb
+      (input)="
+        handleSliderInput({
+          source: ngSliderThumb,
+          parent: ngSlider,
+          value: ngSliderThumb.value
+        })
+      "
+      #ngSliderThumb="matSliderThumb"
+    />
   </mat-slider>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
     <mat-icon [svgIcon]="playIcon"></mat-icon>
   </button>
   <button mat-icon-button color="primary" (click)="resetFilter($event)">
-    <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+    <mat-icon svgIcon="{{ resetIcon }}"></mat-icon>
   </button>
-  
 </div>

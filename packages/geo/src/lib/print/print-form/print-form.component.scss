@@ -10,17 +10,17 @@ $slide-toggle-width: 60px;
   .slide-toggle-container {
     margin-bottom: 16px;
   }
-  
+
   .print-slide-toggle-container {
     mat-slide-toggle {
       width: 100%;
       padding: 0 8px;
 
-      ::ng-deep .mdc-form-field{
+      ::ng-deep .mdc-form-field {
         width: 100%;
       }
 
-      ::ng-deep .mdc-label  {
+      ::ng-deep .mdc-label {
         margin-left: 0;
         width: calc(100% - #{$slide-toggle-width});
       }
@@ -31,7 +31,7 @@ $slide-toggle-width: 60px;
     display: block;
     margin-bottom: 12px;
   }
-  
+
   .igo-form {
     padding: 10px 5px 5px;
   }

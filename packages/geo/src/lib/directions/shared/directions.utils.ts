@@ -7,7 +7,12 @@ import * as olProj from 'ol/proj';
 
 import { uuid, NumberUtils } from '@igo2/utils';
 
-import { Direction, FeatureWithDirection, FeatureWithStop, Stop } from './directions.interface';
+import {
+  Direction,
+  FeatureWithDirection,
+  FeatureWithStop,
+  Stop
+} from './directions.interface';
 import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -17,8 +22,16 @@ import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loa
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { LanguageService } from '@igo2/core';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
-import { DirectionRelativePositionType, DirectionType } from './directions.enum';
-import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } from './store';
+import {
+  DirectionRelativePositionType,
+  DirectionType
+} from './directions.enum';
+import {
+  RoutesFeatureStore,
+  StepFeatureStore,
+  StopsFeatureStore,
+  StopsStore
+} from './store';
 
 /**
  * Function that updat the sort of the list base on the provided field.
@@ -26,14 +39,21 @@ import { RoutesFeatureStore, StepFeatureStore, StopsFeatureStore, StopsStore } f
  * @param direction asc / desc sort order
  * @param field the field to use to sort the view
  */
-export function updateStoreSorting(stopsStore: StopsStore, direction: 'asc' | 'desc' = 'asc', field = 'position') {
+export function updateStoreSorting(
+  stopsStore: StopsStore,
+  direction: 'asc' | 'desc' = 'asc',
+  field = 'position'
+) {
   stopsStore.view.sort({
     direction,
     valueAccessor: (entity: Stop) => entity[field]
   });
 }
 
-export function computeRelativePosition(index: number, totalLength): DirectionRelativePositionType {
+export function computeRelativePosition(
+  index: number,
+  totalLength
+): DirectionRelativePositionType {
   let relativePosition = DirectionRelativePositionType.Intermediate;
   if (index === 0) {
     relativePosition = DirectionRelativePositionType.Start;
@@ -44,12 +64,14 @@ export function computeRelativePosition(index: number, totalLength): DirectionRe
 }
 
 export function computeStopsPosition(stopsStore: StopsStore) {
-
   const stopsToComputePosition = [...stopsStore.all()];
   stopsToComputePosition.sort((a, b) => a.position - b.position);
   stopsToComputePosition.map((stop, i) => {
     stop.position = i;
-    stop.relativePosition = computeRelativePosition(stop.position, stopsToComputePosition.length);
+    stop.relativePosition = computeRelativePosition(
+      stop.position,
+      stopsToComputePosition.length
+    );
   });
   if (stopsToComputePosition) {
     stopsStore.updateMany(stopsToComputePosition);
@@ -61,26 +83,37 @@ export function computeStopsPosition(stopsStore: StopsStore) {
  * @param stopsStore stop store as an EntityStore
  */
 export function addStopToStore(stopsStore: StopsStore): Stop {
-
   const id = uuid();
   const stops = stopsStore.all();
   let positions: number[];
   if (stopsStore.count === 0) {
     positions = [0];
   } else {
-    positions = stops.map(stop => stop.position);
+    positions = stops.map((stop) => stop.position);
   }
   const maxPosition: number = Math.max(...positions);
   const insertPosition: number = maxPosition;
   const lastPosition: number = maxPosition + 1;
 
-  const stopToUpdate = stopsStore.all().find(stop => stop.position === maxPosition);
+  const stopToUpdate = stopsStore
+    .all()
+    .find((stop) => stop.position === maxPosition);
   if (stopToUpdate) {
     stopToUpdate.position = lastPosition;
-    stopToUpdate.relativePosition = computeRelativePosition(lastPosition, stopsStore.count + 1);
+    stopToUpdate.relativePosition = computeRelativePosition(
+      lastPosition,
+      stopsStore.count + 1
+    );
   }
 
-  stopsStore.insert({ id, position: insertPosition, relativePosition: computeRelativePosition(insertPosition, stopsStore.count + 1) });
+  stopsStore.insert({
+    id,
+    position: insertPosition,
+    relativePosition: computeRelativePosition(
+      insertPosition,
+      stopsStore.count + 1
+    )
+  });
 
   updateStoreSorting(stopsStore);
   return stopsStore.get(id);
@@ -119,10 +152,16 @@ export function directionsStyle(
 
   const routeStyle = [
     new olStyle.Style({
-      stroke: new olStyle.Stroke({ color: `rgba(106, 121, 130, ${feature.get('active') ? 0.75 : 0})`, width: 10 })
+      stroke: new olStyle.Stroke({
+        color: `rgba(106, 121, 130, ${feature.get('active') ? 0.75 : 0})`,
+        width: 10
+      })
     }),
     new olStyle.Style({
-      stroke: new olStyle.Stroke({ color: `rgba(79, 169, 221, ${feature.get('active') ? 0.75 : 0})`, width: 6 })
+      stroke: new olStyle.Stroke({
+        color: `rgba(79, 169, 221, ${feature.get('active') ? 0.75 : 0})`,
+        width: 6
+      })
     })
   ];
 
@@ -137,7 +176,10 @@ export function directionsStyle(
   }
 }
 
-export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, languageService: LanguageService) {
+export function initStopsFeatureStore(
+  stopsFeatureStore: StopsFeatureStore,
+  languageService: LanguageService
+) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -145,12 +187,14 @@ export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, lang
   const stopsLayer = new VectorLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-stops-layer',
-    title: languageService.translate.instant('igo.geo.directionsForm.stopLayer'),
+    title: languageService.translate.instant(
+      'igo.geo.directionsForm.stopLayer'
+    ),
     zIndex: 911,
     source: new FeatureDataSource(),
     showInLayerList: true,
     workspace: {
-      enabled: false,
+      enabled: false
     },
     linkedLayers: {
       linkId: 'igo-direction-stops-layer',
@@ -171,7 +215,10 @@ export function initStopsFeatureStore(stopsFeatureStore: StopsFeatureStore, lang
   tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
 }
 
-export function initRoutesFeatureStore(routesFeatureStore: RoutesFeatureStore, languageService: LanguageService) {
+export function initRoutesFeatureStore(
+  routesFeatureStore: RoutesFeatureStore,
+  languageService: LanguageService
+) {
   const loadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
@@ -179,12 +226,14 @@ export function initRoutesFeatureStore(routesFeatureStore: RoutesFeatureStore, l
   const routeLayer = new VectorLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-route-layer',
-    title: languageService.translate.instant('igo.geo.directionsForm.routeLayer'),
+    title: languageService.translate.instant(
+      'igo.geo.directionsForm.routeLayer'
+    ),
     zIndex: 910,
     source: new FeatureDataSource(),
     showInLayerList: true,
     workspace: {
-      enabled: false,
+      enabled: false
     },
     linkedLayers: {
       linkId: 'igo-direction-route-layer'
@@ -211,7 +260,7 @@ export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
     source: new FeatureDataSource(),
     showInLayerList: false,
     workspace: {
-      enabled: false,
+      enabled: false
     },
     linkedLayers: {
       linkId: 'igo-direction-route-layer'
@@ -225,34 +274,46 @@ export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
   tryAddLoadingStrategy(stepFeatureStore, loadingStrategy);
 }
 
-
 export function addStopToStopsFeatureStore(
   stop: Stop,
   stopsStore: StopsStore,
   stopsFeatureStore: StopsFeatureStore,
   projection: string,
-  languageService: LanguageService) {
+  languageService: LanguageService
+) {
   let stopColor;
   let stopText;
-
 
   switch (stop.relativePosition) {
     case DirectionRelativePositionType.Start:
       stopColor = '#008000';
-      stopText = languageService.translate.instant('igo.geo.directionsForm.start');
+      stopText = languageService.translate.instant(
+        'igo.geo.directionsForm.start'
+      );
       break;
     case DirectionRelativePositionType.End:
       stopColor = '#f64139';
-      stopText = languageService.translate.instant('igo.geo.directionsForm.end');
+      stopText = languageService.translate.instant(
+        'igo.geo.directionsForm.end'
+      );
       break;
     default:
       stopColor = '#ffd700';
-      stopText = languageService.translate.instant('igo.geo.directionsForm.intermediate') + ' #' + stop.position;
+      stopText =
+        languageService.translate.instant(
+          'igo.geo.directionsForm.intermediate'
+        ) +
+        ' #' +
+        stop.position;
       break;
   }
 
   const geometry = new olGeom.Point(
-    olProj.transform(stop.coordinates, projection, stopsFeatureStore.map.projection)
+    olProj.transform(
+      stop.coordinates,
+      projection,
+      stopsFeatureStore.map.projection
+    )
   );
 
   const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
@@ -289,7 +350,8 @@ export function addDirectionToRoutesFeatureStore(
   direction: Direction,
   projection: string,
   active: boolean = false,
-  moveToExtent = false) {
+  moveToExtent = false
+) {
   const geom = direction.geometry.coordinates;
   const geometry4326 = new olGeom.LineString(geom);
   const geometry = geometry4326.transform(
@@ -302,11 +364,8 @@ export function addDirectionToRoutesFeatureStore(
     dataProjection: routesFeatureStore.map.projection
   }) as FeatureGeometry;
 
-
   const previousRoute = routesFeatureStore.get(direction.id);
-  const previousRouteRevision = previousRoute
-    ? previousRoute.meta.revision
-    : 0;
+  const previousRouteRevision = previousRoute ? previousRoute.meta.revision : 0;
 
   const routeFeatureStore: FeatureWithDirection = {
     type: FEATURE,
@@ -335,10 +394,14 @@ export function formatDistance(distance: number): string {
     return NumberUtils.roundToNDecimal(Math.round(distance) / 1000, 1) + ' km';
   }
   if (distance >= 10000) {
-    return NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km';
+    return (
+      NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km'
+    );
   }
   if (distance >= 1000) {
-    return NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km';
+    return (
+      NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km'
+    );
   }
   return NumberUtils.roundToNDecimal(distance, 0) + ' m';
 }
@@ -375,10 +438,12 @@ export function formatInstruction(
   let cssClass = 'rotate-270';
   const translatedDirection = translateBearing(direction, languageService);
   const translatedModifier = translateModifier(modifier, languageService);
-  const prefix = modifier === 'straight' ? '' : translate.instant('igo.geo.directions.modifier.prefix');
+  const prefix =
+    modifier === 'straight'
+      ? ''
+      : translate.instant('igo.geo.directions.modifier.prefix');
 
   let aggregatedDirection = prefix + translatedModifier;
-
 
   if (modifier?.search('slight') >= 0) {
     aggregatedDirection = translatedModifier;
@@ -411,27 +476,44 @@ export function formatInstruction(
 
   if (type === 'turn') {
     if (modifier === 'straight') {
-      directive = translate.instant('igo.geo.directions.turn.straight', { route });
+      directive = translate.instant('igo.geo.directions.turn.straight', {
+        route
+      });
     } else if (modifier === 'uturn') {
       directive = translate.instant('igo.geo.directions.turn.uturn', { route });
     } else {
-      directive = translate.instant('igo.geo.directions.turn.else', { route, aggregatedDirection, translatedModifier });
+      directive = translate.instant('igo.geo.directions.turn.else', {
+        route,
+        aggregatedDirection,
+        translatedModifier
+      });
     }
   } else if (type === 'new name') {
-    directive = translate.instant('igo.geo.directions.new name', { route, translatedDirection });
+    directive = translate.instant('igo.geo.directions.new name', {
+      route,
+      translatedDirection
+    });
     image = 'compass';
     cssClass = '';
   } else if (type === 'depart') {
-    directive = translate.instant('igo.geo.directions.depart', { route, translatedDirection });
+    directive = translate.instant('igo.geo.directions.depart', {
+      route,
+      translatedDirection
+    });
     image = 'compass';
     cssClass = '';
   } else if (type === 'arrive') {
     if (lastStep) {
       const coma = !translatedModifier ? '' : ', ';
       aggregatedDirection = !translatedModifier ? '' : aggregatedDirection;
-      directive = translate.instant('igo.geo.directions.arrive.lastStep', { coma, aggregatedDirection });
+      directive = translate.instant('igo.geo.directions.arrive.lastStep', {
+        coma,
+        aggregatedDirection
+      });
     } else {
-      directive = translate.instant('igo.geo.directions.arrive.intermediate', { route });
+      directive = translate.instant('igo.geo.directions.arrive.intermediate', {
+        route
+      });
       image = 'map-marker';
       cssClass = '';
     }
@@ -440,9 +522,13 @@ export function formatInstruction(
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'on ramp') {
-    directive = translate.instant('igo.geo.directions.on ramp', { aggregatedDirection });
+    directive = translate.instant('igo.geo.directions.on ramp', {
+      aggregatedDirection
+    });
   } else if (type === 'off ramp') {
-    directive = translate.instant('igo.geo.directions.off ramp', { aggregatedDirection });
+    directive = translate.instant('igo.geo.directions.off ramp', {
+      aggregatedDirection
+    });
   } else if (type === 'fork') {
     if (modifier.search('left') >= 0) {
       directive = translate.instant('igo.geo.directions.fork.left', { route });
@@ -452,18 +538,28 @@ export function formatInstruction(
       directive = translate.instant('igo.geo.directions.fork.else', { route });
     }
   } else if (type === 'end of road') {
-    directive = translate.instant('igo.geo.directions.end of road', { translatedModifier, route });
+    directive = translate.instant('igo.geo.directions.end of road', {
+      translatedModifier,
+      route
+    });
   } else if (type === 'use lane') {
     directive = translate.instant('igo.geo.directions.use lane');
   } else if (type === 'continue' && modifier !== 'uturn') {
-    directive = translate.instant('igo.geo.directions.continue.notUturn', { route });
+    directive = translate.instant('igo.geo.directions.continue.notUturn', {
+      route
+    });
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'roundabout') {
-    const cntSuffix = exit === 1 ?
-      translate.instant('igo.geo.directions.cntSuffix.first') :
-      translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
-    directive = translate.instant('igo.geo.directions.roundabout', { exit, cntSuffix, route });
+    const cntSuffix =
+      exit === 1
+        ? translate.instant('igo.geo.directions.cntSuffix.first')
+        : translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
+    directive = translate.instant('igo.geo.directions.roundabout', {
+      exit,
+      cntSuffix,
+      route
+    });
     image = 'chart-donut';
     cssClass = '';
   } else if (type === 'rotary') {
@@ -475,13 +571,18 @@ export function formatInstruction(
     image = 'chart-donut';
     cssClass = '';
   } else if (type === 'exit roundabout') {
-    directive = translate.instant('igo.geo.directions.exit roundabout', { route });
+    directive = translate.instant('igo.geo.directions.exit roundabout', {
+      route
+    });
     image = 'forward';
     cssClass = 'rotate-270';
   } else if (type === 'notification') {
     directive = translate.instant('igo.geo.directions.notification');
   } else if (modifier === 'uturn') {
-    directive = translate.instant('igo.geo.directions.uturnText', { translatedDirection, route });
+    directive = translate.instant('igo.geo.directions.uturnText', {
+      translatedDirection,
+      route
+    });
   } else {
     directive = translate.instant('igo.geo.directions.unknown');
   }
@@ -517,7 +618,10 @@ export function translateModifier(modifier, languageService: LanguageService) {
   }
 }
 
-export function translateBearing(bearing: number, languageService: LanguageService) {
+export function translateBearing(
+  bearing: number,
+  languageService: LanguageService
+) {
   const translate = languageService.translate;
   if (bearing >= 337 || bearing < 23) {
     return translate.instant('igo.geo.cardinalPoints.n');
@@ -539,5 +643,3 @@ export function translateBearing(bearing: number, languageService: LanguageServi
     return;
   }
 }
-
-

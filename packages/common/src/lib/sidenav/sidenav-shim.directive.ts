@@ -39,5 +39,8 @@ export class SidenavShimDirective {
     this.focusedElement = undefined;
   }
 
-  constructor(@Self() component: MatSidenav, private renderer: Renderer2) {}
+  constructor(
+    @Self() component: MatSidenav,
+    private renderer: Renderer2
+  ) {}
 }

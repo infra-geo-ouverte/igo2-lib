@@ -37,10 +37,7 @@ import { ContextPermissionsBindingDirective } from './context-permissions/contex
 import { IgoContextMapButtonModule } from '../context-map-button/context-map-button.module';
 import { IgoContextImportExportModule } from '../context-import-export/context-import-export.module';
 
-const CONTEXT_DIRECTIVES = [
-  MapContextDirective,
-  LayerContextDirective
-];
+const CONTEXT_DIRECTIVES = [MapContextDirective, LayerContextDirective];
 
 @NgModule({
   imports: [

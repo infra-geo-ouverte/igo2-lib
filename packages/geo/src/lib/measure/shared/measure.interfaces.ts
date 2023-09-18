@@ -13,7 +13,8 @@ export interface MeasurerDialogData {
   perimeter: number;
 }
 
-export interface FeatureWithMeasure extends Feature<FeatureWithMeasureProperties> {}
+export interface FeatureWithMeasure
+  extends Feature<FeatureWithMeasureProperties> {}
 
 export interface FeatureWithMeasureProperties {
   id: string;

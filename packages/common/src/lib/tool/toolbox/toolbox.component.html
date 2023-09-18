@@ -5,20 +5,24 @@
   [withTitle]="toolbarWithTitle$ | async"
   [withTooltip]="(toolbarWithTitle$ | async) === false"
   [scrollActive]="toolbarWithTitle$ | async"
-  [horizontal]="false">
+  [horizontal]="false"
+>
 </igo-actionbar>
 
 <div
   *ngIf="activeTool$ | async as tool"
   class="igo-tool-container mat-body-1"
-  [ngClass]="{'igo-tool-container-with-toolbar': !actionStore.empty, 'igo-tool-container-with-animation': animate}"
+  [ngClass]="{
+    'igo-tool-container-with-toolbar': !actionStore.empty,
+    'igo-tool-container-with-animation': animate
+  }"
   [@toolSlideInOut]="animation$ | async"
   (@toolSlideInOut.start)="onAnimationStart()"
-  (@toolSlideInOut.done)="onAnimationComplete()">
-
+  (@toolSlideInOut.done)="onAnimationComplete()"
+>
   <igo-dynamic-outlet
     [component]="tool.component"
-    [inputs]="getToolInputs(tool)">
+    [inputs]="getToolInputs(tool)"
+  >
   </igo-dynamic-outlet>
-
 </div>

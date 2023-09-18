@@ -14,5 +14,4 @@ export class LayerListToolService {
   public onlyInRangeInitialized = false;
 
   constructor() {}
-
 }

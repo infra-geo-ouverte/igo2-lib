@@ -4,13 +4,8 @@ import { CommonModule } from '@angular/common';
 import { IgoActionbarModule } from './actionbar/actionbar.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoActionbarModule
-  ],
-  exports: [
-    IgoActionbarModule
-  ],
+  imports: [CommonModule, IgoActionbarModule],
+  exports: [IgoActionbarModule],
   declarations: [],
   providers: []
 })

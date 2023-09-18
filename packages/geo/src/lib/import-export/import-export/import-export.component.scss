@@ -47,11 +47,11 @@ $slide-toggle-width: 60px;
     mat-slide-toggle {
       width: 100%;
       padding: 10px;
-      ::ng-deep .mdc-form-field{
+      ::ng-deep .mdc-form-field {
         width: 100%;
       }
 
-      ::ng-deep .mdc-label  {
+      ::ng-deep .mdc-label {
         margin-left: 0;
         width: calc(100% - #{$slide-toggle-width});
       }

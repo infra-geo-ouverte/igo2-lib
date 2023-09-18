@@ -4,7 +4,13 @@ import { Action, Widget } from '@igo2/common';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { EditionWorkspace, OgcFilterWidget } from '@igo2/geo';
-import { StorageService, StorageServiceEvent, StorageServiceEventEnum, LanguageService, MediaService} from '@igo2/core';
+import {
+  StorageService,
+  StorageServiceEvent,
+  StorageServiceEventEnum,
+  LanguageService,
+  MediaService
+} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
 import { skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
@@ -15,7 +21,6 @@ import { DatePipe } from '@angular/common';
   providedIn: 'root'
 })
 export class EditionActionsService implements OnDestroy {
-
   public maximize$: BehaviorSubject<boolean>;
 
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -35,11 +40,12 @@ export class EditionActionsService implements OnDestroy {
     public languageService: LanguageService,
     private mediaService: MediaService,
     private toolState: ToolState,
-    private datePipe: DatePipe) {
-      this.maximize$ = new BehaviorSubject(
-        this.storageService.get('workspaceMaximize') as boolean
-      );
-    }
+    private datePipe: DatePipe
+  ) {
+    this.maximize$ = new BehaviorSubject(
+      this.storageService.get('workspaceMaximize') as boolean
+    );
+  }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -51,12 +57,12 @@ export class EditionActionsService implements OnDestroy {
     workspace: EditionWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
-    ) {
+  ) {
     const actions = this.buildActions(
       workspace,
       rowsInMapExtentCheckCondition$,
       selectOnlyCheckCondition$
-      );
+    );
     workspace.actionStore.load(actions);
   }
 
@@ -67,8 +73,13 @@ export class EditionActionsService implements OnDestroy {
   ): Action[] {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
-      .pipe(skipWhile((storageChange: StorageServiceEvent) =>
-        storageChange?.key !== 'zoomAuto' || storageChange?.event === StorageServiceEventEnum.CLEARED))
+      .pipe(
+        skipWhile(
+          (storageChange: StorageServiceEvent) =>
+            storageChange?.key !== 'zoomAuto' ||
+            storageChange?.event === StorageServiceEventEnum.CLEARED
+        )
+      )
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
         handleZoomAuto(workspace, this.storageService);
@@ -84,6 +95,7 @@ export class EditionActionsService implements OnDestroy {
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.datePipe);
+      this.datePipe
+    );
   }
 }

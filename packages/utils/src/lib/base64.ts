@@ -70,7 +70,7 @@ export class Base64 {
     let i,
       b10,
       x = [],
-      imax = s.length - s.length % 3;
+      imax = s.length - (s.length % 3);
 
     if (s.length === 0) {
       return s;

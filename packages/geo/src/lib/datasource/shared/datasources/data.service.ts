@@ -1,3 +1,3 @@
 export abstract class DataService {
-    abstract getData(): string;
+  abstract getData(): string;
 }

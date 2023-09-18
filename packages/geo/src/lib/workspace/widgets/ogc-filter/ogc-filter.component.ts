@@ -19,7 +19,6 @@ import { IgoMap } from '../../../map/shared/map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
-
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
@@ -49,5 +48,4 @@ export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   onClose() {
     this.cancel.emit();
   }
-
 }

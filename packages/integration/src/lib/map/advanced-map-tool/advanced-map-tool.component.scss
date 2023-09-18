@@ -1,10 +1,10 @@
 $slide-toggle-width: 60px;
 
-.nameOfTool{
-    text-align: center;
-    font-weight: bold;
-    font-size: small;
-    margin: 15px 10px 0px;
+.nameOfTool {
+  text-align: center;
+  font-weight: bold;
+  font-size: small;
+  margin: 15px 10px 0px;
 }
 
 .advanced-tool-line {
@@ -19,11 +19,11 @@ $slide-toggle-width: 60px;
     width: 100%;
     padding: 0 8px;
 
-    ::ng-deep .mdc-form-field{
+    ::ng-deep .mdc-form-field {
       width: 100%;
     }
 
-    ::ng-deep .mdc-label  {
+    ::ng-deep .mdc-label {
       margin-left: 0;
       width: calc(100% - #{$slide-toggle-width});
     }

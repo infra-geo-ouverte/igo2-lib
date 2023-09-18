@@ -24,7 +24,6 @@ import { IgoFormFieldComponent } from '../shared/form-field-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldTextComponent implements OnInit {
-
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
@@ -40,7 +39,7 @@ export class FormFieldTextComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: {[key: string]: string};
+  @Input() errors: { [key: string]: string };
 
   /**
    * Wheter a disable switch should be available
@@ -78,5 +77,4 @@ export class FormFieldTextComponent implements OnInit {
     }
     this.disabled$.next(disabled);
   }
-
 }

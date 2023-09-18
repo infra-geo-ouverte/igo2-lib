@@ -1,5 +1,7 @@
-<igo-context-form *ngIf="context"
-   [btnSubmitText]="'igo.context.contextManager.save' | translate"
-   [context]="context"
-   (submitForm)="submitForm.emit($event)">
+<igo-context-form
+  *ngIf="context"
+  [btnSubmitText]="'igo.context.contextManager.save' | translate"
+  [context]="context"
+  (submitForm)="submitForm.emit($event)"
+>
 </igo-context-form>

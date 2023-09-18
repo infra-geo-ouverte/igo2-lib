@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { GlobalConfig, ToastrModule } from 'ngx-toastr';
 
 @NgModule({
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right',
       timeOut: 10000,
@@ -20,7 +21,8 @@ import { GlobalConfig, ToastrModule } from 'ngx-toastr';
       resetTimeoutOnDuplicate: true,
       countDuplicates: false,
       includeTitleDuplicates: true
-    } as GlobalConfig)],
+    } as GlobalConfig)
+  ],
   declarations: [],
   exports: []
 })

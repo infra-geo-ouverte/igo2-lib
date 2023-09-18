@@ -12,18 +12,18 @@ import { AppToolRoutingModule } from './tool-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        AppToolComponent,
-        AppSalutationToolComponent,
-        AppAboutToolComponent
-    ],
-    imports: [
-        SharedModule,
-        AppToolRoutingModule,
-        IgoLanguageModule,
-        IgoPanelModule,
-        IgoToolModule.forRoot()
-    ],
-    exports: [AppToolComponent]
+  declarations: [
+    AppToolComponent,
+    AppSalutationToolComponent,
+    AppAboutToolComponent
+  ],
+  imports: [
+    SharedModule,
+    AppToolRoutingModule,
+    IgoLanguageModule,
+    IgoPanelModule,
+    IgoToolModule.forRoot()
+  ],
+  exports: [AppToolComponent]
 })
 export class AppToolModule {}

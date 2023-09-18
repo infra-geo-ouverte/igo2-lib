@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppQueryComponent } from './query.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppQueryRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppQueryRoutingModule = RouterModule.forChild(routes);

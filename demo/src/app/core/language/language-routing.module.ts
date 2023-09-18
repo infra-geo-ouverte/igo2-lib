@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppLanguageComponent } from './language.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppLanguageRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppLanguageRoutingModule = RouterModule.forChild(routes);

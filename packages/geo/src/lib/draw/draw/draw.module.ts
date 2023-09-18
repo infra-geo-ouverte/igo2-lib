@@ -27,8 +27,7 @@ import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import {MatRadioModule} from '@angular/material/radio';
-
+import { MatRadioModule } from '@angular/material/radio';
 
 /**
  * @ignore
@@ -59,7 +58,12 @@ import {MatRadioModule} from '@angular/material/radio';
     MatRadioModule,
     MatCheckboxModule
   ],
-  declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
+  declarations: [
+    DrawComponent,
+    DrawPopupComponent,
+    DrawLayerPopupComponent,
+    DrawShorcutsComponent
+  ],
   exports: [DrawComponent]
 })
 export class IgoDrawModule {}

@@ -31,7 +31,9 @@ export function olLayerIsQueryable(olLayer: OlLayer<OlSource>): boolean {
  */
 export function layerFeatureIsQueryable(layer: AnyLayer): boolean {
   const dataSource = layer.dataSource as QueryableDataSource;
-  return dataSource.options.queryLayerFeatures !== undefined ? (dataSource.options.queryLayerFeatures === true) : true;
+  return dataSource.options.queryLayerFeatures !== undefined
+    ? dataSource.options.queryLayerFeatures === true
+    : true;
 }
 
 /**
@@ -41,5 +43,7 @@ export function layerFeatureIsQueryable(layer: AnyLayer): boolean {
  */
 export function olLayerFeatureIsQueryable(olLayer: OlLayer<OlSource>): boolean {
   const layer = olLayer.get('_layer');
-  return layer === undefined ? false : (layerIsQueryable(layer) && layerFeatureIsQueryable(layer));
+  return layer === undefined
+    ? false
+    : layerIsQueryable(layer) && layerFeatureIsQueryable(layer);
 }

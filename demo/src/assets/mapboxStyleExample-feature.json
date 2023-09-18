@@ -1,7 +1,7 @@
 {
   "version": 8,
   "name": "Empty Style",
-  "metadata": {"maputnik:renderer": "mbgljs"},
+  "metadata": { "maputnik:renderer": "mbgljs" },
   "sources": {
     "source_nameX": {
       "type": "vector",
@@ -23,51 +23,59 @@
         "visibility": "visible",
         "text-anchor": "top-right",
         "text-field": "{description}",
-        "text-font": [
-          "Noto Sans Regular"
-        ],
+        "text-font": ["Noto Sans Regular"],
         "text-max-width": 16,
         "text-size": 16,
         "text-padding": 3,
         "text-allow-overlap": false,
         "icon-text-fit": "both"
-       }
-      },
-      {
-        "id": "test_symbol",
-        "type": "symbol",
-        "source": "source_nameX",
-        "filter": ["any",["==","name","Name 4"]],
-        "layout": {
-          "symbol-z-order": "auto",
-          "icon-text-fit": "width",
-          "icon-allow-overlap": true,
-          "icon-optional": {"stops": [[6, false], [10, false]]},
-          "icon-size": 1.75,
-          "icon-image": "triangle",
-          "visibility": "visible"
-        }
-      },
-      {
-        "id": "test_symbol2",
-        "type": "symbol",
-        "source": "source_nameX",
-        "filter": ["any",["==","name","Name 5"]],
-        "layout": {
-          "symbol-z-order": "auto",
-          "icon-text-fit": "width",
-          "icon-allow-overlap": true,
-          "icon-optional": {"stops": [[6, false], [10, false]]},
-          "icon-size": 1.75,
-          "icon-image": "circle",
-          "visibility": "visible"
-        }
-      },
+      }
+    },
+    {
+      "id": "test_symbol",
+      "type": "symbol",
+      "source": "source_nameX",
+      "filter": ["any", ["==", "name", "Name 4"]],
+      "layout": {
+        "symbol-z-order": "auto",
+        "icon-text-fit": "width",
+        "icon-allow-overlap": true,
+        "icon-optional": {
+          "stops": [
+            [6, false],
+            [10, false]
+          ]
+        },
+        "icon-size": 1.75,
+        "icon-image": "triangle",
+        "visibility": "visible"
+      }
+    },
+    {
+      "id": "test_symbol2",
+      "type": "symbol",
+      "source": "source_nameX",
+      "filter": ["any", ["==", "name", "Name 5"]],
+      "layout": {
+        "symbol-z-order": "auto",
+        "icon-text-fit": "width",
+        "icon-allow-overlap": true,
+        "icon-optional": {
+          "stops": [
+            [6, false],
+            [10, false]
+          ]
+        },
+        "icon-size": 1.75,
+        "icon-image": "circle",
+        "visibility": "visible"
+      }
+    },
     {
       "id": "circle_style",
       "type": "circle",
       "source": "source_nameX",
-      "filter": ["any",["==","name","Name 1"]],
+      "filter": ["any", ["==", "name", "Name 1"]],
       "paint": {
         "circle-color": "rgba(0, 255, 0, 1)",
         "circle-radius": 7,
@@ -81,7 +89,7 @@
       "id": "line_style",
       "type": "line",
       "source": "source_nameX",
-      "filter": ["any",["==","name","Name 2"]],
+      "filter": ["any", ["==", "name", "Name 2"]],
       "paint": {
         "line-color": "rgba(0, 255, 0, 1)"
       },
@@ -89,19 +97,19 @@
         "visibility": "visible",
         "line-cap": "round",
         "line-join": "round"
-       }
+      }
     },
     {
       "id": "poly_style",
       "type": "fill",
       "source": "source_nameX",
-      "filter": ["any",["==","name","Name 3"]],
+      "filter": ["any", ["==", "name", "Name 3"]],
       "paint": {
         "fill-color": "rgba(0, 255, 0, 1)"
       },
       "layout": {
         "visibility": "visible"
-       }
+      }
     }
   ],
   "id": "xsk9pp6fv"

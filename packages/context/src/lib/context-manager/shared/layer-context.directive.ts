@@ -59,9 +59,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       this.route.options.contextKey
     ) {
       this.route.queryParams
-        .pipe(first(params => !ObjectUtils.isEmpty(params)))
+        .pipe(first((params) => !ObjectUtils.isEmpty(params)))
         .subscribe((params) => {
-            this.queryParams = params;
+          this.queryParams = params;
         });
     }
   }
@@ -94,8 +94,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            const importExportOptions = this.configService.getConfig('importExport');
-            const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
+            const importExportOptions =
+              this.configService.getConfig('importExport');
+            const importWithStyle =
+              importExportOptions?.importWithStyle ||
+              this.configService.getConfig('importWithStyle');
             if (this.configService.getConfig('importWithStyle')) {
               console.warn(`
               The location of this config importWithStyle is deprecated.
@@ -120,9 +123,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         }
       });
 
-      this.layerService.createAsyncIdbLayers(context.uri).pipe(debounceTime(500))
+    this.layerService
+      .createAsyncIdbLayers(context.uri)
+      .pipe(debounceTime(500))
       .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
-
   }
 
   private handleAddLayers(layers: Layer[]) {
@@ -182,10 +186,16 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       // After, managing named layer by id (context.json OR id from datasource)
       visiblelayers = visibleOnLayersParams.split(',');
       invisiblelayers = visibleOffLayersParams.split(',');
-      if (visiblelayers.indexOf(currentLayerid) > -1 || visiblelayers.indexOf(currentLayerid.toString()) > -1) {
+      if (
+        visiblelayers.indexOf(currentLayerid) > -1 ||
+        visiblelayers.indexOf(currentLayerid.toString()) > -1
+      ) {
         visible = true;
       }
-      if (invisiblelayers.indexOf(currentLayerid) > -1 || invisiblelayers.indexOf(currentLayerid.toString()) > -1) {
+      if (
+        invisiblelayers.indexOf(currentLayerid) > -1 ||
+        invisiblelayers.indexOf(currentLayerid.toString()) > -1
+      ) {
         visible = false;
       }
     }

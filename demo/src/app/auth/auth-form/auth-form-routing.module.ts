@@ -9,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppAuthFormRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppAuthFormRoutingModule = RouterModule.forChild(routes);

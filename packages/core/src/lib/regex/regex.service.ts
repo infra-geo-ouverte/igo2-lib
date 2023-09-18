@@ -12,7 +12,6 @@ export class RegexService {
     this.options = this.config.getConfig('regex');
   }
 
-
   getAll() {
     return this.options;
   }

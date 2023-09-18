@@ -1,6 +1,8 @@
 <div class="igo-input-container" *ngIf="directions && activeDirection">
   <mat-form-field *ngIf="directions && directions.length > 1">
-    <mat-label>{{ 'igo.geo.directionsForm.drivingOptions' | translate }}</mat-label>
+    <mat-label>{{
+      'igo.geo.directionsForm.drivingOptions' | translate
+    }}</mat-label>
     <mat-select
       placeholder="{{ 'igo.geo.directionsForm.drivingOptions' | translate }}"
       (selectionChange)="changeRoute()"

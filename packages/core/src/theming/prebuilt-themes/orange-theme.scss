@@ -6,15 +6,17 @@ $accent: mat.define-palette(mat.$light-blue-palette, 600, 100, 800);
 $warn: mat.define-palette(mat.$red-palette, 600);
 $typography: igo.$igo-typography;
 
-$theme: mat.define-light-theme((
+$theme: mat.define-light-theme(
+  (
     color: (
-        primary: $primary,
-        accent: $accent,
-        warn: $warn
+      primary: $primary,
+      accent: $accent,
+      warn: $warn
     ),
     typography: $typography,
-    density: 0,
-));
+    density: 0
+  )
+);
 
 @include mat.core();
 @include mat.typography-hierarchy($typography);

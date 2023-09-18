@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import {RouterTestingModule} from '@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { RouteService } from './route.service';
 

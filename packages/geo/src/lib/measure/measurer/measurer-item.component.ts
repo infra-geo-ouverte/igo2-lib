@@ -14,7 +14,10 @@ import {
   MeasureAreaUnit,
   MeasureLengthUnit
 } from '../shared/measure.enum';
-import { computeBestAreaUnit, computeBestLengthUnit } from '../shared/measure.utils';
+import {
+  computeBestAreaUnit,
+  computeBestLengthUnit
+} from '../shared/measure.utils';
 
 /**
  * Measurer item
@@ -26,7 +29,6 @@ import { computeBestAreaUnit, computeBestLengthUnit } from '../shared/measure.ut
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeasurerItemComponent implements OnDestroy {
-
   /**
    * Measure observable
    * @internal
@@ -56,14 +58,20 @@ export class MeasurerItemComponent implements OnDestroy {
   set measure(value: number) {
     this.measure$.next(value);
   }
-  get measure(): number { return this.measure$.value; }
+  get measure(): number {
+    return this.measure$.value;
+  }
 
   /**
    * Whther measure units should be automatically determined
    */
   @Input()
-  set auto(value: boolean) { this.toggleAutoUnit(value); }
-  get auto(): boolean { return this._auto; }
+  set auto(value: boolean) {
+    this.toggleAutoUnit(value);
+  }
+  get auto(): boolean {
+    return this._auto;
+  }
   private _auto: boolean = false;
 
   /**
@@ -74,7 +82,9 @@ export class MeasurerItemComponent implements OnDestroy {
   /**
    * Event emitted when the measure unit changes
    */
-  @Output() measureUnitChange = new EventEmitter<MeasureAreaUnit | MeasureLengthUnit>();
+  @Output() measureUnitChange = new EventEmitter<
+    MeasureAreaUnit | MeasureLengthUnit
+  >();
 
   /**
    * Available measure units for the measure type given

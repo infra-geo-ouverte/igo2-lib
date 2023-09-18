@@ -5,15 +5,8 @@ import { IgoDynamicOutletModule } from './dynamic-outlet/dynamic-outlet.module';
 import { DynamicComponentService } from './shared/dynamic-component.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoDynamicOutletModule
-  ],
-  exports: [
-    IgoDynamicOutletModule
-  ],
-  providers: [
-    DynamicComponentService
-  ]
+  imports: [CommonModule, IgoDynamicOutletModule],
+  exports: [IgoDynamicOutletModule],
+  providers: [DynamicComponentService]
 })
 export class IgoDynamicComponentModule {}
