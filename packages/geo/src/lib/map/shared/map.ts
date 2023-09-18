@@ -212,7 +212,7 @@ export class IgoMap implements MapBase {
 
     const viewOptions: ViewOptions = { constrainResolution: true, ...options };
     if (options.center) {
-      viewOptions.center = olproj.fromLonLat(options.center, this.projectionCode);
+      viewOptions.center = olproj.fromLonLat(options.center, options.projection);
     }
 
     this.ol.setView(new olView(viewOptions));
