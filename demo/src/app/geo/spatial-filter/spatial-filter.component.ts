@@ -24,7 +24,7 @@ import {
   createOverlayMarkerStyle,
   MeasureLengthUnit
 } from '@igo2/geo';
-import { EntityStore } from '@igo2/common';
+import { EntityStore, EntityStoreWithStrategy } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olSourceVector from 'ol/source/Vector';
 import olSourceCluster from 'ol/source/Cluster';
@@ -77,7 +77,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private format = new olFormatGeoJSON();
 
-  public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
+  public store = new EntityStoreWithStrategy<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -528,7 +528,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
     }
   }
 

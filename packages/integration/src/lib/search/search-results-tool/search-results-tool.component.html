@@ -64,6 +64,7 @@
         matTooltipShowDelay="500"
         (click)="zoomToFeatureExtent()">
         <mat-icon
+        aria-hidden="false"
         [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
         matBadgeColor="accent"
         matBadgeSize="small"

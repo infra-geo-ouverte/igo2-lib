@@ -28,10 +28,9 @@ export class MapProximityState {
   private defaultProximityRadiusValue: number = 30;
 
   public enabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public proximityRadiusValue$: BehaviorSubject<number> = new BehaviorSubject<number>(
-    this.storageService.get('mapProximityRadius') as number || this.defaultProximityRadiusValue);
+  public proximityRadiusValue$: BehaviorSubject<number>;
   public proximitylocationType$: BehaviorSubject<string> = new BehaviorSubject<string>('geolocation');
-  public proximityFeatureStore: FeatureStore<Feature> = new FeatureStore<Feature>([], { map: this.mapState.map });
+  public proximityFeatureStore: FeatureStore<Feature>;
   private subs$$: Subscription[] = [];
   public currentPositionCoordinate$: BehaviorSubject<[number, number]> = new BehaviorSubject(undefined);
 
@@ -41,7 +40,12 @@ export class MapProximityState {
 
   constructor(
     private mapState: MapState,
-    private storageService: StorageService) {
+    private storageService: StorageService
+  ) {
+    this.proximityFeatureStore = new FeatureStore<Feature>([], { map: this.mapState.map });
+
+    this.proximityRadiusValue$ = new BehaviorSubject<number>(
+      this.storageService.get('mapProximityRadius') as number || this.defaultProximityRadiusValue);
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.subscribeProximityMonitor();

@@ -125,7 +125,6 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     MonitoringModule,
 
     AppContextModule,
-
     AppRoutingModule,
 
     HammerModule

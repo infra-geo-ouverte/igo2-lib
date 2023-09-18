@@ -3,8 +3,8 @@ import {
   WorkspaceOptions
 } from '@igo2/common';
 
-import { ImageLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { ImageLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 
 export interface WmsWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer;

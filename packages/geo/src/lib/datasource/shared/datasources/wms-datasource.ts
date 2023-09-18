@@ -2,7 +2,7 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
+import { TimeFilterableDataSourceOptions, WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
@@ -15,12 +15,20 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
-import { LegendMapViewOptions } from '../../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { BehaviorSubject } from 'rxjs';
-import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
+import { TimeFilterOptions } from '../../../filter';
+
+export interface TimeFilterableDataSource extends WMSDataSource {
+  options: TimeFilterableDataSourceOptions;
+  timeFilter$: BehaviorSubject<TimeFilterOptions>;
+  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean);
+  filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
+}
 
 export class WMSDataSource extends DataSource {
-  public ol: olSourceImageWMS;
+  public declare ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;
@@ -262,4 +270,12 @@ export class WMSDataSource extends DataSource {
   }
 
   public onUnwatch() {}
+}
+
+export interface TimeFilterableDataSource extends WMSDataSource {
+  options: TimeFilterableDataSourceOptions;
+  timeFilter$: BehaviorSubject<TimeFilterOptions>;
+  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean );
+  filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
 }

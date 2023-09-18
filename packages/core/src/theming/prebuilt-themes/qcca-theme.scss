@@ -1,50 +1,15 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
-@use '../../index' as igo;
+@use '../../' as igo;
+@use './qcca';
 
-$qcca-palette: (
-  50: #f2f1f1,
-  100: #dae6f0,
-  //lighter ex: list on focus
-  200: #dae6f0,
-  300: #509fdf,
-  400: #0d7dd9,
-  500: #095797,
-  //default
-  600: #0a60a6,
-  700: #223654,
-  // darker
-  800: #cb381f,
-  900: #4f813d,
-  A100: #1479cc,
-  A200: #1479cc,
-  A400: #dae6f0,
-  A700: #f2f1f1,
-  contrast: (
-    50: #223654,
-    100: #223654,
-    200: #223654,
-    300: #fff,
-    400: #fff,
-    500: #fff,
-    600: #fff,
-    700: #fff,
-    800: #fff,
-    900: #fff,
-    A100: #fff,
-    A200: #fff,
-    A400: #223654,
-    A700: #223654
-  )
-);
-
-$primary: mat.define-palette($qcca-palette, 500, 400, 700);
-$accent: mat.define-palette($qcca-palette, 400, 100, 700);
-$warn: mat.define-palette($qcca-palette, 800);
-$success: mat.define-palette($qcca-palette, 900);
-$background: mat.define-palette($qcca-palette, 100, 100, 100);
-$foreground: mat.define-palette($qcca-palette, 700, 700, 700);
-$typography: igo.$igo-typography;
+// https://design.quebec.ca/a-propos-systeme-design
+$primary: mat.define-palette(qcca.$palette, 500, 400, 700);
+$accent: mat.define-palette(qcca.$palette, 400, 100, 700);
+$warn: mat.define-palette(qcca.$palette, 800);
+$success: mat.define-palette(qcca.$palette, 900);
+$background: mat.define-palette(qcca.$palette, 100, 100, 100);
+$foreground: mat.define-palette(qcca.$palette, 700, 700, 700);
 
 $theme: mat.define-light-theme(
   (
@@ -55,29 +20,28 @@ $theme: mat.define-light-theme(
       success: $success,
       background: $background
     ),
-    typography: $typography,
+    typography: qcca.$typo-typography,
     density: 0
   )
 );
 
-$foreground: igo.theme-foreground(
-  mat.define-palette($qcca-palette, 500, 100, 700)
-);
 $theme: map.merge(
   $theme,
   (
-    foreground: $foreground
+    foreground:
+      igo.theme-foreground(mat.define-palette(qcca.$palette, 500, 100, 700))
   )
 );
 
 @include mat.core();
-@include mat.typography-hierarchy($typography);
+@include mat.typography-hierarchy(qcca.$typo-typography);
 @include mat.all-component-themes($theme);
 
 @include igo.all-component-themes($theme);
+@include qcca.all-component-themes($theme);
 
-
-/* For the non-Angular Material items */
-body {
-  color: #223654;
+@media (max-width: 1200px) {
+  @include mat.typography-hierarchy(qcca.$typo-typography-mobile);
 }
+
+@include qcca.typo-set-base-styles();

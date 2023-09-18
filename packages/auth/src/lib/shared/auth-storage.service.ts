@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { StorageService, StorageScope, ConfigService } from '@igo2/core';
+import { StorageScope, ConfigService, BaseStorage } from '@igo2/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { AuthStorageOptions } from './auth-storage.interface';
@@ -9,8 +9,7 @@ import { AuthStorageOptions } from './auth-storage.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthStorageService extends StorageService {
-  protected options: AuthStorageOptions;
+export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
 
   constructor(
     config: ConfigService,

@@ -4,7 +4,7 @@ import olSourceImage from 'ol/source/Image';
 import { AuthInterceptor } from '@igo2/auth';
 
 import { ImageWatcher } from '../../utils';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
 
@@ -14,9 +14,9 @@ import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasource
 import { MessageService } from '@igo2/core';
 
 export class ImageLayer extends Layer {
-  public dataSource: WMSDataSource | ImageArcGISRestDataSource;
-  public options: ImageLayerOptions;
-  public ol: olLayerImage<olSourceImage>;
+  public declare dataSource: WMSDataSource | ImageArcGISRestDataSource;
+  public declare options: ImageLayerOptions;
+  public declare ol: olLayerImage<olSourceImage>;
 
   private watcher: ImageWatcher;
 

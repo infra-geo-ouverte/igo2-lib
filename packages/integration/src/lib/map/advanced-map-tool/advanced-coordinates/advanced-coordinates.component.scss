@@ -1,3 +1,5 @@
+$slide-toggle-width: 60px;
+
 textarea { resize: none; };
 
 mat-form-field  { padding: 10px 15px;  };
@@ -29,7 +31,16 @@ mat-form-field.igo-input-container { width: 100%; padding: 0px 15px; };
   width: 100%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version. */
-.advanced-coordinates__form ::ng-deep .mat-slide-toggle-content {
-  width: 100%
+mat-slide-toggle {
+  width: 100%;
+  padding: 0 8px;
+
+  ::ng-deep .mdc-form-field{
+    width: 100%;
+  }
+
+  ::ng-deep .mdc-label  {
+    margin-left: 0;
+    width: calc(100% - #{$slide-toggle-width});
+  }
 }

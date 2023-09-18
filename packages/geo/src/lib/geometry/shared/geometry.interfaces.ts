@@ -3,7 +3,7 @@ import { GeoJsonGeometryTypes } from 'geojson';
 
 import { FormFieldInputs } from '@igo2/common';
 
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 export interface GeometryFormFieldInputs extends FormFieldInputs {
   map: IgoMap;
