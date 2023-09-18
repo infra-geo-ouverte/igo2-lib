@@ -82,7 +82,8 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.res = this.contextService.getContextFromLayers(
       this.map,
       contextOptions.layers,
-      contextOptions.name
+      contextOptions.name,
+      false
     );
     this.res.imported = true;
     this.contextExportService.export(this.res).pipe(take(1)).subscribe(
