@@ -81,10 +81,10 @@
     "version.linux": "gulp bumpVersion && rimraf ./dist && npm run build.all && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages.win",
     "postversion.linux": "git push && git push --tags && npm run publish && npm run ghpages",
-    "preghpages": "gulp bundleLocale && npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
+    "preghpages": "npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
-    "preghpages.win": "gulp bundleLocale && npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
+    "preghpages.win": "npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
     "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
     "postghpages.win": "rimraf ./dist/ghpages"
   },
