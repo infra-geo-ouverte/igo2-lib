@@ -92,6 +92,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     return !this.queryService.queryEnabled;
   }
 
+  get interactions(): any[] {
+    return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
+  }
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
@@ -121,11 +125,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private freezeStores() {
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.removeInteraction(this.selectedRoute);
     this.stopsFeatureStore.deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
@@ -209,11 +211,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.stopsFeatureStore.layer.map.ol.addInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.addInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
   }
 
   onStopInputHasFocusChange(stopInputHasFocus: boolean) {
@@ -447,14 +447,12 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   onToggleDirectionsControl(toggle: boolean) {
     this.queryService.queryEnabled = !toggle;
     if (toggle) {
-      [this.selectedRoute, this.translateStop, this.selectStopInteraction].map(
-        (interaction) =>
-          this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
+      this.interactions.map((interaction) =>
+        this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
       );
     } else {
-      [this.selectedRoute, this.translateStop, this.selectStopInteraction].map(
-        (interaction) =>
-          this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
+      this.interactions.map((interaction) =>
+        this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
       );
     }
   }
