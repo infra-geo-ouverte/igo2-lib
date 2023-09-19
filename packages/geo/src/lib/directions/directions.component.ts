@@ -92,7 +92,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     return !this.queryService.queryEnabled;
   }
 
-  get interactions(): any[] {
+  get interactions(): olInteraction.Interaction[] {
     return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
   }
 
