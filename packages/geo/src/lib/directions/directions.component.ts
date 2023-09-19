@@ -84,6 +84,14 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() coordRoundedDecimals: number = 6;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
 
+  /**
+   * Wheter one of the direction control is active
+   * @internal
+   */
+  get directionControlIsActive(): boolean {
+    return !this.queryService.queryEnabled;
+  }
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private languageService: LanguageService,
@@ -434,5 +442,20 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       this.projection,
       this.languageService
     );
+  }
+
+  onToggleDirectionsControl(toggle: boolean) {
+    this.queryService.queryEnabled = !toggle;
+    if (toggle) {
+      [this.selectedRoute, this.translateStop, this.selectStopInteraction].map(
+        (interaction) =>
+          this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
+      );
+    } else {
+      [this.selectedRoute, this.translateStop, this.selectStopInteraction].map(
+        (interaction) =>
+          this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
+      );
+    }
   }
 }
