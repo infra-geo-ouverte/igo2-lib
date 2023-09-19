@@ -1,4 +1,4 @@
-import { Units } from "ol/control/ScaleLine";
+import { Units } from 'ol/control/ScaleLine';
 
 export type MapExtent = [number, number, number, number];
 

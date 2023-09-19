@@ -17,11 +17,7 @@ import { FormGroupComponent } from './form-group.component';
     IgoLanguageModule,
     IgoFormFieldModule
   ],
-  exports: [
-    FormGroupComponent
-  ],
-  declarations: [
-    FormGroupComponent
-  ]
+  exports: [FormGroupComponent],
+  declarations: [FormGroupComponent]
 })
 export class IgoFormGroupModule {}

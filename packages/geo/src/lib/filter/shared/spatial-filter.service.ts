@@ -45,7 +45,7 @@ export class SpatialFilterService {
   }
 
   getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
+    return Object.keys(object).find((key) => object[key] === value);
   }
 
   /*
@@ -59,8 +59,8 @@ export class SpatialFilterService {
           this.baseUrl + this.urlFilterList[urlPath]
         )
         .pipe(
-          map(featureCollection =>
-            featureCollection.features.map(f => {
+          map((featureCollection) =>
+            featureCollection.features.map((f) => {
               f.meta = {
                 id: f.properties.code
               };
@@ -79,7 +79,7 @@ export class SpatialFilterService {
     const items: SpatialFilterThematic[] = [];
     return this.http.get(this.baseUrl + url).pipe(
       map((types: string[]) => {
-        types.forEach(type => {
+        types.forEach((type) => {
           if (type.startsWith('lieux')) {
             const item: SpatialFilterThematic = {
               name: undefined,
@@ -97,7 +97,9 @@ export class SpatialFilterService {
                 'igo.geo.terrapi.' + name
               );
             } catch (e) {
-              item.name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length - 1);
+              item.name =
+                name.substring(0, 1).toUpperCase() +
+                name.substring(1, name.length - 1);
             }
 
             try {
@@ -105,7 +107,9 @@ export class SpatialFilterService {
                 'igo.geo.spatialFilter.group.' + substr
               );
             } catch (e) {
-              item.group = substr.substring(0, 1).toUpperCase() + substr.substring(1, name.length - 1);
+              item.group =
+                substr.substring(0, 1).toUpperCase() +
+                substr.substring(1, name.length - 1);
             }
 
             items.push(item);
@@ -121,7 +125,9 @@ export class SpatialFilterService {
                   'igo.geo.terrapi.' + name
                 );
               } catch (e) {
-                item.name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length - 1);
+                item.name =
+                  name.substring(0, 1).toUpperCase() +
+                  name.substring(1, name.length - 1);
               }
               item.source = type;
 
@@ -164,8 +170,8 @@ export class SpatialFilterService {
             }
           )
           .pipe(
-            map(featureCollection =>
-              featureCollection.features.map(f => {
+            map((featureCollection) =>
+              featureCollection.features.map((f) => {
                 f.meta = {
                   id: f.properties.code,
                   title: this.languageService.translate.instant(
@@ -193,8 +199,8 @@ export class SpatialFilterService {
             }
           )
           .pipe(
-            map(featureCollection =>
-              featureCollection.features.map(f => {
+            map((featureCollection) =>
+              featureCollection.features.map((f) => {
                 f.meta = {
                   id: f.properties.code,
                   title: thematic.name,
@@ -219,8 +225,8 @@ export class SpatialFilterService {
             simplified: '100'
           })
           .pipe(
-            map(featureCollection =>
-              featureCollection.features.map(f => {
+            map((featureCollection) =>
+              featureCollection.features.map((f) => {
                 f.meta = {
                   id: f.properties.code,
                   title: this.languageService.translate.instant(
@@ -244,8 +250,8 @@ export class SpatialFilterService {
             simplified: '100'
           })
           .pipe(
-            map(featureCollection =>
-              featureCollection.features.map(f => {
+            map((featureCollection) =>
+              featureCollection.features.map((f) => {
                 f.meta = {
                   id: f.properties.code,
                   title: thematic.name,
@@ -276,7 +282,7 @@ export class SpatialFilterService {
           }
         })
         .pipe(
-          map(f => {
+          map((f) => {
             f.meta = {
               id: f.properties.code,
               alias: f.properties.nom,
@@ -295,23 +301,21 @@ export class SpatialFilterService {
     feature: Feature,
     filterType: SpatialFilterType,
     buffer?: number,
-    type?: SpatialFilterQueryType,
+    type?: SpatialFilterQueryType
   ): Observable<Feature> {
     if (filterType === SpatialFilterType.Predefined) {
       const featureType = this.urlFilterList[type];
       const featureCode = '/' + feature.properties.code;
       if (featureType && featureCode) {
         return this.http
-          .get<Feature>(this.baseUrl + featureType + featureCode,
-            {
-              params: {
-                geometry: '100',
-                bufferOutput: buffer.toString()
-              }
+          .get<Feature>(this.baseUrl + featureType + featureCode, {
+            params: {
+              geometry: '100',
+              bufferOutput: buffer.toString()
             }
-          )
+          })
           .pipe(
-            map(f => {
+            map((f) => {
               f.meta = {
                 id: f.properties.code,
                 alias: f.properties.nom,
@@ -328,7 +332,7 @@ export class SpatialFilterService {
           loc: JSON.stringify(feature)
         })
         .pipe(
-          map(f => {
+          map((f) => {
             return f;
           })
         );

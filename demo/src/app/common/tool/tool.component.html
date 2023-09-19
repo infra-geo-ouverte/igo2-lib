@@ -1,7 +1,5 @@
 <app-doc-viewer title="Tool" subtitle="Common">
-  <app-example-viewer
-    codeFolder="common/tool"
-  >
+  <app-example-viewer codeFolder="common/tool">
     <igo-panel [title]="panelTitle">
       <button
         mat-icon-button
@@ -21,7 +19,11 @@
         <mat-icon svgIcon="menu"></mat-icon>
       </button>
 
-      <igo-toolbox [toolbox]="toolbox" [animate]="true" color="primary"></igo-toolbox>
+      <igo-toolbox
+        [toolbox]="toolbox"
+        [animate]="true"
+        color="primary"
+      ></igo-toolbox>
     </igo-panel>
 
     <button

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HammerGestureConfig } from '@angular/platform-browser';
 
-
 @Injectable()
 export class IgoGestureConfig extends HammerGestureConfig {
   buildHammer(element: HTMLElement) {

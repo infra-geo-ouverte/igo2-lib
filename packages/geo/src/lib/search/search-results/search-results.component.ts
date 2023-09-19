@@ -15,7 +15,12 @@ import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
-import { EntityState, EntityStoreFilterCustomFuncStrategy, EntityStoreWatcher, EntityStoreWithStrategy } from '@igo2/common';
+import {
+  EntityState,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreWatcher,
+  EntityStoreWithStrategy
+} from '@igo2/common';
 
 import { IgoMap } from '../../map/shared';
 
@@ -40,7 +45,6 @@ export enum SearchResultMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
-
   private showResultsCount: boolean = true;
 
   /**
@@ -56,9 +60,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   private settingsChange$$: Subscription;
 
-  public pageIterator: {sourceId: string}[] = [];
+  public pageIterator: { sourceId: string }[] = [];
 
-  public collapsed: {sourceId: string}[] = [];
+  public collapsed: { sourceId: string }[] = [];
 
   @Input() map: IgoMap;
 
@@ -133,22 +137,26 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Output() resultMouseenter = new EventEmitter<SearchResult>();
   @Output() resultMouseleave = new EventEmitter<SearchResult>();
 
-  @ContentChild('igoSearchItemToolbar', /* TODO: add static flag */ {}) templateSearchToolbar: TemplateRef<any>;
+  @ContentChild('igoSearchItemToolbar', /* TODO: add static flag */ {})
+  templateSearchToolbar: TemplateRef<any>;
 
-  get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
+  get results$(): Observable<
+    { source: SearchSource; results: SearchResult[] }[]
+  > {
     if (this._results$ === undefined) {
       this._results$ = this.liftResults();
     }
     return this._results$;
   }
   private _results$: Observable<
-    {source: SearchSource; results: SearchResult[]}[]
+    { source: SearchSource; results: SearchResult[] }[]
   >;
 
-  constructor(private cdRef: ChangeDetectorRef,
-              private searchService: SearchService,
-              private configService: ConfigService,
-              ) {}
+  constructor(
+    private cdRef: ChangeDetectorRef,
+    private searchService: SearchService,
+    private configService: ConfigService
+  ) {}
 
   /**
    * Bind the search results store to the watcher
@@ -161,7 +169,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       this.pageIterator = [];
     });
 
-    if (this.configService.getConfig('searchSources.showResultsCount') === false) {
+    if (
+      this.configService.getConfig('searchSources.showResultsCount') === false
+    ) {
       this.showResultsCount = false;
     }
   }
@@ -181,7 +191,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Group title
    * @internal
    */
-  computeGroupTitle(group: {source: SearchSource; results: SearchResult[]}): string {
+  computeGroupTitle(group: {
+    source: SearchSource;
+    results: SearchResult[];
+  }): string {
     const parts = [group.source.title];
     const count = group.results.length;
     if (count > 1 && this.showResultsCount) {
@@ -202,7 +215,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    this.store.state.update(result, {focused: true, selected: true}, true);
+    this.store.state.update(result, { focused: true, selected: true }, true);
     this.resultSelect.emit(result);
   }
 
@@ -211,13 +224,17 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Observable of grouped search results
    * @internal
    */
-   private liftResults(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
+  private liftResults(): Observable<
+    { source: SearchSource; results: SearchResult[] }[]
+  > {
     return this.store.stateView.all$().pipe(
-      debounce((results: {entity: SearchResult, state: EntityState}[]) => {
+      debounce((results: { entity: SearchResult; state: EntityState }[]) => {
         return results.length === 0 ? EMPTY : timer(200);
       }),
-      map((results: {entity: SearchResult, state: EntityState}[]) => {
-        return this.groupResults(results.map(r => r.entity).sort(this.sortByOrder));
+      map((results: { entity: SearchResult; state: EntityState }[]) => {
+        return this.groupResults(
+          results.map((r) => r.entity).sort(this.sortByOrder)
+        );
       })
     );
   }
@@ -236,7 +253,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param results Search results from all sources
    * @returns Search results grouped by source
    */
-  private groupResults(results: SearchResult[]): {source: SearchSource; results: SearchResult[]}[] {
+  private groupResults(
+    results: SearchResult[]
+  ): { source: SearchSource; results: SearchResult[] }[] {
     const grouped = new Map<SearchSource, SearchResult[]>();
     results.forEach((result: SearchResult) => {
       const source = result.source;
@@ -252,29 +271,39 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       if (this.pageIterator[source.getId()] === undefined) {
         this.pageIterator[source.getId()] = 1;
       }
-      return {source, results: grouped.get(source)};
+      return { source, results: grouped.get(source) };
     });
   }
 
   isMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
-    const stategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+    const stategy = this.store.getStrategyOfType(
+      EntityStoreFilterCustomFuncStrategy
+    );
     const active = stategy?.active || false;
     if (!active) {
-      return group.results && group.results[group.results.length - 1].meta.nextPage === true;
+      return (
+        group.results &&
+        group.results[group.results.length - 1].meta.nextPage === true
+      );
     } else {
-      return group.results?.length % +group.source.params.limit === 0 && + group.source.params.page < 30;
+      return (
+        group.results?.length % +group.source.params.limit === 0 &&
+        +group.source.params.page < 30
+      );
     }
-
   }
 
-  displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
+  displayMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
     const options: TextSearchOptions = {
       sourceId: group.source.getId(),
       page: ++this.pageIterator[group.source.getId()]
     };
 
     let terms;
-    if (this.termSplitter && this.term.match(new RegExp(this.termSplitter, 'g'))) {
+    if (
+      this.termSplitter &&
+      this.term.match(new RegExp(this.termSplitter, 'g'))
+    ) {
       terms = this.term.split(this.termSplitter);
     } else {
       terms = [this.term];
@@ -285,13 +314,13 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       researches = researches.concat(this.searchService.search(term, options));
     });
 
-    researches.map(research => {
+    researches.map((research) => {
       research.request.subscribe((results: SearchResult[]) => {
         const newResults = group.results.concat(results);
         if (!results.length) {
           newResults[newResults.length - 1].meta.nextPage = false;
         }
-        this.moreResults.emit({research, results: newResults});
+        this.moreResults.emit({ research, results: newResults });
       });
     });
     return;

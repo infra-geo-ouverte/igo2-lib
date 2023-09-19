@@ -8,11 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppTableComponent],
-  imports: [
-    SharedModule,
-    AppTableRoutingModule,
-    IgoTableModule
-  ],
+  imports: [SharedModule, AppTableRoutingModule, IgoTableModule],
   exports: [AppTableComponent]
 })
 export class AppTableModule {}

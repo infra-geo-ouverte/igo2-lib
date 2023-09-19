@@ -29,7 +29,6 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -63,17 +62,21 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Height Condition for scroll button
    */
-  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
 
   /**
    * Position Condition for top scroll button
    */
-  positionConditionTop$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  positionConditionTop$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(true);
 
   /**
    * Position Condition for low scroll button
    */
-  positionConditionLow$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  positionConditionLow$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(true);
 
   /**
    * Action store
@@ -197,7 +200,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
 
   get positionConditionLow(): boolean {
     const el = this.elRef.nativeElement;
-    if (el.scrollTop >= (el.scrollHeight - el.clientHeight)) {
+    if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
       return false;
     }
     return true;
@@ -211,7 +214,8 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     public overlay: Overlay,
     private elRef: ElementRef,
     private cdRef: ChangeDetectorRef,
-    public mediaService: MediaService) {}
+    public mediaService: MediaService
+  ) {}
 
   /**
    * @internal
@@ -249,5 +253,4 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   scrollUp() {
     this.elRef.nativeElement.scrollBy(0, -52);
   }
-
 }

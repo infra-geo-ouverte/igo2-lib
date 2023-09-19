@@ -5,8 +5,6 @@ import { IgoAppMeasurerToolModule } from './measurer-tool/measurer-tool.module';
 @NgModule({
   imports: [],
   declarations: [],
-  exports: [
-    IgoAppMeasurerToolModule
-  ]
+  exports: [IgoAppMeasurerToolModule]
 })
 export class IgoAppMeasureModule {}

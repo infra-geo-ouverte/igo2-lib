@@ -17,7 +17,7 @@ $igo-actionbar-item-icon-padding: 8px;
       width: auto;
       white-space: nowrap;
     }
-  
+
     igo-actionbar-item {
       display: inline-block;
     }
@@ -26,32 +26,32 @@ $igo-actionbar-item-icon-padding: 8px;
   mat-list {
     padding-top: 0;
   }
-  
+
   .buttonOverlay {
     margin: 0px;
   }
-  
+
   .context-menu-card {
     padding: 8px 3px;
     margin: 10px;
   }
-  
+
   #topChevron {
     position: sticky;
     top: 0;
     background-color: white;
     z-index: 3;
-  
+
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       position: fixed;
       top: unset;
     }
-    @supports (-ms-accelerator:true) {
+    @supports (-ms-accelerator: true) {
       position: fixed;
       top: unset;
     }
   }
-  
+
   #lowChevron {
     position: fixed;
     position: sticky;
@@ -59,14 +59,14 @@ $igo-actionbar-item-icon-padding: 8px;
     background-color: white;
     z-index: 3;
   }
-  
+
   .igo-actionbar-overlay {
     min-width: inherit !important;
     padding-top: 0;
     padding-bottom: 0;
 
     .mat-mdc-list {
-      padding-top: 0
+      padding-top: 0;
     }
 
     .mat-mdc-menu-content:not(:empty) {
@@ -74,7 +74,7 @@ $igo-actionbar-item-icon-padding: 8px;
       padding-bottom: 0;
     }
   }
-  
+
   ::ng-deep .mdc-list-item__primary-text {
     white-space: normal;
     overflow: hidden;

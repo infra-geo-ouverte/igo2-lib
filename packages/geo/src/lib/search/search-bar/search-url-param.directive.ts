@@ -22,7 +22,7 @@ export class SearchUrlParamDirective implements OnInit {
 
   ngOnInit() {
     if (this.route && this.route.options.searchKey) {
-      this.route.queryParams.subscribe(params => {
+      this.route.queryParams.subscribe((params) => {
         const searchParams = params[this.route.options.searchKey as string];
         if (searchParams) {
           this.component.setTerm(searchParams);

@@ -2,17 +2,25 @@
   <mat-select
     [required]="required"
     [placeholder]="placeholder"
-    [formControl]="formControl">
+    [formControl]="formControl"
+  >
     <mat-option *ngFor="let choice of choices$ | async" [value]="choice.value">
-      {{choice.title}}
+      {{ choice.title }}
     </mat-option>
   </mat-select>
   <mat-icon
     *ngIf="disableSwitch === true"
     class="igo-form-disable-switch"
-    [svgIcon]="(disabled$ | async) === true ? 'checkbox-blank-outline' : 'checkbox-marked-outline'"
+    [svgIcon]="
+      (disabled$ | async) === true
+        ? 'checkbox-blank-outline'
+        : 'checkbox-marked-outline'
+    "
     (click)="onDisableSwitchClick()"
-    matPrefix>
+    matPrefix
+  >
   </mat-icon>
-  <mat-error *ngIf="formControl.errors">{{getErrorMessage() | translate}}</mat-error>
+  <mat-error *ngIf="formControl.errors">{{
+    getErrorMessage() | translate
+  }}</mat-error>
 </mat-form-field>

@@ -4,7 +4,10 @@ import { Toolbox, ToolService } from '@igo2/common';
 
 import { ExportOptions } from '@igo2/geo';
 import { BehaviorSubject } from 'rxjs';
-import { ImportExportMode, ImportExportState } from '../import-export/import-export.state';
+import {
+  ImportExportMode,
+  ImportExportState
+} from '../import-export/import-export.state';
 
 /**
  * Service that holds the state of the search module
@@ -17,17 +20,25 @@ export class ToolState {
     return this.toolService.toolbox;
   }
 
-  public openSidenav$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  public openSidenav$: BehaviorSubject<boolean> = new BehaviorSubject(
+    undefined
+  );
 
   constructor(
     private toolService: ToolService,
     private importExportState: ImportExportState
-    ) {}
+  ) {}
 
-    toolToActivateFromOptions(toolToActivate: { tool: string; options: {[key: string]: any} }) {
-    if (!toolToActivate) { return; }
+  toolToActivateFromOptions(toolToActivate: {
+    tool: string;
+    options: { [key: string]: any };
+  }) {
+    if (!toolToActivate) {
+      return;
+    }
     if (toolToActivate.tool === 'importExport') {
-      let exportOptions: ExportOptions = this.importExportState.exportOptions$.value;
+      let exportOptions: ExportOptions =
+        this.importExportState.exportOptions$.value;
       if (!exportOptions) {
         exportOptions = {
           layers: toolToActivate.options.layers,
@@ -35,7 +46,8 @@ export class ToolState {
         };
       } else {
         exportOptions.layers = toolToActivate.options.layers;
-        exportOptions.featureInMapExtent = toolToActivate.options.featureInMapExtent;
+        exportOptions.featureInMapExtent =
+          toolToActivate.options.featureInMapExtent;
       }
       this.importExportState.setsExportOptions(exportOptions);
       this.importExportState.setMode(ImportExportMode.export);

@@ -22,7 +22,7 @@ export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
     // Override input layers
     this.component.layers = [];
 
-    this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
+    this.layers$$ = this.mapService.getMap().layers$.subscribe((layers) => {
       this.component.layers = layers;
     });
   }

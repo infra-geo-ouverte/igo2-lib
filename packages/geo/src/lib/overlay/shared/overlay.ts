@@ -152,7 +152,9 @@ export class Overlay<T extends MapBase = MapBase> {
     features.forEach((feature: Feature) => {
       if (feature.meta) {
         if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
-          this.removeOlFeature(this.dataSource.ol.getFeatureById(feature.meta.id));
+          this.removeOlFeature(
+            this.dataSource.ol.getFeatureById(feature.meta.id)
+          );
         }
       }
     });

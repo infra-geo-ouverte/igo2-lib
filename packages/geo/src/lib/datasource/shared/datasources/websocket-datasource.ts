@@ -33,7 +33,9 @@ export class WebSocketDataSource extends FeatureDataSource {
   }
 
   onMessage(event) {
-    const featureAdded = this.options.format.readFeature(event.data) as olFeature<OlGeometry>;
+    const featureAdded = this.options.format.readFeature(
+      event.data
+    ) as olFeature<OlGeometry>;
 
     switch (this.options.onmessage) {
       case 'update':

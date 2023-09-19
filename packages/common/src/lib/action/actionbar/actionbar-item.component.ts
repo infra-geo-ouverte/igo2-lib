@@ -12,9 +12,9 @@ import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
 import { Action } from '../shared/action.interfaces';
 
- /**
-  * An action button
-  */
+/**
+ * An action button
+ */
 @Component({
   selector: 'igo-actionbar-item',
   templateUrl: './actionbar-item.component.html',
@@ -22,10 +22,11 @@ import { Action } from '../shared/action.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
-
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(
+    undefined
+  );
 
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -33,7 +34,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   readonly noDisplay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  readonly ngClass$: BehaviorSubject<{[key: string]: boolean}> = new BehaviorSubject({});
+  readonly ngClass$: BehaviorSubject<{ [key: string]: boolean }> =
+    new BehaviorSubject({});
 
   private ngClass$$: Subscription;
 
@@ -80,15 +82,23 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
    * Whether the action is disabled
    */
   @Input()
-  set disabled(value: boolean) { this.disabled$.next(value); }
-  get disabled(): boolean { return this.disabled$.value; }
+  set disabled(value: boolean) {
+    this.disabled$.next(value);
+  }
+  get disabled(): boolean {
+    return this.disabled$.value;
+  }
 
   /**
    * Whether the action is display or not
    */
   @Input()
-  set noDisplay(value: boolean) { this.noDisplay$.next(value); }
-  get noDisplay(): boolean { return this.noDisplay$.value; }
+  set noDisplay(value: boolean) {
+    this.noDisplay$.next(value);
+  }
+  get noDisplay(): boolean {
+    return this.noDisplay$.value;
+  }
 
   /**
    * Event emitted when the action button is clicked
@@ -98,7 +108,9 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   /**
    * @internal
    */
-  get title(): string { return this.action.title; }
+  get title(): string {
+    return this.action.title;
+  }
 
   constructor() {}
 
@@ -106,46 +118,56 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     const args = this.action.args || [];
 
     if (this.action.ngClass !== undefined) {
-      this.ngClass$$ = this.action.ngClass(...args)
-        .subscribe((ngClass: {[key: string]: boolean}) => this.updateNgClass(ngClass));
+      this.ngClass$$ = this.action
+        .ngClass(...args)
+        .subscribe((ngClass: { [key: string]: boolean }) =>
+          this.updateNgClass(ngClass)
+        );
     }
 
     if (isObservable(this.action.icon)) {
-      this.icon$$ = this.action.icon
-        .subscribe((icon: string) => this.updateIcon(icon));
+      this.icon$$ = this.action.icon.subscribe((icon: string) =>
+        this.updateIcon(icon)
+      );
     } else {
       this.updateIcon(this.action.icon);
     }
 
     if (isObservable(this.action.checkCondition)) {
-      this.checkCondition$$ = this.action.checkCondition
-        .subscribe((checkCondition: boolean) => this.updateCheckCondition(checkCondition));
+      this.checkCondition$$ = this.action.checkCondition.subscribe(
+        (checkCondition: boolean) => this.updateCheckCondition(checkCondition)
+      );
     } else {
       this.updateCheckCondition(this.action.checkCondition);
     }
 
     if (isObservable(this.action.tooltip)) {
-      this.tooltip$$ = this.action.tooltip
-        .subscribe((tooltip: string) => this.updateTooltip(tooltip));
+      this.tooltip$$ = this.action.tooltip.subscribe((tooltip: string) =>
+        this.updateTooltip(tooltip)
+      );
     } else {
       this.updateTooltip(this.action.tooltip);
     }
 
     if (this.action.availability !== undefined) {
-      this.availability$$ = this.action.availability(...args)
-        .subscribe((available: boolean) => this.disabled = !available);
+      this.availability$$ = this.action
+        .availability(...args)
+        .subscribe((available: boolean) => (this.disabled = !available));
     }
 
-    this.disabled$$ = this.disabled$
-      .subscribe((disabled: boolean) => this.updateNgClass({'igo-actionbar-item-disabled': disabled}));
+    this.disabled$$ = this.disabled$.subscribe((disabled: boolean) =>
+      this.updateNgClass({ 'igo-actionbar-item-disabled': disabled })
+    );
 
     if (this.action.display !== undefined) {
-      this.display$$ = this.action.display(...args)
-        .subscribe((display: boolean) => this.noDisplay = !display);
+      this.display$$ = this.action
+        .display(...args)
+        .subscribe((display: boolean) => (this.noDisplay = !display));
     }
 
-    this.noDisplay$$ = this.noDisplay$
-      .subscribe((noDisplay: boolean) => this.updateNgClass({'igo-actionbar-item-no-display': noDisplay}));
+    this.noDisplay$$ = this.noDisplay$.subscribe((noDisplay: boolean) =>
+      this.updateNgClass({ 'igo-actionbar-item-no-display': noDisplay })
+    );
   }
 
   ngOnDestroy() {
@@ -195,7 +217,7 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     this.trigger.emit(this.action);
   }
 
-  private updateNgClass(ngClass: {[key: string]: boolean}) {
+  private updateNgClass(ngClass: { [key: string]: boolean }) {
     this.ngClass$.next(Object.assign({}, this.ngClass$.value, ngClass));
   }
 

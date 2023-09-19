@@ -1,23 +1,32 @@
-<igo-flexible #flex
+<igo-flexible
+  #flex
   collapsedMobile="51px"
   expandedMobile="300px"
   [state]="state"
   (swipeup)="swipe($event.type)"
-  (swipedown)="swipe($event.type)">
-
+  (swipedown)="swipe($event.type)"
+>
   <igo-panel [title]="title">
-    <button
-      mat-icon-button
-      panelLeftButton
-      (click)="toggle()">
-      <mat-icon [svgIcon]="['collapsed', 'initial'].indexOf(flex.state) >= 0 ? 'arrow_upward' : 'arrow_downward'"></mat-icon>
+    <button mat-icon-button panelLeftButton (click)="toggle()">
+      <mat-icon
+        [svgIcon]="
+          ['collapsed', 'initial'].indexOf(flex.state) >= 0
+            ? 'arrow_upward'
+            : 'arrow_downward'
+        "
+      ></mat-icon>
     </button>
 
-    <button mat-icon-button panelRightButton class="igo-icon-button" (click)="zoomToFeatureExtent()" *ngIf="feature.geometry">
+    <button
+      mat-icon-button
+      panelRightButton
+      class="igo-icon-button"
+      (click)="zoomToFeatureExtent()"
+      *ngIf="feature.geometry"
+    >
       <mat-icon svgIcon="zoom-in"></mat-icon>
     </button>
 
     <igo-feature-details [feature]="feature"></igo-feature-details>
   </igo-panel>
-
 </igo-flexible>

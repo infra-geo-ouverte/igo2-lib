@@ -10,14 +10,8 @@
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
   $foreground: map.get($theme, foreground);
-  $darker-contrast: mat.get-color-from-palette(
-    $primary,
-    darker-contrast
-  );
-  $lighter-contrast: mat.get-color-from-palette(
-    $primary,
-    lighter-contrast
-  );
+  $darker-contrast: mat.get-color-from-palette($primary, darker-contrast);
+  $lighter-contrast: mat.get-color-from-palette($primary, lighter-contrast);
 
   igo-toolbox {
     &.color-primary > igo-actionbar:not(.with-title) {
@@ -48,7 +42,7 @@
           &:hover {
             color: black;
           }
-  
+
           &.tool-activated,
           &.children-tool-activated {
             background-color: white;
@@ -68,7 +62,7 @@
               color: black;
             }
           }
-    
+
           mat-list-item {
             color: $lighter-contrast;
           }
@@ -79,12 +73,12 @@
         &:hover {
           background-color: mat.get-color-from-palette($accent, lighter);
         }
-    
+
         &.tool-activated,
         &.children-tool-activated {
           color: $lighter-contrast;
           background-color: $darker-contrast;
-    
+
           button {
             cursor: default;
           }

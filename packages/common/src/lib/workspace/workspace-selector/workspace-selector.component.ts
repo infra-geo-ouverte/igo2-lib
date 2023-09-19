@@ -20,7 +20,6 @@ import { WorkspaceStore } from '../shared/store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceSelectorComponent {
-
   /**
    * Store that holds the available workspaces.
    */
@@ -52,10 +51,9 @@ export class WorkspaceSelectorComponent {
    * @internal
    * @param event The selection change event
    */
-  onSelectedChange(event: {value: Workspace}) {
+  onSelectedChange(event: { value: Workspace }) {
     const workspace = event.value;
     this.store.activateWorkspace(workspace);
-    this.selectedChange.emit({selected: true, value: workspace});
+    this.selectedChange.emit({ selected: true, value: workspace });
   }
-
 }

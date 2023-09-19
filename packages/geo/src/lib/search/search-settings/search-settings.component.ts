@@ -91,7 +91,8 @@ export class SearchSettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.hasPointerReverseSearchSource = this.hasReverseSearchSourcesForPointerSummary();
+    this.hasPointerReverseSearchSource =
+      this.hasReverseSearchSourcesForPointerSummary();
   }
 
   /**
@@ -170,8 +171,9 @@ export class SearchSettingsComponent implements OnInit {
    */
   computeSourcesCheckAllBehavior(sources: SearchSource[]) {
     const enabledSourcesCnt = sources.filter((source) => source.enabled).length;
-    const disabledSourcesCnt = sources.filter((source) => !source.enabled)
-      .length;
+    const disabledSourcesCnt = sources.filter(
+      (source) => !source.enabled
+    ).length;
     this.searchSourcesAllEnabled =
       enabledSourcesCnt >= disabledSourcesCnt ? false : true;
   }
@@ -277,12 +279,10 @@ export class SearchSettingsComponent implements OnInit {
 
   onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
     source.enabled = event.checked;
-    const storage = (this.storageService.get(source.getId() + '.options') || {}) as SettingOptions;
+    const storage = (this.storageService.get(source.getId() + '.options') ||
+      {}) as SettingOptions;
     storage.enabled = source.enabled;
-    this.storageService.set(
-      source.getId() + '.options',
-      storage
-    );
+    this.storageService.set(source.getId() + '.options', storage);
     this.searchSourceChange.emit(source);
   }
 
@@ -313,6 +313,8 @@ export class SearchSettingsComponent implements OnInit {
 
   reverseSearchCoordsFormat(event) {
     this.reverseSearchCoordsFormatEnabled = event.checked;
-    this.reverseSearchCoordsFormatStatus.emit(this.reverseSearchCoordsFormatEnabled);
+    this.reverseSearchCoordsFormatStatus.emit(
+      this.reverseSearchCoordsFormatEnabled
+    );
   }
 }

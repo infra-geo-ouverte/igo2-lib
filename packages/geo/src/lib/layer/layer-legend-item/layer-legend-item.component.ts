@@ -18,7 +18,6 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
-
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   tooltipText: string;
@@ -41,10 +40,12 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.state = state;
-      this.onResolutionChange();
-    });
+    this.network$$ = this.networkService
+      .currentState()
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
+        this.onResolutionChange();
+      });
   }
 
   ngOnDestroy() {

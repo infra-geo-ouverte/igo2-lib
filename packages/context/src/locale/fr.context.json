@@ -75,7 +75,7 @@
           "exportSelectAll": "Tout sélectionner",
           "success": {
             "text": "Contexte exporté avec succès.",
-            "title":"Exportation réussie"
+            "title": "Exportation réussie"
           },
           "nothing": {
             "text": "Impossible d’exporter, contexte non valide ou aucun contexte sélectionné.",

@@ -4,17 +4,21 @@
   [refreshFilters]="refreshFunc"
   [datasource]="datasource"
   [map]="map"
-  [currentFilter]="currentFilter">
+  [currentFilter]="currentFilter"
+>
 </igo-ogc-filter-selection>
 
-<ng-template 
-*ngIf="advancedOgcFilters && datasource.options.ogcFilters.editable"
-ngFor let-currentFilter 
-[ngForOf]="datasource.options.ogcFilters.interfaceOgcFilters">
-<igo-ogc-filter-form
-  [currentFilter]="currentFilter"
-  [refreshFilters]="refreshFunc"
-  [datasource]="datasource"
-  [map]="map">
-</igo-ogc-filter-form>
+<ng-template
+  *ngIf="advancedOgcFilters && datasource.options.ogcFilters.editable"
+  ngFor
+  let-currentFilter
+  [ngForOf]="datasource.options.ogcFilters.interfaceOgcFilters"
+>
+  <igo-ogc-filter-form
+    [currentFilter]="currentFilter"
+    [refreshFilters]="refreshFunc"
+    [datasource]="datasource"
+    [map]="map"
+  >
+  </igo-ogc-filter-form>
 </ng-template>

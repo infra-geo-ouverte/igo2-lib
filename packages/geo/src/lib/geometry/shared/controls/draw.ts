@@ -99,7 +99,6 @@ export class DrawControl {
     this.predefinedRadius$.next(radiusCercle);
   }
 
-
   /**
    * Wheter the control is active
    */
@@ -116,7 +115,9 @@ export class DrawControl {
   }
 
   constructor(private options: DrawControlOptions) {
-    this.olDrawingLayer = options.drawingLayer ? options.drawingLayer : this.createOlInnerOverlayLayer();
+    this.olDrawingLayer = options.drawingLayer
+      ? options.drawingLayer
+      : this.createOlInnerOverlayLayer();
     this.olGeometryType = this.options.geometryType;
     this.olInteractionStyle = this.options.interactionStyle;
   }
@@ -144,7 +145,6 @@ export class DrawControl {
    */
   getSource(): OlVectorSource<OlGeometry> {
     return this.olDrawingLayerSource;
-
   }
 
   setOlInteractionStyle(style) {
@@ -169,9 +169,13 @@ export class DrawControl {
   /**
    * Create a drawing source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
+  private createOlInnerOverlayLayer(): OlVectorLayer<
+    OlVectorSource<OlGeometry>
+  > {
     return new OlVectorLayer({
-      source: this.options.drawingLayerSource ? this.options.drawingLayerSource : new OlVectorSource(),
+      source: this.options.drawingLayerSource
+        ? this.options.drawingLayerSource
+        : new OlVectorSource(),
       style: this.options.drawingLayerStyle,
       zIndex: 500
     });
@@ -232,13 +236,15 @@ export class DrawControl {
           freehandCondition: () => false
         });
       }
-
     } else {
       if (this.olGeometryType === 'Point') {
         olDrawInteraction = new OlDraw({
           type: 'Circle',
           source: this.getSource(),
-          style: typeof this.olInteractionStyle === 'function' ? undefined : this.olInteractionStyle,
+          style:
+            typeof this.olInteractionStyle === 'function'
+              ? undefined
+              : this.olInteractionStyle,
           maxPoints: this.options.maxPoints,
           freehand: true
         });
@@ -256,9 +262,17 @@ export class DrawControl {
     // Add Draw interaction to map and create listeners
     this.olMap.addInteraction(olDrawInteraction);
     this.olDrawInteraction = olDrawInteraction;
-    this.onDrawStartKey = olDrawInteraction.on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
-    this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
-    this.onDrawAbortKey = olDrawInteraction.on('drawabort', (event: OlDrawEvent) => this.abort$.next(event.feature.getGeometry()));
+    this.onDrawStartKey = olDrawInteraction.on(
+      'drawstart',
+      (event: OlDrawEvent) => this.onDrawStart(event)
+    );
+    this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) =>
+      this.onDrawEnd(event)
+    );
+    this.onDrawAbortKey = olDrawInteraction.on(
+      'drawabort',
+      (event: OlDrawEvent) => this.abort$.next(event.feature.getGeometry())
+    );
 
     if (activateModifyAndSelect) {
       // Create a Modify interaction, add it to map and create a listener
@@ -278,7 +292,9 @@ export class DrawControl {
         this.olMap.addInteraction(olSelectInteraction);
         this.olSelectInteraction = olSelectInteraction;
 
-        this.olSelectInteraction.on('select', (event: OlSelectEvent) => this.onSelect(event));
+        this.olSelectInteraction.on('select', (event: OlSelectEvent) =>
+          this.onSelect(event)
+        );
       }
     }
   }
@@ -288,7 +304,12 @@ export class DrawControl {
    */
   private removeOlInteractions() {
     this.unsubscribeKeyDown();
-    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey, this.onDrawAbortKey]);
+    unByKey([
+      this.onDrawStartKey,
+      this.onDrawEndKey,
+      this.onDrawKey,
+      this.onDrawAbortKey
+    ]);
 
     if (this.olMap) {
       this.olMap.removeInteraction(this.olDrawInteraction);
@@ -346,32 +367,34 @@ export class DrawControl {
    */
   private subscribeKeyDown() {
     this.unsubscribeKeyDown();
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
-      // On Escape or 'c' keydowns, abort the current drawing
-      if (event.key === 'Escape') {
-        this.olDrawInteraction.abortDrawing();
-        return;
-      }
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
+      (event: KeyboardEvent) => {
+        // On Escape or 'c' keydowns, abort the current drawing
+        if (event.key === 'Escape') {
+          this.olDrawInteraction.abortDrawing();
+          return;
+        }
 
-      // On Backspace or 'u' keydowns, remove last vertex of current drawing
-      if (event.key === 'Backspace') {
-        this.olDrawInteraction.removeLastPoint();
-      }
+        // On Backspace or 'u' keydowns, remove last vertex of current drawing
+        if (event.key === 'Backspace') {
+          this.olDrawInteraction.removeLastPoint();
+        }
 
-      // On Enter or 'f' keydowns, finish current drawing
-      if (event.key === 'Enter') {
-        this.olDrawInteraction.finishDrawing();
-      }
+        // On Enter or 'f' keydowns, finish current drawing
+        if (event.key === 'Enter') {
+          this.olDrawInteraction.finishDrawing();
+        }
 
-      // On space bar key down, pan to the current mouse position
-      if (event.key === ' ') {
-        this.olMap.getView().animate({
-          center: this.mousePosition,
-          duration: 100
-        });
-        return;
+        // On space bar key down, pan to the current mouse position
+        if (event.key === ' ') {
+          this.olMap.getView().animate({
+            center: this.mousePosition,
+            duration: 100
+          });
+          return;
+        }
       }
-    });
+    );
   }
 
   /**

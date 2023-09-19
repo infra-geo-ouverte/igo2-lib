@@ -38,9 +38,7 @@ import { IgoLayerModule } from '../../layer/layer.module';
     IgoMetadataModule,
     IgoLayerModule
   ],
-  exports: [
-    CatalogBrowserComponent
-  ],
+  exports: [CatalogBrowserComponent],
   declarations: [
     CatalogBrowserComponent,
     CatalogBrowserGroupComponent,

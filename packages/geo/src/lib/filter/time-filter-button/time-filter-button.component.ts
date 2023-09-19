@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit
+} from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared';
@@ -12,7 +17,6 @@ import { TimeFilterableDataSourceOptions } from '../../datasource';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeFilterButtonComponent implements OnInit {
-
   public options: TimeFilterableDataSourceOptions;
 
   get badge() {

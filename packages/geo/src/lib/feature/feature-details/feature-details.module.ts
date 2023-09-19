@@ -19,11 +19,7 @@ import { FeatureDetailsDirective } from './feature-details.directive';
     IgoKeyValueModule,
     IgoImageModule
   ],
-  exports: [
-    FeatureDetailsComponent,
-    FeatureDetailsDirective],
-  declarations: [
-    FeatureDetailsComponent,
-    FeatureDetailsDirective]
+  exports: [FeatureDetailsComponent, FeatureDetailsDirective],
+  declarations: [FeatureDetailsComponent, FeatureDetailsDirective]
 })
 export class IgoFeatureDetailsModule {}

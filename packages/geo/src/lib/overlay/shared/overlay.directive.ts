@@ -27,7 +27,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.features$$ = this.overlayService.features$.subscribe(res =>
+    this.features$$ = this.overlayService.features$.subscribe((res) =>
       this.handleFeatures(res[0], res[1])
     );
   }

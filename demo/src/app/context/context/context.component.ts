@@ -26,7 +26,7 @@ export class AppContextComponent {
   constructor(
     private languageService: LanguageService,
     private mapService: MapService,
-    private contextService: ContextService,
+    private contextService: ContextService
   ) {
     this.mapService.setMap(this.map);
     this.contextService.loadDefaultContext();

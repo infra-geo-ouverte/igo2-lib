@@ -11,7 +11,6 @@ import { ContextService } from '../../context-manager/shared/context.service';
   providedIn: 'root'
 })
 export class ShareMapService {
-
   private language = '';
 
   constructor(
@@ -26,9 +25,11 @@ export class ShareMapService {
   }
 
   getUrlWithApi(formValues) {
-    return this.language ?
-      `${location.origin + location.pathname}?context=${formValues.uri}&lang=${this.language}` :
-      `${location.origin + location.pathname}?context=${formValues.uri}`;
+    return this.language
+      ? `${location.origin + location.pathname}?context=${
+          formValues.uri
+        }&lang=${this.language}`
+      : `${location.origin + location.pathname}?context=${formValues.uri}`;
   }
 
   createContextShared(map: IgoMap, formValues) {
@@ -62,8 +63,12 @@ export class ShareMapService {
     let invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
 
-    const visibleLayers = layers.filter(lay => lay.visible && !lay.isIgoInternalLayer);
-    const invisibleLayers = layers.filter(lay => !lay.visible && !lay.isIgoInternalLayer);
+    const visibleLayers = layers.filter(
+      (lay) => lay.visible && !lay.isIgoInternalLayer
+    );
+    const invisibleLayers = layers.filter(
+      (lay) => !lay.visible && !lay.isIgoInternalLayer
+    );
 
     if (visibleLayers.length === 0) {
       visibleKey = '';
@@ -90,16 +95,39 @@ export class ShareMapService {
     const contextLayersID = [];
     const contextLayers = this.contextService.context$.value.layers;
     for (const contextLayer of contextLayers) {
-      if ( typeof contextLayer.id !== 'undefined' || typeof contextLayer.source !== 'undefined' ) {
+      if (
+        typeof contextLayer.id !== 'undefined' ||
+        typeof contextLayer.source !== 'undefined'
+      ) {
         contextLayersID.push(contextLayer.id || contextLayer.source.id);
       }
     }
 
-    const addedLayersQueryParamsWms = this.makeLayersByService(layers, contextLayersID, 'wms');
-    const addedLayersQueryParamsWmts = this.makeLayersByService(layers, contextLayersID, 'wmts');
-    const addedLayersQueryParamsArcgisRest = this.makeLayersByService(layers, contextLayersID, 'arcgisrest');
-    const addedLayersQueryParamsImageArcgisRest = this.makeLayersByService(layers, contextLayersID, 'imagearcgisrest');
-    const addedLayersQueryParamsTileArcgisRest = this.makeLayersByService(layers, contextLayersID, 'tilearcgisrest');
+    const addedLayersQueryParamsWms = this.makeLayersByService(
+      layers,
+      contextLayersID,
+      'wms'
+    );
+    const addedLayersQueryParamsWmts = this.makeLayersByService(
+      layers,
+      contextLayersID,
+      'wmts'
+    );
+    const addedLayersQueryParamsArcgisRest = this.makeLayersByService(
+      layers,
+      contextLayersID,
+      'arcgisrest'
+    );
+    const addedLayersQueryParamsImageArcgisRest = this.makeLayersByService(
+      layers,
+      contextLayersID,
+      'imagearcgisrest'
+    );
+    const addedLayersQueryParamsTileArcgisRest = this.makeLayersByService(
+      layers,
+      contextLayersID,
+      'tilearcgisrest'
+    );
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
@@ -117,9 +145,9 @@ export class ShareMapService {
       context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
-    let url = this.language ?
-      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}&lang=${this.language}` :
-      `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
+    let url = this.language
+      ? `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}&lang=${this.language}`
+      : `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
       url = url.endsWith('&') ? url.slice(0, -1) : url;
@@ -131,45 +159,59 @@ export class ShareMapService {
     return url;
   }
 
-  private makeLayersByService(layers: Layer[], contextLayersID: any[], typeService: string): string {
-
+  private makeLayersByService(
+    layers: Layer[],
+    contextLayersID: any[],
+    typeService: string
+  ): string {
     const addedLayersByService = [];
-    for (const layer of layers.filter(l => l.dataSource.options?.type === typeService)) {
+    for (const layer of layers.filter(
+      (l) => l.dataSource.options?.type === typeService
+    )) {
       if (contextLayersID.indexOf(layer.id) === -1) {
         let linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
         let addedLayer = '';
         let layerVersion: string;
         switch (layer.dataSource.options.type.toLowerCase()) {
           case 'wms':
-            const datasourceOptions = layer.dataSource.options as WMSDataSourceOptions;
+            const datasourceOptions = layer.dataSource
+              .options as WMSDataSourceOptions;
             addedLayer = encodeURIComponent(datasourceOptions.params.LAYERS);
-            layerVersion = datasourceOptions.params.VERSION === '1.3.0' ? layerVersion : datasourceOptions.params.VERSION;
+            layerVersion =
+              datasourceOptions.params.VERSION === '1.3.0'
+                ? layerVersion
+                : datasourceOptions.params.VERSION;
             break;
           case 'wmts':
           case 'arcgisrest':
           case 'imagearcgisrest':
           case 'tilearcgisrest':
-            addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+            addedLayer = encodeURIComponent(
+              (layer.dataSource.options as any).layer
+            );
             break;
         }
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
         let version = '';
         if (layerVersion) {
-          const operator = (layer.dataSource.options as any).url.indexOf('?') === -1 ? '?' : '&';
+          const operator =
+            (layer.dataSource.options as any).url.indexOf('?') === -1
+              ? '?'
+              : '&';
           version = encodeURIComponent(`${operator}VERSION=${layerVersion}`);
         }
         linkUrl = `${linkUrl}${version}`;
 
         if (
-          !addedLayersByService.find(definedUrl => definedUrl.url === linkUrl)
+          !addedLayersByService.find((definedUrl) => definedUrl.url === linkUrl)
         ) {
           addedLayersByService.push({
             url: linkUrl,
             layers: [addedLayerPosition]
           });
         } else {
-          addedLayersByService.forEach(service => {
+          addedLayersByService.forEach((service) => {
             if (service.url === linkUrl) {
               service.layers.push(addedLayerPosition);
             }
@@ -216,7 +258,7 @@ export class ShareMapService {
 
       let linkUrlQueryParams = '';
       let layersQueryParams = '';
-      addedLayersByService.forEach(service => {
+      addedLayersByService.forEach((service) => {
         linkUrlQueryParams += `${service.url},`;
         layersQueryParams += `(${service.layers.join(',')}),`;
       });

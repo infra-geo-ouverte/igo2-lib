@@ -12,7 +12,6 @@ import {
   selector: '[igoListItem]'
 })
 export class ListItemDirective {
-
   static focusedCls = 'igo-list-item-focused';
   static selectedCls = 'igo-list-item-selected';
   static disabledCls = 'igo-list-item-disabled';
@@ -111,7 +110,10 @@ export class ListItemDirective {
     this.selected = true;
   }
 
-  constructor(public renderer: Renderer2, public el: ElementRef) {}
+  constructor(
+    public renderer: Renderer2,
+    public el: ElementRef
+  ) {}
 
   getOffsetTop(): number {
     const padding = 5;

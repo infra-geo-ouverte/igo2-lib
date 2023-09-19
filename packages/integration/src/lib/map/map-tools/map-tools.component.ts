@@ -25,7 +25,10 @@ import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
-import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
+import {
+  ImportExportMode,
+  ImportExportState
+} from '../../import-export/import-export.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -246,11 +249,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.allowShowAllLegends === false
     ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe((value) => {
-        value.length === 0
-          ? (visibleOrInRangeLayers = false)
-          : (visibleOrInRangeLayers = true);
-      });
+      this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(
+        (value) => {
+          value.length === 0
+            ? (visibleOrInRangeLayers = false)
+            : (visibleOrInRangeLayers = true);
+        }
+      );
 
       if (visibleOrInRangeLayers === false) {
         return false;
@@ -262,7 +267,10 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   activateExport(layer: Layer) {
     let id = layer.id;
     if (layer.options.workspace?.workspaceId) {
-      id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
+      id =
+        layer.options.workspace.workspaceId !== layer.id
+          ? layer.options.workspace.workspaceId
+          : layer.id;
     }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);
@@ -296,19 +304,29 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   isOGCFilterButton(layer): boolean {
     const options = layer.dataSource.options;
-    return this.ogcButton && options.ogcFilters && options.ogcFilters.enabled &&
-    (options.ogcFilters.pushButtons || options.ogcFilters.checkboxes || options.ogcFilters.radioButtons
-      || options.ogcFilters.select || options.ogcFilters.autocomplete || options.ogcFilters.editable);
+    return (
+      this.ogcButton &&
+      options.ogcFilters &&
+      options.ogcFilters.enabled &&
+      (options.ogcFilters.pushButtons ||
+        options.ogcFilters.checkboxes ||
+        options.ogcFilters.radioButtons ||
+        options.ogcFilters.select ||
+        options.ogcFilters.autocomplete ||
+        options.ogcFilters.editable)
+    );
   }
 
   isExportButton(layer: Layer): boolean {
     if (
       (layer instanceof VectorLayer && layer.exportable === true) ||
-      (layer.dataSource.options.download && layer.dataSource.options.download.url) ||
-      (layer.options.workspace?.enabled && layer.options.workspace?.workspaceId !== layer.id))
-      {
-          return true;
-      }
+      (layer.dataSource.options.download &&
+        layer.dataSource.options.download.url) ||
+      (layer.options.workspace?.enabled &&
+        layer.options.workspace?.workspaceId !== layer.id)
+    ) {
+      return true;
+    }
     return false;
   }
 
@@ -317,7 +335,6 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       if ((layer as VectorLayer).options?.igoStyle?.editable) {
         return true;
       }
-
     }
     return false;
   }

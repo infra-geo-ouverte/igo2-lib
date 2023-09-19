@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppOverlayComponent } from './overlay.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppOverlayRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppOverlayRoutingModule = RouterModule.forChild(routes);

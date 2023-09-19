@@ -6,7 +6,8 @@
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.search.menu.tooltip' | translate"
-    [matMenuTriggerFor]="searchSelectorMenu">
+    [matMenuTriggerFor]="searchSelectorMenu"
+  >
     <mat-icon svgIcon="menu-down"></mat-icon>
   </button>
 
@@ -14,15 +15,19 @@
     #searchSelectorMenu="matMenu"
     class="no-border-radius"
     xPosition="before"
-    yPosition="above">
+    yPosition="above"
+  >
     <mat-radio-group
       class="igo-search-selector-radio-group"
       [value]="searchType$ | async"
-      (change)="onSearchTypeChange($event.value)">
-      <mat-radio-button *ngFor="let searchType of searchTypes" [value]="searchType">
-        {{getSearchTypeTitle(searchType) | translate}}
+      (change)="onSearchTypeChange($event.value)"
+    >
+      <mat-radio-button
+        *ngFor="let searchType of searchTypes"
+        [value]="searchType"
+      >
+        {{ getSearchTypeTitle(searchType) | translate }}
       </mat-radio-button>
     </mat-radio-group>
   </mat-menu>
-
 </div>

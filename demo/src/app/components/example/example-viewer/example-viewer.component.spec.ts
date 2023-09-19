@@ -10,13 +10,9 @@ describe('ExampleViewerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MatCardModule,
-        MatDividerModule,
-      ],
-      declarations: [ ExampleViewerComponent ]
-    })
-    .compileComponents();
+      imports: [MatCardModule, MatDividerModule],
+      declarations: [ExampleViewerComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ExampleViewerComponent);
     component = fixture.componentInstance;

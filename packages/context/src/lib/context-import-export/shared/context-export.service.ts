@@ -10,21 +10,24 @@ import { Observer, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ContextExportService {
-
   export(res: DetailedContext): Observable<void> {
     return this.exportAsync(res);
   }
 
   protected exportAsync(res: DetailedContext): Observable<void> {
     const doExport = (observer: Observer<void>) => {
-        const nothingToExport = this.nothingToExport(res);
-        if (nothingToExport === true) {
-            observer.error(new ExportNothingToExportError());
-            return;
-        }
-        const contextJSON = JSON.stringify(res);
-        downloadContent(contextJSON, 'text/json;charset=utf-8', `${res.uri}.json`);
-        observer.complete();
+      const nothingToExport = this.nothingToExport(res);
+      if (nothingToExport === true) {
+        observer.error(new ExportNothingToExportError());
+        return;
+      }
+      const contextJSON = JSON.stringify(res);
+      downloadContent(
+        contextJSON,
+        'text/json;charset=utf-8',
+        `${res.uri}.json`
+      );
+      observer.complete();
     };
     return new Observable(doExport);
   }

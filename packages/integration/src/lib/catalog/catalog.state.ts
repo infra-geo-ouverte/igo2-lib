@@ -11,11 +11,12 @@ import { Catalog, CatalogItem } from '@igo2/geo';
   providedIn: 'root'
 })
 export class CatalogState {
-
   /**
    * Store that contains all the catalogs
    */
-  get catalogStore(): EntityStore<Catalog> { return this._catalogStore; }
+  get catalogStore(): EntityStore<Catalog> {
+    return this._catalogStore;
+  }
   private _catalogStore: EntityStore<Catalog>;
 
   /**

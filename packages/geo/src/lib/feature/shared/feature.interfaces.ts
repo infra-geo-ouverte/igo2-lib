@@ -70,11 +70,11 @@ export interface FeatureStoreLoadingStrategyOptions
 }
 
 export interface FeatureStorePropertyTypeStrategyOptions
-extends FeatureStoreStrategyOptions {
-  map: IgoMap
+  extends FeatureStoreStrategyOptions {
+  map: IgoMap;
 }
 export interface FeatureStoreInMapExtentStrategyOptions
-extends FeatureStoreStrategyOptions {}
+  extends FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreInMapResolutionStrategyOptions
   extends FeatureStoreStrategyOptions {}
@@ -83,9 +83,9 @@ export interface FeatureStoreLoadingLayerStrategyOptions
   extends FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreSearchIndexStrategyOptions
-extends EntityStoreStrategyOptions {
+  extends EntityStoreStrategyOptions {
   sourceFields?: SourceFieldsOptionsParams[];
-  percentDistinctValueRatio?: number
+  percentDistinctValueRatio?: number;
 }
 
 export interface FeatureStoreSelectionStrategyOptions

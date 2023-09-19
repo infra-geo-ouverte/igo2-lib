@@ -6,9 +6,6 @@ import { IgoAppSearchResultsToolModule } from './search-results-tool/search-resu
 @NgModule({
   imports: [],
   declarations: [],
-  exports: [
-   IgoAppSearchBarModule,
-   IgoAppSearchResultsToolModule
-  ],
+  exports: [IgoAppSearchBarModule, IgoAppSearchResultsToolModule]
 })
 export class IgoAppSearchModule {}

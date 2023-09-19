@@ -11,9 +11,10 @@ import { IgoMap } from '../shared/map';
   styleUrls: ['./geolocate-button.component.scss']
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
-
   private tracking$$: Subscription;
-  readonly icon$: BehaviorSubject<string> = new BehaviorSubject('crosshairs-gps');
+  readonly icon$: BehaviorSubject<string> = new BehaviorSubject(
+    'crosshairs-gps'
+  );
 
   @Input()
   get map(): IgoMap {
@@ -36,13 +37,17 @@ export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   constructor(private configService: ConfigService) {}
   ngAfterContentInit(): void {
     this.map.ol.once('rendercomplete', () => {
-      this.tracking$$ =this.map.geolocationController.tracking$.subscribe(tracking => {
-        if (tracking) {
-          this.icon$.next('crosshairs-gps');
-        } else {
-          this.configService.getConfig('geolocate.basic') ? this.icon$.next('crosshairs-gps') : this.icon$.next('crosshairs');
+      this.tracking$$ = this.map.geolocationController.tracking$.subscribe(
+        (tracking) => {
+          if (tracking) {
+            this.icon$.next('crosshairs-gps');
+          } else {
+            this.configService.getConfig('geolocate.basic')
+              ? this.icon$.next('crosshairs-gps')
+              : this.icon$.next('crosshairs');
+          }
         }
-      });
+      );
     });
   }
 

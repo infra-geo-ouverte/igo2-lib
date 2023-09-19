@@ -7,7 +7,6 @@ import { EntityStoreStrategy } from './strategy';
  * selected entities only.
  */
 export class EntityStoreFilterSelectionStrategy extends EntityStoreStrategy {
-
   /**
    * Store / filter ids map
    */

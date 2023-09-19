@@ -39,9 +39,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<CatalogItem>;
 
- // private resolution$$: Subscription;
+  // private resolution$$: Subscription;
 
-  get resolution$(): BehaviorSubject<number> { return this.map.viewController.resolution$; }
+  get resolution$(): BehaviorSubject<number> {
+    return this.map.viewController.resolution$;
+  }
 
   @Input() catalogAllowLegend = false;
 
@@ -90,10 +92,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     }
 
     const catalogShowLegend = this.catalog ? this.catalog.showLegend : false;
-    this.catalogAllowLegend = catalogShowLegend ? catalogShowLegend : this.catalogAllowLegend;
+    this.catalogAllowLegend = catalogShowLegend
+      ? catalogShowLegend
+      : this.catalogAllowLegend;
 
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
-
   }
 
   ngOnDestroy() {
@@ -122,7 +125,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   onLayerAddedChange(event: AddedChangeEmitter) {
     const layer = event.layer;
     this.store.state.update(layer, { added: event.added }, false);
-    event.added ? this.addLayerToMap(layer, event) : this.removeLayerFromMap(layer);
+    event.added
+      ? this.addLayerToMap(layer, event)
+      : this.removeLayerFromMap(layer);
   }
 
   /**
@@ -133,7 +138,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   onGroupAddedChange(event: AddedChangeGroupEmitter) {
     const group = event.group;
     this.store.state.update(group, { added: event.added }, false);
-    event.added ? this.addGroupToMap(group, event) : this.removeGroupFromMap(group);
+    event.added
+      ? this.addGroupToMap(group, event)
+      : this.removeGroupFromMap(group);
   }
 
   /**
@@ -156,7 +163,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add multiple layers to map
    * @param layers Catalog layers
    */
-  private addLayersToMap(layers: CatalogItemLayer[], event: AddedChangeEmitter | AddedChangeGroupEmitter) {
+  private addLayersToMap(
+    layers: CatalogItemLayer[],
+    event: AddedChangeEmitter | AddedChangeGroupEmitter
+  ) {
     const layers$ = layers.map((layer: CatalogItemLayer) => {
       if (!layer.options.sourceOptions.optionsFromApi) {
         layer.options.sourceOptions.optionsFromApi = true;
@@ -227,7 +237,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Add all the layers of a group to map
    * @param group Catalog group
    */
-  private addGroupToMap(group: CatalogItemGroup, event: AddedChangeGroupEmitter) {
+  private addGroupToMap(
+    group: CatalogItemGroup,
+    event: AddedChangeGroupEmitter
+  ) {
     let layers = group.items.filter((item: CatalogItem) => {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;

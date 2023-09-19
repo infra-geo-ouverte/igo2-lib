@@ -36,7 +36,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   private layers$$: Subscription;
   private lastTimeoutRequest;
 
-  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(
+    false
+  );
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
   private mouseInsideAdd: boolean = false;
@@ -78,19 +80,23 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     return getEntityIcon(this.layer) || 'layers';
   }
 
-  constructor(private layerService: LayerService ) {}
+  constructor(private layerService: LayerService) {}
 
   ngOnInit(): void {
-    this.isPreview$$ = this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
+    this.isPreview$$ = this.isPreview$.subscribe((value) =>
+      this.addedLayerIsPreview.emit(value)
+    );
 
     this.layers$$ = this.map.layers$.subscribe(() => {
       this.isVisible();
     });
 
-    this.resolution$$ = this.map.viewController.resolution$.subscribe((resolution) => {
-      this.isInResolutionsRange(resolution);
-      this.isVisible();
-    });
+    this.resolution$$ = this.map.viewController.resolution$.subscribe(
+      (resolution) => {
+        this.isInResolutionsRange(resolution);
+        this.isVisible();
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -100,30 +106,30 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   }
 
   computeTitleTooltip(): string {
-      const layerOptions = this.layer.options;
-      if (!layerOptions.tooltip) {
-        return getEntityTitle(this.layer);
-      }
-      const layerTooltip = layerOptions.tooltip;
-      const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
-      switch (layerOptions.tooltip.type) {
-        case TooltipType.TITLE:
+    const layerOptions = this.layer.options;
+    if (!layerOptions.tooltip) {
+      return getEntityTitle(this.layer);
+    }
+    const layerTooltip = layerOptions.tooltip;
+    const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
+    switch (layerOptions.tooltip.type) {
+      case TooltipType.TITLE:
+        return this.layer.title;
+      case TooltipType.ABSTRACT:
+        if (layerMetadata && layerMetadata.abstract) {
+          return layerMetadata.abstract;
+        } else {
           return this.layer.title;
-        case TooltipType.ABSTRACT:
-          if (layerMetadata && layerMetadata.abstract) {
-            return layerMetadata.abstract;
-          } else {
-            return this.layer.title;
-          }
-        case TooltipType.CUSTOM:
-          if (layerTooltip && layerTooltip.text) {
-            return layerTooltip.text;
-          } else {
-            return this.layer.title;
-          }
-        default:
+        }
+      case TooltipType.CUSTOM:
+        if (layerTooltip && layerTooltip.text) {
+          return layerTooltip.text;
+        } else {
           return this.layer.title;
-      }
+        }
+      default:
+        return this.layer.title;
+    }
   }
 
   /**
@@ -136,8 +142,10 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
 
   askForLegend(event) {
     this.layerLegendShown$.next(!this.layerLegendShown$.value);
-    this.layerService.createAsyncLayer(this.layer.options).pipe(first())
-    .subscribe(layer => this.igoLayer$.next(layer));
+    this.layerService
+      .createAsyncLayer(this.layer.options)
+      .pipe(first())
+      .subscribe((layer) => this.igoLayer$.next(layer));
   }
 
   /**
@@ -148,7 +156,7 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
-    if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
+    if (event.type === 'mouseenter' && this.mouseInsideAdd) {
       return;
     }
     switch (event.type) {
@@ -208,10 +216,16 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   }
 
   isInResolutionsRange(resolution: number) {
-    const minResolution = (!this.layer.options.minResolution || Number.isNaN(this.layer.options.minResolution))
-      ? 0 : this.layer.options.minResolution;
-    const maxResolution = (!this.layer.options.maxResolution || Number.isNaN(this.layer.options.maxResolution))
-    ? Infinity : this.layer.options.maxResolution;
+    const minResolution =
+      !this.layer.options.minResolution ||
+      Number.isNaN(this.layer.options.minResolution)
+        ? 0
+        : this.layer.options.minResolution;
+    const maxResolution =
+      !this.layer.options.maxResolution ||
+      Number.isNaN(this.layer.options.maxResolution)
+        ? Infinity
+        : this.layer.options.maxResolution;
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );
@@ -220,7 +234,9 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   isVisible() {
     if (this.layer?.id) {
       const oLayer = this.map.getLayerById(this.layer?.id);
-      oLayer ? this.isVisible$.next(oLayer.visible) : this.isVisible$.next(false);
+      oLayer
+        ? this.isVisible$.next(oLayer.visible)
+        : this.isVisible$.next(false);
     }
   }
 
@@ -238,8 +254,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
         return 'igo.geo.catalog.layer.addToMap';
       } else if (this.inRange$.value) {
         return this.isVisible$.value
-        ? 'igo.geo.catalog.layer.removeFromMap'
-        : 'igo.geo.catalog.layer.removeFromMapNotVisible';
+          ? 'igo.geo.catalog.layer.removeFromMap'
+          : 'igo.geo.catalog.layer.removeFromMapNotVisible';
       } else {
         return 'igo.geo.catalog.layer.removeFromMapOutRange';
       }

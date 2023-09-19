@@ -12,10 +12,7 @@ describe('LanguageService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([LanguageService], (service: LanguageService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([LanguageService], (service: LanguageService) => {
+    expect(service).toBeTruthy();
+  }));
 });

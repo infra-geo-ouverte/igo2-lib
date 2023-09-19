@@ -16,14 +16,14 @@ export class AppRequestComponent {
 
   callHttp() {
     const url = 'https://geoegl.msp.gouv.qc.ca/apis/icherche/info';
-    this.http.get(url).subscribe(rep => {
+    this.http.get(url).subscribe((rep) => {
       console.log(rep);
     });
   }
 
   callHttpError() {
     const url = '404';
-    this.http.get(url).subscribe(rep => {
+    this.http.get(url).subscribe((rep) => {
       console.log(rep);
     });
   }

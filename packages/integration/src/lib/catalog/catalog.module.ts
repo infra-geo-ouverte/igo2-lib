@@ -5,10 +5,7 @@ import { IgoAppCatalogBrowserToolModule } from './catalog-browser-tool/catalog-b
 
 @NgModule({
   imports: [],
-  exports: [
-    IgoAppCatalogLibraryToolModule,
-    IgoAppCatalogBrowserToolModule
-  ],
+  exports: [IgoAppCatalogLibraryToolModule, IgoAppCatalogBrowserToolModule],
   declarations: []
 })
 export class IgoAppCatalogModule {}

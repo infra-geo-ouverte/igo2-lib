@@ -117,11 +117,14 @@ export function renderFeatureFromOl(
       ends
     );
   } else if (geometryType === 'Point') {
-    geom = new OlPoint(olRenderFeature.getFlatCoordinates(), 'XY' as GeometryLayout);
+    geom = new OlPoint(
+      olRenderFeature.getFlatCoordinates(),
+      'XY' as GeometryLayout
+    );
   } else if (geometryType === 'LineString') {
     geom = new OlLineString(
       olRenderFeature.getFlatCoordinates(),
-      'XY' as GeometryLayout,
+      'XY' as GeometryLayout
     );
   }
 
@@ -132,7 +135,11 @@ export function renderFeatureFromOl(
 
   const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
   const mapTitle = olRenderFeature.get('_mapTitle');
-  const extent = olproj.transformExtent(olRenderFeature.getExtent(), projectionIn, projectionOut) as [number, number, number, number];
+  const extent = olproj.transformExtent(
+    olRenderFeature.getExtent(),
+    projectionIn,
+    projectionOut
+  ) as [number, number, number, number];
   return {
     type: FEATURE,
     projection: projectionOut,
@@ -191,13 +198,20 @@ export function featureFromOl(
       excludeOffline = sourceOptions.excludeAttributeOffline;
       idColumn =
         sourceOptions.idColumn ||
-        ((sourceOptions.type === 'arcgisrest' || sourceOptions.type === 'tilearcgisrest') ? 'OBJECTID' : undefined );
+        (sourceOptions.type === 'arcgisrest' ||
+        sourceOptions.type === 'tilearcgisrest'
+          ? 'OBJECTID'
+          : undefined);
     }
   } else {
     title = olFeature.get('_title');
   }
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId() ? olFeature.getId() : olFeature.get(idColumn) ? olFeature.get(idColumn) : uuid();
+  const id = olFeature.getId()
+    ? olFeature.getId()
+    : olFeature.get(idColumn)
+    ? olFeature.get(idColumn)
+    : uuid();
   const newFeature = olFeature.get('_newFeature');
 
   return {
@@ -227,7 +241,7 @@ export function featureFromOl(
  */
 export function computeOlFeatureExtent(
   olFeature: OlFeature<OlGeometry>,
-  projection: olproj.Projection,
+  projection: olproj.Projection
 ): [number, number, number, number] {
   let olExtent = olextent.createEmpty();
 
@@ -257,7 +271,7 @@ export function computeOlFeatureExtent(
  */
 export function computeOlFeaturesExtent(
   olFeatures: OlFeature<OlGeometry>[],
-  projection: olproj.Projection,
+  projection: olproj.Projection
 ): [number, number, number, number] {
   const extent = olextent.createEmpty();
 
@@ -303,14 +317,14 @@ export function featuresAreOutOfView(
   featuresExtent: [number, number, number, number],
   edgeRatio: number | number[] = 0.05
 ) {
-  const edgesRatio = Array.isArray(edgeRatio) ? edgeRatio :[edgeRatio,edgeRatio,edgeRatio,edgeRatio];
-  const scale = [-1, -1, -1, -1].map((x,i) => x * edgesRatio[i]);
-  const viewExtent = scaleExtent(extent, scale as [
-    number,
-    number,
-    number,
-    number
-  ]);
+  const edgesRatio = Array.isArray(edgeRatio)
+    ? edgeRatio
+    : [edgeRatio, edgeRatio, edgeRatio, edgeRatio];
+  const scale = [-1, -1, -1, -1].map((x, i) => x * edgesRatio[i]);
+  const viewExtent = scaleExtent(
+    extent,
+    scale as [number, number, number, number]
+  );
 
   return !olextent.containsExtent(viewExtent, featuresExtent);
 }

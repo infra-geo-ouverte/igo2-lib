@@ -30,8 +30,9 @@ export class AuthInterceptor implements HttpInterceptor {
     this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
     this.trustHosts.push(window.location.hostname);
 
-    this.hostsWithCredentials = this.config.getConfig('auth.hostsWithCredentials') || [];
-    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsWithCredhostsByKeyentials') || [];
+    this.hostsWithCredentials =
+      this.config.getConfig('auth.hostsWithCredentials') || [];
+    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsByKey') || [];
   }
 
   intercept(
@@ -92,8 +93,8 @@ export class AuthInterceptor implements HttpInterceptor {
   interceptXhr(xhr, url: string): boolean {
     const withCredentials = this.handleHostsWithCredentials(url);
     if (withCredentials) {
-       xhr.withCredentials = withCredentials;
-       return true;
+      xhr.withCredentials = withCredentials;
+      return true;
     }
 
     this.refreshToken();
@@ -114,7 +115,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (hostWithKey) {
       const urlDecomposed = interceptedUrl.split(/[?&]/);
       let urlWithKeyAdded = urlDecomposed.shift();
-      const paramsToKeep = urlDecomposed.filter(p => p.length !== 0);
+      const paramsToKeep = urlDecomposed.filter((p) => p.length !== 0);
       paramsToKeep.push(`${hostWithKey.key}=${hostWithKey.value}`);
       if (paramsToKeep.length) {
         urlWithKeyAdded += '?' + paramsToKeep.join('&');
@@ -129,22 +130,28 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithCredentials of this.hostsWithCredentials) {
       const domainRegex = new RegExp(hostWithCredentials.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        withCredentials = hostWithCredentials.withCredentials !== undefined ? hostWithCredentials.withCredentials : undefined;
+        withCredentials =
+          hostWithCredentials.withCredentials !== undefined
+            ? hostWithCredentials.withCredentials
+            : undefined;
         break;
       }
     }
     return withCredentials;
   }
 
-  private handleHostsAuthByKey(reqUrl: string): {key: string, value: string} {
+  private handleHostsAuthByKey(reqUrl: string): { key: string; value: string } {
     let hostWithKey;
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
         var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
-        var keyAdded = new RegExp(replace,"gm");
+        var keyAdded = new RegExp(replace, 'gm');
         if (!keyAdded.test(reqUrl)) {
-          hostWithKey = {key : hostWithAuthByKey.keyProperty, value: hostWithAuthByKey.keyValue};
+          hostWithKey = {
+            key: hostWithAuthByKey.keyProperty,
+            value: hostWithAuthByKey.keyValue
+          };
           break;
         }
       }
@@ -170,7 +177,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.tokenService.set(data.token);
           this.refreshInProgress = false;
         },
-        err => {
+        (err) => {
           err.error.caught = true;
           return err;
         }

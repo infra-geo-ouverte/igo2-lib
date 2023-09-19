@@ -12,7 +12,6 @@ import { EntityStore } from '../store';
  * At creation, strategy is inactive and needs to be manually activated.
  */
 export class EntityStoreStrategy {
-
   /**
    * Feature store
    * @internal
@@ -23,7 +22,9 @@ export class EntityStoreStrategy {
    * Whether this strategy is active
    * @internal
    */
-  get active(): boolean { return this.active$.value; }
+  get active(): boolean {
+    return this.active$.value;
+  }
   readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(protected options: EntityStoreStrategyOptions = {}) {
@@ -83,5 +84,4 @@ export class EntityStoreStrategy {
    * @internal
    */
   protected doDeactivate() {}
-
 }

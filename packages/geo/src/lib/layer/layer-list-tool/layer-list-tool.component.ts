@@ -59,7 +59,7 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
   @Output() selection = new EventEmitter<boolean>();
 
   ngOnInit(): void {
-    this.term$$ = this.term$.subscribe(keyword => {
+    this.term$$ = this.term$.subscribe((keyword) => {
       this.appliedFilterAndSort.emit({
         keyword,
         onlyVisible: this.onlyVisible,
@@ -67,14 +67,14 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.onlyVisible$$ = this.onlyVisible$.subscribe(onlyVisible => {
+    this.onlyVisible$$ = this.onlyVisible$.subscribe((onlyVisible) => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible,
         sortAlpha: this.sortAlpha
       });
     });
-    this.sortAlpha$$ = this.sortAlpha$.subscribe(sortAlpha => {
+    this.sortAlpha$$ = this.sortAlpha$.subscribe((sortAlpha) => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible: this.onlyVisible,

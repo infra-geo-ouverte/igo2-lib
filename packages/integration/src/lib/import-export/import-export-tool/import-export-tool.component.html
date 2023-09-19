@@ -1,6 +1,8 @@
-<mat-tab-group *ngIf="importExportShowBothType" >
-  <mat-tab [label]="'igo.integration.importExportTool.importExportData' | translate">
-    <igo-import-export  
+<mat-tab-group *ngIf="importExportShowBothType">
+  <mat-tab
+    [label]="'igo.integration.importExportTool.importExportData' | translate"
+  >
+    <igo-import-export
       [contextUri]="(contextState.context$ | async).uri"
       [map]="map"
       [selectFirstProj]="selectFirstProj"
@@ -9,15 +11,18 @@
       [selectedMode]="importExportState.selectedMode$ | async"
       (selectMode)="modeChanged($event)"
       [exportOptions$]="importExportState.exportOptions$"
-      (exportOptionsChange)="exportOptionsChange($event)">
+      (exportOptionsChange)="exportOptionsChange($event)"
+    >
     </igo-import-export>
   </mat-tab>
-  <mat-tab [label]="'igo.integration.importExportTool.importExportContext' | translate">
+  <mat-tab
+    [label]="'igo.integration.importExportTool.importExportContext' | translate"
+  >
     <igo-context-import-export [map]="map"></igo-context-import-export>
   </mat-tab>
 </mat-tab-group>
 
-<igo-import-export  
+<igo-import-export
   *ngIf="!importExportShowBothType && importExportType === 'layer'"
   [contextUri]="(contextState.context$ | async).uri"
   [map]="map"
@@ -25,10 +30,12 @@
   [selectedMode]="importExportState.selectedMode$ | async"
   (selectMode)="modeChanged($event)"
   [exportOptions$]="importExportState.exportOptions$"
-  (exportOptionsChange)="exportOptionsChange($event)">
+  (exportOptionsChange)="exportOptionsChange($event)"
+>
 </igo-import-export>
 
-<igo-context-import-export 
+<igo-context-import-export
   *ngIf="!importExportShowBothType && importExportType === 'context'"
-  [map]="map">
+  [map]="map"
+>
 </igo-context-import-export>

@@ -11,7 +11,6 @@ import {
 import { CoordinatesUnit } from './draw.enum';
 import { convertDDToDMS, roundCoordToString } from '../../map/shared/map.utils';
 
-
 /**
  * Create a default style
  * @param fillColor the fill color
@@ -20,7 +19,12 @@ import { convertDDToDMS, roundCoordToString } from '../../map/shared/map.utils';
  * @param label a label
  * @returns OL style
  */
-export function createInteractionStyle(fillColor?: string, strokeColor?: string, strokeWidth?: number, label?: string): Olstyle.Style {
+export function createInteractionStyle(
+  fillColor?: string,
+  strokeColor?: string,
+  strokeWidth?: number,
+  label?: string
+): Olstyle.Style {
   return new Olstyle.Style({
     stroke: new Olstyle.Stroke({
       color: strokeColor ? strokeColor : 'rgba(143,7,7,1)',
@@ -47,18 +51,20 @@ export function createInteractionStyle(fillColor?: string, strokeColor?: string,
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
+export function updateOlTooltipsDrawAtMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
     const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
-    olGeometry.setProperties({_midpoints: olMidpoints}, true);
+    olGeometry.setProperties({ _midpoints: olMidpoints }, true);
   } else if (olGeometry instanceof OlCircle) {
     const olMidpointPoint = new OlPoint(olGeometry.getCenter());
     olMidpoints = new Array(1);
     olMidpoints[0] = olMidpointPoint;
-    olGeometry.setProperties({_midpoints: olMidpoints}, true);
+    olGeometry.setProperties({ _midpoints: olMidpoints }, true);
   } else {
     olMidpoints = updateOlGeometryMidpoints(olGeometry);
   }
@@ -79,7 +85,9 @@ export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineStri
  * @param olGeometry OL Geometry
  * @returns OL overlay
  */
-export function updateOlTooltipDrawAtCenter(olGeometry: OlLineString | OlPolygon): OlOverlay {
+export function updateOlTooltipDrawAtCenter(
+  olGeometry: OlLineString | OlPolygon
+): OlOverlay {
   const olCenter = updateOlGeometryCenter(olGeometry);
   let olTooltip = olCenter.get('_tooltip');
   if (olTooltip === undefined) {
@@ -99,10 +107,7 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
   const olTooltip = new OlOverlay({
     element: document.createElement('div'),
     offset: [-30, -10],
-    className: [
-      'igo-map-tooltip',
-      'igo-map-tooltip-draw'
-    ].join(' '),
+    className: ['igo-map-tooltip', 'igo-map-tooltip-draw'].join(' '),
     stopEvent: false
   });
   olTooltip.setPosition(olPoint.getFlatCoordinates());
@@ -111,22 +116,28 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
   return olTooltip;
 }
 
-
-export function DDtoDMS(value: [number, number], unit: CoordinatesUnit): string[] | undefined {
+export function DDtoDMS(
+  value: [number, number],
+  unit: CoordinatesUnit
+): string[] | undefined {
   const conversionMapper = new Map([
-    [CoordinatesUnit.DecimalDegree, (val: [number, number]) => {
-      if (typeof val[0] === 'number') {
-        return roundCoordToString(val, 5) as string[];
-      } else {
-        const numVal: [number, number] = [Number(val[0]), Number(val[1])];
-        return roundCoordToString(numVal, 5) as string[];
+    [
+      CoordinatesUnit.DecimalDegree,
+      (val: [number, number]) => {
+        if (typeof val[0] === 'number') {
+          return roundCoordToString(val, 5) as string[];
+        } else {
+          const numVal: [number, number] = [Number(val[0]), Number(val[1])];
+          return roundCoordToString(numVal, 5) as string[];
+        }
       }
-    }],
-    [CoordinatesUnit.DegreesMinutesSeconds, (val: [number, number]) => convertDDToDMS(val, 2)]
+    ],
+    [
+      CoordinatesUnit.DegreesMinutesSeconds,
+      (val: [number, number]) => convertDDToDMS(val, 2)
+    ]
   ]);
   let conversion = conversionMapper.get(unit);
 
   return conversion ? conversion(value) : undefined;
 }
-
-

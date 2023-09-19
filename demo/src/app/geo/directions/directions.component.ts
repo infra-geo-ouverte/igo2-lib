@@ -34,9 +34,15 @@ export class AppDirectionsComponent {
   };
 
   public stopsStore: StopsStore = new StopsStore([]);
-  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], { map: this.map });
-  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], { map: this.map });
-  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], { map: this.map });
+  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
+    map: this.map
+  });
+  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
+    map: this.map
+  });
+  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
+    map: this.map
+  });
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   constructor(
@@ -53,6 +59,6 @@ export class AppDirectionsComponent {
           type: 'osm'
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
   }
 }
