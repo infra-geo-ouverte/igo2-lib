@@ -66,7 +66,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
-  private selectedRoute;
+  private selectedRoute: olInteraction.Select;
   private focusOnStop: boolean = false;
   private isTranslating: boolean = false;
 
