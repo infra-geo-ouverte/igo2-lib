@@ -15,7 +15,6 @@
   @include ogc-filter-selection.igo-ogc-filter-selection-theming($theme);
 }
 
-.cdk-overlay-pane:has(.mat-mdc-select-panel, .mat-mdc-autocomplete-panel) {
-  /* styles to apply if the content contains select-panel OR autocomplete-panel */
+.igo-overlay-panel-width {
   min-width: fit-content;
 }
