@@ -17,8 +17,3 @@ button.mat-mdc-icon-button.mat-mdc-button-base[disabled='true'] {
     padding: 0;
   }
 }
-
-.cdk-overlay-pane:has(.mat-mdc-select-panel, .mat-mdc-autocomplete-panel) {
-  /* styles to apply if the content contains select-panel OR autocomplete-panel */
-  min-width: fit-content;
-}
