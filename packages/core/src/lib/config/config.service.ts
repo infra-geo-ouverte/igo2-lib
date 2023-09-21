@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions } from './config.interface';
+import { ConfigOptions, DeprecatedConfig } from './config.interface';
 import { version } from './version';
 
 @Injectable({
@@ -14,6 +14,18 @@ import { version } from './version';
 export class ConfigService {
   private config: object = {};
   private httpClient: HttpClient;
+  private deprecatedConfigs: DeprecatedConfig[] = [
+    {
+      key: 'showMenuButton',
+      deprecationDate: new Date('2024-06-06'),
+      alternativeKey: 'menu.button.show'
+    },
+    {
+      key: 'menuButtonReverseColor',
+      deprecationDate: new Date('2024-06-06'),
+      alternativeKey: 'menu.button.show'
+    }
+  ];
 
   constructor(handler: HttpBackend) {
     this.httpClient = new HttpClient(handler);
@@ -23,6 +35,19 @@ export class ConfigService {
    * Use to get the data found in config file
    */
   public getConfig(key: string): any {
+    const currentDate = new Date();
+    const deprecatedConfig = this.deprecatedConfigs.find(
+      (dc) => dc.key === key
+    );
+    if (deprecatedConfig) {
+      let deprecationMessage = `This config (${deprecatedConfig.key}) is not effective anymore (or shortly). Remove the ${deprecatedConfig.key} property.`;
+      if (deprecatedConfig.alternativeKey) {
+        deprecationMessage += ` You should use this key (${deprecatedConfig.alternativeKey}) as an alternate solution`;
+      }
+      currentDate >= deprecatedConfig.deprecationDate
+        ? console.error(deprecationMessage)
+        : console.warn(deprecationMessage);
+    }
     return ObjectUtils.resolve(this.config, key);
   }
 
