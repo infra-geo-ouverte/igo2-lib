@@ -20,20 +20,28 @@ export class MenuButtonComponent {
 
   @Output() openSidenav = new EventEmitter<any>();
 
-  public menuButtonReverseColor = false;
+  public useThemeColor: boolean;
 
   public menuButtonClass;
 
   constructor(public configService: ConfigService) {
-    const configValue = this.configService.getConfig('menuButtonReverseColor');
-    if (configValue !== undefined) {
-      this.menuButtonReverseColor = configValue;
-    }
+    const configValue = this.configService.getConfig(
+      'menu.button.useThemeColor'
+    );
+    const configReverseColor = this.configService.getConfig(
+      'menuButtonReverseColor'
+    );
+    this.useThemeColor =
+      configValue !== undefined
+        ? configValue
+        : configReverseColor !== undefined
+        ? configReverseColor
+        : false;
   }
 
   getClassMenuButton() {
     this.menuButtonClass = {
-      'menu-button-white-background': !this.menuButtonReverseColor
+      'menu-button-white-background': !this.useThemeColor
     };
   }
 
