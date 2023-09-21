@@ -444,11 +444,11 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onToggleDirectionsControl(toggle: boolean) {
-    this.queryService.queryEnabled = !toggle;
+  onToggleDirectionsControl(isActive: boolean) {
+    this.queryService.queryEnabled = !isActive;
     const ol = this.routesFeatureStore.layer.map.ol;
     this.interactions.map((interaction) =>
-      toggle
+      isActive
         ? ol.addInteraction(interaction)
         : ol.removeInteraction(interaction)
     );
