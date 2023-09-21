@@ -26,6 +26,7 @@
     "@angular/core": "^16.2.5",
     "@angular/material": "^16.2.4",
     "@angular/platform-browser": "^16.2.5",
+    "@floating-ui/utils": "^0.1.4",
     "@igo2/core": "^16.0.0-rc.0",
     "@igo2/utils": "^16.0.0-rc.0",
     "angular-shepherd": "16.0.0",
