@@ -7,6 +7,7 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 @Component({
   selector: 'igo-ogc-filterable-form',
   templateUrl: './ogc-filterable-form.component.html',
+  styles: ['::ng-deep.igo-overlay-panel-width { min-width: fit-content;}'],
   providers: [
     {
       provide: MAT_SELECT_CONFIG,

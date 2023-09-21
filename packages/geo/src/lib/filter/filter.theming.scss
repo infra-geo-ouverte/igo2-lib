@@ -14,7 +14,3 @@
   @include ogc-filter-slider.igo-ogc-filter-time-slider-theming($theme);
   @include ogc-filter-selection.igo-ogc-filter-selection-theming($theme);
 }
-
-.igo-overlay-panel-width {
-  min-width: fit-content;
-}
