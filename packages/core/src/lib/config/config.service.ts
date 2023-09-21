@@ -23,7 +23,7 @@ export class ConfigService {
     {
       key: 'menuButtonReverseColor',
       deprecationDate: new Date('2024-06-06'),
-      alternativeKey: 'menu.button.show'
+      alternativeKey: 'menu.button.useThemeColor'
     }
   ];
 
