@@ -66,7 +66,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
-  private selectedRoute;
+  private selectedRoute: olInteraction.Select;
   private focusOnStop: boolean = false;
   private isTranslating: boolean = false;
 
@@ -83,6 +83,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+
+  /**
+   * Wheter one of the direction control is active
+   * @internal
+   */
+  get directionControlIsActive(): boolean {
+    return !this.queryService.queryEnabled;
+  }
+
+  get interactions(): olInteraction.Interaction[] {
+    return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -113,11 +125,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private freezeStores() {
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.removeInteraction(this.selectedRoute);
     this.stopsFeatureStore.deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
@@ -201,11 +211,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.stopsFeatureStore.layer.map.ol.addInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.addInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
   }
 
   onStopInputHasFocusChange(stopInputHasFocus: boolean) {
@@ -433,6 +441,16 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       this.stopsFeatureStore,
       this.projection,
       this.languageService
+    );
+  }
+
+  onToggleDirectionsControl(isActive: boolean) {
+    this.queryService.queryEnabled = !isActive;
+    const ol = this.routesFeatureStore.layer.map.ol;
+    this.interactions.map((interaction) =>
+      isActive
+        ? ol.addInteraction(interaction)
+        : ol.removeInteraction(interaction)
     );
   }
 }
