@@ -25,28 +25,16 @@ export class MenuButtonComponent {
   public menuButtonClass;
 
   constructor(public configService: ConfigService) {
-    if (
-      typeof this.configService.getConfig('menuButtonReverseColor') !==
-      'undefined'
-    ) {
-      this.menuButtonReverseColor = this.configService.getConfig(
-        'menuButtonReverseColor'
-      );
+    const configValue = this.configService.getConfig('menuButtonReverseColor');
+    if (configValue !== undefined) {
+      this.menuButtonReverseColor = configValue;
     }
   }
 
   getClassMenuButton() {
-    if (this.sidenavOpened) {
-      this.menuButtonClass = {
-        'menu-button': this.menuButtonReverseColor === false,
-        'menu-button-reverse-color': this.menuButtonReverseColor === true
-      };
-    } else {
-      this.menuButtonClass = {
-        'menu-button': this.menuButtonReverseColor === false,
-        'menu-button-reverse-color-close': this.menuButtonReverseColor === true
-      };
-    }
+    this.menuButtonClass = {
+      'menu-button-white-background': !this.menuButtonReverseColor
+    };
   }
 
   onToggleSidenavClick() {
