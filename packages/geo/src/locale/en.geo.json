@@ -376,7 +376,8 @@
           "copyMsg": "Directions copied to clipboard",
           "copyMsgLink": "Link for directions copied to clipboard",
           "copyTitle": "Directions"
-        }
+        },
+        "toggleActive": "Activate direction control"
       },
       "directions": {
         "uturn": "u-turn",
