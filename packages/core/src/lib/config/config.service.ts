@@ -5,8 +5,12 @@ import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions, DeprecatedConfig } from './config.interface';
+import { ConfigOptions } from './config.interface';
 import { version } from './version';
+import {
+  ALTERNATE_CONFIG_FROM_DEPRECATION,
+  CONFIG_DEPRECATED
+} from './config-deprecated';
 
 @Injectable({
   providedIn: 'root'
@@ -14,18 +18,7 @@ import { version } from './version';
 export class ConfigService {
   private config: object = {};
   private httpClient: HttpClient;
-  private deprecatedConfigs: DeprecatedConfig[] = [
-    {
-      key: 'showMenuButton',
-      deprecationDate: new Date('2024-06-06'),
-      alternativeKey: 'menu.button.show'
-    },
-    {
-      key: 'menuButtonReverseColor',
-      deprecationDate: new Date('2024-06-06'),
-      alternativeKey: 'menu.button.useThemeColor'
-    }
-  ];
+  private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
   constructor(handler: HttpBackend) {
     this.httpClient = new HttpClient(handler);
@@ -35,20 +28,39 @@ export class ConfigService {
    * Use to get the data found in config file
    */
   public getConfig(key: string): any {
-    const currentDate = new Date();
-    const deprecatedConfig = this.deprecatedConfigs.find(
-      (dc) => dc.key === key
-    );
-    if (deprecatedConfig) {
-      let deprecationMessage = `This config (${deprecatedConfig.key}) is not effective anymore (or shortly). Remove the ${deprecatedConfig.key} property.`;
-      if (deprecatedConfig.alternativeKey) {
-        deprecationMessage += ` You should use this key (${deprecatedConfig.alternativeKey}) as an alternate solution`;
-      }
-      currentDate >= deprecatedConfig.deprecationDate
-        ? console.error(deprecationMessage)
-        : console.warn(deprecationMessage);
+    const value = ObjectUtils.resolve(this.config, key);
+
+    const isDeprecated = this.configDeprecated.get(key);
+    if (isDeprecated) {
+      this.handleDeprecatedConfig(key);
+    } else if (value === undefined && !isDeprecated) {
+      return this.handleDeprecationPossibility(key);
     }
-    return ObjectUtils.resolve(this.config, key);
+
+    return value;
+  }
+
+  private handleDeprecatedConfig(key: string): void {
+    const options = this.configDeprecated.get(key);
+
+    let message = `This config (${key}) is deprecated and will be removed shortly`;
+    if (options.alternativeKey) {
+      message += ` You should use this key (${options.alternativeKey}) as an alternate solution`;
+    }
+
+    const currentDate = new Date();
+    currentDate >= options.mayBeRemoveIn
+      ? console.error(message)
+      : console.warn(message);
+  }
+
+  private handleDeprecationPossibility(key: string): null {
+    const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
+    if (!options) {
+      return;
+    }
+
+    return this.getConfig(options.deprecatedKey);
   }
 
   /**

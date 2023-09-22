@@ -2,8 +2,13 @@ export interface ConfigOptions {
   default?: { [key: string]: any };
   path?: string;
 }
-export interface DeprecatedConfig {
-  key: string;
-  deprecationDate?: Date;
+
+export interface DeprecatedOptions {
   alternativeKey?: string;
+  mayBeRemoveIn: Date;
+}
+
+export interface AlternateConfigOptions {
+  deprecatedKey: string;
+  mayBeRemoveIn?: Date;
 }
