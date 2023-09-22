@@ -28,15 +28,7 @@ export class MenuButtonComponent {
     const configValue = this.configService.getConfig(
       'menu.button.useThemeColor'
     );
-    const configReverseColor = this.configService.getConfig(
-      'menuButtonReverseColor'
-    );
-    this.useThemeColor =
-      configValue !== undefined
-        ? configValue
-        : configReverseColor !== undefined
-        ? configReverseColor
-        : false;
+    this.useThemeColor = configValue !== undefined ? configValue : false;
   }
 
   getClassMenuButton() {
