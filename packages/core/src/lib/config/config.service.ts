@@ -31,7 +31,7 @@ export class ConfigService {
     const value = ObjectUtils.resolve(this.config, key);
 
     const isDeprecated = this.configDeprecated.get(key);
-    if (isDeprecated) {
+    if (isDeprecated && value !== undefined) {
       this.handleDeprecatedConfig(key);
     } else if (value === undefined) {
       return this.handleDeprecationPossibility(key);
