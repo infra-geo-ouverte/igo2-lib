@@ -2,7 +2,7 @@ import { DeprecatedOptions, AlternateConfigOptions } from './config.interface';
 
 export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
   showMenuButton: {
-    alternativeKey: 'menu.button.show',
+    alternativeKey: 'menu.button.visible',
     mayBeRemoveIn: new Date('2024-06-06')
   },
   menuButtonReverseColor: {
