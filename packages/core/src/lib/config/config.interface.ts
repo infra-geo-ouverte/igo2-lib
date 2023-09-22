@@ -10,5 +10,4 @@ export interface DeprecatedOptions {
 
 export interface AlternateConfigOptions {
   deprecatedKey: string;
-  mayBeRemoveIn?: Date;
 }

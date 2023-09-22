@@ -33,7 +33,7 @@ export class ConfigService {
     const isDeprecated = this.configDeprecated.get(key);
     if (isDeprecated) {
       this.handleDeprecatedConfig(key);
-    } else if (value === undefined && !isDeprecated) {
+    } else if (value === undefined) {
       return this.handleDeprecationPossibility(key);
     }
 

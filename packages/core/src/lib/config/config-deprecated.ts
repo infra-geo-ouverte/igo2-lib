@@ -20,8 +20,7 @@ export const ALTERNATE_CONFIG_FROM_DEPRECATION = new Map<
     .map(([key, options]) => [
       options.alternativeKey,
       {
-        deprecatedKey: key,
-        mayBeRemoveIn: options.mayBeRemoveIn
+        deprecatedKey: key
       } satisfies AlternateConfigOptions
     ])
 );
