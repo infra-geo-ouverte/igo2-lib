@@ -54,7 +54,7 @@ export class ConfigService {
       : console.warn(message);
   }
 
-  private handleDeprecationPossibility(key: string): null {
+  private handleDeprecationPossibility(key: string): any {
     const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
     if (!options) {
       return;
