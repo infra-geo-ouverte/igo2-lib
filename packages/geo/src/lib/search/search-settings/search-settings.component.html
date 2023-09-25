@@ -21,8 +21,9 @@
       </button>
     </div>
     <div class="checkDefaultButton">
-      <button mat-raised-button (click)="checkAllDefaultOptions($event)">{{'igo.geo.search.searchSources.defaultSettings' |
-        translate}} </button>
+      <!--<button mat-raised-button (click)="checkAllDefaultOptions($event)">
+        {{ 'igo.geo.search.searchSources.defaultSettings' | translate }}
+      </button>-->
     </div>
     <ng-container *ngFor="let source of getSearchSources()">
       <span class="igo-search-settings-search-source">
@@ -46,6 +47,12 @@
         </button>
       </span>
       <mat-menu #sub_menu="matMenu">
+        <button
+          mat-raised-button-centered
+          (click)="checkMenuDefaultOptions($event, source)"
+        >
+          {{ 'igo.geo.search.searchSources.defaultSettings' | translate }}
+        </button>
         <ng-container *ngFor="let setting of source.settings">
           <button mat-menu-item [matMenuTriggerFor]="test_sub_menu">
             {{
@@ -97,8 +104,13 @@
                         | translate)
                   }}
                 </button>
-                <button mat-raised-button
-                  (click)="checkDefaultOptions($event, source, setting)">{{'igo.geo.search.searchSources.defaultSettings' | translate}}
+                <button
+                  mat-raised-button
+                  (click)="checkDefaultOptions($event, source, setting)"
+                >
+                  {{
+                    'igo.geo.search.searchSources.defaultSettings' | translate
+                  }}
                 </button>
               </div>
               <div mat-menu-item>

@@ -209,20 +209,50 @@ export class SearchSettingsComponent implements OnInit {
    * Only CheckBox type will change
    * @internal
    */
-  checkDefaultOptions(event, source: SearchSource, setting: SearchSourceSettings){
+  checkDefaultOptions(
+    event,
+    source: SearchSource,
+    setting: SearchSourceSettings
+  ) {
     event.stopPropagation();
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
-    source.enabled = true;
-    for(var settingsIndex in source.getDefaultOptions().settings){
-      if(source.getDefaultOptions().settings[settingsIndex].title === setting.title){
-        for(var index in setting.values){
-          setting.values[index].enabled = source.getDefaultOptions().settings[settingsIndex].values[index].enabled;
+    //source.enabled = true;
+    for (var settingsIndex in source.getDefaultOptions().settings) {
+      if (
+        source.getDefaultOptions().settings[settingsIndex].title ===
+        setting.title
+      ) {
+        for (var index in setting.values) {
+          setting.values[index].enabled =
+            source.getDefaultOptions().settings[settingsIndex].values[
+              index
+            ].enabled;
         }
       }
     }
-    setting.allEnabled = true;
-    source.setParamFromSetting(setting);
+    //setting.allEnabled = true;
+    //source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
+  }
+
+  /**
+   * Triggered when the default option is clicked in the specified setting
+   * @internal
+   */
+  checkMenuDefaultOptions(event, source: SearchSource) {
+    event.stopPropagation();
+    for (var index in source.settings) {
+      source.settings[index].allEnabled = true;
+      this.checkUncheckAll(event, source, source.settings[index]);
+
+      for (var settingsIndex in source.settings[index].values) {
+        source.settings[index].values[settingsIndex].enabled =
+          source.getDefaultOptions().settings[index].values[
+            settingsIndex
+          ].enabled;
+      }
+    }
     this.searchSourceChange.emit(source);
   }
 
@@ -230,23 +260,27 @@ export class SearchSettingsComponent implements OnInit {
    * Triggered when the global default options is clicked
    * @internal
    */
-  checkAllDefaultOptions(event){
+  checkAllDefaultOptions(event) {
     event.stopPropagation();
     this.getSearchSources().map((source) => {
       source.enabled = true;
-      for(var settingIndex in source.settings){
-        if(source.settings[settingIndex].type === 'checkbox'){
+      for (var settingIndex in source.settings) {
+        if (source.settings[settingIndex].type === 'checkbox') {
           source.settings[settingIndex].allEnabled = true;
           this.checkUncheckAll(event, source, source.settings[settingIndex]);
-          for(var index in source.settings[settingIndex].values){
-            source.settings[settingIndex].values[index].enabled
-              = source.getDefaultOptions().settings[settingIndex].values[index].enabled;
+          for (var index in source.settings[settingIndex].values) {
+            source.settings[settingIndex].values[index].enabled =
+              source.getDefaultOptions().settings[settingIndex].values[
+                index
+              ].enabled;
           }
         }
-        if(source.settings[settingIndex].type === 'radiobutton'){
-          for(var index in source.settings[settingIndex].values){
-            source.settings[settingIndex].values[index].enabled
-              = source.getDefaultOptions(true).settings[settingIndex].values[index].enabled;
+        if (source.settings[settingIndex].type === 'radiobutton') {
+          for (var index in source.settings[settingIndex].values) {
+            source.settings[settingIndex].values[index].enabled =
+              source.getDefaultOptions(true).settings[settingIndex].values[
+                index
+              ].enabled;
           }
         }
         source.settings[settingIndex].allEnabled = true;
