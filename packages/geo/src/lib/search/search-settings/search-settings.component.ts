@@ -257,40 +257,6 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   /**
-   * Triggered when the global default options is clicked
-   * @internal
-   */
-  checkAllDefaultOptions(event) {
-    event.stopPropagation();
-    this.getSearchSources().map((source) => {
-      source.enabled = true;
-      for (var settingIndex in source.settings) {
-        if (source.settings[settingIndex].type === 'checkbox') {
-          source.settings[settingIndex].allEnabled = true;
-          this.checkUncheckAll(event, source, source.settings[settingIndex]);
-          for (var index in source.settings[settingIndex].values) {
-            source.settings[settingIndex].values[index].enabled =
-              source.getDefaultOptions().settings[settingIndex].values[
-                index
-              ].enabled;
-          }
-        }
-        if (source.settings[settingIndex].type === 'radiobutton') {
-          for (var index in source.settings[settingIndex].values) {
-            source.settings[settingIndex].values[index].enabled =
-              source.getDefaultOptions(true).settings[settingIndex].values[
-                index
-              ].enabled;
-          }
-        }
-        source.settings[settingIndex].allEnabled = true;
-        source.setParamFromSetting(source.settings[settingIndex]);
-      }
-      this.searchSourceChange.emit(source);
-    });
-  }
-
-  /**
    * Triggered when a setting is checked (radiobutton style)
    * @internal
    */
