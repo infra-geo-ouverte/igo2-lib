@@ -6,6 +6,10 @@
   mat-dialog-content
   [hidden]="data.features.length === 0"
 >
+  <color-chrome [color]="getFeatureFillColor()" rgb>
+    <button>ok</button> <button>cancel</button>
+  </color-chrome>
+
   <form class="igo-form" [formGroup]="form">
     <div class="color-picker">
       <ng-container *ngIf="linestringOnly !== true">
@@ -13,14 +17,24 @@
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
-        <igo-color-picker-form-field
+        <!--igo-color-picker-form-field
           formControlName="fill"
           outputFormat="rgba"
           setAlpha=".4"
           (open)="openPicker()"
           (close)="closePicker()"
           [color]="getFeatureFillColor()"
-        ></igo-color-picker-form-field>
+        ></igo-color-picker-form-field-->
+        <mat-form-field
+          class="fill-field"
+          floatLabel="always"
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>xxxx</mat-label>
+          <input matInput />
+        </mat-form-field>
       </ng-container>
 
       <span>

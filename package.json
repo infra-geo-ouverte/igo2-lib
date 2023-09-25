@@ -122,6 +122,7 @@
     "jszip": "^3.10.1",
     "jwt-decode": "^2.2.0",
     "moment": "^2.29.4",
+    "ngx-color": "^9.0.0",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^17.0.0",
     "nosleep.js": "^0.12.0",
