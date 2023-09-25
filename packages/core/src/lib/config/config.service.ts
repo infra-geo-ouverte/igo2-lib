@@ -7,6 +7,10 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { ConfigOptions } from './config.interface';
 import { version } from './version';
+import {
+  ALTERNATE_CONFIG_FROM_DEPRECATION,
+  CONFIG_DEPRECATED
+} from './config-deprecated';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +18,7 @@ import { version } from './version';
 export class ConfigService {
   private config: object = {};
   private httpClient: HttpClient;
+  private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
   constructor(handler: HttpBackend) {
     this.httpClient = new HttpClient(handler);
@@ -23,7 +28,39 @@ export class ConfigService {
    * Use to get the data found in config file
    */
   public getConfig(key: string): any {
-    return ObjectUtils.resolve(this.config, key);
+    const value = ObjectUtils.resolve(this.config, key);
+
+    const isDeprecated = this.configDeprecated.get(key);
+    if (isDeprecated && value !== undefined) {
+      this.handleDeprecatedConfig(key);
+    } else if (value === undefined) {
+      return this.handleDeprecationPossibility(key);
+    }
+
+    return value;
+  }
+
+  private handleDeprecatedConfig(key: string): void {
+    const options = this.configDeprecated.get(key);
+
+    let message = `This config (${key}) is deprecated and will be removed shortly`;
+    if (options.alternativeKey) {
+      message += ` You should use this key (${options.alternativeKey}) as an alternate solution`;
+    }
+
+    const currentDate = new Date();
+    currentDate >= options.mayBeRemoveIn
+      ? console.error(message)
+      : console.warn(message);
+  }
+
+  private handleDeprecationPossibility(key: string): any {
+    const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
+    if (!options) {
+      return;
+    }
+
+    return this.getConfig(options.deprecatedKey);
   }
 
   /**

@@ -376,7 +376,8 @@
           "copyMsg": "Itinéraire copié dans le presse-papier",
           "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
           "copyTitle": "Itinéraire"
-        }
+        },
+        "toggleActive": "Activer le contrôle d'itinéraire"
       },
       "directions": {
         "uturn": "demi-tour",

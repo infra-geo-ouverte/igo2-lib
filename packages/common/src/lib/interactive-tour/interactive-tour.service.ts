@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ShepherdService } from 'angular-shepherd';
+import Shepherd from 'shepherd.js';
+import { offset } from '@floating-ui/dom';
 
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { InteractiveTourLoader } from './interactive-tour.loader';
@@ -282,17 +284,17 @@ export class InteractiveTourService {
   }
 
   private getShepherdSteps(stepConfig: InteractiveTourOptions) {
-    const shepherdSteps = [];
+    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
 
     let i = 0;
     for (const step of stepConfig.steps) {
       shepherdSteps.push({
         attachTo: {
           element: step.element,
-          on: step.position || stepConfig.position
+          on: (step.position || stepConfig.position) as any // PopperPlacement
         },
-        popperOptions: {
-          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
+        floatingUIOptions: {
+          middleware: [offset({ mainAxis: 15 })]
         },
         beforeShowPromise: () => {
           return Promise.all([
@@ -331,7 +333,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      });
+      } satisfies Shepherd.Step.StepOptions);
       i++;
     }
 

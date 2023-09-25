@@ -3,7 +3,7 @@
   "workspaces": [
     "./packages/*"
   ],
-  "version": "16.0.0-rc.0",
+  "version": "16.0.0-rc.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
@@ -81,10 +81,10 @@
     "version.linux": "gulp bumpVersion && rimraf ./dist && npm run build.all && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages.win",
     "postversion.linux": "git push && git push --tags && npm run publish && npm run ghpages",
-    "preghpages": "gulp bundleLocale && npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
+    "preghpages": "npm run build.ghpages && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
-    "preghpages.win": "gulp bundleLocale && npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
+    "preghpages.win": "npm run build.ghpages && echo include: ['_default.json', '_contexts.json', '_base.json'] > dist/ghpages/_config.yml",
     "ghpages.win": "npx ngh --dir=dist/ghpages --no-silent=false --message=%npm_package_version%",
     "postghpages.win": "rimraf ./dist/ghpages"
   },
@@ -101,6 +101,7 @@
     "@angular/platform-browser-dynamic": "^16.2.5",
     "@angular/router": "^16.2.5",
     "@azure/msal-angular": "^3.0.4",
+    "@floating-ui/utils": "^0.1.4",
     "@mat-datetimepicker/core": "~12.0.0",
     "@mdi/angular-material": "^7.2.96",
     "@ngx-translate/core": "^15.0.0",
@@ -124,7 +125,7 @@
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^17.0.0",
     "nosleep.js": "^0.12.0",
-    "ol": "^8.1.0",
+    "ol": "^7.5.2",
     "ol-mapbox-style": "^12.0.0",
     "proj4": "^2.9.0",
     "rxjs": "^7.8.0",

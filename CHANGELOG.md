@@ -1,3 +1,23 @@
+# [16.0.0-rc.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.0...16.0.0-rc.1) (2023-09-22)
+
+
+### Bug Fixes
+
+* **InteractiveTour:** add Placement types from [@floating-ui](https://github.com/floating-ui) ([#1407](https://github.com/infra-geo-ouverte/igo2-lib/issues/1407)) ([44b3d4a](https://github.com/infra-geo-ouverte/igo2-lib/commit/44b3d4ac88a23a83bc4704dde03a563230b90c53))
+* **InteractiveTour:** options migration from popperJS to floatingUI ([#1399](https://github.com/infra-geo-ouverte/igo2-lib/issues/1399)) ([fbc4ff7](https://github.com/infra-geo-ouverte/igo2-lib/commit/fbc4ff7a26f501c8d42e28760440d4b45b99cbc6))
+* **menu-button:** fix v16.0.0 regression form menu button color configuration ([#1403](https://github.com/infra-geo-ouverte/igo2-lib/issues/1403)) ([c92b488](https://github.com/infra-geo-ouverte/igo2-lib/commit/c92b488dcae1329e82e0c42274c0fed49cae5c70))
+* **Openlayers:** downgrade to 7.5.2 due to wms regression ([#1402](https://github.com/infra-geo-ouverte/igo2-lib/issues/1402)) ([a18905a](https://github.com/infra-geo-ouverte/igo2-lib/commit/a18905a57be9ea0ce120a50caf395b14f8a4cebc))
+
+
+### Features
+
+* **core:** add a new method to handle deprecated configs ([#1408](https://github.com/infra-geo-ouverte/igo2-lib/issues/1408)) ([8019300](https://github.com/infra-geo-ouverte/igo2-lib/commit/801930010a15696eb201401150c94d46591d6884))
+* **direction:** add a toogle to control user interaction with map ([#1396](https://github.com/infra-geo-ouverte/igo2-lib/issues/1396)) ([cdea457](https://github.com/infra-geo-ouverte/igo2-lib/commit/cdea45704ef2c347eeae3800e3be3b534dfe9a1e))
+* **Prettier:** be specific about the end of line ([a4be26e](https://github.com/infra-geo-ouverte/igo2-lib/commit/a4be26ebbef5afe81e3e588fa99b2be77c26a3d4))
+* **qcca-theme:** ajout de style pour la barre de défilement qc-ca ([#1400](https://github.com/infra-geo-ouverte/igo2-lib/issues/1400)) ([8d00c6b](https://github.com/infra-geo-ouverte/igo2-lib/commit/8d00c6b5b94ae8ee1f06fb1c2d5e4f582280deee))
+
+
+
 # [16.0.0-rc.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.15.2...16.0.0-rc.0) (2023-09-19)
 
 
