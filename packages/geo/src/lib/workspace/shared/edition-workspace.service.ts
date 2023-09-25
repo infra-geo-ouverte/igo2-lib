@@ -222,8 +222,7 @@ export class EditionWorkspaceService {
           this.dialog,
           this.configService,
           this.adding$,
-          this.deleteFeature,
-          this.getDomainValues,
+          (relation: RelationOptions) => this.getDomainValues(relation),
           {
             id: layer.id,
             title: layer.title,
