@@ -1,4 +1,4 @@
-import { Injectable, Inject, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 
@@ -26,7 +26,7 @@ export class MessageService {
   private activeMessageTranslations: ActiveMessageTranslation[] = [];
 
   constructor(
-    @Inject(Injector) private injector: Injector,
+    private toastr: ToastrService,
     private configService: ConfigService,
     private languageService: LanguageService
   ) {
@@ -90,10 +90,6 @@ export class MessageService {
         }
       });
     });
-  }
-
-  private get toastr(): ToastrService {
-    return this.injector.get(ToastrService);
   }
 
   showError(httpError: HttpErrorResponse) {
@@ -329,7 +325,10 @@ export class MessageService {
         activeToast = this.toastr.success(message, translatedTitle, options);
         break;
       case 'error':
-        activeToast = this.toastr.error(message, translatedTitle, options);
+        activeToast = this.toastr.error(message, translatedTitle, {
+          ...options,
+          progressBar: false // Workaround, to avoid infite loop caused by the ErrorInterceptor and the Zone.js dection
+        });
         break;
       case 'show':
       case 'info':
