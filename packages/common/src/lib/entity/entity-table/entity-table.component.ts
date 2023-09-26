@@ -44,6 +44,20 @@ import { map } from 'rxjs/operators';
 import { default as moment } from 'moment';
 import { StringUtils } from '@igo2/utils';
 
+interface CellData {
+  [key: string]: {
+    value: any;
+    class: { [key: string]: boolean };
+    isUrl: boolean;
+    isImg: boolean;
+  };
+}
+
+interface RowData {
+  record: EntityRecord<object, EntityState>;
+  cellData: CellData;
+}
+
 @Component({
   selector: 'igo-entity-table',
   templateUrl: './entity-table.component.html',
@@ -185,6 +199,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   dataSource = new MatTableDataSource<object>();
 
+  processedRowData: RowData[];
+
   /**
    * Whether selection is supported
    * @internal
@@ -235,6 +251,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     private dateAdapter: DateAdapter<Date>
   ) {
     this.dateAdapter.setLocale('fr-CA');
+    this.processedRowData = [];
   }
 
   /**
@@ -461,7 +478,26 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (all[0]) {
         this.enableEdit(all[0]);
       }
-      this.dataSource.data = all;
+      this.processedRowData = [];
+      all.map((record) => {
+        const rowData: RowData = {
+          record,
+          cellData: undefined
+        };
+        const cellData: CellData = {};
+        this.template.columns.map((column) => {
+          const value = this.getValue(record, column);
+          cellData[column.name] = {
+            class: this.getCellClass(record, column),
+            value,
+            isUrl: this.isUrl(value),
+            isImg: this.isImg(value)
+          };
+        });
+        rowData.cellData = cellData;
+        this.processedRowData.push(rowData);
+      });
+      this.dataSource.data = this.processedRowData;
     });
   }
 

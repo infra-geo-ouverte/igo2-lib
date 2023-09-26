@@ -23,16 +23,16 @@
           </ng-container>
         </ng-container>
       </th>
-      <td mat-cell *matCellDef="let record">
+      <td mat-cell *matCellDef="let row">
         <mat-checkbox
           (mousedown)="$event.shiftKey ? $event.preventDefault() : null"
           (click)="
             $event.shiftKey
-              ? onShiftToggleRow(!rowIsSelected(record), record, $event)
+              ? onShiftToggleRow(!rowIsSelected(row.record), row.record, $event)
               : $event.stopPropagation()
           "
-          (change)="onToggleRow($event.checked, record)"
-          [checked]="rowIsSelected(record)"
+          (change)="onToggleRow($event.checked, row.record)"
+          [checked]="rowIsSelected(row.record)"
         >
         </mat-checkbox>
       </td>
@@ -69,31 +69,33 @@
         <ng-container
           *ngIf="columnRenderer === entityTableColumnRenderer.Default"
         >
-          <ng-container *matCellDef="let record">
+          <ng-container *matCellDef="let row">
             <td
               mat-cell
               class="mat-cell-text"
-              *ngIf="!isUrl(getValue(record, column)); else isAnUrlDefault"
-              [ngClass]="getCellClass(record, column)"
+              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlDefault"
+              [ngClass]="row.cellData[column.name].class"
             >
-              {{ getValue(record, column) }}
+              {{ row.cellData[column.name].value }}
             </td>
             <ng-template #isAnUrlDefault>
               <td
                 mat-cell
                 class="mat-cell-text"
-                [ngClass]="getCellClass(record, column)"
+                [ngClass]="row.cellData[column.name].class"
               >
                 <a
-                  href="{{ getValue(record, column) }}"
+                  href="{{ row.cellData[column.name].value }}"
                   target="_blank"
                   rel="noopener noreferrer"
                   (click)="$event.stopPropagation()"
                 >
                   <img
                     igoImageError
-                    *ngIf="isImg(getValue(record, column)); else notImg"
-                    src="{{ getValue(record, column) | secureImage | async }}"
+                    *ngIf="row.cellData[column.name].isImg; else notImg"
+                    src="{{
+                      row.cellData[column.name].value | secureImage | async
+                    }}"
                     width="50"
                     heigth="auto"
                   />
@@ -108,30 +110,32 @@
           </ng-container>
         </ng-container>
         <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.HTML">
-          <ng-container *matCellDef="let record">
+          <ng-container *matCellDef="let row">
             <td
               mat-cell
               class="mat-cell-text"
-              *ngIf="!isUrl(getValue(record, column)); else isAnUrlHTML"
-              [ngClass]="getCellClass(record, column)"
-              [innerHTML]="getValue(record, column)"
+              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlHTML"
+              [ngClass]="row.cellData[column.name].class"
+              [innerHTML]="row.cellData[column.name].value"
             ></td>
             <ng-template #isAnUrlHTML>
               <td
                 mat-cell
                 class="mat-cell-text"
-                [ngClass]="getCellClass(record, column)"
+                [ngClass]="row.cellData[column.name].class"
               >
                 <a
-                  href="{{ getValue(record, column) }}"
+                  href="{{ row.cellData[column.name].value }}"
                   target="_blank"
                   rel="noopener noreferrer"
                   (click)="$event.stopPropagation()"
                 >
                   <img
                     igoImageError
-                    *ngIf="isImg(getValue(record, column)); else notImg"
-                    src="{{ getValue(record, column) | secureImage | async }}"
+                    *ngIf="row.cellData[column.name].isImg; else notImg"
+                    src="{{
+                      row.cellData[column.name].value | secureImage | async
+                    }}"
                     width="50"
                     heigth="auto"
                   />
@@ -148,13 +152,13 @@
         <ng-container
           *ngIf="columnRenderer === entityTableColumnRenderer.UnsanitizedHTML"
         >
-          <ng-container *matCellDef="let record">
+          <ng-container *matCellDef="let row">
             <td
               mat-cell
               class="mat-cell-text edition"
               [formGroup]="formGroup"
-              *ngIf="isEdition(record); else isUnsanitizedHTML"
-              [ngClass]="getCellClass(record, column)"
+              *ngIf="isEdition(row.record); else isUnsanitizedHTML"
+              [ngClass]="row.cellData[column.name].class"
             >
               <div class="date-picker" *ngIf="column.type === 'date'">
                 <mat-datepicker-toggle
@@ -165,8 +169,8 @@
                   matInput
                   [matDatepicker]="picker"
                   [formControlName]="column.name"
-                  value="{{ getValue(record, column) }}"
-                  (dateChange)="onDateChange(column.name, record, $event)"
+                  value="{{ row.cellData[column.name].value }}"
+                  (dateChange)="onDateChange(column.name, row.record, $event)"
                 />
                 <mat-datepicker #picker></mat-datepicker>
               </div>
@@ -187,8 +191,8 @@
                 *ngIf="column.type === 'number'"
                 [formControlName]="column.name"
                 step="{{ column.step }}"
-                value="{{ getValue(record, column) }}"
-                (input)="onValueChange(column.name, record, $event)"
+                value="{{ row.cellData[column.name].value }}"
+                (input)="onValueChange(column.name, row.record, $event)"
                 readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
                 required="{{
                   getValidationAttributeValue(column, 'mandatory')
@@ -201,8 +205,8 @@
                 type="text"
                 *ngIf="!column.type || column.type === 'string'"
                 [formControlName]="column.name"
-                value="{{ getValue(record, column) }}"
-                (input)="onValueChange(column.name, record, $event)"
+                value="{{ row.cellData[column.name].value }}"
+                (input)="onValueChange(column.name, row.record, $event)"
                 readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
                 required="{{
                   getValidationAttributeValue(column, 'mandatory')
@@ -211,8 +215,8 @@
               <mat-checkbox
                 *ngIf="column.type === 'boolean'"
                 [formControlName]="column.name"
-                [checked]="getValue(record, column)"
-                (change)="onBooleanValueChange(column.name, record, $event)"
+                [checked]="row.cellData[column.name].value"
+                (change)="onBooleanValueChange(column.name, row.record, $event)"
               ></mat-checkbox>
               <mat-select
                 *ngIf="column.type === 'list'"
@@ -222,9 +226,9 @@
                 [formControlName]="column.name"
                 [multiple]="column.multiple"
                 (selectionChange)="
-                  onSelectValueChange(column.name, record, $event)
+                  onSelectValueChange(column.name, row.record, $event)
                 "
-                [value]="getValue(record, column)"
+                [value]="row.cellData[column.name].value"
               >
                 <mat-option
                   *ngFor="let option of column.domainValues"
@@ -243,13 +247,13 @@
                 required="{{
                   getValidationAttributeValue(column, 'mandatory')
                 }}"
-                value="{{ getValue(record, column) }}"
+                value="{{ row.cellData[column.name].value }}"
                 readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
               />
               <mat-autocomplete
                 #auto="matAutocomplete"
                 (optionSelected)="
-                  onAutocompleteValueChange(column, record, $event)
+                  onAutocompleteValueChange(column, row.record, $event)
                 "
                 panelWidth="430px"
               >
@@ -266,28 +270,30 @@
                 mat-cell
                 class="mat-cell-text"
                 *ngIf="
-                  !isUrl(getValue(record, column));
+                  !row.cellData[column.name].isUrl;
                   else isAnUrlUnsanitizedHTML
                 "
-                [ngClass]="getCellClass(record, column)"
-                [innerHTML]="getValue(record, column) | sanitizeHtml"
+                [ngClass]="row.cellData[column.name].class"
+                [innerHTML]="row.cellData[column.name].value | sanitizeHtml"
               ></td>
               <ng-template #isAnUrlUnsanitizedHTML>
                 <td
                   mat-cell
                   class="mat-cell-text"
-                  [ngClass]="getCellClass(record, column)"
+                  [ngClass]="row.cellData[column.name].class"
                 >
                   <a
-                    href="{{ getValue(record, column) }}"
+                    href="{{ row.cellData[column.name].value }}"
                     target="_blank"
                     rel="noopener noreferrer"
                     (click)="$event.stopPropagation()"
                   >
                     <img
                       igoImageError
-                      *ngIf="isImg(getValue(record, column)); else notImg"
-                      src="{{ getValue(record, column) | secureImage | async }}"
+                      *ngIf="row.cellData[column.name].isImg; else notImg"
+                      src="{{
+                        row.cellData[column.name].value | secureImage | async
+                      }}"
                       width="50"
                       heigth="auto"
                     />
@@ -305,34 +311,34 @@
         <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
           <td
             mat-cell
-            *matCellDef="let record"
+            *matCellDef="let row"
             class="mat-cell-text"
-            [ngClass]="getCellClass(record, column)"
+            [ngClass]="row.cellData[column.name].class"
           >
             <mat-icon
               *ngIf="column.onClick"
-              svgIcon="{{ getValue(record, column) || column.icon }}"
+              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
               (click)="column.onClick($event)"
             ></mat-icon>
             <mat-icon
               *ngIf="!column.onClick"
-              svgIcon="{{ getValue(record, column) || column.icon }}"
+              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
             ></mat-icon>
           </td>
         </ng-container>
         <ng-container
           *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup"
         >
-          <ng-container *matCellDef="let record">
+          <ng-container *matCellDef="let row">
             <td
               mat-cell
               class="mat-cell-text"
-              [ngClass]="getCellClass(record, column)"
+              [ngClass]="row.cellData[column.name].class"
             >
-              <span *ngFor="let button of getValue(record, column)">
+              <span *ngFor="let button of row.cellData[column.name].value">
                 <ng-container
                   *ngIf="
-                    isEdition(record) === button.editMode ||
+                    isEdition(row.record) === button.editMode ||
                     button.editMode === undefined
                   "
                 >
@@ -341,7 +347,7 @@
                     igoStopPropagation
                     mat-icon-button
                     [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, record)"
+                    (mousedown)="onButtonClick(button.click, row.record)"
                     [disabled]="button.disabled"
                   >
                     <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
@@ -351,7 +357,7 @@
                     igoStopPropagation
                     mat-mini-fab
                     [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, record)"
+                    (mousedown)="onButtonClick(button.click, row.record)"
                     [disabled]="button.disabled"
                   >
                     <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
@@ -372,13 +378,13 @@
     <tr
       mat-row
       igoEntityTableRow
-      *matRowDef="let record; columns: headers"
+      *matRowDef="let row; columns: headers"
       [scrollBehavior]="scrollBehavior"
-      [ngClass]="getRowClass(record)"
+      [ngClass]="getRowClass(row.record)"
       [selection]="selection"
-      [selected]="rowIsSelected(record)"
-      (select)="onRowSelect(record)"
-      (click)="onRowClick(record)"
+      [selected]="rowIsSelected(row.record)"
+      (select)="onRowSelect(row.record)"
+      (click)="onRowClick(row.record)"
     ></tr>
   </table>
   <igo-entity-table-paginator
