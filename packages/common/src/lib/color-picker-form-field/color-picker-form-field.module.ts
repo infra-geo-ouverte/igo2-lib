@@ -6,7 +6,6 @@ import { MatInputModule } from '@angular/material/input';
 import { ColorPickerModule } from '@iplab/ngx-color-picker';
 import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
-// import { ColorChromeModule } from 'ngx-color/chrome';
 
 @NgModule({
   imports: [
@@ -17,7 +16,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
     ColorPickerModule,
     CommonModule,
     OverlayModule
-    // ColorChromeModule
   ],
   declarations: [ColorPickerFormFieldComponent],
   exports: [ColorPickerFormFieldComponent]
