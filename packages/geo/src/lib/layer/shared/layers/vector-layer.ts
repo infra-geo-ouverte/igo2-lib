@@ -27,7 +27,10 @@ import {
   buildUrl,
   defaultMaxFeatures
 } from '../../../datasource/shared/datasources/wms-wfs.utils';
-import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import {
+  OgcFilterableDataSourceOptions,
+  OgcFiltersOptions
+} from '../../../filter/shared/ogc-filter.interface';
 import {
   GeoNetworkService,
   SimpleGetOptions
@@ -48,8 +51,13 @@ import BaseEvent from 'ol/events/Event';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
 import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
 import { ObjectUtils } from '@igo2/utils';
+import { Extent } from 'ol/extent';
 
 export class VectorLayer extends Layer {
+  private previousLoadExtent: Extent;
+  private previousLoadResolution: number;
+  private previousOgcFilters: OgcFiltersOptions;
+  private xhrAccumulator: XMLHttpRequest[] = [];
   public declare dataSource:
     | FeatureDataSource
     | WFSDataSource
@@ -452,12 +460,29 @@ export class VectorLayer extends Layer {
         ? new olProjection({ code: paramsWFS.srsName })
         : proj;
       const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
+      const ogcFilters = (options as OgcFilterableDataSourceOptions).ogcFilters;
+
+      if (
+        (this.previousLoadExtent &&
+          this.previousLoadExtent !== currentExtent) ||
+        (this.previousLoadResolution &&
+          this.previousLoadResolution !== resolution) ||
+        (this.previousOgcFilters && this.previousOgcFilters !== ogcFilters)
+      ) {
+        vectorSource.removeLoadedExtent(this.previousLoadExtent);
+        this.xhrAccumulator.map((xhr) => xhr.abort());
+      }
+
+      this.previousLoadExtent = currentExtent;
+      this.previousLoadResolution = resolution;
+      this.previousOgcFilters = ogcFilters;
+
       paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
       const url = buildUrl(
         options,
         currentExtent,
         wfsProj,
-        (options as OgcFilterableDataSourceOptions).ogcFilters,
+        ogcFilters,
         randomParam
       );
       let startIndex = 0;
@@ -481,7 +506,6 @@ export class VectorLayer extends Layer {
             wfsProj,
             proj,
             alteredUrl,
-            nbOfFeature,
             success,
             failure
           );
@@ -495,7 +519,6 @@ export class VectorLayer extends Layer {
           wfsProj,
           proj,
           url,
-          paramsWFS.maxFeatures,
           success,
           failure
         );
@@ -512,7 +535,6 @@ export class VectorLayer extends Layer {
    * @param dataProjection the projection of the retrieved data
    * @param featureProjection the projection of the created features
    * @param url the url string to retrieve the data
-   * @param threshold the threshold to manage "more features" (TODO)
    * @param success success callback
    * @param failure failure callback
    */
@@ -523,12 +545,9 @@ export class VectorLayer extends Layer {
     dataProjection,
     featureProjection,
     url: string,
-    threshold: number,
     success,
     failure
   ) {
-    const idAssociatedCall = (this.dataSource as WFSDataSource)
-      .mostRecentIdCallOGCFilter;
     const xhr = new XMLHttpRequest();
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
@@ -552,15 +571,7 @@ export class VectorLayer extends Layer {
             dataProjection,
             featureProjection
           }) as olFeature<OlGeometry>[];
-        // TODO Manage "More feature"
-        /*if (features.length === 0 || features.length < threshold ) {
-          console.log('No more data to download at this resolution');
-        }*/
-        // Avoids retrieving an older call that took longer to be process
-        if (
-          idAssociatedCall ===
-          (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter
-        ) {
+        if (features) {
           vectorSource.addFeatures(features);
           success(features);
         } else {
@@ -570,6 +581,7 @@ export class VectorLayer extends Layer {
         onError();
       }
     };
+    this.xhrAccumulator.push(xhr);
     xhr.send();
   }
 
