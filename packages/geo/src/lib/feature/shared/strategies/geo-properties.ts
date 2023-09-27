@@ -90,7 +90,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
     this.updateEntitiesPropertiesState(store);
     this.states$$.push(
       this.map.layers$
-        .pipe(debounceTime(750), pairwise())
+        .pipe(debounceTime(250), pairwise())
         .subscribe(([prevLayers, currentLayers]) => {
           let prevLayersId;
           if (prevLayers) {
@@ -103,7 +103,7 @@ export class GeoPropertiesStrategy extends EntityStoreStrategy {
         })
     );
     this.states$$.push(
-      store.entities$.pipe(debounceTime(750)).subscribe((a) => {
+      store.entities$.pipe(debounceTime(250)).subscribe((a) => {
         this.updateEntitiesPropertiesState(store);
       })
     );

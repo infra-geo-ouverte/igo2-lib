@@ -40,7 +40,7 @@ import {
 } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import { default as moment } from 'moment';
 import { StringUtils } from '@igo2/utils';
 
@@ -261,6 +261,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
+    this.store.state.change$.pipe(debounceTime(250)).subscribe((r) => {
+      this.handleDatasource();
+      this.refresh();
+    });
   }
 
   /**
