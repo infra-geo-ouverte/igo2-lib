@@ -290,7 +290,7 @@ export class TimeFilterFormComponent implements OnInit {
   findThumbLabel(test: any[]): any {
     let thumbLabel;
 
-    test.forEach(value => {
+    test.forEach((value) => {
       if (value.className === 'mat-slider-thumb-label-text') {
         thumbLabel = value;
       }
@@ -341,7 +341,7 @@ export class TimeFilterFormComponent implements OnInit {
     } else {
       this.playIcon = 'pause-circle';
       this.interval = setInterval(
-        that => {
+        (that) => {
           let newMinDateNumber;
           const maxDateNumber = new Date(that.max);
 
@@ -374,16 +374,18 @@ export class TimeFilterFormComponent implements OnInit {
       this.stopFilter();
     } else {
       this.playIcon = 'pause-circle';
-      this.interval = setInterval(() => {
-        if (
-          (this.year + this.mySlider.step) > this.max.getFullYear()) {
-          this.stopFilter();
-        } else {
-          this.year = this.year + this.mySlider.step;
-        }
-        this.yearChange.emit(this.year);
-
-      }, this.timeInterval, this);
+      this.interval = setInterval(
+        () => {
+          if (this.year + this.mySlider.step > this.max.getFullYear()) {
+            this.stopFilter();
+          } else {
+            this.year = this.year + this.mySlider.step;
+          }
+          this.yearChange.emit(this.year);
+        },
+        this.timeInterval,
+        this
+      );
     }
   }
 

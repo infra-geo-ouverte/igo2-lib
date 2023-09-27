@@ -116,7 +116,7 @@
           "UTF8": "UTF-8"
         },
         "combinedLayers": "couchesCombinees"
-      },      
+      },
       "import": {
         "promptStoreToIdb": "Est-ce que vous voulez sauvegarder cette couche d'information afin d'être utilisée ultérieurement dans une autre session?"
       },
@@ -299,7 +299,7 @@
         "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-				"resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
+        "resetRotation": "Azimut: {{azimuth}}°N. Rotation: {{rotation}}°. Réinitialiser la carte vers le nord",
         "tipRotation": "Maintenez les touches Alt et Majuscule (shift) tout en cliquant sur la carte pour faire pivoter la carte",
         "preventScreenLock": "Préviens l'écran d'entrer en mode verrouillé.",
         "letScreenLock": "Permets l'écran d'entrer en mode verrouillé."
@@ -371,11 +371,13 @@
         "copy": "Copier l'itinéraire",
         "geolocate": "Utiliser sa localisation comme point d'arrêt",
         "link": "Lien",
+        "print": "Imprimer",
         "dialog": {
           "copyMsg": "Itinéraire copié dans le presse-papier",
           "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
           "copyTitle": "Itinéraire"
-        }
+        },
+        "toggleActive": "Activer le contrôle d'itinéraire"
       },
       "directions": {
         "uturn": "demi-tour",
@@ -394,16 +396,16 @@
         "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
         "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
         "arrive": {
-          "lastStep" : "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
-          "intermediate" : "Vous atteignez le point intermédiaire sur {{route}}"
+          "lastStep": "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
+          "intermediate": "Vous atteignez le point intermédiaire sur {{route}}"
         },
         "merge": "Continuer sur {{route}}",
         "on ramp": "Prendre l'entrée d'autoroute {{aggregatedDirection}}",
         "off ramp": "Prendre la sortie d'autoroute {{aggregatedDirection}}",
         "fork": {
-          "left" : "Garder la gauche sur {{route}}",
-          "right" : "Garder la droite sur {{route}}",
-          "else" : "Continuer sur {{route}}"
+          "left": "Garder la gauche sur {{route}}",
+          "right": "Garder la droite sur {{route}}",
+          "else": "Continuer sur {{route}}"
         },
         "end of road": "À la fin de la route, tourner {{translatedModifier}} sur {{route}}",
         "use lane": "Prendre la voie de ...",
@@ -506,11 +508,12 @@
             "entreprise": "Entreprise",
             "cadastre": "Cadastre",
             "restArea": "Halte routière",
-            "cycleStop": "Halte cyclable"
+            "cycleStop": "Halte cyclable",
+            "cultpatri": "Culture et patrimoine"
           },
           "restrictExtent": {
-            "map": "À l'étendue de la carte",
-            "quebec": "Au Québec"
+            "map": "Étendue de la carte",
+            "quebec": "Québec"
           }
         },
         "coordinates": {
@@ -549,7 +552,7 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "restrictExtent": "Restreins l'étendue",
+            "restrictExtent": "Limite de recherche",
             "selectAll": "Tout sélectionner",
             "unselectAll": "Tout désélectionner",
             "true": "Oui",
@@ -720,6 +723,7 @@
         }
       },
       "draw": {
+        "drawControl": "Activer le contrôle de dessin",
         "abort": "Annuler le dessin en cours",
         "cancel": "Annuler",
         "Circle": "Cercle",

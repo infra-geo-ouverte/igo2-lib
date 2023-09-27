@@ -7,19 +7,27 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
-import { DynamicComponent, OnUpdateInputs, WidgetComponent, WidgetService } from '@igo2/common';
+import {
+  DynamicComponent,
+  OnUpdateInputs,
+  WidgetComponent,
+  WidgetService
+} from '@igo2/common';
 
 @Component({
   selector: 'app-salutation-widget',
   template: `
-    <p>Hello, my name is {{name}}.</p>
-    <button mat-flat-button (click)="complete.emit(name)">Nice to meet you</button>
+    <p>Hello, my name is {{ name }}.</p>
+    <button mat-flat-button (click)="complete.emit(name)">
+      Nice to meet you
+    </button>
     <button mat-flat-button (click)="cancel.emit(name)">Dismiss</button>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppSalutationWidgetComponent implements OnUpdateInputs, WidgetComponent {
-
+export class AppSalutationWidgetComponent
+  implements OnUpdateInputs, WidgetComponent
+{
   @Input() name: string;
 
   @Output() complete = new EventEmitter<string>();
@@ -31,7 +39,6 @@ export class AppSalutationWidgetComponent implements OnUpdateInputs, WidgetCompo
   onUpdateInputs() {
     this.cdRef.detectChanges();
   }
-
 }
 
 @Component({
@@ -40,12 +47,13 @@ export class AppSalutationWidgetComponent implements OnUpdateInputs, WidgetCompo
   styleUrls: ['./widget.component.scss']
 })
 export class AppWidgetComponent {
+  widget: DynamicComponent<WidgetComponent>;
 
-  widget: DynamicComponent<WidgetComponent> = this.widgetService.create(AppSalutationWidgetComponent);
+  inputs = { name: 'Bob' };
 
-  inputs = {name: 'Bob'};
-
-  constructor(private widgetService: WidgetService) {}
+  constructor(private widgetService: WidgetService) {
+    this.widget = this.widgetService.create(AppSalutationWidgetComponent);
+  }
 
   onWidgetComplete(name: string) {
     alert(`${name} emitted event 'complete' then got automatically destroyed.`);
@@ -54,5 +62,4 @@ export class AppWidgetComponent {
   onWidgetCancel() {
     alert(`Widget emitted event 'cancel' then got automatically destroyed.`);
   }
-
 }

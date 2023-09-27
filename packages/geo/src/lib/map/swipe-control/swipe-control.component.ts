@@ -1,5 +1,5 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
-import { Layer } from '../../layer';
+import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared/map';
 import { getRenderPixel } from 'ol/render';
 import { Subscription } from 'rxjs';
@@ -12,10 +12,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './swipe-control.component.html',
   styleUrls: ['./swipe-control.component.scss']
 })
-
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
-
-
   /**
    * Get an active map
    */
@@ -51,8 +48,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    */
   private boundPrerender = this.prerender.bind(this);
 
-  constructor() {
-   }
+  constructor() {}
 
   /**
    * Get the list of layers for swipe and activate of deactivate the swipe
@@ -60,9 +56,9 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     this.getListOfLayers();
-    this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe(value => {
-        value ? this.displaySwipe() : this.displaySwipeOff();
-      });
+    this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe((value) => {
+      value ? this.displaySwipe() : this.displaySwipeOff();
+    });
     this.letZoom();
   }
 
@@ -80,9 +76,11 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Display a swipe-element and render the layers
    */
   displaySwipe() {
-    this.swipeId.style.visibility = 'visible';
-    this.layers.map(layer => layer.ol.on('prerender', this.boundPrerender));
-    this.layers.map(layer => layer.ol.on('postrender', this.postrender));
+    if (this.swipeId) {
+      this.swipeId.style.visibility = 'visible';
+    }
+    this.layers.map((layer) => layer.ol.on('prerender', this.boundPrerender));
+    this.layers.map((layer) => layer.ol.on('postrender', this.postrender));
     this.map.ol.render();
   }
 
@@ -90,9 +88,11 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Clear a swipe-element and render the layers on the initial state
    */
   displaySwipeOff() {
-    this.swipeId.style.visibility = 'hidden';
-    this.layers.map(layer => layer.ol.un('prerender', this.boundPrerender));
-    this.layers.map(layer => layer.ol.un('postrender', this.postrender));
+    if (this.swipeId) {
+      this.swipeId.style.visibility = 'hidden';
+    }
+    this.layers.map((layer) => layer.ol.un('prerender', this.boundPrerender));
+    this.layers.map((layer) => layer.ol.un('postrender', this.postrender));
     this.map.ol.render();
     this.layers = [];
   }
@@ -108,7 +108,7 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Get the list of layers for swipe
    */
   getListOfLayers() {
-    this.map.selectedFeatures$.subscribe(layers => {
+    this.map.selectedFeatures$.subscribe((layers) => {
       this.layers = [];
       if (layers !== null) {
         for (const layer of layers) {
@@ -126,29 +126,28 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   dragDown(event) {
     this.inDragAction = true;
     event.preventDefault();
-    if (event.type === 'mousedown'){
-        this.pos3 = event.clientX;
-        this.mouseSwipe();
-        document.onmouseup = this.closeDragMouseElement;
-    }
-    else if (event.type === 'touchstart'){
-        document.getElementById('arrows').style.visibility = 'hidden';
-        this.pos3 = event.touches[0].clientX;
-        this.touchSwipe();
-        document.ontouchend = this.closeDragTouchElement;
+    if (event.type === 'mousedown') {
+      this.pos3 = event.clientX;
+      this.mouseSwipe();
+      document.onmouseup = this.closeDragMouseElement;
+    } else if (event.type === 'touchstart') {
+      document.getElementById('arrows').style.visibility = 'hidden';
+      this.pos3 = event.touches[0].clientX;
+      this.touchSwipe();
+      document.ontouchend = this.closeDragTouchElement;
     }
   }
 
   /**
    * Moving a line with a mouse
    */
-  mouseSwipe(){
-    document.addEventListener('mousemove', event => {
-      if (this.inDragAction){
+  mouseSwipe() {
+    document.addEventListener('mousemove', (event) => {
+      if (this.inDragAction) {
         event.preventDefault();
         this.pos1 = this.pos3 - event.clientX;
         this.pos3 = event.clientX;
-        this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
+        this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
       }
       this.map.ol.render();
     });
@@ -157,14 +156,14 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * Moving a line with a touch
    */
-  touchSwipe(){
-    document.addEventListener('touchmove', event => {
+  touchSwipe() {
+    document.addEventListener('touchmove', (event) => {
       if (this.inDragAction) {
         event.preventDefault();
         document.getElementById('arrows').style.visibility = 'hidden';
         this.pos1 = this.pos3 - event.changedTouches[0].clientX;
         this.pos3 = event.changedTouches[0].clientX;
-        this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
+        this.swipeId.style.left = this.swipeId.offsetLeft - this.pos1 + 'px';
       }
       this.map.ol.render();
     });
@@ -193,27 +192,27 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
    * Cut the image of a layer by the position of swiped-element
    */
   prerender(event) {
-      const ctx = event.context;
-      const mapSize = this.map.ol.getSize();
-      const width = this.swipeId.offsetLeft ;
-      const tl = getRenderPixel(event, [width, 0]);
-      const tr = getRenderPixel(event, [0, 0]);
-      const bl = getRenderPixel(event, [width, mapSize[1]]);
-      const br = getRenderPixel(event, [0, mapSize[1]]);
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(tl[0], tl[1]);
-      ctx.lineTo(bl[0], bl[1]);
-      ctx.lineTo(br[0], br[1]);
-      ctx.lineTo(tr[0], tr[1]);
-      ctx.closePath();
-      ctx.clip();
+    const ctx = event.context;
+    const mapSize = this.map.ol.getSize();
+    const width = this.swipeId.offsetLeft;
+    const tl = getRenderPixel(event, [width, 0]);
+    const tr = getRenderPixel(event, [0, 0]);
+    const bl = getRenderPixel(event, [width, mapSize[1]]);
+    const br = getRenderPixel(event, [0, mapSize[1]]);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(tl[0], tl[1]);
+    ctx.lineTo(bl[0], bl[1]);
+    ctx.lineTo(br[0], br[1]);
+    ctx.lineTo(tr[0], tr[1]);
+    ctx.closePath();
+    ctx.clip();
   }
 
   /**
    * Save a current state of the context
    */
-  postrender(event){
+  postrender(event) {
     event.context.restore();
     event.context.save();
   }
@@ -221,9 +220,15 @@ export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**
    * Zoom on div
    */
-     private letZoom() {
-      document.getElementById('igo-layer-swipe').addEventListener('wheel', event => {
-        event.deltaY > 0 ? this.map.viewController.zoomOut() : this.map.viewController.zoomIn();
-      }, true);
-    }
+  private letZoom() {
+    document.getElementById('igo-layer-swipe').addEventListener(
+      'wheel',
+      (event) => {
+        event.deltaY > 0
+          ? this.map.viewController.zoomOut()
+          : this.map.viewController.zoomIn();
+      },
+      true
+    );
+  }
 }

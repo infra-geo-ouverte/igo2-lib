@@ -8,10 +8,11 @@
         [state]="store.state"
         [resolution]="resolution$ | async"
         [catalogAllowLegend]="catalogAllowLegend"
-        [collapsed]="(store.count === 1) ? false : true"
+        [collapsed]="store.count === 1 ? false : true"
         [toggleCollapsed]="toggleCollapsedGroup"
         (addedChange)="onGroupAddedChange($event)"
-        (layerAddedChange)="onLayerAddedChange($event)">
+        (layerAddedChange)="onLayerAddedChange($event)"
+      >
       </igo-catalog-browser-group>
     </ng-container>
 
@@ -23,7 +24,8 @@
         [resolution]="resolution$ | async"
         [catalogAllowLegend]="catalogAllowLegend"
         [added]="store.state.get(item).added"
-        (addedChange)="onLayerAddedChange($event)">
+        (addedChange)="onLayerAddedChange($event)"
+      >
       </igo-catalog-browser-layer>
     </ng-container>
   </ng-template>

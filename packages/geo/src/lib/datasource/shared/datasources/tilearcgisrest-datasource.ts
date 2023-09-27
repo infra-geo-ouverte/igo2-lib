@@ -7,8 +7,8 @@ import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.int
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class TileArcGISRestDataSource extends DataSource {
-  public ol: olSourceTileArcGISRest;
-  public options: TileArcGISRestDataSourceOptions;
+  public declare ol: olSourceTileArcGISRest;
+  public declare options: TileArcGISRestDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -37,7 +37,11 @@ export class TileArcGISRestDataSource extends DataSource {
   getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
       return legend;
     }
 

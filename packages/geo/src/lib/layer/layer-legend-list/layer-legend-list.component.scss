@@ -1,25 +1,32 @@
 $slide-toggle-width: 60px;
 
-mat-slide-toggle {
-  width: 100%;
-  margin: 10px;
+:host {
+  mat-slide-toggle {
+    width: 100%;
+    padding: 10px;
 
-  ::ng-deep .mat-slide-toggle-content {
-    width: calc(100% - #{$slide-toggle-width});
+    ::ng-deep .mdc-form-field {
+      width: 100%;
+    }
+
+    ::ng-deep .mdc-label {
+      margin-left: 0;
+      width: calc(100% - #{$slide-toggle-width});
+    }
   }
-}
 
-igo-list {
-   /* autoprefixer: ignore next */
-  display: contents;
-}
+  igo-list {
+    /* autoprefixer: ignore next */
+    display: contents;
+  }
 
-.layers-empty {
-  text-align: justify;
-  margin: 10px;
-}
+  .layers-empty {
+    text-align: justify;
+    margin: 10px;
+  }
 
-.layer-legend-list-container {
-  max-height: 100%;
-  overflow: auto;
+  .layer-legend-list-container {
+    max-height: 100%;
+    overflow: auto;
+  }
 }

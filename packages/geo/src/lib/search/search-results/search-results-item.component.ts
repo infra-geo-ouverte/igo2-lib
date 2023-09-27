@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
+} from '@angular/core';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import {
@@ -9,7 +15,7 @@ import {
 
 import { SearchResult } from '../shared/search.interfaces';
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared';
 
 /**
  * Search results list item
@@ -82,7 +88,11 @@ export class SearchResultsItemComponent {
       dataProjection: this.result.data.projection,
       featureProjection: this.map.projection
     });
-    moveToOlFeatures(this.map, [olFeature], FeatureMotion.Default);
+    moveToOlFeatures(
+      this.map.viewController,
+      [olFeature],
+      FeatureMotion.Default
+    );
   }
 
   /**
@@ -95,13 +105,15 @@ export class SearchResultsItemComponent {
     switch (type) {
       case 'mouseenter':
         const hideBtn = element.querySelector('#hide-save-search-result-btn');
-        (hideBtn) ?
-        hideBtn.setAttribute('id', 'show-save-search-result-btn') : null;
+        hideBtn
+          ? hideBtn.setAttribute('id', 'show-save-search-result-btn')
+          : null;
         break;
       case 'mouseleave':
         const showBtn = element.querySelector('#show-save-search-result-btn');
-        (showBtn) ?
-        showBtn.setAttribute('id', 'hide-save-search-result-btn') : null;
+        showBtn
+          ? showBtn.setAttribute('id', 'hide-save-search-result-btn')
+          : null;
         break;
       default:
         break;

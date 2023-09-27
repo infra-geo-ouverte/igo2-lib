@@ -2,11 +2,18 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
+import {
+  TimeFilterableDataSourceOptions,
+  WMSDataSourceOptions
+} from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFilterableDataSourceOptions, OgcFiltersOptions, OgcFilterDuringOptions } from '../../../filter/shared/ogc-filter.interface';
+import {
+  OgcFilterableDataSourceOptions,
+  OgcFiltersOptions,
+  OgcFilterDuringOptions
+} from '../../../filter/shared/ogc-filter.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import {
   formatWFSQueryString,
@@ -15,12 +22,20 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
-import { LegendMapViewOptions } from '../../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { BehaviorSubject } from 'rxjs';
-import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
+import { TimeFilterOptions } from '../../../filter';
+
+export interface TimeFilterableDataSource extends WMSDataSource {
+  options: TimeFilterableDataSourceOptions;
+  timeFilter$: BehaviorSubject<TimeFilterOptions>;
+  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean);
+  filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
+}
 
 export class WMSDataSource extends DataSource {
-  public ol: olSourceImageWMS;
+  public declare ol: olSourceImageWMS;
 
   get params(): any {
     return this.options.params as any;
@@ -49,13 +64,14 @@ export class WMSDataSource extends DataSource {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
   }
 
-  set timeFilter(value: TimeFilterOptions ) {
+  set timeFilter(value: TimeFilterOptions) {
     (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
   }
   get timeFilter(): TimeFilterOptions {
     return (this.options as TimeFilterableDataSourceOptions).timeFilter;
   }
-  readonly timeFilter$: BehaviorSubject<TimeFilterOptions> = new BehaviorSubject(undefined);
+  readonly timeFilter$: BehaviorSubject<TimeFilterOptions> =
+    new BehaviorSubject(undefined);
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -93,7 +109,7 @@ export class WMSDataSource extends DataSource {
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     } else {
-      options.sourceFields.forEach(sourceField => {
+      options.sourceFields.forEach((sourceField) => {
         sourceField.alias = sourceField.alias
           ? sourceField.alias
           : sourceField.name;
@@ -105,35 +121,40 @@ export class WMSDataSource extends DataSource {
     const ogcFilterWriter = new OgcFilterWriter();
 
     if (!initOgcFilters) {
-      (options as OgcFilterableDataSourceOptions).ogcFilters = ogcFilterWriter.defineOgcFiltersDefaultOptions(
-        initOgcFilters,
-        fieldNameGeometry,
-        'wms'
-      );
+      (options as OgcFilterableDataSourceOptions).ogcFilters =
+        ogcFilterWriter.defineOgcFiltersDefaultOptions(
+          initOgcFilters,
+          fieldNameGeometry,
+          'wms'
+        );
     } else {
-      initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes
-        || initOgcFilters.radioButtons || initOgcFilters.select || initOgcFilters.autocomplete)
-        ? false
-        : true;
+      initOgcFilters.advancedOgcFilters =
+        initOgcFilters.pushButtons ||
+        initOgcFilters.checkboxes ||
+        initOgcFilters.radioButtons ||
+        initOgcFilters.select ||
+        initOgcFilters.autocomplete
+          ? false
+          : true;
       if (initOgcFilters.advancedOgcFilters && initOgcFilters.filters) {
-          const filterDuring = initOgcFilters.filters as OgcFilterDuringOptions;
-          if(filterDuring.calendarModeYear) {
-            initOgcFilters.advancedOgcFilters = false;
-          }
+        const filterDuring = initOgcFilters.filters as OgcFilterDuringOptions;
+        if (filterDuring.calendarModeYear) {
+          initOgcFilters.advancedOgcFilters = false;
+        }
       }
-      if (initOgcFilters.pushButtons){
+      if (initOgcFilters.pushButtons) {
         initOgcFilters.pushButtons.selectorType = 'pushButton';
       }
-      if (initOgcFilters.checkboxes){
+      if (initOgcFilters.checkboxes) {
         initOgcFilters.checkboxes.selectorType = 'checkbox';
       }
-      if (initOgcFilters.radioButtons){
+      if (initOgcFilters.radioButtons) {
         initOgcFilters.radioButtons.selectorType = 'radioButton';
       }
-      if (initOgcFilters.select){
+      if (initOgcFilters.select) {
         initOgcFilters.select.selectorType = 'select';
       }
-      if (initOgcFilters.autocomplete){
+      if (initOgcFilters.autocomplete) {
         initOgcFilters.autocomplete.selectorType = 'autocomplete';
       }
     }
@@ -157,7 +178,8 @@ export class WMSDataSource extends DataSource {
       initOgcFilters &&
       initOgcFilters.enabled &&
       initOgcFilters.editable &&
-      (options.sourceFields || []).filter(sf => !sf.values).length > 0) {
+      (options.sourceFields || []).filter((sf) => !sf.values).length > 0
+    ) {
       this.wfsService.getSourceFieldsFromWFS(options);
     }
 
@@ -166,13 +188,15 @@ export class WMSDataSource extends DataSource {
       fieldNameGeometry
     );
     sourceParams.FILTER = filterQueryString;
-    this.ol.updateParams({'FILTER': sourceParams.FILTER});
+    this.ol.updateParams({ FILTER: sourceParams.FILTER });
     this.setOgcFilters(initOgcFilters, true);
 
-    const timeFilterableDataSourceOptions = (options as TimeFilterableDataSourceOptions);
+    const timeFilterableDataSourceOptions =
+      options as TimeFilterableDataSourceOptions;
     if (
       timeFilterableDataSourceOptions?.timeFilterable &&
-      timeFilterableDataSourceOptions?.timeFilter) {
+      timeFilterableDataSourceOptions?.timeFilter
+    ) {
       this.setTimeFilter(timeFilterableDataSourceOptions.timeFilter, true);
     }
   }
@@ -183,13 +207,14 @@ export class WMSDataSource extends DataSource {
 
   private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
     const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
-    const downloadUrl = queryStringValues.find(f => f.name === 'getfeature')
-      .value;
+    const downloadUrl = queryStringValues.find(
+      (f) => f.name === 'getfeature'
+    ).value;
     return downloadUrl;
   }
 
   protected createOlSource(): olSourceImageWMS {
-    return new olSourceImageWMS(Object.assign({ratio: 1}, this.options));
+    return new olSourceImageWMS(Object.assign({ ratio: 1 }, this.options));
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
@@ -209,15 +234,23 @@ export class WMSDataSource extends DataSource {
 
   getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
     let legend = super.getLegend();
-    if (legend.length > 0 && (style === undefined && !view?.scale)) {
+    if (legend.length > 0 && style === undefined && !view?.scale) {
       return legend;
     }
 
     let contentDependent = false;
     let projParam;
 
-    if (view?.size && view?.extent && view?.projection && this.options.contentDependentLegend) {
-      projParam = this.params.VERSION === '1.3.0' || this.params.VERSION === undefined ? 'CRS' : 'SRS';
+    if (
+      view?.size &&
+      view?.extent &&
+      view?.projection &&
+      this.options.contentDependentLegend
+    ) {
+      projParam =
+        this.params.VERSION === '1.3.0' || this.params.VERSION === undefined
+          ? 'CRS'
+          : 'SRS';
       contentDependent = true;
     }
 
@@ -254,7 +287,7 @@ export class WMSDataSource extends DataSource {
       return {
         url: `${baseUrl}${separator}${params.join('&')}&LAYER=${layer}`,
         title: layers.length > 1 ? layer : undefined,
-        currentStyle: style === undefined ? undefined : style as string
+        currentStyle: style === undefined ? undefined : (style as string)
       };
     });
 
@@ -262,4 +295,12 @@ export class WMSDataSource extends DataSource {
   }
 
   public onUnwatch() {}
+}
+
+export interface TimeFilterableDataSource extends WMSDataSource {
+  options: TimeFilterableDataSourceOptions;
+  timeFilter$: BehaviorSubject<TimeFilterOptions>;
+  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean);
+  filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
 }

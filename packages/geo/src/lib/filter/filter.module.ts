@@ -6,7 +6,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule, MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -140,7 +141,12 @@ import { OgcFilterTimeSliderComponent } from './ogc-filter-time/ogc-filter-time-
     OgcFilterTimeComponent,
     OgcFilterTimeSliderComponent
   ],
-  providers: [TimeFilterService, OGCFilterService, OGCFilterTimeService, SpatialFilterService]
+  providers: [
+    TimeFilterService,
+    OGCFilterService,
+    OGCFilterTimeService,
+    SpatialFilterService
+  ]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders<IgoFilterModule> {

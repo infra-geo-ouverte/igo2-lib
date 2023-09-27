@@ -6,12 +6,9 @@ import { GeoServiceDefinition } from './propertyTypeDetector.interface';
   providedIn: 'root'
 })
 export class PropertyTypeDetectorService {
-
   public geoServiceRegexes: GeoServiceDefinition[] = [];
 
-  constructor(
-    private regexService: RegexService
-  ) {
+  constructor(private regexService: RegexService) {
     this.geoServiceRegexes = this.getGeoServiceRegexes();
   }
 
@@ -39,7 +36,10 @@ export class PropertyTypeDetectorService {
     return isGeoService;
   }
 
-  getGeoService(url: string, availableProperties: string[]): GeoServiceDefinition {
+  getGeoService(
+    url: string,
+    availableProperties: string[]
+  ): GeoServiceDefinition {
     if (!this.isGeoService(url)) {
       return;
     }
@@ -48,17 +48,20 @@ export class PropertyTypeDetectorService {
       const domainRegex = new RegExp(geoServiceRegex.url);
       if (domainRegex.test(url)) {
         // providing the the first matching regex;
-        const matchingProperties = availableProperties.filter(p => geoServiceRegex.propertiesForLayerName.includes(p));
-        matchingGeoservice = matchingProperties ? geoServiceRegex: undefined;
-        if (matchingGeoservice) { break; }
+        const matchingProperties = availableProperties.filter((p) =>
+          geoServiceRegex.propertiesForLayerName.includes(p)
+        );
+        matchingGeoservice = matchingProperties ? geoServiceRegex : undefined;
+        if (matchingGeoservice) {
+          break;
+        }
       }
     }
     return matchingGeoservice;
   }
 
-
   private getGeoServiceRegexes(): GeoServiceDefinition[] {
-    return this.regexService.get('geoservice') as GeoServiceDefinition[] | [];
+    return (this.regexService.get('geoservice') ||
+      []) as GeoServiceDefinition[];
   }
-
 }

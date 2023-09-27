@@ -1,8 +1,16 @@
-
 <igo-list [navigation]="false" [selection]="false">
-  <div  id="no-layer-message" *ngIf="(layers | filterableDataSource : 'ogc').length === 0">{{'igo.geo.filter.noFilterableLayer' | translate}}</div>
+  <div
+    id="no-layer-message"
+    *ngIf="(layers | filterableDataSource: 'ogc').length === 0"
+  >
+    {{ 'igo.geo.filter.noFilterableLayer' | translate }}
+  </div>
   <ng-template ngFor let-layer [ngForOf]="layers | filterableDataSource: 'ogc'">
-    <igo-ogc-filterable-item igoListItem [header]="true" [layer]="layer" 
-    [map]="layer.map" ></igo-ogc-filterable-item>
+    <igo-ogc-filterable-item
+      igoListItem
+      [header]="true"
+      [layer]="layer"
+      [map]="layer.map"
+    ></igo-ogc-filterable-item>
   </ng-template>
 </igo-list>

@@ -4,7 +4,7 @@ import { ImageLayerOptions } from '../../../layer/shared/layers/image-layer.inte
 import { SearchSourceOptions } from './source.interfaces';
 
 export interface ILayerSearchSourceOptions extends SearchSourceOptions {
-  queryFormat?: {[key: string]: string | {urls: string[]}};
+  queryFormat?: { [key: string]: string | { urls: string[] } };
 }
 
 export interface ILayerServiceResponse {
@@ -38,8 +38,8 @@ export interface ILayerDataHighlight {
 }
 
 interface QueryWMSDataSourceOptions
-      extends WMSDataSourceOptions,
-        QueryableDataSourceOptions {}
+  extends WMSDataSourceOptions,
+    QueryableDataSourceOptions {}
 
 export interface ILayerItemResponse extends ImageLayerOptions {
   title: string;

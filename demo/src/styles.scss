@@ -1,1 +1,29 @@
-@import '../../dist/core/style/index.theming.scss';
+// In production use @igo2/core/all-style
+@use 'packages/core/src/style/all-style';
+// In production use @igo2/core/layout
+@use 'packages/core/src/style/layout';
+
+@use 'style/theme.scss';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+mat-card {
+  .mat-mdc-card-content > :last-child:is(hr) {
+    margin-bottom: 0.5em !important;
+  }
+}
+
+mat-card-actions,
+.actions-container {
+  button:not(:last-child) {
+    margin-right: 8px;
+  }
+}

@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppWorkspaceComponent } from './workspace.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppWorkspaceRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppWorkspaceRoutingModule = RouterModule.forChild(routes);

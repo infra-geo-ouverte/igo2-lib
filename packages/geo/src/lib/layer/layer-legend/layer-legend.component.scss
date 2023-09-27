@@ -1,28 +1,38 @@
-.igo-layer-legend.with-title {
-  padding-left: 18px;
-}
-
-img:after {
-  content: ' ';
-  position: relative;
-  height: 17px;
-  float: left;
-  width: 17px;
-  top: -3px;
-  right: 19px;
-  background-color: #fff;
-  border: 3px solid #f3f3f3;
-  border-radius: 50%;
-  animation: 2s linear infinite spin;
-}
-
-@-moz-document url-prefix() {
-  img:after {
-     margin-left: 19px;
+:host {
+  .igo-layer-legend.with-title {
+    padding-left: 18px;
   }
-}
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  img {
+    max-width: 100%;
+
+    &:after {
+      content: ' ';
+      position: relative;
+      height: 17px;
+      float: left;
+      width: 17px;
+      top: -3px;
+      right: 19px;
+      background-color: #fff;
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      animation: 2s linear infinite spin;
+    }
+  }
+
+  @-moz-document url-prefix() {
+    img:after {
+      margin-left: 19px;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }

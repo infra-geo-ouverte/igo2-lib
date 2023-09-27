@@ -1,27 +1,44 @@
 <form [formGroup]="form" role="form" (ngSubmit)="loginUser(form.value)">
   <div>
     <mat-form-field class="full-width">
-      <input matInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
+      <mat-label>{{ 'igo.auth.user' | translate }}</mat-label>
+      <input
+        matInput
+        required
+        placeholder="{{ 'igo.auth.user' | translate }}"
+        formControlName="username"
+      />
     </mat-form-field>
   </div>
 
   <div>
     <mat-form-field class="full-width">
-      <input matInput required type="password" placeholder="{{'igo.auth.password' | translate}}" formControlName="password">
+      <mat-label>{{ 'igo.auth.password' | translate }}</mat-label>
+      <input
+        matInput
+        required
+        type="password"
+        placeholder="{{ 'igo.auth.password' | translate }}"
+        formControlName="password"
+      />
     </mat-form-field>
   </div>
 
-  <button mat-raised-button type="submit">{{'igo.auth.login' | translate}}</button>
-  <button *ngIf="allowAnonymous" mat-raised-button class="anonymous" type="button" [disabled]="loading" (click)="loginAnonymous()">
-    {{'igo.auth.accessAnonymous' | translate }}
+  <button mat-raised-button type="submit">
+    {{ 'igo.auth.login' | translate }}
+  </button>
+  <button
+    *ngIf="allowAnonymous"
+    mat-raised-button
+    class="anonymous"
+    type="button"
+    [disabled]="loading"
+    (click)="loginAnonymous()"
+  >
+    {{ 'igo.auth.accessAnonymous' | translate }}
   </button>
   <div *ngIf="error">
-    <br/>
-    <font size="3" color="red">{{error}}</font>
+    <br />
+    <font size="3" color="red">{{ error }}</font>
   </div>
 </form>
-
-<!--
-This part was removed from the below line to fix Angular issue 30616 : [disabled]="!form.valid || loading
-  <button mat-raised-button type="submit" [disabled]="!form.valid || loading">{{'igo.auth.login' | translate}}</button>*/
--->

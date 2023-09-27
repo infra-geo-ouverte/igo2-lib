@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
-import {stylefunction} from "ol-mapbox-style";
+import { stylefunction } from 'ol-mapbox-style';
 import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
 import olLayerVectorTile from 'ol/layer/VectorTile';
@@ -115,10 +115,13 @@ export class LayerService {
     return layer;
   }
 
-  createAsyncLayer(_layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
+  createAsyncLayer(
+    _layerOptions: AnyLayerOptions,
+    detailedContextUri?: string
+  ): Observable<Layer> {
     const layerOptions = computeMVTOptionsOnHover(_layerOptions);
     if (layerOptions.source) {
-      return new Observable(d => d.next(this.createLayer(layerOptions)));
+      return new Observable((d) => d.next(this.createLayer(layerOptions)));
     }
 
     const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions;
@@ -130,7 +133,7 @@ export class LayerService {
     const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : (geostylerStyleHover ? this.geostylerService.geostylerToOl(geostylerStyleHover) : of(undefined));
 
 
-
+    
     return globalWriteStyleResult$.pipe(
       mergeMap(writeStyleResult => {
         // n'oublie pas de voir comment gérer les cluster directement par geostyler.
@@ -163,11 +166,19 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.messageService, this.authInterceptor);
+    return new ImageLayer(
+      layerOptions,
+      this.messageService,
+      this.authInterceptor
+    );
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(layerOptions, this.messageService, this.authInterceptor);
+    return new TileLayer(
+      layerOptions,
+      this.messageService,
+      this.authInterceptor
+    );
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
@@ -177,14 +188,34 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
-    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'clusterBaseStyle', 'style'];
+    const legacyStyleOptions = [
+      'styleByAttribute',
+      'hoverStyle',
+      'mapboxStyle',
+      'clusterBaseStyle',
+      'style'
+    ];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
-    if (layerOptions.igoStyle.igoStyleObject && !layerOptions.idbInfo?.storeToIdb) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
-    } else if (layerOptions.igoStyle.igoStyleObject && layerOptions.idbInfo?.storeToIdb) {
+    if (
+      layerOptions.igoStyle.igoStyleObject &&
+      !layerOptions.idbInfo?.storeToIdb
+    ) {
+      style = (feature, resolution) =>
+        this.styleService.createStyle(
+          layerOptions.igoStyle.igoStyleObject,
+          feature,
+          resolution
+        );
+    } else if (
+      layerOptions.igoStyle.igoStyleObject &&
+      layerOptions.idbInfo?.storeToIdb
+    ) {
       // temporary fix todo : handle it with geostyler.
-      style = this.styleService.parseStyle('style', layerOptions.igoStyle.igoStyleObject);
+      style = this.styleService.parseStyle(
+        'style',
+        layerOptions.igoStyle.igoStyleObject
+      );
     }
 
     if (layerOptions.source instanceof ArcGISRestDataSource) {
@@ -205,7 +236,8 @@ export class LayerService {
         this.authInterceptor,
         this.geoNetworkService,
         this.geoNetworkService.geoDBService,
-        this.layerDBService);
+        this.layerDBService
+      );
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -225,7 +257,8 @@ export class LayerService {
         this.authInterceptor,
         this.geoNetworkService,
         this.geoNetworkService.geoDBService,
-        this.layerDBService);
+        this.layerDBService
+      );
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -233,12 +266,14 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorLayer(layerOptionsOl,
+      igoLayer = new VectorLayer(
+        layerOptionsOl,
         this.messageService,
         this.authInterceptor,
         this.geoNetworkService,
         this.geoNetworkService.geoDBService,
-        this.layerDBService);
+        this.layerDBService
+      );
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl as any);
@@ -247,7 +282,7 @@ export class LayerService {
   }
 
   private handleLegacyStyles(layerOptions, legacyStyleOptions: string[]) {
-    legacyStyleOptions.map(legacyOption => {
+    legacyStyleOptions.map((legacyOption) => {
       if (layerOptions[legacyOption]) {
         let newKey = legacyOption;
         if (legacyOption === 'style') {
@@ -281,12 +316,22 @@ export class LayerService {
     if (!layerOptions.igoStyle) {
       layerOptions.igoStyle = {};
     }
-    const legacyStyleOptions = ['styleByAttribute', 'hoverStyle', 'mapboxStyle', 'style'];
+    const legacyStyleOptions = [
+      'styleByAttribute',
+      'hoverStyle',
+      'mapboxStyle',
+      'style'
+    ];
     // handling legacy property.
     this.handleLegacyStyles(layerOptions, legacyStyleOptions);
 
     if (layerOptions.igoStyle.igoStyleObject) {
-      style = (feature, resolution) => this.styleService.createStyle(layerOptions.igoStyle.igoStyleObject, feature, resolution);
+      style = (feature, resolution) =>
+        this.styleService.createStyle(
+          layerOptions.igoStyle.igoStyleObject,
+          feature,
+          resolution
+        );
     }
 
     if (layerOptions.igoStyle.styleByAttribute) {
@@ -298,7 +343,11 @@ export class LayerService {
           resolution
         );
       };
-      igoLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
+      igoLayer = new VectorTileLayer(
+        layerOptions,
+        this.messageService,
+        this.authInterceptor
+      );
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -306,7 +355,11 @@ export class LayerService {
     });
 
     if (!igoLayer) {
-      igoLayer = new VectorTileLayer(layerOptionsOl, this.messageService, this.authInterceptor);
+      igoLayer = new VectorTileLayer(
+        layerOptionsOl,
+        this.messageService,
+        this.authInterceptor
+      );
     }
 
     this.applyMapboxStyle(igoLayer, layerOptionsOl);
@@ -315,15 +368,28 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.igoStyle?.mapboxStyle) {
-      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe(res => {
-        if (res.sprite){
-          const url = this.getAbsoluteUrl(layerOptions.igoStyle.mapboxStyle.url, res.sprite);
-          this.getStuff(url+'.json').subscribe(res2 => {
-            stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source, undefined, res2,
-              url+'.png');
+      this.getStuff(layerOptions.igoStyle.mapboxStyle.url).subscribe((res) => {
+        if (res.sprite) {
+          const url = this.getAbsoluteUrl(
+            layerOptions.igoStyle.mapboxStyle.url,
+            res.sprite
+          );
+          this.getStuff(url + '.json').subscribe((res2) => {
+            stylefunction(
+              layer.ol as olLayerVectorTile,
+              res,
+              layerOptions.igoStyle.mapboxStyle.source,
+              undefined,
+              res2,
+              url + '.png'
+            );
           });
         } else {
-          stylefunction(layer.ol as olLayerVectorTile, res, layerOptions.igoStyle.mapboxStyle.source);
+          stylefunction(
+            layer.ol as olLayerVectorTile,
+            res,
+            layerOptions.igoStyle.mapboxStyle.source
+          );
         }
       });
     }
@@ -332,7 +398,7 @@ export class LayerService {
   private getStuff(url: string) {
     return this.http.get(url).pipe(
       map((res: any) => res),
-      catchError(err => {
+      catchError((err) => {
         console.log('No style was found');
         return of(err);
       })
@@ -340,27 +406,36 @@ export class LayerService {
   }
 
   private getAbsoluteUrl(source, url) {
-    const r = new RegExp('^http|\/\/', 'i');
-    if(r.test(url)){
+    const r = new RegExp('^http|//', 'i');
+    if (r.test(url)) {
       return url;
     } else {
-      if ( source.substr(source.length -1) === "/"){
+      if (source.substr(source.length - 1) === '/') {
         return source + url;
-      } else{
-        return source + "/" + url;
+      } else {
+        return source + '/' + url;
       }
     }
   }
 
   createAsyncIdbLayers(contextUri: string = '*'): Observable<Layer[]> {
     return this.layerDBService.getAll().pipe(
-      concatMap(res => {
-        const idbLayers = contextUri !== '*' ? res.filter(l => l.detailedContextUri === contextUri) : res;
-        const layersOptions: LayerOptions[] =
-          idbLayers.map(idbl => Object.assign({}, idbl.layerOptions, { sourceOptions: idbl.sourceOptions }));
-        return combineLatest(layersOptions.map(layerOptions => this.createAsyncLayer(layerOptions)));
+      concatMap((res) => {
+        const idbLayers =
+          contextUri !== '*'
+            ? res.filter((l) => l.detailedContextUri === contextUri)
+            : res;
+        const layersOptions: LayerOptions[] = idbLayers.map((idbl) =>
+          Object.assign({}, idbl.layerOptions, {
+            sourceOptions: idbl.sourceOptions
+          })
+        );
+        return combineLatest(
+          layersOptions.map((layerOptions) =>
+            this.createAsyncLayer(layerOptions)
+          )
+        );
       })
     );
   }
-
 }

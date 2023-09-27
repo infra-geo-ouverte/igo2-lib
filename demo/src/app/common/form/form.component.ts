@@ -11,10 +11,9 @@ import { Form, FormService } from '@igo2/common';
   styleUrls: ['./form.component.scss']
 })
 export class AppFormComponent implements OnInit, OnDestroy {
-
   form$ = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{[key: string]: any}>(undefined);
+  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
 
   submitDisabled = true;
 
@@ -30,7 +29,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
       {
         name: 'id',
         title: 'ID',
-        options:  {
+        options: {
           cols: 1,
           validator: Validators.required
         }
@@ -38,7 +37,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
       {
         name: 'name',
         title: 'Name',
-        options:  {
+        options: {
           cols: 1,
           validator: Validators.required
         }
@@ -47,20 +46,23 @@ export class AppFormComponent implements OnInit, OnDestroy {
         name: 'status',
         title: 'Status',
         type: 'select',
-        options:  {
+        options: {
           cols: 2
         },
         inputs: {
           choices: [
-            {value: 1, title: 'Single'},
-            {value: 2, title: 'Married'}
+            { value: 1, title: 'Single' },
+            { value: 2, title: 'Married' }
           ]
         }
       }
     ];
 
     const fields = fieldConfigs.map((config) => this.formService.field(config));
-    const form = this.formService.form([], [this.formService.group({name: 'info'}, fields)]);
+    const form = this.formService.form(
+      [],
+      [this.formService.group({ name: 'info' }, fields)]
+    );
 
     this.valueChanges$$ = form.control.valueChanges.subscribe(() => {
       this.submitDisabled = !form.control.valid;
@@ -85,7 +87,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: {[key: string]: any}) {
+  onSubmit(data: { [key: string]: any }) {
     alert(JSON.stringify(data));
   }
 }

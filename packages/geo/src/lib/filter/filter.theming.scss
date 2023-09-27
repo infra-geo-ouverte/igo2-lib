@@ -1,5 +1,16 @@
-@mixin igo-filter-theming($theme, $typography) {
-  @include igo-time-filter-form-theming($theme);
-  @include igo-ogc-filter-time-slider-theming($theme);
-  @include igo-ogc-filter-selection-theming($theme);
+@use '@mat-datetimepicker/core/datetimepicker/datetimepicker-theme' as
+  datetimepicker;
+
+@use './time-filter-form/time-filter-form.theming.scss' as time-filter;
+@use './ogc-filter-time/ogc-filter-time-slider.theming.scss' as
+  ogc-filter-slider;
+@use './ogc-filter-selection/ogc-filter-selection.theming.scss' as
+  ogc-filter-selection;
+
+@mixin igo-filter-theming($theme) {
+  @include datetimepicker.mat-datetimepicker-theme($theme);
+
+  @include time-filter.igo-time-filter-form-theming($theme);
+  @include ogc-filter-slider.igo-ogc-filter-time-slider-theming($theme);
+  @include ogc-filter-selection.igo-ogc-filter-selection-theming($theme);
 }

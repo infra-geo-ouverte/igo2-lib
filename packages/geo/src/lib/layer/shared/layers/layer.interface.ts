@@ -4,7 +4,8 @@ import { Message } from '@igo2/core';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
-import { MapExtent, MapViewOptions } from '../../../map/shared/map.interface';
+import { MapExtent } from '../../../map/shared/map.interface';
+import { LegendOptions } from './legend.interface';
 
 export interface LayerOptions {
   isIgoInternalLayer?: boolean; // useful when mapOffline directive set the resolution of the layers.
@@ -38,7 +39,7 @@ export interface LayerOptions {
 }
 
 export interface LayerSecurityOptions {
-  profils?: string[]
+  profils?: string[];
 }
 
 export interface GeoWorkspaceOptions {
@@ -93,29 +94,4 @@ export enum TooltipType {
   TITLE = 'title',
   ABSTRACT = 'abstract',
   CUSTOM = 'custom'
-}
-
-export interface LegendOptions {
-  collapsed?: boolean;
-  display?: boolean;
-  url?: string;
-  html?: string;
-  stylesAvailable?: ItemStyleOptions[];
-}
-
-export interface LegendMapViewOptions extends MapViewOptions{
-  scale?: number;
-  size?: [number, number];
-}
-
-export interface ItemStyleOptions {
-  name: string;
-  title?: string;
-}
-
-export interface OutputLayerLegend {
-  title: string;
-  url: string;
-  display: boolean;
-  isInResolutionsRange: boolean;
 }

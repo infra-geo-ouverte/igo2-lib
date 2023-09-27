@@ -5,7 +5,6 @@ import OlPoint from 'ol/geom/Point';
 import { ProjectionLike, transform } from 'ol/proj';
 import { FontType } from '../shared/font.enum';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -110,14 +109,52 @@ export class DrawStyleService {
     if (geom instanceof OlPoint) {
       labelsAreOffset = !labelsAreOffset;
     }
+    const textToShow = labelsAreShown ? feature.get('draw') : '';
+    feature.set('_mapTitle', textToShow);
+    const textIgoStyleObject = {
+      text: textToShow,
+      stroke: {
+        color: 'white',
+        width: 0.75
+      },
+      fill: { color: 'black' },
+      font: fontSizeAndStyle,
+      overflow: true,
+      offsetX: offsetX,
+      offsetY: offsetY
+    };
+
+    let igoStyleObject;
 
     // if feature is a circle
     if (feature.get('rad')) {
-      const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
+      const coordinates = transform(
+        feature.getGeometry().flatCoordinates,
+        proj,
+        'EPSG:4326'
+      );
+      const radius =
+        feature.get('rad') /
+        Math.cos((Math.PI / 180) * coordinates[1]) /
+        resolution;
+      igoStyleObject = {
+        text: textIgoStyleObject,
+        circle: {
+          radius,
+          stroke: {
+            color: strokeColor ? strokeColor : this.strokeColor,
+            width: this.strokeWidth
+          },
+          fill: {
+            color: fillColor
+          }
+        }
+      };
+      feature.set('_style', igoStyleObject);
 
       style = new OlStyle.Style({
         text: new OlStyle.Text({
-          text: labelsAreShown ? feature.get('draw') : '',
+          text: textToShow,
           stroke: new OlStyle.Stroke({
             color: 'white',
             width: 0.75
@@ -133,7 +170,7 @@ export class DrawStyleService {
         }),
 
         image: new OlStyle.Circle({
-          radius: feature.get('rad') / Math.cos((Math.PI / 180) * coordinates[1]) / resolution,
+          radius,
           stroke: new OlStyle.Stroke({
             color: strokeColor ? strokeColor : this.strokeColor,
             width: this.strokeWidth
@@ -148,6 +185,22 @@ export class DrawStyleService {
       // if feature is an icon
     } else if (icon) {
       this.offsetY = -26;
+      textIgoStyleObject.offsetY = this.offsetY;
+      const igoStyleObject = {
+        text: textIgoStyleObject,
+        stroke: {
+          color: strokeColor,
+          width: this.strokeWidth
+        },
+        fill: {
+          color: fillColor
+        },
+        icon: {
+          src: icon
+        }
+      };
+      feature.set('_style', igoStyleObject);
+
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',
@@ -182,6 +235,30 @@ export class DrawStyleService {
       // if feature is a point, a linestring or a polygon
     } else {
       this.offsetY = labelsAreOffset ? -15 : 0;
+
+      textIgoStyleObject.offsetY = this.offsetY;
+      const igoStyleObject = {
+        text: textIgoStyleObject,
+        stroke: {
+          color: strokeColor,
+          width: this.strokeWidth
+        },
+        fill: {
+          color: fillColor
+        },
+        circle: {
+          radius: 5,
+          stroke: {
+            color: strokeColor,
+            width: this.strokeWidth
+          },
+          fill: {
+            color: fillColor
+          }
+        }
+      };
+      feature.set('_style', igoStyleObject);
+
       style = new OlStyle.Style({
         text: new OlStyle.Text({
           text: labelsAreShown ? feature.get('draw') : '',

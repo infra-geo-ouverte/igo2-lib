@@ -9,9 +9,9 @@ import {
 } from '../../feature/shared';
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { IgoMap } from '../../map/shared/map';
 
 import { createOverlayLayer } from './overlay.utils';
+import { MapBase } from '../../map/shared/map.abstract';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -19,11 +19,11 @@ import { createOverlayLayer } from './overlay.utils';
  * a defautl style based on the geometry type of the features it contains.
  * @todo Enhance that by using a FeatureStore and strategies.
  */
-export class Overlay {
+export class Overlay<T extends MapBase = MapBase> {
   /**
    * The map to add the layer to
    */
-  private map: IgoMap;
+  private map: T;
 
   /**
    * Overlay layer
@@ -37,7 +37,7 @@ export class Overlay {
     return this.layer.dataSource as FeatureDataSource;
   }
 
-  constructor(map?: IgoMap) {
+  constructor(map?: T) {
     this.layer = createOverlayLayer();
     this.setMap(map);
   }
@@ -46,7 +46,7 @@ export class Overlay {
    * Bind this to a map and add the overlay layer to that map
    * @param map Map
    */
-  setMap(map: IgoMap) {
+  setMap(map: T) {
     if (map === undefined) {
       if (this.map !== undefined) {
         this.map.ol.removeLayer(this.layer.ol);
@@ -133,7 +133,7 @@ export class Overlay {
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     this.dataSource.ol.addFeatures(olFeatures);
-    moveToOlFeatures(this.map, olFeatures, motion);
+    moveToOlFeatures(this.map.viewController, olFeatures, motion);
   }
 
   /**
@@ -152,7 +152,9 @@ export class Overlay {
     features.forEach((feature: Feature) => {
       if (feature.meta) {
         if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
-          this.removeOlFeature(this.dataSource.ol.getFeatureById(feature.meta.id));
+          this.removeOlFeature(
+            this.dataSource.ol.getFeatureById(feature.meta.id)
+          );
         }
       }
     });

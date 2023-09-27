@@ -27,7 +27,6 @@ import { WorkspaceState } from '@igo2/integration';
   styleUrls: ['./workspace.component.scss']
 })
 export class AppWorkspaceComponent implements OnInit {
-
   public workspacePaginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
@@ -63,7 +62,7 @@ export class AppWorkspaceComponent implements OnInit {
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
-    public workspaceState: WorkspaceState,
+    public workspaceState: WorkspaceState
   ) {}
 
   ngOnInit() {
@@ -85,7 +84,6 @@ export class AppWorkspaceComponent implements OnInit {
             });
           }
           return entity;
-
         })
       );
 
@@ -93,7 +91,7 @@ export class AppWorkspaceComponent implements OnInit {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -101,46 +99,6 @@ export class AppWorkspaceComponent implements OnInit {
           })
         );
       });
-
-    // const wmsDataSourceOptions = {
-    //   type: 'wms',
-    //   url: 'https://ahocevar.com/geoserver/wms',
-    //   urlWfs: 'https://ahocevar.com/geoserver/wfs',
-    //   params: {
-    //     LAYERS: 'water_areas',
-    //     VERSION: '1.3.0'
-    //   },
-    //   paramsWFS: {
-    //     featureTypes: 'water_areas',
-    //     fieldNameGeometry: 'the_geom',
-    //     maxFeatures: 10000,
-    //     version: '1.1.0',
-    //     outputFormat: 'application/json',
-    //     outputFormatDownload: 'application/vnd.google-earth.kml+xml'
-    //   },
-    //   sourceFields: [
-    //     {name: 'waterway', alias: 'Chemin d eau'},
-    //     {name: 'osm_id'},
-    //     {name: 'landuse'}
-    //   ],
-    //   ogcFilters: {
-    //     enabled: true,
-    //     editable: true
-    //   },
-    //   serverType: 'geoserver'
-    // };
-    //
-    // this.dataSourceService
-    //   .createAsyncDataSource(wmsDataSourceOptions as OgcFilterableDataSourceOptions)
-    //   .subscribe(dataSource => {
-    //     const layer = {
-    //       optionsFromCapabilities: true,
-    //       title: 'WMS Geoserver filterable ',
-    //       visible: true,
-    //       source: dataSource
-    //     };
-    //     this.map.addLayer(this.layerService.createLayer(layer));
-    //   });
 
     const wfsDataSourceOptions: WFSDataSourceOptions = {
       type: 'wfs',
@@ -160,7 +118,7 @@ export class AppWorkspaceComponent implements OnInit {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer = {
           title: 'Simple WFS ',
           maxResolution: 3000,

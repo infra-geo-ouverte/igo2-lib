@@ -52,7 +52,11 @@ export class AuthService {
     return this.loginCall(body, myHeader);
   }
 
-  loginWithToken(token: string, type: string, infosUser?: IInfosUser): Observable<void> {
+  loginWithToken(
+    token: string,
+    type: string,
+    infosUser?: IInfosUser
+  ): Observable<void> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
@@ -171,7 +175,7 @@ export class AuthService {
             this.languageService.setLanguage(tokenDecoded.user.locale);
           }
           if (tokenDecoded.user.isExpired) {
-              this.messageService.alert('igo.auth.error.Password expired');
+            this.messageService.alert('igo.auth.error.Password expired');
           }
         }
         this.authenticate$.next(true);

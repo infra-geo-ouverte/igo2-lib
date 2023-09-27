@@ -1,27 +1,15 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
-  "plugins": ["unused-imports"],
+  "ignorePatterns": ["packages/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
-      "parserOptions": {
-        "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.e2e.json"
-        ],
-        "createDefaultProgram": true
-      },
+      "files": ["*.ts"],
+      "plugins": ["unused-imports"],
       "extends": [
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        // https://eslint.org/docs/rules/
         "arrow-spacing": "error",
         "max-len": [
           "error",
@@ -36,7 +24,7 @@
         ],
         "unused-imports/no-unused-imports": "error",
         "no-multi-spaces": "error",
-        "eqeqeq": ["error", "always"],
+        "eqeqeq": ["error", "smart"],
         "semi": ["error", "always"],
         "no-trailing-spaces": "error",
         "no-multiple-empty-lines": "error",
@@ -61,12 +49,8 @@
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended"
-      ],
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }
   ]

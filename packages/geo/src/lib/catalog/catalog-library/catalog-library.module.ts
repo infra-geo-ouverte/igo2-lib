@@ -7,7 +7,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoListModule } from '@igo2/common';
 
-import { CatalogLibaryComponent, } from './catalog-library.component';
+import { CatalogLibaryComponent } from './catalog-library.component';
 import { CatalogLibaryItemComponent } from './catalog-library-item.component';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
 
@@ -41,10 +41,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatAutocompleteModule,
     MatDialogModule
   ],
-  exports: [
-    CatalogLibaryComponent,
-    AddCatalogDialogComponent
-  ],
+  exports: [CatalogLibaryComponent, AddCatalogDialogComponent],
   declarations: [
     CatalogLibaryComponent,
     CatalogLibaryItemComponent,

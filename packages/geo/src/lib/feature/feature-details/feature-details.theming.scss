@@ -1,11 +1,16 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-feature-details-theming($theme) {
-  $is-dark: map-get($theme, is-dark);
-  $foreground: map-get($theme, foreground);
-  $background: map-get($theme, background);
+  $is-dark: map.get($theme, is-dark);
+  $foreground: map.get($theme, foreground);
+  $background: map.get($theme, background);
 
   igo-feature-details > table.igo-striped tbody tr:nth-child(odd) {
-    background-color: mat.get-color-from-palette($background, if($is-dark, app-bar, status-bar));
+    background-color: mat.get-color-from-palette(
+      $background,
+      if($is-dark, app-bar, status-bar)
+    );
     color: black;
   }
-
 }

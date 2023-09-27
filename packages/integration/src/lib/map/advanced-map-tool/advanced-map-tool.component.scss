@@ -1,10 +1,10 @@
 $slide-toggle-width: 60px;
 
-.nameOfTool{
-    text-align: center;
-    font-weight: bold;
-    font-size: small;
-    margin: 15px 10px 0px;
+.nameOfTool {
+  text-align: center;
+  font-weight: bold;
+  font-size: small;
+  margin: 15px 10px 0px;
 }
 
 .advanced-tool-line {
@@ -13,13 +13,18 @@ $slide-toggle-width: 60px;
 }
 
 .geolocation-slide-toggle-container {
-  overflow-x: hidden;
+  margin-top: 8px;
 
   mat-slide-toggle {
     width: 100%;
-    margin: 10px;
+    padding: 0 8px;
 
-    ::ng-deep .mat-slide-toggle-content {
+    ::ng-deep .mdc-form-field {
+      width: 100%;
+    }
+
+    ::ng-deep .mdc-label {
+      margin-left: 0;
       width: calc(100% - #{$slide-toggle-width});
     }
   }

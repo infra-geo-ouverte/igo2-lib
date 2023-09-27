@@ -1,4 +1,8 @@
-import { UntypedFormControl, UntypedFormGroup, ValidatorFn } from '@angular/forms';
+import {
+  UntypedFormControl,
+  UntypedFormGroup,
+  ValidatorFn
+} from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 export interface Form {
@@ -20,7 +24,7 @@ export interface FormFieldGroup extends FormFieldGroupConfig {
 
 export interface FormFieldGroupOptions {
   validator?: ValidatorFn;
-  errors?: {[key: string]: string};
+  errors?: { [key: string]: string };
 }
 
 export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
@@ -30,10 +34,19 @@ export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
   type?: string;
   options?: FormFieldOptions;
   inputs?: T;
-  subscribers?: {[key: string]: ({field: FormField, control: FormControl}) => void};
+  subscribers?: FormFieldSubscribers;
 }
 
-export interface FormField<T extends FormFieldInputs = FormFieldInputs> extends FormFieldConfig<T> {
+export type FormFieldSubscribers = { [key: string]: FormFieldSubscriber };
+type FormFieldSubscriber = (options: FormFieldSubscriberOptions) => void;
+
+interface FormFieldSubscriberOptions {
+  field: FormField;
+  control: UntypedFormControl;
+}
+
+export interface FormField<T extends FormFieldInputs = FormFieldInputs>
+  extends FormFieldConfig<T> {
   control: UntypedFormControl;
 }
 
@@ -42,7 +55,7 @@ export interface FormFieldOptions {
   disabled?: boolean;
   visible?: boolean;
   cols?: number;
-  errors?: {[key: string]: string};
+  errors?: { [key: string]: string };
   disableSwitch?: boolean;
 }
 

@@ -73,10 +73,24 @@ import { MapProximityToolComponent } from './map-proximity-tool/map-proximity-to
     MatTooltipModule,
     IgoEntityTableModule
   ],
-  declarations: [ AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
-    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent, AdvancedSwipeComponent, AdvancedCoordinatesComponent],
-  exports: [AdvancedMapToolComponent, MapProximityToolComponent, MapToolComponent,
-    MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
+  declarations: [
+    AdvancedMapToolComponent,
+    MapProximityToolComponent,
+    MapToolComponent,
+    MapToolsComponent,
+    MapDetailsToolComponent,
+    MapLegendToolComponent,
+    AdvancedSwipeComponent,
+    AdvancedCoordinatesComponent
+  ],
+  exports: [
+    AdvancedMapToolComponent,
+    MapProximityToolComponent,
+    MapToolComponent,
+    MapToolsComponent,
+    MapDetailsToolComponent,
+    MapLegendToolComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMapModule {

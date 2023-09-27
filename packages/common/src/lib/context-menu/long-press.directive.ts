@@ -1,6 +1,11 @@
-import { Directive, HostListener, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Directive,
+  HostListener,
+  Output,
+  EventEmitter,
+  Input
+} from '@angular/core';
 import { userAgent } from '@igo2/utils';
-
 
 /**
  * IgoLongPress trigger longpress event after a define duration.
@@ -17,8 +22,7 @@ export class LongPressDirective {
   @Input() onlyIOS: boolean = true;
   @Output() longpress = new EventEmitter();
 
-  constructor() { }
-
+  constructor() {}
 
   @HostListener('touchstart', ['$event'])
   public touchstart(e: TouchEvent) {
@@ -42,7 +46,6 @@ export class LongPressDirective {
   public touchend() {
     this.touchEnd();
   }
-
 
   private touchEnd() {
     clearTimeout(this.touchTimeout);

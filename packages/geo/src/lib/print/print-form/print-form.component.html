@@ -1,137 +1,217 @@
 <form class="igo-form" [formGroup]="form">
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{ 'igo.geo.printForm.title' | translate }}</mat-label>
       <input
         matInput
         formControlName="title"
-        placeholder="{{'igo.geo.printForm.title' | translate}}">
-        <mat-error *ngIf="titleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
-          column: 'igo.geo.printForm.title' | translate, 
-          value: 130 } }}</mat-error>
+        placeholder="{{ 'igo.geo.printForm.title' | translate }}"
+      />
+      <mat-error *ngIf="titleField.errors?.maxlength">{{
+        'igo.geo.formValidation.maxLength'
+          | translate
+            : {
+                column: 'igo.geo.printForm.title' | translate,
+                value: 130
+              }
+      }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{ 'igo.geo.printForm.subtitle' | translate }}</mat-label>
       <input
         matInput
         formControlName="subtitle"
-        placeholder="{{'igo.geo.printForm.subtitle' | translate}}">
-        <mat-error *ngIf="subtitleField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
-          column: 'igo.geo.printForm.subtitle' | translate, 
-          value: 120 } }}</mat-error>
+        placeholder="{{ 'igo.geo.printForm.subtitle' | translate }}"
+      />
+      <mat-error *ngIf="subtitleField.errors?.maxlength">{{
+        'igo.geo.formValidation.maxLength'
+          | translate
+            : {
+                column: 'igo.geo.printForm.subtitle' | translate,
+                value: 120
+              }
+      }}</mat-error>
     </mat-form-field>
   </div>
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{ 'igo.geo.printForm.comment' | translate }}</mat-label>
       <input
         matInput
         formControlName="comment"
-        placeholder="{{'igo.geo.printForm.comment' | translate}}">
-        <mat-error *ngIf="commentField.errors?.maxlength">{{'igo.geo.formValidation.maxLength' | translate: { 
-          column: 'igo.geo.printForm.comment' | translate, 
-          value: maxLength } }}</mat-error>
+        placeholder="{{ 'igo.geo.printForm.comment' | translate }}"
+      />
+      <mat-error *ngIf="commentField.errors?.maxlength">{{
+        'igo.geo.formValidation.maxLength'
+          | translate
+            : {
+                column: 'igo.geo.printForm.comment' | translate,
+                value: maxLength
+              }
+      }}</mat-error>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container">
-    <div class="print-slide-toggle-container mat-typography">
+  <div class="igo-input-container slide-toggle-container">
+    <div class="print-slide-toggle-container">
       <mat-slide-toggle
         class="print-option"
         formControlName="showProjection"
-        [labelPosition]="'before'">
-        {{'igo.geo.printForm.showProjection' | translate}}
+        [labelPosition]="'before'"
+      >
+        {{ 'igo.geo.printForm.showProjection' | translate }}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
         formControlName="showScale"
-        [labelPosition]="'before'">
-        {{'igo.geo.printForm.showScale' | translate}}
+        [labelPosition]="'before'"
+      >
+        {{ 'igo.geo.printForm.showScale' | translate }}
       </mat-slide-toggle>
       <mat-slide-toggle
         class="print-option"
         formControlName="doZipFile"
         [labelPosition]="'before'"
-        [style.display]="isPrintService ? 'none' : ''">
-        {{'igo.geo.printForm.doZipFile' | translate}}
+        [style.display]="isPrintService ? 'none' : ''"
+      >
+        {{ 'igo.geo.printForm.doZipFile' | translate }}
       </mat-slide-toggle>
     </div>
   </div>
 
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{
+        'igo.geo.printForm.legendPosition' | translate
+      }}</mat-label>
       <mat-select
         formControlName="legendPosition"
-        placeholder="{{'igo.geo.printForm.legendPosition' | translate}}">
-        <mat-option *ngFor="let legendPosition of legendPositions | keyvalue " [value]="legendPosition.key">
-          <ng-container *ngIf="!['newpage', 'newimage'].includes(legendPosition.value)">
-            {{'igo.geo.printForm.legendPositions.' + legendPosition.value | translate}}
+        placeholder="{{ 'igo.geo.printForm.legendPosition' | translate }}"
+      >
+        <mat-option
+          *ngFor="let legendPosition of legendPositions | keyvalue"
+          [value]="legendPosition.key"
+        >
+          <ng-container
+            *ngIf="!['newpage', 'newimage'].includes(legendPosition.value)"
+          >
+            {{
+              'igo.geo.printForm.legendPositions.' + legendPosition.value
+                | translate
+            }}
           </ng-container>
 
-          <ng-container *ngIf="['newpage', 'newimage'].includes(legendPosition.value)">
-            {{ ((outputFormat === 'Pdf') ? 'igo.geo.printForm.legendPositions.newpage' : 
-            'igo.geo.printForm.legendPositions.newimage') | translate}}
+          <ng-container
+            *ngIf="['newpage', 'newimage'].includes(legendPosition.value)"
+          >
+            {{
+              (outputFormat === 'Pdf'
+                ? 'igo.geo.printForm.legendPositions.newpage'
+                : 'igo.geo.printForm.legendPositions.newimage'
+              ) | translate
+            }}
           </ng-container>
         </mat-option>
-
       </mat-select>
     </mat-form-field>
   </div>
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-select (selectionChange)="toggleImageSaveProp()"
+      <mat-label>{{ 'igo.geo.printForm.outputFormat' | translate }}</mat-label>
+      <mat-select
+        (selectionChange)="toggleImageSaveProp()"
         formControlName="outputFormat"
-        placeholder="{{'igo.geo.printForm.outputFormat' | translate}}">
-        <mat-option *ngFor="let outputFormat of outputFormats | keyvalue " [value]="outputFormat.key">
-            {{outputFormat.value}}
+        placeholder="{{ 'igo.geo.printForm.outputFormat' | translate }}"
+      >
+        <mat-option
+          *ngFor="let outputFormat of outputFormats | keyvalue"
+          [value]="outputFormat.key"
+        >
+          {{ outputFormat.value }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
+  <div
+    class="igo-input-container"
+    [style.display]="isPrintService ? 'block' : 'none'"
+  >
     <mat-form-field>
-      <mat-select (selectionChange)="changeCommentLength()"
+      <mat-label>{{ 'igo.geo.printForm.paperFormat' | translate }}</mat-label>
+      <mat-select
+        (selectionChange)="changeCommentLength()"
         formControlName="paperFormat"
-        placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
-        <mat-option *ngFor="let paperFormat of paperFormats | keyvalue " [value]="paperFormat.key">
-          {{('igo.geo.printForm.paperFormats.' + paperFormat.value) | translate}}
+        placeholder="{{ 'igo.geo.printForm.paperFormat' | translate }}"
+      >
+        <mat-option
+          *ngFor="let paperFormat of paperFormats | keyvalue"
+          [value]="paperFormat.key"
+        >
+          {{
+            'igo.geo.printForm.paperFormats.' + paperFormat.value | translate
+          }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container" [style.display]="isPrintService ? 'none' : 'block'">
+  <div
+    class="igo-input-container"
+    [style.display]="isPrintService ? 'none' : 'block'"
+  >
     <mat-form-field>
+      <mat-label>{{ 'igo.geo.printForm.imageFormat' | translate }}</mat-label>
       <mat-select
         formControlName="imageFormat"
-        placeholder="{{'igo.geo.printForm.imageFormat' | translate}}">
-        <mat-option *ngFor="let imageFormat of imageFormats | keyvalue " [value]="imageFormat.key">
-          {{imageFormat.value}}
+        placeholder="{{ 'igo.geo.printForm.imageFormat' | translate }}"
+      >
+        <mat-option
+          *ngFor="let imageFormat of imageFormats | keyvalue"
+          [value]="imageFormat.key"
+        >
+          {{ imageFormat.value }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container" style="display: none;">
+  <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{ 'igo.geo.printForm.resolution' | translate }}</mat-label>
       <mat-select
         formControlName="resolution"
-        placeholder="{{'igo.geo.printForm.resolution' | translate}}">
-        <mat-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
-          {{resolution.value + ' PPI'}}
+        placeholder="{{ 'igo.geo.printForm.resolution' | translate }}"
+      >
+        <mat-option
+          *ngFor="let resolution of resolutions | keyvalue"
+          [value]="resolution.key"
+        >
+          {{ resolution.value + ' PPI' }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
+  <div
+    class="igo-input-container"
+    [style.display]="isPrintService ? 'block' : 'none'"
+  >
     <mat-form-field>
-      <mat-select (selectionChange)="changeCommentLength()"
+      <mat-label>{{ 'igo.geo.printForm.orientation' | translate }}</mat-label>
+      <mat-select
+        (selectionChange)="changeCommentLength()"
         formControlName="orientation"
-        placeholder="{{'igo.geo.printForm.orientation' | translate}}">
-        <mat-option *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
-          {{('igo.geo.printForm.' + orientation.value) | translate}}
+        placeholder="{{ 'igo.geo.printForm.orientation' | translate }}"
+      >
+        <mat-option
+          *ngFor="let orientation of orientations | keyvalue"
+          [value]="orientation.key"
+        >
+          {{ 'igo.geo.printForm.' + orientation.value | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -142,9 +222,9 @@
       mat-raised-button
       type="button"
       [disabled]="!form.valid || (disabled$ | async)"
-      (click)="handleFormSubmit(form.value, form.valid)">
-      {{'igo.geo.printForm.saveBtn' | translate}}
+      (click)="handleFormSubmit(form.value, form.valid)"
+    >
+      {{ 'igo.geo.printForm.saveBtn' | translate }}
     </button>
   </div>
-
 </form>

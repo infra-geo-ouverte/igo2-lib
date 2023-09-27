@@ -1,15 +1,10 @@
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Workspace,
-  WorkspaceOptions,
-  EntityRecord
-} from '@igo2/common';
+import { Workspace, WorkspaceOptions, EntityRecord } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 
-import { ImageLayer, VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
-import { EditionWorkspaceService } from './edition-workspace.service';
+import { ImageLayer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 import { DrawControl } from '../../geometry';
 import { createInteractionStyle, GeometryType } from '../../draw';
@@ -23,7 +18,7 @@ import * as OlStyle from 'ol/style';
 import OlModify from 'ol/interaction/Modify';
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
-import { FeatureDataSource } from '../../datasource/shared';
+import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -31,12 +26,17 @@ export interface EditionWorkspaceOptions extends WorkspaceOptions {
 }
 
 export class EditionWorkspace extends Workspace {
+  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(
+    true
+  );
 
-  readonly inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  get layer(): ImageLayer | VectorLayer {
+    return this.options.layer;
+  }
 
-  get layer(): ImageLayer | VectorLayer { return this.options.layer; }
-
-  get map(): IgoMap { return this.options.map; }
+  get map(): IgoMap {
+    return this.options.map;
+  }
 
   private drawControl: DrawControl;
   private drawEnd$$: Subscription;
@@ -78,13 +78,19 @@ export class EditionWorkspace extends Workspace {
   public strokeWidth: number;
 
   constructor(
-    protected options: EditionWorkspaceOptions,
-    private editionWorkspaceService: EditionWorkspaceService,
     private dialog: MatDialog,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private adding$: BehaviorSubject<boolean>,
+    private _deleteFeature: (workspace: EditionWorkspace, url: string) => void,
+    private getDomainValues: (relation: RelationOptions) => Observable<any>,
+    protected options: EditionWorkspaceOptions
+  ) {
     super(options);
     this.map.viewController.resolution$.subscribe((mapResolution) => {
-      if (mapResolution > this.layer.minResolution && mapResolution < this.layer.maxResolution) {
+      if (
+        mapResolution > this.layer.minResolution &&
+        mapResolution < this.layer.maxResolution
+      ) {
         this.inResolutionRange$.next(true);
       } else {
         this.inResolutionRange$.next(false);
@@ -106,7 +112,7 @@ export class EditionWorkspace extends Workspace {
       browsable: false,
       workspace: {
         enabled: false
-      },
+      }
     });
   }
 
@@ -118,21 +124,26 @@ export class EditionWorkspace extends Workspace {
     setTimeout(() => {
       const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
         disableClose: false,
-        data: {type: 'delete'}
-    });
+        data: { type: 'delete' }
+      });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result === false) {
           let id, url;
           const baseUrl = workspace.layer.dataSource.options.edition.baseUrl;
-          const deleteUrl = workspace.layer.dataSource.options.edition.deleteUrl;
+          const deleteUrl =
+            workspace.layer.dataSource.options.edition.deleteUrl;
           if (baseUrl.length) {
-            url = this.configService.getConfig('edition.url') ?
-              this.configService.getConfig('edition.url') + baseUrl + '?' + deleteUrl :
-              baseUrl + '?' + deleteUrl;
+            url = this.configService.getConfig('edition.url')
+              ? this.configService.getConfig('edition.url') +
+                baseUrl +
+                '?' +
+                deleteUrl
+              : baseUrl + '?' + deleteUrl;
           } else {
-            url = this.configService.getConfig('edition.url') ?
-              this.configService.getConfig('edition.url') + deleteUrl : deleteUrl;
+            url = this.configService.getConfig('edition.url')
+              ? this.configService.getConfig('edition.url') + deleteUrl
+              : deleteUrl;
           }
 
           for (const column of workspace.meta.tableTemplate.columns) {
@@ -148,7 +159,7 @@ export class EditionWorkspace extends Workspace {
           }
           if (url) {
             url += id;
-            this.editionWorkspaceService.deleteFeature(workspace, url);
+            this.deleteFeature(workspace, url);
           }
         }
       });
@@ -160,11 +171,10 @@ export class EditionWorkspace extends Workspace {
     let id;
     let find = false;
     const editionOpt = workspace.layer.dataSource.options.edition;
-    for (const column of workspace.meta.tableTemplate.columns ) {
-
+    for (const column of workspace.meta.tableTemplate.columns) {
       // Update domain list
       if (column.type === 'list' || column.type === 'autocomplete') {
-        this.editionWorkspaceService.getDomainValues(column.relation).subscribe(result => {
+        this.getDomainValues(column.relation).subscribe((result) => {
           column.domainValues = result;
         });
       }
@@ -183,7 +193,9 @@ export class EditionWorkspace extends Workspace {
       }
     }
     if (id) {
-      feature.original_properties = JSON.parse(JSON.stringify(feature.properties));
+      feature.original_properties = JSON.parse(
+        JSON.stringify(feature.properties)
+      );
       feature.original_geometry = feature.geometry;
       feature.idkey = id;
       workspace.entityStore.state.updateAll({ edit: false });
@@ -193,7 +205,7 @@ export class EditionWorkspace extends Workspace {
       // Only for edition with it's own geometry
       if (!feature.newFeature && editionOpt.geomType) {
         feature.newFeature = true;
-        this.editionWorkspaceService.adding$.next(true);
+        this.adding$.next(true);
         workspace.entityStore.state.updateAll({ newFeature: false });
         workspace.entityStore.stateView.filter(this.newFeaturefilterClauseFunc);
         if (editionOpt.addWithDraw) {
@@ -201,7 +213,11 @@ export class EditionWorkspace extends Workspace {
           this.onGeometryTypeChange(geometryType, feature, workspace);
         } else {
           workspace.entityStore.insert(feature);
-          workspace.entityStore.state.update(feature, { newFeature: true }, true);
+          workspace.entityStore.state.update(
+            feature,
+            { newFeature: true },
+            true
+          );
         }
       }
     }
@@ -214,12 +230,20 @@ export class EditionWorkspace extends Workspace {
    * @param strokeWidth the stroke width
    * @returns a Draw Control
    */
-  createDrawControl(fillColor?: string, strokeColor?: string, strokeWidth?: number) {
+  createDrawControl(
+    fillColor?: string,
+    strokeColor?: string,
+    strokeWidth?: number
+  ) {
     const drawControl = new DrawControl({
       geometryType: undefined,
       drawingLayerSource: this.olDrawingLayerSource,
       drawingLayerStyle: new OlStyle.Style({}),
-      interactionStyle: createInteractionStyle(fillColor, strokeColor, strokeWidth),
+      interactionStyle: createInteractionStyle(
+        fillColor,
+        strokeColor,
+        strokeWidth
+      )
     });
 
     return drawControl;
@@ -229,10 +253,14 @@ export class EditionWorkspace extends Workspace {
    * Called when the user selects a new geometry type
    * @param geometryType the geometry type selected by the user
    */
-  onGeometryTypeChange(geometryType: Type, feature, workspace: EditionWorkspace) {
-      this.drawControl.setGeometryType(geometryType);
-      this.toggleDrawControl(feature, workspace);
-    }
+  onGeometryTypeChange(
+    geometryType: Type,
+    feature,
+    workspace: EditionWorkspace
+  ) {
+    this.drawControl.setGeometryType(geometryType);
+    this.toggleDrawControl(feature, workspace);
+  }
 
   /**
    * Activate the correct control
@@ -261,9 +289,11 @@ export class EditionWorkspace extends Workspace {
    * Activate a given control
    */
   private activateDrawControl(feature, workspace: EditionWorkspace) {
-    this.drawEnd$$ = this.drawControl.end$.subscribe((olGeometry: OlGeometry) => {
-      this.addFeatureToStore(feature, workspace, olGeometry);
-    });
+    this.drawEnd$$ = this.drawControl.end$.subscribe(
+      (olGeometry: OlGeometry) => {
+        this.addFeatureToStore(feature, workspace, olGeometry);
+      }
+    );
 
     this.drawControl.setOlMap(this.map.ol, true);
   }
@@ -273,7 +303,11 @@ export class EditionWorkspace extends Workspace {
    * will trigger and add the feature to the workspace store.
    * @internal
    */
-  private addFeatureToStore(feature, workspace: EditionWorkspace, olGeometry?: OlGeometry) {
+  private addFeatureToStore(
+    feature,
+    workspace: EditionWorkspace,
+    olGeometry?: OlGeometry
+  ) {
     const projection = this.map.ol.getView().getProjection();
     let geometry = feature.geometry;
 
@@ -316,7 +350,11 @@ export class EditionWorkspace extends Workspace {
   /**
    * Create a modify interaction to allow a geometry change one feature at the time (drag and drop)
    */
-  createModifyInteraction(olFeature: OlFeature<OlGeometry>, feature, workspace: EditionWorkspace) {
+  createModifyInteraction(
+    olFeature: OlFeature<OlGeometry>,
+    feature,
+    workspace: EditionWorkspace
+  ) {
     this.map.ol.removeInteraction(this.modify);
     const olCollection = new Collection([olFeature], { unique: true });
     this.modify = new OlModify({
@@ -324,7 +362,7 @@ export class EditionWorkspace extends Workspace {
     });
 
     this.map.ol.addInteraction(this.modify);
-    olCollection.forEach(feature => {
+    olCollection.forEach((feature) => {
       feature.setStyle(this.modifyStyle);
     });
 

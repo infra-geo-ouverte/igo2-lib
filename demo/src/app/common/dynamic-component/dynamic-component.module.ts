@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 
 import { IgoDynamicComponentModule } from '@igo2/common';
 
@@ -10,19 +8,19 @@ import {
   AppDynamicComponentComponent
 } from './dynamic-component.component';
 import { AppDynamicComponentRoutingModule } from './dynamic-component-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-    declarations: [
-        AppSalutationComponent,
-        AppDynamicComponentComponent,
-        AppExplanationComponent
-    ],
-    imports: [
-        AppDynamicComponentRoutingModule,
-        MatButtonModule,
-        MatCardModule,
-        IgoDynamicComponentModule
-    ],
-    exports: [AppDynamicComponentComponent]
+  declarations: [
+    AppSalutationComponent,
+    AppDynamicComponentComponent,
+    AppExplanationComponent
+  ],
+  imports: [
+    SharedModule,
+    AppDynamicComponentRoutingModule,
+    IgoDynamicComponentModule
+  ],
+  exports: [AppDynamicComponentComponent]
 })
 export class AppDynamicComponentModule {}

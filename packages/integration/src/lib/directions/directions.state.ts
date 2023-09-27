@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { AnyLayerOptions, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
+import {
+  AnyLayerOptions,
+  StopsStore,
+  StopsFeatureStore,
+  RoutesFeatureStore,
+  StepFeatureStore
+} from '@igo2/geo';
 import { Subject } from 'rxjs';
 import { MapState } from '../map/map.state';
 
@@ -11,7 +17,6 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
-
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   /**
@@ -22,34 +27,43 @@ export class DirectionState {
   /**
    * Store that holds the driving stops as feature
    */
-  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
-    map: this.mapState.map
-  });
+  public stopsFeatureStore: StopsFeatureStore;
 
   /**
    * Store that holds the driving route as feature
    */
-  public routesFeatureStore: RoutesFeatureStore = new RoutesFeatureStore([], {
-    map: this.mapState.map
-  });
+  public routesFeatureStore: RoutesFeatureStore;
 
-  public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {
-    map: this.mapState.map
-  });
+  public stepFeatureStore: StepFeatureStore;
 
   public debounceTime: number = 200;
 
   constructor(private mapState: MapState) {
+    this.stopsFeatureStore = new StopsFeatureStore([], {
+      map: this.mapState.map
+    });
+
+    this.routesFeatureStore = new RoutesFeatureStore([], {
+      map: this.mapState.map
+    });
+
+    this.stepFeatureStore = new StepFeatureStore([], {
+      map: this.mapState.map
+    });
 
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {
         if (this.stopsFeatureStore.layer?.options) {
-          (this.stopsFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+          (
+            this.stopsFeatureStore.layer.options as AnyLayerOptions
+          ).showInLayerList = !empty;
         }
       });
       this.routesFeatureStore.empty$.subscribe((empty) => {
         if (this.routesFeatureStore.layer?.options) {
-          (this.routesFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+          (
+            this.routesFeatureStore.layer.options as AnyLayerOptions
+          ).showInLayerList = !empty;
         }
       });
     });
@@ -64,5 +78,4 @@ export class DirectionState {
       }
     });
   }
-
 }

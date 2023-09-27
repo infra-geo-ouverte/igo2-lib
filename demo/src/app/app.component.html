@@ -1,16 +1,27 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-toolbar color="primary" class="example-toolbar">
-    <button mat-icon-button (click)="snav.toggle()"><mat-icon svgIcon="menu"></mat-icon></button>
-    <h1>{{title}}</h1>
-    <h5>{{version.lib}}</h5>
+  <mat-toolbar color="primary" class="example-toolbar mat-elevation-z6">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon svgIcon="menu"></mat-icon>
+    </button>
+    <h1>{{ title }}</h1>
+    <h5 class="mat-subtitle-1 m-b-0">{{ version.lib }}</h5>
   </mat-toolbar>
 
-  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-    <mat-sidenav #snav opened="true" [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+  <mat-sidenav-container
+    class="example-sidenav-container"
+    [style.marginTop.px]="mobileQuery.matches ? 56 : 0"
+  >
+    <mat-sidenav
+      #snav
+      opened="true"
+      [mode]="mobileQuery.matches ? 'over' : 'side'"
+      [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56"
+    >
       <mat-nav-list>
         <a mat-list-item routerLink=".">Home</a>
 
-        <hr>
+        <hr />
 
         <a mat-list-item routerLink="activity">Activity</a>
         <a mat-list-item routerLink="config">Config</a>
@@ -19,11 +30,11 @@
         <a mat-list-item routerLink="message">Message</a>
         <a mat-list-item routerLink="request">Request</a>
 
-        <hr>
+        <hr />
 
         <a mat-list-item routerLink="auth-form">Authentification</a>
 
-        <hr>
+        <hr />
 
         <a mat-list-item routerLink="action">Action</a>
         <a mat-list-item routerLink="dynamic-component">Dynamic Component</a>
@@ -34,7 +45,7 @@
         <a mat-list-item routerLink="tool">Tool</a>
         <a mat-list-item routerLink="widget">Widget</a>
 
-        <hr>
+        <hr />
 
         <a mat-list-item routerLink="simple-map">Simple map</a>
         <a mat-list-item routerLink="layer">Layer</a>
@@ -56,16 +67,14 @@
         <a mat-list-item routerLink="spatial-filter">Spatial filter</a>
         <a mat-list-item routerLink="workspace">Workspace</a>
 
-        <hr>
+        <hr />
 
         <a mat-list-item routerLink="context">Context</a>
-
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
-
   </mat-sidenav-container>
 </div>

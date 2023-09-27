@@ -1,53 +1,76 @@
-.nameOfTool{
+$slide-toggle-width: 60px;
+
+:host {
+  .nameOfTool {
     text-align: center;
     font-weight: bold;
     font-size: small;
     margin: 15px 10px 0px;
-}
+  }
 
-.igo-swipe-select-container {
+  .igo-swipe-select-container {
     padding: 10px;
-  
+
     mat-form-field {
       width: 100%;
     }
   }
-  
-.igo-form {
-padding: 1px 5px;
-width: 100%
-}
 
-.swipe-toggle{
-padding: 10px 5px 35px;
-}
+  .igo-form {
+    padding: 1px 5px;
+    width: 100%;
+  }
 
-.map-empty, .search-tool, .catalog-tool, .context-tool {
-margin: 5px;
-}
+  mat-slide-toggle {
+    width: 100%;
+    padding: 0 8px;
 
-.map-empty {
-padding: 10px;
-text-align: justify;
-}
+    ::ng-deep .mdc-form-field {
+      width: 100%;
+    }
 
-.search-tool, .catalog-tool, .context-tool {
-cursor: pointer;
-}
+    ::ng-deep .mdc-label {
+      margin-left: 0;
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
 
-mat-list mat-list-item h4 {
-font-weight: bold;
-}
+  .map-empty,
+  .search-tool,
+  .catalog-tool,
+  .context-tool {
+    margin: 5px;
+  }
 
-mat-list-item ::ng-deep .mat-list-text {
-font-size: smaller;
-}
+  .map-empty {
+    padding: 10px;
+    text-align: justify;
+  }
 
-mat-list.mat-list-base mat-list-item.mat-list-item ::ng-deep div.mat-list-item-content div.mat-list-text {
-padding-left: 15px;
-}
+  .search-tool,
+  .catalog-tool,
+  .context-tool {
+    cursor: pointer;
+  }
 
-.advanced-tool-line {
-height: 2px;
-background-color: gray;
+  mat-list mat-list-item h4 {
+    font-weight: bold;
+  }
+
+  mat-list-item ::ng-deep .mdc-list-item__primary-text {
+    font-size: smaller;
+  }
+
+  mat-list.mat-mdc-list-base
+    mat-list-item.mat-mdc-list-item
+    ::ng-deep
+    div.mdc-list-item__content
+    div.mdc-list-item__primary-text {
+    padding-left: 15px;
+  }
+
+  .advanced-tool-line {
+    height: 2px;
+    background-color: gray;
+  }
 }

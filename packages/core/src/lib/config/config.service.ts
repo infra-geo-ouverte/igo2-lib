@@ -1,5 +1,5 @@
-import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -7,20 +7,60 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { ConfigOptions } from './config.interface';
 import { version } from './version';
+import {
+  ALTERNATE_CONFIG_FROM_DEPRECATION,
+  CONFIG_DEPRECATED
+} from './config-deprecated';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
   private config: object = {};
+  private httpClient: HttpClient;
+  private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
-  constructor(private injector: Injector) {}
+  constructor(handler: HttpBackend) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   /**
    * Use to get the data found in config file
    */
   public getConfig(key: string): any {
-    return ObjectUtils.resolve(this.config, key);
+    const value = ObjectUtils.resolve(this.config, key);
+
+    const isDeprecated = this.configDeprecated.get(key);
+    if (isDeprecated && value !== undefined) {
+      this.handleDeprecatedConfig(key);
+    } else if (value === undefined) {
+      return this.handleDeprecationPossibility(key);
+    }
+
+    return value;
+  }
+
+  private handleDeprecatedConfig(key: string): void {
+    const options = this.configDeprecated.get(key);
+
+    let message = `This config (${key}) is deprecated and will be removed shortly`;
+    if (options.alternativeKey) {
+      message += ` You should use this key (${options.alternativeKey}) as an alternate solution`;
+    }
+
+    const currentDate = new Date();
+    currentDate >= options.mayBeRemoveIn
+      ? console.error(message)
+      : console.warn(message);
+  }
+
+  private handleDeprecationPossibility(key: string): any {
+    const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
+    if (!options) {
+      return;
+    }
+
+    return this.getConfig(options.deprecatedKey);
   }
 
   /**
@@ -33,10 +73,8 @@ export class ConfigService {
       return true;
     }
 
-    const http = this.injector.get(HttpClient);
-
     return new Promise((resolve, _reject) => {
-      http
+      this.httpClient
         .get(options.path)
         .pipe(
           catchError((error: any): any => {

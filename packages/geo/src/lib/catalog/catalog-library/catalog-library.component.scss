@@ -1,9 +1,11 @@
-igo-list {
-  height: auto;
-}
+:host {
+  igo-list {
+    height: auto;
+  }
 
-.btnAddCatalog {
-  justify-content: center;
-  display: flex;
-  margin: 30px 0;
+  .btnAddCatalog {
+    justify-content: center;
+    display: flex;
+    margin: 30px 0;
+  }
 }

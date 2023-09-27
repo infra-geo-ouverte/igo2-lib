@@ -9,8 +9,8 @@ import {
   EntityStoreStrategyOptions
 } from '@igo2/common';
 
-import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
@@ -70,11 +70,11 @@ export interface FeatureStoreLoadingStrategyOptions
 }
 
 export interface FeatureStorePropertyTypeStrategyOptions
-extends FeatureStoreStrategyOptions {
-  map: IgoMap
+  extends FeatureStoreStrategyOptions {
+  map: IgoMap;
 }
 export interface FeatureStoreInMapExtentStrategyOptions
-extends FeatureStoreStrategyOptions {}
+  extends FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreInMapResolutionStrategyOptions
   extends FeatureStoreStrategyOptions {}
@@ -83,9 +83,9 @@ export interface FeatureStoreLoadingLayerStrategyOptions
   extends FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreSearchIndexStrategyOptions
-extends EntityStoreStrategyOptions {
+  extends EntityStoreStrategyOptions {
   sourceFields?: SourceFieldsOptionsParams[];
-  percentDistinctValueRatio?: number
+  percentDistinctValueRatio?: number;
 }
 
 export interface FeatureStoreSelectionStrategyOptions

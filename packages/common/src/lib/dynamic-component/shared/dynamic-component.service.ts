@@ -1,7 +1,4 @@
-import {
-  ComponentFactoryResolver,
-  Injectable
-} from '@angular/core';
+import { ComponentFactoryResolver, Injectable } from '@angular/core';
 
 import { DynamicComponent } from './dynamic-component';
 
@@ -12,7 +9,6 @@ import { DynamicComponent } from './dynamic-component';
   providedIn: 'root'
 })
 export class DynamicComponentService {
-
   constructor(private resolver: ComponentFactoryResolver) {}
 
   /**

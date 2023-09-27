@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 import type { Layer } from '@igo2/geo';
 import { WorkspaceState } from '../workspace.state';
 import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
@@ -10,7 +16,6 @@ import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {
-
   public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private hasWorkspace$$: Subscription;
 
@@ -28,12 +33,15 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
 
   @Input() color: string = 'primary';
 
-  constructor(private workspaceState: WorkspaceState) { }
+  constructor(private workspaceState: WorkspaceState) {}
 
   ngOnInit(): void {
-    this.hasWorkspace$$ = combineLatest([this.workspaceState.workspaceEnabled$, this.layer$])
-      .subscribe(bunch => this.hasWorkspace$.next(bunch[0] && bunch[1]?.options.workspace?.enabled)
-      );
+    this.hasWorkspace$$ = combineLatest([
+      this.workspaceState.workspaceEnabled$,
+      this.layer$
+    ]).subscribe((bunch) =>
+      this.hasWorkspace$.next(bunch[0] && bunch[1]?.options.workspace?.enabled)
+    );
   }
 
   ngOnDestroy(): void {
@@ -43,8 +51,10 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   activateWorkspace() {
     if (
       this.workspaceState.workspace$.value &&
-      (this.workspaceState.workspace$.value as any).layer.id === this.layer.id &&
-      this.workspaceState.workspacePanelExpanded) {
+      (this.workspaceState.workspace$.value as any).layer.id ===
+        this.layer.id &&
+      this.workspaceState.workspacePanelExpanded
+    ) {
       this.workspaceState.workspacePanelExpanded = false;
     } else {
       this.workspaceState.workspacePanelExpanded = true;

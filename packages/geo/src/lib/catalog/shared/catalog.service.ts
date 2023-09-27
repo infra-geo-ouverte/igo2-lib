@@ -12,8 +12,8 @@ import {
   WMTSDataSourceOptions,
   ArcGISRestDataSourceOptions
 } from '../../datasource';
-import { LayerOptions, ImageLayerOptions } from '../../layer';
-import { getResolutionFromScale } from '../../map';
+import { LayerOptions, ImageLayerOptions } from '../../layer/shared';
+import { getResolutionFromScale } from '../../map/shared';
 
 import {
   CatalogItem,
@@ -21,10 +21,18 @@ import {
   CatalogItemGroup,
   ForcedProperty
 } from './catalog.interface';
-import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
+import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
-import { QueryFormat } from '../../query';
+import { QueryFormat } from '../../query/shared';
 import { generateIdFromSourceOptions } from '../../utils';
+import {
+  ArcGISRestCatalog,
+  BaselayersCatalog,
+  CompositeCatalog,
+  TileOrImageArcGISRestCatalog,
+  WMSCatalog,
+  WMTSCatalog
+} from './catalogs';
 
 @Injectable({
   providedIn: 'root'
@@ -139,18 +147,28 @@ export class CatalogService {
         if (!capabilities) {
           return items;
         }
-        if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
+        if (
+          capabilities.Service &&
+          capabilities.Service.Abstract &&
+          capabilities.Service.Abstract.length
+        ) {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-        this.flattenWmsCapabilities(capabilities.Capability.Layer, 0, finalLayers, catalog.groupSeparator);
-        const capabilitiesCapabilityLayer = Object.assign({}, capabilities.Capability.Layer);
-        capabilitiesCapabilityLayer.Layer = finalLayers.filter(f => f.Layer.length !== 0);
-        this.includeRecursiveItems(
-          catalog,
-          capabilitiesCapabilityLayer,
-          items
+        this.flattenWmsCapabilities(
+          capabilities.Capability.Layer,
+          0,
+          finalLayers,
+          catalog.groupSeparator
         );
+        const capabilitiesCapabilityLayer = Object.assign(
+          {},
+          capabilities.Capability.Layer
+        );
+        capabilitiesCapabilityLayer.Layer = finalLayers.filter(
+          (f) => f.Layer.length !== 0
+        );
+        this.includeRecursiveItems(catalog, capabilitiesCapabilityLayer, items);
         return items;
       })
     );
@@ -158,22 +176,27 @@ export class CatalogService {
 
   flattenWmsCapabilities(parent, level = 0, finalLayers, separator = ' / ') {
     if (!finalLayers.includes(parent.Title)) {
-        const modifiedParent = Object.assign({}, parent);
-        modifiedParent.Layer = [];
-        finalLayers.push(modifiedParent);
+      const modifiedParent = Object.assign({}, parent);
+      modifiedParent.Layer = [];
+      finalLayers.push(modifiedParent);
     }
     for (const layer of parent.Layer) {
-        const modifiedLayer = Object.assign({}, layer);
-        if (level > 0) {
-          modifiedLayer.Title = parent.Title + separator + layer.Title;
-        }
-        if (layer.Layer) {
-            this.flattenWmsCapabilities(modifiedLayer, level + 1, finalLayers, separator);
-        } else {
-            finalLayers.find(ff => ff.Title === parent.Title).Layer.push(layer);
-         }
+      const modifiedLayer = Object.assign({}, layer);
+      if (level > 0) {
+        modifiedLayer.Title = parent.Title + separator + layer.Title;
+      }
+      if (layer.Layer) {
+        this.flattenWmsCapabilities(
+          modifiedLayer,
+          level + 1,
+          finalLayers,
+          separator
+        );
+      } else {
+        finalLayers.find((ff) => ff.Title === parent.Title).Layer.push(layer);
+      }
     }
-}
+  }
 
   loadCatalogWMTSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
@@ -197,9 +220,8 @@ export class CatalogService {
       component.sortDirection = catalog.sortDirection; // propagate sortDirection with parent value
       catalogsFromInstance.push(
         CatalogFactory.createInstanceCatalog(component, this)
-    );
-  }
-    );
+      );
+    });
 
     // get CatalogItems for each original Catalog-----------------------------------------------------
     const request1$ = [];
@@ -307,7 +329,8 @@ export class CatalogService {
           if (diffAddress.length > 0) {
             let nPosition = indicesMatchTitle.findIndex((x) => x === idx) + 1;
             outItem.title = `${item.title} (${nPosition})`; // source: ${item.address.split('.')[0]}
-            nPosition = indicesMatchNewMetadataUrl.findIndex((x) => x === idx) + 1;
+            nPosition =
+              indicesMatchNewMetadataUrl.findIndex((x) => x === idx) + 1;
             outItem.newMetadataUrl = `${item.newMetadataUrl} (${nPosition})`; // source: ${item.address.split('.')[0]}
           }
 
@@ -344,10 +367,13 @@ export class CatalogService {
       .pipe(
         catchError((e) => {
           this.messageService.error(
-            catalog.title ? 'igo.geo.catalog.unavailable' : 'igo.geo.catalog.someUnavailable',
+            catalog.title
+              ? 'igo.geo.catalog.unavailable'
+              : 'igo.geo.catalog.someUnavailable',
             'igo.geo.catalog.unavailableTitle',
             undefined,
-            catalog.title ? { value: catalog.title } : undefined);
+            catalog.title ? { value: catalog.title } : undefined
+          );
           console.error(e);
           return of(undefined);
         })
@@ -356,8 +382,8 @@ export class CatalogService {
 
   private computeForcedProperties(
     layerNameFromCatalog: string,
-    forcedProperties: ForcedProperty[]): ForcedProperty {
-
+    forcedProperties: ForcedProperty[]
+  ): ForcedProperty {
     if (!forcedProperties || forcedProperties.length === 0) {
       return;
     }
@@ -371,18 +397,22 @@ export class CatalogService {
     };
     //process wildcard before
     // if there is a * wildcard
-    const forcedPropertiesForAllLayers = forcedProperties.find(f => f.layerName === '*');
+    const forcedPropertiesForAllLayers = forcedProperties.find(
+      (f) => f.layerName === '*'
+    );
     if (forcedPropertiesForAllLayers) {
       // metadataAbstractAll
       if (forcedPropertiesForAllLayers.metadataAbstractAll) {
-        returnProperty.metadataAbstractAll = forcedPropertiesForAllLayers.metadataAbstractAll;
+        returnProperty.metadataAbstractAll =
+          forcedPropertiesForAllLayers.metadataAbstractAll;
       }
       // metadataUrlAll
       if (forcedPropertiesForAllLayers.metadataUrlAll) {
-        returnProperty.metadataUrlAll = forcedPropertiesForAllLayers.metadataUrlAll;
+        returnProperty.metadataUrlAll =
+          forcedPropertiesForAllLayers.metadataUrlAll;
       }
     }
-    forcedProperties.map(forcedProperty => {
+    forcedProperties.map((forcedProperty) => {
       // if match found
       if (layerNameFromCatalog === forcedProperty.layerName) {
         // title
@@ -440,7 +470,10 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
-    const propertiesToForce = this.computeForcedProperties(layer.Name, catalog.forcedProperties);
+    const propertiesToForce = this.computeForcedProperties(
+      layer.Name,
+      catalog.forcedProperties
+    );
     let baseAbstract;
     let extern = true;
     if (layer.Abstract) {
@@ -448,10 +481,19 @@ export class CatalogService {
     } else if (!layer.Abstract && catalog.abstract) {
       baseAbstract = catalog.abstract;
     }
-    const layerOnlineResource = layer?.DataURL && layer?.DataURL.length >0 ? layer?.DataURL[0].OnlineResource : undefined;
+    const layerOnlineResource =
+      layer?.DataURL && layer?.DataURL.length > 0
+        ? layer?.DataURL[0].OnlineResource
+        : undefined;
 
-    let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll || layerOnlineResource;
-    let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || baseAbstract;
+    let metadataUrl =
+      propertiesToForce?.metadataUrl ||
+      propertiesToForce?.metadataUrlAll ||
+      layerOnlineResource;
+    let metadataAbstract =
+      propertiesToForce?.metadataAbstract ||
+      propertiesToForce?.metadataAbstractAll ||
+      baseAbstract;
 
     if (
       !propertiesToForce?.metadataUrl &&
@@ -461,7 +503,10 @@ export class CatalogService {
     ) {
       extern = false;
     }
-    if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+    if (
+      propertiesToForce?.metadataAbstract &&
+      propertiesToForce?.metadataUrlAll
+    ) {
       extern = false;
     }
 
@@ -522,12 +567,13 @@ export class CatalogService {
             return items;
           }
 
-          const layerItem: CatalogItemLayer<ImageLayerOptions> = this.prepareCatalogItemLayer(
-            layer,
-            idGroup,
-            layersQueryFormat,
-            catalog
-          );
+          const layerItem: CatalogItemLayer<ImageLayerOptions> =
+            this.prepareCatalogItemLayer(
+              layer,
+              idGroup,
+              layersQueryFormat,
+              catalog
+            );
 
           items.push(layerItem);
         }
@@ -611,18 +657,25 @@ export class CatalogService {
     if (
       capabilities.ServiceIdentification &&
       capabilities.ServiceIdentification.Abstract &&
-      capabilities.ServiceIdentification.Abstract.length) {
+      capabilities.ServiceIdentification.Abstract.length
+    ) {
       catalog.abstract = capabilities.ServiceIdentification.Abstract;
     }
 
     return layers
       .map((layer: any) => {
-
-        const propertiesToForce = this.computeForcedProperties(layer.Title, catalog.forcedProperties);
+        const propertiesToForce = this.computeForcedProperties(
+          layer.Title,
+          catalog.forcedProperties
+        );
         let extern = true;
 
-        let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || catalog.abstract;
+        let metadataUrl =
+          propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
+        let metadataAbstract =
+          propertiesToForce?.metadataAbstract ||
+          propertiesToForce?.metadataAbstractAll ||
+          catalog.abstract;
 
         if (
           !propertiesToForce?.metadataUrl &&
@@ -632,71 +685,76 @@ export class CatalogService {
         ) {
           extern = false;
         }
-        if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+        if (
+          propertiesToForce?.metadataAbstract &&
+          propertiesToForce?.metadataUrlAll
+        ) {
           extern = false;
         }
 
-
-      if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
-        return undefined;
-      }
-      const params = Object.assign({}, catalog.queryParams, {
-        version: '1.0.0'
-      });
-      const baseSourceOptions = {
-        type: 'wmts',
-        url: catalog.url,
-        crossOrigin: catalog.setCrossOriginAnonymous
-          ? 'anonymous'
-          : undefined,
-        layer: layer.Identifier,
-        matrixSet: catalog.matrixSet,
-        optionsFromCapabilities: true,
-        requestEncoding: catalog.requestEncoding || 'KVP',
-        style: 'default'
-      } as WMTSDataSourceOptions;
-      const sourceOptions = Object.assign(
-        {},
-        baseSourceOptions,
-        catalog.sourceOptions,
-        { params }
-      ) as WMTSDataSourceOptions;
-
-      return ObjectUtils.removeUndefined({
-        id: generateIdFromSourceOptions(sourceOptions),
-        type: CatalogItemType.Layer,
-        title: propertiesToForce?.title ? propertiesToForce.title : layer.Title,
-        address: catalog.id,
-        externalProvider: catalog.externalProvider,
-        options: {
-          sourceOptions,
-          metadata: {
-            url: metadataUrl,
-            extern,
-            abstract: metadataAbstract,
-            type: baseSourceOptions.type
-          }
+        if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
+          return undefined;
         }
-      } as CatalogItem);
-    })
-    .filter((item: CatalogItemLayer | undefined) => item !== undefined);
-}
+        const params = Object.assign({}, catalog.queryParams, {
+          version: '1.0.0'
+        });
+        const baseSourceOptions = {
+          type: 'wmts',
+          url: catalog.url,
+          crossOrigin: catalog.setCrossOriginAnonymous
+            ? 'anonymous'
+            : undefined,
+          layer: layer.Identifier,
+          matrixSet: catalog.matrixSet,
+          optionsFromCapabilities: true,
+          requestEncoding: catalog.requestEncoding || 'KVP',
+          style: 'default'
+        } as WMTSDataSourceOptions;
+        const sourceOptions = Object.assign(
+          {},
+          baseSourceOptions,
+          catalog.sourceOptions,
+          { params }
+        ) as WMTSDataSourceOptions;
 
-/// ERSI
+        return ObjectUtils.removeUndefined({
+          id: generateIdFromSourceOptions(sourceOptions),
+          type: CatalogItemType.Layer,
+          title: propertiesToForce?.title
+            ? propertiesToForce.title
+            : layer.Title,
+          address: catalog.id,
+          externalProvider: catalog.externalProvider,
+          options: {
+            sourceOptions,
+            metadata: {
+              url: metadataUrl,
+              extern,
+              abstract: metadataAbstract,
+              type: baseSourceOptions.type
+            }
+          }
+        } as CatalogItem);
+      })
+      .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+  }
 
-  private getArcGISRESTItems(
-    catalog,
-    capabilities
-  ): CatalogItemLayer[] {
+  /// ERSI
+
+  private getArcGISRESTItems(catalog, capabilities): CatalogItemLayer[] {
     if (!capabilities) {
       return [];
     }
-    const layers =
-    !capabilities.layers ? [] : capabilities.layers.filter(layer => !layer.type || layer.type === 'Feature Layer');
+    const layers = !capabilities.layers
+      ? []
+      : capabilities.layers.filter(
+          (layer) => !layer.type || layer.type === 'Feature Layer'
+        );
     if (!capabilities.layers) {
       this.messageService.error(
         'igo.geo.catalog.someUnavailable',
-        'igo.geo.catalog.unavailableTitle');
+        'igo.geo.catalog.unavailableTitle'
+      );
     }
 
     const regexes = (catalog.regFilters || []).map(
@@ -704,15 +762,20 @@ export class CatalogService {
     );
 
     let abstract;
-    if (capabilities.serviceDescription && capabilities.serviceDescription.length) {
-      const regex = /(<([^>]+)>)/ig;
+    if (
+      capabilities.serviceDescription &&
+      capabilities.serviceDescription.length
+    ) {
+      const regex = /(<([^>]+)>)/gi;
       abstract = capabilities.serviceDescription.replace(regex, '');
     }
 
     return layers
       .map((layer: any) => {
-
-        const propertiesToForce = this.computeForcedProperties(layer.name, catalog.forcedProperties);
+        const propertiesToForce = this.computeForcedProperties(
+          layer.name,
+          catalog.forcedProperties
+        );
         let baseAbstract;
         let extern = true;
         if (layer.Abstract) {
@@ -721,8 +784,12 @@ export class CatalogService {
           baseAbstract = catalog.abstract;
         }
 
-        let metadataUrl = propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
-        let metadataAbstract = propertiesToForce?.metadataAbstract || propertiesToForce?.metadataAbstractAll || baseAbstract;
+        let metadataUrl =
+          propertiesToForce?.metadataUrl || propertiesToForce?.metadataUrlAll;
+        let metadataAbstract =
+          propertiesToForce?.metadataAbstract ||
+          propertiesToForce?.metadataAbstractAll ||
+          baseAbstract;
 
         if (
           !propertiesToForce?.metadataUrl &&
@@ -732,7 +799,10 @@ export class CatalogService {
         ) {
           extern = false;
         }
-        if (propertiesToForce?.metadataAbstract && propertiesToForce?.metadataUrlAll) {
+        if (
+          propertiesToForce?.metadataAbstract &&
+          propertiesToForce?.metadataUrlAll
+        ) {
           extern = false;
         }
 
@@ -760,7 +830,9 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: propertiesToForce?.title ? propertiesToForce.title : layer.name,
+          title: propertiesToForce?.title
+            ? propertiesToForce.title
+            : layer.name,
           externalProvider: catalog.externalProvider,
           address: catalog.id,
           options: {
@@ -772,7 +844,7 @@ export class CatalogService {
               extern,
               abstract: metadataAbstract,
               type: baseSourceOptions.type
-            },
+            }
           }
         } as CatalogItem);
       })
@@ -837,5 +909,51 @@ export class CatalogService {
       }
     });
     return layersQueryFormat;
+  }
+}
+
+class CatalogFactory {
+  public static createInstanceCatalog(
+    options: Catalog,
+    catalogService: CatalogService
+  ): Catalog {
+    let catalog: Catalog;
+    if (options.hasOwnProperty('composite')) {
+      catalog = new CompositeCatalog(options, (catalog: Catalog) =>
+        catalogService.loadCatalogCompositeLayerItems(catalog)
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.baselayers]) {
+      catalog = new BaselayersCatalog(options, (catalog: Catalog) =>
+        catalogService.loadCatalogBaseLayerItems(catalog)
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
+      catalog = new ArcGISRestCatalog(options, (catalog: Catalog) =>
+        catalogService.loadCatalogArcGISRestItems(catalog)
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
+      catalog = new TileOrImageArcGISRestCatalog(
+        options,
+        (catalog: Catalog) =>
+          catalogService.loadCatalogArcGISRestItems(catalog),
+        TypeCatalog.tilearcgisrest
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.imagearcgisrest]) {
+      catalog = new TileOrImageArcGISRestCatalog(
+        options,
+        (catalog: Catalog) =>
+          catalogService.loadCatalogArcGISRestItems(catalog),
+        TypeCatalog.imagearcgisrest
+      );
+    } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
+      catalog = new WMTSCatalog(options, (catalog: Catalog) =>
+        catalogService.loadCatalogWMTSLayerItems(catalog)
+      );
+    } else {
+      catalog = new WMSCatalog(options, (catalog: Catalog) =>
+        catalogService.loadCatalogWMSLayerItems(catalog)
+      );
+    }
+
+    return catalog;
   }
 }

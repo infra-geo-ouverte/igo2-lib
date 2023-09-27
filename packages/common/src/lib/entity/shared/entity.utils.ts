@@ -38,7 +38,9 @@ export function getEntityId(entity: object): EntityKey {
  */
 export function getEntityTitle(entity: object): string {
   const meta = (entity as any).meta || {};
-  return meta.title ? meta.title : getEntityProperty(entity, meta.titleProperty || 'title');
+  return meta.title
+    ? meta.title
+    : getEntityProperty(entity, meta.titleProperty || 'title');
 }
 
 /**
@@ -49,7 +51,9 @@ export function getEntityTitle(entity: object): string {
  */
 export function getEntityTitleHtml(entity: object): string {
   const meta = (entity as any).meta || {};
-  return meta.titleHtml ? meta.titleHtml : getEntityProperty(entity, meta.titleHtmlProperty || 'titleHtml');
+  return meta.titleHtml
+    ? meta.titleHtml
+    : getEntityProperty(entity, meta.titleHtmlProperty || 'titleHtml');
 }
 
 /**
@@ -60,7 +64,9 @@ export function getEntityTitleHtml(entity: object): string {
  */
 export function getEntityIcon(entity: object): string {
   const meta = (entity as any).meta || {};
-  return meta.icon ? meta.icon : getEntityProperty(entity, meta.iconProperty || 'icon');
+  return meta.icon
+    ? meta.icon
+    : getEntityProperty(entity, meta.iconProperty || 'icon');
 }
 
 /**

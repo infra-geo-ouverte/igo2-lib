@@ -95,7 +95,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return (this.component.map as any) as IgoMap;
+    return this.component.map as any as IgoMap;
   }
 
   constructor(
@@ -199,7 +199,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         event.pixel,
         (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
-          if ((layer.dataSource.options as QueryableDataSourceOptions).queryFormatAsWms) {
+          if (
+            (layer.dataSource.options as QueryableDataSourceOptions)
+              .queryFormatAsWms
+          ) {
             return;
           }
           if (featureOL) {
@@ -211,7 +214,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                   id: layerOL.values_._layer.id + '.' + feature.id_,
                   icon: feature.values_._icon,
                   sourceTitle: layerOL.values_.title,
-                  alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                  alias: this.queryService.getAllowedFieldsAndAlias(layer)
                   // title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
                 };
                 clickedFeatures.push(newFeature);
@@ -226,7 +229,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
               };
               clickedFeatures.push(newFeature);
             } else {
@@ -239,7 +244,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
               };
               clickedFeatures.push(newFeature);
             }
@@ -257,23 +264,31 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       const dragExtent = target.getGeometry().getExtent();
       this.map.layers
         .filter(layerIsQueryable)
-        .filter(layer => layer instanceof VectorLayer && layer.visible)
-        .map(layer => {
+        .filter((layer) => layer instanceof VectorLayer && layer.visible)
+        .map((layer) => {
           const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
-          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: any) => {
-            const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
-            newFeature.meta = {
-              id: layer.id + '.' + olFeature.getId(),
-              icon: olFeature.values_._icon,
-              sourceTitle: layer.title,
-              alias: this.queryService.getAllowedFieldsAndAlias(layer),
-              title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
-            };
-            clickedFeatures.push(newFeature);
-          });
+          featuresOL.forEachFeatureIntersectingExtent(
+            dragExtent,
+            (olFeature: any) => {
+              const newFeature: Feature = featureFromOl(
+                olFeature,
+                this.map.projection,
+                layer.ol
+              );
+              newFeature.meta = {
+                id: layer.id + '.' + olFeature.getId(),
+                icon: olFeature.values_._icon,
+                sourceTitle: layer.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
+              };
+              clickedFeatures.push(newFeature);
+            }
+          );
         });
     }
-
 
     return of(clickedFeatures);
   }

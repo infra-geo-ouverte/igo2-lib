@@ -8,31 +8,42 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core';
-import { ColorPickerModule } from 'ngx-color-picker';
 import { IgoStyleListModule } from './style-list/style-list.module';
 import { StyleModalDrawingComponent } from './style-modal/drawing/style-modal-drawing.component';
 import { StyleModalLayerComponent } from './style-modal/layer/style-modal-layer.component';
 import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style-modal-layer-button.component';
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ColorPickerFormFieldModule } from '@igo2/common';
 
 @NgModule({
   imports: [
-    ColorPickerModule,
     CommonModule,
     FormsModule,
     IgoLanguageModule,
     MatFormFieldModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule,
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    ColorPickerFormFieldModule,
     IgoStyleListModule.forRoot()
   ],
-  exports: [IgoStyleListModule, StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent],
-  declarations: [StyleModalDrawingComponent, StyleModalLayerComponent, StyleModalLayerButtonComponent]
+  exports: [
+    IgoStyleListModule,
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ],
+  declarations: [
+    StyleModalDrawingComponent,
+    StyleModalLayerComponent,
+    StyleModalLayerButtonComponent
+  ]
 })
 export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {

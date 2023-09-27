@@ -3,7 +3,12 @@ import { Directive, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { MapViewOptions, MapBrowserComponent, MapControlsOptions, MapScaleLineOptions } from '@igo2/geo';
+import {
+  MapViewOptions,
+  MapBrowserComponent,
+  MapControlsOptions,
+  MapScaleLineOptions
+} from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
@@ -31,8 +36,8 @@ export class MapContextDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.context$$ = this.contextService.context$
-      .pipe(filter(context => context !== undefined))
-      .subscribe(context => this.handleContextChange(context));
+      .pipe(filter((context) => context !== undefined))
+      .subscribe((context) => this.handleContextChange(context));
   }
 
   ngOnDestroy() {
@@ -59,18 +64,25 @@ export class MapContextDirective implements OnInit, OnDestroy {
     // this.component.map.ol.setTarget(target);
 
     const viewContext: ContextMapView = context.map.view;
-    if (!this.component.view || viewContext.keepCurrentView !== true || context.map.view.projection !== this.map.projection) {
+    if (
+      !this.component.view ||
+      viewContext.keepCurrentView !== true ||
+      context.map.view.projection !== this.map.projection
+    ) {
       this.component.view = viewContext as MapViewOptions;
     }
     if (this.component.map.geolocationController) {
-      this.component.map.geolocationController.updateGeolocationOptions(viewContext);
+      this.component.map.geolocationController.updateGeolocationOptions(
+        viewContext
+      );
     }
 
     const controlsContext: MapControlsOptions = context.map.controls;
     if (!this.component.controls && controlsContext) {
       if (this.mediaService.isMobile()) {
-        if (typeof(controlsContext.scaleLine) !== 'boolean') {
-          const scaleLineOption = controlsContext.scaleLine as MapScaleLineOptions;
+        if (typeof controlsContext.scaleLine !== 'boolean') {
+          const scaleLineOption =
+            controlsContext.scaleLine as MapScaleLineOptions;
           if (!scaleLineOption.minWidth) {
             scaleLineOption.minWidth = Math.min(64, scaleLineOption.minWidth);
             controlsContext.scaleLine = scaleLineOption;

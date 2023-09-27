@@ -1,100 +1,112 @@
 $slide-toggle-width: 60px;
 
-.geometry-type-toggle {
+:host {
+  .geometry-type-toggle {
     padding: 10px;
     text-align: center;
 
     mat-button-toggle-group {
       width: 100%;
-
       mat-button-toggle {
         width: 25%;
       }
     }
-}
+  }
 
-.draw-options {
-  overflow-x: hidden;
+  .draw-options {
+    mat-slide-toggle {
+      width: 100%;
+      padding: 10px;
 
-  mat-slide-toggle {
+      ::ng-deep .mdc-form-field {
+        width: 100%;
+      }
+
+      ::ng-deep .mdc-label {
+        margin-left: 0;
+        width: calc(100% - #{$slide-toggle-width});
+      }
+    }
+  }
+
+  .icon-options {
+    margin: 5px 5px 0px 5px;
+  }
+
+  .deleteBtn {
+    margin-left: 16px;
+  }
+
+  .edition-drawing {
+    padding: 10px 0;
+  }
+
+  .edition-drawing {
+    padding: 10px 0;
+  }
+
+  img {
     width: 100%;
-    margin: 10px;
+    height: 100%;
+  }
 
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
+  .deleteBtn {
+    margin-left: 12px;
+  }
+
+  .storeTable {
+    height: auto !important;
+  }
+
+  .layer-select {
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  .input-button-container {
+    padding: 10px;
+    mat-form-field {
+      width: 25%;
     }
-  }
-}
-
-.icon-options {
-  margin: 5px 5px 0px 5px;
-}
-
-.deleteBtn {
-  margin-left: 12px;
-}
-
-.edition-drawing{
-  padding: 10px 0;
-}
-
-.edition-drawing{
-  padding: 10px 0;
-}
-
-img {
-  width: 100%;
-  height: 100%;
-}
-
-.deleteBtn {
-  margin-left: 12px;
-}
-
-.storeTable {
-  height: auto !important;
-}
-
-.layer-select {
-  width: 85%;
-  padding: 10px;
-  padding-bottom: 0%;
-}
-
-.input-button-container {
-  padding: 10px;
-  mat-form-field {
-    width: 25%;
-  }
-  button {
-    left: 8px;
-    bottom: 10px;
-  }
-}
-
-.radius {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 110%;
-}
-
-.unit-field {
-  width: 110px;
-  margin-left: 30px;
-}
-
-.radius-unit {
-  display: flex;
-  width: 100%;
-  margin-left: 2px;
-  padding: 5px;
-}
-
-::ng-deep igo-entity-table {
-  td:last-child {
-    text-align: right !important;
     button {
-      margin: 0% !important;
+      left: 8px;
+      bottom: 10px;
     }
+  }
+
+  .radius {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 110%;
+  }
+
+  .unit-field {
+    width: 110px;
+    margin-left: 30px;
+  }
+
+  .radius-unit {
+    display: flex;
+    width: 100%;
+    padding: 4px 8px;
+  }
+
+  ::ng-deep igo-entity-table {
+    td:last-child {
+      text-align: right !important;
+      button {
+        margin: 0% !important;
+      }
+    }
+  }
+
+  .layer-select-container {
+    margin: 16px 8px;
+  }
+
+  .actions-container,
+  .layer-select-container {
+    display: flex;
+    align-items: center;
   }
 }

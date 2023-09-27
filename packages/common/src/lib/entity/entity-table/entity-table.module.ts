@@ -46,12 +46,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatDatepickerModule,
     MatTooltipModule
   ],
-  exports: [
-    EntityTableComponent
-  ],
-  declarations: [
-    EntityTableComponent,
-    EntityTableRowDirective
-  ]
+  exports: [EntityTableComponent],
+  declarations: [EntityTableComponent, EntityTableRowDirective]
 })
 export class IgoEntityTableModule {}

@@ -1,57 +1,94 @@
-<h1 mat-dialog-title class="mat-typography">{{'igo.geo.catalog.library.addTitle' | translate}}</h1>
+<h1 mat-dialog-title class="mat-typography">
+  {{ 'igo.geo.catalog.library.addTitle' | translate }}
+</h1>
 <div mat-dialog-content class="mat-typography">
   <form class="igo-form" [formGroup]="form">
     <div class="igo-input-container">
       <mat-form-field>
-        <input type="text" formControlName="title" placeholder="{{'igo.geo.printForm.title' | translate}}" matInput [matAutocomplete]="auto2">
-        <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)'>
-          <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
-            [matTooltip]="predefinedCatalog.title" [value]="predefinedCatalog">
-            {{predefinedCatalog.title}}
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="{{ 'igo.geo.printForm.title' | translate }}"
+          matInput
+          [matAutocomplete]="auto2"
+        />
+        <mat-autocomplete
+          #auto2="matAutocomplete"
+          (optionSelected)="changeUrlOrTitle($event.option.value)"
+        >
+          <mat-option
+            *ngFor="let predefinedCatalog of predefinedCatalogsList$ | async"
+            matTooltipShowDelay="500"
+            [matTooltip]="predefinedCatalog.title"
+            [value]="predefinedCatalog"
+          >
+            {{ predefinedCatalog.title }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </div>
     <div class="igo-input-container">
       <mat-form-field>
-        <input type="text" formControlName="url" placeholder="URL" matInput [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='changeUrlOrTitle($event.option.value)'>
-          <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
-            [matTooltip]="predefinedCatalog.url" [value]="predefinedCatalog">
-            {{predefinedCatalog.url}}
+        <input
+          type="text"
+          formControlName="url"
+          placeholder="URL"
+          matInput
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="changeUrlOrTitle($event.option.value)"
+        >
+          <mat-option
+            *ngFor="let predefinedCatalog of predefinedCatalogsList$ | async"
+            matTooltipShowDelay="500"
+            [matTooltip]="predefinedCatalog.url"
+            [value]="predefinedCatalog"
+          >
+            {{ predefinedCatalog.url }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </div>
     <div class="igo-input-container">
       <mat-form-field>
-        <mat-select
-          formControlName="type"
-          placeholder="Type">
+        <mat-select formControlName="type" placeholder="Type">
           <mat-option
             *ngFor="let type of typeCapabilities"
             [value]="type"
-            (click)="$event.stopPropagation()">
-              <p mat-line>{{type}}</p>
+            (click)="$event.stopPropagation()"
+          >
+            <p matListItemTitle>{{ type }}</p>
           </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
   </form>
   <span *ngIf="error && addedCatalog && emailAddress">
-    <p class="error">{{languageService.translate.instant('igo.geo.catalog.externalProvider.unavailableWithEmail', { value: addedCatalog.url, email: emailAddress })}}</p>
+    <p class="error">
+      {{
+        languageService.translate.instant(
+          'igo.geo.catalog.externalProvider.unavailableWithEmail',
+          { value: addedCatalog.url, email: emailAddress }
+        )
+      }}
+    </p>
   </span>
   <span *ngIf="error && addedCatalog && !emailAddress">
-    <p class="error">{{languageService.translate.instant('igo.geo.catalog.unavailable', { value: addedCatalog.url })}}</p>
+    <p class="error">
+      {{
+        languageService.translate.instant('igo.geo.catalog.unavailable', {
+          value: addedCatalog.url
+        })
+      }}
+    </p>
   </span>
 </div>
 <div mat-dialog-actions style="justify-content: center">
   <div class="igo-form-button-group add-catalog-button-top-padding">
-    <button
-      mat-raised-button
-      type="button"
-      (click)="cancel()">
-      {{'igo.geo.catalog.library.cancel' | translate}}
+    <button mat-raised-button type="button" (click)="cancel()">
+      {{ 'igo.geo.catalog.library.cancel' | translate }}
     </button>
     <button
       id="addCatalogBtnDialog"
@@ -59,8 +96,9 @@
       type="button"
       color="primary"
       [disabled]="!form.valid"
-      (click)="addCatalog(form.value)">
-      {{'igo.geo.catalog.library.add' | translate}}
+      (click)="addCatalog(form.value)"
+    >
+      {{ 'igo.geo.catalog.library.add' | translate }}
     </button>
   </div>
 </div>

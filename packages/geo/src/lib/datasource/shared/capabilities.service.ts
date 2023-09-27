@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpParams
-} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
@@ -31,7 +28,7 @@ import {
 import {
   LegendOptions,
   ItemStyleOptions
-} from '../../layer/shared/layers/layer.interface';
+} from '../../layer/shared/layers/legend.interface';
 import {
   TimeFilterType,
   TimeFilterStyle
@@ -58,7 +55,10 @@ export class CapabilitiesService {
     esriJSON: new EsriJSON()
   };
 
-  constructor(private http: HttpClient, private mapService: MapService) {}
+  constructor(
+    private http: HttpClient,
+    private mapService: MapService
+  ) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -117,7 +117,10 @@ export class CapabilitiesService {
     baseOptions: ArcGISRestDataSourceOptions
   ): Observable<ArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-    const serviceCapabilities = this.getCapabilities('arcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'arcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     return forkJoin([arcgisOptions, serviceCapabilities]).pipe(
       map((res: any) => {
@@ -130,11 +133,18 @@ export class CapabilitiesService {
     maxCacheCount: 20
   })
   getImageArcgisOptions(
-    baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
+    baseOptions:
+      | ArcGISRestImageDataSourceOptions
+      | TileArcGISRestDataSourceOptions
+  ): Observable<
+    ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  > {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
-    const serviceCapabilities = this.getCapabilities('imagearcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'imagearcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
       map((res: any) => res),
@@ -145,7 +155,12 @@ export class CapabilitiesService {
     );
     return forkJoin([arcgisOptions, legend, serviceCapabilities]).pipe(
       map((res: any) => {
-        return this.parseTileOrImageArcgisOptions(baseOptions, res[0], res[1], res[2]);
+        return this.parseTileOrImageArcgisOptions(
+          baseOptions,
+          res[0],
+          res[1],
+          res[2]
+        );
       })
     );
   }
@@ -155,10 +170,15 @@ export class CapabilitiesService {
   })
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
+  ): Observable<
+    ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  > {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
-    const serviceCapabilities = this.getCapabilities('tilearcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'tilearcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     const legendInfo = this.http.get(legendUrl).pipe(
       map((res: any) => res),
@@ -266,9 +286,13 @@ export class CapabilitiesService {
       isExtentInGeographic = false;
     }
 
-    const extent = isExtentInGeographic ?
-        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', this.mapService.getMap().projection) :
-        undefined;
+    const extent = isExtentInGeographic
+      ? olproj.transformExtent(
+          layer.EX_GeographicBoundingBox,
+          'EPSG:4326',
+          this.mapService.getMap().projection
+        )
+      : undefined;
 
     let queryFormat: QueryFormat;
     const queryFormatMimeTypePriority = [
@@ -369,7 +393,7 @@ export class CapabilitiesService {
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
     arcgisOptions: any,
-    serviceCapabilities: any,
+    serviceCapabilities: any
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
     let legendInfo: any;
@@ -422,8 +446,9 @@ export class CapabilitiesService {
         maxResolution: getResolutionFromScale(arcgisOptions.minScale),
         metadata: {
           extern: false,
-          abstract: arcgisOptions.description || serviceCapabilities.serviceDescription
-        },
+          abstract:
+            arcgisOptions.description || serviceCapabilities.serviceDescription
+        }
       },
       legendInfo,
       timeFilter,
@@ -435,13 +460,17 @@ export class CapabilitiesService {
   }
 
   private parseTileOrImageArcgisOptions(
-    baseOptions: TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions,
+    baseOptions:
+      | TileArcGISRestDataSourceOptions
+      | ArcGISRestImageDataSourceOptions,
     arcgisOptions: any,
     legend: any,
     serviceCapabilities: any
   ): TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions {
     const title = arcgisOptions.name;
-    const legendInfo = legend.layers ? legend.layers.find(x => x.layerName === title) : undefined;
+    const legendInfo = legend.layers
+      ? legend.layers.find((x) => x.layerName === title)
+      : undefined;
     const attributions = new olAttribution({
       target: arcgisOptions.copyrightText
     });
@@ -477,8 +506,9 @@ export class CapabilitiesService {
         maxResolution: getResolutionFromScale(arcgisOptions.minScale),
         metadata: {
           extern: false,
-          abstract: arcgisOptions.description || serviceCapabilities.serviceDescription
-        },
+          abstract:
+            arcgisOptions.description || serviceCapabilities.serviceDescription
+        }
       },
       legendInfo,
       timeFilter,

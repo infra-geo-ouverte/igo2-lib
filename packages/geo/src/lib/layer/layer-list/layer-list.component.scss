@@ -1,91 +1,75 @@
-:host .igo-list-no-tools {
-  height: calc(100% - 57px);
-  padding-top: 8px;
-}
-
-:host .igo-list-tools-single {
-  height: calc(100% - 153px);
-  padding-top: 8px;
-}
-
-:host .igo-list-tools-multi {
-  height: calc(100% - 191px);
-  padding-top: 8px;
-}
-
-mat-form-field.inputFilter {
-  width: calc(100% - 100px);
-  max-width: 200px;
-}
-
-.igo-layer-actions-container {
-  width: calc(100% - 5px);
-  padding-left: 4px;
-}
-
-.igo-layer-actions-container > div {
-  text-align: center;
-}
-
-mat-list-item ::ng-deep .mat-list-item-content {
-  margin-bottom: 10px;
-}
-
-mat-checkbox ::ng-deep .mat-checkbox-inner-container {
-  margin-left: 8px;
-  margin-right: 16px;
-}
-
-#opacity-slider {
-  float: left;
-  min-width: unset;
-  width: 110px;
-  left: 10px;
-  top: 10px
-}
-
-.igo-layer-button-group, .actions-buttons-multi {
+:host {
   display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  overflow-x: auto;
-  overflow-y: hidden;
+  flex-direction: column;
+  height: 100%;
 
-  &::-webkit-scrollbar {
-    height: 4px;
+  igo-list {
+    flex: 1;
+    padding-top: 8px;
   }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  mat-form-field.inputFilter {
+    width: calc(100% - 100px);
+    max-width: 200px;
   }
 
-  &::-webkit-scrollbar-thumb {
-    background: #888;
+  .igo-layer-actions-container {
+    padding: 0px 6px 0px 4px;
+  }
 
-    &:hover {
-      background: #555;
+  .igo-layer-actions-container > div {
+    text-align: center;
+  }
+
+  mat-list-item ::ng-deep .mdc-list-item__content {
+    margin-bottom: 10px;
+  }
+
+  .igo-layer-button-group,
+  .actions-buttons-multi {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+
+      &:hover {
+        background: #555;
+      }
     }
   }
-}
 
-.igo-layer-button-group {
-  padding-top: 5px;
-}
+  .igo-layer-button-group {
+    padding-top: 5px;
+  }
 
-:host igo-panel {
-  height: unset;
-}
+  igo-panel {
+    height: unset;
+  }
 
-#opacity-menu {
-  max-width: unset;
-  width: 132px;
-  height: 50px;
-
-  .mat-menu-content:not(:empty) {
-    padding-top: 20px;
+  .select-all {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding: 0 16px;
   }
 }
 
-.select-all ::ng-deep .mat-list-item-content {
-  margin: 0px;
+::ng-deep .panel-opacity-menu {
+  overflow: visible !important;
+
+  #opacity-slider {
+    margin: 0 16px;
+  }
 }

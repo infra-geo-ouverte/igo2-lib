@@ -1,64 +1,63 @@
+@use '../../../../../core/src/style/partial/core-utils';
 @import '../../../../../core/src/style/partial/core.variables';
 
-:host ::ng-deep .mat-form-field {
-  padding: 0 $igo-padding;
-}
+:host {
+  .igo-search-bar-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+  }
 
-:host ::ng-deep .mat-form-field-wrapper {
-    margin-bottom: -1.50em;
-}
+  mat-form-field {
+    flex: 1;
+  }
 
-:host ::ng-deep span.mat-form-field-label-wrapper {
-  top: -20px;
-}
+  mat-divider {
+    margin: 8px 0;
+  }
 
-:host ::ng-deep div.mat-form-field-infix {
-  left: $igo-padding;
-  right: $igo-padding;
-  padding: 0 0 12px 0 !important;
-}
+  ::ng-deep {
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
 
-:host ::ng-deep div.mat-form-field-underline {
-  display: none;
-}
+    .mat-mdc-text-field-wrapper {
+      align-items: center;
+      padding-right: 0;
+    }
 
-.igo-search-bar-container {
-  position: relative;
-  width: 100%;
-  display: inline-flex;
-  overflow: hidden;
-}
+    .mat-mdc-form-field-infix {
+      align-self: center;
+    }
 
-.igo-search-bar-container > mat-form-field {
-  width: calc(100% - (2 * #{$igo-icon-size}));
-}
+    mat-form-field input {
+      @include core-utils.text-ellipsis();
+    }
+  }
 
-.igo-search-bar-container.empty > mat-form-field {
-  width: calc(100% - #{$igo-icon-size});
-}
+  .search-bar-buttons {
+    position: relative;
+    display: inline-flex;
+    & > button:nth-child(2)::before {
+      content: '';
+      border-right: 1px solid #ddd;
+      height: 28px;
+    }
+  }
 
-.search-bar-buttons {
-  position: relative;
-  right: 0px;
-  display: inline-flex;
-  top: 0;
-  & > button:nth-child(2)::before {
-    content: '';
-    left: 0px;
-    top: 5px;
-    border-right: 1px solid #ddd;
-    height: 28px;
+  igo-search-selector {
+    background-color: #fff;
+    top: 0;
+    border-radius: 0;
+  }
+
+  igo-search-settings {
+    background-color: #fff;
+    top: 0;
+    border-radius: 0;
   }
 }
 
-igo-search-selector {
-  background-color: #fff;
-  top: 0;
-  border-radius: 0;
-}
-
-igo-search-settings {
-  background-color: #fff;
-  top: 0;
-  border-radius: 0;
+:host ::ng-deep mat-form-field .mdc-line-ripple {
+  display: none;
 }

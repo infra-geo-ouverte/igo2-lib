@@ -7,7 +7,11 @@ import {
   EventEmitter,
   ChangeDetectorRef
 } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormGroup,
+  UntypedFormBuilder,
+  Validators
+} from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import {
@@ -51,7 +55,7 @@ import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
 import { DownloadService } from '../../download/shared/download.service';
-import { computeProjectionsConstraints } from '../../map';
+import { computeProjectionsConstraints } from '../../map/shared';
 
 import olVectorSource from 'ol/source/Vector';
 import olClusterSource from 'ol/source/Cluster';
@@ -90,7 +94,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
+  public projections$: BehaviorSubject<InputProjections[]> =
+    new BehaviorSubject([]);
   private projectionsConstraints: ProjectionsLimitationsOptions;
 
   public popupChecked: boolean = false;
@@ -150,7 +155,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   get popupAllowed(): boolean {
-    return this.storageService.get('importExportPopupAllowed') as boolean || false;
+    return (
+      (this.storageService.get('importExportPopupAllowed') as boolean) || false
+    );
   }
 
   set popupAllowed(value: boolean) {
@@ -175,8 +182,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.loadConfig();
     this.buildForm();
     this.computeProjections();
-    this.importHtmlClarifications = this.languageService.translate.instant('igo.geo.importExportForm.importHtmlClarifications');
-    this.exportHtmlClarifications = this.languageService.translate.instant('igo.geo.importExportForm.exportHtmlClarifications');
+    this.importHtmlClarifications = this.languageService.translate.instant(
+      'igo.geo.importExportForm.importHtmlClarifications'
+    );
+    this.exportHtmlClarifications = this.languageService.translate.instant(
+      'igo.geo.importExportForm.exportHtmlClarifications'
+    );
   }
 
   ngOnInit() {
@@ -210,13 +221,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       });
     this.formLayer$$ = this.form
       .get('format')
-      .valueChanges
-      .subscribe((format) => {
+      .valueChanges.subscribe((format) => {
         const ogreFormats = Object.keys(ExportService.ogreFormats);
         if (
           !this.popupChecked &&
           this.form.get('layers').value?.length > 1 &&
-          (ogreFormats.indexOf(format) >= 0 || format === ExportFormat.URL)) {
+          (ogreFormats.indexOf(format) >= 0 || format === ExportFormat.URL)
+        ) {
           if (!this.handlePopup(true)) {
             this.form.patchValue({ format: undefined }, { emitEvent: false });
           }
@@ -227,7 +238,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .get('layers')
       .valueChanges.subscribe((layersId) => {
         this.handlePreviousLayerSpecs();
-        const selectedLayers = layersId instanceof Array ? layersId : [layersId];
+        const selectedLayers =
+          layersId instanceof Array ? layersId : [layersId];
         this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
         const layers = selectedLayers.map((l) => this.map.getLayerById(l));
         this.computeFormats(layers);
@@ -280,7 +292,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .pipe(skipWhile((encodings) => !encodings))
       .subscribe((encodings) => {
         if (Object.keys(encodings).length === 1) {
-          this.form.patchValue({ encoding: encodings[Object.keys(encodings)[0]] });
+          this.form.patchValue({
+            encoding: encodings[Object.keys(encodings)[0]]
+          });
         }
       });
 
@@ -293,7 +307,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       });
 
     this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
-      if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
+      if (
+        format === ExportFormat.CSVcomma ||
+        format === ExportFormat.CSVsemicolon
+      ) {
         this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
       } else {
         this.form.patchValue({ encoding: EncodingFormat.UTF8 });
@@ -303,7 +320,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     if (this.selectFirstProj) {
       if (this.projections$.value.length === 0) {
-        this.importForm.patchValue({ inputProj: { translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4326', zone: '' } });
+        this.importForm.patchValue({
+          inputProj: {
+            translateKey: 'nad83',
+            alias: 'NAD83',
+            code: 'EPSG:4326',
+            zone: ''
+          }
+        });
       } else {
         this.importForm.patchValue({ inputProj: this.projections$.value[0] });
       }
@@ -313,17 +337,34 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private computeProjections() {
-    this.projectionsConstraints = computeProjectionsConstraints(this.projectionsLimitations);
+    this.projectionsConstraints = computeProjectionsConstraints(
+      this.projectionsLimitations
+    );
     const projections: InputProjections[] = [];
 
     if (this.projectionsConstraints.nad83) {
-      projections.push({ translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4269', zone: '' });
+      projections.push({
+        translateKey: 'nad83',
+        alias: 'NAD83',
+        code: 'EPSG:4269',
+        zone: ''
+      });
     }
     if (this.projectionsConstraints.wgs84) {
-      projections.push({ translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4326', zone: '' });
+      projections.push({
+        translateKey: 'wgs84',
+        alias: 'WGS84',
+        code: 'EPSG:4326',
+        zone: ''
+      });
     }
     if (this.projectionsConstraints.webMercator) {
-      projections.push({ translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: '' });
+      projections.push({
+        translateKey: 'webMercator',
+        alias: 'Web Mercator',
+        code: 'EPSG:3857',
+        zone: ''
+      });
     }
 
     if (this.projectionsConstraints.mtm) {
@@ -332,8 +373,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       const maxZone = this.projectionsConstraints.mtmZone.maxZone;
 
       for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
-        const code = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-        projections.push({ translateKey: 'mtm', alias: `MTM ${mtmZone}`, code, zone: `${mtmZone}` });
+        const code =
+          mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+        projections.push({
+          translateKey: 'mtm',
+          alias: `MTM ${mtmZone}`,
+          code,
+          zone: `${mtmZone}`
+        });
       }
     }
 
@@ -343,8 +390,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       const maxZone = this.projectionsConstraints.utmZone.maxZone;
 
       for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
-        const code = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
-        projections.push({ translateKey: 'utm', alias: `UTM ${utmZone}`, code, zone: `${utmZone}` });
+        const code =
+          utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
+        projections.push({
+          translateKey: 'utm',
+          alias: `UTM ${utmZone}`,
+          code,
+          zone: `${utmZone}`
+        });
       }
     }
 
@@ -359,7 +412,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private getWorkspaceByLayerId(id: string): Workspace {
     const wksFromLayerId = this.store
       .all()
-      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace).layer.id === id);
+      .find(
+        (workspace) =>
+          (workspace as WfsWorkspace | FeatureWorkspace | EditionWorkspace)
+            .layer.id === id
+      );
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
@@ -370,14 +427,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return this.map.getLayerById(id)?.title;
   }
 
-
   layerHasSelectedFeatures(layer: Layer): boolean {
     const wksFromLayer = this.getWorkspaceByLayerId(layer.id);
     if (wksFromLayer) {
-      const recs = wksFromLayer.entityStore.stateView
-        .firstBy((record: EntityRecord<Feature>) => {
+      const recs = wksFromLayer.entityStore.stateView.firstBy(
+        (record: EntityRecord<Feature>) => {
           return record.state.selected === true;
-        });
+        }
+      );
       return recs ? true : false;
     }
   }
@@ -387,19 +444,25 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (event.checked) {
       layersWithSelection.push(id);
     } else {
-      layersWithSelection = layersWithSelection.filter(layerId => layerId !== id);
+      layersWithSelection = layersWithSelection.filter(
+        (layerId) => layerId !== id
+      );
     }
     this.form.patchValue({ layersWithSelection });
   }
 
   public onlySelectedClick(event, id: string) {
-    if (this.form.value.layers.find(layerId => layerId === id)) {
+    if (this.form.value.layers.find((layerId) => layerId === id)) {
       event.stopPropagation();
     }
   }
 
   public inLayersIdToExportSelectionOnly(layer: Layer): boolean {
-    return this.form.value.layersWithSelection.find(layerId => layerId === layer.id) ? true : false;
+    return this.form.value.layersWithSelection.find(
+      (layerId) => layerId === layer.id
+    )
+      ? true
+      : false;
   }
 
   ngOnDestroy() {
@@ -465,32 +528,51 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.loading$.next(true);
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
-    if (!this.popupChecked && data.layers.length > 1 &&
-      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) && !this.popupAllowed) {
+    if (
+      !this.popupChecked &&
+      data.layers.length > 1 &&
+      (ogreFormats.indexOf(data.format) >= 0 ||
+        data.format === ExportFormat.URL) &&
+      !this.popupAllowed
+    ) {
       this.handlePopup();
     }
 
-    let geomTypesCSV: { geometryType: string, features: any[] }[] = [];
+    let geomTypesCSV: { geometryType: string; features: any[] }[] = [];
     let featuresCSV: any[] = [];
-    let filename: string = "";
+    let filename: string = '';
 
     for (const [layerIndex, layer] of data.layers.entries()) {
       const lay = this.map.getLayerById(layer);
-      if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma)
-      || !data.combineLayers || data.layers.length === 1) {
+      if (
+        !(
+          data.format === ExportFormat.CSVsemicolon ||
+          data.format === ExportFormat.CSVcomma
+        ) ||
+        !data.combineLayers ||
+        data.layers.length === 1
+      ) {
         filename = lay.title;
         if (data.name) {
           filename = data.name;
         }
       } else {
-        filename = this.languageService.translate.instant('igo.geo.export.combinedLayers');
+        filename = this.languageService.translate.instant(
+          'igo.geo.export.combinedLayers'
+        );
       }
       const dSOptions: DataSourceOptions = lay.dataSource.options;
-      if (data.format === ExportFormat.URL && dSOptions.download && (dSOptions.download.url || dSOptions.download.dynamicUrl)) {
+      if (
+        data.format === ExportFormat.URL &&
+        dSOptions.download &&
+        (dSOptions.download.url || dSOptions.download.dynamicUrl)
+      ) {
         setTimeout(() => {
           // better look an feel
           const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
-          url.match(/service=wfs/gi) ? this.downloadService.open(lay) : window.open(url , '_blank');
+          url.match(/service=wfs/gi)
+            ? this.downloadService.open(lay)
+            : window.open(url, '_blank');
           this.loading$.next(false);
         }, 500);
         return;
@@ -498,26 +580,43 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       const wks = this.getWorkspaceByLayerId(layer);
       let olFeatures;
       if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
-
-        if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
+        if (
+          data.layersWithSelection.indexOf(layer) !== -1 &&
+          data.featureInMapExtent
+        ) {
           // Only export selected feature && into map extent
-          olFeatures = wks.entityStore.stateView.all()
-            .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
+          olFeatures = wks.entityStore.stateView
+            .all()
+            .filter(
+              (e: EntityRecord<object>) =>
+                e.state.inMapExtent && e.state.selected
+            )
+            .map((e) => (e.entity as Feature).ol);
+        } else if (
+          data.layersWithSelection.indexOf(layer) !== -1 &&
+          !data.featureInMapExtent
+        ) {
           // Only export selected feature &&  (into map extent OR not)
-          olFeatures = wks.entityStore.stateView.all()
-            .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
+          olFeatures = wks.entityStore.stateView
+            .all()
+            .filter((e: EntityRecord<object>) => e.state.selected)
+            .map((e) => (e.entity as Feature).ol);
         } else if (data.featureInMapExtent) {
           // Only into map extent
-          olFeatures = wks.entityStore.stateView.all()
-            .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
+          olFeatures = wks.entityStore.stateView
+            .all()
+            .filter((e: EntityRecord<object>) => e.state.inMapExtent)
+            .map((e) => (e.entity as Feature).ol);
         } else {
           // All features
-          olFeatures = wks.entityStore.stateView.all().map(e => (e.entity as Feature).ol);
+          olFeatures = wks.entityStore.stateView
+            .all()
+            .map((e) => (e.entity as Feature).ol);
         }
-      }
-      else {
-        const ol = lay.dataSource.ol as olVectorSource<OlGeometry> | olClusterSource ;
+      } else {
+        const ol = lay.dataSource.ol as
+          | olVectorSource<OlGeometry>
+          | olClusterSource;
         if (data.featureInMapExtent) {
           olFeatures = ol.getFeaturesInExtent(
             lay.map.viewController.getExtent()
@@ -532,27 +631,37 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
 
-
-      let geomTypes: { geometryType: string, features: any[] }[] = [];
-      if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
+      let geomTypes: { geometryType: string; features: any[] }[] = [];
+      if (
+        data.format === ExportFormat.Shapefile ||
+        data.format === ExportFormat.GPX
+      ) {
         olFeatures.forEach((olFeature) => {
           const featureGeomType = olFeature.getGeometry().getType();
-          const currentGeomType = geomTypes.find(geomType => geomType.geometryType === featureGeomType);
+          const currentGeomType = geomTypes.find(
+            (geomType) => geomType.geometryType === featureGeomType
+          );
           if (currentGeomType) {
             currentGeomType.features.push(olFeature);
           } else {
-            geomTypes.push({ geometryType: featureGeomType, features: [olFeature] });
+            geomTypes.push({
+              geometryType: featureGeomType,
+              features: [olFeature]
+            });
           }
         });
       } else {
         geomTypes = [{ geometryType: '', features: olFeatures }];
       }
 
-      geomTypes.forEach(geomType => {
-        geomType.features.forEach(feature => {
+      geomTypes.forEach((geomType) => {
+        geomType.features.forEach((feature) => {
           const radius: number = feature.get('rad');
           if (radius) {
-            const center4326: Array<number> = [feature.get('longitude'), feature.get('latitude')];
+            const center4326: Array<number> = [
+              feature.get('longitude'),
+              feature.get('latitude')
+            ];
             const circle = circular(center4326, radius, 500);
             circle.transform('EPSG:4326', feature.get('_projection'));
             feature.setGeometry(circle);
@@ -562,31 +671,49 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       if (data.format === ExportFormat.GPX) {
         const gpxFeatureCnt = geomTypes.length;
-        geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
+        geomTypes = geomTypes.filter((geomType) =>
+          ['LineString', 'Point'].includes(geomType.geometryType)
+        );
         const gpxFeatureCntPointOrPoly = geomTypes.length;
         if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
-          this.messageService.error('igo.geo.export.gpx.error.poly.text', 'igo.geo.export.gpx.error.poly.title', { timeOut: 20000 });
+          this.messageService.error(
+            'igo.geo.export.gpx.error.poly.text',
+            'igo.geo.export.gpx.error.poly.title',
+            { timeOut: 20000 }
+          );
         }
-      } else if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
-        geomTypes.forEach(geomType => geomTypesCSV.push(geomType));
+      } else if (
+        (data.format === ExportFormat.CSVsemicolon ||
+          data.format === ExportFormat.CSVcomma) &&
+        data.combineLayers
+      ) {
+        geomTypes.forEach((geomType) => geomTypesCSV.push(geomType));
 
         if (layerIndex !== data.layers.length - 1) {
           continue;
         } else {
           let previousFeature = undefined;
-          geomTypesCSV.forEach(geomType => {
-            geomType.features.forEach(currentFeature => {
+          geomTypesCSV.forEach((geomType) => {
+            geomType.features.forEach((currentFeature) => {
               if (data.separator) {
                 if (previousFeature) {
-                  if (currentFeature.get('_featureStore').layer.options.title !==
-                  previousFeature.get('_featureStore').layer.options.title) {
-                    const titleEmptyRows = this.createTitleEmptyRows(previousFeature, currentFeature);
+                  if (
+                    currentFeature.get('_featureStore').layer.options.title !==
+                    previousFeature.get('_featureStore').layer.options.title
+                  ) {
+                    const titleEmptyRows = this.createTitleEmptyRows(
+                      previousFeature,
+                      currentFeature
+                    );
                     featuresCSV.push(titleEmptyRows[2]);
                     featuresCSV.push(titleEmptyRows[0]);
                     featuresCSV.push(titleEmptyRows[1]);
                   }
                 } else {
-                  const titleEmptyRows = this.createTitleEmptyRows(currentFeature, currentFeature);
+                  const titleEmptyRows = this.createTitleEmptyRows(
+                    currentFeature,
+                    currentFeature
+                  );
                   featuresCSV.push(titleEmptyRows[0]);
                 }
               }
@@ -599,43 +726,71 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       if (geomTypes.length === 0) {
         this.loading$.next(false);
-        this.messageService.error('igo.geo.export.nothing.text', 'igo.geo.export.nothing.title', { timeOut: 20000 });
-
+        this.messageService.error(
+          'igo.geo.export.nothing.text',
+          'igo.geo.export.nothing.title',
+          { timeOut: 20000 }
+        );
       } else {
-        if (!(data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) || !data.combineLayers) {
-          geomTypes.map(geomType =>
-            this.exportService.export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
-            .subscribe(
-              () => {},
-              (error: Error) => this.onFileExportError(error),
-              () => {
-                this.onFileExportSuccess();
+        if (
+          !(
+            data.format === ExportFormat.CSVsemicolon ||
+            data.format === ExportFormat.CSVcomma
+          ) ||
+          !data.combineLayers
+        ) {
+          geomTypes.map((geomType) =>
+            this.exportService
+              .export(
+                geomType.features,
+                data.format,
+                filename + geomType.geometryType,
+                data.encoding,
+                this.map.projection
+              )
+              .subscribe(
+                () => {},
+                (error: Error) => this.onFileExportError(error),
+                () => {
+                  this.onFileExportSuccess();
 
-                geomType.features.forEach(feature => {
-                  this.circleToPoint(feature);
-                });
+                  geomType.features.forEach((feature) => {
+                    this.circleToPoint(feature);
+                  });
 
-                this.loading$.next(false);
-            }
-          ));
+                  this.loading$.next(false);
+                }
+              )
+          );
         }
       }
-    };
-    if ((data.format === ExportFormat.CSVsemicolon || data.format === ExportFormat.CSVcomma) && data.combineLayers) {
-      this.exportService.export(featuresCSV, data.format, filename, data.encoding, this.map.projection)
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
-          this.onFileExportSuccess();
+    }
+    if (
+      (data.format === ExportFormat.CSVsemicolon ||
+        data.format === ExportFormat.CSVcomma) &&
+      data.combineLayers
+    ) {
+      this.exportService
+        .export(
+          featuresCSV,
+          data.format,
+          filename,
+          data.encoding,
+          this.map.projection
+        )
+        .subscribe(
+          () => {},
+          (error: Error) => this.onFileExportError(error),
+          () => {
+            this.onFileExportSuccess();
 
-          featuresCSV.forEach(feature => {
-            this.circleToPoint(feature);
-          });
+            featuresCSV.forEach((feature) => {
+              this.circleToPoint(feature);
+            });
 
-          this.loading$.next(false);
-        }
-      );
+            this.loading$.next(false);
+          }
+        );
     }
   }
 
@@ -661,7 +816,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
     }
     const allKeys: Array<string> = currentFeature.getKeys();
-    previousFeatureKeys.forEach(previousKey => {
+    previousFeatureKeys.forEach((previousKey) => {
       if (allKeys.includes(previousKey) && previousKey !== firstKeyPrevious) {
         allKeys.push(previousKey);
       }
@@ -675,19 +830,35 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         break;
       }
     }
-    allKeys.forEach(key => {
-      const sameKeys: boolean = previousFeatureKeys.length === currentFeatureKeys.length &&
-      previousFeatureKeys.every((value, index) => value === currentFeatureKeys[index]);
+    allKeys.forEach((key) => {
+      const sameKeys: boolean =
+        previousFeatureKeys.length === currentFeatureKeys.length &&
+        previousFeatureKeys.every(
+          (value, index) => value === currentFeatureKeys[index]
+        );
       if (key === firstKeyAll && !sameKeys) {
-        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title + " ===============>", true);
+        titleRow.set(
+          key,
+          currentFeature.get('_featureStore').layer.options.title +
+            ' ===============>',
+          true
+        );
         headerRow.set(key, key, true);
         emptyRow.unset(key, true);
       } else if (key === firstKeyAll && sameKeys) {
-        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        titleRow.set(
+          key,
+          currentFeature.get('_featureStore').layer.options.title,
+          true
+        );
         headerRow.set(key, key, true);
         emptyRow.unset(key, true);
       } else if (key === firstKeyCurrent) {
-        titleRow.set(key, currentFeature.get('_featureStore').layer.options.title, true);
+        titleRow.set(
+          key,
+          currentFeature.get('_featureStore').layer.options.title,
+          true
+        );
         headerRow.set(key, key, true);
         emptyRow.unset(key, true);
       } else if (key !== 'geometry') {
@@ -699,7 +870,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         emptyRow.unset(key, true);
       }
 
-      if (!(currentFeatureKeys.includes(key))) {
+      if (!currentFeatureKeys.includes(key)) {
         headerRow.unset(key, true);
       }
     });
@@ -711,7 +882,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const radius: number = feature.get('rad');
 
     if (radius) {
-      const point = new olPoint([feature.get('longitude'), feature.get('latitude')]);
+      const point = new olPoint([
+        feature.get('longitude'),
+        feature.get('latitude')
+      ]);
       point.transform('EPSG:4326', feature.get('_projection'));
       feature.setGeometry(point);
     }
@@ -741,15 +915,21 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         encoding: [EncodingFormat.UTF8, [Validators.required]],
         combineLayers: [true, [Validators.required]],
         separator: [false, [Validators.required]],
-        featureInMapExtent: [false, [Validators.required]],
+        featureInMapExtent: [false, [Validators.required]]
       });
     }
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
-    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
-    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
+    const importExportOptions = this.config.getConfig(
+      'importExport'
+    ) as ImportExportServiceOptions;
+    const confirmDialogService = importExportOptions?.allowToStoreLayer
+      ? this.confirmDialogService
+      : undefined;
+    const importWithStyle =
+      importExportOptions?.importWithStyle ||
+      this.config.getConfig('importWithStyle');
     if (this.config.getConfig('importWithStyle')) {
       console.warn(`
       The location of this config importWithStyle is deprecated.
@@ -786,22 +966,20 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileImportError(file: File, error: Error) {
     this.loading$.next(false);
-    handleFileImportError(
-      file,
-      error,
-      this.messageService,
-      this.fileSizeMb
-    );
+    handleFileImportError(file, error, this.messageService, this.fileSizeMb);
   }
 
   private onPopupBlockedError(preCheck: boolean = true) {
     this.loading$.next(false);
-    const extraMessage = preCheck ? 'igo.geo.export.popupBlocked.selectAgain' : 'igo.geo.export.popupBlocked.retry';
+    const extraMessage = preCheck
+      ? 'igo.geo.export.popupBlocked.selectAgain'
+      : 'igo.geo.export.popupBlocked.retry';
     this.messageService.error(
       'igo.geo.export.popupBlocked.text',
       'igo.geo.export.popupBlocked.title',
       { timeOut: 20000 },
-      {extraMessage});
+      { extraMessage }
+    );
   }
 
   private onFileExportError(error: Error) {
@@ -818,7 +996,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public encodingDefaultValue(format: ExportFormat) {
-    if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
+    if (
+      format === ExportFormat.CSVcomma ||
+      format === ExportFormat.CSVsemicolon
+    ) {
       this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
       return EncodingFormat.LATIN1;
     } else {
@@ -847,7 +1028,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
         if (layer.dataSource.options.download?.allowedFormats) {
           formatsType.customList = true;
-          customList.push({layer: layer.title, formats: this.validateListFormat(layer.dataSource.options.download.allowedFormats)});
+          customList.push({
+            layer: layer.title,
+            formats: this.validateListFormat(
+              layer.dataSource.options.download.allowedFormats
+            )
+          });
         } else if (
           !(layer instanceof VectorLayer) &&
           layer.dataSource.options.download &&
@@ -856,7 +1042,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           formatsType.onlyUrl = true;
         } else if (
           layer.dataSource.options.download &&
-          (layer.dataSource.options.download.url || layer.dataSource.options.download.dynamicUrl)
+          (layer.dataSource.options.download.url ||
+            layer.dataSource.options.download.dynamicUrl)
         ) {
           formatsType.vectorAndUrl = true;
         } else if (layer instanceof VectorLayer) {
@@ -890,21 +1077,31 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       }
     }
-    const configImportExportFormats = this.config.getConfig('importExport.formats');
+    const configImportExportFormats = this.config.getConfig(
+      'importExport.formats'
+    );
     if (configImportExportFormats) {
-      const validatedListFormat = this.validateListFormat(configImportExportFormats);
-      appliedformats = appliedformats.filter(af => validatedListFormat.includes(af));
+      const validatedListFormat = this.validateListFormat(
+        configImportExportFormats
+      );
+      appliedformats = appliedformats.filter((af) =>
+        validatedListFormat.includes(af)
+      );
     }
     if (formatsType.customList) {
       let commonFormats;
       const layersWithCustomFormats = [];
       let previousCustomListFormats = customList[0].formats;
-      customList.map(list => {
+      customList.map((list) => {
         layersWithCustomFormats.push(list.layer);
-        commonFormats = list.formats.filter(value => previousCustomListFormats.includes(value));
+        commonFormats = list.formats.filter((value) =>
+          previousCustomListFormats.includes(value)
+        );
         previousCustomListFormats = list.formats;
       });
-      const finalFormats = commonFormats.filter(value => appliedformats.includes(value));
+      const finalFormats = commonFormats.filter((value) =>
+        appliedformats.includes(value)
+      );
       if (finalFormats.length > 0) {
         this.formats$.next(strEnum(finalFormats));
 
@@ -920,7 +1117,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       } else {
         this.formats$.next([]);
-        this.messageService.alert('igo.geo.export.noFormat.text','igo.geo.export.noFormat.title');
+        this.messageService.alert(
+          'igo.geo.export.noFormat.text',
+          'igo.geo.export.noFormat.title'
+        );
       }
       return;
     } else {

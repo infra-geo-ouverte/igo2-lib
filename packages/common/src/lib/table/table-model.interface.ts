@@ -9,9 +9,7 @@ export interface TableColumn {
   html?: boolean;
 }
 
-export type RowClassFunc = (
-  row: any
-) => {
+export type RowClassFunc = (row: any) => {
   [key: string]: string;
 };
 

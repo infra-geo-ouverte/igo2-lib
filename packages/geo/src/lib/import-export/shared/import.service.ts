@@ -25,7 +25,6 @@ import { ImportExportServiceOptions } from './import.interface';
   providedIn: 'root'
 })
 export class ImportService {
-
   static formatExtensionAssociation = {
     GeoJSON: 'geojson',
     GML: 'gml',
@@ -52,15 +51,21 @@ export class ImportService {
   private ogreUrl: string;
   private clientSideFileSizeMax: number;
 
-  constructor(private http: HttpClient, private config: ConfigService) {
-    const importConfig = this.config.getConfig('importExport') as ImportExportServiceOptions;
+  constructor(
+    private http: HttpClient,
+    private config: ConfigService
+  ) {
+    const importConfig = this.config.getConfig(
+      'importExport'
+    ) as ImportExportServiceOptions;
     this.ogreUrl = importConfig.url;
     const configFileSizeMb = importConfig.clientSideFileSizeMaxMb;
-    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
+    this.clientSideFileSizeMax =
+      (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     if (importConfig.formats) {
       ImportService.allowedExtensions = importConfig.formats
-        .map(format => ImportService.formatExtensionAssociation[format])
-        .filter(e => e);
+        .map((format) => ImportService.formatExtensionAssociation[format])
+        .filter((e) => e);
       if (ImportService.allowedExtensions.includes('geojson')) {
         ImportService.allowedExtensions.push('json');
       }
@@ -78,11 +83,11 @@ export class ImportService {
   private getFileImporter(
     file: File
   ): (
-      file: File,
-      observer: Observer<Feature[]>,
-      projectionIn: string,
-      projectionOut: string
-    ) => void {
+    file: File,
+    observer: Observer<Feature[]>,
+    projectionIn: string,
+    projectionOut: string
+  ) => void {
     const extension = getFileExtension(file);
     const allowedExtensions = ImportService.allowedExtensions;
     let zipMimeTypes = [];
@@ -158,7 +163,7 @@ export class ImportService {
       observer.complete();
     };
 
-    reader.onerror = evt => {
+    reader.onerror = (evt) => {
       observer.error(new ImportUnreadableFileError());
     };
 
@@ -179,42 +184,43 @@ export class ImportService {
     formData.append('formatOutput', 'GEOJSON');
     formData.append('skipFailures', '');
 
-    this.http.post(url, formData, { headers: new HttpHeaders() })
-      .subscribe(
-        (response: { errors?: string[] } | object | null) => {
-          if (response === null) {
-            observer.error(new ImportUnreadableFileError());
-            return;
-          }
-
-          const errors = (response as any).errors || [];
-          if (errors.length > 0) {
-            observer.error(new ImportUnreadableFileError());
-          } else {
-            const features = this.parseFeaturesFromGeoJSON(
-              file,
-              response,
-              projectionOut
-            );
-            observer.next(features);
-            observer.complete();
-          }
-        },
-        (error: any) => {
-          error.error.caught = true;
-          const errMsg = error.error.msg || '';
-          if (errMsg === 'No valid files found') {
-            observer.error(new ImportInvalidFileError());
-          } else if (errMsg && errMsg.startWith('ERROR 1: Failed to process SRS definition')
-          ) {
-            observer.error(new ImportSRSError());
-          } else if (error.status === 500) {
-            observer.error(new ImportOgreServerError());
-          } else {
-            observer.error(new ImportUnreadableFileError());
-          }
+    this.http.post(url, formData, { headers: new HttpHeaders() }).subscribe(
+      (response: { errors?: string[] } | object | null) => {
+        if (response === null) {
+          observer.error(new ImportUnreadableFileError());
+          return;
         }
-      );
+
+        const errors = (response as any).errors || [];
+        if (errors.length > 0) {
+          observer.error(new ImportUnreadableFileError());
+        } else {
+          const features = this.parseFeaturesFromGeoJSON(
+            file,
+            response,
+            projectionOut
+          );
+          observer.next(features);
+          observer.complete();
+        }
+      },
+      (error: any) => {
+        error.error.caught = true;
+        const errMsg = error.error.msg || '';
+        if (errMsg === 'No valid files found') {
+          observer.error(new ImportInvalidFileError());
+        } else if (
+          errMsg &&
+          errMsg.startWith('ERROR 1: Failed to process SRS definition')
+        ) {
+          observer.error(new ImportSRSError());
+        } else if (error.status === 500) {
+          observer.error(new ImportOgreServerError());
+        } else {
+          observer.error(new ImportUnreadableFileError());
+        }
+      }
+    );
   }
 
   private parseFeaturesFromFile(

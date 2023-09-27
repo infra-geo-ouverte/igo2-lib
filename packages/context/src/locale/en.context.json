@@ -75,7 +75,7 @@
           "exportSelectAll": "Select all",
           "success": {
             "text": "Context has been exported.",
-            "title":"Context export success"
+            "title": "Context export success"
           },
           "nothing": {
             "text": "No context could be exported.",

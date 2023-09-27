@@ -1,36 +1,36 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/media';
 
-.igo-user-button-container {
-  button {
-    background-color: #fff;
-    &:hover {
-      background-color: #efefef;
-    }
-  }
-  & > button {
-    @include mobile {
-      position: absolute;
-      bottom: 0;
-    }
-  }
-}
+:host {
+  @include common-utils.square-button();
 
-.igo-user-button-more-container {
-  float: left;
-  height: 40px;
-  & > * {
-    margin-right: 2px;
+  .igo-user-button-container {
+    button {
+      background-color: #fff;
+      &:hover {
+        background-color: #efefef;
+      }
+    }
+    & > button {
+      @include mobile {
+        position: absolute;
+        bottom: 0;
+      }
+    }
+  }
+
+  .igo-user-button-more-container {
     float: left;
+    height: 40px;
+    & > * {
+      margin-right: 2px;
+      float: left;
+    }
+    @include mobile {
+      height: 80px;
+      width: 150px;
+      position: relative;
+      left: 24px;
+    }
   }
-  @include mobile {
-    height: 80px;
-    width: 150px;
-    position: relative;
-    left: 24px;
-  }
-}
-
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
 }

@@ -1,36 +1,38 @@
-<mat-card>
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Tool</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/tool">code of this example</a>
-  </mat-card-content>
+<app-doc-viewer title="Tool" subtitle="Common">
+  <app-example-viewer codeFolder="common/tool">
+    <igo-panel [title]="panelTitle">
+      <button
+        mat-icon-button
+        panelLeftButton
+        (click)="toolbox.activatePreviousTool()"
+        *ngIf="activeTool$ | async"
+      >
+        <mat-icon svgIcon="arrow-back"></mat-icon>
+      </button>
 
-  <igo-panel [title]="panelTitle">
+      <button
+        mat-icon-button
+        panelRightButton
+        (click)="toolbox.deactivateTool()"
+        *ngIf="activeTool$ | async"
+      >
+        <mat-icon svgIcon="menu"></mat-icon>
+      </button>
+
+      <igo-toolbox
+        [toolbox]="toolbox"
+        [animate]="true"
+        color="primary"
+      ></igo-toolbox>
+    </igo-panel>
+
     <button
-      mat-icon-button
-      panelLeftButton
-      (click)="toolbox.activatePreviousTool()"
-      *ngIf="activeTool$ | async">
-      <mat-icon svgIcon="arrow-back"></mat-icon>
+      mat-flat-button
+      type="button"
+      color="primary"
+      (click)="activateSalutationTool()"
+    >
+      Activate Salutation Tool
     </button>
-
-    <button
-      mat-icon-button
-      panelRightButton
-      (click)="toolbox.deactivateTool()"
-      *ngIf="activeTool$ | async">
-      <mat-icon svgIcon="menu"></mat-icon>
-    </button>
-
-    <igo-toolbox [toolbox]="toolbox" [animate]="true"></igo-toolbox>
-  </igo-panel>
-
-  <button
-    mat-flat-button
-    type="button"
-    color="primary"
-    (click)="activateSalutationTool()">
-    Activate Salutation Tool
-  </button>
-
-</mat-card>
+  </app-example-viewer>
+</app-doc-viewer>

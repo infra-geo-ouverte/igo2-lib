@@ -1,22 +1,28 @@
-<mat-card>
-  <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Print</mat-card-title>
-  <mat-card-content>
-    <li>Dependencies: LanguageService</li>
-
-    <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/print">code of this example</a>
-    <hr>
-  </mat-card-content>
-
-  <igo-map-browser [map]="map" [view]="view">
-    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-    <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
-    <igo-home-extent-button [map]="map" color="primary"></igo-home-extent-button>
-    <igo-rotation-button [map]="map" [showIfNoRotation]="false" color="primary"></igo-rotation-button>
-  </igo-map-browser>
-
-  <igo-print [map]="map"></igo-print>
-
-</mat-card>
-
+<app-doc-viewer
+  title="Print"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/print">
+    <mat-grid-list cols="2" rowHeight="800px" gutterSize="16px">
+      <mat-grid-tile
+        ><igo-map-browser [map]="map" [view]="view">
+          <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+          <igo-geolocate-button
+            [map]="map"
+            color="primary"
+          ></igo-geolocate-button>
+          <igo-home-extent-button
+            [map]="map"
+            color="primary"
+          ></igo-home-extent-button>
+          <igo-rotation-button
+            [map]="map"
+            [showIfNoRotation]="false"
+            color="primary"
+          ></igo-rotation-button> </igo-map-browser
+      ></mat-grid-tile>
+      <mat-grid-tile> <igo-print [map]="map"></igo-print></mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

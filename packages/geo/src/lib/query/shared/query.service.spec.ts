@@ -8,10 +8,7 @@ import { QueryService } from './query.service';
 describe('QueryService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        TranslateModule.forRoot()
-      ],
+      imports: [HttpClientModule, TranslateModule.forRoot()],
       providers: [QueryService]
     });
   });

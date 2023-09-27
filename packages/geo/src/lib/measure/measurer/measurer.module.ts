@@ -18,6 +18,7 @@ import { MeasureFormatPipe } from './measure-format.pipe';
 import { MeasurerItemComponent } from './measurer-item.component';
 import { MeasurerComponent } from './measurer.component';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 /**
  * @ignore
@@ -27,6 +28,7 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
     CommonModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatDialogModule,
     MatIconModule,
     MatTooltipModule,
     MatFormFieldModule,
@@ -43,9 +45,6 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
     MeasurerComponent,
     MeasurerDialogComponent
   ],
-  exports: [
-    MeasureFormatPipe,
-    MeasurerComponent
-  ]
+  exports: [MeasureFormatPipe, MeasurerComponent]
 })
 export class IgoMeasurerModule {}

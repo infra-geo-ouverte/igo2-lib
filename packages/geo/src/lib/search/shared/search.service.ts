@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
-import { stringToLonLat } from '../../map';
+import { stringToLonLat } from '../../map/shared';
 import { MapService } from '../../map/shared/map.service';
 
-import { SearchSource, TextSearch, ReverseSearch } from './sources/source';
+import { SearchSource } from './sources/source';
 import {
   TextSearchOptions,
   ReverseSearchOptions
 } from './sources/source.interfaces';
 import { SearchSourceService } from './search-source.service';
-import { Research } from './search.interfaces';
+import { Research, TextSearch, ReverseSearch } from './search.interfaces';
 import {
   sourceCanSearch,
   sourceCanReverseSearch,
@@ -49,7 +49,10 @@ export class SearchService {
       forceNA: options.forceNA
     });
     if (response.lonLat) {
-      return this.reverseSearch(response.lonLat, { distance: response.radius, conf: response.conf });
+      return this.reverseSearch(response.lonLat, {
+        distance: response.radius,
+        conf: response.conf
+      });
     } else if (response.message) {
       console.log(response.message);
     }
@@ -94,9 +97,17 @@ export class SearchService {
     const sources = this.searchSourceService
       .getEnabledSources()
       .filter(reverseSourceFonction);
-    const reverseSearchCoordsFormat = this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
+    const reverseSearchCoordsFormat =
+      (this.storageService.get(
+        'reverseSearchCoordsFormatEnabled'
+      ) as boolean) || false;
 
-    return this.reverseSearchSources(sources, lonLat, options || {}, reverseSearchCoordsFormat);
+    return this.reverseSearchSources(
+      sources,
+      lonLat,
+      options || {},
+      reverseSearchCoordsFormat
+    );
   }
 
   /**
@@ -112,7 +123,7 @@ export class SearchService {
   ): Research[] {
     return sources.map((source: SearchSource) => {
       return {
-        request: ((source as any) as TextSearch).search(term, options),
+        request: (source as any as TextSearch).search(term, options),
         reverse: false,
         source
       };
@@ -133,7 +144,7 @@ export class SearchService {
   ): Research[] {
     return sources.map((source: SearchSource) => {
       return {
-        request: ((source as any) as ReverseSearch).reverseSearch(
+        request: (source as any as ReverseSearch).reverseSearch(
           lonLat,
           options,
           reverseSearchCoordsFormat

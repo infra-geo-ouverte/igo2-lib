@@ -1,3 +1,3 @@
 export interface RegexOptions {
-  [key: string]: any
+  [key: string]: any;
 }

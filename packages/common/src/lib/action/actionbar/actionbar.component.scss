@@ -9,92 +9,79 @@ $igo-actionbar-item-icon-padding: 8px;
   height: 100%;
   overflow: auto;
   position: relative;
-}
 
-button {
-  margin: 4px;
-}
+  &.horizontal {
+    max-width: 100%;
+    overflow: unset;
+    mat-list {
+      width: auto;
+      white-space: nowrap;
+    }
 
-.buttonOverlay {
-  margin: 0px;
-}
+    igo-actionbar-item {
+      display: inline-block;
+    }
+  }
 
-mat-list {
-  padding-top: 0;
-}
-
-:host.horizontal {
-  max-width: 100%;
-  overflow: unset;
   mat-list {
-    width: auto;
-    white-space: nowrap;
+    padding-top: 0;
   }
 
-  igo-actionbar-item {
-    display: inline-block;
-  }
-}
-
-:host ::ng-deep .mat-list .mat-list-item .mat-list-text > * {
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  max-height: 36px;
-  line-height: 18px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-:host ::ng-deep .mat-list-base .mat-list-item.mat-list-item-with-avatar {
-  height: $igo-actionbar-item-height;
-
-  .mat-list-item-content {
-    display: -webkit-flex;
-    height: $igo-actionbar-item-height;
-    padding: $igo-actionbar-item-padding;
+  .buttonOverlay {
+    margin: 0px;
   }
 
-  .mat-list-item-content > mat-icon {
-    padding: $igo-actionbar-item-icon-padding;
+  .context-menu-card {
+    padding: 8px 3px;
+    margin: 10px;
   }
-}
 
-igo-actionbar-item ::ng-deep mat-list-item [mat-list-avatar] {
-  height: auto;
-  width: 40px;
-}
+  #topChevron {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 3;
 
-igo-actionbar-item ::ng-deep mat-list-item:hover {
-  cursor: pointer;
-}
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      position: fixed;
+      top: unset;
+    }
+    @supports (-ms-accelerator: true) {
+      position: fixed;
+      top: unset;
+    }
+  }
 
-.context-menu-card {
-  padding: 8px 3px;
-  margin: 10px;
-}
-
-#topChevron {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 3;
-
-  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  #lowChevron {
     position: fixed;
-    top: unset;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 3;
   }
-  @supports (-ms-accelerator:true) {
-    position: fixed;
-    top: unset;
-  }
-}
 
-#lowChevron {
-  position: fixed;
-  position: sticky;
-  bottom: 0;
-  background-color: white;
-  z-index: 3;
+  .igo-actionbar-overlay {
+    min-width: inherit !important;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .mat-mdc-list {
+      padding-top: 0;
+    }
+
+    .mat-mdc-menu-content:not(:empty) {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  ::ng-deep .mdc-list-item__primary-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 18px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 }

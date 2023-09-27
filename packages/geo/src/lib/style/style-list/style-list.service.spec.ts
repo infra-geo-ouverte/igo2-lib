@@ -11,10 +11,7 @@ describe('StyleListService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([StyleListService], (service: StyleListService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([StyleListService], (service: StyleListService) => {
+    expect(service).toBeTruthy();
+  }));
 });

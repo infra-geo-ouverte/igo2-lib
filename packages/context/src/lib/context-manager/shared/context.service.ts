@@ -29,7 +29,13 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap, Layer, LayerOptions } from '@igo2/geo';
+import type {
+  IgoMap,
+  Layer,
+  LayerOptions,
+  VectorLayerOptions,
+  VectorTileLayerOptions
+} from '@igo2/geo';
 import { ExportService } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
@@ -40,8 +46,11 @@ import {
   DetailedContext,
   ContextMapView,
   ContextPermission,
-  ContextProfils
+  ContextProfils,
+  ExtraFeatures
 } from './context.interface';
+import { Geometry } from 'ol/geom';
+import { Feature } from 'ol';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +72,11 @@ export class ContextService {
   private toolbar: string[];
 
   get defaultContextUri(): string {
-    return this.storageService.get('favorite.context.uri') as string || this._defaultContextUri || this.options.defaultContextUri;
+    return (
+      (this.storageService.get('favorite.context.uri') as string) ||
+      this._defaultContextUri ||
+      this.options.defaultContextUri
+    );
   }
   set defaultContextUri(uri: string) {
     this._defaultContextUri = uri;
@@ -89,7 +102,7 @@ export class ContextService {
       this.config.getConfig('context')
     );
 
-    this.baseUrl = this.options.url;
+    this.baseUrl = this.options.url ?? '';
 
     this.readParamsFromRoute();
 
@@ -147,7 +160,6 @@ export class ContextService {
       this.defaultContextId$.next(uri);
       return this.getContextByUri(uri);
     }
-
   }
 
   getProfilByUser(): Observable<ContextProfils[]> {
@@ -467,7 +479,10 @@ export class ContextService {
         )
         .sort((a, b) => a.zIndex - b.zIndex);
     } else {
-      layers = igoMap.layers$.getValue().filter(lay => !lay.id.includes('WfsWorkspaceTableDest')).sort((a, b) => a.zIndex - b.zIndex);
+      layers = igoMap.layers$
+        .getValue()
+        .filter((lay) => !lay.id.includes('WfsWorkspaceTableDest'))
+        .sort((a, b) => a.zIndex - b.zIndex);
     }
 
     let i = 0;
@@ -503,7 +518,8 @@ export class ContextService {
   getContextFromLayers(
     igoMap: IgoMap,
     layers: Layer[],
-    name: string
+    name: string,
+    keepCurrentView?: boolean
   ): DetailedContext {
     const currentContext = this.context$.getValue();
     const view = igoMap.ol.getView();
@@ -513,14 +529,15 @@ export class ContextService {
       'EPSG:4326'
     );
 
-    const context = {
+    const context: DetailedContext = {
       uri: name,
       title: name,
       map: {
         view: {
           center: center.getCoordinates(),
           zoom: view.getZoom(),
-          projection: proj
+          projection: proj,
+          keepCurrentView
         }
       },
       layers: [],
@@ -543,16 +560,18 @@ export class ContextService {
 
     layers.forEach((layer) => {
       // Do not seem to work properly. layerFound is always undefined.
-      const layerFound = currentContext.layers.find(
-        (contextLayer) => {
-          const source = contextLayer.source;
-          return source && layer.id === source.id && !contextLayer.baseLayer;
-        });
+      const layerFound = currentContext.layers.find((contextLayer) => {
+        const source = contextLayer.source;
+        return source && layer.id === source.id && !contextLayer.baseLayer;
+      });
       if (layerFound) {
-        let layerStyle = layerFound[`style`];
-        if (layerFound[`igoStyle`][`styleByAttribute`]) {
+        let layerFoundAs = layerFound as
+          | VectorLayerOptions
+          | VectorTileLayerOptions;
+        let layerStyle = layerFoundAs.style;
+        if (layerFoundAs.igoStyle?.styleByAttribute) {
           layerStyle = undefined;
-        } else if (layerFound[`igoStyle`][`clusterBaseStyle`]) {
+        } else if (layerFoundAs.igoStyle?.clusterBaseStyle) {
           layerStyle = undefined;
           delete layerFound.sourceOptions[`source`];
           delete layerFound.sourceOptions[`format`];
@@ -562,8 +581,8 @@ export class ContextService {
           title: layer.options.title,
           zIndex: layer.zIndex,
           igoStyle: {
-            styleByAttribute: layerFound[`igoStyle`][`styleByAttribute`],
-            clusterBaseStyle: layerFound[`igoStyle`][`clusterBaseStyle`],
+            styleByAttribute: layerFoundAs.igoStyle?.styleByAttribute,
+            clusterBaseStyle: layerFoundAs.igoStyle?.clusterBaseStyle
           },
           style: layerStyle,
           clusterParam: layerFound[`clusterParam`],
@@ -576,38 +595,16 @@ export class ContextService {
         if (!(layer.ol.getSource() instanceof olVectorSource)) {
           const catalogLayer = layer.options;
           catalogLayer.zIndex = layer.zIndex;
+          (catalogLayer.visible = layer.visible),
+            (catalogLayer.opacity = layer.opacity);
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
-          let features;
-          const writer = new GeoJSON();
-          if (layer.ol.getSource() instanceof Cluster) {
-            const clusterSource = layer.ol.getSource() as Cluster;
-            let olFeatures = clusterSource.getFeatures();
-            olFeatures = (olFeatures as any).flatMap((cluster: any) => cluster.get('features'));
-            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
-            features = writer.writeFeatures(
-              cleanedOlFeatures,
-              {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-              }
-            );
-          } else {
-            const source = layer.ol.getSource() as olVectorSource;
-            const olFeatures = source.getFeatures();
-            const cleanedOlFeatures = this.exportService.generateFeature(olFeatures, 'GeoJSON', '_featureStore');
-            features = writer.writeFeatures(
-              cleanedOlFeatures,
-              {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
-              }
-            );
-          }
-          features = JSON.parse(features);
-          features.name = layer.options.title;
-          context.extraFeatures.push(features);
+          const extraFeatures = this.getExtraFeatures(layer);
+          extraFeatures.name = layer.options.title;
+          extraFeatures.opacity = layer.opacity;
+          extraFeatures.visible = layer.visible;
+          context.extraFeatures.push(extraFeatures);
         }
       }
     });
@@ -616,6 +613,31 @@ export class ContextService {
     context.tools = this.tools;
 
     return context;
+  }
+
+  private getExtraFeatures(layer: Layer): ExtraFeatures {
+    const writer = new GeoJSON();
+    let olFeatures: Feature<Geometry>[];
+    if (layer.ol.getSource() instanceof Cluster) {
+      const clusterSource = layer.ol.getSource() as Cluster;
+      olFeatures = clusterSource.getFeatures();
+      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
+        cluster.get('features')
+      );
+    } else {
+      const source = layer.ol.getSource() as olVectorSource;
+      olFeatures = source.getFeatures();
+    }
+    const cleanedOlFeatures = this.exportService.generateFeature(
+      olFeatures,
+      'GeoJSON',
+      '_featureStore'
+    );
+    const features = writer.writeFeatures(cleanedOlFeatures, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: 'EPSG:3857'
+    });
+    return JSON.parse(features);
   }
 
   setTools(tools: Tool[]) {
@@ -627,13 +649,17 @@ export class ContextService {
   }
 
   private handleContextMessage(context: DetailedContext) {
-    if (this.context$.value && context.uri && this.context$.value.uri !== context.uri) {
+    if (
+      this.context$.value &&
+      context.uri &&
+      this.context$.value.uri !== context.uri
+    ) {
       this.messageService.removeAllAreNotError();
     }
 
     context.messages = context.messages ? context.messages : [];
     context.messages.push(context.message);
-    context.messages.map(message => {
+    context.messages.map((message) => {
       if (message) {
         this.messageService.message(message as Message);
       }
@@ -743,12 +769,11 @@ export class ContextService {
     }
     this.messageService.error(
       'igo.context.contextManager.errors.addPermission',
-      'igo.context.contextManager.errors.addPermissionTitle');
+      'igo.context.contextManager.errors.addPermissionTitle'
+    );
   }
 
-  private handleContextsChange(
-    keepCurrentContext = true
-  ) {
+  private handleContextsChange(keepCurrentContext = true) {
     const context = this.context$.value;
     const editedContext = this.editedContext$.value;
     if (!context || context.uri === this.options.defaultContextUri) {
@@ -760,11 +785,9 @@ export class ContextService {
     } else {
       this.getContextByUri(context.uri)
         .pipe(first())
-        .subscribe(
-          (newContext: DetailedContext) => {
-            this.toolsChanged$.next(newContext);
-          }
-        );
+        .subscribe((newContext: DetailedContext) => {
+          this.toolsChanged$.next(newContext);
+        });
 
       if (this.baseUrl && this.authService.authenticated) {
         this.getDefault().subscribe();

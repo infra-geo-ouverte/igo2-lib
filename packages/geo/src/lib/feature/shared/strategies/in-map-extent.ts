@@ -12,7 +12,6 @@ import { skipWhile } from 'rxjs/operators';
  * The features's state inside the map are tagged inMapExtent = true;
  */
 export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
-
   /**
    * Subscription to the store's OL source changes
    */
@@ -75,9 +74,11 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     }
 
     this.updateEntitiesInExtent(store);
-    this.states$$.push(store.layer.map.viewController.state$.subscribe(() => {
-      this.updateEntitiesInExtent(store);
-    }));
+    this.states$$.push(
+      store.layer.map.viewController.state$.subscribe(() => {
+        this.updateEntitiesInExtent(store);
+      })
+    );
   }
 
   private updateEntitiesInExtent(store) {
@@ -88,7 +89,9 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
       let entitiesWithNoGeom = [];
       for (const entity of store.entities$.value) {
         if (entity.ol) {
-          if (olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent)) {
+          if (
+            olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent)
+          ) {
             entitiesInMapExtent.push(entity);
           }
         } else {
@@ -96,10 +99,18 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
         }
       }
       if (entitiesInMapExtent.length > 0) {
-        store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, false);
+        store.state.updateMany(
+          entitiesInMapExtent,
+          { inMapExtent: true },
+          false
+        );
       }
       if (entitiesWithNoGeom.length > 0) {
-        store.state.updateMany(entitiesWithNoGeom, { inMapExtent: true }, false);
+        store.state.updateMany(
+          entitiesWithNoGeom,
+          { inMapExtent: true },
+          false
+        );
       }
     }
   }
@@ -120,7 +131,9 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    */
   private unwatchAll() {
     this.stores$$.clear();
-    this.states$$.map(state => state.unsubscribe());
-    if (this.empty$$) { this.empty$$.unsubscribe(); }
+    this.states$$.map((state) => state.unsubscribe());
+    if (this.empty$$) {
+      this.empty$$.unsubscribe();
+    }
   }
 }

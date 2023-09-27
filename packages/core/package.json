@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "1.15.4",
+  "version": "16.0.0-rc.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -13,22 +13,42 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "exports": {
+    ".": {
+      "sass": "./_index.scss"
+    },
+    "./style": {
+      "style": "./style/style.css"
+    },
+    "./all-style": {
+      "style": "./style/all-style.css"
+    },
+    "./layout": {
+      "sass": "./style/layout.scss"
+    },
+    "./theming": {
+      "sass": "./core-theme.scss"
+    },
+    "./prebuilt-themes/*": {
+      "style": "./theming/prebuilt-themes/*.css"
+    }
+  },
   "dependencies": {
-    "@ngx-translate/core": "^14.0.0",
-    "tslib": "^2.4.0"
+    "@ngx-translate/core": "^15.0.0",
+    "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.2.7",
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/platform-browser": "^14.3.0",
-    "@angular/router": "^14.3.0",
-    "@igo2/utils": "^1.15.4",
-    "rxjs": "^7.5.6",
+    "@angular/cdk": "^16.2.4",
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@angular/platform-browser": "^16.2.5",
+    "@angular/router": "^16.2.5",
+    "@igo2/utils": "^16.0.0-rc.1",
+    "rxjs": "^7.8.0",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^15.0.0"
+    "ngx-toastr": "^17.0.0"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

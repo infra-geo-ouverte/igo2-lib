@@ -1,47 +1,123 @@
-<table class="igo-striped mat-typography" *ngIf="ready && feature && isObject(feature.properties) && feature.properties.target !== 'iframe'">
+<table
+  class="igo-striped mat-typography"
+  *ngIf="
+    ready &&
+    feature &&
+    isObject(feature.properties) &&
+    feature.properties.target !== 'iframe'
+  "
+>
   <tbody>
     <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
-
-      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
-        <mat-icon mat-list-avatar svgIcon="{{icon}}"></mat-icon>
+      <td
+        *ngIf="feature.properties.target === '_blank' && property.key === 'url'"
+      >
+        <mat-icon matListItemIcon svgIcon="{{ icon }}"></mat-icon>
       </td>
 
-      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
-        <a href="{{property.value}}" target='_blank' rel="noopener noreferrer"> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
-        <button class="copyClipboard" mat-icon-button (click)="copyTextToClipboard(property.value)">
+      <td
+        *ngIf="feature.properties.target === '_blank' && property.key === 'url'"
+      >
+        <a
+          href="{{ property.value }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ 'igo.geo.targetHtmlUrl' | translate }} {{ title }}</a
+        >
+        <button
+          class="copyClipboard"
+          mat-icon-button
+          (click)="copyTextToClipboard(property.value)"
+        >
           <mat-icon svgIcon="content-copy"></mat-icon>
         </button>
       </td>
 
       <td id="keyValue" *ngIf="feature.properties.target === undefined">
-        {{property.key}}
+        {{ property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value) && !isEmbeddedLink(property.value)" [innerHTML]="property.value">
+      <td
+        *ngIf="
+          feature.properties.target === undefined &&
+          !isObject(property.value) &&
+          !isUrl(property.value) &&
+          !isEmbeddedLink(property.value)
+        "
+        [innerHTML]="property.value"
+      ></td>
+
+      <td
+        *ngIf="
+          feature.properties.target === undefined &&
+          isEmbeddedLink(property.value)
+        "
+      >
+        <u
+          [ngStyle]="{ cursor: 'pointer', color: 'blue' }"
+          (click)="openSecureUrl(property.value)"
+          >{{ getEmbeddedLinkText(property.value) }}</u
+        >
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && isEmbeddedLink(property.value)">
-        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ getEmbeddedLinkText(property.value) }}</u>
-      </td>
-
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && (isDoc(property.value) || isUrl(property.value)) && !isImg(property.value)">
-        <u [ngStyle]="{'cursor': 'pointer', 'color': 'blue'}" (click)="openSecureUrl(property.value)">{{ 'igo.geo.targetHtmlUrl' | translate }}</u>
-        <button class="copyClipboard" mat-icon-button (click)="copyTextToClipboard(property.value)">
+      <td
+        *ngIf="
+          feature.properties.target === undefined &&
+          !isObject(property.value) &&
+          (isDoc(property.value) || isUrl(property.value)) &&
+          !isImg(property.value)
+        "
+      >
+        <u
+          [ngStyle]="{ cursor: 'pointer', color: 'blue' }"
+          (click)="openSecureUrl(property.value)"
+          >{{ 'igo.geo.targetHtmlUrl' | translate }}</u
+        >
+        <button
+          class="copyClipboard"
+          mat-icon-button
+          (click)="copyTextToClipboard(property.value)"
+        >
           <mat-icon svgIcon="content-copy"></mat-icon>
         </button>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && isImg(property.value)">
-        <a href="{{property.value}}" target='_blank' (click)="openSecureUrl(property.value)" rel="noopener noreferrer">
-          <img igoImageError src="{{(property.value | secureImage) | async}}" width="225" height="auto">
+      <td
+        *ngIf="
+          feature.properties.target === undefined &&
+          !isObject(property.value) &&
+          isUrl(property.value) &&
+          isImg(property.value)
+        "
+      >
+        <a
+          href="{{ property.value }}"
+          target="_blank"
+          (click)="openSecureUrl(property.value)"
+          rel="noopener noreferrer"
+        >
+          <img
+            igoImageError
+            src="{{ property.value | secureImage | async }}"
+            width="225"
+            height="auto"
+          />
         </a>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
-      </td>
-
+      <td
+        *ngIf="
+          feature.properties.target === undefined && isObject(property.value)
+        "
+        [innerHTML]="property.value | json"
+      ></td>
     </tr>
   </tbody>
 </table>
 
-<iframe *ngIf="isHtmlDisplay()" [srcdoc]="htmlSanitizer(feature.properties)" [src]="urlSanitizer(feature.properties.url)"></iframe>
+<iframe
+  *ngIf="isHtmlDisplay()"
+  [srcdoc]="htmlSanitizer(feature.properties)"
+  [src]="urlSanitizer(feature.properties.url)"
+></iframe>

@@ -89,7 +89,6 @@ export class PrintComponent {
   constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
-
     this.disabled$.next(true);
 
     if (data.isPrintService === true) {
@@ -115,12 +114,10 @@ export class PrintComponent {
 
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
-      const resolution = +data.resolution;
-
       this.printService
         .downloadMapImage(
           this.map,
-          resolution,
+          data.resolution,
           data.imageFormat,
           data.showProjection,
           data.showScale,

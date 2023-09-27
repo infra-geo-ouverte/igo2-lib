@@ -1,6 +1,6 @@
 {
   "name": "@igo2/utils",
-  "version": "1.15.4",
+  "version": "16.0.0-rc.1",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "bowser": "^2.10.0",
-    "tslib": "^2.4.0"
+    "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/platform-browser": "^14.3.0"
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@angular/platform-browser": "^16.2.5"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

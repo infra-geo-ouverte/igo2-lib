@@ -34,7 +34,9 @@ export class AboutToolComponent implements OnInit {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
   private _discoverTitleInLocale: string = 'IGO';
-  public discoverTitleInLocale$: Observable<string> = of(this._discoverTitleInLocale);
+  public discoverTitleInLocale$: Observable<string> = of(
+    this._discoverTitleInLocale
+  );
 
   @Input()
   get discoverTitleInLocale() {
@@ -49,7 +51,7 @@ export class AboutToolComponent implements OnInit {
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
-  private _headerHtml: string = this.languageService.translate.instant('igo.integration.aboutTool.headerHtml');
+  private _headerHtml: string;
 
   private baseUrlProfil;
   private baseUrlGuide;
@@ -61,41 +63,53 @@ export class AboutToolComponent implements OnInit {
     public auth: AuthService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService) {
+    private languageService: LanguageService
+  ) {
+    this.headerHtml = this.languageService.translate.instant(
+      'igo.integration.aboutTool.headerHtml'
+    );
     this.version = configService.getConfig('version');
     this.baseUrlProfil = configService.getConfig('storage.url');
-    this.baseUrlGuide = configService.getConfig('depot.url') + configService.getConfig('depot.guideUrl');
+    this.baseUrlGuide =
+      configService.getConfig('depot.url') +
+      configService.getConfig('depot.guideUrl');
   }
 
   ngOnInit() {
-    if (this.auth.authenticated && this.configService.getConfig('context.url')) {
+    if (
+      this.auth.authenticated &&
+      this.configService.getConfig('context.url')
+    ) {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
         this.trainingGuideURLs = recast.guides;
         this.cdRef.detectChanges();
       });
     } else if (
-        this.auth.authenticated &&
-        !this.configService.getConfig('context.url') &&
-        this.configService.getConfig('depot.trainingGuides')) {
-          this.trainingGuideURLs = this.configService.getConfig('depot.trainingGuides');
+      this.auth.authenticated &&
+      !this.configService.getConfig('context.url') &&
+      this.configService.getConfig('depot.trainingGuides')
+    ) {
+      this.trainingGuideURLs = this.configService.getConfig(
+        'depot.trainingGuides'
+      );
     }
   }
 
   openGuide(guide?) {
     this.loading = true;
-    const url = guide ?
-      this.baseUrlGuide + guide + '?' :
-      this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+    const url = guide
+      ? this.baseUrlGuide + guide + '?'
+      : this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
     this.http
-    .get(url, {
-      responseType: 'blob'
-    })
-    .subscribe(() => {
-      this.loading = false;
-      window.open(url, '_blank');
-      this.cdRef.detectChanges();
-    });
+      .get(url, {
+        responseType: 'blob'
+      })
+      .subscribe(() => {
+        this.loading = false;
+        window.open(url, '_blank');
+        this.cdRef.detectChanges();
+      });
   }
 
   formatFileName(name: string) {

@@ -1,12 +1,8 @@
-import { Observable } from 'rxjs';
-
 import { ObjectUtils } from '@igo2/utils';
 import { StorageService } from '@igo2/core';
-import { SearchResult } from '../search.interfaces';
 import {
+  ISearchSourceParams,
   SearchSourceOptions,
-  TextSearchOptions,
-  ReverseSearchOptions,
   SearchSourceSettings
 } from './source.interfaces';
 import { FeatureStore } from '../../../feature';
@@ -101,8 +97,8 @@ export class SearchSource {
   /**
    * Search query params
    */
-  get params(): { [key: string]: string } {
-    return this.options.params === undefined ? {} : this.options.params;
+  get params(): ISearchSourceParams | null {
+    return this.options.params;
   }
 
   /**
@@ -121,15 +117,18 @@ export class SearchSource {
   private _featureStoresWithIndex: FeatureStore[];
 
   setWorkspaces(workspaces: Workspace[]) {
-    if (workspaces.filter(fw => (fw.entityStore as FeatureStore).searchDocument).length >= 1) {
+    if (
+      workspaces.filter((fw) => (fw.entityStore as FeatureStore).searchDocument)
+        .length >= 1
+    ) {
       this.options.available = true;
     } else {
       this.options.available = false;
     }
     const values = [];
     this.featureStoresWithIndex = workspaces
-      .filter(fw => (fw.entityStore as FeatureStore).searchDocument)
-      .map(fw => {
+      .filter((fw) => (fw.entityStore as FeatureStore).searchDocument)
+      .map((fw) => {
         values.push({
           title: fw.title,
           value: fw.title,
@@ -137,7 +136,7 @@ export class SearchSource {
         });
         return fw.entityStore as FeatureStore;
       });
-    const datasets = this.options.settings.find(s => s.title === 'datasets');
+    const datasets = this.options.settings.find((s) => s.title === 'datasets');
     if (datasets) {
       datasets.values = values;
     }
@@ -150,7 +149,7 @@ export class SearchSource {
   setParamFromSetting(setting: SearchSourceSettings, saveInStorage = true) {
     switch (setting.type) {
       case 'radiobutton':
-        setting.values.forEach(conf => {
+        setting.values.forEach((conf) => {
           if (conf.enabled) {
             this.options.params = Object.assign(this.options.params || {}, {
               [setting.name]: conf.value
@@ -161,8 +160,8 @@ export class SearchSource {
       case 'checkbox':
         let confValue = '';
         setting.values
-          .filter(s => s.available !== false)
-          .forEach(conf => {
+          .filter((s) => s.available !== false)
+          .forEach((conf) => {
             if (conf.enabled) {
               confValue += conf.value + ',';
             }
@@ -175,10 +174,9 @@ export class SearchSource {
     }
 
     if (saveInStorage && this.storageService) {
-      this.storageService.set(
-        this.getId() + '.options',
-        {params: this.options.params}
-      );
+      this.storageService.set(this.getId() + '.options', {
+        params: this.options.params
+      });
     }
   }
 
@@ -189,7 +187,10 @@ export class SearchSource {
     return this.options.order === undefined ? 99 : this.options.order;
   }
 
-  constructor(options: SearchSourceOptions, private storageService?: StorageService) {
+  constructor(
+    options: SearchSourceOptions,
+    private storageService?: StorageService
+  ) {
     this.options = options;
     if (this.storageService) {
       const storageOptions = this.storageService.get(
@@ -200,11 +201,13 @@ export class SearchSource {
       }
     }
 
-    this.options = ObjectUtils.mergeDeep(this.getDefaultOptions(), this.options);
-
+    this.options = ObjectUtils.mergeDeep(
+      this.getDefaultOptions(),
+      this.options
+    );
 
     // Set Default Params from Settings
-    this.settings.forEach(setting => {
+    this.settings.forEach((setting) => {
       this.setParamFromSetting(setting, false);
     });
   }
@@ -221,8 +224,8 @@ export class SearchSource {
 
     const searchSourceSetting = this.getSettingsValues(settingsName);
     const hashtagsValid = [];
-    hashtags.forEach(hashtag => {
-      searchSourceSetting.values.forEach(conf => {
+    hashtags.forEach((hashtag) => {
+      searchSourceSetting.values.forEach((conf) => {
         const hashtagKey = hashtag.substring(1);
         if (typeof conf.value === 'string') {
           const types = conf.value
@@ -240,7 +243,10 @@ export class SearchSource {
             hashtagsValid.push(types[index]);
           }
         }
-        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey.toLowerCase()) !== -1) {
+        if (
+          conf.hashtags &&
+          conf.hashtags.indexOf(hashtagKey.toLowerCase()) !== -1
+        ) {
           hashtagsValid.push(conf.value);
         }
       });
@@ -256,37 +262,4 @@ export class SearchSource {
       }
     );
   }
-}
-
-/**
- * Search sources that allow searching by text implement this class
- */
-export interface TextSearch {
-  /**
-   * Search by text
-   * @param term Text
-   * @param options Optional: TextSearchOptions
-   * @returns Observable or search results
-   */
-  search(
-    term: string | undefined,
-    options?: TextSearchOptions
-  ): Observable<SearchResult[]>;
-}
-
-/**
- * Search sources that allow searching by coordinates implement this class
- */
-export interface ReverseSearch {
-  /**
-   * Search by text
-   * @param lonLat Coordinates
-   * @param options Optional: ReverseSearchOptions
-   * @returns Observable or search results
-   */
-  reverseSearch(
-    lonLat: [number, number],
-    options?: ReverseSearchOptions,
-    reverseSearchCoordsFormat?: boolean
-  ): Observable<SearchResult[]>;
 }

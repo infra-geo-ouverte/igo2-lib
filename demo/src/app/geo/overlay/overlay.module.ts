@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 
 import { IgoMapModule, IgoOverlayModule } from '@igo2/geo';
 
 import { AppOverlayComponent } from './overlay.component';
 import { AppOverlayRoutingModule } from './overlay-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppOverlayComponent],
   imports: [
+    SharedModule,
     AppOverlayRoutingModule,
-    MatCardModule,
-    MatButtonModule,
     IgoMapModule,
     IgoOverlayModule
   ],

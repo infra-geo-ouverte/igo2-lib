@@ -6,9 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./info-section.component.scss']
 })
 export class InfoSectionComponent {
-
   @Input() infoContent: string = '';
 
   constructor() {}
-
 }

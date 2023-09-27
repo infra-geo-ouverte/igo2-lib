@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppMediaComponent } from './media.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppMediaRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppMediaRoutingModule = RouterModule.forChild(routes);

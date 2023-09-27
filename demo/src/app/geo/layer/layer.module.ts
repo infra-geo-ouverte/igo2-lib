@@ -14,10 +14,12 @@ import {
 
 import { AppLayerComponent } from './layer.component';
 import { AppLayerRoutingModule } from './layer-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppLayerComponent],
   imports: [
+    SharedModule,
     AppLayerRoutingModule,
     MatCardModule,
     MatButtonModule,

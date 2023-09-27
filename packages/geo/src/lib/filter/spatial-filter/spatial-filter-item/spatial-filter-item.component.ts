@@ -9,9 +9,12 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-filter.enum';
+import {
+  SpatialFilterQueryType,
+  SpatialFilterType
+} from '../../shared/spatial-filter.enum';
 import { SelectionModel } from '@angular/cdk/collections';
-import { IgoMap } from '../../../map';
+import { IgoMap } from '../../../map/shared';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { UntypedFormControl } from '@angular/forms';
@@ -25,7 +28,12 @@ import OlPoint from 'ol/geom/Point';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
-import { EntityStore, EntityStoreFilterSelectionStrategy, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
+import {
+  EntityStoreFilterSelectionStrategy,
+  EntityStoreWithStrategy,
+  EntityTableColumnRenderer,
+  EntityTableTemplate
+} from '@igo2/common';
 import { Layer, VectorLayer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
@@ -45,7 +53,6 @@ import { FeatureDataSource } from '../../../datasource/shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
-
   @Input() map: IgoMap;
 
   @Input()
@@ -54,7 +61,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   set type(type: SpatialFilterType) {
     this._type = type;
-    const index = this.geometryTypes.findIndex(geom => geom === this.type);
+    const index = this.geometryTypes.findIndex((geom) => geom === this.type);
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
     this.radius = undefined;
@@ -74,12 +81,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
-      this.PointStyle = (feature: OlFeature<OlGeometry>, resolution: number) => {
+      this.PointStyle = (
+        feature: OlFeature<OlGeometry>,
+        resolution: number
+      ) => {
         const geom = feature.getGeometry() as OlPoint;
-        const coordinates = olproj.transform(geom.getCoordinates(), this.map.projection, 'EPSG:4326');
-        return new olStyle.Style ({
-          image: new olStyle.Circle ({
-            radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
+        const coordinates = olproj.transform(
+          geom.getCoordinates(),
+          this.map.projection,
+          'EPSG:4326'
+        );
+        return new olStyle.Style({
+          image: new olStyle.Circle({
+            radius:
+              this.radius /
+              Math.cos((Math.PI / 180) * coordinates[1]) /
+              resolution, // Latitude correction
             stroke: new olStyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
@@ -96,7 +113,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       // If geometry types is Polygon
       this.radius = undefined;
       this.PolyStyle = () => {
-        return new olStyle.Style ({
+        return new olStyle.Style({
           stroke: new olStyle.Stroke({
             width: 2,
             color: 'rgba(0, 153, 255)'
@@ -109,7 +126,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       const color = [0, 153, 255];
       const drawStyle = () => {
         return new olStyle.Style({
-          image: new olStyle.Circle ({
+          image: new olStyle.Circle({
             radius: 8,
             stroke: new olStyle.Stroke({
               width: 2,
@@ -123,7 +140,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             color: color.concat([1]),
             width: 2
           }),
-          fill:  new olStyle.Fill({
+          fill: new olStyle.Fill({
             color: color.concat([0.2])
           })
         });
@@ -142,14 +159,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() loading;
 
   @Input()
-  get store(): EntityStore<Feature> {
+  get store(): EntityStoreWithStrategy<Feature> {
     return this._store;
   }
-  set store(store: EntityStore<Feature>) {
+  set store(store: EntityStoreWithStrategy<Feature>) {
     this._store = store;
-    this._store.entities$.subscribe(() => { this.cdRef.detectChanges(); });
+    this._store.entities$.subscribe(() => {
+      this.cdRef.detectChanges();
+    });
   }
-  private _store: EntityStore<Feature>;
+  private _store: EntityStoreWithStrategy<Feature>;
 
   /**
    * Available measure units for the measure type given
@@ -197,11 +216,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() openWorkspace = new EventEmitter();
   @Output() entityChange = new EventEmitter<any>();
 
-  public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
-  public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
+  public itemType: SpatialFilterItemType[] = [
+    SpatialFilterItemType.Address,
+    SpatialFilterItemType.Thematics
+  ];
+  public selectedItemType: SpatialFilterItemType =
+    SpatialFilterItemType.Address;
   public selectedSourceAddress;
 
-  treeControl: NestedTreeControl<SpatialFilterThematic> = new NestedTreeControl<SpatialFilterThematic>(node => node.children);
+  treeControl: NestedTreeControl<SpatialFilterThematic> =
+    new NestedTreeControl<SpatialFilterThematic>((node) => node.children);
 
   // For thematics and results tables
   public displayedColumns: string[] = ['name', 'select'];
@@ -209,13 +233,20 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public groups: string[] = [];
   public thematics: SpatialFilterThematic[] = [];
   public dataSource = new MatTreeNestedDataSource<SpatialFilterThematic>();
-  public selectedThematics = new SelectionModel<SpatialFilterThematic>(true, []);
+  public selectedThematics = new SelectionModel<SpatialFilterThematic>(
+    true,
+    []
+  );
 
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
-  overlayStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
-  drawStyle$: BehaviorSubject<olStyle.Style | ((feature, resolution) => olStyle.Style)> = new BehaviorSubject(undefined);
+  overlayStyle$: BehaviorSubject<
+    olStyle.Style | ((feature, resolution) => olStyle.Style)
+  > = new BehaviorSubject(undefined);
+  drawStyle$: BehaviorSubject<
+    olStyle.Style | ((feature, resolution) => olStyle.Style)
+  > = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
@@ -252,85 +283,119 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     private cdRef: ChangeDetectorRef,
     private spatialFilterService: SpatialFilterService,
     private messageService: MessageService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
-    this.spatialFilterService.loadThematicsList()
-    .subscribe((items: SpatialFilterThematic[]) => {
-      for (const item of items) {
-        this.childrens.push(item);
-        this.childrens.sort((a, b) => {
-          return a.name.localeCompare(b.name);
-        });
-      }
-      this.groups.push(this.languageService.translate.instant('igo.geo.terrapi.limites'));
-      const limits: SpatialFilterThematic = {
-        name: this.groups[0],
-        children: []
-      };
-      this.thematics.push(limits);
-      this.childrens.forEach(child => {
-        if (child.group && (this.groups.indexOf(child.group) === -1)) {
-          this.groups.push(child.group);
-          const thematic: SpatialFilterThematic = {
-            name: child.group,
-            children: []
-          };
-          this.thematics.push(thematic);
+    this.spatialFilterService
+      .loadThematicsList()
+      .subscribe((items: SpatialFilterThematic[]) => {
+        for (const item of items) {
+          this.childrens.push(item);
+          this.childrens.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          });
         }
-
-        if (!child.group) {
-          if (
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.AdmRegion') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.Mun') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.Arrond') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircFed') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircProv') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.DirReg') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.MRC') ||
-            child.name === this.languageService.translate.instant('igo.geo.terrapi.RegTour')) {
-              child.group = limits.name;
-          } else if (child.name === this.languageService.translate.instant('igo.geo.terrapi.routes')) {
-            child.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.transport');
-          } else {
+        this.groups.push(
+          this.languageService.translate.instant('igo.geo.terrapi.limites')
+        );
+        const limits: SpatialFilterThematic = {
+          name: this.groups[0],
+          children: []
+        };
+        this.thematics.push(limits);
+        this.childrens.forEach((child) => {
+          if (child.group && this.groups.indexOf(child.group) === -1) {
+            this.groups.push(child.group);
             const thematic: SpatialFilterThematic = {
-              name: child.name,
-              children: [],
-              source: child.source
+              name: child.group,
+              children: []
             };
             this.thematics.push(thematic);
           }
-        }
-        this.thematics.sort((a, b) => {
-          return a.name.localeCompare(b.name);
+
+          if (!child.group) {
+            if (
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.AdmRegion'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant('igo.geo.terrapi.Mun') ||
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.Arrond'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.CircFed'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.CircProv'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.DirReg'
+                ) ||
+              child.name ===
+                this.languageService.translate.instant('igo.geo.terrapi.MRC') ||
+              child.name ===
+                this.languageService.translate.instant(
+                  'igo.geo.terrapi.RegTour'
+                )
+            ) {
+              child.group = limits.name;
+            } else if (
+              child.name ===
+              this.languageService.translate.instant('igo.geo.terrapi.routes')
+            ) {
+              child.group = this.languageService.translate.instant(
+                'igo.geo.spatialFilter.group.transport'
+              );
+            } else {
+              const thematic: SpatialFilterThematic = {
+                name: child.name,
+                children: [],
+                source: child.source
+              };
+              this.thematics.push(thematic);
+            }
+          }
+          this.thematics.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          });
+        });
+        this.thematics.forEach((thematic) => {
+          for (const child of this.childrens) {
+            if (child.group === thematic.name) {
+              thematic.children.push(child);
+            }
+          }
         });
       });
-      this.thematics.forEach(thematic => {
-        for (const child of this.childrens) {
-          if (child.group === thematic.name) {
-            thematic.children.push(child);
-          }
-        }
-      });
-    });
 
     this.dataSource.data = this.thematics;
 
     this.drawGuide$.next(null);
-    this.value$.next(this.formControl.value ? this.formControl.value : undefined);
-    this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      if (value) {
-        this.value$.next(value);
-        this.drawZone = this.formControl.value as Feature;
-        if (this.buffer !== 0) {
-          this.drawZoneEvent.emit(this.drawZone);
-          this.bufferFormControl.setValue(this.buffer);
+    this.value$.next(
+      this.formControl.value ? this.formControl.value : undefined
+    );
+    this.value$$ = this.formControl.valueChanges.subscribe(
+      (value: GeoJSONGeometry) => {
+        if (value) {
+          this.value$.next(value);
+          this.drawZone = this.formControl.value as Feature;
+          if (this.buffer !== 0) {
+            this.drawZoneEvent.emit(this.drawZone);
+            this.bufferFormControl.setValue(this.buffer);
+          }
+        } else {
+          this.value$.next(undefined);
+          this.drawZone = undefined;
         }
-      } else {
-        this.value$.next(undefined);
-        this.drawZone = undefined;
       }
-    });
+    );
 
     this.value$.subscribe(() => {
       this.getRadius();
@@ -343,32 +408,38 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     });
 
     this.bufferChanges$$ = this.bufferFormControl.valueChanges
-      .pipe(
-        debounceTime(500)
-      )
+      .pipe(debounceTime(500))
       .subscribe((value) => {
-        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
+        if (
+          this.measureUnit === MeasureLengthUnit.Meters &&
+          value > 0 &&
+          value <= 100000
+        ) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.spatialFilterService.loadBufferGeometry(
-            this.drawZone,
-            SpatialFilterType.Polygon,
-            value
-          ).subscribe((featureGeom: Feature) => {
-            this.zoneWithBuffer = featureGeom;
-            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-          });
-        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
+          this.spatialFilterService
+            .loadBufferGeometry(this.drawZone, SpatialFilterType.Polygon, value)
+            .subscribe((featureGeom: Feature) => {
+              this.zoneWithBuffer = featureGeom;
+              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+            });
+        } else if (
+          this.measureUnit === MeasureLengthUnit.Kilometers &&
+          value > 0 &&
+          value <= 100
+        ) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.spatialFilterService.loadBufferGeometry(
-            this.drawZone,
-            SpatialFilterType.Polygon,
-            value * 1000
-          ).subscribe((featureGeom: Feature) => {
-            this.zoneWithBuffer = featureGeom;
-            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-          });
+          this.spatialFilterService
+            .loadBufferGeometry(
+              this.drawZone,
+              SpatialFilterType.Polygon,
+              value * 1000
+            )
+            .subscribe((featureGeom: Feature) => {
+              this.zoneWithBuffer = featureGeom;
+              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+            });
         } else if (value === 0) {
           this.buffer = value;
           this.bufferEvent.emit(value);
@@ -376,12 +447,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         } else if (
           value < 0 ||
           (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
-          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
-            this.bufferFormControl.setValue(0);
-            this.buffer = 0;
-            this.messageService.alert('igo.geo.spatialFilter.bufferAlert','igo.geo.spatialFilter.warning');
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)
+        ) {
+          this.bufferFormControl.setValue(0);
+          this.buffer = 0;
+          this.messageService.alert(
+            'igo.geo.spatialFilter.bufferAlert',
+            'igo.geo.spatialFilter.warning'
+          );
         }
-    });
+      });
 
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
@@ -437,13 +512,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.measureUnit = unit;
       this.measureUnitChange.emit(this.measureUnit);
       if (this.isPolygon()) {
-        this.measureUnit === MeasureLengthUnit.Meters ?
-          this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
-          this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
+        this.measureUnit === MeasureLengthUnit.Meters
+          ? this.bufferFormControl.setValue(this.bufferFormControl.value * 1000)
+          : this.bufferFormControl.setValue(
+              this.bufferFormControl.value / 1000
+            );
       } else if (this.isPoint()) {
-        this.measureUnit === MeasureLengthUnit.Meters ?
-          this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
-          this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+        this.measureUnit === MeasureLengthUnit.Meters
+          ? this.radiusFormControl.setValue(this.radiusFormControl.value * 1000)
+          : this.radiusFormControl.setValue(
+              this.radiusFormControl.value / 1000
+            );
       }
     }
   }
@@ -468,7 +547,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   onToggleClick(node: SpatialFilterThematic) {
-    this.treeControl.isExpanded(node) ? this.treeControl.collapse(node) : this.treeControl.expand(node);
+    this.treeControl.isExpanded(node)
+      ? this.treeControl.collapse(node)
+      : this.treeControl.expand(node);
   }
 
   isAllSelected(node?: SpatialFilterThematic) {
@@ -476,20 +557,28 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     let numNodes = 0;
     if (!node) {
       numSelected = this.selectedThematics.selected.length;
-      this.thematics.forEach(thematic => {
+      this.thematics.forEach((thematic) => {
         if (this.groups.indexOf(thematic.name) === -1) {
           numNodes++;
         }
       });
-      this.childrens.forEach(children => {
-        if (!this.thematics.find(thematic => thematic.source === children.source)) {
+      this.childrens.forEach((children) => {
+        if (
+          !this.thematics.find(
+            (thematic) => thematic.source === children.source
+          )
+        ) {
           numNodes++;
         }
       });
     } else {
       numSelected = node.children.length;
-      node.children.forEach(children => {
-        if (this.selectedThematics.selected.find(thematic => thematic === children)) {
+      node.children.forEach((children) => {
+        if (
+          this.selectedThematics.selected.find(
+            (thematic) => thematic === children
+          )
+        ) {
           numNodes++;
         }
       });
@@ -504,8 +593,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   hasChildrenSelected(node: SpatialFilterThematic) {
     let bool = false;
-    node.children.forEach(child => {
-      if (this.selectedThematics.selected.find(thematic => thematic.source === child.source)) {
+    node.children.forEach((child) => {
+      if (
+        this.selectedThematics.selected.find(
+          (thematic) => thematic.source === child.source
+        )
+      ) {
         bool = true;
       }
     });
@@ -516,9 +609,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Apply header checkbox
    */
   masterToggle() {
-    this.isAllSelected() ?
-      this.selectedThematics.clear() :
-      this.selectAll();
+    this.isAllSelected() ? this.selectedThematics.clear() : this.selectAll();
 
     const selectedThematicsName: SpatialFilterThematic[] = [];
     for (const thematic of this.selectedThematics.selected) {
@@ -526,13 +617,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
 
     if (this.isAllSelected()) {
-      this.thematics.forEach(thematic => {
+      this.thematics.forEach((thematic) => {
         if (this.hasChild(0, thematic)) {
           this.treeControl.expand(thematic);
         }
       });
     } else {
-      this.thematics.forEach(thematic => {
+      this.thematics.forEach((thematic) => {
         if (this.hasChild(0, thematic)) {
           this.treeControl.collapse(thematic);
         }
@@ -543,27 +634,33 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   selectAll(node?: SpatialFilterThematic) {
     if (!node) {
-      this.thematics.forEach(thematic => {
+      this.thematics.forEach((thematic) => {
         if (this.groups.indexOf(thematic.name) === -1) {
           this.selectedThematics.select(thematic);
         }
       });
-      this.childrens.forEach(children => {
-        if (!this.selectedThematics.selected.find(thematic => thematic.source === children.source)) {
+      this.childrens.forEach((children) => {
+        if (
+          !this.selectedThematics.selected.find(
+            (thematic) => thematic.source === children.source
+          )
+        ) {
           this.selectedThematics.select(children);
         }
       });
     } else {
       if (this.hasChild(0, node)) {
-        node.children.forEach(children => this.selectedThematics.select(children));
+        node.children.forEach((children) =>
+          this.selectedThematics.select(children)
+        );
       }
     }
   }
 
   childrensToggle(node: SpatialFilterThematic) {
-    this.isAllSelected(node) ?
-    node.children.forEach(child => this.selectedThematics.deselect(child)) :
-    this.selectAll(node);
+    this.isAllSelected(node)
+      ? node.children.forEach((child) => this.selectedThematics.deselect(child))
+      : this.selectAll(node);
 
     const selectedThematicsName: SpatialFilterThematic[] = [];
     for (const thematic of this.selectedThematics.selected) {
@@ -578,11 +675,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   onToggleChange(nodeSelected: SpatialFilterThematic) {
     let selected = false;
-    if (this.selectedThematics.selected.find(thematic => thematic.source === nodeSelected.source) !== undefined) {
+    if (
+      this.selectedThematics.selected.find(
+        (thematic) => thematic.source === nodeSelected.source
+      ) !== undefined
+    ) {
       selected = true;
     }
 
-    this.childrens.forEach(children => {
+    this.childrens.forEach((children) => {
       if (children === nodeSelected && selected === false) {
         this.selectedThematics.select(children);
       }
@@ -590,7 +691,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.selectedThematics.deselect(children);
       }
     });
-    this.thematics.forEach(thematic => {
+    this.thematics.forEach((thematic) => {
       if (thematic === nodeSelected && selected === false) {
         this.selectedThematics.select(thematic);
       }
@@ -657,9 +758,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.bufferEvent.emit(this.buffer);
     }
     this.toggleSearch.emit();
-    this.store.entities$.pipe(
-      debounceTime(500)
-    ).subscribe((value) => {
+    this.store.entities$.pipe(debounceTime(500)).subscribe((value) => {
       if (value.length && this.layers.length === this.thematicLength + 1) {
         this.openWorkspace.emit();
         this.createTableTemplate();
@@ -716,17 +815,30 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
-        if (this.queryType !== undefined && this.zone !== undefined && this.selectedThematics.selected.length > 0) {
+        if (
+          this.queryType !== undefined &&
+          this.zone !== undefined &&
+          this.selectedThematics.selected.length > 0
+        ) {
           return this.loading;
         }
       }
     }
-    if (this.type === SpatialFilterType.Polygon || this.type === SpatialFilterType.Point) {
-      if (this.selectedItemType === SpatialFilterItemType.Address && this.formControl.value !== null) {
+    if (
+      this.type === SpatialFilterType.Polygon ||
+      this.type === SpatialFilterType.Point
+    ) {
+      if (
+        this.selectedItemType === SpatialFilterItemType.Address &&
+        this.formControl.value !== null
+      ) {
         return this.loading;
       }
       if (this.selectedItemType === SpatialFilterItemType.Thematics) {
-        if (this.selectedThematics.selected.length > 0 && this.formControl.value !== null) {
+        if (
+          this.selectedThematics.selected.length > 0 &&
+          this.formControl.value !== null
+        ) {
           return this.loading;
         }
       }
@@ -736,9 +848,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   disabledClearSearch() {
     let disable = true;
-    this.selectedItemType === SpatialFilterItemType.Address ?
-      disable = this.queryType === undefined :
-      disable = this.queryType === undefined && this.selectedThematics.selected.length === 0;
+    this.selectedItemType === SpatialFilterItemType.Address
+      ? (disable = this.queryType === undefined)
+      : (disable =
+          this.queryType === undefined &&
+          this.selectedThematics.selected.length === 0);
 
     return disable;
   }
@@ -749,9 +863,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   getRadius() {
     let formValue;
     if (this.formControl.value !== null) {
-      this.measureUnit === MeasureLengthUnit.Meters ?
-        formValue = this.formControl.value.radius :
-        formValue = this.formControl.value.radius / 1000;
+      this.measureUnit === MeasureLengthUnit.Meters
+        ? (formValue = this.formControl.value.radius)
+        : (formValue = this.formControl.value.radius / 1000);
     } else {
       formValue = undefined;
     }
@@ -760,20 +874,29 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (!this.freehandDrawIsActive) {
         if (
           this.radiusFormControl.value < 0 ||
-          (this.measureUnit === MeasureLengthUnit.Meters && this.radiusFormControl.value >= 100000) ||
-          (this.measureUnit === MeasureLengthUnit.Kilometers && this.radiusFormControl.value >= 100)) {
-          this.messageService.alert('igo.geo.spatialFilter.radiusAlert', 'igo.geo.spatialFilter.warning');
+          (this.measureUnit === MeasureLengthUnit.Meters &&
+            this.radiusFormControl.value >= 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers &&
+            this.radiusFormControl.value >= 100)
+        ) {
+          this.messageService.alert(
+            'igo.geo.spatialFilter.radiusAlert',
+            'igo.geo.spatialFilter.warning'
+          );
           this.radius = 1000;
-          this.measureUnit === MeasureLengthUnit.Meters ?
-            this.radiusFormControl.setValue(this.radius) :
-            this.radiusFormControl.setValue(this.radius / 1000);
+          this.measureUnit === MeasureLengthUnit.Meters
+            ? this.radiusFormControl.setValue(this.radius)
+            : this.radiusFormControl.setValue(this.radius / 1000);
           this.drawGuide$.next(this.radius);
           return;
         }
       } else {
         if (formValue) {
           if (formValue >= 100000) {
-            this.messageService.alert('igo.geo.spatialFilter.radiusAlert', 'igo.geo.spatialFilter.warning');
+            this.messageService.alert(
+              'igo.geo.spatialFilter.radiusAlert',
+              'igo.geo.spatialFilter.warning'
+            );
             this.formControl.reset();
             return;
           }
@@ -802,12 +925,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private createTableTemplate() {
     const typeColumn = {
       name: 'meta.title',
-      title: this.languageService.translate.instant('igo.geo.spatialFilter.type'),
+      title: this.languageService.translate.instant(
+        'igo.geo.spatialFilter.type'
+      ),
       renderer: EntityTableColumnRenderer.UnsanitizedHTML
     };
     const nameColumn = {
       name: 'properties.nom',
-      title: this.languageService.translate.instant('igo.geo.spatialFilter.searchResults'),
+      title: this.languageService.translate.instant(
+        'igo.geo.spatialFilter.searchResults'
+      ),
       renderer: EntityTableColumnRenderer.UnsanitizedHTML
     };
     const columns = [typeColumn, nameColumn];

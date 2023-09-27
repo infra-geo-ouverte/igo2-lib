@@ -1,14 +1,12 @@
-<mat-card>
-  <mat-card-subtitle>Common</mat-card-subtitle>
-  <mat-card-title>Entity Table</mat-card-title>
-  <mat-card-content>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/entity-table">code of this example</a>
-  </mat-card-content>
-  <igo-entity-table
-    [store]="store"
-    [withPaginator]="true"
-    [paginatorOptions]="paginatorOptions"
-    [template]="template"
-    (entitySortChange)="entitySortChange()">
-  </igo-entity-table>
-</mat-card>
+<app-doc-viewer title="Entity Table" subtitle="Common">
+  <app-example-viewer codeFolder="common/entity-table">
+    <igo-entity-table
+      [store]="store"
+      [withPaginator]="true"
+      [paginatorOptions]="paginatorOptions"
+      [template]="template"
+      (entitySortChange)="entitySortChange()"
+    >
+    </igo-entity-table>
+  </app-example-viewer>
+</app-doc-viewer>

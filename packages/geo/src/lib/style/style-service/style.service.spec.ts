@@ -6,14 +6,11 @@ describe('StyleService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
-      providers: [
-        StyleService
-      ]
+      providers: [StyleService]
     });
   });
 
   it('should ...', inject([StyleService], (service: StyleService) => {
     expect(service).toBeTruthy();
   }));
-
 });

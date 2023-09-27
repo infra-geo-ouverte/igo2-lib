@@ -9,8 +9,7 @@
       },
       "errors": {
         "uncaught": {
-          "message":
-            "Sorry, service is currently not available. Please try again later",
+          "message": "Sorry, service is currently not available. Please try again later",
           "title": "Error server"
         }
       },

@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 
-import { VectorLayer } from '../../layer';
+import { VectorLayer } from '../../layer/shared';
 import { DataSourceOptions } from '../../datasource';
 
 @Component({
@@ -42,7 +42,8 @@ export class ExportButtonComponent {
   layerIsExportable(): boolean {
     if (
       (this.layer instanceof VectorLayer && this.layer.exportable === true) ||
-      (this.layer.dataSource.options.download && this.layer.dataSource.options.download.url) ||
+      (this.layer.dataSource.options.download &&
+        this.layer.dataSource.options.download.url) ||
       (this.layer.options.workspace?.enabled &&
         this.layer.options.workspace?.workspaceId !== this.layer.id)
     ) {

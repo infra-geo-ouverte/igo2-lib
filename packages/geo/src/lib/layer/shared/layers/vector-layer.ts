@@ -17,16 +17,28 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { VectorWatcher } from '../../utils';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map';
+import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
-import { buildUrl, defaultMaxFeatures } from '../../../datasource/shared/datasources/wms-wfs.utils';
+import {
+  buildUrl,
+  defaultMaxFeatures
+} from '../../../datasource/shared/datasources/wms-wfs.utils';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
-import { GeoNetworkService, SimpleGetOptions } from '../../../offline/shared/geo-network.service';
-import { catchError, concatMap, debounceTime, delay, first } from 'rxjs/operators';
+import {
+  GeoNetworkService,
+  SimpleGetOptions
+} from '../../../offline/shared/geo-network.service';
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  delay,
+  first
+} from 'rxjs/operators';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { fromEvent, of, zip } from 'rxjs';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
@@ -38,14 +50,14 @@ import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources
 import { ObjectUtils } from '@igo2/utils';
 
 export class VectorLayer extends Layer {
-  public dataSource:
+  public declare dataSource:
     | FeatureDataSource
     | WFSDataSource
     | ArcGISRestDataSource
     | WebSocketDataSource
     | ClusterDataSource;
-  public options: VectorLayerOptions;
-  public ol: olLayerVector<olSourceVector<OlGeometry>>;
+  public declare options: VectorLayerOptions;
+  public declare ol: olLayerVector<olSourceVector<OlGeometry>>;
   private watcher: VectorWatcher;
   private trackFeatureListenerId;
 
@@ -73,7 +85,13 @@ export class VectorLayer extends Layer {
     public geoDBService?: GeoDBService,
     public layerDBService?: LayerDBService
   ) {
-    super(options, messageService, authInterceptor, geoDBService, layerDBService);
+    super(
+      options,
+      messageService,
+      authInterceptor,
+      geoDBService,
+      layerDBService
+    );
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -83,13 +101,20 @@ export class VectorLayer extends Layer {
     // ex : this.options.style =  this.options.igoStyle.geoStylerStyle
     const initialOpacityValue = this.options.opacity || 1;
     const initialVisibleValue = this.options.visible !== false;
-    const initialMinResValue = this.options.minResolution || getResolutionFromScale(Number(this.options.minScaleDenom));
-    const initialMaxResValue = this.options.maxResolution || getResolutionFromScale(Number(this.options.maxScaleDenom));
+    const initialMinResValue =
+      this.options.minResolution ||
+      getResolutionFromScale(Number(this.options.minScaleDenom));
+    const initialMaxResValue =
+      this.options.maxResolution ||
+      getResolutionFromScale(Number(this.options.maxScaleDenom));
     const so = this.options.sourceOptions as FeatureDataSourceOptions;
     if (this.dataSource instanceof FeatureDataSource) {
       if (so?.preload?.bypassResolution || so?.preload?.bypassVisible) {
         this.options.opacity = 0;
-        if (so.preload.bypassResolution && (this.options.minResolution || this.options.maxResolution)) {
+        if (
+          so.preload.bypassResolution &&
+          (this.options.minResolution || this.options.maxResolution)
+        ) {
           this.options.minResolution = 0;
           this.options.maxResolution = Infinity;
         }
@@ -106,26 +131,31 @@ export class VectorLayer extends Layer {
     if (this.options.animation) {
       this.dataSource.ol.on(
         'addfeature',
-        function(e) {
+        function (e) {
           this.flash(e.feature);
         }.bind(this)
       );
     }
     if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
-      if (this.options.idbInfo.firstLoad){
+      if (this.options.idbInfo.firstLoad) {
         this.maintainFeaturesInIdb();
       }
       this.dataSource.ol.once('featuresloadend', () => {
         this.dataSource.ol.on('addfeature', () => this.maintainFeaturesInIdb());
-        this.dataSource.ol.on('changefeature', () => this.maintainFeaturesInIdb());
+        this.dataSource.ol.on('changefeature', () =>
+          this.maintainFeaturesInIdb()
+        );
         this.dataSource.ol.on('clear', () => this.maintainFeaturesInIdb());
-        this.dataSource.ol.on('removefeature', () => this.maintainFeaturesInIdb());
+        this.dataSource.ol.on('removefeature', () =>
+          this.maintainFeaturesInIdb()
+        );
       });
     }
 
     if (
       this.dataSource instanceof FeatureDataSource &&
-      (so?.preload?.bypassResolution || so?.preload?.bypassVisible)) {
+      (so?.preload?.bypassResolution || so?.preload?.bypassVisible)
+    ) {
       this.dataSource.ol.once('featuresloadend', () => {
         if (initialOpacityValue) {
           this.opacity = initialOpacityValue;
@@ -150,7 +180,10 @@ export class VectorLayer extends Layer {
     if (url) {
       let loader;
       const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
-      if (wfsOptions?.type === 'wfs' && (wfsOptions.params || wfsOptions.paramsWFS)) {
+      if (
+        wfsOptions?.type === 'wfs' &&
+        (wfsOptions.params || wfsOptions.paramsWFS)
+      ) {
         loader = (extent, resolution, proj, success, failure) => {
           this.customWFSLoader(
             vectorSource,
@@ -198,10 +231,12 @@ export class VectorLayer extends Layer {
 
     if (this.options.idbInfo?.storeToIdb && this.geoDBService) {
       vector.once('sourceready', () => {
-        if (this.options.idbInfo.firstLoad){
+        if (this.options.idbInfo.firstLoad) {
           this.maintainOptionsInIdb();
         }
-        fromEvent<BaseEvent>(vector, 'change').pipe(debounceTime(750)).subscribe(() => this.maintainOptionsInIdb());
+        fromEvent<BaseEvent>(vector, 'change')
+          .pipe(debounceTime(750))
+          .subscribe(() => this.maintainOptionsInIdb());
         vector.on('change:zIndex', () => this.maintainOptionsInIdb());
       });
     }
@@ -210,8 +245,10 @@ export class VectorLayer extends Layer {
 
   removeLayerFromIDB() {
     if (this.geoDBService && this.layerDBService) {
-      zip(this.geoDBService.deleteByKey(this.id),
-        this.layerDBService.deleteByKey(this.id)).subscribe();
+      zip(
+        this.geoDBService.deleteByKey(this.id),
+        this.layerDBService.deleteByKey(this.id)
+      ).subscribe();
     }
   }
 
@@ -227,7 +264,7 @@ export class VectorLayer extends Layer {
       },
       layerOptions: {
         workspace: this.options.workspace,
-        zIndex: this.ol ? this.zIndex: 1000000,
+        zIndex: this.ol ? this.zIndex : 1000000,
         id: this.id,
         isIgoInternalLayer: this.isIgoInternalLayer,
         title: this.title,
@@ -241,11 +278,19 @@ export class VectorLayer extends Layer {
 
   private maintainFeaturesInIdb() {
     const dsFeatures = this.dataSource.ol.getFeatures();
-    const geojsonObject = JSON.parse(new olformat.GeoJSON().writeFeatures(dsFeatures, {
-      dataProjection: 'EPSG:4326',
-      featureProjection: this.dataSource.ol.getProjection() || 'EPSG:3857'
-    }));
-    this.geoDBService.update(this.id, this.id, geojsonObject, InsertSourceInsertDBEnum.User, `${this.title}-${this.id}-${new Date()}`);
+    const geojsonObject = JSON.parse(
+      new olformat.GeoJSON().writeFeatures(dsFeatures, {
+        dataProjection: 'EPSG:4326',
+        featureProjection: this.dataSource.ol.getProjection() || 'EPSG:3857'
+      })
+    );
+    this.geoDBService.update(
+      this.id,
+      this.id,
+      geojsonObject,
+      InsertSourceInsertDBEnum.User,
+      `${this.title}-${this.id}-${new Date()}`
+    );
   }
 
   protected flash(feature) {
@@ -274,10 +319,12 @@ export class VectorLayer extends Layer {
 
       switch (feature.getGeometry().getType()) {
         case 'Point':
-          if(styleClone.getImage() !== null &&
-            typeof styleClone.getImage().getRadius === 'function'){
+          if (
+            styleClone.getImage() !== null &&
+            typeof styleClone.getImage().getRadius === 'function'
+          ) {
             const radius =
-            easeOut(elapsedRatio) * (styleClone.getImage().getRadius() * 3);
+              easeOut(elapsedRatio) * (styleClone.getImage().getRadius() * 3);
             styleClone.getImage().setRadius(radius);
             styleClone.getImage().setOpacity(opacity);
           }
@@ -352,7 +399,7 @@ export class VectorLayer extends Layer {
   public stopAnimation() {
     this.dataSource.ol.un(
       'addfeature',
-      function(e) {
+      function (e) {
         if (this.visible) {
           this.flash(e.feature);
         }
@@ -369,7 +416,9 @@ export class VectorLayer extends Layer {
   public centerMapOnFeature(id: string | number) {
     const feat = this.dataSource.ol.getFeatureById(id);
     if (feat) {
-      this.map.ol.getView().setCenter((feat.getGeometry() as any).getCoordinates());
+      this.map.ol
+        .getView()
+        .setCenter((feat.getGeometry() as any).getCoordinates());
     }
   }
 
@@ -409,7 +458,9 @@ export class VectorLayer extends Layer {
   ) {
     {
       const paramsWFS = options.paramsWFS;
-      const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
+      const wfsProj = paramsWFS.srsName
+        ? new olProjection({ code: paramsWFS.srsName })
+        : proj;
       const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
       paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
       const url = buildUrl(
@@ -417,24 +468,50 @@ export class VectorLayer extends Layer {
         currentExtent,
         wfsProj,
         (options as OgcFilterableDataSourceOptions).ogcFilters,
-        randomParam);
+        randomParam
+      );
       let startIndex = 0;
-      if (paramsWFS.version === '2.0.0' && paramsWFS.maxFeatures > defaultMaxFeatures) {
+      if (
+        paramsWFS.version === '2.0.0' &&
+        paramsWFS.maxFeatures > defaultMaxFeatures
+      ) {
         const nbOfFeature = 1000;
         while (startIndex < paramsWFS.maxFeatures) {
-          let alteredUrl = url.replace('count=' + paramsWFS.maxFeatures, 'count=' + nbOfFeature);
+          let alteredUrl = url.replace(
+            'count=' + paramsWFS.maxFeatures,
+            'count=' + nbOfFeature
+          );
           alteredUrl = alteredUrl.replace('startIndex=0', '0');
           alteredUrl += '&startIndex=' + startIndex;
           alteredUrl.replace(/&&/g, '&');
-          this.getFeatures(vectorSource, interceptor, currentExtent, wfsProj, proj, alteredUrl, nbOfFeature, success, failure);
+          this.getFeatures(
+            vectorSource,
+            interceptor,
+            currentExtent,
+            wfsProj,
+            proj,
+            alteredUrl,
+            nbOfFeature,
+            success,
+            failure
+          );
           startIndex += nbOfFeature;
         }
       } else {
-        this.getFeatures(vectorSource, interceptor, currentExtent, wfsProj, proj, url, paramsWFS.maxFeatures, success, failure);
+        this.getFeatures(
+          vectorSource,
+          interceptor,
+          currentExtent,
+          wfsProj,
+          proj,
+          url,
+          paramsWFS.maxFeatures,
+          success,
+          failure
+        );
       }
     }
   }
-
 
   /**
    * Custom loader to get feature from a WFS datasource
@@ -457,9 +534,11 @@ export class VectorLayer extends Layer {
     featureProjection,
     url: string,
     threshold: number,
-    success, failure) {
-
-    const idAssociatedCall = (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter;
+    success,
+    failure
+  ) {
+    const idAssociatedCall = (this.dataSource as WFSDataSource)
+      .mostRecentIdCallOGCFilter;
     const xhr = new XMLHttpRequest();
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
     let modifiedUrl = url;
@@ -477,22 +556,25 @@ export class VectorLayer extends Layer {
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200 && xhr.responseText.length > 0) {
-        const features =
-          vectorSource
-            .getFormat()
-            .readFeatures(xhr.responseText, { dataProjection, featureProjection }) as olFeature<OlGeometry>[];
+        const features = vectorSource
+          .getFormat()
+          .readFeatures(xhr.responseText, {
+            dataProjection,
+            featureProjection
+          }) as olFeature<OlGeometry>[];
         // TODO Manage "More feature"
         /*if (features.length === 0 || features.length < threshold ) {
           console.log('No more data to download at this resolution');
         }*/
         // Avoids retrieving an older call that took longer to be process
-        if (idAssociatedCall === (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter)
-        {
-            vectorSource.addFeatures(features);
-            success(features);
-        }
-        else {
-            success([]);
+        if (
+          idAssociatedCall ===
+          (this.dataSource as WFSDataSource).mostRecentIdCallOGCFilter
+        ) {
+          vectorSource.addFeatures(features);
+          success(features);
+        } else {
+          success([]);
         }
       } else {
         onError();
@@ -543,17 +625,23 @@ export class VectorLayer extends Layer {
       };
 
       const options: SimpleGetOptions = { responseType };
-      this.geoNetworkService.geoDBService.get(url).pipe(delay(750)).pipe(concatMap(r =>
-        r ? of(r) : this.geoNetworkService.get(modifiedUrl, options)
-          .pipe(
-            first(),
-            catchError((res) => {
-              onError();
-              throw res;
-            })
+      this.geoNetworkService.geoDBService
+        .get(url)
+        .pipe(delay(750))
+        .pipe(
+          concatMap((r) =>
+            r
+              ? of(r)
+              : this.geoNetworkService.get(modifiedUrl, options).pipe(
+                  first(),
+                  catchError((res) => {
+                    onError();
+                    throw res;
+                  })
+                )
           )
-      ))
-      .subscribe((content) => {
+        )
+        .subscribe((content) => {
           if (content) {
             const format = vectorSource.getFormat();
             const type = format.getType();
@@ -572,7 +660,10 @@ export class VectorLayer extends Layer {
               source = content;
             }
             if (source) {
-              const features = format.readFeatures(source, { extent, featureProjection: projection });
+              const features = format.readFeatures(source, {
+                extent,
+                featureProjection: projection
+              });
               vectorSource.addFeatures(features, format.readProjection(source));
               success(features);
             } else {
@@ -580,55 +671,56 @@ export class VectorLayer extends Layer {
             }
           }
         });
-
     } else {
-    xhr.open( 'GET', modifiedUrl);
-    const format = vectorSource.getFormat();
-    if (format.getType() === 'arraybuffer') {
-      xhr.responseType = 'arraybuffer';
-    }
-    if (interceptor) {
-      interceptor.interceptXhr(xhr, modifiedUrl);
-    }
+      xhr.open('GET', modifiedUrl);
+      const format = vectorSource.getFormat();
+      if (format.getType() === 'arraybuffer') {
+        xhr.responseType = 'arraybuffer';
+      }
+      if (interceptor) {
+        interceptor.interceptXhr(xhr, modifiedUrl);
+      }
 
-    const onError = () => {
-      vectorSource.removeLoadedExtent(extent);
-      failure();
-    };
-    xhr.onerror = onError;
-    xhr.onload = () => {
-      // status will be 0 for file:// urls
-      if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
-        const type = format.getType();
-        let source;
-        if (type === 'json' || type === 'text') {
-          source = xhr.responseText;
-        } else if (type === 'xml') {
-          source = xhr.responseXML;
-          if (!source) {
-            source = new DOMParser().parseFromString(
-              xhr.responseText,
-              'application/xml'
-            );
+      const onError = () => {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      };
+      xhr.onerror = onError;
+      xhr.onload = () => {
+        // status will be 0 for file:// urls
+        if (!xhr.status || (xhr.status >= 200 && xhr.status < 300)) {
+          const type = format.getType();
+          let source;
+          if (type === 'json' || type === 'text') {
+            source = xhr.responseText;
+          } else if (type === 'xml') {
+            source = xhr.responseXML;
+            if (!source) {
+              source = new DOMParser().parseFromString(
+                xhr.responseText,
+                'application/xml'
+              );
+            }
+          } else if (type === 'arraybuffer') {
+            source = xhr.response;
           }
-        } else if (type === 'arraybuffer') {
-          source = xhr.response;
-        }
-        if (source) {
-          const features = format.readFeatures(source, { extent, featureProjection: projection });
-          vectorSource.addFeatures(features, format.readProjection(source));
-          success(features);
+          if (source) {
+            const features = format.readFeatures(source, {
+              extent,
+              featureProjection: projection
+            });
+            vectorSource.addFeatures(features, format.readProjection(source));
+            success(features);
+          } else {
+            onError();
+          }
         } else {
           onError();
         }
-      } else {
-        onError();
-      }
-    };
-    xhr.send();
+      };
+      xhr.send();
+    }
   }
-  }
-
 
   /**
    * Custom loader for vector layer.
@@ -648,43 +740,41 @@ export class VectorLayer extends Layer {
     success,
     failure
   ) {
-
-
     if (this.geoNetworkService) {
       const onError = () => {
         vectorSource.removeLoadedExtent(extent);
         failure();
       };
-      this.geoNetworkService.geoDBService.get(layerID)
-      .subscribe((content) => {
-          if (content) {
-            const format = vectorSource.getFormat();
-            const type = format.getType();
-            let source;
-            if (type === 'json' || type === 'text') {
-              source = content;
-            } else if (type === 'xml') {
-              source = content;
-              if (!source) {
-                source = new DOMParser().parseFromString(
-                  content,
-                  'application/xml'
-                );
-              }
-            } else if (type === 'arraybuffer') {
-              source = content;
+      this.geoNetworkService.geoDBService.get(layerID).subscribe((content) => {
+        if (content) {
+          const format = vectorSource.getFormat();
+          const type = format.getType();
+          let source;
+          if (type === 'json' || type === 'text') {
+            source = content;
+          } else if (type === 'xml') {
+            source = content;
+            if (!source) {
+              source = new DOMParser().parseFromString(
+                content,
+                'application/xml'
+              );
             }
-            if (source) {
-              const features = format.readFeatures(source, { extent, featureProjection: projection });
-              vectorSource.addFeatures(features, format.readProjection(source));
-              success(features);
-            } else {
-              onError();
-            }
+          } else if (type === 'arraybuffer') {
+            source = content;
           }
-        });
-
+          if (source) {
+            const features = format.readFeatures(source, {
+              extent,
+              featureProjection: projection
+            });
+            vectorSource.addFeatures(features, format.readProjection(source));
+            success(features);
+          } else {
+            onError();
+          }
+        }
+      });
     }
   }
-
 }

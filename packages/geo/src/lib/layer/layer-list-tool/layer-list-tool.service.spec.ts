@@ -6,14 +6,14 @@ describe('LayerListToolService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
-      providers: [
-        LayerListToolService
-      ]
+      providers: [LayerListToolService]
     });
   });
 
-  it('should ...', inject([LayerListToolService], (service: LayerListToolService) => {
-    expect(service).toBeTruthy();
-  }));
-
+  it('should ...', inject(
+    [LayerListToolService],
+    (service: LayerListToolService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 });

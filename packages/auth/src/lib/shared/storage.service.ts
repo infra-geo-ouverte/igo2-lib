@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { StorageService, StorageScope, ConfigService } from '@igo2/core';
+import { StorageScope, ConfigService, BaseStorage } from '@igo2/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { AuthStorageOptions } from './storage.interface';
@@ -9,9 +9,7 @@ import { AuthStorageOptions } from './storage.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthStorageService extends StorageService {
-  protected options: AuthStorageOptions;
-
+export class AuthStorageService extends BaseStorage<AuthStorageOptions> {
   constructor(
     config: ConfigService,
     private http: HttpClient,
@@ -20,7 +18,7 @@ export class AuthStorageService extends StorageService {
   ) {
     super(config);
 
-    this.authService.authenticate$.subscribe(isAuthenticated => {
+    this.authService.authenticate$.subscribe((isAuthenticated) => {
       if (isAuthenticated && this.options.url) {
         this.http
           .get(this.options.url)
@@ -72,11 +70,17 @@ export class AuthStorageService extends StorageService {
       this.authService.authenticated &&
       this.options.url
     ) {
-      this.http.patch(this.options.url, { preference: {}}, {
-        params: {
-          mergePreference: 'false'
-        }
-      }).subscribe();
+      this.http
+        .patch(
+          this.options.url,
+          { preference: {} },
+          {
+            params: {
+              mergePreference: 'false'
+            }
+          }
+        )
+        .subscribe();
     }
 
     let token: string;

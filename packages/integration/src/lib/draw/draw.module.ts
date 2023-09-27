@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
 
 import { IgoDrawingToolModule } from '@igo2/geo';
-import { DrawingToolComponent } from './drawing-tool/drawing-tool.component';
+import { IgoAppDrawingToolModule } from './drawing-tool/drawing-tool.module';
 
 @NgModule({
   imports: [IgoDrawingToolModule],
-  declarations: [DrawingToolComponent],
-  exports: [
-    DrawingToolComponent
-  ]
+  exports: [IgoAppDrawingToolModule]
 })
 export class IgoAppDrawModule {}

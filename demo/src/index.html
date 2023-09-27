@@ -1,14 +1,116 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Igo2Lib</title>
-  <base href="/">
+  <head>
+    <meta charset="utf-8" />
+    <title>Demo - IGO2 Library</title>
+    <base href="/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="mat-typography">
+    <app-root></app-root>
+
+    <div id="splash-screen" class="is-loaded">
+      <div id="splash-screen__filmstrip">
+        <img alt="" aria-hidden="true" src="assets/images/splash_screen.png" />
+        <h1>Demo - IGO2 Library</h1>
+      </div>
+      <svg
+        id="splash-screen__spinner"
+        width="24"
+        height="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 21a9 9 0 1 0-9-9"
+          fill="none"
+          stroke="#b0bec5"
+          stroke-width="2"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+    </div>
+
+    <style id="splash-screen-stylesheet">
+      #splash-screen {
+        align-items: center;
+        background-color: #f5f7f9;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        left: 0;
+        opacity: 1;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translateZ(0);
+        z-index: 1999;
+        transition: all 300ms;
+      }
+
+      #splash-screen h1 {
+        font-family: sans-serif !important;
+        color: rgba(0, 0, 0, 0.64) !important;
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        margin: 16px 0;
+      }
+
+      #splash-screen.is-destroying {
+        opacity: 0;
+      }
+
+      #splash-screen__filmstrip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      #splash-screen__filmstrip img {
+        width: fit-content;
+        height: 95px;
+      }
+
+      #splash-screen__spinner {
+        margin-top: 0;
+        opacity: 0;
+      }
+
+      #splash-screen.is-loaded #splash-screen__spinner {
+        animation:
+          spinner-fade 0.2s ease 0.8s,
+          spinner-rotate 1s linear infinite;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes spinner-fade {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes spinner-rotate {
+        from {
+          transform: translateZ(0) rotate(0deg);
+        }
+
+        to {
+          transform: translateZ(0) rotate(360deg);
+        }
+      }
+    </style>
+  </body>
 </html>

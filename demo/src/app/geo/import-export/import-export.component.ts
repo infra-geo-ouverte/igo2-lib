@@ -36,6 +36,6 @@ export class AppImportExportComponent {
           type: 'osm'
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
   }
 }
