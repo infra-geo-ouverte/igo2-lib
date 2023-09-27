@@ -261,7 +261,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
-    this.store.state.change$.pipe(debounceTime(250)).subscribe((r) => {
+    this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
       this.handleDatasource();
       this.refresh();
     });
