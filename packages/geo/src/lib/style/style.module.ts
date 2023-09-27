@@ -16,7 +16,6 @@ import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ColorPickerFormFieldModule } from '@igo2/common';
-import { ColorChromeModule } from 'ngx-color/chrome'; // <color-chrome></color-chrome>
 
 @NgModule({
   imports: [
@@ -32,8 +31,7 @@ import { ColorChromeModule } from 'ngx-color/chrome'; // <color-chrome></color-c
     MatTooltipModule,
     ReactiveFormsModule,
     ColorPickerFormFieldModule,
-    IgoStyleListModule.forRoot(),
-    ColorChromeModule
+    IgoStyleListModule.forRoot()
   ],
   exports: [
     IgoStyleListModule,

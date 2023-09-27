@@ -1,0 +1,32 @@
+.picker {
+  left: 100%;
+  position: absolute;
+  top: 100%;
+  z-index: 2;
+
+  chrome-picker {
+    left: 100%;
+    position: absolute;
+    top: 100%;
+    z-index: 2;
+  }
+
+  .buttons {
+    padding: 0 12px 12px;
+    text-align: center;
+
+    button {
+      padding: 0.2rem 1rem;
+    }
+  }
+
+  .overlay {
+    background: transparent;
+    left: 0;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+  }
+}

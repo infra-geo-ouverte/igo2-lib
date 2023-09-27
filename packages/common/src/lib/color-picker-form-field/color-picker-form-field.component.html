@@ -4,14 +4,32 @@
   tooltip-position="below"
   matTooltipShowDelay="500"
   subscriptSizing="dynamic"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (click)="isOpen = !isOpen"
 >
-  <mat-label>{{ value }}</mat-label>
+  <mat-label>{{ colorControl.value.toRgbaString() }}</mat-label>
   <input
     matInput
     [readonly]="true"
-    (click)="open.emit(true)"
-    (blur)="closePicker()"
-    [(ngModel)]="hexColor"
-    type="color"
+    type="text"
+    [style.background]="colorControl.value.toRgbaString()"
   />
+  <input type="hidden" [(ngModel)]="value" />
 </mat-form-field>
+
+<!-- This template displays the overlay content and is connected to the button -->
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen"
+>
+  <div class="picker">
+    <chrome-picker [control]="colorControl">
+      <div class="buttons">
+        <button mat-raised-button (click)="applyClick($event)">Apply</button>
+      </div>
+    </chrome-picker>
+    <div class="overlay" (click)="isOpen = false"></div>
+  </div>
+</ng-template>
