@@ -8,8 +8,13 @@
   #trigger="cdkOverlayOrigin"
   (click)="isOpen = !isOpen"
 >
-  <mat-label>{{ color }}</mat-label>
-  <input type="text" matInput [readonly]="true" [style.background]="color" />
+  <mat-label>{{ colorPicker }}</mat-label>
+  <input
+    type="text"
+    matInput
+    [readonly]="true"
+    [style.background]="colorPicker"
+  />
 </mat-form-field>
 
 <ng-template
@@ -21,10 +26,12 @@
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
 >
   <div class="picker">
-    <color-chrome (onChange)="handleChange($event)" [color]="color">
+    <color-chrome (onChange)="handleChange($event)" [color]="colorPicker">
     </color-chrome>
     <div class="buttons">
-      <button mat-raised-button (click)="applyClick($event)">Apply</button>
+      <button mat-flat-button color="primary" (click)="handleClick($event)">
+        Apply
+      </button>
     </div>
   </div>
 </ng-template>

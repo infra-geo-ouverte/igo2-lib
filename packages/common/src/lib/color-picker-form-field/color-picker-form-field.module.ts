@@ -6,10 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ColorChromeModule } from 'ngx-color/chrome';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   imports: [
     FormsModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,

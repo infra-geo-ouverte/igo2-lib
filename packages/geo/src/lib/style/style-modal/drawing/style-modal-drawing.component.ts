@@ -27,9 +27,7 @@ export class StyleModalDrawingComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private drawStyleService: DrawStyleService,
     @Inject(MAT_DIALOG_DATA) public data: DrawingMatDialogData
-  ) {
-    this.buildForm();
-  }
+  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;
@@ -39,12 +37,17 @@ export class StyleModalDrawingComponent implements OnInit {
       }
     }
     this.buildStyleData();
+    this.buildForm();
+
+    this.form.valueChanges.subscribe((res) => {
+      console.log(res);
+    });
   }
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      fill: [''],
-      stroke: ['']
+      fill: [this.getFeatureFillColor()],
+      stroke: [this.getFeatureStrokeColor()]
     });
   }
 
@@ -109,7 +112,7 @@ export class StyleModalDrawingComponent implements OnInit {
     }
   }
 
-  getFeatureFillColor() {
+  private getFeatureFillColor() {
     if (!this.styleModalData.fillColor) {
       return this.data.features.length > 0
         ? this.data.features[0].properties.drawingStyle.fill
@@ -119,7 +122,7 @@ export class StyleModalDrawingComponent implements OnInit {
     }
   }
 
-  getFeatureStrokeColor() {
+  private getFeatureStrokeColor() {
     if (!this.styleModalData.strokeColor) {
       return this.data.features.length > 0
         ? this.data.features[0].properties.drawingStyle.stroke

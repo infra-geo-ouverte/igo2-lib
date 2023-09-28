@@ -1,18 +1,21 @@
+@use '@angular/material' as mat;
+
 .picker {
   left: 100%;
   position: absolute;
   top: 100%;
-  .buttons {
-    padding: 0 12px 8px;
-    text-align: center;
-    background: #fff;
-    border-radius: 0px 0px 2px 2px;
-    box-shadow: 0 4px 5px #0000004d;
-    box-sizing: initial;
-    margin-top: -2px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  @include mat.elevation(2);
 
-    button {
-      padding: 0.2rem 1rem;
-    }
+  ::ng-deep .chrome-picker {
+    box-shadow: none;
+  }
+
+  .buttons {
+    padding: 4px 12px 8px;
+    display: flex;
+    justify-content: flex-end;
   }
 }
