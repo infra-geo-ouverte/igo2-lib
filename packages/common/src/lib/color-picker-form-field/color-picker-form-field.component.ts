@@ -23,9 +23,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   set value(value: string) {
     this._value = this.formatColor(value ?? '#000');
-    if (this.colorPicker == null || this.colorPicker !== this._value) {
-      this.colorPicker = this._value;
-    }
+    this.colorPicker = this._value;
 
     this.onChange(this.value);
     this.onTouch(this.value);
