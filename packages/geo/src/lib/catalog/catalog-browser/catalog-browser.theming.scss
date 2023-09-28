@@ -16,7 +16,6 @@
   );
 
   igo-catalog-browser {
-    @include mat.icon-density($theme);
     @include mat.icon-button-density($theme);
     @include mat.list-density($theme);
   }
