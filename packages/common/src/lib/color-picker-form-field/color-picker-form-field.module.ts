@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ColorChromeModule } from 'ngx-color/chrome';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     CommonModule,
     OverlayModule,
-    ColorChromeModule
+    ColorChromeModule,
+    TranslateModule
   ],
   declarations: [ColorPickerFormFieldComponent],
   exports: [ColorPickerFormFieldComponent]
