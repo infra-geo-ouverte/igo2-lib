@@ -65,7 +65,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
     this.colorPicker = this.formatColor($event.color.rgb, 'rgba');
   }
 
-  formatColor(
+  private formatColor(
     color: ColorInput,
     format: ColorFormat = this.outputFormat
   ): string {

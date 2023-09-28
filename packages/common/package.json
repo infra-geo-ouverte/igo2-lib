@@ -33,11 +33,13 @@
     "scroll-into-view-if-needed": "^3.0.0",
     "typy": "^3.3.0",
     "ngx-color": "^9.0.0",
-    "@types/tinycolor2": "^1.4.4",
     "tinycolor2": "^1.6.0"
   },
   "dependencies": {
     "tslib": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/tinycolor2": "^1.4.4"
   },
   "engines": {
     "node": ">=18.10.0"
