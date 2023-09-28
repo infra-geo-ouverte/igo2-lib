@@ -81,7 +81,6 @@ export class EditionWorkspace extends Workspace {
     private dialog: MatDialog,
     private configService: ConfigService,
     private adding$: BehaviorSubject<boolean>,
-    private _deleteFeature: (workspace: EditionWorkspace, url: string) => void,
     private getDomainValues: (relation: RelationOptions) => Observable<any>,
     protected options: EditionWorkspaceOptions
   ) {
@@ -114,10 +113,6 @@ export class EditionWorkspace extends Workspace {
         enabled: false
       }
     });
-  }
-
-  private getInResolutionRange(): boolean {
-    return this.inResolutionRange$.value;
   }
 
   deleteFeature(feature, workspace) {
