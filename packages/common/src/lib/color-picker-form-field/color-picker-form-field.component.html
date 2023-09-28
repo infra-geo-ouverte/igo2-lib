@@ -8,27 +8,23 @@
   #trigger="cdkOverlayOrigin"
   (click)="isOpen = !isOpen"
 >
-  <mat-label>{{ colorControl.value.toRgbaString() }}</mat-label>
-  <input
-    matInput
-    [readonly]="true"
-    type="text"
-    [style.background]="colorControl.value.toRgbaString()"
-  />
-  <input type="hidden" [(ngModel)]="value" />
+  <mat-label>{{ color }}</mat-label>
+  <input type="text" matInput [readonly]="true" [style.background]="color" />
 </mat-form-field>
 
 <ng-template
   cdkConnectedOverlay
   [cdkConnectedOverlayOrigin]="trigger"
   [cdkConnectedOverlayOpen]="isOpen"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  (backdropClick)="isOpen = false"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
 >
   <div class="picker">
-    <chrome-picker [control]="colorControl">
-      <div class="buttons">
-        <button mat-raised-button (click)="applyClick($event)">Apply</button>
-      </div>
-    </chrome-picker>
-    <div class="overlay" (click)="isOpen = false"></div>
+    <color-chrome (onChange)="handleChange($event)" [color]="color">
+    </color-chrome>
+    <div class="buttons">
+      <button mat-raised-button (click)="applyClick($event)">Apply</button>
+    </div>
   </div>
 </ng-template>

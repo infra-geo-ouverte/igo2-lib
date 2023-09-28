@@ -1,8 +1,8 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, OnInit } from '@angular/core';
 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Color, ColorPickerControl } from '@iplab/ngx-color-picker';
-// import tinycolor from 'tinycolor2';
+import { ColorEvent } from 'ngx-color';
+import tinycolor from 'tinycolor2';
 @Component({
   selector: 'igo-color-picker-form-field',
   templateUrl: './color-picker-form-field.component.html',
@@ -15,9 +15,10 @@ import { Color, ColorPickerControl } from '@iplab/ngx-color-picker';
     }
   ]
 })
-export class ColorPickerFormFieldComponent implements ControlValueAccessor {
+export class ColorPickerFormFieldComponent
+  implements ControlValueAccessor, OnInit
+{
   isOpen: boolean = false;
-  colorControl = new ColorPickerControl().hidePresets();
 
   set value(value: string) {
     this.onChange(value);
@@ -29,16 +30,26 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   }
   private _value: string;
 
-  private _color: Color = null;
+  // default format
+  @Input() outputFormat: 'hex' | 'rgba' | 'hsla' = 'rgba';
   // default color
   @Input()
-  public set color(color: string) {
-    this.colorControl.setValueFrom(color);
-    this._color = this.colorControl.value;
+  set color(color: string) {
+    this._color = color;
   }
+  get color(): string {
+    return this._color;
+  }
+  private _color: string;
 
   onChange: any = () => {};
   onTouch: any = () => {};
+
+  ngOnInit(): void {
+    this.color = !this.color
+      ? this.setColorFormat('#000')
+      : this.setColorFormat(this.color);
+  }
 
   writeValue(value: string) {
     this.value = value;
@@ -56,7 +67,28 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
     event.preventDefault();
     event.stopPropagation();
     this.isOpen = false;
-    this._color = this.colorControl.value;
-    this.value = this.colorControl.value.toRgbaString();
+    this.value = this.color;
+  }
+
+  handleChange($event: ColorEvent) {
+    this.color = this.setColorFormat(tinycolor($event.color.rgb).toRgbString());
+  }
+
+  setColorFormat(color: string): string {
+    switch (this.outputFormat) {
+      case 'hex':
+        color = tinycolor(color).toHexString();
+        break;
+      case 'rgba':
+        color = tinycolor(color).toRgbString();
+        break;
+      case 'hsla':
+        color = tinycolor(color).toHsvString();
+        break;
+      default:
+        color = tinycolor(color).toRgbString();
+        break;
+    }
+    return color;
   }
 }

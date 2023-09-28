@@ -2,31 +2,17 @@
   left: 100%;
   position: absolute;
   top: 100%;
-  z-index: 2;
-
-  chrome-picker {
-    left: 100%;
-    position: absolute;
-    top: 100%;
-    z-index: 2;
-  }
-
   .buttons {
-    padding: 0 12px 12px;
+    padding: 0 12px 8px;
     text-align: center;
+    background: #fff;
+    border-radius: 0px 0px 2px 2px;
+    box-shadow: 0 4px 5px #0000004d;
+    box-sizing: initial;
+    margin-top: -2px;
 
     button {
       padding: 0.2rem 1rem;
     }
-  }
-
-  .overlay {
-    background: transparent;
-    left: 0;
-    position: fixed;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
   }
 }

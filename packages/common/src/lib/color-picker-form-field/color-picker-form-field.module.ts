@@ -3,9 +3,9 @@ import { ColorPickerFormFieldComponent } from './color-picker-form-field.compone
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ColorPickerModule } from '@iplab/ngx-color-picker';
 import { CommonModule } from '@angular/common';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { ColorChromeModule } from 'ngx-color/chrome';
 
 @NgModule({
   imports: [
@@ -13,9 +13,9 @@ import { OverlayModule } from '@angular/cdk/overlay';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    ColorPickerModule,
     CommonModule,
-    OverlayModule
+    OverlayModule,
+    ColorChromeModule
   ],
   declarations: [ColorPickerFormFieldComponent],
   exports: [ColorPickerFormFieldComponent]
