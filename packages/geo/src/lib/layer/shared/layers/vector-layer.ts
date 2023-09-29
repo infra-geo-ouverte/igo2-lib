@@ -475,7 +475,9 @@ export class VectorLayer extends Layer {
         (this.previousOgcFilters && this.previousOgcFilters !== ogcFilters)
       ) {
         vectorSource.removeLoadedExtent(this.previousLoadExtent);
-        this.xhrAccumulator.map((xhr) => xhr.abort());
+        for (let xhr of this.xhrAccumulator) {
+          xhr.abort();
+        }
       }
 
       this.previousLoadExtent = currentExtent;
