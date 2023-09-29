@@ -9,12 +9,17 @@
 @mixin color($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
-
+  $background: map-get($theme, background);
   igo-entity-table
     table.igo-entity-table-with-selection
     tr.igo-entity-table-row-highlighted {
     background-color: mat.get-color-from-palette($primary, A100);
     color: mat.get-color-from-palette($primary, default-contrast);
+  }
+  $background: map-get($theme, background);
+
+  igo-entity-table .mat-mdc-table thead {
+    background-color: mat.get-color-from-palette($background, background);
   }
 }
 
