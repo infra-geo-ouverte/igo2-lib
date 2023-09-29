@@ -17,9 +17,6 @@ export interface EnvironmentOptions extends BaseEnvironmentOptions {
 
 export interface IntegrationOptions {
   app?: AppOptions;
-  depot?: { url: string; trainingGuides?: string[] };
-  importWithStyle?: boolean;
-  interactiveTour?: InteractiveTourConfigOptions;
 }
 
 export interface AppOptions {
@@ -33,10 +30,4 @@ export interface AppOptions {
     enabled?: boolean;
     path?: string;
   };
-}
-
-export interface InteractiveTourConfigOptions {
-  activateInteractiveTour: boolean;
-  tourInMobile: boolean;
-  pathToConfigFile?: string;
 }

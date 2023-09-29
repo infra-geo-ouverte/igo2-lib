@@ -1,4 +1,7 @@
 import { CatalogServiceOptions } from '../catalog';
+import { OptionsApiOptions } from '../datasource';
+import { DirectionsSourceOptions } from '../directions';
+import { SpatialFilterOptions } from '../filter';
 import { ImportExportServiceOptions } from '../import-export';
 import { Projection } from '../map';
 import {
@@ -10,9 +13,15 @@ import { CommonVectorStyleOptions } from '../style';
 
 export interface GeoOptions {
   catalog?: CatalogServiceOptions;
-  depot?: { url: string; trainingGuides?: string[] };
+  directionsSources?: DirectionsSourceOptions;
+  drawingTool?: unknown; // TODO add the type
+  edition?: unknown; // TODO add the type
+  emailAddress?: string;
+  geolocate?: unknown; // TODO add the type
+  homeExtentButton?: unknown; // TODO add the type
   importExport?: ImportExportServiceOptions;
   importWithStyle?: boolean;
+  optionsApi?: OptionsApiOptions;
   projections?: Projection[];
   queryOverlayStyle?: {
     base?: CommonVectorStyleOptions;
@@ -30,4 +39,5 @@ export interface GeoOptions {
       | StoredQueriesSearchSourceOptions
       | StoredQueriesReverseSearchSourceOptions;
   };
+  spatialFilter?: SpatialFilterOptions;
 }

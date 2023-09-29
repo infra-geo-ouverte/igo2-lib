@@ -6,4 +6,5 @@ export interface BaseEnvironmentOptions {
 
 export interface CoreOptions {
   language?: LanguageOptions;
+  version?: string;
 }

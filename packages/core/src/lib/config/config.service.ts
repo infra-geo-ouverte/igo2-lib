@@ -27,7 +27,7 @@ export class ConfigService<T = { [key: string]: any }> {
   /**
    * Use to get the data found in config file
    */
-  public getConfig(key: string): any {
+  public getConfig<T = any>(key: string): T {
     const value = ObjectUtils.resolve(this.config, key);
 
     const isDeprecated = this.configDeprecated.get(key);
