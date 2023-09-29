@@ -1,44 +1,25 @@
-import { AuthOptions, AuthStorageOptions } from '@igo2/auth';
-import { ContextServiceOptions } from '@igo2/context';
-import {
-  CatalogServiceOptions,
-  CommonVectorStyleOptions,
-  ImportExportServiceOptions,
-  Projection,
-  SearchSourceOptions,
-  StoredQueriesReverseSearchSourceOptions,
-  StoredQueriesSearchSourceOptions
-} from '@igo2/geo';
-import { DOMOptions } from '@igo2/common';
+import { AuthEnvironmentOptions } from '@igo2/auth';
+import { ContextOptions } from '@igo2/context';
+import { CommonOptions } from '@igo2/common';
 import { BaseEnvironmentOptions, CoreOptions } from '@igo2/core';
+import { GeoOptions } from '@igo2/geo';
+
+type AllPackageOptions = AuthEnvironmentOptions &
+  CommonOptions &
+  CoreOptions &
+  ContextOptions &
+  GeoOptions &
+  IntegrationOptions;
 
 export interface EnvironmentOptions extends BaseEnvironmentOptions {
-  igo: IgoOptions;
+  igo: AllPackageOptions;
 }
 
-export interface IgoOptions extends CoreOptions {
+export interface IntegrationOptions {
   app?: AppOptions;
-  auth?: AuthOptions;
-  catalog?: CatalogServiceOptions;
-  context?: ContextServiceOptions;
   depot?: { url: string; trainingGuides?: string[] };
-  dom?: DOMOptions[];
-  importExport?: ImportExportServiceOptions;
   importWithStyle?: boolean;
   interactiveTour?: InteractiveTourConfigOptions;
-  projections?: Projection[];
-  queryOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchSources?: { [key: string]: SearchSourceOptions | StoredQueriesSearchSourceOptions | StoredQueriesReverseSearchSourceOptions };
-  storage?: AuthStorageOptions;
 }
 
 export interface AppOptions {
