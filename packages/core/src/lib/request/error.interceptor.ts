@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   HttpInterceptor,
   HttpHandler,
@@ -16,7 +16,7 @@ import { MessageService } from '../message/shared/message.service';
   providedIn: 'root'
 })
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private messageService: MessageService) {}
+  constructor(private injector: Injector) {}
 
   intercept(
     originalReq: HttpRequest<any>,
@@ -33,16 +33,8 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error) => this.handleError(error, errorContainer)),
       finalize(() => {
-        const httpError = errorContainer.httpError;
-        if (!httpError) {
-          return;
-        }
-
-        if (httpError.error.toDisplay) {
-          this.handleCaughtError(httpError);
-        } else if (!httpError.error.caught) {
-          this.handleUncaughtError(httpError);
-        }
+        this.handleCaughtError(errorContainer);
+        this.handleUncaughtError(errorContainer);
       })
     );
   }
@@ -69,16 +61,26 @@ export class ErrorInterceptor implements HttpInterceptor {
     return throwError(httpError);
   }
 
-  private handleCaughtError(httpError: HttpErrorResponse) {
-    httpError.error.caught = true;
-    this.messageService.error(httpError.error.message, httpError.error.title);
+  private handleCaughtError(errorContainer: { httpError: HttpErrorResponse }) {
+    const httpError = errorContainer.httpError;
+    if (httpError && httpError.error.toDisplay) {
+      httpError.error.caught = true;
+      const messageService = this.injector.get(MessageService);
+      messageService.error(httpError.error.message, httpError.error.title);
+    }
   }
 
-  private handleUncaughtError(httpError: HttpErrorResponse) {
-    httpError.error.caught = true;
-    this.messageService.error(
-      'igo.core.errors.uncaught.message',
-      'igo.core.errors.uncaught.title'
-    );
+  private handleUncaughtError(errorContainer: {
+    httpError: HttpErrorResponse;
+  }) {
+    const httpError = errorContainer.httpError;
+    if (httpError && !httpError.error.caught) {
+      const messageService = this.injector.get(MessageService);
+      httpError.error.caught = true;
+      messageService.error(
+        'igo.core.errors.uncaught.message',
+        'igo.core.errors.uncaught.title'
+      );
+    }
   }
 }
