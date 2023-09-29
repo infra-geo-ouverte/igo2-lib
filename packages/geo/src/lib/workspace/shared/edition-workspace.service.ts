@@ -54,6 +54,7 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
+import { FeatureLoader } from 'ol/featureloader';
 
 @Injectable({
   providedIn: 'root'
@@ -738,10 +739,16 @@ export class EditionWorkspaceService {
    */
   refreshMap(layer: VectorLayer, map: MapBase) {
     const wfsOlLayer = layer.dataSource.ol;
-    const loader = (extent, resolution, proj, success, failure) => {
+    const loader: FeatureLoader = (
+      extent,
+      resolution,
+      proj,
+      success,
+      failure
+    ) => {
       layer.customWFSLoader(
         layer.ol.getSource(),
-        layer.options.sourceOptions,
+        layer.options.sourceOptions as WFSDataSourceOptions,
         this.authInterceptor,
         extent,
         resolution,
