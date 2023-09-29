@@ -1,9 +1,7 @@
-interface Environment {
-  production: boolean;
-  igo: any;
-}
+import { EnvironmentOptions } from '@igo2/core';
+import { TooltipType } from '@igo2/geo';
 
-export const environment: Environment = {
+export const environment: EnvironmentOptions = {
   production: true,
   igo: {
     projections: [
@@ -15,13 +13,15 @@ export const environment: Environment = {
       }
     ],
     auth: {
+      tokenKey: 'testIgo2Lib',
       intern: {
         enabled: true
       },
       allowAnonymous: true
     },
     interactiveTour: {
-      tourInMobile: true
+      tourInMobile: true,
+      activateInteractiveTour: true
     },
     importExport: {
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ogre'
@@ -39,16 +39,17 @@ export const environment: Environment = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          queryFormat: {
-            html: '*',
-            'application/json': [
-              'stations_meteoroutieres',
-              'histo_stations_meteoroutieres'
-            ]
-          },
-          queryHtmlTarget: 'iframe',
-          count: 30
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
+          // TODO pelord, serais-tu en mesure de corriger l'interface?
+          // queryFormat: {
+          //   html: '*',
+          //   'application/json': [
+          //     'stations_meteoroutieres',
+          //     'histo_stations_meteoroutieres'
+          //   ]
+          // },
+          // queryHtmlTarget: 'iframe',
+          // count: 30
         },
         {
           id: 'catalogwithregex',
@@ -60,7 +61,7 @@ export const environment: Environment = {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          tooltipType: 'abstract' // or title
+          tooltipType: TooltipType.ABSTRACT
         }
       ]
     },
