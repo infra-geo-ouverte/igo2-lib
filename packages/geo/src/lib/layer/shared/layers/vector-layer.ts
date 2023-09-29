@@ -9,6 +9,7 @@ import olFeature from 'ol/Feature';
 import olProjection from 'ol/proj/Projection';
 import * as olproj from 'ol/proj';
 import * as olformat from 'ol/format';
+import OlFeature from 'ol/Feature';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -52,6 +53,7 @@ import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.
 import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
 import { ObjectUtils } from '@igo2/utils';
 import { Extent } from 'ol/extent';
+import { FeatureLoader } from 'ol/featureloader';
 
 export class VectorLayer extends Layer {
   private previousLoadExtent: Extent;
@@ -175,8 +177,11 @@ export class VectorLayer extends Layer {
     const vector = new olLayerVector(olOptions);
     const vectorSource = vector.getSource() as olSourceVector<OlGeometry>;
     const url = vectorSource.getUrl();
+    if (typeof url === 'function') {
+      return vector;
+    }
     if (url) {
-      let loader;
+      let loader: FeatureLoader;
       const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
       if (
         wfsOptions?.type === 'wfs' &&
@@ -444,14 +449,14 @@ export class VectorLayer extends Layer {
    * @param randomParam random parameter to ensure cache is not causing problems in retrieving new data
    */
   public customWFSLoader(
-    vectorSource,
-    options,
-    interceptor,
-    extent,
-    resolution,
-    proj,
-    success,
-    failure,
+    vectorSource: olSourceVector<OlGeometry>,
+    options: WFSDataSourceOptions,
+    interceptor: AuthInterceptor,
+    extent: Extent,
+    resolution: number,
+    proj: olProjection,
+    success: (features: olFeature<OlGeometry>[]) => void,
+    failure: () => void,
     randomParam?: boolean
   ) {
     {
@@ -540,13 +545,13 @@ export class VectorLayer extends Layer {
    */
   private getFeatures(
     vectorSource: olSourceVector<OlGeometry>,
-    interceptor,
-    extent,
-    dataProjection,
-    featureProjection,
+    interceptor: AuthInterceptor,
+    extent: Extent,
+    dataProjection: olProjection,
+    featureProjection: olProjection,
     url: string,
-    success,
-    failure
+    success: (features: olFeature<OlGeometry>[]) => void,
+    failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
     const alteredUrlWithKeyAuth = interceptor.alterUrlWithKeyAuth(url);
@@ -596,14 +601,14 @@ export class VectorLayer extends Layer {
    * @param projection the projection to retrieve the data
    */
   private customLoader(
-    vectorSource,
-    url,
-    interceptor,
-    extent,
-    resolution,
-    projection,
-    success,
-    failure
+    vectorSource: olSourceVector<OlGeometry>,
+    url: string,
+    interceptor: AuthInterceptor,
+    extent: Extent,
+    resolution: number,
+    projection: olProjection,
+    success: (features: olFeature<OlGeometry>[]) => void,
+    failure: () => void
   ) {
     const xhr = new XMLHttpRequest();
     let modifiedUrl = url;
@@ -612,8 +617,6 @@ export class VectorLayer extends Layer {
       if (alteredUrlWithKeyAuth) {
         modifiedUrl = alteredUrlWithKeyAuth;
       }
-    } else {
-      modifiedUrl = url(extent, resolution, projection);
     }
 
     if (this.geoNetworkService && typeof url !== 'function') {
@@ -634,7 +637,7 @@ export class VectorLayer extends Layer {
           concatMap((r) =>
             r
               ? of(r)
-              : this.geoNetworkService.get(modifiedUrl, options).pipe(
+              : this.geoNetworkService.get(modifiedUrl as string, options).pipe(
                   first(),
                   catchError((res) => {
                     onError();
@@ -665,8 +668,8 @@ export class VectorLayer extends Layer {
               const features = format.readFeatures(source, {
                 extent,
                 featureProjection: projection
-              });
-              vectorSource.addFeatures(features, format.readProjection(source));
+              }) as OlFeature<OlGeometry>[];
+              vectorSource.addFeatures(features);
               success(features);
             } else {
               onError();
@@ -674,13 +677,13 @@ export class VectorLayer extends Layer {
           }
         });
     } else {
-      xhr.open('GET', modifiedUrl);
+      xhr.open('GET', modifiedUrl as string);
       const format = vectorSource.getFormat();
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
       if (interceptor) {
-        interceptor.interceptXhr(xhr, modifiedUrl);
+        interceptor.interceptXhr(xhr, modifiedUrl as string);
       }
 
       const onError = () => {
@@ -710,8 +713,8 @@ export class VectorLayer extends Layer {
             const features = format.readFeatures(source, {
               extent,
               featureProjection: projection
-            });
-            vectorSource.addFeatures(features, format.readProjection(source));
+            }) as OlFeature<OlGeometry>[];
+            vectorSource.addFeatures(features);
             success(features);
           } else {
             onError();
