@@ -79,7 +79,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
     );
     this.resolution$$.push(
       store.layer.map.viewController.resolution$
-        .pipe(debounceTime(750))
+        .pipe(debounceTime(250))
         .subscribe((res) => {
           this.updateEntitiesInResolution(store, res);
         })

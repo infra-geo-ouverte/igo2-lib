@@ -197,7 +197,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Data source consumable by the underlying material table
    * @internal
    */
-  dataSource = new MatTableDataSource<object>();
+  dataSource = new MatTableDataSource<RowData>();
 
   processedRowData: RowData[];
 
