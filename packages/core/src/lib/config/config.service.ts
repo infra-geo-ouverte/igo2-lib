@@ -31,7 +31,7 @@ export class ConfigService {
     Array.from(this.configDeprecated.keys()).map((deprecatedKey) => {
       const deprecatedValue = ObjectUtils.resolve(this.config, deprecatedKey);
       if (deprecatedValue !== undefined) {
-        this.getConfig(deprecatedKey);
+        this.handleDeprecatedConfig(deprecatedKey);
       }
     });
     return this.config;
