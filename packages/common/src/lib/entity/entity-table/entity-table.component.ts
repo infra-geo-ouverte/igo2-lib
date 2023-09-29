@@ -199,8 +199,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   dataSource = new MatTableDataSource<RowData>();
 
-  processedRowData: RowData[];
-
   /**
    * Whether selection is supported
    * @internal
@@ -251,7 +249,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     private dateAdapter: DateAdapter<Date>
   ) {
     this.dateAdapter.setLocale('fr-CA');
-    this.processedRowData = [];
   }
 
   /**
@@ -482,26 +479,21 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (all[0]) {
         this.enableEdit(all[0]);
       }
-      this.processedRowData = [];
-      all.map((record) => {
-        const rowData: RowData = {
+      this.dataSource.data = all.map((record) => {
+        return {
           record,
-          cellData: undefined
+          cellData: this.template.columns.reduce((cellData, column) => {
+            const value = this.getValue(record, column);
+            cellData[column.name] = {
+              class: this.getCellClass(record, column),
+              value,
+              isUrl: this.isUrl(value),
+              isImg: this.isImg(value)
+            };
+            return cellData;
+          }, {})
         };
-        const cellData: CellData = {};
-        this.template.columns.map((column) => {
-          const value = this.getValue(record, column);
-          cellData[column.name] = {
-            class: this.getCellClass(record, column),
-            value,
-            isUrl: this.isUrl(value),
-            isImg: this.isImg(value)
-          };
-        });
-        rowData.cellData = cellData;
-        this.processedRowData.push(rowData);
       });
-      this.dataSource.data = this.processedRowData;
     });
   }
 
