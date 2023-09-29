@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions } from './config.interface';
+import { BaseConfigOptions, ConfigOptions } from './config.interface';
 import { version } from './version';
 import {
   ALTERNATE_CONFIG_FROM_DEPRECATION,
@@ -15,8 +15,8 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigService {
-  private config: object = {};
+export class ConfigService<T = { [key: string]: any }> {
+  private config: BaseConfigOptions<T> | null;
   private httpClient: HttpClient;
   private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
@@ -66,8 +66,8 @@ export class ConfigService {
   /**
    * This method loads "[path]" to get all config's variables
    */
-  public load(options: ConfigOptions) {
-    const baseConfig = options.default || {};
+  public load(options: ConfigOptions<T>) {
+    const baseConfig = options.default;
     if (!options.path) {
       this.config = baseConfig;
       return true;
