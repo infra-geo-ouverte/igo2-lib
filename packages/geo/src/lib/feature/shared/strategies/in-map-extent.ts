@@ -1,11 +1,9 @@
-import * as olextent from 'ol/extent';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
 import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
-import { skipWhile } from 'rxjs/operators';
+import { debounceTime, skipWhile } from 'rxjs/operators';
 
 /**
  * This strategy maintain the store features updated while the map is moved.
@@ -75,39 +73,23 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesInExtent(store);
     this.states$$.push(
-      store.layer.map.viewController.state$.subscribe(() => {
-        this.updateEntitiesInExtent(store);
-      })
+      store.layer.map.viewController.state$
+        .pipe(debounceTime(250))
+        .subscribe(() => this.updateEntitiesInExtent(store))
     );
   }
 
-  private updateEntitiesInExtent(store) {
+  private updateEntitiesInExtent(store: FeatureStore) {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
-      let entitiesInMapExtent = [];
-      let entitiesWithNoGeom = [];
-      for (const entity of store.entities$.value) {
-        if (entity.ol) {
-          if (
-            olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent)
-          ) {
-            entitiesInMapExtent.push(entity);
-          }
-        } else {
-          entitiesWithNoGeom.push(entity);
-        }
-      }
-      if (entitiesInMapExtent.length > 0) {
+      let entitiesInMapExtent = store.layer.ol
+        .getSource()
+        .getFeaturesInExtent(mapExtent)
+        .map((f) => store.get(f.getId()));
+      if (entitiesInMapExtent) {
         store.state.updateMany(
           entitiesInMapExtent,
-          { inMapExtent: true },
-          false
-        );
-      }
-      if (entitiesWithNoGeom.length > 0) {
-        store.state.updateMany(
-          entitiesWithNoGeom,
           { inMapExtent: true },
           false
         );
