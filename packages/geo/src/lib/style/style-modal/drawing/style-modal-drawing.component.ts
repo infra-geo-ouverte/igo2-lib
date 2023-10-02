@@ -38,10 +38,6 @@ export class StyleModalDrawingComponent implements OnInit {
     }
     this.buildStyleData();
     this.buildForm();
-
-    this.form.valueChanges.subscribe((res) => {
-      console.log(res);
-    });
   }
 
   private buildForm() {
