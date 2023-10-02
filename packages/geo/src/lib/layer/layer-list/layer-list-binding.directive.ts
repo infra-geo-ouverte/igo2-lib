@@ -1,11 +1,13 @@
-import { Directive, Self, OnInit, OnDestroy, Optional } from '@angular/core';
-import { Subscription, combineLatest } from 'rxjs';
+import { Directive, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 
 import { RouteService } from '@igo2/core';
+
+import { Subscription, combineLatest } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
 import { MapService } from '../../map/shared/map.service';
-import { LayerListComponent } from './layer-list.component';
 import { Layer } from '../shared/layers/layer';
-import { map, debounceTime } from 'rxjs/operators';
+import { LayerListComponent } from './layer-list.component';
 
 @Directive({
   selector: '[igoLayerListBinding]'

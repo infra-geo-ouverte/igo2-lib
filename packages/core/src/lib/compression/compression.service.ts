@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { Observable, Observer } from 'rxjs';
+
 import { CompressedData } from './compressedData.interface';
 
 function getNumber(v: number, endposition: number, length: number) {

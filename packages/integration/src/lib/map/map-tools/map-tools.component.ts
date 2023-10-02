@@ -1,34 +1,36 @@
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   Input,
+  OnDestroy,
   OnInit,
-  ViewChild,
-  OnDestroy
+  ViewChild
 } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common';
 import {
+  ExportOptions,
+  IgoMap,
+  Layer,
   LayerListControlsEnum,
   LayerListControlsOptions,
-  IgoMap,
   SearchSourceService,
-  sourceCanSearch,
-  Layer,
-  ExportOptions,
-  VectorLayer
+  VectorLayer,
+  sourceCanSearch
 } from '@igo2/geo';
 
-import { LayerListToolState } from '../layer-list-tool.state';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ToolState } from '../../tool/tool.state';
-import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
-import { map, debounceTime } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
+
 import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
+import { ToolState } from '../../tool/tool.state';
+import { LayerListToolState } from '../layer-list-tool.state';
+import { MapState } from '../map.state';
+
 /**
  * Tool to browse a map's layers or to choose a different map
  */

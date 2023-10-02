@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared';
-import { MAT_SELECT_CONFIG } from '@angular/material/select';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
+import { MAT_SELECT_CONFIG } from '@angular/material/select';
+
+import { IgoMap } from '../../map/shared';
+import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 
 @Component({
   selector: 'igo-ogc-filterable-form',

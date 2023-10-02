@@ -1,10 +1,10 @@
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {
-  NgModule,
   ModuleWithProviders,
+  NgModule,
   Optional,
   SkipSelf
 } from '@angular/core';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ErrorInterceptor } from './error.interceptor';
 

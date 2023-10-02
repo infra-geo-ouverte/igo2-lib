@@ -1,26 +1,27 @@
-import * as olfilter from 'ol/format/filter';
-import olFormatWKT from 'ol/format/WKT';
-import olFormatWFS, { WriteGetFeatureOptions } from 'ol/format/WFS';
-import olGeometry from 'ol/geom/Geometry';
+import { ObjectUtils, uuid } from '@igo2/utils';
 
+import olFormatWFS, { WriteGetFeatureOptions } from 'ol/format/WFS';
+import olFormatWKT from 'ol/format/WKT';
+import * as olfilter from 'ol/format/filter';
+import olGeometry from 'ol/geom/Geometry';
 import olProjection from 'ol/proj/Projection';
 
-import { uuid, ObjectUtils } from '@igo2/utils';
+import { default as moment } from 'moment';
 
+import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { OgcFilterOperator, OgcFilterOperatorType } from './ogc-filter.enum';
 import {
-  OgcFilter,
-  IgoOgcFilterObject,
   AnyBaseOgcFilterOptions,
-  OgcInterfaceFilterOptions,
+  IgoOgcFilterObject,
+  IgoOgcSelector,
+  OgcFilter,
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions,
-  IgoOgcSelector,
-  SelectorGroup,
-  OgcSelectorBundle
+  OgcInterfaceFilterOptions,
+  OgcSelectorBundle,
+  SelectorGroup
 } from './ogc-filter.interface';
-import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
-import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
-import { default as moment } from 'moment';
+
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {

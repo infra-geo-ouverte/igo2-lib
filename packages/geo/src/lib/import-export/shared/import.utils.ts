@@ -1,30 +1,31 @@
+import { ConfirmDialogService } from '@igo2/common';
 import { MessageService } from '@igo2/core';
+import { uuid } from '@igo2/utils';
 
+import { first, of } from 'rxjs';
+
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
+  computeOlFeaturesExtent,
   featureToOl,
-  moveToOlFeatures,
-  computeOlFeaturesExtent
+  moveToOlFeatures
 } from '../../feature/shared/feature.utils';
+import { ClusterParam } from '../../layer/shared/clusterParam';
+import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { StyleService } from '../../style/style-service/style.service';
-import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { ClusterParam } from '../../layer/shared/clusterParam';
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
-import { uuid } from '@igo2/utils';
 import {
   featureRandomStyle,
   featureRandomStyleFunction
 } from '../../style/shared/feature/feature-style';
-import { LayerService } from '../../layer/shared/layer.service';
-import { ConfirmDialogService } from '@igo2/common';
-import { first, of } from 'rxjs';
+import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
+import { StyleListService } from '../../style/style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],

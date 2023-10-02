@@ -1,10 +1,11 @@
 import {
-  NgModule,
+  CUSTOM_ELEMENTS_SCHEMA,
   ModuleWithProviders,
-  CUSTOM_ELEMENTS_SCHEMA
+  NgModule
 } from '@angular/core';
 
 import { IgoPrintModule } from '@igo2/geo';
+
 import { PrintToolComponent } from './print-tool/print-tool.component';
 
 @NgModule({

@@ -1,4 +1,4 @@
-import { ExportFormat, EncodingFormat } from './export.type';
+import { EncodingFormat, ExportFormat } from './export.type';
 
 export interface ExportOptions {
   format?: ExportFormat;

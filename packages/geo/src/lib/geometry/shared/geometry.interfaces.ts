@@ -1,7 +1,8 @@
-import type { Type } from 'ol/geom/Geometry';
-import { GeoJsonGeometryTypes } from 'geojson';
-
 import { FormFieldInputs } from '@igo2/common';
+
+import type { Type } from 'ol/geom/Geometry';
+
+import { GeoJsonGeometryTypes } from 'geojson';
 
 import { IgoMap } from '../../map/shared';
 

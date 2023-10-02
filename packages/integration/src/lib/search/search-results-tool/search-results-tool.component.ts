@@ -1,55 +1,54 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  Input,
-  OnInit,
+  Component,
   ElementRef,
-  OnDestroy
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
-import { Observable, BehaviorSubject, Subscription, combineLatest } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import olFormatGeoJSON from 'ol/format/GeoJSON';
-import olFeature from 'ol/Feature';
-import olPoint from 'ol/geom/Point';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-
-import pointOnFeature from '@turf/point-on-feature';
-import * as olProj from 'ol/proj';
-import { ConfigService } from '@igo2/core';
 
 import {
+  EntityState,
   EntityStore,
-  ToolComponent,
-  FlexibleState,
-  getEntityTitle,
   FlexibleComponent,
-  EntityState
+  FlexibleState,
+  ToolComponent,
+  getEntityTitle
 } from '@igo2/common';
-
+import { ConfigService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
-  SearchResult,
+  FeatureStore,
   IgoMap,
-  moveToOlFeatures,
   Research,
-  featuresAreTooDeepInView,
-  featureToOl,
-  featureFromOl,
-  getCommonVectorStyle,
-  getCommonVectorSelectedStyle,
+  SearchResult,
   computeOlFeaturesExtent,
+  featureFromOl,
+  featureToOl,
   featuresAreOutOfView,
-  roundCoordTo,
-  FeatureStore
+  featuresAreTooDeepInView,
+  getCommonVectorSelectedStyle,
+  getCommonVectorStyle,
+  moveToOlFeatures,
+  roundCoordTo
 } from '@igo2/geo';
 
-import { MapState } from '../../map/map.state';
+import olFeature from 'ol/Feature';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olPoint from 'ol/geom/Point';
+import * as olProj from 'ol/proj';
 
-import { SearchState } from '../search.state';
-import { ToolState } from '../../tool/tool.state';
+import pointOnFeature from '@turf/point-on-feature';
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
 import { DirectionState } from '../../directions/directions.state';
+import { MapState } from '../../map/map.state';
+import { ToolState } from '../../tool/tool.state';
+import { SearchState } from '../search.state';
 
 /**
  * Tool to browse the search results

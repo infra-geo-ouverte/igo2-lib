@@ -1,38 +1,38 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectorRef,
-  OnInit,
   ChangeDetectionStrategy,
-  OnDestroy
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AuthService } from '@igo2/auth';
+import { ActionStore, ActionbarMode } from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
 import {
-  DetailedContext,
-  ContextsList,
-  ContextUserPermission,
-  ContextProfils
-} from '../shared/context.interface';
-import { ContextListControlsEnum } from './context-list.enum';
-import {
-  Subscription,
   BehaviorSubject,
-  ReplaySubject,
   EMPTY,
+  ReplaySubject,
+  Subscription,
   timer
 } from 'rxjs';
 import { take } from 'rxjs/operators';
-
-import { MatDialog } from '@angular/material/dialog';
-import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
-import { ActionStore, ActionbarMode } from '@igo2/common';
+
+import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
+import {
+  ContextProfils,
+  ContextUserPermission,
+  ContextsList,
+  DetailedContext
+} from '../shared/context.interface';
+import { ContextListControlsEnum } from './context-list.enum';
 
 @Component({
   selector: 'igo-context-list',

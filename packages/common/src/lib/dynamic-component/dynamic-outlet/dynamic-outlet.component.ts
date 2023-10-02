@@ -1,13 +1,13 @@
 import {
-  Input,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewContainerRef,
-  ViewChild
+  ViewChild,
+  ViewContainerRef
 } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';

@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions } from './config.interface';
-import { version } from './version';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 import {
   ALTERNATE_CONFIG_FROM_DEPRECATION,
   CONFIG_DEPRECATED
 } from './config-deprecated';
+import { ConfigOptions } from './config.interface';
+import { version } from './version';
 
 @Injectable({
   providedIn: 'root'

@@ -1,9 +1,9 @@
 import { BehaviorSubject } from 'rxjs';
 
+import { EntityKey, EntityRecord, EntityState } from './entity.interfaces';
+import { getEntityId, getEntityProperty } from './entity.utils';
 import { EntityStateManager } from './state';
 import { EntityView } from './view';
-import { EntityKey, EntityState, EntityRecord } from './entity.interfaces';
-import { getEntityId, getEntityProperty } from './entity.utils';
 
 export interface EntityStoreOptions {
   getKey?: (entity: object) => EntityKey;

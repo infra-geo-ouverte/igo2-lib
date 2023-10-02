@@ -1,26 +1,26 @@
-import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { Subscription, merge } from 'rxjs';
-import { buffer, debounceTime, filter, first } from 'rxjs/operators';
-
-import { RouteService, ConfigService } from '@igo2/core';
+import { ConfigService, RouteService } from '@igo2/core';
 import {
-  MapBrowserComponent,
   Layer,
-  LayerService,
   LayerOptions,
+  LayerService,
+  MapBrowserComponent,
   StyleListService,
   StyleService
 } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
-import { ContextService } from './context.service';
-import { DetailedContext } from './context.interface';
+import { Subscription, merge } from 'rxjs';
+import { buffer, debounceTime, filter, first } from 'rxjs/operators';
+
 import {
-  addImportedFeaturesToMap,
-  addImportedFeaturesStyledToMap
+  addImportedFeaturesStyledToMap,
+  addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
+import { DetailedContext } from './context.interface';
+import { ContextService } from './context.service';
 
 @Directive({
   selector: '[igoLayerContext]'

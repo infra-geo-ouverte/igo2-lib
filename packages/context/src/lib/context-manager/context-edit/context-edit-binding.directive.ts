@@ -1,15 +1,16 @@
 import {
-  Output,
-  EventEmitter,
   Directive,
-  Self,
-  OnInit,
+  EventEmitter,
+  HostListener,
   OnDestroy,
-  HostListener
+  OnInit,
+  Output,
+  Self
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
 import { MessageService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
 
 import { Context, DetailedContext } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';

@@ -1,9 +1,9 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { DrawStyleService } from '../../style-service/draw-style.service';
 import { FontType } from '../../shared/font.enum';
+import { DrawStyleService } from '../../style-service/draw-style.service';
 import {
   DrawingMatDialogData,
   StyleModalData

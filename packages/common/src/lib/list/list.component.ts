@@ -1,12 +1,12 @@
 import {
-  Component,
   AfterViewInit,
-  OnInit,
-  OnDestroy,
-  Input,
+  Component,
   ContentChildren,
+  ElementRef,
   HostListener,
-  ElementRef
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
 

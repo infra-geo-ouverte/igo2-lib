@@ -1,27 +1,30 @@
-import { BehaviorSubject, interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import OlMap from 'ol/Map';
-import olGeolocation from 'ol/Geolocation';
-import Geometry from 'ol/geom/Geometry';
-import * as olproj from 'ol/proj';
+import { ConfigService, StorageService } from '@igo2/core';
+
 import olFeature from 'ol/Feature';
-import { MapController } from './controller';
+import olGeolocation from 'ol/Geolocation';
+import OlMap from 'ol/Map';
 import { Point, Polygon } from 'ol/geom';
-import { fromCircle } from 'ol/geom/Polygon';
-import * as olSphere from 'ol/sphere';
 import OlCircle from 'ol/geom/Circle';
+import Geometry from 'ol/geom/Geometry';
+import { fromCircle } from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+import * as olSphere from 'ol/sphere';
 import * as olstyle from 'ol/style';
-import { StorageService, ConfigService } from '@igo2/core';
-import { Overlay } from '../../../overlay/shared/overlay';
+
+import { BehaviorSubject, Subscription, interval } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
 import { FeatureMotion } from '../../../feature/shared/feature.enums';
-import { MapViewOptions } from '../map.interface';
-import { MapBase } from '../map.abstract';
 import {
   computeOlFeaturesExtent,
   featuresAreOutOfView,
   hideOlFeature,
   moveToOlFeatures
 } from '../../../feature/shared/feature.utils';
+import { Overlay } from '../../../overlay/shared/overlay';
+import { MapBase } from '../map.abstract';
+import { MapViewOptions } from '../map.interface';
+import { MapController } from './controller';
 import {
   GeolocationBuffer,
   GeolocationOverlayType,

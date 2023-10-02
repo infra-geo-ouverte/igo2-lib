@@ -1,5 +1,5 @@
-import { BrowserAuthOptions } from '@azure/msal-browser';
 import { MsalGuardConfiguration } from '@azure/msal-angular';
+import { BrowserAuthOptions } from '@azure/msal-browser';
 
 export interface AuthInternOptions {
   enabled?: boolean;

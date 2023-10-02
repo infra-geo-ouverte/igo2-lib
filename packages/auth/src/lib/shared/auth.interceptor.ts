@@ -1,17 +1,19 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   HttpEvent,
-  HttpInterceptor,
   HttpHandler,
+  HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+
 import { Observable } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
-import { ConfigService } from '@igo2/core';
-import { TokenService } from './token.service';
 import { AuthByKeyOptions, WithCredentialsOptions } from './auth.interface';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'

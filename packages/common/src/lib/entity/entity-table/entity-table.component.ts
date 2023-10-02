@@ -1,48 +1,49 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
+  Component,
   ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Optional,
-  Self
+  Output,
+  Self,
+  SimpleChanges
 } from '@angular/core';
+import {
+  FormControlName,
+  NgControl,
+  NgForm,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
+import { StringUtils } from '@igo2/utils';
+
+import { default as moment } from 'moment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import {
   EntityKey,
   EntityRecord,
   EntityState,
   EntityStore,
-  EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
+  EntityTableScrollBehavior,
   EntityTableSelectionState,
-  EntityTableScrollBehavior
+  EntityTableTemplate
 } from '../shared';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import {
-  UntypedFormBuilder,
-  NgControl,
-  NgForm,
-  FormControlName,
-  UntypedFormGroup
-} from '@angular/forms';
-import { FocusMonitor } from '@angular/cdk/a11y';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { debounceTime, map } from 'rxjs/operators';
-import { default as moment } from 'moment';
-import { StringUtils } from '@igo2/utils';
 
 interface CellData {
   [key: string]: {

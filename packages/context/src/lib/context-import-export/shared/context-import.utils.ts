@@ -1,28 +1,29 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-
+import { MessageService } from '@igo2/core';
 import {
+  ClusterDataSource,
+  ClusterDataSourceOptions,
+  ClusterParam,
   FeatureDataSource,
   FeatureDataSourceOptions,
   IgoMap,
-  VectorLayer,
   QueryableDataSourceOptions,
-  StyleService,
-  StyleListService,
   StyleByAttribute,
-  ClusterParam,
-  ClusterDataSourceOptions,
-  ClusterDataSource,
+  StyleListService,
+  StyleService,
+  VectorLayer,
   featureRandomStyle,
   featureRandomStyleFunction
 } from '@igo2/geo';
-import { MessageService } from '@igo2/core';
+
+import OlFeature from 'ol/Feature';
+import GeoJSON from 'ol/format/GeoJSON';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
 import {
   DetailedContext,
   ExtraFeatures
 } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
-import OlFeature from 'ol/Feature';
-import GeoJSON from 'ol/format/GeoJSON';
 
 export function handleFileImportSuccess(
   file: File,

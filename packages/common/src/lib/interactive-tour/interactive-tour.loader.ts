@@ -1,9 +1,12 @@
-import { catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { InteractiveTourOptions } from './interactive-tour.interface';
+
 import { ConfigService } from '@igo2/core';
+
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+import { InteractiveTourOptions } from './interactive-tour.interface';
 
 @Injectable()
 export class InteractiveTourLoader {

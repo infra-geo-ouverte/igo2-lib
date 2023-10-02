@@ -1,25 +1,25 @@
-import olSourceVector from 'ol/source/Vector';
-import * as OlLoadingStrategy from 'ol/loadingstrategy';
-import olProjection from 'ol/proj/Projection';
-import * as olproj from 'ol/proj';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+import { AuthInterceptor } from '@igo2/auth';
 
-import { DataSource } from './datasource';
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WFSService } from './wfs.service';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as OlLoadingStrategy from 'ol/loadingstrategy';
+import * as olproj from 'ol/proj';
+import olProjection from 'ol/proj/Projection';
+import olSourceVector from 'ol/source/Vector';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { DataSource } from './datasource';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WFSService } from './wfs.service';
 import {
-  defaultFieldNameGeometry,
+  buildUrl,
   checkWfsParams,
-  getFormatFromOptions,
-  buildUrl
+  defaultFieldNameGeometry,
+  getFormatFromOptions
 } from './wms-wfs.utils';
-import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
   public declare ol: olSourceVector<OlGeometry>;

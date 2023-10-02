@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@igo2/auth';
 
+import { AuthService } from '@igo2/auth';
 import { ToolComponent } from '@igo2/common';
 import {
   LanguageService,
@@ -11,13 +11,14 @@ import {
 import {
   IgoMap,
   RoutesFeatureStore,
+  StepFeatureStore,
   StopsFeatureStore,
-  StopsStore,
-  StepFeatureStore
+  StopsStore
 } from '@igo2/geo';
-import { Subject } from 'rxjs';
-import { ContextState } from '../../context/context.state';
 
+import { Subject } from 'rxjs';
+
+import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
 

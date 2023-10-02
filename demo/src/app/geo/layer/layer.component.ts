@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
-  WMSDataSourceOptions,
+  IgoMap,
   LayerOptions,
-  WFSDataSourceOptions,
+  LayerService,
+  MetadataLayerOptions,
   OgcFilterableDataSourceOptions,
-  MetadataLayerOptions
+  WFSDataSourceOptions,
+  WMSDataSourceOptions
 } from '@igo2/geo';
 
 @Component({

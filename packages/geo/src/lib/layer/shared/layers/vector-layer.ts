@@ -1,28 +1,38 @@
-import olLayerVector from 'ol/layer/Vector';
-import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { unByKey } from 'ol/Observable';
-import { easeOut } from 'ol/easing';
-import { asArray as ColorAsArray } from 'ol/color';
-import { getVectorContext } from 'ol/render';
-import olFeature from 'ol/Feature';
-import olProjection from 'ol/proj/Projection';
-import * as olproj from 'ol/proj';
-import * as olformat from 'ol/format';
-import OlFeature from 'ol/Feature';
-
-import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
-import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
-import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
-import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
-import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
-
-import { VectorWatcher } from '../../utils';
-import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
-import { Layer } from './layer';
-import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
+
+import olFeature from 'ol/Feature';
+import OlFeature from 'ol/Feature';
+import { unByKey } from 'ol/Observable';
+import { asArray as ColorAsArray } from 'ol/color';
+import { easeOut } from 'ol/easing';
+import BaseEvent from 'ol/events/Event';
+import { Extent } from 'ol/extent';
+import { FeatureLoader } from 'ol/featureloader';
+import * as olformat from 'ol/format';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olLayerVector from 'ol/layer/Vector';
+import * as olproj from 'ol/proj';
+import olProjection from 'ol/proj/Projection';
+import { getVectorContext } from 'ol/render';
+import olSourceVector from 'ol/source/Vector';
+
+import { fromEvent, of, zip } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  delay,
+  first
+} from 'rxjs/operators';
+
+import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
+import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
+import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
+import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
+import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import {
   buildUrl,
@@ -32,28 +42,19 @@ import {
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
+import { LayerDBData } from '../../../offline';
+import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
+import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
-import {
-  catchError,
-  concatMap,
-  debounceTime,
-  delay,
-  first
-} from 'rxjs/operators';
-import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
-import { fromEvent, of, zip } from 'rxjs';
-import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
-import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
-import { LayerDBData } from '../../../offline';
-import BaseEvent from 'ol/events/Event';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
-import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
-import { ObjectUtils } from '@igo2/utils';
-import { Extent } from 'ol/extent';
-import { FeatureLoader } from 'ol/featureloader';
+import { VectorWatcher } from '../../utils';
+import { Layer } from './layer';
+import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
   private previousLoadExtent: Extent;

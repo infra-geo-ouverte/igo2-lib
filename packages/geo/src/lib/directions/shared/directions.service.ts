@@ -1,23 +1,26 @@
-import { Injectable, Inject } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { Direction, DirectionOptions } from '../shared/directions.interface';
-import { DirectionsSource } from '../directions-sources/directions-source';
-import { DirectionsSourceService } from './directions-source.service';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+
+import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
 import { SubjectStatus } from '@igo2/utils';
+
+import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { UserOptions } from 'jspdf-autotable';
+import moment from 'moment';
+import { Observable, Subject } from 'rxjs';
+
 import { IgoMap } from '../../map';
 import { PrintLegendPosition, PrintService } from '../../print';
+import { DirectionsSource } from '../directions-sources/directions-source';
+import { Direction, DirectionOptions } from '../shared/directions.interface';
+import { DirectionsSourceService } from './directions-source.service';
 import {
   formatDistance,
   formatDuration,
   formatInstruction
 } from './directions.utils';
-import moment from 'moment';
-import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
-import html2canvas from 'html2canvas';
-import { DOCUMENT } from '@angular/common';
-import { UserOptions } from 'jspdf-autotable';
 
 @Injectable({
   providedIn: 'root'

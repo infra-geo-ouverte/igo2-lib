@@ -1,7 +1,8 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
 import {
-  TranslateModule,
-  MissingTranslationHandler
+  MissingTranslationHandler,
+  TranslateModule
 } from '@ngx-translate/core';
 
 import { provideDefaultLanguageLoader } from './shared/language.provider';

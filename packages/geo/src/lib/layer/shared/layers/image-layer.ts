@@ -1,17 +1,15 @@
+import { AuthInterceptor } from '@igo2/auth';
+import { MessageService } from '@igo2/core';
+
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
 
-import { AuthInterceptor } from '@igo2/auth';
-
-import { ImageWatcher } from '../../utils';
-import { IgoMap } from '../../../map/shared';
-
-import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
-
-import { Layer } from './layer';
-import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
-import { MessageService } from '@igo2/core';
+import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
+import { IgoMap } from '../../../map/shared';
+import { ImageWatcher } from '../../utils';
+import { ImageLayerOptions } from './image-layer.interface';
+import { Layer } from './layer';
 
 export class ImageLayer extends Layer {
   public declare dataSource: WMSDataSource | ImageArcGISRestDataSource;

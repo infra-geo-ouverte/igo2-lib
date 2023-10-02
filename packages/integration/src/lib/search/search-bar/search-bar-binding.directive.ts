@@ -1,13 +1,15 @@
 import {
   Directive,
-  Self,
-  OnInit,
+  HostListener,
   OnDestroy,
-  HostListener
+  OnInit,
+  Self
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
 import { SearchBarComponent } from '@igo2/geo';
+
+import { Subscription } from 'rxjs';
+
 import { SearchState } from '../search.state';
 
 @Directive({

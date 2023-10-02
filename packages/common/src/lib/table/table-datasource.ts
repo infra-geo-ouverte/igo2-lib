@@ -1,13 +1,13 @@
 import { DataSource } from '@angular/cdk/table';
 import { MatSort } from '@angular/material/sort';
 
-import { Observable, BehaviorSubject, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
-
 import { ObjectUtils } from '@igo2/utils';
 
-import { TableModel } from './table-model.interface';
+import { BehaviorSubject, Observable, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { TableDatabase } from './table-database';
+import { TableModel } from './table-model.interface';
 
 export class TableDataSource extends DataSource<any> {
   get filter(): string {

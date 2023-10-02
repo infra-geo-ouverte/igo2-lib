@@ -1,30 +1,30 @@
 import {
   Directive,
-  HostListener,
   EventEmitter,
-  OnInit,
+  HostListener,
+  Input,
   OnDestroy,
-  Input
+  OnInit
 } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-
-import { MessageService, ConfigService } from '@igo2/core';
 import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
+import { ConfigService, MessageService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-import { ImportService } from './import.service';
-import {
-  handleFileImportSuccess,
-  handleFileImportError
-} from '../shared/import.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { concatMap, first, skipWhile } from 'rxjs/operators';
 import { LayerService } from '../../layer/shared/layer.service';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+import { StyleListService } from '../../style/style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import {
+  handleFileImportError,
+  handleFileImportSuccess
+} from '../shared/import.utils';
 import { ImportExportServiceOptions } from './import.interface';
+import { ImportService } from './import.service';
 
 @Directive({
   selector: '[igoDropGeoFile]'

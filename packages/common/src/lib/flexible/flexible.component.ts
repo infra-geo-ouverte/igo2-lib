@@ -1,16 +1,17 @@
 import {
   Component,
-  OnInit,
-  OnDestroy,
+  ElementRef,
   Input,
-  ViewChild,
-  ElementRef
+  OnDestroy,
+  OnInit,
+  ViewChild
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
 import { Media, MediaService } from '@igo2/core';
 
-import { FlexibleState, FlexibleDirection } from './flexible.type';
+import { Subscription } from 'rxjs';
+
+import { FlexibleDirection, FlexibleState } from './flexible.type';
 
 @Component({
   selector: 'igo-flexible',

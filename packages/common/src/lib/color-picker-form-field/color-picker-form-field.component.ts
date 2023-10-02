@@ -1,12 +1,13 @@
 import {
   Component,
   EventEmitter,
-  forwardRef,
+  OnInit,
   Output,
-  OnInit
+  forwardRef
 } from '@angular/core';
 import { Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
 import tinycolor from 'tinycolor2';
 
 @Component({

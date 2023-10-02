@@ -1,47 +1,50 @@
-import OlFeature from 'ol/Feature';
+import { SelectionModel } from '@angular/cdk/collections';
+import { NestedTreeControl } from '@angular/cdk/tree';
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Output,
+  Component,
   EventEmitter,
+  Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  Output
 } from '@angular/core';
-import {
-  SpatialFilterQueryType,
-  SpatialFilterType
-} from '../../shared/spatial-filter.enum';
-import { SelectionModel } from '@angular/cdk/collections';
-import { IgoMap } from '../../../map/shared';
-import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
-import { Feature } from './../../../feature/shared/feature.interfaces';
 import { UntypedFormControl } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import type { Type } from 'ol/geom/Geometry';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
-import * as olStyle from 'ol/style';
-import * as olproj from 'ol/proj';
-import OlPoint from 'ol/geom/Point';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { SpatialFilterService } from '../../shared/spatial-filter.service';
-import { MeasureLengthUnit } from '../../../measure';
+
 import {
   EntityStoreFilterSelectionStrategy,
   EntityStoreWithStrategy,
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
-import { Layer, VectorLayer } from '../../../layer/shared';
-import { NestedTreeControl } from '@angular/cdk/tree';
-import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
-import { MessageService, LanguageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
+
+import OlFeature from 'ol/Feature';
+import type { Type } from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlPoint from 'ol/geom/Point';
+import * as olproj from 'ol/proj';
+import * as olStyle from 'ol/style';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { FeatureDataSource } from '../../../datasource/shared';
+import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
+import { Layer, VectorLayer } from '../../../layer/shared';
+import { IgoMap } from '../../../map/shared';
+import { MeasureLengthUnit } from '../../../measure';
+import {
+  SpatialFilterQueryType,
+  SpatialFilterType
+} from '../../shared/spatial-filter.enum';
+import { SpatialFilterService } from '../../shared/spatial-filter.service';
+import { Feature } from './../../../feature/shared/feature.interfaces';
+import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
+import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 
 /**
  * Spatial-Filter-Item (search parameters)

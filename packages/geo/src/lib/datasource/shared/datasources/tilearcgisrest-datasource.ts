@@ -1,10 +1,10 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 import { Options } from 'ol/source/TileArcGISRest';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class TileArcGISRestDataSource extends DataSource {
   public declare ol: olSourceTileArcGISRest;

@@ -1,9 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+
 import { ConnectionState, NetworkService } from '@igo2/core';
-import { Observable } from 'rxjs';
-import { GeoDBService } from '../geoDB/geoDB.service';
+
 import { Type } from 'ol/format/Feature';
+
+import { Observable } from 'rxjs';
+
+import { GeoDBService } from '../geoDB/geoDB.service';
 
 export enum ResponseType {
   Arraybuffer = 'arraybuffer',

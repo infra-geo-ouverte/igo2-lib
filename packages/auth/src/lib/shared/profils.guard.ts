@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
-  Router,
   ActivatedRouteSnapshot,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { map } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
+
+import { map } from 'rxjs/operators';
+
 import { AuthService } from './auth.service';
 
 @Injectable({

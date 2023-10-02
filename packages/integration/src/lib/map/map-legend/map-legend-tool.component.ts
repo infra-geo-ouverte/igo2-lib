@@ -1,27 +1,28 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectorRef
+  OnInit
 } from '@angular/core';
-import {
-  Observable,
-  Subscription,
-  BehaviorSubject,
-  ReplaySubject,
-  combineLatest
-} from 'rxjs';
-import { map, debounceTime } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
 import {
-  Layer,
   IgoMap,
+  Layer,
   LayerListControlsOptions,
   SearchSourceService,
   sourceCanSearch
 } from '@igo2/geo';
+
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  Subscription,
+  combineLatest
+} from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';

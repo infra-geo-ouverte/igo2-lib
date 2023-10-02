@@ -1,17 +1,18 @@
 import { MediaMatcher } from '@angular/cdk/layout';
+import { DOCUMENT } from '@angular/common';
 import {
-  OnInit,
   ChangeDetectorRef,
   Component,
   Inject,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
-
-import { userAgent, DomUtils } from '@igo2/utils';
-import { version } from '@igo2/core';
 import { NavigationEnd, Router } from '@angular/router';
+
+import { version } from '@igo2/core';
+import { DomUtils, userAgent } from '@igo2/utils';
+
 import { delay, first } from 'rxjs';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-root',

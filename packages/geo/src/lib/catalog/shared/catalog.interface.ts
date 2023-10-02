@@ -1,9 +1,8 @@
 import { EntityState } from '@igo2/common';
 
-import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TooltipType } from '../../layer';
 import { QueryFormat } from '../../query';
-
+import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
 export interface AddedChangeEmitter {
