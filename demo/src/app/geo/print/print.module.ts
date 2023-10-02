@@ -6,6 +6,7 @@ import { IgoMapModule, IgoPrintModule } from '@igo2/geo';
 import { AppPrintComponent } from './print.component';
 import { AppPrintRoutingModule } from './print-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { IgoContextModule } from '@igo2/context';
 
 @NgModule({
   declarations: [AppPrintComponent],
@@ -14,7 +15,8 @@ import { SharedModule } from '../../shared/shared.module';
     AppPrintRoutingModule,
     IgoMessageModule,
     IgoMapModule,
-    IgoPrintModule
+    IgoPrintModule,
+    IgoContextModule
   ],
   exports: [AppPrintComponent]
 })

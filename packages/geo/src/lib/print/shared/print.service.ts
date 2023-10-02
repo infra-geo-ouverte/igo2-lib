@@ -184,7 +184,14 @@ export class PrintService {
                 margins,
                 resolution,
                 options.legendPosition
-              );
+              ).catch((res) => {
+                status$.next(SubjectStatus.legendHeightError);
+                this.messageService.error(
+                  'igo.geo.printForm.heighPdfLegendtErrorMessageBody',
+                  'igo.geo.printForm.corsErrorMessageHeader'
+                );
+                return status$;
+              });
             } else if (options.legendPosition === 'newpage') {
               await this.addLegend(doc, map, margins, resolution);
             }
@@ -633,6 +640,15 @@ export class PrintService {
       }
       this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
       await this.saveDoc(doc);
+      // check page Height and legend Height
+      const pageHeightMM = Math.round(
+        doc.internal.pageSize.getHeight() - (margins[0] + margins[2])
+      );
+      const legendDimensionMM = Math.round((25.4 * canvas.height) / resolution);
+
+      if (legendDimensionMM > pageHeightMM) {
+        throw false;
+      }
     }
   }
 

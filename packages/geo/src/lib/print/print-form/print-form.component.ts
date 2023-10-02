@@ -34,6 +34,7 @@ export class PrintFormComponent implements OnInit {
   public isPrintService = true;
 
   @Input() disabled$: BehaviorSubject<boolean>;
+  @Input() legendHeightError$: BehaviorSubject<boolean>;
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
@@ -225,6 +226,12 @@ export class PrintFormComponent implements OnInit {
 
   ngOnInit() {
     this.doZipFileField.setValue(false);
+    this.legendHeightError$.subscribe((res) => {
+      console.log('print form: ', res);
+      if (res) {
+        this.legendPositionField.setErrors({ legendHeightError: true });
+      }
+    });
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {

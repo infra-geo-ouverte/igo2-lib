@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
+import { ContextService } from '@igo2/context';
 
 import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService } from '@igo2/geo';
+import { IgoMap, LayerService, MapService } from '@igo2/geo';
 
 @Component({
   selector: 'app-print',
@@ -24,9 +25,13 @@ export class AppPrintComponent {
 
   constructor(
     private languageService: LanguageService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private mapService: MapService,
+    private contextService: ContextService
   ) {
-    this.layerService
+    this.mapService.setMap(this.map);
+    this.contextService.loadDefaultContext();
+    /*this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
         sourceOptions: {
@@ -40,9 +45,9 @@ export class AppPrintComponent {
             "© <a href='http://www.droitauteur.gouv.qc.ca/copyright.php' target='_blank'><img src='https://geoegl.msp.gouv.qc.ca/gouvouvert/public/images/quebec/gouv_qc_logo.png' width='64' height='14'>Gouvernement du Québec</a> / <a href='https://www.igouverte.org/' target='_blank'>IGO2</a>"
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));*/
 
-    this.layerService
+    /*this.layerService
       .createAsyncLayer({
         title: 'School board',
         sourceOptions: {
@@ -70,8 +75,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
-
+      .subscribe((l) => this.map.addLayer(l));*/
     // this.layerService
     //   .createAsyncLayer({
     //     title: 'Geomet',
@@ -86,7 +90,6 @@ export class AppPrintComponent {
     //     }
     //   })
     //   .subscribe(l => this.map.addLayer(l));
-
     /*
         //CORS error if activate (for test)
         this.layerService

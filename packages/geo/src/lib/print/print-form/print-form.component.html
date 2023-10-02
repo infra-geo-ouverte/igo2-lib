@@ -115,6 +115,16 @@
           </ng-container>
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="legendPositionField.errors?.legendHeightError">
+        <ng-container *ngIf="outputFormat === 'Pdf'">
+          {{ 'igo.geo.printForm.heighPdfLegendtErrorMessageBody' | translate }}
+        </ng-container>
+        <ng-container *ngIf="outputFormat === 'Image'">
+          {{
+            'igo.geo.printForm.heighImageLegendtErrorMessageBody' | translate
+          }}
+        </ng-container>
+      </mat-error>
     </mat-form-field>
   </div>
 

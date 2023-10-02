@@ -15,6 +15,7 @@ import {
 } from '../shared/print.type';
 
 import { PrintService } from '../shared/print.service';
+import { SubjectStatus } from '@igo2/utils';
 
 @Component({
   selector: 'igo-print',
@@ -22,6 +23,7 @@ import { PrintService } from '../shared/print.service';
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);
+  public legendHeightError$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -95,7 +97,11 @@ export class PrintComponent {
       this.printService
         .print(this.map, data)
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: SubjectStatus) => {
+          console.log('aaa: ', res);
+          if (res === SubjectStatus.legendHeightError) {
+            this.legendHeightError$.next(true);
+          }
           this.disabled$.next(false);
         });
     } else {
