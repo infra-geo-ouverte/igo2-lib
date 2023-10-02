@@ -4,7 +4,7 @@
   "overrides": [
     {
       "files": ["*.ts"],
-      "plugins": ["unused-imports","@trivago/prettier-plugin-sort-imports"],
+      "plugins": ["unused-imports"],
       "extends": [
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
