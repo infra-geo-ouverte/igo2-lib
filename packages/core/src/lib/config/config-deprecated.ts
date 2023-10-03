@@ -12,6 +12,10 @@ export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
   importWithStyle: {
     alternativeKey: 'importExport.importWithStyle',
     mayBeRemoveIn: new Date('2024-06-06')
+  },
+  version: {
+    alternativeKey: 'app.version',
+    mayBeRemoveIn: new Date('2024-06-06')
   }
 };
 

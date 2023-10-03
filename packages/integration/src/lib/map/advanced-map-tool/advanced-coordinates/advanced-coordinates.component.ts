@@ -279,7 +279,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'wgs84',
         alias: 'WGS84',
         code: 'EPSG:4326',
-        zone: ''
+        zone: '',
+        def: undefined,
+        extent: undefined
       });
     }
 
@@ -292,7 +294,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'nad83',
         alias: 'NAD83',
         code: 'EPSG:4269',
-        zone: ''
+        zone: '',
+        def: undefined,
+        extent: undefined
       });
     }
 
@@ -305,7 +309,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'webMercator',
         alias: 'Web Mercator',
         code: 'EPSG:3857',
-        zone: ''
+        zone: '',
+        def: undefined,
+        extent: undefined
       });
     }
     if (this.projectionsConstraints.mtm) {
@@ -322,7 +328,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
           translateKey: 'mtm',
           alias: `MTM ${zone}`,
           code,
-          zone: `${zone}`
+          zone: `${zone}`,
+          def: undefined,
+          extent: undefined
         });
       } else {
         this.inMtmZone = false;
@@ -340,14 +348,18 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'utm',
         alias: `UTM ${zone}`,
         code,
-        zone: `${zone}`
+        zone: `${zone}`,
+        def: undefined,
+        extent: undefined
       });
     }
-    let configProjection = [];
+    let configProjection: InputProjections[] = [];
     if (this.projectionsConstraints.projFromConfig) {
-      configProjection = this.config.getConfig('projections') || [];
+      configProjection = (this.config.getConfig('projections') ||
+        []) as InputProjections[];
     }
-    this.projections$.next(projections.concat(configProjection));
+
+    this.projections$.next(configProjection.concat(projections));
   }
 
   /**
@@ -366,7 +378,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
         translateKey: 'mtm',
         alias: `MTM ${zone}`,
         code,
-        zone: `${zone}`
+        zone: `${zone}`,
+        def: undefined,
+        extent: undefined
       });
     }
   }
@@ -438,7 +452,7 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
    * @param coordinates An array of numbers, longitude and latitude
    */
   checkLambert(coordinates: [number, number]) {
-    const lambertProjections = this.config.getConfig('projections');
+    const lambertProjections = this.config.getConfig('projections') || [];
     lambertProjections.forEach((projection) => {
       let modifiedProj = this.projections$.value;
       const extent = projection.extent;

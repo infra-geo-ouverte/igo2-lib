@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
 import { HttpClient } from '@angular/common/http';
+import { AllPackageEnvironnementOptions } from '../../environment/environment.interface';
 
 @ToolComponent({
   name: 'about',
@@ -18,6 +19,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./about-tool.component.scss']
 })
 export class AboutToolComponent implements OnInit {
+  private configOptions: AllPackageEnvironnementOptions;
   @Input()
   get headerHtml() {
     return this._headerHtml;
@@ -68,18 +70,17 @@ export class AboutToolComponent implements OnInit {
     this.headerHtml = this.languageService.translate.instant(
       'igo.integration.aboutTool.headerHtml'
     );
-    this.version = configService.getConfig('version');
-    this.baseUrlProfil = configService.getConfig('storage.url');
+    this.configOptions = this.configService.getConfigs();
+    this.version = this.configOptions.app?.version;
+    this.baseUrlProfil = this.configOptions.storage?.url;
     this.baseUrlGuide =
-      configService.getConfig('depot.url') +
-      configService.getConfig('depot.guideUrl');
+      this.configOptions.depot?.url +
+      // todo validate this property
+      (this.configOptions.depot as any).guideUrl;
   }
 
   ngOnInit() {
-    if (
-      this.auth.authenticated &&
-      this.configService.getConfig('context.url')
-    ) {
+    if (this.auth.authenticated && this.configOptions.context?.url) {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
         this.trainingGuideURLs = recast.guides;
@@ -87,12 +88,10 @@ export class AboutToolComponent implements OnInit {
       });
     } else if (
       this.auth.authenticated &&
-      !this.configService.getConfig('context.url') &&
-      this.configService.getConfig('depot.trainingGuides')
+      !this.configOptions.context?.url &&
+      this.configOptions.depot?.trainingGuides
     ) {
-      this.trainingGuideURLs = this.configService.getConfig(
-        'depot.trainingGuides'
-      );
+      this.trainingGuideURLs = this.configOptions.depot?.trainingGuides;
     }
   }
 
