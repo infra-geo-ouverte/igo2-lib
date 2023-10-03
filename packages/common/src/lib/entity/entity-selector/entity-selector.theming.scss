@@ -11,7 +11,7 @@
   $theme: map.merge(
     $theme,
     (
-      density: $density - 2
+      density: $density - 4
     )
   );
 

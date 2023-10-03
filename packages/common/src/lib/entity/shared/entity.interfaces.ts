@@ -121,7 +121,7 @@ export interface EntityTableColumn {
 
 export interface SelectOption {
   id: number;
-  value: string;
+  value: string | number;
 }
 
 export interface EntityTableButton {

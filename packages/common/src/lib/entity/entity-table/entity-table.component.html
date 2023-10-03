@@ -156,9 +156,10 @@
               class="mat-cell-text edition"
               [formGroup]="formGroup"
               *ngIf="isEdition(row.record); else isUnsanitizedHTML"
+              [ngSwitch]="column.type"
               [ngClass]="row.cellData[column.name].class"
             >
-              <div class="date-picker" *ngIf="column.type === 'date'">
+              <mat-form-field *ngSwitchCase="'date'" subscriptSizing="dynamic">
                 <mat-datepicker-toggle
                   matSuffix
                   [for]="picker"
@@ -171,56 +172,60 @@
                   (dateChange)="onDateChange(column.name, row.record, $event)"
                 />
                 <mat-datepicker #picker></mat-datepicker>
-              </div>
-              <input
-                matInput
-                type="time"
-                *ngIf="column.type === 'time'"
-                [formControlName]="column.name"
-                step="900"
-                (focus)="column.onFocus($event)"
-                (keypress)="column.onChange($event)"
-                (blur)="column.onBlur($event)"
-              />
-              <input
-                matInput
-                type="number"
-                class="class_number_edition"
-                *ngIf="column.type === 'number'"
-                [formControlName]="column.name"
-                step="{{ column.step }}"
-                value="{{ row.cellData[column.name].value }}"
-                (input)="onValueChange(column.name, row.record, $event)"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-                min="{{ getValidationAttributeValue(column, 'minValue') }}"
-                max="{{ getValidationAttributeValue(column, 'maxValue') }}"
-              />
-              <input
-                matInput
-                type="text"
+              </mat-form-field>
+              <mat-form-field *ngSwitchCase="'time'" subscriptSizing="dynamic">
+                <input
+                  matInput
+                  type="time"
+                  [formControlName]="column.name"
+                  step="900"
+                  (focus)="column.onFocus($event)"
+                  (keypress)="column.onChange($event)"
+                  (blur)="column.onBlur($event)"
+                />
+              </mat-form-field>
+              <mat-form-field
+                *ngSwitchCase="'number'"
+                subscriptSizing="dynamic"
+              >
+                <input
+                  matInput
+                  type="number"
+                  class="class_number_edition"
+                  [formControlName]="column.name"
+                  step="{{ column.step }}"
+                  value="{{ row.cellData[column.name].value }}"
+                  (input)="onValueChange(column.name, row.record, $event)"
+                  readonly="{{
+                    getValidationAttributeValue(column, 'readonly')
+                  }}"
+                  min="{{ getValidationAttributeValue(column, 'minValue') }}"
+                  max="{{ getValidationAttributeValue(column, 'maxValue') }}"
+                />
+              </mat-form-field>
+              <mat-form-field
                 *ngIf="!column.type || column.type === 'string'"
-                [formControlName]="column.name"
-                value="{{ row.cellData[column.name].value }}"
-                (input)="onValueChange(column.name, row.record, $event)"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-              />
+                subscriptSizing="dynamic"
+              >
+                <input
+                  matInput
+                  type="text"
+                  [formControlName]="column.name"
+                  value="{{ row.cellData[column.name].value }}"
+                  (input)="onValueChange(column.name, row.record, $event)"
+                  readonly="{{
+                    getValidationAttributeValue(column, 'readonly')
+                  }}"
+                />
+              </mat-form-field>
               <mat-checkbox
-                *ngIf="column.type === 'boolean'"
+                *ngSwitchCase="'boolean'"
                 [formControlName]="column.name"
                 [checked]="row.cellData[column.name].value"
                 (change)="onBooleanValueChange(column.name, row.record, $event)"
               ></mat-checkbox>
               <mat-select
-                *ngIf="column.type === 'list'"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
+                *ngSwitchCase="'list'"
                 [formControlName]="column.name"
                 [multiple]="column.multiple"
                 (selectionChange)="
@@ -236,32 +241,15 @@
                   {{ option.value }}
                 </mat-option>
               </mat-select>
-              <input
-                matInput
-                type="text"
-                [formControlName]="column.name"
-                *ngIf="column.type === 'autocomplete'"
-                [matAutocomplete]="auto"
-                required="{{
-                  getValidationAttributeValue(column, 'mandatory')
-                }}"
-                value="{{ row.cellData[column.name].value }}"
-                readonly="{{ getValidationAttributeValue(column, 'readonly') }}"
-              />
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="
-                  onAutocompleteValueChange(column, row.record, $event)
-                "
-                panelWidth="430px"
+
+              <igo-entity-table-autocomplete-field
+                *ngSwitchCase="'autocomplete'"
+                [control]="this.formGroup.get([column.name])"
+                [column]="column"
+                [record]="row.record"
+                (selected)="onChange(column, row.record, $event)"
               >
-                <mat-option
-                  *ngFor="let option of filteredOptions[column.name] | async"
-                  [value]="option.id"
-                >
-                  {{ option.value }}
-                </mat-option>
-              </mat-autocomplete>
+              </igo-entity-table-autocomplete-field>
             </td>
             <ng-template #isUnsanitizedHTML>
               <td

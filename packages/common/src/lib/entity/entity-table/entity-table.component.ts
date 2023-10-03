@@ -11,10 +11,11 @@ import {
   SimpleChanges,
   ElementRef,
   Optional,
-  Self
+  Self,
+  TrackByFunction
 } from '@angular/core';
 
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
   EntityKey,
@@ -25,7 +26,8 @@ import {
   EntityTableColumn,
   EntityTableColumnRenderer,
   EntityTableSelectionState,
-  EntityTableScrollBehavior
+  EntityTableScrollBehavior,
+  getColumnKeyWithoutPropertiesTag
 } from '../shared';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -36,13 +38,18 @@ import {
   NgControl,
   NgForm,
   FormControlName,
-  UntypedFormGroup
+  UntypedFormGroup,
+  FormControl,
+  Validators
 } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { debounceTime, map } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { default as moment } from 'moment';
 import { StringUtils } from '@igo2/utils';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatSelectChange } from '@angular/material/select';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 interface CellData {
   [key: string]: {
@@ -131,7 +138,17 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Table template
    */
-  @Input() template: EntityTableTemplate;
+  @Input() set template(value: EntityTableTemplate) {
+    this._template = value;
+    this.visibleColumns = value.columns.filter(
+      (column) => column.visible !== false
+    );
+  }
+  get template(): EntityTableTemplate {
+    return this._template;
+  }
+  private _template: EntityTableTemplate;
+  visibleColumns: EntityTableColumn[];
 
   /**
    * Scroll behavior on selection
@@ -260,7 +277,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.dataSource.paginator = this.paginator;
     this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
       this.handleDatasource();
-      this.refresh();
+      this.cdRef.detectChanges();
     });
   }
 
@@ -277,48 +294,53 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process text or number value change (edition)
    */
-  onValueChange(column: string, record: EntityRecord<any>, event) {
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = event.target.value;
+  onChange(
+    column: EntityTableColumn,
+    record: EntityRecord<any>,
+    value: unknown
+  ) {
+    const key = getColumnKeyWithoutPropertiesTag(column.name);
+    record.entity.properties[key] = value;
+  }
+
+  onValueChange(column: EntityTableColumn, record: EntityRecord<any>, event) {
+    this.onChange(column, record, event.target.value);
   }
 
   /**
    * Process boolean value change (edition)
    */
-  onBooleanValueChange(column: string, record: EntityRecord<any>, event) {
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = event.checked;
+  onBooleanValueChange(
+    column: EntityTableColumn,
+    record: EntityRecord<any>,
+    event: MatCheckboxChange
+  ) {
+    this.onChange(column, record, event.checked);
   }
 
   /**
    * Process select value change (edition)
    */
-  onSelectValueChange(column: string, record: EntityRecord<any>, event) {
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = event.value;
-  }
-
-  /**
-   * Process autocomplete value change (edition)
-   */
-  onAutocompleteValueChange(
+  onSelectValueChange(
     column: EntityTableColumn,
     record: EntityRecord<any>,
-    event
+    event: MatSelectChange
   ) {
-    this.formGroup.controls[column.name].setValue(event.option.viewValue);
-    const key = this.getColumnKeyWithoutPropertiesTag(column.name);
-    record.entity.properties[key] = event.option.value;
+    this.onChange(column, record, event.value);
   }
 
   /**
    * Process date value change (edition)
    */
-  onDateChange(column: string, record: EntityRecord<any>, event) {
+  onDateChange(
+    column: EntityTableColumn,
+    record: EntityRecord<any>,
+    event: MatDatepickerInputEvent<any>
+  ) {
     const format = 'YYYY-MM-DD';
     const value = moment(event.value).format(format);
-    const key = this.getColumnKeyWithoutPropertiesTag(column);
-    record.entity.properties[key] = value;
+
+    this.onChange(column, record, value);
   }
 
   /**
@@ -326,127 +348,138 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * More than one row can be edited at the same time
    */
   private enableEdit(record: EntityRecord<any>) {
-    const item = record.entity.properties || record.entity;
-    this.template.columns.forEach((column) => {
+    const controlsConfig = this.visibleColumns.reduce((config, column) => {
       column.title =
         column.validation?.mandatory && !column.title.includes('*')
           ? column.title + ' *'
           : column.title;
+      const control = this.createControlByColumnType(record, column);
+      config[column.name] = control;
+      return config;
+    }, {});
 
-      const key = this.getColumnKeyWithoutPropertiesTag(column.name);
-      if (column.type === 'boolean') {
-        if (!item[key] || item[key] === null) {
-          item[key] = false;
-        } else if (typeof item[key] === 'string') {
-          item[key] = JSON.parse(item[key].toLowerCase());
-        }
-        this.formGroup.setControl(
-          column.name,
-          this.formBuilder.control(item[key])
-        );
-      } else if (column.type === 'list') {
-        if (column.multiple) {
-          this.formGroup.setControl(
-            column.name,
-            this.formBuilder.control([item[key]])
-          );
-        } else {
-          this.formGroup.setControl(
-            column.name,
-            this.formBuilder.control(item[key])
-          );
+    this.formGroup = this.formBuilder.group(controlsConfig);
+  }
 
-          typeof item[key] === 'string'
-            ? this.formGroup.controls[column.name].setValue(parseInt(item[key]))
-            : this.formGroup.controls[column.name].setValue(item[key]);
-        }
-      } else if (column.type === 'autocomplete') {
-        this.formGroup.setControl(
-          column.name,
-          this.formBuilder.control(item[key])
-        );
+  private createControlByColumnType(
+    record: EntityRecord<any>,
+    column: EntityTableColumn
+  ) {
+    const item = record.entity.properties || record.entity;
+    const key = getColumnKeyWithoutPropertiesTag(column.name);
+    const value = item[key];
 
-        this.filteredOptions[column.name] = new Observable<any[]>();
-        this.filteredOptions[column.name] = this.formGroup.controls[
-          column.name
-        ].valueChanges.pipe(
-          map((value) => {
-            if (value?.length) {
-              return column.domainValues?.filter((option) => {
-                const filterNormalized = value
-                  ? value
-                      .toLowerCase()
-                      .normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '')
-                  : '';
-                const featureNameNormalized = option.value
-                  .toLowerCase()
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '');
-                return featureNameNormalized.includes(filterNormalized);
-              });
-            }
-          })
-        );
+    switch (column.type) {
+      case 'boolean':
+        return this.createBooleanControl(value, column);
+      case 'list':
+        return this.createListControl(value, column);
+      case 'autocomplete':
+        return this.createAutocompleteControl(value, column, record);
+      case 'date':
+        return this.createDateControl(value, column, record);
 
-        let formControlValue = item[key];
-        column.domainValues.forEach((option) => {
-          if (
-            typeof formControlValue === 'string' &&
-            StringUtils.isValidNumber(formControlValue) &&
-            !StringUtils.isOctalNumber(formControlValue)
-          ) {
-            formControlValue = parseInt(formControlValue);
-          }
-          if (
-            option.value === formControlValue ||
-            option.id === formControlValue
-          ) {
-            formControlValue = option.value;
-          }
-        });
+      default:
+        return this.createBaseControl(value, column);
+    }
+  }
 
-        this.formGroup.controls[column.name].setValue(formControlValue);
-        if (this.isEdition(record) && column.linkColumnForce) {
-          const entity = record.entity as any;
-          this.formGroup.controls[column.name].setValue(
-            entity?.properties[
-              this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
-            ]
-          );
-        }
-      } else if (column.type === 'date') {
-        if (column.visible !== false) {
-          if (item[key]) {
-            let date = moment(item[key]);
-            item[key] = date.utc().format('YYYY-MM-DD');
-            this.formGroup.setControl(
-              column.name,
-              this.formBuilder.control(item[key])
-            );
-          } else {
-            const newKey = this.getColumnKeyWithoutPropertiesTag(column.name);
-            record.entity.properties[newKey] = null;
-            this.formGroup.setControl(
-              column.name,
-              this.formBuilder.control(null)
-            );
-          }
-        }
-      } else {
-        this.formGroup.setControl(
-          column.name,
-          this.formBuilder.control(item[key])
-        );
+  private createBooleanControl(
+    value: string | boolean,
+    column: EntityTableColumn
+  ): FormControl {
+    if (!value || value === null) {
+      value = false;
+    } else if (typeof value === 'string') {
+      value = JSON.parse(value.toLowerCase());
+    }
+    return this.createBaseControl(value, column);
+  }
+
+  private createListControl(
+    value: unknown,
+    column: EntityTableColumn
+  ): FormControl {
+    value = typeof value === 'string' ? parseInt(value) : value;
+    return this.createBaseControl(column.multiple ? [value] : value, column);
+  }
+
+  private createDateControl(
+    value: unknown,
+    column: EntityTableColumn,
+    record: EntityRecord<any>
+  ): FormControl {
+    if (value) {
+      let date = moment(value);
+      value = date.utc().format('YYYY-MM-DD');
+    } else {
+      const newKey = getColumnKeyWithoutPropertiesTag(column.name);
+      record.entity.properties[newKey] = null;
+    }
+    return this.createBaseControl(value, column);
+  }
+
+  private createAutocompleteControl(
+    value: any,
+    column: EntityTableColumn,
+    record: EntityRecord<any>
+  ): FormControl {
+    value = this.getAutocompleteDomainValues(value, record, column);
+
+    const control = this.createBaseControl(value, column);
+
+    return control;
+  }
+
+  private createBaseControl(
+    value: unknown,
+    column: EntityTableColumn
+  ): FormControl {
+    return new FormControl(
+      {
+        value,
+        disabled: this.getValidationAttributeValue(column, 'readonly')
+      },
+      [
+        this.getValidationAttributeValue(column, 'mandatory') &&
+          Validators.required
+      ].filter(Boolean)
+    );
+  }
+
+  private getAutocompleteDomainValues(
+    value: any,
+    record: EntityRecord<any>,
+    column: EntityTableColumn
+  ): string | number {
+    if (column.linkColumnForce) {
+      value =
+        record.entity?.properties[
+          getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
+        ];
+    } else if (column.domainValues) {
+      value = this.tryParseNumberValue(value);
+      const domainValue = column.domainValues.find(
+        (option) => option.value === value || option.id === value
+      );
+
+      if (domainValue) {
+        return this.isEdition(record) ? domainValue.id : domainValue.value;
       }
+    }
 
-      if (
-        this.formGroup.controls[column.name] &&
-        this.getValidationAttributeValue(column, 'readonly')
-      ) {
-        this.formGroup.controls[column.name].disable();
-      }
-    });
+    return value;
+  }
+
+  private tryParseNumberValue(value: number | string): number | string {
+    if (
+      typeof value === 'string' &&
+      StringUtils.isValidNumber(value) &&
+      !StringUtils.isOctalNumber(value)
+    ) {
+      value = parseInt(value);
+    }
+    return value;
   }
 
   private handleDatasource() {
@@ -476,13 +509,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         this.selectionState$.next(this.computeSelectionState(records));
       });
     this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
-      if (all[0]) {
-        this.enableEdit(all[0]);
-      }
       this.dataSource.data = all.map((record) => {
         return {
           record,
-          cellData: this.template.columns.reduce((cellData, column) => {
+          cellData: this.visibleColumns.reduce((cellData, column) => {
             const value = this.getValue(record, column);
             cellData[column.name] = {
               class: this.getCellClass(record, column),
@@ -520,20 +550,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param index Record index
    * @internal
    */
-  getTrackByFunction() {
-    return (index: number, record: EntityRecord<object, EntityState>) => {
-      return record.ref;
-    };
-  }
-
-  /**
-   * Trigger a refresh of thre table. This can be useful when
-   * the data source doesn't emit a new value but for some reason
-   * the records need an update.
-   * @internal
-   */
-  refresh() {
-    this.cdRef.detectChanges();
+  getTrackByFunction(): TrackByFunction<EntityRecord<object, EntityState>> {
+    return (_index, record) => record.ref;
   }
 
   paginatorChange(event: MatPaginator) {
@@ -756,106 +774,89 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getValue(record: EntityRecord<object>, column: EntityTableColumn): any {
     const entity = record.entity;
-    let value;
     if (column.valueAccessor !== undefined) {
       return column.valueAccessor(entity, record);
     }
     if (this.template.valueAccessor !== undefined) {
       return this.template.valueAccessor(entity, column.name, record);
     }
-    value = this.store.getProperty(entity, column.name);
 
+    let value = this.store.getProperty(entity, column.name);
     if (column.type === 'boolean') {
-      if (value === undefined || value === null || value === '') {
-        value = false;
-      } else if (typeof value !== 'boolean' && value !== undefined) {
-        if (typeof value === 'number') {
-          value = Boolean(value);
-        } else {
-          value = JSON.parse(value.toLowerCase());
-        }
-      }
-      if (!this.isEdition(record)) {
-        value = value ? '&#10003;' : ''; // check mark
-      }
+      value = this.getBooleanValue(value, record);
     } else if (column.type === 'list' && value && column.domainValues) {
-      const entity = record.entity as any;
-      if (column.multiple) {
-        let list_id;
-        typeof value === 'string'
-          ? (list_id = value.match(/[\w.-]+/g).map(Number))
-          : (list_id = value);
-        let list_option = [];
-
-        column.domainValues.forEach((option) => {
-          if (list_id.includes(option.id)) {
-            if (record.edition) {
-              list_option.push(option.id);
-            } else {
-              list_option.push(option.value);
-            }
-          }
-        });
-
-        this.isEdition(record) ? (value = list_id) : (value = list_option);
-      } else {
-        if (!this.isEdition(record) && column.linkColumnForce) {
-          value =
-            entity?.properties[
-              this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
-            ];
-        } else {
-          column.domainValues.forEach((option) => {
-            if (
-              typeof value === 'string' &&
-              StringUtils.isValidNumber(value) &&
-              !StringUtils.isOctalNumber(value)
-            ) {
-              value = parseInt(value);
-            }
-            if (option.value === value || option.id === value) {
-              this.isEdition(record)
-                ? (value = option.id)
-                : (value = option.value);
-            }
-          });
-        }
-      }
+      value = this.getListValue(value, record, column);
     } else if (column.type === 'autocomplete' && value && column.domainValues) {
-      const entity = record.entity as any;
-      if (!this.isEdition(record) && column.linkColumnForce) {
-        value =
-          entity?.properties[
-            this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
-          ];
-      } else {
-        column.domainValues.forEach((option) => {
-          if (
-            typeof value === 'string' &&
-            StringUtils.isValidNumber(value) &&
-            !StringUtils.isOctalNumber(value)
-          ) {
-            value = parseInt(value);
-          }
-          if (option.value === value || option.id === value) {
-            value = option.value;
-          }
-        });
-      }
+      value = this.getAutocompleteDomainValues(value, record, column);
     } else if (column.type === 'date') {
-      if (this.isEdition(record)) {
-        if (value) {
-          let date = moment(value);
-          value = date.format();
-          this.formGroup.controls[column.name].setValue(value);
-        }
-      } else if (!this.isEdition(record) && value === null) {
-        value = '';
-      }
+      value = this.getDateValue(value, record);
     }
 
     if (value === undefined) {
       value = '';
+    }
+
+    return value;
+  }
+
+  private getListValue(
+    value: string | number | boolean,
+    record: EntityRecord<object>,
+    column: EntityTableColumn
+  ): any {
+    if (column.multiple) {
+      let list_id;
+      typeof value === 'string'
+        ? (list_id = value.match(/[\w.-]+/g).map(Number))
+        : (list_id = value);
+
+      let list_option = [];
+      column.domainValues.forEach((option) => {
+        if (list_id.includes(option.id)) {
+          if (record.edition) {
+            list_option.push(option.id);
+          } else {
+            list_option.push(option.value);
+          }
+        }
+      });
+
+      value = this.isEdition(record) ? list_id : list_option;
+    } else {
+      value = this.getAutocompleteDomainValues(value, record, column);
+    }
+
+    return value;
+  }
+
+  private getDateValue(
+    value: string | number,
+    record: EntityRecord<object>
+  ): string | number {
+    if (value && this.isEdition(record)) {
+      let date = moment(value);
+      value = date.format();
+    } else if (!this.isEdition(record) && value === null) {
+      value = '';
+    }
+    return value;
+  }
+
+  private getBooleanValue(
+    value: string | number | boolean,
+    record: EntityRecord<object>
+  ): string | number | boolean {
+    if (value === undefined || value === null || value === '') {
+      value = false;
+    } else if (typeof value !== 'boolean' && value !== undefined) {
+      if (typeof value === 'number') {
+        value = Boolean(value);
+      } else {
+        value = JSON.parse(value.toLowerCase());
+      }
+    }
+    if (!this.isEdition(record)) {
+      value = value ? '&#10003;' : ''; // check mark
     }
 
     return value;
@@ -979,15 +980,5 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (typeof clickFunc === 'function') {
       clickFunc(record.entity, record);
     }
-  }
-
-  /**
-   * Retrieve column name without his "properties" tag (useful for edition workspace properties)
-   */
-  public getColumnKeyWithoutPropertiesTag(column: string) {
-    if (column.includes('properties.')) {
-      return column.split('.')[1];
-    }
-    return column;
   }
 }

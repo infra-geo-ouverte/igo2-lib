@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { EntityTableAutocompleteFieldComponent } from '../entity-table-fields/entity-table-autocomplete-field/entity-table-autocomplete-field.component';
 
 /**
  * @ignore
@@ -47,6 +48,10 @@ import { MatSelectModule } from '@angular/material/select';
     MatTooltipModule
   ],
   exports: [EntityTableComponent],
-  declarations: [EntityTableComponent, EntityTableRowDirective]
+  declarations: [
+    EntityTableComponent,
+    EntityTableRowDirective,
+    EntityTableAutocompleteFieldComponent
+  ]
 })
 export class IgoEntityTableModule {}

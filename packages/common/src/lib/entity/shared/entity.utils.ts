@@ -78,3 +78,10 @@ export function getEntityRevision(entity: object): number {
   const meta = (entity as any).meta || {};
   return meta.revision || 0;
 }
+
+export function getColumnKeyWithoutPropertiesTag(key: string): string {
+  if (key.includes('properties.')) {
+    return key.split('.')[1];
+  }
+  return key;
+}
