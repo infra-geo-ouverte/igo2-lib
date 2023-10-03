@@ -11,11 +11,12 @@
   $theme: map.merge(
     $theme,
     (
-      density: $density - 4
+      density: $density - 2
     )
   );
 
-  igo-entity-selector {
-    @include mat.paginator-density($theme);
+  igo-catalog-browser {
+    @include mat.icon-button-density($theme);
+    @include mat.list-density($theme);
   }
 }

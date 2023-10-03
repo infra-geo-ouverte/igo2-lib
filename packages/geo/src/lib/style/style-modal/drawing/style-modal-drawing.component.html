@@ -13,13 +13,9 @@
           <mat-icon class="stroke-palette-icon" svgIcon="square"></mat-icon>
           {{ 'igo.geo.style.fill' | translate }}
         </span>
+
         <igo-color-picker-form-field
           formControlName="fill"
-          outputFormat="rgba"
-          setAlpha=".4"
-          (open)="openPicker()"
-          (close)="closePicker()"
-          [color]="getFeatureFillColor()"
         ></igo-color-picker-form-field>
       </ng-container>
 
@@ -31,11 +27,6 @@
 
       <igo-color-picker-form-field
         formControlName="stroke"
-        outputFormat="rgba"
-        setAlpha="1"
-        (open)="openPicker()"
-        (close)="closePicker()"
-        [color]="getFeatureStrokeColor()"
       ></igo-color-picker-form-field>
     </div>
 
