@@ -73,10 +73,8 @@ export class InteractiveTourService {
     const showInMobile = this.configService.getConfig(
       'interactiveTour.tourInMobile'
     );
-    if (showInMobile === undefined) {
-      return true;
-    }
-    return this.configService.getConfig('interactiveTour.tourInMobile');
+
+    return showInMobile === undefined ? true : showInMobile;
   }
 
   private getButtons(buttonKind?: 'first' | 'last' | 'noBackButton') {

@@ -1,14 +1,10 @@
-import { DOMOptions } from '../dom';
-
 export interface CommonOptions {
   depot?: DepotOptions;
-  dom?: DOMOptions[];
   interactiveTour?: InteractiveTourConfigOptions;
 }
 
-interface DepotOptions {
+export interface DepotOptions {
   url: string;
-  /** TODO PELORD SHOULD BE DEPRECATED? */
   trainingGuides?: string[];
 }
 
