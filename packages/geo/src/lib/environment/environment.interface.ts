@@ -30,20 +30,23 @@ export interface EnvironmentOptions {
   importExport?: ImportExportServiceOptions;
   importWithStyle?: boolean;
   menu?: {
+    // todo move to common?
     button: {
       useThemeColor: boolean;
     };
-  }; // todo move to common?
+  };
   optionsApi?: OptionsApiOptions;
   projections?: Projection[];
   queryOverlayStyle?: OverlayStyleOptions;
   searchOverlayStyle?: OverlayStyleOptions;
   searchSources?: {
+    showResultsCount?: boolean;
     [key: string]:
       | SearchSourceOptions
       | StoredQueriesSearchSourceOptions
-      | StoredQueriesReverseSearchSourceOptions;
-  }; // todo validate
-  searchBar: { showSearchButton: boolean }; // todo move to common?
+      | StoredQueriesReverseSearchSourceOptions
+      | boolean;
+  };
+  searchBar?: { showSearchButton?: boolean }; // todo move to common?
   spatialFilter?: SpatialFilterOptions;
 }
