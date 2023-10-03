@@ -31,7 +31,7 @@ export class EntityTableAutocompleteFieldComponent implements OnInit {
   @Input({ required: true }) column: EntityTableColumn;
   @Input({ required: true }) record: EntityRecord<any>;
 
-  @Output() selected = new EventEmitter<string | number>();
+  @Output() selected = new EventEmitter<SelectOption>();
 
   get entity() {
     return this.record.entity;
@@ -68,7 +68,8 @@ export class EntityTableAutocompleteFieldComponent implements OnInit {
    * Process autocomplete value change (edition)
    */
   onSelected(event: MatAutocompleteSelectedEvent) {
-    this.control.setValue(event.option.viewValue);
-    this.selected.emit(event.option.value);
+    const value = event.option.value;
+    this.control.setValue(value);
+    this.selected.emit(value);
   }
 }
