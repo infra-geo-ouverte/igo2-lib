@@ -277,7 +277,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.dataSource.paginator = this.paginator;
     this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
       this.handleDatasource();
-      this.cdRef.detectChanges();
+      this.refresh();
     });
   }
 
@@ -552,6 +552,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   getTrackByFunction(): TrackByFunction<EntityRecord<object, EntityState>> {
     return (_index, record) => record.ref;
+  }
+
+  /**
+   * Trigger a refresh of thre table. This can be useful when
+   * the data source doesn't emit a new value but for some reason
+   * the records need an update.
+   * @internal
+   */
+  refresh() {
+    this.cdRef.detectChanges();
   }
 
   paginatorChange(event: MatPaginator) {
