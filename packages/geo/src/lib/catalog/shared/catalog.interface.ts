@@ -4,7 +4,11 @@ import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface
 import { TooltipType } from '../../layer';
 import { QueryFormat } from '../../query';
 
-import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
+import {
+  CatalogItemType,
+  CatalogQueryFormatTypes,
+  TypeCatalogStrings
+} from './catalog.enum';
 
 export interface AddedChangeEmitter {
   added: boolean;
@@ -32,7 +36,7 @@ export interface ICatalog {
   regFilters?: string[];
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id, title, sortDirection?)
   groupSeparator?: string;
-  queryFormat?: QueryFormat;
+  queryFormat?: QueryFormat | CatalogQueryFormatTypes;
   queryParams?: { [key: string]: string };
   sourceOptions?: { [key: string]: any };
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
