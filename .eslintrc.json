@@ -19,7 +19,8 @@
             "ignoreTrailingComments": true,
             "ignoreUrls": true,
             "ignoreTemplateLiterals": true,
-            "ignoreRegExpLiterals": true
+            "ignoreRegExpLiterals": true,
+            "ignorePattern": "^import\\W.*"
           }
         ],
         "unused-imports/no-unused-imports": "error",
