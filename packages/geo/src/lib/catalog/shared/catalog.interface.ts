@@ -77,8 +77,13 @@ export interface CatalogItemState extends EntityState {
 }
 
 export interface CatalogServiceOptions {
+  /** @deprecated Use baselayers instead*/
   baseLayers?: boolean;
-  sources?: (ICatalog | ICompositeCatalog)[];
-  sourcesUrl?: string;
+  baselayers?: boolean;
+  /** @deprecated Not used anymore*/
   emailAddress?: string;
+  url?: string;
+  sources?: (ICatalog | ICompositeCatalog)[];
+  /** @deprecated Use url instead */
+  sourcesUrl?: string;
 }

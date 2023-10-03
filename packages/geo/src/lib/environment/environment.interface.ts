@@ -1,43 +1,49 @@
-import { CatalogServiceOptions } from '../catalog';
+import { DepotOptions } from '@igo2/common';
 import { OptionsApiOptions } from '../datasource';
 import { DirectionsSourceOptions } from '../directions';
+import { DrawOptions } from '../draw/shared/draw.interface';
 import { SpatialFilterOptions } from '../filter';
 import { ImportExportServiceOptions } from '../import-export';
-import { Projection } from '../map';
+import {
+  GeolocationOptions,
+  HomeExtentButtonOptions,
+  Projection
+} from '../map';
 import {
   SearchSourceOptions,
   StoredQueriesReverseSearchSourceOptions,
   StoredQueriesSearchSourceOptions
 } from '../search';
-import { CommonVectorStyleOptions } from '../style';
+import { OverlayStyleOptions } from '../style';
+import { CatalogServiceOptions } from '../catalog';
 
 export interface GeoOptions {
   catalog?: CatalogServiceOptions;
+  context?: any; // set to any to avoid circular dependency with @igo2/context
+  depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
-  drawingTool?: unknown; // TODO add the type
+  drawingTool?: DrawOptions;
   edition?: unknown; // TODO add the type
   emailAddress?: string;
-  geolocate?: unknown; // TODO add the type
-  homeExtentButton?: unknown; // TODO add the type
+  geolocate?: GeolocationOptions;
+  homeExtentButton?: HomeExtentButtonOptions;
   importExport?: ImportExportServiceOptions;
   importWithStyle?: boolean;
+  menu?: {
+    button: {
+      useThemeColor: boolean;
+    };
+  }; // todo move to common?
   optionsApi?: OptionsApiOptions;
   projections?: Projection[];
-  queryOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
+  queryOverlayStyle?: OverlayStyleOptions;
+  searchOverlayStyle?: OverlayStyleOptions;
   searchSources?: {
     [key: string]:
       | SearchSourceOptions
       | StoredQueriesSearchSourceOptions
       | StoredQueriesReverseSearchSourceOptions;
-  };
+  }; // todo validate
+  searchBar: { showSearchButton: boolean }; // todo move to common?
   spatialFilter?: SpatialFilterOptions;
 }

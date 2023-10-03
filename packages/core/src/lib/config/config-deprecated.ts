@@ -8,6 +8,10 @@ export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
   menuButtonReverseColor: {
     alternativeKey: 'menu.button.useThemeColor',
     mayBeRemoveIn: new Date('2024-06-06')
+  },
+  importWithStyle: {
+    alternativeKey: 'importExport.importWithStyle',
+    mayBeRemoveIn: new Date('2024-06-06')
   }
 };
 
