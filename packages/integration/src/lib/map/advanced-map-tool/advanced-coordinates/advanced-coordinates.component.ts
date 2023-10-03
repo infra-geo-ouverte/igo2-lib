@@ -89,7 +89,9 @@ export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
       translateKey: 'wgs84',
       alias: 'WGS84',
       code: 'EPSG:4326',
-      zone: ''
+      zone: '',
+      def: undefined,
+      extent: undefined
     };
     this.center = this.storageService.get('centerToggle') as boolean;
     this.computeProjections();

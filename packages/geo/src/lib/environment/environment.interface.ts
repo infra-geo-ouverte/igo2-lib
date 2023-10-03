@@ -17,7 +17,7 @@ import {
 import { OverlayStyleOptions } from '../style';
 import { CatalogServiceOptions } from '../catalog';
 
-export interface GeoOptions {
+export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
   context?: any; // set to any to avoid circular dependency with @igo2/context
   depot?: DepotOptions;

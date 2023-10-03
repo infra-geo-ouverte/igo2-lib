@@ -1,21 +1,25 @@
-import { AuthEnvironmentOptions } from '@igo2/auth';
-import { ContextOptions } from '@igo2/context';
-import { CommonOptions } from '@igo2/common';
-import { BaseEnvironmentOptions, CoreOptions, Version } from '@igo2/core';
-import { GeoOptions } from '@igo2/geo';
+import { EnvironmentOptions as AuthEnvironmentOptions } from '@igo2/auth';
+import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
+import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common';
+import {
+  BaseEnvironmentOptions,
+  EnvironmentOptions as CoreEnvironmentOptions,
+  Version
+} from '@igo2/core';
+import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
 
-export type AllPackageEnvironnementOptions = AuthEnvironmentOptions &
-  CommonOptions &
-  CoreOptions &
-  ContextOptions &
-  GeoOptions &
-  IntegrationEnvironnementOptions;
+export type AllEnvironmentOptions = AuthEnvironmentOptions &
+  CommonEnvironmentOptions &
+  CoreEnvironmentOptions &
+  ContextEnvironmentOptions &
+  GeoEnvironmentOptions &
+  IntegrationEnvironmentOptions;
 
 export interface EnvironmentOptions extends BaseEnvironmentOptions {
-  igo: AllPackageEnvironnementOptions;
+  igo: AllEnvironmentOptions;
 }
 
-export interface IntegrationEnvironnementOptions {
+interface IntegrationEnvironmentOptions {
   app?: AppOptions;
   hasFeatureEmphasisOnSelection?: boolean;
   saveSearchResultInLayer?: boolean;

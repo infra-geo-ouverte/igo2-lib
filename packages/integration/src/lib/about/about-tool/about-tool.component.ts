@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
 import { HttpClient } from '@angular/common/http';
-import { AllPackageEnvironnementOptions } from '../../environment/environment.interface';
+import { AllEnvironmentOptions } from '../../environment/environment.interface';
 
 @ToolComponent({
   name: 'about',
@@ -19,7 +19,7 @@ import { AllPackageEnvironnementOptions } from '../../environment/environment.in
   styleUrls: ['./about-tool.component.scss']
 })
 export class AboutToolComponent implements OnInit {
-  private configOptions: AllPackageEnvironnementOptions;
+  private configOptions: AllEnvironmentOptions;
   @Input()
   get headerHtml() {
     return this._headerHtml;
@@ -76,7 +76,7 @@ export class AboutToolComponent implements OnInit {
     this.baseUrlGuide =
       this.configOptions.depot?.url +
       // todo validate this property
-      (this.configOptions.depot as any).guideUrl;
+      (this.configOptions.depot as any)?.guideUrl;
   }
 
   ngOnInit() {

@@ -1,4 +1,4 @@
-export interface CommonOptions {
+export interface EnvironmentOptions {
   depot?: DepotOptions;
   interactiveTour?: InteractiveTourConfigOptions;
 }

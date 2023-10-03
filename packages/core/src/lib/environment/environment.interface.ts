@@ -7,7 +7,7 @@ export interface BaseEnvironmentOptions {
   production: boolean;
 }
 
-export interface CoreOptions {
+export interface EnvironmentOptions {
   analytics?: AnalyticsOptions;
   emailAddress?: string;
   language?: LanguageOptions;
