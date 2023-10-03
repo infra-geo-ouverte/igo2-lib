@@ -25,6 +25,19 @@ export class ConfigService<T = { [key: string]: any }> {
   }
 
   /**
+   * Use to get the all config file (merge from environnement.ts and config.json)
+   */
+  public getConfigs(): any {
+    Array.from(this.configDeprecated.keys()).map((deprecatedKey) => {
+      const deprecatedValue = ObjectUtils.resolve(this.config, deprecatedKey);
+      if (deprecatedValue !== undefined) {
+        this.handleDeprecatedConfig(deprecatedKey);
+      }
+    });
+    return this.config;
+  }
+
+  /**
    * Use to get the data found in config file
    */
   public getConfig<T = any>(key: string): T {
