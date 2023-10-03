@@ -16,11 +16,8 @@ export interface AuthGoogleOptions {
   clientId: string;
 }
 
-export interface AuthMicrosoftOptions {
+export interface AuthMicrosoftOptions extends BrowserAuthOptions {
   enabled?: boolean;
-  clientId: string;
-  redirectUri?: string;
-  authority?: string;
 }
 
 export interface AuthMicrosoftb2cOptions {
