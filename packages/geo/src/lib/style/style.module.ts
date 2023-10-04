@@ -14,6 +14,7 @@ import { StyleModalLayerComponent } from './style-modal/layer/style-modal-layer.
 import { StyleModalLayerButtonComponent } from './style-modal/layer-button/style-modal-layer-button.component';
 import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
+import { GeostylerStyleService } from './geostyler-service/geostyler.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ColorPickerFormFieldModule } from '@igo2/common';
 
@@ -49,7 +50,7 @@ export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {
     return {
       ngModule: IgoStyleModule,
-      providers: [StyleService, DrawStyleService]
+      providers: [StyleService, DrawStyleService, GeostylerStyleService]
     };
   }
 }
