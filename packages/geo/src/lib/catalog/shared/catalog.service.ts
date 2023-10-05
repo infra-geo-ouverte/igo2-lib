@@ -50,7 +50,6 @@ export class CatalogService {
   loadCatalogs(): Observable<Catalog[]> {
     const contextConfig = this.config.getConfig('context') || {};
 
-    // todo handle this type
     const catalogConfig: CatalogServiceOptions =
       this.config.getConfig('catalog') || {};
     const apiUrl = catalogConfig.url || contextConfig.url;

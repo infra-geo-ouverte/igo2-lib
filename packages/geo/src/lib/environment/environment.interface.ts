@@ -23,7 +23,7 @@ export interface EnvironmentOptions {
   depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
   drawingTool?: DrawOptions;
-  edition?: unknown; // TODO add the type
+  edition?: unknown;
   emailAddress?: string;
   geolocate?: GeolocationOptions;
   homeExtentButton?: HomeExtentButtonOptions;
