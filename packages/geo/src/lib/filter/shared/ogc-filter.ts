@@ -21,6 +21,7 @@ import {
 import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 import { default as moment } from 'moment';
+import { Extent } from 'ol/extent';
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {
@@ -106,7 +107,7 @@ export class OgcFilterWriter {
 
   public buildFilter(
     filters?: IgoOgcFilterObject,
-    extent?: [number, number, number, number],
+    extent?: Extent,
     proj?: olProjection,
     fieldNameGeometry?: string,
     options?: OgcFilterableDataSourceOptions
@@ -711,7 +712,7 @@ export class OgcFilterWriter {
   public handleOgcFiltersAppliedValue(
     options: OgcFilterableDataSourceOptions,
     fieldNameGeometry: string,
-    extent?: [number, number, number, number],
+    extent?: Extent,
     proj?: olProjection
   ): string {
     const ogcFilters = options.ogcFilters;
