@@ -1,6 +1,6 @@
-import { CoreOptions } from '../environment';
+import { EnvironmentOptions } from '../environment';
 
-export type BaseConfigOptions<T> = CoreOptions & T;
+export type BaseConfigOptions<T> = EnvironmentOptions & T;
 
 export interface ConfigOptions<T = { [key: string]: any }> {
   default?: BaseConfigOptions<T>;

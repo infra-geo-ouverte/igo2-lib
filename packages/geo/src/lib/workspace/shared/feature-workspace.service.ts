@@ -26,6 +26,10 @@ import {
   createTableTemplate
 } from './workspace.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
+import {
+  FeatureCommonVectorStyleOptions,
+  OverlayStyleOptions
+} from '../../style/shared/vector/vector-style.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -91,7 +95,7 @@ export class FeatureWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle =
+    const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
@@ -104,7 +108,7 @@ export class FeatureWorkspaceService {
               {},
               { feature },
               confQueryOverlayStyle?.selection || {}
-            )
+            ) as FeatureCommonVectorStyleOptions
           );
         },
         showInLayerList: false,

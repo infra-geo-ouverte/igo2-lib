@@ -1,43 +1,52 @@
-import { CatalogServiceOptions } from '../catalog';
+import { DepotOptions } from '@igo2/common';
 import { OptionsApiOptions } from '../datasource';
 import { DirectionsSourceOptions } from '../directions';
+import { DrawOptions } from '../draw/shared/draw.interface';
 import { SpatialFilterOptions } from '../filter';
 import { ImportExportServiceOptions } from '../import-export';
-import { Projection } from '../map';
+import {
+  GeolocationOptions,
+  HomeExtentButtonOptions,
+  Projection
+} from '../map';
 import {
   SearchSourceOptions,
   StoredQueriesReverseSearchSourceOptions,
   StoredQueriesSearchSourceOptions
 } from '../search';
-import { CommonVectorStyleOptions } from '../style';
+import { OverlayStyleOptions } from '../style';
+import { CatalogServiceOptions } from '../catalog';
 
-export interface GeoOptions {
+export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
+  context?: any; // set to any to avoid circular dependency with @igo2/context
+  depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
-  drawingTool?: unknown; // TODO add the type
-  edition?: unknown; // TODO add the type
+  drawingTool?: DrawOptions;
+  edition?: unknown;
   emailAddress?: string;
-  geolocate?: unknown; // TODO add the type
-  homeExtentButton?: unknown; // TODO add the type
+  geolocate?: GeolocationOptions;
+  homeExtentButton?: HomeExtentButtonOptions;
   importExport?: ImportExportServiceOptions;
   importWithStyle?: boolean;
+  menu?: {
+    // todo move to common?
+    button: {
+      useThemeColor: boolean;
+    };
+  };
   optionsApi?: OptionsApiOptions;
   projections?: Projection[];
-  queryOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
+  queryOverlayStyle?: OverlayStyleOptions;
+  searchOverlayStyle?: OverlayStyleOptions;
   searchSources?: {
+    showResultsCount?: boolean;
     [key: string]:
       | SearchSourceOptions
       | StoredQueriesSearchSourceOptions
-      | StoredQueriesReverseSearchSourceOptions;
+      | StoredQueriesReverseSearchSourceOptions
+      | boolean;
   };
+  searchBar?: { showSearchButton?: boolean }; // todo move to common?
   spatialFilter?: SpatialFilterOptions;
 }

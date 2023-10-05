@@ -1,5 +1,6 @@
 export interface DirectionsSourceOptions extends BaseDirectionsSourceOptions {
   osrm?: OsrmDirectionsSourceOptions;
+  logo?: string;
 }
 
 export type OsrmDirectionsSourceOptions = BaseDirectionsSourceOptions;

@@ -43,7 +43,6 @@ export class GeoNetworkService {
   ): Observable<any> {
     let request;
     switch (simpleGetOptions.responseType) {
-      // TODO Ajuster pour autre formats
       case 'arraybuffer':
         request = this.http.get(url, {
           responseType: 'arraybuffer',

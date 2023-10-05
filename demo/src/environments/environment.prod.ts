@@ -1,5 +1,5 @@
 import { EnvironmentOptions } from '@igo2/integration';
-import { TooltipType } from '@igo2/geo';
+import { CatalogQueryFormatTypes, ICatalog, TooltipType } from '@igo2/geo';
 
 export const environment: EnvironmentOptions = {
   production: true,
@@ -39,18 +39,14 @@ export const environment: EnvironmentOptions = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
-          // TODO pelord, serais-tu en mesure de corriger l'interface?
-          // queryFormat: {
-          //   html: '*',
-          //   'application/json': [
-          //     'stations_meteoroutieres',
-          //     'histo_stations_meteoroutieres'
-          //   ]
-          // },
-          // queryHtmlTarget: 'iframe',
-          // count: 30
-        },
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          queryFormat: {
+            html: '*',
+            json: ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+          } as CatalogQueryFormatTypes,
+          queryHtmlTarget: 'iframe',
+          count: 30
+        } as ICatalog,
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',

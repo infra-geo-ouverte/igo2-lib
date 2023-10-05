@@ -263,7 +263,7 @@ export class IgoMap implements MapBase {
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getCenter(projection?: string | OlProjection): [number, number] {
@@ -271,14 +271,16 @@ export class IgoMap implements MapBase {
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getExtent(projection?: string | OlProjection): MapExtent {
     return this.viewController.getExtent(projection);
   }
-
-  // TODO: Move to ViewController and update every place it's used
+  /**
+   * @deprecated
+   * TODO: Move to ViewController and update every place it's used
+   */
   getZoom(): number {
     return this.viewController.getZoom();
   }
