@@ -125,7 +125,8 @@ export class VectorLayer extends Layer {
     }
 
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as olSourceVector<OlGeometry>
+      source: this.options.source.ol as olSourceVector<OlGeometry>,
+      sourceOptions: this.options.sourceOptions || this.options.source.options
     });
 
     if (this.options.animation) {
@@ -180,7 +181,7 @@ export class VectorLayer extends Layer {
     if (typeof url === 'function') {
       return vector;
     }
-    if (url) {
+    if (url || olOptions.sourceOptions?.type === 'wfs') {
       let loader: FeatureLoader;
       const wfsOptions = olOptions.sourceOptions as WFSDataSourceOptions;
       if (
