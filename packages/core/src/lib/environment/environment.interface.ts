@@ -1,4 +1,5 @@
 import { AnalyticsOptions } from '../analytics';
+import { Version } from '../config';
 import { LanguageOptions } from '../language';
 import { MessageOptions } from '../message';
 import { RegexOptions } from '../regex';
@@ -13,5 +14,5 @@ export interface EnvironmentOptions {
   language?: LanguageOptions;
   message?: MessageOptions;
   regex?: RegexOptions;
-  version?: string;
+  version?: Version;
 }

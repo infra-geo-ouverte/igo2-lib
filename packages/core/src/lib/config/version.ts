@@ -1,6 +1,7 @@
 export interface Version {
-  lib: string;
-  releaseDate: number;
+  app?: string;
+  lib?: string;
+  releaseDate?: number;
 }
 
 export const version: Version = {

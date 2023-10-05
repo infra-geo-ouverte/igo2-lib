@@ -9,7 +9,7 @@ export interface DepotOptions {
 }
 
 export interface InteractiveTourConfigOptions {
-  activateInteractiveTour: boolean;
-  tourInMobile: boolean;
+  activateInteractiveTour?: boolean;
+  tourInMobile?: boolean;
   pathToConfigFile?: string;
 }

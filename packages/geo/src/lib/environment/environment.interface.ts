@@ -1,4 +1,4 @@
-import { DepotOptions } from '@igo2/common';
+import { DOMOptions, DepotOptions } from '@igo2/common';
 import { OptionsApiOptions } from '../datasource';
 import { DirectionsSourceOptions } from '../directions';
 import { DrawOptions } from '../draw/shared/draw.interface';
@@ -19,9 +19,16 @@ import { CatalogServiceOptions } from '../catalog';
 
 export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
-  context?: any; // set to any to avoid circular dependency with @igo2/context
+  // duplicated from packages\context\src\lib\context-manager\shared\context.interface.ts to avoid circular dependency with @igo2/context
+  context?: {
+    url?: string;
+    basePath?: string;
+    contextListFile?: string;
+    defaultContextUri?: string;
+  };
   depot?: DepotOptions;
   directionsSources?: DirectionsSourceOptions;
+  dom?: DOMOptions[];
   drawingTool?: DrawOptions;
   edition?: unknown;
   emailAddress?: string;

@@ -3,11 +3,14 @@ import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common';
 import {
   BaseEnvironmentOptions,
-  EnvironmentOptions as CoreEnvironmentOptions,
-  Version
+  EnvironmentOptions as CoreEnvironmentOptions
 } from '@igo2/core';
 import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
 
+/**
+ * Use EnvironmentOptions instead
+ * import { EnvironmentOptions } from '@igo2/integration';
+ */
 export type AllEnvironmentOptions = AuthEnvironmentOptions &
   CommonEnvironmentOptions &
   CoreEnvironmentOptions &
@@ -25,8 +28,7 @@ interface IntegrationEnvironmentOptions {
   saveSearchResultInLayer?: boolean;
 }
 
-export interface AppOptions {
-  version: Version;
+interface AppOptions {
   forceCoordsNA: boolean;
   install: {
     enabled?: boolean;
