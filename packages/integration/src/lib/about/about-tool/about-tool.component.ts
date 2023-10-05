@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { ConfigService, LanguageService, Version } from '@igo2/core';
+import { ConfigService, LanguageService, version } from '@igo2/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
@@ -51,7 +51,7 @@ export class AboutToolComponent implements OnInit {
 
   @Input() trainingGuideURLs;
 
-  public version: Version;
+  public effectiveVersion: string;
   private _html: string = 'igo.integration.aboutTool.html';
   private _headerHtml: string;
 
@@ -71,7 +71,9 @@ export class AboutToolComponent implements OnInit {
       'igo.integration.aboutTool.headerHtml'
     );
     this.configOptions = this.configService.getConfigs();
-    this.version = this.configOptions.app?.version;
+    const configVersion = this.configOptions.version;
+    this.effectiveVersion =
+      configVersion?.app || configVersion?.lib || version.lib;
     this.baseUrlProfil = this.configOptions.storage?.url;
     this.baseUrlGuide =
       this.configOptions.depot?.url +
