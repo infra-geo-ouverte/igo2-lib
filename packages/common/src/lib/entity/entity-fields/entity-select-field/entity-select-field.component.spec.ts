@@ -1,30 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { IgoEntityAutocompleteFieldComponent } from './entity-autocomplete-field.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Component } from '@angular/core';
-import { EntityRecord, EntityTableColumn } from '../../shared';
+
+import { IgoEntitySelectFieldComponent } from './entity-select-field.component';
+import { MatSelectModule } from '@angular/material/select';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   ENTIY_RECORD_MOCK,
   ENTIY_TABLE_COLUMN_MOCK
 } from '../../__mocks__/entity.mock';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-describe('IgoEntityAutocompleteFieldComponent', () => {
-  let component: IgoEntityAutocompleteFieldComponent;
+describe('EntitySelectFieldComponent', () => {
+  let component: IgoEntitySelectFieldComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [IgoEntityAutocompleteFieldComponent],
-      imports: [
-        MatAutocompleteModule,
-        MatInputModule,
-        MatProgressSpinnerModule,
-        ReactiveFormsModule
-      ]
+      declarations: [IgoEntitySelectFieldComponent],
+      imports: [MatSelectModule, MatProgressSpinnerModule, ReactiveFormsModule]
     });
     fixture = TestBed.createComponent(TestWrapperComponent);
     component = fixture.debugElement.children[0].componentInstance;
@@ -38,16 +31,18 @@ describe('IgoEntityAutocompleteFieldComponent', () => {
 
 @Component({
   selector: 'igo-test-wrapper-component',
-  template: `<igo-entity-autocomplete-field
+  template: `<igo-entity-select-field
     [control]="this.formGroup.get([column.name])"
-    [column]="column"
+    [relation]="column.relation"
+    [domainValues]="column.domainValues"
     [record]="record"
-  ></igo-entity-autocomplete-field>`
+    [multiple]="column.multiple"
+  ></igo-entity-select-field>`
 })
 class TestWrapperComponent {
   formGroup: FormGroup;
-  column: EntityTableColumn = ENTIY_TABLE_COLUMN_MOCK;
-  record: EntityRecord<any> = ENTIY_RECORD_MOCK;
+  column = ENTIY_TABLE_COLUMN_MOCK;
+  record = ENTIY_RECORD_MOCK;
 
   constructor() {
     this.formGroup = new FormGroup({

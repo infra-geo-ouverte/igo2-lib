@@ -17,10 +17,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
 import { IgoEntityTableCellsModule } from '../entity-table-cells/entity-table-cells.module';
 import { IgoEntityFieldsModule } from '../entity-fields/entity-fields.module';
-
 
 /**
  * @ignore
@@ -41,16 +39,12 @@ import { IgoEntityFieldsModule } from '../entity-fields/entity-fields.module';
     MatIconModule,
     MatInputModule,
     MatPaginatorModule,
-    MatSelectModule,
     MatSortModule,
     MatTableModule,
     MatTooltipModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   exports: [EntityTableComponent],
-  declarations: [
-    EntityTableComponent,
-    EntityTableRowDirective,
-  ]
+  declarations: [EntityTableComponent, EntityTableRowDirective]
 })
 export class IgoEntityTableModule {}

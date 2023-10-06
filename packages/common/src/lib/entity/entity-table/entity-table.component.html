@@ -5,7 +5,6 @@
     matSort
     [ngClass]="getTableClass()"
     [dataSource]="dataSource"
-    [trackBy]="getTrackByFunction()"
     (matSortChange)="onSort($event)"
   >
     <ng-container matColumnDef="selectionCheckbox" class="mat-cell-checkbox">
@@ -147,27 +146,15 @@
                     onBooleanValueChange(column.name, row.record, $event)
                   "
                 ></mat-checkbox>
-                <mat-form-field
+                <igo-entity-select-field
                   *ngSwitchCase="'list'"
-                  subscriptSizing="dynamic"
-                >
-                  <mat-select
-                    [formControlName]="column.name"
-                    [multiple]="column.multiple"
-                    (selectionChange)="
-                      onSelectValueChange(column.name, row.record, $event)
-                    "
-                    [value]="row.cellData[column.name].value"
-                  >
-                    <mat-option
-                      *ngFor="let option of column.domainValues"
-                      [value]="option.id"
-                      [disabled]="option.disabled"
-                    >
-                      {{ option.value }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                  [control]="this.formGroup.get([column.name])"
+                  [relation]="column.relation"
+                  [domainValues]="column.domainValues"
+                  [record]="row.record"
+                  [multiple]="column.multiple"
+                  (selected)="onSelectValueChange(column, row.record, $event)"
+                ></igo-entity-select-field>
 
                 <igo-entity-autocomplete-field
                   *ngSwitchCase="'autocomplete'"
@@ -198,7 +185,11 @@
               <td mat-cell [ngClass]="row.cellData[column.name].class">
                 <ng-container [ngSwitch]="column.type">
                   <igo-entity-table-choice-cell
-                    *ngSwitchCase="'autocomplete'"
+                    *ngSwitchCase="
+                      column.type === 'autocomplete' || column.type === 'list'
+                        ? column.type
+                        : ''
+                    "
                     [column]="column"
                     [record]="row.record"
                   >
@@ -277,7 +268,11 @@
           >
             <ng-container [ngSwitch]="column.type">
               <igo-entity-table-choice-cell
-                *ngSwitchCase="'autocomplete'"
+                *ngSwitchCase="
+                  column.type === 'autocomplete' || column.type === 'list'
+                    ? column.type
+                    : ''
+                "
                 [column]="column"
                 [record]="row.record"
               >

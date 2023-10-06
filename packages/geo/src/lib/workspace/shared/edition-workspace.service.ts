@@ -10,7 +10,9 @@ import {
   EntityTableButton,
   EntityService,
   EntityTableColumn,
-  isChoiceField
+  isChoiceField,
+  isChoiceFieldWithLabelField,
+  SelectEntityTableColumn
 } from '@igo2/common';
 import { ConfigService, MessageService, StorageService } from '@igo2/core';
 import { AuthInterceptor } from '@igo2/auth';
@@ -222,7 +224,6 @@ export class EditionWorkspaceService {
         wks = new EditionWorkspace(
           this.dialog,
           this.configService,
-          this.entityService,
           this.adding$,
           {
             id: layer.id,
@@ -400,6 +401,15 @@ export class EditionWorkspaceService {
         primary: field.primary === true ? true : false
       };
 
+      // Prefetch the domain values for the choice field with no label field
+      if (isChoiceField(field) && !isChoiceFieldWithLabelField(field)) {
+        this.entityService
+          .getDomainValues(field.relation)
+          .subscribe((result) => {
+            (column as SelectEntityTableColumn).domainValues = result;
+          });
+      }
+
       return column;
     });
 
@@ -509,7 +519,7 @@ export class EditionWorkspaceService {
           delete feature.properties[property];
         }
 
-        if (isChoiceField(sf)) {
+        if (isChoiceFieldWithLabelField(sf)) {
           delete feature.properties[sf.labelField];
         }
       }
@@ -631,7 +641,7 @@ export class EditionWorkspaceService {
           delete feature.properties[property];
         }
 
-        if (isChoiceField(sf)) {
+        if (isChoiceFieldWithLabelField(sf)) {
           delete feature.properties[sf.labelField];
         }
       }

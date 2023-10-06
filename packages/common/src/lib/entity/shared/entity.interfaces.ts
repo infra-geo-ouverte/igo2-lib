@@ -114,7 +114,8 @@ export interface EntityRelationParam {
 
 export type EntityTableColumn = SelectEntityTableColumn | BaseEntityTableColumn;
 
-export type SelectEntityTableColumn = ChoiceEntityField & BaseEntityTableColumn;
+export type SelectEntityTableColumn = AnyChoiceEntityField &
+  BaseEntityTableColumn;
 
 export interface BaseEntityTableColumn extends BaseEntityField {
   primary?: boolean;
@@ -134,11 +135,22 @@ export interface BaseEntityTableColumn extends BaseEntityField {
   valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
 }
 
-export type AnyEntityField = ChoiceEntityField | BaseEntityField;
+export type AnyEntityField = AnyChoiceEntityField | BaseEntityField;
 
-export interface ChoiceEntityField extends BaseEntityField {
-  domainValues?: Array<SelectOption>;
+export type AnyChoiceEntityField =
+  | ChoiceEntityFieldWithDomain
+  | ChoiceEntityFieldWithLabelField;
+
+export interface ChoiceEntityFieldWithDomain extends BaseChoiceEntityField {
+  domainValues: Array<SelectOption>;
+}
+
+export interface ChoiceEntityFieldWithLabelField extends BaseChoiceEntityField {
   labelField: string;
+}
+
+interface BaseChoiceEntityField extends BaseEntityField {
+  domainValues?: Array<SelectOption>;
   type: 'list' | 'autocomplete';
 }
 

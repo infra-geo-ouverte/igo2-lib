@@ -2,8 +2,9 @@ import { t } from 'typy';
 
 import {
   AnyEntityField,
-  ChoiceEntityField,
-  EntityKey
+  AnyChoiceEntityField,
+  EntityKey,
+  ChoiceEntityFieldWithLabelField
 } from './entity.interfaces';
 
 /**
@@ -92,6 +93,15 @@ export function getColumnKeyWithoutPropertiesTag(key: string): string {
 
 export function isChoiceField(
   field: AnyEntityField
-): field is ChoiceEntityField {
-  return (field as ChoiceEntityField).labelField !== undefined;
+): field is AnyChoiceEntityField {
+  return (
+    (field as AnyChoiceEntityField).type === 'list' ||
+    (field as AnyChoiceEntityField).type === 'autocomplete'
+  );
+}
+
+export function isChoiceFieldWithLabelField(
+  field: AnyEntityField
+): field is ChoiceEntityFieldWithLabelField {
+  return (field as ChoiceEntityFieldWithLabelField).labelField !== undefined;
 }

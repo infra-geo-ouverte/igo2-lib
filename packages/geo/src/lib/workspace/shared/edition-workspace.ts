@@ -1,10 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import {
-  Workspace,
-  WorkspaceOptions,
-  EntityRecord,
-  EntityService
-} from '@igo2/common';
+import { Workspace, WorkspaceOptions, EntityRecord } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -85,7 +80,6 @@ export class EditionWorkspace extends Workspace {
   constructor(
     private dialog: MatDialog,
     private configService: ConfigService,
-    private entityService: EntityService,
     private adding$: BehaviorSubject<boolean>,
     protected options: EditionWorkspaceOptions
   ) {
@@ -172,14 +166,6 @@ export class EditionWorkspace extends Workspace {
     let find = false;
     const editionOpt = workspace.layer.dataSource.options.edition;
     for (const column of workspace.meta.tableTemplate.columns) {
-      // Update domain list
-      if (column.type === 'list' || column.type === 'autocomplete') {
-        this.entityService
-          .getDomainValues(column.relation)
-          .subscribe((result) => {
-            column.domainValues = result;
-          });
-      }
       if (find === false) {
         for (const property in feature.properties) {
           let columnName = column.name;

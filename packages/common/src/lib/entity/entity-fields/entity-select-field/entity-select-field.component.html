@@ -1,0 +1,19 @@
+<mat-form-field subscriptSizing="dynamic">
+  <mat-spinner *ngIf="isLoading" matPrefix diameter="16"></mat-spinner>
+  <mat-select
+    [formControl]="selectionControl"
+    [multiple]="multiple"
+    (selectionChange)="onSelected($event)"
+  >
+    <mat-select-trigger>
+      {{ displayFn() }}
+    </mat-select-trigger>
+    <mat-option
+      *ngFor="let option of options$ | async"
+      [value]="option"
+      [disabled]="option.disabled"
+    >
+      {{ option.value }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

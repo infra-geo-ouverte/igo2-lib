@@ -11,8 +11,7 @@ import {
   SimpleChanges,
   ElementRef,
   Optional,
-  Self,
-  TrackByFunction
+  Self
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -20,7 +19,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   EntityKey,
   EntityRecord,
-  EntityState,
   EntityStore,
   EntityTableTemplate,
   EntityTableColumn,
@@ -349,7 +347,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       const key = getColumnKeyWithoutPropertiesTag(column.name);
       const item = record.entity.properties || record.entity;
 
-      config[key] = this.createControlByColumnType(item[key], column);
+      config[column.name] = this.createControlByColumnType(item[key], column);
       return config;
     }, {});
 
@@ -414,7 +412,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.unsubscribeStore();
 
     this.selection$$ = this.handleSelection();
-
     this.dataSource$$ = this.handleDatasource();
   }
 
@@ -478,16 +475,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (this.dataSource$$) {
       this.dataSource$$.unsubscribe();
     }
-  }
-
-  /**
-   * Trackby function
-   * @param record Record
-   * @param index Record index
-   * @internal
-   */
-  getTrackByFunction(): TrackByFunction<EntityRecord<object, EntityState>> {
-    return (_index, record) => record.ref;
   }
 
   /**
