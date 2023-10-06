@@ -10,6 +10,7 @@ import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
 import { isChoiceField } from '@igo2/common';
+import { Extent } from 'ol/extent';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -28,7 +29,7 @@ export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
  */
 export function buildUrl(
   options: WFSDataSourceOptions,
-  extent,
+  extent: Extent,
   proj: olProjection,
   ogcFilters: OgcFiltersOptions,
   randomParam?: boolean
@@ -40,20 +41,20 @@ export function buildUrl(
     options.paramsWFS.srsName
   );
   let igoFilters;
-  if (ogcFilters && ogcFilters.enabled) {
-    igoFilters = ogcFilters.filters;
+  if (ogcFilters?.enabled) {
+    igoFilters = ogcFilters?.filters;
   }
   const ogcFilterWriter = new OgcFilterWriter();
   const filterOrBox = ogcFilterWriter.buildFilter(
     igoFilters,
     extent,
     proj,
-    ogcFilters.geometryName,
+    ogcFilters?.geometryName,
     options
   );
   let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(
     options,
-    ogcFilters.geometryName,
+    ogcFilters?.geometryName,
     extent,
     proj
   );
@@ -64,7 +65,7 @@ export function buildUrl(
     filterOrPush = extent.join(',') + ',' + proj.getCode();
   }
 
-  paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters
+  paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
     ? filterOrBox
     : `${prefix}=${filterOrPush}`;
   let baseUrl = queryStringValues.find((f) => f.name === 'getfeature').value;
