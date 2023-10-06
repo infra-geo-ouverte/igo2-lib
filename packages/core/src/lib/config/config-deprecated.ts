@@ -12,6 +12,10 @@ export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
   importWithStyle: {
     alternativeKey: 'importExport.importWithStyle',
     mayBeRemoveIn: new Date('2024-06-06')
+  },
+  hasGeolocateButton: {
+    alternativeKey: 'geolocate.button.visible',
+    mayBeRemoveIn: new Date('2024-06-06')
   }
 };
 
