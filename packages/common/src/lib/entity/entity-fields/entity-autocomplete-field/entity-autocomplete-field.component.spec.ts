@@ -6,6 +6,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Component } from '@angular/core';
 import { EntityRecord, EntityTableColumn } from '../../shared';
 import { FormControl, FormGroup } from '@angular/forms';
+import {
+  ENTIY_RECORD_MOCK,
+  ENTIY_TABLE_COLUMN_MOCK
+} from '../../__mocks__/entity.mock';
 
 describe('IgoEntityAutocompleteFieldComponent', () => {
   let component: IgoEntityAutocompleteFieldComponent;
@@ -36,16 +40,8 @@ describe('IgoEntityAutocompleteFieldComponent', () => {
 })
 class TestWrapperComponent {
   formGroup: FormGroup;
-  column: EntityTableColumn = {
-    name: 'test',
-    title: 'Test'
-  };
-  record: EntityRecord<any> = {
-    entity: {},
-    state: {},
-    revision: 0,
-    ref: 'test'
-  };
+  column: EntityTableColumn = ENTIY_TABLE_COLUMN_MOCK;
+  record: EntityRecord<any> = ENTIY_RECORD_MOCK;
 
   constructor() {
     this.formGroup = new FormGroup({
