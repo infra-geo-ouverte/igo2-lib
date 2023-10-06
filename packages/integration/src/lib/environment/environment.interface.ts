@@ -7,10 +7,6 @@ import {
 } from '@igo2/core';
 import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
 
-/**
- * Use EnvironmentOptions instead
- * import { EnvironmentOptions } from '@igo2/integration';
- */
 export type AllEnvironmentOptions = AuthEnvironmentOptions &
   CommonEnvironmentOptions &
   CoreEnvironmentOptions &

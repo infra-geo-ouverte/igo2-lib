@@ -40,6 +40,7 @@ export interface EnvironmentOptions {
     // todo move to common?
     button: {
       useThemeColor: boolean;
+      visible?: boolean;
     };
   };
   optionsApi?: OptionsApiOptions;
@@ -54,6 +55,9 @@ export interface EnvironmentOptions {
       | StoredQueriesReverseSearchSourceOptions
       | boolean;
   };
-  searchBar?: { showSearchButton?: boolean }; // todo move to common?
+  searchBar?: {
+    showSearchButton?: boolean;
+    showSearchBar?: boolean;
+  }; // todo move to common?
   spatialFilter?: SpatialFilterOptions;
 }

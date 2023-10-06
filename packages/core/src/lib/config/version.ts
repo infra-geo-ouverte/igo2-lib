@@ -1,6 +1,7 @@
 export interface Version {
   app?: string;
   lib?: string;
+  releaseDateApp?: number;
   releaseDate?: number;
 }
 
