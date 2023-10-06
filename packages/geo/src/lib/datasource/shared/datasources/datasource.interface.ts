@@ -3,6 +3,7 @@ import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
 import type { Type } from 'ol/geom/Geometry';
 import { Encoders, Preset, Tokenizer } from 'flexsearch';
+import { BaseEntityTableColumn, EntityRelation } from '@igo2/common';
 
 export interface DataSourceOptions {
   type?:
@@ -37,7 +38,8 @@ export interface DataSourceOptions {
   relations?: RelationOptions[];
 }
 
-export interface SourceFieldsOptionsParams {
+export interface SourceFieldsOptionsParams
+  extends Omit<BaseEntityTableColumn, 'title'> {
   name: any;
   alias?: any;
   values?: any;
@@ -45,11 +47,18 @@ export interface SourceFieldsOptionsParams {
   allowedOperatorsType?: OgcFilterOperatorType;
   step?: number;
   relation?: RelationOptions;
-  type?: number | number[] | string | string[] | boolean | Date;
+  type?:
+    | 'number'
+    | 'number[]'
+    | 'string'
+    | 'string[]'
+    | 'boolean'
+    | 'Date'
+    | 'list'
+    | 'autocomplete'; // TODO the type need to be analyze
   primary?: boolean;
   visible?: boolean;
   validation?: SourceFieldsValidationParams;
-  linkColumnForce?: string;
   multiple?: boolean;
   tooltip?: string;
   searchIndex?: searchIndexOptions;
@@ -86,7 +95,7 @@ export interface EditionOptions {
   deleteButton?: boolean;
 }
 
-export interface RelationOptions {
+export interface RelationOptions extends EntityRelation {
   title: string;
   name: string;
   table?: string;

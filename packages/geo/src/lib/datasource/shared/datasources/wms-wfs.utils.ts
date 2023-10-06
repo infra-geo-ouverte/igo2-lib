@@ -9,6 +9,7 @@ import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
+import { isChoiceField } from '@igo2/common';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -142,6 +143,9 @@ export function formatWFSQueryString(
     const fieldsNames = [];
     dataSourceOptions.sourceFields.forEach((sourcefield) => {
       fieldsNames.push(sourcefield.name);
+      if (isChoiceField(sourcefield)) {
+        fieldsNames.push(sourcefield.labelField);
+      }
     });
     propertyName = `propertyName=${fieldsNames.join(',')},${
       paramsWFS.fieldNameGeometry

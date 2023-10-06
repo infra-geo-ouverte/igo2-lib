@@ -44,26 +44,11 @@ import {
 } from '@angular/forms';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { debounceTime } from 'rxjs/operators';
 import { default as moment } from 'moment';
-import { StringUtils } from '@igo2/utils';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatSelectChange } from '@angular/material/select';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-
-interface CellData {
-  [key: string]: {
-    value: any;
-    class: { [key: string]: boolean };
-    isUrl: boolean;
-    isImg: boolean;
-  };
-}
-
-interface RowData {
-  record: EntityRecord<object, EntityState>;
-  cellData: CellData;
-}
+import { RowData } from '../shared/entity-table.interface';
 
 @Component({
   selector: 'igo-entity-table',
@@ -76,6 +61,7 @@ interface RowData {
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  visibleColumns: EntityTableColumn[];
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
@@ -148,7 +134,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return this._template;
   }
   private _template: EntityTableTemplate;
-  visibleColumns: EntityTableColumn[];
 
   /**
    * Scroll behavior on selection
@@ -273,12 +258,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.handleDatasource();
+    this.handleStore();
     this.dataSource.paginator = this.paginator;
-    this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
-      this.handleDatasource();
-      this.refresh();
-    });
   }
 
   /**
@@ -287,7 +268,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-      this.handleDatasource();
+      this.handleStore();
     }
   }
 
@@ -330,6 +311,17 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
+   * Process autocomplete value change (edition)
+   */
+  onAutocompleteValueChange(
+    column: EntityTableColumn,
+    record: EntityRecord<any>,
+    value: unknown
+  ) {
+    this.onChange(column, record, value);
+  }
+
+  /**
    * Process date value change (edition)
    */
   onDateChange(
@@ -353,31 +345,26 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         column.validation?.mandatory && !column.title.includes('*')
           ? column.title + ' *'
           : column.title;
-      const control = this.createControlByColumnType(record, column);
-      config[column.name] = control;
+
+      const key = getColumnKeyWithoutPropertiesTag(column.name);
+      const item = record.entity.properties || record.entity;
+
+      config[key] = this.createControlByColumnType(item[key], column);
       return config;
     }, {});
 
     this.formGroup = this.formBuilder.group(controlsConfig);
   }
 
-  private createControlByColumnType(
-    record: EntityRecord<any>,
-    column: EntityTableColumn
-  ) {
-    const item = record.entity.properties || record.entity;
-    const key = getColumnKeyWithoutPropertiesTag(column.name);
-    const value = item[key];
-
+  private createControlByColumnType(value: unknown, column: EntityTableColumn) {
     switch (column.type) {
       case 'boolean':
-        return this.createBooleanControl(value, column);
+        return this.createBooleanControl(value as string, column);
       case 'list':
-        return this.createListControl(value, column);
       case 'autocomplete':
-        return this.createAutocompleteControl(value, column, record);
+        return this.createBaseControl(value, column);
       case 'date':
-        return this.createDateControl(value, column, record);
+        return this.createDateControl(value, column);
 
       default:
         return this.createBaseControl(value, column);
@@ -396,39 +383,15 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return this.createBaseControl(value, column);
   }
 
-  private createListControl(
-    value: unknown,
-    column: EntityTableColumn
-  ): FormControl {
-    value = typeof value === 'string' ? parseInt(value) : value;
-    return this.createBaseControl(column.multiple ? [value] : value, column);
-  }
-
   private createDateControl(
     value: unknown,
-    column: EntityTableColumn,
-    record: EntityRecord<any>
+    column: EntityTableColumn
   ): FormControl {
     if (value) {
       let date = moment(value);
       value = date.utc().format('YYYY-MM-DD');
-    } else {
-      const newKey = getColumnKeyWithoutPropertiesTag(column.name);
-      record.entity.properties[newKey] = null;
     }
     return this.createBaseControl(value, column);
-  }
-
-  private createAutocompleteControl(
-    value: any,
-    column: EntityTableColumn,
-    record: EntityRecord<any>
-  ): FormControl {
-    value = this.getAutocompleteDomainValues(value, record, column);
-
-    const control = this.createBaseControl(value, column);
-
-    return control;
   }
 
   private createBaseControl(
@@ -447,44 +410,34 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  private getAutocompleteDomainValues(
-    value: any,
-    record: EntityRecord<any>,
-    column: EntityTableColumn
-  ): string | number {
-    if (column.linkColumnForce) {
-      value =
-        record.entity?.properties[
-          getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
-        ];
-    } else if (column.domainValues) {
-      value = this.tryParseNumberValue(value);
-      const domainValue = column.domainValues.find(
-        (option) => option.value === value || option.id === value
-      );
-
-      if (domainValue) {
-        return this.isEdition(record) ? domainValue.id : domainValue.value;
-      }
-    }
-
-    return value;
-  }
-
-  private tryParseNumberValue(value: number | string): number | string {
-    if (
-      typeof value === 'string' &&
-      StringUtils.isValidNumber(value) &&
-      !StringUtils.isOctalNumber(value)
-    ) {
-      value = parseInt(value);
-    }
-    return value;
-  }
-
-  private handleDatasource() {
+  private handleStore() {
     this.unsubscribeStore();
-    this.selection$$ = this.store.stateView
+
+    this.selection$$ = this.handleSelection();
+
+    this.dataSource$$ = this.handleDatasource();
+  }
+
+  private handleDatasource(): Subscription {
+    return this.store.stateView.all$().subscribe((all) => {
+      this.dataSource.data = all.map((record) => {
+        return {
+          record,
+          cellData: this.visibleColumns.reduce((cellData, column) => {
+            const value = this.getValue(record, column);
+            cellData[column.name] = {
+              class: this.getCellClass(record, column),
+              value
+            };
+            return cellData;
+          }, {})
+        };
+      });
+    });
+  }
+
+  private handleSelection(): Subscription {
+    return this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
         const firstSelected = records[0];
@@ -508,23 +461,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.selectionState$.next(this.computeSelectionState(records));
       });
-    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
-      this.dataSource.data = all.map((record) => {
-        return {
-          record,
-          cellData: this.visibleColumns.reduce((cellData, column) => {
-            const value = this.getValue(record, column);
-            cellData[column.name] = {
-              class: this.getCellClass(record, column),
-              value,
-              isUrl: this.isUrl(value),
-              isImg: this.isImg(value)
-            };
-            return cellData;
-          }, {})
-        };
-      });
-    });
   }
 
   /**
@@ -754,27 +690,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return state.selected ? state.selected : false;
   }
 
-  isImg(value) {
-    if (this.isUrl(value)) {
-      return (
-        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !==
-        -1
-      );
-    } else {
-      return false;
-    }
-  }
-
-  isUrl(value) {
-    if (typeof value === 'string') {
-      return (
-        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
-      );
-    } else {
-      return false;
-    }
-  }
-
   /**
    * Method to access an entity's values
    * @param record Record
@@ -794,46 +709,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     let value = this.store.getProperty(entity, column.name);
     if (column.type === 'boolean') {
       value = this.getBooleanValue(value, record);
-    } else if (column.type === 'list' && value && column.domainValues) {
-      value = this.getListValue(value, record, column);
-    } else if (column.type === 'autocomplete' && value && column.domainValues) {
-      value = this.getAutocompleteDomainValues(value, record, column);
     } else if (column.type === 'date') {
       value = this.getDateValue(value, record);
     }
 
     if (value === undefined) {
       value = '';
-    }
-
-    return value;
-  }
-
-  private getListValue(
-    value: string | number | boolean,
-    record: EntityRecord<object>,
-    column: EntityTableColumn
-  ): any {
-    if (column.multiple) {
-      let list_id;
-      typeof value === 'string'
-        ? (list_id = value.match(/[\w.-]+/g).map(Number))
-        : (list_id = value);
-
-      let list_option = [];
-      column.domainValues.forEach((option) => {
-        if (list_id.includes(option.id)) {
-          if (record.edition) {
-            list_option.push(option.id);
-          } else {
-            list_option.push(option.value);
-          }
-        }
-      });
-
-      value = this.isEdition(record) ? list_id : list_option;
-    } else {
-      value = this.getAutocompleteDomainValues(value, record, column);
     }
 
     return value;

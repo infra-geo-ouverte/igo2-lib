@@ -1,20 +1,19 @@
 <mat-form-field subscriptSizing="dynamic">
+  <mat-spinner *ngIf="isLoading" matPrefix diameter="16"></mat-spinner>
   <input
     matInput
     type="text"
-    [formControl]="control"
+    [formControl]="selectionControl"
     [matAutocomplete]="auto"
   />
 </mat-form-field>
 <mat-autocomplete
   #auto="matAutocomplete"
+  [displayWith]="displayFn"
   (optionSelected)="onSelected($event)"
   panelWidth="430px"
 >
-  <mat-option
-    *ngFor="let option of filteredOptions$ | async"
-    [value]="option.id"
-  >
+  <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
     {{ option.value }}
   </mat-option>
 </mat-autocomplete>

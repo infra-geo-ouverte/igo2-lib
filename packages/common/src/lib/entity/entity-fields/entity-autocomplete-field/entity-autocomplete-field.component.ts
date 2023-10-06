@@ -1,0 +1,152 @@
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef
+} from '@angular/core';
+import { FormControl } from '@angular/forms';
+import {
+  EntityRecord,
+  EntityRelation,
+  EntityService,
+  SelectOption
+} from '../../shared';
+import { BehaviorSubject, Observable, first, map, startWith, tap } from 'rxjs';
+
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+
+@Component({
+  selector: 'igo-entity-autocomplete-field',
+  templateUrl: './entity-autocomplete-field.component.html',
+  styleUrls: ['./entity-autocomplete-field.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class IgoEntityAutocompleteFieldComponent implements OnInit {
+  filteredOptions$: Observable<SelectOption[]>;
+  selectionControl: FormControl<SelectOption>;
+  isLoading: boolean;
+  options$: BehaviorSubject<SelectOption[]>;
+
+  @Input({ required: true }) record: EntityRecord<any>;
+  @Input({ required: true }) relation: EntityRelation;
+  @Input({ required: true }) domainValues: SelectOption[];
+  @Input({ required: true }) control: FormControl;
+
+  get options(): SelectOption[] {
+    return this.options$.value;
+  }
+
+  @Output() selected = new EventEmitter<SelectOption>();
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private entityService: EntityService
+  ) {}
+
+  ngOnInit(): void {
+    this.options$ = new BehaviorSubject(this.domainValues ?? []);
+
+    this.selectionControl = new FormControl(this.findFormOption());
+
+    if (this.relation?.params) {
+      this.setParamsRelationship();
+    } else if (!this.domainValues) {
+      this.getDomainValues().subscribe((options) => {
+        this.domainValues = options;
+        this.setOptions(options);
+      });
+    }
+
+    this.control.valueChanges.subscribe((_value) => {
+      const option = this.findFormOption();
+      this.selectionControl.setValue(option);
+    });
+
+    this.initAutocompleteFilter();
+  }
+
+  displayFn(option: SelectOption | null): string {
+    return option?.value ? String(option?.value) : '';
+  }
+
+  private setParamsRelationship(): void {
+    const filterControl = this.control.parent.get([
+      `properties.${this.relation?.params.field}`
+    ]);
+    this.getDomainValues(filterControl.value).subscribe((options) =>
+      this.setOptions(options)
+    );
+
+    filterControl.valueChanges.subscribe((value) =>
+      this.getDomainValues(value).subscribe((options) =>
+        this.setOptions(options)
+      )
+    );
+  }
+
+  private initAutocompleteFilter(): void {
+    this.filteredOptions$ = this.selectionControl.valueChanges.pipe(
+      startWith(''),
+      map((value) => this.filter(value ?? ''))
+    );
+  }
+
+  private getDomainValues(value?: string): Observable<SelectOption[]> {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    const params = this.relation.params;
+    const paramsValue = params ? { [params.field]: value } : null;
+
+    return this.entityService.getDomainValues(this.relation, paramsValue).pipe(
+      first(),
+      tap(() => (this.isLoading = false))
+    );
+  }
+
+  private setOptions(options: SelectOption[]) {
+    this.options$.next(options);
+
+    const option = this.findFormOption();
+    option
+      ? this.selectionControl.setValue(option)
+      : this.selectionControl.reset(undefined);
+  }
+
+  private filter(option: string | SelectOption): SelectOption[] {
+    const name = typeof option === 'string' ? option : option.value;
+    return name ? this.filterOptions(name) : this.options;
+  }
+
+  private findFormOption(): SelectOption {
+    const id = this.control?.value;
+    return this.options.find((option) => option.id === id);
+  }
+
+  private filterOptions(name: string | number): SelectOption[] {
+    return this.options?.filter((option) => {
+      const filterNormalized = this.normalizeValue(name);
+      const optionNoarmalized = this.normalizeValue({ ...option }.value);
+      return optionNoarmalized.includes(filterNormalized);
+    });
+  }
+
+  private normalizeValue(value: string | number): string {
+    return String(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  /**
+   * Process autocomplete value change (edition)
+   */
+  onSelected(event: MatAutocompleteSelectedEvent) {
+    const option = event.option.value satisfies SelectOption;
+    this.control.setValue(option.id);
+    this.selected.emit(option.id);
+  }
+}

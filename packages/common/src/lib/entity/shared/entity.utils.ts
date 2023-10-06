@@ -1,6 +1,10 @@
 import { t } from 'typy';
 
-import { EntityKey } from './entity.interfaces';
+import {
+  AnyEntityField,
+  ChoiceEntityField,
+  EntityKey
+} from './entity.interfaces';
 
 /**
  * Get an entity's named property. Nested properties are supported
@@ -84,4 +88,10 @@ export function getColumnKeyWithoutPropertiesTag(key: string): string {
     return key.split('.')[1];
   }
   return key;
+}
+
+export function isChoiceField(
+  field: AnyEntityField
+): field is ChoiceEntityField {
+  return (field as ChoiceEntityField).labelField !== undefined;
 }

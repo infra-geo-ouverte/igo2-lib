@@ -1,7 +1,12 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Workspace, WorkspaceOptions, EntityRecord } from '@igo2/common';
+import {
+  Workspace,
+  WorkspaceOptions,
+  EntityRecord,
+  EntityService
+} from '@igo2/common';
 import { ConfigService } from '@igo2/core';
-import { BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
@@ -18,7 +23,7 @@ import * as OlStyle from 'ol/style';
 import OlModify from 'ol/interaction/Modify';
 import Collection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
-import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
+import { FeatureDataSource } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;
@@ -80,8 +85,8 @@ export class EditionWorkspace extends Workspace {
   constructor(
     private dialog: MatDialog,
     private configService: ConfigService,
+    private entityService: EntityService,
     private adding$: BehaviorSubject<boolean>,
-    private getDomainValues: (relation: RelationOptions) => Observable<any>,
     protected options: EditionWorkspaceOptions
   ) {
     super(options);
@@ -169,9 +174,11 @@ export class EditionWorkspace extends Workspace {
     for (const column of workspace.meta.tableTemplate.columns) {
       // Update domain list
       if (column.type === 'list' || column.type === 'autocomplete') {
-        this.getDomainValues(column.relation).subscribe((result) => {
-          column.domainValues = result;
-        });
+        this.entityService
+          .getDomainValues(column.relation)
+          .subscribe((result) => {
+            column.domainValues = result;
+          });
       }
       if (find === false) {
         for (const property in feature.properties) {

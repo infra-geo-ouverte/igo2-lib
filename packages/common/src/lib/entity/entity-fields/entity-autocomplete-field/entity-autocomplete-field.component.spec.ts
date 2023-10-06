@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EntityTableAutocompleteFieldComponent } from './entity-table-autocomplete-field.component';
+import { IgoEntityAutocompleteFieldComponent } from './entity-autocomplete-field.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Component } from '@angular/core';
 import { EntityRecord, EntityTableColumn } from '../../shared';
 import { FormControl, FormGroup } from '@angular/forms';
 
-describe('EntityTableAutocompleteFieldComponent', () => {
-  let component: EntityTableAutocompleteFieldComponent;
+describe('IgoEntityAutocompleteFieldComponent', () => {
+  let component: IgoEntityAutocompleteFieldComponent;
   let fixture: ComponentFixture<TestWrapperComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [EntityTableAutocompleteFieldComponent],
+      declarations: [IgoEntityAutocompleteFieldComponent],
       imports: [MatAutocompleteModule, MatInputModule]
     });
     fixture = TestBed.createComponent(TestWrapperComponent);
@@ -28,11 +28,11 @@ describe('EntityTableAutocompleteFieldComponent', () => {
 
 @Component({
   selector: 'igo-test-wrapper-component',
-  template: `<igo-entity-table-autocomplete-field
+  template: `<igo-entity-autocomplete-field
     [control]="this.formGroup.get([column.name])"
     [column]="column"
     [record]="record"
-  ></igo-entity-table-autocomplete-field>`
+  ></igo-entity-autocomplete-field>`
 })
 class TestWrapperComponent {
   formGroup: FormGroup;

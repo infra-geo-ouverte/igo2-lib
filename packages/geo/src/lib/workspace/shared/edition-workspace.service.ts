@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
@@ -11,11 +7,14 @@ import {
   EntityStoreFilterSelectionStrategy,
   EntityTableColumnRenderer,
   EntityTableTemplate,
-  EntityTableButton
+  EntityTableButton,
+  EntityService,
+  EntityTableColumn,
+  isChoiceField
 } from '@igo2/common';
 import { ConfigService, MessageService, StorageService } from '@igo2/core';
 import { AuthInterceptor } from '@igo2/auth';
-import { catchError, map, skipWhile, take } from 'rxjs/operators';
+import { skipWhile, take } from 'rxjs/operators';
 import {
   RelationOptions,
   SourceFieldsOptionsParams,
@@ -52,7 +51,7 @@ import GeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 import { FeatureLoader } from 'ol/featureloader';
 
@@ -82,6 +81,7 @@ export class EditionWorkspaceService {
     private http: HttpClient,
     private dialog: MatDialog,
     private styleService: StyleService,
+    private entityService: EntityService,
     public authInterceptor?: AuthInterceptor
   ) {}
 
@@ -222,8 +222,8 @@ export class EditionWorkspaceService {
         wks = new EditionWorkspace(
           this.dialog,
           this.configService,
+          this.entityService,
           this.adding$,
-          (relation: RelationOptions) => this.getDomainValues(relation),
           {
             id: layer.id,
             title: layer.title,
@@ -384,7 +384,8 @@ export class EditionWorkspaceService {
     }
 
     columns = fields.map((field: SourceFieldsOptionsParams) => {
-      let column = {
+      let column: EntityTableColumn = {
+        ...field,
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name,
         renderer: rendererType,
@@ -396,36 +397,19 @@ export class EditionWorkspaceService {
             return cellClass;
           }
         },
-        primary: field.primary === true ? true : false,
-        visible: field.visible,
-        validation: field.validation,
-        linkColumnForce: field.linkColumnForce,
-        type: field.type,
-        domainValues: undefined,
-        relation: undefined,
-        multiple: field.multiple,
-        step: field.step,
-        tooltip: field.tooltip
+        primary: field.primary === true ? true : false
       };
 
-      if (field.type === 'list' || field.type === 'autocomplete') {
-        this.getDomainValues(field.relation).subscribe((result) => {
-          column.domainValues = result;
-          column.relation = field.relation;
-        });
-      }
       return column;
     });
 
     relationsColumn = relations.map((relation: RelationOptions) => {
       return {
+        ...relation,
         name: `properties.${relation.name}`,
         title: relation.alias ? relation.alias : relation.name,
         renderer: EntityTableColumnRenderer.Icon,
-        icon: relation.icon,
-        parent: relation.parent,
         type: 'relation',
-        tooltip: relation.tooltip,
         onClick: () => {
           if (this.adding$.getValue() === false) {
             this.ws$.next(relation.title);
@@ -523,6 +507,10 @@ export class EditionWorkspaceService {
           (sf.name === property && sf.validation?.send === false)
         ) {
           delete feature.properties[property];
+        }
+
+        if (isChoiceField(sf)) {
+          delete feature.properties[sf.labelField];
         }
       }
     }
@@ -642,6 +630,10 @@ export class EditionWorkspaceService {
         ) {
           delete feature.properties[property];
         }
+
+        if (isChoiceField(sf)) {
+          delete feature.properties[sf.labelField];
+        }
       }
     }
 
@@ -711,25 +703,6 @@ export class EditionWorkspaceService {
       delete feature.original_properties;
       delete feature.original_geometry;
     }
-  }
-
-  getDomainValues(relation: RelationOptions): Observable<any> {
-    let url = relation.url;
-    if (!url) {
-      url = this.configService.getConfig('edition.url')
-        ? this.configService.getConfig('edition.url') + relation.table
-        : relation.table;
-    }
-
-    return this.http.get<any>(url).pipe(
-      map((result) => {
-        return result;
-      }),
-      catchError((err: HttpErrorResponse) => {
-        err.error.caught = true;
-        return throwError(err);
-      })
-    );
   }
 
   /*

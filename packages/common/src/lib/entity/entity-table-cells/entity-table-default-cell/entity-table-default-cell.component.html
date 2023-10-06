@@ -1,0 +1,26 @@
+<ng-container [ngSwitch]="type">
+  <a
+    *ngSwitchCase="'img'"
+    href="{{ cellData.value }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    (click)="$event.stopPropagation()"
+  >
+    <img
+      igoImageError
+      src="{{ $any(cellData.value) | secureImage | async }}"
+      width="50"
+      heigth="auto"
+    />
+  </a>
+  <a
+    *ngSwitchCase="'url'"
+    href="{{ cellData.value }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    (click)="$event.stopPropagation()"
+  >
+    <span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span>
+  </a>
+  <div *ngSwitchCase="'default'" [innerHTML]="cellData.value"></div>
+</ng-container>

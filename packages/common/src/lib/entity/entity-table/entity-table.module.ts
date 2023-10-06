@@ -13,14 +13,14 @@ import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
-import { IgoImageModule } from '../../image/image.module';
-import { IgoLanguageModule } from '@igo2/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
-import { EntityTableAutocompleteFieldComponent } from '../entity-table-fields/entity-table-autocomplete-field/entity-table-autocomplete-field.component';
+import { IgoEntityTableCellsModule } from '../entity-table-cells/entity-table-cells.module';
+import { IgoEntityFieldsModule } from '../entity-fields/entity-fields.module';
+
 
 /**
  * @ignore
@@ -28,30 +28,29 @@ import { EntityTableAutocompleteFieldComponent } from '../entity-table-fields/en
 @NgModule({
   imports: [
     CommonModule,
-    MatTableModule,
+    FormsModule,
+    IgoCustomHtmlModule,
+    IgoEntityFieldsModule,
+    IgoEntityTablePaginatorModule,
+    IgoEntityTableCellsModule,
+    IgoStopPropagationModule,
     MatAutocompleteModule,
-    MatSortModule,
-    MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatDatepickerModule,
+    MatIconModule,
+    MatInputModule,
     MatPaginatorModule,
     MatSelectModule,
-    IgoStopPropagationModule,
-    IgoCustomHtmlModule,
-    IgoEntityTablePaginatorModule,
-    IgoImageModule,
-    IgoLanguageModule,
-    FormsModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
     ReactiveFormsModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatTooltipModule
   ],
   exports: [EntityTableComponent],
   declarations: [
     EntityTableComponent,
     EntityTableRowDirective,
-    EntityTableAutocompleteFieldComponent
   ]
 })
 export class IgoEntityTableModule {}

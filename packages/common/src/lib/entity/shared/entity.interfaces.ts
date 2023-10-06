@@ -17,6 +17,7 @@ export interface EntityRecord<
   revision: number;
   ref: string;
   edition?: boolean;
+  newFeature?: any;
 }
 
 export interface EntityStoreStrategyOptions {}
@@ -93,40 +94,69 @@ export interface EntityTableColumnValidation {
   maxValue?: number;
 }
 
-export interface TableRelation {
-  table: string;
+export interface EntityRelation {
+  table?: string;
+  url?: string;
+  params?: EntityRelationParam;
+  choiceList?: {
+    propertyGetter?: {
+      list?: string;
+      id: string;
+      value: string;
+    };
+  };
 }
 
-export interface EntityTableColumn {
-  validation?: EntityTableColumnValidation;
-  name: string;
-  title: string;
+export interface EntityRelationParam {
+  name?: string;
+  field: string;
+}
+
+export type EntityTableColumn = SelectEntityTableColumn | BaseEntityTableColumn;
+
+export type SelectEntityTableColumn = ChoiceEntityField & BaseEntityTableColumn;
+
+export interface BaseEntityTableColumn extends BaseEntityField {
+  primary?: boolean;
   renderer?: EntityTableColumnRenderer;
-  valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
-  visible?: boolean;
-  linkColumnForce?: string;
   sort?: boolean;
-  type?: string;
-  multiple?: boolean;
-  domainValues?: Array<SelectOption>;
-  relation?: TableRelation;
+  step?: number;
+  title: string;
   tooltip?: string;
+  validation?: EntityTableColumnValidation;
+  visible?: boolean;
   cellClassFunc?: (
     entity: object,
     record: EntityRecord<object>
   ) => {
     [key: string]: boolean;
   };
+  valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
+}
+
+export type AnyEntityField = ChoiceEntityField | BaseEntityField;
+
+export interface ChoiceEntityField extends BaseEntityField {
+  domainValues?: Array<SelectOption>;
+  labelField: string;
+  type: 'list' | 'autocomplete';
+}
+
+interface BaseEntityField {
+  multiple?: boolean;
+  name: string;
+  relation?: EntityRelation;
+  type?: string;
 }
 
 export interface SelectOption {
-  id: number;
+  id: number | string;
   value: string | number;
 }
 
 export interface EntityTableButton {
   icon: string;
-  click: (entity: object, record: EntityRecord<object>) => void;
+  click: (record: EntityRecord<object>) => void;
   color?: 'primary' | 'accent' | 'warn';
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';

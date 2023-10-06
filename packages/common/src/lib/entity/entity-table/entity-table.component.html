@@ -23,6 +23,7 @@
           </ng-container>
         </ng-container>
       </th>
+
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
           (mousedown)="$event.shiftKey ? $event.preventDefault() : null"
@@ -39,262 +40,180 @@
     </ng-container>
 
     <ng-container
-      [matColumnDef]="column.name"
       *ngFor="let column of template.columns"
+      [matColumnDef]="column.name"
     >
-      <ng-container *ngIf="columnIsSortable(column)">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [matTooltip]="column.tooltip ? column.tooltip : undefined"
-        >
-          {{ column.title }}
-        </th>
-      </ng-container>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        [disabled]="!columnIsSortable(column)"
+        [matTooltip]="column.tooltip ? column.tooltip : undefined"
+      >
+        {{ column.title }}
+      </th>
 
-      <ng-container *ngIf="!columnIsSortable(column)">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          [matTooltip]="column.tooltip ? column.tooltip : undefined"
-        >
-          {{ column.title }}
-        </th>
-      </ng-container>
-
-      <ng-container *ngIf="getColumnRenderer(column) as columnRenderer">
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.Default"
-        >
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlDefault"
-              [ngClass]="row.cellData[column.name].class"
-            >
-              {{ row.cellData[column.name].value }}
-            </td>
-            <ng-template #isAnUrlDefault>
-              <td
-                mat-cell
-                class="mat-cell-text"
-                [ngClass]="row.cellData[column.name].class"
+      <ng-container [ngSwitch]="column.renderer">
+        <ng-container *ngSwitchCase="entityTableColumnRenderer.HTML">
+          <td
+            mat-cell
+            *matCellDef="let row"
+            [ngClass]="row.cellData[column.name].class"
+          >
+            <ng-container [ngSwitch]="column.type">
+              <igo-entity-table-choice-cell
+                *ngSwitchCase="
+                  column.type === 'autocomplete' || column.type === 'list'
+                    ? column.type
+                    : ''
+                "
+                [column]="column"
+                [record]="row.record"
               >
-                <a
-                  href="{{ row.cellData[column.name].value }}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  (click)="$event.stopPropagation()"
-                >
-                  <img
-                    igoImageError
-                    *ngIf="row.cellData[column.name].isImg; else notImg"
-                    src="{{
-                      row.cellData[column.name].value | secureImage | async
-                    }}"
-                    width="50"
-                    heigth="auto"
-                  />
-                  <ng-template #notImg
-                    ><span
-                      >{{ 'igo.common.entity-table.targetHtmlUrl' | translate }}
-                    </span></ng-template
-                  >
-                </a>
-              </td>
-            </ng-template>
-          </ng-container>
-        </ng-container>
-        <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.HTML">
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              *ngIf="!row.cellData[column.name].isUrl; else isAnUrlHTML"
-              [ngClass]="row.cellData[column.name].class"
-              [innerHTML]="row.cellData[column.name].value"
-            ></td>
-            <ng-template #isAnUrlHTML>
-              <td
-                mat-cell
-                class="mat-cell-text"
-                [ngClass]="row.cellData[column.name].class"
+              </igo-entity-table-choice-cell>
+              <igo-entity-table-default-cell
+                *ngSwitchDefault
+                [cellData]="row.cellData[column.name]"
               >
-                <a
-                  href="{{ row.cellData[column.name].value }}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  (click)="$event.stopPropagation()"
-                >
-                  <img
-                    igoImageError
-                    *ngIf="row.cellData[column.name].isImg; else notImg"
-                    src="{{
-                      row.cellData[column.name].value | secureImage | async
-                    }}"
-                    width="50"
-                    heigth="auto"
-                  />
-                  <ng-template #notImg
-                    ><span
-                      >{{ 'igo.geo.targetHtmlUrl' | translate }}
-                    </span></ng-template
-                  >
-                </a>
-              </td>
-            </ng-template>
-          </ng-container>
+              </igo-entity-table-default-cell>
+            </ng-container>
+          </td>
         </ng-container>
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.UnsanitizedHTML"
-        >
+        <ng-container *ngSwitchCase="entityTableColumnRenderer.UnsanitizedHTML">
           <ng-container *matCellDef="let row">
             <td
+              *ngIf="isEdition(row.record); else isUnsanitizedHTML"
               mat-cell
               class="mat-cell-text edition"
               [formGroup]="formGroup"
-              *ngIf="isEdition(row.record); else isUnsanitizedHTML"
-              [ngSwitch]="column.type"
               [ngClass]="row.cellData[column.name].class"
             >
-              <mat-form-field *ngSwitchCase="'date'" subscriptSizing="dynamic">
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="picker"
-                ></mat-datepicker-toggle>
-                <input
-                  matInput
-                  [matDatepicker]="picker"
-                  [formControlName]="column.name"
-                  value="{{ row.cellData[column.name].value }}"
-                  (dateChange)="onDateChange(column.name, row.record, $event)"
-                />
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-              <mat-form-field *ngSwitchCase="'time'" subscriptSizing="dynamic">
-                <input
-                  matInput
-                  type="time"
-                  [formControlName]="column.name"
-                  step="900"
-                  (focus)="column.onFocus($event)"
-                  (keypress)="column.onChange($event)"
-                  (blur)="column.onBlur($event)"
-                />
-              </mat-form-field>
-              <mat-form-field
-                *ngSwitchCase="'number'"
-                subscriptSizing="dynamic"
-              >
-                <input
-                  matInput
-                  type="number"
-                  class="class_number_edition"
-                  [formControlName]="column.name"
-                  step="{{ column.step }}"
-                  value="{{ row.cellData[column.name].value }}"
-                  (input)="onValueChange(column.name, row.record, $event)"
-                  readonly="{{
-                    getValidationAttributeValue(column, 'readonly')
-                  }}"
-                  min="{{ getValidationAttributeValue(column, 'minValue') }}"
-                  max="{{ getValidationAttributeValue(column, 'maxValue') }}"
-                />
-              </mat-form-field>
-              <mat-form-field
-                *ngIf="!column.type || column.type === 'string'"
-                subscriptSizing="dynamic"
-              >
-                <input
-                  matInput
-                  type="text"
-                  [formControlName]="column.name"
-                  value="{{ row.cellData[column.name].value }}"
-                  (input)="onValueChange(column.name, row.record, $event)"
-                  readonly="{{
-                    getValidationAttributeValue(column, 'readonly')
-                  }}"
-                />
-              </mat-form-field>
-              <mat-checkbox
-                *ngSwitchCase="'boolean'"
-                [formControlName]="column.name"
-                [checked]="row.cellData[column.name].value"
-                (change)="onBooleanValueChange(column.name, row.record, $event)"
-              ></mat-checkbox>
-              <mat-select
-                *ngSwitchCase="'list'"
-                [formControlName]="column.name"
-                [multiple]="column.multiple"
-                (selectionChange)="
-                  onSelectValueChange(column.name, row.record, $event)
-                "
-                [value]="row.cellData[column.name].value"
-              >
-                <mat-option
-                  *ngFor="let option of column.domainValues"
-                  [value]="option.id"
-                  [disabled]="option.disabled"
+              <ng-container [ngSwitch]="column.type">
+                <mat-form-field
+                  *ngSwitchCase="'date'"
+                  subscriptSizing="dynamic"
                 >
-                  {{ option.value }}
-                </mat-option>
-              </mat-select>
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    [formControlName]="column.name"
+                    value="{{ row.cellData[column.name].value }}"
+                    (dateChange)="onDateChange(column.name, row.record, $event)"
+                  />
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field
+                  *ngSwitchCase="'time'"
+                  subscriptSizing="dynamic"
+                >
+                  <input
+                    matInput
+                    type="time"
+                    [formControlName]="column.name"
+                    step="900"
+                    (focus)="column.onFocus($event)"
+                    (keypress)="column.onChange($event)"
+                    (blur)="column.onBlur($event)"
+                  />
+                </mat-form-field>
+                <mat-form-field
+                  *ngSwitchCase="'number'"
+                  subscriptSizing="dynamic"
+                >
+                  <input
+                    matInput
+                    type="number"
+                    class="class_number_edition"
+                    [formControlName]="column.name"
+                    step="{{ column.step }}"
+                    value="{{ row.cellData[column.name].value }}"
+                    (input)="onValueChange(column.name, row.record, $event)"
+                    readonly="{{
+                      getValidationAttributeValue(column, 'readonly')
+                    }}"
+                    min="{{ getValidationAttributeValue(column, 'minValue') }}"
+                    max="{{ getValidationAttributeValue(column, 'maxValue') }}"
+                  />
+                </mat-form-field>
+                <mat-checkbox
+                  *ngSwitchCase="'boolean'"
+                  [formControlName]="column.name"
+                  [checked]="row.cellData[column.name].value"
+                  (change)="
+                    onBooleanValueChange(column.name, row.record, $event)
+                  "
+                ></mat-checkbox>
+                <mat-form-field
+                  *ngSwitchCase="'list'"
+                  subscriptSizing="dynamic"
+                >
+                  <mat-select
+                    [formControlName]="column.name"
+                    [multiple]="column.multiple"
+                    (selectionChange)="
+                      onSelectValueChange(column.name, row.record, $event)
+                    "
+                    [value]="row.cellData[column.name].value"
+                  >
+                    <mat-option
+                      *ngFor="let option of column.domainValues"
+                      [value]="option.id"
+                      [disabled]="option.disabled"
+                    >
+                      {{ option.value }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
 
-              <igo-entity-table-autocomplete-field
-                *ngSwitchCase="'autocomplete'"
-                [control]="this.formGroup.get([column.name])"
-                [column]="column"
-                [record]="row.record"
-                (selected)="onChange(column, row.record, $event)"
-              >
-              </igo-entity-table-autocomplete-field>
+                <igo-entity-autocomplete-field
+                  *ngSwitchCase="'autocomplete'"
+                  [control]="this.formGroup.get([column.name])"
+                  [relation]="column.relation"
+                  [domainValues]="column.domainValues"
+                  [record]="row.record"
+                  (selected)="
+                    onAutocompleteValueChange(column, row.record, $event)
+                  "
+                >
+                </igo-entity-autocomplete-field>
+                <mat-form-field *ngSwitchCaseDefault subscriptSizing="dynamic">
+                  <input
+                    matInput
+                    type="text"
+                    [formControlName]="column.name"
+                    value="{{ row.cellData[column.name].value }}"
+                    (input)="onValueChange(column.name, row.record, $event)"
+                    readonly="{{
+                      getValidationAttributeValue(column, 'readonly')
+                    }}"
+                  />
+                </mat-form-field>
+              </ng-container>
             </td>
             <ng-template #isUnsanitizedHTML>
-              <td
-                mat-cell
-                class="mat-cell-text"
-                *ngIf="
-                  !row.cellData[column.name].isUrl;
-                  else isAnUrlUnsanitizedHTML
-                "
-                [ngClass]="row.cellData[column.name].class"
-                [innerHTML]="row.cellData[column.name].value | sanitizeHtml"
-              ></td>
-              <ng-template #isAnUrlUnsanitizedHTML>
-                <td
-                  mat-cell
-                  class="mat-cell-text"
-                  [ngClass]="row.cellData[column.name].class"
-                >
-                  <a
-                    href="{{ row.cellData[column.name].value }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    (click)="$event.stopPropagation()"
+              <td mat-cell [ngClass]="row.cellData[column.name].class">
+                <ng-container [ngSwitch]="column.type">
+                  <igo-entity-table-choice-cell
+                    *ngSwitchCase="'autocomplete'"
+                    [column]="column"
+                    [record]="row.record"
                   >
-                    <img
-                      igoImageError
-                      *ngIf="row.cellData[column.name].isImg; else notImg"
-                      src="{{
-                        row.cellData[column.name].value | secureImage | async
-                      }}"
-                      width="50"
-                      heigth="auto"
-                    />
-                    <ng-template #notImg
-                      ><span
-                        >{{ 'igo.geo.targetHtmlUrl' | translate }}
-                      </span></ng-template
-                    >
-                  </a>
-                </td>
-              </ng-template>
+                  </igo-entity-table-choice-cell>
+                  <igo-entity-table-default-cell
+                    *ngSwitchDefault
+                    [cellData]="row.cellData[column.name]"
+                  >
+                  </igo-entity-table-default-cell>
+                </ng-container>
+              </td>
             </ng-template>
           </ng-container>
         </ng-container>
-        <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
+        <ng-container *ngSwitchCase="entityTableColumnRenderer.Icon">
           <td
             mat-cell
             *matCellDef="let row"
@@ -312,46 +231,64 @@
             ></mat-icon>
           </td>
         </ng-container>
-        <ng-container
-          *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup"
-        >
-          <ng-container *matCellDef="let row">
-            <td
-              mat-cell
-              class="mat-cell-text"
-              [ngClass]="row.cellData[column.name].class"
-            >
-              <span *ngFor="let button of row.cellData[column.name].value">
-                <ng-container
-                  *ngIf="
-                    isEdition(row.record) === button.editMode ||
-                    button.editMode === undefined
-                  "
+        <ng-container *ngSwitchCase="entityTableColumnRenderer.ButtonGroup">
+          <td
+            mat-cell
+            *matCellDef="let row"
+            class="mat-cell-text"
+            [ngClass]="row.cellData[column.name].class"
+          >
+            <span *ngFor="let button of row.cellData[column.name].value">
+              <ng-container
+                *ngIf="
+                  isEdition(row.record) === button.editMode ||
+                  button.editMode === undefined
+                "
+              >
+                <button
+                  *ngIf="button.style === 'mat-icon-button'"
+                  igoStopPropagation
+                  mat-icon-button
+                  [color]="button.color"
+                  (mousedown)="onButtonClick(button.click, row.record)"
+                  [disabled]="button.disabled"
                 >
-                  <button
-                    *ngIf="button.style === 'mat-icon-button'"
-                    igoStopPropagation
-                    mat-icon-button
-                    [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, row.record)"
-                    [disabled]="button.disabled"
-                  >
-                    <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
-                  </button>
-                  <button
-                    *ngIf="button.style !== 'mat-icon-button'"
-                    igoStopPropagation
-                    mat-mini-fab
-                    [color]="button.color"
-                    (mousedown)="onButtonClick(button.click, row.record)"
-                    [disabled]="button.disabled"
-                  >
-                    <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
-                  </button>
-                </ng-container>
-              </span>
-            </td>
-          </ng-container>
+                  <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
+                </button>
+                <button
+                  *ngIf="button.style !== 'mat-icon-button'"
+                  igoStopPropagation
+                  mat-mini-fab
+                  [color]="button.color"
+                  (mousedown)="onButtonClick(button.click, row.record)"
+                  [disabled]="button.disabled"
+                >
+                  <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
+                </button>
+              </ng-container>
+            </span>
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <td
+            mat-cell
+            *matCellDef="let row"
+            [ngClass]="row.cellData[column.name].class"
+          >
+            <ng-container [ngSwitch]="column.type">
+              <igo-entity-table-choice-cell
+                *ngSwitchCase="'autocomplete'"
+                [column]="column"
+                [record]="row.record"
+              >
+              </igo-entity-table-choice-cell>
+              <igo-entity-table-default-cell
+                *ngSwitchDefault
+                [cellData]="row.cellData[column.name]"
+              >
+              </igo-entity-table-default-cell>
+            </ng-container>
+          </td>
         </ng-container>
       </ng-container>
     </ng-container>
