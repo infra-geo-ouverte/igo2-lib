@@ -47,7 +47,7 @@ export class ConfigService<T = { [key: string]: any }> {
     if (isDeprecated && value !== undefined) {
       this.handleDeprecatedConfig(key);
     } else if (value === undefined) {
-      return this.handleDeprecationPossibility(key);
+      return this.handleDeprecationPossibility(key, defaultValue);
     }
 
     return value ?? defaultValue;
@@ -67,13 +67,16 @@ export class ConfigService<T = { [key: string]: any }> {
       : console.warn(message);
   }
 
-  private handleDeprecationPossibility(key: string): any {
+  private handleDeprecationPossibility(
+    key: string,
+    defaultValue?: unknown
+  ): any {
     const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
     if (!options) {
-      return;
+      return defaultValue;
     }
 
-    return this.getConfig(options.deprecatedKey);
+    return this.getConfig(options.deprecatedKey, defaultValue);
   }
 
   /**
