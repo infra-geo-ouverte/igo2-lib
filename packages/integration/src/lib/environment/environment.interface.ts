@@ -24,7 +24,7 @@ interface IntegrationEnvironmentOptions {
   saveSearchResultInLayer?: boolean;
 }
 
-interface AppOptions {
+export interface AppOptions {
   forceCoordsNA: boolean;
   install: {
     enabled?: boolean;
