@@ -14,7 +14,8 @@ import {
   CommonVectorStyleOptions,
   FeatureWorkspace,
   FeatureStore,
-  Feature
+  Feature,
+  OverlayStyleOptions
 } from '@igo2/geo';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { WorkspaceState } from '../workspace/workspace.state';
@@ -82,13 +83,8 @@ export class SearchState {
     private configService: ConfigService,
     private mapState: MapState
   ) {
-    const searchOverlayStyle = this.configService.getConfig(
-      'searchOverlayStyle'
-    ) as {
-      base?: CommonVectorStyleOptions;
-      selection?: CommonVectorStyleOptions;
-      focus?: CommonVectorStyleOptions;
-    };
+    const searchOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('searchOverlayStyle');
     if (searchOverlayStyle) {
       this.searchOverlayStyle = searchOverlayStyle.base;
       this.searchOverlayStyleSelection = searchOverlayStyle.selection;

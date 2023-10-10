@@ -26,6 +26,7 @@ export * from './lib/context';
 export * from './lib/catalog';
 export * from './lib/directions';
 export * from './lib/draw';
+export * from './lib/environment';
 export * from './lib/workspace';
 export * from './lib/filter';
 export * from './lib/import-export';

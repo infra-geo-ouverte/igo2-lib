@@ -19,7 +19,8 @@ import {
   CatalogItem,
   CatalogItemLayer,
   CatalogItemGroup,
-  ForcedProperty
+  ForcedProperty,
+  CatalogServiceOptions
 } from './catalog.interface';
 import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
@@ -48,15 +49,16 @@ export class CatalogService {
 
   loadCatalogs(): Observable<Catalog[]> {
     const contextConfig = this.config.getConfig('context') || {};
-    const catalogConfig = this.config.getConfig('catalog') || {};
+
+    const catalogConfig: CatalogServiceOptions =
+      this.config.getConfig('catalog') || {};
     const apiUrl = catalogConfig.url || contextConfig.url;
     const catalogsFromConfig = catalogConfig.sources || [];
 
     const observables$ = [];
 
     if (apiUrl) {
-      // Base layers catalog
-      if (catalogConfig.baseLayers) {
+      if (catalogConfig.baselayers) {
         const translate = this.languageService.translate;
         const title = translate.instant('igo.geo.catalog.baseLayers');
         const baseLayersCatalog = [

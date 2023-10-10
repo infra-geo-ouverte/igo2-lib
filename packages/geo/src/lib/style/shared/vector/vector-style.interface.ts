@@ -19,6 +19,11 @@ export interface IgoStyleBase {
   styleByAttribute?: StyleByAttribute;
 }
 
+export interface OverlayStyleOptions {
+  base?: CommonVectorStyleOptions;
+  selection?: CommonVectorStyleOptions;
+  focus?: CommonVectorStyleOptions;
+}
 export interface CommonVectorStyleOptions {
   markerColor?: string | number[]; // marker fill
   markerOpacity?: number; // marker opacity, not applied if a rgba is provided
