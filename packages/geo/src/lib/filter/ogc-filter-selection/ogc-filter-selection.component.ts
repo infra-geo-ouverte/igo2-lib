@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
-import { DOMService, DOMValue } from '@igo2/common';
+import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
 
 import {
   OgcFilterableDataSource,
@@ -409,7 +409,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
-          for (const domOptions of this.configService.getConfig('dom')) {
+          for (const domOptions of this.configService.getConfig<DOMOptions[]>(
+            'dom'
+          )) {
             if (
               domSelector.id === domOptions.id ||
               domSelector.name === domOptions.name
@@ -480,7 +482,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
-          for (const domOptions of this.configService.getConfig('dom')) {
+          for (const domOptions of this.configService.getConfig<DOMOptions[]>(
+            'dom'
+          )) {
             if (
               domSelector.id === domOptions.id ||
               domSelector.name === domOptions.name

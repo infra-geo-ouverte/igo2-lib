@@ -18,8 +18,9 @@ import { Projection } from './projection.interfaces';
 })
 export class ProjectionService {
   constructor(private config: ConfigService) {
-    const projections = this.config.getConfig('projections') || [];
-    projections.forEach((projection: Projection) => {
+    const projections: Projection[] =
+      this.config.getConfig('projections') || [];
+    projections.forEach((projection) => {
       projection.alias = projection.alias ? projection.alias : projection.code;
       this.registerProjection(projection);
     });

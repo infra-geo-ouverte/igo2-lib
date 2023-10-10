@@ -14,7 +14,7 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
     new BehaviorSubject(undefined);
 
   constructor(config: ConfigService) {
-    this.options = config.getConfig('storage') || { key: 'igo' };
+    this.options = config.getConfig<T>('storage') || ({ key: 'igo' } as T);
   }
 
   /**
