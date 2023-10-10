@@ -4,7 +4,11 @@ import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface
 import { TooltipType } from '../../layer';
 import { QueryFormat } from '../../query';
 
-import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
+import {
+  CatalogItemType,
+  CatalogQueryFormatTypes,
+  TypeCatalogStrings
+} from './catalog.enum';
 
 export interface AddedChangeEmitter {
   added: boolean;
@@ -32,7 +36,7 @@ export interface ICatalog {
   regFilters?: string[];
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id, title, sortDirection?)
   groupSeparator?: string;
-  queryFormat?: QueryFormat;
+  queryFormat?: QueryFormat | CatalogQueryFormatTypes;
   queryParams?: { [key: string]: string };
   sourceOptions?: { [key: string]: any };
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
@@ -50,7 +54,7 @@ export interface ForcedProperty {
   metadataUrlAll?: string;
 }
 
-export interface ICompositeCatalog extends ICatalog {
+export interface ICompositeCatalog extends Omit<ICatalog, 'url'> {
   composite: ICatalog[];
 }
 
@@ -77,8 +81,13 @@ export interface CatalogItemState extends EntityState {
 }
 
 export interface CatalogServiceOptions {
+  /** @deprecated Use baselayers instead*/
   baseLayers?: boolean;
-  sources?: (ICatalog | ICompositeCatalog)[];
-  sourcesUrl?: string;
+  baselayers?: boolean;
+  /** @deprecated Not used anymore*/
   emailAddress?: string;
+  url?: string;
+  sources?: (ICatalog | ICompositeCatalog)[];
+  /** @deprecated Use url instead */
+  sourcesUrl?: string;
 }

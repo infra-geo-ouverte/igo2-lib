@@ -17,7 +17,8 @@ import {
   DetailedContext,
   ContextsList,
   ContextUserPermission,
-  ContextProfils
+  ContextProfils,
+  ContextServiceOptions
 } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
 import {
@@ -41,6 +42,7 @@ import { ActionStore, ActionbarMode } from '@igo2/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContextListComponent implements OnInit, OnDestroy {
+  public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
   contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
     this.contextsInitial
@@ -82,7 +84,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   @Input()
   get defaultContextId(): string {
-    return this.configService.getConfig('context')
+    return this.contextConfigs
       ? this._defaultContextId
       : (this.storageService.get('favorite.context.uri') as string) ||
           this._defaultContextId;
@@ -160,7 +162,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private languageService: LanguageService,
     private storageService: StorageService
-  ) {}
+  ) {
+    this.contextConfigs = this.configService.getConfig('context');
+  }
 
   ngOnInit() {
     this.change$$ = this.change$
