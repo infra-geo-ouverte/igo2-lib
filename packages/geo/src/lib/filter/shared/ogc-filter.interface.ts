@@ -62,7 +62,12 @@ export interface OgcFiltersOptions {
 export interface IgoOgcSelector {
   groups: SelectorGroup[];
   bundles: OgcSelectorBundle[];
-  selectorType: 'pushButton' | 'checkbox' | 'radioButton' | 'select' | 'autocomplete';
+  selectorType:
+    | 'pushButton'
+    | 'checkbox'
+    | 'radioButton'
+    | 'select'
+    | 'autocomplete';
   order?: number;
 }
 
@@ -81,7 +86,12 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfiltered?: boolean;
-  selectors?: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[] | OgcSelect[] | OgcAutocomplete[];
+  selectors?:
+    | OgcPushButton[]
+    | OgcCheckbox[]
+    | OgcRadioButton[]
+    | OgcSelect[]
+    | OgcAutocomplete[];
   domSelectors?: IgoDomSelector[];
   width?: string;
 }
@@ -127,7 +137,7 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
-  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean );
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean);
 }
 
 export interface IgoLogicalArrayOptions {
@@ -223,7 +233,6 @@ export interface OgcInterfaceFilterOptions {
   wkt_geometry?: string;
   // id?: string;
   // abbrev?: string;
-
 }
 
 export interface SliderOptionsInterface extends OgcFilterDuringOptions {

@@ -72,7 +72,10 @@ export class ContextFormComponent implements OnInit {
     const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
     const successful = Clipboard.copy(text);
     if (successful) {
-      this.messageService.success('igo.context.contextManager.dialog.copyMsg', 'igo.context.contextManager.dialog.copyTitle');
+      this.messageService.success(
+        'igo.context.contextManager.dialog.copyMsg',
+        'igo.context.contextManager.dialog.copyTitle'
+      );
     }
   }
 

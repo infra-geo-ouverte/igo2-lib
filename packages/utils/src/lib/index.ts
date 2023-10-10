@@ -1,4 +1,5 @@
 export * from './base64';
+export * from './cache.utils';
 export * from './clipboard';
 export * from './change';
 export * from './change.interface';

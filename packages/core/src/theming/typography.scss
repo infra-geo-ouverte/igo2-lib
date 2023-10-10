@@ -19,7 +19,6 @@ $igo-typography: mat.define-typography-config(
   $button: mat.define-typography-level(13px, 13px, 500)
 );
 
-
 // WORKAROUND, mat-typography bad area of intersection, h4 is using mat-body-1
 // https://github.com/angular/components/issues/26351
 h4 {

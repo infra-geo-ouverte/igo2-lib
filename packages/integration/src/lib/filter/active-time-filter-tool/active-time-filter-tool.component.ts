@@ -17,7 +17,6 @@ import { toolSlideInOut } from './active-time-filter-tool.animation';
   animations: [toolSlideInOut()]
 })
 export class ActiveTimeFilterToolComponent {
-
   get map(): IgoMap {
     return this.mapState.map;
   }

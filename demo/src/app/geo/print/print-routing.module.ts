@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppPrintComponent } from './print.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppPrintRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppPrintRoutingModule = RouterModule.forChild(routes);

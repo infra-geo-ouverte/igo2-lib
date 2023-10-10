@@ -1,6 +1,6 @@
 export enum OverlayAction {
-    None,
-    Move,
-    Zoom,
-    ZoomIfOutMapExtent
-  }
+  None,
+  Move,
+  Zoom,
+  ZoomIfOutMapExtent
+}

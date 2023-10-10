@@ -1,14 +1,14 @@
 :host {
   overflow: hidden;
-  
+
   .igo-actions-container {
     flex-shrink: 0;
   }
-  
+
   .igo-actions-expand-container {
     display: inline-flex;
-  }  
-  
+  }
+
   mat-icon.disabled {
     color: rgba(0, 0, 0, 0.38);
   }

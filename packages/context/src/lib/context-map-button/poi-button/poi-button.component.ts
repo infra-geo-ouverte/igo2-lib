@@ -53,7 +53,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.authenticate$$ = this.authService.authenticate$.subscribe(auth => {
+    this.authenticate$$ = this.authService.authenticate$.subscribe((auth) => {
       if (auth) {
         this.getPois();
       }
@@ -67,8 +67,12 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   deletePoi(poi: Poi) {
     if (poi && poi.id) {
       this.confirmDialogService
-        .open(this.languageService.translate.instant('igo.context.poiButton.dialog.confirmDelete'))
-        .subscribe(confirm => {
+        .open(
+          this.languageService.translate.instant(
+            'igo.context.poiButton.dialog.confirmDelete'
+          )
+        )
+        .subscribe((confirm) => {
           if (confirm) {
             this.poiService.delete(poi.id).subscribe(
               () => {
@@ -76,10 +80,11 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
                   'igo.context.poiButton.dialog.deleteMsg',
                   'igo.context.poiButton.dialog.deleteTitle',
                   undefined,
-                  { value: poi.title });
-                this.pois = this.pois.filter(p => p.id !== poi.id);
+                  { value: poi.title }
+                );
+                this.pois = this.pois.filter((p) => p.id !== poi.id);
               },
-              err => {
+              (err) => {
                 err.error.title = 'DELETE Pois';
                 this.messageService.showError(err);
               }
@@ -90,15 +95,18 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   }
 
   private getPois() {
-    this.poiService.get().pipe(take(1)).subscribe(
-      rep => {
-        this.pois = rep;
-      },
-      err => {
-        err.error.title = 'GET Pois';
-        this.messageService.showError(err);
-      }
-    );
+    this.poiService
+      .get()
+      .pipe(take(1))
+      .subscribe(
+        (rep) => {
+          this.pois = rep;
+        },
+        (err) => {
+          err.error.title = 'GET Pois';
+          this.messageService.showError(err);
+        }
+      );
   }
 
   createPoi() {
@@ -119,20 +127,21 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
     this.dialog
       .open(PoiDialogComponent, { disableClose: false })
       .afterClosed()
-      .subscribe(title => {
+      .subscribe((title) => {
         if (title) {
           poi.title = title;
           this.poiService.create(poi).subscribe(
-            newPoi => {
+            (newPoi) => {
               this.messageService.success(
                 'igo.context.poiButton.dialog.createMsg',
                 'igo.context.poiButton.dialog.createTitle',
                 undefined,
-                { value: poi.title });
+                { value: poi.title }
+              );
               poi.id = newPoi.id;
               this.pois.push(poi);
             },
-            err => {
+            (err) => {
               err.error.title = 'POST Pois';
               this.messageService.showError(err);
             }
@@ -142,7 +151,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   }
 
   zoomOnPoi(id) {
-    const poi = this.pois.find(p => p.id === id);
+    const poi = this.pois.find((p) => p.id === id);
 
     const center = olproj.fromLonLat(
       [Number(poi.x), Number(poi.y)],

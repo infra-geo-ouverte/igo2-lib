@@ -11,7 +11,10 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(filterString, wmsDatasource.options.params.LAYERS);
+    const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(
+      filterString,
+      wmsDatasource.options.params.LAYERS
+    );
     wmsDatasource.ol.updateParams({ FILTER: appliedFilter });
   }
 
@@ -27,10 +30,11 @@ export class OGCFilterService {
         true
       );
       if (!options.ogcFilters.interfaceOgcFilters) {
-        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-          options.ogcFilters.filters,
-          options.paramsWFS.fieldNameGeometry
-        );
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            options.ogcFilters.filters,
+            options.paramsWFS.fieldNameGeometry
+          );
       }
     }
   }
@@ -47,19 +51,21 @@ export class OGCFilterService {
         true
       );
       if (!options.ogcFilters.interfaceOgcFilters) {
-        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-          // With some wms server, this param must be set to make spatials call.
-          options.ogcFilters.filters,
-          options.fieldNameGeometry
-        );
+        options.ogcFilters.interfaceOgcFilters =
+          ogcFilterWriter.defineInterfaceFilterSequence(
+            // With some wms server, this param must be set to make spatials call.
+            options.ogcFilters.filters,
+            options.fieldNameGeometry
+          );
       }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
-        ogcFilterWriter.buildFilter(options.ogcFilters.filters,
-        undefined,
-        undefined,
-        undefined,
-        wmsDatasource.options
+        ogcFilterWriter.buildFilter(
+          options.ogcFilters.filters,
+          undefined,
+          undefined,
+          undefined,
+          wmsDatasource.options
         )
       );
       options.filtered = true;

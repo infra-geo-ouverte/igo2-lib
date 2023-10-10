@@ -15,7 +15,7 @@ export class MVTDataSource extends DataSource {
   protected createOlSource(): olSourceVectorTile {
     let mvtFormat;
     if (this.options.featureClass === 'feature') {
-      mvtFormat = new olFormatMVT({featureClass: feature});
+      mvtFormat = new olFormatMVT({ featureClass: feature });
     } else {
       mvtFormat = new olFormatMVT();
     }
@@ -25,7 +25,7 @@ export class MVTDataSource extends DataSource {
 
   protected generateId() {
     if (!this.options.url) {
-        return uuid();
+      return uuid();
     }
     const chain = 'mvt' + this.options.url;
     return Md5.hashStr(chain) as string;

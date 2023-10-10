@@ -27,13 +27,7 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
     MatButtonToggleModule,
     IgoLanguageModule
   ],
-  exports: [
-    GeometryFormFieldComponent,
-    GeometryFormFieldInputComponent
-  ],
-  declarations: [
-    GeometryFormFieldComponent,
-    GeometryFormFieldInputComponent
-  ]
+  exports: [GeometryFormFieldComponent, GeometryFormFieldInputComponent],
+  declarations: [GeometryFormFieldComponent, GeometryFormFieldInputComponent]
 })
 export class IgoGeometryFormFieldModule {}

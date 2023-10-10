@@ -14,7 +14,6 @@ import { ToolState } from '../../tool/tool.state';
   templateUrl: './context-editor-tool.component.html'
 })
 export class ContextEditorToolComponent {
-
   constructor(private toolState: ToolState) {}
 
   submitSuccessed() {

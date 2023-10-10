@@ -1,20 +1,32 @@
-<h4 class="nameOfTool">{{'igo.integration.advanced-map-tool.advanced-swipe.swipe-tool' | translate}}</h4>
+<h4 class="nameOfTool">
+  {{
+    'igo.integration.advanced-map-tool.advanced-swipe.swipe-tool' | translate
+  }}
+</h4>
 <igo-advanced-swipe></igo-advanced-swipe>
 <mat-divider class="advanced-tool-line"></mat-divider>
-<h4 class="nameOfTool">{{'igo.integration.advanced-map-tool.advanced-coordinates.coordinates' | translate}}</h4>
+<h4 class="nameOfTool">
+  {{
+    'igo.integration.advanced-map-tool.advanced-coordinates.coordinates'
+      | translate
+  }}
+</h4>
 <igo-advanced-coordinates></igo-advanced-coordinates>
 <mat-divider class="advanced-tool-line"></mat-divider>
 
-<h4 class="nameOfTool">{{'igo.integration.advanced-map-tool.geolocation.title' | translate}}</h4>
+<h4 class="nameOfTool">
+  {{ 'igo.integration.advanced-map-tool.geolocation.title' | translate }}
+</h4>
 
 <div class="igo-input-container">
   <div class="geolocation-slide-toggle-container mat-typography">
-    <mat-slide-toggle 
+    <mat-slide-toggle
       class="geolocation-option mat-typography"
       [checked]="tracking$ | async"
       [labelPosition]="'before'"
-      (change)="toggleTracking($event.checked)">
-      {{'igo.integration.advanced-map-tool.geolocation.tracking' | translate}}
+      (change)="toggleTracking($event.checked)"
+    >
+      {{ 'igo.integration.advanced-map-tool.geolocation.tracking' | translate }}
     </mat-slide-toggle>
 
     <mat-slide-toggle
@@ -22,8 +34,9 @@
       [disabled]="(tracking$ | async) !== true"
       [labelPosition]="'before'"
       [checked]="followPosition$ | async"
-      (change)="toggleFollow($event.checked)">
-      {{'igo.integration.advanced-map-tool.geolocation.follow' | translate}}
+      (change)="toggleFollow($event.checked)"
+    >
+      {{ 'igo.integration.advanced-map-tool.geolocation.follow' | translate }}
     </mat-slide-toggle>
   </div>
 </div>

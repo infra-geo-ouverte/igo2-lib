@@ -1,11 +1,16 @@
-export interface DirectionsSourceOptions {
-  url?: string;
-  reverseUrl?: string;
-  limit?: number;
-  enabled?: boolean;
-  type?: string;
-  distance?: number;
+export interface DirectionsSourceOptions extends BaseDirectionsSourceOptions {
+  osrm?: OsrmDirectionsSourceOptions;
+  logo?: string;
 }
-export interface DirectionsSourcesOptions {
-  osrm?: DirectionsSourceOptions;
+
+export type OsrmDirectionsSourceOptions = BaseDirectionsSourceOptions;
+
+interface BaseDirectionsSourceOptions {
+  distance?: number;
+  enabled?: boolean;
+  limit?: number;
+  logo?: string;
+  reverseUrl?: string;
+  type?: string;
+  url?: string;
 }

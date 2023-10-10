@@ -9,9 +9,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import {
-  EntityStore
-} from '../shared';
+import { EntityStore } from '../shared';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LanguageService, MediaService } from '@igo2/core';
@@ -24,7 +22,6 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
-
   public disabled: boolean = false;
   public hidePageSize: boolean = false;
   public pageIndex: number = 0;
@@ -35,7 +32,9 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   private entitySortChange$$: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
-  @Input() entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  @Input() entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(
+    false
+  );
   /**
    * Entity store
    */
@@ -57,9 +56,13 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   /**
    * Paginator emitted.
    */
-  @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
+  @Output() paginatorChange: EventEmitter<MatPaginator> =
+    new EventEmitter<MatPaginator>();
 
-  constructor(private languageService: LanguageService, private mediaService: MediaService) {}
+  constructor(
+    private languageService: LanguageService,
+    private mediaService: MediaService
+  ) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -82,63 +85,91 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
     this.disabled = this.paginatorOptions?.disabled || this.disabled;
     this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
     this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
-    this.pageSizeOptions = this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
+    this.pageSizeOptions =
+      this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
     if (this.mediaService.isMobile()) {
       this.showFirstLastButtons = false;
       this.hidePageSize = true;
     } else {
-      this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
-      this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
+      this.showFirstLastButtons =
+        this.paginatorOptions?.showFirstLastButtons ||
+        this.showFirstLastButtons;
+      this.hidePageSize =
+        this.paginatorOptions?.hidePageSize || this.hidePageSize;
     }
   }
 
   translateLabels() {
-
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.firstPageLabel').subscribe((label: string) => {
-        this.paginator._intl.firstPageLabel = label;
-      }));
+      this.languageService.translate
+        .get('igo.common.paginator.firstPageLabel')
+        .subscribe((label: string) => {
+          this.paginator._intl.firstPageLabel = label;
+        })
+    );
 
     this.paginator._intl.getRangeLabel = this.rangeLabel;
 
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.itemsPerPageLabel').subscribe((label: string) => {
-        this.paginator._intl.itemsPerPageLabel = label;
-      }));
+      this.languageService.translate
+        .get('igo.common.paginator.itemsPerPageLabel')
+        .subscribe((label: string) => {
+          this.paginator._intl.itemsPerPageLabel = label;
+        })
+    );
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.lastPageLabel').subscribe((label: string) => {
-        this.paginator._intl.lastPageLabel = label;
-      }));
+      this.languageService.translate
+        .get('igo.common.paginator.lastPageLabel')
+        .subscribe((label: string) => {
+          this.paginator._intl.lastPageLabel = label;
+        })
+    );
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.nextPageLabel').subscribe((label: string) => {
-        this.paginator._intl.nextPageLabel = label;
-      }));
+      this.languageService.translate
+        .get('igo.common.paginator.nextPageLabel')
+        .subscribe((label: string) => {
+          this.paginator._intl.nextPageLabel = label;
+        })
+    );
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.previousPageLabel').subscribe((label: string) => {
-        this.paginator._intl.previousPageLabel = label;
-      }));
+      this.languageService.translate
+        .get('igo.common.paginator.previousPageLabel')
+        .subscribe((label: string) => {
+          this.paginator._intl.previousPageLabel = label;
+        })
+    );
   }
 
   rangeLabel = (page: number, pageSize: number, length: number) => {
     const of: BehaviorSubject<string> = new BehaviorSubject('');
 
     this.paginationLabelTranslation$$.push(
-      this.languageService.translate.get('igo.common.paginator.of').subscribe((label: string) => {
-        of.next(label);
-      }));
-    if (length === 0 || pageSize === 0) { return `0 ${of.value} ${length}`; }
+      this.languageService.translate
+        .get('igo.common.paginator.of')
+        .subscribe((label: string) => {
+          of.next(label);
+        })
+    );
+    if (length === 0 || pageSize === 0) {
+      return `0 ${of.value} ${length}`;
+    }
     length = Math.max(length, 0);
     const startIndex = page * pageSize;
-    const endIndex = startIndex < length ?
-        Math.min(startIndex + pageSize, length) :
-        startIndex + pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
     return `${startIndex + 1} - ${endIndex} ${of.value} ${length}`;
   };
 
   private unsubscribeAll() {
-    this.paginationLabelTranslation$$.map(sub => sub.unsubscribe());
-    if (this.count$$) { this.count$$.unsubscribe(); }
-    if (this.entitySortChange$$) { this.entitySortChange$$.unsubscribe(); }
+    this.paginationLabelTranslation$$.map((sub) => sub.unsubscribe());
+    if (this.count$$) {
+      this.count$$.unsubscribe();
+    }
+    if (this.entitySortChange$$) {
+      this.entitySortChange$$.unsubscribe();
+    }
   }
 
   ngOnDestroy(): void {

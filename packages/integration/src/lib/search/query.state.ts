@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 
 import { EntityStoreWithStrategy } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
-import { CapabilitiesService, CommonVectorStyleOptions, GeoPropertiesStrategy, PropertyTypeDetectorService, SearchResult } from '@igo2/geo';
+import {
+  CapabilitiesService,
+  CommonVectorStyleOptions,
+  GeoPropertiesStrategy,
+  OverlayStyleOptions,
+  PropertyTypeDetectorService,
+  SearchResult
+} from '@igo2/geo';
 import { MapState } from '../map/map.state';
 
 /**
@@ -20,16 +27,14 @@ export class QueryState {
   public queryOverlayStyleSelection: CommonVectorStyleOptions = {};
   public queryOverlayStyleFocus: CommonVectorStyleOptions = {};
 
-  constructor(private configService: ConfigService,
+  constructor(
+    private configService: ConfigService,
     private propertyTypeDetectorService: PropertyTypeDetectorService,
     private capabilitiesService: CapabilitiesService,
     private mapState: MapState
-    ) {
-    const queryOverlayStyle = this.configService.getConfig('queryOverlayStyle') as {
-      base?: CommonVectorStyleOptions,
-      selection?: CommonVectorStyleOptions,
-      focus?: CommonVectorStyleOptions
-    };
+  ) {
+    const queryOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('queryOverlayStyle');
     if (queryOverlayStyle) {
       this.queryOverlayStyle = queryOverlayStyle.base;
       this.queryOverlayStyleSelection = queryOverlayStyle.selection;
@@ -38,7 +43,8 @@ export class QueryState {
     const geoPropertiesStrategy = new GeoPropertiesStrategy(
       { map: this.mapState.map },
       this.propertyTypeDetectorService,
-      this.capabilitiesService);
+      this.capabilitiesService
+    );
     this.store.addStrategy(geoPropertiesStrategy, true);
   }
 }

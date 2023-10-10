@@ -1,6 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
-import { EntityTableComponent, EntityTableTemplate, ToolComponent } from '@igo2/common';
+import {
+  EntityTableComponent,
+  EntityTableTemplate,
+  ToolComponent
+} from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { NumberUtils, Clipboard } from '@igo2/utils';
@@ -12,7 +16,6 @@ import { MapState } from '../map.state';
   title: 'igo.integration.tools.closestFeature',
   icon: 'radius'
 })
-
 /**
  * Tool to handle the advanced map tools
  */
@@ -21,9 +24,7 @@ import { MapState } from '../map.state';
   templateUrl: './map-proximity-tool.component.html',
   styleUrls: ['./map-proximity-tool.component.scss']
 })
-
 export class MapProximityToolComponent implements OnInit, OnDestroy {
-
   private subs$$: Subscription[] = [];
   @ViewChild('table', { static: true }) table: EntityTableComponent;
 
@@ -59,16 +60,23 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
       columns: [
         {
           name: 'element',
-          title: this.languageService.translate.instant('igo.integration.map-proximity-tool.feature'),
+          title: this.languageService.translate.instant(
+            'igo.integration.map-proximity-tool.feature'
+          ),
           valueAccessor: (localFeature: Feature) => {
             return localFeature.properties.element;
           }
         },
         {
           name: 'distance',
-          title: this.languageService.translate.instant('igo.integration.map-proximity-tool.distance'),
+          title: this.languageService.translate.instant(
+            'igo.integration.map-proximity-tool.distance'
+          ),
           valueAccessor: (localFeature: Feature) => {
-            return `${NumberUtils.roundToNDecimal(localFeature.properties.distance, 1)}m`;
+            return `${NumberUtils.roundToNDecimal(
+              localFeature.properties.distance,
+              1
+            )}m`;
           }
         }
       ]
@@ -77,24 +85,28 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.mapProximityState.enabled$.next(true);
-    this.userDefinedFollowPosition = this.map.geolocationController.followPosition === true;
+    this.userDefinedFollowPosition =
+      this.map.geolocationController.followPosition === true;
     this.userDefinedMapCenter = this.map.mapCenter$.value === true;
 
-    this.subs$$.push(this.mapProximityState.proximitylocationType$.subscribe(v => {
-      this.map.mapCenter$.next(v !== 'geolocation');
-      if (v === 'geolocation') {
-        this.map.geolocationController.followPosition = true;
-      } else {
-        this.map.geolocationController.followPosition = false;
-      }
-    }));
+    this.subs$$.push(
+      this.mapProximityState.proximitylocationType$.subscribe((v) => {
+        this.map.mapCenter$.next(v !== 'geolocation');
+        if (v === 'geolocation') {
+          this.map.geolocationController.followPosition = true;
+        } else {
+          this.map.geolocationController.followPosition = false;
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.mapProximityState.enabled$.next(false);
     this.map.mapCenter$.next(this.userDefinedMapCenter);
-    this.subs$$.map(s => s.unsubscribe());
-    this.map.geolocationController.followPosition = this.userDefinedFollowPosition;
+    this.subs$$.map((s) => s.unsubscribe());
+    this.map.geolocationController.followPosition =
+      this.userDefinedFollowPosition;
   }
 
   onLocationTypeChange(e: MatRadioChange) {
@@ -105,10 +117,14 @@ export class MapProximityToolComponent implements OnInit, OnDestroy {
    * Copy the coordinates to a clipboard
    */
   copyTextToClipboard(): void {
-
-    const successful = Clipboard.copy(this.mapProximityState.currentPositionCoordinate$?.value.toString());
+    const successful = Clipboard.copy(
+      this.mapProximityState.currentPositionCoordinate$?.value.toString()
+    );
     if (successful) {
-      this.messageService.success('igo.integration.map-proximity-tool.copyMsg', 'igo.integration.map-proximity-tool.copyTitle');
+      this.messageService.success(
+        'igo.integration.map-proximity-tool.copyMsg',
+        'igo.integration.map-proximity-tool.copyTitle'
+      );
     }
   }
 }

@@ -33,14 +33,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCheckboxModule,
     IgoLanguageModule,
     IgoSpinnerModule,
-    MatTooltipModule,
+    MatTooltipModule
   ],
-  exports: [
-    ContextImportExportComponent
-  ],
-  declarations: [
-    ContextImportExportComponent
-  ]
+  exports: [ContextImportExportComponent],
+  declarations: [ContextImportExportComponent]
 })
 export class IgoContextImportExportModule {
   static forRoot(): ModuleWithProviders<IgoContextImportExportModule> {

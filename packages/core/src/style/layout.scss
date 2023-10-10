@@ -85,42 +85,42 @@ $layout-sides: (
 }
 
 .align-items {
-    &-center {
-        align-items: center;
-    }
-    &-end {
-        align-items: flex-end;
-    }
-    &-start {
-        align-items: start;
-    }
+  &-center {
+    align-items: center;
+  }
+  &-end {
+    align-items: flex-end;
+  }
+  &-start {
+    align-items: start;
+  }
 }
 
 .align-self {
-    &-center {
-        align-self: center;
-    }
-    &-end {
-        align-self: flex-end;
-    }
-    &-start {
-        align-self: start;
-    }
+  &-center {
+    align-self: center;
+  }
+  &-end {
+    align-self: flex-end;
+  }
+  &-start {
+    align-self: start;
+  }
 }
 
 .justify-content {
-    &-center {
-        justify-content: center;
-    }
-    &-end {
-        justify-content: flex-end;
-    }
-    &-start {
-        justify-content: start;
-    }
-    &-space-between {
-        justify-content: space-between;
-    }
+  &-center {
+    justify-content: center;
+  }
+  &-end {
+    justify-content: flex-end;
+  }
+  &-start {
+    justify-content: start;
+  }
+  &-space-between {
+    justify-content: space-between;
+  }
 }
 
 .d {

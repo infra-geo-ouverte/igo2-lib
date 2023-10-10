@@ -84,10 +84,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.state.clear();
 
-    this.predefinedCatalogs = this.predefinedCatalogs.map(c => {
-      c.id = Md5.hashStr(
-        (c.type || 'wms') + standardizeUrl(c.url)
-      ) as string;
+    this.predefinedCatalogs = this.predefinedCatalogs.map((c) => {
+      c.id = Md5.hashStr((c.type || 'wms') + standardizeUrl(c.url)) as string;
       c.title = c.title === '' || !c.title ? c.url : c.title;
       return c;
     });
@@ -138,13 +136,20 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     }
 
     if (this.store.get(id)) {
-      this.messageService.alert('igo.geo.catalog.library.inlist.message', 'igo.geo.catalog.library.inlist.title');
+      this.messageService.alert(
+        'igo.geo.catalog.library.inlist.message',
+        'igo.geo.catalog.library.inlist.title'
+      );
       return;
     }
     this.unsubscribeAddingCatalog();
 
     this.addingCatalog$$ = this.capabilitiesService
-    .getCapabilities(addedCatalog.type as any, addedCatalog.url, addedCatalog.version)
+      .getCapabilities(
+        addedCatalog.type as any,
+        addedCatalog.url,
+        addedCatalog.version
+      )
       .pipe(
         catchError((e) => {
           if (e.error) {
@@ -156,7 +161,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
             'igo.geo.catalog.unavailable',
             'igo.geo.catalog.unavailableTitle',
             undefined,
-            { value: addedCatalog.url });
+            { value: addedCatalog.url }
+          );
           throw e;
         })
       )
@@ -183,7 +189,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         }
 
         const catalogToAdd = ObjectUtils.removeUndefined(
-          Object.assign({},
+          Object.assign(
+            {},
             predefinedCatalog,
             ObjectUtils.removeUndefined({
               id,
@@ -193,7 +200,9 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
               externalProvider: addedCatalog.externalProvider || false,
               removable: true,
               version
-            })) as Catalog);
+            })
+          ) as Catalog
+        );
         this.store.insert(catalogToAdd);
         const newCatalogs = this.addedCatalogs.slice(0);
         newCatalogs.push(catalogToAdd);

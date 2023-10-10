@@ -14,7 +14,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoEntityTableModule } from '@igo2/common';
@@ -27,8 +26,7 @@ import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import {MatRadioModule} from '@angular/material/radio';
-
+import { MatRadioModule } from '@angular/material/radio';
 
 /**
  * @ignore
@@ -53,13 +51,17 @@ import {MatRadioModule} from '@angular/material/radio';
     MatDialogModule,
     IgoLanguageModule,
     IgoEntityTableModule,
-    ColorPickerModule,
     BrowserModule,
     BrowserAnimationsModule,
     MatRadioModule,
     MatCheckboxModule
   ],
-  declarations: [DrawComponent, DrawPopupComponent, DrawLayerPopupComponent, DrawShorcutsComponent],
+  declarations: [
+    DrawComponent,
+    DrawPopupComponent,
+    DrawLayerPopupComponent,
+    DrawShorcutsComponent
+  ],
   exports: [DrawComponent]
 })
 export class IgoDrawModule {}

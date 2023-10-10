@@ -21,6 +21,7 @@ import { DirectionsInputsComponent } from './directions-inputs/directions-inputs
 import { DirectionsComponent } from './directions.component';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsResultsComponent } from './directions-results/directions-results.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { DirectionsResultsComponent } from './directions-results/directions-resu
     MatInputModule,
     MatOptionModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatTooltipModule,
     MatAutocompleteModule,
     IgoLanguageModule
@@ -47,7 +49,7 @@ import { DirectionsResultsComponent } from './directions-results/directions-resu
     DirectionsResultsComponent
   ],
   declarations: [
-     DirectionsComponent,
+    DirectionsComponent,
     DirectionsInputsComponent,
     DirectionsButtonsComponent,
     DirectionsResultsComponent

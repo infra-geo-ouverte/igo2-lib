@@ -4,10 +4,11 @@
 @mixin igo-list-theming($theme) {
   $primary: map.get($theme, primary);
   $accent: map.get($theme, accent);
+  @include density($theme);
 
   igo-list {
     [igolistitem] {
-      &[color="primary"] {
+      &[color='primary'] {
         &.igo-list-item-selected > mat-list-item {
           background-color: mat.get-color-from-palette($primary);
           color: mat.get-color-from-palette($primary, default-contrast);
@@ -18,23 +19,40 @@
           color: mat.get-color-from-palette($primary, default-contrast);
         }
       }
-  
-      &[color="accent"] {
+
+      &[color='accent'] {
         &.igo-list-item-selected > mat-list-item {
           background-color: mat.get-color-from-palette($accent);
           color: mat.get-color-from-palette($accent, default-contrast);
         }
-  
+
         &:not(.igo-list-item-disabled):hover > mat-list-item,
         &.igo-list-item-focused > mat-list-item {
           background-color: mat.get-color-from-palette($accent, lighter);
           color: mat.get-color-from-palette($accent, default-contrast);
         }
       }
-  
+
       &.igo-list-item-disabled > mat-list-item {
         color: rgba(0, 0, 0, 0.38);
       }
-    }  
+    }
+  }
+}
+
+@mixin density($theme) {
+  $density: mat.get-density-config($theme);
+
+  $theme: map.merge(
+    $theme,
+    (
+      density: $density
+    )
+  );
+
+  igo-list {
+    @include mat.icon-density($theme);
+    @include mat.icon-button-density($theme);
+    @include mat.list-density($theme);
   }
 }

@@ -20,7 +20,6 @@ import { userAgent } from '@igo2/utils';
  * and replace it by a WakeLock API implementation.
  */
 export class WakeLockButtonComponent {
-
   @Input() color: string = 'primary';
   @Input()
   get enabled(): boolean {

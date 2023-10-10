@@ -2,67 +2,67 @@ $slide-toggle-width: 60px;
 
 :host {
   .geometry-type-toggle {
-      padding: 10px;
-      text-align: center;
-  
-      mat-button-toggle-group {
-        width: 100%;
-        mat-button-toggle {
-          width: 25%;
-        }
+    padding: 10px;
+    text-align: center;
+
+    mat-button-toggle-group {
+      width: 100%;
+      mat-button-toggle {
+        width: 25%;
       }
+    }
   }
-  
+
   .draw-options {
     mat-slide-toggle {
       width: 100%;
       padding: 10px;
 
-      ::ng-deep .mdc-form-field{
+      ::ng-deep .mdc-form-field {
         width: 100%;
       }
 
-      ::ng-deep .mdc-label  {
+      ::ng-deep .mdc-label {
         margin-left: 0;
         width: calc(100% - #{$slide-toggle-width});
       }
     }
   }
-  
+
   .icon-options {
     margin: 5px 5px 0px 5px;
   }
-  
+
   .deleteBtn {
     margin-left: 16px;
   }
-  
-  .edition-drawing{
+
+  .edition-drawing {
     padding: 10px 0;
   }
-  
-  .edition-drawing{
+
+  .edition-drawing {
     padding: 10px 0;
   }
-  
+
   img {
     width: 100%;
     height: 100%;
   }
-  
+
   .deleteBtn {
     margin-left: 12px;
   }
-  
+
   .storeTable {
     height: auto !important;
   }
-  
+
   .layer-select {
     flex: 1;
     margin-right: 8px;
   }
-  
+
   .input-button-container {
     padding: 10px;
     mat-form-field {
@@ -73,24 +73,24 @@ $slide-toggle-width: 60px;
       bottom: 10px;
     }
   }
-  
+
   .radius {
     display: flex;
     flex-flow: column nowrap;
     width: 110%;
   }
-  
+
   .unit-field {
     width: 110px;
     margin-left: 30px;
   }
-  
+
   .radius-unit {
     display: flex;
     width: 100%;
     padding: 4px 8px;
   }
-  
+
   ::ng-deep igo-entity-table {
     td:last-child {
       text-align: right !important;
@@ -104,7 +104,8 @@ $slide-toggle-width: 60px;
     margin: 16px 8px;
   }
 
-  .actions-container, .layer-select-container {
+  .actions-container,
+  .layer-select-container {
     display: flex;
     align-items: center;
   }

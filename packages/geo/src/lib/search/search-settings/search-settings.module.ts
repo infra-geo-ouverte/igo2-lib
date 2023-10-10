@@ -31,4 +31,4 @@ import { IgoLanguageModule } from '@igo2/core';
   ],
   exports: [SearchSettingsComponent]
 })
-export class IgoSearchSettingsModule { }
+export class IgoSearchSettingsModule {}

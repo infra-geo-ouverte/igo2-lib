@@ -62,7 +62,8 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       (ogcFilters.checkboxes && ogcFilters.checkboxes.bundles.length > 0) ||
       (ogcFilters.radioButtons && ogcFilters.radioButtons.bundles.length > 0) ||
       (ogcFilters.select && ogcFilters.select.bundles.length > 0) ||
-      (ogcFilters.autocomplete && ogcFilters.autocomplete.bundles.length > 0)) {
+      (ogcFilters.autocomplete && ogcFilters.autocomplete.bundles.length > 0)
+    ) {
       if (ogcFilters.advancedOgcFilters === undefined) {
         ogcFilters.advancedOgcFilters = false;
       }
@@ -86,7 +87,8 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
           JSON.stringify(ogcFilters.interfaceOgcFilters)
         );
         if (
-          ogcFilters.interfaceOgcFilters.filter(f => f.wkt_geometry).length >= 1
+          ogcFilters.interfaceOgcFilters.filter((f) => f.wkt_geometry).length >=
+          1
         ) {
           this.hasActiveSpatialFilter = true;
         }
@@ -109,12 +111,14 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
 
   addFilterToSequence() {
     this.filtersCollapsed = false;
-    const interfaceOgcFilters: OgcInterfaceFilterOptions[] = this.datasource
-      .options.ogcFilters.interfaceOgcFilters;
+    const interfaceOgcFilters: OgcInterfaceFilterOptions[] =
+      this.datasource.options.ogcFilters.interfaceOgcFilters;
     const arr = interfaceOgcFilters || [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
-    const includedFields = this.datasource.options.sourceFields.filter(f => !f.excludeFromOgcFilters);
+    const includedFields = this.datasource.options.sourceFields.filter(
+      (f) => !f.excludeFromOgcFilters
+    );
     if (includedFields.length > 0) {
       firstFieldName =
         includedFields[0].name === undefined ? '' : includedFields[0].name;
@@ -134,7 +138,8 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
       this.datasource.options.sourceFields,
       firstFieldName,
-      this.datasource.options.ogcFilters.allowedOperatorsType);
+      this.datasource.options.ogcFilters.allowedOperatorsType
+    );
     const firstOperatorName = Object.keys(allowedOperators)[0];
 
     arr.push(
@@ -144,7 +149,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
           operator: firstOperatorName,
           active: true,
           igoSpatialSelector: 'fixedExtent',
-          srsName: this.map.projection,
+          srsName: this.map.projection
         } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,
@@ -159,8 +164,9 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       this.lastRunOgcFilter = undefined;
     }
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
-    const activeFilters = ogcFilters.interfaceOgcFilters ?
-      ogcFilters.interfaceOgcFilters.filter(f => f.active === true) : [];
+    const activeFilters = ogcFilters.interfaceOgcFilters
+      ? ogcFilters.interfaceOgcFilters.filter((f) => f.active === true)
+      : [];
     if (activeFilters.length === 0) {
       ogcFilters.filters = undefined;
       ogcFilters.filtered = false;
@@ -170,7 +176,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     }
     if (
       activeFilters.filter(
-        af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
+        (af) => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
       ).length === 0
     ) {
       this.hasActiveSpatialFilter = false;
@@ -184,9 +190,10 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       if (this.layer.dataSource.options.type === 'wfs') {
         const ogcDataSource: any = this.layer.dataSource;
         const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-        ogcLayer.filters = this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
-          activeFilters
-        );
+        ogcLayer.filters =
+          this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
+            activeFilters
+          );
         this.layer.dataSource.ol.refresh();
       } else if (
         this.layer.dataSource.options.type === 'wms' &&
@@ -196,9 +203,10 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         if (activeFilters.length >= 1) {
           const ogcDataSource: any = this.layer.dataSource;
           const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-          ogcLayer.filters = this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
-            activeFilters
-          );
+          ogcLayer.filters =
+            this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
+              activeFilters
+            );
           rebuildFilter = this.ogcFilterWriter.buildFilter(
             ogcLayer.filters,
             undefined,
@@ -219,7 +227,10 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     } else {
       // identical filter. Nothing triggered
     }
-    (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
+    (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(
+      ogcFilters,
+      true
+    );
   }
 
   public setVisible() {

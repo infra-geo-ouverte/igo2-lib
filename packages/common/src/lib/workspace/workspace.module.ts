@@ -5,13 +5,8 @@ import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selec
 import { IgoWorkspaceWidgetOutletModule } from './workspace-widget-outlet/workspace-widget-outlet.module';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  exports: [
-    IgoWorkspaceSelectorModule,
-    IgoWorkspaceWidgetOutletModule
-  ],
+  imports: [CommonModule],
+  exports: [IgoWorkspaceSelectorModule, IgoWorkspaceWidgetOutletModule],
   declarations: []
 })
 export class IgoWorkspaceModule {}

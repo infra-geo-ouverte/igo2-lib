@@ -25,7 +25,7 @@ export interface PrintOptions {
 }
 
 export interface TextPdfSizeAndMargin {
-  fontSize: number,
-  marginLeft: number,
-  height: number
+  fontSize: number;
+  marginLeft: number;
+  height: number;
 }

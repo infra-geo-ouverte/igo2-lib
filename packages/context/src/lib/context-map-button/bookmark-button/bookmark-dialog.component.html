@@ -1,20 +1,30 @@
-<h1 mat-dialog-title class="mat-typography">{{ 'igo.context.bookmarkButton.dialog.title' | translate }}</h1>
+<h1 mat-dialog-title class="mat-typography">
+  {{ 'igo.context.bookmarkButton.dialog.title' | translate }}
+</h1>
 <div mat-dialog-content class="mat-typography">
   <mat-form-field>
-    <input matInput required autocomplete="off"
+    <input
+      matInput
+      required
+      autocomplete="off"
       maxlength="128"
-      [placeholder]="'igo.context.bookmarkButton.dialog.placeholder' | translate"
-      [(ngModel)]="title">
+      [placeholder]="
+        'igo.context.bookmarkButton.dialog.placeholder' | translate
+      "
+      [(ngModel)]="title"
+    />
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button color="primary"
-         [disabled]="!title"
-         (click)="dialogRef.close(title)">
-    {{'igo.common.confirmDialog.confirmBtn' | translate}}
+  <button
+    mat-button
+    color="primary"
+    [disabled]="!title"
+    (click)="dialogRef.close(title)"
+  >
+    {{ 'igo.common.confirmDialog.confirmBtn' | translate }}
   </button>
-  <button mat-button
-          (click)="dialogRef.close(false)">
-    {{'igo.common.confirmDialog.cancelBtn' | translate}}
+  <button mat-button (click)="dialogRef.close(false)">
+    {{ 'igo.common.confirmDialog.cancelBtn' | translate }}
   </button>
 </div>

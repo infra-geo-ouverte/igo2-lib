@@ -9,7 +9,10 @@ import {
   Layer
 } from '@igo2/geo';
 import { MapState } from './../map.state';
-import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
+import {
+  ImportExportMode,
+  ImportExportState
+} from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
 
 /**
@@ -79,7 +82,10 @@ export class MapToolComponent {
   activateExport(layer: Layer) {
     let id = layer.id;
     if (layer.options.workspace?.workspaceId) {
-      id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
+      id =
+        layer.options.workspace.workspaceId !== layer.id
+          ? layer.options.workspace.workspaceId
+          : layer.id;
     }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);

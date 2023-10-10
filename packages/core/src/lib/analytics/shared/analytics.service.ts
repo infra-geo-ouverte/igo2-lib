@@ -90,10 +90,8 @@ export class AnalyticsService {
   /**
    * Function that tracks layers added to the map
    */
-  public trackLayer(category: string, action: string, parameters: any){
+  public trackLayer(category: string, action: string, parameters: any) {
     if (this.options.provider === 'matomo')
-          this.paq.push(['trackEvent', category, action, parameters]);
-
-      }
-    }
-
+      this.paq.push(['trackEvent', category, action, parameters]);
+  }
+}
