@@ -41,13 +41,13 @@ export class ConfigService {
    * Use to get the data found in config file
    */
   public getConfig(key: string, defaultValue?: unknown): any {
-    const value = ObjectUtils.resolve(this.config, key);
+    let value = ObjectUtils.resolve(this.config, key);
 
     const isDeprecated = this.configDeprecated.get(key);
     if (isDeprecated && value !== undefined) {
       this.handleDeprecatedConfig(key);
     } else if (value === undefined) {
-      return this.handleDeprecationPossibility(key, defaultValue);
+      value = this.handleDeprecationPossibility(key);
     }
 
     return value ?? defaultValue;
@@ -67,16 +67,13 @@ export class ConfigService {
       : console.warn(message);
   }
 
-  private handleDeprecationPossibility(
-    key: string,
-    defaultValue?: unknown
-  ): any {
+  private handleDeprecationPossibility(key: string): any {
     const options = ALTERNATE_CONFIG_FROM_DEPRECATION.get(key);
     if (!options) {
-      return defaultValue;
+      return;
     }
 
-    return this.getConfig(options.deprecatedKey, defaultValue);
+    return this.getConfig(options.deprecatedKey);
   }
 
   /**
