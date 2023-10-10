@@ -7,11 +7,11 @@ import { MatTableModule } from '@angular/material/table';
 import { EntityTableChoiceCellComponent } from './entity-table-choice-cell/entity-table-choice-cell.component';
 
 @NgModule({
+  imports: [CommonModule, IgoLanguageModule, IgoImageModule, MatTableModule],
   declarations: [
     EntityTableDefaultCellComponent,
     EntityTableChoiceCellComponent
   ],
-  exports: [EntityTableDefaultCellComponent, EntityTableChoiceCellComponent],
-  imports: [CommonModule, IgoLanguageModule, IgoImageModule, MatTableModule]
+  exports: [EntityTableDefaultCellComponent, EntityTableChoiceCellComponent]
 })
 export class IgoEntityTableCellsModule {}

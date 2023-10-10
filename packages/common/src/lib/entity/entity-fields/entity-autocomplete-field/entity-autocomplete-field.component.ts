@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import {
   EntityRecord,
   EntityRelation,
+  EntityRelationParam,
   EntityService,
   SelectOption
 } from '../../shared';
@@ -52,7 +53,7 @@ export class IgoEntityAutocompleteFieldComponent implements OnInit {
     this.selectionControl = new FormControl(this.findFormOption());
 
     if (this.relation?.params) {
-      this.setParamsRelationship();
+      this.setParamsRelationship(this.relation?.params);
     } else if (!this.domainValues) {
       this.getDomainValues().subscribe((options) => {
         this.domainValues = options;
@@ -67,9 +68,9 @@ export class IgoEntityAutocompleteFieldComponent implements OnInit {
     return option?.value ? String(option?.value) : '';
   }
 
-  private setParamsRelationship(): void {
+  private setParamsRelationship(param: EntityRelationParam): void {
     const filterControl = this.control.parent.get([
-      this.relation?.params.field
+      `properties.${param.field}`
     ]);
     this.getDomainValues(filterControl.value).subscribe((options) =>
       this.setOptions(options)
