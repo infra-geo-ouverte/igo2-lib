@@ -40,17 +40,17 @@ export class ConfigService<T = { [key: string]: any }> {
   /**
    * Use to get the data found in config file
    */
-  public getConfig<T = any>(key: string): T {
-    const value = ObjectUtils.resolve(this.config, key);
+  public getConfig<T = any>(key: string, defaultValue?: unknown): T {
+    let value = ObjectUtils.resolve(this.config, key);
 
     const isDeprecated = this.configDeprecated.get(key);
     if (isDeprecated && value !== undefined) {
       this.handleDeprecatedConfig(key);
     } else if (value === undefined) {
-      return this.handleDeprecationPossibility(key);
+      value = this.handleDeprecationPossibility(key);
     }
 
-    return value;
+    return value ?? defaultValue;
   }
 
   private handleDeprecatedConfig(key: string): void {
