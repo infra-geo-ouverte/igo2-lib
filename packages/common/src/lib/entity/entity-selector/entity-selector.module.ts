@@ -10,11 +10,7 @@ import { EntitySelectorComponent } from './entity-selector.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatSelectModule
-  ],
+  imports: [CommonModule, FormsModule, MatSelectModule],
   exports: [EntitySelectorComponent],
   declarations: [EntitySelectorComponent]
 })

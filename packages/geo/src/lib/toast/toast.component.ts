@@ -54,7 +54,9 @@ export class ToastComponent {
   /**
    * @internal
    */
-  get title(): string { return getEntityTitle(this.feature); }
+  get title(): string {
+    return getEntityTitle(this.feature);
+  }
 
   constructor() {}
 
@@ -69,7 +71,11 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(
+        this.map.viewController,
+        [olFeature],
+        FeatureMotion.Zoom
+      );
     }
   }
 

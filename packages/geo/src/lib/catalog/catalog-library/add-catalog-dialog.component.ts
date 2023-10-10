@@ -1,7 +1,11 @@
 import { LanguageService, ConfigService } from '@igo2/core';
 import { Component, OnInit, OnDestroy, Optional, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { EntityStore } from '@igo2/common';
@@ -33,7 +37,12 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<AddCatalogDialogComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    public data: { predefinedCatalogs: Catalog[]; store: EntityStore<Catalog>; error: boolean; addedCatalog: Catalog }
+    public data: {
+      predefinedCatalogs: Catalog[];
+      store: EntityStore<Catalog>;
+      error: boolean;
+      addedCatalog: Catalog;
+    }
   ) {
     this.store = data.store;
     this.predefinedCatalogs = data.predefinedCatalogs;

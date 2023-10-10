@@ -1,5 +1,9 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormGroup,
+  UntypedFormBuilder,
+  Validators
+} from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -60,20 +64,25 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
     this.layers$$ = this.map.layers$.subscribe(() => {
       this.layerList = this.contextService.getContextLayers(this.map);
-      this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
+      this.userControlledLayerList = this.layerList.filter(
+        (layer) => layer.showInLayerList
+      );
     });
   }
 
   importFiles(files: File[]) {
     this.loading$.next(true);
     for (const file of files) {
-      this.contextImportService.import(file).pipe(take(1)).subscribe(
-        (context: DetailedContext) => this.onFileImportSuccess(file, context),
-        (error: Error) => this.onFileImportError(file, error),
-        () => {
-          this.loading$.next(false);
-        }
-      );
+      this.contextImportService
+        .import(file)
+        .pipe(take(1))
+        .subscribe(
+          (context: DetailedContext) => this.onFileImportSuccess(file, context),
+          (error: Error) => this.onFileImportError(file, error),
+          () => {
+            this.loading$.next(false);
+          }
+        );
     }
   }
 
@@ -82,17 +91,21 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
     this.res = this.contextService.getContextFromLayers(
       this.map,
       contextOptions.layers,
-      contextOptions.name
+      contextOptions.name,
+      false
     );
     this.res.imported = true;
-    this.contextExportService.export(this.res).pipe(take(1)).subscribe(
-      () => {},
-      (error: Error) => this.onFileExportError(error),
-      () => {
-        this.onFileExportSuccess();
-        this.loading$.next(false);
-      }
-    );
+    this.contextExportService
+      .export(this.res)
+      .pipe(take(1))
+      .subscribe(
+        () => {},
+        (error: Error) => this.onFileExportError(error),
+        () => {
+          this.onFileExportSuccess();
+          this.loading$.next(false);
+        }
+      );
   }
 
   private buildForm() {
@@ -113,12 +126,7 @@ export class ContextImportExportComponent implements OnInit, OnDestroy {
 
   private onFileImportError(file: File, error: Error) {
     this.loading$.next(false);
-    handleFileImportError(
-      file,
-      error,
-      this.messageService,
-      this.fileSizeMb
-    );
+    handleFileImportError(file, error, this.messageService, this.fileSizeMb);
   }
 
   private onFileExportError(error: Error) {

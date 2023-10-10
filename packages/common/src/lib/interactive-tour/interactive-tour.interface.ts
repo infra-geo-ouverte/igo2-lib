@@ -1,6 +1,8 @@
+import { Placement } from '@floating-ui/utils';
+
 export interface InteractiveTourStep {
   element?: string;
-  position?: string;
+  position?: Placement;
   title?: string;
   text: string;
   beforeShow?: InteractiveTourAction;

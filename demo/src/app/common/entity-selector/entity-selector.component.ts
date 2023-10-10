@@ -17,7 +17,6 @@ interface DemoEntity {
   styleUrls: ['./entity-selector.component.scss']
 })
 export class AppEntitySelectorComponent implements OnInit, OnDestroy {
-
   public store = new EntityStore([]);
 
   public selected$ = new BehaviorSubject<DemoEntity>(undefined);
@@ -26,9 +25,9 @@ export class AppEntitySelectorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.load([
-      {id: '2', name: 'Name 2', description: '<b>Description 2</b>'},
-      {id: '1', name: 'Name 1', description: '<b>Description 1</b>'},
-      {id: '3', name: 'Name 3', description: '<b>Description 3</b>'}
+      { id: '2', name: 'Name 2', description: '<b>Description 2</b>' },
+      { id: '1', name: 'Name 1', description: '<b>Description 1</b>' },
+      { id: '3', name: 'Name 3', description: '<b>Description 3</b>' }
     ]);
   }
 
@@ -40,7 +39,7 @@ export class AppEntitySelectorComponent implements OnInit, OnDestroy {
     return entity.name;
   }
 
-  onSelectedChange(event: {selected: boolean; entity: DemoEntity}) {
+  onSelectedChange(event: { selected: boolean; entity: DemoEntity }) {
     this.selected$.next(event.entity);
   }
 }

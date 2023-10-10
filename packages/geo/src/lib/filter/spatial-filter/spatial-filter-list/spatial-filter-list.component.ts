@@ -1,7 +1,10 @@
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EntityStore } from '@igo2/common';
 import { SpatialFilterService } from './../../shared/spatial-filter.service';
-import { SpatialFilterQueryType, SpatialFilterType } from './../../shared/spatial-filter.enum';
+import {
+  SpatialFilterQueryType,
+  SpatialFilterType
+} from './../../shared/spatial-filter.enum';
 import {
   Component,
   Input,
@@ -25,7 +28,6 @@ import { Layer } from '../../../layer';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpatialFilterListComponent implements OnInit, OnDestroy {
-
   @Input()
   get store(): EntityStore<Feature> {
     return this._store;
@@ -87,58 +89,80 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   constructor(
     private spatialFilterService: SpatialFilterService,
-    private messageService: MessageService) {}
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
-    this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
-      if (value.length) {
-        this.store.view.filter((feature) => {
-          const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const featureNameNormalized = feature.properties.nom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          return featureNameNormalized.includes(filterNormalized);
-        });
+    this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
+      (value) => {
+        if (value.length) {
+          this.store.view.filter((feature) => {
+            const filterNormalized = value
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            const featureNameNormalized = feature.properties.nom
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            return featureNameNormalized.includes(filterNormalized);
+          });
+        }
       }
-    });
+    );
 
     this.bufferValueChanges$$ = this.bufferFormControl.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((value) => {
-        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
+        if (
+          this.measureUnit === MeasureLengthUnit.Meters &&
+          value > 0 &&
+          value <= 100000
+        ) {
           this.bufferChange.emit(value);
-          this.spatialFilterService.loadBufferGeometry(
-            this.selectedZone,
-            SpatialFilterType.Predefined,
-            value,
-            this.queryType
-          ).subscribe((featureGeom: Feature) => {
-            this.zoneWithBuffer = featureGeom;
-            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-          });
-        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
+          this.spatialFilterService
+            .loadBufferGeometry(
+              this.selectedZone,
+              SpatialFilterType.Predefined,
+              value,
+              this.queryType
+            )
+            .subscribe((featureGeom: Feature) => {
+              this.zoneWithBuffer = featureGeom;
+              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+            });
+        } else if (
+          this.measureUnit === MeasureLengthUnit.Kilometers &&
+          value > 0 &&
+          value <= 100
+        ) {
           this.bufferChange.emit(value);
-          this.spatialFilterService.loadBufferGeometry(
-            this.selectedZone,
-            SpatialFilterType.Predefined,
-            value * 1000,
-            this.queryType
-          ).subscribe((featureGeom: Feature) => {
-            this.zoneWithBuffer = featureGeom;
-            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-          });
+          this.spatialFilterService
+            .loadBufferGeometry(
+              this.selectedZone,
+              SpatialFilterType.Predefined,
+              value * 1000,
+              this.queryType
+            )
+            .subscribe((featureGeom: Feature) => {
+              this.zoneWithBuffer = featureGeom;
+              this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+            });
         } else if (value === 0 && this.layers.length > 0) {
           this.bufferChange.emit(value);
           this.zoneWithBufferChange.emit(this.selectedZone);
         } else if (
-            value < 0 ||
-            (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
-            (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
-            this.bufferFormControl.setValue(0);
-            this.messageService.alert('igo.geo.spatialFilter.bufferAlert', 'igo.geo.spatialFilter.warning');
+          value < 0 ||
+          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)
+        ) {
+          this.bufferFormControl.setValue(0);
+          this.messageService.alert(
+            'igo.geo.spatialFilter.bufferAlert',
+            'igo.geo.spatialFilter.warning'
+          );
         }
-    });
+      });
   }
 
   ngOnDestroy() {
@@ -151,11 +175,12 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   onZoneChange(feature) {
     if (feature && this.queryType) {
-      this.spatialFilterService.loadItemById(feature, this.queryType)
-      .subscribe((featureGeom: Feature) => {
-        this.selectedZone = featureGeom;
-        this.zoneChange.emit(featureGeom);
-      });
+      this.spatialFilterService
+        .loadItemById(feature, this.queryType)
+        .subscribe((featureGeom: Feature) => {
+          this.selectedZone = featureGeom;
+          this.zoneChange.emit(featureGeom);
+        });
     }
   }
 
@@ -169,9 +194,9 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     } else {
       this.measureUnit = unit;
       this.measureUnitChange.emit(this.measureUnit);
-      this.measureUnit === MeasureLengthUnit.Meters ?
-        this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
-        this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
+      this.measureUnit === MeasureLengthUnit.Meters
+        ? this.bufferFormControl.setValue(this.bufferFormControl.value * 1000)
+        : this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
     }
   }
 }

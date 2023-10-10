@@ -5,13 +5,8 @@ import { IgoFeatureDetailsModule } from './feature-details/feature-details.modul
 import { IgoFeatureFormModule } from './feature-form/feature-form.module';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  exports: [
-    IgoFeatureDetailsModule,
-    IgoFeatureFormModule
-  ],
+  imports: [CommonModule],
+  exports: [IgoFeatureDetailsModule, IgoFeatureFormModule],
   declarations: [],
   providers: []
 })

@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppActionComponent } from './action.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppActionRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppActionRoutingModule = RouterModule.forChild(routes);

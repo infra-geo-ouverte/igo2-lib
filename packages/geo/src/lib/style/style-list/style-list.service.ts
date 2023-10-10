@@ -1,5 +1,5 @@
-import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -12,8 +12,11 @@ import { StyleListOptions } from './style-list.interface';
 })
 export class StyleListService {
   private styleList: object = {};
+  private httpClient: HttpClient;
 
-  constructor(private injector: Injector) {}
+  constructor(handler: HttpBackend) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   /**
    * Use to get the data found in styleList file
@@ -32,10 +35,8 @@ export class StyleListService {
       return true;
     }
 
-    const http = this.injector.get(HttpClient);
-
     return new Promise((resolve, _reject) => {
-      http
+      this.httpClient
         .get(options.path)
         .pipe(
           catchError((error: any): any => {
@@ -45,7 +46,10 @@ export class StyleListService {
           })
         )
         .subscribe((styleListResponse: object) => {
-          this.styleList = ObjectUtils.mergeDeep(baseStyleList, styleListResponse);
+          this.styleList = ObjectUtils.mergeDeep(
+            baseStyleList,
+            styleListResponse
+          );
           resolve(true);
         });
     });

@@ -38,9 +38,10 @@
     cursor: pointer;
   }
 
-  .panel-left, .panel-right {
+  .panel-left,
+  .panel-right {
     display: flex;
-    min-width: 40px; // button widht at denstiy -2 
+    min-width: 40px; // button widht at denstiy -2
   }
 
   .panel-right {

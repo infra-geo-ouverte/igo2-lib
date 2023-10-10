@@ -36,10 +36,11 @@ export class AppPrintComponent {
           matrixSet: 'EPSG_3857',
           version: '1.3.0',
           crossOrigin: 'anonymous',
-          attributions: "© <a href='http://www.droitauteur.gouv.qc.ca/copyright.php' target='_blank'><img src='https://geoegl.msp.gouv.qc.ca/gouvouvert/public/images/quebec/gouv_qc_logo.png' width='64' height='14'>Gouvernement du Québec</a> / <a href='https://www.igouverte.org/' target='_blank'>IGO2</a>"
+          attributions:
+            "© <a href='http://www.droitauteur.gouv.qc.ca/copyright.php' target='_blank'><img src='https://geoegl.msp.gouv.qc.ca/gouvouvert/public/images/quebec/gouv_qc_logo.png' width='64' height='14'>Gouvernement du Québec</a> / <a href='https://www.igouverte.org/' target='_blank'>IGO2</a>"
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -54,7 +55,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
     //
     this.layerService
       .createAsyncLayer({
@@ -69,7 +70,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     // this.layerService
     //   .createAsyncLayer({

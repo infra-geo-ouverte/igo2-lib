@@ -8,14 +8,9 @@ import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { ArcGISRestImageDataSourceOptions } from '../../../datasource/shared/datasources/imagearcgisrest-datasource.interface';
 
-
 export interface ImageLayerOptions extends LayerOptions {
-  source?:
-    | WMSDataSource
-    | ImageArcGISRestDataSource;
-  sourceOptions?:
-    | WMSDataSourceOptions
-    | ArcGISRestImageDataSourceOptions;
+  source?: WMSDataSource | ImageArcGISRestDataSource;
+  sourceOptions?: WMSDataSourceOptions | ArcGISRestImageDataSourceOptions;
   tokenKey?: string;
   ol?: olLayerImage<olSourceImage>;
   metadata?: {

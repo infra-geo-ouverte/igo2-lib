@@ -102,7 +102,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: string, term: string): SearchResult<Feature>[] {
+  private extractResults(
+    response: string,
+    term: string
+  ): SearchResult<Feature>[] {
     return response
       .split('<br />')
       .filter((lot: string) => lot.length > 0)
@@ -117,7 +120,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
     const properties = {
       NoLot: numero,
-      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+      Route:
+        '<span class="routing"> <u>' +
+        this.languageService.translate.instant('igo.geo.seeRouting') +
+        '</u> </span>'
     };
     const id = [this.getId(), 'cadastre', numero].join('.');
 

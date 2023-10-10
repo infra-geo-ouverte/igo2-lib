@@ -5,7 +5,6 @@ import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { StyleModalLayerComponent } from '../layer/style-modal-layer.component';
 import { LayerMatDialogData } from '../shared/style-modal.interface';
 
-
 @Component({
   selector: 'igo-style-modal-layer-button',
   templateUrl: './style-modal-layer-button.component.html',
@@ -14,7 +13,7 @@ import { LayerMatDialogData } from '../shared/style-modal.interface';
 })
 export class StyleModalLayerButtonComponent {
   @Input() layer: VectorLayer;
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog) {}
 
   /**
    * Open the style modal dialog box
@@ -30,5 +29,4 @@ export class StyleModalLayerButtonComponent {
       });
     }, 250);
   }
-
 }

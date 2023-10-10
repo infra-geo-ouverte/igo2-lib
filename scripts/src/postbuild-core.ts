@@ -72,10 +72,7 @@ async function compileAllBaseStyle(): Promise<void> {
 async function prebuiltThemes(): Promise<void> {
   const startTime = performance.now();
   const destination = path.join(distPath, '/theming/prebuilt-themes');
-  const themeFolder = path.join(
-    packagesPath,
-    '/src/theming/prebuilt-themes'
-  );
+  const themeFolder = path.join(packagesPath, '/src/theming/prebuilt-themes');
 
   const files = await readdir(themeFolder);
   const themeFiles = files.filter((filePath) =>

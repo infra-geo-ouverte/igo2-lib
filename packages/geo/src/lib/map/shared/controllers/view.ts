@@ -27,7 +27,7 @@ export class MapViewController extends MapController {
   /**
    * Observable of the current rotation in radians
    */
-   readonly rotation$ = new BehaviorSubject<number>(0);
+  readonly rotation$ = new BehaviorSubject<number>(0);
 
   /**
    * Observable of the current resolution
@@ -93,7 +93,12 @@ export class MapViewController extends MapController {
     super();
   }
 
-  setPadding(padding: { top?: number, bottom?: number, left?: number, right?: number }) {
+  setPadding(padding: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  }) {
     // Values in the array are top, right, bottom and left padding.
     if (padding.top || padding.top === 0) {
       this.padding[0] = padding.top;
@@ -124,7 +129,9 @@ export class MapViewController extends MapController {
   setupObservers() {
     if (this.stateHistory === true) {
       this.observerKeys.push(
-        this.olMap.on('moveend', (event: OlMapEvent) => this.onMoveEnd(event)) as EventsKey
+        this.olMap.on('moveend', (event: OlMapEvent) =>
+          this.onMoveEnd(event)
+        ) as EventsKey
       );
     }
 
@@ -140,7 +147,7 @@ export class MapViewController extends MapController {
       this.olMap.getView().on('change:rotation', (evt: ObjectEvent) => {
         this.rotation$.next(evt.target.getRotation());
       }) as EventsKey
-      );
+    );
   }
 
   /**
@@ -170,7 +177,10 @@ export class MapViewController extends MapController {
   getCenter(projection?: string | OlProjection): [number, number] {
     let center = this.olView.getCenter() as [number, number];
     if (projection && center) {
-      center = olproj.transform(center, this.getOlProjection(), projection) as [number, number];
+      center = olproj.transform(center, this.getOlProjection(), projection) as [
+        number,
+        number
+      ];
     }
     return center;
   }

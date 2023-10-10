@@ -1,5 +1,9 @@
 import { Injectable, Inject, Injector } from '@angular/core';
-import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams,
+  HttpParameterCodec
+} from '@angular/common/http';
 
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -18,7 +22,8 @@ import { SearchSource } from './source';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 import {
   IChercheData,
@@ -97,7 +102,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     }
 
     this.languageService.language$.subscribe(() => {
-      this.title$.next(this.languageService.translate.instant(this.options.title));
+      this.title$.next(
+        this.languageService.translate.instant(this.options.title)
+      );
     });
   }
 
@@ -120,17 +127,19 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         : undefined;
 
     const types = this.options.params?.type
-        ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
-        : [
-            'adresses',
-            'codes-postaux',
-            'routes',
-            'intersections',
-            'municipalites',
-            'mrc',
-            'regadmin',
-            'lieux'
-          ];
+      ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
+      : [
+          'adresses',
+          'codes-postaux',
+          'routes',
+          'intersections',
+          'municipalites',
+          'mrc',
+          'regadmin',
+          'lieux'
+        ];
+
+    const showAdvancedParams = this.options.showAdvancedSettings ?? true;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -194,13 +203,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: 'igo.geo.search.icherche.type.cycleStop',
               value: 'haltes_cyclables',
               enabled: types.indexOf('haltes_cyclables') !== -1,
-              hashtags: ['haltevelo','haltes_cyclables']
+              hashtags: ['haltevelo', 'haltes_cyclables']
             },
             {
               title: 'igo.geo.search.icherche.type.restArea',
               value: 'haltes_routieres',
               enabled: types.indexOf('haltes_routieres') !== -1,
-              hashtags: ['halteroute','haltes_routieres']
+              hashtags: ['halteroute', 'haltes_routieres']
             },
             {
               title: 'igo.geo.search.icherche.type.hq',
@@ -302,7 +311,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         },
-        {
+        showAdvancedParams && {
           type: 'radiobutton',
           title: 'ecmax',
           name: 'ecmax',
@@ -351,7 +360,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         }
-      ]
+      ].filter(Boolean) as SearchSourceSettings[]
     };
   }
 
@@ -375,9 +384,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   @Cacheable({
     maxCacheCount: 20,
-    cacheHasher: customCacheHasher,
+    cacheHasher: customCacheHasher
   })
-  private getSearch(term: string, params: HttpParams): Observable<SearchResult<Feature>[]> {
+  private getSearch(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
       map((response: IChercheResponse) => this.extractResults(response, term)),
       catchError((err) => {
@@ -422,8 +434,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         geometry: true,
         bbox: true,
         icon: true,
-        type:
-          'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
+        type: 'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
       },
       this.params,
       this.computeOptionsParam(term, options || {}).params,
@@ -450,9 +461,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: IChercheResponse, term: string): SearchResult<Feature>[] {
+  private extractResults(
+    response: IChercheResponse,
+    term: string
+  ): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data, term, response));
+      return this.formatter.formatResult(
+        this.dataToResult(data, term, response)
+      );
     });
   }
 
@@ -491,7 +507,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
-        score: data.score || computeTermSimilarity(term.trim(), data.properties.nom),
+        score:
+          data.score || computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
@@ -565,10 +582,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       '</a>';
 
     if (data.geometry.type === 'Point') {
-      googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
-        data.geometry.coordinates[0],
-        data.geometry.coordinates[1]
-      );
+      googleLinksProperties.GoogleStreetView =
+        GoogleLinks.getGoogleStreetViewLink(
+          data.geometry.coordinates[0],
+          data.geometry.coordinates[1]
+        );
     }
 
     const routing: {
@@ -642,8 +660,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
  * IChercheReverse search source
  */
 @Injectable()
-export class IChercheReverseSearchSource extends SearchSource
-  implements ReverseSearch {
+export class IChercheReverseSearchSource
+  extends SearchSource
+  implements ReverseSearch
+{
   static id = 'icherchereverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
@@ -659,12 +679,14 @@ export class IChercheReverseSearchSource extends SearchSource
     private languageService: LanguageService,
     storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
-    injector: Injector,
+    injector: Injector
   ) {
     super(options, storageService);
 
     this.languageService.language$.subscribe(() => {
-      this.title$.next(this.languageService.translate.instant(this.options.title));
+      this.title$.next(
+        this.languageService.translate.instant(this.options.title)
+      );
     });
 
     const authService = injector.get(AuthService);
@@ -790,9 +812,11 @@ export class IChercheReverseSearchSource extends SearchSource
 
   @Cacheable({
     maxCacheCount: 20,
-    cacheHasher: customCacheHasher,
+    cacheHasher: customCacheHasher
   })
-  private getReverseSearch(params: HttpParams): Observable<SearchResult<Feature>[]> {
+  private getReverseSearch(
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
     return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
       map((response: IChercheReverseResponse) => {
         return this.extractResults(response);
@@ -892,7 +916,7 @@ export class IChercheReverseSearchSource extends SearchSource
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml,
         icon: data.icon || 'map-marker',
-        pointerSummaryTitle: this.getSubtitle(data)+ ': ' + data.properties.nom
+        pointerSummaryTitle: this.getSubtitle(data) + ': ' + data.properties.nom
       }
     };
   }

@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppGeometryComponent } from './geometry.component';
 
 const routes: Routes = [
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppGeometryRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppGeometryRoutingModule = RouterModule.forChild(routes);

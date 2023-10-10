@@ -8,7 +8,7 @@ import { Observable, Observer } from 'rxjs';
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import {encode} from 'windows-1252';
+import { encode } from 'windows-1252';
 
 import { ExportFormat, EncodingFormat } from './export.type';
 
@@ -53,9 +53,20 @@ export class ExportService {
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
-    const exportOlFeatures = this.generateFeature(olFeatures, format,'_featureStore');
+    const exportOlFeatures = this.generateFeature(
+      olFeatures,
+      format,
+      '_featureStore'
+    );
 
-    return this.exportAsync(exportOlFeatures, format, title, encoding, projectionIn, projectionOut);
+    return this.exportAsync(
+      exportOlFeatures,
+      format,
+      title,
+      encoding,
+      projectionIn,
+      projectionOut
+    );
   }
 
   public generateFeature(
@@ -82,21 +93,28 @@ export class ExportService {
     });
   }
 
-  private generateAggregatedFeature(olFeatures: OlFeature<OlGeometry>[]): OlFeature<OlGeometry>[] {
+  private generateAggregatedFeature(
+    olFeatures: OlFeature<OlGeometry>[]
+  ): OlFeature<OlGeometry>[] {
     return olFeatures.map((olFeature: OlFeature<OlGeometry>) => {
-      const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
+      const keys = olFeature
+        .getKeys()
+        .filter((key: string) => !key.startsWith('_'));
       let comment: string = '';
-      const properties = keys.reduce((acc: object, key: string) => {
-        if (key && key !== 'geometry') {
-          key === 'id' && olFeature.get('draw') ? comment += key + ':' + olFeature.get('draw') + '   \r\n'
-          : comment += key + ':' + olFeature.get(key) + '   \r\n';
+      const properties = keys.reduce(
+        (acc: object, key: string) => {
+          if (key && key !== 'geometry') {
+            key === 'id' && olFeature.get('draw')
+              ? (comment += key + ':' + olFeature.get('draw') + '   \r\n')
+              : (comment += key + ':' + olFeature.get(key) + '   \r\n');
+          }
+          acc[key] = olFeature.get(key);
+          return acc;
+        },
+        {
+          geometry: olFeature.getGeometry()
         }
-        acc[key] = olFeature.get(key);
-        return acc;
-      },
-      {
-        geometry: olFeature.getGeometry()
-      });
+      );
       const newFeature = new OlFeature(properties);
       newFeature.set('name', olFeature.getId());
       newFeature.set('cmt', comment);
@@ -124,15 +142,37 @@ export class ExportService {
       if (ogreFormats.indexOf(format) >= 0) {
         if (!this.ogreUrl) {
           if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
-            this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
+            this.exportToFile(
+              olFeatures,
+              observer,
+              format,
+              title,
+              projectionIn,
+              projectionOut
+            );
           } else {
             observer.error(new ExportInvalidFileError());
           }
           return;
         }
-        this.exportWithOgre(olFeatures, observer, format, title, encoding, projectionIn, projectionOut);
+        this.exportWithOgre(
+          olFeatures,
+          observer,
+          format,
+          title,
+          encoding,
+          projectionIn,
+          projectionOut
+        );
       } else {
-        this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
+        this.exportToFile(
+          olFeatures,
+          observer,
+          format,
+          title,
+          projectionIn,
+          projectionOut
+        );
       }
     };
 
@@ -192,9 +232,11 @@ export class ExportService {
     } else if (encodingType === EncodingFormat.LATIN1) {
       const enctype = 'ISO-8859-1';
       const featuresJson = JSON.parse(featuresText);
-      featuresJson.features.map(f => {
-        const encodedProperties = String.fromCharCode
-          .apply(null, encode(JSON.stringify(f.properties), { mode: 'replacement' }));
+      featuresJson.features.map((f) => {
+        const encodedProperties = String.fromCharCode.apply(
+          null,
+          encode(JSON.stringify(f.properties), { mode: 'replacement' })
+        );
         f.properties = JSON.parse(encodedProperties);
       });
       featuresText = JSON.stringify(featuresJson);
@@ -220,12 +262,18 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    let outputName = format === 'Shapefile' ? `${title}.zip` : `${title}.${format.toLowerCase()}`;
+    let outputName =
+      format === 'Shapefile'
+        ? `${title}.zip`
+        : `${title}.${format.toLowerCase()}`;
     if (format === 'CSVcomma' || format === 'CSVsemicolon') {
       outputName = `${title}.csv`;
     }
     outputName = outputName.replace(' ', '_');
-    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/’/g, "'");
+    outputName = outputName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/’/g, "'");
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);
@@ -247,14 +295,19 @@ export class ExportService {
     observer.complete();
   }
 
-  private nothingToExport(olFeatures: OlFeature<OlGeometry>[], format: string): boolean {
+  private nothingToExport(
+    olFeatures: OlFeature<OlGeometry>[],
+    format: string
+  ): boolean {
     if (olFeatures.length === 0) {
       return true;
     }
     if (format === 'GPX') {
-      const pointOrLine = olFeatures.find(olFeature => {
+      const pointOrLine = olFeatures.find((olFeature) => {
         return (
-          ['Point', 'LineString', 'MultiLineString'].indexOf(olFeature.getGeometry().getType()) >= 0
+          ['Point', 'LineString', 'MultiLineString'].indexOf(
+            olFeature.getGeometry().getType()
+          ) >= 0
         );
       });
       return pointOrLine === undefined;

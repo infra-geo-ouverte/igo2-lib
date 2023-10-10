@@ -6,9 +6,7 @@ import { IgoMap } from '../shared/map';
   templateUrl: './offline-button.component.html',
   styleUrls: ['./offline-button.component.scss']
 })
-
 export class OfflineButtonComponent implements OnInit {
-
   btnStyle: string = 'onlineStyle';
 
   @Input() map: IgoMap;

@@ -3,7 +3,7 @@
 
 :host {
   @include common-utils.square-button();
-  
+
   .igo-user-button-container {
     button {
       background-color: #fff;
@@ -18,7 +18,7 @@
       }
     }
   }
-  
+
   .igo-user-button-more-container {
     float: left;
     height: 40px;

@@ -19,9 +19,7 @@ $theme: mat.define-light-theme(
   )
 );
 
-$foreground: igo.theme-foreground(
-  mat.define-palette(mat.$grey-palette, 900)
-);
+$foreground: igo.theme-foreground(mat.define-palette(mat.$grey-palette, 900));
 $theme: map.merge(
   $theme,
   (

@@ -1,3 +1,3 @@
 export interface ConnectionState {
-    connection: boolean;
+  connection: boolean;
 }

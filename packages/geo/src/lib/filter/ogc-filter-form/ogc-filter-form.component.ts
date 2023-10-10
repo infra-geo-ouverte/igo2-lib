@@ -101,8 +101,7 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    if ( this.datasource.options.sourceFields) {
+    if (this.datasource.options.sourceFields) {
       const sFields = this.datasource.options.sourceFields.filter(
         (sf) =>
           sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
@@ -175,13 +174,15 @@ export class OgcFilterFormComponent implements OnInit {
         .replace(/[\u0300-\u036f]/g, ''),
       'gi'
     );
-    return this.selectedField$.value.values.filter((val) =>
-      val && keywordRegex.test(
-        val
-          .toString()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-      )
+    return this.selectedField$.value.values.filter(
+      (val) =>
+        val &&
+        keywordRegex.test(
+          val
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+        )
     );
   }
 
@@ -261,7 +262,7 @@ export class OgcFilterFormComponent implements OnInit {
         (f) => f.filterid === this.currentFilter.filterid
       )[detectedProperty] = value;
 
-      if ( refreshFilter ) {
+      if (refreshFilter) {
         this.refreshFilters();
       }
     }
@@ -287,9 +288,10 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   changeSNRCGeometry() {
-    const interfaceOgcFilter = this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-      (f) => f.filterid === this.currentFilter.filterid
-    );
+    const interfaceOgcFilter =
+      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter.filterid
+      );
     if (!interfaceOgcFilter) {
       return;
     }
@@ -304,9 +306,10 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   changeMapExtentGeometry(refresh: boolean = true) {
-    const interfaceOgcFilter = this.datasource.options.ogcFilters.interfaceOgcFilters.find(
-      (f) => f.filterid === this.currentFilter.filterid
-    );
+    const interfaceOgcFilter =
+      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter.filterid
+      );
     if (!interfaceOgcFilter) {
       return;
     }

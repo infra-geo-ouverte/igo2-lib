@@ -45,9 +45,6 @@ import { MatDialogModule } from '@angular/material/dialog';
     MeasurerComponent,
     MeasurerDialogComponent
   ],
-  exports: [
-    MeasureFormatPipe,
-    MeasurerComponent
-  ]
+  exports: [MeasureFormatPipe, MeasurerComponent]
 })
 export class IgoMeasurerModule {}

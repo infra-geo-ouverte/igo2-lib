@@ -1,10 +1,15 @@
 <div class="igo-wake-lock-button-container">
-    <button 
-      [color]="color"
-      mat-icon-button
-      [matTooltip]="enabled ? ('igo.geo.mapButtons.preventScreenLock' | translate): ('igo.geo.mapButtons.letScreenLock' | translate)"
-      matTooltipPosition="left"
-      (click)="toggleWakeLock()">
-      <mat-icon svgIcon="{{icon$ | async}}"></mat-icon>
-    </button>
+  <button
+    [color]="color"
+    mat-icon-button
+    [matTooltip]="
+      enabled
+        ? ('igo.geo.mapButtons.preventScreenLock' | translate)
+        : ('igo.geo.mapButtons.letScreenLock' | translate)
+    "
+    matTooltipPosition="left"
+    (click)="toggleWakeLock()"
+  >
+    <mat-icon svgIcon="{{ icon$ | async }}"></mat-icon>
+  </button>
 </div>

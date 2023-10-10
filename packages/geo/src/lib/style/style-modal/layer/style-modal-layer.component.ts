@@ -4,7 +4,10 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
-import { LayerMatDialogData, StyleModalData } from '../shared/style-modal.interface';
+import {
+  LayerMatDialogData,
+  StyleModalData
+} from '../shared/style-modal.interface';
 
 @Component({
   selector: 'igo-style-modal-layer',
@@ -34,9 +37,8 @@ export class StyleModalLayerComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<StyleModalLayerComponent>,
     private formBuilder: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData) {
-      this.buildForm();
-    }
+    @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData
+  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;
@@ -46,13 +48,13 @@ export class StyleModalLayerComponent implements OnInit {
       }
     }
     this.buildStyleData();
-
+    this.buildForm();
   }
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      fill: [''],
-      stroke: ['']
+      fill: [this.getLayerFillColor()],
+      stroke: [this.getLayerStrokeColor()]
     });
   }
 
@@ -61,28 +63,32 @@ export class StyleModalLayerComponent implements OnInit {
       fillColor: this.getLayerFillColor(),
       strokeColor: this.getLayerStrokeColor()
     };
-    this.initialValues ={
+    this.initialValues = {
       fillColor: this.getLayerFillColor(),
       strokeColor: this.getLayerStrokeColor()
     };
   }
 
-  getLayerFillColor() {
+  private getLayerFillColor() {
     let fillColor = this.defaultValues.fillColor;
     const style = this.layerOlStyle;
     if (style?.getFill()?.getColor()) {
       const arrayColor = style.getFill().getColor();
-      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${arrayColor[3]|| 0.4})`;
+      fillColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
+        arrayColor[3] || 0.4
+      })`;
     }
     return fillColor;
   }
 
-  getLayerStrokeColor() {
+  private getLayerStrokeColor() {
     let strokeColor = this.defaultValues.strokeColor;
     const style = this.layerOlStyle;
     if (style?.getStroke()?.getColor()) {
       const arrayColor = style.getStroke().getColor();
-      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${arrayColor[3]|| 1})`;
+      strokeColor = `rgba(${arrayColor[0]},${arrayColor[1]},${arrayColor[2]},${
+        arrayColor[3] || 1
+      })`;
     }
     return strokeColor;
   }

@@ -1,11 +1,16 @@
 <div class="igo-user-button-container">
   <button
     mat-icon-button
-    [matTooltip]="enabled ? ('igo.geo.mapButtons.online' | translate): ('igo.geo.mapButtons.offline' | translate)"
+    [matTooltip]="
+      enabled
+        ? ('igo.geo.mapButtons.online' | translate)
+        : ('igo.geo.mapButtons.offline' | translate)
+    "
     matTooltipPosition="left"
     [ngClass]="[btnStyle]"
     [color]="enabled ? color : null"
-    (click)="onClick()">
+    (click)="onClick()"
+  >
     <mat-icon svgIcon="wifi-strength-off"></mat-icon>
   </button>
 </div>

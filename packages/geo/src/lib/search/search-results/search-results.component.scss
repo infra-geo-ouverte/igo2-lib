@@ -6,14 +6,11 @@
     margin-right: 10px;
     margin-top: 5px;
   }
-  
+
   igo-list ::ng-deep mat-list {
     height: 100%;
-    /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-    .custom-tabs-view .mat-tab-header-pagination {
+    .custom-tabs-view .mat-mdc-tab-header-pagination {
       min-width: 20px;
     }
   }
-  
-  
 }

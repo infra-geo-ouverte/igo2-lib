@@ -27,7 +27,10 @@ export function sourceCanReverseSearch(source: SearchSource): boolean {
  * @returns True if the search source implements ReverseSearch AND is shown in the pointer summary
  */
 export function sourceCanReverseSearchAsSummary(source: SearchSource): boolean {
-  return (source as any).reverseSearch !== undefined && source.showInPointerSummary === true;
+  return (
+    (source as any).reverseSearch !== undefined &&
+    source.showInPointerSummary === true
+  );
 }
 
 /**
@@ -67,7 +70,7 @@ export function featureToSearchResult(
   };
 }
 
-export function findDiff(str1: string, str2: string){
+export function findDiff(str1: string, str2: string) {
   let diff = '';
   str2.split('').forEach((val, i) => {
     if (val !== str1.charAt(i)) {
@@ -77,7 +80,6 @@ export function findDiff(str1: string, str2: string){
   return diff;
 }
 
-
 /**
  * Return a score calculation based on "from" term with the "to" term,
  * where the perfect match is 100 and a total difference is 0 or under.
@@ -86,7 +88,11 @@ export function findDiff(str1: string, str2: string){
  * @param caseSensitive boolean
  * @returns number
  */
-export function computeTermSimilarity(from, to, caseSensitive: boolean = false): number {
+export function computeTermSimilarity(
+  from,
+  to,
+  caseSensitive: boolean = false
+): number {
   if (!from || !to) {
     return 0;
   }
@@ -98,7 +104,7 @@ export function computeTermSimilarity(from, to, caseSensitive: boolean = false):
 
   let delta = 0;
   if (totalDiff.length) {
-    delta = totalDiff.length / termFrom.length * 100;
+    delta = (totalDiff.length / termFrom.length) * 100;
   }
 
   return 100 - Math.floor(delta);

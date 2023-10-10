@@ -27,11 +27,11 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('addPermission', ['$event'])
   onAddPermission(permission: ContextPermission) {
-
     if (!permission.profil) {
       this.messageService.error(
         'igo.context.contextManager.errors.addPermissionEmpty',
-        'igo.context.contextManager.errors.addPermissionTitle');
+        'igo.context.contextManager.errors.addPermissionTitle'
+      );
       return;
     }
     const contextId = this.component.context.id;
@@ -41,7 +41,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         permission.profil,
         permission.typePermission
       )
-      .subscribe(profils => {
+      .subscribe((profils) => {
         for (const p of profils) {
           this.component.permissions[permission.typePermission].push(p);
         }
@@ -50,7 +50,8 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
           'igo.context.permission.dialog.addMsg',
           'igo.context.permission.dialog.addTitle',
           undefined,
-          { value: profil });
+          { value: profil }
+        );
         this.cd.detectChanges();
       });
   }
@@ -63,7 +64,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
       .subscribe(() => {
         const index = this.component.permissions[
           permission.typePermission
-        ].findIndex(p => {
+        ].findIndex((p) => {
           return p.id === permission.id;
         });
         this.component.permissions[permission.typePermission].splice(index, 1);
@@ -73,7 +74,8 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
           'igo.context.permission.dialog.deleteMsg',
           'igo.context.permission.dialog.deleteTitle',
           undefined,
-          { value: profil });
+          { value: profil }
+        );
         this.cd.detectChanges();
       });
   }
@@ -86,7 +88,8 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         'igo.context.permission.dialog.scopeChangedMsg',
         'igo.context.permission.dialog.scopeChangedTitle',
         undefined,
-        { value: 'igo.context.permission.scope.' + scope });
+        { value: 'igo.context.permission.scope.' + scope }
+      );
     });
   }
 
@@ -102,7 +105,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editedContext$$ = this.contextService.editedContext$.subscribe(
-      context => this.handleEditedContextChange(context)
+      (context) => this.handleEditedContextChange(context)
     );
   }
 
@@ -117,13 +120,13 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     if (context) {
       this.contextService
         .getPermissions(context.id)
-        .subscribe(permissionsArray => {
+        .subscribe((permissionsArray) => {
           permissionsArray = permissionsArray || [];
           const permissions = {
-            read: permissionsArray.filter(p => {
+            read: permissionsArray.filter((p) => {
               return p.typePermission.toString() === 'read';
             }),
-            write: permissionsArray.filter(p => {
+            write: permissionsArray.filter((p) => {
               return p.typePermission.toString() === 'write';
             })
           };

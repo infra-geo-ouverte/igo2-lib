@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
+} from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import * as olProj from 'ol/proj';
@@ -8,7 +14,11 @@ import { Stop } from '../shared/directions.interface';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import pointOnFeature from '@turf/point-on-feature';
-import { computeRelativePosition, removeStopFromStore, updateStoreSorting } from '../shared/directions.utils';
+import {
+  computeRelativePosition,
+  removeStopFromStore,
+  updateStoreSorting
+} from '../shared/directions.utils';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 import { StopsFeatureStore, StopsStore } from '../shared/store';
@@ -22,7 +32,6 @@ import { DirectionRelativePositionType } from '../shared/directions.enum';
   styleUrls: ['./directions-inputs.component.scss']
 })
 export class DirectionsInputsComponent implements OnDestroy {
-
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
   public stopWithHover: Stop;
@@ -35,8 +44,9 @@ export class DirectionsInputsComponent implements OnDestroy {
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
-  @Output() stopInputHasFocus: EventEmitter<boolean> = new EventEmitter<boolean>(false);
-  constructor(private languageService: LanguageService) { }
+  @Output() stopInputHasFocus: EventEmitter<boolean> =
+    new EventEmitter<boolean>(false);
+  constructor(private languageService: LanguageService) {}
 
   ngOnDestroy(): void {
     this.unlistenMapSingleClick();
@@ -55,7 +65,10 @@ export class DirectionsInputsComponent implements OnDestroy {
     return option;
   }
 
-  chooseProposal(event: { source: MatAutocomplete, option: MatOption }, stop: Stop) {
+  chooseProposal(
+    event: { source: MatAutocomplete; option: MatOption },
+    stop: Stop
+  ) {
     const result: Feature = event.option.value;
     if (result) {
       let geomCoord;
@@ -99,7 +112,7 @@ export class DirectionsInputsComponent implements OnDestroy {
   }
 
   private keyIsValid(key: string) {
-    return this.invalidKeys.find(value => value === key) === undefined;
+    return this.invalidKeys.find((value) => value === key) === undefined;
   }
 
   getNgClass(stop: Stop): string {
@@ -115,10 +128,16 @@ export class DirectionsInputsComponent implements OnDestroy {
   getPlaceholder(stop: Stop): string {
     let extra = '';
     if (stop.relativePosition) {
-      if (stop.relativePosition === DirectionRelativePositionType.Intermediate) {
+      if (
+        stop.relativePosition === DirectionRelativePositionType.Intermediate
+      ) {
         extra = ' #' + stop.position;
       }
-      return this.languageService.translate.instant('igo.geo.directionsForm.' + stop.relativePosition) + extra;
+      return (
+        this.languageService.translate.instant(
+          'igo.geo.directionsForm.' + stop.relativePosition
+        ) + extra
+      );
     } else {
       return '';
     }
@@ -129,7 +148,11 @@ export class DirectionsInputsComponent implements OnDestroy {
   }
 
   clearStop(stop: Stop) {
-    this.stopsStore.update({ id: stop.id, relativePosition: stop.relativePosition, position: stop.position });
+    this.stopsStore.update({
+      id: stop.id,
+      relativePosition: stop.relativePosition,
+      position: stop.position
+    });
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -158,25 +181,31 @@ export class DirectionsInputsComponent implements OnDestroy {
   }
 
   private listenMapSingleClick(stop: Stop) {
-    const key = this.stopsFeatureStore.layer.map.ol.once('singleclick', event => {
-      const clickCoordinates = olProj.transform(
-        event.coordinate,
-        this.stopsFeatureStore.layer.map.projection,
-        this.projection
-      );
-      const roundedCoord = roundCoordTo(clickCoordinates as [number, number], this.coordRoundedDecimals);
-      stop.text = roundedCoord.join(',');
-      stop.coordinates = roundedCoord;
-      this.stopsStore.update(stop);
-      setTimeout(() => {
-        this.stopInputHasFocus.emit(false);
-      }, 500);
-    });
+    const key = this.stopsFeatureStore.layer.map.ol.once(
+      'singleclick',
+      (event) => {
+        const clickCoordinates = olProj.transform(
+          event.coordinate,
+          this.stopsFeatureStore.layer.map.projection,
+          this.projection
+        );
+        const roundedCoord = roundCoordTo(
+          clickCoordinates as [number, number],
+          this.coordRoundedDecimals
+        );
+        stop.text = roundedCoord.join(',');
+        stop.coordinates = roundedCoord;
+        this.stopsStore.update(stop);
+        setTimeout(() => {
+          this.stopInputHasFocus.emit(false);
+        }, 500);
+      }
+    );
     this.onMapClickEventKeys.push(key);
   }
 
   private unlistenMapSingleClick() {
-    this.onMapClickEventKeys.map(key => {
+    this.onMapClickEventKeys.map((key) => {
       olObservable.unByKey(key);
     });
     this.onMapClickEventKeys = [];

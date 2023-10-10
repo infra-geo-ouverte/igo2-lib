@@ -9,7 +9,6 @@ import { WidgetComponent } from './widget.interfaces';
   providedIn: 'root'
 })
 export class WidgetService {
-
   constructor(private dynamicComponentService: DynamicComponentService) {}
 
   create(widgetCls: any): Widget {

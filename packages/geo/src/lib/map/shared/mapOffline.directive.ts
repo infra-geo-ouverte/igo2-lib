@@ -1,9 +1,5 @@
 import { Directive, AfterViewInit } from '@angular/core';
-import {
-  NetworkService,
-  ConnectionState,
-  MessageService
-} from '@igo2/core';
+import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
 
 import { IgoMap } from './map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
@@ -15,7 +11,6 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 interface OfflinableSourceOptions extends DataSourceOptions {
   pathOffline?: string;
 }
-
 
 @Directive({
   selector: '[igoMapOffline]'
@@ -39,34 +34,47 @@ export class MapOfflineDirective implements AfterViewInit {
 
   ngAfterViewInit() {
     const initialOnline = window.navigator.onLine;
-      this.map.forcedOffline$.subscribe((forcedOffline: boolean) => {
-        const online = window.navigator.onLine;
-        // prevent first online message if no state change.
-        if (initialOnline && initialOnline === online && !forcedOffline) { return;}
-        if (this.previousMessageId) {
-          this.messageService.remove(this.previousMessageId);
-        }
-        if (!forcedOffline && online) {
-          const messageObj = this.messageService.info('igo.geo.network.online.message', 'igo.geo.network.online.title');
-          this.previousMessageId = messageObj.toastId;
-        } else if (forcedOffline) {
-          const messageObj = this.messageService.info('igo.geo.network.offline.message', 'igo.geo.network.offline.title');
-          this.previousMessageId = messageObj.toastId;
-        }
-      });
+    this.map.forcedOffline$.subscribe((forcedOffline: boolean) => {
+      const online = window.navigator.onLine;
+      // prevent first online message if no state change.
+      if (initialOnline && initialOnline === online && !forcedOffline) {
+        return;
+      }
+      if (this.previousMessageId) {
+        this.messageService.remove(this.previousMessageId);
+      }
+      if (!forcedOffline && online) {
+        const messageObj = this.messageService.info(
+          'igo.geo.network.online.message',
+          'igo.geo.network.online.title'
+        );
+        this.previousMessageId = messageObj.toastId;
+      } else if (forcedOffline) {
+        const messageObj = this.messageService.info(
+          'igo.geo.network.offline.message',
+          'igo.geo.network.offline.title'
+        );
+        this.previousMessageId = messageObj.toastId;
+      }
+    });
 
-      combineLatest([this.networkService.currentState(), this.map.forcedOffline$, this.map.layers$])
-      .subscribe((bunch: [ConnectionState, boolean, Layer[]]) => {
-        const online = bunch[0].connection;
-        const forcedOffline = bunch[1];
-        const layers = bunch[2];
-        this.handleLayersOnlineState(online, forcedOffline, layers);
-        });
-
-
+    combineLatest([
+      this.networkService.currentState(),
+      this.map.forcedOffline$,
+      this.map.layers$
+    ]).subscribe((bunch: [ConnectionState, boolean, Layer[]]) => {
+      const online = bunch[0].connection;
+      const forcedOffline = bunch[1];
+      const layers = bunch[2];
+      this.handleLayersOnlineState(online, forcedOffline, layers);
+    });
   }
 
-  private handleNonOfflinableLayerResolution(online: boolean, forcedOffline: boolean, layer: Layer) {
+  private handleNonOfflinableLayerResolution(
+    online: boolean,
+    forcedOffline: boolean,
+    layer: Layer
+  ) {
     if (!online || forcedOffline) {
       layer.maxResolution = 0;
     } else if (online || !forcedOffline) {
@@ -74,14 +82,20 @@ export class MapOfflineDirective implements AfterViewInit {
     }
   }
 
-  private handleLayersOnlineState(online: boolean, forcedOffline: boolean, layers: Layer[]) {
-    layers.forEach(layer => {
+  private handleLayersOnlineState(
+    online: boolean,
+    forcedOffline: boolean,
+    layers: Layer[]
+  ) {
+    layers.forEach((layer) => {
       let offlinableByUrlSourceOptions;
       if (layer.isIgoInternalLayer) {
         return;
       }
       // detect if layer/source are offlinable by url/pathOffline properties
-      if ((layer.options.sourceOptions as OfflinableSourceOptions)?.pathOffline) {
+      if (
+        (layer.options.sourceOptions as OfflinableSourceOptions)?.pathOffline
+      ) {
         offlinableByUrlSourceOptions = layer.options.sourceOptions;
       }
       if (offlinableByUrlSourceOptions) {
@@ -89,12 +103,20 @@ export class MapOfflineDirective implements AfterViewInit {
         if (type === 'mvt') {
           layer.ol.getSource().refresh();
         }
-        if(!online || forcedOffline) {
-          if (['vector', 'cluster'].includes(type)) { return; }
-          (layer.ol.getSource() as any).setUrl(offlinableByUrlSourceOptions.pathOffline);
-        } else if (!online ||!forcedOffline) {
-          if (['vector', 'cluster'].includes(type)) { return; }
-          (layer.ol.getSource() as any).setUrl(offlinableByUrlSourceOptions.url);
+        if (!online || forcedOffline) {
+          if (['vector', 'cluster'].includes(type)) {
+            return;
+          }
+          (layer.ol.getSource() as any).setUrl(
+            offlinableByUrlSourceOptions.pathOffline
+          );
+        } else if (!online || !forcedOffline) {
+          if (['vector', 'cluster'].includes(type)) {
+            return;
+          }
+          (layer.ol.getSource() as any).setUrl(
+            offlinableByUrlSourceOptions.url
+          );
         } else {
           this.handleNonOfflinableLayerResolution(online, forcedOffline, layer);
         }

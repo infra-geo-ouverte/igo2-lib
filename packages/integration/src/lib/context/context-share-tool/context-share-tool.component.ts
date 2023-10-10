@@ -16,10 +16,13 @@ import { LayerListToolState } from '../../map/layer-list-tool.state';
   templateUrl: './context-share-tool.component.html'
 })
 export class ContextShareToolComponent {
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
-  get map(): IgoMap { return this.mapState.map; }
-
-  get layerListControls(): LayerListControlsOptions { return this.layerListToolState.getLayerListControls(); }
+  get layerListControls(): LayerListControlsOptions {
+    return this.layerListToolState.getLayerListControls();
+  }
 
   constructor(
     private mapState: MapState,

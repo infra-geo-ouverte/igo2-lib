@@ -3,9 +3,7 @@
   subtitle="Geo"
   [dependencies]="['LanguageService']"
 >
-  <app-example-viewer
-    codeFolder="geo/spatial-filter"
-  >
+  <app-example-viewer codeFolder="geo/spatial-filter">
     <mat-grid-list cols="2" rowHeight="500px" gutterSize="16px">
       <mat-grid-tile>
         <igo-map-browser
@@ -13,10 +11,10 @@
           [view]="view"
           igoOverlay
           igoQuery
-          [queryFeatures]="true">
+          [queryFeatures]="true"
+        >
           <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
         </igo-map-browser>
-        
       </mat-grid-tile>
       <mat-grid-tile>
         <div class="flex flex-col align-start h-100 w-100 overflow-y-auto">
@@ -31,9 +29,10 @@
               (zoneChange)="onZoneChange($event)"
               (zoneWithBufferChange)="onZoneChange($event, true)"
               (bufferChange)="buffer = $event"
-              (measureUnitChange)="measureUnit = $event">
+              (measureUnitChange)="measureUnit = $event"
+            >
             </igo-spatial-filter-type>
-        
+
             <igo-spatial-filter-item
               [type]="type"
               [queryType]="queryType"
@@ -54,10 +53,11 @@
               (thematicChange)="thematics = $event"
               (toggleSearch)="getOutputToggleSearch()"
               (clearButtonEvent)="clearMap()"
-              (clearSearchEvent)="getOutputClearSearch()">
+              (clearSearchEvent)="getOutputClearSearch()"
+            >
             </igo-spatial-filter-item>
           </igo-panel>
-        
+
           <igo-panel class="w-100">
             <ng-container *ngIf="selectedFeature$ | async as feature">
               <igo-feature-details [feature]="feature"></igo-feature-details>

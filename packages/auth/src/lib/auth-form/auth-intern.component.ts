@@ -5,7 +5,11 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { Validators, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import {
+  Validators,
+  UntypedFormGroup,
+  UntypedFormBuilder
+} from '@angular/forms';
 
 import { AuthService } from '../shared/auth.service';
 import { LanguageService } from '@igo2/core';
@@ -54,7 +58,7 @@ export class AuthInternComponent {
         try {
           this.languageService.translate
             .get('igo.auth.error.' + error.error.message)
-            .subscribe(errorMsg => (this.error = errorMsg));
+            .subscribe((errorMsg) => (this.error = errorMsg));
         } catch (e) {
           this.error = error.error.message;
         }

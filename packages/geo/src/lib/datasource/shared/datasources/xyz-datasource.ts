@@ -12,5 +12,4 @@ export class XYZDataSource extends DataSource {
   }
 
   public onUnwatch() {}
-
 }

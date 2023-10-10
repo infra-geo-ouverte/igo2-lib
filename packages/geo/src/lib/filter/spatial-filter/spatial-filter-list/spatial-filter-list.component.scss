@@ -1,23 +1,23 @@
 :host {
-    display: block;
+  display: block;
 
-    .buffer-div {
-        display: flex;
-        width: 100%;
-    }
-    
-    .zone-list {
-        width: 100%;
-    }
-    
-    .buffer {
-        display: flex;
-        flex-flow: column nowrap;
-        width: 110%;
-    }
-    
-    .unit-field {
-        width: 110px;
-        margin-left: 16px;
-    }    
+  .buffer-div {
+    display: flex;
+    width: 100%;
+  }
+
+  .zone-list {
+    width: 100%;
+  }
+
+  .buffer {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 110%;
+  }
+
+  .unit-field {
+    width: 110px;
+    margin-left: 16px;
+  }
 }

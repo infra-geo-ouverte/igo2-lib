@@ -15,42 +15,48 @@ export class MediaService {
   constructor(breakpointObserver: BreakpointObserver) {
     breakpointObserver
       .observe([Breakpoints.HandsetLandscape])
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res.matches) {
           this.media$.next(Media.Mobile);
           this.orientation$.next(MediaOrientation.Landscape);
         }
       });
 
-    breakpointObserver.observe([Breakpoints.HandsetPortrait]).subscribe(res => {
-      if (res.matches) {
-        this.media$.next(Media.Mobile);
-        this.orientation$.next(MediaOrientation.Portrait);
-      }
-    });
+    breakpointObserver
+      .observe([Breakpoints.HandsetPortrait])
+      .subscribe((res) => {
+        if (res.matches) {
+          this.media$.next(Media.Mobile);
+          this.orientation$.next(MediaOrientation.Portrait);
+        }
+      });
 
-    breakpointObserver.observe([Breakpoints.TabletLandscape]).subscribe(res => {
-      if (res.matches) {
-        this.media$.next(Media.Tablet);
-        this.orientation$.next(MediaOrientation.Landscape);
-      }
-    });
+    breakpointObserver
+      .observe([Breakpoints.TabletLandscape])
+      .subscribe((res) => {
+        if (res.matches) {
+          this.media$.next(Media.Tablet);
+          this.orientation$.next(MediaOrientation.Landscape);
+        }
+      });
 
-    breakpointObserver.observe([Breakpoints.TabletPortrait]).subscribe(res => {
-      if (res.matches) {
-        this.media$.next(Media.Tablet);
-        this.orientation$.next(MediaOrientation.Portrait);
-      }
-    });
+    breakpointObserver
+      .observe([Breakpoints.TabletPortrait])
+      .subscribe((res) => {
+        if (res.matches) {
+          this.media$.next(Media.Tablet);
+          this.orientation$.next(MediaOrientation.Portrait);
+        }
+      });
 
-    breakpointObserver.observe([Breakpoints.WebLandscape]).subscribe(res => {
+    breakpointObserver.observe([Breakpoints.WebLandscape]).subscribe((res) => {
       if (res.matches) {
         this.media$.next(Media.Desktop);
         this.orientation$.next(MediaOrientation.Landscape);
       }
     });
 
-    breakpointObserver.observe([Breakpoints.WebPortrait]).subscribe(res => {
+    breakpointObserver.observe([Breakpoints.WebPortrait]).subscribe((res) => {
       if (res.matches) {
         this.media$.next(Media.Desktop);
         this.orientation$.next(MediaOrientation.Portrait);

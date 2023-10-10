@@ -1,10 +1,12 @@
-<button *ngIf="options.trackFeature"
+<button
+  *ngIf="options.trackFeature"
   mat-icon-button
   collapsibleButton
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.layer.trackFeature' | translate"
   [color]="color"
-  (click)="toggleTrackFeature()">
+  (click)="toggleTrackFeature()"
+>
   <mat-icon svgIcon="crosshairs-gps"></mat-icon>
 </button>
