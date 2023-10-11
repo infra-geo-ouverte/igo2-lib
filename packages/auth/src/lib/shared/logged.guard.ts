@@ -8,6 +8,7 @@ import {
 import { ConfigService } from '@igo2/core';
 
 import { AuthService } from './auth.service';
+import { AuthOptions } from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +27,8 @@ export class LoggedGuard {
 
     this.authService.redirectUrl = state.url;
 
-    const authConfig = this.config.getConfig('auth');
-    if (authConfig && authConfig.loginRoute) {
+    const authConfig = this.config.getConfig('auth') as AuthOptions;
+    if (authConfig?.loginRoute) {
       this.router.navigateByUrl(authConfig.loginRoute);
     }
 

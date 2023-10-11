@@ -226,9 +226,8 @@ export class DirectionsService {
     const pageCount = doc.getNumberOfPages();
     const date = moment(Date.now()).format('DD/MM/YYYY hh:mm').toString();
 
-    const logo = this.configService.getConfig('directionsSources.logo')
-      ? this.configService.getConfig('directionsSources.logo')
-      : 'assets/logo.png';
+    const logoConfig = this.configService.getConfig('directionsSources.logo');
+    const logo = logoConfig ? logoConfig : 'assets/logo.png';
 
     for (let index = 0; index < pageCount; index++) {
       doc.setPage(index);

@@ -21,6 +21,7 @@ import {
   OgcSelectorBundle,
   SelectorGroup
 } from './ogc-filter.interface';
+import { Extent } from 'ol/extent';
 
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
@@ -107,7 +108,7 @@ export class OgcFilterWriter {
 
   public buildFilter(
     filters?: IgoOgcFilterObject,
-    extent?: [number, number, number, number],
+    extent?: Extent,
     proj?: olProjection,
     fieldNameGeometry?: string,
     options?: OgcFilterableDataSourceOptions
@@ -712,7 +713,7 @@ export class OgcFilterWriter {
   public handleOgcFiltersAppliedValue(
     options: OgcFilterableDataSourceOptions,
     fieldNameGeometry: string,
-    extent?: [number, number, number, number],
+    extent?: Extent,
     proj?: olProjection
   ): string {
     const ogcFilters = options.ogcFilters;

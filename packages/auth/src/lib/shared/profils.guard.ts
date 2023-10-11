@@ -10,6 +10,7 @@ import { ConfigService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
+import { AuthOptions } from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class ProfilsGuard {
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.authService.getProfils().pipe(
       map((profils: { profils: string[] }) => {
-        const authConfig = this.config.getConfig('auth');
+        const authConfig = this.config.getConfig('auth') as AuthOptions;
         if (
           profils &&
           profils.profils &&
@@ -35,7 +36,7 @@ export class ProfilsGuard {
 
         this.authService.redirectUrl = state.url;
 
-        if (authConfig && authConfig.loginRoute) {
+        if (authConfig?.loginRoute) {
           this.router.navigateByUrl(authConfig.loginRoute);
         }
 

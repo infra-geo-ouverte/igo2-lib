@@ -12,6 +12,7 @@ import {
   Feature,
   FeatureStore,
   FeatureWorkspace,
+  OverlayStyleOptions,
   SearchResult,
   SearchSource,
   SearchSourceService
@@ -84,13 +85,8 @@ export class SearchState {
     private configService: ConfigService,
     private mapState: MapState
   ) {
-    const searchOverlayStyle = this.configService.getConfig(
-      'searchOverlayStyle'
-    ) as {
-      base?: CommonVectorStyleOptions;
-      selection?: CommonVectorStyleOptions;
-      focus?: CommonVectorStyleOptions;
-    };
+    const searchOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('searchOverlayStyle');
     if (searchOverlayStyle) {
       this.searchOverlayStyle = searchOverlayStyle.base;
       this.searchOverlayStyleSelection = searchOverlayStyle.selection;

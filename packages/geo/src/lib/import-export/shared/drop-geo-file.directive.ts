@@ -155,22 +155,10 @@ export class DropGeoFileDirective
     const importExportOptions = this.config.getConfig(
       'importExport'
     ) as ImportExportServiceOptions;
-    const importWithStyle =
-      importExportOptions?.importWithStyle ||
-      this.config.getConfig('importWithStyle');
-    if (this.config.getConfig('importWithStyle')) {
-      console.warn(`
-      The location of this config importWithStyle is deprecated.
-      Please move this property within importExport configuration.
-      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
-      Refer to environnement.ts OR config/config.json
-      This legacy conversion will be deleted in 2024.
-      `);
-    }
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    if (!importWithStyle) {
+    if (!importExportOptions?.importWithStyle) {
       handleFileImportSuccess(
         file,
         features,

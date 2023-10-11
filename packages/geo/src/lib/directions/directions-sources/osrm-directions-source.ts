@@ -14,7 +14,7 @@ import {
 } from '../shared/directions.enum';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
-import { DirectionsSourceOptions } from './directions-source.interface';
+import { OsrmDirectionsSourceOptions } from './directions-source.interface';
 
 @Injectable()
 export class OsrmDirectionsSource extends DirectionsSource {
@@ -27,7 +27,7 @@ export class OsrmDirectionsSource extends DirectionsSource {
   static _name = 'OSRM Québec';
   private directionsUrl =
     'https://geoegl.msp.gouv.qc.ca/services/itineraire/route/v1/driving/';
-  private options: DirectionsSourceOptions;
+  private options: OsrmDirectionsSourceOptions;
 
   constructor(
     private http: HttpClient,

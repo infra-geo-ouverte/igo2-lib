@@ -2,8 +2,6 @@ import { AuthInterceptor } from '@igo2/auth';
 
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
-import * as olproj from 'ol/proj';
-import olProjection from 'ol/proj/Projection';
 import olSourceVector from 'ol/source/Vector';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
@@ -15,7 +13,6 @@ import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 import {
-  buildUrl,
   checkWfsParams,
   defaultFieldNameGeometry,
   getFormatFromOptions
@@ -81,17 +78,6 @@ export class WFSDataSource extends DataSource {
   protected createOlSource(): olSourceVector<OlGeometry> {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
-      url: (extent, resolution, proj: olProjection) => {
-        const paramsWFS = this.options.paramsWFS;
-        const wfsProj = paramsWFS.srsName
-          ? new olProjection({ code: paramsWFS.srsName })
-          : proj;
-        const ogcFilters = (this.options as OgcFilterableDataSourceOptions)
-          .ogcFilters;
-        const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
-        paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
-        return buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
-      },
       strategy: OlLoadingStrategy.bbox
     });
     return vectorSource;

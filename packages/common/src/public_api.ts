@@ -16,6 +16,7 @@ export * from './lib/dom/dom.module';
 export * from './lib/drag-drop/drag-drop.module';
 export * from './lib/dynamic-component/dynamic-component.module';
 export * from './lib/dynamic-component/dynamic-outlet/dynamic-outlet.module';
+export * from './lib/environment';
 export * from './lib/flexible/flexible.module';
 export * from './lib/form/form.module';
 export * from './lib/form/form/form.module';

@@ -17,7 +17,7 @@ import {
 export function MSALConfigFactory(
   config: ConfigService
 ): PublicClientApplication {
-  const msConf: BrowserAuthOptions | null = config.getConfig('auth.microsoft');
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
 
   msConf.redirectUri = msConf?.redirectUri || window.location.href;
   msConf.authority =
@@ -36,9 +36,9 @@ export function MSALConfigFactory(
 export function MSALConfigFactoryb2c(
   config: ConfigService
 ): PublicClientApplication {
-  const msConf: BrowserAuthOptions | null = config.getConfig(
+  const msConf = config.getConfig(
     'auth.microsoftb2c.browserAuthOptions'
-  );
+  ) as BrowserAuthOptions;
   msConf.redirectUri = msConf?.redirectUri || window.location.href;
   msConf.authority =
     msConf?.authority || 'https://login.microsoftonline.com/organizations';
@@ -56,7 +56,7 @@ export function MSALConfigFactoryb2c(
 export function MSALAngularConfigFactory(
   config: ConfigService
 ): MSPMsalGuardConfiguration {
-  const msConf: AuthMicrosoftOptions = config.getConfig('auth.microsoft');
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
 
   return {
     interactionType: InteractionType.Popup,
@@ -71,9 +71,9 @@ export function MSALAngularConfigFactory(
 export function MSALAngularConfigFactoryb2c(
   config: ConfigService
 ): MSPMsalGuardConfiguration {
-  const msConf: BrowserAuthOptions | null = config.getConfig(
+  const msConf = config.getConfig(
     'auth.microsoftb2c.browserAuthOptions'
-  );
+  ) as BrowserAuthOptions;
 
   return {
     interactionType: InteractionType.Popup,
