@@ -1,20 +1,20 @@
-import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
+import BasicEvent from 'ol/events/Event';
+import { doubleClick } from 'ol/events/condition';
 import type { Type } from 'ol/geom/Geometry';
-import OlVectorSource from 'ol/source/Vector';
-import OlVectorLayer from 'ol/layer/Vector';
-import OlDraw from 'ol/interaction/Draw';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlDraw from 'ol/interaction/Draw';
+import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import OlModify from 'ol/interaction/Modify';
 import OlSelect from 'ol/interaction/Select';
-import BasicEvent from 'ol/events/Event';
-import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { SelectEvent as OlSelectEvent } from 'ol/interaction/Select';
-import { unByKey } from 'ol/Observable';
-import { doubleClick } from 'ol/events/condition';
+import OlVectorLayer from 'ol/layer/Vector';
+import OlVectorSource from 'ol/source/Vector';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
-import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, fromEvent } from 'rxjs';
 
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 

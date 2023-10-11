@@ -1,6 +1,8 @@
-import olSourceImage from 'ol/source/Image';
-import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
+import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
+
+import olSourceImage from 'ol/source/Image';
+
 import { ImageLayer } from '../shared/layers/image-layer';
 
 export class ImageWatcher extends Watcher {

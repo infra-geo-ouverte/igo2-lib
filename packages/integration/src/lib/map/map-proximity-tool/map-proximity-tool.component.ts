@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
+
 import {
   EntityTableComponent,
   EntityTableTemplate,
@@ -7,10 +8,13 @@ import {
 } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
-import { NumberUtils, Clipboard } from '@igo2/utils';
+import { Clipboard, NumberUtils } from '@igo2/utils';
+
 import { Subscription } from 'rxjs';
+
 import { MapProximityState } from '../map-proximity.state';
 import { MapState } from '../map.state';
+
 @ToolComponent({
   name: 'map-proximity',
   title: 'igo.integration.tools.closestFeature',

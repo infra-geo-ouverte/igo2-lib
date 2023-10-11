@@ -1,8 +1,10 @@
-import { Document, DocumentOptions } from 'flexsearch';
 import { EntityStoreStrategy } from '@igo2/common';
-import { FeatureStore } from '../store';
-import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
+
+import { Document, DocumentOptions } from 'flexsearch';
 import { skipWhile } from 'rxjs/operators';
+
+import { FeatureStoreSearchIndexStrategyOptions } from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  *

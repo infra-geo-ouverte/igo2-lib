@@ -1,5 +1,5 @@
+import { ChangeType, GroupingChanges } from './change.interface';
 import { StringUtils } from './string-utils';
-import { GroupingChanges, ChangeType } from './change.interface';
 
 export class ChangeUtils {
   static findChanges(

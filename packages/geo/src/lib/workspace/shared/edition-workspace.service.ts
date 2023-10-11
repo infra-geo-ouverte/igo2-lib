@@ -1,21 +1,31 @@
-import { Injectable } from '@angular/core';
 import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
+import { AuthInterceptor } from '@igo2/auth';
 import {
   ActionStore,
   EntityStoreFilterSelectionStrategy,
+  EntityTableButton,
   EntityTableColumnRenderer,
-  EntityTableTemplate,
-  EntityTableButton
+  EntityTableTemplate
 } from '@igo2/common';
 import { ConfigService, MessageService, StorageService } from '@igo2/core';
-import { AuthInterceptor } from '@igo2/auth';
+
+import olFeature from 'ol/Feature';
+import { FeatureLoader } from 'ol/featureloader';
+import GeoJSON from 'ol/format/GeoJSON';
+import WKT from 'ol/format/WKT';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olSourceImageWMS from 'ol/source/ImageWMS';
+
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, skipWhile, take } from 'rxjs/operators';
+
 import {
   RelationOptions,
   SourceFieldsOptionsParams,
@@ -32,7 +42,6 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy
 } from '../../feature';
-
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import {
   ImageLayer,
@@ -41,20 +50,12 @@ import {
   LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
-import { StyleService } from '../../style/style-service/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { MapBase, IgoMap } from '../../map/shared';
+import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { StyleService } from '../../style/style-service/style.service';
 import { EditionWorkspace } from './edition-workspace';
-
-import WKT from 'ol/format/WKT';
-import GeoJSON from 'ol/format/GeoJSON';
-import olFeature from 'ol/Feature';
-import olSourceImageWMS from 'ol/source/ImageWMS';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
-import { FeatureLoader } from 'ol/featureloader';
 
 @Injectable({
   providedIn: 'root'

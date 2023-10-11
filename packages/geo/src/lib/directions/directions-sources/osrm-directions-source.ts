@@ -1,19 +1,18 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+import { customCacheHasher, uuid } from '@igo2/utils';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { Cacheable } from 'ts-cacheable';
 
-import { customCacheHasher, uuid } from '@igo2/utils';
-import { ConfigService } from '@igo2/core';
-
-import { Direction, DirectionOptions } from '../shared/directions.interface';
 import {
   DirectionsFormat,
   SourceDirectionsType
 } from '../shared/directions.enum';
-
+import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
 import { OsrmDirectionsSourceOptions } from './directions-source.interface';
 

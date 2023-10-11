@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ExampleViewerComponent } from './example-viewer.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+
+import { ExampleViewerComponent } from './example-viewer.component';
 
 describe('ExampleViewerComponent', () => {
   let component: ExampleViewerComponent;

@@ -1,30 +1,30 @@
+import { HttpClient } from '@angular/common/http';
 import {
+  ChangeDetectorRef,
   Component,
-  Input,
-  Output,
   EventEmitter,
+  Input,
   OnInit,
-  ChangeDetectorRef
+  Output
 } from '@angular/core';
 import {
   UntypedFormBuilder,
-  UntypedFormGroup,
-  UntypedFormControl
+  UntypedFormControl,
+  UntypedFormGroup
 } from '@angular/forms';
 
+import { AuthService } from '@igo2/auth';
+import { ConfigService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
+
+import { TypePermission } from '../shared/context.enum';
 import {
   Context,
   ContextPermission,
   ContextPermissionsList,
   ContextProfils
 } from '../shared/context.interface';
-import { TypePermission } from '../shared/context.enum';
-
-import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-
-import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core';
 
 @Component({
   selector: 'igo-context-permissions',

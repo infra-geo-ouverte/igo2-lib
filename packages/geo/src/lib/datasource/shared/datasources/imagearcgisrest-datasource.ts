@@ -1,9 +1,10 @@
 import ImageArcGISRest from 'ol/source/ImageArcGISRest';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
+
 export class ImageArcGISRestDataSource extends DataSource {
   public declare ol: ImageArcGISRest;
   public declare options: ArcGISRestImageDataSourceOptions;

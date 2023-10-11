@@ -1,19 +1,20 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
-  LayerListControlsEnum,
-  LayerListControlsOptions,
-  IgoMap,
   ExportOptions,
-  Layer
+  IgoMap,
+  Layer,
+  LayerListControlsEnum,
+  LayerListControlsOptions
 } from '@igo2/geo';
-import { MapState } from './../map.state';
+
 import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
+import { MapState } from './../map.state';
 
 /**
  * Tool to browse a map's layers or to choose a different map

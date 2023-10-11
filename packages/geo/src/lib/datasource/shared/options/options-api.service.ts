@@ -1,5 +1,6 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,8 +10,8 @@ import {
   TileArcGISRestDataSourceOptions,
   WMSDataSourceOptions
 } from '../datasources';
-import { OptionsService } from './options.service';
 import { OptionsApiOptions } from './options-api.interface';
+import { OptionsService } from './options.service';
 
 @Injectable({
   providedIn: 'root'

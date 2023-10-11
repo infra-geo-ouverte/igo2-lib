@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { ConfigService, StorageService } from '@igo2/core';
 
-import { SearchSource } from './source';
 import { NominatimSearchSource } from './nominatim';
+import { SearchSource } from './source';
 
 /**
  * Nominatim search source factory

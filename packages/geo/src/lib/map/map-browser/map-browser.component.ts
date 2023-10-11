@@ -1,14 +1,15 @@
 import {
+  AfterViewInit,
   Component,
   Input,
-  OnInit,
-  AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
-import { SubjectStatus } from '@igo2/utils';
 import { ActivityService } from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
+import { Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
 import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';

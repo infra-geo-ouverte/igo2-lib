@@ -1,5 +1,6 @@
+import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
+
 import olSourceTile from 'ol/source/Tile';
-import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 
 import { TileLayer } from '../shared/layers/tile-layer';
 import { VectorTileLayer } from '../shared/layers/vectortile-layer';

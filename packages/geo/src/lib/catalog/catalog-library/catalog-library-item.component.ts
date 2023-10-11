@@ -1,12 +1,13 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  Output,
-  EventEmitter
+  Component,
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common';
+
 import { IgoMap } from '../../map/shared';
 import { Catalog } from '../shared/catalog.abstract';
 

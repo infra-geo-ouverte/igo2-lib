@@ -1,14 +1,16 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  OnInit,
+  Component,
   EventEmitter,
-  Output,
-  OnDestroy
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material/form-field';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
+
 import { LayerListControlsOptions } from './layer-list-tool.interface';
 
 @Component({

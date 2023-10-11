@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
-import { EntityTablePaginatorComponent } from './entity-table-paginator.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+
+import { EntityTablePaginatorComponent } from './entity-table-paginator.component';
 
 /**
  * @ignore

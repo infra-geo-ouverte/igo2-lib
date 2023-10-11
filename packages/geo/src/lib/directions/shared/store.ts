@@ -1,5 +1,7 @@
 import { EntityStore } from '@igo2/common';
+
 import { BehaviorSubject } from 'rxjs';
+
 import { FeatureStore } from '../../feature/shared/store';
 import {
   FeatureWithDirection,

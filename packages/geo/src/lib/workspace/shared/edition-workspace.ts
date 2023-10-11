@@ -1,24 +1,26 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Workspace, WorkspaceOptions, EntityRecord } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
-import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 
+import { EntityRecord, Workspace, WorkspaceOptions } from '@igo2/common';
+import { ConfigService } from '@igo2/core';
+
+import Collection from 'ol/Collection';
+import OlFeature from 'ol/Feature';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import type { Type } from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlModify from 'ol/interaction/Modify';
+import OlVectorSource from 'ol/source/Vector';
+import * as OlStyle from 'ol/style';
+
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+
+import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
+import { GeometryType, createInteractionStyle } from '../../draw';
+import { featureToOl } from '../../feature';
+import { DrawControl } from '../../geometry';
 import { ImageLayer, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
-import { DrawControl } from '../../geometry';
-import { createInteractionStyle, GeometryType } from '../../draw';
-import { featureToOl } from '../../feature';
-
-import type { Type } from 'ol/geom/Geometry';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import OlGeoJSON from 'ol/format/GeoJSON';
-import OlVectorSource from 'ol/source/Vector';
-import * as OlStyle from 'ol/style';
-import OlModify from 'ol/interaction/Modify';
-import Collection from 'ol/Collection';
-import OlFeature from 'ol/Feature';
-import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {
   layer: ImageLayer | VectorLayer;

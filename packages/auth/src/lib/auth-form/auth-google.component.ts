@@ -1,12 +1,13 @@
 import {
-  Component,
-  ChangeDetectionStrategy,
   ApplicationRef,
-  Output,
-  EventEmitter
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output
 } from '@angular/core';
 
 import { ConfigService, LanguageService } from '@igo2/core';
+
 import { AuthGoogleOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 

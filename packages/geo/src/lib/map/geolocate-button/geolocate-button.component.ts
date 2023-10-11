@@ -1,7 +1,8 @@
 import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { ConfigService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
 

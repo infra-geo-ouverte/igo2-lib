@@ -1,4 +1,4 @@
-import { TimeFilterType, TimeFilterStyle } from './time-filter.enum';
+import { TimeFilterStyle, TimeFilterType } from './time-filter.enum';
 
 export interface TimeFilterOptions {
   min?: string;

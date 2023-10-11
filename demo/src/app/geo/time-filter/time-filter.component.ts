@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
+  IgoMap,
   LayerService,
-  TimeFilterableDataSourceOptions,
+  TimeFilterStyle,
   TimeFilterType,
-  TimeFilterStyle
+  TimeFilterableDataSourceOptions
 } from '@igo2/geo';
 
 @Component({

@@ -1,19 +1,19 @@
-import { Directive, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy, OnInit } from '@angular/core';
+
+import { MediaService } from '@igo2/core';
+import {
+  MapBrowserComponent,
+  MapControlsOptions,
+  MapScaleLineOptions,
+  MapViewOptions
+} from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import {
-  MapViewOptions,
-  MapBrowserComponent,
-  MapControlsOptions,
-  MapScaleLineOptions
-} from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo';
-
+import { ContextMapView, DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
-import { DetailedContext, ContextMapView } from './context.interface';
-import { MediaService } from '@igo2/core';
 
 @Directive({
   selector: '[igoMapContext]'

@@ -1,33 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
+import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ConfigService, StorageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import {
+  FeatureMotion,
   FeatureStore,
+  FeatureStoreInMapExtentStrategy,
+  FeatureStoreInMapResolutionStrategy,
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
-  FeatureStoreInMapExtentStrategy,
-  FeatureMotion,
-  FeatureStoreInMapResolutionStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
-
+import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
-import { StorageService, ConfigService } from '@igo2/core';
 import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate
 } from './workspace.utils';
-import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
-import {
-  FeatureCommonVectorStyleOptions,
-  OverlayStyleOptions
-} from '../../style/shared/vector/vector-style.interface';
+import { FeatureCommonVectorStyleOptions, OverlayStyleOptions } from '../../style';
+
 @Injectable({
   providedIn: 'root'
 })

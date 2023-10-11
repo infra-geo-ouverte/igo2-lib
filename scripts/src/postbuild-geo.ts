@@ -1,4 +1,5 @@
 import path from 'path';
+
 import { compileStyle } from './utils/style.utils';
 
 const distPath = 'dist/geo';

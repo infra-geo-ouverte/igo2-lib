@@ -1,17 +1,16 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
+  Component,
   Inject,
+  Input,
   ViewEncapsulation
 } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 import { Layer } from '../../layer/shared/layers/layer';
-
 import {
-  MetadataOptions,
-  MetadataLayerOptions
+  MetadataLayerOptions,
+  MetadataOptions
 } from '../shared/metadata.interface';
 import { MetadataService } from '../shared/metadata.service';
 

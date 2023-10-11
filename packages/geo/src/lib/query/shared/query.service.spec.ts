@@ -1,10 +1,11 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from '@angular/core/testing';
+
+import { IgoMessageModule } from '@igo2/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 
 import { QueryService } from './query.service';
-import { IgoMessageModule } from '@igo2/core';
 
 describe('QueryService', () => {
   beforeEach(() => {

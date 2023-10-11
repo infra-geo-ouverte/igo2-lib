@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
   FeatureStore,
   FeatureWithDraw,
+  IgoMap,
+  LayerService,
   MapService
 } from '@igo2/geo';
 

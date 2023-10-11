@@ -1,19 +1,20 @@
-import { NgModule } from '@angular/core';
 import { HttpClientJsonpModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+
 import { IgoPanelModule } from '@igo2/common';
+import { IgoContextModule } from '@igo2/context';
 import {
-  IgoMapModule,
+  IgoFeatureModule,
   IgoLayerModule,
+  IgoMapModule,
   IgoMetadataModule,
   IgoOverlayModule,
-  IgoQueryModule,
-  IgoFeatureModule
+  IgoQueryModule
 } from '@igo2/geo';
-import { IgoContextModule } from '@igo2/context';
 
-import { AppContextComponent } from './context.component';
-import { AppContextRoutingModule } from './context-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppContextRoutingModule } from './context-routing.module';
+import { AppContextComponent } from './context.component';
 
 @NgModule({
   declarations: [AppContextComponent],

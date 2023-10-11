@@ -1,46 +1,47 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
+  Component,
   ContentChild,
-  OnInit,
-  OnDestroy,
-  Output,
+  ElementRef,
   EventEmitter,
-  ElementRef
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
+import { FloatLabelType } from '@angular/material/form-field';
+import { MatSliderChange } from '@angular/material/slider';
 
+import * as olextent from 'ol/extent';
+
+import {
+  BehaviorSubject,
+  EMPTY,
+  ReplaySubject,
+  Subscription,
+  timer
+} from 'rxjs';
+import { debounce } from 'rxjs/operators';
 import scrollIntoView from 'scroll-into-view-if-needed';
 
-import { FloatLabelType } from '@angular/material/form-field';
+import {
+  getAllChildLayersByProperty,
+  getRootParentByProperty
+} from '../../map/shared/linkedLayers.utils';
+import { IgoMap } from '../../map/shared/map';
+import {
+  MetadataLayerOptions,
+  MetadataOptions
+} from '../../metadata/shared/metadata.interface';
+import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
+import { Layer } from '../shared/layers/layer';
+import { LinkedProperties } from '../shared/layers/layer.interface';
 import {
   LayerListControlsEnum,
   LayerListDisplacement
 } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
-import {
-  BehaviorSubject,
-  ReplaySubject,
-  Subscription,
-  EMPTY,
-  timer
-} from 'rxjs';
-import { debounce } from 'rxjs/operators';
-import {
-  MetadataOptions,
-  MetadataLayerOptions
-} from '../../metadata/shared/metadata.interface';
-import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
-import { IgoMap } from '../../map/shared/map';
-import { Layer } from '../shared/layers/layer';
-import { LinkedProperties } from '../shared/layers/layer.interface';
-import { MatSliderChange } from '@angular/material/slider';
-import * as olextent from 'ol/extent';
-import {
-  getAllChildLayersByProperty,
-  getRootParentByProperty
-} from '../../map/shared/linkedLayers.utils';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({

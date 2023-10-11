@@ -1,32 +1,35 @@
 import {
-  Component,
-  ChangeDetectionStrategy,
   ApplicationRef,
-  Output,
+  ChangeDetectionStrategy,
+  Component,
   EventEmitter,
-  Inject
+  Inject,
+  Output
 } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+
 import {
+  MSAL_GUARD_CONFIG,
   MsalBroadcastService,
-  MsalService,
-  MSAL_GUARD_CONFIG
+  MsalService
 } from '@azure/msal-angular';
 import {
-  InteractionStatus,
   AuthenticationResult,
-  PublicClientApplication,
+  InteractionRequiredAuthError,
+  InteractionStatus,
   PopupRequest,
-  SilentRequest,
-  InteractionRequiredAuthError
+  PublicClientApplication,
+  SilentRequest
 } from '@azure/msal-browser';
-import { ConfigService } from '@igo2/core';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+
 import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
 } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
-import { filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'igo-auth-microsoft',

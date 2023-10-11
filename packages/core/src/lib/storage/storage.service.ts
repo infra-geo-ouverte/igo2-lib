@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '../config/config.service';
-import { StorageOptions } from './storage.interface';
 import { BaseStorage } from './storage';
+import { StorageOptions } from './storage.interface';
 
 @Injectable({
   providedIn: 'root'

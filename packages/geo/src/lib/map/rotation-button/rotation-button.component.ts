@@ -1,6 +1,7 @@
 import { AfterContentInit, Component, Input } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+
 import { bearingToAzimuth } from '@turf/helpers';
+import { BehaviorSubject } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UntypedFormBuilder, Validators, ValidatorFn } from '@angular/forms';
+import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 
 import {
   Form,

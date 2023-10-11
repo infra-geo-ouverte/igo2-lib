@@ -1,9 +1,9 @@
 import {
+  ChangeDetectorRef,
   Directive,
-  Self,
   OnInit,
   Optional,
-  ChangeDetectorRef
+  Self
 } from '@angular/core';
 
 import { RouteService } from '@igo2/core';

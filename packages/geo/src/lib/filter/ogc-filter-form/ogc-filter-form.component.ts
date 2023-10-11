@@ -1,16 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FloatLabelType } from '@angular/material/form-field';
+
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
+import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
+import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
-import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map/shared';
-import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
-import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
+import { WktService } from '../../wkt/shared/wkt.service';
 
 @Component({
   selector: 'igo-ogc-filter-form',

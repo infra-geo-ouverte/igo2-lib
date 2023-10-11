@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
+import { ILayerSearchResultFormatter, ILayerSearchSource } from './ilayer';
 import { SearchSource } from './source';
-import { ILayerSearchSource, ILayerSearchResultFormatter } from './ilayer';
 
 /**
  * ILayer search result formatter factory

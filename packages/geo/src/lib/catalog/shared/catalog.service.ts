@@ -1,31 +1,32 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { EMPTY, Observable, of, zip } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
-import { uuid, ObjectUtils } from '@igo2/utils';
-import { LanguageService, MessageService, ConfigService } from '@igo2/core';
+import { ConfigService, LanguageService, MessageService } from '@igo2/core';
+import { ObjectUtils, uuid } from '@igo2/utils';
+
+import { EMPTY, Observable, of, zip } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
 import {
+  ArcGISRestDataSourceOptions,
   CapabilitiesService,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
-  WMTSDataSourceOptions,
-  ArcGISRestDataSourceOptions
+  WMTSDataSourceOptions
 } from '../../datasource';
-import { LayerOptions, ImageLayerOptions } from '../../layer/shared';
+import { ImageLayerOptions, LayerOptions } from '../../layer/shared';
 import { getResolutionFromScale } from '../../map/shared';
-
-import {
-  CatalogItem,
-  CatalogItemLayer,
-  CatalogItemGroup,
-  ForcedProperty,
-  CatalogServiceOptions
-} from './catalog.interface';
-import { Catalog } from './catalog.abstract';
-import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query/shared';
 import { generateIdFromSourceOptions } from '../../utils';
+import { Catalog } from './catalog.abstract';
+import { CatalogItemType, TypeCatalog } from './catalog.enum';
+import {
+  CatalogItem,
+  CatalogItemGroup,
+  CatalogItemLayer,
+  CatalogServiceOptions,
+  ForcedProperty
+} from './catalog.interface';
 import {
   ArcGISRestCatalog,
   BaselayersCatalog,

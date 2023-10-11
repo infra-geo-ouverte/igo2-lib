@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-  Router,
   ActivatedRouteSnapshot,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
 
 import { ConfigService } from '@igo2/core';
+
 import { AuthService } from './auth.service';
 import { AuthOptions } from './auth.interface';
 

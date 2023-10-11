@@ -1,12 +1,12 @@
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { DrawControl } from '../../geometry/shared/controls/draw';
 import { FeatureStore } from '../../feature';
-import { CoordinatesUnit, LabelType } from '../shared/draw.enum';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { DrawControl } from '../../geometry/shared/controls/draw';
+import { IgoMap } from '../../map/shared/map';
 import {
   MeasureAreaUnit,
   MeasureLengthUnit
 } from '../../measure/shared/measure.enum';
+import { CoordinatesUnit, LabelType } from '../shared/draw.enum';
 
 export interface DrawOptions {
   icons?: string[];

@@ -1,7 +1,8 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { IgoCatalogModule } from './catalog/catalog.module';
 import { IgoDataSourceModule } from './datasource/datasource.module';
+import { IgoDirectionsModule } from './directions/directions.module';
 import { IgoDownloadModule } from './download/download.module';
 import { IgoDrawingToolModule } from './draw/drawingTool.module';
 import { IgoFeatureModule } from './feature/feature.module';
@@ -15,12 +16,11 @@ import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
 import { IgoQueryModule } from './query/query.module';
-import { IgoDirectionsModule } from './directions/directions.module';
 import { IgoSearchModule } from './search/search.module';
-import { IgoToastModule } from './toast/toast.module';
-import { IgoGeoWorkspaceModule } from './workspace/workspace.module';
-import { IgoWktModule } from './wkt/wkt.module';
 import { IgoStyleModule } from './style/style.module';
+import { IgoToastModule } from './toast/toast.module';
+import { IgoWktModule } from './wkt/wkt.module';
+import { IgoGeoWorkspaceModule } from './workspace/workspace.module';
 
 @NgModule({
   imports: [],
