@@ -1,9 +1,13 @@
-import { ConfigService } from '@igo2/core';
 import { Component, Input } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+
+import * as olproj from 'ol/proj';
+
 import { IgoMap } from '../shared/map';
 import { MapExtent } from '../shared/map.interface';
-import * as olproj from 'ol/proj';
 import { HomeExtentButtonOptions } from './home-extent-button.interface';
+
 /*
 Button to center the map to the home extent
 */

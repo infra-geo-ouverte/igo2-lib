@@ -1,26 +1,26 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
-  ViewChild,
+  EventEmitter,
   Input,
-  Output,
   OnChanges,
   OnInit,
-  AfterViewInit,
-  EventEmitter
+  Output,
+  ViewChild
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { SelectionModel } from '@angular/cdk/collections';
-
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { fromEvent } from 'rxjs';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { TableModel } from './table-model.interface';
+import { fromEvent } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { TableActionColor } from './table-action-color.enum';
 import { TableDatabase } from './table-database';
 import { TableDataSource } from './table-datasource';
-import { TableActionColor } from './table-action-color.enum';
+import { TableModel } from './table-model.interface';
 
 @Component({
   selector: 'igo-table',

@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+
 import { throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { DOMOptions, DOMValue } from './dom.interfaces';
-import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'

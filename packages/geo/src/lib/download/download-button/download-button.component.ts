@@ -1,7 +1,6 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-
 import { DownloadDataSourceOptions } from '../shared/download.interface';
 import { DownloadService } from '../shared/download.service';
 

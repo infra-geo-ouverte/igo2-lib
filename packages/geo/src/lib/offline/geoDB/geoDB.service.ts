@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, of, Subject } from 'rxjs';
-import { concatMap, first, map, take } from 'rxjs/operators';
+
 import { CompressionService } from '@igo2/core';
-import { GeoDBData } from './geoDB.interface';
+
+import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
+import { Observable, Subject, of } from 'rxjs';
+import { concatMap, first, map, take } from 'rxjs/operators';
+
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
+import { GeoDBData } from './geoDB.interface';
 
 @Injectable({
   providedIn: 'root'

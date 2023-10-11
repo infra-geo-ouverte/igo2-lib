@@ -1,4 +1,5 @@
 import { Workspace } from '@igo2/common';
+
 import { SearchSource } from './sources/source';
 import { SearchSourceSettings } from './sources/source.interfaces';
 

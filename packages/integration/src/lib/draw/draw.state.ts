@@ -6,6 +6,7 @@ import {
   FeatureWithDraw,
   VectorLayer
 } from '@igo2/geo';
+
 import { MapState } from '../map/map.state';
 
 /**

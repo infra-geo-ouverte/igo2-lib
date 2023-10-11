@@ -1,8 +1,3 @@
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
-import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
-import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
@@ -11,6 +6,11 @@ import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
 import { isChoiceFieldWithLabelField } from '@igo2/common';
 import { Extent } from 'ol/extent';
+
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;

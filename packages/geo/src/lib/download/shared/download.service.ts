@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 
-import olProjection from 'ol/proj/Projection';
-import * as olproj from 'ol/proj';
-
 import { MessageService } from '@igo2/core';
 
-import { Layer } from '../../layer/shared';
+import * as olproj from 'ol/proj';
+import olProjection from 'ol/proj/Projection';
+
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import {
   OgcFilterWriter,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared';
-
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { Layer } from '../../layer/shared';
 
 @Injectable({
   providedIn: 'root'

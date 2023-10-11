@@ -1,8 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 
-import { getControlErrorMessage } from '../shared/form.utils';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { getControlErrorMessage } from '../shared/form.utils';
 
 /**
  * A configurable form, optionnally bound to an entity

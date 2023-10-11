@@ -1,13 +1,16 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  ChangeDetectionStrategy,
-  OnInit,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
+
 import type { Layer } from '@igo2/geo';
+
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+
 import { WorkspaceState } from '../workspace.state';
-import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-workspace-button',

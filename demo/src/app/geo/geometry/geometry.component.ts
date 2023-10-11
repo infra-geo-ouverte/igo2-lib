@@ -1,11 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
+
+import { Form, FormService } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+
 import * as olstyle from 'ol/style';
 
-import { LanguageService } from '@igo2/core';
-import { Form, FormService } from '@igo2/common';
-import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-geometry',

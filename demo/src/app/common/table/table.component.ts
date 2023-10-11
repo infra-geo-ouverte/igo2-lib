@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { TableActionColor, TableDatabase } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
-import { TableDatabase, TableActionColor } from '@igo2/common';
 
 @Component({
   selector: 'app-table',

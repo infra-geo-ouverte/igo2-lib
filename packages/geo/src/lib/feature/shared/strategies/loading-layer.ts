@@ -1,10 +1,10 @@
-import OlEvent from 'ol/events/Event';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
-import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import OlEvent from 'ol/events/Event';
+
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy loads a layer's features into it's store counterpart.

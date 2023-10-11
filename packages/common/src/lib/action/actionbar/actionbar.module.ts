@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -11,8 +10,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 
-import { ActionbarComponent } from './actionbar.component';
 import { ActionbarItemComponent } from './actionbar-item.component';
+import { ActionbarComponent } from './actionbar.component';
 
 /**
  * @ignore

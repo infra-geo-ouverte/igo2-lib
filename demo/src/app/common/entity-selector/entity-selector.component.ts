@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+
+import { EntityStore } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
-
-import { LanguageService } from '@igo2/core';
-import { EntityStore } from '@igo2/common';
 
 interface DemoEntity {
   id: string;

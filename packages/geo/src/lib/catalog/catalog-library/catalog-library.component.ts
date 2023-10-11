@@ -1,20 +1,22 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntityStore } from '@igo2/common';
 import { MessageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
+
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
+
 import { CapabilitiesService } from '../../datasource';
 import { IgoMap } from '../../map/shared';
 import { standardizeUrl } from '../../utils/id-generator';

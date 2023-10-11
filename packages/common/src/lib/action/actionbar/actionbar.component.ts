@@ -1,22 +1,24 @@
+import { Overlay } from '@angular/cdk/overlay';
 import {
-  Component,
-  Input,
-  HostBinding,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
   OnChanges,
   OnDestroy,
-  SimpleChanges,
-  ElementRef
+  SimpleChanges
 } from '@angular/core';
 
-import { MediaService, Media } from '@igo2/core';
-import { EntityStoreWatcher } from '../../entity';
-import { Action } from '../shared/action.interfaces';
-import { ActionbarMode } from '../shared/action.enums';
-import { ActionStore } from '../shared/store';
-import { Overlay } from '@angular/cdk/overlay';
+import { Media, MediaService } from '@igo2/core';
+
 import { BehaviorSubject } from 'rxjs';
+
+import { EntityStoreWatcher } from '../../entity';
+import { ActionbarMode } from '../shared/action.enums';
+import { Action } from '../shared/action.interfaces';
+import { ActionStore } from '../shared/store';
 
 /**
  * A list of action buttons.

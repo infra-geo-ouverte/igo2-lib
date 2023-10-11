@@ -1,51 +1,51 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
+  Component,
   ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Optional,
-  Self
+  Output,
+  Self,
+  SimpleChanges
 } from '@angular/core';
+import {
+  FormControl,
+  FormControlName,
+  NgControl,
+  NgForm,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSelectChange } from '@angular/material/select';
+import { MatTableDataSource } from '@angular/material/table';
 
+import { default as moment } from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import {
   EntityKey,
   EntityRecord,
   EntityStore,
-  EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
-  EntityTableSelectionState,
   EntityTableScrollBehavior,
+  EntityTableSelectionState,
+  EntityTableTemplate,
   getColumnKeyWithoutPropertiesTag
 } from '../shared';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import {
-  UntypedFormBuilder,
-  NgControl,
-  NgForm,
-  FormControlName,
-  UntypedFormGroup,
-  FormControl,
-  Validators
-} from '@angular/forms';
-import { FocusMonitor } from '@angular/cdk/a11y';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { default as moment } from 'moment';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { MatSelectChange } from '@angular/material/select';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 import { RowData } from '../shared/entity-table.interface';
 
 @Component({

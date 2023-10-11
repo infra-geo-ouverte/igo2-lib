@@ -1,20 +1,25 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  ChangeDetectionStrategy,
-  OnInit,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
-
-import { SearchResult } from '../shared/search.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { LayerOptions } from '../../layer/shared/layers/layer.interface';
-import { LayerService } from '../../layer/shared/layer.service';
-import { LAYER } from '../../layer/shared/layer.enums';
-import { Subscription, BehaviorSubject, take } from 'rxjs';
-import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+
+import { EntityStore } from '@igo2/common';
+import { Media, MediaService } from '@igo2/core';
+
+import OlOverlay from 'ol/Overlay';
+import { default as OlGeometry } from 'ol/geom/Geometry';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
+import Circle from 'ol/style/Circle';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Style from 'ol/style/Style';
+
+import { BehaviorSubject, Subscription, take } from 'rxjs';
+
 import { DataSourceService, FeatureDataSource } from '../../datasource';
 import {
   Feature,
@@ -26,17 +31,15 @@ import {
   tryAddSelectionStrategy,
   tryBindStoreLayer
 } from '../../feature';
-import { EntityStore } from '@igo2/common';
+import { LAYER } from '../../layer/shared/layer.enums';
+import { LayerService } from '../../layer/shared/layer.service';
+import { LayerOptions } from '../../layer/shared/layers/layer.interface';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../map/shared/map';
 import { getTooltipsOfOlGeometry } from '../../measure';
-import OlOverlay from 'ol/Overlay';
-import Stroke from 'ol/style/Stroke';
-import Fill from 'ol/style/Fill';
-import Style from 'ol/style/Style';
-import Circle from 'ol/style/Circle';
-import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
-import { default as OlGeometry } from 'ol/geom/Geometry';
 import { QueryableDataSourceOptions } from '../../query/shared';
-import { Media, MediaService } from '@igo2/core';
+import { SearchResult } from '../shared/search.interfaces';
+import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
 
 @Component({
   selector: 'igo-search-add-button',

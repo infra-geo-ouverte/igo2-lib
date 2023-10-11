@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Overlay } from '@angular/cdk/overlay';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
+import { ActionStore, ActionbarMode } from '@igo2/common';
 import {
+  LanguageService,
   Media,
   MediaOrientation,
-  MediaService,
-  LanguageService
+  MediaService
 } from '@igo2/core';
-import { ActionStore, ActionbarMode } from '@igo2/common';
-import { Overlay } from '@angular/cdk/overlay';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-action',

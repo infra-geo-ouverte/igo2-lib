@@ -1,13 +1,12 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olStyle from 'ol/style';
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olStyle from 'ol/style';
 
 import { Feature } from '../../../feature/shared/feature.interfaces';
-import { FeatureCommonVectorStyleOptions } from './vector-style.interface';
-
-import { createOverlayDefaultStyle } from '../overlay/overlay-style.utils';
 import { createOverlayMarkerStyle } from '../overlay/overlay-marker-style.utils';
+import { createOverlayDefaultStyle } from '../overlay/overlay-style.utils';
+import { FeatureCommonVectorStyleOptions } from './vector-style.interface';
 
 /**
  * Generate a style for selected features

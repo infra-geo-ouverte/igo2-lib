@@ -1,9 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { MeasurerDialogData } from '../shared/measure.interfaces';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { MeasureAreaUnit, MeasureLengthUnit } from '../shared/measure.enum';
+import { MeasurerDialogData } from '../shared/measure.interfaces';
 
 @Component({
   selector: 'igo-measurer-dialog',

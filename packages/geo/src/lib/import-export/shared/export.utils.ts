@@ -1,7 +1,7 @@
 import {
-  getEntityProperty,
   EntityTableColumn,
-  EntityTableColumnRenderer
+  EntityTableColumnRenderer,
+  getEntityProperty
 } from '@igo2/common';
 import { MessageService } from '@igo2/core';
 import { downloadContent } from '@igo2/utils';

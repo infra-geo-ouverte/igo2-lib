@@ -3,7 +3,7 @@
   "workspaces": [
     "./packages/*"
   ],
-  "version": "16.0.0-rc.1",
+  "version": "16.0.0-rc.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
@@ -152,6 +152,7 @@
     "@angular/compiler-cli": "^16.2.5",
     "@compodoc/compodoc": "^1.1.15",
     "@cypress/schematic": "^2.5.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/flexsearch": "^0.7.3",
     "@types/geojson": "^7946.0.10",
     "@types/hammerjs": "^2.0.36",

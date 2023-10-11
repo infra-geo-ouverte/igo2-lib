@@ -1,17 +1,17 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
   ViewChild
 } from '@angular/core';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { Form, getEntityRevision } from '@igo2/common';
 import type { FormComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
+
+import { BehaviorSubject } from 'rxjs';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';

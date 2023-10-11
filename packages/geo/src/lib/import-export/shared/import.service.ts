@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 
-import { Observable, Observer } from 'rxjs';
-
-import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
+import * as olformat from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+
+import { Observable, Observer } from 'rxjs';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
   ImportInvalidFileError,
-  ImportUnreadableFileError,
-  ImportSizeError,
+  ImportOgreServerError,
   ImportSRSError,
-  ImportOgreServerError
+  ImportSizeError,
+  ImportUnreadableFileError
 } from './import.errors';
-import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
 import { ImportExportServiceOptions } from './import.interface';
+import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
 
 @Injectable({
   providedIn: 'root'

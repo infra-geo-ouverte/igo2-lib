@@ -1,45 +1,47 @@
 import { Injectable, Optional } from '@angular/core';
-import { forkJoin, of, Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
 
+import { AuthInterceptor } from '@igo2/auth';
+import { LanguageService, MessageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
+
+import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
+import { ProjectionService } from '../../map/shared/projection.service';
 import { CapabilitiesService } from './capabilities.service';
-import { OptionsService } from './options/options.service';
-import { WFSService } from './datasources/wfs.service';
 import {
+  AnyDataSourceOptions,
+  ArcGISRestDataSource,
+  ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  CartoDataSource,
+  CartoDataSourceOptions,
+  ClusterDataSource,
+  ClusterDataSourceOptions,
   DataSource,
-  OSMDataSource,
-  OSMDataSourceOptions,
   FeatureDataSource,
   FeatureDataSourceOptions,
-  XYZDataSource,
-  XYZDataSourceOptions,
+  ImageArcGISRestDataSource,
+  MVTDataSource,
+  MVTDataSourceOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
+  TileArcGISRestDataSource,
+  TileArcGISRestDataSourceOptions,
   TileDebugDataSource,
   TileDebugDataSourceOptions,
   WFSDataSource,
   WFSDataSourceOptions,
-  WMTSDataSource,
-  WMTSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
-  CartoDataSource,
-  CartoDataSourceOptions,
-  ArcGISRestDataSource,
-  ArcGISRestDataSourceOptions,
-  ImageArcGISRestDataSource,
-  ArcGISRestImageDataSourceOptions,
-  TileArcGISRestDataSource,
-  TileArcGISRestDataSourceOptions,
+  WMTSDataSource,
+  WMTSDataSourceOptions,
   WebSocketDataSource,
-  AnyDataSourceOptions,
-  MVTDataSource,
-  MVTDataSourceOptions,
-  ClusterDataSource,
-  ClusterDataSourceOptions
+  XYZDataSource,
+  XYZDataSourceOptions
 } from './datasources';
-import { ObjectUtils } from '@igo2/utils';
-import { LanguageService, MessageService } from '@igo2/core';
-import { ProjectionService } from '../../map/shared/projection.service';
-import { AuthInterceptor } from '@igo2/auth';
+import { WFSService } from './datasources/wfs.service';
+import { OptionsService } from './options/options.service';
 
 @Injectable({
   providedIn: 'root'

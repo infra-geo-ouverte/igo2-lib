@@ -1,12 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
+import { AuthService } from '@igo2/auth';
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, LanguageService, version } from '@igo2/core';
+
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
-import { AuthService } from '@igo2/auth';
-import { HttpClient } from '@angular/common/http';
-import { AllEnvironmentOptions } from '../../environment/environment.interface';
+import { AllEnvironmentOptions } from '../../environment';
 
 @ToolComponent({
   name: 'about',

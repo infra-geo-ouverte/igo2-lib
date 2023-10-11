@@ -1,12 +1,13 @@
+import { ObjectUtils, uuid } from '@igo2/utils';
+
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { ObjectUtils, uuid } from '@igo2/utils';
 import {
-  EntityKey,
   EntityFilterClause,
-  EntitySortClause,
-  EntityJoinClause
+  EntityJoinClause,
+  EntityKey,
+  EntitySortClause
 } from './entity.interfaces';
 
 /**

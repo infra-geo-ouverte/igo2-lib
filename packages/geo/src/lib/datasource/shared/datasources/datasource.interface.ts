@@ -1,9 +1,12 @@
+import { BaseEntityTableColumn, EntityRelation } from '@igo2/common';
+
+import type { Type } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
+
+import { Encoders, Preset, Tokenizer } from 'flexsearch';
+
 import { DownloadOptions } from '../../../download/shared/download.interface';
 import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
-import type { Type } from 'ol/geom/Geometry';
-import { Encoders, Preset, Tokenizer } from 'flexsearch';
-import { BaseEntityTableColumn, EntityRelation } from '@igo2/common';
 
 export interface DataSourceOptions {
   type?:

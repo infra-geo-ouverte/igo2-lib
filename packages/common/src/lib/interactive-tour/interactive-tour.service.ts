@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
+
+import { ConfigService, LanguageService, MediaService } from '@igo2/core';
+
+import { offset } from '@floating-ui/dom';
 import { ShepherdService } from 'angular-shepherd';
 import Shepherd from 'shepherd.js';
-import { offset } from '@floating-ui/dom';
 
-import { ConfigService, MediaService, LanguageService } from '@igo2/core';
-import { InteractiveTourLoader } from './interactive-tour.loader';
 import {
+  InteractiveTourAction,
   InteractiveTourOptions,
-  InteractiveTourStep,
-  InteractiveTourAction
+  InteractiveTourStep
 } from './interactive-tour.interface';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @Injectable({
   providedIn: 'root'

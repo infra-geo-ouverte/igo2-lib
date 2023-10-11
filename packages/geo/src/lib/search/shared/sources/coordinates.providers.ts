@@ -1,12 +1,12 @@
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
-import { SearchSource } from './source';
+import { Projection } from '../../../map/shared/projection.interfaces';
+import { ProjectionService } from '../../../map/shared/projection.service';
 import {
   CoordinatesReverseSearchSource,
   CoordinatesSearchResultFormatter
 } from './coordinates';
-import { Projection } from '../../../map/shared/projection.interfaces';
-import { ProjectionService } from '../../../map/shared/projection.service';
+import { SearchSource } from './source';
 
 /**
  * Coordinate search result formatter factory

@@ -1,9 +1,9 @@
 import {
+  ChangeDetectorRef,
   Component,
-  Input,
-  Output,
   EventEmitter,
-  ChangeDetectorRef
+  Input,
+  Output
 } from '@angular/core';
 
 import { Context } from '../shared/context.interface';

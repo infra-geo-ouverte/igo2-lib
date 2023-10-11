@@ -1,13 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
+import { getDefaultErrorMessages } from '../shared';
+import { FormFieldService } from '../shared/form-field.service';
 import {
   FormField,
   FormFieldInputs,
   FormFieldOptions,
   FormFieldSubscribers
 } from '../shared/form.interfaces';
-import { FormFieldService } from '../shared/form-field.service';
-import { getDefaultErrorMessages } from '../shared';
 
 /**
  * This component renders the proper form input based on

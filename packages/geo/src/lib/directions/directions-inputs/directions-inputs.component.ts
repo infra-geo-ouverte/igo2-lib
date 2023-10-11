@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   Component,
   EventEmitter,
@@ -5,26 +6,26 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { MatOption } from '@angular/material/core';
 
-import * as olProj from 'ol/proj';
+import { LanguageService } from '@igo2/core';
+
 import * as olObservable from 'ol/Observable';
+import * as olProj from 'ol/proj';
 
-import { Stop } from '../shared/directions.interface';
+import pointOnFeature from '@turf/point-on-feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
-import pointOnFeature from '@turf/point-on-feature';
+import { roundCoordTo } from '../../map/shared/map.utils';
+import { DirectionRelativePositionType } from '../shared/directions.enum';
+import { Stop } from '../shared/directions.interface';
 import {
   computeRelativePosition,
   removeStopFromStore,
   updateStoreSorting
 } from '../shared/directions.utils';
-import { MatAutocomplete } from '@angular/material/autocomplete';
-import { MatOption } from '@angular/material/core';
 import { StopsFeatureStore, StopsStore } from '../shared/store';
-import { roundCoordTo } from '../../map/shared/map.utils';
-import { LanguageService } from '@igo2/core';
-import { DirectionRelativePositionType } from '../shared/directions.enum';
 
 @Component({
   selector: 'igo-directions-inputs',

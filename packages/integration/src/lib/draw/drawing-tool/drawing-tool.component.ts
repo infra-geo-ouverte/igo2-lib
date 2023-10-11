@@ -1,13 +1,14 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
-  FeatureStore,
-  IgoMap,
   DrawControl,
+  FeatureStore,
   FeatureWithDraw,
+  IgoMap,
   VectorLayer
 } from '@igo2/geo';
+
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
 
