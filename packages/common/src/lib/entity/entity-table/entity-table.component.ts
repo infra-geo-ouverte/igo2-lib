@@ -492,8 +492,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
               isImg: this.isImg(value)
             };
             return cellData;
-          }, {})
-        };
+          }, {}) as CellData
+        } as RowData;
       });
     });
   }
@@ -522,13 +522,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   getTrackByFunction() {
-    return (index: number, record: EntityRecord<object, EntityState>) => {
-      return record.ref;
+    return (index: number, row: RowData) => {
+      return row.record.ref;
     };
   }
 
   /**
-   * Trigger a refresh of thre table. This can be useful when
+   * Trigger a refresh of the table. This can be useful when
    * the data source doesn't emit a new value but for some reason
    * the records need an update.
    * @internal
