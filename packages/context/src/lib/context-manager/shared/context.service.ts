@@ -493,7 +493,8 @@ export class ContextService {
           title: layer.options.title,
           zIndex: ++i,
           visible: layer.visible,
-          security: layer.security
+          security: layer.security,
+          opacity: layer.opacity
         } as LayerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
