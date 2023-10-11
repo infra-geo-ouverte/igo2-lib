@@ -5,6 +5,7 @@
     matSort
     [ngClass]="getTableClass()"
     [dataSource]="dataSource"
+    [trackBy]="rowTrackBy()"
     (matSortChange)="onSort($event)"
   >
     <ng-container matColumnDef="selectionCheckbox" class="mat-cell-checkbox">
@@ -28,18 +29,18 @@
           (mousedown)="$event.shiftKey ? $event.preventDefault() : null"
           (click)="
             $event.shiftKey
-              ? onShiftToggleRow(!rowIsSelected(row.record), row.record, $event)
+              ? onShiftToggleRow(!rowIsSelected(row), row, $event)
               : $event.stopPropagation()
           "
-          (change)="onToggleRow($event.checked, row.record)"
-          [checked]="rowIsSelected(row.record)"
+          (change)="onToggleRow($event.checked, row)"
+          [checked]="rowIsSelected(row)"
         >
         </mat-checkbox>
       </td>
     </ng-container>
 
     <ng-container
-      *ngFor="let column of template.columns"
+      *ngFor="let column of visibleColumns; trackBy: columnTrackBy()"
       [matColumnDef]="column.name"
     >
       <th
@@ -47,7 +48,6 @@
         *matHeaderCellDef
         mat-sort-header
         [disabled]="!columnIsSortable(column)"
-        [matTooltip]="column.tooltip ? column.tooltip : undefined"
       >
         {{ column.title }}
       </th>
@@ -57,7 +57,7 @@
           <td
             mat-cell
             *matCellDef="let row"
-            [ngClass]="row.cellData[column.name].class"
+            [ngClass]="getCellClass(row, column)"
           >
             <ng-container [ngSwitch]="column.type">
               <igo-entity-table-choice-cell
@@ -67,12 +67,13 @@
                     : ''
                 "
                 [column]="column"
-                [record]="row.record"
+                [record]="row"
               >
               </igo-entity-table-choice-cell>
               <igo-entity-table-default-cell
                 *ngSwitchDefault
-                [cellData]="row.cellData[column.name]"
+                [column]="column"
+                [record]="row"
               >
               </igo-entity-table-default-cell>
             </ng-container>
@@ -81,11 +82,11 @@
         <ng-container *ngSwitchCase="entityTableColumnRenderer.UnsanitizedHTML">
           <ng-container *matCellDef="let row">
             <td
-              *ngIf="isEdition(row.record); else isUnsanitizedHTML"
+              *ngIf="isEdition(row); else isUnsanitizedHTML"
               mat-cell
               class="mat-cell-text edition"
               [formGroup]="formGroup"
-              [ngClass]="row.cellData[column.name].class"
+              [ngClass]="getCellClass(row, column)"
             >
               <ng-container [ngSwitch]="column.type">
                 <mat-form-field
@@ -100,8 +101,8 @@
                     matInput
                     [matDatepicker]="picker"
                     [formControlName]="column.name"
-                    value="{{ row.cellData[column.name].value }}"
-                    (dateChange)="onDateChange(column.name, row.record, $event)"
+                    value="{{ getValue(row, column) }}"
+                    (dateChange)="onDateChange(column, row, $event)"
                   />
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -129,8 +130,8 @@
                     class="class_number_edition"
                     [formControlName]="column.name"
                     step="{{ column.step }}"
-                    value="{{ row.cellData[column.name].value }}"
-                    (input)="onValueChange(column.name, row.record, $event)"
+                    value="{{ getValue(row, column) }}"
+                    (input)="onValueChange(column, row, $event)"
                     readonly="{{
                       getValidationAttributeValue(column, 'readonly')
                     }}"
@@ -141,19 +142,17 @@
                 <mat-checkbox
                   *ngSwitchCase="'boolean'"
                   [formControlName]="column.name"
-                  [checked]="row.cellData[column.name].value"
-                  (change)="
-                    onBooleanValueChange(column.name, row.record, $event)
-                  "
+                  [checked]="getValue(row, column)"
+                  (change)="onBooleanValueChange(column, row, $event)"
                 ></mat-checkbox>
                 <igo-entity-select-field
                   *ngSwitchCase="'list'"
                   [control]="this.formGroup.get([column.name])"
                   [relation]="column.relation"
                   [domainValues]="column.domainValues"
-                  [record]="row.record"
+                  [record]="row"
                   [multiple]="column.multiple"
-                  (selected)="onSelectValueChange(column, row.record, $event)"
+                  (selected)="onSelectValueChange(column, row, $event)"
                 ></igo-entity-select-field>
 
                 <igo-entity-autocomplete-field
@@ -161,10 +160,8 @@
                   [control]="this.formGroup.get([column.name])"
                   [relation]="column.relation"
                   [domainValues]="column.domainValues"
-                  [record]="row.record"
-                  (selected)="
-                    onAutocompleteValueChange(column, row.record, $event)
-                  "
+                  [record]="row"
+                  (selected)="onAutocompleteValueChange(column, row, $event)"
                 >
                 </igo-entity-autocomplete-field>
                 <mat-form-field *ngSwitchCaseDefault subscriptSizing="dynamic">
@@ -172,8 +169,8 @@
                     matInput
                     type="text"
                     [formControlName]="column.name"
-                    value="{{ row.cellData[column.name].value }}"
-                    (input)="onValueChange(column.name, row.record, $event)"
+                    value="{{ getValue(row, column) }}"
+                    (input)="onValueChange(column, row, $event)"
                     readonly="{{
                       getValidationAttributeValue(column, 'readonly')
                     }}"
@@ -182,7 +179,7 @@
               </ng-container>
             </td>
             <ng-template #isUnsanitizedHTML>
-              <td mat-cell [ngClass]="row.cellData[column.name].class">
+              <td mat-cell [ngClass]="getCellClass(row, column)">
                 <ng-container [ngSwitch]="column.type">
                   <igo-entity-table-choice-cell
                     *ngSwitchCase="
@@ -191,12 +188,13 @@
                         : ''
                     "
                     [column]="column"
-                    [record]="row.record"
+                    [record]="row"
                   >
                   </igo-entity-table-choice-cell>
                   <igo-entity-table-default-cell
                     *ngSwitchDefault
-                    [cellData]="row.cellData[column.name]"
+                    [column]="column"
+                    [record]="row"
                   >
                   </igo-entity-table-default-cell>
                 </ng-container>
@@ -209,16 +207,16 @@
             mat-cell
             *matCellDef="let row"
             class="mat-cell-text"
-            [ngClass]="row.cellData[column.name].class"
+            [ngClass]="getCellClass(row, column)"
           >
             <mat-icon
               *ngIf="column.onClick"
-              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
+              svgIcon="{{ getValue(row, column) || column.icon }}"
               (click)="column.onClick($event)"
             ></mat-icon>
             <mat-icon
               *ngIf="!column.onClick"
-              svgIcon="{{ row.cellData[column.name].value || column.icon }}"
+              svgIcon="{{ getValue(row, column) || column.icon }}"
             ></mat-icon>
           </td>
         </ng-container>
@@ -227,12 +225,12 @@
             mat-cell
             *matCellDef="let row"
             class="mat-cell-text"
-            [ngClass]="row.cellData[column.name].class"
+            [ngClass]="getCellClass(row, column)"
           >
-            <span *ngFor="let button of row.cellData[column.name].value">
+            <span *ngFor="let button of getValue(row, column)">
               <ng-container
                 *ngIf="
-                  isEdition(row.record) === button.editMode ||
+                  isEdition(row) === button.editMode ||
                   button.editMode === undefined
                 "
               >
@@ -241,7 +239,7 @@
                   igoStopPropagation
                   mat-icon-button
                   [color]="button.color"
-                  (mousedown)="onButtonClick(button.click, row.record)"
+                  (mousedown)="onButtonClick(button.click, row)"
                   [disabled]="button.disabled"
                 >
                   <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
@@ -251,7 +249,7 @@
                   igoStopPropagation
                   mat-mini-fab
                   [color]="button.color"
-                  (mousedown)="onButtonClick(button.click, row.record)"
+                  (mousedown)="onButtonClick(button.click, row)"
                   [disabled]="button.disabled"
                 >
                   <mat-icon svgIcon="{{ button.icon }}"></mat-icon>
@@ -264,7 +262,7 @@
           <td
             mat-cell
             *matCellDef="let row"
-            [ngClass]="row.cellData[column.name].class"
+            [ngClass]="getCellClass(row, column)"
           >
             <ng-container [ngSwitch]="column.type">
               <igo-entity-table-choice-cell
@@ -274,12 +272,13 @@
                     : ''
                 "
                 [column]="column"
-                [record]="row.record"
+                [record]="row"
               >
               </igo-entity-table-choice-cell>
               <igo-entity-table-default-cell
                 *ngSwitchDefault
-                [cellData]="row.cellData[column.name]"
+                [column]="column"
+                [record]="row"
               >
               </igo-entity-table-default-cell>
             </ng-container>
@@ -298,11 +297,11 @@
       igoEntityTableRow
       *matRowDef="let row; columns: headers"
       [scrollBehavior]="scrollBehavior"
-      [ngClass]="getRowClass(row.record)"
+      [ngClass]="getRowClass(row)"
       [selection]="selection"
-      [selected]="rowIsSelected(row.record)"
-      (select)="onRowSelect(row.record)"
-      (click)="onRowClick(row.record)"
+      [selected]="rowIsSelected(row)"
+      (select)="onRowSelect(row)"
+      (click)="onRowClick(row)"
     ></tr>
   </table>
   <igo-entity-table-paginator

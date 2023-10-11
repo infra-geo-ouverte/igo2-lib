@@ -12,7 +12,8 @@ import {
   Optional,
   Output,
   Self,
-  SimpleChanges
+  SimpleChanges,
+  TrackByFunction
 } from '@angular/core';
 import {
   FormControl,
@@ -46,7 +47,6 @@ import {
   EntityTableTemplate,
   getColumnKeyWithoutPropertiesTag
 } from '../shared';
-import { RowData } from '../shared/entity-table.interface';
 
 @Component({
   selector: 'igo-entity-table',
@@ -197,7 +197,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Data source consumable by the underlying material table
    * @internal
    */
-  dataSource = new MatTableDataSource<RowData>();
+  dataSource = new MatTableDataSource<EntityRecord<object>>();
 
   /**
    * Whether selection is supported
@@ -417,19 +417,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
   private handleDatasource(): Subscription {
     return this.store.stateView.all$().subscribe((all) => {
-      this.dataSource.data = all.map((record) => {
-        return {
-          record,
-          cellData: this.visibleColumns.reduce((cellData, column) => {
-            const value = this.getValue(record, column);
-            cellData[column.name] = {
-              class: this.getCellClass(record, column),
-              value
-            };
-            return cellData;
-          }, {})
-        };
-      });
+      this.dataSource.data = all;
+      this.cdRef.markForCheck();
     });
   }
 
@@ -457,6 +446,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           this.dataSource.paginator.pageIndex = pageToReach;
         }
         this.selectionState$.next(this.computeSelectionState(records));
+        this.cdRef.markForCheck();
       });
   }
 
@@ -858,5 +848,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     if (typeof clickFunc === 'function') {
       clickFunc(record.entity, record);
     }
+  }
+
+  rowTrackBy(): TrackByFunction<EntityRecord<object>> {
+    return (_index, row) => row.ref;
+  }
+
+  columnTrackBy(): TrackByFunction<EntityTableColumn> {
+    return (_index, column) => column.name;
   }
 }
