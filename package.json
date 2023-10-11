@@ -3,7 +3,7 @@
   "workspaces": [
     "./packages/*"
   ],
-  "version": "16.0.0-rc.1",
+  "version": "16.0.0-rc.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
