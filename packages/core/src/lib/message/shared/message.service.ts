@@ -299,17 +299,23 @@ export class MessageService {
 
     if (textInterpolateParams) {
       Object.keys(textInterpolateParams).map((k) => {
-        if (textInterpolateParams[k]) {
+        const value = textInterpolateParams[k];
+        if (value) {
           translatedTextInterpolateParams[k] =
-            this.languageService.translate.instant(textInterpolateParams[k]);
+            typeof value === 'string'
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }
     if (titleInterpolateParams) {
       Object.keys(titleInterpolateParams).map((k) => {
         if (k) {
+          const value = titleInterpolateParams[k];
           translatedTitlenterpolateParams[k] =
-            this.languageService.translate.instant(titleInterpolateParams[k]);
+            typeof value === "string"
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }

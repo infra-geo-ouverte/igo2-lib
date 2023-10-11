@@ -1,15 +1,7 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build ---configuration production` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+import { EnvironmentOptions } from '@igo2/integration';
+import { TooltipType, CatalogQueryFormatTypes, ICatalog } from '@igo2/geo';
 
-// import { IgoEnvironment } from '@igo2/core';
-
-interface Environment {
-  production: boolean;
-  igo: any;
-}
-
-export const environment: Environment = {
+export const environment: EnvironmentOptions = {
   production: false,
   igo: {
     importWithStyle: true,
@@ -54,14 +46,11 @@ export const environment: Environment = {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
-            'application/json': [
-              'stations_meteoroutieres',
-              'histo_stations_meteoroutieres'
-            ]
-          },
+            json: ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+          } as CatalogQueryFormatTypes,
           queryHtmlTarget: 'iframe',
           count: 30
-        },
+        } as ICatalog,
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
@@ -72,7 +61,7 @@ export const environment: Environment = {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          tooltipType: 'abstract' // or title
+          tooltipType: TooltipType.ABSTRACT
         },
         {
           id: 'arcgisrestcompletecatalog',
@@ -148,7 +137,7 @@ export const environment: Environment = {
               id: 'wmts_error',
               url: 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Elevation?SERVICE=WMTS&REQUEST=GetCapabilities',
               type: 'wmts',
-              crossOrigin: true,
+              setCrossOriginAnonymous: true,
               matrixSet: 'EPSG_3857',
               version: '1.0.0',
               forcedProperties: [
@@ -166,7 +155,7 @@ export const environment: Environment = {
               id: 'wms',
               url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
               type: 'wms',
-              crossOrigin: true,
+              setCrossOriginAnonymous: true,
               version: '1.3.0',
               forcedProperties: [
                 {
@@ -223,7 +212,7 @@ export const environment: Environment = {
               id: 'wms',
               url: 'https://cartes.geogratis.gc.ca/wms/canvec_fr',
               type: 'wms',
-              crossOrigin: true,
+              setCrossOriginAnonymous: true,
               version: '1.3.0'
             },
             {
@@ -237,7 +226,7 @@ export const environment: Environment = {
               id: 'rn_wmts_1',
               url: 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
               type: 'wmts',
-              crossOrigin: true,
+              setCrossOriginAnonymous: true,
               matrixSet: 'EPSG_3857',
               version: '1.0.0',
               forcedProperties: [
@@ -293,7 +282,7 @@ export const environment: Environment = {
         title: 'Feuillets SNRC',
         searchUrl: '/ws/mffpecofor.fcgi',
         storedquery_id: 'sq250et20kFeuillet',
-        fields: { name: 'no_feuillet', defaultValue: '0' },
+        fields: [{ name: 'no_feuillet', defaultValue: '0' }],
         resultTitle: 'feuillet',
         params: {
           limit: '8'

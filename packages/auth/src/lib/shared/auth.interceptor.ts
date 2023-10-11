@@ -11,12 +11,17 @@ import { Md5 } from 'ts-md5';
 
 import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
-import { AuthByKeyOptions, WithCredentialsOptions } from './auth.interface';
+import {
+  AuthByKeyOptions,
+  AuthOptions,
+  WithCredentialsOptions
+} from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
+  private authOptions: AuthOptions;
   private refreshInProgress = false;
   private trustHosts: string[];
   private hostsWithCredentials: WithCredentialsOptions[];
@@ -27,12 +32,13 @@ export class AuthInterceptor implements HttpInterceptor {
     private tokenService: TokenService,
     private http: HttpClient
   ) {
-    this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
+    this.authOptions = this.config.getConfig('auth') as AuthOptions;
+
+    this.trustHosts = this.authOptions?.trustHosts || [];
     this.trustHosts.push(window.location.hostname);
 
-    this.hostsWithCredentials =
-      this.config.getConfig('auth.hostsWithCredentials') || [];
-    this.hostsWithAuthByKey = this.config.getConfig('auth.hostsByKey') || [];
+    this.hostsWithCredentials = this.authOptions?.hostsWithCredentials || [];
+    this.hostsWithAuthByKey = this.authOptions?.hostsByKey || [];
   }
 
   intercept(
@@ -171,7 +177,7 @@ export class AuthInterceptor implements HttpInterceptor {
     ) {
       this.refreshInProgress = true;
 
-      const url = this.config.getConfig('auth.url');
+      const url = this.authOptions?.url;
       return this.http.post(`${url}/refresh`, {}).subscribe(
         (data: any) => {
           this.tokenService.set(data.token);

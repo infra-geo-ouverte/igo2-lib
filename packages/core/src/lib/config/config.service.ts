@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions } from './config.interface';
+import { BaseConfigOptions, ConfigOptions } from './config.interface';
 import { version } from './version';
 import {
   ALTERNATE_CONFIG_FROM_DEPRECATION,
@@ -15,8 +15,8 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigService {
-  private config: object = {};
+export class ConfigService<T = { [key: string]: any }> {
+  private config: BaseConfigOptions<T> | null;
   private httpClient: HttpClient;
   private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
 
@@ -25,19 +25,32 @@ export class ConfigService {
   }
 
   /**
+   * Use to get the all config file (merge from environnement.ts and config.json)
+   */
+  public getConfigs(): any {
+    Array.from(this.configDeprecated.keys()).map((deprecatedKey) => {
+      const deprecatedValue = ObjectUtils.resolve(this.config, deprecatedKey);
+      if (deprecatedValue !== undefined) {
+        this.handleDeprecatedConfig(deprecatedKey);
+      }
+    });
+    return this.config;
+  }
+
+  /**
    * Use to get the data found in config file
    */
-  public getConfig(key: string): any {
-    const value = ObjectUtils.resolve(this.config, key);
+  public getConfig<T = any>(key: string, defaultValue?: unknown): T {
+    let value = ObjectUtils.resolve(this.config, key);
 
     const isDeprecated = this.configDeprecated.get(key);
     if (isDeprecated && value !== undefined) {
       this.handleDeprecatedConfig(key);
     } else if (value === undefined) {
-      return this.handleDeprecationPossibility(key);
+      value = this.handleDeprecationPossibility(key);
     }
 
-    return value;
+    return value ?? defaultValue;
   }
 
   private handleDeprecatedConfig(key: string): void {
@@ -66,8 +79,8 @@ export class ConfigService {
   /**
    * This method loads "[path]" to get all config's variables
    */
-  public load(options: ConfigOptions) {
-    const baseConfig = options.default || {};
+  public load(options: ConfigOptions<T>) {
+    const baseConfig = options.default;
     if (!options.path) {
       this.config = baseConfig;
       return true;

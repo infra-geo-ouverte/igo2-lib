@@ -1,7 +1,5 @@
 import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
-import olProjection from 'ol/proj/Projection';
-import * as olproj from 'ol/proj';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { DataSource } from './datasource';
@@ -16,14 +14,12 @@ import {
 import {
   defaultFieldNameGeometry,
   checkWfsParams,
-  getFormatFromOptions,
-  buildUrl
+  getFormatFromOptions
 } from './wms-wfs.utils';
 import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
   public declare ol: olSourceVector<OlGeometry>;
-  public mostRecentIdCallOGCFilter: number = 0;
 
   set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
@@ -82,17 +78,6 @@ export class WFSDataSource extends DataSource {
   protected createOlSource(): olSourceVector<OlGeometry> {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
-      url: (extent, resolution, proj: olProjection) => {
-        const paramsWFS = this.options.paramsWFS;
-        const wfsProj = paramsWFS.srsName
-          ? new olProjection({ code: paramsWFS.srsName })
-          : proj;
-        const ogcFilters = (this.options as OgcFilterableDataSourceOptions)
-          .ogcFilters;
-        const currentExtent = olproj.transformExtent(extent, proj, wfsProj);
-        paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
-        return buildUrl(this.options, currentExtent, wfsProj, ogcFilters);
-      },
       strategy: OlLoadingStrategy.bbox
     });
     return vectorSource;
@@ -100,7 +85,6 @@ export class WFSDataSource extends DataSource {
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
-    this.mostRecentIdCallOGCFilter += 1;
     if (triggerEvent) {
       this.ol.notify('ogcFilters', this.ogcFilters);
     }

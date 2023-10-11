@@ -1,3 +1,9 @@
+import { QueryFormat } from '../../query/shared/query.enums';
+
+export type CatalogQueryFormatTypes = {
+  [key in QueryFormat]: string | string[];
+};
+
 export enum CatalogItemType {
   Layer = 'layer',
   Group = 'group'

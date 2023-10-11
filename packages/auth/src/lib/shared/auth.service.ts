@@ -9,7 +9,7 @@ import { globalCacheBusterNotifier } from 'ts-cacheable';
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
-import { User, IInfosUser } from './auth.interface';
+import { User, IInfosUser, AuthOptions } from './auth.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -21,9 +21,10 @@ export class AuthService {
   public redirectUrl: string;
   public languageForce = false;
   private anonymous = false;
+  private authOptions: AuthOptions;
 
   get hasAuthService() {
-    return this.config.getConfig('auth.url') !== undefined;
+    return this.authOptions?.url !== undefined;
   }
 
   constructor(
@@ -34,6 +35,7 @@ export class AuthService {
     private messageService: MessageService,
     @Optional() private router: Router
   ) {
+    this.authOptions = this.config.getConfig('auth');
     this.authenticate$.next(this.authenticated);
     this.authenticate$.subscribe((authenticated) => {
       this.logged$.next(authenticated);
@@ -75,8 +77,7 @@ export class AuthService {
   }
 
   refresh(): Observable<void> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.post(`${url}/refresh`, {}).pipe(
+    return this.http.post(`${this.authOptions?.url}/refresh`, {}).pipe(
       tap((data: any) => {
         this.tokenService.set(data.token);
       }),
@@ -115,9 +116,8 @@ export class AuthService {
     }
     const redirectUrl = this.redirectUrl || this.router.url;
 
-    const options = this.config.getConfig('auth') || {};
-    if (redirectUrl === options.loginRoute) {
-      const homeRoute = options.homeRoute || '/';
+    if (redirectUrl === this.authOptions.loginRoute) {
+      const homeRoute = this.authOptions.homeRoute || '/';
       this.router.navigateByUrl(homeRoute);
     } else if (redirectUrl) {
       this.router.navigateByUrl(redirectUrl);
@@ -125,18 +125,18 @@ export class AuthService {
   }
 
   getUserInfo(): Observable<User> {
-    const url = this.config.getConfig('auth.url') + '/info';
+    const url = this.authOptions?.url + '/info';
     return this.http.get<User>(url);
   }
 
   getProfils(): Observable<{ profils: string[] }> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.get<{ profils: string[] }>(`${url}/profils`);
+    return this.http.get<{ profils: string[] }>(
+      `${this.authOptions?.url}/profils`
+    );
   }
 
   updateUser(user: User): Observable<User> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.patch<User>(url, user);
+    return this.http.patch<User>(this.authOptions?.url, user);
   }
 
   private encodePassword(password: string) {
@@ -165,25 +165,26 @@ export class AuthService {
   }
 
   private loginCall(body, headers) {
-    const url = this.config.getConfig('auth.url');
-    return this.http.post(`${url}/login`, body, { headers }).pipe(
-      tap((data: any) => {
-        this.tokenService.set(data.token);
-        const tokenDecoded = this.decodeToken();
-        if (tokenDecoded && tokenDecoded.user) {
-          if (tokenDecoded.user.locale && !this.languageForce) {
-            this.languageService.setLanguage(tokenDecoded.user.locale);
+    return this.http
+      .post(`${this.authOptions?.url}/login`, body, { headers })
+      .pipe(
+        tap((data: any) => {
+          this.tokenService.set(data.token);
+          const tokenDecoded = this.decodeToken();
+          if (tokenDecoded && tokenDecoded.user) {
+            if (tokenDecoded.user.locale && !this.languageForce) {
+              this.languageService.setLanguage(tokenDecoded.user.locale);
+            }
+            if (tokenDecoded.user.isExpired) {
+              this.messageService.alert('igo.auth.error.Password expired');
+            }
           }
-          if (tokenDecoded.user.isExpired) {
-            this.messageService.alert('igo.auth.error.Password expired');
-          }
-        }
-        this.authenticate$.next(true);
-      }),
-      catchError((err) => {
-        err.error.caught = true;
-        throw err;
-      })
-    );
+          this.authenticate$.next(true);
+        }),
+        catchError((err) => {
+          err.error.caught = true;
+          throw err;
+        })
+      );
   }
 }
