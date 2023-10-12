@@ -1,6 +1,6 @@
 import { FeatureStore } from './store';
-import { FeatureStoreSelectionStrategy } from './strategies/selection';
 import { FeatureStoreLoadingStrategy } from './strategies/loading';
+import { FeatureStoreSelectionStrategy } from './strategies/selection';
 
 /**
  * Try to add a loading strategy to a store and activate it.

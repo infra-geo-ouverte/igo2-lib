@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
-import { ObjectUtils, Clipboard } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
+import { Clipboard, ObjectUtils } from '@igo2/utils';
+
 import { Context } from '../shared/context.interface';
 
 @Component({

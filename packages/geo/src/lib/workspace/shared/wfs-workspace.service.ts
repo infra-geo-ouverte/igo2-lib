@@ -1,29 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
+import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ConfigService, StorageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import {
+  FeatureMotion,
   FeatureStore,
+  FeatureStoreInMapExtentStrategy,
+  FeatureStoreInMapResolutionStrategy,
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
-  FeatureStoreInMapExtentStrategy,
-  FeatureMotion,
-  FeatureStoreInMapResolutionStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
-
+import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
 import { WfsWorkspace } from './wfs-workspace';
-import { StorageService, ConfigService } from '@igo2/core';
 import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate
 } from './workspace.utils';
-import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector';
+import { FeatureCommonVectorStyleOptions, OverlayStyleOptions } from '../../style';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -84,7 +87,7 @@ export class WfsWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle =
+    const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
@@ -97,7 +100,7 @@ export class WfsWorkspaceService {
               {},
               { feature },
               confQueryOverlayStyle?.selection || {}
-            )
+            ) as FeatureCommonVectorStyleOptions
           );
         },
         showInLayerList: false,

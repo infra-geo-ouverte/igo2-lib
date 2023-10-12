@@ -1,5 +1,6 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { provideConfigOptions, provideConfigLoader } from './config.provider';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
+import { provideConfigLoader, provideConfigOptions } from './config.provider';
 
 @NgModule({
   imports: [],

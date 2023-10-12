@@ -1,14 +1,14 @@
-import { Injectable, Inject, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Inject, Injectable, Injector } from '@angular/core';
+
+import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, forkJoin } from 'rxjs';
+import { debounceTime, first } from 'rxjs/operators';
 
 import { ConfigService } from '../../config/config.service';
-
-import { Message, MessageOptions } from './message.interface';
-import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
-import { MessageType } from './message.enum';
 import { LanguageService } from '../../language/shared/language.service';
-import { debounceTime, first } from 'rxjs/operators';
+import { MessageType } from './message.enum';
+import { Message, MessageOptions } from './message.interface';
 
 interface ActiveMessageTranslation {
   id: number;
@@ -299,17 +299,23 @@ export class MessageService {
 
     if (textInterpolateParams) {
       Object.keys(textInterpolateParams).map((k) => {
-        if (textInterpolateParams[k]) {
+        const value = textInterpolateParams[k];
+        if (value) {
           translatedTextInterpolateParams[k] =
-            this.languageService.translate.instant(textInterpolateParams[k]);
+            typeof value === 'string'
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }
     if (titleInterpolateParams) {
       Object.keys(titleInterpolateParams).map((k) => {
         if (k) {
+          const value = titleInterpolateParams[k];
           translatedTitlenterpolateParams[k] =
-            this.languageService.translate.instant(titleInterpolateParams[k]);
+            typeof value === "string"
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }

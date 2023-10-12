@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "1.15.4",
+  "version": "16.0.0-rc.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -44,9 +44,11 @@
     "@angular/platform-browser": "^16.2.5",
     "@igo2/core": "*",
     "@igo2/utils": "*",
+    "@floating-ui/utils": "^0.1.4",
     "angular-shepherd": "16.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "typy": "^3.3.0",
+    "ngx-color": "^9.0.0",
     "tinycolor2": "^1.6.0"
   },
   "devDependencies": {

@@ -1,20 +1,19 @@
 import OlMap from 'ol/Map';
 import OlMapEvent from 'ol/MapEvent';
+import { ObjectEvent } from 'ol/Object';
+import OlView from 'ol/View';
+import * as oleasing from 'ol/easing';
+import { EventsKey } from 'ol/events';
+import * as olproj from 'ol/proj';
+import OlProjection from 'ol/proj/Projection';
 
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-
-import * as oleasing from 'ol/easing';
-import * as olproj from 'ol/proj';
-import OlProjection from 'ol/proj/Projection';
-import OlView from 'ol/View';
 
 import { MapViewAction } from '../map.enums';
 import { MapExtent, MapViewState } from '../map.interface';
 import { getScaleFromResolution, viewStatesAreEqual } from '../map.utils';
 import { MapController } from './controller';
-import { EventsKey } from 'ol/events';
-import { ObjectEvent } from 'ol/Object';
 
 export interface MapViewControllerOptions {
   stateHistory: boolean;

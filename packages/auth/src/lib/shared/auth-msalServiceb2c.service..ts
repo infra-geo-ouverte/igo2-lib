@@ -2,24 +2,24 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
-import { Inject, Injectable } from '@angular/core';
 import { Location } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+
+import { MSAL_INSTANCE } from '@azure/msal-angular';
+import { IMsalService } from '@azure/msal-angular';
 import {
-  IPublicClientApplication,
-  EndSessionRequest,
-  EndSessionPopupRequest,
   AuthenticationResult,
+  EndSessionPopupRequest,
+  EndSessionRequest,
+  IPublicClientApplication,
+  Logger,
+  PopupRequest,
   RedirectRequest,
   SilentRequest,
-  PopupRequest,
   SsoSilentRequest,
-  Logger,
   WrapperSKU
 } from '@azure/msal-browser';
-import { MSAL_INSTANCE } from '@azure/msal-angular';
 import { Observable, from } from 'rxjs';
-import { IMsalService } from '@azure/msal-angular';
 
 @Injectable()
 export class MsalServiceb2c implements IMsalService {

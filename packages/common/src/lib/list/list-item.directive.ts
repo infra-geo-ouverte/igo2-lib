@@ -1,11 +1,11 @@
 import {
   Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
   Input,
   Output,
-  ElementRef,
-  Renderer2,
-  HostListener,
-  EventEmitter
+  Renderer2
 } from '@angular/core';
 
 @Directive({

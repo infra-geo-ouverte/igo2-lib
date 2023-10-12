@@ -1,8 +1,8 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  HostBinding
+  Component,
+  HostBinding,
+  Input
 } from '@angular/core';
 
 @Component({

@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ShepherdService } from 'angular-shepherd';
 
-import { ConfigService, MediaService, LanguageService } from '@igo2/core';
-import { InteractiveTourLoader } from './interactive-tour.loader';
+import { ConfigService, LanguageService, MediaService } from '@igo2/core';
+
+import { offset } from '@floating-ui/dom';
+import { ShepherdService } from 'angular-shepherd';
+import Shepherd from 'shepherd.js';
+
 import {
+  InteractiveTourAction,
   InteractiveTourOptions,
-  InteractiveTourStep,
-  InteractiveTourAction
+  InteractiveTourStep
 } from './interactive-tour.interface';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @Injectable({
   providedIn: 'root'
@@ -71,10 +75,8 @@ export class InteractiveTourService {
     const showInMobile = this.configService.getConfig(
       'interactiveTour.tourInMobile'
     );
-    if (showInMobile === undefined) {
-      return true;
-    }
-    return this.configService.getConfig('interactiveTour.tourInMobile');
+
+    return showInMobile === undefined ? true : showInMobile;
   }
 
   private getButtons(buttonKind?: 'first' | 'last' | 'noBackButton') {
@@ -282,17 +284,17 @@ export class InteractiveTourService {
   }
 
   private getShepherdSteps(stepConfig: InteractiveTourOptions) {
-    const shepherdSteps = [];
+    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
 
     let i = 0;
     for (const step of stepConfig.steps) {
       shepherdSteps.push({
         attachTo: {
           element: step.element,
-          on: step.position || stepConfig.position
+          on: (step.position || stepConfig.position) as any // PopperPlacement
         },
-        popperOptions: {
-          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
+        floatingUIOptions: {
+          middleware: [offset({ mainAxis: 15 })]
         },
         beforeShowPromise: () => {
           return Promise.all([
@@ -331,7 +333,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      });
+      } satisfies Shepherd.Step.StepOptions);
       i++;
     }
 

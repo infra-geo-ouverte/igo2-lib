@@ -1,11 +1,11 @@
 import {
   Directive,
-  Input,
   ElementRef,
-  Renderer2,
   EventEmitter,
+  HostListener,
+  Input,
   Output,
-  HostListener
+  Renderer2
 } from '@angular/core';
 
 import scrollIntoView from 'scroll-into-view-if-needed';

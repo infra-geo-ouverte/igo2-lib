@@ -28,17 +28,15 @@
 
   .logical {
     flex-flow: column nowrap;
-    width: 10%;
-    max-width: 84px;
-    margin-left: 5px;
+    width: 100%;
+    max-width: 60px;
+    margin-right: 5px;
   }
 
   .logicalHidden {
-    flex-flow: column nowrap;
-    width: 10%;
+    width: 0px;
     visibility: hidden;
-    max-width: 45px;
-    margin-left: 5px;
+    max-width: 0px;
   }
 
   ::ng-deep .logical .mat-mdc-select-arrow {
@@ -50,7 +48,8 @@
   }
 
   .field {
-    width: 20%;
+    width: 150px;
+    margin-right: 5px;
   }
 
   ::ng-deep .field .mat-mdc-select-arrow {
@@ -58,9 +57,8 @@
   }
 
   .operator {
-    width: 12%;
-    min-width: 150px;
-    margin-left: 10px;
+    width: 150px;
+    margin-right: 5px;
     text-align: center;
   }
 
@@ -69,8 +67,8 @@
   }
 
   .spatialSelector {
-    width: 15%;
-    margin-left: 5px;
+    width: 110px;
+    margin-right: 5px;
   }
 
   ::ng-deep .spatialSelector .mat-mdc-select-arrow {
@@ -78,16 +76,16 @@
   }
 
   .singleInput {
-    width: 30%;
-    margin-left: 5px;
+    width: 150px;
+    margin-right: 5px;
     @include mobile {
       width: 27%;
     }
   }
 
   .snrc {
-    width: 20%;
-    margin-left: 5px;
+    width: 110px;
+    margin-right: 5px;
   }
 
   ::ng-deep .singleInput .mat-mdc-select-arrow {
@@ -95,8 +93,8 @@
   }
 
   .dualInput {
-    width: 20%;
-    margin-left: 5px;
+    width: 150px;
+    margin-right: 5px;
   }
 
   ::ng-deep .dualInput .mat-mdc-select-arrow {

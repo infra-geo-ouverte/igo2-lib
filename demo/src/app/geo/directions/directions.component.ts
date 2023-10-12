@@ -6,11 +6,12 @@ import {
   LayerService,
   MapService,
   ProjectionService,
-  StopsStore,
-  StopsFeatureStore,
   RoutesFeatureStore,
-  StepFeatureStore
+  StepFeatureStore,
+  StopsFeatureStore,
+  StopsStore
 } from '@igo2/geo';
+
 import { Subject } from 'rxjs';
 
 @Component({

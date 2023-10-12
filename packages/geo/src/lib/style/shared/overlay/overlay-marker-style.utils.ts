@@ -1,5 +1,5 @@
-import * as olstyle from 'ol/style';
 import { asArray as ColorAsArray } from 'ol/color';
+import * as olstyle from 'ol/style';
 
 /**
  * Create a marker style for points

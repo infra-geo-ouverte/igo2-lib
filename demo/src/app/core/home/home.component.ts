@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { InteractiveTourService } from '@igo2/common';
 
 @Component({

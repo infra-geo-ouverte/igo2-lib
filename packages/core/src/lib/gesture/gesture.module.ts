@@ -1,5 +1,5 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
 
 import { IgoGestureConfig } from './gesture.provider';
 

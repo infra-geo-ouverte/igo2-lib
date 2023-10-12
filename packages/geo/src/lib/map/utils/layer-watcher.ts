@@ -1,9 +1,11 @@
+import { SubjectStatus, Watcher } from '@igo2/utils';
+
+import { ObjectEvent } from 'ol/Object';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
-import { Watcher, SubjectStatus } from '@igo2/utils';
 import { Layer, LinkedProperties } from '../../layer/shared/layers';
-import { ObjectEvent } from 'ol/Object';
 
 export class LayerWatcher extends Watcher {
   public propertyChange$: BehaviorSubject<{

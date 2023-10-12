@@ -1,22 +1,23 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  Output,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 
-import { getEntityTitle, getEntityIcon } from '@igo2/common';
+import { getEntityIcon, getEntityTitle } from '@igo2/common';
 
-import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
+
+import { LayerService } from '../../layer/shared/layer.service';
 import { Layer, TooltipType } from '../../layer/shared/layers';
-import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { IgoMap } from '../../map/shared';
+import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
+import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 
 /**
  * Catalog browser layer item

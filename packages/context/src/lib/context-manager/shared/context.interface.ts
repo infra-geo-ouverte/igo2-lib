@@ -1,15 +1,16 @@
-import { Message } from '@igo2/core';
 import { Tool } from '@igo2/common';
+import { Message } from '@igo2/core';
 import {
-  MapViewOptions,
   LayerOptions,
-  MapScaleLineOptions,
   MapAttributionOptions,
-  MapExtent
+  MapExtent,
+  MapScaleLineOptions,
+  MapViewOptions
 } from '@igo2/geo';
 
-import { TypePermission } from './context.enum';
 import { FeatureCollection } from 'geojson';
+
+import { TypePermission } from './context.enum';
 
 export interface Context {
   id?: string;

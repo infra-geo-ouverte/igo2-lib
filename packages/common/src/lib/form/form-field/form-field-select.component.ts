@@ -1,19 +1,19 @@
 import {
-  Input,
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  Input,
   OnInit
 } from '@angular/core';
 import type { UntypedFormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoFormFieldComponent } from '../shared/form-field-component';
+import { FormFieldSelectChoice } from '../shared/form.interfaces';
 import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { FormFieldSelectChoice } from '../shared/form.interfaces';
-import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a select field

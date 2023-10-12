@@ -1,14 +1,14 @@
-import { Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injector } from '@angular/core';
 
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
-import { SearchSource } from './source';
 import {
-  IChercheSearchSource,
+  IChercheReverseSearchSource,
   IChercheSearchResultFormatter,
-  IChercheReverseSearchSource
+  IChercheSearchSource
 } from './icherche';
+import { SearchSource } from './source';
 
 /**
  * ICherche search result formatter factory

@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  UntypedFormGroup,
   UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
+
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
-import { MapState } from '../../map.state';
+
 import { ToolState } from '../../../tool/tool.state';
+import { MapState } from '../../map.state';
 
 @Component({
   selector: 'igo-advanced-swipe',

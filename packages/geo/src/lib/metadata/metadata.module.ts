@@ -1,16 +1,15 @@
-import { MatDialogModule } from '@angular/material/dialog';
-import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 
 import {
-  MetadataButtonComponent,
-  MetadataAbstractComponent
+  MetadataAbstractComponent,
+  MetadataButtonComponent
 } from './metadata-button/metadata-button.component';
 
 @NgModule({

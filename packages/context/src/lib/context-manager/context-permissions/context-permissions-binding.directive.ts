@@ -1,14 +1,15 @@
 import {
+  ChangeDetectorRef,
   Directive,
-  Self,
-  OnInit,
-  OnDestroy,
   HostListener,
-  ChangeDetectorRef
+  OnDestroy,
+  OnInit,
+  Self
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
 
 import {
   Context,

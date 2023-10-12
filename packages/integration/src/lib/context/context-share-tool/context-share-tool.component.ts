@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 import { IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
-import { MapState } from '../../map/map.state';
 import { LayerListToolState } from '../../map/layer-list-tool.state';
+import { MapState } from '../../map/map.state';
 
 @ToolComponent({
   name: 'shareMap',

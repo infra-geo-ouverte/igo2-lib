@@ -5,10 +5,19 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+
 import { LanguageService } from '@igo2/core';
+
+import olFeature from 'ol/Feature';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olGeom from 'ol/geom';
+
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
+import { FEATURE } from '../../feature/shared/feature.enums';
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { DirectionType } from '../shared/directions.enum';
 import {
   Direction,
   FeatureWithStep,
@@ -20,14 +29,6 @@ import {
   formatInstruction
 } from '../shared/directions.utils';
 import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
-
-import olFeature from 'ol/Feature';
-import OlGeoJSON from 'ol/format/GeoJSON';
-import * as olGeom from 'ol/geom';
-
-import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
-import { FEATURE } from '../../feature/shared/feature.enums';
-import { DirectionType } from '../shared/directions.enum';
 
 @Component({
   selector: 'igo-directions-results',

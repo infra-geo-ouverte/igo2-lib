@@ -1,4 +1,5 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
 import { ContextMenuDirective } from './context-menu.directive';
 import { LongPressDirective } from './long-press.directive';
 

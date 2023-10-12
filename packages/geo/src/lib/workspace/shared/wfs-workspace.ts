@@ -1,4 +1,5 @@
 import { Workspace, WorkspaceOptions } from '@igo2/common';
+
 import { BehaviorSubject } from 'rxjs';
 
 import { VectorLayer } from '../../layer/shared';

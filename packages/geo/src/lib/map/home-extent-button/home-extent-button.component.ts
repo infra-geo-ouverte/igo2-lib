@@ -1,8 +1,13 @@
-import { ConfigService } from '@igo2/core';
 import { Component, Input } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+
+import * as olproj from 'ol/proj';
+
 import { IgoMap } from '../shared/map';
 import { MapExtent } from '../shared/map.interface';
-import * as olproj from 'ol/proj';
+import { HomeExtentButtonOptions } from './home-extent-button.interface';
+
 /*
 Button to center the map to the home extent
 */
@@ -27,15 +32,15 @@ export class HomeExtentButtonComponent {
   }
 
   computeHomeExtent() {
+    const homeExtentButtonOptions: HomeExtentButtonOptions =
+      this.configService.getConfig('homeExtentButton');
+
     this.homeExtentButtonExtent =
-      this.extentOverride ||
-      this.configService.getConfig('homeExtentButton.homeExtButtonExtent');
+      this.extentOverride || homeExtentButtonOptions.homeExtButtonExtent;
     this.homeExtentButtonCenter =
-      this.centerOverride ||
-      this.configService.getConfig('homeExtentButton.homeExtButtonCenter');
+      this.centerOverride || homeExtentButtonOptions.homeExtButtonCenter;
     this.homeExtentButtonZoom =
-      this.zoomOverride ||
-      this.configService.getConfig('homeExtentButton.homeExtButtonZoom');
+      this.zoomOverride || homeExtentButtonOptions.homeExtButtonZoom;
 
     // priority over extent if these 2 properties are defined;
     if (this.centerOverride && this.zoomOverride) {

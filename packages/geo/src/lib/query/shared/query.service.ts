@@ -1,34 +1,35 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-
-import { default as striptags } from 'striptags';
-
-import * as olformat from 'ol/format';
-import * as olextent from 'ol/extent';
-import olFormatGML2 from 'ol/format/GML2';
-import olFormatGML3 from 'ol/format/GML3';
-import olFormatEsriJSON from 'ol/format/EsriJSON';
-import olFeature from 'ol/Feature';
-import * as olgeom from 'ol/geom';
+import { Injectable } from '@angular/core';
 
 import { LanguageService, MessageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
+
+import olFeature from 'ol/Feature';
+import * as olextent from 'ol/extent';
+import * as olformat from 'ol/format';
+import olFormatEsriJSON from 'ol/format/EsriJSON';
+import olFormatGML2 from 'ol/format/GML2';
+import olFormatGML3 from 'ol/format/GML3';
+import * as olgeom from 'ol/geom';
+
+import { Observable, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { default as striptags } from 'striptags';
+
+import {
+  CartoDataSource,
+  ImageArcGISRestDataSource,
+  TileArcGISRestDataSource,
+  WMSDataSource,
+  WMSDataSourceOptions
+} from '../../datasource';
+import { FEATURE } from '../../feature/shared/feature.enums';
 import {
   Feature,
   FeatureGeometry
 } from '../../feature/shared/feature.interfaces';
-import { FEATURE } from '../../feature/shared/feature.enums';
 import { Layer } from '../../layer/shared/layers/layer';
-import {
-  WMSDataSource,
-  CartoDataSource,
-  TileArcGISRestDataSource,
-  WMSDataSourceOptions,
-  ImageArcGISRestDataSource
-} from '../../datasource';
-
+import { MapExtent } from '../../map/shared/map.interface';
 import {
   QueryFormat,
   QueryFormatMimeType,
@@ -36,11 +37,10 @@ import {
 } from './query.enums';
 import {
   QueryOptions,
+  QueryUrlData,
   QueryableDataSource,
-  QueryableDataSourceOptions,
-  QueryUrlData
+  QueryableDataSourceOptions
 } from './query.interfaces';
-import { MapExtent } from '../../map/shared/map.interface';
 
 @Injectable({
   providedIn: 'root'

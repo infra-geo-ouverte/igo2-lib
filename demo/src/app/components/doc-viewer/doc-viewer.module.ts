@@ -1,7 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DocViewerComponent } from './doc-viewer.component';
+import { NgModule } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+
+import { DocViewerComponent } from './doc-viewer.component';
 
 @NgModule({
   declarations: [DocViewerComponent],

@@ -1,29 +1,28 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Inject, Injectable } from '@angular/core';
 
 import { LanguageService, StorageService } from '@igo2/core';
-import { customCacheHasher, ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
-import { getResolutionFromScale } from '../../../map/shared/map.utils';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
+
 import { LAYER } from '../../../layer';
-import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
-
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
+import { QueryFormat, QueryableDataSourceOptions } from '../../../query';
 import { SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
+import { QueryHtmlTarget } from './../../../query/shared/query.enums';
+import {
+  ILayerData,
+  ILayerDataSource,
+  ILayerItemResponse,
+  ILayerSearchSourceOptions,
+  ILayerServiceResponse
+} from './ilayer.interfaces';
 import { SearchSource } from './source';
 import { TextSearchOptions } from './source.interfaces';
-import {
-  ILayerSearchSourceOptions,
-  ILayerData,
-  ILayerItemResponse,
-  ILayerServiceResponse,
-  ILayerDataSource
-} from './ilayer.interfaces';
-import { computeTermSimilarity } from '../search.utils';
-import { Cacheable } from 'ts-cacheable';
 
 @Injectable()
 export class ILayerSearchResultFormatter {

@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
-import { MessageService } from '@igo2/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, concatMap } from 'rxjs/operators';
-import { GeoDBService } from './geoDB.service';
-import { of, zip } from 'rxjs';
-import { DatasToIDB, GeoDBData } from './geoDB.interface';
+import { Injectable } from '@angular/core';
+
+import { MessageService } from '@igo2/core';
+
 import { default as JSZip } from 'jszip';
+import { of, zip } from 'rxjs';
+import { catchError, concatMap } from 'rxjs/operators';
+
 import { InsertSourceInsertDBEnum } from './geoDB.enums';
+import { DatasToIDB, GeoDBData } from './geoDB.interface';
+import { GeoDBService } from './geoDB.service';
 
 @Injectable({
   providedIn: 'root'

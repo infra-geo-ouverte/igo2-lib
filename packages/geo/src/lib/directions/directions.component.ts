@@ -6,24 +6,33 @@ import {
   OnInit
 } from '@angular/core';
 
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-
-import { LanguageService } from '@igo2/core';
 import { EntityStoreWatcher } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
+import Collection from 'ol/Collection';
 import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
-import * as olProj from 'ol/proj';
-import { TranslateEvent } from 'ol/interaction/Translate';
-import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
+import { TranslateEvent } from 'ol/interaction/Translate';
+import * as olProj from 'ol/proj';
 
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+
+import { Feature } from '../feature/shared/feature.interfaces';
+import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
+import { roundCoordTo, stringToLonLat } from '../map';
+import { QueryService } from '../query/shared/query.service';
+import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { SearchService } from '../search/shared/search.service';
+import { DirectionType, ProposalType } from './shared/directions.enum';
 import {
   DirectionOptions,
   FeatureWithStopProperties,
   Stop
 } from './shared/directions.interface';
-import { Subject, Subscription } from 'rxjs';
+import { DirectionsService } from './shared/directions.service';
 import {
   addDirectionToRoutesFeatureStore,
   addStopToStopsFeatureStore,
@@ -33,21 +42,12 @@ import {
   initStopsFeatureStore,
   updateStoreSorting
 } from './shared/directions.utils';
-import { Feature } from '../feature/shared/feature.interfaces';
-import { DirectionsService } from './shared/directions.service';
-import { DirectionType, ProposalType } from './shared/directions.enum';
-import { roundCoordTo, stringToLonLat } from '../map';
-import { SearchService } from '../search/shared/search.service';
-import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 import {
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
-import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
-import { Research, SearchResult } from '../search/shared/search.interfaces';
-import { QueryService } from '../query/shared/query.service';
 
 @Component({
   selector: 'igo-directions',
@@ -66,7 +66,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
 
   private selectStopInteraction: olInteraction.Select;
   private translateStop: olInteraction.Translate;
-  private selectedRoute;
+  private selectedRoute: olInteraction.Select;
   private focusOnStop: boolean = false;
   private isTranslating: boolean = false;
 
@@ -83,6 +83,18 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   @Input() length: number = 2;
   @Input() coordRoundedDecimals: number = 6;
   @Input() zoomToActiveRoute$: Subject<void> = new Subject();
+
+  /**
+   * Wheter one of the direction control is active
+   * @internal
+   */
+  get directionControlIsActive(): boolean {
+    return !this.queryService.queryEnabled;
+  }
+
+  get interactions(): olInteraction.Interaction[] {
+    return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -113,11 +125,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private freezeStores() {
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.removeInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.removeInteraction(this.selectedRoute);
     this.stopsFeatureStore.deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
@@ -201,11 +211,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.stopsFeatureStore.layer.map.ol.addInteraction(
-      this.selectStopInteraction
+    this.interactions.map((interaction) =>
+      this.routesFeatureStore.layer.map.ol.addInteraction(interaction)
     );
-    this.stopsFeatureStore.layer.map.ol.addInteraction(this.translateStop);
-    this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
   }
 
   onStopInputHasFocusChange(stopInputHasFocus: boolean) {
@@ -433,6 +441,16 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       this.stopsFeatureStore,
       this.projection,
       this.languageService
+    );
+  }
+
+  onToggleDirectionsControl(isActive: boolean) {
+    this.queryService.queryEnabled = !isActive;
+    const ol = this.routesFeatureStore.layer.map.ol;
+    this.interactions.map((interaction) =>
+      isActive
+        ? ol.addInteraction(interaction)
+        : ol.removeInteraction(interaction)
     );
   }
 }

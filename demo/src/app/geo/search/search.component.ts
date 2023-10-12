@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -6,25 +5,27 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import * as proj from 'ol/proj';
 
+import { ActionStore, EntityStore } from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
-import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
   GoogleLinks,
   IgoMap,
+  Layer,
   LayerService,
   MapService,
-  Layer,
   ProjectionService,
   Research,
   SearchResult
 } from '@igo2/geo';
-
 import { SearchState } from '@igo2/integration';
+
+import * as proj from 'ol/proj';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-search',

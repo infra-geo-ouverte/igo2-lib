@@ -2,14 +2,14 @@ import { NgModule } from '@angular/core';
 
 import { IgoMessageModule } from '@igo2/core';
 import {
-  IgoMapModule,
   IgoDirectionsModule,
+  IgoMapModule,
   provideOsrmDirectionsSource
 } from '@igo2/geo';
 
-import { AppDirectionsComponent } from './directions.component';
-import { AppDirectionsRoutingModule } from './directions-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppDirectionsRoutingModule } from './directions-routing.module';
+import { AppDirectionsComponent } from './directions.component';
 
 @NgModule({
   declarations: [AppDirectionsComponent],
