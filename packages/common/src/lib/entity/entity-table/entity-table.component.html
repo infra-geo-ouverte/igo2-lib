@@ -289,13 +289,13 @@
 
     <tr
       mat-header-row
-      *matHeaderRowDef="headers; sticky: fixedHeader"
+      *matHeaderRowDef="columnToDisplay; sticky: fixedHeader"
       [ngClass]="getHeaderClass()"
     ></tr>
     <tr
       mat-row
       igoEntityTableRow
-      *matRowDef="let row; columns: headers"
+      *matRowDef="let row; columns: columnToDisplay"
       [scrollBehavior]="scrollBehavior"
       [ngClass]="getRowClass(row)"
       [selection]="selection"

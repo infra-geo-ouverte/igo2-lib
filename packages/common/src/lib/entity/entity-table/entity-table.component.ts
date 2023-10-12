@@ -29,7 +29,6 @@ import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSelectChange } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { default as moment } from 'moment';
@@ -60,6 +59,7 @@ import {
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   visibleColumns: EntityTableColumn[];
+  columnToDisplay: string[];
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
 
@@ -127,6 +127,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     this.visibleColumns = value.columns.filter(
       (column) => column.visible !== false
     );
+    this.columnToDisplay = this.getColumnToDisplay();
   }
   get template(): EntityTableTemplate {
     return this._template;
@@ -176,22 +177,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     column: EntityTableColumn;
     direction: string;
   }> = new EventEmitter(undefined);
-
-  /**
-   * Table headers
-   * @internal
-   */
-  get headers(): string[] {
-    let columns = this.template.columns
-      .filter((column: EntityTableColumn) => column.visible !== false)
-      .map((column: EntityTableColumn) => column.name);
-
-    if (this.selectionCheckbox === true) {
-      columns = ['selectionCheckbox'].concat(columns);
-    }
-
-    return columns;
-  }
 
   /**
    * Data source consumable by the underlying material table
@@ -270,6 +255,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  private getColumnToDisplay(): string[] {
+    const columns = this.visibleColumns.map((column) => column.name);
+
+    if (this.selectionCheckbox === true) {
+      columns.unshift('selectionCheckbox');
+    }
+
+    return columns;
+  }
+
   /**
    * Process text or number value change (edition)
    */
@@ -303,9 +298,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   onSelectValueChange(
     column: EntityTableColumn,
     record: EntityRecord<any>,
-    event: MatSelectChange
+    value: unknown
   ) {
-    this.onChange(column, record, event.value);
+    this.onChange(column, record, value);
   }
 
   /**
