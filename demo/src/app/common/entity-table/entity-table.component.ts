@@ -75,8 +75,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
               click: (row) => {
                 console.log(row);
               }
-            }
-          ] as EntityTableButton[];
+            } satisfies EntityTableButton<object>
+          ];
         },
         renderer: EntityTableColumnRenderer.ButtonGroup
       }

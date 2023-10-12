@@ -99,14 +99,21 @@ export interface EntityRelation {
   url?: string;
   params?: EntityRelationParam;
   choiceList?: {
-    propertyGetter?: {
+    path?: {
+      /**
+       * The list property allows you to determine a path to resolve to access the list in an Object.
+       * This is required when the API returns an Object instead of a raw List
+       **/
       list?: string;
-      id: string;
-      value: string;
+      /** Default is "id" */
+      id?: string;
+      /** Default is "value" */
+      value?: string;
     };
   };
 }
 
+/** The relation between field who could affect the query parameter */
 export interface EntityRelationParam {
   name?: string;
   field: string;
@@ -166,9 +173,9 @@ export interface SelectOption {
   value: string | number;
 }
 
-export interface EntityTableButton {
+export interface EntityTableButton<T extends object> {
   icon: string;
-  click: (record: EntityRecord<object>) => void;
+  click: (record: EntityRecord<T>) => void;
   color?: 'primary' | 'accent' | 'warn';
   disabled?: boolean;
   style?: 'mat-mini-fab' | 'mat-icon-button';

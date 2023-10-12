@@ -55,7 +55,9 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { StyleService } from '../../style/style-service/style.service';
+import { ConfirmationPopupComponent } from '../confirmation-popup';
 import { EditionWorkspace } from './edition-workspace';
+import { EditionFeature } from './edition-workspace.interface';
 import { createFilterInMapExtentOrResolutionStrategy } from './workspace.utils';
 
 @Injectable({
@@ -222,22 +224,17 @@ export class EditionWorkspaceService {
         );
         workspaceLayer.dataSource.ol.refresh();
 
-        wks = new EditionWorkspace(
-          this.dialog,
-          this.configService,
-          this.adding$,
-          {
-            id: layer.id,
-            title: layer.title,
-            layer: workspaceLayer,
-            map,
-            entityStore: this.createFeatureStore(workspaceLayer, map),
-            actionStore: new ActionStore([]),
-            meta: {
-              tableTemplate: undefined
-            }
+        wks = new EditionWorkspace(this.configService, this.adding$, {
+          id: layer.id,
+          title: layer.title,
+          layer: workspaceLayer,
+          map,
+          entityStore: this.createFeatureStore(workspaceLayer, map),
+          actionStore: new ActionStore([]),
+          meta: {
+            tableTemplate: undefined
           }
-        );
+        });
         this.createTableTemplate(wks, workspaceLayer);
 
         workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
@@ -313,8 +310,8 @@ export class EditionWorkspaceService {
                 layer.dataSource.options.edition.modifyButton === false
                   ? true
                   : false,
-              click: (feature) => {
-                workspace.editFeature(feature, workspace);
+              click: (record) => {
+                workspace.editFeature(record.entity);
               }
             },
             {
@@ -325,8 +322,8 @@ export class EditionWorkspaceService {
                 layer.dataSource.options.edition.deleteButton === false
                   ? true
                   : false,
-              click: (feature) => {
-                workspace.deleteFeature(feature, workspace);
+              click: (record) => {
+                this.askForDeleteFeature(record.entity, workspace);
               }
             },
             {
@@ -334,8 +331,8 @@ export class EditionWorkspaceService {
               icon: 'check',
               color: 'primary',
               disabled: this.loading,
-              click: (feature) => {
-                this.saveFeature(feature, workspace);
+              click: (record) => {
+                this.saveFeature(record.entity, workspace);
               }
             },
             {
@@ -343,11 +340,11 @@ export class EditionWorkspaceService {
               icon: 'alpha-x',
               color: 'primary',
               disabled: this.loading,
-              click: (feature) => {
-                this.cancelEdit(workspace, feature);
+              click: (record) => {
+                this.cancelEdit(record.entity, workspace);
               }
             }
-          ] as EntityTableButton[];
+          ] as EntityTableButton<Feature>[];
         }
       }
     ];
@@ -442,7 +439,7 @@ export class EditionWorkspaceService {
     };
   }
 
-  public saveFeature(feature, workspace: EditionWorkspace) {
+  public saveFeature(feature: EditionFeature, workspace: EditionWorkspace) {
     if (!this.validateFeature(feature, workspace)) {
       return false;
     }
@@ -488,7 +485,7 @@ export class EditionWorkspaceService {
   }
 
   public addFeature(
-    feature,
+    feature: Feature,
     workspace: EditionWorkspace,
     url: string,
     headers: { [key: string]: any }
@@ -565,25 +562,38 @@ export class EditionWorkspaceService {
       );
   }
 
-  public deleteFeature(workspace: EditionWorkspace, url: string) {
+  askForDeleteFeature(feature: Feature, workspace: EditionWorkspace) {
+    const dialogRef = this.dialog.open(ConfirmationPopupComponent, {
+      disableClose: false,
+      data: { type: 'delete' }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        return;
+      }
+      this.deleteFeature(feature, workspace);
+    });
+  }
+
+  private deleteFeature(feature: Feature, workspace: EditionWorkspace) {
     this.loading = true;
-    this.http.delete(`${url}`, {}).subscribe(
-      () => {
-        this.loading = false;
+    const url = workspace.getDeleteUrl(feature);
+    this.http.delete(url).subscribe({
+      next: () => {
         this.messageService.success('igo.geo.workspace.deleteSuccess');
 
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
-        for (const relation of workspace.layer.options.sourceOptions
-          .relations) {
-          workspace.map.layers.forEach((layer) => {
-            if (layer.title === relation.title) {
-              layer.dataSource.ol.refresh();
-            }
-          });
+        const relations =
+          workspace.layer.options.sourceOptions?.relations ?? [];
+        for (const relation of relations) {
+          const layer = workspace.map.layers.find(
+            (layer) => layer.title === relation.title
+          );
+          layer?.dataSource.ol.refresh();
         }
       },
-      (error) => {
-        this.loading = false;
+      error: (error) => {
         error.error.caught = true;
         const messages = workspace.layer.dataSource.options.edition.messages;
         if (messages) {
@@ -601,12 +611,13 @@ export class EditionWorkspaceService {
         } else {
           this.messageService.error('igo.geo.workspace.addError');
         }
-      }
-    );
+      },
+      complete: () => (this.loading = false)
+    });
   }
 
   public modifyFeature(
-    feature,
+    feature: Feature,
     workspace: EditionWorkspace,
     url: string,
     headers: { [key: string]: any },
@@ -654,22 +665,21 @@ export class EditionWorkspaceService {
     }).subscribe(
       () => {
         this.loading = false;
-        this.cancelEdit(workspace, feature, true);
+        this.cancelEdit(feature, workspace, true);
 
         this.messageService.success('igo.geo.workspace.modifySuccess');
 
         this.refreshMap(workspace.layer as VectorLayer, workspace.layer.map);
 
         let relationLayers = [];
-        for (const relation of workspace.layer.options.sourceOptions
-          .relations) {
+        workspace.layer.options.sourceOptions.relations?.forEach((relation) => {
           workspace.map.layers.forEach((layer) => {
             if (layer.title === relation.title) {
               relationLayers.push(layer);
               layer.dataSource.ol.refresh();
             }
           });
-        }
+        });
         this.relationLayers$.next(relationLayers);
       },
       (error) => {
@@ -695,7 +705,11 @@ export class EditionWorkspaceService {
     );
   }
 
-  cancelEdit(workspace: EditionWorkspace, feature, fromSave = false) {
+  cancelEdit(
+    feature: EditionFeature,
+    workspace: EditionWorkspace,
+    fromSave = false
+  ) {
     feature.edition = false;
     this.adding$.next(false);
     workspace.deleteDrawings();
@@ -761,8 +775,7 @@ export class EditionWorkspaceService {
     }
   }
 
-  validateFeature(feature, workspace: EditionWorkspace) {
-    let message;
+  validateFeature(feature: Feature, workspace: EditionWorkspace) {
     let key;
     let valid = true;
     workspace.meta.tableTemplate.columns.forEach((column) => {
@@ -869,7 +882,7 @@ export class EditionWorkspaceService {
     return valid;
   }
 
-  sanitizeParameter(feature, workspace: EditionWorkspace) {
+  sanitizeParameter(feature: Feature, workspace: EditionWorkspace) {
     workspace.meta.tableTemplate.columns.forEach((column) => {
       if (
         column.type === 'list' &&

@@ -134,7 +134,7 @@ export function getGeoServiceAction(
               {
                 icon: 'delete',
                 color: 'warn',
-                click: (row, record) => {
+                click: (record) => {
                   addOrRemoveLayer(
                     'remove',
                     workspace.map,
@@ -145,14 +145,14 @@ export function getGeoServiceAction(
                   );
                   geoServiceProperties.added = false;
                 }
-              }
-            ] as EntityTableButton[];
+              } satisfies EntityTableButton<object>
+            ];
           } else {
             return [
               {
                 icon: 'plus',
                 color: 'primary',
-                click: (row, record) => {
+                click: (record) => {
                   addOrRemoveLayer(
                     'add',
                     workspace.map,
@@ -163,8 +163,8 @@ export function getGeoServiceAction(
                   );
                   geoServiceProperties.added = true;
                 }
-              }
-            ] as EntityTableButton[];
+              } satisfies EntityTableButton<object>
+            ];
           }
         } else {
           return [];

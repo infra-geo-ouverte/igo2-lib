@@ -241,8 +241,8 @@ export class DrawComponent implements OnInit, OnDestroy {
                   this.editLabelDrawing(feature);
                 },
                 style: 'mat-icon-button'
-              }
-            ] as EntityTableButton[];
+              } satisfies EntityTableButton<object>
+            ];
           },
           renderer: EntityTableColumnRenderer.ButtonGroup
         }

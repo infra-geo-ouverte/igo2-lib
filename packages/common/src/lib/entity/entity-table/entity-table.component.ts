@@ -332,7 +332,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Enable edition mode for one row
    * More than one row can be edited at the same time
    */
-  private enableEdit(record: EntityRecord<any>) {
+  enableEdition(record?: EntityRecord<any>) {
+    this.buildForm(record);
+  }
+
+  private buildForm(record?: EntityRecord<any>) {
     const controlsConfig = this.visibleColumns.reduce((config, column) => {
       column.title =
         column.validation?.mandatory && !column.title.includes('*')
@@ -340,9 +344,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           : column.title;
 
       const key = getColumnKeyWithoutPropertiesTag(column.name);
-      const item = record.entity.properties || record.entity;
+      const item = record?.entity.properties || record?.entity;
 
-      config[column.name] = this.createControlByColumnType(item[key], column);
+      config[column.name] = this.createControlByColumnType(item?.[key], column);
       return config;
     }, {});
 
@@ -836,12 +840,12 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onButtonClick(
-    clickFunc: (entity: object, record?: EntityRecord<object>) => void,
+    clickFunc: (record: EntityRecord<object>) => void,
     record: EntityRecord<object>
   ) {
-    this.enableEdit(record);
+    this.enableEdition(record);
     if (typeof clickFunc === 'function') {
-      clickFunc(record.entity, record);
+      clickFunc(record);
     }
   }
 
