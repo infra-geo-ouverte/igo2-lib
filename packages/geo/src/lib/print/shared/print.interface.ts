@@ -1,10 +1,10 @@
 import {
+  PrintLegendPosition,
+  PrintOrientation,
   PrintOutputFormat,
   PrintPaperFormat,
-  PrintOrientation,
   PrintResolution,
-  PrintSaveImageFormat,
-  PrintLegendPosition
+  PrintSaveImageFormat
 } from './print.type';
 
 export interface PrintOptions {

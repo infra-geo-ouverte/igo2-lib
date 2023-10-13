@@ -1,11 +1,11 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription, isObservable } from 'rxjs';

@@ -4,14 +4,34 @@
   tooltip-position="below"
   matTooltipShowDelay="500"
   subscriptSizing="dynamic"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (click)="isOpen = !isOpen"
 >
-  <mat-label>{{ value }}</mat-label>
+  <mat-label>{{ colorPicker }}</mat-label>
   <input
+    type="text"
     matInput
     [readonly]="true"
-    (click)="open.emit(true)"
-    (blur)="closePicker()"
-    [(ngModel)]="hexColor"
-    type="color"
+    [style.background]="colorPicker"
   />
 </mat-form-field>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  (backdropClick)="isOpen = false"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+>
+  <div class="picker">
+    <color-chrome (onChange)="handleChange($event)" [color]="colorPicker">
+    </color-chrome>
+    <div class="buttons">
+      <button mat-flat-button color="primary" (click)="handleClick($event)">
+        {{ 'igo.common.confirmDialog.applyBtn' | translate }}
+      </button>
+    </div>
+  </div>
+</ng-template>

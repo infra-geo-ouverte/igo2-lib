@@ -1,6 +1,6 @@
-import { QueryableDataSourceOptions } from './../../../query/shared/query.interfaces';
 import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms-datasource.interface';
 import { ImageLayerOptions } from '../../../layer/shared/layers/image-layer.interface';
+import { QueryableDataSourceOptions } from './../../../query/shared/query.interfaces';
 import { SearchSourceOptions } from './source.interfaces';
 
 export interface ILayerSearchSourceOptions extends SearchSourceOptions {

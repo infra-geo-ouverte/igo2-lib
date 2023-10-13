@@ -1,3 +1,10 @@
+import { AuthInterceptor } from '@igo2/auth';
+import { Message, MessageService } from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
+import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
+
 import {
   BehaviorSubject,
   Observable,
@@ -7,20 +14,12 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import olLayer from 'ol/layer/Layer';
-import olSource from 'ol/source/Source';
-
-import { AuthInterceptor } from '@igo2/auth';
-import { SubjectStatus } from '@igo2/utils';
-
 import { DataSource, Legend } from '../../../datasource';
+import { MapBase } from '../../../map/shared/map.abstract';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-
-import { LayerOptions } from './layer.interface';
-import { Message, MessageService } from '@igo2/core';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
-import { MapBase } from '../../../map/shared/map.abstract';
+import { LayerOptions } from './layer.interface';
 
 export abstract class Layer {
   public collapsed: boolean;

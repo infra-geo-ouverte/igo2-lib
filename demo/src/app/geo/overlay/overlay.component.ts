@@ -1,13 +1,13 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
   FEATURE,
   Feature,
-  FeatureMotion
+  FeatureMotion,
+  IgoMap,
+  LayerService
 } from '@igo2/geo';
 
 @Component({

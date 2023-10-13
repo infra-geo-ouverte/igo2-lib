@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
+
 import { StorageService } from '@igo2/core';
-import { BehaviorSubject } from 'rxjs';
-import NoSleep from 'nosleep.js';
 import { userAgent } from '@igo2/utils';
+
+import NoSleep from 'nosleep.js';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-wake-lock-button',

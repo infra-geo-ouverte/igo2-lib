@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, InjectionToken } from '@angular/core';
 
-import { ConfigService } from './config.service';
 import { ConfigOptions } from './config.interface';
+import { ConfigService } from './config.service';
 
 export let CONFIG_OPTIONS = new InjectionToken<ConfigOptions>('configOptions');
 

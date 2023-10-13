@@ -1,15 +1,15 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  ChangeDetectionStrategy,
   OnInit
 } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared';
 import {
-  OgcFilterableDataSourceOptions,
-  IgoOgcSelector
+  IgoOgcSelector,
+  OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
 
 @Component({

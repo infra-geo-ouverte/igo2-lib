@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-import { LanguageService } from '@igo2/core';
 import {
   ActionbarMode,
   EntityRecord,
+  EntityTablePaginatorOptions,
   EntityTableScrollBehavior,
   Workspace,
-  WorkspaceStore,
-  EntityTablePaginatorOptions
+  WorkspaceStore
 } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
+  IgoMap,
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
-import { MatPaginator } from '@angular/material/paginator';
 import { WorkspaceState } from '@igo2/integration';
+
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace',

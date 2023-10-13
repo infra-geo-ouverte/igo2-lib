@@ -5,16 +5,16 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { IgoPanelModule } from '@igo2/common';
 import {
-  IgoMapModule,
-  IgoLayerModule,
+  IgoDownloadModule,
   IgoFilterModule,
-  IgoMetadataModule,
-  IgoDownloadModule
+  IgoLayerModule,
+  IgoMapModule,
+  IgoMetadataModule
 } from '@igo2/geo';
 
-import { AppLegendComponent } from './legend.component';
-import { AppLegendRoutingModule } from './legend-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppLegendRoutingModule } from './legend-routing.module';
+import { AppLegendComponent } from './legend.component';
 
 @NgModule({
   declarations: [AppLegendComponent],

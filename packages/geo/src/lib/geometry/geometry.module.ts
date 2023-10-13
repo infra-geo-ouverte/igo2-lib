@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { IgoGeometryFormFieldModule } from './geometry-form-field/geometry-form-field.module';
 

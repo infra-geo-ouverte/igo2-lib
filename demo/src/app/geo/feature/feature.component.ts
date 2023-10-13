@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
-  VectorLayer,
+  FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
-  FeatureMotion
+  IgoMap,
+  LayerService,
+  VectorLayer
 } from '@igo2/geo';
 
 @Component({

@@ -1,11 +1,11 @@
 import { ChangeDetectorRef } from '@angular/core';
 
+import { ObjectUtils } from '@igo2/utils';
+
 import { Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import { ObjectUtils } from '@igo2/utils';
 import { EntityKey } from './entity.interfaces';
-
 import { EntityStore } from './store';
 
 /**

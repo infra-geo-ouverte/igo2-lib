@@ -1,19 +1,19 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  HostBinding,
   Input,
   OnDestroy,
-  OnInit,
-  HostBinding,
-  ChangeDetectionStrategy
+  OnInit
 } from '@angular/core';
 
-import { Subscription, BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
 import { Tool } from '../shared/tool.interface';
-import { ToolboxColor } from '../shared/toolbox.enums';
 import { Toolbox } from '../shared/toolbox';
+import { ToolboxColor } from '../shared/toolbox.enums';
 import { toolSlideInOut } from './toolbox.animation';
 
 @Component({

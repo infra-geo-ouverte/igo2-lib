@@ -1,67 +1,67 @@
 import {
+  ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  EventEmitter,
-  ChangeDetectorRef
+  Output
 } from '@angular/core';
 import {
-  UntypedFormGroup,
   UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
+import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
+import type { WorkspaceStore } from '@igo2/common';
 import {
-  MessageService,
-  LanguageService,
   ConfigService,
+  LanguageService,
+  MessageService,
   StorageService
 } from '@igo2/core';
 import { strEnum } from '@igo2/utils';
 
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { Layer } from '../../layer/shared/layers/layer';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { AnyLayer } from '../../layer/shared/layers/any-layer';
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import { circular } from 'ol/geom/Polygon';
+import olClusterSource from 'ol/source/Cluster';
+import olVectorSource from 'ol/source/Vector';
 
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { skipWhile } from 'rxjs/operators';
+
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { DownloadService } from '../../download/shared/download.service';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { LayerService } from '../../layer/shared/layer.service';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { Layer } from '../../layer/shared/layers/layer';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
+import { computeProjectionsConstraints } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
+import { StyleListService } from '../../style/style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
+import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
+import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
+import { ExportOptions } from '../shared/export.interface';
+import { ExportService } from '../shared/export.service';
+import { EncodingFormat, ExportFormat } from '../shared/export.type';
 import {
   handleFileExportError,
   handleFileExportSuccess
 } from '../shared/export.utils';
-import { ExportOptions } from '../shared/export.interface';
-import { ExportFormat, EncodingFormat } from '../shared/export.type';
-import { ExportService } from '../shared/export.service';
+import { ImportExportServiceOptions } from '../shared/import.interface';
 import { ImportService } from '../shared/import.service';
 import {
-  handleFileImportSuccess,
-  handleFileImportError
+  handleFileImportError,
+  handleFileImportSuccess
 } from '../shared/import.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { skipWhile } from 'rxjs/operators';
-import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
-import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
-import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
-import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
-import { DownloadService } from '../../download/shared/download.service';
-import { computeProjectionsConstraints } from '../../map/shared';
-
-import olVectorSource from 'ol/source/Vector';
-import olClusterSource from 'ol/source/Cluster';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { LayerService } from '../../layer/shared/layer.service';
-import { ImportExportServiceOptions } from '../shared/import.interface';
 
 @Component({
   selector: 'igo-import-export',
@@ -347,7 +347,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         translateKey: 'nad83',
         alias: 'NAD83',
         code: 'EPSG:4269',
-        zone: ''
+        zone: '',
+        extent: undefined,
+        def: undefined
       });
     }
     if (this.projectionsConstraints.wgs84) {
@@ -355,7 +357,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         translateKey: 'wgs84',
         alias: 'WGS84',
         code: 'EPSG:4326',
-        zone: ''
+        zone: '',
+        extent: undefined,
+        def: undefined
       });
     }
     if (this.projectionsConstraints.webMercator) {
@@ -363,7 +367,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         translateKey: 'webMercator',
         alias: 'Web Mercator',
         code: 'EPSG:3857',
-        zone: ''
+        zone: '',
+        extent: undefined,
+        def: undefined
       });
     }
 
@@ -379,7 +385,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           translateKey: 'mtm',
           alias: `MTM ${mtmZone}`,
           code,
-          zone: `${mtmZone}`
+          zone: `${mtmZone}`,
+          extent: undefined,
+          def: undefined
         });
       }
     }
@@ -396,14 +404,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           translateKey: 'utm',
           alias: `UTM ${utmZone}`,
           code,
-          zone: `${utmZone}`
+          zone: `${utmZone}`,
+          extent: undefined,
+          def: undefined
         });
       }
     }
 
-    let configProjection = [];
+    let configProjection: InputProjections[] = [];
     if (this.projectionsConstraints.projFromConfig) {
-      configProjection = this.config.getConfig('projections') || [];
+      configProjection = (this.config.getConfig('projections') ||
+        []) as InputProjections[];
     }
 
     this.projections$.next(configProjection.concat(projections));
@@ -927,19 +938,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const confirmDialogService = importExportOptions?.allowToStoreLayer
       ? this.confirmDialogService
       : undefined;
-    const importWithStyle =
-      importExportOptions?.importWithStyle ||
-      this.config.getConfig('importWithStyle');
-    if (this.config.getConfig('importWithStyle')) {
-      console.warn(`
-      The location of this config importWithStyle is deprecated.
-      Please move this property within importExport configuration.
-      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
-      Refer to environnement.ts OR config/config.json
-      This legacy conversion will be deleted in 2024.
-      `);
-    }
-    if (!importWithStyle) {
+    if (!importExportOptions?.importWithStyle) {
       handleFileImportSuccess(
         file,
         features,
@@ -988,9 +987,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private loadConfig() {
-    if (this.config.getConfig('importExport.forceNaming') !== undefined) {
-      this.forceNaming = this.config.getConfig('importExport.forceNaming');
-    }
+    const forceNamingConfig = this.config.getConfig('importExport.forceNaming');
+    this.forceNaming =
+      forceNamingConfig !== undefined ? forceNamingConfig : false;
+
     this.computeFormats();
     this.loadEncodings();
   }

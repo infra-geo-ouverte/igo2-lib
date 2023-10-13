@@ -1,15 +1,17 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  OnInit
 } from '@angular/core';
-import { Subscription, BehaviorSubject } from 'rxjs';
+
+import { ConnectionState, NetworkService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { Layer, TooltipType } from '../shared/layers';
-import { NetworkService, ConnectionState } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-legend-item',

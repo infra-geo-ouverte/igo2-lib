@@ -1,25 +1,28 @@
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
+import { UntypedFormControl } from '@angular/forms';
+
 import { EntityStore } from '@igo2/common';
-import { SpatialFilterService } from './../../shared/spatial-filter.service';
+import { MessageService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { Feature } from '../../../feature';
+import { Layer } from '../../../layer';
+import { MeasureLengthUnit } from '../../../measure/shared';
 import {
   SpatialFilterQueryType,
   SpatialFilterType
 } from './../../shared/spatial-filter.enum';
-import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
-  ChangeDetectionStrategy,
-  Output,
-  EventEmitter
-} from '@angular/core';
-import { Subscription } from 'rxjs';
-import { UntypedFormControl } from '@angular/forms';
-import { Feature } from '../../../feature';
-import { MeasureLengthUnit } from '../../../measure/shared';
-import { MessageService } from '@igo2/core';
-import { Layer } from '../../../layer';
+import { SpatialFilterService } from './../../shared/spatial-filter.service';
 
 @Component({
   selector: 'igo-spatial-filter-list',

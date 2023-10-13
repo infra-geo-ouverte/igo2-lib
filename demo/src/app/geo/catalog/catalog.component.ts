@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
-import { LanguageService, ConfigService, StorageService } from '@igo2/core';
+import { EntityRecord, EntityStore } from '@igo2/common';
+import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import {
-  IgoMap,
-  LayerService,
   Catalog,
   CatalogItem,
   CatalogService,
+  IgoMap,
+  LayerService,
   MapService
 } from '@igo2/geo';
-import { EntityRecord, EntityStore } from '@igo2/common';
 
 @Component({
   selector: 'app-catalog',

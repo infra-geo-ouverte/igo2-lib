@@ -1,28 +1,28 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatRadioChange } from '@angular/material/radio';
 
-import {
-  Component,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-  OnInit,
-  HostListener,
-  Input
-} from '@angular/core';
+import { MediaService, StorageService } from '@igo2/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
+import {
+  sourceCanReverseSearch,
+  sourceCanReverseSearchAsSummary,
+  sourceCanSearch
+} from '../shared/search.utils';
 import { SearchSource } from '../shared/sources/source';
 import {
   SearchSourceSettings,
   SettingOptions
 } from '../shared/sources/source.interfaces';
-import {
-  sourceCanReverseSearchAsSummary,
-  sourceCanSearch,
-  sourceCanReverseSearch
-} from '../shared/search.utils';
-import { ConfigService, MediaService, StorageService } from '@igo2/core';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -86,8 +86,7 @@ export class SearchSettingsComponent implements OnInit {
   constructor(
     private searchSourceService: SearchSourceService,
     private mediaService: MediaService,
-    private storageService: StorageService,
-    private configService: ConfigService
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {

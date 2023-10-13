@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { ConfigService } from '../config/config.service';
 import { RegexOptions } from './regex.interface';
 

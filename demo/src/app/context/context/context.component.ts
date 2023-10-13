@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ContextService } from '@igo2/context';
 
+import { ContextService } from '@igo2/context';
 import { LanguageService } from '@igo2/core';
 import { IgoMap, MapService } from '@igo2/geo';
 

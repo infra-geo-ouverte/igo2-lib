@@ -1,16 +1,16 @@
 import {
-  Component,
-  OnInit,
   ChangeDetectionStrategy,
-  Input
+  Component,
+  Input,
+  OnInit
 } from '@angular/core';
-import { take } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-
 import { EntityStore } from '@igo2/common';
-import { Catalog, CatalogService } from '@igo2/geo';
 import { StorageService } from '@igo2/core';
+import { Catalog, CatalogService } from '@igo2/geo';
+
+import { take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';

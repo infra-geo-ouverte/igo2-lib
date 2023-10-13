@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs';
 
-import { TooltipType } from '../../layer/shared';
 import { TimeFilterOptions } from '../../filter/shared';
+import { TooltipType } from '../../layer/shared';
 import { QueryFormat, QueryHtmlTarget } from '../../query/shared';
-
-import { ICatalog, CatalogItem, CatalogItemGroup } from './catalog.interface';
 import { TypeCatalogStrings } from './catalog.enum';
+import { CatalogItem, CatalogItemGroup, ICatalog } from './catalog.interface';
 
 export abstract class Catalog implements ICatalog {
   id: string;

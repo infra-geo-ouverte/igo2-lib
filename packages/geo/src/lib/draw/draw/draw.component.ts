@@ -1,96 +1,92 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
+import {
   ChangeDetectionStrategy,
-  Output,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
-
 import {
-  FEATURE,
-  FeatureStore,
-  FeatureStoreSelectionStrategy,
-  tryAddLoadingStrategy,
-  tryAddSelectionStrategy,
-  FeatureMotion,
-  FeatureStoreLoadingStrategy,
-  featureToOl
-} from '../../feature';
-
-import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
-
-import { LanguageService } from '@igo2/core';
-import { MatDialog } from '@angular/material/dialog';
-import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
-import { FontType } from '../../style/shared/font.enum';
-import { IgoMap } from '../../map/shared/map';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { Draw, FeatureWithDraw } from '../shared/draw.interface';
-import {
-  UntypedFormGroup,
   UntypedFormBuilder,
-  UntypedFormControl
+  UntypedFormControl,
+  UntypedFormGroup
 } from '@angular/forms';
-import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { DrawControl } from '../../geometry/shared/controls/draw';
+import { MatDialog } from '@angular/material/dialog';
+
 import {
   EntityRecord,
   EntityTableButton,
   EntityTableColumnRenderer,
   EntityTableTemplate
 } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
 
-import * as OlStyle from 'ol/style';
-import * as olproj from 'ol/proj';
-import OlVectorSource from 'ol/source/Vector';
-import OlCircle from 'ol/geom/Circle';
-import OlPoint from 'ol/geom/Point';
 import OlFeature from 'ol/Feature';
-import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import OlCircle from 'ol/geom/Circle';
 import type { Type } from 'ol/geom/Geometry';
 import { default as OlGeometry } from 'ol/geom/Geometry';
-import { getDistance, getLength } from 'ol/sphere';
-import { DrawStyleService } from '../../style/style-service/draw-style.service';
-import { first, skip } from 'rxjs/operators';
-import { DrawPopupComponent } from './draw-popup.component';
-import { DrawShorcutsComponent } from './draw-shorcuts.component';
-import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
-import { createInteractionStyle, DDtoDMS } from '../shared/draw.utils';
+import OlPoint from 'ol/geom/Point';
+import Polygon, { fromCircle } from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
 import { transform } from 'ol/proj';
-import { DrawIconService } from '../shared/draw-icon.service';
-import { StyleModalDrawingComponent } from '../../style/style-modal/drawing/style-modal-drawing.component';
-import { StyleModalData } from '../../style/style-modal/shared/style-modal.interface';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
+import OlVectorSource from 'ol/source/Vector';
+import { getDistance, getLength } from 'ol/sphere';
+import * as OlStyle from 'ol/style';
 
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { first, skip } from 'rxjs/operators';
+
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
-
-import { DrawLayerPopupComponent } from './draw-layer-popup.component';
-
+  FEATURE,
+  FeatureMotion,
+  FeatureStore,
+  FeatureStoreLoadingStrategy,
+  FeatureStoreSelectionStrategy,
+  featureToOl,
+  tryAddLoadingStrategy,
+  tryAddSelectionStrategy
+} from '../../feature';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
+import { DrawControl } from '../../geometry/shared/controls/draw';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../map/shared/map';
 import {
-  measureOlGeometryLength,
+  MeasureAreaUnit,
+  MeasureAreaUnitAbbreviation,
+  MeasureLengthUnit,
+  MeasureLengthUnitAbbreviation
+} from '../../measure/shared/measure.enum';
+import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
+import {
   measureOlGeometryArea,
+  measureOlGeometryLength,
   metersToUnit,
   squareMetersToUnit
 } from '../../measure/shared/measure.utils';
-
-import {
-  MeasureLengthUnit,
-  MeasureLengthUnitAbbreviation,
-  MeasureAreaUnit,
-  MeasureAreaUnitAbbreviation
-} from '../../measure/shared/measure.enum';
-import Polygon, { fromCircle } from 'ol/geom/Polygon';
+import { FontType } from '../../style/shared/font.enum';
+import { StyleModalDrawingComponent } from '../../style/style-modal/drawing/style-modal-drawing.component';
+import { StyleModalData } from '../../style/style-modal/shared/style-modal.interface';
+import { DrawStyleService } from '../../style/style-service/draw-style.service';
+import { DrawIconService } from '../shared/draw-icon.service';
+import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
+import { Draw, FeatureWithDraw } from '../shared/draw.interface';
+import { DDtoDMS, createInteractionStyle } from '../shared/draw.utils';
+import { DrawLayerPopupComponent } from './draw-layer-popup.component';
+import { DrawPopupComponent } from './draw-popup.component';
+import { DrawShorcutsComponent } from './draw-shorcuts.component';
 
 @Component({
   selector: 'igo-draw',

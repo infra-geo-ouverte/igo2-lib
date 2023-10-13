@@ -1,5 +1,6 @@
-import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+
 import { Observable } from 'rxjs';
 
 import { RouteServiceOptions } from './route.interface';

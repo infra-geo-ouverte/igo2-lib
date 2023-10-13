@@ -1,5 +1,5 @@
-import { waitForAsync, inject, TestBed } from '@angular/core/testing';
 import { ElementRef, Renderer2 } from '@angular/core';
+import { TestBed, inject, waitForAsync } from '@angular/core/testing';
 
 import { CollapseDirective } from './collapse.directive';
 

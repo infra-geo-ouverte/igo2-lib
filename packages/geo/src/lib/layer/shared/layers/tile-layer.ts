@@ -1,22 +1,21 @@
+import { AuthInterceptor } from '@igo2/auth';
+import { MessageService } from '@igo2/core';
+
+import Tile from 'ol/Tile';
 import olLayerTile from 'ol/layer/Tile';
 import olSourceTile from 'ol/source/Tile';
-import Tile from 'ol/Tile';
 
-import { TileWatcher } from '../../utils';
-import { IgoMap } from '../../../map/shared';
-
-import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
-import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
-import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
 import { CartoDataSource } from '../../../datasource/shared/datasources/carto-datasource';
+import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
 import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources/tilearcgisrest-datasource';
 import { TileDebugDataSource } from '../../../datasource/shared/datasources/tiledebug-datasource';
-
+import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
+import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
+import { IgoMap } from '../../../map/shared';
+import { TileWatcher } from '../../utils';
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 
-import { MessageService } from '@igo2/core';
-import { AuthInterceptor } from '@igo2/auth';
 export class TileLayer extends Layer {
   public declare dataSource:
     | OSMDataSource

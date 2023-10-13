@@ -6,24 +6,33 @@ import {
   OnInit
 } from '@angular/core';
 
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-
-import { LanguageService } from '@igo2/core';
 import { EntityStoreWatcher } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 
+import Collection from 'ol/Collection';
 import * as olCondition from 'ol/events/condition';
 import * as olInteraction from 'ol/interaction';
-import * as olProj from 'ol/proj';
-import { TranslateEvent } from 'ol/interaction/Translate';
-import Collection from 'ol/Collection';
 import { SelectEvent } from 'ol/interaction/Select';
+import { TranslateEvent } from 'ol/interaction/Translate';
+import * as olProj from 'ol/proj';
 
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+
+import { Feature } from '../feature/shared/feature.interfaces';
+import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
+import { roundCoordTo, stringToLonLat } from '../map';
+import { QueryService } from '../query/shared/query.service';
+import { Research, SearchResult } from '../search/shared/search.interfaces';
+import { SearchService } from '../search/shared/search.service';
+import { DirectionType, ProposalType } from './shared/directions.enum';
 import {
   DirectionOptions,
   FeatureWithStopProperties,
   Stop
 } from './shared/directions.interface';
-import { Subject, Subscription } from 'rxjs';
+import { DirectionsService } from './shared/directions.service';
 import {
   addDirectionToRoutesFeatureStore,
   addStopToStopsFeatureStore,
@@ -33,21 +42,12 @@ import {
   initStopsFeatureStore,
   updateStoreSorting
 } from './shared/directions.utils';
-import { Feature } from '../feature/shared/feature.interfaces';
-import { DirectionsService } from './shared/directions.service';
-import { DirectionType, ProposalType } from './shared/directions.enum';
-import { roundCoordTo, stringToLonLat } from '../map';
-import { SearchService } from '../search/shared/search.service';
-import { ChangeUtils, ObjectUtils } from '@igo2/utils';
 import {
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
-import { FeatureStoreLoadingStrategy } from '../feature/shared/strategies/loading';
-import { Research, SearchResult } from '../search/shared/search.interfaces';
-import { QueryService } from '../query/shared/query.service';
 
 @Component({
   selector: 'igo-directions',

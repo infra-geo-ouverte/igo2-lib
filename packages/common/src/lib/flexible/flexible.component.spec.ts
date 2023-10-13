@@ -1,6 +1,7 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MediaService } from '@igo2/core';
+
 import { FlexibleComponent } from './flexible.component';
 
 describe('FlexibleComponent', () => {

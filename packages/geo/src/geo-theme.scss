@@ -5,8 +5,9 @@
 @use './lib/layer/layer.theming.scss' as layer-theme;
 @use './lib/map/map.theming.scss' as map-theme;
 @use './lib/measure/measure.theming.scss' as measure-theme;
-@use './lib/search/search.theming.scss' as search;
+@use './lib/search/search.theming.scss' as search-theme;
 @use './lib/workspace/workspace.theming.scss' as workspace-theme;
+@use './lib/catalog/catalog.theming.scss' as catalog-theme;
 
 @mixin geo-component-themes($theme) {
   @include directions-theme.igo-directions-theming($theme);
@@ -16,6 +17,7 @@
   @include layer-theme.igo-layer-theming($theme);
   @include map-theme.igo-map-theming($theme);
   @include measure-theme.igo-measure-theming($theme);
-  @include search.theme($theme);
+  @include search-theme.theme($theme);
   @include workspace-theme.igo-workspace-theming($theme);
+  @include catalog-theme.themes($theme);
 }
