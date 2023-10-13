@@ -16,7 +16,7 @@ import type {
   IgoMap,
   Layer,
   VectorLayerOptions,
-  VectorTileLayerOptions,
+  VectorTileLayerOptions
 } from '@igo2/geo';
 import { ExportService } from '@igo2/geo';
 import { ObjectUtils, uuid } from '@igo2/utils';
@@ -495,7 +495,7 @@ export class ContextService {
       };
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions: layerOptions,
+        layerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -511,10 +511,8 @@ export class ContextService {
     context.tools = this.tools.map((tool) => {
       return {
         id: String(tool.id),
-        global: tool.global,
-        name: tool.name,
-        component: tool.component
-      };
+        global: tool.global
+      } as Tool;
     });
 
     return context;
