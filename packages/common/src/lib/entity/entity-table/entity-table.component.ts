@@ -12,7 +12,8 @@ import {
   Optional,
   Output,
   Self,
-  SimpleChanges
+  SimpleChanges,
+  TrackByFunction
 } from '@angular/core';
 import {
   FormControlName,
@@ -483,16 +484,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       this.dataSource.data = all.map((record) => {
         return {
           record,
-          cellData: this.template.columns.reduce((cellData, column) => {
-            const value = this.getValue(record, column);
-            cellData[column.name] = {
-              class: this.getCellClass(record, column),
-              value,
-              isUrl: this.isUrl(value),
-              isImg: this.isImg(value)
-            };
-            return cellData;
-          }, {})
+          cellData: this.template.columns.reduce(
+            (cellData: CellData, column) => {
+              const value = this.getValue(record, column);
+              cellData[column.name] = {
+                class: this.getCellClass(record, column),
+                value,
+                isUrl: this.isUrl(value),
+                isImg: this.isImg(value)
+              };
+              return cellData;
+            },
+            {}
+          )
         };
       });
     });
@@ -521,14 +525,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param index Record index
    * @internal
    */
-  getTrackByFunction() {
-    return (index: number, record: EntityRecord<object, EntityState>) => {
-      return record.ref;
-    };
+  getTrackByFunction(): TrackByFunction<RowData> {
+    return (_index, row) => row.record.ref;
   }
-
   /**
-   * Trigger a refresh of thre table. This can be useful when
+   * Trigger a refresh of the table. This can be useful when
    * the data source doesn't emit a new value but for some reason
    * the records need an update.
    * @internal
