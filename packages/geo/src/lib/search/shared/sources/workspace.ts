@@ -1,19 +1,18 @@
-import { Injectable, Inject } from '@angular/core';
-
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
 
 import { LanguageService, StorageService } from '@igo2/core';
 
-import { FEATURE, Feature } from '../../../feature';
+import pointOnFeature from '@turf/point-on-feature';
+import { SimpleDocumentSearchResultSetUnit } from 'flexsearch';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
+import { FEATURE, Feature } from '../../../feature';
+import { Layer } from '../../../layer/shared/layers/layer';
+import { GoogleLinks } from '../../../utils/googleLinks';
 import { SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
-import { computeTermSimilarity } from '../search.utils';
-import { SimpleDocumentSearchResultSetUnit } from 'flexsearch';
-import { GoogleLinks } from '../../../utils/googleLinks';
-import pointOnFeature from '@turf/point-on-feature';
-import { Layer } from '../../../layer/shared/layers/layer';
 import { WorkspaceData } from './workspace.interfaces';
 
 /**

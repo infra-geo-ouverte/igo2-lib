@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
+
 import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { StorageService, ConfigService } from '@igo2/core';
+import { ConfigService, StorageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+
 import { CapabilitiesService, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -13,7 +17,6 @@ import {
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
-
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import {
   ImageLayer,
@@ -22,15 +25,13 @@ import {
   LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
-import { StyleService } from '../../style/style-service/style.service';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { WfsWorkspace } from './wfs-workspace';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
-
+import { StyleService } from '../../style/style-service/style.service';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { WfsWorkspace } from './wfs-workspace';
 import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate

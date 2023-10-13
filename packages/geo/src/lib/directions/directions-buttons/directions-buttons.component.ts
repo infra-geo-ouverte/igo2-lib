@@ -1,10 +1,13 @@
 import { Component, Input, Optional } from '@angular/core';
+
 import { LanguageService, MessageService, RouteService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { roundCoordTo } from '../../map/shared/map.utils';
-import { FeatureWithDirection } from '../shared/directions.interface';
 
+import { BehaviorSubject, Subject } from 'rxjs';
+
+import { roundCoordTo } from '../../map/shared/map.utils';
+import { DirectionsService } from '../shared';
+import { FeatureWithDirection } from '../shared/directions.interface';
 import {
   addStopToStore,
   formatDistance,
@@ -16,7 +19,6 @@ import {
   StepFeatureStore,
   StopsStore
 } from '../shared/store';
-import { DirectionsService } from '../shared';
 
 @Component({
   selector: 'igo-directions-buttons',

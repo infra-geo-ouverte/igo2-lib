@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -9,11 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { IgoLanguageModule } from '@igo2/core';
 import { IgoKeyValueModule } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core';
 
-import { PrintComponent } from './print/print.component';
 import { PrintFormComponent } from './print-form/print-form.component';
+import { PrintComponent } from './print/print.component';
 
 @NgModule({
   imports: [

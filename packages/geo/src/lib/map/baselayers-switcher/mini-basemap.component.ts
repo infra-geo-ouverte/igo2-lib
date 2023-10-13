@@ -1,18 +1,18 @@
 import {
+  AfterViewInit,
+  ApplicationRef,
+  ChangeDetectorRef,
   Component,
   Input,
-  AfterViewInit,
-  OnDestroy,
-  ApplicationRef,
-  ChangeDetectorRef
+  OnDestroy
 } from '@angular/core';
+
+import OlMap from 'ol/Map';
+import OlView from 'ol/View';
 
 import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../shared';
-
-import OlMap from 'ol/Map';
-import OlView from 'ol/View';
 
 @Component({
   selector: 'igo-mini-basemap',

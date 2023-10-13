@@ -1,26 +1,26 @@
-import * as olextent from 'ol/extent';
-import * as olproj from 'ol/proj';
-import * as olstyle from 'ol/style';
-import OlFeature from 'ol/Feature';
-import type { GeometryLayout } from 'ol/geom/Geometry';
-import OlPolygon from 'ol/geom/Polygon';
-import OlPoint from 'ol/geom/Point';
-import OlLineString from 'ol/geom/LineString';
-import OlRenderFeature from 'ol/render/Feature';
-import OlFormatGeoJSON from 'ol/format/GeoJSON';
-import OlLayer from 'ol/layer/Layer';
-import OlSource from 'ol/source/Source';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { uuid } from '@igo2/utils';
-
 import {
   EntityKey,
-  getEntityId,
-  getEntityTitle,
-  getEntityRevision,
   getEntityIcon,
-  getEntityProperty
+  getEntityId,
+  getEntityProperty,
+  getEntityRevision,
+  getEntityTitle
 } from '@igo2/common';
+import { uuid } from '@igo2/utils';
+
+import OlFeature from 'ol/Feature';
+import * as olextent from 'ol/extent';
+import OlFormatGeoJSON from 'ol/format/GeoJSON';
+import type { GeometryLayout } from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlLineString from 'ol/geom/LineString';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import OlLayer from 'ol/layer/Layer';
+import * as olproj from 'ol/proj';
+import OlRenderFeature from 'ol/render/Feature';
+import OlSource from 'ol/source/Source';
+import * as olstyle from 'ol/style';
 
 import { MapExtent, MapViewController } from '../../map/shared';
 import { FEATURE, FeatureMotion } from './feature.enums';

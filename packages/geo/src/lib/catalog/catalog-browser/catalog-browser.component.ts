@@ -1,28 +1,28 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  OnInit,
-  OnDestroy
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 
-import { zip, BehaviorSubject } from 'rxjs';
-
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
-import { Layer } from '../../layer/shared/layers/layer';
-import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../../map/shared';
 
+import { BehaviorSubject, zip } from 'rxjs';
+
+import { LayerService } from '../../layer/shared/layer.service';
+import { Layer } from '../../layer/shared/layers/layer';
+import { IgoMap } from '../../map/shared';
 import {
+  AddedChangeEmitter,
+  AddedChangeGroupEmitter,
   Catalog,
   CatalogItem,
-  CatalogItemLayer,
   CatalogItemGroup,
+  CatalogItemLayer,
   CatalogItemState,
-  CatalogItemType,
-  AddedChangeEmitter,
-  AddedChangeGroupEmitter
+  CatalogItemType
 } from '../shared';
 
 /**

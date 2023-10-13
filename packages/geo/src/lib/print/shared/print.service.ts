@@ -1,30 +1,28 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
+import { SecureImagePipe } from '@igo2/common';
+import {
+  ActivityService,
+  ConfigService,
+  LanguageService,
+  MessageService
+} from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
+import { saveAs } from 'file-saver';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { default as JSZip } from 'jszip';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { map as rxMap } from 'rxjs/operators';
 
-import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { default as JSZip } from 'jszip';
-
-import { SubjectStatus } from '@igo2/utils';
-import { SecureImagePipe } from '@igo2/common';
-import {
-  MessageService,
-  ActivityService,
-  LanguageService,
-  ConfigService
-} from '@igo2/core';
-
-import { IgoMap } from '../../map/shared/map';
-import { formatScale } from '../../map/shared/map.utils';
 import { LegendMapViewOptions } from '../../layer/shared/layers/legend.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
-
-import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
+import { IgoMap } from '../../map/shared/map';
+import { formatScale } from '../../map/shared/map.utils';
 import GeoPdfPlugin from './geopdf';
+import { PrintOptions, TextPdfSizeAndMargin } from './print.interface';
 import {
   PrintLegendPosition,
   PrintPaperFormat,

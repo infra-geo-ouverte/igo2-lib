@@ -1,21 +1,23 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  Output,
-  EventEmitter,
-  Renderer2,
+  ChangeDetectorRef,
+  Component,
   ElementRef,
-  ChangeDetectorRef
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2
 } from '@angular/core';
-import { Subscription, BehaviorSubject } from 'rxjs';
+
+import { ConnectionState, NetworkService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
-import { NetworkService, ConnectionState } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-item',

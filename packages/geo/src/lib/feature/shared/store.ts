@@ -1,23 +1,22 @@
+import { EntityKey, EntityStoreWithStrategy, getEntityId } from '@igo2/common';
+
 import OlFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olextent from 'ol/extent';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { Document } from 'flexsearch';
-
-import { getEntityId, EntityKey, EntityStoreWithStrategy } from '@igo2/common';
 
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap, MapExtent } from '../../map/shared';
-
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import {
   computeOlFeaturesDiff,
+  computeOlFeaturesExtent,
   featureFromOl,
   featureToOl,
-  moveToOlFeatures,
-  computeOlFeaturesExtent
+  moveToOlFeatures
 } from './feature.utils';
 
 /**

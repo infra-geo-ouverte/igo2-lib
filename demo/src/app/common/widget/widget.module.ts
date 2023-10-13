@@ -4,12 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 
 import { IgoWidgetModule } from '@igo2/common';
 
+import { SharedModule } from '../../shared/shared.module';
+import { AppWidgetRoutingModule } from './widget-routing.module';
 import {
   AppSalutationWidgetComponent,
   AppWidgetComponent
 } from './widget.component';
-import { AppWidgetRoutingModule } from './widget-routing.module';
-import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [AppSalutationWidgetComponent, AppWidgetComponent],

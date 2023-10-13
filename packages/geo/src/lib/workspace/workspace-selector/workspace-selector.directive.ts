@@ -1,36 +1,35 @@
 import {
   Directive,
+  EventEmitter,
   Input,
-  OnInit,
   OnDestroy,
-  Output,
-  EventEmitter
+  OnInit,
+  Output
 } from '@angular/core';
+
+import {
+  Workspace,
+  WorkspaceSelectorComponent,
+  WorkspaceStore
+} from '@igo2/common';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import {
-  Workspace,
-  WorkspaceStore,
-  WorkspaceSelectorComponent
-} from '@igo2/common';
-
-import { Layer, ImageLayer, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
-import {
+  FeatureDataSource,
   WFSDataSource,
-  WMSDataSource,
-  FeatureDataSource
+  WMSDataSource
 } from '../../datasource';
+import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared';
-
-import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
-import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { ImageLayer, Layer, VectorLayer } from '../../layer/shared';
+import { IgoMap } from '../../map/shared';
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { EditionWorkspaceService } from '../shared/edition-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
-import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
-import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
+import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'

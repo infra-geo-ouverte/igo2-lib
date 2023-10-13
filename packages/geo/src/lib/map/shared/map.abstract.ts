@@ -1,11 +1,16 @@
-import { Layer } from '../../layer';
+import { SubjectStatus } from '@igo2/utils';
+
+import { ObjectEvent } from 'ol/Object';
+import { Layer as OlLayer } from 'ol/layer';
 import { Projection } from 'ol/proj';
 import { Source } from 'ol/source';
-import { Layer as OlLayer } from 'ol/layer';
+
 import { Map } from 'ol';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ObjectEvent } from 'ol/Object';
-import { SubjectStatus } from '@igo2/utils';
+
+import { FeatureDataSource } from '../../datasource';
+import { Layer } from '../../layer';
+import { Overlay } from '../../overlay';
 import {
   MapControlsOptions,
   MapExtent,
@@ -13,8 +18,6 @@ import {
   MapViewController,
   MapViewOptions
 } from '../shared';
-import { FeatureDataSource } from '../../datasource';
-import { Overlay } from '../../overlay';
 
 export abstract class MapBase {
   ol: Map;

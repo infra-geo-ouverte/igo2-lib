@@ -1,15 +1,16 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
+
+import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
 
 import { IgoActivityModule } from './activity/activity.module';
 import { IgoConfigModule } from './config/config.module';
 import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
-import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
 
 const dbConfig: DBConfig = {
   name: 'igo2DB',

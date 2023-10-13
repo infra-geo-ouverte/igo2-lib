@@ -1,14 +1,16 @@
-import { LanguageService, ConfigService } from '@igo2/core';
-import { Component, OnInit, OnDestroy, Optional, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { EntityStore } from '@igo2/common';
+import { ConfigService, LanguageService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
+
 import { TypeCapabilities } from '../../datasource';
 import { Catalog } from '../shared/catalog.abstract';
 

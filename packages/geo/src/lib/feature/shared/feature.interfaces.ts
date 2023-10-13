@@ -1,7 +1,4 @@
-import OlRenderFeature from 'ol/render/Feature';
 import { UntypedFormGroup } from '@angular/forms';
-
-import { GeoJsonGeometryTypes } from 'geojson';
 
 import {
   EntityKey,
@@ -9,12 +6,16 @@ import {
   EntityStoreStrategyOptions
 } from '@igo2/common';
 
+import OlFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlRenderFeature from 'ol/render/Feature';
+
+import { GeoJsonGeometryTypes } from 'geojson';
+
+import { SourceFieldsOptionsParams } from '../../datasource';
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
-import OlFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { SourceFieldsOptionsParams } from '../../datasource';
 
 export interface Feature<P = { [key: string]: any }> {
   type: string;

@@ -1,20 +1,21 @@
 import { LanguageService } from '@igo2/core';
-import * as olstyle from 'ol/style';
-import OlPoint from 'ol/geom/Point';
-import OlLineString from 'ol/geom/LineString';
-import OlPolygon from 'ol/geom/Polygon';
-import OlCircle from 'ol/geom/Circle';
+
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';
-import { getLength as olGetLength, getArea as olGetArea } from 'ol/sphere';
+import OlCircle from 'ol/geom/Circle';
+import OlLineString from 'ol/geom/LineString';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import { getArea as olGetArea, getLength as olGetLength } from 'ol/sphere';
+import * as olstyle from 'ol/style';
 
-import { Measure } from './measure.interfaces';
 import {
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
   MeasureLengthUnit,
   MeasureLengthUnitAbbreviation
 } from './measure.enum';
+import { Measure } from './measure.interfaces';
 
 /**
  * Convert value from meters to kilometers

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { concatMap, first } from 'rxjs/operators';
+
 import { LayerDBData } from './layerDB.interface';
 
 @Injectable({

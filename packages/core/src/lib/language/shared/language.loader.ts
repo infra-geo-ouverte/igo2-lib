@@ -1,10 +1,9 @@
 import { HttpBackend, HttpClient } from '@angular/common/http';
 
-import { forkJoin, map } from 'rxjs';
+import { ObjectUtils } from '@igo2/utils';
 
 import { TranslateLoader } from '@ngx-translate/core';
-
-import { ObjectUtils } from '@igo2/utils';
+import { forkJoin, map } from 'rxjs';
 
 import { ConfigService } from '../../config/config.service';
 

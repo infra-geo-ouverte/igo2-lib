@@ -1,3 +1,5 @@
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
@@ -9,10 +11,8 @@ import {
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
-import { TemplatePortal } from '@angular/cdk/portal';
-import { fromEvent, Subscription } from 'rxjs';
+import { Subscription, fromEvent } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 
 @Directive({
   selector: '[igoContextMenu]'

@@ -1,10 +1,10 @@
-import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import OlVectorSource from 'ol/source/Vector';
-import OlVectorLayer from 'ol/layer/Vector';
+import OlMap from 'ol/Map';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLineString from 'ol/geom/LineString';
+import OlVectorLayer from 'ol/layer/Vector';
+import OlVectorSource from 'ol/source/Vector';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { Subject, Subscription } from 'rxjs';
 

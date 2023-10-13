@@ -1,21 +1,18 @@
+import { ConfigService } from '@igo2/core';
+
 import {
   MSAL_GUARD_CONFIG,
   MSAL_INSTANCE,
   MsalService
 } from '@azure/msal-angular';
-
-import { PublicClientApplication, InteractionType } from '@azure/msal-browser';
-
-import { ConfigService } from '@igo2/core';
-
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
+import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
 import {
   AuthMicrosoftOptions,
   MSPMsalGuardConfiguration
 } from './auth.interface';
-
-import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
 
 export function MSALConfigFactory(
   config: ConfigService

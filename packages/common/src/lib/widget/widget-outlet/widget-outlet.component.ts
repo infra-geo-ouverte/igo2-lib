@@ -1,14 +1,13 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
-  OnDestroy
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
 } from '@angular/core';
 
 import { DynamicComponent } from '../../dynamic-component';
-
 import { WidgetComponent } from '../shared/widget.interfaces';
 
 /**

@@ -1,12 +1,13 @@
-import { Directive, AfterViewInit } from '@angular/core';
-import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
+import { AfterViewInit, Directive } from '@angular/core';
 
-import { IgoMap } from './map';
-import { MapBrowserComponent } from '../map-browser/map-browser.component';
-import { Layer } from '../../layer/shared/layers/layer';
+import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
+
 import { combineLatest } from 'rxjs';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { Layer } from '../../layer/shared/layers/layer';
+import { MapBrowserComponent } from '../map-browser/map-browser.component';
+import { IgoMap } from './map';
 
 interface OfflinableSourceOptions extends DataSourceOptions {
   pathOffline?: string;

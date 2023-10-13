@@ -1,26 +1,28 @@
 import { Component, Inject, Input } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { LanguageService } from '@igo2/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
-import { transform } from 'ol/proj';
-import { IgoMap, roundCoordTo } from '../../map/shared';
+
 import OlFeature from 'ol/Feature';
+import Circle from 'ol/geom/Circle';
+import { fromCircle } from 'ol/geom/Polygon';
+import { transform } from 'ol/proj';
+import { getLength } from 'ol/sphere';
+
+import { IgoMap, roundCoordTo } from '../../map/shared';
 import {
-  measureOlGeometryLength,
+  MeasureAreaUnit,
+  MeasureAreaUnitAbbreviation,
+  MeasureLengthUnit,
+  MeasureLengthUnitAbbreviation
+} from '../../measure/shared/measure.enum';
+import {
   measureOlGeometryArea,
+  measureOlGeometryLength,
   metersToUnit,
   squareMetersToUnit
 } from '../../measure/shared/measure.utils';
-import {
-  MeasureLengthUnit,
-  MeasureLengthUnitAbbreviation,
-  MeasureAreaUnit,
-  MeasureAreaUnitAbbreviation
-} from '../../measure/shared/measure.enum';
-
-import { fromCircle } from 'ol/geom/Polygon';
-import { getLength } from 'ol/sphere';
-import Circle from 'ol/geom/Circle';
+import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { DDtoDMS } from '../shared/draw.utils';
 
 @Component({

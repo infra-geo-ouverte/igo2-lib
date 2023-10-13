@@ -1,8 +1,9 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
-import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
 import { Subscription, debounceTime } from 'rxjs';
+
+import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy maintain the store features updated while the map is scrolled.

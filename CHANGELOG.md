@@ -1,3 +1,28 @@
+# [16.0.0-rc.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.1...16.0.0-rc.2) (2023-10-11)
+
+
+### Bug Fixes
+
+* **Core:** resolve infinite loop between MessageService and the ErrorInterceptor ([#1419](https://github.com/infra-geo-ouverte/igo2-lib/issues/1419)) ([bc0da58](https://github.com/infra-geo-ouverte/igo2-lib/commit/bc0da58f1b90a4d785fd0b5c0c4c950eb29f63ee))
+* **EditionWorkspace:** pass the service context to the function parameter ([#1415](https://github.com/infra-geo-ouverte/igo2-lib/issues/1415)) ([111f851](https://github.com/infra-geo-ouverte/igo2-lib/commit/111f8514052cb0ebaab2bb392b9dfbe690feb6ac))
+* **geo, common:** Integrate ngx color ([#1422](https://github.com/infra-geo-ouverte/igo2-lib/issues/1422)) ([e920a41](https://github.com/infra-geo-ouverte/igo2-lib/commit/e920a413f72916af1f59a9c4faf889450faf436d))
+* **MDC:** resolve all remaining TODO from MDC migration ([#1416](https://github.com/infra-geo-ouverte/igo2-lib/issues/1416)) ([dc0815e](https://github.com/infra-geo-ouverte/igo2-lib/commit/dc0815ebaa9d95f0d303e575981c395e22d3af07))
+* **MessageService:** handle number for field validation message ([#1432](https://github.com/infra-geo-ouverte/igo2-lib/issues/1432)) ([e6eaa28](https://github.com/infra-geo-ouverte/igo2-lib/commit/e6eaa2829863bbcefeb9b42e0204b0033e5d6293))
+
+
+### Features
+
+* add types for app environment and config ([3b75824](https://github.com/infra-geo-ouverte/igo2-lib/commit/3b75824a1c7273776c68621826a6658121859e03)), closes [#1430](https://github.com/infra-geo-ouverte/igo2-lib/issues/1430)
+* **core:** add default value param to the getConfig method ([#1434](https://github.com/infra-geo-ouverte/igo2-lib/issues/1434)) ([8a24b6f](https://github.com/infra-geo-ouverte/igo2-lib/commit/8a24b6f89da6eb76af2bc625029d3b359f3f2eaf))
+* **core:** add method to retrieve global configs ([#1417](https://github.com/infra-geo-ouverte/igo2-lib/issues/1417)) ([05454b9](https://github.com/infra-geo-ouverte/igo2-lib/commit/05454b9105ec0d1dbe7ffd55701a8c2138984d8a))
+
+
+### Performance Improvements
+
+* **wfs:** cancel outgoing wfs xhr on pan/zoom ([#1421](https://github.com/infra-geo-ouverte/igo2-lib/issues/1421)) ([b796cec](https://github.com/infra-geo-ouverte/igo2-lib/commit/b796cec28417bc4d30a7ad5787b6c07f09f2bc3b))
+
+
+
 # [16.0.0-rc.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.0...16.0.0-rc.1) (2023-09-22)
 
 

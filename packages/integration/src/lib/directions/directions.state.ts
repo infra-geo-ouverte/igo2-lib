@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 
 import {
   AnyLayerOptions,
-  StopsStore,
-  StopsFeatureStore,
   RoutesFeatureStore,
-  StepFeatureStore
+  StepFeatureStore,
+  StopsFeatureStore,
+  StopsStore
 } from '@igo2/geo';
+
 import { Subject } from 'rxjs';
+
 import { MapState } from '../map/map.state';
 
 /**

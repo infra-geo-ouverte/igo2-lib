@@ -1,26 +1,27 @@
-import { Injectable, Inject } from '@angular/core';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import * as olproj from 'ol/proj';
-import { fromCircle } from 'ol/geom/Polygon';
-import OlCircle from 'ol/geom/Circle';
-import * as olformat from 'ol/format';
-
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
-
-import { SearchResult, ReverseSearch } from '../search.interfaces';
-import { SearchSource } from './source';
-import { SearchSourceOptions, ReverseSearchOptions } from './source.interfaces';
+import { Inject, Injectable } from '@angular/core';
 
 import { LanguageService, StorageService } from '@igo2/core';
-import { GoogleLinks } from '../../../utils/googleLinks';
-import { Projection } from '../../../map/shared/projection.interfaces';
-import {
-  lonLatConversion,
-  roundCoordTo,
-  convertDDToDMS
-} from '../../../map/shared/map.utils';
-import { OsmLinks } from '../../../utils';
+
+import * as olformat from 'ol/format';
+import OlCircle from 'ol/geom/Circle';
+import { fromCircle } from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Cacheable } from 'ts-cacheable';
+
+import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import {
+  convertDDToDMS,
+  lonLatConversion,
+  roundCoordTo
+} from '../../../map/shared/map.utils';
+import { Projection } from '../../../map/shared/projection.interfaces';
+import { OsmLinks } from '../../../utils';
+import { GoogleLinks } from '../../../utils/googleLinks';
+import { ReverseSearch, SearchResult } from '../search.interfaces';
+import { SearchSource } from './source';
+import { ReverseSearchOptions, SearchSourceOptions } from './source.interfaces';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {

@@ -1,33 +1,33 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { LanguageService, StorageService } from '@igo2/core';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
+
+import * as olformat from 'ol/format';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
 
-import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 import { FEATURE, Feature } from '../../../feature';
-
-import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
+import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import {
+  ReverseSearchOptions,
   SearchSourceOptions,
-  TextSearchOptions,
-  ReverseSearchOptions
+  TextSearchOptions
 } from './source.interfaces';
 import {
   StoredQueriesData,
+  StoredQueriesFields,
   StoredQueriesResponse,
   StoredQueriesReverseData,
   StoredQueriesReverseResponse,
-  StoredQueriesSearchSourceOptions,
-  StoredQueriesFields,
-  StoredQueriesReverseSearchSourceOptions
+  StoredQueriesReverseSearchSourceOptions,
+  StoredQueriesSearchSourceOptions
 } from './storedqueries.interfaces';
-
-import * as olformat from 'ol/format';
-import { LanguageService, StorageService } from '@igo2/core';
-import { computeTermSimilarity } from '../search.utils';
-import { Cacheable } from 'ts-cacheable';
 
 /**
  * StoredQueries search source

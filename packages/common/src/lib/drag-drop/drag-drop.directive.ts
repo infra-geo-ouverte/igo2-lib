@@ -1,10 +1,10 @@
 import {
   Directive,
-  HostListener,
-  HostBinding,
   EventEmitter,
-  Output,
-  Input
+  HostBinding,
+  HostListener,
+  Input,
+  Output
 } from '@angular/core';
 
 @Directive({

@@ -1,34 +1,39 @@
 import {
   ChangeDetectorRef,
   Component,
+  Input,
   OnDestroy,
-  OnInit,
-  Input
+  OnInit
 } from '@angular/core';
-import {
-  formatScale,
-  IgoMap,
-  InputProjections,
-  ProjectionsLimitationsOptions
-} from '@igo2/geo';
-import { MapState } from '../../map.state';
-import { Clipboard } from '@igo2/utils';
-import {
-  MessageService,
-  LanguageService,
-  StorageService,
-  StorageScope,
-  ConfigService
-} from '@igo2/core';
-import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
-import { zoneMtm, zoneUtm, computeProjectionsConstraints } from '@igo2/geo';
+
+import {
+  ConfigService,
+  LanguageService,
+  MessageService,
+  StorageScope,
+  StorageService
+} from '@igo2/core';
+import {
+  IgoMap,
+  InputProjections,
+  ProjectionsLimitationsOptions,
+  formatScale
+} from '@igo2/geo';
+import { computeProjectionsConstraints, zoneMtm, zoneUtm } from '@igo2/geo';
+import { Clipboard } from '@igo2/utils';
+
 import * as olproj from 'ol/proj';
+
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+
+import { MapState } from '../../map.state';
+
 /**
  * Tool to display the coordinates and a cursor of the center of the map
  */

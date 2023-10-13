@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 

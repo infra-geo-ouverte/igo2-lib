@@ -1,14 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input,
-  Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  Input,
+  Output
 } from '@angular/core';
 
 import { getEntityTitle } from '../../entity';
-import { Workspace } from '../shared/workspace';
 import { WorkspaceStore } from '../shared/store';
+import { Workspace } from '../shared/workspace';
 
 /**
  * Drop list that activates the selected workspace emit an event.

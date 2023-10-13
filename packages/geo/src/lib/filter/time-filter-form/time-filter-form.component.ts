@@ -1,19 +1,21 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
+  Input,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatSlider } from '@angular/material/slider';
-import { default as moment } from 'moment';
+
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
+import { default as moment } from 'moment';
+
 import { Layer } from '../../layer/shared/layers/layer';
+import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
-import { TimeFilterType, TimeFilterStyle } from '../shared/time-filter.enum';
 
 @Component({
   selector: 'igo-time-filter-form',

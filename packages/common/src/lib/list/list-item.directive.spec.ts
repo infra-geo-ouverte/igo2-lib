@@ -1,4 +1,5 @@
 import { ElementRef } from '@angular/core';
+
 import { ListItemDirective } from './list-item.directive';
 
 export class MockElementRef extends ElementRef {}
