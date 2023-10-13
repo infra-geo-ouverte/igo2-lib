@@ -1,7 +1,6 @@
 <div [ngClass]="{ 'separate-item': header === true }">
-  <mat-list-item>
+  <mat-list-item *ngIf="header">
     <mat-icon
-      *ngIf="header"
       class="igo-chevron"
       matListItemIcon
       igoCollapse
@@ -12,7 +11,6 @@
     >
     </mat-icon>
     <span
-      *ngIf="header"
       matListItemTitle
       [ngStyle]="{ cursor: filtersCollapsed ? 'default' : 'pointer' }"
       [matTooltip]="layer.title"
@@ -35,7 +33,6 @@
         <mat-icon svgIcon="plus"></mat-icon>
       </button>
       <button
-        *ngIf="header"
         mat-icon-button
         [color]="layer.visible ? 'primary' : 'default'"
         collapsibleButton
@@ -56,6 +53,19 @@
       </button>
     </div>
   </mat-list-item>
+
+  <button
+    *ngIf="isAdvancedOgcFilters() && filtersAreEditable && !header"
+    [disabled]="addFilterDisabled()"
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.filter.addFilter' | translate"
+    [color]="color"
+    (click)="addFilterToSequence()"
+  >
+    <mat-icon svgIcon="plus"></mat-icon>
+  </button>
 
   <div #ogcFilters>
     <div *ngIf="header" #legend class="igo-layer-legend-container">
