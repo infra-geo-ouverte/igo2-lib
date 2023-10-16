@@ -1,13 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input,
-  Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  Input,
+  Output
 } from '@angular/core';
 
-import { StorageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
+import { StorageService } from '@igo2/core';
+
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
 

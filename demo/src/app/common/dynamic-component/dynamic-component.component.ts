@@ -1,8 +1,8 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Component,
+  Input
 } from '@angular/core';
 
 import { OnUpdateInputs } from '@igo2/common';

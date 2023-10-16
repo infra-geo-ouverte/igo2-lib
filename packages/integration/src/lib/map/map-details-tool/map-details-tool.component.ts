@@ -1,24 +1,25 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
-  LayerListControlsEnum,
-  Layer,
+  ExportOptions,
   IgoMap,
+  Layer,
+  LayerListControlsEnum,
   LayerListControlsOptions,
   SearchSourceService,
-  sourceCanSearch,
-  ExportOptions
+  sourceCanSearch
 } from '@igo2/geo';
 
-import { ToolState } from './../../tool/tool.state';
-import { MapState } from './../map.state';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import {
   ImportExportMode,
   ImportExportState
 } from '../../import-export/import-export.state';
+import { ToolState } from './../../tool/tool.state';
+import { MapState } from './../map.state';
 
 @ToolComponent({
   name: 'mapDetails',

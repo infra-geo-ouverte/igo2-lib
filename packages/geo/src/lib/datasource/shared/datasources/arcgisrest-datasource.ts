@@ -1,11 +1,11 @@
-import olSourceVector from 'ol/source/Vector';
 import olFormatEsriJSON from 'ol/format/EsriJSON';
-import * as olloadingstrategy from 'ol/loadingstrategy';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olloadingstrategy from 'ol/loadingstrategy';
+import olSourceVector from 'ol/source/Vector';
 
+import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
-import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
   public declare ol: olSourceVector<OlGeometry>;

@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { take } from 'rxjs/operators';
 
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
+
+import { take } from 'rxjs/operators';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';

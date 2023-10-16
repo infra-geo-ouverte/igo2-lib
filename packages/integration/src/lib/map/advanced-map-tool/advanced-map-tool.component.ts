@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+
 import { ToolComponent } from '@igo2/common';
+
 import { MapState } from '../map.state';
 
 @ToolComponent({

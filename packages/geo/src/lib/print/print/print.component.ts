@@ -1,17 +1,18 @@
 import { Component, Input } from '@angular/core';
+
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
-
+import { PrintService } from '../shared/print.service';
 import {
+  PrintLegendPosition,
+  PrintOrientation,
   PrintOutputFormat,
   PrintPaperFormat,
-  PrintOrientation,
   PrintResolution,
-  PrintSaveImageFormat,
-  PrintLegendPosition
+  PrintSaveImageFormat
 } from '../shared/print.type';
 
 import { PrintService } from '../shared/print.service';

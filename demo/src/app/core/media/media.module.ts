@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
-import { AppMediaComponent } from './media.component';
-import { AppMediaRoutingModule } from './media-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppMediaRoutingModule } from './media-routing.module';
+import { AppMediaComponent } from './media.component';
 
 @NgModule({
   declarations: [AppMediaComponent],

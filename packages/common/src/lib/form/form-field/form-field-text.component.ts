@@ -1,18 +1,18 @@
 import {
-  Input,
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  Input,
   OnInit
 } from '@angular/core';
 import type { UntypedFormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoFormFieldComponent } from '../shared/form-field-component';
 import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a text field

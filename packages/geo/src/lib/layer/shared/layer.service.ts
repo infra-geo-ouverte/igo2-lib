@@ -1,54 +1,53 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, catchError, concatMap } from 'rxjs/operators';
-import { stylefunction } from 'ol-mapbox-style';
-import { AuthInterceptor } from '@igo2/auth';
-import { ObjectUtils } from '@igo2/utils';
-import olLayerVectorTile from 'ol/layer/VectorTile';
+import { Injectable, Optional } from '@angular/core';
 
+import { AuthInterceptor } from '@igo2/auth';
+import { MessageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
+
+import olLayerVectorTile from 'ol/layer/VectorTile';
 import { Style } from 'ol/style';
 import * as olStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
+
+import { stylefunction } from 'ol-mapbox-style';
+import { Observable, combineLatest, of } from 'rxjs';
+import { catchError, concatMap, map } from 'rxjs/operators';
 
 import {
-  OSMDataSource,
+  ArcGISRestDataSource,
+  CartoDataSource,
+  ClusterDataSource,
   FeatureDataSource,
-  XYZDataSource,
+  ImageArcGISRestDataSource,
+  MVTDataSource,
+  OSMDataSource,
+  TileArcGISRestDataSource,
   TileDebugDataSource,
   WFSDataSource,
-  WMTSDataSource,
   WMSDataSource,
-  CartoDataSource,
-  ImageArcGISRestDataSource,
-  ArcGISRestDataSource,
-  TileArcGISRestDataSource,
+  WMTSDataSource,
   WebSocketDataSource,
-  MVTDataSource,
-  ClusterDataSource
+  XYZDataSource
 } from '../../datasource';
-
 import { DataSourceService } from '../../datasource/shared/datasource.service';
-
+import { LayerDBService } from '../../offline/layerDB/layerDB.service';
+import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
-  Layer,
+  AnyLayerOptions,
   ImageLayer,
   ImageLayerOptions,
+  Layer,
+  LayerOptions,
   TileLayer,
   TileLayerOptions,
   VectorLayer,
   VectorLayerOptions,
-  AnyLayerOptions,
   VectorTileLayer,
-  VectorTileLayerOptions,
-  LayerOptions
+  VectorTileLayerOptions
 } from './layers';
-
-import { computeMVTOptionsOnHover } from '../utils/layer.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { MessageService } from '@igo2/core';
-import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 
 @Injectable({
   providedIn: 'root'

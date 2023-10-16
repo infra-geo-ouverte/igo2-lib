@@ -1,18 +1,19 @@
-import OlCircle from 'ol/geom/Circle';
-import OlPoint from 'ol/geom/Point';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olstyle from 'ol/style';
-import OlLineString from 'ol/geom/LineString';
-import OlLinearRing from 'ol/geom/LinearRing';
-import OlPolygon from 'ol/geom/Polygon';
 import BasicEvent from 'ol/events/Event';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import lineIntersect from '@turf/line-intersect';
+import OlCircle from 'ol/geom/Circle';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlLineString from 'ol/geom/LineString';
+import OlLinearRing from 'ol/geom/LinearRing';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import * as olstyle from 'ol/style';
+
 import { lineString } from '@turf/helpers';
+import lineIntersect from '@turf/line-intersect';
 
 import {
-  GeometrySliceMultiPolygonError,
   GeometrySliceLineStringError,
+  GeometrySliceMultiPolygonError,
   GeometrySliceTooManyIntersectionError
 } from './geometry.errors';
 

@@ -1,10 +1,11 @@
 import {
   Directive,
-  HostListener,
-  Output,
   EventEmitter,
-  Input
+  HostListener,
+  Input,
+  Output
 } from '@angular/core';
+
 import { userAgent } from '@igo2/utils';
 
 /**

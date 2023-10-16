@@ -1,6 +1,6 @@
 import { Component, Input, forwardRef } from '@angular/core';
-
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
 import { ColorEvent } from 'ngx-color';
 import tinycolor, { ColorInput } from 'tinycolor2';
 

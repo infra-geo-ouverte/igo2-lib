@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 
 import { IgoPanelModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule } from '@igo2/geo';
+import { IgoFilterModule, IgoMapModule } from '@igo2/geo';
 
-import { AppTimeFilterComponent } from './time-filter.component';
-import { AppTimeFilterRoutingModule } from './time-filter-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppTimeFilterRoutingModule } from './time-filter-routing.module';
+import { AppTimeFilterComponent } from './time-filter.component';
 
 @NgModule({
   declarations: [AppTimeFilterComponent],

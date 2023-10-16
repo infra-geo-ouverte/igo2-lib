@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+
 import { LayerListControlsOptions } from '@igo2/geo';
+
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Service that holds the state of layer list tool values

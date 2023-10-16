@@ -1,29 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  ViewChildren,
+  ChangeDetectorRef,
+  Component,
   ElementRef,
-  ChangeDetectorRef
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChildren
 } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
-import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
+import { SecureImagePipe } from '@igo2/common';
+import { ConfigService, LanguageService } from '@igo2/core';
 
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
+import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../shared/layers';
 import {
-  LegendMapViewOptions,
-  ItemStyleOptions
+  ItemStyleOptions,
+  LegendMapViewOptions
 } from '../shared/layers/legend.interface';
-import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { catchError, map } from 'rxjs/operators';
-import { LanguageService, ConfigService } from '@igo2/core';
-import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
-import { SecureImagePipe } from '@igo2/common';
 
 @Component({
   selector: 'igo-layer-legend',

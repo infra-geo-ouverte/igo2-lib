@@ -1,27 +1,26 @@
 import { Component } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
-import olFeature from 'ol/Feature';
-import olPoint from 'ol/geom/Point';
-import olPolygon from 'ol/geom/Polygon';
-import olLineString from 'ol/geom/LineString';
-import * as olproj from 'ol/proj';
-
+import { getEntityTitle } from '@igo2/common';
 import {
-  IgoMap,
-  FeatureDataSource,
   DataSourceService,
-  LayerService,
   Feature,
-  QueryableDataSourceOptions,
+  FeatureDataSource,
+  FeatureMotion,
+  IgoMap,
+  LayerService,
   QueryFormat,
   QueryHtmlTarget,
-  SearchResult,
-  FeatureMotion
+  QueryableDataSourceOptions,
+  SearchResult
 } from '@igo2/geo';
 
-import { getEntityTitle } from '@igo2/common';
+import olFeature from 'ol/Feature';
+import olLineString from 'ol/geom/LineString';
+import olPoint from 'ol/geom/Point';
+import olPolygon from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-query',

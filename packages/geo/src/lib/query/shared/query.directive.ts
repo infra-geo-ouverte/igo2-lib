@@ -1,37 +1,36 @@
 import {
-  Directive,
-  Input,
-  Output,
-  EventEmitter,
-  OnDestroy,
   AfterViewInit,
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
   Self
 } from '@angular/core';
 
-import { Subscription, Observable, of, zip } from 'rxjs';
-import { unByKey } from 'ol/Observable';
-
 import OlFeature from 'ol/Feature';
-import OlRenderFeature from 'ol/render/Feature';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLayer from 'ol/layer/Layer';
+import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { EventsKey } from 'ol/events';
+import { Observable, Subscription, of, zip } from 'rxjs';
 
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
-import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
-import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { QueryableDataSourceOptions } from './query.interfaces';
+import { QueryService } from './query.service';
+import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.

@@ -1,67 +1,67 @@
 import {
+  ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  EventEmitter,
-  ChangeDetectorRef
+  Output
 } from '@angular/core';
 import {
-  UntypedFormGroup,
   UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
+import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
+import type { WorkspaceStore } from '@igo2/common';
 import {
-  MessageService,
-  LanguageService,
   ConfigService,
+  LanguageService,
+  MessageService,
   StorageService
 } from '@igo2/core';
 import { strEnum } from '@igo2/utils';
 
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { Layer } from '../../layer/shared/layers/layer';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { AnyLayer } from '../../layer/shared/layers/any-layer';
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import { circular } from 'ol/geom/Polygon';
+import olClusterSource from 'ol/source/Cluster';
+import olVectorSource from 'ol/source/Vector';
 
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { skipWhile } from 'rxjs/operators';
+
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { DownloadService } from '../../download/shared/download.service';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { LayerService } from '../../layer/shared/layer.service';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { Layer } from '../../layer/shared/layers/layer';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
+import { computeProjectionsConstraints } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
+import { StyleListService } from '../../style/style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
+import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
+import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
+import { ExportOptions } from '../shared/export.interface';
+import { ExportService } from '../shared/export.service';
+import { EncodingFormat, ExportFormat } from '../shared/export.type';
 import {
   handleFileExportError,
   handleFileExportSuccess
 } from '../shared/export.utils';
-import { ExportOptions } from '../shared/export.interface';
-import { ExportFormat, EncodingFormat } from '../shared/export.type';
-import { ExportService } from '../shared/export.service';
+import { ImportExportServiceOptions } from '../shared/import.interface';
 import { ImportService } from '../shared/import.service';
 import {
-  handleFileImportSuccess,
-  handleFileImportError
+  handleFileImportError,
+  handleFileImportSuccess
 } from '../shared/import.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { skipWhile } from 'rxjs/operators';
-import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
-import type { WorkspaceStore } from '@igo2/common';
-import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
-import { EditionWorkspace } from '../../workspace/shared/edition-workspace';
-import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { InputProjections, ProjectionsLimitationsOptions } from '../../map/';
-import { DownloadService } from '../../download/shared/download.service';
-import { computeProjectionsConstraints } from '../../map/shared';
-
-import olVectorSource from 'ol/source/Vector';
-import olClusterSource from 'ol/source/Cluster';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { LayerService } from '../../layer/shared/layer.service';
-import { ImportExportServiceOptions } from '../shared/import.interface';
 
 @Component({
   selector: 'igo-import-export',

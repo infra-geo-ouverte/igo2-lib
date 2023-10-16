@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, EMPTY } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+
+import { EMPTY, Observable } from 'rxjs';
+
 import { Poi } from './poi.interface';
 
 @Injectable()

@@ -1,8 +1,11 @@
-import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+
+import { getRenderPixel } from 'ol/render';
+
+import { Subscription } from 'rxjs';
+
 import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared/map';
-import { getRenderPixel } from 'ol/render';
-import { Subscription } from 'rxjs';
 
 /**
  * Tool to swipe the layers

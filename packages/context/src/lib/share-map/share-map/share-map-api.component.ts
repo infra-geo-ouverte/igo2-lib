@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
-import { uuid, Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
+import { LanguageService, MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
+import { Clipboard, uuid } from '@igo2/utils';
 
 import { ShareMapService } from '../shared/share-map.service';
 

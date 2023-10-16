@@ -1,31 +1,31 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectionStrategy,
+  OnInit,
   ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { skip } from 'rxjs/operators';
-
-import OlStyle from 'ol/style/Style';
-import OlGeoJSON from 'ol/format/GeoJSON';
-import OlVectorSource from 'ol/source/Vector';
-import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
-import OlLineString from 'ol/geom/LineString';
-import OlPolygon from 'ol/geom/Polygon';
-import OlFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import OlOverlay from 'ol/Overlay';
-import { unByKey } from 'ol/Observable';
-
-import { LanguageService, StorageScope, StorageService } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 import type { EntityTableComponent } from '@igo2/common';
+import { LanguageService, StorageScope, StorageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
+
+import OlFeature from 'ol/Feature';
+import { unByKey } from 'ol/Observable';
+import OlOverlay from 'ol/Overlay';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlLineString from 'ol/geom/LineString';
+import OlPolygon from 'ol/geom/Polygon';
+import OlVectorSource from 'ol/source/Vector';
+import { VectorSourceEvent as OlVectorSourceEvent } from 'ol/source/Vector';
+import OlStyle from 'ol/style/Style';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { skip } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../datasource';
 import {
@@ -33,34 +33,33 @@ import {
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
-  tryBindStoreLayer,
   tryAddLoadingStrategy,
-  tryAddSelectionStrategy
+  tryAddSelectionStrategy,
+  tryBindStoreLayer
 } from '../../feature';
 import { DrawControl, ModifyControl } from '../../geometry/shared';
 import { VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared';
-
 import {
-  Measure,
-  MeasurerDialogData,
-  FeatureWithMeasure
-} from '../shared/measure.interfaces';
-import {
-  MeasureType,
   MeasureAreaUnit,
-  MeasureLengthUnit
+  MeasureLengthUnit,
+  MeasureType
 } from '../shared/measure.enum';
 import {
-  measureOlGeometry,
+  FeatureWithMeasure,
+  Measure,
+  MeasurerDialogData
+} from '../shared/measure.interfaces';
+import {
   createMeasureInteractionStyle,
   createMeasureLayerStyle,
-  updateOlTooltipsAtMidpoints,
-  updateOlTooltipAtCenter,
+  formatMeasure,
   getTooltipsOfOlGeometry,
-  squareMetersToUnit,
+  measureOlGeometry,
   metersToUnit,
-  formatMeasure
+  squareMetersToUnit,
+  updateOlTooltipAtCenter,
+  updateOlTooltipsAtMidpoints
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
 

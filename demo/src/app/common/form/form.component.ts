@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { LanguageService } from '@igo2/core';
 import { Form, FormService } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-form',

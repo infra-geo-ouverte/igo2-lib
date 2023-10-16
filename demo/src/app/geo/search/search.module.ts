@@ -1,33 +1,30 @@
 import { NgModule } from '@angular/core';
 
-import { IgoMessageModule } from '@igo2/core';
-
 import {
-  IgoPanelModule,
   IgoActionbarModule,
-  IgoContextMenuModule
+  IgoContextMenuModule,
+  IgoPanelModule
 } from '@igo2/common';
-
+import { IgoMessageModule } from '@igo2/core';
 import {
   IgoFeatureModule,
   IgoMapModule,
   IgoSearchModule,
+  provideCadastreSearchSource,
+  provideCoordinatesReverseSearchSource,
+  provideIChercheReverseSearchSource,
   provideIChercheSearchSource,
-  provideWorkspaceSearchSource,
   provideILayerSearchSource,
   provideNominatimSearchSource,
-  provideIChercheReverseSearchSource,
-  provideCoordinatesReverseSearchSource,
-  provideCadastreSearchSource,
+  provideStoredQueriesReverseSearchSource,
   provideStoredQueriesSearchSource,
-  provideStoredQueriesReverseSearchSource
+  provideWorkspaceSearchSource
 } from '@igo2/geo';
-
 import { IgoAppSearchModule } from '@igo2/integration';
 
-import { AppSearchComponent } from './search.component';
-import { AppSearchRoutingModule } from './search-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppSearchRoutingModule } from './search-routing.module';
+import { AppSearchComponent } from './search.component';
 
 @NgModule({
   declarations: [AppSearchComponent],

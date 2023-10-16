@@ -2,19 +2,19 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
+  AnyBaseOgcFilterOptions,
   DataSourceService,
+  IgoMap,
   LayerService,
-  WMSDataSourceOptions,
+  OgcFilterDuringOptions,
+  OgcFilterOperatorType,
+  OgcFilterableDataSourceOptions,
   WFSDataSourceOptions,
   WFSDataSourceOptionsParams,
-  OgcFilterableDataSourceOptions,
-  AnyBaseOgcFilterOptions,
-  OgcFilterOperatorType,
-  OgcFilterDuringOptions
+  WMSDataSourceOptions
 } from '@igo2/geo';
 
-import { Fill, Stroke, Circle, Style } from 'ol/style';
+import { Circle, Fill, Stroke, Style } from 'ol/style';
 
 @Component({
   selector: 'app-ogc-filter',

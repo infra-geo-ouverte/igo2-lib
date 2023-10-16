@@ -1,15 +1,15 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
-import { User, IInfosUser, AuthOptions } from './auth.interface';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { globalCacheBusterNotifier } from 'ts-cacheable';
+
+import { AuthOptions, IInfosUser, User } from './auth.interface';
 import { TokenService } from './token.service';
 
 @Injectable({

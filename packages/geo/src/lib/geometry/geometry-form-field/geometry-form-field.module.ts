@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -9,8 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 
 import { IgoLanguageModule } from '@igo2/core';
 
-import { GeometryFormFieldComponent } from './geometry-form-field.component';
 import { GeometryFormFieldInputComponent } from './geometry-form-field-input.component';
+import { GeometryFormFieldComponent } from './geometry-form-field.component';
 
 /**
  * @ignore

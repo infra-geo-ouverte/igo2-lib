@@ -1,8 +1,9 @@
-import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
-import { StyleService } from '../../../style/style-service/style.service';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olstyle from 'ol/style';
+
+import { StyleService } from '../../../style/style-service/style.service';
 import { createOverlayMarkerStyle } from './overlay-marker-style.utils';
 
 /**

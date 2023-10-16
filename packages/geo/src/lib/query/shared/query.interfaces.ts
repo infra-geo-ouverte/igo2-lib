@@ -1,11 +1,10 @@
-import { DataSource } from '../../datasource/shared/datasources/datasource';
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
-
-import { QueryFormat, QueryHtmlTarget } from './query.enums';
-
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+
+import { DataSource } from '../../datasource/shared/datasources/datasource';
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { QueryFormat, QueryHtmlTarget } from './query.enums';
 
 export interface QueryOptions {
   coordinates: [number, number];

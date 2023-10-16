@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { FlexibleState, getEntityTitle } from '@igo2/common';
+
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { Feature } from '../feature/shared/feature.interfaces';
+
 import { FeatureMotion } from '../feature/shared/feature.enums';
+import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 

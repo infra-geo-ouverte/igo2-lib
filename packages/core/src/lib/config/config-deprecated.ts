@@ -1,4 +1,4 @@
-import { DeprecatedOptions, AlternateConfigOptions } from './config.interface';
+import { AlternateConfigOptions, DeprecatedOptions } from './config.interface';
 
 export const CONFIG_DEPRECATED: { [key: string]: DeprecatedOptions } = {
   showMenuButton: {

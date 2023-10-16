@@ -1,4 +1,5 @@
 import olSourceWMTS from 'ol/source/WMTS';
+
 import { DataSourceOptions } from './datasource.interface';
 
 export interface WMTSDataSourceOptions extends DataSourceOptions {

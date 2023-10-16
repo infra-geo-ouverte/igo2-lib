@@ -1,9 +1,10 @@
-import { Md5 } from 'ts-md5';
-import feature from 'ol/Feature';
-import olSourceVectorTile from 'ol/source/VectorTile';
-import olFormatMVT from 'ol/format/MVT';
-
 import { uuid } from '@igo2/utils';
+
+import feature from 'ol/Feature';
+import olFormatMVT from 'ol/format/MVT';
+import olSourceVectorTile from 'ol/source/VectorTile';
+
+import { Md5 } from 'ts-md5';
 
 import { DataSource } from './datasource';
 import { MVTDataSourceOptions } from './mvt-datasource.interface';

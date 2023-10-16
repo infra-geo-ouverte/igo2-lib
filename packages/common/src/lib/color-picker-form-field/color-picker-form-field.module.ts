@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ColorPickerFormFieldComponent } from './color-picker-form-field.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,6 +7,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { ColorChromeModule } from 'ngx-color/chrome';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+
+import { ColorPickerFormFieldComponent } from './color-picker-form-field.component';
 
 @NgModule({
   imports: [

@@ -1,20 +1,20 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord } from '../shared/entity.interfaces';
+import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
-import { getEntityTitle } from '../shared/entity.utils';
 
 @Component({
   selector: 'igo-entity-selector',

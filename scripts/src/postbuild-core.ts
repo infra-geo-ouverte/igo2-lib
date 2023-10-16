@@ -1,9 +1,10 @@
 import { renameSync } from 'fs';
+import { readdir } from 'fs/promises';
 import path from 'path';
+import { performance } from 'perf_hooks';
+
 import { copyFile, pathExist } from './utils/file-system.utils';
 import { compileStyle } from './utils/style.utils';
-import { readdir } from 'fs/promises';
-import { performance } from 'perf_hooks';
 
 const distPath = 'dist/core';
 const packagesPath = 'packages/core';

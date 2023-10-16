@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+
 import { BehaviorSubject } from 'rxjs';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
-
 import { OverlayAction } from './overlay.enum';
 
 @Injectable({

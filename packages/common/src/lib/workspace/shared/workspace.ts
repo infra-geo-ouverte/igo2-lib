@@ -1,9 +1,8 @@
-import { Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 import { ActionStore } from '../../action';
-import { Widget } from '../../widget';
 import { EntityStoreWithStrategy } from '../../entity';
-
+import { Widget } from '../../widget';
 import { WorkspaceOptions } from './workspace.interfaces';
 
 /**

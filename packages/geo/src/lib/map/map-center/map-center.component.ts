@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
-import { IgoMap } from '../shared/map';
+
 import { Subscription } from 'rxjs';
+
+import { IgoMap } from '../shared/map';
 
 /**
  * Tool to display the center of the map

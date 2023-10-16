@@ -1,31 +1,33 @@
 import { Injectable } from '@angular/core';
 
+import { StorageService } from '@igo2/core';
 import {
-  FeatureStore,
+  FEATURE,
   Feature,
+  FeatureStore,
   IgoMap,
+  Layer,
+  MapGeolocationState,
+  QueryableDataSource,
+  QueryableDataSourceOptions,
   featureFromOl,
   measureOlGeometryLength,
-  Layer,
-  QueryableDataSourceOptions,
-  FEATURE,
-  roundCoordTo,
-  QueryableDataSource,
-  MapGeolocationState
+  roundCoordTo
 } from '@igo2/geo';
-import { BehaviorSubject, combineLatest, interval, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { MapState } from '../map/map.state';
-
-import GeoJSON from 'ol/format/GeoJSON';
 import { uuid } from '@igo2/utils';
 
-import olLayerVector from 'ol/layer/Vector';
-import olVectorSource from 'ol/source/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
 import Geometry from 'ol/geom/Geometry';
 import olLineString from 'ol/geom/LineString';
+import olLayerVector from 'ol/layer/Vector';
 import * as olProj from 'ol/proj';
-import { StorageService } from '@igo2/core';
+import olVectorSource from 'ol/source/Vector';
+
+import { BehaviorSubject, Subscription, combineLatest, interval } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+
+import { MapState } from '../map/map.state';
+
 /**
  * Service that holds the state of the direction module
  */

@@ -1,21 +1,23 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  OnInit,
-  OnDestroy,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
   Output
 } from '@angular/core';
-import { Layer } from '../shared';
+
 import {
   BehaviorSubject,
+  EMPTY,
   ReplaySubject,
   Subscription,
-  EMPTY,
   timer
 } from 'rxjs';
 import { debounce } from 'rxjs/operators';
+
+import { Layer } from '../shared';
 
 @Component({
   selector: 'igo-layer-legend-list',

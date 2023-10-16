@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { FeatureStore, FeatureWithMeasure } from '@igo2/geo';
+
 import { MapState } from '../map/map.state';
 
 /**

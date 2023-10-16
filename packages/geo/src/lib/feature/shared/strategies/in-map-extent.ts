@@ -1,9 +1,10 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
-import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
 import { debounceTime, skipWhile } from 'rxjs/operators';
+
+import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy maintain the store features updated while the map is moved.
