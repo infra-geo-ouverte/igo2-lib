@@ -157,7 +157,7 @@
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.6.2",
     "@types/tinycolor2": "^1.4.4",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.2.0",
     "angular-cli-ghpages": "^1.0.3",
     "conventional-changelog-cli": "^3.0.0",
