@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 import { SecureImagePipe } from '@igo2/common';
 import {
@@ -59,7 +60,8 @@ export class PrintService {
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<any> {
@@ -170,34 +172,32 @@ export class PrintService {
           const res = 1;
           this.addGeoRef(doc, map, width, height, res, margins);
 
-          if (options.legendPosition !== 'none') {
-            if (
-              ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
-                options.legendPosition
-              ) > -1
-            ) {
+          if (legendPostion !== PrintLegendPosition.none) {
+            const targetPositions = Object.keys(PrintLegendPosition).filter(
+              (e) => !['newpage', 'none'].includes(e)
+            );
+            if (targetPositions.indexOf(legendPostion) > -1) {
               await this.addLegendSamePage(
                 doc,
                 map,
                 margins,
                 resolution,
-                options.legendPosition
-              ).catch((res) => {
+                legendPostion
+              ).catch(() => {
                 status$.next(SubjectStatus.legendHeightError);
                 this.messageService.error(
                   'igo.geo.printForm.heighPdfLegendtErrorMessageBody',
                   'igo.geo.printForm.corsErrorMessageHeader'
                 );
-                return status$;
+                this.activityService.unregister(this.activityId);
               });
-            } else if (options.legendPosition === 'newpage') {
+            } else if (legendPostion === PrintLegendPosition.newpage) {
               await this.addLegend(doc, map, margins, resolution);
             }
           } else {
             await this.saveDoc(doc);
           }
         }
-
         if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
           this.activityService.unregister(this.activityId);
           status$.next(SubjectStatus.Done);
@@ -262,8 +262,9 @@ export class PrintService {
   getLayersLegendHtml(
     map: IgoMap,
     width: number,
-    resolution: number
-  ): Observable<string> {
+    resolution: number,
+    height?: number
+  ): Observable<Array<string> | string> {
     return new Observable((observer) => {
       let html = '';
       const legends = getLayersLegends(map.layers, {
@@ -277,6 +278,26 @@ export class PrintService {
       if (legends.filter((l) => l.display === true).length === 0) {
         observer.next(html);
         observer.complete();
+        return;
+      }
+
+      if (height) {
+        const imagesArray$ = legends
+          .filter((l) => l.display && l.isInResolutionsRange === true)
+          .map((legend) =>
+            this.getDataImage(legend.url).pipe(
+              rxMap((dataImage) => {
+                return { title: legend.title, image: dataImage };
+              })
+            )
+          );
+        this.chunkImagesByHeightAndWidth(
+          imagesArray$,
+          height,
+          width,
+          observer,
+          resolution
+        );
         return;
       }
       // Define important style to be sure that all container is convert
@@ -325,6 +346,199 @@ export class PrintService {
     return secureIMG.transform(url);
   }
 
+  private async getImageDimensions(
+    file: string,
+    resolution: number
+  ): Promise<{ w: number; h: number }> {
+    return new Promise(function (resolved, rejected) {
+      const i = new Image();
+      i.src = file;
+      i.onload = function () {
+        // length[mm] = pixel * 25.4mm (1 in) / dpi
+        const heightMM = Math.floor((i.height * 25.4) / resolution);
+        const widthMM = Math.floor((i.width * 25.4) / resolution);
+        resolved({ w: widthMM, h: heightMM });
+      };
+    });
+  }
+
+  /**
+   * Arrange image list by height and width before export in pdf page
+   * @param images$ - list of image base64 as string
+   * @param height - number
+   * @param width - number
+   * @param observer - to save the result here
+   * @param resolution - number
+   * @returns observer contain array of html code as string
+   */
+  private async chunkImagesByHeightAndWidth(
+    images$,
+    height: number,
+    width: number,
+    observer,
+    resolution: number
+  ) {
+    forkJoin(images$).subscribe(
+      async (dataImages: [{ title: string; image: string }]) => {
+        const imgsData = await Promise.all(
+          dataImages.map(
+            async (
+              element
+            ): Promise<{
+              title: string;
+              image: string;
+              dimensions: { w: number; h: number };
+            }> => {
+              const dimensions = await this.getImageDimensions(
+                element.image,
+                resolution
+              );
+              return {
+                title: element.title,
+                image: element.image,
+                dimensions
+              };
+            }
+          )
+        );
+        await this.timeout(1);
+        // sort the list of images from small to large height
+        const sortedImages = this.sortImages(imgsData);
+        // chunk images list by height
+        const chunksByHeight = await this.chunkImagesByHeight(
+          sortedImages,
+          height
+        );
+        // chunk images list by width
+        const chunksByWidth = await this.chunkImagesByWidth(
+          chunksByHeight,
+          width
+        );
+
+        const htmlArray = await this.getHtmlLegendByPage(chunksByWidth, width);
+
+        observer.next(htmlArray);
+        observer.complete();
+        return;
+      }
+    );
+  }
+
+  private async chunkImagesByHeight(
+    imgsData: Array<{
+      title: string;
+      image: string;
+      dimensions: { w: number; h: number };
+    }>,
+    height: number
+  ) {
+    let chunks = [];
+    imgsData.forEach((img) => {
+      // get the first chunk that the value can be added to
+      let chunk = chunks.find((c) => {
+        const sumHeight = c.reduce((acc, obj) => {
+          return acc + obj.dimensions.h;
+        }, 0);
+        return sumHeight + img.dimensions.h < height;
+      });
+      if (chunk) {
+        chunk.push(img);
+      } // found a chunk. Add value to that.
+      else {
+        chunks.push([img]);
+      } // Can't be added to existing chunks. Create new one.
+    });
+    return chunks;
+  }
+
+  private async chunkImagesByWidth(chunks, width: number) {
+    // chunk images list by width
+    let chunksByWidth = [];
+    let chunkByWidth = [];
+    let sumMaxAllWidthInChunk = 0;
+    for (let index = 0; index < chunks.length; index++) {
+      const chunk = chunks[index];
+      const maxWidthInChunk = Math.max(...chunk.map((obj) => obj.dimensions.w));
+      sumMaxAllWidthInChunk = sumMaxAllWidthInChunk + maxWidthInChunk;
+      if (sumMaxAllWidthInChunk <= width) {
+        chunkByWidth.push(chunk);
+      } else {
+        chunksByWidth.push(chunkByWidth);
+        chunkByWidth = [];
+        sumMaxAllWidthInChunk = maxWidthInChunk;
+        chunkByWidth.push(chunk);
+      }
+      if (chunks.length - 1 === index) {
+        chunksByWidth.push(chunkByWidth);
+      }
+    }
+
+    return chunksByWidth;
+  }
+
+  private async getHtmlLegendByPage(chunksByWidth, width: number) {
+    let htmlArray: Array<string> = [];
+    for (let index = 0; index < chunksByWidth.length; index++) {
+      const tableData = chunksByWidth[index];
+      let html = '<style media="screen" type="text/css">';
+      html +=
+        '.html2canvas-container { width: ' +
+        width +
+        'mm !important; height: 2000px !important; }';
+      html += 'table.tableLegend {table-layout: auto;}';
+      html +=
+        'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
+      html += '</style>';
+      // The font size will also be lowered afterwards (globally along the legend size)
+      // this allows having a good relative font size here and to keep ajusting the legend size
+      // while keeping good relative font size
+      html += '<font size="3" face="Times" >';
+      html += '<div class="styleLegend">';
+      let tableHtml =
+        '<table class="tableLegend"><tbody style="vertical-align: top; border-spacing: 0px;">';
+      tableHtml += '<tr>';
+      for (let i = 0; i < tableData.length; i++) {
+        tableHtml += '<td>';
+        const newTabElementData = tableData[i];
+        let newTableElementHtml = '<table style="border-spacing: 0px;"><tbody>';
+        newTabElementData.forEach((data) => {
+          newTableElementHtml += '<tr><td>' + data.title + '</td></tr>';
+          newTableElementHtml +=
+            '<tr><td><img src="' + data.image + '"></td></tr>';
+        });
+        newTableElementHtml += '</tbody></table>';
+        tableHtml += newTableElementHtml;
+        tableHtml += '</td>';
+      }
+      tableHtml += '</tr>';
+      tableHtml += '</tbody></table>';
+      html += tableHtml;
+      html += '</div></font>';
+      htmlArray.push(html);
+    }
+    return htmlArray;
+  }
+
+  private sortImages(
+    images: Array<{
+      image: string;
+      title: string;
+      dimensions: { w: number; h: number };
+    }>
+  ) {
+    return images.sort((a, b) => {
+      const hA = a.dimensions.h;
+      const hB = b.dimensions.h;
+      if (hA < hB) {
+        return -1;
+      }
+      if (hA > hB) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
   /**
    * Get all the legend in a single image
    * * @param  format - Image format. default value to "png"
@@ -339,11 +553,11 @@ export class PrintService {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = await this.getLayersLegendHtml(
+    let html = (await this.getLayersLegendHtml(
       map,
       width,
       resolution
-    ).toPromise();
+    ).toPromise()) as string;
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -520,17 +734,33 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(
+    const height = doc.internal.pageSize.height;
+    const html = (await this.getLayersLegendHtml(
       map,
       width,
-      resolution
-    ).toPromise();
+      resolution,
+      height
+    ).toPromise()) as Array<string>;
     // If no legend, save the map directly
-    if (html === '') {
+    if (html.length === 0) {
       await this.saveDoc(doc);
       return true;
     }
-    // Create div to contain html code for legend
+
+    await this.generateCanvas(html).then((canvasArray) => {
+      const pourcentageReduction = 0.85;
+      canvasArray.forEach((canvas) => {
+        const imageSize = [
+          (pourcentageReduction * (25.4 * canvas.width)) / resolution,
+          (pourcentageReduction * (25.4 * canvas.height)) / resolution
+        ];
+        doc.addPage();
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 10, 5, imageSize[0], imageSize[1]);
+      });
+    });
+    await this.saveDoc(doc);
+    /*// Create div to contain html code for legend
     const div = window.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
@@ -557,7 +787,32 @@ export class PrintService {
       doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
     }
 
-    await this.saveDoc(doc);
+    await this.saveDoc(doc);*/
+  }
+
+  /**
+   * generate canvas from html code
+   * @param html - array of string (contain html code as string)
+   * @return array of canvas
+   */
+  private async generateCanvas(html: Array<string>): Promise<any> {
+    return new Promise(async (resolve, error) => {
+      let canvasArray = [];
+      for (const element of html) {
+        const div = this.document.createElement('div');
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        this.document.body.appendChild(div);
+        div.innerHTML = element;
+        await this.timeout(1);
+        const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+          console.log(e);
+        });
+        canvasArray.push(canvas);
+        this.removeHtmlElement(div);
+      }
+      resolve(canvasArray);
+    });
   }
 
   /**
@@ -575,11 +830,11 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = await this.getLayersLegendHtml(
+    const html = (await this.getLayersLegendHtml(
       map,
       width,
       resolution
-    ).toPromise();
+    ).toPromise()) as string;
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
@@ -969,6 +1224,7 @@ export class PrintService {
     const resolution = +printResolution;
     const initialMapSize = map.ol.getSize() as [number, number];
     const viewResolution = map.ol.getView().getResolution();
+    let legendstatus: SubjectStatus;
 
     map.ol.once('rendercomplete', async (event: any) => {
       const size = map.ol.getSize();
@@ -981,20 +1237,28 @@ export class PrintService {
 
       await this.drawMapControls(map, mapResultCanvas, legendPosition);
       // Check the legendPosition
-      if (legendPosition !== 'none') {
-        if (
-          ['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(
-            legendPosition
-          ) > -1
-        ) {
+      if (legendPosition !== PrintLegendPosition.none) {
+        const targetPositions = Object.keys(PrintLegendPosition).filter(
+          (e) => !['newpage', 'none'].includes(e)
+        );
+        // image *
+        if (targetPositions.indexOf(legendPosition) > -1) {
           await this.addLegendToImage(
             mapResultCanvas,
             map,
             resolution,
             legendPosition,
             format
-          );
-        } else if (legendPosition === 'newpage') {
+          ).catch((res) => {
+            if (res.heightError) {
+              status$.next(SubjectStatus.legendHeightError);
+              this.messageService.error(
+                'igo.geo.printForm.heighPdfLegendtErrorMessageBody',
+                'igo.geo.printForm.corsErrorMessageHeader'
+              );
+            }
+          });
+        } else if (legendPosition === PrintLegendPosition.newpage) {
           await this.getLayersLegendImage(map, format, doZipFile, resolution);
         }
       }
@@ -1174,7 +1438,10 @@ export class PrintService {
     });
 
     this.setMapImageResolution(map, initialMapSize, resolution, viewResolution);
-
+    // console.log('legendstatus$', legendstatus);
+    /*if (legendstatus === SubjectStatus.legendHeightError) {
+      status$.next(SubjectStatus.legendHeightError);
+    }*/
     return status$;
   }
 
@@ -1218,23 +1485,23 @@ export class PrintService {
     const context = canvas.getContext('2d');
 
     // Get html code for the legend
-    const html = await this.getLayersLegendHtml(
+    const html = (await this.getLayersLegendHtml(
       map,
       canvas.width,
       resolution
-    ).toPromise();
+    ).toPromise()) as string;
     // If no legend, save the map directly
     if (html === '') {
       await this.saveCanvasImageAsFile(canvas, fileNameWithExt, format);
       return true;
     }
     // Create div to contain html code for legend
-    const div = window.document.createElement('div');
+    const div = this.document.createElement('div');
     div.style.position = 'absolute';
     div.style.top = '0';
     div.style.zIndex = '-1';
     // Add html code to convert in the new window
-    window.document.body.appendChild(div);
+    this.document.body.appendChild(div);
     div.innerHTML = html;
     await this.timeout(1);
     const canvasLegend = await html2canvas(div, { useCORS: true }).catch(
@@ -1276,7 +1543,9 @@ export class PrintService {
       );
       context.strokeRect(legendX, legendY, legendWidth, legendHeight);
       this.removeHtmlElement(div);
-      return true;
+      if (legendHeight > canvas.height) {
+        throw { heightError: true };
+      }
     }
   }
 

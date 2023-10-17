@@ -14,8 +14,7 @@ import { AppPrintComponent } from './print.component';
     AppPrintRoutingModule,
     IgoMessageModule,
     IgoMapModule,
-    IgoPrintModule,
-    IgoContextModule
+    IgoPrintModule
   ],
   exports: [AppPrintComponent]
 })

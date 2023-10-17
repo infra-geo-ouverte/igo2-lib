@@ -5,13 +5,8 @@
 >
   <app-example-viewer codeFolder="geo/print">
     <mat-grid-list cols="2" rowHeight="800px" gutterSize="16px">
-      <mat-grid-tile>
-        <igo-map-browser
-          [map]="map"
-          [view]="view"
-          igoMapContext
-          igoLayerContext
-        >
+      <mat-grid-tile
+        ><igo-map-browser [map]="map" [view]="view">
           <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
           <igo-geolocate-button
             [map]="map"
@@ -25,9 +20,8 @@
             [map]="map"
             [showIfNoRotation]="false"
             color="primary"
-          ></igo-rotation-button>
-        </igo-map-browser>
-      </mat-grid-tile>
+          ></igo-rotation-button> </igo-map-browser
+      ></mat-grid-tile>
       <mat-grid-tile> <igo-print [map]="map"></igo-print></mat-grid-tile>
     </mat-grid-list>
   </app-example-viewer>

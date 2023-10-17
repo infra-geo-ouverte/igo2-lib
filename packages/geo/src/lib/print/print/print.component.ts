@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 
+import { SubjectStatus } from '@igo2/utils';
+
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -14,9 +16,6 @@ import {
   PrintResolution,
   PrintSaveImageFormat
 } from '../shared/print.type';
-
-import { PrintService } from '../shared/print.service';
-import { SubjectStatus } from '@igo2/utils';
 
 @Component({
   selector: 'igo-print',
@@ -99,7 +98,6 @@ export class PrintComponent {
         .print(this.map, data)
         .pipe(take(1))
         .subscribe((res: SubjectStatus) => {
-          console.log('aaa: ', res);
           if (res === SubjectStatus.legendHeightError) {
             this.legendHeightError$.next(true);
           }
@@ -135,7 +133,10 @@ export class PrintComponent {
           data.legendPosition
         )
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: SubjectStatus) => {
+          if (res === SubjectStatus.legendHeightError) {
+            this.legendHeightError$.next(true);
+          }
           this.disabled$.next(false);
         });
     }
