@@ -1,3 +1,18 @@
+# [16.0.0-rc.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.2...16.0.0-rc.3) (2023-10-13)
+
+
+### Bug Fixes
+
+* **geo:** fix homeExtentButtonOptions ([#1442](https://github.com/infra-geo-ouverte/igo2-lib/issues/1442)) ([c431663](https://github.com/infra-geo-ouverte/igo2-lib/commit/c4316635a86d63cf29c67249a19e7c31f3cfa78f))
+* **ogcFilter:** v16 regression, let the button being clickable when header=false ([#1444](https://github.com/infra-geo-ouverte/igo2-lib/issues/1444)) ([f7f82dd](https://github.com/infra-geo-ouverte/igo2-lib/commit/f7f82dd883cfcbb86b865b5f2cbd13b45101a4ab))
+
+
+### Features
+
+* **context:** save layer opacity in when creating context from map ([#1439](https://github.com/infra-geo-ouverte/igo2-lib/issues/1439)) ([cc2669d](https://github.com/infra-geo-ouverte/igo2-lib/commit/cc2669dd0885c5958d6b60307aae7c38bccf461c))
+
+
+
 # [16.0.0-rc.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.1...16.0.0-rc.2) (2023-10-11)
 
 

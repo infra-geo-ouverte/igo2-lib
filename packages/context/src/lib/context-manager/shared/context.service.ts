@@ -12,9 +12,9 @@ import {
   StorageService
 } from '@igo2/core';
 import type {
+  AnyLayerOptions,
   IgoMap,
   Layer,
-  LayerOptions,
   VectorLayerOptions,
   VectorTileLayerOptions
 } from '@igo2/geo';
@@ -451,7 +451,7 @@ export class ContextService {
       'EPSG:4326'
     );
 
-    const context = {
+    const context: DetailedContext = {
       uri: uuid(),
       title: '',
       scope: 'private',
@@ -485,16 +485,17 @@ export class ContextService {
     }
 
     let i = 0;
-    for (const l of layers) {
-      const layer: any = l;
+    for (const layer of layers) {
+      const layerOptions: AnyLayerOptions = {
+        title: layer.options.title,
+        zIndex: ++i,
+        visible: layer.visible,
+        security: layer.options.security,
+        opacity: layer.opacity
+      };
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions: {
-          title: layer.options.title,
-          zIndex: ++i,
-          visible: layer.visible,
-          security: layer.security
-        } as LayerOptions,
+        layerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -508,7 +509,10 @@ export class ContextService {
     }
 
     context.tools = this.tools.map((tool) => {
-      return { id: String(tool.id), global: tool.global };
+      return {
+        id: String(tool.id),
+        global: tool.global
+      } as Tool;
     });
 
     return context;

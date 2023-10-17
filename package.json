@@ -5,7 +5,7 @@
     "projects/*"
   ],
   "private": true,
-  "version": "16.0.0-rc.2",
+  "version": "16.0.0-rc.3",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
