@@ -20,33 +20,21 @@ export class MenuButtonComponent {
 
   @Output() openSidenav = new EventEmitter<any>();
 
-  public menuButtonReverseColor = false;
+  public useThemeColor: boolean;
 
   public menuButtonClass;
 
   constructor(public configService: ConfigService) {
-    if (
-      typeof this.configService.getConfig('menuButtonReverseColor') !==
-      'undefined'
-    ) {
-      this.menuButtonReverseColor = this.configService.getConfig(
-        'menuButtonReverseColor'
-      );
-    }
+    const configValue = this.configService.getConfig(
+      'menu.button.useThemeColor'
+    );
+    this.useThemeColor = configValue !== undefined ? configValue : false;
   }
 
   getClassMenuButton() {
-    if (this.sidenavOpened) {
-      this.menuButtonClass = {
-        'menu-button': this.menuButtonReverseColor === false,
-        'menu-button-reverse-color': this.menuButtonReverseColor === true
-      };
-    } else {
-      this.menuButtonClass = {
-        'menu-button': this.menuButtonReverseColor === false,
-        'menu-button-reverse-color-close': this.menuButtonReverseColor === true
-      };
-    }
+    this.menuButtonClass = {
+      'menu-button-white-background': !this.useThemeColor
+    };
   }
 
   onToggleSidenavClick() {

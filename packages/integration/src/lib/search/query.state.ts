@@ -6,9 +6,11 @@ import {
   CapabilitiesService,
   CommonVectorStyleOptions,
   GeoPropertiesStrategy,
+  OverlayStyleOptions,
   PropertyTypeDetectorService,
   SearchResult
 } from '@igo2/geo';
+
 import { MapState } from '../map/map.state';
 
 /**
@@ -32,13 +34,8 @@ export class QueryState {
     private capabilitiesService: CapabilitiesService,
     private mapState: MapState
   ) {
-    const queryOverlayStyle = this.configService.getConfig(
-      'queryOverlayStyle'
-    ) as {
-      base?: CommonVectorStyleOptions;
-      selection?: CommonVectorStyleOptions;
-      focus?: CommonVectorStyleOptions;
-    };
+    const queryOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('queryOverlayStyle');
     if (queryOverlayStyle) {
       this.queryOverlayStyle = queryOverlayStyle.base;
       this.queryOverlayStyleSelection = queryOverlayStyle.selection;

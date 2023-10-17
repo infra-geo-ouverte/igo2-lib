@@ -1,19 +1,23 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { combineLatest, Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
+
 import olFeature from 'ol/Feature';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+
+import { Observable, combineLatest, of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
+
+import { DataService } from './data.service';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
-import { DataService } from './data.service';
 import {
-  formatWFSQueryString,
-  gmlRegex,
   defaultEpsg,
   defaultMaxFeatures,
-  getFormatFromOptions
+  formatWFSQueryString,
+  getFormatFromOptions,
+  gmlRegex
 } from './wms-wfs.utils';
-import { concatMap } from 'rxjs/operators';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
+
 @Injectable({
   providedIn: 'root'
 })

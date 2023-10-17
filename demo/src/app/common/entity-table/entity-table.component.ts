@@ -1,14 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 
-import { LanguageService } from '@igo2/core';
 import {
   EntityStore,
   EntityTableButton,
-  getEntityProperty,
   EntityTableColumnRenderer,
-  EntityTablePaginatorOptions
+  EntityTablePaginatorOptions,
+  getEntityProperty
 } from '@igo2/common';
-import { MatPaginator } from '@angular/material/paginator';
+import { LanguageService } from '@igo2/core';
+
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
-  WMSDataSourceOptions,
+  IgoMap,
   LayerOptions,
-  WFSDataSourceOptions,
+  LayerService,
+  MetadataLayerOptions,
   OgcFilterableDataSourceOptions,
-  MetadataLayerOptions
+  WFSDataSourceOptions,
+  WMSDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -64,12 +64,12 @@ export class AppLayerComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: 'geojson',
         outputFormatDownload: 'shp'
       },
       ogcFilters: {
         enabled: true,
-        editable: true,
+        editable: false,
         filters: {
           operator: 'PropertyIsEqualTo',
           propertyName: 'code_municipalite',
@@ -103,7 +103,7 @@ export class AppLayerComponent {
       },
       ogcFilters: {
         enabled: true,
-        editable: true,
+        editable: false,
         filters: {
           operator: 'PropertyIsEqualTo',
           propertyName: 'code_municipalite',

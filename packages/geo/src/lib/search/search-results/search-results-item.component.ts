@@ -1,21 +1,22 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
+  Component,
   EventEmitter,
+  Input,
   Output
 } from '@angular/core';
-import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import {
+  getEntityIcon,
   getEntityTitle,
-  getEntityTitleHtml,
-  getEntityIcon
+  getEntityTitleHtml
 } from '@igo2/common';
 
-import { SearchResult } from '../shared/search.interfaces';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
+
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
 import { IgoMap } from '../../map/shared';
+import { SearchResult } from '../shared/search.interfaces';
 
 /**
  * Search results list item

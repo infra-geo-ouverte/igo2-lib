@@ -1,20 +1,21 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+
+import { AuthService } from '@igo2/auth';
+import { ConfirmDialogService } from '@igo2/common';
+import { LanguageService, MessageService } from '@igo2/core';
+import type { IgoMap } from '@igo2/geo';
+
+import * as oleasing from 'ol/easing';
+import olPoint from 'ol/geom/Point';
+import * as olproj from 'ol/proj';
+
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import * as olproj from 'ol/proj';
-import * as oleasing from 'ol/easing';
-import olPoint from 'ol/geom/Point';
-
-import { MessageService, LanguageService } from '@igo2/core';
-import { ConfirmDialogService } from '@igo2/common';
-import { AuthService } from '@igo2/auth';
-import type { IgoMap } from '@igo2/geo';
-
-import { PoiService } from './shared/poi.service';
-import { Poi } from './shared/poi.interface';
 import { PoiDialogComponent } from './poi-dialog.component';
+import { Poi } from './shared/poi.interface';
+import { PoiService } from './shared/poi.service';
 
 @Component({
   selector: 'igo-poi-button',

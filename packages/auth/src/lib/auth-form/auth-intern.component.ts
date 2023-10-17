@@ -1,18 +1,19 @@
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
   Input,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
 import {
-  Validators,
+  UntypedFormBuilder,
   UntypedFormGroup,
-  UntypedFormBuilder
+  Validators
 } from '@angular/forms';
 
-import { AuthService } from '../shared/auth.service';
 import { LanguageService } from '@igo2/core';
+
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'igo-auth-intern',

@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Observable, Observer } from 'rxjs';
+
 import { ConfigService } from '@igo2/core';
 
+import { Observable, Observer } from 'rxjs';
+
+import { DetailedContext } from '../../context-manager/shared/context.interface';
 import {
   ImportInvalidFileError,
-  ImportUnreadableFileError,
-  ImportSizeError
+  ImportSizeError,
+  ImportUnreadableFileError
 } from './context-import.errors';
 import { getFileExtension } from './context-import.utils';
-import { DetailedContext } from '../../context-manager/shared/context.interface';
 
 @Injectable({
   providedIn: 'root'

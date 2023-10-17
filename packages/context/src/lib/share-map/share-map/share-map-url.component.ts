@@ -1,18 +1,19 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
-  ChangeDetectorRef,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 
-import { Clipboard } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
+import { Clipboard } from '@igo2/utils';
+
+import { Subscription, combineLatest } from 'rxjs';
 
 import { ShareMapService } from '../shared/share-map.service';
-import { combineLatest, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-share-map-url',

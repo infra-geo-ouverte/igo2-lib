@@ -1,26 +1,27 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
-  UntypedFormGroup,
   UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
 
-import { MessageService, ConfigService } from '@igo2/core';
+import { ConfigService, MessageService } from '@igo2/core';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
-import { handleFileExportError } from '../shared/context-export.utils';
-import {
-  handleFileImportSuccess,
-  handleFileImportError
-} from '../shared/context-import.utils';
-import { handleFileExportSuccess } from '../shared/context-export.utils';
-import { ContextService } from '../../context-manager/shared/context.service';
-import { ContextImportService } from '../shared/context-import.service';
-import { ContextExportService } from '../shared/context-export.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { DetailedContext } from '../../context-manager/shared/context.interface';
+import { ContextService } from '../../context-manager/shared/context.service';
+import { ContextExportService } from '../shared/context-export.service';
+import { handleFileExportError } from '../shared/context-export.utils';
+import { handleFileExportSuccess } from '../shared/context-export.utils';
+import { ContextImportService } from '../shared/context-import.service';
+import {
+  handleFileImportError,
+  handleFileImportSuccess
+} from '../shared/context-import.utils';
 
 @Component({
   selector: 'igo-context-import-export',

@@ -5,31 +5,32 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-
-import { ConfigService } from '@igo2/core';
-import { DOMService, DOMValue } from '@igo2/common';
-
-import {
-  OgcFilterableDataSource,
-  IgoOgcFilterObject,
-  OgcPushButton,
-  OgcSelectorBundle,
-  SelectorGroup
-} from '../../filter/shared/ogc-filter.interface';
-import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
-import { IgoMap } from '../../map/shared';
-import { OGCFilterService } from '../shared/ogc-filter.service';
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { debounceTime, map } from 'rxjs/operators';
-import { OgcFilterOperator } from '../shared/ogc-filter.enum';
-import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
+
+import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
+import { ConfigService } from '@igo2/core';
+
 import { BehaviorSubject, Observable } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
+import {
+  IgoOgcFilterObject,
+  OgcFilterableDataSource,
+  OgcPushButton,
+  OgcSelectorBundle,
+  SelectorGroup
+} from '../../filter/shared/ogc-filter.interface';
+import { IgoMap } from '../../map/shared';
+import { OgcFilterOperator } from '../shared/ogc-filter.enum';
+import { OGCFilterService } from '../shared/ogc-filter.service';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -409,7 +410,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
-          for (const domOptions of this.configService.getConfig('dom')) {
+          for (const domOptions of this.configService.getConfig<DOMOptions[]>(
+            'dom'
+          )) {
             if (
               domSelector.id === domOptions.id ||
               domSelector.name === domOptions.name
@@ -480,7 +483,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
           let filterDOM;
-          for (const domOptions of this.configService.getConfig('dom')) {
+          for (const domOptions of this.configService.getConfig<DOMOptions[]>(
+            'dom'
+          )) {
             if (
               domSelector.id === domOptions.id ||
               domSelector.name === domOptions.name

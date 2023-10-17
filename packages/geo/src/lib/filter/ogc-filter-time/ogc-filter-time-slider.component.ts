@@ -1,15 +1,16 @@
 import {
   Component,
-  Input,
-  ViewChild,
-  Output,
   EventEmitter,
-  OnInit
+  Input,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
-import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
+import { MatSlider } from '@angular/material/slider';
 
 import { default as moment } from 'moment';
-import { MatSlider } from '@angular/material/slider';
+
+import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 
 @Component({
   selector: 'igo-ogc-filter-time-slider',

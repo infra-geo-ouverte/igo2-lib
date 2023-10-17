@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olStyle from 'ol/style';
 import OlFeature from 'ol/Feature';
-
-import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import RenderFeature from 'ol/render/Feature';
-import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { StyleByAttribute } from '../shared/vector/vector-style.interface';
+import * as olStyle from 'ol/style';
+
 import { ClusterParam } from '../../layer/shared/clusterParam';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
+import { StyleByAttribute } from '../shared/vector/vector-style.interface';
 
 @Injectable({
   providedIn: 'root'

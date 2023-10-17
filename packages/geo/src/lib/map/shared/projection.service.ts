@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import proj4 from 'proj4';
+import { ConfigService } from '@igo2/core';
+
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 
-import { ConfigService } from '@igo2/core';
+import proj4 from 'proj4';
 
 import { Projection } from './projection.interfaces';
 
@@ -18,8 +19,9 @@ import { Projection } from './projection.interfaces';
 })
 export class ProjectionService {
   constructor(private config: ConfigService) {
-    const projections = this.config.getConfig('projections') || [];
-    projections.forEach((projection: Projection) => {
+    const projections: Projection[] =
+      this.config.getConfig('projections') || [];
+    projections.forEach((projection) => {
       projection.alias = projection.alias ? projection.alias : projection.code;
       this.registerProjection(projection);
     });

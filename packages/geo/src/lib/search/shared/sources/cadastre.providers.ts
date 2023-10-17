@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
-import { SearchSource } from './source';
 import { CadastreSearchSource } from './cadastre';
+import { SearchSource } from './source';
 
 /**
  * Cadastre search source factory

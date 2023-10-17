@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { StorageService, ConfigService } from '@igo2/core';
 
+import { ConfigService, StorageService } from '@igo2/core';
 import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
+
 // import { BehaviorSubject } from 'rxjs';
 
 /**

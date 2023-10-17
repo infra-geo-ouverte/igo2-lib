@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { ConfigService } from '@igo2/core';
 
-import { OptionsService } from './options.service';
 import { OptionsApiService } from './options-api.service';
+import { OptionsService } from './options.service';
 
 export function optionsApiFactory(
   http: HttpClient,

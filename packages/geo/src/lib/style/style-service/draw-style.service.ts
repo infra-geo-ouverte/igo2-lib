@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import * as OlStyle from 'ol/style';
 import OlPoint from 'ol/geom/Point';
 import { ProjectionLike, transform } from 'ol/proj';
+import * as OlStyle from 'ol/style';
+
 import { FontType } from '../shared/font.enum';
 
 @Injectable({

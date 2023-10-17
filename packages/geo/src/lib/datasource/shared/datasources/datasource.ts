@@ -1,16 +1,15 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olClusterSource from 'ol/source/Cluster';
 import olSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
-import olClusterSource from 'ol/source/Cluster';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import { DataSourceOptions, Legend } from './datasource.interface';
-
-import { DataService } from './data.service';
-import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import {
   LegendMapViewOptions,
   LegendOptions
 } from '../../../layer/shared/layers/legend.interface';
+import { generateIdFromSourceOptions } from '../../../utils/id-generator';
+import { DataService } from './data.service';
+import { DataSourceOptions, Legend } from './datasource.interface';
 
 export abstract class DataSource {
   public id: string;

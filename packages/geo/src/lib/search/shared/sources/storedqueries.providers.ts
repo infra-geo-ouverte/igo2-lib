@@ -4,8 +4,8 @@ import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
 import { SearchSource } from './source';
 import {
-  StoredQueriesSearchSource,
-  StoredQueriesReverseSearchSource
+  StoredQueriesReverseSearchSource,
+  StoredQueriesSearchSource
 } from './storedqueries';
 
 /**

@@ -1,9 +1,9 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
+import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
-import { CartoDataSourceOptions } from './carto-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class CartoDataSource extends DataSource {
   public declare ol: olSourceCarto;

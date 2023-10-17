@@ -1,22 +1,22 @@
 import {
-  Component,
-  OnInit,
-  OnDestroy,
-  Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
-import { LanguageService } from '@igo2/core';
 import {
   OnUpdateInputs,
   Tool,
-  Toolbox,
   ToolComponent,
-  ToolService
+  ToolService,
+  Toolbox
 } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
 
 @ToolComponent({
   name: 'demo-salutation',

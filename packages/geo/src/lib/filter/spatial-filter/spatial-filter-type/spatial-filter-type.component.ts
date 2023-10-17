@@ -1,20 +1,22 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   OnInit,
-  ChangeDetectionStrategy,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
+import { UntypedFormControl } from '@angular/forms';
+
+import { EntityStore } from '@igo2/common';
+
+import { Feature } from '../../../feature';
+import { Layer } from '../../../layer';
+import { MeasureLengthUnit } from '../../../measure';
 import {
   SpatialFilterQueryType,
   SpatialFilterType
 } from '../../shared/spatial-filter.enum';
-import { UntypedFormControl } from '@angular/forms';
-import { EntityStore } from '@igo2/common';
-import { Feature } from '../../../feature';
-import { MeasureLengthUnit } from '../../../measure';
-import { Layer } from '../../../layer';
 
 /**
  * Spatial Filter Type

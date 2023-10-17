@@ -1,5 +1,5 @@
-import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
+import * as olstyle from 'ol/style';
 
 export class EsriStyleGenerator {
   public _converters: any;

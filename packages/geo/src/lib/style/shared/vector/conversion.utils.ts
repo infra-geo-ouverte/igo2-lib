@@ -1,6 +1,6 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olLayerVector from 'ol/layer/Vector';
 import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 export function olStyleToBasicIgoStyle(
   layer: olLayerVector<olSourceVector<OlGeometry>>

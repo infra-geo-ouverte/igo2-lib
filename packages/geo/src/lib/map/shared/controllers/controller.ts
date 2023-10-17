@@ -1,6 +1,6 @@
-import { EventsKey } from 'ol/events';
 import OlMap from 'ol/Map';
 import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
 
 /**
  * Base map controller

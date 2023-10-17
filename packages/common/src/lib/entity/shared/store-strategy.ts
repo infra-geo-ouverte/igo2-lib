@@ -1,6 +1,6 @@
 import { EntityState } from './entity.interfaces';
-import { EntityStoreStrategy } from './strategies/strategy';
 import { EntityStore, EntityStoreOptions } from './store';
+import { EntityStoreStrategy } from './strategies/strategy';
 
 export class EntityStoreWithStrategy<
   E extends object = object,

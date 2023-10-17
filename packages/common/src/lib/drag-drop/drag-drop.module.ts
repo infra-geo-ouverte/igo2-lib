@@ -1,4 +1,5 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
 import { DragAndDropDirective } from './drag-drop.directive';
 
 @NgModule({

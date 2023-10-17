@@ -1,26 +1,26 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  OnInit,
-  Input
+  Component,
+  Input,
+  OnInit
 } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import {
-  IgoMap,
   ExportOptions,
+  IgoMap,
   ProjectionsLimitationsOptions
 } from '@igo2/geo';
 
+import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
 import {
   ImportExportMode,
   ImportExportState,
   ImportExportType
 } from '../import-export.state';
-import { WorkspaceState } from '../../workspace/workspace.state';
-import { ContextState } from '../../context/context.state';
 
 @ToolComponent({
   name: 'importExport',
