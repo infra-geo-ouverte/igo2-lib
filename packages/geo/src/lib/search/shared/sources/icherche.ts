@@ -137,7 +137,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           'lieux'
         ];
 
-    const showAdvancedParams = this.options.showAdvancedSettings ?? true;
+    const showAdvancedParams = this.options.showAdvancedSettings;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -276,7 +276,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['grille', 'culture']
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -308,7 +308,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         showAdvancedParams && {
           type: 'radiobutton',
           title: 'ecmax',
@@ -340,7 +340,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: ecmax === 100
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'restrictExtent',
@@ -357,8 +357,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true
             }
           ]
-        }
-      ].filter(Boolean) as SearchSourceSettings[]
+        } satisfies SearchSourceSettings
+      ].filter(Boolean)
     };
   }
 
