@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
-import { ObjectUtils, Clipboard } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
+import { Clipboard, ObjectUtils } from '@igo2/utils';
+
 import { Context } from '../shared/context.interface';
 
 @Component({
@@ -72,7 +73,10 @@ export class ContextFormComponent implements OnInit {
     const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
     const successful = Clipboard.copy(text);
     if (successful) {
-      this.messageService.success('igo.context.contextManager.dialog.copyMsg', 'igo.context.contextManager.dialog.copyTitle');
+      this.messageService.success(
+        'igo.context.contextManager.dialog.copyMsg',
+        'igo.context.contextManager.dialog.copyTitle'
+      );
     }
   }
 

@@ -1,44 +1,43 @@
-import olMap from 'ol/Map';
-import olView from 'ol/View';
-import olControlAttribution from 'ol/control/Attribution';
-import olControlScaleLine from 'ol/control/ScaleLine';
-import * as olproj from 'ol/proj';
-import * as olproj4 from 'ol/proj/proj4';
-import OlProjection from 'ol/proj/Projection';
-import * as olinteraction from 'ol/interaction';
-import {getUid} from 'ol/util';
-import olLayer from 'ol/layer/Layer';
-import olSource from 'ol/source/Source';
-
-import proj4 from 'proj4';
-import { BehaviorSubject, pairwise, skipWhile, Subject } from 'rxjs';
-
+import { ConfigService, StorageService } from '@igo2/core';
 import { SubjectStatus } from '@igo2/utils';
 
+import olMap from 'ol/Map';
+import { ObjectEvent } from 'ol/Object';
+import olView, { ViewOptions } from 'ol/View';
+import olControlAttribution from 'ol/control/Attribution';
+import olControlScaleLine from 'ol/control/ScaleLine';
+import * as olinteraction from 'ol/interaction';
+import olLayer from 'ol/layer/Layer';
+import * as olproj from 'ol/proj';
+import OlProjection from 'ol/proj/Projection';
+import * as olproj4 from 'ol/proj/proj4';
+import olSource from 'ol/source/Source';
+import { getUid } from 'ol/util';
+
+import proj4 from 'proj4';
+import { BehaviorSubject, Subject, pairwise, skipWhile } from 'rxjs';
+
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
-
 import { LayerWatcher } from '../utils/layer-watcher';
-import {
-  MapViewOptions,
-  MapOptions,
-  MapAttributionOptions,
-  MapScaleLineOptions,
-  MapExtent,
-  MapControlsOptions,
-} from './map.interface';
-import { MapBase } from './map.abstract';
-import { MapViewController } from './controllers/view';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
-import { StorageService, ConfigService } from '@igo2/core';
-import { ObjectEvent } from 'ol/Object';
+import { MapViewController } from './controllers/view';
 import {
   getAllChildLayersByDeletion,
   getRootParentByDeletion,
   handleLayerPropertyChange,
   initLayerSyncFromRootParentLayers
 } from './linkedLayers.utils';
+import { MapBase } from './map.abstract';
+import {
+  MapAttributionOptions,
+  MapControlsOptions,
+  MapExtent,
+  MapOptions,
+  MapScaleLineOptions,
+  MapViewOptions
+} from './map.interface';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -48,7 +47,7 @@ export class IgoMap implements MapBase {
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layersAddedByClick$ = new BehaviorSubject<Layer[]>(undefined);
   public status$: Subject<SubjectStatus>;
-  public propertyChange$: Subject<{event:ObjectEvent, layer: Layer}>;
+  public propertyChange$: Subject<{ event: ObjectEvent; layer: Layer }>;
   public overlay: Overlay;
   public queryResultsOverlay: Overlay;
   public searchResultsOverlay: Overlay;
@@ -87,7 +86,8 @@ export class IgoMap implements MapBase {
   constructor(
     options?: MapOptions,
     private storageService?: StorageService,
-    private configService?: ConfigService) {
+    private configService?: ConfigService
+  ) {
     this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
@@ -100,15 +100,19 @@ export class IgoMap implements MapBase {
     const controls = [];
     if (this.options.controls) {
       if (this.options.controls.attribution) {
-        const attributionOpt = (this.options.controls.attribution === true
-          ? {}
-          : this.options.controls.attribution) as MapAttributionOptions;
+        const attributionOpt = (
+          this.options.controls.attribution === true
+            ? {}
+            : this.options.controls.attribution
+        ) as MapAttributionOptions;
         controls.push(new olControlAttribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
-        const scaleLineOpt = (this.options.controls.scaleLine === true
-          ? {}
-          : this.options.controls.scaleLine) as MapScaleLineOptions;
+        const scaleLineOpt = (
+          this.options.controls.scaleLine === true
+            ? {}
+            : this.options.controls.scaleLine
+        ) as MapScaleLineOptions;
         controls.push(new olControlScaleLine(scaleLineOpt));
       }
     }
@@ -146,19 +150,22 @@ export class IgoMap implements MapBase {
           projection: this.viewController.getOlProjection()
         },
         this.storageService,
-        this.configService);
+        this.configService
+      );
       this.geolocationController.setOlMap(this.ol);
       if (this.geolocationController) {
-        this.geolocationController.updateGeolocationOptions(this.mapViewOptions);
+        this.geolocationController.updateGeolocationOptions(
+          this.mapViewOptions
+        );
       }
-      this.layers$
-      .pipe(pairwise())
-      .subscribe(([prevLayers, currentLayers]) => {
+      this.layers$.pipe(pairwise()).subscribe(([prevLayers, currentLayers]) => {
         let prevLayersId;
-        if (prevLayers){
-          prevLayersId = prevLayers.map(l => l.id);
+        if (prevLayers) {
+          prevLayersId = prevLayers.map((l) => l.id);
         }
-        const layers = currentLayers.filter(l => !prevLayersId.includes(l.id));
+        const layers = currentLayers.filter(
+          (l) => !prevLayersId.includes(l.id)
+        );
 
         for (const layer of layers) {
           if (layer.options.linkedLayers) {
@@ -169,15 +176,16 @@ export class IgoMap implements MapBase {
         }
       });
       this.viewController.monitorRotation();
-  });
-  this.propertyChange$.pipe(skipWhile((pc) => !pc)).subscribe(p => handleLayerPropertyChange(this, p.event, p.layer));
+    });
+    this.propertyChange$
+      .pipe(skipWhile((pc) => !pc))
+      .subscribe((p) => handleLayerPropertyChange(this, p.event, p.layer));
   }
-
 
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.layerWatcher.subscribe(() => { }, null);
+      this.layerWatcher.subscribe(() => {}, null);
     } else {
       this.layerWatcher.unsubscribe();
     }
@@ -185,14 +193,16 @@ export class IgoMap implements MapBase {
 
   updateView(options: MapViewOptions) {
     const currentView = this.ol.getView();
-    const viewOptions = Object.assign(
-      {
-        zoom: currentView.getZoom()
-      },
-      currentView.getProperties()
-    );
+    const viewOptions: MapViewOptions = {
+      ...currentView.getProperties(),
+      ...options
+    };
 
-    this.setView(Object.assign(viewOptions, options));
+    if (options.zoom && options.resolution == null) {
+      viewOptions.resolution = undefined;
+    }
+
+    this.setView(viewOptions);
     if (options.maxZoomOnExtent) {
       this.viewController.maxZoomOnExtent = options.maxZoomOnExtent;
     }
@@ -208,20 +218,18 @@ export class IgoMap implements MapBase {
       this.viewController.clearStateHistory();
     }
 
-    options = Object.assign({ constrainResolution: true }, options);
-    const view = new olView(options);
-    this.ol.setView(view);
+    const viewOptions: ViewOptions = { constrainResolution: true, ...options };
+    if (options.center) {
+      viewOptions.center = olproj.fromLonLat(
+        options.center,
+        options.projection
+      );
+    }
 
-    if (options) {
-      if (options.maxLayerZoomExtent) {
-        this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
-      }
+    this.ol.setView(new olView(viewOptions));
 
-      if (options.center) {
-        const projection = view.getProjection().getCode();
-        const center = olproj.fromLonLat(options.center, projection);
-        view.setCenter(center);
-      }
+    if (options.maxLayerZoomExtent) {
+      this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
     }
   }
 
@@ -232,29 +240,29 @@ export class IgoMap implements MapBase {
 
     const controls = [];
     if (value.attribution) {
-      const attributionOpt = (value.attribution === true
-        ? {}
-        : value.attribution) as MapAttributionOptions;
+      const attributionOpt = (
+        value.attribution === true ? {} : value.attribution
+      ) as MapAttributionOptions;
       controls.push(new olControlAttribution(attributionOpt));
     }
     if (value.scaleLine) {
-      const scaleLineOpt = (value.scaleLine === true
-        ? {}
-        : value.scaleLine) as MapScaleLineOptions;
+      const scaleLineOpt = (
+        value.scaleLine === true ? {} : value.scaleLine
+      ) as MapScaleLineOptions;
       controls.push(new olControlScaleLine(scaleLineOpt));
     }
 
     const currentControls = Object.assign([], this.ol.getControls().getArray());
-    currentControls.forEach(control => {
+    currentControls.forEach((control) => {
       this.ol.removeControl(control);
     });
-    controls.forEach(control => {
+    controls.forEach((control) => {
       this.ol.addControl(control);
     });
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getCenter(projection?: string | OlProjection): [number, number] {
@@ -262,14 +270,16 @@ export class IgoMap implements MapBase {
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getExtent(projection?: string | OlProjection): MapExtent {
     return this.viewController.getExtent(projection);
   }
-
-  // TODO: Move to ViewController and update every place it's used
+  /**
+   * @deprecated
+   * TODO: Move to ViewController and update every place it's used
+   */
   getZoom(): number {
     return this.viewController.getZoom();
   }
@@ -337,12 +347,14 @@ export class IgoMap implements MapBase {
     let offsetBaseLayerZIndex = 0;
     const addedLayers = layers
       .map((layer: Layer) => {
-        if (!layer) { return; }
+        if (!layer) {
+          return;
+        }
         const offset = layer.zIndex
           ? 0
           : layer.baseLayer
-            ? offsetBaseLayerZIndex++
-            : offsetZIndex++;
+          ? offsetBaseLayerZIndex++
+          : offsetZIndex++;
         return this.doAddLayer(layer, offset);
       })
       .filter((layer: Layer | undefined) => layer !== undefined);
@@ -373,7 +385,7 @@ export class IgoMap implements MapBase {
         layersToRemove.push(layer);
         newLayers.splice(index, 1);
         this.handleLinkedLayersDeletion(layer, layersToRemove);
-        layersToRemove.map(linkedLayer => {
+        layersToRemove.map((linkedLayer) => {
           const linkedIndex = newLayers.indexOf(linkedLayer);
           if (linkedIndex >= 0) {
             newLayers.splice(linkedIndex, 1);
@@ -396,7 +408,9 @@ export class IgoMap implements MapBase {
     if (!rootParentByDeletion) {
       rootParentByDeletion = srcLayer;
     }
-    const clbd = getAllChildLayersByDeletion(this, rootParentByDeletion, [rootParentByDeletion]);
+    const clbd = getAllChildLayersByDeletion(this, rootParentByDeletion, [
+      rootParentByDeletion
+    ]);
     for (const layer of clbd) {
       layersToRemove.push(layer);
     }

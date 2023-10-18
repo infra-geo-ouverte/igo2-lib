@@ -1,0 +1,5 @@
+@use './catalog-browser/catalog-browser.theming.scss' as catalog-browser;
+
+@mixin themes($theme) {
+  @include catalog-browser.theme($theme);
+}

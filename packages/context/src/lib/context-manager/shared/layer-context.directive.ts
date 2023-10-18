@@ -1,27 +1,26 @@
-import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { Subscription, merge } from 'rxjs';
-import { buffer, debounceTime, filter, first } from 'rxjs/operators';
-
-import { RouteService, ConfigService } from '@igo2/core';
+import { ConfigService, RouteService } from '@igo2/core';
 import {
-  MapBrowserComponent,
   Layer,
-  LayerService,
   LayerOptions,
+  LayerService,
+  MapBrowserComponent,
   StyleListService,
   StyleService
 } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
-import { ContextService } from './context.service';
-import { DetailedContext } from './context.interface';
+import { Subscription, merge } from 'rxjs';
+import { buffer, debounceTime, filter, first } from 'rxjs/operators';
+
 import {
-  addImportedFeaturesToMap,
-  addImportedFeaturesStyledToMap
+  addImportedFeaturesStyledToMap,
+  addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
-import GeoJSON from 'ol/format/GeoJSON';
+import { DetailedContext } from './context.interface';
+import { ContextService } from './context.service';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -60,9 +59,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       this.route.options.contextKey
     ) {
       this.route.queryParams
-        .pipe(first(params => !ObjectUtils.isEmpty(params)))
+        .pipe(first((params) => !ObjectUtils.isEmpty(params)))
         .subscribe((params) => {
-            this.queryParams = params;
+          this.queryParams = params;
         });
     }
   }
@@ -95,31 +94,14 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
         if (context.extraFeatures) {
           context.extraFeatures.forEach((featureCollection) => {
-            const format = new GeoJSON();
-            const title = featureCollection.name;
-            featureCollection = JSON.stringify(featureCollection);
-            featureCollection = format.readFeatures(featureCollection, {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });
-            const importExportOptions = this.configService.getConfig('importExport');
-            const importWithStyle =importExportOptions?.importWithStyle || this.configService.getConfig('importWithStyle');
-            if (this.configService.getConfig('importWithStyle')) {
-              console.warn(`
-              The location of this config importWithStyle is deprecated.
-              Please move this property within importExport configuration.
-              Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
-              Refer to environnement.ts OR config/config.json
-              This legacy conversion will be deleted in 2024.
-              `);
-            }
-            if (!importWithStyle) {
-              addImportedFeaturesToMap(featureCollection, this.map, title);
+            const importExportOptions =
+              this.configService.getConfig('importExport');
+            if (!importExportOptions?.importWithStyle) {
+              addImportedFeaturesToMap(featureCollection, this.map);
             } else {
               addImportedFeaturesStyledToMap(
                 featureCollection,
                 this.map,
-                title,
                 this.styleListService,
                 this.styleService
               );
@@ -128,9 +110,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         }
       });
 
-      this.layerService.createAsyncIdbLayers(context.uri).pipe(debounceTime(500))
+    this.layerService
+      .createAsyncIdbLayers(context.uri)
+      .pipe(debounceTime(500))
       .subscribe((layers: Layer[]) => this.handleAddLayers(layers));
-
   }
 
   private handleAddLayers(layers: Layer[]) {
@@ -190,10 +173,16 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       // After, managing named layer by id (context.json OR id from datasource)
       visiblelayers = visibleOnLayersParams.split(',');
       invisiblelayers = visibleOffLayersParams.split(',');
-      if (visiblelayers.indexOf(currentLayerid) > -1 || visiblelayers.indexOf(currentLayerid.toString()) > -1) {
+      if (
+        visiblelayers.indexOf(currentLayerid) > -1 ||
+        visiblelayers.indexOf(currentLayerid.toString()) > -1
+      ) {
         visible = true;
       }
-      if (invisiblelayers.indexOf(currentLayerid) > -1 || invisiblelayers.indexOf(currentLayerid.toString()) > -1) {
+      if (
+        invisiblelayers.indexOf(currentLayerid) > -1 ||
+        invisiblelayers.indexOf(currentLayerid.toString()) > -1
+      ) {
         visible = false;
       }
     }

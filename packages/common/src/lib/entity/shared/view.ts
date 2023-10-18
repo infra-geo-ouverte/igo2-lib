@@ -1,12 +1,13 @@
+import { ObjectUtils, uuid } from '@igo2/utils';
+
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { ObjectUtils, uuid } from '@igo2/utils';
 import {
-  EntityKey,
   EntityFilterClause,
-  EntitySortClause,
-  EntityJoinClause
+  EntityJoinClause,
+  EntityKey,
+  EntitySortClause
 } from './entity.interfaces';
 
 /**
@@ -15,7 +16,6 @@ import {
  * combine data from multiple sources, joined together.
  */
 export class EntityView<E extends object, V extends object = E> {
-
   /**
    * Observable stream of values
    */
@@ -44,7 +44,9 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Observable of filter clauses
    */
-  private filters$: BehaviorSubject<EntityFilterClause[]> = new BehaviorSubject([]);
+  private filters$: BehaviorSubject<EntityFilterClause[]> = new BehaviorSubject(
+    []
+  );
 
   /**
    * Filters index
@@ -59,25 +61,35 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Method for indexing
    */
-  get getKey(): (V) => EntityKey { return this.getKey$.value; }
-  private getKey$: BehaviorSubject<(V) => EntityKey> = new BehaviorSubject(undefined);
+  get getKey(): (V) => EntityKey {
+    return this.getKey$.value;
+  }
+  private getKey$: BehaviorSubject<(V) => EntityKey> = new BehaviorSubject(
+    undefined
+  );
 
   /**
    * Number of entities
    */
   readonly count$ = new BehaviorSubject<number>(0);
-  get count(): number { return this.count$.value; }
+  get count(): number {
+    return this.count$.value;
+  }
 
   /**
    * Whether the store is empty
    */
   readonly empty$ = new BehaviorSubject<boolean>(true);
-  get empty(): boolean { return this.empty$.value; }
+  get empty(): boolean {
+    return this.empty$.value;
+  }
 
   /**
    * Store index
    */
-  get index(): Map<EntityKey, V> { return this._index; }
+  get index(): Map<EntityKey, V> {
+    return this._index;
+  }
   private _index: Map<EntityKey, V>;
 
   constructor(private source$: BehaviorSubject<E[]>) {}
@@ -89,7 +101,9 @@ export class EntityView<E extends object, V extends object = E> {
    */
   get(key: EntityKey): V {
     if (this._index === undefined) {
-      throw new Error('This view has no index, therefore, this method is unavailable.');
+      throw new Error(
+        'This view has no index, therefore, this method is unavailable.'
+      );
     }
     return this.index.get(key);
   }
@@ -175,7 +189,9 @@ export class EntityView<E extends object, V extends object = E> {
    */
   join(clause: EntityJoinClause): EntityView<E, V> {
     if (this.lifted === true) {
-      throw new Error('This view has already been lifted, therefore, no join is allowed.');
+      throw new Error(
+        'This view has already been lifted, therefore, no join is allowed.'
+      );
     }
     this.joins.push(clause);
     return this;
@@ -227,7 +243,8 @@ export class EntityView<E extends object, V extends object = E> {
    */
   lift() {
     this.lifted = true;
-    const source$ = this.joins.length > 0 ? this.liftJoinedSource() : this.liftSource();
+    const source$ =
+      this.joins.length > 0 ? this.liftJoinedSource() : this.liftSource();
     const observables$ = [
       source$,
       this.filters$,
@@ -259,23 +276,23 @@ export class EntityView<E extends object, V extends object = E> {
    * @returns Observable
    */
   private liftJoinedSource(): Observable<V[]> {
-    const sources$ = [this.source$, combineLatest(
-      this.joins.map((join: EntityJoinClause) => join.source)
-    )];
+    const sources$ = [
+      this.source$,
+      combineLatest(this.joins.map((join: EntityJoinClause) => join.source))
+    ];
 
-    return combineLatest(sources$)
-      .pipe(
-        map((bunch: [E[], any[]]) => {
-          const [entities, joinData] = bunch;
-          return entities.reduce((values: V[], entity: E) => {
-            const value = this.computeJoinedValue(entity, joinData);
-            if (value !== undefined) {
-              values.push(value);
-            }
-            return values;
-          }, []);
-        })
-      );
+    return combineLatest(sources$).pipe(
+      map((bunch: [E[], any[]]) => {
+        const [entities, joinData] = bunch;
+        return entities.reduce((values: V[], entity: E) => {
+          const value = this.computeJoinedValue(entity, joinData);
+          if (value !== undefined) {
+            values.push(value);
+          }
+          return values;
+        }, []);
+      })
+    );
   }
 
   /**
@@ -301,7 +318,10 @@ export class EntityView<E extends object, V extends object = E> {
    * @returns Filtered and sorted values
    */
   private processValues(
-    values: V[], filters: EntityFilterClause[], filter: EntityFilterClause, sort: EntitySortClause
+    values: V[],
+    filters: EntityFilterClause[],
+    filter: EntityFilterClause,
+    sort: EntitySortClause
   ): V[] {
     values = values.slice(0);
     values = this.filterValues(values, filters.concat([filter]));
@@ -316,14 +336,15 @@ export class EntityView<E extends object, V extends object = E> {
    * @returns Filtered values
    */
   private filterValues(values: V[], clauses: EntityFilterClause[]): V[] {
-    if (clauses.length === 0) { return values; }
+    if (clauses.length === 0) {
+      return values;
+    }
 
-    return values
-      .filter((value: V) => {
-        return clauses
-          .filter((clause: EntityFilterClause) => clause !== undefined)
-          .every((clause: EntityFilterClause) => clause(value));
-      });
+    return values.filter((value: V) => {
+      return clauses
+        .filter((clause: EntityFilterClause) => clause !== undefined)
+        .every((clause: EntityFilterClause) => clause(value));
+    });
   }
 
   /**
@@ -333,7 +354,9 @@ export class EntityView<E extends object, V extends object = E> {
    * @returns Sorted values
    */
   private sortValues(values: V[], clause: EntitySortClause): V[] {
-    if (clause === undefined) { return values; }
+    if (clause === undefined) {
+      return values;
+    }
     return values.sort((v1: V, v2: V) => {
       return ObjectUtils.naturalCompare(
         clause.valueAccessor(v1),

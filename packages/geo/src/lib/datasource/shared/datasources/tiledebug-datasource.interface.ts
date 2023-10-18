@@ -1,5 +1,6 @@
-import { DataSourceOptions, TileGridOptions } from './datasource.interface';
 import TileDebug from 'ol/source/TileDebug';
+
+import { DataSourceOptions, TileGridOptions } from './datasource.interface';
 
 export interface TileDebugDataSourceOptions extends DataSourceOptions {
   projection?: string;

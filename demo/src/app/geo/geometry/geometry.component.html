@@ -1,12 +1,10 @@
 <app-doc-viewer title="Geometry Form" subtitle="Geo">
-  <app-example-viewer
-    codeFolder="geo/geometry"
-  >
+  <app-example-viewer codeFolder="geo/geometry">
     <div class="container">
       <igo-map-browser [map]="map" [view]="view">
         <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
       </igo-map-browser>
-  
+
       <igo-form
         *ngIf="form$ | async as form"
         [form]="form"
@@ -14,7 +12,7 @@
         (submitForm)="onSubmit($event)"
       >
         <igo-form-group [group]="form.groups[0]"></igo-form-group>
-  
+
         <div formButtons class="actions-container">
           <button
             mat-stroked-button

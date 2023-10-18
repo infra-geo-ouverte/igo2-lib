@@ -1,14 +1,15 @@
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
-import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
-import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
+import { Extent } from 'ol/extent';
+
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -16,7 +17,6 @@ export const defaultWfsVersion = '2.0.0';
 export const defaultFieldNameGeometry = 'geometry';
 export const gmlRegex = new RegExp(/(.*)?gml(.*)?/gi);
 export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
-
 
 /**
  * This method build the WFS URL based on the layer property.
@@ -28,19 +28,35 @@ export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
  */
 export function buildUrl(
   options: WFSDataSourceOptions,
-  extent,
+  extent: Extent,
   proj: olProjection,
   ogcFilters: OgcFiltersOptions,
-  randomParam?: boolean): string {
+  randomParam?: boolean
+): string {
   const paramsWFS = options.paramsWFS;
-  const queryStringValues = formatWFSQueryString(options, undefined, options.paramsWFS.srsName);
+  const queryStringValues = formatWFSQueryString(
+    options,
+    undefined,
+    options.paramsWFS.srsName
+  );
   let igoFilters;
-  if (ogcFilters && ogcFilters.enabled) {
-    igoFilters = ogcFilters.filters;
+  if (ogcFilters?.enabled) {
+    igoFilters = ogcFilters?.filters;
   }
   const ogcFilterWriter = new OgcFilterWriter();
-  const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, options);
-  let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(options, ogcFilters.geometryName, extent, proj);
+  const filterOrBox = ogcFilterWriter.buildFilter(
+    igoFilters,
+    extent,
+    proj,
+    ogcFilters?.geometryName,
+    options
+  );
+  let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(
+    options,
+    ogcFilters?.geometryName,
+    extent,
+    proj
+  );
 
   let prefix = 'filter';
   if (!filterOrPush) {
@@ -48,17 +64,22 @@ export function buildUrl(
     filterOrPush = extent.join(',') + ',' + proj.getCode();
   }
 
-  paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters ? filterOrBox : `${prefix}=${filterOrPush}`;
-  let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+  paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
+    ? filterOrBox
+    : `${prefix}=${filterOrPush}`;
+  let baseUrl = queryStringValues.find((f) => f.name === 'getfeature').value;
   const patternFilter = /(filter|bbox)=.*/gi;
-  baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
-  options.download = Object.assign({}, options.download, { dynamicUrl: baseUrl });
+  baseUrl = patternFilter.test(paramsWFS.xmlFilter)
+    ? `${baseUrl}&${paramsWFS.xmlFilter}`
+    : baseUrl;
+  options.download = Object.assign({}, options.download, {
+    dynamicUrl: baseUrl
+  });
   if (randomParam) {
     baseUrl += `$&_t${new Date().getTime()}`;
   }
   return baseUrl.replace(/&&/g, '&');
 }
-
 
 /**
  * This method build/standardize WFS call query params based on the layer property.
@@ -80,7 +101,8 @@ export function formatWFSQueryString(
   const url = dataSourceOptions.urlWfs;
   const paramsWFS = dataSourceOptions.paramsWFS;
   const effectiveCount = count || defaultMaxFeatures;
-  const effectiveStartIndex = paramsWFS.version === versionWfs200 ? `startIndex=${startIndex}` : '';
+  const effectiveStartIndex =
+    paramsWFS.version === versionWfs200 ? `startIndex=${startIndex}` : '';
   const epsgCode = epsg || defaultEpsg;
   let outputFormat = paramsWFS.outputFormat
     ? `outputFormat=${paramsWFS.outputFormat}`
@@ -99,10 +121,10 @@ export function formatWFSQueryString(
     ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}`
     : `${paramMaxFeatures}=${effectiveCount}`;
   if (forceDefaultOutputFormat) {
-      outputFormat = '';
-      version = 'version=1.1.0';
-      cnt = cnt.replace('count', 'maxFeatures');
-    }
+    outputFormat = '';
+    version = 'version=1.1.0';
+    cnt = cnt.replace('count', 'maxFeatures');
+  }
 
   const srs = epsg
     ? `srsname=${epsgCode}`
@@ -119,7 +141,7 @@ export function formatWFSQueryString(
   const sourceFields = dataSourceOptions.sourceFields;
   if (!propertyName && sourceFields && sourceFields.length > 0) {
     const fieldsNames = [];
-    dataSourceOptions.sourceFields.forEach(sourcefield => {
+    dataSourceOptions.sourceFields.forEach((sourcefield) => {
       fieldsNames.push(sourcefield.name);
     });
     propertyName = `propertyName=${fieldsNames.join(',')},${
@@ -203,13 +225,22 @@ export function getFormatFromOptions(
     return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('gml2')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML2 }});
+    return new olFormatCls({
+      ...wfsOptions.formatOptions,
+      ...{ gmlFormat: olFormatGML2 }
+    });
   } else if (outputFormat.toLowerCase().match('gml32')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML32 }});
+    return new olFormatCls({
+      ...wfsOptions.formatOptions,
+      ...{ gmlFormat: olFormatGML32 }
+    });
   } else if (outputFormat.toLowerCase().match('gml3')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML3 }});
+    return new olFormatCls({
+      ...wfsOptions.formatOptions,
+      ...{ gmlFormat: olFormatGML3 }
+    });
   } else if (outputFormat.toLowerCase().match('topojson')) {
     olFormatCls = OlFormat.TopoJSON;
     return new olFormatCls(wfsOptions.formatOptions);

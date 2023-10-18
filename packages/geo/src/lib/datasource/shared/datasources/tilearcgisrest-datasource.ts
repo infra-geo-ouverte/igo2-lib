@@ -1,10 +1,10 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 import { Options } from 'ol/source/TileArcGISRest';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class TileArcGISRestDataSource extends DataSource {
   public declare ol: olSourceTileArcGISRest;
@@ -37,7 +37,11 @@ export class TileArcGISRestDataSource extends DataSource {
   getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
       return legend;
     }
 

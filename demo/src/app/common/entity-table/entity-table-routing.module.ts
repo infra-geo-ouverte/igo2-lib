@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppEntityTableComponent } from './entity-table.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppEntityTableRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppEntityTableRoutingModule = RouterModule.forChild(routes);

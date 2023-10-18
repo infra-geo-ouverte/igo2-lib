@@ -1,5 +1,6 @@
+import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
+
 import olSourceTile from 'ol/source/Tile';
-import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 
 import { TileLayer } from '../shared/layers/tile-layer';
 import { VectorTileLayer } from '../shared/layers/vectortile-layer';
@@ -18,15 +19,15 @@ export class TileWatcher extends Watcher {
   }
 
   protected watch() {
-    this.source.on(`tileloadstart`, e => this.handleLoadStart(e));
-    this.source.on(`tileloadend`, e => this.handleLoadEnd(e));
-    this.source.on(`tileloaderror`, e => this.handleLoadEnd(e));
+    this.source.on(`tileloadstart`, (e) => this.handleLoadStart(e));
+    this.source.on(`tileloadend`, (e) => this.handleLoadEnd(e));
+    this.source.on(`tileloaderror`, (e) => this.handleLoadEnd(e));
   }
 
   protected unwatch() {
-    this.source.un(`tileloadstart`, e => this.handleLoadStart(e));
-    this.source.un(`tileloadend`, e => this.handleLoadEnd(e));
-    this.source.un(`tileloaderror`, e => this.handleLoadEnd(e));
+    this.source.un(`tileloadstart`, (e) => this.handleLoadStart(e));
+    this.source.un(`tileloadend`, (e) => this.handleLoadEnd(e));
+    this.source.un(`tileloaderror`, (e) => this.handleLoadEnd(e));
   }
 
   private handleLoadStart(event: any) {

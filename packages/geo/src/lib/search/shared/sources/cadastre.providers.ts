@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 
-import { SearchSource } from './source';
 import { CadastreSearchSource } from './cadastre';
+import { SearchSource } from './source';
 
 /**
  * Cadastre search source factory
@@ -19,7 +19,7 @@ export function cadastreSearchSourceFactory(
     http,
     languageService,
     storageService,
-    config.getConfig(`searchSources.${CadastreSearchSource.id}`),
+    config.getConfig(`searchSources.${CadastreSearchSource.id}`)
   );
 }
 

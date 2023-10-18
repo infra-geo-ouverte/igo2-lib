@@ -1,4 +1,3 @@
-
 export const MEASURE_UNIT_AUTO = 'auto';
 
 export enum MeasureType {

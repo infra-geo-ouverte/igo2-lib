@@ -1,15 +1,17 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  OnInit
 } from '@angular/core';
-import { Subscription, BehaviorSubject } from 'rxjs';
+
+import { ConnectionState, NetworkService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { Layer, TooltipType } from '../shared/layers';
-import { NetworkService, ConnectionState } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-legend-item',
@@ -18,7 +20,6 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerLegendItemComponent implements OnInit, OnDestroy {
-
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   tooltipText: string;
@@ -41,10 +42,12 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.state = state;
-      this.onResolutionChange();
-    });
+    this.network$$ = this.networkService
+      .currentState()
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
+        this.onResolutionChange();
+      });
   }
 
   ngOnDestroy() {

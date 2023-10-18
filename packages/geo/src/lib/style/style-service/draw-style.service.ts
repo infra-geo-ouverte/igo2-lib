@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import * as OlStyle from 'ol/style';
 import OlPoint from 'ol/geom/Point';
 import { ProjectionLike, transform } from 'ol/proj';
-import { FontType } from '../shared/font.enum';
+import * as OlStyle from 'ol/style';
 
+import { FontType } from '../shared/font.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -115,10 +115,10 @@ export class DrawStyleService {
     const textIgoStyleObject = {
       text: textToShow,
       stroke: {
-        color: "white",
+        color: 'white',
         width: 0.75
       },
-      fill: { color: "black" },
+      fill: { color: 'black' },
       font: fontSizeAndStyle,
       overflow: true,
       offsetX: offsetX,
@@ -129,20 +129,28 @@ export class DrawStyleService {
 
     // if feature is a circle
     if (feature.get('rad')) {
-      const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
-      const radius = feature.get('rad') / Math.cos((Math.PI / 180) * coordinates[1]) / resolution;
+      const coordinates = transform(
+        feature.getGeometry().flatCoordinates,
+        proj,
+        'EPSG:4326'
+      );
+      const radius =
+        feature.get('rad') /
+        Math.cos((Math.PI / 180) * coordinates[1]) /
+        resolution;
       igoStyleObject = {
         text: textIgoStyleObject,
         circle: {
           radius,
           stroke: {
-              color: strokeColor ? strokeColor : this.strokeColor,
-              width: this.strokeWidth
+            color: strokeColor ? strokeColor : this.strokeColor,
+            width: this.strokeWidth
           },
           fill: {
             color: fillColor
-        },
-      }};
+          }
+        }
+      };
       feature.set('_style', igoStyleObject);
 
       style = new OlStyle.Style({
@@ -181,11 +189,11 @@ export class DrawStyleService {
       textIgoStyleObject.offsetY = this.offsetY;
       const igoStyleObject = {
         text: textIgoStyleObject,
-        stroke:{
+        stroke: {
           color: strokeColor,
           width: this.strokeWidth
         },
-        fill:{
+        fill: {
           color: fillColor
         },
         icon: {
@@ -232,23 +240,23 @@ export class DrawStyleService {
       textIgoStyleObject.offsetY = this.offsetY;
       const igoStyleObject = {
         text: textIgoStyleObject,
-        stroke:{
+        stroke: {
           color: strokeColor,
           width: this.strokeWidth
         },
-        fill:{
+        fill: {
           color: fillColor
         },
         circle: {
           radius: 5,
           stroke: {
-              color: strokeColor,
-              width: this.strokeWidth
+            color: strokeColor,
+            width: this.strokeWidth
           },
           fill: {
             color: fillColor
-        },
-      }
+          }
+        }
       };
       feature.set('_style', igoStyleObject);
 

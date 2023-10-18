@@ -3,17 +3,14 @@ import { NgModule } from '@angular/core';
 import {
   IgoActionModule,
   IgoEntityModule,
-  IgoWorkspaceModule,
-  IgoPanelModule
+  IgoPanelModule,
+  IgoWorkspaceModule
 } from '@igo2/common';
-import {
-  IgoMapModule,
-  IgoGeoWorkspaceModule
-} from '@igo2/geo';
+import { IgoGeoWorkspaceModule, IgoMapModule } from '@igo2/geo';
 
-import { AppWorkspaceComponent } from './workspace.component';
-import { AppWorkspaceRoutingModule } from './workspace-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppWorkspaceRoutingModule } from './workspace-routing.module';
+import { AppWorkspaceComponent } from './workspace.component';
 
 @NgModule({
   declarations: [AppWorkspaceComponent],

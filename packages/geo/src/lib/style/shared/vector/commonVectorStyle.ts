@@ -1,34 +1,29 @@
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olStyle from 'ol/style';
 import olFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
-
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import * as olStyle from 'ol/style';
 
 import { Feature } from '../../../feature/shared/feature.interfaces';
-import { FeatureCommonVectorStyleOptions } from './vector-style.interface';
-
-import { createOverlayDefaultStyle } from '../overlay/overlay-style.utils';
 import { createOverlayMarkerStyle } from '../overlay/overlay-marker-style.utils';
-
+import { createOverlayDefaultStyle } from '../overlay/overlay-style.utils';
+import { FeatureCommonVectorStyleOptions } from './vector-style.interface';
 
 /**
  * Generate a style for selected features
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getCommonVectorSelectedStyle(
-  {
-    feature,
-    markerColor = [0, 161, 222],
-    markerOpacity = 1,
-    markerOutlineColor = [0, 255, 255],
-    fillColor,
-    fillOpacity = 0.15,
-    strokeColor = [0, 255, 255],
-    strokeOpacity = 0.5,
-    strokeWidth = 4
-  }: FeatureCommonVectorStyleOptions): olStyle.Style {
-
+export function getCommonVectorSelectedStyle({
+  feature,
+  markerColor = [0, 161, 222],
+  markerOpacity = 1,
+  markerOutlineColor = [0, 255, 255],
+  fillColor,
+  fillOpacity = 0.15,
+  strokeColor = [0, 255, 255],
+  strokeOpacity = 0.5,
+  strokeWidth = 4
+}: FeatureCommonVectorStyleOptions): olStyle.Style {
   return getCommonVectorStyle({
     feature,
     markerColor,
@@ -47,19 +42,17 @@ export function getCommonVectorSelectedStyle(
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getCommonVectorStyle(
-  {
-    feature,
-    markerColor = [0, 161, 222],
-    markerOpacity = 0.5,
-    markerOutlineColor,
-    fillColor = [0, 161, 222],
-    fillOpacity = 0.15,
-    strokeColor = [0, 161, 222],
-    strokeOpacity = 0.5,
-    strokeWidth = 2
-  }: FeatureCommonVectorStyleOptions): olStyle.Style {
-
+export function getCommonVectorStyle({
+  feature,
+  markerColor = [0, 161, 222],
+  markerOpacity = 0.5,
+  markerOutlineColor,
+  fillColor = [0, 161, 222],
+  fillOpacity = 0.15,
+  strokeColor = [0, 161, 222],
+  strokeOpacity = 0.5,
+  strokeWidth = 2
+}: FeatureCommonVectorStyleOptions): olStyle.Style {
   const isOlFeature = feature instanceof olFeature;
   let geometry;
   let text;
@@ -77,8 +70,11 @@ export function getCommonVectorStyle(
     const markerColorAsArray = ColorAsArray(markerColor).slice(0);
     const markerColorRGB = markerColorAsArray.slice(0, 3);
 
-    if (markerColorAsArray.length === 4 &&
-        (typeof markerColor !== 'string' || /^#[0-9A-F]{8}$/i.test(markerColor as string))) {
+    if (
+      markerColorAsArray.length === 4 &&
+      (typeof markerColor !== 'string' ||
+        /^#[0-9A-F]{8}$/i.test(markerColor as string))
+    ) {
       markerOpacity = markerColorAsArray[3];
     }
 
@@ -92,13 +88,23 @@ export function getCommonVectorStyle(
     const fillWithOpacity = ColorAsArray(fillColor).slice(0);
     const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
 
-    if (!(fillWithOpacity.length === 4 &&
-        (typeof fillColor !== 'string' || /^#[0-9A-F]{8}$/i.test(fillColor as string)))) {
+    if (
+      !(
+        fillWithOpacity.length === 4 &&
+        (typeof fillColor !== 'string' ||
+          /^#[0-9A-F]{8}$/i.test(fillColor as string))
+      )
+    ) {
       fillWithOpacity[3] = fillOpacity;
     }
 
-    if (!(strokeWithOpacity.length === 4 &&
-        (typeof strokeColor !== 'string' || /^#[0-9A-F]{8}$/i.test(strokeColor as string)))) {
+    if (
+      !(
+        strokeWithOpacity.length === 4 &&
+        (typeof strokeColor !== 'string' ||
+          /^#[0-9A-F]{8}$/i.test(strokeColor as string))
+      )
+    ) {
       strokeWithOpacity[3] = strokeOpacity;
     }
 

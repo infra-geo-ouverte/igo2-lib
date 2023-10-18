@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 
@@ -22,7 +23,10 @@ export class LanguageService {
 
   public setLanguage(language: string) {
     this.language = language.match(/en|fr/) ? language : 'en';
-    combineLatest([this.translate.use(this.language), this.translate.reloadLang(this.language)]).subscribe(() => {
+    combineLatest([
+      this.translate.use(this.language),
+      this.translate.reloadLang(this.language)
+    ]).subscribe(() => {
       this.language$.next(this.language);
     });
   }

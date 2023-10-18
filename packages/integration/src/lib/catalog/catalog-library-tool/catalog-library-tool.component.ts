@@ -1,11 +1,16 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
-import { take } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-
 import { EntityStore } from '@igo2/common';
-import { Catalog, CatalogService } from '@igo2/geo';
 import { StorageService } from '@igo2/core';
+import { Catalog, CatalogService } from '@igo2/geo';
+
+import { take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
@@ -75,9 +80,16 @@ export class CatalogLibraryToolComponent implements OnInit {
    * load them into the store.
    */
   private loadCatalogs() {
-    this.catalogService.loadCatalogs().pipe(take(1)).subscribe((catalogs: Catalog[]) => {
-      this.store.clear();
-      this.store.load(catalogs.concat((this.storageService.get('addedCatalogs') || []) as Catalog[]));
-    });
+    this.catalogService
+      .loadCatalogs()
+      .pipe(take(1))
+      .subscribe((catalogs: Catalog[]) => {
+        this.store.clear();
+        this.store.load(
+          catalogs.concat(
+            (this.storageService.get('addedCatalogs') || []) as Catalog[]
+          )
+        );
+      });
   }
 }

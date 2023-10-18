@@ -1,5 +1,9 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { provideStyleListOptions, provideStyleListLoader } from './style-list.provider';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
+import {
+  provideStyleListLoader,
+  provideStyleListOptions
+} from './style-list.provider';
 
 @NgModule({
   imports: [],

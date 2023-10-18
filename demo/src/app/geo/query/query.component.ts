@@ -1,27 +1,26 @@
 import { Component } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
-import olFeature from 'ol/Feature';
-import olPoint from 'ol/geom/Point';
-import olPolygon from 'ol/geom/Polygon';
-import olLineString from 'ol/geom/LineString';
-import * as olproj from 'ol/proj';
-
+import { getEntityTitle } from '@igo2/common';
 import {
-  IgoMap,
-  FeatureDataSource,
   DataSourceService,
-  LayerService,
   Feature,
-  QueryableDataSourceOptions,
+  FeatureDataSource,
+  FeatureMotion,
+  IgoMap,
+  LayerService,
   QueryFormat,
   QueryHtmlTarget,
-  SearchResult,
-  FeatureMotion
+  QueryableDataSourceOptions,
+  SearchResult
 } from '@igo2/geo';
 
-import { getEntityTitle } from '@igo2/common';
+import olFeature from 'ol/Feature';
+import olLineString from 'ol/geom/LineString';
+import olPoint from 'ol/geom/Point';
+import olPolygon from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-query',
@@ -48,12 +47,11 @@ export class AppQueryComponent {
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
-
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -73,7 +71,7 @@ export class AppQueryComponent {
           version: '1.3.0'
         }
       } as QueryableDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS',
@@ -95,7 +93,7 @@ export class AppQueryComponent {
           version: '1.3.0'
         }
       } as QueryableDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS html with a pre call in GML',
@@ -105,7 +103,7 @@ export class AppQueryComponent {
         );
       });
 
-      this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'Query url test',
         visible: true,
@@ -113,7 +111,11 @@ export class AppQueryComponent {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',
           queryable: true,
-          queryUrls: [{url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application/geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}],
+          queryUrls: [
+            {
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application/geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+            }
+          ],
           queryLayerFeatures: false,
           queryFormat: 'geojson',
           params: {
@@ -121,7 +123,8 @@ export class AppQueryComponent {
             version: '1.3.0'
           }
         }
-      } as any).subscribe(l => this.map.addLayer(l));
+      } as any)
+      .subscribe((l) => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -133,7 +136,7 @@ export class AppQueryComponent {
           { name: 'description', alias: 'Alias description' }
         ]
       } as QueryableDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Vector Layer',
@@ -152,14 +155,14 @@ export class AppQueryComponent {
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
-      ]),
+      ])
     });
 
     const feature2 = new olFeature({
       name: 'feature2',
       geometry: new olPoint(
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
-      ),
+      )
     });
 
     const feature3 = new olFeature({
@@ -170,7 +173,7 @@ export class AppQueryComponent {
           olproj.transform([-73, 47], 'EPSG:4326', 'EPSG:3857'),
           olproj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
-      ]),
+      ])
     });
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
@@ -184,9 +187,11 @@ export class AppQueryComponent {
           url: 'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
           queryable: true,
           queryUrls: [
-            { url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application%2Fgeojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'}
+            {
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=wms_mern_reg_admin&LAYERS=wms_mern_reg_admin&INFO_FORMAT=application%2Fgeojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}'
+            }
           ],
-          queryLayerFeatures: false,
+          queryLayerFeatures: false
           // queryFormat: 'geojson'
         },
         mapboxStyle: {
@@ -194,16 +199,16 @@ export class AppQueryComponent {
           source: 'ahocevar'
         }
       } as any)
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
-      this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/incendie.fcgi',
         queryable: true,
         queryUrls: [
           {
-            url:'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
+            url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/amenagement.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&FORMAT=image%2Fpng&TRANSPARENT=true&QUERY_LAYERS=SDA_MUNIC_S_20K&LAYERS=SDA_MUNIC_S_20K&INFO_FORMAT=geojson&FEATURE_COUNT=20&I=50&J=50&CRS=EPSG%3A3857&STYLES=&WIDTH=101&HEIGHT=101&BBOX={bbox}',
             // minScale: 20000,
             // maxScale: 9000000,
             minResolution: 0,
@@ -216,7 +221,7 @@ export class AppQueryComponent {
           layers: 'MSP_CASERNE_PUBLIC'
         }
       } as QueryableDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS with custom getfeatureinfo url',

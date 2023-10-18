@@ -1,14 +1,16 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  OnInit,
+  Component,
   EventEmitter,
-  Output,
-  OnDestroy
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material/form-field';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
+
 import { LayerListControlsOptions } from './layer-list-tool.interface';
 
 @Component({
@@ -59,7 +61,7 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
   @Output() selection = new EventEmitter<boolean>();
 
   ngOnInit(): void {
-    this.term$$ = this.term$.subscribe(keyword => {
+    this.term$$ = this.term$.subscribe((keyword) => {
       this.appliedFilterAndSort.emit({
         keyword,
         onlyVisible: this.onlyVisible,
@@ -67,14 +69,14 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.onlyVisible$$ = this.onlyVisible$.subscribe(onlyVisible => {
+    this.onlyVisible$$ = this.onlyVisible$.subscribe((onlyVisible) => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible,
         sortAlpha: this.sortAlpha
       });
     });
-    this.sortAlpha$$ = this.sortAlpha$.subscribe(sortAlpha => {
+    this.sortAlpha$$ = this.sortAlpha$.subscribe((sortAlpha) => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible: this.onlyVisible,

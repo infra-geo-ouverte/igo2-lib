@@ -2,7 +2,7 @@ export class DomUtils {
   static create<K extends keyof HTMLElementTagNameMap>(
     doc: Document,
     tagName: K,
-    options?: Partial<HTMLElementTagNameMap[K]>,
+    options?: Partial<HTMLElementTagNameMap[K]>
   ): HTMLElementTagNameMap[K] {
     const el = doc.createElement(tagName);
 

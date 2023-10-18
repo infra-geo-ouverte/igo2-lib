@@ -1,23 +1,22 @@
 import { Injectable } from '@angular/core';
 
-import olProjection from 'ol/proj/Projection';
-import * as olproj from 'ol/proj';
-
 import { MessageService } from '@igo2/core';
 
-import { Layer } from '../../layer/shared';
-import { OgcFilterWriter, OgcFilterableDataSourceOptions } from '../../filter/shared';
+import * as olproj from 'ol/proj';
+import olProjection from 'ol/proj/Projection';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import {
+  OgcFilterWriter,
+  OgcFilterableDataSourceOptions
+} from '../../filter/shared';
+import { Layer } from '../../layer/shared';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DownloadService {
-
-  constructor(
-    private messageService: MessageService
-  ) {}
+  constructor(private messageService: MessageService) {}
 
   open(layer: Layer) {
     this.messageService.success(
@@ -34,9 +33,10 @@ export class DownloadService {
         let wfsOptions;
         let currentProj = new olProjection({ code: layer.map.projection });
         const paramsWFS = (layer.dataSource.options as any).paramsWFS;
-        if (paramsWFS && Object.keys(paramsWFS).length > 0
-        ) {
-          currentProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : currentProj;
+        if (paramsWFS && Object.keys(paramsWFS).length > 0) {
+          currentProj = paramsWFS.srsName
+            ? new olProjection({ code: paramsWFS.srsName })
+            : currentProj;
           wfsOptions = (layer.dataSource.options as any).paramsWFS;
         } else {
           wfsOptions = (layer.dataSource.options as any).params;
@@ -49,7 +49,9 @@ export class DownloadService {
         );
         const outputFormatDownload =
           wfsOptions.outputFormatDownload === undefined
-            ? wfsOptions.outputFormat === undefined ? '' : 'outputformat=' + wfsOptions.outputFormat
+            ? wfsOptions.outputFormat === undefined
+              ? ''
+              : 'outputformat=' + wfsOptions.outputFormat
             : 'outputformat=' + wfsOptions.outputFormatDownload;
 
         const baseurl = DSOptions.download.dynamicUrl
@@ -57,18 +59,20 @@ export class DownloadService {
           .replace(/&?filter=[^&]*/gi, '')
           .replace(/&?bbox=[^&]*/gi, '');
 
-        const ogcFilters = (layer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
+        const ogcFilters = (
+          layer.dataSource.options as OgcFilterableDataSourceOptions
+        ).ogcFilters;
 
         let filterQueryString;
-        filterQueryString = new OgcFilterWriter()
-        .handleOgcFiltersAppliedValue(
+        filterQueryString = new OgcFilterWriter().handleOgcFiltersAppliedValue(
           layer.dataSource.options,
           ogcFilters.geometryName,
           currentExtent as [number, number, number, number],
-          currentProj);
+          currentProj
+        );
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
-            filterQueryString = new OgcFilterWriter().buildFilter(
+          filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
             currentExtent as [number, number, number, number],
             currentProj,

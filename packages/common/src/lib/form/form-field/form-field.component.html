@@ -1,9 +1,8 @@
-
-
 <ng-container *ngIf="field !== undefined">
   <igo-dynamic-outlet
     [component]="getFieldComponent()"
     [inputs]="getFieldInputs()"
-    [subscribers]="getFieldSubscribers()">
+    [subscribers]="getFieldSubscribers()"
+  >
   </igo-dynamic-outlet>
 </ng-container>

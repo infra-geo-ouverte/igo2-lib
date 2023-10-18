@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchSettingsComponent } from './search-settings.component';
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -11,6 +10,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
+
+import { SearchSettingsComponent } from './search-settings.component';
 
 /**
  * @ignore
@@ -31,4 +32,4 @@ import { IgoLanguageModule } from '@igo2/core';
   ],
   exports: [SearchSettingsComponent]
 })
-export class IgoSearchSettingsModule { }
+export class IgoSearchSettingsModule {}

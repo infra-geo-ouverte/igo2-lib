@@ -1,4 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppActivityComponent } from './activity.component';
 
@@ -9,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppActivityRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppActivityRoutingModule = RouterModule.forChild(routes);

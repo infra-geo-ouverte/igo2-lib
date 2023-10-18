@@ -1,9 +1,14 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 
+import { TimeFilterableDataSourceOptions } from '../../datasource';
+import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { TimeFilterableDataSourceOptions } from '../../datasource';
 
 @Component({
   selector: 'igo-time-filter-button',
@@ -12,7 +17,6 @@ import { TimeFilterableDataSourceOptions } from '../../datasource';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeFilterButtonComponent implements OnInit {
-
   public options: TimeFilterableDataSourceOptions;
 
   get badge() {

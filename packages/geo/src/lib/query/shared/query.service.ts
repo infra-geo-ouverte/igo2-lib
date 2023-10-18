@@ -1,31 +1,35 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-
-import { default as striptags } from 'striptags';
-
-import * as olformat from 'ol/format';
-import * as olextent from 'ol/extent';
-import olFormatGML2 from 'ol/format/GML2';
-import olFormatGML3 from 'ol/format/GML3';
-import olFormatEsriJSON from 'ol/format/EsriJSON';
-import olFeature from 'ol/Feature';
-import * as olgeom from 'ol/geom';
+import { Injectable } from '@angular/core';
 
 import { LanguageService, MessageService } from '@igo2/core';
 import { uuid } from '@igo2/utils';
-import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
-import { FEATURE } from '../../feature/shared/feature.enums';
-import { Layer } from '../../layer/shared/layers/layer';
-import {
-  WMSDataSource,
-  CartoDataSource,
-  TileArcGISRestDataSource,
-  WMSDataSourceOptions,
-  ImageArcGISRestDataSource
-} from '../../datasource';
 
+import olFeature from 'ol/Feature';
+import * as olextent from 'ol/extent';
+import * as olformat from 'ol/format';
+import olFormatEsriJSON from 'ol/format/EsriJSON';
+import olFormatGML2 from 'ol/format/GML2';
+import olFormatGML3 from 'ol/format/GML3';
+import * as olgeom from 'ol/geom';
+
+import { Observable, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { default as striptags } from 'striptags';
+
+import {
+  CartoDataSource,
+  ImageArcGISRestDataSource,
+  TileArcGISRestDataSource,
+  WMSDataSource,
+  WMSDataSourceOptions
+} from '../../datasource';
+import { FEATURE } from '../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../feature/shared/feature.interfaces';
+import { Layer } from '../../layer/shared/layers/layer';
+import { MapExtent } from '../../map/shared/map.interface';
 import {
   QueryFormat,
   QueryFormatMimeType,
@@ -33,11 +37,10 @@ import {
 } from './query.enums';
 import {
   QueryOptions,
+  QueryUrlData,
   QueryableDataSource,
-  QueryableDataSourceOptions,
-  QueryUrlData
+  QueryableDataSourceOptions
 } from './query.interfaces';
-import { MapExtent } from '../../map/shared/map.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -52,17 +55,19 @@ export class QueryService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService
+  ) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     if (this.previousMessageIds.length) {
-      this.previousMessageIds.forEach(id => {
+      this.previousMessageIds.forEach((id) => {
         this.messageService.remove(id);
       });
     }
 
-    const newLayers = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-    .map((layer: Layer) => this.queryLayer(layer, options));
+    const newLayers = layers
+      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
+      .map((layer: Layer) => this.queryLayer(layer, options));
     // the directive accept array in this format [observable, observable...]
     // if we use multiple 'url' in queryUrl so the result => this form [observable, observable, [observable, observable]]
     // so we need to flat the array
@@ -70,8 +75,16 @@ export class QueryService {
     return flatArray;
   }
 
-  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> | Observable<Feature[]>[] {
-    const url = this.getQueryUrl(layer.dataSource, options, false, layer.map.viewController.getExtent());
+  queryLayer(
+    layer: Layer,
+    options: QueryOptions
+  ): Observable<Feature[]> | Observable<Feature[]>[] {
+    const url = this.getQueryUrl(
+      layer.dataSource,
+      options,
+      false,
+      layer.map.viewController.getExtent()
+    );
     if (!url) {
       return of([]);
     }
@@ -79,19 +92,33 @@ export class QueryService {
     const resolution: number = layer.map.viewController.getResolution();
     const scale: number = layer.map.viewController.getScale();
 
-    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+    if (
+      (layer.dataSource as QueryableDataSource).options.queryFormat ===
+      QueryFormat.HTMLGML2
+    ) {
       if (typeof url === 'string') {
-        const urlGml = this.getQueryUrl(layer.dataSource, options, true) as string;
+        const urlGml = this.getQueryUrl(
+          layer.dataSource,
+          options,
+          true
+        ) as string;
         return this.http.get(urlGml, { responseType: 'text' }).pipe(
-          mergeMap(gmlRes => {
+          mergeMap((gmlRes) => {
             const mergedGML = this.mergeGML(gmlRes, url, layer);
             const imposedGeom = mergedGML[0];
             const imposedProperties = mergedGML[1];
             return this.http
               .get(url, { responseType: 'text' })
               .pipe(
-                map(res =>
-                  this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+                map((res) =>
+                  this.extractData(
+                    res,
+                    layer,
+                    options,
+                    url,
+                    imposedGeom,
+                    imposedProperties
+                  )
                 )
               );
           })
@@ -102,79 +129,122 @@ export class QueryService {
       for (let i = 0; i < urlGmls.length; i++) {
         const element = urlGmls[i] as QueryUrlData;
         if (this.checkScaleAndResolution(resolution, scale, element)) {
-          observables.push(this.requestDataForHTMLGML2(element.url, url[i].url, layer, options));
+          observables.push(
+            this.requestDataForHTMLGML2(element.url, url[i].url, layer, options)
+          );
         }
       }
       return observables;
     } else {
       if (typeof url === 'string') {
         const request = this.http.get(url, { responseType: 'text' });
-        return request.pipe(map(res => this.extractData(res, layer, options, url)));
+        return request.pipe(
+          map((res) => this.extractData(res, layer, options, url))
+        );
       }
       let observables: any = [];
       for (let i = 0; i < url.length; i++) {
         const element: QueryUrlData = url[i];
         if (this.checkScaleAndResolution(resolution, scale, element)) {
           const request = this.http.get(element.url, { responseType: 'text' });
-          observables.push(request.pipe(map(res => this.extractData(res, layer, options, element.url))));
+          observables.push(
+            request.pipe(
+              map((res) => this.extractData(res, layer, options, element.url))
+            )
+          );
         }
       }
       return observables;
     }
   }
 
-  private requestDataForHTMLGML2(urlGml: string, url: string ,layer: Layer, options: QueryOptions): Observable<Feature[]> {
+  private requestDataForHTMLGML2(
+    urlGml: string,
+    url: string,
+    layer: Layer,
+    options: QueryOptions
+  ): Observable<Feature[]> {
     return this.http.get(urlGml, { responseType: 'text' }).pipe(
-      mergeMap(gmlRes => {
+      mergeMap((gmlRes) => {
         const mergedGML = this.mergeGML(gmlRes, url, layer);
         const imposedGeom = mergedGML[0];
         const imposedProperties = mergedGML[1];
         return this.http
           .get(url, { responseType: 'text' })
           .pipe(
-            map(res =>
-              this.extractData(res, layer, options, url, imposedGeom, imposedProperties)
+            map((res) =>
+              this.extractData(
+                res,
+                layer,
+                options,
+                url,
+                imposedGeom,
+                imposedProperties
+              )
             )
           );
       })
     );
   }
 
-  private checkScaleAndResolution(resolution: number, scale: number, element: QueryUrlData): boolean {
+  private checkScaleAndResolution(
+    resolution: number,
+    scale: number,
+    element: QueryUrlData
+  ): boolean {
     let checkScale: boolean;
     let checkResolution: boolean;
 
-    if (!element.minResolution && !element.maxResolution && !element.minScale && !element.maxScale) {
+    if (
+      !element.minResolution &&
+      !element.maxResolution &&
+      !element.minScale &&
+      !element.maxScale
+    ) {
       return true;
     } else {
       /******************* checking Resolution *******************/
       if (element.minResolution && element.maxResolution) {
         // if "minResolution" and "maxResolution" exists check if resoltion is between
-        if ((resolution >= element.minResolution) && (resolution <= element.maxResolution)) {
+        if (
+          resolution >= element.minResolution &&
+          resolution <= element.maxResolution
+        ) {
           checkResolution = true;
         }
       } else {
         // check if "minResolution" or "maxResolution" exists
-        if (element.minResolution && resolution >= element.minResolution) { checkResolution = true; }
-        if (element.maxResolution && resolution <= element.maxResolution) { checkResolution = true; }
+        if (element.minResolution && resolution >= element.minResolution) {
+          checkResolution = true;
+        }
+        if (element.maxResolution && resolution <= element.maxResolution) {
+          checkResolution = true;
+        }
       }
 
       /******************* checking Scale *******************/
       if (element.minScale && element.maxScale) {
         // if "minScale" and "maxScale" exists check if scale is between
-        if ((scale > element.minScale) && (scale < element.maxScale)) {
+        if (scale > element.minScale && scale < element.maxScale) {
           checkScale = true;
         }
       } else {
         // check if "minScale" or "maxScale" exists
-        if (element.maxScale && scale <= element.maxScale) { checkScale = true; }
-        if (element.minScale && scale >= element.minScale) { checkScale = true; }
+        if (element.maxScale && scale <= element.maxScale) {
+          checkScale = true;
+        }
+        if (element.minScale && scale >= element.minScale) {
+          checkScale = true;
+        }
       }
 
       /******************* result of checking *******************/
       if (checkScale === true && checkResolution === true) {
         return true;
-      } else if ((checkResolution === true && !checkScale) || (checkScale === true && !checkResolution)) {
+      } else if (
+        (checkResolution === true && !checkScale) ||
+        (checkScale === true && !checkResolution)
+      ) {
         return true;
       } else {
         return false;
@@ -182,7 +252,11 @@ export class QueryService {
     }
   }
 
-  private mergeGML(gmlRes, url, layer: Layer): [FeatureGeometry, { [key: string]: any }] {
+  private mergeGML(
+    gmlRes,
+    url,
+    layer: Layer
+  ): [FeatureGeometry, { [key: string]: any }] {
     const parser = new olFormatGML2();
     let features = parser.readFeatures(gmlRes);
     // Handle non standard GML output (MapServer)
@@ -214,19 +288,22 @@ export class QueryService {
         queryTileField = dataSourceOptions.queryTitle;
       }
     }
-    features.map(feature => {
-
+    features.map((feature) => {
       if (queryTileField) {
         let queryTitleContent = feature.getProperties()[queryTileField];
         if (queryTitleContent) {
-          titleContent = !titleContent ? queryTitleContent : `${titleContent},${queryTitleContent}`;
+          titleContent = !titleContent
+            ? queryTitleContent
+            : `${titleContent},${queryTitleContent}`;
         }
       }
       /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
       }*/
-      const featureGeometryCoordinates = (feature.getGeometry() as any).getCoordinates();
+      const featureGeometryCoordinates = (
+        feature.getGeometry() as any
+      ).getCoordinates();
       const featureGeometryType = feature.getGeometry().getType();
 
       if (!firstFeatureType && !outBboxExtent) {
@@ -303,9 +380,7 @@ export class QueryService {
       imposedProperties[queryTileField] = titleContent;
     }
 
-    return [ returnGeometry, imposedProperties];
-
-
+    return [returnGeometry, imposedProperties];
   }
 
   cross(a, b, o) {
@@ -376,10 +451,18 @@ export class QueryService {
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
       case QueryFormat.GEOJSON2:
-        features = this.extractGeoJSONData(res, layer.zIndex, allowedFieldsAndAlias);
+        features = this.extractGeoJSONData(
+          res,
+          layer.zIndex,
+          allowedFieldsAndAlias
+        );
         break;
       case QueryFormat.ESRIJSON:
-        features = this.extractEsriJSONData(res, layer.zIndex, allowedFieldsAndAlias);
+        features = this.extractEsriJSONData(
+          res,
+          layer.zIndex,
+          allowedFieldsAndAlias
+        );
         break;
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
@@ -405,7 +488,10 @@ export class QueryService {
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
     }
-    if (features.length > 0 && (features[0].geometry === null || !features[0].geometry)) {
+    if (
+      features.length > 0 &&
+      (features[0].geometry === null || !features[0].geometry)
+    ) {
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
       for (const feature of features) {
@@ -414,15 +500,24 @@ export class QueryService {
     }
 
     const wmsDatasource = layer.dataSource as WMSDataSource;
-    const featureCount = wmsDatasource.params?.FEATURE_COUNT ?
-      new RegExp('FEATURE_COUNT=' + this.featureCount) :
-      new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
+    const featureCount = wmsDatasource.params?.FEATURE_COUNT
+      ? new RegExp('FEATURE_COUNT=' + this.featureCount)
+      : new RegExp('FEATURE_COUNT=' + this.defaultFeatureCount);
 
     if (
       featureCount.test(url) &&
-      ((wmsDatasource.params?.FEATURE_COUNT && this.featureCount > 1 && features.length === this.featureCount) ||
-      (!wmsDatasource.params?.FEATURE_COUNT && features.length === this.defaultFeatureCount))) {
-      const messageObj = this.messageService.info('igo.geo.query.featureCountMax', undefined, undefined, { value: layer.title });
+      ((wmsDatasource.params?.FEATURE_COUNT &&
+        this.featureCount > 1 &&
+        features.length === this.featureCount) ||
+        (!wmsDatasource.params?.FEATURE_COUNT &&
+          features.length === this.defaultFeatureCount))
+    ) {
+      const messageObj = this.messageService.info(
+        'igo.geo.query.featureCountMax',
+        undefined,
+        undefined,
+        { value: layer.title }
+      );
       this.previousMessageIds.push(messageObj.toastId);
     }
 
@@ -541,7 +636,7 @@ export class QueryService {
       }
     }
 
-    return features.map(feature =>
+    return features.map((feature) =>
       this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
     );
   }
@@ -554,7 +649,7 @@ export class QueryService {
     } catch (e) {
       console.warn('query.service: GML3 is not well supported');
     }
-    return features.map(feature =>
+    return features.map((feature) =>
       this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
     );
   }
@@ -566,11 +661,14 @@ export class QueryService {
     } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
-    features.map(feature => feature.meta = {
-      id: uuid(),
-      order: 1000 - zIndex,
-      alias: allowedFieldsAndAlias
-    });
+    features.map(
+      (feature) =>
+        (feature.meta = {
+          id: uuid(),
+          order: 1000 - zIndex,
+          alias: allowedFieldsAndAlias
+        })
+    );
     return features;
   }
 
@@ -585,7 +683,9 @@ export class QueryService {
     const parser = new olFormatEsriJSON();
     const features = parser.readFeatures(res);
 
-    return features.map(feature => this.featureToResult(feature, zIndex, allowedFieldsAndAlias));
+    return features.map((feature) =>
+      this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
+    );
   }
 
   private extractTextData(res) {
@@ -614,7 +714,9 @@ export class QueryService {
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
     // replace \r \n  and ' ' with '' to validate if the body is really empty. Clear all the html tags from body
-    const body = striptags(res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, ''));
+    const body = striptags(
+      res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '')
+    );
     if (body === '' || res === '') {
       return [];
     }
@@ -623,7 +725,10 @@ export class QueryService {
       {
         type: FEATURE,
         projection,
-        properties: Object.assign({ target: htmlTarget, body: res, url }, imposedProperties),
+        properties: Object.assign(
+          { target: htmlTarget, body: res, url },
+          imposedProperties
+        ),
         geometry: imposedGeometry || geomToAdd
       }
     ];
@@ -637,7 +742,7 @@ export class QueryService {
     const pairs = queryString[1].split('&');
 
     const result = {};
-    pairs.forEach(pair => {
+    pairs.forEach((pair) => {
       pair = pair.split('=');
       result[pair[0]] = decodeURIComponent(pair[1] || '');
     });
@@ -689,7 +794,7 @@ export class QueryService {
     options: QueryOptions,
     forceGML2 = false,
     mapExtent?: MapExtent
-  ): string | QueryUrlData[]{
+  ): string | QueryUrlData[] {
     let url;
 
     if (datasource.options.queryUrls) {
@@ -705,7 +810,8 @@ export class QueryService {
             wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.LAYERS,
-          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
+          FEATURE_COUNT:
+            wmsDatasource.params.FEATURE_COUNT || this.defaultFeatureCount
         };
 
         if (wmsDatasource.params.FEATURE_COUNT) {
@@ -764,7 +870,9 @@ export class QueryService {
         const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
         const maxDelta = deltaX > deltaY ? deltaX : deltaY;
         const clickBuffer = maxDelta * 0.005;
-        const threshold = tileArcGISRestDatasource.options.queryPrecision ? tileArcGISRestDatasource.options.queryPrecision : clickBuffer;
+        const threshold = tileArcGISRestDatasource.options.queryPrecision
+          ? tileArcGISRestDatasource.options.queryPrecision
+          : clickBuffer;
         const extent = olextent.buffer(
           olextent.boundingExtent([options.coordinates]),
           threshold
@@ -807,7 +915,7 @@ export class QueryService {
   private getMimeInfoFormat(queryFormat: string) {
     let mime = 'application/vnd.ogc.gml';
     const keyEnum = Object.keys(QueryFormat).find(
-      key => QueryFormat[key] === queryFormat
+      (key) => QueryFormat[key] === queryFormat
     );
     if (keyEnum) {
       mime = QueryFormatMimeType[keyEnum];
@@ -823,7 +931,7 @@ export class QueryService {
       layer.options.source.options.sourceFields.length >= 1
     ) {
       allowedFieldsAndAlias = {};
-      layer.options.source.options.sourceFields.forEach(sourceField => {
+      layer.options.source.options.sourceFields.forEach((sourceField) => {
         const alias = sourceField.alias ? sourceField.alias : sourceField.name;
         allowedFieldsAndAlias[sourceField.name] = alias;
       });
@@ -848,7 +956,7 @@ export class QueryService {
     let label = labelMatch;
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
-    labelToGet.forEach(v => {
+    labelToGet.forEach((v) => {
       label = label.replace(v[0], feature.properties[v[1]]);
     });
 
@@ -870,50 +978,52 @@ export class QueryService {
   getCustomQueryUrl(
     datasource: QueryableDataSource,
     options: QueryOptions,
-    mapExtent?: MapExtent): QueryUrlData[] {
+    mapExtent?: MapExtent
+  ): QueryUrlData[] {
+    const extent = olextent.getForViewAndSize(
+      options.coordinates,
+      options.resolution,
+      0,
+      [101, 101]
+    );
 
-      const extent = olextent.getForViewAndSize(
-        options.coordinates,
-        options.resolution,
-        0,
-        [101, 101]
-      );
-
-      return datasource.options.queryUrls.map(item => {
-        let data: QueryUrlData = {
-          url: item.url.replace(/\{bbox\}/g, extent.join(','))
+    return datasource.options.queryUrls.map((item) => {
+      let data: QueryUrlData = {
+        url: item.url
+          .replace(/\{bbox\}/g, extent.join(','))
           .replace(/\{x\}/g, options.coordinates[0].toString())
           .replace(/\{y\}/g, options.coordinates[1].toString())
           .replace(/\{resolution\}/g, options.resolution.toString())
-          .replace(/\{srid\}/g, options.projection.replace('EPSG:',''))
-        };
+          .replace(/\{srid\}/g, options.projection.replace('EPSG:', ''))
+      };
 
-        // if the queryFormat changed to "QueryFormat.HTMLGML2": mapExtent will be undefined
-        // we need to check "mapExtent" befor replace variables in the url
-        if(mapExtent) {
-          data.url.replace(/\{xmin\}/g, mapExtent[0].toString())
+      // if the queryFormat changed to "QueryFormat.HTMLGML2": mapExtent will be undefined
+      // we need to check "mapExtent" befor replace variables in the url
+      if (mapExtent) {
+        data.url
+          .replace(/\{xmin\}/g, mapExtent[0].toString())
           .replace(/\{ymin\}/g, mapExtent[1].toString())
           .replace(/\{xmax\}/g, mapExtent[2].toString())
           .replace(/\{ymax\}/g, mapExtent[3].toString());
-        }
+      }
 
-        if(item.maxResolution) {
-          data.maxResolution = item.maxResolution;
-        }
+      if (item.maxResolution) {
+        data.maxResolution = item.maxResolution;
+      }
 
-        if(item.minResolution) {
-          data.minResolution = item.minResolution;
-        }
+      if (item.minResolution) {
+        data.minResolution = item.minResolution;
+      }
 
-        if(item.minScale) {
-          data.minScale = item.minScale;
-        }
+      if (item.minScale) {
+        data.minScale = item.minScale;
+      }
 
-        if(item.maxScale) {
-          data.maxScale = item.maxScale;
-        }
+      if (item.maxScale) {
+        data.maxScale = item.maxScale;
+      }
 
-        return data;
-      });
-    }
+      return data;
+    });
+  }
 }

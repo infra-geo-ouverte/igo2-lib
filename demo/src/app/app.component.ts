@@ -1,11 +1,18 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { OnInit, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-
-import { userAgent, DomUtils } from '@igo2/utils';
-import { version } from '@igo2/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { delay, first } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+
+import { version } from '@igo2/core';
+import { DomUtils, userAgent } from '@igo2/utils';
+
+import { delay, first } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
-    private router: Router,
+    private router: Router
   ) {
     this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => this.changeDetectorRef.detectChanges();
@@ -33,14 +40,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-      this.handleSplashScreen();
+    this.handleSplashScreen();
   }
 
   private handleSplashScreen(): void {
     this.router.events
       .pipe(
         first((events) => events instanceof NavigationEnd),
-        delay(300),
+        delay(300)
       )
       .subscribe(() => {
         this._removeSplashScreen();

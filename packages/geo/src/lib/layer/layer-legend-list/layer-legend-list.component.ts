@@ -1,7 +1,23 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { Layer } from '../shared';
-import { BehaviorSubject, ReplaySubject, Subscription, EMPTY, timer } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
+
+import {
+  BehaviorSubject,
+  EMPTY,
+  ReplaySubject,
+  Subscription,
+  timer
+} from 'rxjs';
 import { debounce } from 'rxjs/operators';
+
+import { Layer } from '../shared';
 
 @Component({
   selector: 'igo-layer-legend-list',
@@ -12,8 +28,11 @@ import { debounce } from 'rxjs/operators';
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
 
-  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(
+    true
+  );
+  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> =
+    new BehaviorSubject(true);
   layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegend: boolean = false;
@@ -38,28 +57,44 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
 
   @Output() allLegendsShown = new EventEmitter<boolean>(false);
 
-  constructor() { }
+  constructor() {}
   ngOnInit(): void {
     this.change$$ = this.change$
-      .pipe(debounce(() => {
-        return this.layers.length === 0 ? EMPTY : timer(50);
-      }))
+      .pipe(
+        debounce(() => {
+          return this.layers.length === 0 ? EMPTY : timer(50);
+        })
+      )
       .subscribe(() => {
         const layers = this.computeShownLayers(this.layers.slice(0));
         this.layers$.next(layers);
         this.hasVisibleOrInRangeLayers$.next(
-          this.layers.slice(0)
-            .filter(layer => layer.baseLayer !== true)
-            .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value).length > 0
+          this.layers
+            .slice(0)
+            .filter((layer) => layer.baseLayer !== true)
+            .filter(
+              (layer) =>
+                layer.visible$.value && layer.isInResolutionsRange$.value
+            ).length > 0
         );
         this.hasVisibleAndNotInRangeLayers$.next(
-          this.layers.slice(0)
-            .filter(layer => layer.baseLayer !== true)
-            .filter(layer => layer.visible$.value && !layer.isInResolutionsRange$.value).length > 0
+          this.layers
+            .slice(0)
+            .filter((layer) => layer.baseLayer !== true)
+            .filter(
+              (layer) =>
+                layer.visible$.value && !layer.isInResolutionsRange$.value
+            ).length > 0
         );
 
         this.layersInUi$.next(
-          this.layers.slice(0).filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+          this.layers
+            .slice(0)
+            .filter(
+              (layer) =>
+                layer.showInLayerList !== false &&
+                (!this.excludeBaseLayers || !layer.baseLayer)
+            )
         );
       });
   }
@@ -71,7 +106,9 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
     this.change$.next();
   }
   private computeShownLayers(layers: Layer[]) {
-    let shownLayers = layers.filter((layer: Layer) => layer.visible && layer.isInResolutionsRange);
+    let shownLayers = layers.filter(
+      (layer: Layer) => layer.visible && layer.isInResolutionsRange
+    );
     if (this.showAllLegendsValue) {
       shownLayers = layers;
     }
@@ -82,8 +119,8 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
   }
 
   toggleShowAllLegends(toggle: boolean) {
-      this.showAllLegendsValue = toggle;
-      this.next();
-      this.allLegendsShown.emit(toggle);
+    this.showAllLegendsValue = toggle;
+    this.next();
+    this.allLegendsShown.emit(toggle);
   }
 }

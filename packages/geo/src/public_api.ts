@@ -38,6 +38,7 @@ export * from './lib/catalog';
 export * from './lib/datasource';
 export * from './lib/download';
 export * from './lib/draw';
+export * from './lib/environment';
 export * from './lib/feature';
 export * from './lib/filter';
 export * from './lib/geometry';

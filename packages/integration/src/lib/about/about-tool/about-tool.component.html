@@ -2,43 +2,63 @@
 <igo-interactive-tour
   mat-raised-button
   tourToStart="global"
-  menuIsOpen=true
+  menuIsOpen="true"
   styleButton="raised"
-  [discoverTitleInLocale$]="discoverTitleInLocale$">
+  [discoverTitleInLocale$]="discoverTitleInLocale$"
+>
 </igo-interactive-tour>
 
-<button *ngIf="auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1"
+<button
+  *ngIf="
+    auth.authenticated && trainingGuideURLs && trainingGuideURLs.length === 1
+  "
   class="training-guide-button"
   mat-raised-button
   tooltip-position="below"
   matTooltipShowDelay="500"
   [disabled]="loading"
   [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
-  (click)="openGuide()">
-  <span>{{'igo.integration.aboutTool.trainingGuide' | translate}}</span>
+  (click)="openGuide()"
+>
+  <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
   <mat-icon svgIcon="file-document"></mat-icon>
 </button>
 
-<button *ngIf="auth.authenticated && trainingGuideURLs && trainingGuideURLs.length > 1"
+<button
+  *ngIf="
+    auth.authenticated && trainingGuideURLs && trainingGuideURLs.length > 1
+  "
   class="training-guide-button"
   mat-raised-button
   tooltip-position="below"
   matTooltipShowDelay="500"
   [disabled]="loading"
   [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
-  [matMenuTriggerFor]="menu">
-  <span>{{'igo.integration.aboutTool.trainingGuide' | translate}}</span>
+  [matMenuTriggerFor]="menu"
+>
+  <span>{{ 'igo.integration.aboutTool.trainingGuide' | translate }}</span>
   <mat-icon svgIcon="file-document"></mat-icon>
 </button>
 
 <mat-menu #menu="matMenu">
-  <button *ngFor="let guide of trainingGuideURLs" mat-menu-item (click)="openGuide(guide)">{{formatFileName(guide)}}</button>
+  <button
+    *ngFor="let guide of trainingGuideURLs"
+    mat-menu-item
+    (click)="openGuide(guide)"
+  >
+    {{ formatFileName(guide) }}
+  </button>
 </mat-menu>
 
-<igo-custom-html *ngIf="headerHtml !== ''" class="mat-typography"
-  [html]="headerHtml | translate">
+<igo-custom-html
+  *ngIf="headerHtml !== ''"
+  class="mat-typography"
+  [html]="headerHtml | translate"
+>
 </igo-custom-html>
 
-<igo-custom-html class="mat-typography"
-  [html]="html | translate: {version: version}">
+<igo-custom-html
+  class="mat-typography"
+  [html]="html | translate: { version: effectiveVersion }"
+>
 </igo-custom-html>

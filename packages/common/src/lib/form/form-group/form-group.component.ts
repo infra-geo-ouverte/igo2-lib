@@ -1,12 +1,8 @@
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 
-import { getControlErrorMessage } from '../shared/form.utils';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { getControlErrorMessage } from '../shared/form.utils';
 
 /**
  * A configurable form, optionnally bound to an entity
@@ -20,7 +16,6 @@ import { FormField, FormFieldGroup } from '../shared/form.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormGroupComponent {
-
   /**
    * Form field group
    */
@@ -29,12 +24,14 @@ export class FormGroupComponent {
   /**
    * Field placeholder
    */
-  @Input() errors: {[key: string]: string};
+  @Input() errors: { [key: string]: string };
 
   /**
    * Form group control
    */
-  get formControl(): UntypedFormGroup { return this.group.control; }
+  get formControl(): UntypedFormGroup {
+    return this.group.control;
+  }
 
   constructor() {}
 
@@ -62,9 +59,9 @@ export class FormGroupComponent {
    * @returns Number of columns
    * @internal
    */
-  getFieldNgClass(field: FormField): {[key: string]: boolean} {
+  getFieldNgClass(field: FormField): { [key: string]: boolean } {
     const colspan = this.getFieldColSpan(field);
-    return {[`igo-form-field-colspan-${colspan}`]: true};
+    return { [`igo-form-field-colspan-${colspan}`]: true };
   }
 
   /**
@@ -74,5 +71,4 @@ export class FormGroupComponent {
     const options = this.group.options || {};
     return getControlErrorMessage(this.formControl, options.errors || {});
   }
-
 }

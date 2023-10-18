@@ -1,21 +1,23 @@
 <div class="igo-zoom-button-container">
   <button
     mat-icon-button
-    [matTooltip]="'igo.geo.mapButtons.zoomIn' | translate: {zoom: zoom + 1}"
+    [matTooltip]="'igo.geo.mapButtons.zoomIn' | translate: { zoom: zoom + 1 }"
     matTooltipPosition="left"
     [color]="color"
     [disabled]="zoom >= maxZoom"
-    (click)="map.viewController.zoomIn()">
+    (click)="map.viewController.zoomIn()"
+  >
     <mat-icon svgIcon="plus"></mat-icon>
   </button>
 
   <button
     mat-icon-button
-    [matTooltip]="'igo.geo.mapButtons.zoomOut' | translate: {zoom: zoom - 1}"
+    [matTooltip]="'igo.geo.mapButtons.zoomOut' | translate: { zoom: zoom - 1 }"
     matTooltipPosition="left"
     [color]="color"
     [disabled]="zoom <= minZoom"
-    (click)="map.viewController.zoomOut()">
+    (click)="map.viewController.zoomOut()"
+  >
     <mat-icon svgIcon="minus"></mat-icon>
   </button>
 </div>

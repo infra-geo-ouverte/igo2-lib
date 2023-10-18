@@ -12,23 +12,41 @@
   }
 }
 
-:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text > * {
+:host ::ng-deep .mat-mdc-list .mat-mdc-list-item .mdc-list-item__primary-text {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  max-height: 36px;
   line-height: 18px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-:host ::ng-deep .mat-mdc-list .mat-mdc-list-item.mdc-list-item--with-leading-icon {
+:host
+  ::ng-deep
+  .mat-mdc-list
+  .mat-mdc-list-item.mdc-list-item--with-leading-icon {
   height: $igo-list-item-height;
 }
 
-:host ::ng-deep .mat-mdc-list ::ng-deep igo-collapsible > .mat-mdc-list-item > .mdc-list-item__primary-text > .mat-mdc-list-item {
+:host
+  ::ng-deep
+  .mat-mdc-list
+  ::ng-deep
+  igo-collapsible
+  > .mat-mdc-list-item
+  > .mdc-list-item__primary-text
+  > .mat-mdc-list-item {
   font-weight: bold;
   opacity: 0.9;
 }
 
-:host mat-list.selectable ::ng-deep [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {
+:host
+  mat-list.selectable
+  ::ng-deep
+  [igolistitem]:not(.igo-list-item-disabled)
+  mat-list-item:hover {
   cursor: pointer;
 }
 

@@ -1,17 +1,16 @@
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
+import { FeatureDataSource } from '../../datasource';
 import {
   Feature,
   FeatureMotion,
   featureToOl,
   moveToOlFeatures
 } from '../../feature/shared';
-import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-
-import { createOverlayLayer } from './overlay.utils';
 import { MapBase } from '../../map/shared/map.abstract';
+import { createOverlayLayer } from './overlay.utils';
 
 /**
  * This class is simply a shortcut for adding features to a map.
@@ -152,7 +151,9 @@ export class Overlay<T extends MapBase = MapBase> {
     features.forEach((feature: Feature) => {
       if (feature.meta) {
         if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
-          this.removeOlFeature(this.dataSource.ol.getFeatureById(feature.meta.id));
+          this.removeOlFeature(
+            this.dataSource.ol.getFeatureById(feature.meta.id)
+          );
         }
       }
     });

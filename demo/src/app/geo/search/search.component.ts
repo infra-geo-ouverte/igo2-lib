@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -6,25 +5,27 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import * as proj from 'ol/proj';
 
+import { ActionStore, EntityStore } from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
-import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
   GoogleLinks,
   IgoMap,
+  Layer,
   LayerService,
   MapService,
-  Layer,
   ProjectionService,
   Research,
   SearchResult
 } from '@igo2/geo';
-
 import { SearchState } from '@igo2/integration';
+
+import * as proj from 'ol/proj';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -54,7 +55,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public osmLayer: Layer;
 
-  @ViewChild('mapBrowser', { read: ElementRef, static: true }) mapBrowser: ElementRef;
+  @ViewChild('mapBrowser', { read: ElementRef, static: true })
+  mapBrowser: ElementRef;
 
   public lonlat;
   public mapProjection: string;
@@ -80,7 +82,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private layerService: LayerService,
     private searchState: SearchState,
     private mediaService: MediaService,
-    private storageService: StorageService,
+    private storageService: StorageService
   ) {
     this.mapService.setMap(this.map);
 
@@ -91,13 +93,15 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       })
-      .subscribe(layer => {
+      .subscribe((layer) => {
         this.osmLayer = layer;
         this.map.addLayer(layer);
       });
 
-      this.igoReverseSearchCoordsFormatEnabled =
-      this.storageService.get('reverseSearchCoordsFormatEnabled') as boolean || false;
+    this.igoReverseSearchCoordsFormatEnabled =
+      (this.storageService.get(
+        'reverseSearchCoordsFormatEnabled'
+      ) as boolean) || false;
   }
 
   onPointerSummaryStatusChange(value) {
@@ -172,7 +176,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       {
         id: 'googleMaps',
         title: 'googleMap',
-        handler: () => this.openGoogleMaps(this.lonlat),
+        handler: () => this.openGoogleMaps(this.lonlat)
       },
       {
         id: 'googleStreetView',
@@ -216,8 +220,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   searchCoordinate(lonlat) {
     this.searchStore.clear();
-    this.term = (!this.igoReverseSearchCoordsFormatEnabled) ?
-    lonlat.map((c) => c.toFixed(6)).join(', ') : lonlat.reverse().map((c) => c.toFixed(6)).join(', ');
+    this.term = !this.igoReverseSearchCoordsFormatEnabled
+      ? lonlat.map((c) => c.toFixed(6)).join(', ')
+      : lonlat
+          .reverse()
+          .map((c) => c.toFixed(6))
+          .join(', ');
   }
 
   openGoogleMaps(lonlat) {
@@ -225,8 +233,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   openGoogleStreetView(lonlat) {
-    window.open(
-      GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1])
-    );
+    window.open(GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1]));
   }
 }

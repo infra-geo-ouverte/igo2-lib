@@ -1,10 +1,14 @@
-import {
-    Component,
-    ChangeDetectionStrategy
-  } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { FeatureStore, IgoMap, DrawControl, FeatureWithDraw, VectorLayer} from '@igo2/geo';
+import {
+  DrawControl,
+  FeatureStore,
+  FeatureWithDraw,
+  IgoMap,
+  VectorLayer
+} from '@igo2/geo';
+
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
 
@@ -45,7 +49,7 @@ export class DrawingToolComponent {
   get drawControls(): [string, DrawControl][] {
     return this.drawState.drawControls;
   }
-  set drawControls(dc:[string, DrawControl][]){
+  set drawControls(dc: [string, DrawControl][]) {
     this.drawState.drawControls = dc;
   }
 
@@ -56,13 +60,16 @@ export class DrawingToolComponent {
     this.drawState.activeDrawingLayer = value;
   }
 
-  public addLayersID(layerID:string){
+  public addLayersID(layerID: string) {
     this.layersID.push(layerID);
   }
 
-  public addDrawControls(dc:[string, DrawControl][]){
+  public addDrawControls(dc: [string, DrawControl][]) {
     this.drawControls = dc;
   }
 
-  constructor(private drawState: DrawState, private mapState: MapState) {}
+  constructor(
+    private drawState: DrawState,
+    private mapState: MapState
+  ) {}
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
-import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
+import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
 
 @Component({
   selector: 'app-simple-map',
@@ -44,7 +44,7 @@ export class AppSimpleMapComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',

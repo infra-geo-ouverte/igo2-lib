@@ -5,7 +5,11 @@
  * @param mimeType File mime type
  * @param fileName File name
  */
-export function downloadContent(content: string, mimeType: string, fileName: string) {
+export function downloadContent(
+  content: string,
+  mimeType: string,
+  fileName: string
+) {
   const uri = `data:${mimeType},${encodeURIComponent(content)}`;
   downloadFromUri(uri, fileName);
 }

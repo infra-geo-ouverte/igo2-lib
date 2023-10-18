@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-import { LanguageService } from '@igo2/core';
 import {
   ActionbarMode,
   EntityRecord,
+  EntityTablePaginatorOptions,
   EntityTableScrollBehavior,
   Workspace,
-  WorkspaceStore,
-  EntityTablePaginatorOptions
+  WorkspaceStore
 } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
+  IgoMap,
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
-import { MatPaginator } from '@angular/material/paginator';
 import { WorkspaceState } from '@igo2/integration';
+
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace',
@@ -27,7 +27,6 @@ import { WorkspaceState } from '@igo2/integration';
   styleUrls: ['./workspace.component.scss']
 })
 export class AppWorkspaceComponent implements OnInit {
-
   public workspacePaginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
@@ -63,7 +62,7 @@ export class AppWorkspaceComponent implements OnInit {
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
-    public workspaceState: WorkspaceState,
+    public workspaceState: WorkspaceState
   ) {}
 
   ngOnInit() {
@@ -85,7 +84,6 @@ export class AppWorkspaceComponent implements OnInit {
             });
           }
           return entity;
-
         })
       );
 
@@ -93,7 +91,7 @@ export class AppWorkspaceComponent implements OnInit {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -120,7 +118,7 @@ export class AppWorkspaceComponent implements OnInit {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDataSourceOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer = {
           title: 'Simple WFS ',
           maxResolution: 3000,

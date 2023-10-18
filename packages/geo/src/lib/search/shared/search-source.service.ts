@@ -1,4 +1,5 @@
 import { Workspace } from '@igo2/common';
+
 import { SearchSource } from './sources/source';
 import { SearchSourceSettings } from './sources/source.interfaces';
 
@@ -6,7 +7,6 @@ import { SearchSourceSettings } from './sources/source.interfaces';
  * Service where all available search sources are registered.
  */
 export class SearchSourceService {
-
   constructor(private sources: SearchSource[]) {}
 
   /**
@@ -52,12 +52,12 @@ export class SearchSourceService {
     source.setParamFromSetting(setting);
   }
 
-    /**
+  /**
    * Set Param from the selected settings
    * @param source search-source
    * @param setting settings
    */
-    setWorkspaces(source: SearchSource, workspaces: Workspace[]) {
-      source.setWorkspaces(workspaces);
-    }
+  setWorkspaces(source: SearchSource, workspaces: Workspace[]) {
+    source.setWorkspaces(workspaces);
+  }
 }

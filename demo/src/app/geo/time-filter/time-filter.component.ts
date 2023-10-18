@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
+  IgoMap,
   LayerService,
-  TimeFilterableDataSourceOptions,
+  TimeFilterStyle,
   TimeFilterType,
-  TimeFilterStyle
+  TimeFilterableDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -38,7 +38,7 @@ export class AppTimeFilterComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -87,7 +87,7 @@ export class AppTimeFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceYear)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle YEAR',

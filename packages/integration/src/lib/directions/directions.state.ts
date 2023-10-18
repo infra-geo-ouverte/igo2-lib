@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 
-import { AnyLayerOptions, StopsStore, StopsFeatureStore, RoutesFeatureStore, StepFeatureStore } from '@igo2/geo';
+import {
+  AnyLayerOptions,
+  RoutesFeatureStore,
+  StepFeatureStore,
+  StopsFeatureStore,
+  StopsStore
+} from '@igo2/geo';
+
 import { Subject } from 'rxjs';
+
 import { MapState } from '../map/map.state';
 
 /**
@@ -11,7 +19,6 @@ import { MapState } from '../map/map.state';
   providedIn: 'root'
 })
 export class DirectionState {
-
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   /**
@@ -49,12 +56,16 @@ export class DirectionState {
     this.mapState.map.ol.once('rendercomplete', () => {
       this.stopsFeatureStore.empty$.subscribe((empty) => {
         if (this.stopsFeatureStore.layer?.options) {
-          (this.stopsFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+          (
+            this.stopsFeatureStore.layer.options as AnyLayerOptions
+          ).showInLayerList = !empty;
         }
       });
       this.routesFeatureStore.empty$.subscribe((empty) => {
         if (this.routesFeatureStore.layer?.options) {
-          (this.routesFeatureStore.layer.options as AnyLayerOptions).showInLayerList = !empty;
+          (
+            this.routesFeatureStore.layer.options as AnyLayerOptions
+          ).showInLayerList = !empty;
         }
       });
     });
@@ -69,5 +80,4 @@ export class DirectionState {
       }
     });
   }
-
 }

@@ -1,7 +1,9 @@
-import { Component, ViewEncapsulation, Input } from '@angular/core';
-import { InteractiveTourService } from './interactive-tour.service';
-import { ToolService } from '../tool/shared/tool.service';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+
 import { Observable, of } from 'rxjs';
+
+import { ToolService } from '../tool/shared/tool.service';
+import { InteractiveTourService } from './interactive-tour.service';
 
 @Component({
   selector: 'igo-interactive-tour',

@@ -1,9 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input,
-  Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  Input,
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
@@ -23,7 +23,6 @@ import { Workspace } from '../shared/workspace';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceWidgetOutletComponent {
-
   /**
    * Workspace
    */
@@ -39,13 +38,15 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's active widget
    * @internal
    */
-  get widget$(): BehaviorSubject<Widget> { return this.workspace.widget$; }
+  get widget$(): BehaviorSubject<Widget> {
+    return this.workspace.widget$;
+  }
 
   /**
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetInputs$(): BehaviorSubject<{[key: string]: any}> {
+  get widgetInputs$(): BehaviorSubject<{ [key: string]: any }> {
     return this.workspace.widgetInputs$;
   }
 
@@ -53,7 +54,9 @@ export class WorkspaceWidgetOutletComponent {
    * Observable of the workspace's widget inputs
    * @internal
    */
-  get widgetSubscribers$(): BehaviorSubject<{[key: string]: (event: any) => void}> {
+  get widgetSubscribers$(): BehaviorSubject<{
+    [key: string]: (event: any) => void;
+  }> {
     return this.workspace.widgetSubscribers$;
   }
 
@@ -80,5 +83,4 @@ export class WorkspaceWidgetOutletComponent {
     this.workspace.deactivateWidget();
     this.deactivateWidget.emit(widget);
   }
-
 }

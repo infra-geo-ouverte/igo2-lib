@@ -1,10 +1,14 @@
 <button
-  *ngIf="(options && options.metadata && options.metadata.url) || (options && options.metadata && options.metadata.abstract)"
+  *ngIf="
+    (options && options.metadata && options.metadata.url) ||
+    (options && options.metadata && options.metadata.abstract)
+  "
   mat-icon-button
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.metadata.show' | translate"
   [color]="color"
-  (click)="openMetadata(options.metadata)">
+  (click)="openMetadata(options.metadata)"
+>
   <mat-icon svgIcon="information-outline"></mat-icon>
 </button>

@@ -1,28 +1,29 @@
 import {
-  Component,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  Input,
-  Output,
+  Component,
+  ElementRef,
   EventEmitter,
-  ViewChild,
-  ElementRef
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 import {
   FloatLabelType,
   MatFormFieldAppearance
 } from '@angular/material/form-field';
+
+import { EntityStore } from '@igo2/common';
+import { ConfigService } from '@igo2/core';
+
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { ConfigService } from '@igo2/core';
-import { EntityStore } from '@igo2/common';
-
-import { SEARCH_TYPES } from '../shared/search.enums';
-import { SearchResult, Research } from '../shared/search.interfaces';
-import { SearchService } from '../shared/search.service';
 import { SearchSourceService } from '../shared/search-source.service';
+import { SEARCH_TYPES } from '../shared/search.enums';
+import { Research, SearchResult } from '../shared/search.interfaces';
+import { SearchService } from '../shared/search.service';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -112,12 +113,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the show geometry setting is changed
    */
-   @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+  @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
 
-   /**
+  /**
    * Event emitted when the coords format setting is changed
    */
-   @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
+  @Output() reverseSearchCoordsFormatStatus = new EventEmitter<boolean>();
 
   /**
    * Search term
@@ -265,9 +266,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
 
     this.stream$$ = this.stream$
-      .pipe(
-        debounce(() => timer(this.debounce))
-      )
+      .pipe(debounce(() => timer(this.debounce)))
       .subscribe((term: string) => this.onSetTerm(term));
 
     this.handlePlaceholder();
@@ -276,7 +275,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       .pipe(distinctUntilChanged())
       .subscribe((searchType: string) => this.onSetSearchType(searchType));
 
-    const configValue = this.configService.getConfig("searchBar.showSearchButton");
+    const configValue = this.configService.getConfig(
+      'searchBar.showSearchButton'
+    );
     this.showSearchButton = configValue !== undefined ? configValue : false;
   }
 
@@ -345,7 +346,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @param term Search term
    */
   setTerm(term: string, reverseCoordEvent?: boolean) {
-
     if (this.disabled) {
       return;
     }
@@ -431,8 +431,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     let terms;
-    if (this.termSplitter && rawTerm.match(new RegExp(this.termSplitter, 'g'))) {
-      terms = rawTerm.split(this.termSplitter).filter((t) => t.length >= this.minLength);
+    if (
+      this.termSplitter &&
+      rawTerm.match(new RegExp(this.termSplitter, 'g'))
+    ) {
+      terms = rawTerm
+        .split(this.termSplitter)
+        .filter((t) => t.length >= this.minLength);
       if (this.store) {
         this.store.clear();
       }
@@ -450,9 +455,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         return;
       }
 
-      researches = researches.concat(this.searchService.search(term, {
-        forceNA: this.forceNA
-      }));
+      researches = researches.concat(
+        this.searchService.search(term, {
+          forceNA: this.forceNA
+        })
+      );
     });
     this.researches$$ = researches.map((research) => {
       return research.request.subscribe((results: SearchResult[]) => {

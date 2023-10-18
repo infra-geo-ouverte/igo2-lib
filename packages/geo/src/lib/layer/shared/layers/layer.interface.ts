@@ -1,9 +1,10 @@
-import olLayer from 'ol/layer/Layer';
-import olSource from 'ol/source/Source';
 import { Message } from '@igo2/core';
 
-import { DataSource } from '../../../datasource/shared/datasources/datasource';
+import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
+
 import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
+import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { MapExtent } from '../../../map/shared/map.interface';
 import { LegendOptions } from './legend.interface';
 
@@ -39,7 +40,7 @@ export interface LayerOptions {
 }
 
 export interface LayerSecurityOptions {
-  profils?: string[]
+  profils?: string[];
 }
 
 export interface GeoWorkspaceOptions {

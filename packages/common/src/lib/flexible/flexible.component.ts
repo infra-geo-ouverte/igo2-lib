@@ -1,9 +1,17 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 
 import { Media, MediaService } from '@igo2/core';
 
-import { FlexibleState, FlexibleDirection } from './flexible.type';
+import { Subscription } from 'rxjs';
+
+import { FlexibleDirection, FlexibleState } from './flexible.type';
 
 @Component({
   selector: 'igo-flexible',
@@ -109,7 +117,10 @@ export class FlexibleComponent implements OnInit, OnDestroy {
 
   private mediaService$$: Subscription;
 
-  constructor(private el: ElementRef, private mediaService: MediaService) {}
+  constructor(
+    private el: ElementRef,
+    private mediaService: MediaService
+  ) {}
 
   ngOnInit() {
     this.el.nativeElement.className += this.direction;

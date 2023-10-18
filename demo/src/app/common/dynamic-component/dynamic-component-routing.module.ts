@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppDynamicComponentComponent } from './dynamic-component.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppDynamicComponentRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppDynamicComponentRoutingModule = RouterModule.forChild(routes);

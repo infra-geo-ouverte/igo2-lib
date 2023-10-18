@@ -1,18 +1,30 @@
 <mat-card appearance="outlined">
   <mat-card-header>
     <mat-card-subtitle>
-      {{title}}
+      {{ title }}
     </mat-card-subtitle>
     <div class="actions">
-      <a *ngIf="codeFolder" mat-icon-button [href]="codeUrl" target="_blank" matTooltip="View code example">
+      <a
+        *ngIf="codeFolder"
+        mat-icon-button
+        [href]="codeUrl"
+        target="_blank"
+        matTooltip="View code example"
+      >
         <mat-icon svgIcon="code-tags"></mat-icon>
       </a>
-      <a *ngIf="configFolder" mat-icon-button [href]="configUrl" target="_blank" matTooltip="View config example">
+      <a
+        *ngIf="configFolder"
+        mat-icon-button
+        [href]="configUrl"
+        target="_blank"
+        matTooltip="View config example"
+      >
         <mat-icon svgIcon="cog"></mat-icon>
       </a>
     </div>
   </mat-card-header>
-  
+
   <mat-divider class="m-b-16"></mat-divider>
 
   <mat-card-content class="mat-body-1">

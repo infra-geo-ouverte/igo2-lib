@@ -2,15 +2,15 @@ import { NgModule } from '@angular/core';
 
 import { IgoMessageModule } from '@igo2/core';
 import {
-  IgoMapModule,
   IgoImportExportModule,
-  provideStyleListOptions,
-  IgoStyleModule
+  IgoMapModule,
+  IgoStyleModule,
+  provideStyleListOptions
 } from '@igo2/geo';
 
-import { AppImportExportComponent } from './import-export.component';
-import { AppImportExportRoutingModule } from './import-export-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppImportExportRoutingModule } from './import-export-routing.module';
+import { AppImportExportComponent } from './import-export.component';
 
 @NgModule({
   declarations: [AppImportExportComponent],

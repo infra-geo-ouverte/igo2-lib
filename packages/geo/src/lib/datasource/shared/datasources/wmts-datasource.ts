@@ -25,5 +25,4 @@ export class WMTSDataSource extends DataSource {
   }
 
   public onUnwatch() {}
-
 }

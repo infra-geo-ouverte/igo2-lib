@@ -1,37 +1,37 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import {
-  ActionStore,
-  EntityStoreFilterSelectionStrategy
-} from '@igo2/common';
 
+import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ConfigService, StorageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import {
-  FeatureStore,
-  FeatureStoreLoadingLayerStrategy,
-  FeatureStoreSelectionStrategy,
-  FeatureStoreInMapExtentStrategy,
   FeatureMotion,
+  FeatureStore,
+  FeatureStoreInMapExtentStrategy,
   FeatureStoreInMapResolutionStrategy,
+  FeatureStoreLoadingLayerStrategy,
   FeatureStoreSearchIndexStrategy,
+  FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
-
-import { FeatureWorkspace } from './feature-workspace';
-import { ConfigService, StorageService } from '@igo2/core';
-
-import { createFilterInMapExtentOrResolutionStrategy, createTableTemplate } from './workspace.utils';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
+import { FeatureWorkspace } from './feature-workspace';
+import {
+  createFilterInMapExtentOrResolutionStrategy,
+  createTableTemplate
+} from './workspace.utils';
+import { FeatureCommonVectorStyleOptions, OverlayStyleOptions } from '../../style';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureWorkspaceService {
-
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
@@ -44,20 +44,21 @@ export class FeatureWorkspaceService {
     private layerService: LayerService,
     private propertyTypeDetectorService: PropertyTypeDetectorService,
     private capabilitiesService: CapabilitiesService
-    ) {}
+  ) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
-    if (layer.options.workspace?.enabled === false || layer.dataSource.options.edition) {
+    if (
+      layer.options.workspace?.enabled === false ||
+      layer.dataSource.options.edition
+    ) {
       return;
     }
 
-    layer.options.workspace = Object.assign({}, layer.options.workspace,
-      {
-        srcId: layer.id,
-        workspaceId: layer.id,
-        enabled: true
-      } as GeoWorkspaceOptions);
-
+    layer.options.workspace = Object.assign({}, layer.options.workspace, {
+      srcId: layer.id,
+      workspaceId: layer.id,
+      enabled: true
+    } as GeoWorkspaceOptions);
 
     const wks = new FeatureWorkspace({
       id: layer.id,
@@ -72,11 +73,10 @@ export class FeatureWorkspaceService {
     });
     createTableTemplate(wks, layer, this.layerService, this.ws$);
     return wks;
-
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
-    const store = new FeatureStore([], {map});
+    const store = new FeatureStore([], { map });
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
@@ -85,17 +85,28 @@ export class FeatureWorkspaceService {
       sourceFields: layer.dataSource.options.sourceFields
     });
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
-    const geoPropertiesStrategy = new GeoPropertiesStrategy({ map }, this.propertyTypeDetectorService, this.capabilitiesService);
+    const geoPropertiesStrategy = new GeoPropertiesStrategy(
+      { map },
+      this.propertyTypeDetectorService,
+      this.capabilitiesService
+    );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle= this.configService.getConfig('queryOverlayStyle');
+    const confQueryOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('queryOverlayStyle');
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
         style: (feature) => {
-          return getCommonVectorSelectedStyle(Object.assign({}, {feature}, confQueryOverlayStyle?.selection || {}));
+          return getCommonVectorSelectedStyle(
+            Object.assign(
+              {},
+              { feature },
+              confQueryOverlayStyle?.selection || {}
+            ) as FeatureCommonVectorStyleOptions
+          );
         },
         showInLayerList: false,
         exportable: false,

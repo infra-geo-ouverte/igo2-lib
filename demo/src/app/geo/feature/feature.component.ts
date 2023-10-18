@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
-  VectorLayer,
+  FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
-  FeatureMotion
+  IgoMap,
+  LayerService,
+  VectorLayer
 } from '@igo2/geo';
 
 @Component({
@@ -97,7 +97,8 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
           name: 'Name 4',
           description: 'Description 4'
         }
-      },{
+      },
+      {
         meta: { id: 5 },
         type: 'Feature',
         geometry: {
@@ -116,7 +117,11 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         type: 'Feature',
         geometry: {
           type: 'LineString',
-          coordinates: [[-72, 47.8], [-73.5, 47.4], [-72.4, 48.6]]
+          coordinates: [
+            [-72, 47.8],
+            [-73.5, 47.4],
+            [-72.4, 48.6]
+          ]
         },
         projection: 'EPSG:4326',
         properties: {
@@ -130,7 +135,13 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         type: 'Feature',
         geometry: {
           type: 'Polygon',
-          coordinates: [[[-71, 46.8], [-73, 47], [-71.2, 46.6]]]
+          coordinates: [
+            [
+              [-71, 46.8],
+              [-73, 47],
+              [-71.2, 46.6]
+            ]
+          ]
         },
         projection: 'EPSG:4326',
         properties: {
@@ -147,8 +158,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
         visible: true,
         sourceOptions: {
           type: 'mvt',
-          url:
-            'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
+          url: 'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
           queryable: true
         },
         igoStyle: {
@@ -158,13 +168,13 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
           }
         }
       } as any)
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer = this.layerService.createLayer({
           title: 'Vector Layer',
           source: dataSource,
@@ -176,7 +186,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
               url: 'assets/mapboxStyleExample-feature.json',
               source: 'source_nameX'
             }
-          },
+          }
         }) as VectorLayer;
         this.map.addLayer(layer);
         this.store.bindLayer(layer);

@@ -9,7 +9,8 @@
     (zoneChange)="onZoneChange($event)"
     (zoneWithBufferChange)="onZoneChange($event, true)"
     (bufferChange)="buffer = $event"
-    (measureUnitChange)="measureUnit = $event">
+    (measureUnitChange)="measureUnit = $event"
+  >
   </igo-spatial-filter-type>
 
   <igo-spatial-filter-item
@@ -35,7 +36,8 @@
     (clearSearchEvent)="getOutputClearSearch()"
     (export)="activateExportTool()"
     (openWorkspace)="activateWorkspace()"
-    (entityChange)="activateWorkspace($event)">
+    (entityChange)="activateWorkspace($event)"
+  >
   </igo-spatial-filter-item>
 </igo-panel>
 

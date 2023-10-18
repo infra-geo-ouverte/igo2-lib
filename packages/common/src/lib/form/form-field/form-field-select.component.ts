@@ -1,16 +1,19 @@
 import {
-  Input,
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  Input,
   OnInit
 } from '@angular/core';
 import type { UntypedFormControl } from '@angular/forms';
 
-import { BehaviorSubject, } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
-import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
-import { FormFieldSelectChoice } from '../shared/form.interfaces';
 import { IgoFormFieldComponent } from '../shared/form-field-component';
+import { FormFieldSelectChoice } from '../shared/form.interfaces';
+import {
+  formControlIsRequired,
+  getControlErrorMessage
+} from '../shared/form.utils';
 
 /**
  * This component renders a select field
@@ -22,16 +25,20 @@ import { IgoFormFieldComponent } from '../shared/form-field-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldSelectComponent implements OnInit {
-
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Select input choices
    */
   @Input()
-  set choices(value: FormFieldSelectChoice[]) { this.choices$.next(value); }
-  get choices(): FormFieldSelectChoice[] { return this.choices$.value; }
-  readonly choices$: BehaviorSubject<FormFieldSelectChoice[]> = new BehaviorSubject([]);
+  set choices(value: FormFieldSelectChoice[]) {
+    this.choices$.next(value);
+  }
+  get choices(): FormFieldSelectChoice[] {
+    return this.choices$.value;
+  }
+  readonly choices$: BehaviorSubject<FormFieldSelectChoice[]> =
+    new BehaviorSubject([]);
 
   /**
    * The field's form control
@@ -46,7 +53,7 @@ export class FormFieldSelectComponent implements OnInit {
   /**
    * Field placeholder
    */
-  @Input() errors: {[key: string]: string};
+  @Input() errors: { [key: string]: string };
 
   /**
    * Wheter a disable switch should be available
@@ -84,5 +91,4 @@ export class FormFieldSelectComponent implements OnInit {
     }
     this.disabled$.next(disabled);
   }
-
 }

@@ -1,10 +1,10 @@
-import olGeometry from 'ol/geom/Geometry';
+import { DOMValue } from '@igo2/common';
+
 import olFormatFilter from 'ol/format/filter/Filter';
+import olGeometry from 'ol/geom/Geometry';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-
-import { DOMValue } from '@igo2/common';
 
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
@@ -62,7 +62,12 @@ export interface OgcFiltersOptions {
 export interface IgoOgcSelector {
   groups: SelectorGroup[];
   bundles: OgcSelectorBundle[];
-  selectorType: 'pushButton' | 'checkbox' | 'radioButton' | 'select' | 'autocomplete';
+  selectorType:
+    | 'pushButton'
+    | 'checkbox'
+    | 'radioButton'
+    | 'select'
+    | 'autocomplete';
   order?: number;
 }
 
@@ -81,7 +86,12 @@ export interface OgcSelectorBundle {
   vertical?: boolean;
   multiple?: boolean;
   unfiltered?: boolean;
-  selectors?: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[] | OgcSelect[] | OgcAutocomplete[];
+  selectors?:
+    | OgcPushButton[]
+    | OgcCheckbox[]
+    | OgcRadioButton[]
+    | OgcSelect[]
+    | OgcAutocomplete[];
   domSelectors?: IgoDomSelector[];
   width?: string;
 }
@@ -127,7 +137,7 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
-  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean );
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean);
 }
 
 export interface IgoLogicalArrayOptions {
@@ -223,7 +233,6 @@ export interface OgcInterfaceFilterOptions {
   wkt_geometry?: string;
   // id?: string;
   // abbrev?: string;
-
 }
 
 export interface SliderOptionsInterface extends OgcFilterDuringOptions {

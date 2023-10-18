@@ -1,19 +1,19 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { StorageService } from '@igo2/core';
+import { customCacheHasher } from '@igo2/utils';
 
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
-
-import { StorageService } from '@igo2/core';
 import { SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
+import { NominatimData } from './nominatim.interfaces';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
-import { NominatimData } from './nominatim.interfaces';
-import { computeTermSimilarity } from '../search.utils';
-import { Cacheable } from 'ts-cacheable';
-import { customCacheHasher } from '@igo2/utils';
 
 /**
  * Nominatim search source
@@ -156,12 +156,17 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
 
   @Cacheable({
     maxCacheCount: 20,
-    cacheHasher: customCacheHasher,
+    cacheHasher: customCacheHasher
   })
-  private getSearch(term: string, params: HttpParams): Observable<SearchResult<Feature>[]> {
+  private getSearch(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<Feature>[]> {
     return this.http
       .get(this.searchUrl, { params })
-      .pipe(map((response: NominatimData[]) => this.extractResults(response, term)));
+      .pipe(
+        map((response: NominatimData[]) => this.extractResults(response, term))
+      );
   }
 
   private computeSearchRequestParams(
@@ -180,11 +185,17 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: NominatimData[], term: string): SearchResult<Feature>[] {
+  private extractResults(
+    response: NominatimData[],
+    term: string
+  ): SearchResult<Feature>[] {
     return response.map((data: NominatimData) => this.dataToResult(data, term));
   }
 
-  private dataToResult(data: NominatimData, term: string): SearchResult<Feature> {
+  private dataToResult(
+    data: NominatimData,
+    term: string
+  ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const geometry = this.computeGeometry(data);
     const extent = this.computeExtent(data);
@@ -258,7 +269,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     }
 
     term = term.replace(/(#[^\s]*)/g, '');
-    hashtags.forEach(tag => {
+    hashtags.forEach((tag) => {
       term += '+[' + tag + ']';
     });
 
@@ -270,12 +281,12 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Query
    */
   private computeTermSettings(term: string): string {
-    this.options.settings.forEach(settings => {
+    this.options.settings.forEach((settings) => {
       if (settings.name === 'amenity') {
-        settings.values.forEach(conf => {
+        settings.values.forEach((conf) => {
           if (conf.enabled && typeof conf.value === 'string') {
             const splitted = conf.value.split(',');
-            splitted.forEach(value => {
+            splitted.forEach((value) => {
               term += '+[' + value + ']';
             });
           }

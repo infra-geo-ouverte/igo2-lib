@@ -1,10 +1,10 @@
 import {
+  PrintLegendPosition,
+  PrintOrientation,
   PrintOutputFormat,
   PrintPaperFormat,
-  PrintOrientation,
   PrintResolution,
-  PrintSaveImageFormat,
-  PrintLegendPosition
+  PrintSaveImageFormat
 } from './print.type';
 
 export interface PrintOptions {
@@ -25,7 +25,7 @@ export interface PrintOptions {
 }
 
 export interface TextPdfSizeAndMargin {
-  fontSize: number,
-  marginLeft: number,
-  height: number
+  fontSize: number;
+  marginLeft: number;
+  height: number;
 }

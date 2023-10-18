@@ -1,24 +1,25 @@
 import {
+  ChangeDetectorRef,
   Directive,
-  Self,
-  OnInit,
-  OnDestroy,
   HostListener,
-  ChangeDetectorRef
+  OnDestroy,
+  OnInit,
+  Self
 } from '@angular/core';
+
+import { AuthService } from '@igo2/auth';
+import { ConfirmDialogService } from '@igo2/common';
+import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { MapService } from '@igo2/geo';
+
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { MessageService, LanguageService, StorageService } from '@igo2/core';
-import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
-import { MapService } from '@igo2/geo';
-
 import {
   Context,
-  DetailedContext,
+  ContextUserPermission,
   ContextsList,
-  ContextUserPermission
+  DetailedContext
 } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';
@@ -55,7 +56,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         undefined,
         {
           value: context.title
-        });
+        }
+      );
     };
 
     if (context.imported) {
@@ -92,11 +94,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       this.contextService.defaultContextId$.next(context.id);
       const messageObj = this.messageService.success(
         'igo.context.contextManager.dialog.favoriteMsg',
-      'igo.context.contextManager.dialog.favoriteTitle',
-      undefined,
-      {
-        value: context.title
-      }
+        'igo.context.contextManager.dialog.favoriteTitle',
+        undefined,
+        {
+          value: context.title
+        }
       );
       this.previousMessageId = messageObj.toastId;
       this.cdRef.detectChanges();
@@ -129,7 +131,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
                 'igo.context.contextManager.dialog.deleteMsg',
                 'igo.context.contextManager.dialog.deleteTitle',
                 undefined,
-                {value: context.title});
+                { value: context.title }
+              );
             });
         }
       });
@@ -146,7 +149,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         'igo.context.contextManager.dialog.cloneMsg',
         'igo.context.contextManager.dialog.cloneTitle',
         undefined,
-        { value: context.title });
+        { value: context.title }
+      );
     });
   }
 
@@ -163,7 +167,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         'igo.context.bookmarkButton.dialog.createMsg',
         'igo.context.bookmarkButton.dialog.createTitle',
         undefined,
-        { value: context.title });
+        { value: context.title }
+      );
       this.contextService.loadContext(context.uri);
     });
   }
@@ -228,7 +233,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         this.component.defaultContextId = id;
       }
     );
-    const storedContextUri = this.storageService.get('favorite.context.uri') as string;
+    const storedContextUri = this.storageService.get(
+      'favorite.context.uri'
+    ) as string;
     if (storedContextUri && !this.auth.authenticated) {
       this.contextService.defaultContextId$.next(storedContextUri);
     }

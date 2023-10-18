@@ -1,19 +1,30 @@
-import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
+import {
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup
+} from '@angular/forms';
 
+import { AuthService } from '@igo2/auth';
+import { ConfigService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
+
+import { TypePermission } from '../shared/context.enum';
 import {
   Context,
   ContextPermission,
   ContextPermissionsList,
   ContextProfils
 } from '../shared/context.interface';
-import { TypePermission } from '../shared/context.enum';
-
-import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-
-import { AuthService } from '@igo2/auth';
-import { ConfigService } from '@igo2/core';
 
 @Component({
   selector: 'igo-context-permissions',
@@ -62,36 +73,54 @@ export class ContextPermissionsComponent implements OnInit {
   formValueChanges$$: Subscription;
 
   @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
-  @Output() removePermission: EventEmitter<ContextPermission> = new EventEmitter();
+  @Output() removePermission: EventEmitter<ContextPermission> =
+    new EventEmitter();
   @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
 
-  constructor(private formBuilder: UntypedFormBuilder,
-              private cd: ChangeDetectorRef,
-              private http: HttpClient,
-              public authService: AuthService,
-              private config: ConfigService) {}
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private cd: ChangeDetectorRef,
+    private http: HttpClient,
+    public authService: AuthService,
+    private config: ConfigService
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
 
-    this.baseUrlProfils = this.config.getConfig('context.url') + '/profils-users?';
+    this.baseUrlProfils =
+      this.config.getConfig('context.url') + '/profils-users?';
 
-    this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
-      if (value.length) {
-        this.http.get(this.baseUrlProfils + 'q=' + value).subscribe(profils => {
-          this.profils = profils as ContextProfils[];
-        });
-        this.profils.filter((profil) => {
-          const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const profilTitleNormalized = profil.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const profilNameNormalized = profil.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const profilNormalized = profilNameNormalized + profilTitleNormalized;
-          return profilNormalized.includes(filterNormalized);
-        });
-      } else {
-        this.profils = [];
+    this.formValueChanges$$ = this.formControl.valueChanges.subscribe(
+      (value) => {
+        if (value.length) {
+          this.http
+            .get(this.baseUrlProfils + 'q=' + value)
+            .subscribe((profils) => {
+              this.profils = profils as ContextProfils[];
+            });
+          this.profils.filter((profil) => {
+            const filterNormalized = value
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            const profilTitleNormalized = profil.title
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            const profilNameNormalized = profil.name
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '');
+            const profilNormalized =
+              profilNameNormalized + profilTitleNormalized;
+            return profilNormalized.includes(filterNormalized);
+          });
+        } else {
+          this.profils = [];
+        }
       }
-    });
+    );
   }
 
   displayFn(profil?: ContextProfils): string | undefined {

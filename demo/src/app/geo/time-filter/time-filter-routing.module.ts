@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppTimeFilterComponent } from './time-filter.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppTimeFilterRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppTimeFilterRoutingModule = RouterModule.forChild(routes);

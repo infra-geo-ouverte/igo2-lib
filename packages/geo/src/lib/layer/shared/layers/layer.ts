@@ -1,3 +1,10 @@
+import { AuthInterceptor } from '@igo2/auth';
+import { Message, MessageService } from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
+import olLayer from 'ol/layer/Layer';
+import olSource from 'ol/source/Source';
+
 import {
   BehaviorSubject,
   Observable,
@@ -7,20 +14,12 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import olLayer from 'ol/layer/Layer';
-import olSource from 'ol/source/Source';
-
-import { AuthInterceptor } from '@igo2/auth';
-import { SubjectStatus } from '@igo2/utils';
-
 import { DataSource, Legend } from '../../../datasource';
+import { MapBase } from '../../../map/shared/map.abstract';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-
-import { LayerOptions } from './layer.interface';
-import { Message, MessageService } from '@igo2/core';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
-import { MapBase } from '../../../map/shared/map.abstract';
+import { LayerOptions } from './layer.interface';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -32,7 +31,9 @@ export abstract class Layer {
   public ol: olLayer<olSource>;
   public olLoadingProblem: boolean = false;
   public status$: Subject<SubjectStatus>;
-  public hasBeenVisible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  public hasBeenVisible$: BehaviorSubject<boolean> = new BehaviorSubject(
+    undefined
+  );
   private hasBeenVisible$$: Subscription;
   private resolution$$: Subscription;
 
@@ -91,9 +92,8 @@ export abstract class Layer {
   get isInResolutionsRange(): boolean {
     return this.isInResolutionsRange$.value;
   }
-  readonly isInResolutionsRange$: BehaviorSubject<
-    boolean
-  > = new BehaviorSubject(false);
+  readonly isInResolutionsRange$: BehaviorSubject<boolean> =
+    new BehaviorSubject(false);
 
   set maxResolution(value: number) {
     this.ol.setMaxResolution(value === 0 ? 0 : value || Infinity);
@@ -114,15 +114,13 @@ export abstract class Layer {
   set visible(value: boolean) {
     this.ol.setVisible(value);
     this.visible$.next(value);
-    if (!this.hasBeenVisible$.value && value){
+    if (!this.hasBeenVisible$.value && value) {
       this.hasBeenVisible$.next(value);
     }
     if (this.options?.messages && value) {
       this.options?.messages
-        .filter(m => m.options?.showOnEachLayerVisibility)
-        .map(message =>
-          this.showMessage(message)
-        );
+        .filter((m) => m.options?.showOnEachLayerVisibility)
+        .map((message) => this.showMessage(message));
     }
   }
   get visible(): boolean {
@@ -142,7 +140,6 @@ export abstract class Layer {
     return this.options.showInLayerList !== false;
   }
 
-
   constructor(
     public options: LayerOptions,
     protected messageService?: MessageService,
@@ -161,8 +158,12 @@ export abstract class Layer {
       options.visible = false;
     }
 
-    this.maxResolution = options.maxResolution || getResolutionFromScale(Number(options.maxScaleDenom));
-    this.minResolution = options.minResolution || getResolutionFromScale(Number(options.minScaleDenom));
+    this.maxResolution =
+      options.maxResolution ||
+      getResolutionFromScale(Number(options.maxScaleDenom));
+    this.minResolution =
+      options.minResolution ||
+      getResolutionFromScale(Number(options.minScaleDenom));
 
     this.visible = options.visible === undefined ? true : options.visible;
     this.opacity = options.opacity === undefined ? 1 : options.opacity;
@@ -193,7 +194,7 @@ export abstract class Layer {
       this.observeResolution();
       this.hasBeenVisible$$ = this.hasBeenVisible$.subscribe(() => {
         if (this.options.messages && this.visible) {
-          this.options.messages.map(message => {
+          this.options.messages.map((message) => {
             this.showMessage(message);
           });
         }
@@ -227,8 +228,10 @@ export abstract class Layer {
     if (this.map !== undefined) {
       const resolution = this.map.viewController.getResolution();
       const minResolution = this.minResolution;
-      const maxResolution = this.maxResolution === undefined ? Infinity : this.maxResolution;
-      this.isInResolutionsRange = resolution >= minResolution && resolution <= maxResolution;
+      const maxResolution =
+        this.maxResolution === undefined ? Infinity : this.maxResolution;
+      this.isInResolutionsRange =
+        resolution >= minResolution && resolution <= maxResolution;
     } else {
       this.isInResolutionsRange = false;
     }

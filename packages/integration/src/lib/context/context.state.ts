@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
-import { LanguageService } from '@igo2/core';
 import { Tool, ToolService } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
+import { LanguageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
 
 import { ToolState } from '../tool/tool.state';
 

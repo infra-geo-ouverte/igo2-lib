@@ -2,19 +2,19 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
+  AnyBaseOgcFilterOptions,
   DataSourceService,
+  IgoMap,
   LayerService,
-  WMSDataSourceOptions,
+  OgcFilterDuringOptions,
+  OgcFilterOperatorType,
+  OgcFilterableDataSourceOptions,
   WFSDataSourceOptions,
   WFSDataSourceOptionsParams,
-  OgcFilterableDataSourceOptions,
-  AnyBaseOgcFilterOptions,
-  OgcFilterOperatorType,
-  OgcFilterDuringOptions
+  WMSDataSourceOptions
 } from '@igo2/geo';
 
-import {Fill, Stroke, Circle, Style} from 'ol/style';
+import { Circle, Fill, Stroke, Style } from 'ol/style';
 
 @Component({
   selector: 'app-ogc-filter',
@@ -44,7 +44,7 @@ export class AppOgcFilterComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -109,7 +109,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (PropertyIsEqualTo OR Intersects)',
@@ -145,13 +145,12 @@ export class AppOgcFilterComponent {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: '2016-01-21T00:00:00-05:00',
-            end: '2016-01-26T00:00:00-05:00'
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: '2016-01-21T00:00:00-05:00',
+          end: '2016-01-26T00:00:00-05:00'
+        } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-10T00:00:00-05:00',
@@ -160,7 +159,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, Step: P2D)',
@@ -182,7 +181,6 @@ export class AppOgcFilterComponent {
         );
       });
 
-
     const datasourceDuringFilterTime: WFSoptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
@@ -195,19 +193,22 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+        }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: '2016-01-01T04:00:00-05:00',
-            end: '2016-01-12T16:00:00-05:00'
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: '2016-01-01T04:00:00-05:00',
+          end: '2016-01-12T16:00:00-05:00'
+        } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-14T20:00:00-05:00',
@@ -216,7 +217,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTime)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, Step: PT4H)',
@@ -250,20 +251,23 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+        }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: '2016-01-01T00:00:00-05:00',
-            end: '2016-03-31T00:00:00-05:00',
-            displayFormat: 'MMMM'
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: '2016-01-01T00:00:00-05:00',
+          end: '2016-03-31T00:00:00-05:00',
+          displayFormat: 'MMMM'
+        } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2018-12-31T00:00:00-05:00',
@@ -272,7 +276,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeMonth)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, Step: P1M)',
@@ -306,24 +310,27 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+        }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: '2014-01-01T00:00:00-05:00',
-            end: '2019-12-31T00:00:00-05:00',
-            sliderOptions: {
-              interval: 2000,
-              displayFormat: 'YY'
-            },
-            displayFormat: 'YYYY'
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: '2014-01-01T00:00:00-05:00',
+          end: '2019-12-31T00:00:00-05:00',
+          sliderOptions: {
+            interval: 2000,
+            displayFormat: 'YY'
+          },
+          displayFormat: 'YYYY'
+        } as OgcFilterDuringOptions
       },
       minDate: '2014-01-01T00:00:00-05:00',
       maxDate: '2019-12-31T00:00:00-05:00',
@@ -332,7 +339,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeYear)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, Step: P1Y)',
@@ -366,19 +373,22 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+        }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: 'today - 2 days', // "now" can also be used. Instead of midnight, the current time will be used
-            end: 'today', // "now" can also be used. Instead of midnight, the current time will be used
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: 'today - 2 days', // "now" can also be used. Instead of midnight, the current time will be used
+          end: 'today' // "now" can also be used. Instead of midnight, the current time will be used
+        } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -387,7 +397,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeInterval)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, Interval from Now, Step: P1D)',
@@ -421,19 +431,22 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+        }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
         allowedOperatorsType: OgcFilterOperatorType.All,
-        filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation',
-            begin: '2019-01-01 00:00:00',
-            restrictToStep: true
-          } as OgcFilterDuringOptions
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation',
+          begin: '2019-01-01 00:00:00',
+          restrictToStep: true
+        } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -442,7 +455,7 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeRestrictedToStep)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle (During, RestrictToStep, Step: P1M)',
@@ -465,31 +478,34 @@ export class AppOgcFilterComponent {
       });
 
     const wmsOgcFilterOptions: WMSoptions = {
-        type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-        optionsFromCapabilities: true,
-        params: {
-          LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
-          VERSION: '1.3.0'
-        },
-        sourceFields: [
-          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
-        ],
-        ogcFilters: {
-          enabled: true,
-          editable: true,
-          filters:
-          {
-            operator: 'During',
-            propertyName: 'date_observation'
-          } as OgcFilterDuringOptions,
-          allowedOperatorsType: OgcFilterOperatorType.Time
+      type: 'wms',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      optionsFromCapabilities: true,
+      params: {
+        LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
+        VERSION: '1.3.0'
+      },
+      sourceFields: [
+        {
+          name: 'date_observation',
+          alias: "Date de l'observation",
+          allowedOperatorsType: 'Time' as OgcFilterOperatorType
         }
+      ],
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        filters: {
+          operator: 'During',
+          propertyName: 'date_observation'
+        } as OgcFilterDuringOptions,
+        allowedOperatorsType: OgcFilterOperatorType.Time
+      }
     };
 
     this.dataSourceService
       .createAsyncDataSource(wmsOgcFilterOptions)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Inondation (During, optionsFromCapabilities)',
@@ -516,8 +532,8 @@ export class AppOgcFilterComponent {
         pushButtons: {
           selectorType: 'pushButton',
           order: 2,
-          groups : [
-            {title: 'Nom du group1 - push', name: '1 - push', ids : ['id1']},
+          groups: [
+            { title: 'Nom du group1 - push', name: '1 - push', ids: ['id1'] }
           ],
           bundles: [
             {
@@ -573,8 +589,12 @@ export class AppOgcFilterComponent {
         checkboxes: {
           selectorType: 'checkbox',
           order: 1,
-          groups : [
-            {title: 'Nom du group1 - checkbox', name: '1 - checkbox', ids : ['id1']},
+          groups: [
+            {
+              title: 'Nom du group1 - checkbox',
+              name: '1 - checkbox',
+              ids: ['id1']
+            }
           ],
           bundles: [
             {
@@ -629,7 +649,7 @@ export class AppOgcFilterComponent {
           ]
         },
         allowedOperatorsType: OgcFilterOperatorType.Basic
-        },
+      },
       paramsWFS: {
         featureTypes: 'radars_photos',
         fieldNameGeometry: 'geometry',
@@ -642,10 +662,11 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Filterable WMS layers with predefined filters (push buttons)',
+            title:
+              'Filterable WMS layers with predefined filters (push buttons)',
             source: dataSource
           })
         );

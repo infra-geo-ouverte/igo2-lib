@@ -1,21 +1,32 @@
-<mat-select [placeholder]="'igo.context.poiButton.placeholder' | translate"
-           floatPlaceholder="never">
-
+<mat-select
+  [placeholder]="'igo.context.poiButton.placeholder' | translate"
+  floatPlaceholder="never"
+>
   <mat-option (click)="createPoi()">
-    <div class="titlePoi">{{ 'igo.context.poiButton.create' | translate }}</div>
-    <button igoStopPropagation class="addPoi buttonPoi"
+    <div class="titlePoi">{{ 'igo.context.poiButton.create' | translate }}</div>
+    <button
+      igoStopPropagation
+      class="addPoi buttonPoi"
       mat-icon-button
       color="primary"
-      (click)="createPoi()">
+      (click)="createPoi()"
+    >
       <mat-icon svgIcon="plus-circle"></mat-icon>
     </button>
   </mat-option>
-  <mat-option *ngFor="let poi of pois" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
+  <mat-option
+    *ngFor="let poi of pois"
+    [value]="poi.id"
+    (click)="zoomOnPoi(poi.id)"
+  >
     <div class="titlePoi">{{ poi.title }}</div>
-    <button igoStopPropagation class="deletePoi buttonPoi"
+    <button
+      igoStopPropagation
+      class="deletePoi buttonPoi"
       mat-icon-button
       color="warn"
-      (click)="deletePoi(poi)">
+      (click)="deletePoi(poi)"
+    >
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
   </mat-option>

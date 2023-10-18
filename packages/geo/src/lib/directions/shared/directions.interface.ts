@@ -1,8 +1,14 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { DirectionRelativePositionType, DirectionsFormat, DirectionType, ProposalType, SourceDirectionsType } from './directions.enum';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
+import {
+  DirectionRelativePositionType,
+  DirectionType,
+  DirectionsFormat,
+  ProposalType,
+  SourceDirectionsType
+} from './directions.enum';
 
 export interface DirectionOptions {
   overview?: boolean;
@@ -13,7 +19,8 @@ export interface DirectionOptions {
 }
 
 export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
-export interface FeatureWithDirection extends Feature<FeatureWithDirectionProperties> { }
+export interface FeatureWithDirection
+  extends Feature<FeatureWithDirectionProperties> {}
 export interface FeatureWithStep extends Feature<FeatureWithStepProperties> {}
 
 export interface FeatureWithStepProperties {

@@ -1,6 +1,6 @@
-import olSourceVector from 'ol/source/Vector';
 import * as olformat from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olSourceVector from 'ol/source/Vector';
 
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';

@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 
 import { IgoMapModule, IgoOverlayModule } from '@igo2/geo';
 
-import { AppOverlayComponent } from './overlay.component';
-import { AppOverlayRoutingModule } from './overlay-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppOverlayRoutingModule } from './overlay-routing.module';
+import { AppOverlayComponent } from './overlay.component';
 
 @NgModule({
   declarations: [AppOverlayComponent],

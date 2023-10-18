@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import * as olproj from 'ol/proj';
 import olWKT from 'ol/format/WKT';
+import * as olproj from 'ol/proj';
 
 @Injectable({
   providedIn: 'root'
@@ -147,13 +147,13 @@ export class WktService {
       let index250kSN = 0;
       let index50kEW = 0;
       let index50kSN = 0;
-      snrc250kIndex.forEach(element => {
+      snrc250kIndex.forEach((element) => {
         if (element.indexOf(part250k) !== -1) {
           index250kSN = snrc250kIndex.indexOf(element);
           index250kEW = element.indexOf(part250k);
         }
       });
-      snrc50kIndex.forEach(element => {
+      snrc50kIndex.forEach((element) => {
         if (element.indexOf(part50k) !== -1) {
           index50kSN = snrc50kIndex.indexOf(element);
           index50kEW = element.indexOf(part50k);
@@ -182,17 +182,14 @@ export class WktService {
         unitPerTypeSN = unit50kSN;
       }
 
-      const coord: {ul?: any, lr?: any, ur?: any, ll?: any} = {
+      const coord: { ul?: any; lr?: any; ur?: any; ll?: any } = {
         ul: [
           ew[partEW].to + increment250kEW + increment50kEW,
           sn[partSN].to - increment250kSN - increment50kSN
         ]
       };
 
-      coord.lr = [
-        coord.ul[0] + unitPerTypeEW,
-        coord.ul[1] - unitPerTypeSN
-      ];
+      coord.lr = [coord.ul[0] + unitPerTypeEW, coord.ul[1] - unitPerTypeSN];
       coord.ur = [coord.ul[0], coord.ul[1] - unitPerTypeSN];
       coord.ll = [coord.ul[0] + unitPerTypeEW, coord.ul[1]];
 

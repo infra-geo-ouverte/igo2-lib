@@ -1,19 +1,34 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { LanguageService } from '@igo2/core';
-import { Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 
-import { Direction, FeatureWithStep, IgoStep } from '../shared/directions.interface';
-import { formatDistance, formatDuration, formatInstruction } from '../shared/directions.utils';
-import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
+import { LanguageService } from '@igo2/core';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olGeom from 'ol/geom';
 
-import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+
 import { FEATURE } from '../../feature/shared/feature.enums';
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionType } from '../shared/directions.enum';
+import {
+  Direction,
+  FeatureWithStep,
+  IgoStep
+} from '../shared/directions.interface';
+import {
+  formatDistance,
+  formatDuration,
+  formatInstruction
+} from '../shared/directions.utils';
+import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
 
 @Component({
   selector: 'igo-directions-results',
@@ -21,7 +36,6 @@ import { DirectionType } from '../shared/directions.enum';
   styleUrls: ['./directions-results.component.scss']
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
-
   public activeDirection: Direction;
   public directions: Direction[];
 
@@ -33,16 +47,19 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   constructor(
     private languageService: LanguageService,
     private cdRef: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.entities$$ = this.routesFeatureStore.entities$
       .pipe(debounceTime(200))
-      .subscribe(entities => {
-        const activeFeatureWithDirection = entities.find(entity => entity.properties.active);
-        this.directions = entities.map(entity => entity.properties.direction);
+      .subscribe((entities) => {
+        const activeFeatureWithDirection = entities.find(
+          (entity) => entity.properties.active
+        );
+        this.directions = entities.map((entity) => entity.properties.direction);
         if (activeFeatureWithDirection) {
-          this.activeDirection = activeFeatureWithDirection.properties.direction;
+          this.activeDirection =
+            activeFeatureWithDirection.properties.direction;
         } else {
           this.activeDirection = undefined;
         }
@@ -55,12 +72,13 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   }
 
   changeRoute() {
-    this.routesFeatureStore.entities$.value.map(entity =>
-      entity.properties.active = !entity.properties.active
+    this.routesFeatureStore.entities$.value.map(
+      (entity) => (entity.properties.active = !entity.properties.active)
     );
-    this.routesFeatureStore.layer.ol.getSource().getFeatures().map(feature =>
-      feature.set('active', !feature.get('active'))
-    );
+    this.routesFeatureStore.layer.ol
+      .getSource()
+      .getFeatures()
+      .map((feature) => feature.set('active', !feature.get('active')));
   }
 
   formatDistance(distance: number): string {
@@ -93,7 +111,6 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   }
 
   showRouteSegmentGeometry(step: IgoStep, zoomToExtent = false) {
-
     const coordinates = step.geometry.coordinates;
     const vertexId = 'vertex';
     const geometry4326 = new olGeom.LineString(coordinates);
@@ -101,7 +118,9 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
       'EPSG:4326',
       this.stepFeatureStore.layer.map.projection
     );
-    const routeSegmentCoordinates = (geometryMapProjection as any).getCoordinates();
+    const routeSegmentCoordinates = (
+      geometryMapProjection as any
+    ).getCoordinates();
     const lastPoint = routeSegmentCoordinates[0];
 
     const geometry = new olGeom.Point(lastPoint);
@@ -134,8 +153,9 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     };
     this.stepFeatureStore.update(stepFeature);
     if (zoomToExtent) {
-      this.stepFeatureStore.layer.map.viewController.zoomToExtent(feature.getGeometry().getExtent() as [number, number, number, number]);
+      this.stepFeatureStore.layer.map.viewController.zoomToExtent(
+        feature.getGeometry().getExtent() as [number, number, number, number]
+      );
     }
   }
-
 }

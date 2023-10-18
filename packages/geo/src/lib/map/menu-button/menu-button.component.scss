@@ -1,26 +1,5 @@
 @use '../../../../../common/src/style/partial/common-utils';
-@import '../../../../../core/src/style/partial/core.variables';
 
 :host {
   @include common-utils.square-button();
-
-  #menu-button {
-    background-color: $app-background-color;
-    border-radius: 0;
-  }
-  
-  #menu-button.menu-button-reverse-color {
-    height: 40px;
-    border-radius: 0;
-    height: 45px;
-    width: 48px;
-  }
-  
-  #menu-button.menu-button-reverse-color-close {
-    border-radius: 0;
-  }
-  
-  mat-icon.disabled {
-    color: rgba(0, 0, 0, 0.38);
-  }
 }

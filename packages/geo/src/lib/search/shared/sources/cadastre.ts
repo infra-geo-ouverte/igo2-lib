@@ -1,22 +1,21 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { LanguageService, StorageService } from '@igo2/core';
+import { customCacheHasher } from '@igo2/utils';
 
 import olWKT from 'ol/format/WKT';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { GeoJsonGeometryTypes } from 'geojson';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
 
+import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 import { SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
-
-import { LanguageService, StorageService } from '@igo2/core';
-import { computeTermSimilarity } from '../search.utils';
-import { Cacheable } from 'ts-cacheable';
-import { GeoJsonGeometryTypes } from 'geojson';
-import { customCacheHasher } from '@igo2/utils';
 
 /**
  * Cadastre search source
@@ -102,7 +101,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: string, term: string): SearchResult<Feature>[] {
+  private extractResults(
+    response: string,
+    term: string
+  ): SearchResult<Feature>[] {
     return response
       .split('<br />')
       .filter((lot: string) => lot.length > 0)
@@ -117,7 +119,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
     const properties = {
       NoLot: numero,
-      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+      Route:
+        '<span class="routing"> <u>' +
+        this.languageService.translate.instant('igo.geo.seeRouting') +
+        '</u> </span>'
     };
     const id = [this.getId(), 'cadastre', numero].join('.');
 

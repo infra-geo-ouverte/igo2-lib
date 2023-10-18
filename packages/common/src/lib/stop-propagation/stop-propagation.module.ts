@@ -1,4 +1,5 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
 import { StopDropPropagationDirective } from './stop-drop-propagation.directive';
 import { StopPropagationDirective } from './stop-propagation.directive';
 

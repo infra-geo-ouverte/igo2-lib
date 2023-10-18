@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppOgcFilterComponent } from './ogc-filter.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppOgcFilterRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppOgcFilterRoutingModule = RouterModule.forChild(routes);

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { StorageService, ConfigService } from '@igo2/core';
 
+import { ConfigService, StorageService } from '@igo2/core';
 import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
+
 // import { BehaviorSubject } from 'rxjs';
 
 /**
@@ -11,7 +12,6 @@ import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
   providedIn: 'root'
 })
 export class MapState {
-
   // public mapCenter$ = new BehaviorSubject<boolean>(false);
   get showAllLegendsValue(): boolean {
     return this._legendToolShowAll;
@@ -25,7 +25,9 @@ export class MapState {
   /**
    * Active map
    */
-  get map(): IgoMap { return this._map; }
+  get map(): IgoMap {
+    return this._map;
+  }
   private _map: IgoMap;
 
   constructor(
@@ -34,16 +36,18 @@ export class MapState {
     private storageService: StorageService,
     private configService: ConfigService
   ) {
-    this._map = new IgoMap({
-      controls: {
-        scaleLine: true,
-        attribution: {
-          collapsed: true
+    this._map = new IgoMap(
+      {
+        controls: {
+          scaleLine: true,
+          attribution: {
+            collapsed: true
+          }
         }
-      }
-    },
-    this.storageService,
-    this.configService);
+      },
+      this.storageService,
+      this.configService
+    );
 
     this.mapService.setMap(this.map);
   }

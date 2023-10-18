@@ -1,11 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { BehaviorSubject, Subscription } from 'rxjs';
+
+import { Form, FormService } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+
 import * as olstyle from 'ol/style';
 
-import { LanguageService } from '@igo2/core';
-import { Form, FormService } from '@igo2/common';
-import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-geometry',
@@ -13,7 +15,6 @@ import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
   styleUrls: ['./geometry.component.scss']
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
-
   map = new IgoMap({
     controls: {
       attribution: {
@@ -30,7 +31,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
 
   form$ = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{[key: string]: any}>(undefined);
+  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
 
   submitDisabled = true;
 
@@ -48,7 +49,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -61,7 +62,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       {
         name: 'geometry',
         title: 'Geometry',
-        options:  {
+        options: {
           validator: Validators.required
         },
         type: 'geometry',
@@ -77,7 +78,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
               color: [255, 0, 0, 1],
               width: 2
             }),
-            fill:  new olstyle.Fill({
+            fill: new olstyle.Fill({
               color: [255, 0, 0, 0.2]
             }),
             image: new olstyle.Circle({
@@ -95,14 +96,17 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       {
         name: 'name',
         title: 'Name',
-        options:  {
+        options: {
           validator: Validators.required
         }
       }
     ];
 
     const fields = fieldConfigs.map((config) => this.formService.field(config));
-    const form = this.formService.form([], [this.formService.group({name: 'info'}, fields)]);
+    const form = this.formService.form(
+      [],
+      [this.formService.group({ name: 'info' }, fields)]
+    );
 
     this.valueChanges$$ = form.control.valueChanges.subscribe(() => {
       this.submitDisabled = !form.control.valid;
@@ -118,13 +122,18 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
   fillForm() {
     this.data$.next({
       name: 'Place',
-      geometry: JSON.stringify({type: 'Polygon', coordinates: [[
-        [-106, 42],
-        [-107, 31],
-        [-81, 32],
-        [-82, 42],
-        [-106, 42]
-      ]]})
+      geometry: JSON.stringify({
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-106, 42],
+            [-107, 31],
+            [-81, 32],
+            [-82, 42],
+            [-106, 42]
+          ]
+        ]
+      })
     });
   }
 
@@ -132,7 +141,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: {[key: string]: any}) {
+  onSubmit(data: { [key: string]: any }) {
     alert(JSON.stringify(data));
   }
 }

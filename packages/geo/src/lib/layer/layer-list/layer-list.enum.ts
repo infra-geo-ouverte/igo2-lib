@@ -12,5 +12,5 @@ export enum LayerListSelectVisibleEnum {
 
 export enum LayerListDisplacement {
   Raise = 'raise',
-  Lower = 'lower',
+  Lower = 'lower'
 }

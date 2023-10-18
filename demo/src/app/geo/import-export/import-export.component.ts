@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
+import { WorkspaceStore } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import { IgoMap, LayerService } from '@igo2/geo';
-import { WorkspaceStore } from '@igo2/common';
 
 @Component({
   selector: 'app-import-export',
@@ -36,6 +36,6 @@ export class AppImportExportComponent {
           type: 'osm'
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
   }
 }

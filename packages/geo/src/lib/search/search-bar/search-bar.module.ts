@@ -1,7 +1,6 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,12 +36,7 @@ import { SearchUrlParamDirective } from './search-url-param.directive';
     IgoSearchSelectorModule,
     IgoSearchSettingsModule
   ],
-  exports: [
-    SearchBarComponent,
-  ],
-  declarations: [
-    SearchBarComponent,
-    SearchUrlParamDirective
-  ]
+  exports: [SearchBarComponent],
+  declarations: [SearchBarComponent, SearchUrlParamDirective]
 })
 export class IgoSearchBarModule {}

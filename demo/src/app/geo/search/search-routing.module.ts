@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppSearchComponent } from './search.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppSearchRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppSearchRoutingModule = RouterModule.forChild(routes);

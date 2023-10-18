@@ -1,25 +1,32 @@
+import { DatePipe } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action, Widget } from '@igo2/common';
+import {
+  LanguageService,
+  MediaService,
+  StorageService,
+  StorageServiceEvent,
+  StorageServiceEventEnum
+} from '@igo2/core';
+import { OgcFilterWidget, WfsWorkspace } from '@igo2/geo';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
-import {
-  WfsWorkspace, OgcFilterWidget } from '@igo2/geo';
-import { StorageService, StorageServiceEvent, StorageServiceEventEnum, LanguageService, MediaService} from '@igo2/core';
-import { StorageState } from '../../storage/storage.state';
 import { skipWhile } from 'rxjs/operators';
+
+import { StorageState } from '../../storage/storage.state';
 import { ToolState } from '../../tool/tool.state';
 import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
-import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsActionsService implements OnDestroy {
-
   public maximize$: BehaviorSubject<boolean>;
 
-  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(
+    false
+  );
   // rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
@@ -38,11 +45,12 @@ export class WfsActionsService implements OnDestroy {
     public languageService: LanguageService,
     private mediaService: MediaService,
     private toolState: ToolState,
-    private datePipe: DatePipe) {
-      this.maximize$ = new BehaviorSubject(
-        this.storageService.get('workspaceMaximize') as boolean
-      );
-    }
+    private datePipe: DatePipe
+  ) {
+    this.maximize$ = new BehaviorSubject(
+      this.storageService.get('workspaceMaximize') as boolean
+    );
+  }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -54,12 +62,12 @@ export class WfsActionsService implements OnDestroy {
     workspace: WfsWorkspace,
     rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
     selectOnlyCheckCondition$: BehaviorSubject<boolean>
-    ) {
+  ) {
     const actions = this.buildActions(
       workspace,
       rowsInMapExtentCheckCondition$,
       selectOnlyCheckCondition$
-      );
+    );
     workspace.actionStore.load(actions);
   }
 
@@ -70,8 +78,13 @@ export class WfsActionsService implements OnDestroy {
   ): Action[] {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
-      .pipe(skipWhile((storageChange: StorageServiceEvent) =>
-        storageChange?.key !== 'zoomAuto' || storageChange?.event === StorageServiceEventEnum.CLEARED))
+      .pipe(
+        skipWhile(
+          (storageChange: StorageServiceEvent) =>
+            storageChange?.key !== 'zoomAuto' ||
+            storageChange?.event === StorageServiceEventEnum.CLEARED
+        )
+      )
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
         handleZoomAuto(workspace, this.storageService);
@@ -87,6 +100,7 @@ export class WfsActionsService implements OnDestroy {
       this.languageService,
       this.mediaService,
       this.toolState,
-      this.datePipe);
+      this.datePipe
+    );
   }
 }

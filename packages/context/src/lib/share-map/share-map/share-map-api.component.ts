@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
-import { uuid, Clipboard } from '@igo2/utils';
-import { MessageService, LanguageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
+import { LanguageService, MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
+import { Clipboard, uuid } from '@igo2/utils';
 
 import { ShareMapService } from '../shared/share-map.service';
 
@@ -31,7 +31,7 @@ export class ShareMapApiComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.auth.authenticate$.subscribe(auth => {
+    this.auth.authenticate$.subscribe((auth) => {
       const decodeToken = this.auth.decodeToken();
       this.userId = decodeToken.user ? decodeToken.user.id : undefined;
       this.buildForm();
@@ -43,15 +43,16 @@ export class ShareMapApiComponent implements OnInit {
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrlWithApi(inputs);
     this.shareMapService.createContextShared(this.map, inputs).subscribe(
-      rep => {
+      (rep) => {
         this.idContextShared = rep.id;
         this.messageService.success(
           'igo.context.contextManager.dialog.saveMsg',
           'igo.context.contextManager.dialog.saveTitle',
           undefined,
-          { value: inputs.title });
+          { value: inputs.title }
+        );
       },
-      err => {
+      (err) => {
         err.error.title = this.languageService.translate.instant(
           'igo.context.shareMap.errorTitle'
         );
@@ -63,21 +64,24 @@ export class ShareMapApiComponent implements OnInit {
   updateContextShared(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
-    this.shareMapService.updateContextShared(this.map, inputs, this.idContextShared).subscribe(
-      rep => {
-        this.messageService.success(
-          'igo.context.contextManager.dialog.saveMsg',
-          'igo.context.contextManager.dialog.saveTitle',
-          undefined,
-          { value: inputs.title });
-      },
-      err => {
-        err.error.title = this.languageService.translate.instant(
-          'igo.context.shareMap.errorTitle'
-        );
-        this.messageService.showError(err);
-      }
-    );
+    this.shareMapService
+      .updateContextShared(this.map, inputs, this.idContextShared)
+      .subscribe(
+        (rep) => {
+          this.messageService.success(
+            'igo.context.contextManager.dialog.saveMsg',
+            'igo.context.contextManager.dialog.saveTitle',
+            undefined,
+            { value: inputs.title }
+          );
+        },
+        (err) => {
+          err.error.title = this.languageService.translate.instant(
+            'igo.context.shareMap.errorTitle'
+          );
+          this.messageService.showError(err);
+        }
+      );
   }
 
   copyTextToClipboard(textArea) {
@@ -85,7 +89,8 @@ export class ShareMapApiComponent implements OnInit {
     if (successful) {
       this.messageService.success(
         'igo.context.shareMap.dialog.copyMsg',
-        'igo.context.shareMap.dialog.copyTitle');
+        'igo.context.shareMap.dialog.copyTitle'
+      );
     }
   }
 

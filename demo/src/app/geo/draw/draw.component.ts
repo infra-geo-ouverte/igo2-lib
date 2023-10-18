@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
   FeatureStore,
   FeatureWithDraw,
+  IgoMap,
+  LayerService,
   MapService
 } from '@igo2/geo';
 
@@ -16,7 +16,6 @@ import {
   styleUrls: ['./draw.component.scss']
 })
 export class AppDrawComponent {
-
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -45,7 +44,7 @@ export class AppDrawComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',

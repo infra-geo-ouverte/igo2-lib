@@ -1,34 +1,37 @@
-import OlCircle from 'ol/geom/Circle';
-import OlPoint from 'ol/geom/Point';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olstyle from 'ol/style';
-import OlLineString from 'ol/geom/LineString';
-import OlLinearRing from 'ol/geom/LinearRing';
-import OlPolygon from 'ol/geom/Polygon';
 import BasicEvent from 'ol/events/Event';
 import OlGeoJSON from 'ol/format/GeoJSON';
-import lineIntersect from '@turf/line-intersect';
+import OlCircle from 'ol/geom/Circle';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlLineString from 'ol/geom/LineString';
+import OlLinearRing from 'ol/geom/LinearRing';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import * as olstyle from 'ol/style';
+
 import { lineString } from '@turf/helpers';
+import lineIntersect from '@turf/line-intersect';
 
 import {
-  GeometrySliceMultiPolygonError,
   GeometrySliceLineStringError,
+  GeometrySliceMultiPolygonError,
   GeometrySliceTooManyIntersectionError
- } from './geometry.errors';
+} from './geometry.errors';
 
 /**
  * Create a default style for draw and modify interactions
  * @param color Style color (R, G, B)
  * @returns OL style
  */
-export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Circle {
+export function createDrawInteractionStyle(
+  color?: [number, number, number]
+): olstyle.Circle {
   color = color || [0, 153, 255];
   return new olstyle.Circle({
     stroke: new olstyle.Stroke({
       color: color.concat([1]),
       width: 2
     }),
-    fill:  new olstyle.Fill({
+    fill: new olstyle.Fill({
       color: color.concat([0.2])
     }),
     radius: 8
@@ -42,7 +45,7 @@ export function createDrawInteractionStyle(color?: [number, number, number]): ol
 export function createDrawHoleInteractionStyle(): olstyle.Style {
   return new olstyle.Style({
     stroke: new olstyle.Stroke({
-      color:  [0, 153, 255, 1],
+      color: [0, 153, 255, 1],
       width: 2
     })
   });
@@ -72,7 +75,10 @@ export function sliceOlGeometry(
  * @param olSlicer Slicing line
  * @returns New OL line strings
  */
-export function sliceOlLineString(olLineString: OlLineString, olSlicer: OlLineString): OlLineString[] {
+export function sliceOlLineString(
+  olLineString: OlLineString,
+  olSlicer: OlLineString
+): OlLineString[] {
   return [];
 }
 
@@ -82,7 +88,10 @@ export function sliceOlLineString(olLineString: OlLineString, olSlicer: OlLineSt
  * @param olSlicer Slicing line
  * @returns New OL polygons
  */
-export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): OlPolygon[] {
+export function sliceOlPolygon(
+  olPolygon: OlPolygon,
+  olSlicer: OlLineString
+): OlPolygon[] {
   if (olPolygon.getLinearRingCount() > 1) {
     throw new GeometrySliceMultiPolygonError();
   }
@@ -133,14 +142,15 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
  * @param olSlicer Slicing line
  * @returns New OL geometries
  */
-export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ) {
+export function addLinearRingToOlPolygon(
+  olPolygon: OlPolygon,
+  olLinearRing: OlLinearRing
+) {
   // TODO: make some validation and support updating an existing linear ring
   olPolygon.appendLinearRing(olLinearRing);
 }
 
-export function getMousePositionFromOlGeometryEvent(
-  olEvent: BasicEvent
-) {
+export function getMousePositionFromOlGeometryEvent(olEvent: BasicEvent) {
   const olGeometry = olEvent.target as OlGeometry;
   if (olGeometry instanceof OlPolygon) {
     return olGeometry.getFlatCoordinates().slice(-4, -2) as [number, number];

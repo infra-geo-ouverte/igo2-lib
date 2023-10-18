@@ -1,52 +1,75 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
+  Component,
   ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Optional,
-  Self
+  Output,
+  Self,
+  SimpleChanges,
+  TrackByFunction
 } from '@angular/core';
+import {
+  FormControlName,
+  NgControl,
+  NgForm,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
+import { StringUtils } from '@igo2/utils';
+
+import { default as moment } from 'moment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import {
   EntityKey,
   EntityRecord,
   EntityState,
   EntityStore,
-  EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
+  EntityTableScrollBehavior,
   EntityTableSelectionState,
-  EntityTableScrollBehavior
+  EntityTableTemplate
 } from '../shared';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import { UntypedFormBuilder, NgControl, NgForm, FormControlName, UntypedFormGroup } from '@angular/forms';
-import { FocusMonitor } from '@angular/cdk/a11y';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { map } from 'rxjs/operators';
-import { default as moment } from 'moment';
-import { StringUtils } from '@igo2/utils';
+
+interface CellData {
+  [key: string]: {
+    value: any;
+    class: { [key: string]: boolean };
+    isUrl: boolean;
+    isImg: boolean;
+  };
+}
+
+interface RowData {
+  record: EntityRecord<object, EntityState>;
+  cellData: CellData;
+}
 
 @Component({
   selector: 'igo-entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: MatFormFieldControl, useExisting: EntityTableComponent }]
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EntityTableComponent }
+  ]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
-
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public formGroup: UntypedFormGroup = new UntypedFormGroup({});
@@ -69,7 +92,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Observable of the selection,s state
    * @internal
    */
-  readonly selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
+  readonly selectionState$: BehaviorSubject<EntityTableSelectionState> =
+    new BehaviorSubject(undefined);
 
   /**
    * Subscription to the store's selection
@@ -150,7 +174,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Event emitted when the table sort is changed.
    */
-  @Output() entitySortChange: EventEmitter<{column: EntityTableColumn, direction: string}> = new EventEmitter(undefined);
+  @Output() entitySortChange: EventEmitter<{
+    column: EntityTableColumn;
+    direction: string;
+  }> = new EventEmitter(undefined);
 
   /**
    * Table headers
@@ -172,35 +199,48 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Data source consumable by the underlying material table
    * @internal
    */
-  dataSource = new MatTableDataSource<object>();
+  dataSource = new MatTableDataSource<RowData>();
 
   /**
    * Whether selection is supported
    * @internal
    */
-  get selection(): boolean { return this.template.selection || false; }
+  get selection(): boolean {
+    return this.template.selection || false;
+  }
 
   /**
    * Whether a selection checkbox should be displayed
    * @internal
    */
-  get selectionCheckbox(): boolean { return this.template.selectionCheckbox || false; }
+  get selectionCheckbox(): boolean {
+    return this.template.selectionCheckbox || false;
+  }
 
   /**
    * Whether selection many entities should eb supported
    * @internal
    */
-  get selectMany(): boolean { return this.template.selectMany || false; }
+  get selectMany(): boolean {
+    return this.template.selectMany || false;
+  }
 
   /**
    * Whether selection many entities should eb supported
    * @internal
    */
-  get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
+  get fixedHeader(): boolean {
+    return this.template.fixedHeader === undefined
+      ? true
+      : this.template.fixedHeader;
+  }
 
-  get tableHeight(): string { return this.template.tableHeight ? this.template.tableHeight : 'auto'; }
+  get tableHeight(): string {
+    return this.template.tableHeight ? this.template.tableHeight : 'auto';
+  }
 
-  constructor(private cdRef: ChangeDetectorRef,
+  constructor(
+    private cdRef: ChangeDetectorRef,
     private formBuilder: UntypedFormBuilder,
     protected _focusMonitor: FocusMonitor,
     protected _elementRef: ElementRef<HTMLElement>,
@@ -220,6 +260,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.handleDatasource();
     this.dataSource.paginator = this.paginator;
+    this.store.state.change$.pipe(debounceTime(100)).subscribe(() => {
+      this.handleDatasource();
+      this.refresh();
+    });
   }
 
   /**
@@ -259,7 +303,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   /**
    * Process autocomplete value change (edition)
    */
-  onAutocompleteValueChange(column: EntityTableColumn, record: EntityRecord<any>, event) {
+  onAutocompleteValueChange(
+    column: EntityTableColumn,
+    record: EntityRecord<any>,
+    event
+  ) {
     this.formGroup.controls[column.name].setValue(event.option.viewValue);
     const key = this.getColumnKeyWithoutPropertiesTag(column.name);
     record.entity.properties[key] = event.option.value;
@@ -269,7 +317,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * Process date value change (edition)
    */
   onDateChange(column: string, record: EntityRecord<any>, event) {
-    const format = "YYYY-MM-DD";
+    const format = 'YYYY-MM-DD';
     const value = moment(event.value).format(format);
     const key = this.getColumnKeyWithoutPropertiesTag(column);
     record.entity.properties[key] = value;
@@ -281,8 +329,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    */
   private enableEdit(record: EntityRecord<any>) {
     const item = record.entity.properties || record.entity;
-    this.template.columns.forEach(column => {
-      column.title = column.validation?.mandatory && !column.title.includes('*') ? column.title + ' *' : column.title;
+    this.template.columns.forEach((column) => {
+      column.title =
+        column.validation?.mandatory && !column.title.includes('*')
+          ? column.title + ' *'
+          : column.title;
 
       const key = this.getColumnKeyWithoutPropertiesTag(column.name);
       if (column.type === 'boolean') {
@@ -291,52 +342,68 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         } else if (typeof item[key] === 'string') {
           item[key] = JSON.parse(item[key].toLowerCase());
         }
-        this.formGroup.setControl(column.name, this.formBuilder.control(
-          item[key]
-        ));
+        this.formGroup.setControl(
+          column.name,
+          this.formBuilder.control(item[key])
+        );
       } else if (column.type === 'list') {
         if (column.multiple) {
-          this.formGroup.setControl(column.name, this.formBuilder.control(
-            [item[key]]
-          ));
+          this.formGroup.setControl(
+            column.name,
+            this.formBuilder.control([item[key]])
+          );
         } else {
-          this.formGroup.setControl(column.name, this.formBuilder.control(
-            item[key]
-          ));
-
-          typeof item[key] === 'string' ?
-            this.formGroup.controls[column.name].setValue(parseInt(item[key])) :
-            this.formGroup.controls[column.name].setValue(item[key]);
-        }
-      } else if (column.type === 'autocomplete') {
-        this.formGroup.setControl(column.name, this.formBuilder.control(
-          item[key]
-        ));
-
-        this.filteredOptions[column.name] = new Observable<any[]>();
-        this.filteredOptions[column.name] =
-          this.formGroup.controls[column.name].valueChanges.pipe(
-            map(value => {
-              if (value?.length) {
-                return column.domainValues?.filter((option) => {
-                  const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-                  const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                  return featureNameNormalized.includes(filterNormalized);
-                });
-              }
-            })
+          this.formGroup.setControl(
+            column.name,
+            this.formBuilder.control(item[key])
           );
 
+          typeof item[key] === 'string'
+            ? this.formGroup.controls[column.name].setValue(parseInt(item[key]))
+            : this.formGroup.controls[column.name].setValue(item[key]);
+        }
+      } else if (column.type === 'autocomplete') {
+        this.formGroup.setControl(
+          column.name,
+          this.formBuilder.control(item[key])
+        );
+
+        this.filteredOptions[column.name] = new Observable<any[]>();
+        this.filteredOptions[column.name] = this.formGroup.controls[
+          column.name
+        ].valueChanges.pipe(
+          map((value) => {
+            if (value?.length) {
+              return column.domainValues?.filter((option) => {
+                const filterNormalized = value
+                  ? value
+                      .toLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                  : '';
+                const featureNameNormalized = option.value
+                  .toLowerCase()
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '');
+                return featureNameNormalized.includes(filterNormalized);
+              });
+            }
+          })
+        );
+
         let formControlValue = item[key];
-        column.domainValues.forEach(option => {
+        column.domainValues.forEach((option) => {
           if (
-            typeof formControlValue === "string" &&
+            typeof formControlValue === 'string' &&
             StringUtils.isValidNumber(formControlValue) &&
             !StringUtils.isOctalNumber(formControlValue)
           ) {
             formControlValue = parseInt(formControlValue);
           }
-          if (option.value === formControlValue || option.id === formControlValue) {
+          if (
+            option.value === formControlValue ||
+            option.id === formControlValue
+          ) {
             formControlValue = option.value;
           }
         });
@@ -345,7 +412,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
         if (this.isEdition(record) && column.linkColumnForce) {
           const entity = record.entity as any;
           this.formGroup.controls[column.name].setValue(
-            entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)]
+            entity?.properties[
+              this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
+            ]
           );
         }
       } else if (column.type === 'date') {
@@ -353,24 +422,30 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           if (item[key]) {
             let date = moment(item[key]);
             item[key] = date.utc().format('YYYY-MM-DD');
-            this.formGroup.setControl(column.name, this.formBuilder.control(
-              item[key]
-            ));
+            this.formGroup.setControl(
+              column.name,
+              this.formBuilder.control(item[key])
+            );
           } else {
             const newKey = this.getColumnKeyWithoutPropertiesTag(column.name);
             record.entity.properties[newKey] = null;
-            this.formGroup.setControl(column.name, this.formBuilder.control(
-              null
-            ));
+            this.formGroup.setControl(
+              column.name,
+              this.formBuilder.control(null)
+            );
           }
         }
       } else {
-        this.formGroup.setControl(column.name, this.formBuilder.control(
-          item[key]
-        ));
+        this.formGroup.setControl(
+          column.name,
+          this.formBuilder.control(item[key])
+        );
       }
 
-      if (this.formGroup.controls[column.name] && this.getValidationAttributeValue(column, 'readonly')) {
+      if (
+        this.formGroup.controls[column.name] &&
+        this.getValidationAttributeValue(column, 'readonly')
+      ) {
         this.formGroup.controls[column.name].disable();
       }
     });
@@ -382,15 +457,22 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
         const firstSelected = records[0];
-        const firstSelectedStateviewPosition = this.store.stateView.all().indexOf(firstSelected);
-        const pageMax = this.paginator ? this.paginator.pageSize * (this.paginator.pageIndex + 1) : 0;
+        const firstSelectedStateviewPosition = this.store.stateView
+          .all()
+          .indexOf(firstSelected);
+        const pageMax = this.paginator
+          ? this.paginator.pageSize * (this.paginator.pageIndex + 1)
+          : 0;
         const pageMin = this.paginator ? pageMax - this.paginator.pageSize : 0;
 
         if (
           this.paginator &&
           (firstSelectedStateviewPosition < pageMin ||
-          firstSelectedStateviewPosition >= pageMax)) {
-          const pageToReach = Math.floor(firstSelectedStateviewPosition / this.paginator.pageSize);
+            firstSelectedStateviewPosition >= pageMax)
+        ) {
+          const pageToReach = Math.floor(
+            firstSelectedStateviewPosition / this.paginator.pageSize
+          );
           this.dataSource.paginator.pageIndex = pageToReach;
         }
         this.selectionState$.next(this.computeSelectionState(records));
@@ -399,9 +481,25 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (all[0]) {
         this.enableEdit(all[0]);
       }
-      this.dataSource.data = all;
+      this.dataSource.data = all.map((record) => {
+        return {
+          record,
+          cellData: this.template.columns.reduce(
+            (cellData: CellData, column) => {
+              const value = this.getValue(record, column);
+              cellData[column.name] = {
+                class: this.getCellClass(record, column),
+                value,
+                isUrl: this.isUrl(value),
+                isImg: this.isImg(value)
+              };
+              return cellData;
+            },
+            {}
+          )
+        };
+      });
     });
-
   }
 
   /**
@@ -427,14 +525,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param index Record index
    * @internal
    */
-  getTrackByFunction() {
-    return (index: number, record: EntityRecord<object, EntityState>) => {
-      return record.ref;
-    };
+  getTrackByFunction(): TrackByFunction<RowData> {
+    return (_index, row) => row.record.ref;
   }
-
   /**
-   * Trigger a refresh of thre table. This can be useful when
+   * Trigger a refresh of the table. This can be useful when
    * the data source doesn't emit a new value but for some reason
    * the records need an update.
    * @internal
@@ -452,18 +547,20 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param event Sort event
    * @internal
    */
-  onSort(event: {active: string, direction: string}) {
+  onSort(event: { active: string; direction: string }) {
     const direction = event.direction;
-    const column = this.template.columns
-      .find((c: EntityTableColumn) => c.name === event.active);
+    const column = this.template.columns.find(
+      (c: EntityTableColumn) => c.name === event.active
+    );
 
     if (direction === 'asc' || direction === 'desc') {
       this.store.stateView.sort({
-        valueAccessor: (record: EntityRecord<object>) => this.getValue(record, column),
+        valueAccessor: (record: EntityRecord<object>) =>
+          this.getValue(record, column),
         direction,
         nullsFirst: this.sortNullsFirst
       });
-      this.entitySortChange.emit({column, direction});
+      this.entitySortChange.emit({ column, direction });
       this.entitySortChange$.next(true);
     } else {
       this.store.stateView.sort(undefined);
@@ -488,11 +585,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onRowSelect(record: EntityRecord<object>) {
-    if (this.selection === false) { return; }
+    if (this.selection === false) {
+      return;
+    }
 
     const entity = record.entity;
-    this.store.state.update(entity, {selected: true}, true);
-    this.entitySelectChange.emit({added: [entity]});
+    this.store.state.update(entity, { selected: true }, true);
+    this.entitySelectChange.emit({ added: [entity] });
   }
 
   /**
@@ -501,14 +600,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onToggleRows(toggle: boolean) {
-    if (this.selection === false) { return; }
+    if (this.selection === false) {
+      return;
+    }
 
-    this.store.state.updateAll({selected: toggle});
+    this.store.state.updateAll({ selected: toggle });
     if (toggle === true) {
       const entities = this.store.stateView
         .all()
         .map((record: EntityRecord<object>) => record.entity);
-      this.entitySelectChange.emit({added: [entities]});
+      this.entitySelectChange.emit({ added: [entities] });
     }
   }
 
@@ -520,13 +621,15 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @internal
    */
   onToggleRow(toggle: boolean, record: EntityRecord<object>) {
-    if (this.selection === false) { return; }
+    if (this.selection === false) {
+      return;
+    }
 
     const entity = record.entity;
     const exclusive = toggle === true && !this.selectMany;
-    this.store.state.update(entity, {selected: toggle}, exclusive);
+    this.store.state.update(entity, { selected: toggle }, exclusive);
     if (toggle === true) {
-      this.entitySelectChange.emit({added: [entity]});
+      this.entitySelectChange.emit({ added: [entity] });
     }
     this.lastRecordCheckedKey = this.store.stateView.getKey(record);
   }
@@ -538,8 +641,14 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param record Record
    * @internal
    */
-  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>, event: MouseEvent) {
-    if (this.selection === false) { return; }
+  onShiftToggleRow(
+    toggle: boolean,
+    record: EntityRecord<object>,
+    event: MouseEvent
+  ) {
+    if (this.selection === false) {
+      return;
+    }
 
     if (this.selectMany === false || this.lastRecordCheckedKey === undefined) {
       this.onToggleRow(toggle, record);
@@ -557,15 +666,22 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
 
     const records = this.store.stateView.all();
     const recordIndex = records.indexOf(record);
-    const lastRecordChecked = this.store.stateView.get(this.lastRecordCheckedKey);
+    const lastRecordChecked = this.store.stateView.get(
+      this.lastRecordCheckedKey
+    );
     const lastRecordIndex = records.indexOf(lastRecordChecked);
     const indexes = [recordIndex, lastRecordIndex];
-    const selectRecords = records.slice(Math.min(...indexes), Math.max(...indexes) + 1);
+    const selectRecords = records.slice(
+      Math.min(...indexes),
+      Math.max(...indexes) + 1
+    );
 
-    const entities = selectRecords.map((_record: EntityRecord<object>) => _record.entity);
-    this.store.state.updateMany(entities, {selected: toggle});
+    const entities = selectRecords.map(
+      (_record: EntityRecord<object>) => _record.entity
+    );
+    this.store.state.updateMany(entities, { selected: toggle });
     if (toggle === true) {
-      this.entitySelectChange.emit({added: entities});
+      this.entitySelectChange.emit({ added: entities });
     }
     this.lastRecordCheckedKey = this.store.stateView.getKey(record);
   }
@@ -575,12 +691,16 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns Whether all, some or no rows are selected
    * @internal
    */
-  private computeSelectionState(selectedRecords: EntityRecord<object>[]): EntityTableSelectionState {
+  private computeSelectionState(
+    selectedRecords: EntityRecord<object>[]
+  ): EntityTableSelectionState {
     const states = EntityTableSelectionState;
     const selectionCount = selectedRecords.length;
-    return selectionCount === 0 ?
-      states.None :
-      (selectionCount === this.store.stateView.count ? states.All : states.Some);
+    return selectionCount === 0
+      ? states.None
+      : selectionCount === this.store.stateView.count
+      ? states.All
+      : states.Some;
   }
 
   /**
@@ -611,7 +731,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   isImg(value) {
     if (this.isUrl(value)) {
       return (
-        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !== -1
+        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !==
+        -1
       );
     } else {
       return false;
@@ -650,23 +771,25 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       if (value === undefined || value === null || value === '') {
         value = false;
       } else if (typeof value !== 'boolean' && value !== undefined) {
-        if (typeof value === 'number'){
+        if (typeof value === 'number') {
           value = Boolean(value);
         } else {
           value = JSON.parse(value.toLowerCase());
         }
       }
-      if (!this.isEdition(record)){
+      if (!this.isEdition(record)) {
         value = value ? '&#10003;' : ''; // check mark
       }
     } else if (column.type === 'list' && value && column.domainValues) {
       const entity = record.entity as any;
       if (column.multiple) {
         let list_id;
-        typeof value === 'string' ? list_id = value.match(/[\w.-]+/g).map(Number) : list_id = value;
+        typeof value === 'string'
+          ? (list_id = value.match(/[\w.-]+/g).map(Number))
+          : (list_id = value);
         let list_option = [];
 
-        column.domainValues.forEach(option => {
+        column.domainValues.forEach((option) => {
           if (list_id.includes(option.id)) {
             if (record.edition) {
               list_option.push(option.id);
@@ -676,17 +799,26 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           }
         });
 
-        this.isEdition(record) ? value = list_id : value = list_option;
+        this.isEdition(record) ? (value = list_id) : (value = list_option);
       } else {
         if (!this.isEdition(record) && column.linkColumnForce) {
-          value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+          value =
+            entity?.properties[
+              this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
+            ];
         } else {
-          column.domainValues.forEach(option => {
-            if (typeof value === "string" && StringUtils.isValidNumber(value) && !StringUtils.isOctalNumber(value)) {
+          column.domainValues.forEach((option) => {
+            if (
+              typeof value === 'string' &&
+              StringUtils.isValidNumber(value) &&
+              !StringUtils.isOctalNumber(value)
+            ) {
               value = parseInt(value);
             }
             if (option.value === value || option.id === value) {
-              this.isEdition(record) ? value = option.id : value = option.value;
+              this.isEdition(record)
+                ? (value = option.id)
+                : (value = option.value);
             }
           });
         }
@@ -694,10 +826,17 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     } else if (column.type === 'autocomplete' && value && column.domainValues) {
       const entity = record.entity as any;
       if (!this.isEdition(record) && column.linkColumnForce) {
-        value = entity?.properties[this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)];
+        value =
+          entity?.properties[
+            this.getColumnKeyWithoutPropertiesTag(column.linkColumnForce)
+          ];
       } else {
-        column.domainValues.forEach(option => {
-          if (typeof value === "string" && StringUtils.isValidNumber(value) && !StringUtils.isOctalNumber(value)) {
+        column.domainValues.forEach((option) => {
+          if (
+            typeof value === 'string' &&
+            StringUtils.isValidNumber(value) &&
+            !StringUtils.isOctalNumber(value)
+          ) {
             value = parseInt(value);
           }
           if (option.value === value || option.id === value) {
@@ -713,7 +852,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
           this.formGroup.controls[column.name].setValue(value);
         }
       } else if (!this.isEdition(record) && value === null) {
-        value = "";
+        value = '';
       }
     }
 
@@ -731,8 +870,14 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns Any value (false if no validation or not the one concerned)
    * @internal
    */
-  getValidationAttributeValue(column: EntityTableColumn, validationType: string): any {
-    if (column.validation !== undefined && column.validation[validationType] !== undefined) {
+  getValidationAttributeValue(
+    column: EntityTableColumn,
+    validationType: string
+  ): any {
+    if (
+      column.validation !== undefined &&
+      column.validation[validationType] !== undefined
+    ) {
       return column.validation[validationType];
     } else {
       return false;
@@ -761,7 +906,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getTableClass(): {[key: string]: boolean} {
+  getTableClass(): { [key: string]: boolean } {
     return {
       'igo-entity-table-with-selection': this.selection
     };
@@ -772,7 +917,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getHeaderClass(): {[key: string]: boolean} {
+  getHeaderClass(): { [key: string]: boolean } {
     const func = this.template.headerClassFunc;
     if (func instanceof Function) {
       return func();
@@ -786,7 +931,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getRowClass(record: EntityRecord<object>): {[key: string]: boolean} {
+  getRowClass(record: EntityRecord<object>): { [key: string]: boolean } {
     const entity = record.entity;
     const func = this.template.rowClassFunc;
     if (func instanceof Function) {
@@ -802,7 +947,10 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @returns ngClass
    * @internal
    */
-  getCellClass(record: EntityRecord<object>, column: EntityTableColumn): {[key: string]: boolean} {
+  getCellClass(
+    record: EntityRecord<object>,
+    column: EntityTableColumn
+  ): { [key: string]: boolean } {
     const entity = record.entity;
     const cls = {};
 

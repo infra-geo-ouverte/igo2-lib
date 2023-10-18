@@ -1,5 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppDirectionsComponent } from './directions.component';
 
@@ -10,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppDirectionsRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppDirectionsRoutingModule = RouterModule.forChild(routes);

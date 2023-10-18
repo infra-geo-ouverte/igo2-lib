@@ -46,8 +46,8 @@ export class StringUtils {
           ? (o.sbs += s[i]) // o.sbs holds the matching substring itsef
           : ((match = true), (o.fis = i), (o.sbs = s[i]))
         : match
-          ? (i = slen) // stop after the first found substring
-          : (i = i);
+        ? (i = slen) // stop after the first found substring
+        : (i = i);
       ++i;
     }
     return o;
@@ -121,6 +121,10 @@ export class StringUtils {
   }
 
   static isOctalNumber(value: string): boolean {
-    return StringUtils.isValidNumber(value) && value.startsWith("0") && value.length > 1;
+    return (
+      StringUtils.isValidNumber(value) &&
+      value.startsWith('0') &&
+      value.length > 1
+    );
   }
 }

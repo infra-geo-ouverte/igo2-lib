@@ -1,10 +1,8 @@
-import {
-  Component,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { FeatureStore, FeatureWithMeasure, IgoMap } from '@igo2/geo';
+
 import { MapState } from '../../map/map.state';
 import { MeasureState } from '../measure.state';
 
@@ -22,22 +20,24 @@ import { MeasureState } from '../measure.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MeasurerToolComponent {
+  /**
+   * Map to measure on
+   * @internal
+   */
+  get store(): FeatureStore<FeatureWithMeasure> {
+    return this.measureState.store;
+  }
 
   /**
    * Map to measure on
    * @internal
    */
-  get store(): FeatureStore<FeatureWithMeasure> { return this.measureState.store; }
-
-  /**
-   * Map to measure on
-   * @internal
-   */
-  get map(): IgoMap { return this.mapState.map; }
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
   constructor(
     private measureState: MeasureState,
     private mapState: MapState
   ) {}
-
 }

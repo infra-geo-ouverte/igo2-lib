@@ -1,14 +1,13 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
-  OnDestroy
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
 } from '@angular/core';
 
 import { DynamicComponent } from '../../dynamic-component';
-
 import { WidgetComponent } from '../shared/widget.interfaces';
 
 /**
@@ -23,7 +22,6 @@ import { WidgetComponent } from '../shared/widget.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WidgetOutletComponent implements OnDestroy {
-
   /**
    * Widget subscribers to 'cancel' and 'complete'
    * @internal
@@ -41,12 +39,12 @@ export class WidgetOutletComponent implements OnDestroy {
   /**
    * Widget inputs
    */
-  @Input() inputs: {[key: string]: any};
+  @Input() inputs: { [key: string]: any };
 
   /**
    * Widget subscribers
    */
-  @Input() subscribers: {[key: string]: (event: any) => void} = {};
+  @Input() subscribers: { [key: string]: (event: any) => void } = {};
 
   /**
    * Event emitted when the widget emits 'complete'
@@ -74,7 +72,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * @returns Combined subscribers
    * @internal
    */
-  getEffectiveSubscribers(): {[key: string]: (event: any) => void} {
+  getEffectiveSubscribers(): { [key: string]: (event: any) => void } {
     const subscribers = Object.assign({}, this.subscribers);
 
     // Base subscribers

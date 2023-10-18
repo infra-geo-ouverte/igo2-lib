@@ -1,4 +1,4 @@
-import { Directive, Self, HostListener, Renderer2 } from '@angular/core';
+import { Directive, HostListener, Renderer2, Self } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 
 /**
@@ -39,5 +39,8 @@ export class SidenavShimDirective {
     this.focusedElement = undefined;
   }
 
-  constructor(@Self() component: MatSidenav, private renderer: Renderer2) {}
+  constructor(
+    @Self() component: MatSidenav,
+    private renderer: Renderer2
+  ) {}
 }

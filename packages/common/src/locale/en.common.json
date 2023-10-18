@@ -4,7 +4,8 @@
       "confirmDialog": {
         "cancelBtn": "Cancel",
         "confirmBtn": "Confirm",
-        "title": "Confirm"
+        "title": "Confirm",
+        "applyBtn": "Apply"
       },
       "table": {
         "filter": "Filter"

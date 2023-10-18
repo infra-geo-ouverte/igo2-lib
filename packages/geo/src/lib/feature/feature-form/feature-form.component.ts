@@ -1,17 +1,17 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
   ViewChild
 } from '@angular/core';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { Form, getEntityRevision } from '@igo2/common';
 import type { FormComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
+
+import { BehaviorSubject } from 'rxjs';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
@@ -30,7 +30,6 @@ import { Feature, FeatureMeta } from '../shared/feature.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureFormComponent {
-
   /**
    * Form
    */
@@ -40,8 +39,12 @@ export class FeatureFormComponent {
    * Feature to update
    */
   @Input()
-  set feature(value: Feature | undefined) { this.feature$.next(value); }
-  get feature(): Feature | undefined { return this.feature$.value; }
+  set feature(value: Feature | undefined) {
+    this.feature$.next(value);
+  }
+  get feature(): Feature | undefined {
+    return this.feature$.value;
+  }
   readonly feature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
   /**

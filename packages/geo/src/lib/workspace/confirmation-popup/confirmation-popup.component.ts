@@ -1,6 +1,7 @@
-import { LanguageService } from '@igo2/core';
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+import { LanguageService } from '@igo2/core';
 
 export interface DialogData {
   type: string;
@@ -8,24 +9,24 @@ export interface DialogData {
 }
 
 @Component({
-    selector: 'igo-confirmation-popup-component',
-    templateUrl: './confirmation-popup.component.html',
-    styleUrls: ['./confirmation-popup.component.scss']
-  })
-  export class ConfirmationPopupComponent {
+  selector: 'igo-confirmation-popup-component',
+  templateUrl: './confirmation-popup.component.html',
+  styleUrls: ['./confirmation-popup.component.scss']
+})
+export class ConfirmationPopupComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmationPopupComponent>,
+    public languageService: LanguageService,
+    @Inject(MAT_DIALOG_DATA) public data: { type: string; cancel: boolean }
+  ) {}
 
-    constructor(
-      public dialogRef: MatDialogRef<ConfirmationPopupComponent>,
-      public languageService: LanguageService,
-      @Inject(MAT_DIALOG_DATA) public data: {type: string, cancel: boolean}) {}
-
-    cancelAction() {
-      this.data.cancel = true;
-      this.dialogRef.close(this.data.cancel);
-    }
-
-    confirmedAction() {
-      this.data.cancel = false;
-      this.dialogRef.close(this.data.cancel);
-    }
+  cancelAction() {
+    this.data.cancel = true;
+    this.dialogRef.close(this.data.cancel);
   }
+
+  confirmedAction() {
+    this.data.cancel = false;
+    this.dialogRef.close(this.data.cancel);
+  }
+}

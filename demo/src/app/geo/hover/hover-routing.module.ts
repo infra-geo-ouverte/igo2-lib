@@ -1,4 +1,5 @@
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
 import { AppHoverComponent } from './hover.component';
 
 const routes: Routes = [
@@ -8,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppHoverRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppHoverRoutingModule = RouterModule.forChild(routes);

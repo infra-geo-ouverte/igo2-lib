@@ -1,17 +1,20 @@
-import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import { asArray as ColorAsArray } from 'ol/color';
-import { StyleService } from '../../../style/style-service/style.service';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { createOverlayMarkerStyle } from './overlay-marker-style.utils';
+import * as olstyle from 'ol/style';
 
+import { StyleService } from '../../../style/style-service/style.service';
+import { createOverlayMarkerStyle } from './overlay-marker-style.utils';
 
 /**
  * Create an overlay style with markers for points and a basic stroke/fill
  * combination for lines and polygons
  * @returns Style function
  */
-export function createOverlayLayerStyle(): (olFeature: OlFeature<OlGeometry>, resolution: number) => olstyle.Style {
+export function createOverlayLayerStyle(): (
+  olFeature: OlFeature<OlGeometry>,
+  resolution: number
+) => olstyle.Style {
   const defaultStyle = createOverlayDefaultStyle();
   const markerStyle = createOverlayMarkerStyle();
 
@@ -48,7 +51,7 @@ export function createOverlayDefaultStyle({
   text,
   strokeWidth = 2,
   fillColor = [0, 161, 222, 0.3],
-  strokeColor = [0, 161, 222, 0.9],
+  strokeColor = [0, 161, 222, 0.9]
 }: {
   text?: string;
   strokeWidth?: number;

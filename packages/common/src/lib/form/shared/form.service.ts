@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UntypedFormBuilder, Validators, ValidatorFn } from '@angular/forms';
+import { UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 
 import {
   Form,
@@ -13,7 +13,6 @@ import {
   providedIn: 'root'
 })
 export class FormService {
-
   constructor(private formBuilder: UntypedFormBuilder) {}
 
   form(fields: FormField[], groups: FormFieldGroup[]): Form {
@@ -25,7 +24,7 @@ export class FormService {
       control.addControl(group.name, group.control);
     });
 
-    return {fields, groups, control};
+    return { fields, groups, control };
   }
 
   group(config: FormFieldGroupConfig, fields: FormField[]): FormFieldGroup {
@@ -40,7 +39,7 @@ export class FormService {
       control.setValidators(validators);
     }
 
-    return Object.assign({}, config, {fields, control}) as FormFieldGroup;
+    return Object.assign({}, config, { fields, control }) as FormFieldGroup;
   }
 
   field(config: FormFieldConfig): FormField {
@@ -56,17 +55,30 @@ export class FormService {
       control.setValidators(validators);
     }
 
-    return Object.assign({type: 'text'}, config, {control}) as FormField;
+    return Object.assign({ type: 'text' }, config, { control }) as FormField;
   }
 
-  extendFieldConfig(config: FormFieldConfig, partial: Partial<FormFieldConfig>): FormFieldConfig {
-    const options = Object.assign({}, config.options || {}, partial.options || {});
+  extendFieldConfig(
+    config: FormFieldConfig,
+    partial: Partial<FormFieldConfig>
+  ): FormFieldConfig {
+    const options = Object.assign(
+      {},
+      config.options || {},
+      partial.options || {}
+    );
     const inputs = Object.assign({}, config.inputs || {}, partial.inputs || {});
-    const subscribers = Object.assign({}, config.subscribers || {}, partial.subscribers || {});
-    return Object.assign({}, config, {options, inputs, subscribers});
+    const subscribers = Object.assign(
+      {},
+      config.subscribers || {},
+      partial.subscribers || {}
+    );
+    return Object.assign({}, config, { options, inputs, subscribers });
   }
 
-  private getValidators(validatorOption: string | string[] | ValidatorFn): ValidatorFn | ValidatorFn[] {
+  private getValidators(
+    validatorOption: string | string[] | ValidatorFn
+  ): ValidatorFn | ValidatorFn[] {
     if (Array.isArray(validatorOption)) {
       return validatorOption.map((validatorStr) => {
         return this.getValidator(validatorStr);
@@ -93,5 +105,4 @@ export class FormService {
     const args = match[2];
     return Validators[name](args);
   }
-
 }

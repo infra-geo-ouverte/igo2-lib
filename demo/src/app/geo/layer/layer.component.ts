@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
-  LayerService,
-  WMSDataSourceOptions,
+  IgoMap,
   LayerOptions,
-  WFSDataSourceOptions,
+  LayerService,
+  MetadataLayerOptions,
   OgcFilterableDataSourceOptions,
-  MetadataLayerOptions
+  WFSDataSourceOptions,
+  WMSDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -41,7 +41,7 @@ export class AppLayerComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -64,12 +64,12 @@ export class AppLayerComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: undefined,
+        outputFormat: 'geojson',
         outputFormatDownload: 'shp'
       },
       ogcFilters: {
         enabled: true,
-        editable: true,
+        editable: false,
         filters: {
           operator: 'PropertyIsEqualTo',
           propertyName: 'code_municipalite',
@@ -80,7 +80,7 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasource)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer: LayerOptions = {
           title: 'WFS ',
           visible: true,
@@ -103,7 +103,7 @@ export class AppLayerComponent {
       },
       ogcFilters: {
         enabled: true,
-        editable: true,
+        editable: false,
         filters: {
           operator: 'PropertyIsEqualTo',
           propertyName: 'code_municipalite',
@@ -117,7 +117,7 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourceCustomEPSG)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer: LayerOptions = {
           title: 'WFS (Custom EPSG)',
           visible: true,
@@ -139,7 +139,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -154,7 +154,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -170,7 +170,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -186,7 +186,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -211,7 +211,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -226,7 +226,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe(l => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
@@ -244,13 +244,12 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         const layer: LayerOptionsWithMetadata = {
           title: 'Embâcle',
           source: dataSource,
           metadata: {
-            url:
-              'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
+            url: 'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
             extern: true
           }
         };

@@ -1,9 +1,24 @@
-<div *ngIf="(!store || store.stateView.empty) && (debouncedEmpty$ | async)" style="margin: 10px;">
+<div
+  *ngIf="(!store || store.stateView.empty) && (debouncedEmpty$ | async)"
+  style="margin: 10px"
+>
   <section class="mat-typography">
-    <h4><strong>{{ 'igo.integration.searchResultsTool.noResults' | translate }}</strong></h4>
-    <p><strong>{{ 'igo.integration.searchResultsTool.doSearch' | translate }}</strong></p>
-    <div [innerHTML]="'igo.integration.searchResultsTool.examples' | translate | sanitizeHtml"></div>
-</section>
+    <h4>
+      <strong>{{
+        'igo.integration.searchResultsTool.noResults' | translate
+      }}</strong>
+    </h4>
+    <p>
+      <strong>{{
+        'igo.integration.searchResultsTool.doSearch' | translate
+      }}</strong>
+    </p>
+    <div
+      [innerHTML]="
+        'igo.integration.searchResultsTool.examples' | translate | sanitizeHtml
+      "
+    ></div>
+  </section>
 </div>
 
 <igo-flexible
@@ -15,8 +30,8 @@
   collapsedMobile="calc(100% - 58px)"
   expanded="60%"
   expandedMobile="60%"
-  [state]="(feature$ | async) ? topPanelState : 'initial'">
-
+  [state]="(feature$ | async) ? topPanelState : 'initial'"
+>
   <div class="igo-content">
     <igo-search-results
       [store]="store"
@@ -31,28 +46,39 @@
       (resultMouseenter)="onResultFocus($event)"
       (resultMouseleave)="onResultUnfocus($event)"
       (moreResults)="onSearch($event)"
-      [map]="map">
+      [map]="map"
+    >
       <ng-template #igoSearchItemToolbar let-result="result">
         <igo-search-add-button
           [map]="map"
           [store]="store"
           [stores]="stores"
           [layer]="result"
-          [saveSearchResultInLayer]="saveSearchResultInLayer">
+          [saveSearchResultInLayer]="saveSearchResultInLayer"
+        >
         </igo-search-add-button>
       </ng-template>
     </igo-search-results>
   </div>
 
   <div igoFlexibleFill class="igo-content">
-    <igo-panel [title]="featureTitle" *ngIf="feature$ | async" (click)="toggleTopPanel($event)" [cursorPointer]="true">
-
+    <igo-panel
+      [title]="featureTitle"
+      *ngIf="feature$ | async"
+      (click)="toggleTopPanel($event)"
+      [cursorPointer]="true"
+    >
       <button
         mat-icon-button
         panelLeftButton
         class="igo-icon-button"
-        (click)="toggleTopPanel()">
-        <mat-icon [svgIcon]="(topPanelState$ | async) === 'collapsed' ? 'arrow-up' : 'arrow-down'"></mat-icon>
+        (click)="toggleTopPanel()"
+      >
+        <mat-icon
+          [svgIcon]="
+            (topPanelState$ | async) === 'collapsed' ? 'arrow-up' : 'arrow-down'
+          "
+        ></mat-icon>
       </button>
 
       <button
@@ -60,16 +86,23 @@
         mat-icon-button
         panelRightButton
         class="igo-icon-button"
-        [matTooltip]="((isSelectedResultOutOfView$ | async) ? 'igo.integration.searchResultsTool.zoomOnFeatureTooltipOutOfView' : 'igo.integration.searchResultsTool.zoomOnFeatureTooltip') | translate"
+        [matTooltip]="
+          ((isSelectedResultOutOfView$ | async)
+            ? 'igo.integration.searchResultsTool.zoomOnFeatureTooltipOutOfView'
+            : 'igo.integration.searchResultsTool.zoomOnFeatureTooltip'
+          ) | translate
+        "
         matTooltipShowDelay="500"
-        (click)="zoomToFeatureExtent()">
+        (click)="zoomToFeatureExtent()"
+      >
         <mat-icon
-        aria-hidden="false"
-        [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
-        matBadgeColor="accent"
-        matBadgeSize="small"
-        [matBadgeHidden]="(isSelectedResultOutOfView$ | async)===false"     
-        svgIcon="magnify-plus-outline"></mat-icon>
+          aria-hidden="false"
+          [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
+          matBadgeColor="accent"
+          matBadgeSize="small"
+          [matBadgeHidden]="(isSelectedResultOutOfView$ | async) === false"
+          svgIcon="magnify-plus-outline"
+        ></mat-icon>
       </button>
 
       <igo-feature-details
@@ -77,9 +110,9 @@
         [feature]="feature$ | async"
         [map]="map"
         [toolbox]="toolState.toolbox"
-        (routingEvent)="getRoute()">
+        (routingEvent)="getRoute()"
+      >
       </igo-feature-details>
     </igo-panel>
   </div>
-
 </igo-flexible>

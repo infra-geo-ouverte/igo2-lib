@@ -1,7 +1,6 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatOptionModule } from '@angular/material/core';
@@ -13,8 +12,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import {
+  IgoCustomHtmlModule,
+  IgoDrapDropModule,
+  IgoKeyValueModule,
+  IgoSpinnerModule
+} from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule, IgoCustomHtmlModule } from '@igo2/common';
 
 import { ExportButtonComponent } from './export-button/export-button.component';
 import { ImportExportComponent } from './import-export/import-export.component';
@@ -42,7 +46,11 @@ import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
     IgoCustomHtmlModule
   ],
   exports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent],
-  declarations: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
+  declarations: [
+    ImportExportComponent,
+    DropGeoFileDirective,
+    ExportButtonComponent
+  ]
 })
 export class IgoImportExportModule {
   static forRoot(): ModuleWithProviders<IgoImportExportModule> {

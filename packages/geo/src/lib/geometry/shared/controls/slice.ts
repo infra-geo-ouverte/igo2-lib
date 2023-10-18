@@ -1,10 +1,10 @@
-import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import OlVectorSource from 'ol/source/Vector';
-import OlVectorLayer from 'ol/layer/Vector';
+import OlMap from 'ol/Map';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLineString from 'ol/geom/LineString';
+import OlVectorLayer from 'ol/layer/Vector';
+import OlVectorSource from 'ol/source/Vector';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { Subject, Subscription } from 'rxjs';
 
@@ -23,7 +23,6 @@ export interface SliceControlOptions {
  * Control to modify geometries
  */
 export class SliceControl {
-
   /**
    * Slice end observable
    */
@@ -105,7 +104,7 @@ export class SliceControl {
    * @param olGeometry Ol Geometry
    */
   setOlGeometry(olGeometry: OlGeometry) {
-    const olFeature = new OlFeature({geometry: olGeometry});
+    const olFeature = new OlFeature({ geometry: olGeometry });
     this.olOverlaySource.clear(true);
     this.olOverlaySource.addFeature(olFeature);
   }
@@ -113,7 +112,9 @@ export class SliceControl {
   /**
    * Create an overlay source if none is defined in the options
    */
-  private createOlInnerOverlayLayer(): OlVectorLayer<OlVectorSource<OlGeometry>> {
+  private createOlInnerOverlayLayer(): OlVectorLayer<
+    OlVectorSource<OlGeometry>
+  > {
     return new OlVectorLayer({
       source: this.options.source ? this.options.source : new OlVectorSource(),
       style: this.options.layerStyle,
@@ -157,10 +158,12 @@ export class SliceControl {
       interactionStyle: this.options.drawStyle,
       maxPoints: 2
     });
-    this.drawLineStart$$ = this.drawLineControl.start$
-      .subscribe((olLine: OlLineString) => this.onDrawLineStart(olLine));
-    this.drawLineEnd$$ = this.drawLineControl.end$
-      .subscribe((olLine: OlLineString) => this.onDrawLineEnd(olLine));
+    this.drawLineStart$$ = this.drawLineControl.start$.subscribe(
+      (olLine: OlLineString) => this.onDrawLineStart(olLine)
+    );
+    this.drawLineEnd$$ = this.drawLineControl.end$.subscribe(
+      (olLine: OlLineString) => this.onDrawLineEnd(olLine)
+    );
     this.drawLineControl.setOlMap(this.olMap);
   }
 
@@ -196,14 +199,17 @@ export class SliceControl {
 
     const olFeaturesToRemove = [];
     try {
-      this.olOverlaySource.forEachFeatureInExtent(lineExtent, (olFeature: OlFeature<OlGeometry>) => {
-        const olGeometry = olFeature.getGeometry() as any;
-        const olParts = sliceOlGeometry(olGeometry, olLine);
-        if (olParts.length > 0) {
-          olSlicedGeometries.push(...olParts);
-          olFeaturesToRemove.push(olFeature);
+      this.olOverlaySource.forEachFeatureInExtent(
+        lineExtent,
+        (olFeature: OlFeature<OlGeometry>) => {
+          const olGeometry = olFeature.getGeometry() as any;
+          const olParts = sliceOlGeometry(olGeometry, olLine);
+          if (olParts.length > 0) {
+            olSlicedGeometries.push(...olParts);
+            olFeaturesToRemove.push(olFeature);
+          }
         }
-      });
+      );
     } catch (e) {
       if (e instanceof GeometrySliceError) {
         this.error$.next(e);
@@ -216,7 +222,9 @@ export class SliceControl {
     this.drawLineControl.getSource().clear(true);
 
     this.olOverlaySource.addFeatures(
-      olSlicedGeometries.map((olGeometry: OlGeometry) => new OlFeature(olGeometry))
+      olSlicedGeometries.map(
+        (olGeometry: OlGeometry) => new OlFeature(olGeometry)
+      )
     );
     olFeaturesToRemove.forEach((olFeature: OlFeature<OlGeometry>) => {
       this.olOverlaySource.removeFeature(olFeature);

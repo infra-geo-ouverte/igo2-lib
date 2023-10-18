@@ -1,12 +1,18 @@
 import { NgModule } from '@angular/core';
 
-import { IgoPanelModule, IgoFormModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureModule, IgoFeatureDetailsModule } from '@igo2/geo';
+import { IgoFormModule, IgoPanelModule } from '@igo2/common';
 import { IgoMessageModule } from '@igo2/core';
+import {
+  IgoFeatureDetailsModule,
+  IgoFeatureModule,
+  IgoFilterModule,
+  IgoMapModule,
+  IgoQueryModule
+} from '@igo2/geo';
 
-import { AppSpatialFilterComponent } from './spatial-filter.component';
-import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
+import { AppSpatialFilterComponent } from './spatial-filter.component';
 
 @NgModule({
   declarations: [AppSpatialFilterComponent],

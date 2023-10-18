@@ -5,21 +5,29 @@
     width: 100%;
     display: inline-block;
   }
-  
+
   .mat-mdc-list-item {
     height: auto;
   }
-  
+
   .igo-layer-legend-container {
     padding-left: 1.125em;
     width: calc(100% - 18px);
   }
-  
+
   mat-icon.disabled {
-    color: rgba(0,0,0,.38);
+    color: rgba(0, 0, 0, 0.38);
   }
-  
+
   .separate-item {
     border-bottom: 4px solid darkgrey;
+  }
+
+  ::ng-deep {
+    .mdc-list-item__start,
+    .mdc-list-item__end,
+    .mdc-list-item__content {
+      pointer-events: auto;
+    }
   }
 }

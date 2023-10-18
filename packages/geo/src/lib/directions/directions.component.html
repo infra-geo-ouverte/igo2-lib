@@ -1,4 +1,15 @@
+<div class="directions-options">
+  <mat-slide-toggle
+    [checked]="directionControlIsActive"
+    [labelPosition]="'before'"
+    (change)="onToggleDirectionsControl($event.checked)"
+  >
+    {{ 'igo.geo.directionsForm.toggleActive' | translate }}
+  </mat-slide-toggle>
+</div>
+
 <igo-directions-buttons
+  [stepFeatureStore]="stepFeatureStore"
   [contextUri]="contextUri"
   [zoomToActiveRoute$]="zoomToActiveRoute$"
   [routesFeatureStore]="routesFeatureStore"

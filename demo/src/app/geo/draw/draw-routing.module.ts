@@ -1,4 +1,4 @@
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppDrawComponent } from './draw.component';
 
@@ -9,6 +9,4 @@ const routes: Routes = [
   }
 ];
 
-export const AppDrawRoutingModule = RouterModule.forChild(
-  routes
-);
+export const AppDrawRoutingModule = RouterModule.forChild(routes);

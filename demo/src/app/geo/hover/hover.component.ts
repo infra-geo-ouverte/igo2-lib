@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
-import { IgoMap, DataSourceService, LayerService, WFSDataSourceOptions, VectorLayerOptions, WFSDataSource } from '@igo2/geo';
+import {
+  DataSourceService,
+  IgoMap,
+  LayerService,
+  VectorLayerOptions,
+  WFSDataSource,
+  WFSDataSourceOptions
+} from '@igo2/geo';
 
 @Component({
   selector: 'app-hover',
@@ -28,7 +35,6 @@ export class AppHoverComponent {
     projection: 'EPSG:3857'
   };
 
-
   get media() {
     return this.mediaService.getMedia();
   }
@@ -43,7 +49,6 @@ export class AppHoverComponent {
     private layerService: LayerService,
     private mediaService: MediaService
   ) {
-
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wmts',
@@ -52,7 +57,7 @@ export class AppHoverComponent {
         matrixSet: 'EPSG_3857',
         version: '1.3.0'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Quebec',
@@ -63,8 +68,7 @@ export class AppHoverComponent {
         );
       });
 
-    interface WFSDataOptions
-      extends WFSDataSourceOptions { }
+    interface WFSDataOptions extends WFSDataSourceOptions {}
 
     const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
@@ -128,7 +132,10 @@ export class AppHoverComponent {
                   font: '12px Calibri,sans-serif',
                   fill: { color: '#000' },
                   backgroundFill: { color: 'rgba(255, 255, 255, 0.5)' },
-                  backgroundStroke: { color: 'rgba(200, 200, 200, 0.75)', width: 2 },
+                  backgroundStroke: {
+                    color: 'rgba(200, 200, 200, 0.75)',
+                    width: 2
+                  },
                   stroke: { color: '#fff', width: 3 },
                   overflow: true,
                   offsetX: 20,
@@ -151,6 +158,5 @@ export class AppHoverComponent {
         };
         this.map.addLayer(this.layerService.createLayer(layer));
       });
-
   }
 }

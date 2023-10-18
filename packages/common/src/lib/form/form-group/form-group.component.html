@@ -1,10 +1,9 @@
-<div
-  *ngIf="group && group.fields.length > 0"
-  class="igo-form-group-fields">
+<div *ngIf="group && group.fields.length > 0" class="igo-form-group-fields">
   <div
     *ngFor="let field of group.fields"
     class="igo-form-field-wrapper"
-    [ngClass]="getFieldNgClass(field)">
+    [ngClass]="getFieldNgClass(field)"
+  >
     <igo-form-field [field]="field"></igo-form-field>
   </div>
 </div>
@@ -13,4 +12,6 @@
   <ng-content></ng-content>
 </div>
 
-<mat-error *ngIf="formControl.errors">{{getErrorMessage() | translate}}</mat-error>
+<mat-error *ngIf="formControl.errors">{{
+  getErrorMessage() | translate
+}}</mat-error>

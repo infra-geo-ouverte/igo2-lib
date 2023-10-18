@@ -1,12 +1,13 @@
 import {
-  Component,
-  ChangeDetectionStrategy,
   ApplicationRef,
-  Output,
-  EventEmitter
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output
 } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+
 import { AuthFacebookOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
@@ -36,7 +37,7 @@ export class AuthFacebookComponent {
   }
 
   private subscribeEvents() {
-    (window as any).FB.Event.subscribe('auth.statusChange', rep => {
+    (window as any).FB.Event.subscribe('auth.statusChange', (rep) => {
       this.statusChangeCallback(rep);
     });
   }

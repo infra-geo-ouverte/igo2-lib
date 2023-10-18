@@ -1,8 +1,8 @@
-import * as olproj from 'ol/proj';
+import { NumberUtils } from '@igo2/utils';
+
 import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { MAC } from 'ol/has';
-
-import { NumberUtils } from '@igo2/utils';
+import * as olproj from 'ol/proj';
 
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
@@ -79,7 +79,7 @@ export function stringToLonLat(
   const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex = new RegExp(`^${patternDmd}`, 'g');
 
- /* eslint-disable max-len */
+  /* eslint-disable max-len */
   const patternBELL =
     'LAT\\s*[\\s:]*\\s*([-+])?(\\d{1,2})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*LONG\\s*[\\s:]*\\s*([-+])?(\\d{1,3})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*UNC\\s*[\\s:]?\\s*(\\d+)\\s*CONF\\s*[\\s:]?\\s*(\\d{1,3})';
   const bellRegex = new RegExp(`^${patternBELL}?`, 'gi');
@@ -94,22 +94,13 @@ export function stringToLonLat(
 
   // Extract projection
   if (projectionRegex.test(str)) {
-    [coordStr, projectionStr] = str.split(';').map(s => s.trim());
+    [coordStr, projectionStr] = str.split(';').map((s) => s.trim());
   } else {
     coordStr = str;
   }
   if (lonLatRegex.test(coordStr)) {
-    [
-      ,
-      negativeLon,
-      lon,
-      ,
-      decimalLon,
-      negativeLat,
-      lat,
-      ,
-      decimalLat
-    ] = coordStr.match(lonLatPattern);
+    [, negativeLon, lon, , decimalLon, negativeLat, lat, , decimalLat] =
+      coordStr.match(lonLatPattern);
 
     lon = parseFloat((negativeLon ? negativeLon : '') + lon + '.' + decimalLon);
     lat = parseFloat((negativeLat ? negativeLat : '') + lat + '.' + decimalLat);
@@ -305,8 +296,10 @@ export function stringToLonLat(
   // Reproject the coordinate if projection parameter have been set and coord is not 4326
   if (
     (projectionStr !== undefined && projectionStr !== toProjection) ||
-    (lonLat[0] > 180 || lonLat[0] < -180) ||
-    (lonLat[1] > 90 || lonLat[1] < -90)
+    lonLat[0] > 180 ||
+    lonLat[0] < -180 ||
+    lonLat[1] > 90 ||
+    lonLat[1] < -90
   ) {
     const source = projectionStr ? 'EPSG:' + projectionStr : mapProjection;
     const dest = 'EPSG:' + toProjection;
@@ -371,11 +364,12 @@ function convertDMSToDD(
  * @returns longitude and latitude in dms
  */
 export function convertDDToDMS(
-  lonLatDD: [number, number], decimal: number = 3
+  lonLatDD: [number, number],
+  decimal: number = 3
 ): string[] {
   const lonLatDMS = [];
 
-  lonLatDD.forEach(dd => {
+  lonLatDD.forEach((dd) => {
     const degrees = dd < 0 ? Math.ceil(dd) : Math.floor(dd);
     const int = dd < 0 ? (degrees - dd) * 60 : (dd - degrees) * 60;
     const minutes = Math.floor(int);
@@ -472,14 +466,24 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
   );
 }
 
-export function roundCoordTo(coord: [number, number], decimal: number = 3): [number, number] {
+export function roundCoordTo(
+  coord: [number, number],
+  decimal: number = 3
+): [number, number] {
   return [
     NumberUtils.roundToNDecimal(coord[0], decimal),
-    NumberUtils.roundToNDecimal(coord[1], decimal)] as [number, number];
+    NumberUtils.roundToNDecimal(coord[1], decimal)
+  ] as [number, number];
 }
 
-export function roundCoordToString(coord: [number, number], decimal: number = 3): [string, string]{
-    return roundCoordTo(coord, decimal).map(r => r.toString()) as [string, string];
+export function roundCoordToString(
+  coord: [number, number],
+  decimal: number = 3
+): [string, string] {
+  return roundCoordTo(coord, decimal).map((r) => r.toString()) as [
+    string,
+    string
+  ];
 }
 
 /**
@@ -500,7 +504,10 @@ export function lonLatConversion(
   coord: [number, number];
   igo2CoordFormat: string;
 }[] {
-  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857') as [number, number];
+  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857') as [
+    number,
+    number
+  ];
   const convertedLonLat = [
     {
       code: 'EPSG:3857',
@@ -514,7 +521,10 @@ export function lonLatConversion(
   const utmZone = utmZoneFromLonLat(lonLat);
   const epsgUtm = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
   const utmName = `UTM-${utmZone}`;
-  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm) as [number, number];
+  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm) as [
+    number,
+    number
+  ];
   convertedLonLat.push({
     code: epsgUtm,
     alias: 'UTM',
@@ -528,7 +538,10 @@ export function lonLatConversion(
     const epsgMtm =
       mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
     const mtmName = `MTM-${mtmZone}`;
-    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm) as [number, number];
+    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm) as [
+      number,
+      number
+    ];
     convertedLonLat.push({
       code: epsgMtm,
       alias: 'MTM',
@@ -537,14 +550,19 @@ export function lonLatConversion(
     });
   }
 
-  projections.forEach(projection => {
-    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code) as [number, number];
+  projections.forEach((projection) => {
+    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code) as [
+      number,
+      number
+    ];
     const numericEpsgCode = projection.code.split(':')[1];
     convertedLonLat.push({
       code: projection.code,
       alias: projection.alias || projection.code,
       coord: rawCoord,
-      igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}`
+      igo2CoordFormat: `${roundCoordTo(rawCoord).join(
+        ', '
+      )} ; ${numericEpsgCode}`
     });
   });
 

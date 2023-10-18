@@ -1,20 +1,20 @@
-<mat-form-field
-  class="measure-field"
-  floatLabel="always">
-  <mat-label>{{placeholder}}</mat-label>
+<mat-form-field class="measure-field" floatLabel="always">
+  <mat-label>{{ placeholder }}</mat-label>
   <input
     matInput
     [disabled]="true"
     [readonly]="true"
-    [value]="((measure$ | async) || 0) | measureFormat: measureUnit">
+    [value]="(measure$ | async) || 0 | measureFormat: measureUnit"
+  />
 </mat-form-field>
 <mat-form-field class="unit-field">
   <mat-select
     [value]="measureUnit"
     [disabled]="auto"
-    (selectionChange)="onMeasureUnitChange($event.value)">
+    (selectionChange)="onMeasureUnitChange($event.value)"
+  >
     <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-      {{('igo.geo.measure.' + measureUnit) | translate}}
+      {{ 'igo.geo.measure.' + measureUnit | translate }}
     </mat-option>
   </mat-select>
 </mat-form-field>

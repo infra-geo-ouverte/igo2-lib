@@ -1,17 +1,22 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   OnInit,
-  ChangeDetectionStrategy,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
-import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-filter.enum';
 import { UntypedFormControl } from '@angular/forms';
+
 import { EntityStore } from '@igo2/common';
+
 import { Feature } from '../../../feature';
-import { MeasureLengthUnit } from '../../../measure';
 import { Layer } from '../../../layer';
+import { MeasureLengthUnit } from '../../../measure';
+import {
+  SpatialFilterQueryType,
+  SpatialFilterType
+} from '../../shared/spatial-filter.enum';
 
 /**
  * Spatial Filter Type
@@ -23,7 +28,6 @@ import { Layer } from '../../../layer';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpatialFilterTypeComponent implements OnInit {
-
   @Input()
   get store(): EntityStore<Feature> {
     return this._store;
@@ -33,7 +37,16 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
   private _store: EntityStore<Feature>;
 
-  public queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
+  public queryType: string[] = [
+    'Arrond',
+    'CircFed',
+    'CircProv',
+    'DirReg',
+    'Mun',
+    'MRC',
+    'AdmRegion',
+    'RegTour'
+  ];
   public selectedTypeIndex = new UntypedFormControl(0);
 
   /**

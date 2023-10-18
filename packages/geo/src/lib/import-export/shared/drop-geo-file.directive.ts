@@ -1,26 +1,38 @@
-import { Directive, HostListener, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+
+import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
+import { ConfigService, MessageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
-
-import { MessageService, ConfigService } from '@igo2/core';
-import { ConfirmDialogService, DragAndDropDirective } from '@igo2/common';
+import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-import { ImportService } from './import.service';
-import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { StyleListService } from '../../style/style-list/style-list.service';
-import { concatMap, first, skipWhile } from 'rxjs/operators';
 import { LayerService } from '../../layer/shared/layer.service';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+import { StyleListService } from '../../style/style-list/style-list.service';
+import { StyleService } from '../../style/style-service/style.service';
+import {
+  handleFileImportError,
+  handleFileImportSuccess
+} from '../shared/import.utils';
 import { ImportExportServiceOptions } from './import.interface';
+import { ImportService } from './import.service';
 
 @Directive({
   selector: '[igoDropGeoFile]'
 })
-export class DropGeoFileDirective extends DragAndDropDirective implements OnInit, OnDestroy {
-
+export class DropGeoFileDirective
+  extends DragAndDropDirective
+  implements OnInit, OnDestroy
+{
   protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
   private epsgCode$: BehaviorSubject<string> = new BehaviorSubject(undefined);
@@ -75,23 +87,29 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
     for (const file of files) {
       this.detectEPSG(file);
       this.epsgCode$$.push(
-        this.epsgCode$.pipe(
-          skipWhile((code) => !code),
-          first(),
-          concatMap(epsgCode => {
-            const epsg = epsgCode === 'epsgNotDefined' ? undefined : epsgCode;
-            this.epsgCode$.next(undefined);
-            return this.importService.import(file, epsg);
-          }),
-        ).subscribe(
-          (features: Feature[]) => this.onFileImportSuccess(file, features),
-          (error: Error) => this.onFileImportError(file, error)
-        ));
+        this.epsgCode$
+          .pipe(
+            skipWhile((code) => !code),
+            first(),
+            concatMap((epsgCode) => {
+              const epsg = epsgCode === 'epsgNotDefined' ? undefined : epsgCode;
+              this.epsgCode$.next(undefined);
+              return this.importService.import(file, epsg);
+            })
+          )
+          .subscribe(
+            (features: Feature[]) => this.onFileImportSuccess(file, features),
+            (error: Error) => this.onFileImportError(file, error)
+          )
+      );
     }
   }
 
   private detectEPSG(file: File, nbLines: number = 500) {
-    if (!file.name.toLowerCase().endsWith('.geojson') && !file.name.toLowerCase().endsWith('.gml')) {
+    if (
+      !file.name.toLowerCase().endsWith('.geojson') &&
+      !file.name.toLowerCase().endsWith('.gml')
+    ) {
       this.epsgCode$.next('epsgNotDefined');
       return;
     }
@@ -111,15 +129,15 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
         } else {
           this.epsgCode$.next('epsgNotDefined');
           return;
-      }
+        }
       } else if (file.name.toLowerCase().endsWith('.gml')) {
-        const text = (reader.result as string);
+        const text = reader.result as string;
         const lines = (text as string).split('\n');
         for (let line = 0; line <= nbLines; line++) {
           const epsg = lines[line].match(/EPSG:\d{0,6}/gm);
           if (epsg !== null && epsg.length) {
-              this.epsgCode$.next(epsg[0]);
-              break;
+            this.epsgCode$.next(epsg[0]);
+            break;
           } else {
             this.epsgCode$.next(undefined);
             return;
@@ -134,19 +152,13 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    const importExportOptions = this.config.getConfig('importExport') as ImportExportServiceOptions;
-    const importWithStyle =importExportOptions?.importWithStyle || this.config.getConfig('importWithStyle');
-    if (this.config.getConfig('importWithStyle')) {
-      console.warn(`
-      The location of this config importWithStyle is deprecated.
-      Please move this property within importExport configuration.
-      Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
-      Refer to environnement.ts OR config/config.json
-      This legacy conversion will be deleted in 2024.
-      `);
-    }
-    const confirmDialogService = importExportOptions?.allowToStoreLayer ? this.confirmDialogService : undefined;
-    if (!importWithStyle) {
+    const importExportOptions = this.config.getConfig(
+      'importExport'
+    ) as ImportExportServiceOptions;
+    const confirmDialogService = importExportOptions?.allowToStoreLayer
+      ? this.confirmDialogService
+      : undefined;
+    if (!importExportOptions?.importWithStyle) {
       handleFileImportSuccess(
         file,
         features,
@@ -154,10 +166,20 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
         this.contextUri,
         this.messageService,
         this.layerService,
-        confirmDialogService);
+        confirmDialogService
+      );
     } else {
-      handleFileImportSuccess(file, features, this.map, this.contextUri, this.messageService,
-        this.layerService, confirmDialogService, this.styleListService, this.styleService);
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.contextUri,
+        this.messageService,
+        this.layerService,
+        confirmDialogService,
+        this.styleListService,
+        this.styleService
+      );
     }
   }
 
@@ -166,6 +188,7 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
       file,
       error,
       this.messageService,
-      this.config.getConfig('importExport.clientSideFileSizeMaxMb'));
+      this.config.getConfig('importExport.clientSideFileSizeMaxMb')
+    );
   }
 }

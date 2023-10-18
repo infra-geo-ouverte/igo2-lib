@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import type { Media } from '@igo2/core';
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
+import type { Media } from '@igo2/core';
 import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
@@ -86,7 +86,11 @@ export class SidenavComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.viewProjection
       });
-      moveToOlFeatures(this.map.viewController, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(
+        this.map.viewController,
+        [olFeature],
+        FeatureMotion.Zoom
+      );
     }
   }
 
@@ -97,5 +101,4 @@ export class SidenavComponent {
       this.topPanelState = 'initial';
     }
   }
-
 }

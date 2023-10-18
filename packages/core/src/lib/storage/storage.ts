@@ -1,22 +1,21 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { ConfigService } from '../config/config.service';
 import {
-  StorageScope,
   StorageOptions,
+  StorageScope,
   StorageServiceEvent,
   StorageServiceEventEnum
 } from './storage.interface';
-import { BehaviorSubject } from 'rxjs';
 
-export abstract class BaseStorage<
-  T extends StorageOptions = StorageOptions
-> {
+export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
   protected options?: T;
 
   public storageChange$: BehaviorSubject<StorageServiceEvent> =
     new BehaviorSubject(undefined);
 
   constructor(config: ConfigService) {
-    this.options = config.getConfig('storage') || { key: 'igo' };
+    this.options = config.getConfig<T>('storage') || ({ key: 'igo' } as T);
   }
 
   /**
@@ -62,8 +61,12 @@ export abstract class BaseStorage<
 
     if (currentValue !== previousValue) {
       this.storageChange$.next({
-        key, scope,
-        event: previousValue !== undefined ? StorageServiceEventEnum.MODIFIED : StorageServiceEventEnum.ADDED,
+        key,
+        scope,
+        event:
+          previousValue !== undefined
+            ? StorageServiceEventEnum.MODIFIED
+            : StorageServiceEventEnum.ADDED,
         previousValue,
         currentValue
       });
@@ -77,7 +80,12 @@ export abstract class BaseStorage<
     } else {
       localStorage.removeItem(`${this.options.key}.${key}`);
     }
-    this.storageChange$.next({key, scope, event: StorageServiceEventEnum.REMOVED, previousValue });
+    this.storageChange$.next({
+      key,
+      scope,
+      event: StorageServiceEventEnum.REMOVED,
+      previousValue
+    });
   }
 
   clear(scope: StorageScope = StorageScope.LOCAL) {
@@ -86,6 +94,6 @@ export abstract class BaseStorage<
     } else {
       localStorage.clear();
     }
-    this.storageChange$.next({scope, event: StorageServiceEventEnum.CLEARED });
+    this.storageChange$.next({ scope, event: StorageServiceEventEnum.CLEARED });
   }
 }
