@@ -1,5 +1,5 @@
-import { EnvironmentOptions } from '@igo2/integration';
 import { CatalogQueryFormatTypes, ICatalog, TooltipType } from '@igo2/geo';
+import { EnvironmentOptions } from '@igo2/integration';
 
 export const environment: EnvironmentOptions = {
   production: true,

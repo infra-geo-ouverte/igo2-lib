@@ -1,5 +1,5 @@
+import { CatalogQueryFormatTypes, ICatalog, TooltipType } from '@igo2/geo';
 import { EnvironmentOptions } from '@igo2/integration';
-import { TooltipType, CatalogQueryFormatTypes, ICatalog } from '@igo2/geo';
 
 export const environment: EnvironmentOptions = {
   production: false,
@@ -296,7 +296,7 @@ export const environment: EnvironmentOptions = {
         order: 2,
         enabled: true,
         params: {
-          limit: '8',
+          limit: '8'
         },
         showAdvancedSettings: true
       },

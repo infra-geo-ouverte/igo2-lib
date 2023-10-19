@@ -309,38 +309,39 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             }
           ]
         } satisfies SearchSourceSettings,
-        showAdvancedParams && {
-          type: 'radiobutton',
-          title: 'ecmax',
-          name: 'ecmax',
-          values: [
-            {
-              title: '10 %',
-              value: 10,
-              enabled: ecmax === 10
-            },
-            {
-              title: '30 %',
-              value: 30,
-              enabled: ecmax === 30 || !ecmax
-            },
-            {
-              title: '50 %',
-              value: 50,
-              enabled: ecmax === 50
-            },
-            {
-              title: '75 %',
-              value: 75,
-              enabled: ecmax === 75
-            },
-            {
-              title: '100 %',
-              value: 100,
-              enabled: ecmax === 100
-            }
-          ]
-        } satisfies SearchSourceSettings,
+        showAdvancedParams &&
+          ({
+            type: 'radiobutton',
+            title: 'ecmax',
+            name: 'ecmax',
+            values: [
+              {
+                title: '10 %',
+                value: 10,
+                enabled: ecmax === 10
+              },
+              {
+                title: '30 %',
+                value: 30,
+                enabled: ecmax === 30 || !ecmax
+              },
+              {
+                title: '50 %',
+                value: 50,
+                enabled: ecmax === 50
+              },
+              {
+                title: '75 %',
+                value: 75,
+                enabled: ecmax === 75
+              },
+              {
+                title: '100 %',
+                value: 100,
+                enabled: ecmax === 100
+              }
+            ]
+          } satisfies SearchSourceSettings),
         {
           type: 'radiobutton',
           title: 'restrictExtent',

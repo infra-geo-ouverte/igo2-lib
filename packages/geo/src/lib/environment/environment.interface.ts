@@ -1,4 +1,6 @@
 import { DOMOptions, DepotOptions } from '@igo2/common';
+
+import { CatalogServiceOptions } from '../catalog';
 import { OptionsApiOptions } from '../datasource';
 import { DirectionsSourceOptions } from '../directions';
 import { DrawOptions } from '../draw/shared/draw.interface';
@@ -15,7 +17,6 @@ import {
   StoredQueriesSearchSourceOptions
 } from '../search';
 import { OverlayStyleOptions } from '../style';
-import { CatalogServiceOptions } from '../catalog';
 
 export interface EnvironmentOptions {
   catalog?: CatalogServiceOptions;
