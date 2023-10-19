@@ -21,7 +21,7 @@
         "advancedMap": "Advanced map tools",
         "closestFeature": "Closest feature tool"
       },
-      "catalog":{
+      "catalog": {
         "library.getCatalogList": "Get the catalog services list"
       },
       "searchResultsTool": {
