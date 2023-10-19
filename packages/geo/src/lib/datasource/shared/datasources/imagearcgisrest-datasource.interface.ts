@@ -1,5 +1,5 @@
-import ImageArcGISRest from 'ol/source/ImageArcGISRest';
 import olAttribution from 'ol/control/Attribution';
+import ImageArcGISRest from 'ol/source/ImageArcGISRest';
 
 import { DataSourceOptions } from './datasource.interface';
 

@@ -1,41 +1,40 @@
 import {
   Directive,
+  HostListener,
   Input,
   OnDestroy,
-  Self,
   OnInit,
-  HostListener
+  Self
 } from '@angular/core';
-import olLayerVectorTile from 'ol/layer/VectorTile';
-import olLayerVector from 'ol/layer/Vector';
-
-import { Subscription } from 'rxjs';
-import olVectorTileSource from 'ol/source/VectorTile';
-
-import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
-
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-import { Feature } from '../../feature/shared/feature.interfaces';
-
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import OlFeature from 'ol/Feature';
-import * as OlGeom from 'ol/geom';
 
 import { EntityStore } from '@igo2/common';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { VectorLayer, Layer, VectorTileLayer } from '../../layer/shared/layers';
-import { first } from 'rxjs/operators';
-import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
-import { FeatureStore } from '../../feature/shared/store';
-import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
-import { StyleService } from '../../style/style-service/style.service';
-import { unByKey } from 'ol/Observable';
-import RenderFeature from 'ol/render/Feature';
-import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
-import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
 import { SubjectStatus } from '@igo2/utils';
+
+import OlFeature from 'ol/Feature';
+import type { default as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import * as OlGeom from 'ol/geom';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olLayerVector from 'ol/layer/Vector';
+import olLayerVectorTile from 'ol/layer/VectorTile';
+import RenderFeature from 'ol/render/Feature';
+import olVectorTileSource from 'ol/source/VectorTile';
+
+import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
+
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { FeatureStore } from '../../feature/shared/store';
+import { Layer, VectorLayer, VectorTileLayer } from '../../layer/shared/layers';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+import { hoverFeatureMarkerStyle } from '../../style/shared/feature/feature-style';
+import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
+import { StyleService } from '../../style/style-service/style.service';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.

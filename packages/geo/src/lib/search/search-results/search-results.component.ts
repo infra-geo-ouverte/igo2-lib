@@ -1,33 +1,32 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ContentChild,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
-import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
-import { debounce, map } from 'rxjs/operators';
-
-import { ConfigService } from '@igo2/core';
 import {
   EntityState,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreWatcher,
   EntityStoreWithStrategy
 } from '@igo2/common';
+import { ConfigService } from '@igo2/core';
+
+import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
+import { debounce, map } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared';
-
-import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
-import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
+import { TextSearchOptions } from '../shared/sources/source.interfaces';
 
 export enum SearchResultMode {
   Grouped = 'grouped',

@@ -1,48 +1,50 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
+  Component,
   ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Optional,
-  Self
+  Output,
+  Self,
+  SimpleChanges,
+  TrackByFunction
 } from '@angular/core';
+import {
+  FormControlName,
+  NgControl,
+  NgForm,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
+import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
+import { StringUtils } from '@igo2/utils';
+
+import { default as moment } from 'moment';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 import {
   EntityKey,
   EntityRecord,
   EntityState,
   EntityStore,
-  EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
+  EntityTableScrollBehavior,
   EntityTableSelectionState,
-  EntityTableScrollBehavior
+  EntityTableTemplate
 } from '../shared';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import {
-  UntypedFormBuilder,
-  NgControl,
-  NgForm,
-  FormControlName,
-  UntypedFormGroup
-} from '@angular/forms';
-import { FocusMonitor } from '@angular/cdk/a11y';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { debounceTime, map } from 'rxjs/operators';
-import { default as moment } from 'moment';
-import { StringUtils } from '@igo2/utils';
 
 interface CellData {
   [key: string]: {
@@ -482,16 +484,19 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       this.dataSource.data = all.map((record) => {
         return {
           record,
-          cellData: this.template.columns.reduce((cellData, column) => {
-            const value = this.getValue(record, column);
-            cellData[column.name] = {
-              class: this.getCellClass(record, column),
-              value,
-              isUrl: this.isUrl(value),
-              isImg: this.isImg(value)
-            };
-            return cellData;
-          }, {})
+          cellData: this.template.columns.reduce(
+            (cellData: CellData, column) => {
+              const value = this.getValue(record, column);
+              cellData[column.name] = {
+                class: this.getCellClass(record, column),
+                value,
+                isUrl: this.isUrl(value),
+                isImg: this.isImg(value)
+              };
+              return cellData;
+            },
+            {}
+          )
         };
       });
     });
@@ -520,14 +525,11 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
    * @param index Record index
    * @internal
    */
-  getTrackByFunction() {
-    return (index: number, record: EntityRecord<object, EntityState>) => {
-      return record.ref;
-    };
+  getTrackByFunction(): TrackByFunction<RowData> {
+    return (_index, row) => row.record.ref;
   }
-
   /**
-   * Trigger a refresh of thre table. This can be useful when
+   * Trigger a refresh of the table. This can be useful when
    * the data source doesn't emit a new value but for some reason
    * the records need an update.
    * @internal

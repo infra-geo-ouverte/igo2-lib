@@ -1,4 +1,5 @@
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
 import { AppHoverComponent } from './hover.component';
 
 const routes: Routes = [

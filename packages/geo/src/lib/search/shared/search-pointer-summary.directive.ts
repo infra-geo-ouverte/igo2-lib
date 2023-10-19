@@ -1,41 +1,40 @@
-import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
 import {
+  AfterContentChecked,
   Directive,
+  HostListener,
   Input,
   OnDestroy,
-  Self,
   OnInit,
-  AfterContentChecked,
-  HostListener
+  Self
 } from '@angular/core';
+
+import { EntityStore } from '@igo2/common';
+import { MediaService } from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
+import olFeature from 'ol/Feature';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olgeom from 'ol/geom';
+import { transform } from 'ol/proj';
 
 import { Subscription, first } from 'rxjs';
 
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { SearchService } from './search.service';
-
-import olFeature from 'ol/Feature';
-import { transform } from 'ol/proj';
-import * as olgeom from 'ol/geom';
-import OlGeoJSON from 'ol/format/GeoJSON';
-
-import { SearchResult, Research } from './search.interfaces';
-import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
+import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
+import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStore } from '../../feature/shared/store';
-import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
-import { SearchSourceService } from './search-source.service';
-import { sourceCanReverseSearchAsSummary } from './search.utils';
-import { MediaService } from '@igo2/core';
-import { unByKey } from 'ol/Observable';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
 import { pointerPositionSummaryMarkerStyle } from '../../style/shared/feature/feature-style';
-import { SubjectStatus } from '@igo2/utils';
+import { FeatureGeometry } from './../../feature/shared/feature.interfaces';
+import { SearchSourceService } from './search-source.service';
+import { Research, SearchResult } from './search.interfaces';
+import { SearchService } from './search.service';
+import { sourceCanReverseSearchAsSummary } from './search.utils';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.

@@ -1,10 +1,11 @@
-import { Pipe, PipeTransform } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Pipe, PipeTransform } from '@angular/core';
 
-import { Cacheable } from 'ts-cacheable';
+import { ConfigService } from '@igo2/core';
+
 import { Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { ConfigService } from '@igo2/core';
+import { Cacheable } from 'ts-cacheable';
 
 @Pipe({
   name: 'secureImage'

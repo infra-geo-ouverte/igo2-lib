@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 
 import { IgoPanelModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule } from '@igo2/geo';
+import { IgoFilterModule, IgoMapModule } from '@igo2/geo';
 
-import { AppOgcFilterComponent } from './ogc-filter.component';
-import { AppOgcFilterRoutingModule } from './ogc-filter-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppOgcFilterRoutingModule } from './ogc-filter-routing.module';
+import { AppOgcFilterComponent } from './ogc-filter.component';
 
 @NgModule({
   declarations: [AppOgcFilterComponent],

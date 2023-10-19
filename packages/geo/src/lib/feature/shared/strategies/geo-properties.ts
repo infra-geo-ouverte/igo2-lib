@@ -1,17 +1,19 @@
 import { EntityStoreStrategy } from '@igo2/common';
+import { ObjectUtils } from '@igo2/utils';
+
+import { Subscription, debounceTime, pairwise } from 'rxjs';
+
 import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
-import { FeatureStore } from '../store';
+import { Layer } from '../../../layer/shared/layers/layer';
+import { IgoMap } from '../../../map/shared/map';
+import { GeoServiceDefinition } from '../../../utils';
+import { generateIdFromSourceOptions } from '../../../utils/id-generator';
+import { PropertyTypeDetectorService } from '../../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import {
   Feature,
   FeatureStorePropertyTypeStrategyOptions
 } from '../feature.interfaces';
-import { Subscription, debounceTime, pairwise } from 'rxjs';
-import { PropertyTypeDetectorService } from '../../../utils/propertyTypeDetector/propertyTypeDetector.service';
-import { ObjectUtils } from '@igo2/utils';
-import { generateIdFromSourceOptions } from '../../../utils/id-generator';
-import { IgoMap } from '../../../map/shared/map';
-import { Layer } from '../../../layer/shared/layers/layer';
-import { GeoServiceDefinition } from '../../../utils';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy maintain the store features updated to detect geoproperties

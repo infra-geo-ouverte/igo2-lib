@@ -1,27 +1,29 @@
+import { HttpClient } from '@angular/common/http';
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Output,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { getEntityIcon, getEntityTitle } from '@igo2/common';
+import type { Toolbox } from '@igo2/common';
+import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
+import { Clipboard } from '@igo2/utils';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
-import { ConfigService } from '@igo2/core';
-import { getEntityTitle, getEntityIcon } from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
-
-import { Feature } from '../shared';
-import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
-import { HttpClient } from '@angular/common/http';
-import { Clipboard } from '@igo2/utils';
+import { SearchSource } from '../../search/shared/sources/source';
+import { Feature } from '../shared';
+
 @Component({
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',

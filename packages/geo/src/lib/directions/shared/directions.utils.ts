@@ -1,31 +1,31 @@
+import { LanguageService } from '@igo2/core';
+import { NumberUtils, uuid } from '@igo2/utils';
+
 import olFeature from 'ol/Feature';
-import * as olStyle from 'ol/style';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olGeom from 'ol/geom';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import * as olGeom from 'ol/geom';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olProj from 'ol/proj';
+import * as olStyle from 'ol/style';
 
-import { uuid, NumberUtils } from '@igo2/utils';
-
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
+import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
+import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
+import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
+import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
+import {
+  DirectionRelativePositionType,
+  DirectionType
+} from './directions.enum';
 import {
   Direction,
   FeatureWithDirection,
   FeatureWithStop,
   Stop
 } from './directions.interface';
-import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
-import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
-import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
-import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
-import { LanguageService } from '@igo2/core';
-import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
-import {
-  DirectionRelativePositionType,
-  DirectionType
-} from './directions.enum';
 import {
   RoutesFeatureStore,
   StepFeatureStore,

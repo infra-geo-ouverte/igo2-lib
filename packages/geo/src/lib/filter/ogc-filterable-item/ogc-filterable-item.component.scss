@@ -22,4 +22,12 @@
   .separate-item {
     border-bottom: 4px solid darkgrey;
   }
+
+  ::ng-deep {
+    .mdc-list-item__start,
+    .mdc-list-item__end,
+    .mdc-list-item__content {
+      pointer-events: auto;
+    }
+  }
 }

@@ -1,22 +1,23 @@
 import {
   Component,
-  Input,
-  ViewChild,
   ElementRef,
-  Output,
   EventEmitter,
-  OnInit
+  Input,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
+
+import { default as moment } from 'moment';
+
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
 import {
-  OgcFilterableDataSourceOptions,
+  OgcFilterDuringOptions,
   OgcFilterableDataSource,
-  OgcFilterDuringOptions
+  OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
-
-import { default as moment } from 'moment';
 
 @Component({
   selector: 'igo-ogc-filter-time',

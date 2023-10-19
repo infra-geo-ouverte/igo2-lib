@@ -1,19 +1,19 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { Layer } from '../../layer/shared/layers/layer';
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
-import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
+import { Layer } from '../../layer/shared/layers/layer';
+import { IgoMap } from '../../map/shared';
+import { OgcFilterWriter } from '../shared/ogc-filter';
 import {
   OgcFilterableDataSource,
   OgcFiltersOptions,
   OgcInterfaceFilterOptions
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
-import { IgoMap } from '../../map/shared';
-import { OgcFilterWriter } from '../shared/ogc-filter';
-import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-ogc-filterable-item',

@@ -1,15 +1,16 @@
-import * as Olstyle from 'ol/style';
-import OlPoint from 'ol/geom/Point';
-import OlLineString from 'ol/geom/LineString';
-import OlPolygon from 'ol/geom/Polygon';
-import OlCircle from 'ol/geom/Circle';
 import OlOverlay from 'ol/Overlay';
+import OlCircle from 'ol/geom/Circle';
+import OlLineString from 'ol/geom/LineString';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import * as Olstyle from 'ol/style';
+
+import { convertDDToDMS, roundCoordToString } from '../../map/shared/map.utils';
 import {
-  updateOlGeometryMidpoints,
-  updateOlGeometryCenter
+  updateOlGeometryCenter,
+  updateOlGeometryMidpoints
 } from '../../measure/shared/measure.utils';
 import { CoordinatesUnit } from './draw.enum';
-import { convertDDToDMS, roundCoordToString } from '../../map/shared/map.utils';
 
 /**
  * Create a default style

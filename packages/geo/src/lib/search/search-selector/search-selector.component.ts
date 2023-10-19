@@ -1,18 +1,18 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
-import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
+import { SEARCH_TYPES } from '../shared/search.enums';
 
 /**
  * This component allows a user to select a search type yo enable. In it's

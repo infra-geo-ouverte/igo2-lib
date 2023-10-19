@@ -1,27 +1,26 @@
+import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+
 import OlFeature from 'ol/Feature';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlDragBoxInteraction, { DragBoxEvent } from 'ol/interaction/DragBox';
 import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
-import { EventsKey } from 'ol/events';
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { unByKey } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
-import { map, debounceTime, skip } from 'rxjs/operators';
-
-import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+import { debounceTime, map, skip } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../../datasource';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../../map/shared/map';
 import { ctrlKeyDown } from '../../../map/shared/map.utils';
-
+import { FeatureMotion } from '../feature.enums';
 import {
   Feature,
   FeatureStoreSelectionStrategyOptions
 } from '../feature.interfaces';
 import { FeatureStore } from '../store';
-import { FeatureMotion } from '../feature.enums';
 
 export class OlDragSelectInteraction extends OlDragBoxInteraction {
   constructor(options) {

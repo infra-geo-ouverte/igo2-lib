@@ -1,29 +1,32 @@
-import { WfsWorkspace } from './wfs-workspace';
-import { FeatureWorkspace } from './feature-workspace';
-import { Observable } from 'rxjs';
 import {
-  EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
-  EntityTableColumnRenderer,
-  EntityTableButton,
+  EntityStoreFilterCustomFuncStrategy,
   EntityStoreStrategyFuncOptions,
+  EntityTableButton,
+  EntityTableColumnRenderer,
   EntityTableTemplate,
   Workspace
 } from '@igo2/common';
-import { map, skipWhile, take } from 'rxjs/operators';
-import { Feature } from '../../feature/shared/feature.interfaces';
-import { StorageScope } from '@igo2/core';
 import { EntityTableColumn } from '@igo2/common';
+import { StorageScope } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
-import { IgoMap } from '../../map/shared/map';
-import { generateIdFromSourceOptions } from '../../utils/id-generator';
-import { LayerService, VectorLayer } from '../../layer';
+
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+
+import { Observable } from 'rxjs';
+import { map, skipWhile, take } from 'rxjs/operators';
+
 import {
   RelationOptions,
   SourceFieldsOptionsParams
 } from '../../datasource/shared/datasources/datasource.interface';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { LayerService, VectorLayer } from '../../layer';
+import { IgoMap } from '../../map/shared/map';
+import { generateIdFromSourceOptions } from '../../utils/id-generator';
+import { FeatureWorkspace } from './feature-workspace';
+import { WfsWorkspace } from './wfs-workspace';
 
 export function getRowsInMapExtent(layerId, storageService): boolean {
   return (

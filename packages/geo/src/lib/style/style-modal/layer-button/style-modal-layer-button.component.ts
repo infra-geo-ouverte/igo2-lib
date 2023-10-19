@@ -1,7 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 
+import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { StyleModalLayerComponent } from '../layer/style-modal-layer.component';
 import { LayerMatDialogData } from '../shared/style-modal.interface';
 

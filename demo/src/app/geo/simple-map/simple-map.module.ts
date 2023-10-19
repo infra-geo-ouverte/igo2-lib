@@ -4,9 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 
 import { IgoMapModule } from '@igo2/geo';
 
-import { AppSimpleMapComponent } from './simple-map.component';
-import { AppSimpleMapRoutingModule } from './simple-map-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppSimpleMapRoutingModule } from './simple-map-routing.module';
+import { AppSimpleMapComponent } from './simple-map.component';
 
 @NgModule({
   declarations: [AppSimpleMapComponent],

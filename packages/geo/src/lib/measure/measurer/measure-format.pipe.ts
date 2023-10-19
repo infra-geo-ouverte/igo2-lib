@@ -2,9 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { MeasureAreaUnit, MeasureLengthUnit } from '../shared/measure.enum';
 import {
+  formatMeasure,
   metersToUnit,
-  squareMetersToUnit,
-  formatMeasure
+  squareMetersToUnit
 } from '../shared/measure.utils';
 
 /**

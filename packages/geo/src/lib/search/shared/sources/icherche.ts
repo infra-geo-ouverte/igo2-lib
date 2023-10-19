@@ -1,38 +1,36 @@
-import { Injectable, Inject, Injector } from '@angular/core';
 import {
   HttpClient,
-  HttpParams,
-  HttpParameterCodec
+  HttpParameterCodec,
+  HttpParams
 } from '@angular/common/http';
-
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Inject, Injectable, Injector } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
 
 import { FEATURE, Feature } from '../../../feature';
+import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 import { GoogleLinks } from './../../../utils/googleLinks';
-
-import { SearchResult, TextSearch, ReverseSearch } from '../search.interfaces';
-import { SearchSource } from './source';
-import {
-  SearchSourceOptions,
-  TextSearchOptions,
-  ReverseSearchOptions,
-  SearchSourceSettings
-} from './source.interfaces';
 import {
   IChercheData,
   IChercheResponse,
   IChercheReverseData,
   IChercheReverseResponse
 } from './icherche.interfaces';
-import { computeTermSimilarity } from '../search.utils';
-import { Cacheable } from 'ts-cacheable';
+import { SearchSource } from './source';
+import {
+  ReverseSearchOptions,
+  SearchSourceOptions,
+  SearchSourceSettings,
+  TextSearchOptions
+} from './source.interfaces';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -139,7 +137,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           'lieux'
         ];
 
-    const showAdvancedParams = this.options.showAdvancedSettings ?? true;
+    const showAdvancedParams = this.options.showAdvancedSettings;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -278,7 +276,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['grille', 'culture']
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -310,7 +308,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         showAdvancedParams && {
           type: 'radiobutton',
           title: 'ecmax',
@@ -342,7 +340,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: ecmax === 100
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'restrictExtent',
@@ -359,8 +357,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true
             }
           ]
-        }
-      ].filter(Boolean) as SearchSourceSettings[]
+        } satisfies SearchSourceSettings
+      ].filter(Boolean)
     };
   }
 

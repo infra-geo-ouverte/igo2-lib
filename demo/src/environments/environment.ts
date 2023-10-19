@@ -296,7 +296,7 @@ export const environment: EnvironmentOptions = {
         order: 2,
         enabled: true,
         params: {
-          limit: '8'
+          limit: '8',
         },
         showAdvancedSettings: true
       },

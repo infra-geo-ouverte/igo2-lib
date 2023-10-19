@@ -10,6 +10,7 @@ import {
   PropertyTypeDetectorService,
   SearchResult
 } from '@igo2/geo';
+
 import { MapState } from '../map/map.state';
 
 /**

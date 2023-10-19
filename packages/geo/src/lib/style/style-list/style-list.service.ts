@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
+
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { StyleListOptions } from './style-list.interface';
 

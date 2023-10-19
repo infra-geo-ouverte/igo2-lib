@@ -1,6 +1,7 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { EntityStore } from '../../entity';
 import { Workspace } from './workspace';
-import { BehaviorSubject } from 'rxjs';
 
 /**
  * The class is a specialized version of an EntityStore that stores

@@ -1,56 +1,55 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import {
-  map,
-  tap,
-  catchError,
-  debounceTime,
-  mergeMap,
-  first,
-  skip
-} from 'rxjs/operators';
-
-import olPoint from 'ol/geom/Point';
-import GeoJSON from 'ol/format/GeoJSON';
-import Cluster from 'ol/source/Cluster';
-import olVectorSource from 'ol/source/Vector';
-
-import { Tool } from '@igo2/common';
-import { uuid, ObjectUtils } from '@igo2/utils';
-import {
-  ConfigService,
-  RouteService,
-  Message,
-  MessageService,
-  LanguageService,
-  StorageService
-} from '@igo2/core';
+import { Injectable, Optional } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
+import { Tool } from '@igo2/common';
+import {
+  ConfigService,
+  LanguageService,
+  Message,
+  MessageService,
+  RouteService,
+  StorageService
+} from '@igo2/core';
 import type {
+  AnyLayerOptions,
   IgoMap,
   Layer,
-  LayerOptions,
   VectorLayerOptions,
   VectorTileLayerOptions
 } from '@igo2/geo';
 import { ExportService } from '@igo2/geo';
+import { ObjectUtils, uuid } from '@igo2/utils';
+
+import GeoJSON from 'ol/format/GeoJSON';
+import { Geometry } from 'ol/geom';
+import olPoint from 'ol/geom/Point';
+import Cluster from 'ol/source/Cluster';
+import olVectorSource from 'ol/source/Vector';
+
+import { Feature } from 'ol';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  first,
+  map,
+  mergeMap,
+  skip,
+  tap
+} from 'rxjs/operators';
 
 import { TypePermission } from './context.enum';
 import {
-  ContextsList,
-  ContextServiceOptions,
   Context,
-  DetailedContext,
   ContextMapView,
   ContextPermission,
   ContextProfils,
+  ContextServiceOptions,
+  ContextsList,
+  DetailedContext,
   ExtraFeatures
 } from './context.interface';
-import { Geometry } from 'ol/geom';
-import { Feature } from 'ol';
 
 @Injectable({
   providedIn: 'root'
@@ -452,7 +451,7 @@ export class ContextService {
       'EPSG:4326'
     );
 
-    const context = {
+    const context: DetailedContext = {
       uri: uuid(),
       title: '',
       scope: 'private',
@@ -486,16 +485,17 @@ export class ContextService {
     }
 
     let i = 0;
-    for (const l of layers) {
-      const layer: any = l;
+    for (const layer of layers) {
+      const layerOptions: AnyLayerOptions = {
+        title: layer.options.title,
+        zIndex: ++i,
+        visible: layer.visible,
+        security: layer.options.security,
+        opacity: layer.opacity
+      };
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions: {
-          title: layer.options.title,
-          zIndex: ++i,
-          visible: layer.visible,
-          security: layer.security
-        } as LayerOptions,
+        layerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -509,7 +509,10 @@ export class ContextService {
     }
 
     context.tools = this.tools.map((tool) => {
-      return { id: String(tool.id), global: tool.global };
+      return {
+        id: String(tool.id),
+        global: tool.global
+      } as Tool;
     });
 
     return context;

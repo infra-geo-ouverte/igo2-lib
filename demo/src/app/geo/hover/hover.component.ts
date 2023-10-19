@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
 import {
-  IgoMap,
   DataSourceService,
+  IgoMap,
   LayerService,
-  WFSDataSourceOptions,
   VectorLayerOptions,
-  WFSDataSource
+  WFSDataSource,
+  WFSDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
