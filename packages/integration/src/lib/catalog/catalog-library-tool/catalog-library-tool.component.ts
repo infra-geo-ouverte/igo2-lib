@@ -4,19 +4,18 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
+import { ContextService } from '@igo2/context';
 import { StorageService } from '@igo2/core';
 import { Catalog, CatalogService } from '@igo2/geo';
 
-import { take } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import { forkJoin } from 'rxjs';
-import { ContextService } from '@igo2/context';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -101,67 +100,107 @@ export class CatalogLibraryToolComponent implements OnInit {
   /**
    * Get the item description for getCatalogList
    */
-  private getDescription(item: any){
-    if(item.options.metadata.abstract){
-      if(item.options.metadata.abstract.includes("\n")){
-        return item.options.metadata.abstract.replaceAll("\n", "");
-      }
-      else{
+  private getDescription(item: any) {
+    if (item.options.metadata.abstract) {
+      if (item.options.metadata.abstract.includes('\n')) {
+        return item.options.metadata.abstract.replaceAll('\n', '');
+      } else {
         return item.options.metadata.abstract;
       }
-    }
-    else{
-      return "";
+    } else {
+      return '';
     }
   }
 
-  getCatalogList(){
+  getCatalogList() {
     var catalogRank = 1;
-    let bufferArray = [["rang Catalog", "Nom de la couche - Catalogue", "Nom du groupe de couche - Catalogue",
-      "Nom de la thématique - Catalogue", "Gestionnaire du service", "URL (Intranet/Internet", "Nom du fichier - Service Web",
-      "Contexte/Thématique PlaniActifs", "Description de la donnée"]];
+    let bufferArray = [
+      [
+        'rang Catalog',
+        'Nom de la couche - Catalogue',
+        'Nom du groupe de couche - Catalogue',
+        'Nom de la thématique - Catalogue',
+        'Gestionnaire du service',
+        'URL (Intranet/Internet',
+        'Nom du fichier - Service Web',
+        'Contexte/Thématique PlaniActifs',
+        'Description de la donnée'
+      ]
+    ];
     var dataArray = [];
-    this.store.entities$.pipe(switchMap(catalogs => {
-        return forkJoin(catalogs.map(ca => this.catalogService.loadCatalogItems(ca).pipe(map(lci => [ca, lci]))));
-    })).subscribe(res => {
-        res.forEach((catalogs:Object) => {
-          var catalogsList = Object.keys(catalogs[1]).map(key => catalogs[1][key]);
+    this.store.entities$
+      .pipe(
+        switchMap((catalogs) => {
+          return forkJoin(
+            catalogs.map((ca) =>
+              this.catalogService
+                .loadCatalogItems(ca)
+                .pipe(map((lci) => [ca, lci]))
+            )
+          );
+        })
+      )
+      .subscribe((res) => {
+        res.forEach((catalogs: Object) => {
+          var catalogsList = Object.keys(catalogs[1]).map(
+            (key) => catalogs[1][key]
+          );
           var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
-          catalogsList.forEach(catalogItemGroup => {
+          catalogsList.forEach((catalogItemGroup) => {
             if (catalogItemGroup.items) {
               catalogItemGroup.items.forEach((item: any) => {
                 dataArray = [];
-                var gestionnaire = "MTQ";
-                if(item.externalProvider !== undefined){
-                    if(item.externalProvider === true)
-                        gestionnaire = "Externe";
+                var gestionnaire = 'MTQ';
+                if (item.externalProvider !== undefined) {
+                  if (item.externalProvider === true) gestionnaire = 'Externe';
                 }
-                const absUrl = item.options.sourceOptions.url.charAt(0) === '/' ? window.location.origin +
-                  item.options.sourceOptions.url : item.options.sourceOptions.url;
-                dataArray.push(catalogRank, item.title, catalogItemGroup.title, catalogTitle, gestionnaire,
-                  absUrl, item.options.sourceOptions.params.LAYERS, "", this.getDescription(item));
+                const absUrl =
+                  item.options.sourceOptions.url.charAt(0) === '/'
+                    ? window.location.origin + item.options.sourceOptions.url
+                    : item.options.sourceOptions.url;
+                dataArray.push(
+                  catalogRank,
+                  item.title,
+                  catalogItemGroup.title,
+                  catalogTitle,
+                  gestionnaire,
+                  absUrl,
+                  item.options.sourceOptions.params.LAYERS,
+                  '',
+                  this.getDescription(item)
+                );
                 bufferArray.push(dataArray);
                 dataArray = [];
                 catalogRank++;
               });
-            }
-            else{
+            } else {
               var itemGroupWMTS: any = catalogItemGroup;
-              if(!itemGroupWMTS.options){
-                dataArray.push(Object.keys(catalogItemGroup).map(key => catalogItemGroup[key]));
+              if (!itemGroupWMTS.options) {
+                dataArray.push(
+                  Object.keys(catalogItemGroup).map(
+                    (key) => catalogItemGroup[key]
+                  )
+                );
                 bufferArray.push(dataArray);
                 dataArray = [];
-              }
-              else{
+              } else {
                 dataArray = [];
-                var gestionnaire = "MTQ";
-                if(itemGroupWMTS.externalProvider !== undefined){
-                    if(itemGroupWMTS.externalProvider === true)
-                        gestionnaire = "Externe";
+                var gestionnaire = 'MTQ';
+                if (itemGroupWMTS.externalProvider !== undefined) {
+                  if (itemGroupWMTS.externalProvider === true)
+                    gestionnaire = 'Externe';
                 }
-                dataArray.push(catalogRank, itemGroupWMTS.title, itemGroupWMTS.title, catalogTitle, gestionnaire,
-                  itemGroupWMTS.options.sourceOptions.url, itemGroupWMTS.options.sourceOptions.layer, "",
-                  this.getDescription(itemGroupWMTS));
+                dataArray.push(
+                  catalogRank,
+                  itemGroupWMTS.title,
+                  itemGroupWMTS.title,
+                  catalogTitle,
+                  gestionnaire,
+                  itemGroupWMTS.options.sourceOptions.url,
+                  itemGroupWMTS.options.sourceOptions.layer,
+                  '',
+                  this.getDescription(itemGroupWMTS)
+                );
                 bufferArray.push(dataArray);
                 dataArray = [];
                 catalogRank++;
@@ -169,29 +208,43 @@ export class CatalogLibraryToolComponent implements OnInit {
             }
           });
         });
-        this.contextService.getLocalContexts().pipe(switchMap(contextsList => forkJoin(contextsList.ours.map(context =>
-          this.contextService.getLocalContext(context.uri))))).subscribe(contextLayers => {
+        this.contextService
+          .getLocalContexts()
+          .pipe(
+            switchMap((contextsList) =>
+              forkJoin(
+                contextsList.ours.map((context) =>
+                  this.contextService.getLocalContext(context.uri)
+                )
+              )
+            )
+          )
+          .subscribe((contextLayers) => {
             for (var index in bufferArray) {
-              if(index !== "0"){
-              var contextLayersList = [];
-              for(var layerContextList of contextLayers){
-                  layerContextList.layers.forEach(layersName => {
-                      if (bufferArray[index][6] === layersName.id) {
-                          contextLayersList.push(layerContextList.title);
-                      }
+              if (index !== '0') {
+                var contextLayersList = [];
+                for (var layerContextList of contextLayers) {
+                  layerContextList.layers.forEach((layersName) => {
+                    if (bufferArray[index][6] === layersName.id) {
+                      contextLayersList.push(layerContextList.title);
+                    }
                   });
-              };
-              bufferArray[index][7] = contextLayersList.toString();
-            }}
-            let csvContent = bufferArray.map(e => e.join(";")).join("\n");
+                }
+                bufferArray[index][7] = contextLayersList.toString();
+              }
+            }
+            let csvContent = bufferArray.map((e) => e.join(';')).join('\n');
             var encodedUri = encodeURI(csvContent);
-            var link = document.createElement("a");
-            link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodedUri);
-            link.setAttribute("download", "liste_couches.csv");
+            var link = document.createElement('a');
+            link.setAttribute(
+              'href',
+              'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
+            );
+            link.setAttribute('download', 'liste_couches.csv');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+          });
       });
-    });
   }
 }
