@@ -19,9 +19,9 @@
     button {
       &.mat-default {
         mat-icon {
-          color: mat.get-color-from-palette($foreground, text);
+          color: mat.get-color-from-palette($foreground, base);
           &.disabled {
-            color: mat.get-color-from-palette($foreground, disabled-text);
+            color: mat.get-color-from-palette($foreground, disabled);
           }
         }
       }
