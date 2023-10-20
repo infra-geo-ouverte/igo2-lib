@@ -17,12 +17,15 @@
     }
 
     button {
-      &.mat-default {
+      &:not(.mat-primary) {
         mat-icon {
           color: mat.get-color-from-palette($foreground, base);
-          &.disabled {
-            color: mat.get-color-from-palette($foreground, disabled);
-          }
+        }
+      }
+
+      mat-icon {
+        &.disabled {
+          color: mat.get-color-from-palette($foreground, disabled);
         }
       }
     }
