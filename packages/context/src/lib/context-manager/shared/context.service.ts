@@ -12,9 +12,9 @@ import {
   StorageService
 } from '@igo2/core';
 import type {
-  AnyLayerOptions,
   IgoMap,
   Layer,
+  LayerOptions,
   VectorLayerOptions,
   VectorTileLayerOptions
 } from '@igo2/geo';
@@ -486,16 +486,15 @@ export class ContextService {
 
     let i = 0;
     for (const layer of layers) {
-      const layerOptions: AnyLayerOptions = {
-        title: layer.options.title,
-        zIndex: ++i,
-        visible: layer.visible,
-        security: layer.options.security,
-        opacity: layer.opacity
-      };
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions,
+        layerOptions: {
+          title: layer.options.title,
+          zIndex: ++i,
+          visible: layer.visible,
+          security: layer.options.security,
+          opacity: layer.opacity
+        } as LayerOptions,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
