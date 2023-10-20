@@ -14,12 +14,12 @@
         "text": "interactiveTour.selectById",
         "noBackButton": true,
         "beforeShow": {
-          "element": "a.mat-list-item[routerlink=\\.]",
+          "element": "a.mat-mdc-list-item[routerlink=\\.]",
           "action": "click"
         }
       },
       {
-        "element": "a.mat-list-item[routerlink=context]",
+        "element": "a.mat-mdc-list-item[routerlink=context]",
         "text": "interactiveTour.changeTool",
         "onShow": {
           "action": "click"

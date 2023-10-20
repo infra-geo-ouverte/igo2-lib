@@ -289,7 +289,6 @@ export class InteractiveTourService {
     let i = 0;
     for (const step of tourConfig.steps) {
       const position = step.position ?? tourConfig.position;
-      console.log(position);
       shepherdSteps.push({
         attachTo: {
           element: step.element,
