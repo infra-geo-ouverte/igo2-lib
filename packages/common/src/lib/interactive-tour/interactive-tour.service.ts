@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { ConfigService, LanguageService, MediaService } from '@igo2/core';
 
-import { offset } from '@floating-ui/dom';
+import { autoPlacement, offset } from '@floating-ui/dom';
 import { ShepherdService } from 'angular-shepherd';
 import Shepherd from 'shepherd.js';
 
@@ -283,18 +283,23 @@ export class InteractiveTourService {
     });
   }
 
-  private getShepherdSteps(stepConfig: InteractiveTourOptions) {
+  private getShepherdSteps(tourConfig: InteractiveTourOptions) {
     const shepherdSteps: Shepherd.Step.StepOptions[] = [];
 
     let i = 0;
-    for (const step of stepConfig.steps) {
+    for (const step of tourConfig.steps) {
+      const position = step.position ?? tourConfig.position;
+      console.log(position);
       shepherdSteps.push({
         attachTo: {
           element: step.element,
-          on: (step.position || stepConfig.position) as any // PopperPlacement
+          on: position as any // PopperPlacement
         },
         floatingUIOptions: {
-          middleware: [offset({ mainAxis: 15 })]
+          middleware: [
+            position === 'auto' && autoPlacement(),
+            offset({ mainAxis: 15 })
+          ].filter(Boolean)
         },
         beforeShowPromise: () => {
           return Promise.all([
@@ -308,20 +313,20 @@ export class InteractiveTourService {
         buttons: this.getButtons(
           i === 0
             ? 'first'
-            : i + 1 === stepConfig.steps.length
+            : i + 1 === tourConfig.steps.length
             ? 'last'
-            : stepConfig.steps[i].noBackButton
+            : tourConfig.steps[i].noBackButton
             ? 'noBackButton'
             : undefined
         ),
         classes: step.class,
         highlightClass: step.highlightClass,
-        scrollTo: step.scrollToElement || stepConfig.scrollToElement || true,
+        scrollTo: step.scrollToElement || tourConfig.scrollToElement || true,
         canClickTarget: step.disableInteraction
           ? !step.disableInteraction
           : undefined,
         title: this.languageService.translate.instant(
-          step.title || stepConfig.title
+          step.title || tourConfig.title
         ),
         text: [this.languageService.translate.instant(step.text)],
         when: {

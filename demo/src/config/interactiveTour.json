@@ -1,7 +1,7 @@
 {
   "global": {
     "title": "interactiveTour.title",
-    "position": "right",
+    "position": "auto",
     "highlightClass": "mat-form-field",
     "class": "mat-form-field",
     "steps": [
