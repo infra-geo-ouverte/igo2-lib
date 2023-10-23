@@ -19,6 +19,10 @@ import {
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
+import {
+  FeatureCommonVectorStyleOptions,
+  OverlayStyleOptions
+} from '../../style';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
@@ -26,7 +30,6 @@ import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate
 } from './workspace.utils';
-import { FeatureCommonVectorStyleOptions, OverlayStyleOptions } from '../../style';
 
 @Injectable({
   providedIn: 'root'

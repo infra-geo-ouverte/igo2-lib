@@ -137,7 +137,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           'lieux'
         ];
 
-    const showAdvancedParams = this.options.showAdvancedSettings ?? true;
+    const showAdvancedParams = this.options.showAdvancedSettings;
 
     return {
       title: 'igo.geo.search.icherche.name',
@@ -276,7 +276,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['grille', 'culture']
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -308,39 +308,40 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
-        },
-        showAdvancedParams && {
-          type: 'radiobutton',
-          title: 'ecmax',
-          name: 'ecmax',
-          values: [
-            {
-              title: '10 %',
-              value: 10,
-              enabled: ecmax === 10
-            },
-            {
-              title: '30 %',
-              value: 30,
-              enabled: ecmax === 30 || !ecmax
-            },
-            {
-              title: '50 %',
-              value: 50,
-              enabled: ecmax === 50
-            },
-            {
-              title: '75 %',
-              value: 75,
-              enabled: ecmax === 75
-            },
-            {
-              title: '100 %',
-              value: 100,
-              enabled: ecmax === 100
-            }
-          ]
-        },
+        } satisfies SearchSourceSettings,
+        showAdvancedParams &&
+          ({
+            type: 'radiobutton',
+            title: 'ecmax',
+            name: 'ecmax',
+            values: [
+              {
+                title: '10 %',
+                value: 10,
+                enabled: ecmax === 10
+              },
+              {
+                title: '30 %',
+                value: 30,
+                enabled: ecmax === 30 || !ecmax
+              },
+              {
+                title: '50 %',
+                value: 50,
+                enabled: ecmax === 50
+              },
+              {
+                title: '75 %',
+                value: 75,
+                enabled: ecmax === 75
+              },
+              {
+                title: '100 %',
+                value: 100,
+                enabled: ecmax === 100
+              }
+            ]
+          } satisfies SearchSourceSettings),
         {
           type: 'radiobutton',
           title: 'restrictExtent',
@@ -357,8 +358,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true
             }
           ]
-        }
-      ].filter(Boolean) as SearchSourceSettings[]
+        } satisfies SearchSourceSettings
+      ].filter(Boolean)
     };
   }
 

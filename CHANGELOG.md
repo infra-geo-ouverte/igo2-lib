@@ -1,3 +1,18 @@
+# [16.0.0-rc.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.3...16.0.0-rc.4) (2023-10-18)
+
+
+### Bug Fixes
+
+* **core:** typography - adjust some size regression ([#1451](https://github.com/infra-geo-ouverte/igo2-lib/issues/1451)) ([cfd6f73](https://github.com/infra-geo-ouverte/igo2-lib/commit/cfd6f739bde36444ae351f864be4e7c44212b862))
+* **geo:** style regression with the material theme ([#1452](https://github.com/infra-geo-ouverte/igo2-lib/issues/1452)) ([7cad71a](https://github.com/infra-geo-ouverte/igo2-lib/commit/7cad71ad62977670674154732def6389e3d1d52e))
+
+
+### Features
+
+* **geo:** ilayer - add the showAdvancedSettings ([#1453](https://github.com/infra-geo-ouverte/igo2-lib/issues/1453)) ([a72e03b](https://github.com/infra-geo-ouverte/igo2-lib/commit/a72e03b32bff5e47f435b9f20fae74b1d2f1ea9a))
+
+
+
 # [16.0.0-rc.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.2...16.0.0-rc.3) (2023-10-13)
 
 

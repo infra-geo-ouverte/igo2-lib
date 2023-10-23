@@ -12,12 +12,12 @@ import { ConfigService } from '@igo2/core';
 import { Observable } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
-import { TokenService } from './token.service';
 import {
   AuthByKeyOptions,
   AuthOptions,
   WithCredentialsOptions
 } from './auth.interface';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'

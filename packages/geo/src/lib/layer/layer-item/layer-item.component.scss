@@ -16,10 +16,6 @@
   }
 
   mat-icon {
-    &.disabled {
-      color: rgba(0, 0, 0, 0.38);
-    }
-
     &[matBadge] ::ng-deep .mat-badge-content {
       font-size: 12px;
     }
