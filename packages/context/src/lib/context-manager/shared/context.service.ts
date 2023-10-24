@@ -486,22 +486,24 @@ export class ContextService {
 
     let i = 0;
     for (const layer of layers) {
-      const opts = {
+      const opts: LayerOptions = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        layerOptions: {
-          title: layer.options.title,
-          zIndex: ++i,
-          visible: layer.visible,
-          security: layer.options.security,
-          opacity: layer.opacity
-        } as LayerOptions,
+        title: layer.options.title,
+        zIndex: ++i,
+        visible: layer.visible,
+        security: layer.options.security,
+        opacity: layer.opacity,
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url,
-          queryable: layer.queryable
+          url: layer.dataSource.options.url
         }
       };
+      if (layer.queryable) {
+        // TODO: bad practice replace bracket notation
+        opts.sourceOptions['queryable'] = layer.queryable;
+      }
+
       if (opts.sourceOptions.type) {
         context.layers.push(opts);
       }
