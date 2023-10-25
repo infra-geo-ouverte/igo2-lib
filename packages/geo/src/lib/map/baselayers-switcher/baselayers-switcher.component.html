@@ -23,20 +23,21 @@
     </button>
   </div>
 
-  <igo-mini-basemap
-    class="mat-typography"
-    *ngFor="let baseLayer of baseLayers; let i = index"
-    [map]="map"
-    [baseLayer]="baseLayer"
-    [title]="
-      baseLayers.length > 2 && !expand
-        ? ('igo.geo.baselayersSwitcher.title' | translate)
-        : baseLayer.title
-    "
-    [display]="expand || (i === 0 && !useStaticIcon)"
-    [disabled]="!expand && baseLayers.length > 1"
-  >
-  </igo-mini-basemap>
+  <div class="basemap-list">
+    <igo-mini-basemap
+      *ngFor="let baseLayer of baseLayers; let i = index"
+      [map]="map"
+      [baseLayer]="baseLayer"
+      [title]="
+        baseLayers.length > 2 && !expand
+          ? ('igo.geo.baselayersSwitcher.title' | translate)
+          : baseLayer.title
+      "
+      [display]="expand || (i === 0 && !useStaticIcon)"
+      [disabled]="!expand && baseLayers.length > 1"
+    >
+    </igo-mini-basemap>
+  </div>
 
   <div *ngIf="hasMoreThanTwo" class="more-baselayers">
     <mat-icon

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 import { ActivityService } from '@igo2/core';
-import { SubjectStatus } from '@igo2/utils';
+import { SubjectStatus, uuid } from '@igo2/utils';
 
 import { Subscription } from 'rxjs';
 
@@ -49,7 +49,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   private _controls: MapControlsOptions;
 
-  public id = `igo-map-target-${new Date().getTime()}`;
+  public id = `igo-map-target-${uuid()}`;
 
   constructor(private activityService: ActivityService) {}
 

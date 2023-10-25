@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   ApplicationRef,
-  ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy
@@ -17,7 +17,8 @@ import { IgoMap } from '../shared';
 @Component({
   selector: 'igo-mini-basemap',
   templateUrl: './mini-basemap.component.html',
-  styleUrls: ['./mini-basemap.component.scss']
+  styleUrls: ['./mini-basemap.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   @Input() map: IgoMap;
@@ -30,7 +31,6 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   }
   set display(value: boolean) {
     this._display = value;
-    this.cdRef.detectChanges();
     this.basemap.ol.getView().changed();
   }
   private _display: boolean;
@@ -52,8 +52,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private layerService: LayerService,
-    private appRef: ApplicationRef,
-    private cdRef: ChangeDetectorRef
+    private appRef: ApplicationRef
   ) {}
 
   ngAfterViewInit() {
