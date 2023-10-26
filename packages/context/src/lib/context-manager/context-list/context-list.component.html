@@ -66,7 +66,7 @@
       </igo-actionbar>
 
       <button
-        *ngIf="auth.authenticated && contextConfigs"
+        *ngIf="auth.authenticated"
         class="users-filter"
         mat-icon-button
         [matTooltip]="'igo.context.contextManager.filterUser' | translate"
@@ -78,15 +78,13 @@
       <mat-menu #accountMenu="matMenu">
         <ng-container *ngFor="let user of users">
           <span class="profilsMenu">
-            <div mat-menu-item>
-              <mat-checkbox
-                [checked]="getPermission(user).checked"
-                [indeterminate]="getPermission(user).indeterminate"
-                (click)="$event.stopPropagation()"
-                (change)="userSelection(user)"
-              >
-              </mat-checkbox>
-            </div>
+            <mat-checkbox
+              [checked]="getPermission(user).checked"
+              [indeterminate]="getPermission(user).indeterminate"
+              (click)="$event.stopPropagation()"
+              (change)="userSelection(user)"
+            >
+            </mat-checkbox>
             <button
               *ngIf="user.childs"
               [matMenuTriggerFor]="subAccountMenu"
@@ -100,9 +98,8 @@
           </span>
 
           <mat-menu #subAccountMenu="matMenu">
-            <div mat-menu-item>
+            <div mat-menu-item *ngFor="let child of user.childs">
               <mat-checkbox
-                *ngFor="let child of user.childs"
                 [checked]="getPermission(child).checked"
                 (click)="$event.stopPropagation()"
                 (change)="userSelection(child, user)"
@@ -114,14 +111,12 @@
         </ng-container>
 
         <span class="profilsMenu">
-          <div mat-menu-item>
-            <mat-checkbox
-              [checked]="showHidden"
-              (click)="$event.stopPropagation()"
-              (change)="showHiddenContexts.emit()"
-            >
-            </mat-checkbox>
-          </div>
+          <mat-checkbox
+            [checked]="showHidden"
+            (click)="$event.stopPropagation()"
+            (change)="showHiddenContexts.emit()"
+          >
+          </mat-checkbox>
           <button mat-menu-item>
             {{ 'igo.context.contextManager.showHidden' | translate }}
           </button>
