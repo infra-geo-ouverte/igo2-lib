@@ -50,14 +50,10 @@
                 "glob": "**/*",
                 "input": "./dist/core/locale/",
                 "output": "./locale/libs_locale",
-                "ignore": [
-                  "**/*.core.json"
-                ]
+                "ignore": ["**/*.core.json"]
               }
             ],
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
             "allowedCommonJsDependencies": [
               "@turf",
@@ -153,30 +149,19 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "demo/src/**/*.ts",
-              "demo/src/**/*.html"
-            ]
+            "lintFilePatterns": ["demo/src/**/*.ts", "demo/src/**/*.html"]
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "demo/src/test.ts",
-            "polyfills": [
-              "demo/src/polyfills.ts",
-              "zone.js/testing"
-            ],
+            "polyfills": ["demo/src/polyfills.ts", "zone.js/testing"],
             "tsConfig": "demo/tsconfig.spec.json",
             "karmaConfig": "demo/karma.conf.js",
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": [],
-            "assets": [
-              "demo/src/favicon.ico",
-              "demo/src/assets"
-            ],
+            "assets": ["demo/src/favicon.ico", "demo/src/assets"],
             "codeCoverage": true
           }
         },
@@ -228,10 +213,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/auth/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/auth/tsconfig.spec.json",
             "karmaConfig": "packages/auth/karma.conf.js",
             "codeCoverage": true
@@ -277,10 +259,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/common/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/common/tsconfig.spec.json",
             "karmaConfig": "packages/common/karma.conf.js",
             "codeCoverage": true
@@ -326,10 +305,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/core/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/core/tsconfig.spec.json",
             "karmaConfig": "packages/core/karma.conf.js",
             "codeCoverage": true
@@ -375,10 +351,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/geo/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/geo/tsconfig.spec.json",
             "karmaConfig": "packages/geo/karma.conf.js",
             "codeCoverage": true
@@ -427,10 +400,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/utils/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/utils/tsconfig.spec.json",
             "karmaConfig": "packages/utils/karma.conf.js",
             "codeCoverage": true
@@ -467,10 +437,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "packages/context/src/test.ts",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "packages/context/tsconfig.spec.json",
             "karmaConfig": "packages/context/karma.conf.js",
             "codeCoverage": true
