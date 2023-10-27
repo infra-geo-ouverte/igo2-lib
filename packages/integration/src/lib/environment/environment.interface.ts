@@ -1,6 +1,6 @@
 import { EnvironmentOptions as AuthEnvironmentOptions } from '@igo2/auth';
-import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common';
+import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import {
   BaseEnvironmentOptions,
   EnvironmentOptions as CoreEnvironmentOptions

@@ -7,8 +7,8 @@ import {
 
 import { ConfigService } from '@igo2/core';
 
-import { AuthService } from './auth.service';
 import { AuthOptions } from './auth.interface';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'

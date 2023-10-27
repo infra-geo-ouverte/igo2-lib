@@ -7,6 +7,7 @@ import { ConfigService, LanguageService, version } from '@igo2/core';
 
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
+
 import { AllEnvironmentOptions } from '../../environment';
 
 @ToolComponent({

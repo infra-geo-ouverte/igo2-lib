@@ -313,7 +313,7 @@ export class MessageService {
         if (k) {
           const value = titleInterpolateParams[k];
           translatedTitlenterpolateParams[k] =
-            typeof value === "string"
+            typeof value === 'string'
               ? this.languageService.translate.instant(value)
               : value;
         }
