@@ -807,7 +807,8 @@
       },
       "indexedDb": {
         "data-download-start": "Downloading data. Please don't leave the current app.",
-        "data-download-completed": "Data download completed"
+        "data-download-completed": "Data download completed",
+        "data-download-failed": "Data download failed. Please contact your application manager."
       }
     }
   }

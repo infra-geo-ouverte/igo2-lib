@@ -808,7 +808,8 @@
       },
       "indexedDb": {
         "data-download-start": "Téléchargement des données. Veuillez ne pas quitter.",
-        "data-download-completed": "Téléchargement des données terminées."
+        "data-download-completed": "Téléchargement des données terminées.",
+        "data-download-failed": "Échec du téléchargement des données pour utilisation hors ligne. Contacter le support de l'application"
       }
     }
   }
