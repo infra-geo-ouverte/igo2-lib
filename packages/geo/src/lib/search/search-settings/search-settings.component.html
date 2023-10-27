@@ -94,7 +94,7 @@
                   }}
                 </button>
               </div>
-              <div mat-menu-item>
+              <div [style.paddingRight.px]="'15'">
                 <mat-checkbox
                   *ngFor="let settingValue of getAvailableValues(setting)"
                   [style.display]="displayBlock"
