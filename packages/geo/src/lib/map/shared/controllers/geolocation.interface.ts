@@ -1,5 +1,14 @@
 import { ProjectionLike } from 'ol/proj';
 
+export interface GeolocationOptions {
+  activateDefault?: boolean;
+  basic?: boolean; // to control the button icon.
+  followPosition?: boolean; // to overide the followPosition define at the context level.
+  button?: {
+    visible: boolean;
+  };
+}
+
 export interface MapGeolocationControllerOptions {
   projection: ProjectionLike;
   accuracyThreshold?: number;

@@ -1,17 +1,18 @@
 import { ObjectEvent } from 'ol/Object';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 import { getUid } from 'ol/util';
+
+import {
+  TimeFilterableDataSource,
+  TimeFilterableDataSourceOptions
+} from '../../datasource';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../../filter/shared/ogc-filter.interface';
 import { Layer, LinkedProperties } from '../../layer/shared/layers';
-import olSourceImageWMS from 'ol/source/ImageWMS';
-import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
-import {
-  TimeFilterableDataSource,
-  TimeFilterableDataSourceOptions
-} from '../../datasource';
 import { MapBase } from '../shared/map.abstract';
 
 export function getLinkedLayersOptions(layer: Layer) {

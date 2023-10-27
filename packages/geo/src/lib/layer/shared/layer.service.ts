@@ -1,55 +1,54 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
-import { stylefunction } from 'ol-mapbox-style';
-import { AuthInterceptor } from '@igo2/auth';
-import { ObjectUtils } from '@igo2/utils';
-import olLayerVectorTile from 'ol/layer/VectorTile';
+import { Injectable, Optional } from '@angular/core';
 
+import { AuthInterceptor } from '@igo2/auth';
+import { MessageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
+
+import olLayerVectorTile from 'ol/layer/VectorTile';
 import { Style } from 'ol/style';
 import * as olStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
+
+import { stylefunction } from 'ol-mapbox-style';
+import { Observable, combineLatest, of } from 'rxjs';
+import { catchError, concatMap, map, mergeMap } from 'rxjs/operators';
 
 import {
-  OSMDataSource,
+  ArcGISRestDataSource,
+  CartoDataSource,
+  ClusterDataSource,
   FeatureDataSource,
-  XYZDataSource,
+  ImageArcGISRestDataSource,
+  MVTDataSource,
+  OSMDataSource,
+  TileArcGISRestDataSource,
   TileDebugDataSource,
   WFSDataSource,
-  WMTSDataSource,
   WMSDataSource,
-  CartoDataSource,
-  ImageArcGISRestDataSource,
-  ArcGISRestDataSource,
-  TileArcGISRestDataSource,
+  WMTSDataSource,
   WebSocketDataSource,
-  MVTDataSource,
-  ClusterDataSource
+  XYZDataSource
 } from '../../datasource';
-
 import { DataSourceService } from '../../datasource/shared/datasource.service';
-
+import { LayerDBService } from '../../offline/layerDB/layerDB.service';
+import { GeoNetworkService } from '../../offline/shared/geo-network.service';
+import { GeostylerStyleService } from '../../style/geostyler-service/geostyler.service';
+import { StyleService } from '../../style/style-service/style.service';
+import { computeMVTOptionsOnHover } from '../utils/layer.utils';
 import {
-  Layer,
+  AnyLayerOptions,
   ImageLayer,
   ImageLayerOptions,
+  Layer,
+  LayerOptions,
   TileLayer,
   TileLayerOptions,
   VectorLayer,
   VectorLayerOptions,
-  AnyLayerOptions,
   VectorTileLayer,
-  VectorTileLayerOptions,
-  LayerOptions
+  VectorTileLayerOptions
 } from './layers';
-
-import { computeMVTOptionsOnHover } from '../utils/layer.utils';
-import { StyleService } from '../../style/style-service/style.service';
-import { MessageService } from '@igo2/core';
-import { GeoNetworkService } from '../../offline/shared/geo-network.service';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import { LayerDBService } from '../../offline/layerDB/layerDB.service';
-import { GeostylerStyleService } from '../../style/geostyler-service/geostyler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -124,18 +123,24 @@ export class LayerService {
       return new Observable((d) => d.next(this.createLayer(layerOptions)));
     }
 
-    const stylableLayerOptions = layerOptions as VectorLayerOptions | VectorTileLayerOptions;
-    const geostylerStyleGlobal = stylableLayerOptions.igoStyle?.geoStylerStyle?.global;
-    const geostylerStyleHover = stylableLayerOptions.igoStyle?.geoStylerStyle?.hover;
+    const stylableLayerOptions = layerOptions as
+      | VectorLayerOptions
+      | VectorTileLayerOptions;
+    const geostylerStyleGlobal =
+      stylableLayerOptions.igoStyle?.geoStylerStyle?.global;
+    const geostylerStyleHover =
+      stylableLayerOptions.igoStyle?.geoStylerStyle?.hover;
     //const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
 
     // temporaire, penser à une meilleure logique pour l'ajout d'un type (global, hover, etc.)
-    const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : (geostylerStyleHover ? this.geostylerService.geostylerToOl(geostylerStyleHover) : of(undefined));
+    const globalWriteStyleResult$ = geostylerStyleGlobal
+      ? this.geostylerService.geostylerToOl(geostylerStyleGlobal)
+      : geostylerStyleHover
+      ? this.geostylerService.geostylerToOl(geostylerStyleHover)
+      : of(undefined);
 
-
-    
     return globalWriteStyleResult$.pipe(
-      mergeMap(writeStyleResult => {
+      mergeMap((writeStyleResult) => {
         // n'oublie pas de voir comment gérer les cluster directement par geostyler.
         if (writeStyleResult?.warnings) {
           console.warn(writeStyleResult.warnings);
@@ -155,14 +160,15 @@ export class LayerService {
         return this.dataSourceService
           .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
           .pipe(
-            map(source => {
+            map((source) => {
               if (source === undefined) {
                 return undefined;
               }
               return this.createLayer(Object.assign(layerOptions, { source }));
             })
           );
-      }));
+      })
+    );
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {

@@ -1,21 +1,22 @@
+import { DatePipe } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action, Widget } from '@igo2/common';
-
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { WfsWorkspace, OgcFilterWidget } from '@igo2/geo';
 import {
+  LanguageService,
+  MediaService,
   StorageService,
   StorageServiceEvent,
-  StorageServiceEventEnum,
-  LanguageService,
-  MediaService
+  StorageServiceEventEnum
 } from '@igo2/core';
-import { StorageState } from '../../storage/storage.state';
+import { OgcFilterWidget, WfsWorkspace } from '@igo2/geo';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
+
+import { StorageState } from '../../storage/storage.state';
 import { ToolState } from '../../tool/tool.state';
 import { getWorkspaceActions, handleZoomAuto } from './workspace.utils';
-import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'

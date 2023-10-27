@@ -1,44 +1,46 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  Input,
   OnDestroy,
   OnInit
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Observable, forkJoin, Subject } from 'rxjs';
-import { tap, take, takeUntil } from 'rxjs/operators';
 
+import { EntityStore, EntityStoreWithStrategy } from '@igo2/common';
+import { LanguageService, MessageService } from '@igo2/core';
 import {
-  IgoMap,
-  DataSourceService,
-  LayerService,
-  Feature,
-  moveToOlFeatures,
-  FeatureMotion,
   ClusterDataSource,
-  featureToOl,
   DataSource,
+  DataSourceService,
+  Feature,
+  FeatureMotion,
+  IgoMap,
+  Layer,
+  LayerService,
+  MeasureLengthUnit,
   QueryableDataSourceOptions,
-  SpatialFilterService,
-  SpatialFilterType,
   SpatialFilterItemType,
   SpatialFilterQueryType,
+  SpatialFilterService,
   SpatialFilterThematic,
-  Layer,
+  SpatialFilterType,
   VectorLayer,
   createOverlayMarkerStyle,
-  MeasureLengthUnit
+  featureToOl,
+  moveToOlFeatures
 } from '@igo2/geo';
-import { EntityStore, EntityStoreWithStrategy } from '@igo2/common';
+
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import olSourceVector from 'ol/source/Vector';
-import olSourceCluster from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { BehaviorSubject } from 'rxjs';
+import olSourceCluster from 'ol/source/Cluster';
+import olSourceVector from 'ol/source/Vector';
 import * as olstyle from 'ol/style';
-import { MessageService, LanguageService } from '@igo2/core';
+
+import { Observable, Subject, forkJoin } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { take, takeUntil, tap } from 'rxjs/operators';
 
 /**
  * Spatial Filter Type

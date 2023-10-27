@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
 
 import { IgoErrorModule, IgoLanguageModule } from '@igo2/core';
 
-import { AppRequestComponent } from './request.component';
-import { AppRequestRoutingModule } from './request-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppRequestRoutingModule } from './request-routing.module';
+import { AppRequestComponent } from './request.component';
 
 @NgModule({
   declarations: [AppRequestComponent],

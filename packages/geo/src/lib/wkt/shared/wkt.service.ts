@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import * as olproj from 'ol/proj';
 import olWKT from 'ol/format/WKT';
+import * as olproj from 'ol/proj';
 
 @Injectable({
   providedIn: 'root'

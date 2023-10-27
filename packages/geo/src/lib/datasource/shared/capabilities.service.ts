@@ -1,39 +1,40 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { Cacheable } from 'ts-cacheable';
-
-import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
-import { optionsFromCapabilities } from 'ol/source/WMTS.js';
-import olAttribution from 'ol/control/Attribution';
+import { Injectable } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
+
+import olAttribution from 'ol/control/Attribution';
+import { EsriJSON, WMSCapabilities, WMTSCapabilities } from 'ol/format';
+import * as olproj from 'ol/proj';
+import { optionsFromCapabilities } from 'ol/source/WMTS.js';
+
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
+
+import {
+  TimeFilterStyle,
+  TimeFilterType
+} from '../../filter/shared/time-filter.enum';
+import {
+  ItemStyleOptions,
+  LegendOptions
+} from '../../layer/shared/layers/legend.interface';
 import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
   QueryFormat,
   QueryFormatMimeType
 } from '../../query/shared/query.enums';
-
+import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
-  WMTSDataSourceOptions,
-  WMSDataSourceOptions,
-  CartoDataSourceOptions,
   ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  CartoDataSourceOptions,
   TileArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions
+  WMSDataSourceOptions,
+  WMTSDataSourceOptions
 } from './datasources';
-import {
-  LegendOptions,
-  ItemStyleOptions
-} from '../../layer/shared/layers/legend.interface';
-import {
-  TimeFilterType,
-  TimeFilterStyle
-} from '../../filter/shared/time-filter.enum';
-import * as olproj from 'ol/proj';
 
 export enum TypeCapabilities {
   wms = 'wms',

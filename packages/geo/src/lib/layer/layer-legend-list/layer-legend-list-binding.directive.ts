@@ -1,9 +1,10 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+
 import { Subscription, combineLatest } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import { MapService } from '../../map/shared/map.service';
 import { Layer } from '../shared/layers/layer';
-import { debounceTime } from 'rxjs/operators';
 import { LayerLegendListComponent } from './layer-legend-list.component';
 
 @Directive({

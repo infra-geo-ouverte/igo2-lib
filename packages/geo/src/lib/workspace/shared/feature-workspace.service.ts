@@ -1,31 +1,35 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
+import { ActionStore, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { ConfigService, StorageService } from '@igo2/core';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { CapabilitiesService, FeatureDataSource } from '../../datasource';
 import {
-  FeatureStore,
-  FeatureStoreLoadingLayerStrategy,
-  FeatureStoreSelectionStrategy,
-  FeatureStoreInMapExtentStrategy,
   FeatureMotion,
+  FeatureStore,
+  FeatureStoreInMapExtentStrategy,
   FeatureStoreInMapResolutionStrategy,
+  FeatureStoreLoadingLayerStrategy,
   FeatureStoreSearchIndexStrategy,
+  FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
 } from '../../feature';
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map/shared';
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
+import {
+  FeatureCommonVectorStyleOptions,
+  OverlayStyleOptions
+} from '../../style';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
-
+import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
-import { ConfigService, StorageService } from '@igo2/core';
-
 import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate
 } from './workspace.utils';
-import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 
 @Injectable({
   providedIn: 'root'
@@ -91,7 +95,7 @@ export class FeatureWorkspaceService {
     );
     const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
-    const confQueryOverlayStyle =
+    const confQueryOverlayStyle: OverlayStyleOptions =
       this.configService.getConfig('queryOverlayStyle');
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({
@@ -104,7 +108,7 @@ export class FeatureWorkspaceService {
               {},
               { feature },
               confQueryOverlayStyle?.selection || {}
-            )
+            ) as FeatureCommonVectorStyleOptions
           );
         },
         showInLayerList: false,

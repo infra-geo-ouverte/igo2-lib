@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { FeatureStore, FeatureWithMeasure, IgoMap } from '@igo2/geo';
+
 import { MapState } from '../../map/map.state';
 import { MeasureState } from '../measure.state';
 

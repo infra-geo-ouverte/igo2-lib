@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+
 import { ConnectionState, NetworkService } from '@igo2/core';
+
+import { Type } from 'ol/format/Feature';
+
 import { Observable } from 'rxjs';
+
 import { GeoDBService } from '../geoDB/geoDB.service';
 
 export enum ResponseType {
@@ -11,7 +16,7 @@ export enum ResponseType {
   Json = 'json'
 }
 export interface SimpleGetOptions {
-  responseType: ResponseType;
+  responseType: Type;
   withCredentials?: boolean;
 }
 @Injectable({
@@ -42,16 +47,9 @@ export class GeoNetworkService {
   ): Observable<any> {
     let request;
     switch (simpleGetOptions.responseType) {
-      // TODO Ajuster pour autre formats
       case 'arraybuffer':
         request = this.http.get(url, {
           responseType: 'arraybuffer',
-          withCredentials: simpleGetOptions.withCredentials
-        });
-        break;
-      case 'blob':
-        request = this.http.get(url, {
-          responseType: 'blob',
           withCredentials: simpleGetOptions.withCredentials
         });
         break;

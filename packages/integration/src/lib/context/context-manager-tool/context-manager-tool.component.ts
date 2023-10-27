@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-
-import { ToolState } from '../../tool/tool.state';
-import { MapState } from '../../map/map.state';
 import { IgoMap } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
+import { ToolState } from '../../tool/tool.state';
 
 @ToolComponent({
   name: 'contextManager',

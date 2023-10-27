@@ -1,7 +1,7 @@
-import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
+import { SubjectStatus, Watcher, uuid } from '@igo2/utils';
 
-import { VectorLayer } from '../shared/layers/vector-layer';
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { VectorLayer } from '../shared/layers/vector-layer';
 
 export class VectorWatcher extends Watcher {
   private id: string;

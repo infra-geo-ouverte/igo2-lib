@@ -2,9 +2,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+
 import { MSAL_INSTANCE } from '@azure/msal-angular';
 import {
   EventMessage,
@@ -12,6 +11,8 @@ import {
   IPublicClientApplication,
   InteractionStatus
 } from '@azure/msal-browser';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+
 import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
 
 @Injectable()

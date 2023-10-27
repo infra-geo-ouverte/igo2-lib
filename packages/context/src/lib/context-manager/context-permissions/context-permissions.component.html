@@ -79,7 +79,11 @@
               <small class="mat-typography">{{ permission.profil }}</small>
             </h4>
 
-            <div igoStopPropagation class="igo-actions-container">
+            <div
+              matListItemMeta
+              igoStopPropagation
+              class="igo-actions-container"
+            >
               <button
                 *ngIf="
                   canWrite ||

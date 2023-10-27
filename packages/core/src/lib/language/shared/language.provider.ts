@@ -1,4 +1,5 @@
 import { HttpBackend } from '@angular/common/http';
+
 import { TranslateLoader } from '@ngx-translate/core';
 
 import { ConfigService } from '../../config/config.service';

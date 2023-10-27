@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
 import { ExportOptions } from '@igo2/geo';
+
+import { BehaviorSubject } from 'rxjs';
 
 export enum ImportExportType {
   layer = 'layer',

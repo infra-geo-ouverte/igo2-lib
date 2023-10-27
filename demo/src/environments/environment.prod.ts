@@ -1,9 +1,7 @@
-interface Environment {
-  production: boolean;
-  igo: any;
-}
+import { CatalogQueryFormatTypes, ICatalog, TooltipType } from '@igo2/geo';
+import { EnvironmentOptions } from '@igo2/integration';
 
-export const environment: Environment = {
+export const environment: EnvironmentOptions = {
   production: true,
   igo: {
     projections: [
@@ -15,13 +13,15 @@ export const environment: Environment = {
       }
     ],
     auth: {
+      tokenKey: 'testIgo2Lib',
       intern: {
         enabled: true
       },
       allowAnonymous: true
     },
     interactiveTour: {
-      tourInMobile: true
+      tourInMobile: true,
+      activateInteractiveTour: true
     },
     importExport: {
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ogre'
@@ -42,14 +42,11 @@ export const environment: Environment = {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
-            'application/json': [
-              'stations_meteoroutieres',
-              'histo_stations_meteoroutieres'
-            ]
-          },
+            json: ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+          } as CatalogQueryFormatTypes,
           queryHtmlTarget: 'iframe',
           count: 30
-        },
+        } as ICatalog,
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
@@ -60,7 +57,7 @@ export const environment: Environment = {
           id: 'catalogwithtooltipcontrol',
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          tooltipType: 'abstract' // or title
+          tooltipType: TooltipType.ABSTRACT
         }
       ]
     },

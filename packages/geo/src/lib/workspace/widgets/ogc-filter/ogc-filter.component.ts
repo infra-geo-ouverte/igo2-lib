@@ -1,10 +1,10 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 
 import { OnUpdateInputs, WidgetComponent } from '@igo2/common';

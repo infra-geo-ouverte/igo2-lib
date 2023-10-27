@@ -1,14 +1,15 @@
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WMSDataSourceOptions } from './wms-datasource.interface';
-import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
-import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-
+import { Extent } from 'ol/extent';
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
+
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -27,7 +28,7 @@ export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
  */
 export function buildUrl(
   options: WFSDataSourceOptions,
-  extent,
+  extent: Extent,
   proj: olProjection,
   ogcFilters: OgcFiltersOptions,
   randomParam?: boolean
@@ -39,20 +40,20 @@ export function buildUrl(
     options.paramsWFS.srsName
   );
   let igoFilters;
-  if (ogcFilters && ogcFilters.enabled) {
-    igoFilters = ogcFilters.filters;
+  if (ogcFilters?.enabled) {
+    igoFilters = ogcFilters?.filters;
   }
   const ogcFilterWriter = new OgcFilterWriter();
   const filterOrBox = ogcFilterWriter.buildFilter(
     igoFilters,
     extent,
     proj,
-    ogcFilters.geometryName,
+    ogcFilters?.geometryName,
     options
   );
   let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(
     options,
-    ogcFilters.geometryName,
+    ogcFilters?.geometryName,
     extent,
     proj
   );
@@ -63,7 +64,7 @@ export function buildUrl(
     filterOrPush = extent.join(',') + ',' + proj.getCode();
   }
 
-  paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters
+  paramsWFS.xmlFilter = ogcFilters?.advancedOgcFilters
     ? filterOrBox
     : `${prefix}=${filterOrPush}`;
   let baseUrl = queryStringValues.find((f) => f.name === 'getfeature').value;

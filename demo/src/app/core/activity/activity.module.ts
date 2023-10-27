@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 
-import { IgoActivityModule } from '@igo2/core';
 import { IgoSpinnerModule } from '@igo2/common';
+import { IgoActivityModule } from '@igo2/core';
 
-import { AppActivityComponent } from './activity.component';
-import { AppActivityRoutingModule } from './activity-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppActivityRoutingModule } from './activity-routing.module';
+import { AppActivityComponent } from './activity.component';
 
 @NgModule({
   declarations: [AppActivityComponent],

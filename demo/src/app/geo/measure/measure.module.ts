@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 
 import { IgoMapModule, IgoMeasureModule } from '@igo2/geo';
 
-import { AppMeasureComponent } from './measure.component';
-import { AppMeasureRoutingModule } from './measure-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppMeasureRoutingModule } from './measure-routing.module';
+import { AppMeasureComponent } from './measure.component';
 
 @NgModule({
   declarations: [AppMeasureComponent],

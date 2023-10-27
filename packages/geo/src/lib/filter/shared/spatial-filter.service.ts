@@ -1,13 +1,15 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
 import { ConfigService, LanguageService } from '@igo2/core';
-import { map } from 'rxjs/operators';
+
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Feature } from '../../feature/shared';
 import {
-  SpatialFilterQueryType,
   SpatialFilterItemType,
+  SpatialFilterQueryType,
   SpatialFilterType
 } from './spatial-filter.enum';
 import { SpatialFilterThematic } from './spatial-filter.interface';

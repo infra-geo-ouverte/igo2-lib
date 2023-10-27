@@ -1,44 +1,43 @@
+import { ConfigService, StorageService } from '@igo2/core';
+import { SubjectStatus } from '@igo2/utils';
+
 import olMap from 'ol/Map';
+import { ObjectEvent } from 'ol/Object';
 import olView, { ViewOptions } from 'ol/View';
 import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
-import * as olproj from 'ol/proj';
-import * as olproj4 from 'ol/proj/proj4';
-import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
-import { getUid } from 'ol/util';
 import olLayer from 'ol/layer/Layer';
+import * as olproj from 'ol/proj';
+import OlProjection from 'ol/proj/Projection';
+import * as olproj4 from 'ol/proj/proj4';
 import olSource from 'ol/source/Source';
+import { getUid } from 'ol/util';
 
 import proj4 from 'proj4';
-import { BehaviorSubject, pairwise, skipWhile, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, pairwise, skipWhile } from 'rxjs';
 
-import { SubjectStatus } from '@igo2/utils';
-
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { Overlay } from '../../overlay/shared/overlay';
-
 import { LayerWatcher } from '../utils/layer-watcher';
-import {
-  MapViewOptions,
-  MapOptions,
-  MapAttributionOptions,
-  MapScaleLineOptions,
-  MapExtent,
-  MapControlsOptions
-} from './map.interface';
-import { MapBase } from './map.abstract';
-import { MapViewController } from './controllers/view';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { MapGeolocationController } from './controllers/geolocation';
-import { StorageService, ConfigService } from '@igo2/core';
-import { ObjectEvent } from 'ol/Object';
+import { MapViewController } from './controllers/view';
 import {
   getAllChildLayersByDeletion,
   getRootParentByDeletion,
   handleLayerPropertyChange,
   initLayerSyncFromRootParentLayers
 } from './linkedLayers.utils';
+import { MapBase } from './map.abstract';
+import {
+  MapAttributionOptions,
+  MapControlsOptions,
+  MapExtent,
+  MapOptions,
+  MapScaleLineOptions,
+  MapViewOptions
+} from './map.interface';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -263,7 +262,7 @@ export class IgoMap implements MapBase {
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getCenter(projection?: string | OlProjection): [number, number] {
@@ -271,14 +270,16 @@ export class IgoMap implements MapBase {
   }
 
   /**
-   * Deprecated
+   * @deprecated
    * TODO: Move to ViewController and update every place it's used
    */
   getExtent(projection?: string | OlProjection): MapExtent {
     return this.viewController.getExtent(projection);
   }
-
-  // TODO: Move to ViewController and update every place it's used
+  /**
+   * @deprecated
+   * TODO: Move to ViewController and update every place it's used
+   */
   getZoom(): number {
     return this.viewController.getZoom();
   }

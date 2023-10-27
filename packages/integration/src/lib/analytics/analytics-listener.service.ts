@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
+
+import { AuthService } from '@igo2/auth';
+import { AnalyticsService } from '@igo2/core';
+import {
+  ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  Layer,
+  TileArcGISRestDataSourceOptions,
+  WMSDataSourceOptions,
+  WMTSDataSourceOptions
+} from '@igo2/geo';
+
 import { skip } from 'rxjs/operators';
 
-import { AnalyticsService } from '@igo2/core';
-import { AuthService } from '@igo2/auth';
-
 import { ContextState } from '../context/context.state';
+import { MapState } from '../map/map.state';
 import { SearchState } from '../search/search.state';
 import { ToolState } from '../tool/tool.state';
-import { MapState } from '../map/map.state';
-
-import {
-  Layer,
-  WMTSDataSourceOptions,
-  WMSDataSourceOptions,
-  ArcGISRestDataSourceOptions,
-  TileArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions
-} from '@igo2/geo';
 
 /**
  * Service that holds the state of the search module

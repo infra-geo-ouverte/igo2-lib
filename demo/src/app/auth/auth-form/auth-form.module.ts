@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 
 import { IgoAuthModule } from '@igo2/auth';
 
-import { AppAuthFormComponent } from './auth-form.component';
-import { AppAuthFormRoutingModule } from './auth-form-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { AppAuthFormRoutingModule } from './auth-form-routing.module';
+import { AppAuthFormComponent } from './auth-form.component';
 
 @NgModule({
   declarations: [AppAuthFormComponent],

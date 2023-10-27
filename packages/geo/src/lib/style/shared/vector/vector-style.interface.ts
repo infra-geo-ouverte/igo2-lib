@@ -1,8 +1,9 @@
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { Feature } from '../../../feature/shared/feature.interfaces';
 import olStyle from 'ol/style/Style';
 import { Style as GeoStylerStyle } from 'geostyler-style';
+
+import { Feature } from '../../../feature/shared/feature.interfaces';
 
 export interface FeatureCommonVectorStyleOptions
   extends CommonVectorStyleOptions {
@@ -28,6 +29,11 @@ export interface GeoStylerStyleInterfaceOptions {
   hover?: GeoStylerStyle;
 }
 
+export interface OverlayStyleOptions {
+  base?: CommonVectorStyleOptions;
+  selection?: CommonVectorStyleOptions;
+  focus?: CommonVectorStyleOptions;
+}
 export interface CommonVectorStyleOptions {
   markerColor?: string | number[]; // marker fill
   markerOpacity?: number; // marker opacity, not applied if a rgba is provided

@@ -1,7 +1,7 @@
 import { FEATURE } from '../../feature/shared/feature.enums';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { SearchSource } from './sources/source';
 import { SearchResult } from './search.interfaces';
+import { SearchSource } from './sources/source';
 
 /**
  * Function that checks whether a search source implements TextSearch

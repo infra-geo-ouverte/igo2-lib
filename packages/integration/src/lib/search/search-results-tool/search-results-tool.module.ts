@@ -1,21 +1,20 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoLanguageModule } from '@igo2/core';
 import {
-  IgoFlexibleModule,
   IgoCustomHtmlModule,
+  IgoFlexibleModule,
   IgoPanelModule
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core';
 import {
+  IgoFeatureDetailsModule,
   IgoFeatureModule,
-  IgoSearchModule,
-  IgoFeatureDetailsModule
+  IgoSearchModule
 } from '@igo2/geo';
 
 import { SearchResultsToolComponent } from './search-results-tool.component';

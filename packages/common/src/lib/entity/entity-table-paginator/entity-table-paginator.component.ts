@@ -1,18 +1,20 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
-  OnChanges,
-  ViewChild,
-  Output,
+  Component,
   EventEmitter,
-  OnDestroy
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  ViewChild
 } from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+
+import { LanguageService, MediaService } from '@igo2/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityStore } from '../shared';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { LanguageService, MediaService } from '@igo2/core';
 import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';
 
 @Component({

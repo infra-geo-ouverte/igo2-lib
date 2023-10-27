@@ -20,6 +20,7 @@ export * from './lib/route/route.interface';
 export * from './lib/activity';
 export * from './lib/analytics';
 export * from './lib/config';
+export * from './lib/environment';
 export * from './lib/language';
 export * from './lib/media';
 export * from './lib/message';

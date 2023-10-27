@@ -1,11 +1,12 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { ConfigService } from '../config/config.service';
 import {
-  StorageScope,
   StorageOptions,
+  StorageScope,
   StorageServiceEvent,
   StorageServiceEventEnum
 } from './storage.interface';
-import { BehaviorSubject } from 'rxjs';
 
 export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
   protected options?: T;
@@ -14,7 +15,7 @@ export abstract class BaseStorage<T extends StorageOptions = StorageOptions> {
     new BehaviorSubject(undefined);
 
   constructor(config: ConfigService) {
-    this.options = config.getConfig('storage') || { key: 'igo' };
+    this.options = config.getConfig<T>('storage') || ({ key: 'igo' } as T);
   }
 
   /**

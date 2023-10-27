@@ -1,57 +1,60 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  Input,
   OnDestroy,
   OnInit
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Observable, forkJoin, Subject } from 'rxjs';
-import { tap, take, takeUntil } from 'rxjs/operators';
 
-import {
-  IgoMap,
-  DataSourceService,
-  LayerService,
-  Feature,
-  moveToOlFeatures,
-  FeatureMotion,
-  ClusterDataSource,
-  featureToOl,
-  DataSource,
-  QueryableDataSourceOptions,
-  SpatialFilterService,
-  SpatialFilterType,
-  SpatialFilterItemType,
-  SpatialFilterQueryType,
-  SpatialFilterThematic,
-  Layer,
-  VectorLayer,
-  createOverlayMarkerStyle,
-  ExportOptions,
-  MeasureLengthUnit
-} from '@igo2/geo';
 import {
   EntityStore,
   EntityStoreWithStrategy,
   ToolComponent
 } from '@igo2/common';
+import { LanguageService, MessageService } from '@igo2/core';
+import {
+  ClusterDataSource,
+  DataSource,
+  DataSourceService,
+  ExportOptions,
+  Feature,
+  FeatureMotion,
+  IgoMap,
+  Layer,
+  LayerService,
+  MeasureLengthUnit,
+  QueryableDataSourceOptions,
+  SpatialFilterItemType,
+  SpatialFilterQueryType,
+  SpatialFilterService,
+  SpatialFilterThematic,
+  SpatialFilterType,
+  VectorLayer,
+  createOverlayMarkerStyle,
+  featureToOl,
+  moveToOlFeatures
+} from '@igo2/geo';
+
+import { EventsKey } from 'ol/events';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import olSourceVector from 'ol/source/Vector';
-import olSourceCluster from 'ol/source/Cluster';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olSourceCluster from 'ol/source/Cluster';
+import olSourceVector from 'ol/source/Vector';
+import * as olstyle from 'ol/style';
+
+import { Observable, Subject, forkJoin } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
+import { take, takeUntil, tap } from 'rxjs/operators';
+
 import { MapState } from '../../map/map.state';
+import { ToolState } from '../../tool/tool.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
 import {
   ImportExportMode,
   ImportExportState
 } from './../../import-export/import-export.state';
-import * as olstyle from 'ol/style';
-import { MessageService, LanguageService } from '@igo2/core';
-import { ToolState } from '../../tool/tool.state';
-import { WorkspaceState } from '../../workspace/workspace.state';
-import { EventsKey } from 'ol/events';
 
 /**
  * Tool to apply spatial filter

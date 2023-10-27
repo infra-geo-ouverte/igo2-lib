@@ -1,24 +1,25 @@
 import {
+  ChangeDetectorRef,
   Directive,
-  Self,
-  OnInit,
-  OnDestroy,
   HostListener,
-  ChangeDetectorRef
+  OnDestroy,
+  OnInit,
+  Self
 } from '@angular/core';
+
+import { AuthService } from '@igo2/auth';
+import { ConfirmDialogService } from '@igo2/common';
+import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { MapService } from '@igo2/geo';
+
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { MessageService, LanguageService, StorageService } from '@igo2/core';
-import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
-import { MapService } from '@igo2/geo';
-
 import {
   Context,
-  DetailedContext,
+  ContextUserPermission,
   ContextsList,
-  ContextUserPermission
+  DetailedContext
 } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';

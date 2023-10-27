@@ -1,21 +1,22 @@
 import {
   Directive,
-  Input,
-  Output,
   EventEmitter,
+  Input,
   OnDestroy,
-  Self,
-  OnInit
+  OnInit,
+  Output,
+  Self
 } from '@angular/core';
 
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-
-import { transform } from 'ol/proj';
 import { MediaService } from '@igo2/core';
+
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
+import { transform } from 'ol/proj';
+
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+
 /**
  * This directive return the pointer coordinate (on click or pointermove)
  * in [longitude, latitude], delayed by in input (pointerMoveDelay)
