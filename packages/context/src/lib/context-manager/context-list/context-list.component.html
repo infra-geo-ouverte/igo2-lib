@@ -77,8 +77,26 @@
       </button>
       <mat-menu #accountMenu="matMenu">
         <ng-container *ngFor="let user of users">
-          <span class="profilsMenu">
-            <div mat-menu-item>
+          <button
+            *ngIf="!user.childs; else withSubMenu"
+            mat-menu-item
+            class="profil-menu"
+          >
+            <mat-checkbox
+              [checked]="getPermission(user).checked"
+              [indeterminate]="getPermission(user).indeterminate"
+              (click)="$event.stopPropagation()"
+              (change)="userSelection(user)"
+            >
+            </mat-checkbox>
+            <span>{{ user.title }}</span>
+          </button>
+          <ng-template #withSubMenu>
+            <button
+              mat-menu-item
+              [matMenuTriggerFor]="subAccountMenu"
+              class="profil-menu"
+            >
               <mat-checkbox
                 [checked]="getPermission(user).checked"
                 [indeterminate]="getPermission(user).indeterminate"
@@ -86,46 +104,38 @@
                 (change)="userSelection(user)"
               >
               </mat-checkbox>
-            </div>
-            <button
-              *ngIf="user.childs"
-              [matMenuTriggerFor]="subAccountMenu"
-              mat-menu-item
-            >
-              {{ user.title }}
+              <span>{{ user.title }}</span>
             </button>
-            <button mat-menu-item *ngIf="!user.childs">
-              {{ user.title }}
-            </button>
-          </span>
 
-          <mat-menu #subAccountMenu="matMenu">
-            <div mat-menu-item>
-              <mat-checkbox
+            <mat-menu #subAccountMenu="matMenu">
+              <button
+                mat-menu-item
                 *ngFor="let child of user.childs"
-                [checked]="getPermission(child).checked"
-                (click)="$event.stopPropagation()"
-                (change)="userSelection(child, user)"
+                class="profil-menu"
               >
-                {{ child.title }}
-              </mat-checkbox>
-            </div>
-          </mat-menu>
+                <mat-checkbox
+                  [checked]="getPermission(child).checked"
+                  (click)="$event.stopPropagation()"
+                  (change)="userSelection(child, user)"
+                >
+                  {{ child.title }}
+                </mat-checkbox>
+              </button>
+            </mat-menu>
+          </ng-template>
         </ng-container>
 
-        <span class="profilsMenu">
-          <div mat-menu-item>
-            <mat-checkbox
-              [checked]="showHidden"
-              (click)="$event.stopPropagation()"
-              (change)="showHiddenContexts.emit()"
-            >
-            </mat-checkbox>
-          </div>
-          <button mat-menu-item>
+        <button mat-menu-item class="profil-menu">
+          <mat-checkbox
+            [checked]="showHidden"
+            (click)="$event.stopPropagation()"
+            (change)="showHiddenContexts.emit()"
+          >
+          </mat-checkbox>
+          <span>
             {{ 'igo.context.contextManager.showHidden' | translate }}
-          </button>
-        </span>
+          </span>
+        </button>
       </mat-menu>
     </div>
   </div>
