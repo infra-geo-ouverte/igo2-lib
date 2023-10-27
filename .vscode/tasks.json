@@ -5,6 +5,7 @@
       "label": "npm: start",
       "type": "npm",
       "script": "start",
+      "path": "projects/demo",
       "isBackground": true,
       "presentation": {
         "focus": true,

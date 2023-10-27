@@ -60,15 +60,13 @@ If you want to concurently develop inside the IGO2 Library AND inside any igo2-l
 This example is based on IGO2 project (https://github.com/infra-geo-ouverte/igo2.git)
 
 1.  Clone current repository using :`git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2.  Navigate to the cloned  folder : `cd igo2-lib/`
-3.  Now you can checkout any igo2-lib branch based on 16.x.x release
-4.  Navigate to the sub project folder : `cd projects`
-5.  Clone the sub project repository using : `git clone https://github.com/infra-geo-ouverte/igo2.git`
-6.  Now you can checkout any IGO2 branch based on 16.x.x release
-7.  Navigate to the root folder of igo2-lib
-8.  Run `npm install` to install dependencies and create the symbolic links inside the node_modules folder.
-9.  If it is your first run, you MUST run `npm run build -w @igo2/core` to ensure to have all required assets (theme, locale, ...)
-10. Execute `npm run link.start -w igo2` from IGO2 project OR run or you can run the vscode task (`Launch IGO2 with link`)
+2.  Navigate to the cloned folder : `cd igo2-lib/`
+3.  Navigate to the sub project folder : `cd projects`
+4.  Clone the sub project repository using : `git clone https://github.com/infra-geo-ouverte/igo2.git`
+5.  Navigate to the root folder of igo2-lib
+6.  Run `npm install` to install dependencies
+7.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
+8. Execute `npm run link.start -w igo2` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
 
 
 If you strictly want to develop inside IGO2 Library, here some step to follow:
@@ -77,7 +75,7 @@ If you strictly want to develop inside IGO2 Library, here some step to follow:
 2.  Navigate to the folder igo2-lib : `cd igo2-lib/`
 3.  Install dependencies by running `npm install`
 3.  Build librairies: `npm run build.libs`
-4.  Start form npm `npm start` (or you can run the vscode task (F5))
+4.  Start form npm `npm start.demo` (or you can run the VsCode config (`Launch Demo`))
 5.  Open your browser at http://localhost:4200/
 
 ### Build
