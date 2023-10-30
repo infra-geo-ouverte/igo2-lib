@@ -1,6 +1,6 @@
 {
   "name": "@igo2/integration",
-  "version": "16.0.0-rc.6",
+  "version": "16.0.0-rc.7",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -16,8 +16,8 @@
   "peerDependencies": {
     "@angular/common": "^16.2.5",
     "@angular/core": "^16.2.5",
-    "@igo2/geo": "16.0.0-rc.6",
-    "@igo2/context": "16.0.0-rc.6",
+    "@igo2/geo": "16.0.0-rc.7",
+    "@igo2/context": "16.0.0-rc.7",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.29",
     "rxjs": "^7.8.0"

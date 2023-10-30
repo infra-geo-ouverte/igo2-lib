@@ -1,3 +1,12 @@
+# [16.0.0-rc.7](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.6...16.0.0-rc.7) (2023-10-30)
+
+
+### Reverts
+
+* Revert "fix(context): save layer opacity in context export (#1458)" ([dae76f1](https://github.com/infra-geo-ouverte/igo2-lib/commit/dae76f155c03d45bfa511bd0b2d7180cd26fb0b3)), closes [#1458](https://github.com/infra-geo-ouverte/igo2-lib/issues/1458)
+
+
+
 # [16.0.0-rc.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.5...16.0.0-rc.6) (2023-10-30)
 
 
