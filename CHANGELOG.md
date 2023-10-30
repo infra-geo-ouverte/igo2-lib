@@ -1,3 +1,7 @@
+# [16.0.0-rc.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.5...16.0.0-rc.6) (2023-10-30)
+
+
+
 # [16.0.0-rc.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.4...16.0.0-rc.5) (2023-10-30)
 
 
