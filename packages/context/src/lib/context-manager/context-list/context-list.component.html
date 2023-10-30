@@ -86,7 +86,7 @@
               [checked]="getPermission(user).checked"
               [indeterminate]="getPermission(user).indeterminate"
               (click)="$event.stopPropagation()"
-              (change)="userSelection(user)"
+              (change)="handleToggleCategory(user)"
             >
             </mat-checkbox>
             <span>{{ user.title }}</span>
@@ -101,7 +101,7 @@
                 [checked]="getPermission(user).checked"
                 [indeterminate]="getPermission(user).indeterminate"
                 (click)="$event.stopPropagation()"
-                (change)="userSelection(user)"
+                (change)="handleToggleCategory(user)"
               >
               </mat-checkbox>
               <span>{{ user.title }}</span>
@@ -116,7 +116,7 @@
                 <mat-checkbox
                   [checked]="getPermission(child).checked"
                   (click)="$event.stopPropagation()"
-                  (change)="userSelection(child, user)"
+                  (change)="handleToggleCategory(child, user)"
                 >
                   {{ child.title }}
                 </mat-checkbox>
@@ -200,4 +200,8 @@
       </igo-context-item>
     </ng-template>
   </ng-template>
+
+  <div *ngIf="isEmpty" class="no-result">
+    {{ 'igo.context.contextManager.noResult' | translate }}
+  </div>
 </igo-list>
