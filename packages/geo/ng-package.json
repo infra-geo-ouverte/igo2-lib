@@ -16,7 +16,7 @@
   ],
   "assets": [
     { "input": "src", "glob": "*.scss", "output": "" },
-    { "input": "src/lib", "glob": "**/*.theming.scss", "output": "lib" },
+    { "input": "src/lib", "glob": "**/*.them*.scss", "output": "lib" },
     { "input": "src/assets", "glob": "**/*", "output": "assets" },
     { "input": "src/locale", "glob": "*", "output": "locale" }
   ]
