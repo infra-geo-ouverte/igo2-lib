@@ -1,14 +1,16 @@
-import { Provider, InjectionToken } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
+
 import { provideSentryMonitoring } from './sentry/sentry.provider';
-import { MonitoringOptions } from './shared';
-import { BaseEnvironmentOptions } from '../environment';
+import { AnyMonitoringOptions, MonitoringOptions } from './shared';
 
 export const MONITORING_OPTIONS = new InjectionToken<MonitoringOptions | null>(
   'monitoring.options'
 );
 
-export function provideMonitoring(environment: BaseEnvironmentOptions): Provider[] {
-  const options = environment.igo?.monitoring;
+export function provideMonitoring(
+  options: AnyMonitoringOptions | null,
+  isProd: boolean
+): Provider[] {
   if (!options) {
     return null;
   }
@@ -19,9 +21,7 @@ export function provideMonitoring(environment: BaseEnvironmentOptions): Provider
 
   switch (options.provider) {
     case 'sentry':
-      providers.push(
-        ...provideSentryMonitoring(options, environment.production)
-      );
+      providers.push(...provideSentryMonitoring(options, isProd));
       break;
     default:
       break;
