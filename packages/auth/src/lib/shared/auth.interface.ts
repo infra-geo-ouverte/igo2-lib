@@ -1,6 +1,6 @@
-import { BrowserAuthOptions } from '@azure/msal-browser';
 import { MsalGuardConfiguration } from '@azure/msal-angular';
 import { BaseUser } from '@igo2/core';
+import { BrowserAuthOptions } from '@azure/msal-browser';
 
 export interface AuthInternOptions {
   enabled?: boolean;
@@ -17,11 +17,8 @@ export interface AuthGoogleOptions {
   clientId: string;
 }
 
-export interface AuthMicrosoftOptions {
+export interface AuthMicrosoftOptions extends BrowserAuthOptions {
   enabled?: boolean;
-  clientId: string;
-  redirectUri?: string;
-  authority?: string;
 }
 
 export interface AuthMicrosoftb2cOptions {
@@ -55,7 +52,7 @@ export interface AuthMicrosoftb2cOptionsAuthority {
 
 export interface AuthOptions {
   url?: string;
-  tokenKey: string;
+  tokenKey?: string;
   allowAnonymous?: boolean;
   loginRoute?: string;
   logoutRoute?: string;

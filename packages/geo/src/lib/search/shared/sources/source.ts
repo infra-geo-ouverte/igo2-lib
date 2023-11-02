@@ -1,12 +1,13 @@
-import { ObjectUtils } from '@igo2/utils';
+import { Workspace } from '@igo2/common';
 import { StorageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
+
+import { FeatureStore } from '../../../feature';
 import {
   ISearchSourceParams,
   SearchSourceOptions,
   SearchSourceSettings
 } from './source.interfaces';
-import { FeatureStore } from '../../../feature';
-import { Workspace } from '@igo2/common';
 
 /**
  * Base search source class

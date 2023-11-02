@@ -1,6 +1,6 @@
-import olSourceVector from 'ol/source/Vector';
 import olFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
+import olSourceVector from 'ol/source/Vector';
 
 import { FeatureDataSource } from './feature-datasource';
 import { WebSocketDataSourceOptions } from './websocket-datasource.interface';

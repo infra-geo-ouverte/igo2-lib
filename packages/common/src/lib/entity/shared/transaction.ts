@@ -1,16 +1,15 @@
 import { Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { BehaviorSubject } from 'rxjs';
-
+import { EntityOperationType } from './entity.enums';
 import {
   EntityKey,
-  EntityTransactionOptions,
-  EntityOperationState
+  EntityOperationState,
+  EntityTransactionOptions
 } from './entity.interfaces';
-import { EntityStore } from './store';
-import { EntityOperationType } from './entity.enums';
 import { getEntityId } from './entity.utils';
+import { EntityStore } from './store';
 
 interface EntityOperation<E extends object = object> {
   key: EntityKey;

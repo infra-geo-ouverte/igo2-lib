@@ -1,44 +1,27 @@
-import { AuthOptions, AuthStorageOptions } from '@igo2/auth';
-import { ContextServiceOptions } from '@igo2/context';
+import { EnvironmentOptions as AuthEnvironmentOptions } from '@igo2/auth';
+import { EnvironmentOptions as CommonEnvironmentOptions } from '@igo2/common';
+import { EnvironmentOptions as ContextEnvironmentOptions } from '@igo2/context';
 import {
-  CatalogServiceOptions,
-  CommonVectorStyleOptions,
-  ImportExportServiceOptions,
-  Projection,
-  SearchSourceOptions,
-  StoredQueriesReverseSearchSourceOptions,
-  StoredQueriesSearchSourceOptions
-} from '@igo2/geo';
-import { DOMOptions } from '@igo2/common';
-import { BaseEnvironmentOptions, CoreOptions } from '@igo2/core';
+  BaseEnvironmentOptions,
+  EnvironmentOptions as CoreEnvironmentOptions
+} from '@igo2/core';
+import { EnvironmentOptions as GeoEnvironmentOptions } from '@igo2/geo';
+
+export type AllEnvironmentOptions = AuthEnvironmentOptions &
+  CommonEnvironmentOptions &
+  CoreEnvironmentOptions &
+  ContextEnvironmentOptions &
+  GeoEnvironmentOptions &
+  IntegrationEnvironmentOptions;
 
 export interface EnvironmentOptions extends BaseEnvironmentOptions {
-  igo: IgoOptions;
+  igo: AllEnvironmentOptions;
 }
 
-export interface IgoOptions extends CoreOptions {
+interface IntegrationEnvironmentOptions {
   app?: AppOptions;
-  auth?: AuthOptions;
-  catalog?: CatalogServiceOptions;
-  context?: ContextServiceOptions;
-  depot?: { url: string; trainingGuides?: string[] };
-  dom?: DOMOptions[];
-  importExport?: ImportExportServiceOptions;
-  importWithStyle?: boolean;
-  interactiveTour?: InteractiveTourConfigOptions;
-  projections?: Projection[];
-  queryOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchOverlayStyle?: {
-    base?: CommonVectorStyleOptions;
-    selection?: CommonVectorStyleOptions;
-    focus?: CommonVectorStyleOptions;
-  };
-  searchSources?: { [key: string]: SearchSourceOptions | StoredQueriesSearchSourceOptions | StoredQueriesReverseSearchSourceOptions };
-  storage?: AuthStorageOptions;
+  hasFeatureEmphasisOnSelection?: boolean;
+  saveSearchResultInLayer?: boolean;
 }
 
 export interface AppOptions {
@@ -52,10 +35,4 @@ export interface AppOptions {
     enabled?: boolean;
     path?: string;
   };
-}
-
-export interface InteractiveTourConfigOptions {
-  activateInteractiveTour: boolean;
-  tourInMobile: boolean;
-  pathToConfigFile?: string;
 }

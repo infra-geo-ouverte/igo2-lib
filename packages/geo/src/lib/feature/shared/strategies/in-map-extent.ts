@@ -1,11 +1,16 @@
-import * as olextent from 'ol/extent';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
-import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
+import * as olextent from 'ol/extent';
+
 import { Subscription } from 'rxjs';
-import { skipWhile } from 'rxjs/operators';
+import { debounceTime, skipWhile } from 'rxjs/operators';
+
+import { MapExtent } from '../../../map';
+import {
+  Feature,
+  FeatureStoreInMapExtentStrategyOptions
+} from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy maintain the store features updated while the map is moved.
@@ -75,44 +80,40 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
 
     this.updateEntitiesInExtent(store);
     this.states$$.push(
-      store.layer.map.viewController.state$.subscribe(() => {
-        this.updateEntitiesInExtent(store);
-      })
+      store.layer.map.viewController.state$
+        .pipe(debounceTime(250))
+        .subscribe(() => this.updateEntitiesInExtent(store))
     );
   }
 
-  private updateEntitiesInExtent(store) {
+  private updateEntitiesInExtent(store: FeatureStore) {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
-      let entitiesInMapExtent = [];
-      let entitiesWithNoGeom = [];
-      for (const entity of store.entities$.value) {
-        if (entity.ol) {
-          if (
-            olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent)
-          ) {
-            entitiesInMapExtent.push(entity);
-          }
-        } else {
-          entitiesWithNoGeom.push(entity);
-        }
-      }
-      if (entitiesInMapExtent.length > 0) {
-        store.state.updateMany(
-          entitiesInMapExtent,
-          { inMapExtent: true },
-          false
-        );
-      }
-      if (entitiesWithNoGeom.length > 0) {
-        store.state.updateMany(
-          entitiesWithNoGeom,
-          { inMapExtent: true },
-          false
-        );
-      }
+      const features = store.entities$.value;
+      const entitiesInMapExtent = this.getFeaturesInExtent(features, mapExtent);
+      store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, false);
     }
+  }
+
+  private getFeaturesInExtent(
+    features: Feature<any>[],
+    extent: MapExtent
+  ): Feature[] {
+    return features.reduce((acc, feature) => {
+      const geom = feature.ol?.getGeometry();
+      if (geom) {
+        const featureExtent = geom.getExtent();
+
+        if (olextent.intersects(featureExtent, extent)) {
+          acc.push(feature);
+        }
+      } else {
+        // By default, keep entity with no geometry
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
   }
 
   /**

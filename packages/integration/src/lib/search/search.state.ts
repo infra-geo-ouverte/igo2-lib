@@ -8,17 +8,20 @@ import {
 } from '@igo2/common';
 import { ConfigService, StorageService } from '@igo2/core';
 import {
-  SearchResult,
-  SearchSourceService,
-  SearchSource,
   CommonVectorStyleOptions,
-  FeatureWorkspace,
+  Feature,
   FeatureStore,
-  Feature
+  FeatureWorkspace,
+  OverlayStyleOptions,
+  SearchResult,
+  SearchSource,
+  SearchSourceService
 } from '@igo2/geo';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { WorkspaceState } from '../workspace/workspace.state';
+
 import { MapState } from '../map';
+import { WorkspaceState } from '../workspace/workspace.state';
 
 /**
  * Service that holds the state of the search module
@@ -82,13 +85,8 @@ export class SearchState {
     private configService: ConfigService,
     private mapState: MapState
   ) {
-    const searchOverlayStyle = this.configService.getConfig(
-      'searchOverlayStyle'
-    ) as {
-      base?: CommonVectorStyleOptions;
-      selection?: CommonVectorStyleOptions;
-      focus?: CommonVectorStyleOptions;
-    };
+    const searchOverlayStyle: OverlayStyleOptions =
+      this.configService.getConfig('searchOverlayStyle');
     if (searchOverlayStyle) {
       this.searchOverlayStyle = searchOverlayStyle.base;
       this.searchOverlayStyleSelection = searchOverlayStyle.selection;

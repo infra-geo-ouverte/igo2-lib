@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '../../config/config.service';
-
 import { AnalyticsOptions } from './analytics.interface';
 
 @Injectable({

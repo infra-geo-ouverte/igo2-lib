@@ -66,7 +66,8 @@
         "contextMapTooltip": "Create a new context from map layers",
         "hide": "Hide this context",
         "show": "Show up this context",
-        "showHidden": "Show hidden contexts"
+        "showHidden": "Show hidden contexts",
+        "noResult": "No results for selected filters"
       },
       "contextImportExport": {
         "export": {

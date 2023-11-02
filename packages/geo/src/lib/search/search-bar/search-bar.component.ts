@@ -1,28 +1,29 @@
 import {
-  Component,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  Input,
-  Output,
+  Component,
+  ElementRef,
   EventEmitter,
-  ViewChild,
-  ElementRef
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 import {
   FloatLabelType,
   MatFormFieldAppearance
 } from '@angular/material/form-field';
+
+import { EntityStore } from '@igo2/common';
+import { ConfigService } from '@igo2/core';
+
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { ConfigService } from '@igo2/core';
-import { EntityStore } from '@igo2/common';
-
-import { SEARCH_TYPES } from '../shared/search.enums';
-import { SearchResult, Research } from '../shared/search.interfaces';
-import { SearchService } from '../shared/search.service';
 import { SearchSourceService } from '../shared/search-source.service';
+import { SEARCH_TYPES } from '../shared/search.enums';
+import { Research, SearchResult } from '../shared/search.interfaces';
+import { SearchService } from '../shared/search.service';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.

@@ -1,30 +1,30 @@
+import { ObjectUtils } from '@igo2/utils';
+
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
+import { BehaviorSubject } from 'rxjs';
+
+import { TimeFilterOptions } from '../../../filter';
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import {
+  OgcFilterDuringOptions,
+  OgcFilterableDataSourceOptions,
+  OgcFiltersOptions
+} from '../../../filter/shared/ogc-filter.interface';
+import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
+import { WFSService } from './wfs.service';
 import {
   TimeFilterableDataSourceOptions,
   WMSDataSourceOptions
 } from './wms-datasource.interface';
-import { WFSService } from './wfs.service';
-
-import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
-  OgcFilterableDataSourceOptions,
-  OgcFiltersOptions,
-  OgcFilterDuringOptions
-} from '../../../filter/shared/ogc-filter.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
-import {
-  formatWFSQueryString,
   checkWfsParams,
-  defaultFieldNameGeometry
+  defaultFieldNameGeometry,
+  formatWFSQueryString
 } from './wms-wfs.utils';
-
-import { ObjectUtils } from '@igo2/utils';
-import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
-import { BehaviorSubject } from 'rxjs';
-import { TimeFilterOptions } from '../../../filter';
 
 export interface TimeFilterableDataSource extends WMSDataSource {
   options: TimeFilterableDataSourceOptions;

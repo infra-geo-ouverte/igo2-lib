@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import {
   copyFile as fsCopyFile,
   mkdir,
@@ -7,10 +7,15 @@ import {
 } from 'fs/promises';
 import { normalize, sep } from 'path';
 
-const BUFFER_ENCODING: BufferEncoding = 'utf-8';
+export const BUFFER_ENCODING: BufferEncoding = 'utf-8';
 
 export async function readFileContent<T>(path: string): Promise<T> {
   const body = await readFile(path, BUFFER_ENCODING);
+  return JSON.parse(body) as T;
+}
+
+export function readFileContentSync<T>(path: string): T {
+  const body = readFileSync(path, BUFFER_ENCODING);
   return JSON.parse(body) as T;
 }
 
@@ -60,4 +65,13 @@ async function createPreviousFolder(dest: string): Promise<void> {
 
 export function pathExist(path: string): boolean {
   return existsSync(path);
+}
+
+export function writeFile2(path: string, body: object | string, endLineBreak = true): Promise<void> {
+  let formattedBody =
+    typeof body === 'string' ? body : JSON.stringify(body, null, 2);
+  if (endLineBreak) {
+    formattedBody = formattedBody.concat('\n');
+  }
+  return writeFile(path, formattedBody, BUFFER_ENCODING);
 }

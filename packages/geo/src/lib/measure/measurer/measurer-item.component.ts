@@ -1,18 +1,18 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  Input,
-  Output,
   EventEmitter,
+  Input,
   OnDestroy,
-  ChangeDetectionStrategy
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
-  MeasureType,
   MeasureAreaUnit,
-  MeasureLengthUnit
+  MeasureLengthUnit,
+  MeasureType
 } from '../shared/measure.enum';
 import {
   computeBestAreaUnit,

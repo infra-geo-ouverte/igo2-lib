@@ -9,7 +9,6 @@ export interface SearchSourceOptions {
   settings?: SearchSourceSettings[];
   showInPointerSummary?: boolean;
   showInSettings?: boolean;
-  /** Default value is true */
   showAdvancedSettings?: boolean;
 }
 

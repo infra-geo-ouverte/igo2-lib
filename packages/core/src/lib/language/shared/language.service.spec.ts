@@ -1,5 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 

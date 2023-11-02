@@ -1,9 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { Layer } from '../../layer/shared/layers/layer';
-
-import { VectorLayer } from '../../layer/shared';
 import { DataSourceOptions } from '../../datasource';
+import { VectorLayer } from '../../layer/shared';
+import { Layer } from '../../layer/shared/layers/layer';
 
 @Component({
   selector: 'igo-export-button',

@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 
 import { downloadContent } from '@igo2/utils';
 
+import { Observable, Observer } from 'rxjs';
+
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ExportNothingToExportError } from './context-export.errors';
-import { Observer, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

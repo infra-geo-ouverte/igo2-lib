@@ -1,7 +1,6 @@
 import { ConfigService } from '@igo2/core';
 
 import { SearchSource } from '../../search/shared/sources/source';
-
 import { QuerySearchSource } from './query-search-source';
 
 /**

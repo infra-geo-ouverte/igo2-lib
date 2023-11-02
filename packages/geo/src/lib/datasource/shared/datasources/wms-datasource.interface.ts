@@ -1,11 +1,11 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import type { ServerType } from 'ol/source/wms';
 
+import { TimeFilterOptions } from '../../../filter';
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
-import { TimeFilterOptions } from '../../../filter';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';

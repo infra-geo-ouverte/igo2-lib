@@ -1,6 +1,7 @@
+import { BehaviorSubject, Subscription } from 'rxjs';
+
 import { EntityRecord, EntityStore } from '../../entity';
 import { Tool, ToolboxOptions } from './tool.interface';
-import { BehaviorSubject, Subscription } from 'rxjs';
 
 /**
  * Service where all available tools and their component are registered.

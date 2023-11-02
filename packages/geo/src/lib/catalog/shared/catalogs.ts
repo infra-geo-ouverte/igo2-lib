@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+
 import { Catalog, CollectCatalogItemsFn } from './catalog.abstract';
 import { TypeCatalog } from './catalog.enum';
 import {

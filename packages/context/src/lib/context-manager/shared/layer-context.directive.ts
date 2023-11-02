@@ -1,26 +1,26 @@
-import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
-import { Subscription, merge } from 'rxjs';
-import { buffer, debounceTime, filter, first } from 'rxjs/operators';
-
-import { RouteService, ConfigService } from '@igo2/core';
+import { ConfigService, RouteService } from '@igo2/core';
 import {
-  MapBrowserComponent,
   Layer,
-  LayerService,
   LayerOptions,
+  LayerService,
+  MapBrowserComponent,
   StyleListService,
   StyleService
 } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 import { ObjectUtils } from '@igo2/utils';
 
-import { ContextService } from './context.service';
-import { DetailedContext } from './context.interface';
+import { Subscription, merge } from 'rxjs';
+import { buffer, debounceTime, filter, first } from 'rxjs/operators';
+
 import {
-  addImportedFeaturesToMap,
-  addImportedFeaturesStyledToMap
+  addImportedFeaturesStyledToMap,
+  addImportedFeaturesToMap
 } from '../../context-import-export/shared/context-import.utils';
+import { DetailedContext } from './context.interface';
+import { ContextService } from './context.service';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -96,22 +96,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           context.extraFeatures.forEach((featureCollection) => {
             const importExportOptions =
               this.configService.getConfig('importExport');
-            const importWithStyle =
-              importExportOptions?.importWithStyle ||
-              this.configService.getConfig('importWithStyle');
-            if (this.configService.getConfig('importWithStyle')) {
-              console.warn(`
-              The location of this config importWithStyle is deprecated.
-              Please move this property within importExport configuration.
-              Ex: importWithStyle: true/false must be transfered to importExport: { importWithStyle: true/false }
-              Refer to environnement.ts OR config/config.json
-              This legacy conversion will be deleted in 2024.
-              `);
-            }
-            if (!importWithStyle) {
+            if (!importExportOptions?.importWithStyle) {
               addImportedFeaturesToMap(featureCollection, this.map);
             } else {
-              console.log('importWithStyle', importWithStyle);
               addImportedFeaturesStyledToMap(
                 featureCollection,
                 this.map,

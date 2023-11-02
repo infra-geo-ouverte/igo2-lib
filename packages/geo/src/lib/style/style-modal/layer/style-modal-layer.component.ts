@@ -1,9 +1,10 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
+
 import {
   LayerMatDialogData,
   StyleModalData
@@ -38,9 +39,7 @@ export class StyleModalLayerComponent implements OnInit {
     public dialogRef: MatDialogRef<StyleModalLayerComponent>,
     private formBuilder: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: LayerMatDialogData
-  ) {
-    this.buildForm();
-  }
+  ) {}
 
   ngOnInit() {
     this.linestringOnly = true;
@@ -50,12 +49,13 @@ export class StyleModalLayerComponent implements OnInit {
       }
     }
     this.buildStyleData();
+    this.buildForm();
   }
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      fill: [''],
-      stroke: ['']
+      fill: [this.getLayerFillColor()],
+      stroke: [this.getLayerStrokeColor()]
     });
   }
 
@@ -70,7 +70,7 @@ export class StyleModalLayerComponent implements OnInit {
     };
   }
 
-  getLayerFillColor() {
+  private getLayerFillColor() {
     let fillColor = this.defaultValues.fillColor;
     const style = this.layerOlStyle;
     if (style?.getFill()?.getColor()) {
@@ -82,7 +82,7 @@ export class StyleModalLayerComponent implements OnInit {
     return fillColor;
   }
 
-  getLayerStrokeColor() {
+  private getLayerStrokeColor() {
     let strokeColor = this.defaultValues.strokeColor;
     const style = this.layerOlStyle;
     if (style?.getStroke()?.getColor()) {

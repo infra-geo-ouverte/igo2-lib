@@ -41,3 +41,6 @@ sendTo*.sh
 # System Files
 .DS_Store
 Thumbs.db
+
+projects/*
+!projects/demo

@@ -1,21 +1,22 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-import { BehaviorSubject, Subscription, Observable, of } from 'rxjs';
-
 import {
   EntityRecord,
-  Workspace,
-  WorkspaceStore,
-  Widget,
+  EntityState,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
-  EntityState
+  Widget,
+  Workspace,
+  WorkspaceStore
 } from '@igo2/common';
-import { WfsWorkspace, FeatureWorkspace, EditionWorkspace } from '@igo2/geo';
+import { StorageService } from '@igo2/core';
+import { EditionWorkspace, FeatureWorkspace, WfsWorkspace } from '@igo2/geo';
+
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
+
+import { EditionActionsService } from './shared/edition-actions.service';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
-import { StorageService } from '@igo2/core';
-import { EditionActionsService } from './shared/edition-actions.service';
 
 /**
  * Service that holds the state of the workspace module

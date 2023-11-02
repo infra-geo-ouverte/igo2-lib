@@ -1,18 +1,19 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { EntityStore } from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
 
+import { BehaviorSubject } from 'rxjs';
+
+import { IgoMap } from '../../map/shared';
 import {
   AddedChangeEmitter,
   AddedChangeGroupEmitter,
@@ -22,7 +23,6 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { IgoMap } from '../../map/shared';
 
 /**
  * Catalog browser group item

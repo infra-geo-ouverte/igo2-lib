@@ -3,19 +3,18 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from '@igo2/core';
 import { downloadContent } from '@igo2/utils';
 
-import { Observable, Observer } from 'rxjs';
-
-import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
+import * as olformat from 'ol/format';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
-import { encode } from 'windows-1252';
 
-import { ExportFormat, EncodingFormat } from './export.type';
+import { Observable, Observer } from 'rxjs';
+import { encode } from 'windows-1252';
 
 import {
   ExportInvalidFileError,
   ExportNothingToExportError
 } from './export.errors';
+import { EncodingFormat, ExportFormat } from './export.type';
 
 @Injectable({
   providedIn: 'root'

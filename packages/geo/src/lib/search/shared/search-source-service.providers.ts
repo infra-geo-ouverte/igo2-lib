@@ -1,5 +1,5 @@
-import { SearchSource } from './sources/source';
 import { SearchSourceService } from './search-source.service';
+import { SearchSource } from './sources/source';
 
 /**
  * Search source factory

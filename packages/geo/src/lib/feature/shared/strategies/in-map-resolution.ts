@@ -1,8 +1,9 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
+import { Subscription, debounceTime } from 'rxjs';
+
 import { FeatureStoreInMapResolutionStrategyOptions } from '../feature.interfaces';
-import { Subscription } from 'rxjs';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy maintain the store features updated while the map is scrolled.
@@ -78,9 +79,11 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
       store.layer.map.viewController.getResolution()
     );
     this.resolution$$.push(
-      store.layer.map.viewController.resolution$.subscribe((res) => {
-        this.updateEntitiesInResolution(store, res);
-      })
+      store.layer.map.viewController.resolution$
+        .pipe(debounceTime(250))
+        .subscribe((res) => {
+          this.updateEntitiesInResolution(store, res);
+        })
     );
   }
 

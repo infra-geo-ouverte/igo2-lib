@@ -1,15 +1,18 @@
-import { LanguageService } from '@igo2/core';
-import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators
 } from '@angular/forms';
-import { Layer } from '../../layer/shared';
-import { SearchResult } from '../shared';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+import { LanguageService } from '@igo2/core';
+
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+
+import { Layer } from '../../layer/shared';
+import { SearchResult } from '../shared';
 
 @Component({
   selector: 'igo-save-feature-dialog',

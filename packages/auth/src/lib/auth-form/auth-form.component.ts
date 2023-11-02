@@ -1,16 +1,18 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  OnInit,
+  Component,
+  EventEmitter,
   Input,
+  OnInit,
   Optional,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { NavigationStart, Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core';
+
+import { filter } from 'rxjs/operators';
+
 import { AuthOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 

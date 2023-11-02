@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ShepherdService } from 'angular-shepherd';
 
-import { ConfigService, MediaService, LanguageService } from '@igo2/core';
-import { InteractiveTourLoader } from './interactive-tour.loader';
+import { ConfigService, LanguageService, MediaService } from '@igo2/core';
+
+import { autoPlacement, offset } from '@floating-ui/dom';
+import { ShepherdService } from 'angular-shepherd';
+import Shepherd from 'shepherd.js';
+
 import {
+  InteractiveTourAction,
   InteractiveTourOptions,
-  InteractiveTourStep,
-  InteractiveTourAction
+  InteractiveTourStep
 } from './interactive-tour.interface';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @Injectable({
   providedIn: 'root'
@@ -71,10 +75,8 @@ export class InteractiveTourService {
     const showInMobile = this.configService.getConfig(
       'interactiveTour.tourInMobile'
     );
-    if (showInMobile === undefined) {
-      return true;
-    }
-    return this.configService.getConfig('interactiveTour.tourInMobile');
+
+    return showInMobile === undefined ? true : showInMobile;
   }
 
   private getButtons(buttonKind?: 'first' | 'last' | 'noBackButton') {
@@ -281,18 +283,22 @@ export class InteractiveTourService {
     });
   }
 
-  private getShepherdSteps(stepConfig: InteractiveTourOptions) {
-    const shepherdSteps = [];
+  private getShepherdSteps(tourConfig: InteractiveTourOptions) {
+    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
 
     let i = 0;
-    for (const step of stepConfig.steps) {
+    for (const step of tourConfig.steps) {
+      const position = step.position ?? tourConfig.position;
       shepherdSteps.push({
         attachTo: {
           element: step.element,
-          on: step.position || stepConfig.position
+          on: position as any // PopperPlacement
         },
-        popperOptions: {
-          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
+        floatingUIOptions: {
+          middleware: [
+            position === 'auto' && autoPlacement(),
+            offset({ mainAxis: 15 })
+          ].filter(Boolean)
         },
         beforeShowPromise: () => {
           return Promise.all([
@@ -306,20 +312,20 @@ export class InteractiveTourService {
         buttons: this.getButtons(
           i === 0
             ? 'first'
-            : i + 1 === stepConfig.steps.length
+            : i + 1 === tourConfig.steps.length
             ? 'last'
-            : stepConfig.steps[i].noBackButton
+            : tourConfig.steps[i].noBackButton
             ? 'noBackButton'
             : undefined
         ),
         classes: step.class,
         highlightClass: step.highlightClass,
-        scrollTo: step.scrollToElement || stepConfig.scrollToElement || true,
+        scrollTo: step.scrollToElement || tourConfig.scrollToElement || true,
         canClickTarget: step.disableInteraction
           ? !step.disableInteraction
           : undefined,
         title: this.languageService.translate.instant(
-          step.title || stepConfig.title
+          step.title || tourConfig.title
         ),
         text: [this.languageService.translate.instant(step.text)],
         when: {
@@ -331,7 +337,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      });
+      } satisfies Shepherd.Step.StepOptions);
       i++;
     }
 

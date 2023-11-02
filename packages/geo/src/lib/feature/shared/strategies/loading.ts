@@ -1,6 +1,6 @@
-import { Subscription } from 'rxjs';
-
 import { EntityStoreStrategy } from '@igo2/common';
+
+import { Subscription } from 'rxjs';
 
 import { FeatureMotion } from '../feature.enums';
 import {

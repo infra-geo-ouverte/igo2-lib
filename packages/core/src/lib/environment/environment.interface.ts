@@ -1,12 +1,20 @@
-import { LanguageOptions } from "../language";
-import { AnyMonitoringOptions } from "../monitoring";
+import { AnalyticsOptions } from '../analytics';
+import { Version } from '../config';
+import { LanguageOptions } from '../language';
+import { MessageOptions } from '../message';
+import { AnyMonitoringOptions } from '../monitoring';
+import { RegexOptions } from '../regex';
 
 export interface BaseEnvironmentOptions {
   production: boolean;
-  igo: CoreOptions;
 }
 
-export interface CoreOptions {
-  monitoring?: AnyMonitoringOptions;
+export interface EnvironmentOptions {
+  analytics?: AnalyticsOptions;
+  emailAddress?: string;
   language?: LanguageOptions;
+  message?: MessageOptions;
+  monitoring?: AnyMonitoringOptions;
+  regex?: RegexOptions;
+  version?: Version;
 }

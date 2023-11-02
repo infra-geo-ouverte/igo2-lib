@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { MapState } from '../../map/map.state';
 import { IgoMap, Layer } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-time-filter-tool.animation';
 
 @ToolComponent({

@@ -1,48 +1,48 @@
-import { DrawControlOptions } from './../shared/controls/draw';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
-  OnInit,
   OnDestroy,
+  OnInit,
   Optional,
-  Self,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy
+  Self
 } from '@angular/core';
-import { NgControl, ControlValueAccessor } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 
-import { Subscription } from 'rxjs';
-
-import * as OlStyle from 'ol/style';
-import { StyleLike as OlStyleLike } from 'ol/style/Style';
+import OlFeature from 'ol/Feature';
+import OlOverlay from 'ol/Overlay';
 import OlGeoJSON from 'ol/format/GeoJSON';
+import OlCircle from 'ol/geom/Circle';
 import OlGeometry from 'ol/geom/Geometry';
 import type { Type } from 'ol/geom/Geometry';
-import OlFeature from 'ol/Feature';
-import OlVectorSource from 'ol/source/Vector';
-import OlVectorLayer from 'ol/layer/Vector';
-import OlOverlay from 'ol/Overlay';
-import * as olproj from 'ol/proj';
+import OlLineString from 'ol/geom/LineString';
 import Point from 'ol/geom/Point';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import OlVectorLayer from 'ol/layer/Vector';
+import * as olproj from 'ol/proj';
+import OlVectorSource from 'ol/source/Vector';
+import * as OlStyle from 'ol/style';
+import { StyleLike as OlStyleLike } from 'ol/style/Style';
+
+import { Subscription } from 'rxjs';
 
 import { IgoMap } from '../../map/shared';
 import {
   MeasureLengthUnit,
-  updateOlGeometryMidpoints,
   formatMeasure,
-  measureOlGeometry
+  measureOlGeometry,
+  updateOlGeometryMidpoints
 } from '../../measure';
 import {
   DrawControl,
   ModifyControl,
   ModifyControlOptions
 } from '../shared/controls';
-import { createDrawInteractionStyle } from '../shared/geometry.utils';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
-import OlCircle from 'ol/geom/Circle';
-import OlLineString from 'ol/geom/LineString';
-import OlPoint from 'ol/geom/Point';
-import OlPolygon from 'ol/geom/Polygon';
+import { createDrawInteractionStyle } from '../shared/geometry.utils';
+import { DrawControlOptions } from './../shared/controls/draw';
 
 interface HasRadius {
   getRadius: () => number;

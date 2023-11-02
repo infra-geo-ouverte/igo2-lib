@@ -1,4 +1,5 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+
 import { Subscription } from 'rxjs';
 
 import { MapService } from '../../map/shared/map.service';

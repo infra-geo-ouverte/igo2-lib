@@ -1,6 +1,8 @@
+import { Placement } from '@floating-ui/utils';
+
 export interface InteractiveTourStep {
   element?: string;
-  position?: string;
+  position?: InteractiveTourPlacement;
   title?: string;
   text: string;
   beforeShow?: InteractiveTourAction;
@@ -14,6 +16,8 @@ export interface InteractiveTourStep {
   noBackButton?: boolean;
 }
 
+type InteractiveTourPlacement = 'auto' | Placement;
+
 export interface InteractiveTourAction {
   element?: string;
   action: 'click';
@@ -24,7 +28,7 @@ export interface InteractiveTourAction {
 
 export interface InteractiveTourOptions {
   steps: InteractiveTourStep[];
-  position?: string;
+  position?: InteractiveTourPlacement;
   title?: string;
   /* CSS class that is added to the hightlight element */
   highlightClass?: string;

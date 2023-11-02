@@ -1,27 +1,29 @@
+import { DatePipe } from '@angular/common';
+
 import {
+  Action,
   EntityStoreFilterCustomFuncStrategy,
   EntityStoreFilterSelectionStrategy,
-  Widget,
-  Action
+  Widget
 } from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
 import {
+  EditionWorkspace,
+  ExportOptions,
   FeatureMotion,
   FeatureStoreSelectionStrategy,
   FeatureWorkspace,
+  OgcFilterableDataSource,
   WfsWorkspace,
-  EditionWorkspace,
   mapExtentStrategyActiveToolTip,
-  noElementSelected,
-  ExportOptions,
-  OgcFilterableDataSource
+  noElementSelected
 } from '@igo2/geo';
-import { BehaviorSubject, map } from 'rxjs';
 
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { BehaviorSubject, map } from 'rxjs';
+
 import { ToolState } from '../../tool';
-import { DatePipe } from '@angular/common';
 
 export function handleZoomAuto(
   workspace: FeatureWorkspace | WfsWorkspace | EditionWorkspace,

@@ -1,15 +1,16 @@
 import {
-  OnInit,
   Directive,
-  Self,
-  HostListener,
   ElementRef,
+  EventEmitter,
+  HostListener,
+  OnInit,
   Output,
-  EventEmitter
+  Self
 } from '@angular/core';
-import { FeatureDetailsComponent } from './feature-details.component';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { FeatureDetailsComponent } from './feature-details.component';
 
 @Directive({
   // This directive allow to view the route between the user coordinates and the feature

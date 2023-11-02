@@ -1,8 +1,17 @@
-import { CoreOptions } from '../environment';
+import { EnvironmentOptions } from '../environment';
 
-export interface ConfigOptions<T = {[key: string]: any}> {
+export type BaseConfigOptions<T> = EnvironmentOptions & T;
+
+export interface ConfigOptions<T = { [key: string]: any }> {
   default?: BaseConfigOptions<T>;
   path?: string;
 }
 
-export type BaseConfigOptions<T> = CoreOptions & T;
+export interface DeprecatedOptions {
+  alternativeKey?: string;
+  mayBeRemoveIn: Date;
+}
+
+export interface AlternateConfigOptions {
+  deprecatedKey: string;
+}

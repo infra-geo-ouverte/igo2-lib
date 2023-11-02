@@ -1,5 +1,5 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Injectable } from '@angular/core';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 
 import { BehaviorSubject } from 'rxjs';
 

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { RegexService } from '@igo2/core';
+
 import { GeoServiceDefinition } from './propertyTypeDetector.interface';
 
 @Injectable({
