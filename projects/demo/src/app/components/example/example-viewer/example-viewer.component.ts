@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 const SRC_PATH =
-  'https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src';
+  'https://github.com/infra-geo-ouverte/igo2-lib/tree/master/projects/demo/src';
 
 @Component({
   selector: 'app-example-viewer',
