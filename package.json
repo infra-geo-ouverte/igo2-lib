@@ -4,7 +4,7 @@
     "packages/*",
     "projects/*"
   ],
-  "version": "16.0.0-rc.7",
+  "version": "16.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
   "license": "MIT",
