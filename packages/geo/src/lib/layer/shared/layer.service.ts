@@ -132,7 +132,7 @@ export class LayerService {
       stylableLayerOptions.igoStyle?.geoStylerStyle?.hover;
     //const globalWriteStyleResult$ = geostylerStyleGlobal ? this.geostylerService.geostylerToOl(geostylerStyleGlobal) : of(undefined);
 
-    // temporaire, penser à une meilleure logique pour l'ajout d'un type (global, hover, etc.)
+    // temp, rethink logic for adding a new type (global, hover, etc.)
     const globalWriteStyleResult$ = geostylerStyleGlobal
       ? this.geostylerService.geostylerToOl(geostylerStyleGlobal)
       : geostylerStyleHover
@@ -141,10 +141,10 @@ export class LayerService {
 
     return globalWriteStyleResult$.pipe(
       mergeMap((writeStyleResult) => {
-        // n'oublie pas de voir comment gérer les cluster directement par geostyler.
+        // Check manage cluster directly with geostyler
         if (writeStyleResult?.warnings) {
           console.warn(writeStyleResult.warnings);
-          // intéressant de présenter via le message service? aucune idée? réfléchis y!
+          // Present message via message service?
         }
         if (writeStyleResult?.errors) {
           console.error(writeStyleResult.errors);
