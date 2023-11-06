@@ -1,4 +1,13 @@
-# [16.0.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.7...16.0.0) (2023-11-03)
+## [16.0.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.0.0...v16.0.1) (2023-11-06)
+
+
+### Bug Fixes
+
+* **geo:** print handle canvas with no controls ([#1488](https://github.com/infra-geo-ouverte/igo2-lib/issues/1488)) ([13c1d6c](https://github.com/infra-geo-ouverte/igo2-lib/commit/13c1d6c1207e2c2da4c5aeaddaf7fdfa2b018c72))
+
+
+
+# [16.0.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.7...v16.0.0) (2023-11-03)
 
 
 
