@@ -1,3 +1,42 @@
+# [16.0.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.7...16.0.0) (2023-11-03)
+
+
+
+# [16.0.0-rc.7](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.6...16.0.0-rc.7) (2023-10-30)
+
+
+### Reverts
+
+* Revert "fix(context): save layer opacity in context export (#1458)" ([dae76f1](https://github.com/infra-geo-ouverte/igo2-lib/commit/dae76f155c03d45bfa511bd0b2d7180cd26fb0b3)), closes [#1458](https://github.com/infra-geo-ouverte/igo2-lib/issues/1458)
+
+
+
+# [16.0.0-rc.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.5...16.0.0-rc.6) (2023-10-30)
+
+
+
+# [16.0.0-rc.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.4...16.0.0-rc.5) (2023-10-30)
+
+
+### Bug Fixes
+
+* **common:** interactive-tour add the auto placement ([#1457](https://github.com/infra-geo-ouverte/igo2-lib/issues/1457)) ([0087ace](https://github.com/infra-geo-ouverte/igo2-lib/commit/0087acec34f3cc9c015dbe10a35124a6528d3c14))
+* **context:** context-permissions style regression ([#1462](https://github.com/infra-geo-ouverte/igo2-lib/issues/1462)) ([975fc6d](https://github.com/infra-geo-ouverte/igo2-lib/commit/975fc6dc0aa7981a43a25eeb8c633e2fab096c9f))
+* **context:** poi-button style regression ([#1470](https://github.com/infra-geo-ouverte/igo2-lib/issues/1470)) ([85d1331](https://github.com/infra-geo-ouverte/igo2-lib/commit/85d13310d0586bf3eda8566bad3b3186dbd84ba4))
+* **context:** save layer opacity in context export ([#1458](https://github.com/infra-geo-ouverte/igo2-lib/issues/1458)) ([168ab6b](https://github.com/infra-geo-ouverte/igo2-lib/commit/168ab6bc5a985a24adaa4e90b79f0a14d0d2e4e0))
+* **context:** style regression for the menu ([#1468](https://github.com/infra-geo-ouverte/igo2-lib/issues/1468)) ([13cb3e7](https://github.com/infra-geo-ouverte/igo2-lib/commit/13cb3e7b4f3e8951845f15738d39162a61505c68))
+* **context:** trigger the changes on empty result ([#1471](https://github.com/infra-geo-ouverte/igo2-lib/issues/1471)) ([18aebca](https://github.com/infra-geo-ouverte/igo2-lib/commit/18aebca48d08f8e6b3b5422bcac32de2d1159e3d))
+* **core:** adjust typography ([#1466](https://github.com/infra-geo-ouverte/igo2-lib/issues/1466)) ([b8885c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/b8885c6eff2d9fd183f440062491fde98c158ceb))
+* **geo:** layer - visibility button style regression ([#1456](https://github.com/infra-geo-ouverte/igo2-lib/issues/1456)) ([9221c04](https://github.com/infra-geo-ouverte/igo2-lib/commit/9221c04ba49f678ea222e2ff68ee7f748e0d863d))
+* **geo:** store strategy in-map-extent revert changes ([54027da](https://github.com/infra-geo-ouverte/igo2-lib/commit/54027dad0d769096205e7c41779376f14f894bbf))
+
+
+### Features
+
+* **geo:** add a error message on fail during data download ([#1464](https://github.com/infra-geo-ouverte/igo2-lib/issues/1464)) ([6673979](https://github.com/infra-geo-ouverte/igo2-lib/commit/6673979c6fbf9aac6e6f86a2b9a990b80bbfd009))
+
+
+
 # [16.0.0-rc.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/16.0.0-rc.3...16.0.0-rc.4) (2023-10-18)
 
 

@@ -1,9 +1,11 @@
 {
   "name": "@igo2/context",
-  "version": "16.0.0-rc.4",
+  "version": "16.0.0",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,6 +15,18 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "build": "ng build context --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "publish": "npm publish ../../dist/context",
+    "test": "ng test context --watch=false",
+    "watch": "ng build context --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
+  },
   "peerDependencies": {
     "@angular/animations": "^16.2.5",
     "@angular/common": "^16.2.5",
@@ -20,11 +34,11 @@
     "@angular/forms": "^16.2.5",
     "@angular/material": "^16.2.4",
     "@angular/platform-browser": "^16.2.5",
-    "@igo2/auth": "^16.0.0-rc.4",
-    "@igo2/common": "^16.0.0-rc.4",
-    "@igo2/core": "^16.0.0-rc.4",
-    "@igo2/utils": "^16.0.0-rc.4",
-    "@igo2/geo": "^16.0.0-rc.4",
+    "@igo2/auth": "*",
+    "@igo2/common": "*",
+    "@igo2/core": "*",
+    "@igo2/geo": "*",
+    "@igo2/utils": "*",
     "ol": "^7.5.2",
     "rxjs": "^7.8.0"
   },
