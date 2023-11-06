@@ -877,7 +877,10 @@ export class PrintService {
       useCORS: true
     });
 
-    context.drawImage(canvasOverlayHTML, 0, 0);
+    if (canvasOverlayHTML.width !== 0 && canvasOverlayHTML.height !== 0) {
+      context.drawImage(canvasOverlayHTML, 0, 0);
+    }
+
     // remove 'mapOverlayHTML' after generating canvas
     mapOverlayHTML.remove();
   }
