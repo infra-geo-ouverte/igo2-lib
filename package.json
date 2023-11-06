@@ -137,7 +137,7 @@
     "copy-newer": "^2.1.2",
     "cypress": "^13.2.0",
     "del": "^7.0.0",
-    "eslint": "^8.47.0",
+    "eslint": "^8.53.0",
     "eslint-plugin-cypress": "^2.14.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "jasmine-core": "~5.1.0",
