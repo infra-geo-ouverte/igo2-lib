@@ -1,3 +1,12 @@
+## [16.0.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.0.1...v16.0.2) (2023-11-07)
+
+
+### Bug Fixes
+
+* **geo:** print - remove 300 PPI resolution ([#1489](https://github.com/infra-geo-ouverte/igo2-lib/issues/1489)) ([2f728da](https://github.com/infra-geo-ouverte/igo2-lib/commit/2f728da83036bb17e6a72a5b6f08a97e8b771d46))
+
+
+
 ## [16.0.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.0.0...v16.0.1) (2023-11-06)
 
 
