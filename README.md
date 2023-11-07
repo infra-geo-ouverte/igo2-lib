@@ -60,13 +60,14 @@ If you want to concurently develop inside the IGO2 Library AND inside any igo2-l
 This example is based on IGO2 project (https://github.com/infra-geo-ouverte/igo2.git)
 
 1.  Clone current repository using :`git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2.  Navigate to the cloned folder : `cd igo2-lib/`
+2.  Navigate to the cloned folder : `cd igo2-lib && git checkout next`
 3.  Navigate to the sub project folder : `cd projects`
 4.  Clone the sub project repository using : `git clone https://github.com/infra-geo-ouverte/igo2.git`
-5.  Navigate to the root folder of igo2-lib
-6.  Run `npm install` to install dependencies
-7.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
-8. Execute `npm run link.start -w igo2` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
+5. `cd igo2 && git checkout next`
+6.  Navigate to the root folder of igo2-lib
+7.  Run `npm install` to install dependencies
+8.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
+9. Execute `npm run link.start -w igo` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
 
 
 If you strictly want to develop inside IGO2 Library, here some step to follow:
