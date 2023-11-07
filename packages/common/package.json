@@ -1,6 +1,6 @@
 {
   "name": "@igo2/common",
-  "version": "16.0.1",
+  "version": "16.0.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": ["igo"],
@@ -27,8 +27,8 @@
     "@angular/material": "^16.2.4",
     "@angular/platform-browser": "^16.2.5",
     "@floating-ui/utils": "^0.1.4",
-    "@igo2/core": "^16.0.1",
-    "@igo2/utils": "^16.0.1",
+    "@igo2/core": "^16.0.2",
+    "@igo2/utils": "^16.0.2",
     "angular-shepherd": "16.0.0",
     "scroll-into-view-if-needed": "^3.0.0",
     "typy": "^3.3.0",
