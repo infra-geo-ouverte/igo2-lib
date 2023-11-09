@@ -138,8 +138,6 @@ export class ExportService {
       }
 
       const ogreFormats = Object.keys(ExportService.ogreFormats);
-      console.log('ogreFormats', ogreFormats);
-      console.log('this.ogreUrl', this.ogreUrl);
       if (ogreFormats.indexOf(format) >= 0) {
         if (!this.ogreUrl) {
           if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
