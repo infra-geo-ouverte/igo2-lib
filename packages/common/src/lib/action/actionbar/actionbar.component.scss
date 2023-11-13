@@ -41,7 +41,7 @@ $igo-actionbar-item-icon-padding: 8px;
     top: 0;
     background-color: white;
     z-index: 3;
-
+    padding: 4px;
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       position: fixed;
       top: unset;
@@ -58,6 +58,7 @@ $igo-actionbar-item-icon-padding: 8px;
     bottom: 0;
     background-color: white;
     z-index: 3;
+    padding: 4px;
   }
 
   .igo-actionbar-overlay {
