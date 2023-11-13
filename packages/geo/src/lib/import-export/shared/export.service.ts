@@ -196,7 +196,7 @@ export class ExportService {
 
     const fileName = `${title}.${format.toLowerCase()}`;
 
-    downloadContent(featuresText, 'text/plain;charset=utf-8', fileName);
+    downloadContent(featuresText, 'attachment/plain;charset=utf-8', fileName);
     observer.complete();
   }
 
