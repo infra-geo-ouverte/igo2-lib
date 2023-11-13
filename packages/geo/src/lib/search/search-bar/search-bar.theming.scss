@@ -37,6 +37,5 @@
 
   igo-search-bar {
     @include mat.form-field-density($theme);
-    @include mat.icon-button-density($theme);
   }
 }

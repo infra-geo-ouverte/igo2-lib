@@ -2,6 +2,20 @@
 @import '../../../../../core/src/style/partial/core.variables';
 
 :host {
+  .igo-search-bar-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+  }
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  mat-divider {
+    margin: 8px 0;
+  }
+
   ::ng-deep {
     .mat-mdc-form-field-subscript-wrapper {
       display: none;
@@ -14,56 +28,36 @@
 
     .mat-mdc-form-field-infix {
       align-self: center;
-
-      @media (max-width: 599px) {
-        width: 158px;
-      }
     }
 
-    mat-form-field {
-      .mdc-line-ripple {
-        display: none;
-      }
-
-      input {
-        @include core-utils.text-ellipsis();
-      }
+    mat-form-field input {
+      @include core-utils.text-ellipsis();
     }
+  }
+
+  .search-bar-buttons {
+    position: relative;
+    display: inline-flex;
+    & > button:nth-child(2)::before {
+      content: '';
+      border-right: 1px solid #ddd;
+      height: 28px;
+    }
+  }
+
+  igo-search-selector {
+    background-color: #fff;
+    top: 0;
+    border-radius: 0;
+  }
+
+  igo-search-settings {
+    background-color: #fff;
+    top: 0;
+    border-radius: 0;
   }
 }
 
-.igo-search-bar-container {
-  position: relative;
-  width: 100%;
-  display: flex;
-}
-
-mat-form-field {
-  flex: 1;
-}
-
-mat-divider {
-  margin: 8px 0;
-}
-
-.search-bar-buttons {
-  position: relative;
-  display: inline-flex;
-  & > button:nth-child(2)::before {
-    content: '';
-    border-right: 1px solid #ddd;
-    height: 28px;
-  }
-}
-
-igo-search-selector {
-  background-color: #fff;
-  top: 0;
-  border-radius: 0;
-}
-
-igo-search-settings {
-  background-color: #fff;
-  top: 0;
-  border-radius: 0;
+:host ::ng-deep mat-form-field .mdc-line-ripple {
+  display: none;
 }
