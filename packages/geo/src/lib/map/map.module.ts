@@ -24,25 +24,6 @@ import { SwipeControlComponent } from './swipe-control/swipe-control.component';
 import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
-const directives = [
-  MapBrowserComponent,
-  ZoomButtonComponent,
-  GeolocateButtonComponent,
-  HomeExtentButtonComponent,
-  RotationButtonComponent,
-  InfoSectionComponent,
-  BaseLayersSwitcherComponent,
-  MiniBaseMapComponent,
-  MapOfflineDirective,
-  OfflineButtonComponent,
-  WakeLockButtonComponent,
-  PointerPositionDirective,
-  HoverFeatureDirective,
-  SwipeControlComponent,
-  MapCenterComponent,
-  MenuButtonComponent
-];
-
 @NgModule({
   imports: [
     CommonModule,
@@ -52,7 +33,41 @@ const directives = [
     MatButtonModule,
     MatTooltipModule
   ],
-  declarations: directives,
-  exports: directives
+  exports: [
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    GeolocateButtonComponent,
+    HomeExtentButtonComponent,
+    RotationButtonComponent,
+    InfoSectionComponent,
+    BaseLayersSwitcherComponent,
+    MiniBaseMapComponent,
+    MapOfflineDirective,
+    OfflineButtonComponent,
+    WakeLockButtonComponent,
+    PointerPositionDirective,
+    HoverFeatureDirective,
+    SwipeControlComponent,
+    MapCenterComponent,
+    MenuButtonComponent
+  ],
+  declarations: [
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    GeolocateButtonComponent,
+    HomeExtentButtonComponent,
+    RotationButtonComponent,
+    InfoSectionComponent,
+    BaseLayersSwitcherComponent,
+    MiniBaseMapComponent,
+    MapOfflineDirective,
+    OfflineButtonComponent,
+    WakeLockButtonComponent,
+    PointerPositionDirective,
+    HoverFeatureDirective,
+    SwipeControlComponent,
+    MapCenterComponent,
+    MenuButtonComponent
+  ]
 })
 export class IgoMapModule {}
