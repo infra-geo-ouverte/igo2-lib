@@ -190,10 +190,7 @@
         formControlName="resolution"
         placeholder="{{ 'igo.geo.printForm.resolution' | translate }}"
       >
-        <mat-option
-          *ngFor="let resolution of targetResolutions"
-          [value]="resolution"
-        >
+        <mat-option *ngFor="let resolution of resolutions" [value]="resolution">
           {{ resolution }}
         </mat-option>
       </mat-select>

@@ -30,7 +30,7 @@ export class PrintFormComponent implements OnInit {
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
-  public resolutions = PrintResolution;
+  public resolutions: Array<string> = Object.keys(PrintResolution);
   public imageFormats = PrintSaveImageFormat;
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
@@ -203,7 +203,7 @@ export class PrintFormComponent implements OnInit {
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
   maxLength: number = 180;
-  targetResolutions: Array<string> = Object.keys(this.resolutions);
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     private mediaService: MediaService
@@ -231,8 +231,8 @@ export class PrintFormComponent implements OnInit {
   ngOnInit() {
     this.doZipFileField.setValue(false);
     if (this.mediaService.isMobile()) {
-      this.targetResolutions = this.targetResolutions.filter(
-        (resolution) => resolution !== this.resolutions['300']
+      this.resolutions = this.resolutions.filter(
+        (resolution) => resolution !== PrintResolution['300']
       );
     }
   }
