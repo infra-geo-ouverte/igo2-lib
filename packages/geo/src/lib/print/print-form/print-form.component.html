@@ -191,10 +191,10 @@
         placeholder="{{ 'igo.geo.printForm.resolution' | translate }}"
       >
         <mat-option
-          *ngFor="let resolution of resolutions | keyvalue"
-          [value]="resolution.key"
+          *ngFor="let resolution of targetResolutions"
+          [value]="resolution"
         >
-          {{ resolution.value }}
+          {{ resolution }}
         </mat-option>
       </mat-select>
     </mat-form-field>

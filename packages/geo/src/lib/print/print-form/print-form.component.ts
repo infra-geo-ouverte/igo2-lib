@@ -6,6 +6,8 @@ import {
   Validators
 } from '@angular/forms';
 
+import { MediaService } from '@igo2/core';
+
 import { BehaviorSubject } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
@@ -201,8 +203,11 @@ export class PrintFormComponent implements OnInit {
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
   maxLength: number = 180;
-
-  constructor(private formBuilder: UntypedFormBuilder) {
+  targetResolutions: Array<string> = Object.keys(this.resolutions);
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private mediaService: MediaService
+  ) {
     this.form = this.formBuilder.group({
       title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
       subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],
@@ -225,6 +230,11 @@ export class PrintFormComponent implements OnInit {
 
   ngOnInit() {
     this.doZipFileField.setValue(false);
+    if (this.mediaService.isMobile()) {
+      this.targetResolutions = this.targetResolutions.filter(
+        (resolution) => resolution !== this.resolutions['300']
+      );
+    }
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {

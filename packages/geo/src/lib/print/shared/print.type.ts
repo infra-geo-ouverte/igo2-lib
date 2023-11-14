@@ -19,7 +19,7 @@ export type PrintPaperFormat = keyof typeof PrintPaperFormat;
 export const PrintOrientation = strEnum(['landscape', 'portrait']);
 export type PrintOrientation = keyof typeof PrintOrientation;
 
-export const PrintResolution = strEnum(['72', '96', '150']); // For now, we remove the 300 dpi because there is too much instability on iOS and slow device.
+export const PrintResolution = strEnum(['72', '96', '150', '300']);
 export type PrintResolution = keyof typeof PrintResolution;
 
 export const PrintSaveImageFormat = strEnum([
