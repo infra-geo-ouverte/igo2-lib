@@ -41,7 +41,8 @@ $igo-actionbar-item-icon-padding: 8px;
     top: 0;
     background-color: white;
     z-index: 3;
-    padding: 4px;
+    display: flex;
+    justify-content: center;
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       position: fixed;
       top: unset;
@@ -53,12 +54,12 @@ $igo-actionbar-item-icon-padding: 8px;
   }
 
   #lowChevron {
-    position: fixed;
     position: sticky;
     bottom: 0;
     background-color: white;
     z-index: 3;
-    padding: 4px;
+    display: flex;
+    justify-content: center;
   }
 
   .igo-actionbar-overlay {
