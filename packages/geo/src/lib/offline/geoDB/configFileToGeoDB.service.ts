@@ -74,7 +74,7 @@ export class ConfigFileToGeoDBService {
                                 this.messageService.remove(
                                   downloadMessage.toastId
                                 );
-                                this.messageService.success(
+                                this.messageService.error(
                                   'igo.geo.indexedDb.data-download-failed',
                                   undefined,
                                   { timeOut: 40000 }

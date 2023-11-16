@@ -35,12 +35,12 @@ export class ContextMenuDirective {
   public onContextMenu(e: MouseEvent | TouchEvent): void {
     let x;
     let y;
-    if (e instanceof TouchEvent) {
-      x = e.touches[0].pageX;
-      y = e.touches[0].pageY;
-    } else if (e instanceof MouseEvent) {
+    if (e instanceof MouseEvent) {
       x = e.x;
       y = e.y;
+    } else if (e instanceof TouchEvent) {
+      x = e.touches[0].pageX;
+      y = e.touches[0].pageY;
     }
     if (!x || !y) {
       return;

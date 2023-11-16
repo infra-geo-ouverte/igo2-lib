@@ -1,15 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Media, MediaService } from '@igo2/core';
+import { IgoLanguageModule, Media, MediaService } from '@igo2/core';
 
 import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
+import { MiniBaseMapComponent } from './mini-basemap.component';
 
 @Component({
   selector: 'igo-baselayers-switcher',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IgoLanguageModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MiniBaseMapComponent
+  ],
   templateUrl: './baselayers-switcher.component.html',
   styleUrls: ['./baselayers-switcher.component.scss'],
   animations: [baseLayersSwitcherSlideInOut()]

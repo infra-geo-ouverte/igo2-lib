@@ -26,22 +26,22 @@ import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
 @NgModule({
   imports: [
+    BaseLayersSwitcherComponent,
     CommonModule,
     IgoLanguageModule,
     IgoConfirmDialogModule,
+    MapBrowserComponent,
+    MiniBaseMapComponent,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule
   ],
-  exports: [
-    MapBrowserComponent,
+  declarations: [
     ZoomButtonComponent,
     GeolocateButtonComponent,
     HomeExtentButtonComponent,
     RotationButtonComponent,
     InfoSectionComponent,
-    BaseLayersSwitcherComponent,
-    MiniBaseMapComponent,
     MapOfflineDirective,
     OfflineButtonComponent,
     WakeLockButtonComponent,
@@ -51,7 +51,7 @@ import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
     MapCenterComponent,
     MenuButtonComponent
   ],
-  declarations: [
+  exports: [
     MapBrowserComponent,
     ZoomButtonComponent,
     GeolocateButtonComponent,
