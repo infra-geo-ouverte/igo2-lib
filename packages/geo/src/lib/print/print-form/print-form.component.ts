@@ -30,7 +30,7 @@ export class PrintFormComponent implements OnInit {
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
-  public resolutions: Array<string> = Object.keys(PrintResolution);
+  public resolutions = [...PrintResolution];
   public imageFormats = PrintSaveImageFormat;
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
@@ -82,7 +82,7 @@ export class PrintFormComponent implements OnInit {
     return this.resolutionField.value;
   }
   set resolution(value: PrintResolution) {
-    this.resolutionField.setValue(value || PrintResolution['96'], {
+    this.resolutionField.setValue(value || ('96' satisfies PrintResolution), {
       onlySelf: true
     });
   }
@@ -232,7 +232,7 @@ export class PrintFormComponent implements OnInit {
     this.doZipFileField.setValue(false);
     if (this.mediaService.isMobile()) {
       this.resolutions = this.resolutions.filter(
-        (resolution) => resolution !== PrintResolution['300']
+        (resolution) => resolution !== '300'
       );
     }
   }
