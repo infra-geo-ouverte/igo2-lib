@@ -515,6 +515,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onLengthUnitChange(unit: MeasureLengthUnit) {
     this.activeLengthUnit = unit;
     this.table.refresh();
+    this.store.stateView.clear();
     this.updateTooltipsOfOlSource(this.store.source.ol);
     if (this.activeOlGeometry !== undefined) {
       this.updateTooltipsOfOlGeometry(this.activeOlGeometry);
@@ -528,6 +529,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onAreaUnitChange(unit: MeasureAreaUnit) {
     this.activeAreaUnit = unit;
     this.table.refresh();
+    this.store.stateView.clear();
     this.updateTooltipsOfOlSource(this.store.source.ol);
     if (this.activeOlGeometry !== undefined) {
       this.updateTooltipsOfOlGeometry(this.activeOlGeometry);
