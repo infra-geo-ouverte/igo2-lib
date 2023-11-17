@@ -1,6 +1,6 @@
 <div class="advanced-coordinates__coordinates-container">
-  <div class="advanced-coordinates__coordinates-container__inner">
-    <mat-form-field *ngIf="units; else elseBlock" class="coordinates">
+  <div class="dvanced-coordinates__coordinates-container__inner">
+    <mat-form-field *ngIf="units; else elseBlock">
       <mat-label>{{
         'igo.integration.advanced-map-tool.advanced-coordinates.lon' | translate
       }}</mat-label>
@@ -17,7 +17,7 @@
       ></textarea>
     </mat-form-field>
     <ng-template #elseBlock>
-      <mat-form-field class="coordinates">
+      <mat-form-field>
         <textarea
           #textArea
           matInput
@@ -32,7 +32,7 @@
       </mat-form-field>
     </ng-template>
 
-    <mat-form-field *ngIf="units; else elseBlock2" class="coordinates2">
+    <mat-form-field *ngIf="units; else elseBlock2">
       <mat-label>{{
         'igo.integration.advanced-map-tool.advanced-coordinates.lat' | translate
       }}</mat-label>
@@ -49,7 +49,7 @@
       ></textarea>
     </mat-form-field>
     <ng-template #elseBlock2>
-      <mat-form-field class="coordinates2">
+      <mat-form-field>
         <textarea
           #textArea
           matInput
@@ -63,65 +63,66 @@
         ></textarea>
       </mat-form-field>
     </ng-template>
+    <button
+      mat-icon-button
+      [attr.aria-label]="
+        'igo.integration.advanced-map-tool.advanced-coordinates.copy'
+          | translate
+      "
+      class="igo-form-button-group advanced-coordinates__copy-coordinates"
+      (click)="copyTextToClipboard()"
+    >
+      <mat-icon svgIcon="content-copy"></mat-icon>
+    </button>
   </div>
 
-  <button
-    mat-icon-button
-    [attr.aria-label]="
-      'igo.integration.advanced-map-tool.advanced-coordinates.copy' | translate
-    "
-    class="igo-form-button-group advanced-coordinates__copy-coordinates"
-    (click)="copyTextToClipboard()"
-  >
-    <mat-icon svgIcon="content-copy"></mat-icon>
-  </button>
-</div>
-<form class="igo-form advanced-coordinates__form" [formGroup]="form">
-  <mat-form-field class="igo-input-container">
-    <mat-label>{{
-      'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem'
-        | translate
-    }}</mat-label>
-    <mat-select [(value)]="inputProj">
-      <mat-option
-        matTooltipShowDelay="500"
-        *ngFor="let projection of projections$ | async"
-        [value]="projection"
-        (click)="$event.stopPropagation()"
-      >
-        {{ projection.translatedValue || projection.alias }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-slide-toggle
-    class="center-toggle mat-typography"
-    [checked]="center"
-    [labelPosition]="'before'"
-    (change)="displayCenter($event.checked)"
-  >
+  <form class="igo-form advanced-coordinates__form" [formGroup]="form">
+    <mat-form-field class="igo-input-container">
+      <mat-label>{{
+        'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem'
+          | translate
+      }}</mat-label>
+      <mat-select [(value)]="inputProj">
+        <mat-option
+          matTooltipShowDelay="500"
+          *ngFor="let projection of projections$ | async"
+          [value]="projection"
+          (click)="$event.stopPropagation()"
+        >
+          {{ projection.translatedValue || projection.alias }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-slide-toggle
+      class="center-toggle mat-typography"
+      [checked]="center"
+      [labelPosition]="'before'"
+      (change)="displayCenter($event.checked)"
+    >
+      {{
+        'igo.integration.advanced-map-tool.advanced-coordinates.center'
+          | translate
+      }}
+    </mat-slide-toggle>
+  </form>
+
+  <p class="igo-zoom mat-typography">
     {{
-      'igo.integration.advanced-map-tool.advanced-coordinates.center'
+      'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate
+    }}
+    {{ map.viewController.getZoom() }}
+  </p>
+  <p class="igo-zoom mat-typography">
+    {{
+      'igo.integration.advanced-map-tool.advanced-coordinates.scale' | translate
+    }}
+    {{ formattedScale$ | async }}
+  </p>
+  <p class="igo-zoom mat-typography">
+    {{
+      'igo.integration.advanced-map-tool.advanced-coordinates.resolution'
         | translate
     }}
-  </mat-slide-toggle>
-</form>
-
-<p class="igo-zoom mat-typography">
-  {{
-    'igo.integration.advanced-map-tool.advanced-coordinates.zoom' | translate
-  }}
-  {{ map.viewController.getZoom() }}
-</p>
-<p class="igo-zoom mat-typography">
-  {{
-    'igo.integration.advanced-map-tool.advanced-coordinates.scale' | translate
-  }}
-  {{ formattedScale$ | async }}
-</p>
-<p class="igo-zoom mat-typography">
-  {{
-    'igo.integration.advanced-map-tool.advanced-coordinates.resolution'
-      | translate
-  }}
-  {{ map.viewController.getResolution() | number: '1.0-0' }}
-</p>
+    {{ map.viewController.getResolution() | number: '1.0-0' }}
+  </p>
+</div>

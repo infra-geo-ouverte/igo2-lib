@@ -1,10 +1,10 @@
-$mobile-portrait: 'only screen and (orientation:portrait) and (max-width: 599px)';
-$tablet-portrait: 'only screen and (orientation:portrait) and (min-width: 600px) and (max-width: 839px)';
-$desktop-portrait: 'only screen and (orientation:portrait) and (min-width: 840px)';
+$mobile-portrait: 'only screen and (orientation:portrait) and (max-device-width: 599px)';
+$tablet-portrait: 'only screen and (orientation:portrait) and (min-device-width: 600px) and (max-width: 839px)';
+$desktop-portrait: 'only screen and (orientation:portrait) and (min-device-width: 840px)';
 
-$mobile-landscape: 'only screen and (orientation:landscape) and (max-width: 959px)';
-$tablet-landscape: 'only screen and (orientation:landscape) and (min-width: 960px) and (max-width: 1279px)';
-$desktop-landscape: 'only screen and (orientation:landscape) and (min-width: 1280px)';
+$mobile-landscape: 'only screen and (orientation:landscape) and (max-device-width: 959px)';
+$tablet-landscape: 'only screen and (orientation:landscape) and (min-device-width: 960px) and (max-device-width: 1279px)';
+$desktop-landscape: 'only screen and (orientation:landscape) and (min-device-width: 1280px)';
 
 $mobile: $mobile-portrait + ',' + $mobile-landscape;
 $tablet: $tablet-portrait + ',' + $tablet-landscape;
