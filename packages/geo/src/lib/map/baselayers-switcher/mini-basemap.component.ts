@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ApplicationRef,
@@ -13,13 +12,10 @@ import OlView from 'ol/View';
 
 import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
-import { MapBrowserComponent } from '../map-browser';
 import { IgoMap } from '../shared';
 
 @Component({
   selector: 'igo-mini-basemap',
-  standalone: true,
-  imports: [CommonModule, MapBrowserComponent],
   templateUrl: './mini-basemap.component.html',
   styleUrls: ['./mini-basemap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
