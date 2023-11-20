@@ -1,37 +1,32 @@
 :host {
-  mat-select {
-    width: 150px;
-    background-color: white;
-    height: 40px;
-    padding-top: 0;
-    & ::ng-deep {
-      .mat-mdc-select-trigger {
-        height: 40px;
-      }
-      .mat-mdc-select-value-text,
-      .mat-mdc-select-placeholder {
-        padding: 5px;
-        position: relative;
-      }
+  background-color: white;
+  padding: 0 8px;
+  height: 100%;
+}
+
+mat-select {
+  width: 150px;
+  height: 100%;
+
+  ::ng-deep {
+    .mat-mdc-select-trigger {
+      height: 100%;
     }
   }
+}
 
-  .mat-mdc-option {
-    text-overflow: inherit;
-  }
+::ng-deep {
+  .poi-option {
+    .mdc-list-item__primary-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      overflow: visible;
+    }
 
-  .titlePoi {
-    max-width: 135px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    float: left;
-  }
-
-  .buttonPoi {
-    float: right;
-    margin: 4px -10px 4px 0;
-    & ::ng-deep .mat-icon {
-      margin: 0 8px;
+    button {
+      margin-right: -16px;
     }
   }
 }
