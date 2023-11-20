@@ -1,5 +1,5 @@
-import { FeatureStore } from '../../feature';
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { FeatureStore } from '../../feature/shared/store';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { IgoMap } from '../../map/shared/map';
 import {

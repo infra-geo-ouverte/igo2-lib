@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { StorageService } from '@igo2/core';
 
-import { stringToLonLat } from '../../map/shared';
 import { MapService } from '../../map/shared/map.service';
+import { stringToLonLat } from '../../map/shared/map.utils';
 import { SearchSourceService } from './search-source.service';
 import { Research, ReverseSearch, TextSearch } from './search.interfaces';
 import {

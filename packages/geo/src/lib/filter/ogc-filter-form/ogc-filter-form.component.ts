@@ -10,7 +10,7 @@ import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { WktService } from '../../wkt/shared/wkt.service';
 
 @Component({

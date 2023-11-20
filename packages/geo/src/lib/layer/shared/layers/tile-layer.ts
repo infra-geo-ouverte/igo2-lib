@@ -11,8 +11,8 @@ import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources
 import { TileDebugDataSource } from '../../../datasource/shared/datasources/tiledebug-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
-import { IgoMap } from '../../../map/shared';
-import { TileWatcher } from '../../utils';
+import { IgoMap } from '../../../map/shared/map';
+import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 

@@ -5,7 +5,7 @@ import * as olextent from 'ol/extent';
 import { Subscription } from 'rxjs';
 import { debounceTime, skipWhile } from 'rxjs/operators';
 
-import { MapExtent } from '../../../map';
+import { MapExtent } from '../../../map/shared/map.interface';
 import {
   Feature,
   FeatureStoreInMapExtentStrategyOptions

@@ -22,7 +22,7 @@ import {
   TileArcGISRestDataSource,
   WMSDataSource,
   WMSDataSourceOptions
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { FEATURE } from '../../feature/shared/feature.enums';
 import {
   Feature,

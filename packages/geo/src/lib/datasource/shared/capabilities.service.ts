@@ -28,6 +28,10 @@ import {
 } from '../../query/shared/query.enums';
 import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
+  TypeCapabilities,
+  TypeCapabilitiesStrings
+} from './capabilities.interface';
+import {
   ArcGISRestDataSourceOptions,
   ArcGISRestImageDataSourceOptions,
   CartoDataSourceOptions,
@@ -35,16 +39,6 @@ import {
   WMSDataSourceOptions,
   WMTSDataSourceOptions
 } from './datasources';
-
-export enum TypeCapabilities {
-  wms = 'wms',
-  wmts = 'wmts',
-  arcgisrest = 'esriJSON',
-  imagearcgisrest = 'esriJSON',
-  tilearcgisrest = 'esriJSON'
-}
-
-export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
 
 @Injectable({
   providedIn: 'root'

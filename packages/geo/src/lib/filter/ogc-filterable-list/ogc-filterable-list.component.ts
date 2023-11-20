@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 @Component({
   selector: 'igo-ogc-filterable-list',

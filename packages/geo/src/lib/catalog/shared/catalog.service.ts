@@ -7,17 +7,17 @@ import { ObjectUtils, uuid } from '@igo2/utils';
 import { EMPTY, Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import {
   ArcGISRestDataSourceOptions,
-  CapabilitiesService,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
   WMTSDataSourceOptions
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { ImageLayerOptions, LayerOptions } from '../../layer/shared';
-import { getResolutionFromScale } from '../../map/shared';
-import { QueryFormat } from '../../query/shared';
-import { generateIdFromSourceOptions } from '../../utils';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { QueryFormat } from '../../query/shared/query.enums';
+import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { Catalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import {

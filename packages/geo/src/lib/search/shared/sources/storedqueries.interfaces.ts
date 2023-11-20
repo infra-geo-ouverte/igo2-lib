@@ -1,4 +1,4 @@
-import { FeatureGeometry } from '../../../feature';
+import { FeatureGeometry } from '../../../feature/shared/feature.interfaces';
 import { SearchSourceOptions } from './source.interfaces';
 
 export interface StoredQueriesSearchSourceOptions extends SearchSourceOptions {

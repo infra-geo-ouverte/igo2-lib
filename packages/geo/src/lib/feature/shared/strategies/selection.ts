@@ -11,7 +11,7 @@ import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
 import { Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { FeatureDataSource } from '../../../datasource';
+import { FeatureDataSource } from '../../../datasource/shared/datasources';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../../map/shared/map';
 import { ctrlKeyDown } from '../../../map/shared/map.utils';

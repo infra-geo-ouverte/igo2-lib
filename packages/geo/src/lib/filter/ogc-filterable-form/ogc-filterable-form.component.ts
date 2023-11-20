@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { MAT_SELECT_CONFIG } from '@angular/material/select';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { OgcFilterableDataSource } from '../shared/ogc-filter.interface';
 
 @Component({

@@ -11,7 +11,7 @@ import { ConfigService, LanguageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { TypeCapabilities } from '../../datasource';
+import { TypeCapabilities } from '../../datasource/shared/capabilities.interface';
 import { Catalog } from '../shared/catalog.abstract';
 
 @Component({
