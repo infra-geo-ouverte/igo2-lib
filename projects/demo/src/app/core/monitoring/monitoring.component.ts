@@ -1,5 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+
 import { AnyMonitoringOptions, MONITORING_OPTIONS } from '@igo2/core';
 
 @Component({
@@ -31,15 +32,13 @@ export class MonitoringComponent {
 }
 
 const EXAMPLE_MODULE_PROVIDER = `@NgModule({
-  declarations: [
-    ...
-  ],
-  imports: [
-    ...,
-    AuthModule // *Required only if you enable "identifyUser" in the monitoring options
-  ],
+  declarations: [...],
+  imports: [...],
   providers: [
-    ...provideMonitoring(environment)
+    ...provideMonitoring(environment),
+
+    // Provide the authentication user monitoring if you want to identify your user (id, fullname, email) in the error logging 
+    ...provideAuthUserMonitoring()
   ]
 })
 `;

@@ -1,9 +1,11 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
+
 import {
   AnyMonitoringOptions,
   MONITORING_OPTIONS,
   identifySentryUser
 } from '@igo2/core';
+
 import { AuthService, User } from '../shared';
 
 @Injectable({
@@ -12,6 +14,7 @@ import { AuthService, User } from '../shared';
 export class AuthMonitoringService {
   constructor(
     private authService: AuthService,
+    @Optional()
     @Inject(MONITORING_OPTIONS)
     private monitoringOptions: AnyMonitoringOptions | null
   ) {
