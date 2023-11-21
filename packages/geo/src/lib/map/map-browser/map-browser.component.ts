@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -17,8 +16,6 @@ import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 
 @Component({
   selector: 'igo-map-browser',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './map-browser.component.html',
   styleUrls: ['./map-browser.component.scss']
 })
