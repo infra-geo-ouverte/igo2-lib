@@ -91,13 +91,6 @@ export class PrintComponent {
     this.disabled$.next(true);
 
     if (data.isPrintService === true) {
-      /*this.printService
-        .print_test(this.map, data)
-        .pipe(take(1))
-        .subscribe(() => {
-          this.disabled$.next(false);
-        });*/
-
       this.printService
         .print(this.map, data)
         .pipe(take(1))
