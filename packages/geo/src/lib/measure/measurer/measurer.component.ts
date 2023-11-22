@@ -442,9 +442,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   checkDistanceAreaToggle() {
-    console.log('distanceToggle', this.storageService.get('distanceToggle'));
-    console.log('linesToggle', this.storageService.get('linesToggle'));
-    console.log('areasToggle', this.storageService.get('areasToggle'));
     if (this.storageService.get('distanceToggle') === false) {
       this.displayDistance = false;
     }
