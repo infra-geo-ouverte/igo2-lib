@@ -7,6 +7,11 @@
         "title": "Confirm",
         "applyBtn": "Apply"
       },
+      "selectValueDialog": {
+          "cancelButtonText": "Cancel",
+          "processButtonText": "Select",
+          "title": "Please, select value(s)"
+      },
       "table": {
         "filter": "Filter"
       },
