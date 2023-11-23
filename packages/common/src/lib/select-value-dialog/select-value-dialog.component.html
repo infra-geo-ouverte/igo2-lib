@@ -10,13 +10,13 @@
       [ngForOf]="data.choices"
     >
       <mat-checkbox formControlName="{{ choice.id }}">{{
-        choice.title || choice.title
+        choice.title || choice.id
       }}</mat-checkbox>
     </ng-template>
 
     <mat-radio-group *ngIf="!data.multiple" (change)="onChange($event)">
       <mat-radio-button *ngFor="let choice of data.choices" [value]="choice.id">
-        {{ choice.title || choice.title }}
+        {{ choice.title || choice.id }}
       </mat-radio-button>
     </mat-radio-group>
 
