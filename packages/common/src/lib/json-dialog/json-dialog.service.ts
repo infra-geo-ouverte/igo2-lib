@@ -15,7 +15,7 @@ export class JsonDialogService {
     });
     dialogRef.componentInstance.data = data;
     dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.ignoreKeys = ignoreKeys;
+    dialogRef.componentInstance.ignoreKeys = ignoreKeys ?? [];
 
     return dialogRef.afterClosed();
   }
