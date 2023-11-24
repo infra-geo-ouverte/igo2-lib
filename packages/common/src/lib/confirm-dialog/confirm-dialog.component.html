@@ -1,12 +1,14 @@
 <h2 mat-dialog-title class="mat-typography">
-  {{ 'igo.common.confirmDialog.title' | translate }}
+  {{ titleKey | translate }}
 </h2>
-<div mat-dialog-content class="mat-typography">{{ confirmMessage }}</div>
+<div mat-dialog-content class="mat-typography">
+  {{ confirmMessage | translate }}
+</div>
 <div mat-dialog-actions>
   <button mat-button color="primary" (click)="dialogRef.close(true)">
-    {{ 'igo.common.confirmDialog.confirmBtn' | translate }}
+    {{ proccessKey | translate }}
   </button>
   <button mat-button (click)="dialogRef.close(false)">
-    {{ 'igo.common.confirmDialog.cancelBtn' | translate }}
+    {{ cancelKey | translate }}
   </button>
 </div>

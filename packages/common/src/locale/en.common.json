@@ -4,6 +4,8 @@
       "confirmDialog": {
         "cancelBtn": "Cancel",
         "confirmBtn": "Confirm",
+        "yes": "Yes",
+        "no": "No",
         "title": "Confirm",
         "applyBtn": "Apply"
       },
