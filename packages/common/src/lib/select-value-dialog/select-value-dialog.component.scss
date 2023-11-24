@@ -1,29 +1,12 @@
 :host::ng-deep {
-  .mat-mdc-checkbox .mdc-checkbox {
-    margin-top: -0.5em !important;
-    .button-group {
-      text-align: center;
-    }
+  div[mat-dialog-actions] {
+    margin: 10px 0 0 0;
+  }
 
-    button {
-      cursor: pointer;
-    }
-
-    button#processBtnDialog[disabled='true'] {
-      cursor: default;
-      background-color: rgba(0, 0, 0, 0.12);
-      color: rgba(0, 0, 0, 0.26);
-    }
-
-    .mat-checkbox .mat-checkbox-frame {
-      transform: scale(2);
-    }
-
-    section.choices-section {
-      display: grid;
-      grid-template-columns: auto auto;
-      grid-gap: 0px;
-      padding: 5px;
-    }
+  section.choices-section {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 0px;
+    padding: 5px;
   }
 }

@@ -1,41 +1,24 @@
 <h1 mat-dialog-title>{{ data.title | translate }}</h1>
 
-<form class="igo-form" [formGroup]="formGroup">
-  <section class="choices-section">
-    <ng-template
-      *ngIf="data.multiple"
-      ngFor
-      let-choice
-      let-i="index"
-      [ngForOf]="data.choices"
+<igo-form
+  *ngIf="form$ | async as form"
+  [form]="form"
+  [formData]="data$ | async"
+  (submitForm)="onSubmit($event)"
+>
+  <igo-form-group [group]="form.groups[0]"></igo-form-group>
+
+  <div formButtons mat-dialog-actions>
+    <button mat-stroked-button type="button" color="primary" (click)="cancel()">
+      {{ data.cancelButtonText | translate }}
+    </button>
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      [disabled]="isDisabled$ | async"
     >
-      <mat-checkbox formControlName="{{ choice.id }}">{{
-        choice.title || choice.id
-      }}</mat-checkbox>
-    </ng-template>
-
-    <mat-radio-group *ngIf="!data.multiple" (change)="onChange($event)">
-      <mat-radio-button *ngFor="let choice of data.choices" [value]="choice.id">
-        {{ choice.title || choice.id }}
-      </mat-radio-button>
-    </mat-radio-group>
-
-    <div mat-dialog-actions style="justify-content: center">
-      <div class="button-group">
-        <button mat-raised-button type="button" (click)="cancel()">
-          {{ data.cancelButtonText | translate }}
-        </button>
-        <button
-          [disabled]="isDisabled$ | async"
-          id="processBtnDialog"
-          mat-raised-button
-          type="button"
-          color="primary"
-          (click)="save()"
-        >
-          {{ data.processButtonText | translate }}
-        </button>
-      </div>
-    </div>
-  </section>
-</form>
+      {{ data.processButtonText | translate }}
+    </button>
+  </div>
+</igo-form>

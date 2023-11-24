@@ -1,11 +1,12 @@
 export interface Choice {
-  id: any;
-  title?: any;
+  value: any;
+  title: any;
 }
 
 export interface SelectValueData {
   choices: Choice[];
   title?: string;
+  selectFieldText?: string;
   processButtonText?: string;
   cancelButtonText?: string;
   multiple?: boolean;
