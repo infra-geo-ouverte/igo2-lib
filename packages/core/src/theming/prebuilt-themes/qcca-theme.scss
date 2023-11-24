@@ -25,14 +25,6 @@ $theme: mat.define-light-theme(
   )
 );
 
-$theme: map.merge(
-  $theme,
-  (
-    foreground:
-      igo.theme-foreground(mat.define-palette(qcca.$palette, 500, 100, 700))
-  )
-);
-
 @include mat.core();
 @include mat.typography-hierarchy(qcca.$typo-typography);
 @include mat.all-component-themes($theme);
