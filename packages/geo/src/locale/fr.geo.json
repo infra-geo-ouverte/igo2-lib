@@ -330,6 +330,7 @@
         "portrait": "Portrait",
         "projection": "Projection",
         "resolution": "Résolution",
+        "resolutionUnit": "PPP",
         "saveBtn": "Sauvegarder",
         "scale": "Échelle",
         "showProjection": "Afficher la projection",
