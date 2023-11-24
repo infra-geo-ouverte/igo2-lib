@@ -25,7 +25,7 @@
       "@igo2/integration": ["packages/integration/src/public_api"]
     }
   },
-  "exclude": ["dist", "scripts", "demo/e2e/**/*"],
+  "exclude": ["dist", "scripts", "projects/**/e2e/**/*"],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,

@@ -3,7 +3,9 @@
   "version": "16.0.2",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,18 +15,29 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "prestart": "ts-node ../../scripts/src/core/prestart-core.ts",
+    "build": "ng build core --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
+    "publish": "npm publish ../../dist/core --dry-run",
+    "test": "ng test core --watch=false",
+    "watch": "ng build core --watch && npm run postbuild"
+  },
   "exports": {
     ".": {
-      "sass": "./_index.scss"
+      "import": "./src/public_api.ts",
+      "sass": "./index.scss"
     },
     "./style": {
       "style": "./style/style.css"
     },
-    "./all-style": {
-      "style": "./style/all-style.css"
+    "./*": {
+      "sass": "./src/style/*.scss",
+      "style": "./style/*.css"
     },
-    "./layout": {
-      "sass": "./style/layout.scss"
+    "./partial/*": {
+      "sass": "./src/style/partial/*.scss"
     },
     "./theming": {
       "sass": "./core-theme.scss"
@@ -43,10 +56,14 @@
     "@angular/core": "^16.2.5",
     "@angular/platform-browser": "^16.2.5",
     "@angular/router": "^16.2.5",
-    "@igo2/utils": "^16.0.2",
-    "rxjs": "^7.8.0",
+    "@igo2/utils": "*",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^17.0.0"
+    "ngx-toastr": "^17.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.10.0"

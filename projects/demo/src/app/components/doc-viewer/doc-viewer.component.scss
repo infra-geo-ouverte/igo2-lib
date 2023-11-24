@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  padding: 16px 48px;
+
+  @media (max-width: 599px) {
+    padding: 16px;
+  }
+}
+
+h6 {
+  color: rgba(0, 0, 0, 0.54);
+}

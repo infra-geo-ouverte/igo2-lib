@@ -1,4 +1,10 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  forwardRef
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { ColorEvent } from 'ngx-color';
@@ -35,6 +41,12 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   @Input() outputFormat: ColorFormat = 'rgba';
 
+  /**
+   * The emitted value represent the current chosen color in the picker
+   * The value is emitted by default in RGBA, or based on the input 'outputFormat' value.
+   */
+  @Output() colorChange: EventEmitter<string> = new EventEmitter<string>();
+
   colorPicker: string;
 
   onChange: any = () => {};
@@ -61,6 +73,7 @@ export class ColorPickerFormFieldComponent implements ControlValueAccessor {
 
   handleChange($event: ColorEvent) {
     this.colorPicker = this.formatColor($event.color.rgb, 'rgba');
+    this.colorChange.emit(this.formatColor(this.colorPicker));
   }
 
   private formatColor(
