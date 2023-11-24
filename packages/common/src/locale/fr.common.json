@@ -12,7 +12,9 @@
       "selectValueDialog": {
           "cancelButtonText": "Annuler",
           "processButtonText": "Sélectionner",
-          "title": "Veuiller sélectionner une ou des valeurs:"
+          "multipleTitle": "Veuiller sélectionner une ou plusieurs valeurs",
+          "title": "Veuiller sélectionner une valeur",
+          "selectFieldText": "Options"
       },
       "table": {
         "filter": "Filtre"

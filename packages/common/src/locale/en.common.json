@@ -12,7 +12,9 @@
       "selectValueDialog": {
           "cancelButtonText": "Cancel",
           "processButtonText": "Select",
-          "title": "Please, select value(s)"
+          "multipleTitle": "Please, select values",
+          "title": "Please, select a value",
+          "selectFieldText": "Options"
       },
       "table": {
         "filter": "Filter"

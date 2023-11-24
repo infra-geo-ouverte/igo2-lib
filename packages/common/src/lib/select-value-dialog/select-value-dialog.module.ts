@@ -8,6 +8,8 @@ import { MatRadioModule } from '@angular/material/radio';
 
 import { IgoLanguageModule } from '@igo2/core';
 
+import { IgoFormModule } from '../form/form.module';
+import { SelectValueCheckRadioDialogComponent } from './select-value-check-radio-dialog.component';
 import { SelectValueDialogComponent } from './select-value-dialog.component';
 import { SelectValueDialogService } from './select-value-dialog.service';
 
@@ -20,10 +22,14 @@ import { SelectValueDialogService } from './select-value-dialog.service';
     FormsModule,
     MatDialogModule,
     ReactiveFormsModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    IgoFormModule
   ],
-  declarations: [SelectValueDialogComponent],
-  exports: [SelectValueDialogComponent],
+  declarations: [
+    SelectValueDialogComponent,
+    SelectValueCheckRadioDialogComponent
+  ],
+  exports: [SelectValueDialogComponent, SelectValueCheckRadioDialogComponent],
   providers: [SelectValueDialogService]
 })
 export class IgoSelectValueDialogModule {

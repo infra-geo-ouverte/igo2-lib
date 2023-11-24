@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>{{ data.title | translate }}</h1>
+
+<form class="igo-form" [formGroup]="formGroup">
+  <section class="choices-section">
+    <ng-template
+      *ngIf="data.multiple"
+      ngFor
+      let-choice
+      let-i="index"
+      [ngForOf]="data.choices"
+    >
+      <mat-checkbox formControlName="{{ choice.value }}">{{
+        choice.title || choice.value
+      }}</mat-checkbox>
+    </ng-template>
+
+    <mat-radio-group *ngIf="!data.multiple" (change)="onChange($event)">
+      <mat-radio-button
+        *ngFor="let choice of data.choices"
+        [value]="choice.value"
+      >
+        {{ choice.title || choice.value }}
+      </mat-radio-button>
+    </mat-radio-group>
+  </section>
+  <div mat-dialog-actions>
+    <div class="button-group">
+      <button mat-raised-button type="button" (click)="cancel()">
+        {{ data.cancelButtonText | translate }}
+      </button>
+      <button
+        [disabled]="isDisabled$ | async"
+        id="processBtnDialog"
+        mat-raised-button
+        type="button"
+        color="primary"
+        (click)="save()"
+      >
+        {{ data.processButtonText | translate }}
+      </button>
+    </div>
+  </div>
+</form>
