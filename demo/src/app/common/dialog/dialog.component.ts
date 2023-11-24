@@ -40,7 +40,7 @@ export class AppDialogComponent {
       });
   }
 
-  private select(type: SelectValueDialogType = SelectValueDialogType.Select) {
+  private select(type: SelectValueDialogType) {
     const choices: Choice[] = [
       { value: '1', title: 'Chocolate' },
       { value: '2', title: 'Candy' },

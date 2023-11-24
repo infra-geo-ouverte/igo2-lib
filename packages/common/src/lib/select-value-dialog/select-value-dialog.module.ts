@@ -10,7 +10,6 @@ import { IgoLanguageModule } from '@igo2/core';
 
 import { IgoFormModule } from '../form/form.module';
 import { SelectValueCheckRadioDialogComponent } from './select-value-check-radio-dialog.component';
-import { SelectValueDialogComponent } from './select-value-dialog.component';
 import { SelectValueDialogService } from './select-value-dialog.service';
 
 @NgModule({
@@ -25,11 +24,8 @@ import { SelectValueDialogService } from './select-value-dialog.service';
     IgoLanguageModule,
     IgoFormModule
   ],
-  declarations: [
-    SelectValueDialogComponent,
-    SelectValueCheckRadioDialogComponent
-  ],
-  exports: [SelectValueDialogComponent, SelectValueCheckRadioDialogComponent],
+  declarations: [SelectValueCheckRadioDialogComponent],
+  exports: [SelectValueCheckRadioDialogComponent],
   providers: [SelectValueDialogService]
 })
 export class IgoSelectValueDialogModule {

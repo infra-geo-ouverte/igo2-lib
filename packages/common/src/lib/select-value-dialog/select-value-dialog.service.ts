@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 import { SelectValueCheckRadioDialogComponent } from './select-value-check-radio-dialog.component';
-import { SelectValueDialogComponent } from './select-value-dialog.component';
 import { SelectValueDialogType } from './select-value-dialog.enums';
 import { Choice } from './select-value-dialog.interface';
 
@@ -23,9 +22,6 @@ export class SelectValueDialogService {
     let dialogComponent;
     let multiple = selectMultiple;
     switch (type) {
-      case SelectValueDialogType.Select:
-        dialogComponent = SelectValueDialogComponent;
-        break;
       case SelectValueDialogType.Checkbox:
         dialogComponent = SelectValueCheckRadioDialogComponent;
         break;
@@ -34,7 +30,7 @@ export class SelectValueDialogService {
         multiple = false;
         break;
       default:
-        dialogComponent = SelectValueDialogComponent;
+        dialogComponent = SelectValueCheckRadioDialogComponent;
         break;
     }
 
