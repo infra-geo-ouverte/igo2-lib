@@ -16,6 +16,11 @@
           "title": "Veuiller sélectionner une valeur",
           "selectFieldText": "Options"
       },
+      "formDialog": {
+          "cancelButtonText": "Annuler",
+          "processButtonText": "Confirmer",
+          "title": "Veuiller remplir le formulaire"
+      },
       "table": {
         "filter": "Filtre"
       },

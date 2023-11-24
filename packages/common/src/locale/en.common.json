@@ -16,6 +16,11 @@
           "title": "Please, select a value",
           "selectFieldText": "Options"
       },
+      "formDialog": {
+          "cancelButtonText": "Cancel",
+          "processButtonText": "Submit",
+          "title": "Fill the form"
+      },
       "table": {
         "filter": "Filter"
       },
