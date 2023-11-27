@@ -1,6 +1,6 @@
 <div class="advanced-coordinates__coordinates-container">
-  <div class="dvanced-coordinates__coordinates-container__inner">
-    <mat-form-field *ngIf="units; else elseBlock">
+  <div class="advanced-coordinates__coordinates-container__inner">
+    <mat-form-field *ngIf="units; else elseBlock" subscriptSizing="dynamic">
       <mat-label>{{
         'igo.integration.advanced-map-tool.advanced-coordinates.lon' | translate
       }}</mat-label>
@@ -17,7 +17,7 @@
       ></textarea>
     </mat-form-field>
     <ng-template #elseBlock>
-      <mat-form-field>
+      <mat-form-field subscriptSizing="dynamic">
         <textarea
           #textArea
           matInput
@@ -32,7 +32,7 @@
       </mat-form-field>
     </ng-template>
 
-    <mat-form-field *ngIf="units; else elseBlock2">
+    <mat-form-field *ngIf="units; else elseBlock2" subscriptSizing="dynamic">
       <mat-label>{{
         'igo.integration.advanced-map-tool.advanced-coordinates.lat' | translate
       }}</mat-label>
@@ -49,7 +49,7 @@
       ></textarea>
     </mat-form-field>
     <ng-template #elseBlock2>
-      <mat-form-field>
+      <mat-form-field subscriptSizing="dynamic">
         <textarea
           #textArea
           matInput
@@ -77,33 +77,37 @@
   </div>
 
   <form class="igo-form advanced-coordinates__form" [formGroup]="form">
-    <mat-form-field class="igo-input-container">
-      <mat-label>{{
-        'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem'
-          | translate
-      }}</mat-label>
-      <mat-select [(value)]="inputProj">
-        <mat-option
-          matTooltipShowDelay="500"
-          *ngFor="let projection of projections$ | async"
-          [value]="projection"
-          (click)="$event.stopPropagation()"
-        >
-          {{ projection.translatedValue || projection.alias }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-slide-toggle
-      class="center-toggle mat-typography"
-      [checked]="center"
-      [labelPosition]="'before'"
-      (change)="displayCenter($event.checked)"
-    >
-      {{
-        'igo.integration.advanced-map-tool.advanced-coordinates.center'
-          | translate
-      }}
-    </mat-slide-toggle>
+    <div class="advanced-coordinates__coordinates-container__inner">
+      <mat-form-field class="igo-input-container" subscriptSizing="dynamic">
+        <mat-label>{{
+          'igo.integration.advanced-map-tool.advanced-coordinates.coordSystem'
+            | translate
+        }}</mat-label>
+        <mat-select [(value)]="inputProj">
+          <mat-option
+            matTooltipShowDelay="500"
+            *ngFor="let projection of projections$ | async"
+            [value]="projection"
+            (click)="$event.stopPropagation()"
+          >
+            {{ projection.translatedValue || projection.alias }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="advanced-coordinates__coordinates-container__inner">
+      <mat-slide-toggle
+        class="center-toggle mat-typography"
+        [checked]="center"
+        [labelPosition]="'before'"
+        (change)="displayCenter($event.checked)"
+      >
+        {{
+          'igo.integration.advanced-map-tool.advanced-coordinates.center'
+            | translate
+        }}
+      </mat-slide-toggle>
+    </div>
   </form>
 
   <p class="igo-zoom mat-typography">

@@ -24,16 +24,15 @@
         >
       </mat-select>
     </mat-form-field>
+    <mat-slide-toggle
+      class="swipe-toggle mat-typography"
+      [checked]="swipe"
+      [labelPosition]="'before'"
+      (change)="startSwipe($event.checked)"
+    >
+      {{ 'igo.integration.advanced-map-tool.advanced-swipe.swipe' | translate }}
+    </mat-slide-toggle>
   </form>
-
-  <mat-slide-toggle
-    class="swipe-toggle mat-typography"
-    [checked]="swipe"
-    [labelPosition]="'before'"
-    (change)="startSwipe($event.checked)"
-  >
-    {{ 'igo.integration.advanced-map-tool.advanced-swipe.swipe' | translate }}
-  </mat-slide-toggle>
 </div>
 
 <ng-template #noLayersBlock>
