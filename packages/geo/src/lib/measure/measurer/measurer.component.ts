@@ -520,7 +520,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onLengthUnitChange(unit: MeasureLengthUnit) {
     this.activeLengthUnit = unit;
-    console.log('activeLengthUnit', this.activeLengthUnit);
     this.saveCurrentUnits();
     this.refreshTableAndTooltip();
   }
