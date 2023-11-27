@@ -1,4 +1,4 @@
-import { TypeCatalogStrings } from '../../catalog';
+import { TypeCatalogStrings } from '../../catalog/shared/catalog.enum';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 
 export interface MetadataOptions {

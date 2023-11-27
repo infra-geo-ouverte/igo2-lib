@@ -27,7 +27,7 @@ import OlStyle from 'ol/style/Style';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
-import { FeatureDataSource } from '../../datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   FEATURE,
   FeatureStore,
@@ -39,7 +39,7 @@ import {
 } from '../../feature';
 import { DrawControl, ModifyControl } from '../../geometry/shared';
 import { VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   MeasureAreaUnit,
   MeasureLengthUnit,

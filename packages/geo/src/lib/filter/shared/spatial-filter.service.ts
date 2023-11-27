@@ -6,7 +6,7 @@ import { ConfigService, LanguageService } from '@igo2/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Feature } from '../../feature/shared';
+import { Feature } from '../../feature/shared/feature.interfaces';
 import {
   SpatialFilterItemType,
   SpatialFilterQueryType,

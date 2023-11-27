@@ -17,7 +17,8 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
-import { Layer, TooltipType } from '../shared/layers';
+import { Layer } from '../shared/layers/layer';
+import { TooltipType } from '../shared/layers/layer.interface';
 
 @Component({
   selector: 'igo-layer-item',

@@ -5,7 +5,7 @@ import { getUid } from 'ol/util';
 import {
   TimeFilterableDataSource,
   TimeFilterableDataSourceOptions
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import {

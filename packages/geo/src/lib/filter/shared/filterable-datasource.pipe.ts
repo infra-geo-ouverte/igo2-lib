@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { TimeFilterableDataSource } from '../../datasource';
+import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { Layer } from '../../layer/shared/layers/layer';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
