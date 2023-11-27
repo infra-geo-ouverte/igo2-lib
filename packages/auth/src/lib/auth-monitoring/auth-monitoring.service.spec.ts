@@ -1,17 +1,20 @@
+import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
-import { AuthMonitoringService } from './auth-monitoring.service';
-import { HttpClientModule } from '@angular/common/http';
 import {
   AnyMonitoringOptions,
+  ConfigService,
   IgoLanguageModule,
   MONITORING_OPTIONS,
   MessageService
 } from '@igo2/core';
-import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
-import { AuthService } from '../shared';
-import { IgoAuthModule } from '../auth.module';
+
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
+
+import { IgoAuthModule } from '../auth.module';
+import { AuthService } from '../shared';
+import { AuthMonitoringService } from './auth-monitoring.service';
 
 const initialize = (
   options: AnyMonitoringOptions = MOCK_MONITORING_OPTIONS
@@ -25,10 +28,13 @@ const initialize = (
     ]
   });
 
+  const configService = TestBed.inject(ConfigService);
   const authService = TestBed.inject(AuthService);
   const authMonitoringService = TestBed.inject(AuthMonitoringService);
 
   spyOn<any>(authMonitoringService, '_identifyUser');
+
+  configService.load({});
 
   return { authMonitoringService, authService };
 };
