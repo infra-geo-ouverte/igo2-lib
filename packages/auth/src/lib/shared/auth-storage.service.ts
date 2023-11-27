@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { BaseStorage, ConfigService, StorageScope } from '@igo2/core';
 
 import { AuthService } from './auth.service';
-import { AuthStorageOptions } from './storage.interface';
+import { AuthStorageOptions } from './auth-storage.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
