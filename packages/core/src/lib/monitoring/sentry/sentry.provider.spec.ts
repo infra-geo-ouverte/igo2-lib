@@ -1,9 +1,11 @@
 import { APP_INITIALIZER, ErrorHandler, FactoryProvider } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { TraceService } from '@sentry/angular-ivy';
-import { provideSentryMonitoring } from './sentry.provider';
-import { SentryMonitoringOptions } from './sentry.interface';
+
 import { MOCK_SENTRY_OPTIONS } from '../__mocks__/monitoring-mock';
+import { SentryMonitoringOptions } from './sentry.interface';
+import { provideSentryMonitoring } from './sentry.provider';
 
 describe('Provide Sentry monitoring', () => {
   let options: SentryMonitoringOptions;
@@ -14,20 +16,17 @@ describe('Provide Sentry monitoring', () => {
 
   it('should return an empty array if options.enabled is false', () => {
     options.enabled = false;
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     expect(providers).toEqual([]);
   });
 
   it('should return an array of providers if options.enabled is true', () => {
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     expect(providers.length).toBeGreaterThan(0);
   });
 
   it('should provide ErrorHandler with createSentryErrorHandler factory', () => {
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     const errorHandlerProvider = providers.find(
       (p) => p.provide === ErrorHandler
     ) as FactoryProvider;
@@ -37,8 +36,7 @@ describe('Provide Sentry monitoring', () => {
 
   it('should provide TraceService if tracing is enabled', () => {
     options.enableTracing = true;
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     const traceServiceProvider = providers.find(
       (p) => p.provide === TraceService
     );
@@ -48,8 +46,7 @@ describe('Provide Sentry monitoring', () => {
 
   it('should provide APP_INITIALIZER to instantiate TraceService if tracing is enabled', () => {
     options.enableTracing = true;
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     const appInitializerProvider = providers.find(
       (p) => p.provide === APP_INITIALIZER
     ) as FactoryProvider;
@@ -61,8 +58,7 @@ describe('Provide Sentry monitoring', () => {
 
   it('should not provide TraceService if tracing is not enabled', () => {
     options.enableTracing = false;
-    const isProd = true;
-    const providers = provideSentryMonitoring(options, isProd);
+    const providers = provideSentryMonitoring(options);
     const tracingProviders = providers.filter(
       (p) =>
         (p.provide === APP_INITIALIZER && p.deps.includes(TraceService)) ||

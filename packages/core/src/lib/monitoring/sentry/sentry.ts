@@ -1,30 +1,27 @@
 import {
-  init,
-  createErrorHandler,
-  SentryErrorHandler,
-  getCurrentHub,
+  BrowserOptions,
   BrowserTracing,
-  instrumentAngularRouting,
   Replay,
-  BrowserOptions
+  SentryErrorHandler,
+  createErrorHandler,
+  getCurrentHub,
+  init,
+  instrumentAngularRouting
 } from '@sentry/angular-ivy';
+
 import { SentryMonitoringOptions } from './sentry.interface';
 import { isTracingEnabled } from './sentry.utils';
 
 export const createSentryErrorHandler = (
-  options: SentryMonitoringOptions,
-  isProd: boolean
+  options: SentryMonitoringOptions
 ): SentryErrorHandler => {
   return createErrorHandler({
-    logErrors: !isProd,
+    logErrors: options.logErrors,
     ...(options.errorHandlerOptions ?? {})
   });
 };
 
-export const initSentry = (
-  options: SentryMonitoringOptions,
-  isProd: boolean
-): void => {
+export const initSentry = (options: SentryMonitoringOptions): void => {
   const client = getCurrentHub().getClient();
   if (client) {
     return;
@@ -33,7 +30,8 @@ export const initSentry = (
   const tracingEnabled = isTracingEnabled(options);
   const baseConfig: BrowserOptions = {
     dsn: options.dsn,
-    environment: isProd ? 'production' : 'development',
+    environment: options.environment,
+    release: options.release,
     integrations: [
       tracingEnabled &&
         new BrowserTracing({

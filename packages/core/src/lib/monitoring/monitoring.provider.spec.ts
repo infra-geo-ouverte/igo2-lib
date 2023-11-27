@@ -16,12 +16,12 @@ describe('Provide Monitoring', () => {
 
   it('should return null if monitoring options are not defined', () => {
     options = null;
-    const providers = provideMonitoring(options, environment.production);
-    expect(providers).toBeNull();
+    const providers = provideMonitoring(options);
+    expect(providers.length).toEqual(0);
   });
 
   it('should provide monitoring base options', () => {
-    const providers = provideMonitoring(options, environment.production);
+    const providers = provideMonitoring(options);
     expect(providers).toContain({
       provide: MONITORING_OPTIONS,
       useValue: options
@@ -29,7 +29,7 @@ describe('Provide Monitoring', () => {
   });
 
   it('should provide Sentry monitoring if provider is "sentry"', () => {
-    const providers = provideMonitoring(options, environment.production);
+    const providers = provideMonitoring(options);
     expect(providers.length).toBeGreaterThan(1);
   });
 });

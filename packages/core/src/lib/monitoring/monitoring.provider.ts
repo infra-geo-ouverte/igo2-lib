@@ -8,11 +8,10 @@ export const MONITORING_OPTIONS = new InjectionToken<MonitoringOptions | null>(
 );
 
 export function provideMonitoring(
-  options: AnyMonitoringOptions | null,
-  isProd: boolean
+  options: AnyMonitoringOptions | null
 ): Provider[] {
   if (!options) {
-    return null;
+    return [];
   }
 
   const providers: Provider[] = [
@@ -21,7 +20,7 @@ export function provideMonitoring(
 
   switch (options.provider) {
     case 'sentry':
-      providers.push(...provideSentryMonitoring(options, isProd));
+      providers.push(...provideSentryMonitoring(options));
       break;
     default:
       break;

@@ -35,10 +35,10 @@ const EXAMPLE_MODULE_PROVIDER = `@NgModule({
   declarations: [...],
   imports: [...],
   providers: [
-    ...provideMonitoring(environment),
+    ...provideMonitoring(environment.igo.monitoring),
 
     // Provide the authentication user monitoring if you want to identify your user (id, fullname, email) in the error logging 
-    ...provideAuthUserMonitoring()
+    ...provideAuthUserMonitoring(environment.igo.monitoring)
   ]
 })
 `;
