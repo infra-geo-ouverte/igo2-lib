@@ -185,12 +185,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   /**
    * Active mlength unit
    */
-  private activeLengthUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+  public activeLengthUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
   /**
    * Active area unit
    */
-  private activeAreaUnit: MeasureAreaUnit = MeasureAreaUnit.SquareMeters;
+  public activeAreaUnit: MeasureAreaUnit = MeasureAreaUnit.SquareMeters;
 
   /**
    * Feature added listener key
@@ -352,6 +352,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
+    this.getSavedUnits();
     this.initStore();
     this.createDrawLineControl();
     this.createDrawPolygonControl();
@@ -519,6 +520,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onLengthUnitChange(unit: MeasureLengthUnit) {
     this.activeLengthUnit = unit;
+    console.log('activeLengthUnit', this.activeLengthUnit);
+    this.saveCurrentUnits();
     this.refreshTableAndTooltip();
   }
 
@@ -528,6 +531,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   onAreaUnitChange(unit: MeasureAreaUnit) {
     this.activeAreaUnit = unit;
+    this.saveCurrentUnits();
     this.refreshTableAndTooltip();
   }
 
@@ -1176,5 +1180,28 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  private saveCurrentUnits() {
+    this.storageService.set(
+      'distanceUnit',
+      this.activeLengthUnit,
+      StorageScope.SESSION
+    );
+    this.storageService.set(
+      'areaUnit',
+      this.activeAreaUnit,
+      StorageScope.SESSION
+    );
+  }
+
+  private getSavedUnits() {
+    const distanceUnit = this.storageService.get(
+      'distanceUnit'
+    ) as MeasureLengthUnit;
+    const areaUnit = this.storageService.get('areaUnit') as MeasureAreaUnit;
+
+    this.activeLengthUnit = distanceUnit ? distanceUnit : this.activeLengthUnit;
+    this.activeAreaUnit = areaUnit ? areaUnit : this.activeAreaUnit;
   }
 }
