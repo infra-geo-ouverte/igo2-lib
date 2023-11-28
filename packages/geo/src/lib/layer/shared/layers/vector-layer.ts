@@ -43,16 +43,16 @@ import {
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
 import { IgoMap, MapExtent, getResolutionFromScale } from '../../../map/shared';
-import { LayerDBData } from '../../../offline';
 import { InsertSourceInsertDBEnum } from '../../../offline/geoDB/geoDB.enums';
 import { GeoDBService } from '../../../offline/geoDB/geoDB.service';
+import { LayerDBData } from '../../../offline/layerDB/layerDB.interface';
 import { LayerDBService } from '../../../offline/layerDB/layerDB.service';
 import {
   GeoNetworkService,
   SimpleGetOptions
 } from '../../../offline/shared/geo-network.service';
 import { olStyleToBasicIgoStyle } from '../../../style/shared/vector/conversion.utils';
-import { VectorWatcher } from '../../utils';
+import { VectorWatcher } from '../../utils/vector-watcher';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 

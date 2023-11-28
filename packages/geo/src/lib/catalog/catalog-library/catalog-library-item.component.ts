@@ -8,7 +8,7 @@ import {
 
 import { getEntityTitle } from '@igo2/common';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
 
 /**

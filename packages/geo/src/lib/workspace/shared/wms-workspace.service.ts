@@ -5,7 +5,8 @@ import { ConfigService, StorageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
-import { CapabilitiesService, WMSDataSource } from '../../datasource';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import { WMSDataSource } from '../../datasource/shared/datasources';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -16,17 +17,17 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
-} from '../../feature';
+} from '../../feature/shared';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import {
+  GeoWorkspaceOptions,
   ImageLayer,
   LayerService,
   LayersLinkProperties,
   LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
-import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
 import {

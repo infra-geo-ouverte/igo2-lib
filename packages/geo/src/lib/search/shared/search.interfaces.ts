@@ -1,8 +1,11 @@
 import { Observable } from 'rxjs';
 
 import { CommonVectorStyleOptions } from '../../style/shared/vector/vector-style.interface';
-import { ReverseSearchOptions, TextSearchOptions } from './sources';
 import { SearchSource } from './sources/source';
+import {
+  ReverseSearchOptions,
+  TextSearchOptions
+} from './sources/source.interfaces';
 
 export interface Research {
   request: Observable<SearchResult[]>;

@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { TimeFilterableDataSource } from '../../datasource';
+import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterService } from '../shared/time-filter.service';
 

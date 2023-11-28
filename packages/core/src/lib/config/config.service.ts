@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { throwError } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import {
@@ -20,6 +20,9 @@ export class ConfigService<T = { [key: string]: any }> {
   private config: BaseConfigOptions<T> | null;
   private httpClient: HttpClient;
   private configDeprecated = new Map(Object.entries(CONFIG_DEPRECATED));
+
+  private _isLoaded$ = new BehaviorSubject<boolean>(null);
+  isLoaded$ = this._isLoaded$.asObservable();
 
   constructor(handler: HttpBackend) {
     this.httpClient = new HttpClient(handler);
@@ -84,6 +87,7 @@ export class ConfigService<T = { [key: string]: any }> {
     const baseConfig = options.default;
     if (!options.path) {
       this.config = baseConfig;
+      this._isLoaded$.next(true);
       return true;
     }
 
@@ -102,6 +106,7 @@ export class ConfigService<T = { [key: string]: any }> {
             ObjectUtils.mergeDeep({ version }, baseConfig),
             configResponse
           );
+          this._isLoaded$.next(true);
           resolve(true);
         });
     });

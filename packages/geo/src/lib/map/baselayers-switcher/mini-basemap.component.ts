@@ -12,7 +12,7 @@ import OlView from 'ol/View';
 
 import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../shared';
+import { IgoMap } from '../shared/map';
 
 @Component({
   selector: 'igo-mini-basemap',

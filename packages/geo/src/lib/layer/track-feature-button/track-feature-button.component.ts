@@ -5,7 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 
-import { VectorLayer } from '../shared/layers';
+import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({

@@ -6,8 +6,8 @@ import { Subscription, debounceTime, pairwise } from 'rxjs';
 import { CapabilitiesService } from '../../../datasource/shared/capabilities.service';
 import { Layer } from '../../../layer/shared/layers/layer';
 import { IgoMap } from '../../../map/shared/map';
-import { GeoServiceDefinition } from '../../../utils';
 import { generateIdFromSourceOptions } from '../../../utils/id-generator';
+import { GeoServiceDefinition } from '../../../utils/propertyTypeDetector/propertyTypeDetector.interface';
 import { PropertyTypeDetectorService } from '../../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import {
   Feature,
