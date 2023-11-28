@@ -7,7 +7,9 @@
     <mat-grid-list cols="2" rowHeight="600px" gutterSize="16px">
       <mat-grid-tile>
         <igo-map-browser [map]="map" [view]="view">
-          <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+          <div class="map-actions --vertical --bottom --right">
+            <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+          </div>
         </igo-map-browser>
       </mat-grid-tile>
       <mat-grid-tile>
