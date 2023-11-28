@@ -32,6 +32,9 @@
     },
     "./theming": {
       "sass": "./common-theme.scss"
+    },
+    "./partial/*": {
+      "sass": "./src/style/partial/*.scss"
     }
   },
   "dependencies": {
