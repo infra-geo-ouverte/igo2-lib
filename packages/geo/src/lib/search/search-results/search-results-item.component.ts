@@ -15,7 +15,7 @@ import {
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { SearchResult } from '../shared/search.interfaces';
 
 /**

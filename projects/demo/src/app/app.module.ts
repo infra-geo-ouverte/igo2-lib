@@ -42,6 +42,7 @@ import { AppHomeModule } from './core/home/home.module';
 import { AppLanguageModule } from './core/language/language.module';
 import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
+import { MonitoringModule } from './core/monitoring/monitoring.module';
 import { AppRequestModule } from './core/request/request.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
@@ -121,7 +122,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppOgcFilterModule,
     AppSpatialFilterModule,
     AppWorkspaceModule,
-
+    MonitoringModule,
     AppContextModule,
     AppRoutingModule,
 

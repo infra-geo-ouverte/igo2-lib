@@ -17,7 +17,7 @@ import {
 } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
-import { Layer } from '../shared';
+import { Layer } from '../shared/layers/layer';
 
 @Component({
   selector: 'igo-layer-legend-list',

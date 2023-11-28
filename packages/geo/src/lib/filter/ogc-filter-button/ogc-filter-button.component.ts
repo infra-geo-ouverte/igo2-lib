@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   IgoOgcSelector,
   OgcFilterableDataSourceOptions

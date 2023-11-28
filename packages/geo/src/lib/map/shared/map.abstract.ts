@@ -8,16 +8,18 @@ import { Source } from 'ol/source';
 import { Map } from 'ol';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { FeatureDataSource } from '../../datasource';
-import { Layer } from '../../layer';
-import { Overlay } from '../../overlay';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
+import { Layer } from '../../layer/shared/layers/layer';
+import { Overlay } from '../../overlay/shared/overlay';
+import {
+  MapGeolocationController,
+  MapViewController
+} from '../shared/controllers';
 import {
   MapControlsOptions,
   MapExtent,
-  MapGeolocationController,
-  MapViewController,
   MapViewOptions
-} from '../shared';
+} from '../shared/map.interface';
 
 export abstract class MapBase {
   ol: Map;
