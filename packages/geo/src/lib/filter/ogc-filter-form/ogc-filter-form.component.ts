@@ -176,7 +176,7 @@ export class OgcFilterFormComponent implements OnInit {
       'gi'
     );
 
-    return this.selectedField$.value?.values.filter(
+    return this.selectedField$.value?.values?.filter(
       (val) =>
         val &&
         keywordRegex.test(
