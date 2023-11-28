@@ -12,12 +12,7 @@
     <button mat-stroked-button type="button" color="primary" (click)="cancel()">
       {{ data.cancelButtonText | translate }}
     </button>
-    <button
-      mat-flat-button
-      type="submit"
-      color="primary"
-      [disabled]="isDisabled$ | async"
-    >
+    <button mat-flat-button type="submit" color="primary">
       {{ data.processButtonText | translate }}
     </button>
   </div>

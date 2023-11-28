@@ -17,7 +17,6 @@ import { FormDialogData } from './form-dialog.interface';
 export class FormDialogComponent implements OnDestroy {
   form$ = new BehaviorSubject<Form>(undefined);
   data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
-  public isDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   private valueChanges$$: Subscription;
   constructor(
     public languageService: LanguageService,
@@ -40,9 +39,6 @@ export class FormDialogComponent implements OnDestroy {
       [],
       [this.formService.group({ name: 'info' }, fields)]
     );
-    this.valueChanges$$ = form.control.valueChanges.subscribe(() => {
-      this.isDisabled$.next(!form.control.valid);
-    });
 
     this.form$.next(form);
   }
@@ -52,7 +48,15 @@ export class FormDialogComponent implements OnDestroy {
   }
 
   onSubmit(data: { [key: string]: any }) {
-    this.dialogRef.close(data);
+    const form = this.form$.getValue();
+    if (form.control.valid) {
+      this.dialogRef.close(data);
+    } else {
+      Object.keys(form.groups[0].control.controls).map((k) => {
+        form.groups[0].control.controls[k].markAsTouched();
+        form.groups[0].control.controls[k].updateValueAndValidity();
+      });
+    }
   }
   cancel() {
     this.dialogRef.close();

@@ -17,7 +17,7 @@ export class FormDialogService {
     processButtonText?: string,
     cancelButtonText?: string,
     notice?: string
-  ): Observable<any> {
+  ): Observable<{ [key: string]: any }> {
     const data: FormDialogData = {
       formFieldConfig,
       title,

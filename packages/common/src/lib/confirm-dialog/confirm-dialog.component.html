@@ -5,10 +5,10 @@
   {{ confirmMessage | translate }}
 </div>
 <div mat-dialog-actions>
-  <button mat-button color="primary" (click)="dialogRef.close(true)">
+  <button mat-raised-button color="primary" (click)="dialogRef.close(true)">
     {{ proccessKey | translate }}
   </button>
-  <button mat-button (click)="dialogRef.close(false)">
+  <button mat-flat-button (click)="dialogRef.close(false)">
     {{ cancelKey | translate }}
   </button>
 </div>

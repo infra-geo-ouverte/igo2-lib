@@ -13,7 +13,7 @@ export class ConfirmDialogService {
     message: string,
     title: string = 'igo.common.confirmDialog.title',
     modeYesNo: boolean = false
-  ): Observable<any> {
+  ): Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       disableClose: false
     });
