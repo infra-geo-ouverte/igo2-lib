@@ -16,5 +16,7 @@ export * from './lib/shared/protected.directive';
 export * from './lib/shared/token.service';
 export * from './lib/shared/auth-storage.interface';
 export * from './lib/shared/auth-storage.service';
+export * from './lib/auth-monitoring/auth-monitoring.provider';
+export * from './lib/auth-monitoring/auth-monitoring.service';
 export * from './lib/auth-routing.module';
 export * from './lib/auth.module';
