@@ -13,7 +13,7 @@ import type { EntityStateManager } from '@igo2/common';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   AddedChangeEmitter,
   AddedChangeGroupEmitter,

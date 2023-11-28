@@ -5,10 +5,10 @@ import {
   OnInit
 } from '@angular/core';
 
-import { TimeFilterableDataSourceOptions } from '../../datasource';
+import { TimeFilterableDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 @Component({
   selector: 'igo-time-filter-button',

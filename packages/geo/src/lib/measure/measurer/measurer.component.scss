@@ -49,10 +49,9 @@ $slide-toggle-width: 60px;
     padding: 4px 8px;
     white-space: nowrap;
   }
-  .igo-map-tooltip-hidden {
-    display: none;
-  }
-  .igo-map-tooltip-measure-by-display {
-    display: none;
-  }
+}
+
+::ng-deep .igo-map-tooltip-hidden,
+.igo-map-tooltip-measure-by-display {
+  display: none;
 }

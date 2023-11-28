@@ -27,6 +27,11 @@ export class AuthService {
     return this.authOptions?.url !== undefined;
   }
 
+  get user(): User | null {
+    const { user = null } = this.decodeToken();
+    return user;
+  }
+
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,

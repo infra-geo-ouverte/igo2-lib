@@ -6,8 +6,8 @@ import olSourceImage from 'ol/source/Image';
 
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
-import { IgoMap } from '../../../map/shared';
-import { ImageWatcher } from '../../utils';
+import { IgoMap } from '../../../map/shared/map';
+import { ImageWatcher } from '../../utils/image-watcher';
 import { ImageLayerOptions } from './image-layer.interface';
 import { Layer } from './layer';
 

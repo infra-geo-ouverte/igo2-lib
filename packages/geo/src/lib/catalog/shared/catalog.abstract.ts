@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 
-import { TimeFilterOptions } from '../../filter/shared';
-import { TooltipType } from '../../layer/shared';
-import { QueryFormat, QueryHtmlTarget } from '../../query/shared';
+import { TimeFilterOptions } from '../../filter/shared/time-filter.interface';
+import { TooltipType } from '../../layer/shared/layers/layer.interface';
+import { QueryFormat, QueryHtmlTarget } from '../../query/shared/query.enums';
 import { TypeCatalogStrings } from './catalog.enum';
 import { CatalogItem, CatalogItemGroup, ICatalog } from './catalog.interface';
 

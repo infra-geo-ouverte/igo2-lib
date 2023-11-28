@@ -1,4 +1,5 @@
 import { MsalGuardConfiguration } from '@azure/msal-angular';
+import { BaseUser } from '@igo2/core';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
 export interface AuthInternOptions {
@@ -96,12 +97,9 @@ export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
   type: string;
 }
 
-export interface User {
+export interface User extends BaseUser {
   source?: string;
   sourceId?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
   locale?: string;
   isExpired?: boolean;
   admin?: boolean;

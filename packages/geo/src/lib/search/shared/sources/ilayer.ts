@@ -8,12 +8,15 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { LAYER } from '../../../layer';
+import { LAYER } from '../../../layer/shared/layer.enums';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import { QueryFormat, QueryableDataSourceOptions } from '../../../query';
+import { QueryableDataSourceOptions } from '../../../query/shared/query.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
+import {
+  QueryFormat,
+  QueryHtmlTarget
+} from './../../../query/shared/query.enums';
 import {
   ILayerData,
   ILayerDataSource,
