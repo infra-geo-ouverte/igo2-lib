@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { Form } from '../form/shared/form.interfaces';
 import { FormService } from '../form/shared/form.service';
@@ -14,10 +14,9 @@ import { FormDialogData } from './form-dialog.interface';
   templateUrl: './form-dialog.component.html',
   styleUrls: ['./form-dialog.component.scss']
 })
-export class FormDialogComponent implements OnDestroy {
+export class FormDialogComponent {
   form$ = new BehaviorSubject<Form>(undefined);
   data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
-  private valueChanges$$: Subscription;
   constructor(
     public languageService: LanguageService,
     public dialogRef: MatDialogRef<FormDialogComponent>,
@@ -41,10 +40,6 @@ export class FormDialogComponent implements OnDestroy {
     );
 
     this.form$.next(form);
-  }
-
-  ngOnDestroy() {
-    this.valueChanges$$.unsubscribe();
   }
 
   onSubmit(data: { [key: string]: any }) {
