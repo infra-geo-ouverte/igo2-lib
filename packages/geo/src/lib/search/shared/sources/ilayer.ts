@@ -8,12 +8,15 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { LAYER } from '../../../layer';
+import { LAYER } from '../../../layer/shared/layer.enums';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import { QueryFormat, QueryableDataSourceOptions } from '../../../query';
+import { QueryableDataSourceOptions } from '../../../query/shared/query.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
+import {
+  QueryFormat,
+  QueryHtmlTarget
+} from './../../../query/shared/query.enums';
 import {
   ILayerData,
   ILayerDataSource,
@@ -22,7 +25,7 @@ import {
   ILayerServiceResponse
 } from './ilayer.interfaces';
 import { SearchSource } from './source';
-import { TextSearchOptions } from './source.interfaces';
+import { SearchSourceSettings, TextSearchOptions } from './source.interfaces';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -109,6 +112,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
+
+    const showAdvancedParams = this.options.showAdvancedSettings;
+
     return {
       title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
@@ -131,7 +137,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               hashtags: ['gr-layer', 'gr-layers', 'gr-couche', 'gr-couches']
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -163,40 +169,41 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
-        },
-        {
-          type: 'radiobutton',
-          title: 'ecmax',
-          name: 'ecmax',
-          values: [
-            {
-              title: '10 %',
-              value: 10,
-              enabled: ecmax === 10
-            },
-            {
-              title: '30 %',
-              value: 30,
-              enabled: ecmax === 30
-            },
-            {
-              title: '50 %',
-              value: 50,
-              enabled: ecmax === 50 || !ecmax
-            },
-            {
-              title: '75 %',
-              value: 75,
-              enabled: ecmax === 75
-            },
-            {
-              title: '100 %',
-              value: 100,
-              enabled: ecmax === 100
-            }
-          ]
-        }
-      ]
+        } satisfies SearchSourceSettings,
+        showAdvancedParams &&
+          ({
+            type: 'radiobutton',
+            title: 'ecmax',
+            name: 'ecmax',
+            values: [
+              {
+                title: '10 %',
+                value: 10,
+                enabled: ecmax === 10
+              },
+              {
+                title: '30 %',
+                value: 30,
+                enabled: ecmax === 30
+              },
+              {
+                title: '50 %',
+                value: 50,
+                enabled: ecmax === 50 || !ecmax
+              },
+              {
+                title: '75 %',
+                value: 75,
+                enabled: ecmax === 75
+              },
+              {
+                title: '100 %',
+                value: 100,
+                enabled: ecmax === 100
+              }
+            ]
+          } satisfies SearchSourceSettings)
+      ].filter(Boolean)
     };
   }
 

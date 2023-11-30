@@ -5,20 +5,12 @@
 
   .measure-field {
     pointer-events: none;
+    flex: 2;
   }
 
   .unit-field {
-    margin-left: 12px;
-
-    ::ng-deep {
-      .mat-mdc-form-field-infix {
-        width: fit-content;
-      }
-
-      .mat-mdc-select-min-line {
-        padding-right: 8px;
-      }
-    }
+    margin-left: 8px;
+    flex: 1;
   }
 
   ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {

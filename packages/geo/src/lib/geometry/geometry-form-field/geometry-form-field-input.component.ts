@@ -28,7 +28,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { Subscription } from 'rxjs';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   MeasureLengthUnit,
   formatMeasure,

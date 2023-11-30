@@ -6,7 +6,7 @@ import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { OgcFilterWriter } from '../shared/ogc-filter';
 import {
   OgcFilterableDataSource,

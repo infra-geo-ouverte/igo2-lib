@@ -4,13 +4,13 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { TimeFilterOptions } from '../../../filter';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import {
   OgcFilterDuringOptions,
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions
 } from '../../../filter/shared/ogc-filter.interface';
+import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { LegendMapViewOptions } from '../../../layer/shared/layers/legend.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';

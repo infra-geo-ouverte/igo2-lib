@@ -1,5 +1,6 @@
 import { ObjectUtils, uuid } from '@igo2/utils';
 
+import { Extent } from 'ol/extent';
 import olFormatWFS, { WriteGetFeatureOptions } from 'ol/format/WFS';
 import olFormatWKT from 'ol/format/WKT';
 import * as olfilter from 'ol/format/filter';
@@ -21,7 +22,6 @@ import {
   OgcSelectorBundle,
   SelectorGroup
 } from './ogc-filter.interface';
-import { Extent } from 'ol/extent';
 
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];

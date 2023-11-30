@@ -9,8 +9,8 @@ import { ConfigService } from '@igo2/core';
 
 import { map } from 'rxjs/operators';
 
-import { AuthService } from './auth.service';
 import { AuthOptions } from './auth.interface';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'

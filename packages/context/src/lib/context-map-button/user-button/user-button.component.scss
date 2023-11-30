@@ -5,32 +5,19 @@
   @include common-utils.square-button();
 
   .igo-user-button-container {
+    display: flex;
+    gap: 4px;
+
     button {
       background-color: #fff;
       &:hover {
         background-color: #efefef;
       }
     }
-    & > button {
-      @include mobile {
-        position: absolute;
-        bottom: 0;
-      }
-    }
   }
 
   .igo-user-button-more-container {
-    float: left;
-    height: 40px;
-    & > * {
-      margin-right: 2px;
-      float: left;
-    }
-    @include mobile {
-      height: 80px;
-      width: 150px;
-      position: relative;
-      left: 24px;
-    }
+    display: flex;
+    gap: 4px;
   }
 }

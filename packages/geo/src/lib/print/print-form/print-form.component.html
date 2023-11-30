@@ -181,16 +181,17 @@
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-label>{{ 'igo.geo.printForm.resolution' | translate }}</mat-label>
+      <mat-label
+        >{{ 'igo.geo.printForm.resolution' | translate }} ({{
+          'igo.geo.printForm.resolutionUnit' | translate
+        }})</mat-label
+      >
       <mat-select
         formControlName="resolution"
         placeholder="{{ 'igo.geo.printForm.resolution' | translate }}"
       >
-        <mat-option
-          *ngFor="let resolution of resolutions | keyvalue"
-          [value]="resolution.key"
-        >
-          {{ resolution.value + ' PPI' }}
+        <mat-option *ngFor="let resolution of resolutions" [value]="resolution">
+          {{ resolution }}
         </mat-option>
       </mat-select>
     </mat-form-field>

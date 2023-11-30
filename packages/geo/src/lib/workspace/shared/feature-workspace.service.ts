@@ -5,7 +5,8 @@ import { ConfigService, StorageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { CapabilitiesService, FeatureDataSource } from '../../datasource';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   FeatureMotion,
   FeatureStore,
@@ -15,18 +16,21 @@ import {
   FeatureStoreSearchIndexStrategy,
   FeatureStoreSelectionStrategy,
   GeoPropertiesStrategy
-} from '../../feature';
+} from '../../feature/shared';
 import { LayerService, VectorLayer } from '../../layer/shared';
 import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
-import { IgoMap } from '../../map/shared';
-import { getCommonVectorSelectedStyle } from '../../style/shared/vector/commonVectorStyle';
+import { IgoMap } from '../../map/shared/map';
+import {
+  FeatureCommonVectorStyleOptions,
+  OverlayStyleOptions,
+  getCommonVectorSelectedStyle
+} from '../../style/shared';
 import { PropertyTypeDetectorService } from '../../utils/propertyTypeDetector/propertyTypeDetector.service';
 import { FeatureWorkspace } from './feature-workspace';
 import {
   createFilterInMapExtentOrResolutionStrategy,
   createTableTemplate
 } from './workspace.utils';
-import { FeatureCommonVectorStyleOptions, OverlayStyleOptions } from '../../style';
 
 @Injectable({
   providedIn: 'root'
