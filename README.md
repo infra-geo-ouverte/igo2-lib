@@ -68,6 +68,7 @@ This example is based on IGO2 project (https://github.com/infra-geo-ouverte/igo2
 7.  Run `npm install` to install dependencies
 8.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
 9. Execute `npm run link.start -w igo` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
+10. If you have some issues within VSCode, not recognizing the IGO2 project (or any subproject), open a file within the project (./project/igo2/.*) and press CTRL-Shift-P and activathe this command: Developper: Reload Window.
 
 
 If you strictly want to develop inside IGO2 Library, here some step to follow:
