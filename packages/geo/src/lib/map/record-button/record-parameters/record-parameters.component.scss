@@ -20,12 +20,12 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
 .ang-label {
-  font-family:  Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 .mat-column-name {
@@ -36,7 +36,7 @@ input[type=number] {
   overflow-wrap: break-word;
   word-wrap: break-word;
 
-  word-break:break-word;
+  word-break: break-word;
 
   -ms-hyphens: auto;
   -moz-hyphens: auto;
@@ -53,7 +53,7 @@ input[type=number] {
   word-wrap: break-word;
   padding-left: 10px;
 
-  word-break:break-word;
+  word-break: break-word;
 
   -ms-hyphens: auto;
   -moz-hyphens: auto;

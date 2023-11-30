@@ -1,14 +1,40 @@
-<h1 mat-dialog-title>{{ 'igo.geo.record-prompts.filesToDownload' | translate }}</h1>
+<h1 mat-dialog-title>
+  {{ 'igo.geo.record-prompts.filesToDownload' | translate }}
+</h1>
 <div mat-dialog-content>
-  <mat-radio-group class="radio-group element"
-  [(ngModel)]="gpxType">
-    <mat-radio-button value="track">{{ 'igo.geo.record-prompts.track' | translate }}</mat-radio-button>
+  <mat-radio-group class="radio-group element" [(ngModel)]="gpxType">
+    <mat-radio-button value="track">{{
+      'igo.geo.record-prompts.track' | translate
+    }}</mat-radio-button>
     <mat-radio-button value="points">Points</mat-radio-button>
-    <mat-radio-button value="both">{{ 'igo.geo.record-prompts.both' | translate }}</mat-radio-button>
+    <mat-radio-button value="both">{{
+      'igo.geo.record-prompts.both' | translate
+    }}</mat-radio-button>
   </mat-radio-group>
 </div>
-<div mat-dialog-actions style="padding: 0 0 8px 0;">
-  <button mat-raised-button color="warn" (click)="onNoClick()" style="margin-top: 8px;">{{ 'igo.geo.record-prompts.delete' | translate }}</button>
-  <button mat-raised-button [mat-dialog-close]="gpxType" cdkFocusInitial style="margin-right: 8px; margin-top: 8px;">{{ 'igo.geo.record-prompts.save' | translate }}</button>
-  <button mat-raised-button [mat-dialog-close]="undefined" cdkFocusInitial style="margin-left: 0; margin-top: 8px;">{{ 'igo.geo.record-prompts.continueRecording' | translate }}</button>
+<div mat-dialog-actions style="padding: 0 0 8px 0">
+  <button
+    mat-raised-button
+    color="warn"
+    (click)="onNoClick()"
+    style="margin-top: 8px"
+  >
+    {{ 'igo.geo.record-prompts.delete' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="gpxType"
+    cdkFocusInitial
+    style="margin-right: 8px; margin-top: 8px"
+  >
+    {{ 'igo.geo.record-prompts.save' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="undefined"
+    cdkFocusInitial
+    style="margin-left: 0; margin-top: 8px"
+  >
+    {{ 'igo.geo.record-prompts.continueRecording' | translate }}
+  </button>
 </div>

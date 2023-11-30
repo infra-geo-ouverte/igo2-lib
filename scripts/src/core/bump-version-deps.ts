@@ -1,7 +1,8 @@
 import { readdirSync } from 'fs';
+import { resolve } from 'path';
+
 import { PATHS, getPackageJson } from '../config/paths';
 import { writeFile2 } from '../utils/file-system.utils';
-import { resolve } from 'path';
 
 (async () => {
   const rootPackageJson = getPackageJson('root');

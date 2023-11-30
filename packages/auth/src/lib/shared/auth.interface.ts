@@ -1,5 +1,6 @@
-import { MsalGuardConfiguration } from '@azure/msal-angular';
 import { BaseUser } from '@igo2/core';
+
+import { MsalGuardConfiguration } from '@azure/msal-angular';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
 export interface AuthInternOptions {

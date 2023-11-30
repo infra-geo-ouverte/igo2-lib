@@ -1,11 +1,12 @@
-import { pathExist, writeFile2 } from './utils/file-system.utils';
-import { PATHS, getPackageJson } from './config/paths';
 import { rm } from 'fs/promises';
+import { resolve } from 'path';
+
 import { PACKAGES_RELATIONS, waitOnPackageRelations } from './config/packages';
+import { PATHS, getPackageJson } from './config/paths';
+import { execWorkspaceCmd } from './utils/exec.utils';
+import { pathExist, writeFile2 } from './utils/file-system.utils';
 import * as log from './utils/log';
 import { getDuration } from './utils/performance.utils';
-import { execWorkspaceCmd } from './utils/exec.utils';
-import { resolve } from 'path';
 
 const baseCmdName = 'Build all library';
 
@@ -42,10 +43,13 @@ const baseCmdName = 'Build all library';
 async function removePublicApiExports() {
   for (const [packageName] of PACKAGES_RELATIONS) {
     const packageJSON = getPackageJson('dist', packageName);
-    const rootExports = packageJSON.exports["."];
-    if (rootExports && typeof rootExports === "object" && rootExports?.import) {
+    const rootExports = packageJSON.exports['.'];
+    if (rootExports && typeof rootExports === 'object' && rootExports?.import) {
       delete rootExports?.import;
     }
-    await writeFile2(resolve(PATHS.dist, packageName, 'package.json'), packageJSON);
+    await writeFile2(
+      resolve(PATHS.dist, packageName, 'package.json'),
+      packageJSON
+    );
   }
 }

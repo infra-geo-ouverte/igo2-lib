@@ -128,11 +128,11 @@ export class MapGeolocationController extends MapController {
   /**
    * Whether the geolocate should show a buffer around the current position
    */
-   set buffer(value: GeolocationBuffer) {
+  set buffer(value: GeolocationBuffer) {
     this._buffer = value;
     this.handleFeatureCreation(this.position$.value);
   }
-   get buffer(): GeolocationBuffer {
+  get buffer(): GeolocationBuffer {
     return this._buffer;
   }
   private _buffer: GeolocationBuffer;
@@ -172,7 +172,7 @@ export class MapGeolocationController extends MapController {
     }
   }
 
-    /**
+  /**
    * Whether the activate the view tracking of the current position
    */
   set followPosition(value: boolean) {
@@ -440,7 +440,7 @@ export class MapGeolocationController extends MapController {
       });
       positionFeatureArrow.setId(GeolocationOverlayType.PositionDirection);
       hideOlFeature(positionFeatureArrow);
-      }
+    }
     if (!positionFeatureExists) {
       positionFeature = new olFeature<Point>({ geometry: positionGeometry });
       positionFeature.setId(GeolocationOverlayType.Position);
@@ -448,9 +448,9 @@ export class MapGeolocationController extends MapController {
     }
     if (!accuracyFeatureExists) {
       accuracyFeature = new olFeature<Polygon>({ geometry: accuracyGeometry });
-        accuracyFeature.setId(GeolocationOverlayType.Accuracy);
-        accuracyFeature.setStyle(this.accuracyFeatureStyle);
-      }
+      accuracyFeature.setId(GeolocationOverlayType.Accuracy);
+      accuracyFeature.setStyle(this.accuracyFeatureStyle);
+    }
 
     if (positionGeometry) {
       positionFeatureExists
@@ -484,9 +484,9 @@ export class MapGeolocationController extends MapController {
         );
         if (!bufferFeatureExists) {
           bufferFeature = new olFeature(bufferGeometry);
-        bufferFeature.setId(GeolocationOverlayType.Buffer);
+          bufferFeature.setId(GeolocationOverlayType.Buffer);
           bufferFeature.setStyle(this.positionFeatureStyle);
-      }
+        }
         bufferFeature.setStyle(this.bufferStyle);
         bufferFeatureExists
           ? bufferFeature.setGeometry(bufferGeometry)

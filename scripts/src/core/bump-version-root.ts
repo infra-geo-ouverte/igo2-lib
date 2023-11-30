@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync } from 'fs';
+
 import { PATHS, getPackageJson, resolvePackage } from '../config/paths';
 import { BUFFER_ENCODING, writeFile2 } from '../utils/file-system.utils';
 

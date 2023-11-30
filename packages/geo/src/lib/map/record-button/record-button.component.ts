@@ -1,24 +1,27 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { RecordParametersComponent } from './record-parameters/record-parameters.component';
-import { GpxSelectionComponent } from './gpx-selection/gpx-selection.component';
+
+import { MessageService } from '@igo2/core';
+import { downloadContent } from '@igo2/utils';
+
+import Feature from 'ol/Feature';
 import olGeolocation from 'ol/Geolocation';
+import { LineString } from 'ol/geom';
+import { transform } from 'ol/proj';
 import * as olSphere from 'ol/sphere';
 
-import { MapService } from '../shared/map.service';
-import { downloadContent } from '@igo2/utils';
-import {transform} from 'ol/proj';
-import { MapGeolocationController } from '../shared';
-import { MessageService } from '@igo2/core';
-import Feature from 'ol/Feature';
-import { LineString } from 'ol/geom';
-import { VectorLayer } from '../../layer';
-import { QueryableDataSourceOptions } from '../../query';
-import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
-import { BehaviorSubject, Subscription, take } from 'rxjs';
-import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
 import NoSleep from 'nosleep.js';
+import { BehaviorSubject, Subscription, take } from 'rxjs';
+
+import { FeatureDataSource, FeatureDataSourceOptions } from '../../datasource';
+import { VectorLayer } from '../../layer';
+import { GeoDBService, InsertSourceInsertDBEnum } from '../../offline';
+import { QueryableDataSourceOptions } from '../../query';
 import { StyleService } from '../../style/style-service/style.service';
+import { MapGeolocationController } from '../shared';
+import { MapService } from '../shared/map.service';
+import { GpxSelectionComponent } from './gpx-selection/gpx-selection.component';
+import { RecordParametersComponent } from './record-parameters/record-parameters.component';
 
 interface PositionDetailed {
   coordinates: number[];
@@ -31,7 +34,6 @@ interface PositionDetailed {
   styleUrls: ['./record-button.component.scss']
 })
 export class RecordButtonComponent implements OnInit {
-
   @Input() contextUri: string;
   isRecording = false;
   timerKey = null;
@@ -49,9 +51,8 @@ export class RecordButtonComponent implements OnInit {
   noSleep: NoSleep = new NoSleep();
   geolocationListener: () => any;
 
-
   intervalId = null;
-  routeFeatures : PositionDetailed[] = [];
+  routeFeatures: PositionDetailed[] = [];
 
   constructor(
     public dialog: MatDialog,
@@ -59,14 +60,13 @@ export class RecordButtonComponent implements OnInit {
     private styleService: StyleService,
     private messageService: MessageService,
     private geoDBService: GeoDBService
-    ) {
-    }
+  ) {}
 
   ngOnInit(): void {
     this.mapService.getMap().ol.once('rendercomplete', () => {
       this.geoDBService.get('layerRecording').subscribe(async (res) => {
-        if(res) {
-          this.timePassed = (new Date()).getTime() - res.startTime;
+        if (res) {
+          this.timePassed = new Date().getTime() - res.startTime;
           this.startTime = new Date();
           this.currentTime = new Date();
           this.recordParameters = res.recordParameters;
@@ -77,7 +77,7 @@ export class RecordButtonComponent implements OnInit {
       });
     });
     window.addEventListener('blur', () => {
-      if(this.isRecording) {
+      if (this.isRecording) {
         this.pauseRecording();
       }
     });
@@ -88,7 +88,7 @@ export class RecordButtonComponent implements OnInit {
    * @param coord2 Coordinates of destination point
    * @returns Distance between points in km
    */
-  distanceBetweenPoints(coord1: number[], coord2: number[]): number{
+  distanceBetweenPoints(coord1: number[], coord2: number[]): number {
     return olSphere.getDistance(coord1, coord2) / 1000;
   }
 
@@ -96,50 +96,58 @@ export class RecordButtonComponent implements OnInit {
    * Starts recording track, stops the recording if already started
    */
   record() {
-    if(!this.isRecording) {
-      if(!this.recordParameters) {
-        const dialogRef = this.dialog.open(RecordParametersComponent, {data: { contextUri: this.contextUri }});
-        dialogRef.afterClosed().subscribe(result => {
-          if(result) {
+    if (!this.isRecording) {
+      if (!this.recordParameters) {
+        const dialogRef = this.dialog.open(RecordParametersComponent, {
+          data: { contextUri: this.contextUri }
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
             this.setUpRecordListeners(result);
           }
         });
-      }
-      else {
+      } else {
         this.setUpRecordListeners(this.recordParameters);
       }
-    }
-    else {
+    } else {
       const dialogRef = this.dialog.open(PauseStopComponent);
-      dialogRef.afterClosed().subscribe(paused => {
-        if(paused !== undefined) {
+      dialogRef.afterClosed().subscribe((paused) => {
+        if (paused !== undefined) {
           this.pauseRecording();
         }
-        if(paused === false){
+        if (paused === false) {
           this.saveFile();
         }
       });
     }
   }
 
-
   private setUpRecordListeners(result: any) {
-    if(result !== undefined) {
-      if(!result.fileName || !result.amountInput) {
+    if (result !== undefined) {
+      if (!result.fileName || !result.amountInput) {
         this.messageService.alert('igo.geo.record-prompts.badInputs');
         return;
       }
-      if(!this.mapService.getMap()) {
+      if (!this.mapService.getMap()) {
         this.messageService.alert('igo.geo.record-prompts.mapNotRendered');
         return;
       }
       this.geoMap = this.mapService.getMap().geolocationController;
-      if(!this.geoMap.position$.value || !this.geoMap.position$.value.position) {
+      if (
+        !this.geoMap.position$.value ||
+        !this.geoMap.position$.value.position
+      ) {
         this.messageService.alert('igo.geo.record-prompts.positionNotFound');
         return;
       }
-      if(!this.recordParameters && !this.isRecording && this.fileNames.length > 0) {
-        const resultsLayer = this.mapService.getMap().getLayerById(this.fileNames[0]);
+      if (
+        !this.recordParameters &&
+        !this.isRecording &&
+        this.fileNames.length > 0
+      ) {
+        const resultsLayer = this.mapService
+          .getMap()
+          .getLayerById(this.fileNames[0]);
         if (resultsLayer !== undefined) {
           this.mapService.getMap().removeLayer(resultsLayer);
         }
@@ -149,20 +157,35 @@ export class RecordButtonComponent implements OnInit {
       this.currentTime = new Date();
       this.recordParameters = result;
       const startingPosition: PositionDetailed = {
-        coordinates: transform(this.geoMap.position$.value.position, 'EPSG:3857', 'EPSG:4326'),
+        coordinates: transform(
+          this.geoMap.position$.value.position,
+          'EPSG:3857',
+          'EPSG:4326'
+        ),
         timeStamp: new Date().toLocaleString().replace(', ', 'T')
       };
       this.routeFeatures.push(startingPosition);
       this.setFileName(result.fileName).subscribe((namingIsOver) => {
-        if(namingIsOver === true) {
-          if(!this.lineString) {
+        if (namingIsOver === true) {
+          if (!this.lineString) {
             this.createLineString();
           }
           this.positionSubscription = this.geoMap.position$.subscribe(() => {
-            for(let i = this.lineString.getCoordinates().length; i<this.routeFeatures.length; i++){
-              this.lineString.appendCoordinate(transform(
-                [this.routeFeatures[i].coordinates[0],this.routeFeatures[i].coordinates[1]],
-                'EPSG:4326', 'EPSG:3857'));
+            for (
+              let i = this.lineString.getCoordinates().length;
+              i < this.routeFeatures.length;
+              i++
+            ) {
+              this.lineString.appendCoordinate(
+                transform(
+                  [
+                    this.routeFeatures[i].coordinates[0],
+                    this.routeFeatures[i].coordinates[1]
+                  ],
+                  'EPSG:4326',
+                  'EPSG:3857'
+                )
+              );
             }
             this.updatePointsArrayDb();
           });
@@ -172,10 +195,9 @@ export class RecordButtonComponent implements OnInit {
       this.timerKey = setInterval(() => {
         this.currentTime = new Date();
       }, 1000);
-      if(result.intervalMode === 'time') {
+      if (result.intervalMode === 'time') {
         this.setUpTimeIntervalObserver();
-      }
-      else if(result.intervalMode === 'distance') {
+      } else if (result.intervalMode === 'distance') {
         this.setUpDistanceIntervalObserver();
       }
     }
@@ -183,83 +205,97 @@ export class RecordButtonComponent implements OnInit {
 
   private setFileName(name: string): BehaviorSubject<boolean> {
     let fileArray: File[] = [];
-    let namingOverSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    this.geoDBService.get('recordedTraces').pipe(take(1)).subscribe((res) => {
-      if(res) {
-        fileArray = res;
-      }
-      const regex = new RegExp('(.*?)(?:\\ \\((\\d+)\\))?(\\.[^.]*)$');
-      let trackNameNumber = -1;
-      let pointsNameNumber = -1;
-      for(let file of fileArray) {
-        const regexResult = regex.exec(file.name);
-        if(regexResult[1] === name+'_trace') {
-          if(!regexResult[2] && trackNameNumber === -1)
-            trackNameNumber = 1;
-          else if(parseInt(regexResult[2]) >= trackNameNumber)
-            trackNameNumber = parseInt(regexResult[2]) + 1;
+    let namingOverSubject: BehaviorSubject<boolean> = new BehaviorSubject(
+      false
+    );
+    this.geoDBService
+      .get('recordedTraces')
+      .pipe(take(1))
+      .subscribe((res) => {
+        if (res) {
+          fileArray = res;
         }
-        if(regexResult[1] === name+'_points') {
-          if(!regexResult[2] && pointsNameNumber === -1)
-            pointsNameNumber = 1;
-          else if(parseInt(regexResult[2]) >= pointsNameNumber)
-            pointsNameNumber = parseInt(regexResult[2]) + 1;
+        const regex = new RegExp('(.*?)(?:\\ \\((\\d+)\\))?(\\.[^.]*)$');
+        let trackNameNumber = -1;
+        let pointsNameNumber = -1;
+        for (let file of fileArray) {
+          const regexResult = regex.exec(file.name);
+          if (regexResult[1] === name + '_trace') {
+            if (!regexResult[2] && trackNameNumber === -1) trackNameNumber = 1;
+            else if (parseInt(regexResult[2]) >= trackNameNumber)
+              trackNameNumber = parseInt(regexResult[2]) + 1;
+          }
+          if (regexResult[1] === name + '_points') {
+            if (!regexResult[2] && pointsNameNumber === -1)
+              pointsNameNumber = 1;
+            else if (parseInt(regexResult[2]) >= pointsNameNumber)
+              pointsNameNumber = parseInt(regexResult[2]) + 1;
+          }
         }
-      }
-      if(trackNameNumber !== -1) {
-        this.fileNames[0] = name + `_trace (${trackNameNumber}).gpx`;
-      }
-      else {
-        this.fileNames[0] = name + '_trace.gpx';
-      }
-      if(pointsNameNumber !== -1) {
-        this.fileNames[1] = name + `_points (${pointsNameNumber}).gpx`;
-      }
-      else {
-        this.fileNames[1] = name + '_points.gpx';
-      }
-      namingOverSubject.next(true);
-    });
+        if (trackNameNumber !== -1) {
+          this.fileNames[0] = name + `_trace (${trackNameNumber}).gpx`;
+        } else {
+          this.fileNames[0] = name + '_trace.gpx';
+        }
+        if (pointsNameNumber !== -1) {
+          this.fileNames[1] = name + `_points (${pointsNameNumber}).gpx`;
+        } else {
+          this.fileNames[1] = name + '_points.gpx';
+        }
+        namingOverSubject.next(true);
+      });
     return namingOverSubject;
   }
 
   updatePointsArrayDb() {
     if (this.routeFeatures.length > 0) {
       this.geoDBService.get('layerRecording').subscribe(async (res) => {
-        if(!res) {
+        if (!res) {
           res = {
             startTime: this.startTime,
             recordParameters: this.recordParameters,
             points: this.routeFeatures
           };
-        }
-        else {
+        } else {
           res.points = this.routeFeatures;
         }
-        this.geoDBService.update('layerRecording',
-        'layerRecording',
-          res,InsertSourceInsertDBEnum.System,
-          'layerRecording'
-        ).subscribe((r) => {});
+        this.geoDBService
+          .update(
+            'layerRecording',
+            'layerRecording',
+            res,
+            InsertSourceInsertDBEnum.System,
+            'layerRecording'
+          )
+          .subscribe((r) => {});
       });
     }
   }
 
   setUpTimeIntervalObserver() {
-    this.geolocationListener = this.geoMap.addOnChangedListener((geo: olGeolocation) => {
-      if(geo.getPosition()) {
-        this.position = transform(geo.getPosition(), 'EPSG:3857', 'EPSG:4326');
+    this.geolocationListener = this.geoMap.addOnChangedListener(
+      (geo: olGeolocation) => {
+        if (geo.getPosition()) {
+          this.position = transform(
+            geo.getPosition(),
+            'EPSG:3857',
+            'EPSG:4326'
+          );
+        }
       }
-    });
+    );
     this.pointIntervalKey = setInterval(() => {
-      if(this.position) {
+      if (this.position) {
         const position = this.position;
         let distance = 1;
-        if(this.routeFeatures.length > 0) {
-          distance = this.distanceBetweenPoints(position, this.routeFeatures[this.routeFeatures.length-1].coordinates);
+        if (this.routeFeatures.length > 0) {
+          distance = this.distanceBetweenPoints(
+            position,
+            this.routeFeatures[this.routeFeatures.length - 1].coordinates
+          );
         }
-        if(distance >= 0.001) {
-          const point : PositionDetailed = {
+        if (distance >= 0.001) {
+          const point: PositionDetailed = {
             coordinates: position,
             timeStamp: new Date().toLocaleString().replace(', ', 'T')
           };
@@ -270,50 +306,62 @@ export class RecordButtonComponent implements OnInit {
   }
 
   setUpDistanceIntervalObserver() {
-    this.geolocationListener = this.geoMap.addOnChangedListener((geo: olGeolocation) => {
-      if(geo.getPosition()) {
-        const position = transform(geo.getPosition(), 'EPSG:3857', 'EPSG:4326');
-        let distance = -1;
-        if(this.routeFeatures.length > 0) {
-          distance = this.distanceBetweenPoints(position, this.routeFeatures[this.routeFeatures.length-1].coordinates);
-        }
-        if(distance >= this.recordParameters.amountInput / 1000) {
-          const point : PositionDetailed = {
-            coordinates: position,
-            timeStamp: new Date().toLocaleString().replace(', ', 'T')
-          };
-          this.routeFeatures.push(point);
+    this.geolocationListener = this.geoMap.addOnChangedListener(
+      (geo: olGeolocation) => {
+        if (geo.getPosition()) {
+          const position = transform(
+            geo.getPosition(),
+            'EPSG:3857',
+            'EPSG:4326'
+          );
+          let distance = -1;
+          if (this.routeFeatures.length > 0) {
+            distance = this.distanceBetweenPoints(
+              position,
+              this.routeFeatures[this.routeFeatures.length - 1].coordinates
+            );
+          }
+          if (distance >= this.recordParameters.amountInput / 1000) {
+            const point: PositionDetailed = {
+              coordinates: position,
+              timeStamp: new Date().toLocaleString().replace(', ', 'T')
+            };
+            this.routeFeatures.push(point);
+          }
         }
       }
-    });
+    );
   }
 
   private createLineString() {
     let coordsArray: number[][] = new Array(this.routeFeatures.length);
     for (var i = 0; i < this.routeFeatures.length; i++) {
-      let coords: number[] = [this.routeFeatures[i].coordinates[0],this.routeFeatures[i].coordinates[1]];
+      let coords: number[] = [
+        this.routeFeatures[i].coordinates[0],
+        this.routeFeatures[i].coordinates[1]
+      ];
       coordsArray[i] = transform(coords, 'EPSG:4326', 'EPSG:3857');
     }
 
     this.lineString = new LineString(coordsArray);
 
     var featureLine = new Feature({
-        geometry: this.lineString
+      geometry: this.lineString
     });
     this.addLayerToMap([featureLine], this.fileNames[0], 'trace position');
   }
 
   private addLayerToMap(features: any[], layerId: string, layerName: string) {
     const baseStyle = {
-      stroke: { color: "red",
-                width: 3 }
+      stroke: { color: 'red', width: 3 }
     };
 
     const style = this.styleService.createStyle(baseStyle);
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-      queryable: true,
-      type: 'vector'
-    };
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
+      {
+        queryable: true,
+        type: 'vector'
+      };
     const featureSource = new FeatureDataSource(sourceOptions);
     featureSource.ol.addFeatures(features);
     const resultsLayer = this.mapService.getMap().getLayerById(layerId);
@@ -322,15 +370,17 @@ export class RecordButtonComponent implements OnInit {
     }
 
     const date = new Date();
-    const today = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
-    const time = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    const today =
+      date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+    const time =
+      date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
     const layer = new VectorLayer({
       title: `${layerName} ${today} ${time}`,
       source: featureSource,
       sourceOptions: sourceOptions,
       id: layerId,
-      style: style,
+      style: style
     });
     this.mapService.getMap().addLayer(layer);
   }
@@ -348,7 +398,7 @@ export class RecordButtonComponent implements OnInit {
   }
 
   stopRecording() {
-    this.geoDBService.deleteByKey("layerRecording").subscribe();
+    this.geoDBService.deleteByKey('layerRecording').subscribe();
     this.lineString = undefined;
     this.routeFeatures = [];
     this.recordParameters = undefined;
@@ -360,7 +410,9 @@ export class RecordButtonComponent implements OnInit {
    */
   getTimeRecording() {
     const time = this.currentTime.getTime() - this.startTime.getTime();
-    let formattedTime = new Date(time + this.timePassed).toISOString().substring(11,19);
+    let formattedTime = new Date(time + this.timePassed)
+      .toISOString()
+      .substring(11, 19);
     return formattedTime;
   }
 
@@ -368,11 +420,12 @@ export class RecordButtonComponent implements OnInit {
    * Creates Blob objects for gpx files and then downloads them
    */
   saveFile() {
-    if(this.routeFeatures.length > 0) {
+    if (this.routeFeatures.length > 0) {
       const dialogRef = this.dialog.open(GpxSelectionComponent, {
-      width: '25em'});
+        width: '25em'
+      });
       dialogRef.afterClosed().subscribe(async (result) => {
-        if(result === undefined) {
+        if (result === undefined) {
           this.record();
           return;
         }
@@ -381,51 +434,75 @@ export class RecordButtonComponent implements OnInit {
         let gpxPointsText = xml + '<gpx>\n';
         this.routeFeatures.forEach((point) => {
           const pointData = `      <time>${point.timeStamp}</time>\n`;
-          gpxTrackText += `    <trkpt lat="${point.coordinates[1]}" lon="${point.coordinates[0]}">\n`
-                      + pointData
-                      + '    </trkpt>\n';
-          gpxPointsText += `  <wpt lat="${point.coordinates[1]}" lon="${point.coordinates[0]}">\n`
-                        + pointData.replace(/(      )+/g, `    `)
-                        + '  </wpt>\n';
+          gpxTrackText +=
+            `    <trkpt lat="${point.coordinates[1]}" lon="${point.coordinates[0]}">\n` +
+            pointData +
+            '    </trkpt>\n';
+          gpxPointsText +=
+            `  <wpt lat="${point.coordinates[1]}" lon="${point.coordinates[0]}">\n` +
+            pointData.replace(/(      )+/g, `    `) +
+            '  </wpt>\n';
         });
         gpxTrackText += '  </trkseg>\n</trk>\n</gpx>';
         gpxPointsText += '</gpx>';
 
-        const reservedChars = "|\\?*<\":>+[]/'";
+        const reservedChars = '|\\?*<":>+[]/\'';
 
-        for(let i = 0; i<reservedChars.length; i++) {
-          for(let name of this.fileNames) {
-            name = name.replace(reservedChars.charAt(i), "&");
+        for (let i = 0; i < reservedChars.length; i++) {
+          for (let name of this.fileNames) {
+            name = name.replace(reservedChars.charAt(i), '&');
           }
         }
 
-        if(result === 'both') {
-          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileNames[0]);
-          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileNames[1]);
-          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileNames[0]),
-                                     new File([gpxPointsText], this.fileNames[1])]);
-        }
-        else if(result === 'track') {
-          downloadContent(gpxTrackText, 'text/xml;charset=utf-8', this.fileNames[0]);
-          this.updateIndexedDBFiles([new File([gpxTrackText], this.fileNames[0])]);
-        }
-        else if(result === 'points') {
-          downloadContent(gpxPointsText, 'text/xml;charset=utf-8', this.fileNames[1]);
-          this.updateIndexedDBFiles([new File([gpxPointsText], this.fileNames[1])]);
+        if (result === 'both') {
+          downloadContent(
+            gpxTrackText,
+            'text/xml;charset=utf-8',
+            this.fileNames[0]
+          );
+          downloadContent(
+            gpxPointsText,
+            'text/xml;charset=utf-8',
+            this.fileNames[1]
+          );
+          this.updateIndexedDBFiles([
+            new File([gpxTrackText], this.fileNames[0]),
+            new File([gpxPointsText], this.fileNames[1])
+          ]);
+        } else if (result === 'track') {
+          downloadContent(
+            gpxTrackText,
+            'text/xml;charset=utf-8',
+            this.fileNames[0]
+          );
+          this.updateIndexedDBFiles([
+            new File([gpxTrackText], this.fileNames[0])
+          ]);
+        } else if (result === 'points') {
+          downloadContent(
+            gpxPointsText,
+            'text/xml;charset=utf-8',
+            this.fileNames[1]
+          );
+          this.updateIndexedDBFiles([
+            new File([gpxPointsText], this.fileNames[1])
+          ]);
         }
         this.stopRecording();
-        if(result === 'noDownload') {
-          const resultsLayer = this.mapService.getMap().getLayerById(this.fileNames[0]);
+        if (result === 'noDownload') {
+          const resultsLayer = this.mapService
+            .getMap()
+            .getLayerById(this.fileNames[0]);
           if (resultsLayer !== undefined) {
             this.mapService.getMap().removeLayer(resultsLayer);
           }
-        }
-        else {
-          this.messageService.success('igo.geo.record-prompts.gpxDownloadedToast');
+        } else {
+          this.messageService.success(
+            'igo.geo.record-prompts.gpxDownloadedToast'
+          );
         }
       });
-    }
-    else {
+    } else {
       this.messageService.alert('igo.geo.record-prompts.gpxIsEmpty');
       this.stopRecording();
     }
@@ -434,17 +511,18 @@ export class RecordButtonComponent implements OnInit {
   updateIndexedDBFiles(files: File[]) {
     let fileArray: File[] = [];
     this.geoDBService.get('recordedTraces').subscribe(async (res) => {
-      if(res) {
+      if (res) {
         fileArray = res;
       }
       for await (const file of files) {
         fileArray.push(file);
-      };
-      this.geoDBService.update('recordedTraces',
+      }
+      this.geoDBService.update(
+        'recordedTraces',
         fileArray.length,
         fileArray,
         InsertSourceInsertDBEnum.System,
-        'recordedTraces'+fileArray.length
+        'recordedTraces' + fileArray.length
       );
     });
   }
@@ -454,15 +532,17 @@ export class RecordButtonComponent implements OnInit {
   selector: 'igo-pause-or-stop',
   template: `
     <div mat-dialog-content style="width: fit-content;">
-      <button mat-button [mat-dialog-close]="true">{{'igo.geo.record-prompts.pause' | translate}}</button>
-      <button mat-button [mat-dialog-close]="false">{{'igo.geo.record-prompts.stop' | translate}}</button>
+      <button mat-button [mat-dialog-close]="true">
+        {{ 'igo.geo.record-prompts.pause' | translate }}
+      </button>
+      <button mat-button [mat-dialog-close]="false">
+        {{ 'igo.geo.record-prompts.stop' | translate }}
+      </button>
     </div>
   `
 })
 export class PauseStopComponent {
-  constructor(
-    public dialogRef: MatDialogRef<PauseStopComponent>
-  ) {}
+  constructor(public dialogRef: MatDialogRef<PauseStopComponent>) {}
 
   onNoClick(): void {
     this.dialogRef.close();

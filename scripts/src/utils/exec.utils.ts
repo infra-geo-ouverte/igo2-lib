@@ -8,14 +8,15 @@ export function execWorkspaceCmd(
   return execCmd(endsPattern, [`--workspace=@igo2/${name}`, ...args]);
 }
 
-export function execCmd(
-  endsPattern: string,
-  args: string[]
-): Promise<void> {
+export function execCmd(endsPattern: string, args: string[]): Promise<void> {
   return new Promise((resolve) => {
-    const cmd = spawn(process.platform === 'linux' ? 'npm' : 'npm.cmd', [...args], {
-      stdio: ['inherit', 'pipe', 'inherit']
-    });
+    const cmd = spawn(
+      process.platform === 'linux' ? 'npm' : 'npm.cmd',
+      [...args],
+      {
+        stdio: ['inherit', 'pipe', 'inherit']
+      }
+    );
 
     cmd.stdout?.on('data', (data: Buffer) => {
       const msg = data.toString();
