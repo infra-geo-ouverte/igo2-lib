@@ -14,6 +14,7 @@ import { stylefunction } from 'ol-mapbox-style';
 import { Observable, combineLatest, of } from 'rxjs';
 import { catchError, concatMap, map, mergeMap } from 'rxjs/operators';
 
+import { DataSourceService } from '../../datasource/shared/datasource.service';
 import {
   ArcGISRestDataSource,
   CartoDataSource,
@@ -29,8 +30,7 @@ import {
   WMTSDataSource,
   WebSocketDataSource,
   XYZDataSource
-} from '../../datasource';
-import { DataSourceService } from '../../datasource/shared/datasource.service';
+} from '../../datasource/shared/datasources';
 import { LayerDBService } from '../../offline/layerDB/layerDB.service';
 import { GeoNetworkService } from '../../offline/shared/geo-network.service';
 import { GeostylerStyleService } from '../../style/geostyler-service/geostyler.service';

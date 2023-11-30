@@ -1,6 +1,6 @@
 {
   "name": "@igo2/core",
-  "version": "16.0.0",
+  "version": "16.0.2",
   "description": "IGO Library",
   "author": "IGO Community",
   "keywords": [
@@ -57,6 +57,7 @@
     "@angular/platform-browser": "^16.2.5",
     "@angular/router": "^16.2.5",
     "@igo2/utils": "*",
+    "@sentry/angular-ivy": "^7.61.0",
     "ngx-indexed-db": "^11.0.2",
     "ngx-toastr": "^17.0.0",
     "rxjs": "^7.8.0"

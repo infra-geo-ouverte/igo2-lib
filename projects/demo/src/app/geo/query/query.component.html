@@ -8,7 +8,9 @@
       [queryFeatures]="true"
       (query)="handleQueryResults($event)"
     >
-      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
     </igo-map-browser>
 
     <igo-panel title="Details">

@@ -35,7 +35,7 @@ import { FeatureDataSource } from '../../../datasource/shared';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Layer, VectorLayer } from '../../../layer/shared';
-import { IgoMap } from '../../../map/shared';
+import { IgoMap } from '../../../map/shared/map';
 import { MeasureLengthUnit } from '../../../measure';
 import {
   SpatialFilterQueryType,

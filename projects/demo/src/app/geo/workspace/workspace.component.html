@@ -1,7 +1,9 @@
 <app-doc-viewer title="Workspace" subtitle="Geo">
   <app-example-viewer codeFolder="geo/workspace">
     <igo-map-browser [map]="map" [view]="view" class="m-b-16">
-      <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
     </igo-map-browser>
 
     <igo-workspace-selector

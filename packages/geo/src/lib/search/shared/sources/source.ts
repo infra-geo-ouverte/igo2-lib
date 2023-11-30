@@ -2,7 +2,7 @@ import { Workspace } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
-import { FeatureStore } from '../../../feature';
+import { FeatureStore } from '../../../feature/shared/store';
 import {
   ISearchSourceParams,
   SearchSourceOptions,

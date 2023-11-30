@@ -11,8 +11,9 @@ import { UserOptions } from 'jspdf-autotable';
 import moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 
-import { IgoMap } from '../../map';
-import { PrintLegendPosition, PrintService } from '../../print';
+import { IgoMap } from '../../map/shared/map';
+import { PrintService } from '../../print/shared/print.service';
+import { PrintLegendPosition } from '../../print/shared/print.type';
 import { DirectionsSource } from '../directions-sources/directions-source';
 import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSourceService } from './directions-source.service';
