@@ -11,7 +11,11 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../../feature/shared/feature.interfaces';
 import { SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { SearchSource } from './source';

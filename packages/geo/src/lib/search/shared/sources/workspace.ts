@@ -6,7 +6,8 @@ import pointOnFeature from '@turf/point-on-feature';
 import { SimpleDocumentSearchResultSetUnit } from 'flexsearch';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
-import { FEATURE, Feature } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import { Feature } from '../../../feature/shared/feature.interfaces';
 import { Layer } from '../../../layer/shared/layers/layer';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { SearchResult, TextSearch } from '../search.interfaces';

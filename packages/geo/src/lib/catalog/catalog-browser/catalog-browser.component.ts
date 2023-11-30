@@ -13,7 +13,7 @@ import { BehaviorSubject, zip } from 'rxjs';
 
 import { LayerService } from '../../layer/shared/layer.service';
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import {
   AddedChangeEmitter,
   AddedChangeGroupEmitter,

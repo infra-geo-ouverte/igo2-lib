@@ -28,6 +28,7 @@
 .igo-search-settings-radio-group {
   display: flex;
   flex-direction: column;
+  padding-right: 16px;
 }
 
 .igo-search-settings-checkbox mat-radio-button {
@@ -60,4 +61,8 @@
 
 .igo-search-settings-button {
   @include common-utils.square-button();
+}
+
+.igo-search-settings-sub-menu {
+  min-height: 34px;
 }

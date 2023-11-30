@@ -15,13 +15,7 @@ import { ActionStore, ActionbarMode } from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
-import {
-  BehaviorSubject,
-  EMPTY,
-  ReplaySubject,
-  Subscription,
-  timer
-} from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
@@ -58,7 +52,6 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
-    this.cdRef.detectChanges();
     this.next();
   }
   private _contexts: ContextsList = { ours: [] };
@@ -155,6 +148,14 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   public thresholdToFilter = 5;
 
+  get isEmpty(): boolean {
+    return (
+      !this.contexts.ours.length &&
+      !this.contexts.public?.length &&
+      !this.contexts.shared?.length
+    );
+  }
+
   constructor(
     private cdRef: ChangeDetectorRef,
     public configService: ConfigService,
@@ -168,15 +169,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.change$$ = this.change$
-      .pipe(
-        debounce(() => {
-          return this.contexts.ours.length === 0 &&
-            this.contexts.public?.length === 0 &&
-            this.contexts.shared?.length === 0
-            ? EMPTY
-            : timer(50);
-        })
-      )
+      .pipe(debounce(() => timer(50)))
       .subscribe(() => {
         this.contexts$.next(this.filterContextsList(this.contexts));
       });
@@ -215,7 +208,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.change$.next();
   }
 
-  private filterContextsList(contexts: ContextsList) {
+  private filterContextsList(contexts: ContextsList): ContextsList {
     if (this.term === '') {
       if (this.sortedAlpha) {
         contexts = this.sortContextsList(contexts);
@@ -372,7 +365,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     }
   }
 
-  userSelection(user, parent?) {
+  handleToggleCategory(user, parent?) {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;

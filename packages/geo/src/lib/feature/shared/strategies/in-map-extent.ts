@@ -1,9 +1,15 @@
 import { EntityStoreStrategy } from '@igo2/common';
 
+import * as olextent from 'ol/extent';
+
 import { Subscription } from 'rxjs';
 import { debounceTime, skipWhile } from 'rxjs/operators';
 
-import { FeatureStoreInMapExtentStrategyOptions } from '../feature.interfaces';
+import { MapExtent } from '../../../map/shared/map.interface';
+import {
+  Feature,
+  FeatureStoreInMapExtentStrategyOptions
+} from '../feature.interfaces';
 import { FeatureStore } from '../store';
 
 /**
@@ -84,18 +90,30 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     if (store?.layer?.map?.viewController) {
       store.state.updateAll({ inMapExtent: false });
       const mapExtent = store.layer.map.viewController.getExtent();
-      let entitiesInMapExtent = store.layer.ol
-        .getSource()
-        .getFeaturesInExtent(mapExtent)
-        .map((f) => store.get(f.getId()));
-      if (entitiesInMapExtent) {
-        store.state.updateMany(
-          entitiesInMapExtent,
-          { inMapExtent: true },
-          false
-        );
-      }
+      const features = store.entities$.value;
+      const entitiesInMapExtent = this.getFeaturesInExtent(features, mapExtent);
+      store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, false);
     }
+  }
+
+  private getFeaturesInExtent(
+    features: Feature<any>[],
+    extent: MapExtent
+  ): Feature[] {
+    return features.reduce((acc, feature) => {
+      const geom = feature.ol?.getGeometry();
+      if (geom) {
+        const featureExtent = geom.getExtent();
+
+        if (olextent.intersects(featureExtent, extent)) {
+          acc.push(feature);
+        }
+      } else {
+        // By default, keep entity with no geometry
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
   }
 
   /**

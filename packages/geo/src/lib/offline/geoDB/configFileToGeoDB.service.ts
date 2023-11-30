@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { MessageService } from '@igo2/core';
 
 import { default as JSZip } from 'jszip';
+import { ActiveToast } from 'ngx-toastr';
 import { of, zip } from 'rxjs';
 import { catchError, concatMap } from 'rxjs/operators';
 
@@ -22,12 +23,12 @@ export class ConfigFileToGeoDBService {
   ) {}
 
   load(url: string) {
-    let downloadMessage;
+    let downloadMessage: ActiveToast<any>;
     this.http
       .get(url)
       .pipe(
-        catchError((error: any): any => {
-          console.log(`GeoData file ${url} could not be read`);
+        catchError((error: HttpErrorResponse) => {
+          this.messageService.error(`GeoData file ${url} could not be read`);
           error.error.caught = true;
           throw error;
         }),
@@ -69,6 +70,19 @@ export class ConfigFileToGeoDBService {
                               responseType = 'arraybuffer';
                             }
                             return this.http.get(url, { responseType }).pipe(
+                              catchError((error: HttpErrorResponse) => {
+                                this.messageService.remove(
+                                  downloadMessage.toastId
+                                );
+                                this.messageService.error(
+                                  'igo.geo.indexedDb.data-download-failed',
+                                  undefined,
+                                  { timeOut: 40000 }
+                                );
+
+                                error.error.caught = true;
+                                throw error;
+                              }),
                               concatMap((r) => {
                                 if (isZip) {
                                   const observables$ = [
@@ -145,7 +159,7 @@ export class ConfigFileToGeoDBService {
       .subscribe(() => {
         if (downloadMessage) {
           setTimeout(() => {
-            this.messageService.remove((downloadMessage as any).toastId);
+            this.messageService.remove(downloadMessage.toastId);
             this.messageService.success(
               'igo.geo.indexedDb.data-download-completed',
               undefined,

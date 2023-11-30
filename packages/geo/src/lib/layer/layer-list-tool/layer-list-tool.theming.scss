@@ -2,7 +2,19 @@
 @use '@angular/material' as mat;
 
 @mixin theme($theme) {
+  @include color($theme);
   @include density($theme);
+}
+
+@mixin color($theme) {
+  igo-layer-list-tool {
+    mat-form-field {
+      .mat-mdc-text-field-wrapper,
+      .mat-mdc-form-field-focus-overlay {
+        background-color: white !important;
+      }
+    }
+  }
 }
 
 @mixin density($theme) {

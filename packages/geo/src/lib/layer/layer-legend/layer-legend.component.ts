@@ -17,10 +17,11 @@ import { ConfigService, LanguageService } from '@igo2/core';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { WMSDataSource, WMSDataSourceOptions } from '../../datasource';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
-import { Layer } from '../shared/layers';
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
+import { Layer } from '../shared/layers/layer';
 import {
   ItemStyleOptions,
   LegendMapViewOptions

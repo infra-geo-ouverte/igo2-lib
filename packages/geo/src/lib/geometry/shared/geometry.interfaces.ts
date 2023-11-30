@@ -4,7 +4,7 @@ import type { Type } from 'ol/geom/Geometry';
 
 import { GeoJsonGeometryTypes } from 'geojson';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 export interface GeometryFormFieldInputs extends FormFieldInputs {
   map: IgoMap;

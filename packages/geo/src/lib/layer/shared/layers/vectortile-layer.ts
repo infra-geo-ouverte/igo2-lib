@@ -6,8 +6,8 @@ import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
 import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
-import { IgoMap } from '../../../map/shared';
-import { TileWatcher } from '../../utils';
+import { IgoMap } from '../../../map/shared/map';
+import { TileWatcher } from '../../utils/tile-watcher';
 import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 

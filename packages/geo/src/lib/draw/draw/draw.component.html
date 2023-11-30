@@ -50,18 +50,16 @@
     </mat-slide-toggle>
 
     <div class="radius-unit" *ngIf="isCircle()">
-      <form class="radius-form">
-        <mat-form-field class="radius">
-          <input
-            matInput
-            type="number"
-            min="0"
-            placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
-            [formControl]="radiusFormControl"
-            [readonly]="this.freehandMode"
-          />
-        </mat-form-field>
-      </form>
+      <mat-form-field class="radius">
+        <input
+          matInput
+          type="number"
+          min="0"
+          placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
+          [formControl]="radiusFormControl"
+          [readonly]="this.freehandMode"
+        />
+      </mat-form-field>
 
       <mat-form-field class="unit-field">
         <mat-select

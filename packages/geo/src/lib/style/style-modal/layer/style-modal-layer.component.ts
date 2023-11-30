@@ -44,7 +44,7 @@ export class StyleModalLayerComponent implements OnInit {
   ngOnInit() {
     this.linestringOnly = true;
     for (const feature of this.data.layer.ol.getSource().getFeatures()) {
-      if (feature.getGeometry().getType() !== 'LineString') {
+      if (feature.getGeometry()?.getType() !== 'LineString') {
         this.linestringOnly = false;
       }
     }

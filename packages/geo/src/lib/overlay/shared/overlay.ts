@@ -1,7 +1,7 @@
 import OlFeature from 'ol/Feature';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import { FeatureDataSource } from '../../datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   Feature,
   FeatureMotion,

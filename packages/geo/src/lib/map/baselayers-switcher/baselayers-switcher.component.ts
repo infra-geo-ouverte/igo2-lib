@@ -5,7 +5,7 @@ import { Media, MediaService } from '@igo2/core';
 import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer/shared';
-import { IgoMap } from '../shared';
+import { IgoMap } from '../shared/map';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
 
 @Component({

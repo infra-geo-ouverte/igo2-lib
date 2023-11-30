@@ -30,7 +30,7 @@ import {
   RelationOptions,
   SourceFieldsOptionsParams,
   WMSDataSource
-} from '../../datasource';
+} from '../../datasource/shared/datasources';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import {
@@ -41,16 +41,16 @@ import {
   FeatureStoreInMapResolutionStrategy,
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy
-} from '../../feature';
+} from '../../feature/shared';
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import {
+  GeoWorkspaceOptions,
   ImageLayer,
   LayerService,
   LayersLinkProperties,
   LinkedProperties,
   VectorLayer
 } from '../../layer/shared';
-import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap, MapBase } from '../../map/shared';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { StyleService } from '../../style/style-service/style.service';

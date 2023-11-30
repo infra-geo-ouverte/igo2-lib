@@ -10,15 +10,19 @@ import * as olproj from 'ol/proj';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import {
+  Feature,
+  FeatureGeometry
+} from '../../../feature/shared/feature.interfaces';
 import {
   convertDDToDMS,
   lonLatConversion,
   roundCoordTo
 } from '../../../map/shared/map.utils';
 import { Projection } from '../../../map/shared/projection.interfaces';
-import { OsmLinks } from '../../../utils';
 import { GoogleLinks } from '../../../utils/googleLinks';
+import { OsmLinks } from '../../../utils/osmLinks';
 import { ReverseSearch, SearchResult } from '../search.interfaces';
 import { SearchSource } from './source';
 import { ReverseSearchOptions, SearchSourceOptions } from './source.interfaces';

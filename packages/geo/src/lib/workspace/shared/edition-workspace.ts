@@ -15,11 +15,11 @@ import * as OlStyle from 'ol/style';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { FeatureDataSource, RelationOptions } from '../../datasource/shared';
-import { GeometryType, createInteractionStyle } from '../../draw';
-import { featureToOl } from '../../feature';
-import { DrawControl } from '../../geometry';
+import { GeometryType, createInteractionStyle } from '../../draw/shared';
+import { featureToOl } from '../../feature/shared';
+import { DrawControl } from '../../geometry/shared';
 import { ImageLayer, VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { ConfirmationPopupComponent } from '../confirmation-popup/confirmation-popup.component';
 
 export interface EditionWorkspaceOptions extends WorkspaceOptions {

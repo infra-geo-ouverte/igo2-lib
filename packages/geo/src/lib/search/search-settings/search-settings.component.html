@@ -112,9 +112,12 @@
                   }}
                 </button>
               </div>
-              <div mat-menu-item>
+              <div
+                class="igo-search-settings-sub-menu"
+                mat-menu-item
+                *ngFor="let settingValue of getAvailableValues(setting)"
+              >
                 <mat-checkbox
-                  *ngFor="let settingValue of getAvailableValues(setting)"
                   [style.display]="displayBlock"
                   [checked]="settingValue.enabled"
                   [value]="setting"

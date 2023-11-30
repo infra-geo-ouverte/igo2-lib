@@ -49,30 +49,36 @@ Require:
 
 | IGO2 version | Node version |
 | ------------ | ------------ |
+| >= 16.x      | >= 18.10.0   |
 | >= 1.15.x    | >= 16.19.x   |
 | >= 1.13.x    | >= 14, <= 16 |
 |  1.5.x       | >= 12, <= 14 |
 | < 1.5.x      | >= 8, <= 11  |
 | 0.x.x        | >= 6, <= 10  |
 
-If you want to develop in IGO2 Library, it can be installed by:
+If you want to concurently develop inside the IGO2 Library AND inside any igo2-lib's based project, here some step to follow:
+This example is based on IGO2 project (https://github.com/infra-geo-ouverte/igo2.git)
+
+1.  Clone current repository using :`git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+2.  Navigate to the cloned folder : `cd igo2-lib && git checkout next`
+3.  Navigate to the sub project folder : `cd projects`
+4.  Clone the sub project repository using : `git clone https://github.com/infra-geo-ouverte/igo2.git`
+5. `cd igo2 && git checkout next`
+6.  Navigate to the root folder of igo2-lib
+7.  Run `npm install` to install dependencies
+8.  If it is your first run, you MUST run `npm run build -w @igo2/core` or `npm run prestart` to ensure to have all required assets (theme, locale, ...)
+9. Execute `npm run link.start -w igo` from IGO2 project OR run or you can run the VsCode config (`Launch IGO2 with link`)
+10. If you have some issues within VSCode, not recognizing the IGO2 project (or any subproject), open a file within the project (./project/igo2/.*) and press CTRL-Shift-P and activathe this command: Developper: Reload Window.
+
+
+If you strictly want to develop inside IGO2 Library, here some step to follow:
 
 1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2.  Deploy in `cd igo2-lib/` and install from npm `npm install`
+2.  Navigate to the folder igo2-lib : `cd igo2-lib/`
+3.  Install dependencies by running `npm install`
 3.  Build librairies: `npm run build.libs`
-4.  Start form npm `npm start`
+4.  Start form npm `npm start.demo` (or you can run the VsCode config (`Launch Demo`))
 5.  Open your browser at http://localhost:4200/
-
-### Development server
-
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the demo's source files.
-If you modify files from the lib (../packages/\*) you must run:
-
-1. npm run build.libs to rebuild all the libs
-2. OR
-3. npm run build.geo if you have only modifyed the geo package or whatever part of the lib...
-4. OR
-5. npm run start.watch to be aware of any modifications done to the lib.
 
 ### Build
 

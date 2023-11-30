@@ -12,9 +12,9 @@ import OlRenderFeature from 'ol/render/Feature';
 
 import { GeoJsonGeometryTypes } from 'geojson';
 
-import { SourceFieldsOptionsParams } from '../../datasource';
-import { VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../map/shared/map';
 import { FeatureMotion } from './feature.enums';
 
 export interface Feature<P = { [key: string]: any }> {
