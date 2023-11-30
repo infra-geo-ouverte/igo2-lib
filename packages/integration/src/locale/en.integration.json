@@ -6,6 +6,7 @@
         "contexts": "Contexts",
         "directions": "Directions",
         "draw": "Draw",
+        "geometryForm": "Report a data inconsistency",
         "importExport": "Import & Export",
         "ogcFilter": "Filter by",
         "map": "Map",
