@@ -25,7 +25,8 @@ export class SelectValueDialogService {
 
     const dialogRef = this.dialog.open(SelectValueCheckRadioDialogComponent, {
       disableClose: false,
-      data
+      data,
+      ...options
     });
     return dialogRef.afterClosed();
   }

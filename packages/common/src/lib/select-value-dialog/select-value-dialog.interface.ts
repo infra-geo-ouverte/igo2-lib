@@ -1,3 +1,5 @@
+import { MatDialogConfig } from '@angular/material/dialog';
+
 import { SelectValueDialogType } from './select-value-dialog.enums';
 
 export interface Choice {
@@ -9,7 +11,7 @@ export interface SelectValueData extends SelectValueDialogOptions {
   choices: Choice[];
 }
 
-export interface SelectValueDialogOptions {
+export interface SelectValueDialogOptions extends MatDialogConfig {
   type?: SelectValueDialogType;
   title?: string;
   processButtonText?: string;
