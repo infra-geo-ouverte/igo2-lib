@@ -6,6 +6,7 @@ import {
   ConfirmDialogService,
   FormDialogService,
   FormFieldConfig,
+  FormGroupsConfig,
   JsonDialogService,
   SelectValueDialogService
 } from '@igo2/common';
@@ -34,7 +35,7 @@ export class AppDialogComponent {
   }
   yesno() {
     this.confirmDialogService
-      .open('Is the sky blue today? ', undefined, true)
+      .open('Is the sky blue today? ', { modeYesNo: true })
       .subscribe((r) => {
         alert(`Your choice is: ${r}`);
       });
@@ -47,7 +48,7 @@ export class AppDialogComponent {
       { value: 3, title: 'Cake' }
     ];
 
-    this.selectValueDialogService.open(choices, type, true).subscribe((r) => {
+    this.selectValueDialogService.open(choices, { type }).subscribe((r) => {
       if (r?.choices) {
         if (r.choices.length > 1) {
           alert(`Your choice(s) are: ${r.choices}`);
@@ -85,7 +86,26 @@ export class AppDialogComponent {
     );
   }
   form() {
-    const fieldConfigs: FormFieldConfig[] = [
+    const formFieldConfigs: FormFieldConfig[] = [
+      {
+        name: 'country',
+        title: 'Country',
+        options: {
+          cols: 1
+        }
+      }
+    ];
+
+    const formFieldConfigs1: FormFieldConfig[] = [
+      {
+        name: 'city',
+        title: 'City',
+        options: {
+          cols: 1
+        }
+      }
+    ];
+    const formFieldConfigs2: FormFieldConfig[] = [
       {
         name: 'id',
         title: 'ID',
@@ -118,15 +138,22 @@ export class AppDialogComponent {
       }
     ];
 
-    this.formDialogService.open(fieldConfigs).subscribe((data) => {
-      if (data) {
-        alert(JSON.stringify(data));
-      }
-    });
+    const formGroupsConfigs: FormGroupsConfig[] = [
+      { name: 'country', formFieldConfigs: formFieldConfigs1 },
+      { name: 'city', formFieldConfigs: formFieldConfigs2 }
+    ];
+
+    this.formDialogService
+      .open({ formFieldConfigs, formGroupsConfigs }, { minWidth: '50vh' })
+      .subscribe((data) => {
+        if (data) {
+          alert(JSON.stringify(data));
+        }
+      });
   }
 
   email() {
-    const fieldConfigs: FormFieldConfig[] = [
+    const formFieldConfigs: FormFieldConfig[] = [
       {
         name: 'email',
         title: 'Email',
@@ -148,7 +175,7 @@ export class AppDialogComponent {
       }
     ];
 
-    this.formDialogService.open(fieldConfigs).subscribe((data) => {
+    this.formDialogService.open({ formFieldConfigs }).subscribe((data) => {
       if (data) {
         data.password = '°°°°°°°°°°';
         alert(JSON.stringify(data));
