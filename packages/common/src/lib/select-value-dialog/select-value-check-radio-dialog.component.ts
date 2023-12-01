@@ -7,6 +7,7 @@ import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { SelectValueDialogType } from './select-value-dialog.enums';
 import { SelectValueData } from './select-value-dialog.interface';
 
 @Component({
@@ -36,10 +37,9 @@ export class SelectValueCheckRadioDialogComponent implements OnInit {
     this.data.cancelButtonText =
       this.data.cancelButtonText ??
       'igo.common.selectValueDialog.cancelButtonText';
-    this.data.multiple = this.data.multiple === true ? true : false;
     this.data.title =
       this.data.title ?? 'igo.common.selectValueDialog.multipleTitle';
-    if (!this.data.multiple) {
+    if (this.data.type === SelectValueDialogType.Radio) {
       this.data.title = 'igo.common.selectValueDialog.title';
     }
   }

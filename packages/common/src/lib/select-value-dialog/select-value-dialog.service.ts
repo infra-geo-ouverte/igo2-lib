@@ -4,8 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 import { SelectValueCheckRadioDialogComponent } from './select-value-check-radio-dialog.component';
-import { SelectValueDialogType } from './select-value-dialog.enums';
-import { Choice } from './select-value-dialog.interface';
+import {
+  Choice,
+  SelectValueData,
+  SelectValueDialogOptions
+} from './select-value-dialog.interface';
 
 @Injectable()
 export class SelectValueDialogService {
@@ -13,30 +16,16 @@ export class SelectValueDialogService {
 
   public open(
     choices: Choice[],
-    type?: SelectValueDialogType,
-    selectMultiple: boolean = true,
-    title?: string,
-    processButtonText?: string,
-    cancelButtonText?: string
+    options?: SelectValueDialogOptions
   ): Observable<any> {
-    let dialogComponent;
-    let multiple = selectMultiple;
-    switch (type) {
-      case SelectValueDialogType.Checkbox:
-        dialogComponent = SelectValueCheckRadioDialogComponent;
-        break;
-      case SelectValueDialogType.Radio:
-        dialogComponent = SelectValueCheckRadioDialogComponent;
-        multiple = false;
-        break;
-      default:
-        dialogComponent = SelectValueCheckRadioDialogComponent;
-        break;
-    }
+    const data: SelectValueData = {
+      choices,
+      ...options
+    };
 
-    const dialogRef = this.dialog.open(dialogComponent, {
+    const dialogRef = this.dialog.open(SelectValueCheckRadioDialogComponent, {
       disableClose: false,
-      data: { choices, title, processButtonText, cancelButtonText, multiple }
+      data
     });
     return dialogRef.afterClosed();
   }

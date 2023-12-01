@@ -3,7 +3,7 @@
 <form class="igo-form" [formGroup]="formGroup">
   <section class="choices-section">
     <ng-template
-      *ngIf="data.multiple"
+      *ngIf="data.type === 'checkbox'"
       ngFor
       let-choice
       let-i="index"
@@ -14,7 +14,7 @@
       }}</mat-checkbox>
     </ng-template>
 
-    <mat-radio-group *ngIf="!data.multiple" (change)="onChange($event)">
+    <mat-radio-group *ngIf="data.type === 'radio'" (change)="onChange($event)">
       <mat-radio-button
         *ngFor="let choice of data.choices"
         [value]="choice.value"

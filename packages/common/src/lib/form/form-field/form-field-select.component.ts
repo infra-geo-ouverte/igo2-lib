@@ -43,7 +43,7 @@ export class FormFieldSelectComponent implements OnInit {
   /**
    * If the select allow multiple selections
    */
-  @Input() multiple: Boolean = false;
+  @Input() multiple: boolean = false;
 
   /**
    * The field's form control

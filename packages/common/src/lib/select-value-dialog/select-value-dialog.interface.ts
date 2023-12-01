@@ -1,13 +1,18 @@
+import { SelectValueDialogType } from './select-value-dialog.enums';
+
 export interface Choice {
   value: any;
   title: any;
 }
 
-export interface SelectValueData {
+export interface SelectValueData extends SelectValueDialogOptions {
   choices: Choice[];
+}
+
+export interface SelectValueDialogOptions {
+  type?: SelectValueDialogType;
   title?: string;
-  selectFieldText?: string;
   processButtonText?: string;
   cancelButtonText?: string;
-  multiple?: boolean;
+  selectFieldText?: string;
 }
