@@ -29,6 +29,7 @@ export class FormDialogComponent {
     this.data.cancelButtonText =
       this.data.cancelButtonText ?? 'igo.common.formDialog.cancelButtonText';
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
+    this.data$ = this.data.data$;
 
     const fields = this.data.formFieldConfig.map((config) =>
       this.formService.field(config)
