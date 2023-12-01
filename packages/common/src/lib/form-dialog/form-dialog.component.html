@@ -6,7 +6,16 @@
   [formData]="data$ | async"
   (submitForm)="onSubmit($event)"
 >
-  <igo-form-group [group]="form.groups[0]"></igo-form-group>
+  <div *ngIf="form.fields.length" class="form-dialog-container">
+    <igo-form-field
+      *ngFor="let field of form.fields"
+      [field]="field"
+    ></igo-form-field>
+    <igo-form-group
+      *ngFor="let group of form.groups"
+      [group]="group"
+    ></igo-form-group>
+  </div>
 
   <div formButtons mat-dialog-actions>
     <button mat-stroked-button type="button" color="primary" (click)="cancel()">

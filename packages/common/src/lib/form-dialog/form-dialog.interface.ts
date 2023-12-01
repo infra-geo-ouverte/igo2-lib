@@ -1,11 +1,20 @@
+import { MatDialogConfig } from '@angular/material/dialog';
+
 import { BehaviorSubject } from 'rxjs';
 
-import { FormFieldConfig } from '../form/shared/form.interfaces';
+import {
+  FormFieldConfig,
+  FormGroupsConfig
+} from '../form/shared/form.interfaces';
 
-export interface FormDialogData extends FormDialogOptions {
-  formFieldConfig: FormFieldConfig[];
+export interface FormDialogFormConfig {
+  formFieldConfigs?: FormFieldConfig[];
+  formGroupsConfigs?: FormGroupsConfig[];
 }
-export interface FormDialogOptions {
+export interface FormDialogData
+  extends FormDialogOptions,
+    FormDialogFormConfig {}
+export interface FormDialogOptions extends MatDialogConfig {
   data$?: BehaviorSubject<{ [key: string]: any }>;
   title?: string;
   processButtonText?: string;

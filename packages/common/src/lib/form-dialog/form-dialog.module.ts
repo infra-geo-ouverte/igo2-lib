@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -17,7 +18,8 @@ import { FormDialogService } from './form-dialog.service';
     MatDialogModule,
     IgoCustomHtmlModule,
     IgoLanguageModule,
-    IgoFormModule
+    IgoFormModule,
+    MatDividerModule
   ],
   declarations: [FormDialogComponent],
   exports: [FormDialogComponent],

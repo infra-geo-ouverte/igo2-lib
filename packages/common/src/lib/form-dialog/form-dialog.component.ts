@@ -5,7 +5,12 @@ import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { Form } from '../form/shared/form.interfaces';
+import {
+  Form,
+  FormField,
+  FormFieldGroup,
+  FormFieldInputs
+} from '../form/shared/form.interfaces';
 import { FormService } from '../form/shared/form.service';
 import { FormDialogData } from './form-dialog.interface';
 
@@ -31,13 +36,21 @@ export class FormDialogComponent {
     this.data.title = this.data.title ?? 'igo.common.formDialog.title';
     this.data$ = this.data.data$;
 
-    const fields = this.data.formFieldConfig.map((config) =>
-      this.formService.field(config)
+    let fields: FormField<FormFieldInputs>[] = [];
+    let groups: FormFieldGroup[] = [];
+    this.data.formFieldConfigs?.map((config) =>
+      fields.push(this.formService.field(config))
     );
-    const form = this.formService.form(
-      [],
-      [this.formService.group({ name: 'info' }, fields)]
-    );
+
+    this.data.formGroupsConfigs?.map((formGroupsConfig) => {
+      const fields = formGroupsConfig.formFieldConfigs?.map((config) =>
+        this.formService.field(config)
+      );
+      groups.push(
+        this.formService.group({ name: formGroupsConfig.name }, fields)
+      );
+    });
+    const form = this.formService.form(fields, groups);
 
     this.form$.next(form);
   }
@@ -47,10 +60,19 @@ export class FormDialogComponent {
     if (form.control.valid) {
       this.dialogRef.close(data);
     } else {
-      Object.keys(form.groups[0].control.controls).map((k) => {
-        form.groups[0].control.controls[k].markAsTouched();
-        form.groups[0].control.controls[k].updateValueAndValidity();
-      });
+      if (form.groups?.length) {
+        form.groups.map((group) => {
+          Object.keys(group.control.controls).map((k) => {
+            group.control.controls[k].markAsTouched();
+            group.control.controls[k].updateValueAndValidity();
+          });
+        });
+      } else {
+        form.fields.map((f) => {
+          f.control.markAsTouched();
+          f.control.updateValueAndValidity();
+        });
+      }
     }
   }
   cancel() {
