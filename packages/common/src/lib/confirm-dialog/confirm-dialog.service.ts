@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { ConfirmDialogOptions } from './confirm-dialog.interface';
 
 @Injectable()
 export class ConfirmDialogService {
@@ -11,15 +12,19 @@ export class ConfirmDialogService {
 
   public open(
     message: string,
-    title: string = 'igo.common.confirmDialog.title',
-    modeYesNo: boolean = false
+    options?: ConfirmDialogOptions
   ): Observable<boolean> {
+    const _options: ConfirmDialogOptions = {
+      title: 'igo.common.confirmDialog.title',
+      modeYesNo: false,
+      ...options
+    };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       disableClose: false
     });
     dialogRef.componentInstance.confirmMessage = message;
-    dialogRef.componentInstance.titleKey = title;
-    if (modeYesNo) {
+    dialogRef.componentInstance.titleKey = _options.title;
+    if (_options.modeYesNo) {
       dialogRef.componentInstance.proccessKey = 'igo.common.confirmDialog.yes';
       dialogRef.componentInstance.cancelKey = 'igo.common.confirmDialog.no';
     }
