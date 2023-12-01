@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, Optional } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core';
@@ -21,7 +21,6 @@ export class FormDialogComponent {
     public languageService: LanguageService,
     public dialogRef: MatDialogRef<FormDialogComponent>,
     private formService: FormService,
-    @Optional()
     @Inject(MAT_DIALOG_DATA)
     public data: FormDialogData
   ) {
