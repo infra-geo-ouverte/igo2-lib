@@ -25,7 +25,7 @@ import {
 })
 export class FormFieldTextComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  hide: boolean = true;
   /**
    * The field's form control
    */
@@ -35,6 +35,11 @@ export class FormFieldTextComponent implements OnInit {
    * Field placeholder
    */
   @Input() placeholder: string;
+
+  /**
+   * if the input is a password
+   */
+  @Input() isPassword: boolean;
 
   /**
    * Field placeholder
@@ -76,5 +81,9 @@ export class FormFieldTextComponent implements OnInit {
       this.formControl.enable();
     }
     this.disabled$.next(disabled);
+  }
+
+  togglePassword() {
+    this.hide = !this.hide;
   }
 }

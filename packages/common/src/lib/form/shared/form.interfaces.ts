@@ -27,6 +27,10 @@ export interface FormFieldGroupOptions {
   validator?: ValidatorFn;
   errors?: { [key: string]: string };
 }
+export interface FormGroupsConfig {
+  name: string;
+  formFieldConfigs: FormFieldConfig[];
+}
 
 export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
   name: string;
