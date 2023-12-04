@@ -42,7 +42,7 @@
     "changelog-current": "conventional-changelog -p angular -r 2",
     "preversion": "npm run test && npm run e2e",
     "version": "npm run release.lib && npm run release.ghpages",
-    "postversion": "git push && git push --tags",
+    "postversion": "npm run changelog && git add -u && git push && git push --tags",
     "release.lib": "ts-node scripts/src/release/release.ts",
     "release.ghpages": "ts-node scripts/src/release/github-page.ts"
   },
