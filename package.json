@@ -90,7 +90,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.29",
     "jszip": "^3.10.1",
-    "jwt-decode": "^2.2.0",
+    "jwt-decode": "^4.0.0",
     "moment": "^2.29.4",
     "ngx-color": "^9.0.0",
     "ngx-indexed-db": "^11.0.2",
