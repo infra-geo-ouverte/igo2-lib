@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { IgoUserInterface } from '@igo2/auth';
+
 import { ConfigService } from '../../config/config.service';
 import { AnalyticsOptions } from './analytics.interface';
 
@@ -45,15 +47,7 @@ export class AnalyticsService {
     })();
   }
 
-  public setUser(
-    user?: {
-      id: number;
-      sourceId?: string;
-      firstName?: string;
-      lastName?: string;
-    },
-    profils?: string[]
-  ) {
+  public setUser(user?: IgoUserInterface, profils?: string[]) {
     if (this.options.provider === 'matomo') {
       if (!user) {
         this.paq.push(['resetUserId']);

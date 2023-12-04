@@ -78,7 +78,7 @@ export class AuthInterceptor implements HttpInterceptor {
       headers: req.headers.set('Authorization', authHeader)
     });
 
-    const tokenDecoded: any = this.tokenService.decode();
+    const tokenDecoded = this.tokenService.decode();
     if (
       authReq.params.get('_i') === 'true' &&
       tokenDecoded &&

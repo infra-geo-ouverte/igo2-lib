@@ -10,6 +10,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { AuthOptions, IInfosUser, User } from './auth.interface';
+import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -108,11 +109,11 @@ export class AuthService {
     return this.tokenService.get();
   }
 
-  decodeToken() {
+  decodeToken(): IgoJwtPayload | undefined {
     if (this.isAuthenticated()) {
       return this.tokenService.decode();
     }
-    return false;
+    return;
   }
 
   goToRedirectUrl() {

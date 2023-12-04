@@ -48,8 +48,8 @@ export class AnalyticsListenerService {
 
   listenUser() {
     this.authService.authenticate$.subscribe(() => {
-      const tokenDecoded = this.authService.decodeToken() || {};
-      if (tokenDecoded.user) {
+      const tokenDecoded = this.authService.decodeToken();
+      if (tokenDecoded?.user) {
         this.authService
           .getProfils()
           .subscribe((profils) =>

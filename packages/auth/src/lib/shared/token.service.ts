@@ -5,6 +5,7 @@ import { ConfigService } from '@igo2/core';
 import { jwtDecode } from 'jwt-decode';
 
 import { AuthOptions } from './auth.interface';
+import { IgoJwtPayload } from './token.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -31,12 +32,12 @@ export class TokenService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  decode() {
+  decode(): IgoJwtPayload {
     const token = this.get();
     if (!token) {
       return;
     }
-    return jwtDecode(token);
+    return jwtDecode(token) as IgoJwtPayload;
   }
 
   isExpired() {
