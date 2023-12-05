@@ -45,7 +45,10 @@ export class AnalyticsService {
     })();
   }
 
-  public setUser(user: AnalyticsBaseUser, profils?: string[]) {
+  /**
+   * Pass `null` to unset the user.
+   */
+  public setUser(user: AnalyticsBaseUser | null, profils?: string[]) {
     if (this.options.provider === 'matomo') {
       if (!user) {
         this.paq.push(['resetUserId']);

@@ -56,7 +56,7 @@ export class AnalyticsListenerService {
             this.analyticsService.setUser(tokenDecoded.user, profils.profils)
           );
       } else {
-        this.analyticsService.setUser();
+        this.analyticsService.setUser(null);
       }
     });
   }
