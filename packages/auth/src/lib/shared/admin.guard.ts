@@ -22,7 +22,7 @@ export class AdminGuard {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const token = this.authService.decodeToken();
-    if (token && token.user && token.user.isAdmin) {
+    if (token?.user?.isAdmin) {
       return true;
     }
 

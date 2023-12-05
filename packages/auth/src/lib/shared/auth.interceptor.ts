@@ -79,12 +79,7 @@ export class AuthInterceptor implements HttpInterceptor {
     });
 
     const tokenDecoded = this.tokenService.decode();
-    if (
-      authReq.params.get('_i') === 'true' &&
-      tokenDecoded &&
-      tokenDecoded.user &&
-      tokenDecoded.user.sourceId
-    ) {
+    if (authReq.params.get('_i') === 'true' && tokenDecoded?.user?.sourceId) {
       const hashUser = Md5.hashStr(tokenDecoded.user.sourceId) as string;
       authReq = authReq.clone({
         params: authReq.params.set('_i', hashUser)

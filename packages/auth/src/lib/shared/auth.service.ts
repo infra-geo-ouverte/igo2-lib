@@ -164,7 +164,7 @@ export class AuthService {
 
   get isAdmin(): boolean {
     const token = this.decodeToken();
-    if (token && token.user && token.user.isAdmin) {
+    if (token?.user?.isAdmin) {
       return true;
     }
     return false;
