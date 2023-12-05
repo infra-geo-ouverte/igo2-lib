@@ -37,7 +37,7 @@ export class TokenService {
     if (!token) {
       return;
     }
-    return jwtDecode(token) as IgoJwtPayload;
+    return jwtDecode(token) satisfies IgoJwtPayload;
   }
 
   isExpired() {
