@@ -29,8 +29,8 @@ export class AuthService {
   }
 
   get user(): User | null {
-    const { user = null } = this.decodeToken();
-    return user;
+    const decodedToken = this.decodeToken();
+    return decodedToken ? decodedToken.user ?? null : null;
   }
 
   constructor(

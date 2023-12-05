@@ -32,7 +32,7 @@ export class TokenService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  decode(): IgoJwtPayload {
+  decode(): IgoJwtPayload | null {
     const token = this.get();
     if (!token) {
       return;
