@@ -1,14 +1,7 @@
-import { BaseUser } from '@igo2/core';
-
 import { JwtPayload } from 'jwt-decode';
 
-export interface IgoJwtPayload extends JwtPayload {
-  user: IgoUserInterface;
-}
+import { User } from './auth.interface';
 
-export interface IgoUserInterface extends BaseUser {
-  sourceId?: string;
-  locale?: string;
-  isExpired?: boolean;
-  isAdmin?: boolean;
+export interface IgoJwtPayload extends JwtPayload {
+  user: User;
 }
