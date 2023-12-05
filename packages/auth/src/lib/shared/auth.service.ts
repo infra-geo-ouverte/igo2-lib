@@ -109,7 +109,7 @@ export class AuthService {
     return this.tokenService.get();
   }
 
-  decodeToken(): IgoJwtPayload | undefined {
+  decodeToken(): IgoJwtPayload | null {
     if (this.isAuthenticated()) {
       return this.tokenService.decode();
     }
