@@ -177,7 +177,7 @@ export class AuthService {
         tap((data: any) => {
           this.tokenService.set(data.token);
           const tokenDecoded = this.decodeToken();
-          if (tokenDecoded && tokenDecoded.user) {
+          if (tokenDecoded?.user) {
             if (tokenDecoded.user.locale && !this.languageForce) {
               this.languageService.setLanguage(tokenDecoded.user.locale);
             }
