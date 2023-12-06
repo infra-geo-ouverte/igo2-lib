@@ -44,6 +44,7 @@ export class PrintService {
   nbFileToProcess: number;
   activityId: string;
   imgSizeAdded: Array<number>;
+  mapPrintExtent: Array<number>;
 
   TEXTPDFFONT = {
     titleFont: 'Times',
@@ -169,8 +170,8 @@ export class PrintService {
 
           const width = this.imgSizeAdded[0];
           const height = this.imgSizeAdded[1];
-          const res = 1;
-          this.addGeoRef(doc, map, width, height, res, margins);
+
+          this.addGeoRef(doc, width, height, margins);
 
           if (legendPostion !== PrintLegendPosition.none) {
             const targetPositions = Object.keys(PrintLegendPosition).filter(
@@ -208,7 +209,7 @@ export class PrintService {
     return status$;
   }
   // ref GeoMoose https://github.com/geomoose/gm3/tree/main/src/gm3/components/print
-  addGeoRef(doc, map, width, height, resolution, margins) {
+  addGeoRef(doc, width, height, margins) {
     const unit = 'mm';
     const docHeight = doc.internal.pageSize.getHeight();
 
@@ -220,9 +221,7 @@ export class PrintService {
     for (let i = 0; i < pdf_extents.length; i++) {
       pdf_extents[i] = this.pdf_units2points(pdf_extents[i], unit);
     }
-
-    const mapExtent = map.viewController.getExtent('EPSG:3857');
-    doc.setGeoArea(pdf_extents, mapExtent);
+    doc.setGeoArea(pdf_extents, this.mapPrintExtent);
   }
 
   /**
@@ -969,6 +968,7 @@ export class PrintService {
         .getViewport()
         .getElementsByTagName('canvas') as HTMLCollectionOf<HTMLCanvasElement>;
       const mapResultCanvas = await this.drawMap(dimensionPixels, mapCanvas);
+      this.mapPrintExtent = map.viewController.getExtent('EPSG:3857');
 
       this.resetOriginalMapSize(map, mapSize, viewResolution);
 
@@ -1148,7 +1148,10 @@ export class PrintService {
       useCORS: true
     });
 
-    context.drawImage(canvasOverlayHTML, 0, 0);
+    if (canvasOverlayHTML.width !== 0 && canvasOverlayHTML.height !== 0) {
+      context.drawImage(canvasOverlayHTML, 0, 0);
+    }
+
     // remove 'mapOverlayHTML' after generating canvas
     mapOverlayHTML.remove();
   }

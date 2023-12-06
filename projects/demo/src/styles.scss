@@ -1,0 +1,80 @@
+// In production use @igo2/core/all-style
+@use '../../../packages/core/src/style/all-style';
+// In production use @igo2/core/layout
+@use '../../../packages/core/src/style/layout';
+
+@use 'style/theme.scss';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+mat-card {
+  .mat-mdc-card-content > :last-child:is(hr) {
+    margin-bottom: 0.5em !important;
+  }
+}
+
+mat-card-actions,
+.actions-container {
+  button:not(:last-child) {
+    margin-right: 8px;
+  }
+}
+
+igo-map-browser {
+  width: 100%;
+  height: 100%;
+
+  .map-actions {
+    position: absolute;
+    display: flex;
+    transition:
+      bottom 250ms,
+      left 250ms;
+
+    .spinner-spacer {
+      height: 40px;
+    }
+
+    &.--vertical {
+      flex-direction: column;
+
+      > :not(:first-child) {
+        margin-top: 8px;
+      }
+    }
+
+    &.--horizontal {
+      > :not(:first-child) {
+        margin-right: 8px;
+      }
+    }
+
+    &.--bottom {
+      bottom: 4px;
+    }
+
+    &.--right {
+      right: 4px;
+    }
+
+    &.--top {
+      top: 4px;
+    }
+
+    &.--horizontal.--bottom.--right {
+      right: calc(40px + 4px * 2);
+    }
+
+    &.--left {
+      left: 4px;
+    }
+  }
+}

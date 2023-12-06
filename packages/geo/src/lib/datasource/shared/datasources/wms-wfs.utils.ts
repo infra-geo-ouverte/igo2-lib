@@ -1,10 +1,10 @@
+import { Extent } from 'ol/extent';
 import * as OlFormat from 'ol/format';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatGML32 from 'ol/format/GML32';
 import olFormatOSMXML from 'ol/format/OSMXML';
 import olProjection from 'ol/proj/Projection';
-import { Extent } from 'ol/extent';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';

@@ -3,7 +3,7 @@ import { Workspace, WorkspaceOptions } from '@igo2/common';
 import { BehaviorSubject } from 'rxjs';
 
 import { VectorLayer } from '../../layer/shared';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 
 export interface WfsWorkspaceOptions extends WorkspaceOptions {
   layer: VectorLayer;

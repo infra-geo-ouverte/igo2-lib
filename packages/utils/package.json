@@ -1,9 +1,11 @@
 {
   "name": "@igo2/utils",
-  "version": "16.0.0-rc.3",
+  "version": "16.0.2",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -12,6 +14,18 @@
   },
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
+  },
+  "scripts": {
+    "build": "ng build utils --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "publish": "npm publish ../../dist/utils",
+    "test": "ng test utils --watch=false",
+    "watch": "ng build utils --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
   },
   "dependencies": {
     "bowser": "^2.10.0",

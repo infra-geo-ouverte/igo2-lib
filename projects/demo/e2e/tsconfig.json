@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc",
+    "sourceMap": false,
+    "types": ["cypress"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": []
+}

@@ -22,7 +22,7 @@ import {
   SourceFieldsOptionsParams
 } from '../../datasource/shared/datasources/datasource.interface';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { LayerService, VectorLayer } from '../../layer';
+import { LayerService, VectorLayer } from '../../layer/shared';
 import { IgoMap } from '../../map/shared/map';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { FeatureWorkspace } from './feature-workspace';

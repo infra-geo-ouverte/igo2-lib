@@ -1,36 +1,43 @@
 :host {
-  .context-filter-container {
-    display: flex;
-    align-items: center;
-    padding: 8px 4px;
-
-    mat-form-field {
-      flex: 1;
-    }
-  }
-
-  .context-filter-min-width {
-    width: calc(100% - 135px);
-    margin: 5px;
-    padding-left: 6px;
-  }
-
-  .profilsMenu {
-    display: flex;
-  }
-
-  .add-context-button {
-    margin: 0px;
-    width: 40px;
-    display: inline-flex;
-    overflow: hidden;
-  }
-
   ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
     display: none;
   }
+}
 
-  .actions-container {
-    margin-left: 4px;
+.context-filter-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+
+  mat-form-field {
+    flex: 1;
   }
+}
+
+.context-filter-min-width {
+  width: calc(100% - 135px);
+  margin: 5px;
+  padding-left: 6px;
+}
+
+.profil-menu {
+  padding-left: 8px;
+
+  mat-checkbox {
+    margin-right: 8px;
+  }
+}
+
+.add-context-button {
+  margin: 0px;
+  width: 40px;
+  display: inline-flex;
+  overflow: hidden;
+}
+.actions-container {
+  margin-left: 4px;
+}
+
+.no-result {
+  padding: 16px;
 }

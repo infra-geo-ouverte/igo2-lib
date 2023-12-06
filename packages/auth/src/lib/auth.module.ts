@@ -18,9 +18,9 @@ import { AuthInternComponent } from './auth-form/auth-intern.component';
 import { AuthMicrosoftComponent } from './auth-form/auth-microsoft.component';
 import { AuthMicrosoftb2cComponent } from './auth-form/auth-microsoftb2c.component';
 import { provideAuthMicrosoft } from './shared/auth-microsoft.provider';
+import { AuthStorageService } from './shared/auth-storage.service';
 import { AuthInterceptor } from './shared/auth.interceptor';
 import { ProtectedDirective } from './shared/protected.directive';
-import { AuthStorageService } from './shared/storage.service';
 
 @NgModule({
   imports: [

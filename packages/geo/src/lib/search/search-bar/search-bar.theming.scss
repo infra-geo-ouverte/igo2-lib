@@ -4,17 +4,22 @@
 @mixin theme($theme) {
   @include color($theme);
   @include density($theme);
+
+  igo-search-bar {
+    mat-form-field {
+      .mdc-line-ripple {
+        display: none;
+      }
+    }
+  }
 }
 
 @mixin color($theme) {
   igo-search-bar {
     mat-form-field {
-      .mat-mdc-text-field-wrapper {
+      .mat-mdc-text-field-wrapper,
+      .mat-mdc-form-field-focus-overlay {
         background-color: white !important;
-      }
-
-      .mdc-line-ripple {
-        display: none;
       }
     }
   }
@@ -32,5 +37,6 @@
 
   igo-search-bar {
     @include mat.form-field-density($theme);
+    @include mat.icon-button-density($theme);
   }
 }

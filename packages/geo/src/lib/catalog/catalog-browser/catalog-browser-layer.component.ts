@@ -15,7 +15,7 @@ import { first } from 'rxjs/operators';
 
 import { LayerService } from '../../layer/shared/layer.service';
 import { Layer, TooltipType } from '../../layer/shared/layers';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
 

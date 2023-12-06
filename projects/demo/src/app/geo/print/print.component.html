@@ -1,0 +1,38 @@
+<app-doc-viewer
+  title="Print"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/print">
+    <mat-grid-list cols="2" rowHeight="800px" gutterSize="16px">
+      <mat-grid-tile
+        ><igo-map-browser [map]="map" [view]="view">
+          <div class="map-actions --vertical --top --right">
+            <div class="spinner-spacer"></div>
+            <igo-rotation-button
+              class="mat-elevation-z2"
+              [showIfNoRotation]="true"
+              [map]="map"
+              color="primary"
+            ></igo-rotation-button>
+          </div>
+          <div class="map-actions --vertical --bottom --right">
+            <igo-home-extent-button
+              class="mat-elevation-z2"
+              [map]="map"
+              color="primary"
+            >
+            </igo-home-extent-button>
+            <igo-geolocate-button
+              class="mat-elevation-z2"
+              [map]="map"
+              color="primary"
+            >
+            </igo-geolocate-button>
+            <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+          </div> </igo-map-browser
+      ></mat-grid-tile>
+      <mat-grid-tile> <igo-print [map]="map"></igo-print></mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

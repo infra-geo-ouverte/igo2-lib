@@ -13,6 +13,8 @@ import {
   Validators
 } from '@angular/forms';
 
+import { MediaService } from '@igo2/core';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
@@ -35,7 +37,7 @@ export class PrintFormComponent implements OnInit, OnDestroy {
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
-  public resolutions = PrintResolution;
+  public resolutions = [...PrintResolution];
   public imageFormats = PrintSaveImageFormat;
   public legendPositions = PrintLegendPosition;
   public isPrintService = true;
@@ -89,7 +91,7 @@ export class PrintFormComponent implements OnInit, OnDestroy {
     return this.resolutionField.value;
   }
   set resolution(value: PrintResolution) {
-    this.resolutionField.setValue(value || PrintResolution['96'], {
+    this.resolutionField.setValue(value || ('96' satisfies PrintResolution), {
       onlySelf: true
     });
   }
@@ -211,7 +213,10 @@ export class PrintFormComponent implements OnInit, OnDestroy {
 
   maxLength: number = 180;
 
-  constructor(private formBuilder: UntypedFormBuilder) {
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private mediaService: MediaService
+  ) {
     this.form = this.formBuilder.group({
       title: ['', [Validators.minLength(0), Validators.maxLength(130)]],
       subtitle: ['', [Validators.minLength(0), Validators.maxLength(120)]],
@@ -237,6 +242,11 @@ export class PrintFormComponent implements OnInit, OnDestroy {
     this.legendHeightError$.subscribe((res) => {
       this.legendPositionField.setErrors({ legendHeightError: res });
     });
+    if (this.mediaService.isMobile()) {
+      this.resolutions = this.resolutions.filter(
+        (resolution) => resolution !== '300'
+      );
+    }
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {

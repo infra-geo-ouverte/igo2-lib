@@ -332,6 +332,7 @@
         "portrait": "Portrait",
         "projection": "Projection",
         "resolution": "Resolution",
+        "resolutionUnit": "PPI",
         "saveBtn": "Save",
         "scale": "Scale",
         "showProjection": "Show projection",
@@ -647,14 +648,14 @@
         "geographie": "Natural sites",
         "parc": "Parks",
         "secteur": "Sector",
-        "sites-archeologiques":"Complete archaeological sites (centroid and reservation)",
-        "sites-archeologiques-partiel-s":"Archaeological sites - surface area (partial)",
-        "zones-inf-archeologique":"Archaeological information zones",
-        "grille-borden":"Grille borden",
-        "immeubles-patrimoniaux":"Heritage buildings (classified and cited)",
-        "immeubles-patrimoniaux-s":"Protected land and protection area (of listed heritage buildings)",
-        "sites-patrimoniaux-declares":"Heritage sites (classified, declared, national)",
-        "sites-patrimoniaux":"Heritage sites cited",
+        "sites-archeologiques": "Complete archaeological sites (centroid and reservation)",
+        "sites-archeologiques-partiel-s": "Archaeological sites - surface area (partial)",
+        "zones-inf-archeologique": "Archaeological information zones",
+        "grille-borden": "Grille borden",
+        "immeubles-patrimoniaux": "Heritage buildings (classified and cited)",
+        "immeubles-patrimoniaux-s": "Protected land and protection area (of listed heritage buildings)",
+        "sites-patrimoniaux-declares": "Heritage sites (classified, declared, national)",
+        "sites-patrimoniaux": "Heritage sites cited",
         "service-garde": "Child care",
         "public": "Public schools",
         "prive": "Private school",
@@ -809,7 +810,8 @@
       },
       "indexedDb": {
         "data-download-start": "Downloading data. Please don't leave the current app.",
-        "data-download-completed": "Data download completed"
+        "data-download-completed": "Data download completed",
+        "data-download-failed": "Data download failed. Please contact your application manager."
       }
     }
   }

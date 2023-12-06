@@ -1,19 +1,18 @@
-<mat-list *ngIf="mode === actionbarMode.Dock" matListItemIcon>
-  <div
-    *ngIf="heightCondition && positionConditionTop && isDesktop"
-    id="topChevron"
+<div
+  *ngIf="heightCondition && positionConditionTop && isDesktop"
+  id="topChevron"
+>
+  <button
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.common.actionbar.scrollUp' | translate"
+    (click)="scrollUp()"
   >
-    <button
-      mat-icon-button
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.common.actionbar.scrollUp' | translate"
-      (click)="scrollUp()"
-    >
-      <mat-icon svgIcon="chevron-up"></mat-icon>
-    </button>
-  </div>
-
+    <mat-icon svgIcon="chevron-up"></mat-icon>
+  </button>
+</div>
+<mat-list *ngIf="mode === actionbarMode.Dock" matListItemIcon>
   <igo-actionbar-item
     *ngIf="withToggleButton"
     color="accent"
@@ -45,22 +44,22 @@
     >
     </igo-actionbar-item>
   </ng-template>
-
-  <div
-    *ngIf="heightCondition && positionConditionLow && isDesktop"
-    id="lowChevron"
-  >
-    <button
-      mat-icon-button
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.common.actionbar.scrollDown' | translate"
-      (click)="scrollDown()"
-    >
-      <mat-icon svgIcon="chevron-down"></mat-icon>
-    </button>
-  </div>
 </mat-list>
+
+<div
+  *ngIf="heightCondition && positionConditionLow && isDesktop"
+  id="lowChevron"
+>
+  <button
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.common.actionbar.scrollDown' | translate"
+    (click)="scrollDown()"
+  >
+    <mat-icon svgIcon="chevron-down"></mat-icon>
+  </button>
+</div>
 
 <div *ngIf="mode === actionbarMode.Overlay">
   <button

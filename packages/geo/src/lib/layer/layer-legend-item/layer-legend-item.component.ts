@@ -11,7 +11,8 @@ import { ConnectionState, NetworkService } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
-import { Layer, TooltipType } from '../shared/layers';
+import { Layer } from '../shared/layers/layer';
+import { TooltipType } from '../shared/layers/layer.interface';
 
 @Component({
   selector: 'igo-layer-legend-item',

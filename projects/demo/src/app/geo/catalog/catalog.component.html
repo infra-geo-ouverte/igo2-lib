@@ -1,0 +1,30 @@
+<app-doc-viewer
+  title="Catalog"
+  subtitle="Geo"
+  [dependencies]="['ConfigService', 'LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/catalog">
+    <igo-map-browser [map]="map" [view]="view">
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-panel title="Catalog Library">
+      <igo-catalog-library
+        [store]="catalogStore"
+        (catalogSelectChange)="onCatalogSelectChange($event)"
+      >
+      </igo-catalog-library>
+    </igo-panel>
+
+    <igo-panel title="Catalog Browser">
+      <igo-catalog-browser
+        [catalog]="catalog"
+        [store]="catalogItemStore"
+        [map]="map"
+      >
+      </igo-catalog-browser>
+    </igo-panel>
+  </app-example-viewer>
+</app-doc-viewer>

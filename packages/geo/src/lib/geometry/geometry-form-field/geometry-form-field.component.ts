@@ -15,7 +15,7 @@ import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 
 /**

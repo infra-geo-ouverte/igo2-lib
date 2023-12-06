@@ -22,7 +22,8 @@ import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
 import * as olstyle from 'ol/style';
 
-import { MapExtent, MapViewController } from '../../map/shared';
+import { MapViewController } from '../../map/shared/controllers/view';
+import { MapExtent } from '../../map/shared/map.interface';
 import { FEATURE, FeatureMotion } from './feature.enums';
 import { Feature, FeatureGeometry } from './feature.interfaces';
 

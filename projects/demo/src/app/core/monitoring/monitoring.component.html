@@ -1,0 +1,62 @@
+<app-doc-viewer title="Monitoring" subtitle="Core">
+  <p>
+    The <code>monitoring</code> package provides a set of configuration for
+    manging application monitoring
+  </p>
+  <ul>
+    <li>Error montioring, report application exception</li>
+    <li>Custom event reporting, like tracking use of code deprecation</li>
+  </ul>
+
+  <h3>Getting started</h3>
+  <p>
+    Start by configure the monitoring options in your
+    <code>environnment.ts</code> file. You can complement this configuration
+    with your provider options. To get the basic options, for Sentry consult the
+    <a
+      href="https://docs.sentry.io/platforms/javascript/configuration/options"
+      target="_blank"
+      >documentation</a
+    >
+  </p>
+  <pre><code>{{getBasicConfigExample()}}</code></pre>
+
+  <h3>Identify user information with the event</h3>
+  <p>
+    If you yant to identify the user with the monitoring event, you need to
+    configure <code>identifyUser</code> to true in the monitoring options. Then
+    import the <code>AuthModule</code> and it will provide the
+    <code>provideAuthUserMonitoring</code> providers.
+  </p>
+
+  <h3>Add Readable Stack Traces to Errors for your application</h3>
+  <p>
+    Follow the instruction
+    <a
+      href="https://docs.sentry.io/platforms/javascript/guides/angular/sourcemaps/"
+      target="_blank"
+      >Sentry - Source Maps</a
+    >
+  </p>
+
+  <h3>Initialize monitoring</h3>
+  <p>
+    Then import the <code>provideMonitoring</code> providers into the AppModule
+  </p>
+  <pre><code [innerHTML]="exampleModuleCode"></code></pre>
+
+  <app-example-viewer
+    title="Sentry"
+    codeFolder="core/monitoring"
+    configFolder="environments"
+  >
+    <p class="mat-body-1">
+      Trigger a test error somewhere in your Angular app, for example in your
+      main app component. Once triggered, an error event should be sent on your
+      Sentry application
+    </p>
+    <button mat-raised-button color="warn" (click)="throwTestError()">
+      Throw Test Error
+    </button>
+  </app-example-viewer>
+</app-doc-viewer>
