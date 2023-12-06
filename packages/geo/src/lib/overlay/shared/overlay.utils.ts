@@ -1,4 +1,4 @@
-import { FeatureDataSource } from '../../datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { createOverlayLayerStyle } from '../../style/shared/overlay/overlay-style.utils';
 

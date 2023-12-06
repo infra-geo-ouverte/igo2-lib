@@ -604,13 +604,9 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    this.store.state.updateAll({ selected: toggle });
-    if (toggle === true) {
-      const entities = this.store.stateView
-        .all()
-        .map((record: EntityRecord<object>) => record.entity);
-      this.entitySelectChange.emit({ added: [entities] });
-    }
+    const entities = this.store.view.all();
+    this.entitySelectChange.emit({ added: [entities] });
+    this.store.state.updateMany(entities, { selected: toggle });
   }
 
   /**

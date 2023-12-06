@@ -72,7 +72,7 @@
         activeMeasureType === measureType.Area
       "
       [measureType]="measureType.Length"
-      [measureUnit]="measureLengthUnit.Meters"
+      [measureUnit]="activeLengthUnit"
       [measure]="measure.length"
       [auto]="measureUnitsAuto"
       [placeholder]="
@@ -88,7 +88,7 @@
     <igo-measurer-item
       *ngIf="activeMeasureType === measureType.Area"
       [measureType]="measureType.Area"
-      [measureUnit]="measureAreaUnit.SquareMeters"
+      [measureUnit]="activeAreaUnit"
       [measure]="measure.area"
       [auto]="measureUnitsAuto"
       [placeholder]="'igo.geo.measure.area' | translate"

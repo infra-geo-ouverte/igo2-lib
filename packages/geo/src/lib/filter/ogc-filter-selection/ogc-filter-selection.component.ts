@@ -28,7 +28,7 @@ import {
   OgcSelectorBundle,
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 

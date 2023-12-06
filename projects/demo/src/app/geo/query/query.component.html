@@ -1,0 +1,30 @@
+<app-doc-viewer title="Query" subtitle="Geo" [dependencies]="[]">
+  <app-example-viewer codeFolder="geo/query">
+    <igo-map-browser
+      [map]="map"
+      [view]="view"
+      igoOverlay
+      igoQuery
+      [queryFeatures]="true"
+      (query)="handleQueryResults($event)"
+    >
+      <div class="map-actions --vertical --bottom --right">
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+
+    <igo-panel title="Details">
+      <ng-container *ngIf="features$ | async as features">
+        <div *ngFor="let feature of features">
+          <h1>
+            Query Title :
+            <span style="background-color: #e0e0e0">{{
+              getTitle(feature)
+            }}</span>
+          </h1>
+          <igo-feature-details [feature]="feature"></igo-feature-details>
+        </div>
+      </ng-container>
+    </igo-panel>
+  </app-example-viewer>
+</app-doc-viewer>

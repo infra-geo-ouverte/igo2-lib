@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { DataSourceOptions } from '../../datasource';
+import { DataSourceOptions } from '../../datasource/shared/datasources';
 import { VectorLayer } from '../../layer/shared';
 import { Layer } from '../../layer/shared/layers/layer';
 

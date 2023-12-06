@@ -75,14 +75,12 @@ $slide-toggle-width: 60px;
   }
 
   .radius {
-    display: flex;
-    flex-flow: column nowrap;
-    width: 110%;
+    flex: 2;
   }
 
   .unit-field {
-    width: 110px;
-    margin-left: 30px;
+    flex: 1;
+    margin-left: 8px;
   }
 
   .radius-unit {

@@ -20,7 +20,8 @@ import Style from 'ol/style/Style';
 
 import { BehaviorSubject, Subscription, take } from 'rxjs';
 
-import { DataSourceService, FeatureDataSource } from '../../datasource';
+import { DataSourceService } from '../../datasource/shared/datasource.service';
+import { FeatureDataSource } from '../../datasource/shared/datasources';
 import {
   Feature,
   FeatureMotion,

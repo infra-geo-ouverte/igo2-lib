@@ -3,7 +3,7 @@ import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
 import type { ServerType } from 'ol/source/wms';
 
-import { TimeFilterOptions } from '../../../filter';
+import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
 

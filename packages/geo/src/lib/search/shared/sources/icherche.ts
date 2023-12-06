@@ -14,7 +14,8 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
-import { FEATURE, Feature } from '../../../feature';
+import { FEATURE } from '../../../feature/shared/feature.enums';
+import { Feature } from '../../../feature/shared/feature.interfaces';
 import { ReverseSearch, SearchResult, TextSearch } from '../search.interfaces';
 import { computeTermSimilarity } from '../search.utils';
 import { GoogleLinks } from './../../../utils/googleLinks';

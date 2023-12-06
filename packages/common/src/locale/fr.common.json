@@ -4,8 +4,22 @@
       "confirmDialog": {
         "cancelBtn": "Annuler",
         "confirmBtn": "Confirmer",
+        "yes": "Oui",
+        "no": "Non",
         "title": "Confirmation",
         "applyBtn": "Appliquer"
+      },
+      "selectValueDialog": {
+        "cancelButtonText": "Annuler",
+        "processButtonText": "Sélectionner",
+        "multipleTitle": "Veuiller sélectionner une ou plusieurs valeurs",
+        "title": "Veuiller sélectionner une valeur",
+        "selectFieldText": "Options"
+      },
+      "formDialog": {
+        "cancelButtonText": "Annuler",
+        "processButtonText": "Confirmer",
+        "title": "Veuiller remplir le formulaire"
       },
       "table": {
         "filter": "Filtre"
@@ -15,6 +29,7 @@
       },
       "form": {
         "errors": {
+          "email": "Veuillez saisir un courriel",
           "required": "Ce champ est requis"
         }
       },

@@ -22,7 +22,7 @@ import { ConfigService } from '@igo2/core';
 import { BehaviorSubject, EMPTY, Observable, Subscription, timer } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
-import { IgoMap } from '../../map/shared';
+import { IgoMap } from '../../map/shared/map';
 import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchSource } from '../shared/sources/source';

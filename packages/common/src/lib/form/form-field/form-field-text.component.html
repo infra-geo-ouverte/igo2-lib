@@ -1,7 +1,9 @@
 <mat-form-field>
   <input
     matInput
-    [required]="required"
+    (blur)="hide = true"
+    [type]="isPassword ? (hide ? 'password' : 'text') : 'text'"
+    [required]="isPassword ? 'true' : required"
     [placeholder]="placeholder"
     [formControl]="formControl"
   />
@@ -17,6 +19,16 @@
     matPrefix
   >
   </mat-icon>
+
+  <button
+    *ngIf="isPassword"
+    matSuffix
+    mat-icon-button
+    (click)="togglePassword()"
+  >
+    <mat-icon color="primary" [svgIcon]="hide ? 'eye-off' : 'eye'"></mat-icon>
+  </button>
+
   <mat-error *ngIf="formControl.errors">{{
     getErrorMessage() | translate
   }}</mat-error>
