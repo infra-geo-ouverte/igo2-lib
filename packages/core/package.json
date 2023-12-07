@@ -40,7 +40,7 @@
       "sass": "./src/style/partial/*.scss"
     },
     "./theming": {
-      "sass": "./core-theme.scss"
+      "sass": "./src/core-theme.scss"
     },
     "./prebuilt-themes/*": {
       "style": "./theming/prebuilt-themes/*.css"
