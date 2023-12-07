@@ -20,14 +20,13 @@
   >
   </mat-icon>
 
-  <button
+  <mat-icon
     *ngIf="isPassword"
     matSuffix
-    mat-icon-button
-    (click)="togglePassword()"
-  >
-    <mat-icon color="primary" [svgIcon]="hide ? 'eye-off' : 'eye'"></mat-icon>
-  </button>
+    (click)="togglePassword($event)"
+    color="primary"
+    [svgIcon]="hide ? 'eye-off' : 'eye'"
+  ></mat-icon>
 
   <mat-error *ngIf="formControl.errors">{{
     getErrorMessage() | translate

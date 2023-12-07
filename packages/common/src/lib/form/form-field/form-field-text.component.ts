@@ -83,7 +83,8 @@ export class FormFieldTextComponent implements OnInit {
     this.disabled$.next(disabled);
   }
 
-  togglePassword() {
+  togglePassword(event: PointerEvent) {
     this.hide = !this.hide;
+    event.preventDefault();
   }
 }
