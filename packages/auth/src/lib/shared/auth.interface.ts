@@ -103,7 +103,7 @@ export interface User extends BaseUser {
   sourceId?: string;
   locale?: string;
   isExpired?: boolean;
-  admin?: boolean;
+  isAdmin?: boolean;
   defaultContextId?: string;
 }
 

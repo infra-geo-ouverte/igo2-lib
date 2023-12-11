@@ -27,6 +27,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 import { AppActionModule } from './common/action/action.module';
+import { AppDialogModule } from './common/dialog/dialog.module';
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
 import { AppEntitySelectorModule } from './common/entity-selector/entity-selector.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
@@ -91,6 +92,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppRequestModule,
 
     AppActionModule,
+    AppDialogModule,
     AppDynamicComponentModule,
     AppEntityTableModule,
     AppEntitySelectorModule,

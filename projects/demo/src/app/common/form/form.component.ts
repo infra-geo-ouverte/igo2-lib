@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import { Form, FormService } from '@igo2/common';
+import { Form, FormFieldConfig, FormService } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -26,7 +26,7 @@ export class AppFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const fieldConfigs = [
+    const fieldConfigs: FormFieldConfig[] = [
       {
         name: 'id',
         title: 'ID',

@@ -3,7 +3,6 @@ import { resolve } from 'path';
 
 import { PACKAGES_RELATIONS, waitOnPackageRelations } from './config/packages';
 import { PATHS, getPackageJson } from './config/paths';
-import { execWorkspaceCmd } from './utils/exec.utils';
 import { pathExist, writeFile2 } from './utils/file-system.utils';
 import * as log from './utils/log';
 import { getDuration } from './utils/performance.utils';
@@ -13,6 +12,8 @@ const baseCmdName = 'Build all library';
 (async () => {
   const startTime = performance.now();
   log.startMsg(baseCmdName);
+
+  const { $ } = await import('execa');
 
   if (pathExist(PATHS.dist)) {
     log.info('Deleting dist folder...');
@@ -25,7 +26,7 @@ const baseCmdName = 'Build all library';
         await waitOnPackageRelations(dependsOn);
       }
 
-      await execWorkspaceCmd(name, 'Build at', ['run', 'build']);
+      await $({ stdio: 'inherit' })`npm run build -w @igo2/${name}`;
 
       observer.next(true);
     }

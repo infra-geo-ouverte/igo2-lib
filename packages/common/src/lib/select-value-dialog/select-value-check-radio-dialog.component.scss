@@ -1,0 +1,12 @@
+:host::ng-deep {
+  div[mat-dialog-actions] {
+    margin: 10px 0 0 0;
+  }
+  section.choices-section {
+    max-width: auto;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 0px;
+    padding: 5px;
+  }
+}
