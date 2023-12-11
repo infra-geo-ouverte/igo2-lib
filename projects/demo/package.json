@@ -4,7 +4,7 @@
     "ng": "ng",
     "start": "ng serve demo",
     "build": "ng build demo --configuration=production",
-    "build.ghpages": "ng build demo --configuration=production --output-path ../../dist/ghpages --base-href /igo2-lib/",
+    "build.ghpages": "ng build demo --configuration=github",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "lint": "ng lint demo",
     "lint.fix": "ng lint demo --fix",

@@ -18,7 +18,6 @@
   "scripts": {
     "build": "ng build context --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
-    "publish": "npm publish ../../dist/context",
     "test": "ng test context --watch=false",
     "watch": "ng build context --watch"
   },

@@ -67,7 +67,11 @@ export function pathExist(path: string): boolean {
   return existsSync(path);
 }
 
-export function writeFile2(path: string, body: object | string, endLineBreak = true): Promise<void> {
+export function writeFile2(
+  path: string,
+  body: object | string,
+  endLineBreak = true
+): Promise<void> {
   let formattedBody =
     typeof body === 'string' ? body : JSON.stringify(body, null, 2);
   if (endLineBreak) {

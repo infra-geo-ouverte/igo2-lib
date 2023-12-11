@@ -18,7 +18,6 @@
   "scripts": {
     "build": "ng build auth --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
-    "publish": "npm publish ../../dist/auth",
     "test": "ng test auth --watch=false",
     "watch": "ng build auth --watch"
   },

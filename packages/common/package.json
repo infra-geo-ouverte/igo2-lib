@@ -19,7 +19,6 @@
     "build": "ng build common --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
-    "publish": "npm publish ../../dist/common",
     "test": "ng test common --watch=false",
     "watch": "ng build common --watch"
   },
