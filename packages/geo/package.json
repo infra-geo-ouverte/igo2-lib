@@ -19,7 +19,6 @@
     "build": "ng build geo --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/geo/postbuild-geo.ts",
-    "publish": "npm publish ../../dist/geo",
     "test": "ng test geo --watch=false",
     "watch": "ng build geo --watch"
   },
@@ -59,6 +58,7 @@
     "flexsearch": "0.7.21",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.29",
     "jszip": "^3.10.1",
     "moment": "^2.29.4",
     "ngx-color-picker": "^14.0.0",

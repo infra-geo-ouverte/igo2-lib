@@ -1,9 +1,10 @@
 import { performance } from 'perf_hooks';
-import { getDuration } from '../utils/performance.utils';
+
 import { PackageName } from '../config/packages';
 import * as log from '../utils/log';
-import { bundleLocalization } from './utils/localization';
+import { getDuration } from '../utils/performance.utils';
 import { copyAssets, copyExternalAssets } from './utils/assets';
+import { bundleLocalization } from './utils/localization';
 
 const packageName: PackageName = 'core';
 const baseCmdName = `Prepare @igo2/${packageName}`;

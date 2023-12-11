@@ -13,6 +13,7 @@ export * from './lib/shared/auth.interceptor';
 export * from './lib/shared/auth.interface';
 export * from './lib/shared/auth-microsoft.provider';
 export * from './lib/shared/protected.directive';
+export * from './lib/shared/token.interface';
 export * from './lib/shared/token.service';
 export * from './lib/shared/auth-storage.interface';
 export * from './lib/shared/auth-storage.service';

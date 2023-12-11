@@ -8,6 +8,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class ConfirmDialogComponent {
   public confirmMessage: string;
+  public titleKey: string = 'igo.common.confirmDialog.title';
+  public proccessKey: string = 'igo.common.confirmDialog.confirmBtn';
+  public cancelKey: string = 'igo.common.confirmDialog.cancelBtn';
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
 }

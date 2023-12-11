@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>{{ data.title | translate }}</h1>
+
+<igo-form
+  *ngIf="form$ | async as form"
+  [form]="form"
+  [formData]="data$ | async"
+  (submitForm)="onSubmit($event)"
+>
+  <div *ngIf="form.fields.length" class="form-dialog-container">
+    <igo-form-field
+      *ngFor="let field of form.fields"
+      [field]="field"
+    ></igo-form-field>
+    <igo-form-group
+      *ngFor="let group of form.groups"
+      [group]="group"
+    ></igo-form-group>
+  </div>
+
+  <div formButtons mat-dialog-actions>
+    <button mat-stroked-button type="button" color="primary" (click)="cancel()">
+      {{ data.cancelButtonText | translate }}
+    </button>
+    <button mat-flat-button type="submit" color="primary">
+      {{ data.processButtonText | translate }}
+    </button>
+  </div>
+</igo-form>
+<div>
+  <igo-custom-html
+    *ngIf="data.notice && data.notice !== ''"
+    [html]="data.notice"
+  >
+  </igo-custom-html>
+</div>
