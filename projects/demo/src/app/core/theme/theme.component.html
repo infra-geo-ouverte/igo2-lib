@@ -1,0 +1,16 @@
+<app-doc-viewer title="Theme" subtitle="Core">
+  <p>Change the app theme</p>
+
+  <app-example-viewer codeFolder="core/theme">
+    <div class="actions-container">
+      <mat-select
+        (selectionChange)="loadTheme($event)"
+        placeholder="Select a theme"
+      >
+        <mat-option *ngFor="let theme of themes" [value]="theme.value">
+          {{ theme.title }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>
