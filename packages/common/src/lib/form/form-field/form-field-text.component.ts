@@ -27,7 +27,7 @@ import {
 export class FormFieldTextComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   hide: boolean = true;
-  private lastTimeoutRequest: NodeJS.Timeout;
+  private lastTimeoutRequest;
 
   /**
    * The field's form control
