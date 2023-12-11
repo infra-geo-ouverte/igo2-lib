@@ -1,0 +1,15 @@
+:host {
+  div[mat-dialog-actions] {
+    margin: 10px 0 0 0;
+  }
+  .form-dialog-container {
+    width: 100%;
+    padding: 10px;
+
+    igo-form-field,
+    igo-form-group {
+      display: block;
+      height: auto;
+    }
+  }
+}

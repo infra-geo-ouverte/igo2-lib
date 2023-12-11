@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+
 import { readFileContentSync } from '../utils/file-system.utils';
 
 export interface IPackageJson {
