@@ -206,6 +206,7 @@ export class SearchSettingsComponent implements OnInit {
   /**
    * Triggered when the default options is clicked
    * Only CheckBox type will change
+   * Default Button of a specified setting
    * @internal
    */
   checkDefaultOptions(
@@ -216,7 +217,6 @@ export class SearchSettingsComponent implements OnInit {
     event.stopPropagation();
     setting.allEnabled = true;
     this.checkUncheckAll(event, source, setting);
-    //source.enabled = true;
     for (var settingsIndex in source.getDefaultOptions().settings) {
       if (
         source.getDefaultOptions().settings[settingsIndex].title ===
@@ -230,13 +230,11 @@ export class SearchSettingsComponent implements OnInit {
         }
       }
     }
-    //setting.allEnabled = true;
-    //source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
   }
 
   /**
-   * Triggered when the default option is clicked in the specified setting
+   * Triggered when the default option is clicked in the specified source
    * @internal
    */
   checkMenuDefaultOptions(event, source: SearchSource) {
@@ -247,7 +245,7 @@ export class SearchSettingsComponent implements OnInit {
 
       for (var settingsIndex in source.settings[index].values) {
         source.settings[index].values[settingsIndex].enabled =
-          source.getDefaultOptions().settings[index].values[
+          source.getDefaultOptions(true).settings[index].values[
             settingsIndex
           ].enabled;
       }
