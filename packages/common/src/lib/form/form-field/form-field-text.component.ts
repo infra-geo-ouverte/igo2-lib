@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit
@@ -26,6 +27,8 @@ import {
 export class FormFieldTextComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   hide: boolean = true;
+  private lastTimeoutRequest: NodeJS.Timeout;
+
   /**
    * The field's form control
    */
@@ -58,6 +61,8 @@ export class FormFieldTextComponent implements OnInit {
     return formControlIsRequired(this.formControl);
   }
 
+  constructor(private cdRef: ChangeDetectorRef) {}
+
   ngOnInit() {
     this.disabled$.next(this.formControl.disabled);
   }
@@ -85,5 +90,17 @@ export class FormFieldTextComponent implements OnInit {
 
   togglePassword() {
     this.hide = !this.hide;
+    this.delayedHide();
+  }
+  delayedHide(delayMS: number = 10000) {
+    if (this.isPassword && !this.hide) {
+      if (this.lastTimeoutRequest) {
+        clearTimeout(this.lastTimeoutRequest);
+      }
+      this.lastTimeoutRequest = setTimeout(() => {
+        this.hide = true;
+        this.cdRef.detectChanges();
+      }, delayMS);
+    }
   }
 }
