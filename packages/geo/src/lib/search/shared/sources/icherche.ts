@@ -764,7 +764,7 @@ export class IChercheReverseSearchSource
             {
               title: 'igo.geo.search.icherche.type.unites',
               value: 'unites',
-              enabled: types.indexOf('unites') !== -1,
+              enabled: types.indexOf('unites') !== -1
             }
           ]
         },
