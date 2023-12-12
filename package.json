@@ -40,6 +40,7 @@
     "compodoc": "npx compodoc -p tsconfig.json",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog-current": "conventional-changelog -p angular -r 2",
+    "preversion": "npm run test && npm run e2e",
     "version": "npm run release.lib && npm run release.ghpages",
     "postversion": "npm run changelog && git add -u && git push && git push --tags",
     "release.lib": "ts-node scripts/src/release/release.ts",
