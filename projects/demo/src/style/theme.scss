@@ -3,13 +3,14 @@
 
 @use '../../../../packages/core/src/index' as igo;
 @use '../../../../packages/core/src/theming/all-theme';
+@use '../app/app.theme' as app;
 
 $primary: mat.define-palette(mat.$deep-purple-palette);
 $accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
 $warn: mat.define-palette(mat.$red-palette);
 $typography: igo.$igo-typography;
 
-$theme-config: mat.define-light-theme(
+$light-theme: mat.define-light-theme(
   (
     color: (
       primary: $primary,
@@ -24,8 +25,9 @@ $theme-config: mat.define-light-theme(
 @include mat.core();
 @include mat.typography-hierarchy($typography);
 
-@include mat.all-component-themes($theme-config);
-@include all-theme.all-component-themes($theme-config);
+@include mat.all-component-themes($light-theme);
+@include all-theme.all-component-themes($light-theme);
+@include app.themes($light-theme);
 
 @mixin mat-toolbar($theme) {
   $density: mat.get-density-config($theme);
@@ -39,5 +41,32 @@ $theme-config: mat.define-light-theme(
 
   @include mat.toolbar-density($theme);
 }
+@include mat-toolbar($light-theme);
 
-@include mat-toolbar($theme-config);
+// @TODO un début de dark theme
+// Define an alternate dark theme.
+$dark-primary: mat.define-palette(mat.$blue-palette, 900);
+$dark-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$dark-warn: mat.define-palette(mat.$deep-orange-palette);
+
+// Define a dark theme
+$dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $dark-primary,
+      accent: $dark-accent,
+      warn: $dark-warn
+    ),
+    typography: $typography,
+    density: 0
+  )
+);
+
+// Apply the dark theme only when the user prefers dark themes.
+// @media (prefers-color-scheme: dark) {
+.dark-theme {
+  @include mat.core-color($dark-theme);
+  @include mat.all-component-colors($dark-theme);
+  @include all-theme.all-component-themes($dark-theme); // @todo add the colors
+  @include app.colors($dark-theme);
+}
