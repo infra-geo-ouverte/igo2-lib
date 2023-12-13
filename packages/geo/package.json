@@ -30,7 +30,7 @@
       "sass": "./style/style.scss"
     },
     "./theming": {
-      "sass": "./geo-theme.scss"
+      "sass": "./src/geo-theme.scss"
     }
   },
   "dependencies": {

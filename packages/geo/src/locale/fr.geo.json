@@ -510,7 +510,8 @@
             "cadastre": "Cadastre",
             "restArea": "Halte routière",
             "cycleStop": "Halte cyclable",
-            "cultpatri": "Culture et patrimoine"
+            "cultpatri": "Culture et patrimoine",
+            "unites":"Numéro d'unite"
           },
           "restrictExtent": {
             "map": "Étendue de la carte",
@@ -674,7 +675,8 @@
         "palais-justice": "Palais de justice",
         "penitencier-fed": "Pénitenciers fédéraux",
         "penitencier-prov": "Pénitenciers provinciaux",
-        "polices": "Poste de police"
+        "polices": "Poste de police",
+        "unites":"Numéro d'unite"
       },
       "measure": {
         "dialog": {

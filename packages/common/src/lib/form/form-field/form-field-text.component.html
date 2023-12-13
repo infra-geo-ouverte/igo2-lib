@@ -1,11 +1,12 @@
 <mat-form-field>
   <input
     matInput
-    (blur)="hide = true"
+    (blur)="delayedHide(0)"
     [type]="isPassword ? (hide ? 'password' : 'text') : 'text'"
     [required]="isPassword ? 'true' : required"
     [placeholder]="placeholder"
     [formControl]="formControl"
+    (change)="delayedHide()"
   />
   <mat-icon
     *ngIf="disableSwitch === true"
@@ -21,6 +22,7 @@
   </mat-icon>
 
   <button
+    type="button"
     *ngIf="isPassword"
     matSuffix
     mat-icon-button
