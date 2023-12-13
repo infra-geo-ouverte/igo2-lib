@@ -24,6 +24,7 @@ import {
 } from '../../measure/shared/measure.utils';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { DDtoDMS } from '../shared/draw.utils';
+import { Position } from 'geojson';
 
 @Component({
   selector: 'igo-draw-popup-component',
@@ -52,7 +53,7 @@ export class DrawPopupComponent {
   public coordinatesInDD: string;
   public currentCoordinatesUnit: string;
 
-  private longlatDD: [number, number];
+  private longlatDD: Position;
   private labelLength: number;
 
   public polygonCheck = 0; // Count for polygon label types checkboxes

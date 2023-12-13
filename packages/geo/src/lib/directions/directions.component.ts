@@ -17,7 +17,6 @@ import { SelectEvent } from 'ol/interaction/Select';
 import { TranslateEvent } from 'ol/interaction/Translate';
 import * as olProj from 'ol/proj';
 
-import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { Feature } from '../feature/shared/feature.interfaces';
@@ -28,26 +27,29 @@ import { Research, SearchResult } from '../search/shared/search.interfaces';
 import { SearchService } from '../search/shared/search.service';
 import { DirectionType, ProposalType } from './shared/directions.enum';
 import {
-  DirectionOptions,
-  FeatureWithStopProperties,
-  Stop
+  RouteOptions,
+  FeatureWithWaypointProperties,
+  Waypoint,
+  Route
 } from './shared/directions.interface';
 import { DirectionsService } from './shared/directions.service';
+import { Observable, Subject, Subscription } from 'rxjs';
 import {
-  addDirectionToRoutesFeatureStore,
-  addStopToStopsFeatureStore,
-  addStopToStore,
+  addRouteToRouteFeatureStore,
+  addWaypointToWaypointFeatureStore,
+  addWaypointToStore,
   initRoutesFeatureStore,
   initStepFeatureStore,
-  initStopsFeatureStore,
+  initWaypointFeatureStore,
   updateStoreSorting
 } from './shared/directions.utils';
 import {
   RoutesFeatureStore,
   StepFeatureStore,
-  StopsFeatureStore,
-  StopsStore
+  WaypointFeatureStore,
+  WaypointStore
 } from './shared/store';
+import { Position } from 'geojson';
 
 @Component({
   selector: 'igo-directions',
@@ -55,7 +57,7 @@ import {
   styleUrls: ['./directions.component.scss']
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
-  private watcher: EntityStoreWatcher<Stop>;
+  private watcher: EntityStoreWatcher<Waypoint>;
 
   public projection: string = 'EPSG:4326';
 
@@ -64,19 +66,19 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   private storeChange$$: Subscription;
   private routesQueries$$: Subscription[] = [];
 
-  private selectStopInteraction: olInteraction.Select;
-  private translateStop: olInteraction.Translate;
+  private selectWaypointInteraction: olInteraction.Select;
+  private translateWaypoint: olInteraction.Translate;
   private selectedRoute: olInteraction.Select;
-  private focusOnStop: boolean = false;
+  private focusOnWaypoint: boolean = false;
   private isTranslating: boolean = false;
 
-  public previousStops: Stop[] = [];
+  public previousWaypoints: Waypoint[] = [];
 
   private searchs$$: Subscription[] = [];
 
   @Input() contextUri: string;
-  @Input() stopsStore: StopsStore;
-  @Input() stopsFeatureStore: StopsFeatureStore;
+  @Input() waypointStore: WaypointStore;
+  @Input() waypointFeatureStore: WaypointFeatureStore;
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
   @Input() debounce: number = 200;
@@ -93,7 +95,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   get interactions(): olInteraction.Interaction[] {
-    return [this.selectStopInteraction, this.translateStop, this.selectedRoute];
+    return [this.selectWaypointInteraction, this.translateWaypoint, this.selectedRoute];
   }
 
   constructor(
@@ -108,7 +110,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = false;
     this.initEntityStores();
     setTimeout(() => {
-      initStopsFeatureStore(this.stopsFeatureStore, this.languageService);
+      initWaypointFeatureStore(this.waypointFeatureStore, this.languageService);
       initRoutesFeatureStore(this.routesFeatureStore, this.languageService);
       initStepFeatureStore(this.stepFeatureStore);
       this.initOlInteraction();
@@ -128,7 +130,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.interactions.map((interaction) =>
       this.routesFeatureStore.layer.map.ol.removeInteraction(interaction)
     );
-    this.stopsFeatureStore.deactivateStrategyOfType(
+    this.waypointFeatureStore.deactivateStrategyOfType(
       FeatureStoreLoadingStrategy
     );
     this.routesFeatureStore.deactivateStrategyOfType(
@@ -138,7 +140,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private initEntityStores() {
-    this.watcher = new EntityStoreWatcher(this.stopsStore, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.waypointStore, this.cdRef);
     this.monitorEmptyEntityStore();
     this.monitorEntityStoreChange();
     this.monitorActiveRouteZoom();
@@ -163,24 +165,24 @@ export class DirectionsComponent implements OnInit, OnDestroy {
   }
 
   private initOlInteraction() {
-    this.selectStopInteraction = new olInteraction.Select({
-      layers: [this.stopsFeatureStore.layer.ol],
+    this.selectWaypointInteraction = new olInteraction.Select({
+      layers: [this.waypointFeatureStore.layer.ol],
       hitTolerance: 7,
       condition: (event) => {
         return event.type === 'pointermove' && !event.dragging;
       }
     });
 
-    this.translateStop = new olInteraction.Translate({
-      features: this.selectStopInteraction.getFeatures()
+    this.translateWaypoint = new olInteraction.Translate({
+      features: this.selectWaypointInteraction.getFeatures()
     });
-    this.translateStop.on('translating', (evt: TranslateEvent) => {
+    this.translateWaypoint.on('translating', (evt: TranslateEvent) => {
       this.isTranslating = true;
-      this.executeStopTranslation(evt.features);
+      this.executeWaypointTranslation(evt.features);
     });
-    this.translateStop.on('translateend', (evt: TranslateEvent) => {
+    this.translateWaypoint.on('translateend', (evt: TranslateEvent) => {
       this.isTranslating = false;
-      this.executeStopTranslation(evt.features);
+      this.executeWaypointTranslation(evt.features);
     });
 
     this.selectedRoute = new olInteraction.Select({
@@ -196,7 +198,7 @@ export class DirectionsComponent implements OnInit, OnDestroy {
       }
     });
     this.selectedRoute.on('select', (evt: SelectEvent) => {
-      if (this.focusOnStop === false) {
+      if (this.focusOnWaypoint === false) {
         const selectCoordinates = roundCoordTo(
           olProj.transform(
             (evt as any).mapBrowserEvent.coordinate,
@@ -205,9 +207,9 @@ export class DirectionsComponent implements OnInit, OnDestroy {
           ) as [number, number],
           this.coordRoundedDecimals
         );
-        const addedStop = addStopToStore(this.stopsStore);
-        addedStop.text = selectCoordinates.join(',');
-        addedStop.coordinates = [selectCoordinates[0], selectCoordinates[1]];
+        const addedWaypoint: Waypoint = addWaypointToStore(this.waypointStore);
+        addedWaypoint.text = selectCoordinates.join(',');
+        addedWaypoint.coordinates = [selectCoordinates[0], selectCoordinates[1]];
       }
     });
 
@@ -216,60 +218,60 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onStopInputHasFocusChange(stopInputHasFocus: boolean) {
-    stopInputHasFocus
+  onWaypointInputHasFocusChange(waypointInputHasFocus: boolean) {
+    waypointInputHasFocus
       ? this.routesFeatureStore.layer.map.ol.removeInteraction(
           this.selectedRoute
         )
       : this.routesFeatureStore.layer.map.ol.addInteraction(this.selectedRoute);
   }
 
-  private executeStopTranslation(features: Collection<any>) {
+  private executeWaypointTranslation(features: Collection<any>) {
     if (features.getLength() === 0) {
       return;
     }
     const firstFeature = features.getArray()[0];
-    const translatedStopId = firstFeature.getId();
+    const translatedWaypointId = firstFeature.getId();
 
     const translationCoordinates = olProj.transform(
       firstFeature.getGeometry().getCoordinates(),
-      this.stopsFeatureStore.layer.map.projection,
+      this.waypointFeatureStore.layer.map.projection,
       this.projection
     );
-    const translatedStop = this.stopsStore.get(translatedStopId);
+    const translatedWaypoint = this.waypointStore.get(translatedWaypointId);
     const roundedCoord = roundCoordTo(
       translationCoordinates as [number, number],
       this.coordRoundedDecimals
     );
-    translatedStop.coordinates = roundedCoord;
-    translatedStop.text = roundedCoord.join(',');
-    this.stopsStore.update(translatedStop);
+    translatedWaypoint.coordinates = roundedCoord;
+    translatedWaypoint.text = roundedCoord.join(',');
+    this.waypointStore.update(translatedWaypoint);
   }
 
   private monitorEmptyEntityStore() {
     // Watch if the store is empty to reset it
-    this.storeEmpty$$ = this.stopsStore.count$
+    this.storeEmpty$$ = this.waypointStore.count$
       .pipe(distinctUntilChanged())
       .subscribe((count) => {
         if (count < 2) {
-          addStopToStore(this.stopsStore);
-          if (this.stopsStore.count === 2) {
-            this.stopsStore.storeInitialized$.next(true);
+          addWaypointToStore(this.waypointStore);
+          if (this.waypointStore.count === 2) {
+            this.waypointStore.storeInitialized$.next(true);
             return;
           }
-          this.stopsStore.storeInitialized$.next(false);
+          this.waypointStore.storeInitialized$.next(false);
         }
         this.routesQueries$$.map((u) => u.unsubscribe());
       });
   }
 
   private monitorEntityStoreChange() {
-    this.storeChange$$ = this.stopsStore.entities$
+    this.storeChange$$ = this.waypointStore.entities$
       .pipe(debounceTime(this.debounce))
-      .subscribe((stops: Stop[]) => {
-        this.handleStopDiff(stops);
-        updateStoreSorting(this.stopsStore);
-        this.handleStopsFeature();
+      .subscribe((waypoints: Waypoint[]) => {
+        this.handleWaypointDiff(waypoints);
+        updateStoreSorting(this.waypointStore);
+        this.handleWaypointFeatures();
         this.getRoutes(this.isTranslating);
       });
   }
@@ -278,28 +280,28 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     this.searchs$$.map((s) => s.unsubscribe());
   }
 
-  private handleStopDiff(stops: Stop[]) {
-    const simplifiedStops = stops.map((stop: Stop) => {
+  private handleWaypointDiff(waypoints: Waypoint[]) {
+    const simplifiedWaypoints: Waypoint[] = waypoints.map((waypoint: Waypoint) => {
       return ObjectUtils.removeUndefined({
-        ...{ id: stop.id, text: stop.text, coordinates: stop.coordinates }
+        ...{ id: waypoint.id, text: waypoint.text, coordinates: waypoint.coordinates }
       });
     });
-    const diff = ChangeUtils.findChanges(this.previousStops, simplifiedStops, [
+    const diff = ChangeUtils.findChanges(this.previousWaypoints, simplifiedWaypoints, [
       'coordinates'
     ]);
-    const stopIdToProcess = diff.added.concat(diff.modified);
-    if (stopIdToProcess) {
-      stopIdToProcess.map((change) => {
-        const changedStop = change.newValue as Stop;
-        if (changedStop) {
-          const stop: Stop = this.stopsStore.get(changedStop.id);
-          const term = stop.text;
+    const waypointIdToProcess = diff.added.concat(diff.modified);
+    if (waypointIdToProcess) {
+      waypointIdToProcess.map((change) => {
+        const changedWaypoint = change.newValue as Waypoint;
+        if (changedWaypoint) {
+          const waypoint: Waypoint = this.waypointStore.get(changedWaypoint.id);
+          const term: string = waypoint.text;
           if (!term || term.length === 0) {
             return;
           }
           const response = stringToLonLat(
             term,
-            this.stopsFeatureStore.layer.map.projection
+            this.waypointFeatureStore.layer.map.projection
           );
           let researches: Research[];
           let isCoord = false;
@@ -337,21 +339,21 @@ export class DirectionsComponent implements OnInit, OnDestroy {
                   const source = res[0].source;
                   const meta = res[0].meta;
                   const results = res.map((r) => r.data);
-                  if (!stop.searchProposals) {
-                    stop.searchProposals = [];
+                  if (!waypoint.searchProposals) {
+                    waypoint.searchProposals = [];
                   }
-                  stop.searchProposals = stop.searchProposals.filter(
+                  waypoint.searchProposals = waypoint.searchProposals.filter(
                     (sp) =>
                       sp.type ===
                       (isCoord ? ProposalType.Coord : ProposalType.Text)
                   );
-                  let storedSource = stop.searchProposals.find(
+                  let storedSource = waypoint.searchProposals.find(
                     (sp) => sp.source === source
                   );
                   if (storedSource) {
                     storedSource.results = results;
                   } else {
-                    stop.searchProposals.push({
+                    waypoint.searchProposals.push({
                       type: isCoord ? ProposalType.Coord : ProposalType.Text,
                       source,
                       meta,
@@ -365,67 +367,67 @@ export class DirectionsComponent implements OnInit, OnDestroy {
         }
       });
     }
-    this.previousStops = simplifiedStops;
+    this.previousWaypoints = simplifiedWaypoints;
   }
 
-  private handleStopsFeature() {
-    const stops = this.stopsStore.all();
-    const stopsWithCoordinates = stops.filter((stop) => stop.coordinates);
-    stopsWithCoordinates.map((stop) => this.addStopOverlay(stop));
-    this.stopsFeatureStore
+  private handleWaypointFeatures() {
+    const waypoints: Waypoint[] = this.waypointStore.all();
+    const waypointsWithCoordinates = waypoints.filter((waypoint: Waypoint) => waypoint.coordinates);
+    waypointsWithCoordinates.map((waypoint: Waypoint) => this.addWaypointOverlay(waypoint));
+    this.waypointFeatureStore
       .all()
-      .map((stopFeature: Feature<FeatureWithStopProperties>) => {
-        if (!this.stopsStore.get(stopFeature.properties.id)) {
-          this.stopsFeatureStore.delete(stopFeature);
+      .map((waypointFeature: Feature<FeatureWithWaypointProperties>) => {
+        if (!this.waypointStore.get(waypointFeature.properties.id)) {
+          this.waypointFeatureStore.delete(waypointFeature);
         }
       });
-    const stopsWithoutCoordinates = stops.filter((stop) => !stop.coordinates);
-    stopsWithoutCoordinates.map((stop) => {
-      const stopFeature = this.stopsFeatureStore.get(stop.id);
-      if (stopFeature) {
-        this.stopsFeatureStore.delete(stopFeature);
+    const waypointsWithoutCoordinates: Waypoint[] = waypoints.filter((waypoint: Waypoint) => !waypoint.coordinates);
+    waypointsWithoutCoordinates.map((waypoint: Waypoint) => {
+      const waypointFeature = this.waypointFeatureStore.get(waypoint.id);
+      if (waypointFeature) {
+        this.waypointFeatureStore.delete(waypointFeature);
       }
     });
   }
 
   private getRoutes(isOverview: boolean = false) {
-    const stopsWithCoordinates = this.stopsStore.view
+    const waypointsWithCoordinates: Waypoint[] = this.waypointStore.view
       .all()
-      .filter((stop) => stop.coordinates);
-    if (stopsWithCoordinates.length < 2) {
+      .filter((waypoint: Waypoint) => waypoint.coordinates);
+    if (waypointsWithCoordinates.length < 2) {
       this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
       return;
     }
 
-    const roundedCoordinates = stopsWithCoordinates.map((stop) => {
-      const roundedCoord = roundCoordTo(
-        stop.coordinates,
+    const roundedCoordinates: Position[] = waypointsWithCoordinates.map((waypoint: Waypoint) => {
+      const roundedCoord: Position = roundCoordTo(
+        waypoint.coordinates,
         this.coordRoundedDecimals
       );
       return roundedCoord;
     });
-    const overviewDirectionsOptions: DirectionOptions = {
-      overview: true,
+    const overviewRouteOptions: RouteOptions = {
+      overview: 'simplified',
       steps: false,
       alternatives: false,
       continue_straight: false
     };
     this.routesQueries$$.map((u) => u.unsubscribe());
-    const routeResponse = this.directionsService.route(
+    const routeResponse: Observable<Route[]>[] = this.directionsService.route(
       roundedCoordinates,
-      isOverview ? overviewDirectionsOptions : undefined
+      isOverview ? overviewRouteOptions : undefined
     );
     if (routeResponse) {
-      routeResponse.map((res) =>
+      routeResponse.map((response: Observable<Route[]>) =>
         this.routesQueries$$.push(
-          res.subscribe((directions) => {
+          response.subscribe((routes: Route[]) => {
             this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());
-            directions.map((direction) =>
-              addDirectionToRoutesFeatureStore(
+            routes.map((route: Route) =>
+              addRouteToRouteFeatureStore(
                 this.routesFeatureStore,
-                direction,
+                route,
                 this.projection,
-                direction === directions[0] ? true : false
+                route === routes[0] ? true : false
               )
             );
           })
@@ -434,11 +436,10 @@ export class DirectionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  public addStopOverlay(stop: Stop) {
-    addStopToStopsFeatureStore(
-      stop,
-      this.stopsStore,
-      this.stopsFeatureStore,
+  public addWaypointOverlay(waypoint: Waypoint) {
+    addWaypointToWaypointFeatureStore(
+      waypoint,
+      this.waypointFeatureStore,
       this.projection,
       this.languageService
     );

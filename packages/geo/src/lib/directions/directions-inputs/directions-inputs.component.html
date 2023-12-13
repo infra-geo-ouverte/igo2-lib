@@ -1,101 +1,108 @@
 <div cdkDropList class="stops-list" (cdkDropListDropped)="drop($event)">
   <div
     touchleave
-    (touchenter)="onStopEnter(stop)"
-    (touchleave)="onStopLeave()"
-    (mouseover)="onStopEnter(stop)"
-    (mouseleave)="onStopLeave()"
-    (cdkDragStarted)="stopIsDragged = true"
-    (cdkDragEnded)="stopIsDragged = false"
+    (touchenter)="onWaypointEnter(waypoint)"
+    (touchleave)="onWaypointLeave()"
+    (mouseover)="onWaypointEnter(waypoint)"
+    (mouseleave)="onWaypointLeave()"
+    (cdkDragStarted)="waypointIsDragged = true"
+    (cdkDragEnded)="waypointIsDragged = false"
     cdkDragLockAxis="y"
-    class="stop-box"
-    *ngFor="let stop of stopsStore.view.all$() | async; let i = index"
+    class="stop-box2"
+    *ngFor="let waypoint of waypointStore.view.all$() | async"
     cdkDrag
   >
-    <div [ngClass]="getNgClass(stop)">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>{{ getPlaceholder(stop) }}</mat-label>
-        <input
-          id="{{ stop.id }}"
-          type="text"
-          [placeholder]="getPlaceholder(stop)"
-          matTooltipShowDelay="500"
-          [matTooltip]="stop.text"
-          aria-label="Number"
-          matInput
-          (focus)="onInputFocus(stop)"
-          [(ngModel)]="stop.text"
-          (keyup)="setStopText($event, stop)"
-          (keydown.enter)="$event.preventDefault()"
-          [matAutocomplete]="auto"
-        />
-        <button
-          *ngIf="
-            (stop.text || stop.coordinates) &&
-            stopWithHover &&
-            stop.id === stopWithHover.id
-          "
-          mat-icon-button
-          matSuffix
-          matTooltipShowDelay="500"
-          [matTooltip]="'igo.geo.directionsForm.clearStop' | translate"
-          color="warn"
-          aria-label="Clear"
-          (click)="clearStop(stop)"
-        >
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
-
-        <mat-autocomplete
-          [displayWith]="getOptionText"
-          #auto="matAutocomplete"
-          (optionSelected)="chooseProposal($event, stop)"
-        >
-          <mat-optgroup
-            *ngFor="let source of stop.searchProposals"
-            [label]="source.source.title"
-            [disabled]="source.source.enabled === false"
-          >
-            <mat-option
-              *ngFor="let result of source.results"
-              [value]="result"
-              matTooltipShowDelay="500"
-              [matTooltip]="result.meta ? result.meta.title : ''"
-            >
-              {{ result.meta ? result.meta.title : '' }}
-            </mat-option>
-          </mat-optgroup>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-
-    <div
-      *ngIf="!stopIsDragged && stopWithHover && stop.id === stopWithHover.id"
-      class="igo-form-button-group"
-    >
+    <div class="stop-box">
       <button
         class="swipe-vertical"
         cdkDragHandle
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.moveStop' | translate"
+        [matTooltip]="'igo.geo.directionsForm.moveWaypoint' | translate"
         color="primary"
       >
-        <mat-icon svgIcon="gesture-swipe-vertical"></mat-icon>
+        <mat-icon svgIcon="dots-grid"></mat-icon>
       </button>
 
+      <div [ngClass]="getNgClass(waypoint)">
+        <mat-form-field subscriptSizing="dynamic" [matTooltip]="getPlaceholder(waypoint)" matTooltipShowDelay="500">
+          <mat-label>{{ getLabel(waypoint) }}</mat-label>
+          <input
+            id="{{ waypoint.id }}"
+            type="text"
+            [placeholder]="getPlaceholder(waypoint)"
+            aria-label="Number"
+            matInput
+            (focus)="onInputFocus(waypoint)"
+            [(ngModel)]="waypoint.text"
+            (keyup)="setWaypointText($event, waypoint)"
+            (keydown.enter)="$event.preventDefault()"
+            [matAutocomplete]="auto"
+          />
+          <button
+            *ngIf="
+              (waypoint.text || waypoint.coordinates) &&
+              waypointWithHover &&
+              waypoint.id === waypointWithHover.id
+            "
+            mat-icon-button
+            matSuffix
+            matTooltipShowDelay="500"
+            [matTooltip]="'igo.geo.directionsForm.clearWaypoint' | translate"
+            color="warn"
+            aria-label="Clear"
+            (click)="clearWaypoint(waypoint)"
+          >
+            <mat-icon svgIcon="close"></mat-icon>
+          </button>
+
+          <mat-autocomplete
+            [displayWith]="getOptionText"
+            #auto="matAutocomplete"
+            (optionSelected)="chooseProposal($event, waypoint)"
+          >
+            <mat-optgroup
+              *ngFor="let source of waypoint.searchProposals"
+              [label]="source.source.title"
+              [disabled]="source.source.enabled === false"
+            >
+              <mat-option
+                *ngFor="let result of source.results"
+                [value]="result"
+                matTooltipShowDelay="500"
+                [matTooltip]="result.meta ? result.meta.title : ''"
+              >
+                {{ result.meta ? result.meta.title : '' }}
+              </mat-option>
+            </mat-optgroup>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
       <button
-        *ngIf="(stopsStore.count$ | async) > 2"
+        *ngIf="(waypointStore.count$ | async) > 2"
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.directionsForm.removeStop' | translate"
+        [matTooltip]="'igo.geo.directionsForm.removeWaypoint' | translate"
         color="warn"
-        (click)="removeStop(stop)"
+        (click)="removeWaypoint(waypoint)"
       >
-        <mat-icon svgIcon="delete"></mat-icon>
+        <mat-icon svgIcon="map-marker-remove"></mat-icon>
       </button>
     </div>
+    <div>
+      <button *ngIf="waypoint.position === (waypointStore.count$ | async) - 2" mat-raised-button class='inter-stop-button' color="accent" (click)="addWaypoint()">
+        <mat-icon svgIcon="map-marker-plus"></mat-icon>
+        {{ 'igo.geo.directionsForm.addWaypoint' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="igo-form-button-group">
+    <button *ngIf="(routesFeatureStore.count$ | async) >= 1 || (waypointStore.count$ | async) >= 1 && activeRoute"
+      mat-raised-button color="warn" (click)="resetWaypoints()">
+      <mat-icon svgIcon="delete"></mat-icon>
+      {{ 'igo.geo.directionsForm.resetDirectionsBtn' | translate }}
+    </button>
   </div>
 </div>

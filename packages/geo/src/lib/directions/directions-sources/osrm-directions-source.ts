@@ -8,13 +8,14 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
 
+import { OsrmRoute, OsrmRouteLeg, OsrmRouteStep, OsrmWaypoint, Route, RouteOptions } from '../shared/directions.interface';
 import {
   DirectionsFormat,
   SourceDirectionsType
 } from '../shared/directions.enum';
-import { Direction, DirectionOptions } from '../shared/directions.interface';
 import { DirectionsSource } from './directions-source';
 import { OsrmDirectionsSourceOptions } from './directions-source.interface';
+import { Position } from 'geojson';
 
 @Injectable()
 export class OsrmDirectionsSource extends DirectionsSource {
@@ -30,11 +31,11 @@ export class OsrmDirectionsSource extends DirectionsSource {
   private options: OsrmDirectionsSourceOptions;
 
   constructor(
-    private http: HttpClient,
-    private config: ConfigService
+    private _http: HttpClient,
+    private _config: ConfigService
   ) {
     super();
-    this.options = this.config.getConfig('directionsSources.osrm') || {};
+    this.options = this._config.getConfig('directionsSources.osrm') || {};
     this.directionsUrl = this.options.url || this.directionsUrl;
   }
 
@@ -43,81 +44,81 @@ export class OsrmDirectionsSource extends DirectionsSource {
   }
 
   route(
-    coordinates: [number, number][],
-    directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]> {
-    const directionsParams = this.getRouteParams(directionsOptions);
-    return this.getRoute(coordinates, directionsParams);
+    coordinates: Position[],
+    routeOptions: RouteOptions = {}
+  ): Observable<Route[]> {
+    const routeParams: HttpParams = this._getRouteParams(routeOptions);
+    return this._getRoute(coordinates, routeParams);
   }
 
   @Cacheable({
     maxCacheCount: 20,
     cacheHasher: customCacheHasher
   })
-  private getRoute(
-    coordinates: [number, number][],
+  private _getRoute(
+    coordinates: Position[],
     params: HttpParams
-  ): Observable<Direction[]> {
-    return this.http
+  ): Observable<Route[]> {
+    return this._http
       .get<JSON[]>(this.directionsUrl + coordinates.join(';'), {
         params
       })
-      .pipe(map((res) => this.extractRoutesData(res)));
+      .pipe(map((response) => this._extractRoutesData(response)));
   }
 
-  private extractRoutesData(response): Direction[] {
-    const routeResponse = [];
-    response.routes.forEach((route) => {
-      routeResponse.push(this.formatRoute(route, response.waypoints));
+  private _extractRoutesData(response: any): Route[] {
+    const routes: Route[] = [];
+    response.routes.forEach((route: OsrmRoute) => {
+      routes.push(this._formatRoute(route, response.waypoints));
     });
-    return routeResponse;
+    return routes;
   }
 
-  private getRouteParams(directionsOptions: DirectionOptions = {}): HttpParams {
-    directionsOptions.alternatives =
-      directionsOptions.alternatives !== undefined
-        ? directionsOptions.alternatives
+  private _getRouteParams(routeOptions: RouteOptions = {}): HttpParams {
+    routeOptions.alternatives =
+      routeOptions.alternatives !== undefined
+        ? routeOptions.alternatives
         : true;
-    directionsOptions.steps =
-      directionsOptions.steps !== undefined ? directionsOptions.steps : true;
-    directionsOptions.geometries =
-      directionsOptions.geometries !== undefined
-        ? directionsOptions.geometries
+    routeOptions.steps =
+      routeOptions.steps !== undefined ? routeOptions.steps : true;
+    routeOptions.geometries =
+      routeOptions.geometries !== undefined
+        ? routeOptions.geometries
         : 'geojson';
-    directionsOptions.overview =
-      directionsOptions.overview !== undefined
-        ? directionsOptions.overview
+    routeOptions.overview =
+      routeOptions.overview !== undefined
+        ? routeOptions.overview
         : false;
-    directionsOptions.continue_straight =
-      directionsOptions.continue_straight !== undefined
-        ? directionsOptions.continue_straight
+    routeOptions.continue_straight =
+      routeOptions.continue_straight !== undefined
+        ? routeOptions.continue_straight
         : false;
 
     return new HttpParams({
       fromObject: {
-        alternatives: directionsOptions.alternatives ? 'true' : 'false',
-        overview: directionsOptions.overview ? 'simplified' : 'full',
-        steps: directionsOptions.steps ? 'true' : 'false',
-        geometries: directionsOptions.geometries
-          ? directionsOptions.geometries
+        alternatives: routeOptions.alternatives,
+        overview: routeOptions.overview ? 'simplified' : 'full',
+        steps: routeOptions.steps ? 'true' : 'false',
+        geometries: routeOptions.geometries
+          ? routeOptions.geometries
           : 'geojson',
-        continue_straight: directionsOptions.continue_straight
+        continue_straight: routeOptions.continue_straight
           ? 'true'
           : 'false'
       }
     });
   }
 
-  private formatRoute(roadNetworkRoute: any, waypoints: any): Direction {
-    const stepsUI = [];
-    roadNetworkRoute.legs.forEach((leg) => {
-      leg.steps.forEach((step) => {
+  private _formatRoute(route: OsrmRoute, waypoints: OsrmWaypoint[]): Route {
+    const stepsUI: OsrmRouteStep[] = [];
+    route.legs.forEach((leg: OsrmRouteLeg) => {
+      leg.steps.forEach((step: OsrmRouteStep) => {
         stepsUI.push(step);
       });
     });
     return {
       id: uuid(),
-      title: roadNetworkRoute.legs[0].summary,
+      title: route.legs[0].summary,
       source: OsrmDirectionsSource._name,
       sourceType: SourceDirectionsType.Route,
       order: 1,
@@ -125,13 +126,13 @@ export class OsrmDirectionsSource extends DirectionsSource {
       icon: 'directions',
       projection: 'EPSG:4326',
       waypoints,
-      distance: roadNetworkRoute.distance,
-      duration: roadNetworkRoute.duration,
-      geometry: roadNetworkRoute.geometry,
-      legs: roadNetworkRoute.legs,
+      distance: route.distance,
+      duration: route.duration,
+      geometry: route.geometry,
+      legs: route.legs,
       steps: stepsUI,
-      weight: roadNetworkRoute.weight,
-      weight_name: roadNetworkRoute.weight_name
+      weight: route.weight,
+      weight_name: route.weight_name
     };
   }
 }

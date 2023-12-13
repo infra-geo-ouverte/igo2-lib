@@ -4,27 +4,27 @@ import { BehaviorSubject } from 'rxjs';
 
 import { FeatureStore } from '../../feature/shared/store';
 import {
-  FeatureWithDirection,
+  FeatureWithRoute,
   FeatureWithStep,
-  FeatureWithStop,
-  Stop
+  FeatureWithWaypoint,
+  Waypoint
 } from './directions.interface';
 
 /**
  * The class is a specialized version of an EntityStore that stores
- * stops.
+ * waypoints.
  */
-export class StopsStore extends EntityStore<Stop> {
+export class WaypointStore extends EntityStore<Waypoint> {
   public storeInitialized$: BehaviorSubject<boolean> = new BehaviorSubject(
     false
   );
 
-  public clearStops() {
+  public clearWaypoints() {
     this.storeInitialized$.next(false);
     this.clear();
   }
 }
 
-export class StopsFeatureStore extends FeatureStore<FeatureWithStop> {}
-export class RoutesFeatureStore extends FeatureStore<FeatureWithDirection> {}
+export class WaypointFeatureStore extends FeatureStore<FeatureWithWaypoint> {}
+export class RoutesFeatureStore extends FeatureStore<FeatureWithRoute> {}
 export class StepFeatureStore extends FeatureStore<FeatureWithStep> {}

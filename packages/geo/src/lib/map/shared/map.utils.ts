@@ -6,6 +6,7 @@ import * as olproj from 'ol/proj';
 
 import { MapViewState } from './map.interface';
 import { Projection } from './projection.interfaces';
+import { Position } from 'geojson';
 
 /**
  * This method extracts a coordinate tuple from a string.
@@ -467,17 +468,17 @@ export function ctrlKeyDown(event: MapBrowserPointerEvent<any>): boolean {
 }
 
 export function roundCoordTo(
-  coord: [number, number],
+  coord: Position,
   decimal: number = 3
-): [number, number] {
+): Position {
   return [
     NumberUtils.roundToNDecimal(coord[0], decimal),
     NumberUtils.roundToNDecimal(coord[1], decimal)
-  ] as [number, number];
+  ];
 }
 
 export function roundCoordToString(
-  coord: [number, number],
+  coord: Position,
   decimal: number = 3
 ): [string, string] {
   return roundCoordTo(coord, decimal).map((r) => r.toString()) as [

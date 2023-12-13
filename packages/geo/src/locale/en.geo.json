@@ -349,33 +349,38 @@
         }
       },
       "directionsForm": {
-        "stopLayer": "Directions - stops",
+        "waypointLayer": "Directions - stops",
         "routeLayer": "Directions - route",
-        "start": "Start",
-        "intermediate": "Intermediate",
-        "end": "End",
-        "directionsBtn": "Get route",
-        "resetDirectionsBtn": "Reset",
+        "start": {
+          "label": "Starting point",
+          "placeholder": "Search for a starting point or click on the map"
+        },
+        "intermediate": {
+          "label": "Intermediate stop",
+          "placeholder": "Search for a stop or click on the map"
+        },
+        "end": {
+          "label": "Destination",
+          "placeholder": "Search for a destination or click on the map"
+        },
+        "resetDirectionsBtn": "Reset all stops",
         "zoomRoute": "Zoom on route",
         "null": "",
         "directions": "Directions",
-        "raiseStop": "Raise stop's priority",
-        "lowerStop": "Lower stop's priority",
-        "addStop": "Add a stop",
-        "clearStop": "Clear this stop",
-        "moveStop": "Move this stop",
-        "removeStop": "Remove this stop",
-        "drivingOptions": "Options",
-        "summary": "Direction's summary",
-        "stopsList": "Stops's list",
+        "addWaypoint": "Add an intermediate stop",
+        "clearWaypoint": "Clear this stop",
+        "moveWaypoint": "Move this stop",
+        "removeWaypoint": "Remove this stop",
+        "drivingOptions": "Route options",
+        "summary": "Route summary",
+        "waypointList": "Stop list",
         "instructions": "Instructions",
-        "copy": "Copy directions",
-        "geolocate": "Use current localisation as stop",
-        "link": "Link",
-        "print": "Print",
+        "copy": "Copy directions to clipboard",
+        "link": "Copy directions link to clipboard",
+        "print": "Print itinerary",
         "dialog": {
           "copyMsg": "Directions copied to clipboard",
-          "copyMsgLink": "Link for directions copied to clipboard",
+          "copyMsgLink": "Directions link copied to clipboard",
           "copyTitle": "Directions"
         },
         "toggleActive": "Activate direction control"
@@ -397,7 +402,7 @@
         "new name": "Head {{translatedDirection}} on {{route}}",
         "depart": "Head {{translatedDirection}} on {{route}}",
         "arrive": {
-          "lastStep": "You have reached your destination {{coma}} {{aggregatedDirection}}",
+          "lastStep": "You have reached your destination {{comma}} {{aggregatedDirection}}",
           "intermediate": "You have reached the intermediate stop onto {{route}}"
         },
         "merge": "Continue on {{route}}",

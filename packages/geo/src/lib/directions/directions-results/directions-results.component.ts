@@ -19,9 +19,10 @@ import { FEATURE } from '../../feature/shared/feature.enums';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { DirectionType } from '../shared/directions.enum';
 import {
-  Direction,
+  Route,
   FeatureWithStep,
-  IgoStep
+  IgoStep,
+  FeatureWithRoute
 } from '../shared/directions.interface';
 import {
   formatDistance,
@@ -36,10 +37,10 @@ import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
   styleUrls: ['./directions-results.component.scss']
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
-  public activeDirection: Direction;
-  public directions: Direction[];
+  public activeRoute: Route;
+  public routes: Route[];
 
-  private entities$$: Subscription;
+  private routes$$: Subscription;
 
   @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() stepFeatureStore: StepFeatureStore;
@@ -50,25 +51,25 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.entities$$ = this.routesFeatureStore.entities$
+    this.routes$$ = this.routesFeatureStore.entities$
       .pipe(debounceTime(200))
-      .subscribe((entities) => {
-        const activeFeatureWithDirection = entities.find(
-          (entity) => entity.properties.active
+      .subscribe((routes: FeatureWithRoute[]) => {
+        const activeRoute: FeatureWithRoute = routes.find(
+          (route: FeatureWithRoute) => route.properties.active
         );
-        this.directions = entities.map((entity) => entity.properties.direction);
-        if (activeFeatureWithDirection) {
-          this.activeDirection =
-            activeFeatureWithDirection.properties.direction;
+        this.routes = routes.map((route: FeatureWithRoute) => route.properties.route);
+        if (activeRoute) {
+          this.activeRoute =
+            activeRoute.properties.route;
         } else {
-          this.activeDirection = undefined;
+          this.activeRoute = undefined;
         }
         this.cdRef.detectChanges();
       });
   }
 
   ngOnDestroy(): void {
-    this.entities$$.unsubscribe();
+    this.routes$$.unsubscribe();
   }
 
   changeRoute() {
@@ -89,16 +90,16 @@ export class DirectionsResultsComponent implements OnInit, OnDestroy {
     return formatDuration(duration);
   }
 
-  formatStep(step, cnt) {
+  formatStep(step: IgoStep, stepPosition: number) {
     return formatInstruction(
       step.maneuver.type,
       step.maneuver.modifier,
       step.name,
       step.maneuver.bearing_after,
-      cnt,
+      stepPosition,
       step.maneuver.exit,
       this.languageService,
-      cnt === this.activeDirection.steps.length - 1
+      stepPosition === this.activeRoute.steps.length - 1
     );
   }
 

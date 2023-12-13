@@ -2,6 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 
 import { ActivityService, ConfigService, LanguageService } from '@igo2/core';
+import { Observable, Subject } from 'rxjs';
+import { IgoInstruction, IgoStep, Route, RouteOptions } from '../shared/directions.interface';
+import { DirectionsSource } from '../directions-sources/directions-source';
+import { DirectionsSourceService } from './directions-source.service';
 import { SubjectStatus } from '@igo2/utils';
 
 import html2canvas from 'html2canvas';
@@ -9,19 +13,15 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
 import moment from 'moment';
-import { Observable, Subject } from 'rxjs';
 
-import { IgoMap } from '../../map/shared/map';
-import { PrintService } from '../../print/shared/print.service';
-import { PrintLegendPosition } from '../../print/shared/print.type';
-import { DirectionsSource } from '../directions-sources/directions-source';
-import { Direction, DirectionOptions } from '../shared/directions.interface';
-import { DirectionsSourceService } from './directions-source.service';
+import { IgoMap } from '../../map';
+import { PrintLegendPosition, PrintService } from '../../print';
 import {
   formatDistance,
   formatDuration,
   formatInstruction
 } from './directions.utils';
+import { Position } from 'geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -37,31 +37,31 @@ export class DirectionsService {
   ) {}
 
   route(
-    coordinates: [number, number][],
-    directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]>[] {
+    coordinates: Position[],
+    routeOptions: RouteOptions = {}
+  ): Observable<Route[]>[] {
     if (coordinates.length === 0) {
       return;
     }
     return this.directionsSourceService.sources
       .filter((source: DirectionsSource) => source.enabled)
       .map((source: DirectionsSource) =>
-        this.routeSource(source, coordinates, directionsOptions)
+        this._routeSource(source, coordinates, routeOptions)
       );
   }
 
-  routeSource(
+  private _routeSource(
     source: DirectionsSource,
-    coordinates: [number, number][],
-    directionsOptions: DirectionOptions = {}
-  ): Observable<Direction[]> {
-    const request = source.route(coordinates, directionsOptions);
+    coordinates: Position[],
+    routeOptions: RouteOptions = {}
+  ): Observable<Route[]> {
+    const request: Observable<Route[]> = source.route(coordinates, routeOptions);
     return request;
   }
 
-  downloadDirection(
+  downloadDirections(
     map: IgoMap,
-    direction: Direction
+    route: Route
   ): Observable<SubjectStatus> {
     const activityId = this.activityService.register();
     const status$ = new Subject<SubjectStatus>();
@@ -80,9 +80,9 @@ export class DirectionsService {
     const height = dimensions[1] - margins[0] - margins[2];
     const size: [number, number] = [width, height];
 
-    const title = `${direction.title} (${formatDistance(
-      direction.distance
-    )}, ${formatDuration(direction.duration)})`;
+    const title = `${route.title} (${formatDistance(
+      route.distance
+    )}, ${formatDuration(route.duration)})`;
     const titlePosition = 25;
 
     doc.text(title, doc.internal.pageSize.width / 2, titlePosition, {
@@ -95,7 +95,7 @@ export class DirectionsService {
       .addMap(doc, map, resolution, size, margins, PrintLegendPosition.none)
       .subscribe(async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          await this.addInstructions(doc, direction, title);
+          await this.addInstructions(doc, route, title);
           this.setPageHeaderFooter(doc);
           await doc.save(`${title}.pdf`, { returnPromise: true });
         }
@@ -108,9 +108,9 @@ export class DirectionsService {
   }
 
   private async setHTMLTableContent(
-    direction: Direction
+    route: Route
   ): Promise<HTMLTableElement> {
-    const data = await this.directionsInstruction(direction);
+    const data = await this.directionsInstruction(route);
     const table = document.createElement('table');
     const tblBody = document.createElement('tbody');
     for (let index = 0; index < data.length; index++) {
@@ -142,7 +142,7 @@ export class DirectionsService {
   }
 
   private async directionsInstruction(
-    direction: Direction
+    route: Route
   ): Promise<Array<{ instruction: string; icon: string; distance: string }>> {
     const matListItems = this.document
       .getElementsByTagName('igo-directions-results')[0]
@@ -161,46 +161,46 @@ export class DirectionsService {
       }
     }
 
-    let formattedDirection: Array<{
+    let formattedRoute: Array<{
       instruction: string;
       icon: string;
       distance: string;
     }> = [];
-    for (let i = 0; i < direction.steps.length; i++) {
-      const step = direction.steps[i];
-      const instruction = formatInstruction(
+    for (let routeIndex = 0; routeIndex < route.steps.length; routeIndex++) {
+      const step: IgoStep = route.steps[routeIndex];
+      const instruction: IgoInstruction = formatInstruction(
         step.maneuver.type,
         step.maneuver.modifier,
         step.name,
         step.maneuver.bearing_after,
-        i,
-        (step.maneuver as any).exit,
+        routeIndex,
+        step.maneuver.exit,
         this.languageService,
-        i === direction.steps.length - 1
+        routeIndex === route.steps.length - 1
       );
 
-      const distance = formatDistance(step.distance);
-      formattedDirection.push({
-        instruction: i + 1 + '. ' + instruction.instruction,
+      const distance: string = formatDistance(step.distance);
+      formattedRoute.push({
+        instruction: routeIndex + 1 + '. ' + instruction.instruction,
         icon: iconsArray.find((icon) => icon.name === instruction.image).icon,
         distance: distance ? '(' + distance + ')' : undefined
       });
     }
-    return formattedDirection;
+    return formattedRoute;
   }
 
   private async addInstructions(
     doc: jsPDF,
-    direction: Direction,
+    route: Route,
     title: string
   ) {
     doc.addPage();
-    const titlePosition = 25;
+    const titlePosition: number = 25;
     doc.text(title, doc.internal.pageSize.width / 2, titlePosition, {
       align: 'center'
     });
-    const HTMLtable = await this.setHTMLTableContent(direction);
-    const tablePos = titlePosition + 5;
+    const HTMLtable: HTMLTableElement = await this.setHTMLTableContent(route);
+    const tablePos: number = titlePosition + 5;
     (doc as any).autoTable({
       html: HTMLtable,
       startY: tablePos,
@@ -216,7 +216,7 @@ export class DirectionsService {
         if (data.column.index === 0 && data.cell.section === 'body') {
           data.row.height = 10;
           const td = data.cell.raw as HTMLElement;
-          const img = td.getElementsByTagName('img')[0];
+          const img: HTMLImageElement = td.getElementsByTagName('img')[0];
           doc.addImage(img.src, data.cell.x, data.cell.y, 8, 8);
         }
       }
@@ -224,8 +224,8 @@ export class DirectionsService {
   }
 
   private setPageHeaderFooter(doc: jsPDF) {
-    const pageCount = doc.getNumberOfPages();
-    const date = moment(Date.now()).format('DD/MM/YYYY hh:mm').toString();
+    const pageCount: number = doc.getNumberOfPages();
+    const date: string = moment(Date.now()).format('DD/MM/YYYY hh:mm').toString();
 
     const logoConfig = this.configService.getConfig('directionsSources.logo');
     const logo = logoConfig ? logoConfig : 'assets/logo.png';

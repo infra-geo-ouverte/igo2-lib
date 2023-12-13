@@ -1,51 +1,51 @@
-<div class="igo-input-container" *ngIf="directions && activeDirection">
-  <mat-form-field *ngIf="directions && directions.length > 1">
+<div class="igo-input-container" *ngIf="routes && activeRoute">
+  <mat-form-field *ngIf="routes?.length > 1">
     <mat-label>{{
       'igo.geo.directionsForm.drivingOptions' | translate
     }}</mat-label>
     <mat-select
       placeholder="{{ 'igo.geo.directionsForm.drivingOptions' | translate }}"
       (selectionChange)="changeRoute()"
-      [(ngModel)]="activeDirection"
+      [(ngModel)]="activeRoute"
     >
       <mat-option
-        *ngFor="let direction of directions; let cnt = index"
-        [value]="direction"
+        *ngFor="let route of routes; let routeOption = index"
+        [value]="route"
       >
-        Option {{ cnt + 1 }} : {{ formatDistance(direction.distance) }} ({{
-          formatDuration(direction.duration)
+        Option {{ routeOption + 1 }} : {{ formatDistance(route.distance) }} ({{
+          formatDuration(route.duration)
         }})
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-divider *ngIf="directions && directions.length === 0"></mat-divider>
+  <mat-divider *ngIf="routes?.length === 0"></mat-divider>
 
   <mat-list (mouseleave)="onStepsListBlur()">
-    <h2 mat-header class="igo-route-title">{{ activeDirection.title }}</h2>
+    <h2 mat-header class="igo-route-title">{{ activeRoute.title }}</h2>
     <span class="mat-caption">
-      {{ formatDistance(activeDirection.distance) }},
-      {{ formatDuration(activeDirection.duration) }}
+      {{ formatDistance(activeRoute.distance) }},
+      {{ formatDuration(activeRoute.duration) }}
     </span>
     <mat-list-item
       class="igo-steps"
       (mouseenter)="showSegment(step)"
       (click)="showSegment(step, true)"
-      *ngFor="let step of activeDirection.steps; let cnt = index"
+      *ngFor="let step of activeRoute.steps; let stepPosition = index"
       igoListItem
     >
       <mat-icon
-        [ngClass]="formatStep(step, cnt).cssClass"
+        [ngClass]="formatStep(step, stepPosition).cssClass"
         matListItemIcon
-        svgIcon="{{ formatStep(step, cnt).image }}"
+        svgIcon="{{ formatStep(step, stepPosition).image }}"
       >
       </mat-icon>
 
       <span class="igo-step-text">
-        {{ cnt + 1 }}. {{ formatStep(step, cnt).instruction }}
+        {{ stepPosition + 1 }}. {{ formatStep(step, stepPosition).instruction }}
       </span>
       <span matListItemMeta>
-        {{ formatDistance(step.distance) }}
+        {{ formatDistance(step.distance)}}, {{ formatDuration(step.duration) }}
       </span>
     </mat-list-item>
 

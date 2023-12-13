@@ -49,6 +49,7 @@ import { DirectionState } from '../../directions/directions.state';
 import { MapState } from '../../map/map.state';
 import { ToolState } from '../../tool/tool.state';
 import { SearchState } from '../search.state';
+import { Position } from 'geojson';
 
 /**
  * Tool to browse the search results
@@ -666,21 +667,21 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   getRoute() {
     this.toolState.toolbox.activateTool('directions');
-    this.directionState.stopsStore.clearStops();
+    this.directionState.waypointStore.clearWaypoints();
     setTimeout(() => {
       let routingCoordLoaded = false;
       if (this.getRoute$$) {
         this.getRoute$$.unsubscribe();
       }
       this.getRoute$$ =
-        this.directionState.stopsStore.storeInitialized$.subscribe(
+        this.directionState.waypointStore.storeInitialized$.subscribe(
           (init: boolean) => {
             if (
-              this.directionState.stopsStore.storeInitialized$.value &&
+              this.directionState.waypointStore.storeInitialized$.value &&
               !routingCoordLoaded
             ) {
               routingCoordLoaded = true;
-              const stop = this.directionState.stopsStore
+              const stop = this.directionState.waypointStore
                 .all()
                 .find((e) => e.position === 1);
               let coord;
@@ -700,11 +701,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
               }
               stop.text = this.featureTitle;
               stop.coordinates = coord;
-              this.directionState.stopsStore.update(stop);
+              this.directionState.waypointStore.update(stop);
               if (this.map.geolocationController.position$.value) {
                 const currentPos =
                   this.map.geolocationController.position$.value;
-                const stop = this.directionState.stopsStore
+                const stop = this.directionState.waypointStore
                   .all()
                   .find((e) => e.position === 0);
                 const currentCoord = olProj.transform(
@@ -712,13 +713,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
                   currentPos.projection,
                   'EPSG:4326'
                 );
-                const coord: [number, number] = roundCoordTo(
+                const coord: Position = roundCoordTo(
                   [currentCoord[0], currentCoord[1]],
                   6
                 );
                 stop.text = coord.join(',');
                 stop.coordinates = coord;
-                this.directionState.stopsStore.update(stop);
+                this.directionState.waypointStore.update(stop);
               }
             }
           }

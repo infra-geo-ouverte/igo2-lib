@@ -8,23 +8,24 @@
   </mat-slide-toggle>
 </div>
 
+<igo-directions-inputs
+  (waypointInputHasFocus)="onWaypointInputHasFocusChange($event)"
+  [coordRoundedDecimals]="coordRoundedDecimals"
+  [projection]="projection"
+  [waypointFeatureStore]="waypointFeatureStore"
+  [routesFeatureStore]="routesFeatureStore"
+  [waypointStore]="waypointStore"
+  [debounce]="debounce"
+  [length]="length"
+></igo-directions-inputs>
+
 <igo-directions-buttons
   [stepFeatureStore]="stepFeatureStore"
   [contextUri]="contextUri"
   [zoomToActiveRoute$]="zoomToActiveRoute$"
   [routesFeatureStore]="routesFeatureStore"
-  [stopsStore]="stopsStore"
+  [waypointStore]="waypointStore"
 ></igo-directions-buttons>
-
-<igo-directions-inputs
-  (stopInputHasFocus)="onStopInputHasFocusChange($event)"
-  [coordRoundedDecimals]="coordRoundedDecimals"
-  [projection]="projection"
-  [stopsFeatureStore]="stopsFeatureStore"
-  [stopsStore]="stopsStore"
-  [debounce]="debounce"
-  [length]="length"
-></igo-directions-inputs>
 
 <igo-directions-results
   [stepFeatureStore]="stepFeatureStore"

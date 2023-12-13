@@ -11,6 +11,7 @@ import {
   updateOlGeometryMidpoints
 } from '../../measure/shared/measure.utils';
 import { CoordinatesUnit } from './draw.enum';
+import { Position } from 'geojson';
 
 /**
  * Create a default style
@@ -118,13 +119,13 @@ export function createOlTooltipDrawAtPoint(olPoint: OlPoint): OlOverlay {
 }
 
 export function DDtoDMS(
-  value: [number, number],
+  value: Position,
   unit: CoordinatesUnit
 ): string[] | undefined {
   const conversionMapper = new Map([
     [
       CoordinatesUnit.DecimalDegree,
-      (val: [number, number]) => {
+      (val: Position) => {
         if (typeof val[0] === 'number') {
           return roundCoordToString(val, 5) as string[];
         } else {

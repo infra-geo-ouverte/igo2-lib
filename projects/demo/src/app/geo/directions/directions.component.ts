@@ -6,10 +6,10 @@ import {
   LayerService,
   MapService,
   ProjectionService,
+  WaypointStore,
+  WaypointFeatureStore,
   RoutesFeatureStore,
-  StepFeatureStore,
-  StopsFeatureStore,
-  StopsStore
+  StepFeatureStore
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -34,8 +34,8 @@ export class AppDirectionsComponent {
     geolocate: false
   };
 
-  public stopsStore: StopsStore = new StopsStore([]);
-  public stopsFeatureStore: StopsFeatureStore = new StopsFeatureStore([], {
+  public waypointStore: WaypointStore = new WaypointStore([]);
+  public waypointFeatureStore: WaypointFeatureStore = new WaypointFeatureStore([], {
     map: this.map
   });
   public stepFeatureStore: StepFeatureStore = new StepFeatureStore([], {

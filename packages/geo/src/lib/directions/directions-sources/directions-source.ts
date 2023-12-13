@@ -1,12 +1,13 @@
 import { Observable } from 'rxjs';
 
-import { Direction, DirectionOptions } from '../shared/directions.interface';
+import { Route, RouteOptions } from '../shared/directions.interface';
+import { Position } from 'geojson';
 
 export abstract class DirectionsSource {
   abstract enabled: boolean;
   abstract getName(): string;
   abstract route(
-    coordinates: [number, number][],
-    directionsOptions: DirectionOptions
-  ): Observable<Direction[]>;
+    coordinates: Position[],
+    routeOptions: RouteOptions
+  ): Observable<Route[]>;
 }

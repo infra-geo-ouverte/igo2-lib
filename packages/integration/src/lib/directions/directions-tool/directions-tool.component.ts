@@ -12,8 +12,8 @@ import {
   IgoMap,
   RoutesFeatureStore,
   StepFeatureStore,
-  StopsFeatureStore,
-  StopsStore
+  WaypointFeatureStore,
+  WaypointStore
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -34,11 +34,11 @@ import { DirectionState } from '../directions.state';
 export class DirectionsToolComponent implements OnInit {
   public currentContextUri: string;
   /**
-   * stops
+   * waypoints
    * @internal
    */
-  get stopsStore(): StopsStore {
-    return this.directionState.stopsStore;
+  get waypointStore(): WaypointStore {
+    return this.directionState.waypointStore;
   }
 
   get debounceTime(): number {
@@ -46,11 +46,11 @@ export class DirectionsToolComponent implements OnInit {
   }
 
   /**
-   * stops
+   * waypoints
    * @internal
    */
-  get stopsFeatureStore(): StopsFeatureStore {
-    return this.directionState.stopsFeatureStore;
+  get waypointFeatureStore(): WaypointFeatureStore {
+    return this.directionState.waypointFeatureStore;
   }
 
   /**

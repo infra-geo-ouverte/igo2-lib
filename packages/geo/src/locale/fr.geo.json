@@ -349,33 +349,38 @@
         }
       },
       "directionsForm": {
-        "stopLayer": "Itinéraire - Arrêts",
+        "waypointLayer": "Itinéraire - Arrêts",
         "routeLayer": "Itinéraire - Tracé",
-        "start": "Début",
-        "intermediate": "Intermédiaire",
-        "end": "Fin",
-        "directionsBtn": "Obtenir l'itinéraire",
-        "resetDirectionsBtn": "Supprimer l'itinéraire",
-        "zoomRoute": "Zoomer sur l'itinéraire",
+        "start": {
+          "label": "Point de départ",
+          "placeholder": "Recherchez un point de départ ou cliquez sur la carte"
+        },
+        "intermediate": {
+          "label": "Arrêt intermédiaire",
+          "placeholder": "Recherchez un arrêt intermédiaire ou cliquez sur la carte"
+        },
+        "end": {
+          "label": "Point d'arrivée",
+          "placeholder": "Recherchez un point d'arrivée ou cliquez sur la carte"
+        },
+        "resetDirectionsBtn": "Réinitialiser tous les arrêts",
+        "zoomRoute": "Cadrer sur l'itinéraire",
         "null": "",
         "directions": "Itinéraire",
-        "raiseStop": "Prioriser l'arrêt",
-        "lowerStop": "Reporter l'arrêt plus loin dans le parcours",
-        "addStop": "Ajouter un arrêt",
-        "clearStop": "Réinitialiser cet arrêt",
-        "moveStop": "Déplacer cet arrêt",
-        "removeStop": "Supprimer l'arrêt",
+        "addWaypoint": "Ajouter un arrêt intermédiaire",
+        "clearWaypoint": "Réinitialiser cet arrêt",
+        "moveWaypoint": "Déplacer cet arrêt",
+        "removeWaypoint": "Retirer cet arrêt",
         "drivingOptions": "Choix d'itinéraires",
         "summary": "Résumé de l'itinéraire",
-        "stopsList": "Liste des lieux d'arrêts",
+        "waypointList": "Liste des arrêts",
         "instructions": "Indications",
-        "copy": "Copier l'itinéraire",
-        "geolocate": "Utiliser sa localisation comme point d'arrêt",
-        "link": "Lien",
-        "print": "Imprimer",
+        "copy": "Copier l'itinéraire au presse-papier",
+        "link": "Copier le lien de l'itinéraire au presse-papier",
+        "print": "Imprimer l'initéraire",
         "dialog": {
           "copyMsg": "Itinéraire copié dans le presse-papier",
-          "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
+          "copyMsgLink": "Lien de l'itinéraire copié dans le presse-papier",
           "copyTitle": "Itinéraire"
         },
         "toggleActive": "Activer le contrôle d'itinéraire"
@@ -397,7 +402,7 @@
         "new name": "Continuer en direction {{translatedDirection}} sur {{route}}",
         "depart": "Aller en direction {{translatedDirection}} sur {{route}}",
         "arrive": {
-          "lastStep": "Vous êtes arrivé {{coma}} {{aggregatedDirection}}",
+          "lastStep": "Vous êtes arrivé {{comma}} {{aggregatedDirection}}",
           "intermediate": "Vous atteignez le point intermédiaire sur {{route}}"
         },
         "merge": "Continuer sur {{route}}",

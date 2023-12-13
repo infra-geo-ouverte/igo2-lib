@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 
 import {
   AnyLayerOptions,
+  WaypointStore,
+  WaypointFeatureStore,
   RoutesFeatureStore,
-  StepFeatureStore,
-  StopsFeatureStore,
-  StopsStore
+  StepFeatureStore
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -22,14 +22,14 @@ export class DirectionState {
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   /**
-   * Store that holds the stop
+   * Store that holds the waypoints
    */
-  public stopsStore: StopsStore = new StopsStore([]);
+  public waypointStore: WaypointStore = new WaypointStore([]);
 
   /**
-   * Store that holds the driving stops as feature
+   * Store that holds the driving waypoints as features
    */
-  public stopsFeatureStore: StopsFeatureStore;
+  public waypointFeatureStore: WaypointFeatureStore;
 
   /**
    * Store that holds the driving route as feature
@@ -41,7 +41,7 @@ export class DirectionState {
   public debounceTime: number = 200;
 
   constructor(private mapState: MapState) {
-    this.stopsFeatureStore = new StopsFeatureStore([], {
+    this.waypointFeatureStore = new WaypointFeatureStore([], {
       map: this.mapState.map
     });
 
@@ -54,10 +54,10 @@ export class DirectionState {
     });
 
     this.mapState.map.ol.once('rendercomplete', () => {
-      this.stopsFeatureStore.empty$.subscribe((empty) => {
-        if (this.stopsFeatureStore.layer?.options) {
+      this.waypointFeatureStore.empty$.subscribe((empty) => {
+        if (this.waypointFeatureStore.layer?.options) {
           (
-            this.stopsFeatureStore.layer.options as AnyLayerOptions
+            this.waypointFeatureStore.layer.options as AnyLayerOptions
           ).showInLayerList = !empty;
         }
       });
@@ -71,9 +71,9 @@ export class DirectionState {
     });
 
     this.mapState.map.layers$.subscribe(() => {
-      if (!this.mapState.map.getLayerById('igo-direction-stops-layer')) {
-        this.stopsStore.deleteMany(this.stopsStore.all());
-        this.stopsFeatureStore.deleteMany(this.stopsFeatureStore.all()); // not necessary
+      if (!this.mapState.map.getLayerById('igo-direction-waypoint-layer')) {
+        this.waypointStore.deleteMany(this.waypointStore.all());
+        this.waypointFeatureStore.deleteMany(this.waypointFeatureStore.all()); // not necessary
       }
       if (!this.mapState.map.getLayerById('igo-direction-route-layer')) {
         this.routesFeatureStore.deleteMany(this.routesFeatureStore.all());

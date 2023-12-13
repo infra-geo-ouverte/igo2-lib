@@ -1,26 +1,30 @@
-import { GeoJsonGeometryTypes } from 'geojson';
-
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchSource } from '../../search/shared/sources/source';
+import { GeoJsonGeometryTypes, LineString, Position } from 'geojson';
 import {
   DirectionRelativePositionType,
   DirectionType,
   DirectionsFormat,
+  OsrmLaneIndication,
+  OsrmRouteServiceOptionsAnnotations,
+  OsrmStepManeuverModifier,
+  OsrmStepManeuverType,
   ProposalType,
   SourceDirectionsType
 } from './directions.enum';
 
-export interface DirectionOptions {
-  overview?: boolean;
+export interface RouteOptions {
+  alternatives?: boolean | number;
   steps?: boolean;
-  geometries?: string;
-  alternatives?: boolean;
+  annotations?: boolean | OsrmRouteServiceOptionsAnnotations
+  geometries?: 'polyline' | 'polyline6' | 'geojson';
+  overview?: 'simplified' | 'full' | false;
   continue_straight?: boolean;
 }
 
-export interface FeatureWithStop extends Feature<FeatureWithStopProperties> {}
-export interface FeatureWithDirection
-  extends Feature<FeatureWithDirectionProperties> {}
+export interface FeatureWithWaypoint extends Feature<FeatureWithWaypointProperties> {}
+export interface FeatureWithRoute
+  extends Feature<FeatureWithRouteProperties> {}
 export interface FeatureWithStep extends Feature<FeatureWithStepProperties> {}
 
 export interface FeatureWithStepProperties {
@@ -28,32 +32,31 @@ export interface FeatureWithStepProperties {
   step: IgoStep;
   type: DirectionType;
 }
-export interface FeatureWithDirectionProperties {
+export interface FeatureWithRouteProperties {
   id: string;
-  direction: Direction;
+  route: Route;
   type: DirectionType;
   active: boolean;
 }
-export interface FeatureWithStopProperties {
+export interface FeatureWithWaypointProperties {
   id: string;
-  stop: Stop;
+  waypoint: Waypoint;
   type: DirectionType;
-  stopText: string;
-  stopColor: string;
-  stopOpacity: 1;
+  waypointText: string;
+  waypointColor: string;
+  waypointOpacity: 1;
 }
 
-export interface Stop {
+export interface Waypoint {
   id: string;
   text?: string;
   searchProposals?: SourceProposal[];
-  coordinates?: [number, number];
+  coordinates?: Position;
   position: number;
   relativePosition: DirectionRelativePositionType;
-  stopPoint?: string;
-  stopProposals?: [];
+  waypointProposals?: [];
   directionsText?: string;
-  stopCoordinates?: [number, number];
+  waypointCoordinates?: Position;
 }
 
 export interface SourceProposal {
@@ -71,7 +74,7 @@ export interface SourceProposal {
   };
 }
 
-export interface Direction {
+export interface Route {
   id: string;
   source: string;
   sourceType?: SourceDirectionsType;
@@ -84,22 +87,16 @@ export interface Direction {
   distance?: number;
   duration?: number;
   geometry?: DirectionsGeometry;
-  legs?: OsrmLeg[];
+  legs?: OsrmRouteLeg[];
   steps?: IgoStep[];
   weight?: number;
   weight_name?: string;
 }
 export interface DirectionsGeometry {
   type: GeoJsonGeometryTypes;
-  coordinates: [any];
+  coordinates: Position[];
 }
-export interface OsrmLeg {
-  distance?: number;
-  duration?: number;
-  steps?: OsrmStep[];
-  summary: string;
-  weight?: number;
-}
+
 export interface IgoStep {
   // REFER TO THIS INTERFACE FOR VARIOUS SOURCE
   distance?: number;
@@ -107,30 +104,84 @@ export interface IgoStep {
   duration?: number;
   geometry?: DirectionsGeometry;
   intersections?: OsrmIntersection[];
-  maneuver?: OsrmManeuver;
+  maneuver?: OsrmStepManeuver;
   mode?: string;
   name?: string;
+  weight?: number;
+  ref?: number | string;
+  pronunciation?: string;
 }
-export interface OsrmStep {
+export interface IgoInstruction {
+  instruction: string;
+  image: string;
+  cssClass: string;
+}
+export interface OsrmRoute {
   distance?: number;
-  driving_side?: string;
   duration?: number;
-  geometry?: DirectionsGeometry;
-  intersections?: OsrmIntersection[];
-  maneuver?: OsrmManeuver;
-  mode?: string;
+  geometry?: LineString;
+  weight?: number;
+  weight_name: string;
+  legs: OsrmRouteLeg[];
+}
+export interface OsrmRouteLeg {
+  distance?: number;
+  duration?: number;
+  weight?: number;
+  summary?: string;
+  steps?: OsrmRouteStep[];
+  annotation?: OsrmAnnotation;
+}
+export interface OsrmAnnotation {
+  distance?: number[];
+  duration?: number[];
+  datasources?: number[];
+  nodes?: number[];
+  weight?: number[];
+  speed?: number[];
+  metadata?: {datasource_names: string[]}
+}
+export interface OsrmRouteStep {
+  distance?: number;
+  duration?: number;
+  geometry?: LineString;
+  weight?: number;
   name?: string;
+  ref?: string | number;
+  pronunciation?: string;
+  destinations?: any;
+  exits?: number[] | string[];
+  mode?: string;
+  maneuver?: OsrmStepManeuver;
+  intersections?: OsrmIntersection[];
+  rotary_name?: string;
+  rotary_pronunciation?: string;
+  driving_side?: 'left' | 'right';
+}
+export interface OsrmStepManeuver {
+  location?: Position;
+  bearing_before?: number;
+  bearing_after?: number;
+  type?: OsrmStepManeuverType;
+  modifier?: OsrmStepManeuverModifier;
+  exit?: number;
+}
+export interface OsrmLane {
+  indications?: OsrmLaneIndication[];
+  valid?: boolean;
 }
 export interface OsrmIntersection {
-  bearing?: [any];
-  entry?: [boolean];
-  location?: [number, number];
+  location?: Position;
+  bearings?: number[];
+  classes?: string[];
+  entry?: boolean[];
+  in?: number;
   out?: number;
+  lanes?: OsrmLane[]
 }
-export interface OsrmManeuver {
-  bearing_after?: number;
-  bearing_before?: number;
-  location?: [number, number];
-  modifier?: string;
-  type?: string;
+export interface OsrmWaypoint {
+  name?: string;
+  location?: Position;
+  distance?: number;
+  hint?: string;
 }

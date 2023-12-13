@@ -8,51 +8,56 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olProj from 'ol/proj';
 import * as olStyle from 'ol/style';
 
+import {
+  Route,
+  FeatureWithRoute,
+  FeatureWithWaypoint,
+  IgoInstruction,
+  Waypoint
+} from './directions.interface';
+import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { tryBindStoreLayer } from '../../feature/shared/feature-store.utils';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 import { FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
-import { VectorLayer } from '../../layer/shared/layers/vector-layer';
-import { createOverlayMarkerStyle } from '../../style/shared/overlay/overlay-marker-style.utils';
 import {
   DirectionRelativePositionType,
-  DirectionType
+  DirectionType,
+  OsrmStepManeuverModifier,
+  OsrmStepManeuverType
 } from './directions.enum';
-import {
-  Direction,
-  FeatureWithDirection,
-  FeatureWithStop,
-  Stop
-} from './directions.interface';
 import {
   RoutesFeatureStore,
   StepFeatureStore,
-  StopsFeatureStore,
-  StopsStore
+  WaypointFeatureStore,
+  WaypointStore
 } from './store';
+import { TranslateService } from '@ngx-translate/core';
+import { Position } from 'geojson';
 
 /**
  * Function that updat the sort of the list base on the provided field.
- * @param source stop store
+ * @param source waypoint store
  * @param direction asc / desc sort order
  * @param field the field to use to sort the view
  */
 export function updateStoreSorting(
-  stopsStore: StopsStore,
+  waypointStore: WaypointStore,
   direction: 'asc' | 'desc' = 'asc',
   field = 'position'
-) {
-  stopsStore.view.sort({
+): void {
+  waypointStore.view.sort({
     direction,
-    valueAccessor: (entity: Stop) => entity[field]
+    valueAccessor: (entity: Waypoint) => entity[field]
   });
 }
 
 export function computeRelativePosition(
   index: number,
-  totalLength
+  totalLength: number
 ): DirectionRelativePositionType {
   let relativePosition = DirectionRelativePositionType.Intermediate;
   if (index === 0) {
@@ -63,77 +68,76 @@ export function computeRelativePosition(
   return relativePosition;
 }
 
-export function computeStopsPosition(stopsStore: StopsStore) {
-  const stopsToComputePosition = [...stopsStore.all()];
-  stopsToComputePosition.sort((a, b) => a.position - b.position);
-  stopsToComputePosition.map((stop, i) => {
-    stop.position = i;
-    stop.relativePosition = computeRelativePosition(
-      stop.position,
-      stopsToComputePosition.length
+export function computeWaypointsPosition(waypointStore: WaypointStore): void {
+  const waypointsToComputePosition: Waypoint[] = [...waypointStore.all()];
+  waypointsToComputePosition.sort((a, b) => a.position - b.position);
+  waypointsToComputePosition.map((waypoint: Waypoint, waypointIndex: number) => {
+    waypoint.position = waypointIndex;
+    waypoint.relativePosition = computeRelativePosition(
+      waypoint.position,
+      waypointsToComputePosition.length
     );
   });
-  if (stopsToComputePosition) {
-    stopsStore.updateMany(stopsToComputePosition);
+  if (waypointsToComputePosition) {
+    waypointStore.updateMany(waypointsToComputePosition);
   }
 }
 
 /**
- * Function that add a stop to the stop store. Stop are always added before the last stop.
- * @param stopsStore stop store as an EntityStore
+ * Function that add a waypoint to the waypoint store. An intermediate waypoint is always added before the last waypoint.
+ * @param waypointStore waypoint store as an EntityStore
  */
-export function addStopToStore(stopsStore: StopsStore): Stop {
-  const id = uuid();
-  const stops = stopsStore.all();
+export function addWaypointToStore(waypointStore: WaypointStore): Waypoint {
+  const id: string = uuid();
+  const waypoints: Waypoint[] = waypointStore.all();
   let positions: number[];
-  if (stopsStore.count === 0) {
+  if (waypointStore.count === 0) {
     positions = [0];
   } else {
-    positions = stops.map((stop) => stop.position);
+    positions = waypoints.map((waypoint: Waypoint) => waypoint.position);
   }
   const maxPosition: number = Math.max(...positions);
   const insertPosition: number = maxPosition;
   const lastPosition: number = maxPosition + 1;
 
-  const stopToUpdate = stopsStore
+  const waypointToUpdate: Waypoint = waypointStore
     .all()
-    .find((stop) => stop.position === maxPosition);
-  if (stopToUpdate) {
-    stopToUpdate.position = lastPosition;
-    stopToUpdate.relativePosition = computeRelativePosition(
+    .find((waypoint: Waypoint) => waypoint.position === maxPosition);
+  if (waypointToUpdate) {
+    waypointToUpdate.position = lastPosition;
+    waypointToUpdate.relativePosition = computeRelativePosition(
       lastPosition,
-      stopsStore.count + 1
+      waypointStore.count + 1
     );
   }
 
-  stopsStore.insert({
+  waypointStore.insert({
     id,
     position: insertPosition,
     relativePosition: computeRelativePosition(
       insertPosition,
-      stopsStore.count + 1
+      waypointStore.count + 1
     )
   });
 
-  updateStoreSorting(stopsStore);
-  return stopsStore.get(id);
+  updateStoreSorting(waypointStore);
+  return waypointStore.get(id);
 }
 
-export function removeStopFromStore(stopsStore: StopsStore, stop: Stop) {
-  stopsStore.delete(stop);
-  computeStopsPosition(stopsStore);
+export function removeWaypointFromStore(waypointStore: WaypointStore, waypoint: Waypoint) {
+  waypointStore.delete(waypoint);
+  computeWaypointsPosition(waypointStore);
 }
 
 /**
- * Create a style for the directions stops and routes
+ * Create a style for the directions waypoints and routes
  * @param feature OlFeature
  * @returns OL style function
  */
 export function directionsStyle(
   feature: olFeature<OlGeometry>,
-  resolution: number
 ): olStyle.Style | olStyle.Style[] {
-  const vertexStyle = [
+  const vertexStyle: olStyle.Style[] = [
     new olStyle.Style({
       geometry: feature.getGeometry(),
       image: new olStyle.Circle({
@@ -143,14 +147,14 @@ export function directionsStyle(
     })
   ];
 
-  const stopStyle = createOverlayMarkerStyle({
-    text: feature.get('stopText'),
-    opacity: feature.get('stopOpacity'),
-    markerColor: feature.get('stopColor'),
+  const waypointStyle: olStyle.Style = createOverlayMarkerStyle({
+    text: feature.get('waypointText'),
+    opacity: feature.get('waypointOpacity'),
+    markerColor: feature.get('waypointColor'),
     markerOutlineColor: [255, 255, 255]
   });
 
-  const routeStyle = [
+  const routeStyle: olStyle.Style[] = [
     new olStyle.Style({
       stroke: new olStyle.Stroke({
         color: `rgba(106, 121, 130, ${feature.get('active') ? 0.75 : 0})`,
@@ -165,10 +169,10 @@ export function directionsStyle(
     })
   ];
 
-  if (feature.get('type') === DirectionType.Stop) {
-    return stopStyle;
+  if (feature.get('type') === DirectionType.Waypoint) {
+    return waypointStyle;
   }
-  if (feature.get('type') === 'vertex') {
+  if (feature.get('type') === DirectionType.Vertex) {
     return vertexStyle;
   }
   if (feature.get('type') === DirectionType.Route) {
@@ -176,19 +180,19 @@ export function directionsStyle(
   }
 }
 
-export function initStopsFeatureStore(
-  stopsFeatureStore: StopsFeatureStore,
+export function initWaypointFeatureStore(
+  waypointFeatureStore: WaypointFeatureStore,
   languageService: LanguageService
 ) {
-  const loadingStrategy = new FeatureStoreLoadingStrategy({
+  const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
 
-  const stopsLayer = new VectorLayer({
+  const waypointLayer: VectorLayer = new VectorLayer({
     isIgoInternalLayer: true,
-    id: 'igo-direction-stops-layer',
+    id: 'igo-direction-waypoint-layer',
     title: languageService.translate.instant(
-      'igo.geo.directionsForm.stopLayer'
+      'igo.geo.directionsForm.waypointLayer'
     ),
     zIndex: 911,
     source: new FeatureDataSource(),
@@ -197,7 +201,7 @@ export function initStopsFeatureStore(
       enabled: false
     },
     linkedLayers: {
-      linkId: 'igo-direction-stops-layer',
+      linkId: 'igo-direction-waypoint-layer',
       links: [
         {
           syncedDelete: true,
@@ -210,20 +214,20 @@ export function initStopsFeatureStore(
     browsable: false,
     style: directionsStyle
   });
-  tryBindStoreLayer(stopsFeatureStore, stopsLayer);
-  stopsFeatureStore.layer.visible = true;
-  tryAddLoadingStrategy(stopsFeatureStore, loadingStrategy);
+  tryBindStoreLayer(waypointFeatureStore, waypointLayer);
+  waypointFeatureStore.layer.visible = true;
+  tryAddLoadingStrategy(waypointFeatureStore, loadingStrategy);
 }
 
 export function initRoutesFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
   languageService: LanguageService
 ) {
-  const loadingStrategy = new FeatureStoreLoadingStrategy({
+  const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
 
-  const routeLayer = new VectorLayer({
+  const routeLayer: VectorLayer = new VectorLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-route-layer',
     title: languageService.translate.instant(
@@ -248,11 +252,11 @@ export function initRoutesFeatureStore(
 }
 
 export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
-  const loadingStrategy = new FeatureStoreLoadingStrategy({
+  const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({
     motion: FeatureMotion.None
   });
 
-  const stepLayer = new VectorLayer({
+  const stepLayer: VectorLayer = new VectorLayer({
     isIgoInternalLayer: true,
     id: 'igo-direction-step-layer',
     title: '',
@@ -274,111 +278,109 @@ export function initStepFeatureStore(stepFeatureStore: StepFeatureStore) {
   tryAddLoadingStrategy(stepFeatureStore, loadingStrategy);
 }
 
-export function addStopToStopsFeatureStore(
-  stop: Stop,
-  stopsStore: StopsStore,
-  stopsFeatureStore: StopsFeatureStore,
-  projection: string,
+export function addWaypointToWaypointFeatureStore(
+  waypoint: Waypoint,
+  waypointFeatureStore: WaypointFeatureStore,
+  projectionCode: string,
   languageService: LanguageService
-) {
-  let stopColor;
-  let stopText;
+): void {
+  let waypointColor: string;
+  let waypointText: string;
 
-  switch (stop.relativePosition) {
+  switch (waypoint.relativePosition) {
     case DirectionRelativePositionType.Start:
-      stopColor = '#008000';
-      stopText = languageService.translate.instant(
-        'igo.geo.directionsForm.start'
+      waypointColor = '#008000';
+      waypointText = languageService.translate.instant(
+        'igo.geo.directionsForm.start.label'
       );
       break;
     case DirectionRelativePositionType.End:
-      stopColor = '#f64139';
-      stopText = languageService.translate.instant(
-        'igo.geo.directionsForm.end'
+      waypointColor = '#f64139';
+      waypointText = languageService.translate.instant(
+        'igo.geo.directionsForm.end.label'
       );
       break;
     default:
-      stopColor = '#ffd700';
-      stopText =
+      waypointColor = '#ffd700';
+      waypointText =
         languageService.translate.instant(
-          'igo.geo.directionsForm.intermediate'
+          'igo.geo.directionsForm.intermediate.label'
         ) +
         ' #' +
-        stop.position;
+        waypoint.position;
       break;
   }
 
-  const geometry = new olGeom.Point(
+  const geometry: olGeom.Point = new olGeom.Point(
     olProj.transform(
-      stop.coordinates,
-      projection,
-      stopsFeatureStore.map.projection
+      waypoint.coordinates,
+      projectionCode,
+      waypointFeatureStore.map.projectionCode
     )
   );
 
-  const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
-    featureProjection: stopsFeatureStore.map.projection,
-    dataProjection: stopsFeatureStore.map.projection
+  const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(geometry, {
+    featureProjection: waypointFeatureStore.map.projectionCode,
+    dataProjection: waypointFeatureStore.map.projectionCode
   }) as FeatureGeometry;
 
-  const previousStop = stopsFeatureStore.get(stop.id);
-  const previousStopRevision = previousStop ? previousStop.meta.revision : 0;
+  const previousWaypoint: FeatureWithWaypoint = waypointFeatureStore.get(waypoint.id);
+  const previousWaypointRevision: number = previousWaypoint ? previousWaypoint.meta.revision : 0;
 
-  const stopFeatureStore: FeatureWithStop = {
+  const featureWithWaypoint: FeatureWithWaypoint = {
     type: FEATURE,
     geometry: geojsonGeom,
-    projection: stopsFeatureStore.map.projection,
+    projection: waypointFeatureStore.map.projectionCode,
     properties: {
-      id: stop.id,
-      type: DirectionType.Stop,
-      stopText,
-      stopColor,
-      stopOpacity: 1,
-      stop
+      id: waypoint.id,
+      type: DirectionType.Waypoint,
+      waypointText,
+      waypointColor,
+      waypointOpacity: 1,
+      waypoint
     },
     meta: {
-      id: stop.id,
-      revision: previousStopRevision + 1
+      id: waypoint.id,
+      revision: previousWaypointRevision + 1
     },
     ol: new olFeature({ geometry })
   };
-  stopsFeatureStore.update(stopFeatureStore);
+  waypointFeatureStore.update(featureWithWaypoint);
 }
 
-export function addDirectionToRoutesFeatureStore(
+export function addRouteToRouteFeatureStore(
   routesFeatureStore: RoutesFeatureStore,
-  direction: Direction,
-  projection: string,
-  active: boolean = false,
-  moveToExtent = false
-) {
-  const geom = direction.geometry.coordinates;
-  const geometry4326 = new olGeom.LineString(geom);
-  const geometry = geometry4326.transform(
-    projection,
-    routesFeatureStore.map.projection
+  route: Route,
+  projectionCode: string,
+  active: boolean = false
+): void {
+  const geom: Position[] = route.geometry.coordinates;
+  const geometry4326: olGeom.LineString = new olGeom.LineString(geom);
+  const geometry: OlGeometry = geometry4326.transform(
+    projectionCode,
+    routesFeatureStore.map.projectionCode
   );
 
-  const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
-    featureProjection: routesFeatureStore.map.projection,
-    dataProjection: routesFeatureStore.map.projection
+  const geojsonGeom: FeatureGeometry = new OlGeoJSON().writeGeometryObject(geometry, {
+    featureProjection: routesFeatureStore.map.projectionCode,
+    dataProjection: routesFeatureStore.map.projectionCode
   }) as FeatureGeometry;
 
-  const previousRoute = routesFeatureStore.get(direction.id);
-  const previousRouteRevision = previousRoute ? previousRoute.meta.revision : 0;
+  const previousRoute: FeatureWithRoute = routesFeatureStore.get(route.id);
+  const previousRouteRevision: number = previousRoute ? previousRoute.meta.revision : 0;
 
-  const routeFeatureStore: FeatureWithDirection = {
+  const routeFeatureStore: FeatureWithRoute = {
     type: FEATURE,
     geometry: geojsonGeom,
-    projection: routesFeatureStore.map.projection,
+    projection: routesFeatureStore.map.projectionCode,
     properties: {
-      id: direction.id,
+      id: route.id,
       type: DirectionType.Route,
       active,
-      direction
+      route: route
     },
     meta: {
-      id: direction.id,
+      id: route.id,
       revision: previousRouteRevision + 1
     },
     ol: new olFeature({ geometry })
@@ -387,99 +389,100 @@ export function addDirectionToRoutesFeatureStore(
 }
 
 export function formatDistance(distance: number): string {
+  let formattedDistance: string = '';
   if (distance === 0) {
     return;
   }
-  if (distance >= 100000) {
-    return NumberUtils.roundToNDecimal(Math.round(distance) / 1000, 1) + ' km';
-  }
-  if (distance >= 10000) {
-    return (
-      NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km'
-    );
-  }
   if (distance >= 1000) {
-    return (
-      NumberUtils.roundToNDecimal(Math.round(distance) / 100 / 10, 1) + ' km'
-    );
+    formattedDistance = (NumberUtils.roundToNDecimal(distance / 1000, 1) + ' km').replace('.', ',');
+  } else {
+    formattedDistance = Math.round(distance) + ' m';
   }
-  return NumberUtils.roundToNDecimal(distance, 0) + ' m';
+  return formattedDistance;
 }
 
 export function formatDuration(duration: number): string {
+  let formattedDuration: string = '';
+  if (duration === 0) {
+    return;
+  }
+  if (duration < 30) {
+    return '0 min';
+  }
   if (duration >= 3600) {
-    const hour = Math.floor(duration / 3600);
-    const minute = Math.round((duration / 3600 - hour) * 60);
-    if (minute === 60) {
-      return hour + 1 + ' h';
+    const hours: number = Math.floor(duration / 3600);
+    const minutes: number = Math.round((duration / 3600 - hours) * 60);
+    if (minutes === 60) {
+      formattedDuration = hours + 1 + ' h';
+    } else if (minutes === 0) {
+      formattedDuration = hours + ' h';
+    } else {
+      formattedDuration = hours + ' h ' + minutes + ' min';
     }
-    return hour + ' h ' + minute + ' min';
+  } else if (duration >= 30) {
+    formattedDuration = Math.round(duration / 60) + ' min';
   }
-
-  if (duration >= 60) {
-    return Math.round(duration / 60) + ' min';
-  }
-  return duration + ' s';
+  return formattedDuration;
 }
 
 export function formatInstruction(
-  type,
-  modifier,
-  route,
-  direction,
-  stepPosition,
-  exit,
+  type: OsrmStepManeuverType,
+  modifier: OsrmStepManeuverModifier,
+  route: string,
+  bearing_after: number,
+  stepPosition: number,
+  exit: number,
   languageService: LanguageService,
-  lastStep = false
-) {
-  const translate = languageService.translate;
-  let directive;
+  lastStep: boolean = false
+): IgoInstruction {
+  const translate: TranslateService = languageService.translate;
+  let directive: string = '';
   let image = 'forward';
   let cssClass = 'rotate-270';
-  const translatedDirection = translateBearing(direction, languageService);
-  const translatedModifier = translateModifier(modifier, languageService);
+  const translatedDirection: string = translateBearing(bearing_after, translate);
+  const translatedModifier: string = translateModifier(modifier, translate);
   const prefix =
-    modifier === 'straight'
+    modifier === OsrmStepManeuverModifier.Straight
       ? ''
       : translate.instant('igo.geo.directions.modifier.prefix');
 
-  let aggregatedDirection = prefix + translatedModifier;
+  let aggregatedDirection: string = prefix + translatedModifier;
 
   if (modifier?.search('slight') >= 0) {
     aggregatedDirection = translatedModifier;
   }
 
-  if (modifier === 'uturn') {
+  if (modifier === OsrmStepManeuverModifier.Uturn) {
     image = 'forward';
     cssClass = 'rotate-90';
-  } else if (modifier === 'sharp right') {
+  } else if (modifier === OsrmStepManeuverModifier.SharpRight) {
     image = 'subdirectory-arrow-right';
     cssClass = 'icon-flipped';
-  } else if (modifier === 'right') {
+  } else if (modifier === OsrmStepManeuverModifier.Right) {
     image = 'subdirectory-arrow-right';
     cssClass = 'icon-flipped';
-  } else if (modifier === 'slight right') {
+  } else if (modifier === OsrmStepManeuverModifier.SlightRight) {
     image = 'forward';
     cssClass = 'rotate-290';
-  } else if (modifier === 'straight') {
+  } else if (modifier === OsrmStepManeuverModifier.Straight) {
     image = 'forward';
-  } else if (modifier === 'slight left') {
+  } else if (modifier === OsrmStepManeuverModifier.SlightLeft) {
     image = 'forward';
     cssClass = 'rotate-250';
-  } else if (modifier === 'left') {
+  } else if (modifier === OsrmStepManeuverModifier.Left) {
     image = 'subdirectory-arrow-left';
     cssClass = 'icon-flipped';
-  } else if (modifier === 'sharp left') {
+  } else if (modifier === OsrmStepManeuverModifier.SharpLeft) {
     image = 'subdirectory-arrow-left';
     cssClass = 'icon-flipped';
   }
 
-  if (type === 'turn') {
-    if (modifier === 'straight') {
+  if (type === OsrmStepManeuverType.Turn) {
+    if (modifier === OsrmStepManeuverModifier.Straight) {
       directive = translate.instant('igo.geo.directions.turn.straight', {
         route
       });
-    } else if (modifier === 'uturn') {
+    } else if (modifier === OsrmStepManeuverModifier.Uturn) {
       directive = translate.instant('igo.geo.directions.turn.uturn', { route });
     } else {
       directive = translate.instant('igo.geo.directions.turn.else', {
@@ -488,26 +491,26 @@ export function formatInstruction(
         translatedModifier
       });
     }
-  } else if (type === 'new name') {
+  } else if (type === OsrmStepManeuverType.NewName) {
     directive = translate.instant('igo.geo.directions.new name', {
       route,
       translatedDirection
     });
     image = 'compass';
     cssClass = '';
-  } else if (type === 'depart') {
+  } else if (type === OsrmStepManeuverType.Depart) {
     directive = translate.instant('igo.geo.directions.depart', {
       route,
       translatedDirection
     });
     image = 'compass';
     cssClass = '';
-  } else if (type === 'arrive') {
+  } else if (type === OsrmStepManeuverType.Arrive) {
     if (lastStep) {
-      const coma = !translatedModifier ? '' : ', ';
+      const comma: string = !translatedModifier ? '' : ', ';
       aggregatedDirection = !translatedModifier ? '' : aggregatedDirection;
       directive = translate.instant('igo.geo.directions.arrive.lastStep', {
-        coma,
+        comma,
         aggregatedDirection
       });
     } else {
@@ -517,19 +520,19 @@ export function formatInstruction(
       image = 'map-marker';
       cssClass = '';
     }
-  } else if (type === 'merge') {
+  } else if (type === OsrmStepManeuverType.Merge) {
     directive = translate.instant('igo.geo.directions.merge', { route });
     image = 'forward';
     cssClass = 'rotate-270';
-  } else if (type === 'on ramp') {
+  } else if (type === OsrmStepManeuverType.OnRamp) {
     directive = translate.instant('igo.geo.directions.on ramp', {
       aggregatedDirection
     });
-  } else if (type === 'off ramp') {
+  } else if (type === OsrmStepManeuverType.OffRamp) {
     directive = translate.instant('igo.geo.directions.off ramp', {
       aggregatedDirection
     });
-  } else if (type === 'fork') {
+  } else if (type === OsrmStepManeuverType.Fork) {
     if (modifier.search('left') >= 0) {
       directive = translate.instant('igo.geo.directions.fork.left', { route });
     } else if (modifier.search('right') >= 0) {
@@ -537,21 +540,21 @@ export function formatInstruction(
     } else {
       directive = translate.instant('igo.geo.directions.fork.else', { route });
     }
-  } else if (type === 'end of road') {
+  } else if (type === OsrmStepManeuverType.EndOfRoad) {
     directive = translate.instant('igo.geo.directions.end of road', {
       translatedModifier,
       route
     });
-  } else if (type === 'use lane') {
+  } else if (type === OsrmStepManeuverType.UseLane) {
     directive = translate.instant('igo.geo.directions.use lane');
-  } else if (type === 'continue' && modifier !== 'uturn') {
+  } else if (type === OsrmStepManeuverType.Continue && modifier !== OsrmStepManeuverModifier.Uturn) {
     directive = translate.instant('igo.geo.directions.continue.notUturn', {
       route
     });
     image = 'forward';
     cssClass = 'rotate-270';
-  } else if (type === 'roundabout') {
-    const cntSuffix =
+  } else if (type === OsrmStepManeuverType.Roundabout) {
+    const cntSuffix: string =
       exit === 1
         ? translate.instant('igo.geo.directions.cntSuffix.first')
         : translate.instant('igo.geo.directions.cntSuffix.secondAndMore');
@@ -562,23 +565,23 @@ export function formatInstruction(
     });
     image = 'chart-donut';
     cssClass = '';
-  } else if (type === 'rotary') {
+  } else if (type === OsrmStepManeuverType.Rotary) {
     directive = translate.instant('igo.geo.directions.rotary');
     image = 'chart-donut';
     cssClass = '';
-  } else if (type === 'roundabout turn') {
+  } else if (type === OsrmStepManeuverType.RoundaboutTurn) {
     directive = translate.instant('igo.geo.directions.roundabout turn');
     image = 'chart-donut';
     cssClass = '';
-  } else if (type === 'exit roundabout') {
+  } else if (type === OsrmStepManeuverType.ExitRoundabout) {
     directive = translate.instant('igo.geo.directions.exit roundabout', {
       route
     });
     image = 'forward';
     cssClass = 'rotate-270';
-  } else if (type === 'notification') {
+  } else if (type === OsrmStepManeuverType.Notification) {
     directive = translate.instant('igo.geo.directions.notification');
-  } else if (modifier === 'uturn') {
+  } else if (modifier === OsrmStepManeuverModifier.Uturn) {
     directive = translate.instant('igo.geo.directions.uturnText', {
       translatedDirection,
       route
@@ -595,34 +598,29 @@ export function formatInstruction(
   return { instruction: directive, image, cssClass };
 }
 
-export function translateModifier(modifier, languageService: LanguageService) {
-  const translate = languageService.translate;
-  if (modifier === 'uturn') {
+function translateModifier(modifier: OsrmStepManeuverModifier, translate: TranslateService): string {
+  if (modifier === OsrmStepManeuverModifier.Uturn) {
     return translate.instant('igo.geo.directions.uturn');
-  } else if (modifier === 'sharp right') {
+  } else if (modifier === OsrmStepManeuverModifier.SharpRight) {
     return translate.instant('igo.geo.directions.sharp right');
-  } else if (modifier === 'right') {
+  } else if (modifier === OsrmStepManeuverModifier.Right) {
     return translate.instant('igo.geo.directions.right');
-  } else if (modifier === 'slight right') {
+  } else if (modifier === OsrmStepManeuverModifier.SlightRight) {
     return translate.instant('igo.geo.directions.slight right');
-  } else if (modifier === 'sharp left') {
-    return languageService.translate.instant('igo.geo.directions.sharp left');
-  } else if (modifier === 'left') {
-    return languageService.translate.instant('igo.geo.directions.left');
-  } else if (modifier === 'slight left') {
-    return languageService.translate.instant('igo.geo.directions.slight left');
-  } else if (modifier === 'straight') {
-    return languageService.translate.instant('igo.geo.directions.straight');
+  } else if (modifier === OsrmStepManeuverModifier.SharpLeft) {
+    return translate.instant('igo.geo.directions.sharp left');
+  } else if (modifier === OsrmStepManeuverModifier.Left) {
+    return translate.instant('igo.geo.directions.left');
+  } else if (modifier === OsrmStepManeuverModifier.SlightLeft) {
+    return translate.instant('igo.geo.directions.slight left');
+  } else if (modifier === OsrmStepManeuverModifier.Straight) {
+    return translate.instant('igo.geo.directions.straight');
   } else {
     return modifier;
   }
 }
 
-export function translateBearing(
-  bearing: number,
-  languageService: LanguageService
-) {
-  const translate = languageService.translate;
+function translateBearing(bearing: number, translate: TranslateService): string {
   if (bearing >= 337 || bearing < 23) {
     return translate.instant('igo.geo.cardinalPoints.n');
   } else if (bearing < 67) {

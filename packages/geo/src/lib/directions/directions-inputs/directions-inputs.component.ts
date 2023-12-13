@@ -16,16 +16,20 @@ import * as olProj from 'ol/proj';
 
 import pointOnFeature from '@turf/point-on-feature';
 
-import { Feature } from '../../feature/shared/feature.interfaces';
 import { roundCoordTo } from '../../map/shared/map.utils';
 import { DirectionRelativePositionType } from '../shared/directions.enum';
-import { Stop } from '../shared/directions.interface';
+import { FeatureWithRoute, Waypoint } from '../shared/directions.interface';
+
+import { Feature, FeatureGeometry } from '../../feature/shared/feature.interfaces';
 import {
+  addWaypointToStore,
   computeRelativePosition,
-  removeStopFromStore,
+  removeWaypointFromStore,
   updateStoreSorting
 } from '../shared/directions.utils';
-import { StopsFeatureStore, StopsStore } from '../shared/store';
+import { RoutesFeatureStore, WaypointFeatureStore, WaypointStore } from '../shared/store';
+import { Position } from 'geojson';
+import { EventsKey } from 'ol/events';
 
 @Component({
   selector: 'igo-directions-inputs',
@@ -33,47 +37,63 @@ import { StopsFeatureStore, StopsStore } from '../shared/store';
   styleUrls: ['./directions-inputs.component.scss']
 })
 export class DirectionsInputsComponent implements OnDestroy {
-  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  get activeRoute(): FeatureWithRoute {
+    return this.routesFeatureStore
+      .all()
+      .find((route: FeatureWithRoute) => route.properties.active);
+  }
+  private readonly invalidKeys: string[] = ['Control', 'Shift', 'Alt'];
   private onMapClickEventKeys = [];
-  public stopWithHover: Stop;
-  public stopIsDragged: boolean = false;
-  @Input() stopsStore: StopsStore;
-  @Input() stopsFeatureStore: StopsFeatureStore;
+  public waypointWithHover: Waypoint;
+  public waypointIsDragged: boolean = false;
+  @Input() waypointStore: WaypointStore;
+  @Input() waypointFeatureStore: WaypointFeatureStore;
+  @Input() routesFeatureStore: RoutesFeatureStore;
   @Input() projection: string;
   @Input() coordRoundedDecimals: number = 6;
 
   @Input() debounce: number = 200;
   @Input() length: number = 2;
 
-  @Output() stopInputHasFocus: EventEmitter<boolean> =
+  @Output() waypointInputHasFocus: EventEmitter<boolean> =
     new EventEmitter<boolean>(false);
   constructor(private languageService: LanguageService) {}
 
   ngOnDestroy(): void {
     this.unlistenMapSingleClick();
   }
-  onStopEnter(stop: Stop) {
-    this.stopWithHover = stop;
-  }
-  onStopLeave() {
-    this.stopWithHover = undefined;
+
+  // intermediate waypoints are always added before the last waypoint.
+  addWaypoint(): void {
+    addWaypointToStore(this.waypointStore);
   }
 
-  getOptionText(option) {
+  onWaypointEnter(waypoint: Waypoint): void {
+    this.waypointWithHover = waypoint;
+  }
+  onWaypointLeave(): void {
+    this.waypointWithHover = undefined;
+  }
+
+  getOptionText(option: any): any {
     if (option instanceof Object) {
       return option?.meta ? option.meta.title : '';
     }
     return option;
   }
 
+  resetWaypoints(): void {
+    this.waypointStore.clearWaypoints();
+  }
+
   chooseProposal(
     event: { source: MatAutocomplete; option: MatOption },
-    stop: Stop
-  ) {
+    waypoint: Waypoint
+  ): void {
     const result: Feature = event.option.value;
     if (result) {
-      let geomCoord;
-      const geom = result.geometry;
+      let geomCoord: Position;
+      const geom: FeatureGeometry = result.geometry;
       if (geom.type === 'Point') {
         geomCoord = geom.coordinates;
       } else {
@@ -84,25 +104,25 @@ export class DirectionsInputsComponent implements OnDestroy {
         ];
       }
       if (geomCoord) {
-        stop.coordinates = geomCoord;
-        stop.text = result.meta.title;
-        this.stopsStore.update(stop);
+        waypoint.coordinates = geomCoord;
+        waypoint.text = result.meta.title;
+        this.waypointStore.update(waypoint);
       }
     }
   }
 
-  setStopText(event: KeyboardEvent, stop: Stop) {
+  setWaypointText(event: KeyboardEvent, waypoint: Waypoint): void {
     this.unlistenMapSingleClick();
-    const term = (event.target as HTMLInputElement).value;
+    const term: string = (event.target as HTMLInputElement).value;
     if (term.length === 0) {
-      this.clearStop(stop);
+      this.clearWaypoint(waypoint);
     } else if (this.validateTerm(term)) {
-      stop.text = term;
-      this.stopsStore.update(stop);
+      waypoint.text = term;
+      this.waypointStore.update(waypoint);
     }
   }
 
-  validateTerm(term: string) {
+  validateTerm(term: string): boolean {
     if (
       this.keyIsValid(term) &&
       (term.length >= this.length || term.length === 0)
@@ -112,31 +132,29 @@ export class DirectionsInputsComponent implements OnDestroy {
     return false;
   }
 
-  private keyIsValid(key: string) {
-    return this.invalidKeys.find((value) => value === key) === undefined;
+  private keyIsValid(key: string): boolean {
+    return this.invalidKeys.find((value: string) => value === key) === undefined;
   }
 
-  getNgClass(stop: Stop): string {
-    if (!this.stopWithHover) {
+  getNgClass(waypoint: Waypoint): string {
+    if (!this.waypointWithHover) {
       return 'igo-input-container';
-    } else if (stop.id === this.stopWithHover.id) {
+    } else if (waypoint.id === this.waypointWithHover.id) {
       return 'igo-input-container reduce';
     } else {
       return 'igo-input-container';
     }
   }
 
-  getPlaceholder(stop: Stop): string {
+  getLabel(waypoint: Waypoint): string {
     let extra = '';
-    if (stop.relativePosition) {
-      if (
-        stop.relativePosition === DirectionRelativePositionType.Intermediate
-      ) {
-        extra = ' #' + stop.position;
+    if (waypoint.relativePosition) {
+      if (waypoint.relativePosition === DirectionRelativePositionType.Intermediate) {
+        extra = ' #' + waypoint.position;
       }
       return (
         this.languageService.translate.instant(
-          'igo.geo.directionsForm.' + stop.relativePosition
+          'igo.geo.directionsForm.' + waypoint.relativePosition + ".label"
         ) + extra
       );
     } else {
@@ -144,61 +162,73 @@ export class DirectionsInputsComponent implements OnDestroy {
     }
   }
 
-  removeStop(stop: Stop) {
-    removeStopFromStore(this.stopsStore, stop);
+  getPlaceholder(waypoint: Waypoint): string {
+    if (waypoint.relativePosition) {
+      return (
+        this.languageService.translate.instant(
+          'igo.geo.directionsForm.' + waypoint.relativePosition + ".placeholder"
+        )
+      );
+    } else {
+      return '';
+    }
   }
 
-  clearStop(stop: Stop) {
-    this.stopsStore.update({
-      id: stop.id,
-      relativePosition: stop.relativePosition,
-      position: stop.position
+  removeWaypoint(waypoint: Waypoint) {
+    removeWaypointFromStore(this.waypointStore, waypoint);
+  }
+
+  clearWaypoint(waypoint: Waypoint) {
+    this.waypointStore.update({
+      id: waypoint.id,
+      relativePosition: waypoint.relativePosition,
+      position: waypoint.position
     });
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.moveStops(event.previousIndex, event.currentIndex);
+    this.moveWaypoints(event.previousIndex, event.currentIndex);
   }
 
-  private moveStops(fromIndex, toIndex) {
+  private moveWaypoints(fromIndex: number, toIndex: number) {
     if (fromIndex !== toIndex) {
-      const stops = [...this.stopsStore.view.all()];
-      moveItemInArray(stops, fromIndex, toIndex);
-      stops.map((stop, i) => {
-        stop.relativePosition = computeRelativePosition(i, stops.length);
-        stop.position = i;
+      const waypoints: Waypoint[] = [...this.waypointStore.view.all()];
+      moveItemInArray(waypoints, fromIndex, toIndex);
+      waypoints.map((waypoint: Waypoint, waypointIndex: number) => {
+        waypoint.relativePosition = computeRelativePosition(waypointIndex, waypoints.length);
+        waypoint.position = waypointIndex;
       });
-      this.stopsStore.updateMany(stops);
-      updateStoreSorting(this.stopsStore);
+      this.waypointStore.updateMany(waypoints);
+      updateStoreSorting(this.waypointStore);
     }
   }
 
-  onInputFocus(stop: Stop) {
-    if (!stop.text || stop.text?.length === 0) {
+  onInputFocus(waypoint: Waypoint) {
+    if (!waypoint.text || waypoint.text?.length === 0) {
       this.unlistenMapSingleClick();
-      this.stopInputHasFocus.emit(true);
-      this.listenMapSingleClick(stop);
+      this.waypointInputHasFocus.emit(true);
+      this.listenMapSingleClick(waypoint);
     }
   }
 
-  private listenMapSingleClick(stop: Stop) {
-    const key = this.stopsFeatureStore.layer.map.ol.once(
+  private listenMapSingleClick(waypoint: Waypoint) {
+    const key: EventsKey = this.waypointFeatureStore.layer.map.ol.once(
       'singleclick',
       (event) => {
-        const clickCoordinates = olProj.transform(
+        const clickCoordinates: Position = olProj.transform(
           event.coordinate,
-          this.stopsFeatureStore.layer.map.projection,
+          this.waypointFeatureStore.layer.map.projection,
           this.projection
         );
-        const roundedCoord = roundCoordTo(
-          clickCoordinates as [number, number],
+        const roundedCoord: Position = roundCoordTo(
+          clickCoordinates,
           this.coordRoundedDecimals
         );
-        stop.text = roundedCoord.join(',');
-        stop.coordinates = roundedCoord;
-        this.stopsStore.update(stop);
+        waypoint.text = roundedCoord.join(',');
+        waypoint.coordinates = roundedCoord;
+        this.waypointStore.update(waypoint);
         setTimeout(() => {
-          this.stopInputHasFocus.emit(false);
+          this.waypointInputHasFocus.emit(false);
         }, 500);
       }
     );
