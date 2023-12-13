@@ -54,11 +54,17 @@ async function publishPackage(
   try {
     const { $ } = await import('execa');
     const dist = ALL_DIST_TAG.find((tag) => version.includes(tag));
-    const tagArg = dist ? `--tag ${dist}` : '';
+    const tagArg = dist ? `` : '';
 
+    let npmCommand = `npm publish ./dist/${name}`;
+    if (dist) {
+      npmCommand = `${npmCommand} --tag ${dist}`;
+    }
+
+    log.info(npmCommand);
     await $({
       stdio: 'inherit'
-    })`npm publish ./dist/${name} ${tagArg}`;
+    })`${npmCommand}`;
 
     log.success(`Published @igo2/${name} version ${version}`);
   } catch (err: any) {

@@ -24,6 +24,9 @@
   "exports": {
     ".": {
       "import": "./src/public_api.ts"
+    },
+    "./theming": {
+      "sass": "./src/context-theme.scss"
     }
   },
   "peerDependencies": {
