@@ -16,7 +16,7 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "scripts": {
-    "prestart": "ts-node ../../scripts/src/core/prestart-core.ts",
+    "prestart": "npm run postbuild",
     "build": "ng build core --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
@@ -39,7 +39,7 @@
       "sass": "./src/style/partial/*.scss"
     },
     "./theming": {
-      "sass": "./core-theme.scss"
+      "sass": "./src/core-theme.scss"
     },
     "./prebuilt-themes/*": {
       "style": "./theming/prebuilt-themes/*.css"

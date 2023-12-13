@@ -546,7 +546,8 @@
             "cadastre": "Cadastre",
             "restArea": "Rest area",
             "cycleStop": "Cycle stop",
-            "cultpatri": "Culture and heritage"
+            "cultpatri": "Culture and heritage",
+            "unites":"Unit number"
           },
           "restrictExtent": {
             "map": "Map extent",
@@ -709,7 +710,8 @@
         "palais-justice": "Courthouses",
         "penitencier-fed": "Federal penitentiaries",
         "penitencier-prov": "Provincial penitentiaries",
-        "polices": "Police station"
+        "polices": "Police station",
+        "unites":"Unit number"
       },
       "measure": {
         "dialog": {

@@ -10,7 +10,7 @@
     {
       "input": "src",
       "glob": "*.scss",
-      "output": "",
+      "output": "src",
       "ignore": ["*.import.scss"]
     },
     { "input": "src", "glob": "**/*.them*.scss", "output": "src" },
