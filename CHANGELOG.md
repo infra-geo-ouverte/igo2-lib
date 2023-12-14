@@ -1,3 +1,7 @@
+## [16.1.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.1.0...v16.1.1) (2023-12-14)
+
+
+
 # [16.1.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/v16.0.2...v16.1.0) (2023-12-12)
 
 
