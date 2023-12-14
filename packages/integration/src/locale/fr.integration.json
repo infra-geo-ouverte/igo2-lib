@@ -22,6 +22,21 @@
         "advancedMap": "Outils avancés",
         "closestFeature": "Entités à proximité"
       },
+      "geometryFormTool": {
+        "submit": {
+          "title": "Soumettre une incohérence de donnée",
+          "message": "--TEST-- Veuillez configurer une composante serveur pour soumettre une incohérence",
+          "button": "Soumettre la localisation"
+        },
+        "reset": {
+          "button": "Réinitialiser la saisie"
+        },
+        "geometry": "Saisir une géométrie",
+        "drawGuidePlaceholder": "Guide de dessin",
+        "layer": "Couches d'informations",
+        "description": "Description",
+        "email": "Courriel"
+      },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
         "doSearch": "Veuillez effectuer une recherche dans la barre de recherche ci-dessus.",

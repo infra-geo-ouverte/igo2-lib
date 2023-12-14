@@ -22,6 +22,21 @@
         "advancedMap": "Advanced map tools",
         "closestFeature": "Closest feature tool"
       },
+      "geometryFormTool": {
+        "submit": {
+          "title": "Submit a data inconsistency",
+          "message": "--TEST-- Please configure a server component to submit an inconsistency",
+          "button": "Submit location"
+        },
+        "reset": {
+          "button": "Reset input"
+        },
+        "geometry": "Enter geometry",
+        "drawGuidePlaceholder": "Drawing Guide",
+        "layer": "Layers of information",
+        "description": "Description",
+        "email": "Email"
+      },
       "searchResultsTool": {
         "noResults": "No results",
         "doSearch": "",
