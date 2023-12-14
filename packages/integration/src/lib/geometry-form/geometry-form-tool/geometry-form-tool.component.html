@@ -4,7 +4,12 @@
   [formData]="data$ | async"
   (submitForm)="onSubmit($event)"
 >
-  <igo-form-group [group]="form.groups[0]"></igo-form-group>
+  <div *ngIf="form.fields.length" class="form-container">
+    <igo-form-field
+      *ngFor="let field of form.fields"
+      [field]="field"
+    ></igo-form-field>
+  </div>
 
   <div formButtons class="actions-container">
     <button

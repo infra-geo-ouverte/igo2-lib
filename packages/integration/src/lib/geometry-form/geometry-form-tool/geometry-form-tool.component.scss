@@ -4,4 +4,13 @@
       margin-right: 8px;
     }
   }
+  .form-container {
+    width: 100%;
+    padding: 10px;
+
+    igo-form-field {
+      display: block;
+      height: auto;
+    }
+  }
 }

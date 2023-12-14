@@ -148,10 +148,7 @@ export class GeometryFormToolComponent implements OnInit, OnDestroy {
         const fields = fieldConfigs.map((config) =>
           this.formService.field(config)
         );
-        const form = this.formService.form(
-          [],
-          [this.formService.group({ name: 'info' }, fields)]
-        );
+        const form = this.formService.form(fields, []);
 
         this.valueChanges$$ = form.control.valueChanges.subscribe(() => {
           this.submitDisabled = !form.control.valid;
