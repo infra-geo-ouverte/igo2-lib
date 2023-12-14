@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { LanguageService, MediaService } from '@igo2/core';
-import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+import { MediaService } from '@igo2/core';
+import { DataSource, DataSourceService, IgoMap, LayerService } from '@igo2/geo';
 
 @Component({
   selector: 'app-simple-map',
@@ -9,7 +9,7 @@ import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
   styleUrls: ['./simple-map.component.scss']
 })
 export class AppSimpleMapComponent {
-  public pointerCoord;
+  public pointerCoord: string;
   public pointerCoordDelay: number = 0;
   public map = new IgoMap({
     controls: {
@@ -35,7 +35,6 @@ export class AppSimpleMapComponent {
   }
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mediaService: MediaService
@@ -44,11 +43,13 @@ export class AppSimpleMapComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
+            source: dataSource,
+            visible: true,
+            baseLayer: true
           })
         );
       });
