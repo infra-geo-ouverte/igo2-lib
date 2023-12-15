@@ -7,21 +7,22 @@ import {
 } from '@angular/core';
 
 import { ActionStore, EntityStore } from '@igo2/common';
-import { LanguageService, MediaService, StorageService } from '@igo2/core';
+import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
   GoogleLinks,
   IgoMap,
-  Layer,
+  ImageLayer,
+  LayerOptions,
   LayerService,
   MapService,
-  ProjectionService,
   Research,
   SearchResult
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
+import { Coordinate } from 'ol/coordinate';
 
 import * as proj from 'ol/proj';
 
@@ -53,12 +54,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     zoom: 7
   };
 
-  public osmLayer: Layer;
-
   @ViewChild('mapBrowser', { read: ElementRef, static: true })
   mapBrowser: ElementRef;
 
-  public lonlat;
+  public lonlat: Coordinate;
   public mapProjection: string;
   public term: string;
 
@@ -76,8 +75,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public igoReverseSearchCoordsFormatEnabled: boolean;
 
   constructor(
-    private languageService: LanguageService,
-    private projectionService: ProjectionService,
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
@@ -89,14 +86,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((layer) => {
-        this.osmLayer = layer;
-        this.map.addLayer(layer);
-      });
+      } as LayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
       (this.storageService.get(
@@ -127,7 +123,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.searchStore.updateMany(newResults);
   }
 
-  onReverseCoordsFormatStatusChange(value) {
+  onReverseCoordsFormatStatusChange(value: boolean) {
     this.storageService.set('reverseSearchCoordsFormatEnabled', value);
     this.igoReverseSearchCoordsFormatEnabled = value;
   }
@@ -200,7 +196,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   onContextMenuOpen(event: { x: number; y: number }) {
     const position = this.mapPosition(event);
     const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
-    this.mapProjection = this.mapService.getMap().projection;
+    this.mapProjection = this.mapService.getMap().projectionCode;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
 
@@ -218,21 +214,21 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return position;
   }
 
-  searchCoordinate(lonlat) {
+  searchCoordinate(lonlat: Coordinate) {
     this.searchStore.clear();
     this.term = !this.igoReverseSearchCoordsFormatEnabled
-      ? lonlat.map((c) => c.toFixed(6)).join(', ')
+      ? lonlat.map((c: number) => c.toFixed(6)).join(', ')
       : lonlat
           .reverse()
-          .map((c) => c.toFixed(6))
+          .map((c: number) => c.toFixed(6))
           .join(', ');
   }
 
-  openGoogleMaps(lonlat) {
+  openGoogleMaps(lonlat: Coordinate) {
     window.open(GoogleLinks.getGoogleMapsCoordLink(lonlat[0], lonlat[1]));
   }
 
-  openGoogleStreetView(lonlat) {
+  openGoogleStreetView(lonlat: Coordinate) {
     window.open(GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1]));
   }
 }
