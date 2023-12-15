@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
   IgoMap,
+  LayerOptions,
   LayerService,
+  OSMDataSource,
+  OSMDataSourceOptions,
   TimeFilterStyle,
   TimeFilterType,
+  TimeFilterableDataSource,
   TimeFilterableDataSourceOptions
 } from '@igo2/geo';
 
@@ -30,42 +33,25 @@ export class AppTimeFilterComponent {
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
+            baseLayer: true,
+            visible: true,
             source: dataSource
-          })
+          } as LayerOptions)
         );
       });
 
-    // const datasource: TimeFilterableDataSourceOptions = {
-    //   type: 'wms',
-    //   url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
-    //   params: {
-    //     layers: 'vg_observation_v_inondation_embacle_wmst',
-    //     version: '1.3.0'
-    //   },
-    //   timeFilterable: true,
-    //   timeFilter: {
-    //     min: '2017-01-01',
-    //     max: '2018-01-01',
-    //     range: true,
-    //     type: TimeFilterType.DATETIME,
-    //     style: TimeFilterStyle.SLIDER,
-    //     step: 86400000,
-    //     timeInterval: 2000
-    //   }
-    // };
-
+    // Couche Embâcles
     const datasourceYear: TimeFilterableDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
@@ -80,20 +66,18 @@ export class AppTimeFilterComponent {
         range: false,
         type: TimeFilterType.YEAR,
         style: TimeFilterStyle.SLIDER,
-        step: 1,
-        timeInterval: 2000
+        step: 1
       }
     };
 
     this.dataSourceService
       .createAsyncDataSource(datasourceYear)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: TimeFilterableDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle YEAR',
-            visible: true,
+            title: 'Embâcles',
             source: dataSource
-          })
+          } as LayerOptions)
         );
       });
   }
