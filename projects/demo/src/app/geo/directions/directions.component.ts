@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   IgoMap,
+  ImageLayer,
+  LayerOptions,
   LayerService,
   MapService,
-  ProjectionService,
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
@@ -47,8 +47,6 @@ export class AppDirectionsComponent {
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   constructor(
-    private projectionService: ProjectionService,
-    private languageService: LanguageService,
     private layerService: LayerService,
     private mapService: MapService
   ) {
@@ -56,10 +54,12 @@ export class AppDirectionsComponent {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } as LayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
   }
 }
