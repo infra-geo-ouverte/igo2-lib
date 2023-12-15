@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
+  DataSource,
   DataSourceService,
   FeatureMotion,
   FeatureStore,
@@ -54,7 +54,6 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
   public store = new FeatureStore([], { map: this.map });
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
@@ -152,29 +151,27 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       }
     ]);
 
-    this.layerService
-      .createAsyncLayer({
-        title: 'MVT test',
-        visible: true,
-        sourceOptions: {
-          type: 'mvt',
-          url: 'https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf',
-          queryable: true
-        },
-        igoStyle: {
-          mapboxStyle: {
-            url: 'assets/mapboxStyleExample-vectortile.json',
-            source: 'ahocevar'
-          }
-        }
-      } as any)
-      .subscribe((l) => this.map.addLayer(l));
+    // Couche OSM
+    this.dataSourceService
+      .createAsyncDataSource({
+        type: 'osm'
+      })
+      .subscribe((dataSource: DataSource) => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'OSM',
+            baseLayer: true,
+            visible: true,
+            source: dataSource
+          })
+        );
+      });
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         const layer = this.layerService.createLayer({
           title: 'Vector Layer',
           source: dataSource,
