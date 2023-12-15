@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService } from '@igo2/geo';
+import { IgoMap, ImageLayer, ImageLayerOptions, LayerService, TileLayer, TileLayerOptions } from '@igo2/geo';
 
 @Component({
   selector: 'app-print',
@@ -23,43 +22,26 @@ export class AppPrintComponent {
   };
 
   constructor(
-    private languageService: LanguageService,
     private layerService: LayerService
   ) {
+    // Fond
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
-          type: 'wmts',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
-          layer: 'carte_gouv_qc_ro',
-          matrixSet: 'EPSG_3857',
-          version: '1.3.0',
-          crossOrigin: 'anonymous',
-          attributions:
-            "© <a href='http://www.droitauteur.gouv.qc.ca/copyright.php' target='_blank'><img src='https://geoegl.msp.gouv.qc.ca/gouvouvert/public/images/quebec/gouv_qc_logo.png' width='64' height='14'>Gouvernement du Québec</a> / <a href='https://www.igouverte.org/' target='_blank'>IGO2</a>"
-        }
-      })
-      .subscribe((l) => this.map.addLayer(l));
-
-    this.layerService
-      .createAsyncLayer({
-        title: 'School board',
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-          params: {
-            LAYERS: 'MELS_CS_ANGLO_S',
-            VERSION: '1.3.0'
-          },
+          type: 'xyz',
+          url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
           crossOrigin: 'anonymous'
-        }
-      })
-      .subscribe((l) => this.map.addLayer(l));
-    //
+        },
+      } as TileLayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+
+    // Couche Embâcles
     this.layerService
       .createAsyncLayer({
-        title: 'Embacle',
+        title: 'Embâcles',
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
@@ -69,39 +51,39 @@ export class AppPrintComponent {
           },
           crossOrigin: 'anonymous'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // this.layerService
-    //   .createAsyncLayer({
-    //     title: 'Geomet',
-    //     sourceOptions: {
-    //       type: 'wms',
-    //       url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
-    //       params: {
-    //         LAYERS: 'RADAR_1KM_RDBR',
-    //         VERSION: '1.3.0'
-    //       },
-    //       crossOrigin: 'anonymous'
-    //     }
-    //   })
-    //   .subscribe(l => this.map.addLayer(l));
+    // Couche radar météo
+    this.layerService
+      .createAsyncLayer({
+        title: 'Radar météo',
+        sourceOptions: {
+          type: 'wms',
+          url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
+          params: {
+            LAYERS: 'RADAR_1KM_RRAI',
+            VERSION: '1.3.0'
+          },
+          crossOrigin: 'anonymous'
+        }
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    /*
-        //CORS error if activate (for test)
-        this.layerService
-          .createAsyncLayer({
-            title: 'Geomet',
-            sourceOptions: {
-              type: 'wms',
-              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wms',
-              params: {
-                layers: 'swtq',
-                version: '1.3.0',
-              }
-            }
-          })
-          .subscribe(l => this.map.addLayer(l));
-    */
+    // Couche Aéroports
+    this.layerService
+      .createAsyncLayer({
+        title: 'Aéroports',
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?',
+          params: {
+            layers: 'aeroport',
+            version: '1.3.0',
+          },
+          crossOrigin: 'anonymous'
+        }
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
   }
 }
