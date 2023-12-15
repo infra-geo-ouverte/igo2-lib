@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
+  DataSource,
   DataSourceService,
   FeatureStore,
   FeatureWithDraw,
@@ -34,7 +34,6 @@ export class AppDrawComponent {
   public stores: FeatureStore<FeatureWithDraw>[] = [];
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mapService: MapService
@@ -44,11 +43,13 @@ export class AppDrawComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
+            source: dataSource,
+            baseLayer: true,
+            visible: true
           })
         );
       });
