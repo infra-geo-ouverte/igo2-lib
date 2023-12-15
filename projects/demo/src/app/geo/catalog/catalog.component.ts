@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
 import { EntityRecord, EntityStore } from '@igo2/common';
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core';
 import {
   Catalog,
   CatalogItem,
   CatalogService,
   IgoMap,
+  ImageLayer,
+  LayerOptions,
   LayerService,
   MapService
 } from '@igo2/geo';
@@ -36,8 +38,6 @@ export class AppCatalogComponent implements OnInit {
   public catalogItemStore = new EntityStore<CatalogItem>([]);
 
   constructor(
-    private configService: ConfigService,
-    private languageService: LanguageService,
     private layerService: LayerService,
     private catalogService: CatalogService,
     private storageService: StorageService,
@@ -51,11 +51,13 @@ export class AppCatalogComponent implements OnInit {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((layer) => this.map.addLayer(layer));
+      } as LayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.loadCatalogs();
 
