@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
-import { Form, FormService } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
-import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+import { Form, FormField, FormFieldConfig, FormService } from '@igo2/common';
+import { DataSource, DataSourceService, IgoMap, LayerService } from '@igo2/geo';
 
 import * as olstyle from 'ol/style';
 
@@ -38,7 +37,6 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
   private valueChanges$$: Subscription;
 
   constructor(
-    private languageService: LanguageService,
     private formService: FormService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
@@ -49,16 +47,18 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
+            source: dataSource,
+            baseLayer: true,
+            visible: true
           })
         );
       });
 
-    const fieldConfigs = [
+    const fieldConfigs: FormFieldConfig[] = [
       {
         name: 'geometry',
         title: 'Geometry',
@@ -102,8 +102,8 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
       }
     ];
 
-    const fields = fieldConfigs.map((config) => this.formService.field(config));
-    const form = this.formService.form(
+    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) => this.formService.field(config));
+    const form: Form = this.formService.form(
       [],
       [this.formService.group({ name: 'info' }, fields)]
     );
