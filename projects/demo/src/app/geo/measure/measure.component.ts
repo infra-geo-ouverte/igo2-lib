@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
+  DataSource,
   DataSourceService,
   FeatureStore,
   FeatureWithMeasure,
@@ -33,7 +33,6 @@ export class AppMeasureComponent {
   public store = new FeatureStore<FeatureWithMeasure>([], { map: this.map });
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
@@ -41,11 +40,13 @@ export class AppMeasureComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
+            source: dataSource,
+            baseLayer: true,
+            visible: true
           })
         );
       });
