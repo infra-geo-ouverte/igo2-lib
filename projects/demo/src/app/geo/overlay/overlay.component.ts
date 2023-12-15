@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
+  DataSource,
   DataSourceService,
   FEATURE,
   Feature,
@@ -31,7 +31,6 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
@@ -41,11 +40,13 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
+            source: dataSource,
+            baseLayer: true,
+            visible: true
           })
         );
       });
