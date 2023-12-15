@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 import { WorkspaceStore } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService } from '@igo2/geo';
+import { IgoMap, ImageLayer, LayerOptions, LayerService } from '@igo2/geo';
 
 @Component({
   selector: 'app-import-export',
@@ -26,16 +25,17 @@ export class AppImportExportComponent {
   public store = new WorkspaceStore([]);
 
   constructor(
-    private languageService: LanguageService,
     private layerService: LayerService
   ) {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } as LayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
   }
 }
