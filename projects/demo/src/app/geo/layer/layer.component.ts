@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
+  DataSource,
   DataSourceService,
   IgoMap,
+  Layer,
   LayerOptions,
   LayerService,
   MetadataLayerOptions,
@@ -33,61 +34,29 @@ export class AppLayerComponent {
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
+    // Couche OSM
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            visible: true,
             baseLayer: true,
+            visible: true,
             source: dataSource
           })
         );
       });
 
+    //Couche WFS (Custom EPSG)
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
-
-    const wfsDatasource: WFSoptions = {
-      type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-      params: {
-        featureTypes: 'vg_observation_v_autre_wmst',
-        fieldNameGeometry: 'geometry',
-        maxFeatures: 10000,
-        version: '2.0.0',
-        outputFormat: 'geojson',
-        outputFormatDownload: 'shp'
-      },
-      ogcFilters: {
-        enabled: true,
-        editable: false,
-        filters: {
-          operator: 'PropertyIsEqualTo',
-          propertyName: 'code_municipalite',
-          expression: '10043'
-        }
-      }
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wfsDatasource)
-      .subscribe((dataSource) => {
-        const layer: LayerOptions = {
-          title: 'WFS ',
-          visible: true,
-          source: dataSource
-        };
-        this.map.addLayer(this.layerService.createLayer(layer));
-      });
 
     const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
@@ -117,30 +86,32 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourceCustomEPSG)
-      .subscribe((dataSource) => {
-        const layer: LayerOptions = {
+      .subscribe((dataSource: DataSource) => {
+        const layerOptions: LayerOptions = {
           title: 'WFS (Custom EPSG)',
           visible: true,
           source: dataSource,
           removable: false
         };
-        this.map.addLayer(this.layerService.createLayer(layer));
+        this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
 
+    // Couche Parc routiers
     this.layerService
       .createAsyncLayer({
+        title: 'Parcs routiers',
         sourceOptions: {
           type: 'wms',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'parc_routier',
             VERSION: '1.3.0'
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((layer: Layer) => this.map.addLayer(layer));
 
+    // Couche Réseau routier
     this.layerService
       .createAsyncLayer({
         title: 'Réseau routier',
@@ -154,68 +125,44 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((layer: Layer) => this.map.addLayer(layer));
 
+    // Couche Lieux habités
     this.layerService
       .createAsyncLayer({
-        title: 'lieu habité',
+        title: 'Lieux habités',
         visible: false,
         sourceOptions: {
           type: 'wms',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'lieuhabite',
             VERSION: '1.3.0'
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((layer: Layer) => this.map.addLayer(layer));
 
+    // Couche Distribution écoforestière
     this.layerService
       .createAsyncLayer({
-        title: 'sh_dis_eco',
+        title: 'Distribution écoforestière',
         visible: false,
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/mffpecofor.fcgi',
-          optionsFromCapabilities: true,
           params: {
             LAYERS: 'sh_dis_eco',
             VERSION: '1.3.0'
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((layer: Layer) => this.map.addLayer(layer));
 
+    // Couche Avertissements routiers
     this.layerService
       .createAsyncLayer({
-        title: 'nurc:Arc_Sample_Parent',
-        visible: false,
-        legendOptions: {
-          // collapsed: false,
-          display: true,
-          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
-          stylesAvailable: [
-            { name: 'rain', title: 'Pluie' },
-            { name: 'raster', title: 'Défaut' }
-          ] //
-        },
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://demo.geo-solutions.it/geoserver/ows',
-          optionsFromCapabilities: true,
-          params: {
-            LAYERS: 'nurc:Arc_Sample', // , test:Linea_costa
-            VERSION: '1.3.0'
-          }
-        }
-      })
-      .subscribe((l) => this.map.addLayer(l));
-
-    this.layerService
-      .createAsyncLayer({
-        title: 'Avertissements routier',
+        title: 'Avertissements routiers',
         visible: false,
         sourceOptions: {
           type: 'wms',
@@ -226,8 +173,9 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((layer: Layer) => this.map.addLayer(layer));
 
+    // Couche Embâcles
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
@@ -244,16 +192,16 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource) => {
-        const layer: LayerOptionsWithMetadata = {
-          title: 'Embâcle',
+      .subscribe((dataSource: DataSource) => {
+        const layerOptions: LayerOptionsWithMetadata = {
+          title: 'Embâcles',
           source: dataSource,
           metadata: {
             url: 'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
             extern: true
           }
         };
-        this.map.addLayer(this.layerService.createLayer(layer));
+        this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
   }
 }
