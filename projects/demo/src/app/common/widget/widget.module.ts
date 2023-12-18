@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 
 import { IgoWidgetModule } from '@igo2/common';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppWidgetRoutingModule } from './widget-routing.module';
 import {
   AppSalutationWidgetComponent,
@@ -13,14 +13,13 @@ import {
 
 @NgModule({
   imports: [
-    SharedModule,
     AppWidgetRoutingModule,
     MatButtonModule,
     MatCardModule,
     IgoWidgetModule,
     AppSalutationWidgetComponent,
     AppWidgetComponent
-  ],
+],
   exports: [AppWidgetComponent]
 })
 export class AppWidgetModule {}

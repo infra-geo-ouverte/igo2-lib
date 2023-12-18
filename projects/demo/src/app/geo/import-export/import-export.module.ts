@@ -8,20 +8,19 @@ import {
   provideStyleListOptions
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppImportExportRoutingModule } from './import-export-routing.module';
 import { AppImportExportComponent } from './import-export.component';
 
 @NgModule({
   imports: [
     AppImportExportRoutingModule,
-    SharedModule,
     IgoMessageModule,
     IgoMapModule,
     IgoStyleModule,
     IgoImportExportModule,
     AppImportExportComponent
-  ],
+],
   exports: [AppImportExportComponent],
   providers: [
     provideStyleListOptions({

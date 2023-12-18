@@ -22,13 +22,12 @@ import {
 } from '@igo2/geo';
 import { IgoAppSearchModule } from '@igo2/integration';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppSearchRoutingModule } from './search-routing.module';
 import { AppSearchComponent } from './search.component';
 
 @NgModule({
   imports: [
-    SharedModule,
     AppSearchRoutingModule,
     IgoMessageModule.forRoot(),
     IgoPanelModule,
@@ -39,7 +38,7 @@ import { AppSearchComponent } from './search.component';
     IgoContextMenuModule,
     IgoFeatureModule,
     AppSearchComponent
-  ],
+],
   exports: [AppSearchComponent],
   providers: [
     provideCoordinatesReverseSearchSource(),

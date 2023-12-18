@@ -40,11 +40,11 @@ import { AppActivityModule } from './core/activity/activity.module';
 import { AppConfigModule } from './core/config/config.module';
 import { AppHomeModule } from './core/home/home.module';
 import { AppLanguageModule } from './core/language/language.module';
-import { AppMediaModule } from './core/media/media.module';
+
 import { AppMessageModule } from './core/message/message.module';
 import { MonitoringModule } from './core/monitoring/monitoring.module';
 import { AppRequestModule } from './core/request/request.module';
-import { AppThemeModule } from './core/theme/theme.module';
+
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppDrawModule } from './geo/draw/draw.module';
@@ -83,16 +83,12 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     MatButtonModule,
     MatIconModule,
     MatListModule,
-
     AppHomeModule,
     AppActivityModule,
     AppConfigModule,
     AppLanguageModule,
-    AppMediaModule,
     AppMessageModule,
     AppRequestModule,
-    AppThemeModule,
-
     AppActionModule,
     AppDialogModule,
     AppDynamicComponentModule,
@@ -102,9 +98,7 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     AppTableModule,
     AppToolModule,
     AppWidgetModule,
-
     AppAuthFormModule,
-
     AppSimpleMapModule,
     AppLayerModule,
     AppLegendModule,
@@ -127,9 +121,8 @@ export const defaultTooltipOptions: MatTooltipDefaultOptions = {
     MonitoringModule,
     AppContextModule,
     AppRoutingModule,
-
     HammerModule
-  ],
+],
   providers: [
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,

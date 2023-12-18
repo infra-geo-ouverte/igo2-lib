@@ -10,14 +10,13 @@ import {
   IgoQueryModule
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 
 @NgModule({
   imports: [
     AppSpatialFilterRoutingModule,
-    SharedModule,
     IgoPanelModule,
     IgoMapModule,
     IgoMessageModule,
@@ -27,7 +26,7 @@ import { AppSpatialFilterComponent } from './spatial-filter.component';
     IgoFilterModule,
     IgoFormModule,
     AppSpatialFilterComponent
-  ],
+],
   exports: [AppSpatialFilterComponent]
 })
 export class AppSpatialFilterModule {}

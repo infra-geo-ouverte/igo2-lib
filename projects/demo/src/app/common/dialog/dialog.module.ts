@@ -10,13 +10,12 @@ import {
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppDialogRoutingModule } from './dialog-routing.module';
 import { AppDialogComponent } from './dialog.component';
 
 @NgModule({
   imports: [
-    SharedModule,
     AppDialogRoutingModule,
     IgoConfirmDialogModule,
     IgoSelectValueDialogModule,
@@ -26,7 +25,7 @@ import { AppDialogComponent } from './dialog.component';
     IgoLanguageModule.forRoot(),
     MatDividerModule,
     AppDialogComponent
-  ],
+],
   exports: [AppDialogComponent]
 })
 export class AppDialogModule {}

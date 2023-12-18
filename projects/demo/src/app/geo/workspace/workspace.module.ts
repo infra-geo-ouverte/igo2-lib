@@ -8,13 +8,12 @@ import {
 } from '@igo2/common';
 import { IgoGeoWorkspaceModule, IgoMapModule } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppWorkspaceRoutingModule } from './workspace-routing.module';
 import { AppWorkspaceComponent } from './workspace.component';
 
 @NgModule({
   imports: [
-    SharedModule,
     AppWorkspaceRoutingModule,
     IgoActionModule,
     IgoEntityModule,
@@ -23,7 +22,7 @@ import { AppWorkspaceComponent } from './workspace.component';
     IgoMapModule,
     IgoGeoWorkspaceModule,
     AppWorkspaceComponent
-  ],
+],
   exports: [AppWorkspaceComponent]
 })
 export class AppWorkspaceModule {}

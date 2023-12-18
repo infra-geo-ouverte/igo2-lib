@@ -12,13 +12,12 @@ import {
   IgoMetadataModule
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppLegendRoutingModule } from './legend-routing.module';
 import { AppLegendComponent } from './legend.component';
 
 @NgModule({
   imports: [
-    SharedModule,
     AppLegendRoutingModule,
     MatCardModule,
     MatButtonModule,
@@ -30,7 +29,7 @@ import { AppLegendComponent } from './legend.component';
     IgoMetadataModule,
     IgoDownloadModule,
     AppLegendComponent
-  ],
+],
   exports: [AppLegendComponent]
 })
 export class AppLegendModule {}

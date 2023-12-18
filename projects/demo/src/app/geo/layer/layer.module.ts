@@ -12,13 +12,12 @@ import {
   IgoMetadataModule
 } from '@igo2/geo';
 
-import { SharedModule } from '../../shared/shared.module';
+
 import { AppLayerRoutingModule } from './layer-routing.module';
 import { AppLayerComponent } from './layer.component';
 
 @NgModule({
   imports: [
-    SharedModule,
     AppLayerRoutingModule,
     MatCardModule,
     MatButtonModule,
@@ -30,7 +29,7 @@ import { AppLayerComponent } from './layer.component';
     IgoMetadataModule,
     IgoDownloadModule,
     AppLayerComponent
-  ],
+],
   exports: [AppLayerComponent]
 })
 export class AppLayerModule {}
