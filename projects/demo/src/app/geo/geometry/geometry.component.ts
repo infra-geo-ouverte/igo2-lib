@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 
 import { Form, FormField, FormFieldConfig, FormService } from '@igo2/common';
-import { DataSource, DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+import { DataSourceService, IgoMap, LayerOptions, LayerService, MapViewOptions, OSMDataSource, OSMDataSourceOptions } from '@igo2/geo';
 
 import * as olstyle from 'ol/style';
 
@@ -14,7 +14,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styleUrls: ['./geometry.component.scss']
 })
 export class AppGeometryComponent implements OnInit, OnDestroy {
-  map = new IgoMap({
+  map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -23,16 +23,16 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     }
   });
 
-  view = {
+  view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 15
   };
 
-  form$ = new BehaviorSubject<Form>(undefined);
+  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
   data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
 
-  submitDisabled = true;
+  submitDisabled: boolean = true;
 
   private valueChanges$$: Subscription;
 
@@ -42,19 +42,19 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
             baseLayer: true,
             visible: true
-          })
+          } as LayerOptions)
         );
       });
 
@@ -115,11 +115,11 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.form$.next(form);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.valueChanges$$.unsubscribe();
   }
 
-  fillForm() {
+  fillForm(): void {
     this.data$.next({
       name: 'Place',
       geometry: JSON.stringify({
@@ -137,11 +137,11 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     });
   }
 
-  clearForm() {
+  clearForm(): void {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }) {
+  onSubmit(data: { [key: string]: any }): void {
     alert(JSON.stringify(data));
   }
 }

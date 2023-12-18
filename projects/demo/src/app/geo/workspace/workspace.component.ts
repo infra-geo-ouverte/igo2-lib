@@ -15,7 +15,9 @@ import {
   IgoMap,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   OSMDataSource,
+  OSMDataSourceOptions,
   VectorLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions
@@ -39,7 +41,7 @@ export class AppWorkspaceComponent implements OnInit {
     showFirstLastButtons: true // Whether to show the first/last buttons UI to the user.
   };
 
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -47,7 +49,7 @@ export class AppWorkspaceComponent implements OnInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-72, 47.2],
     zoom: 5
   };
@@ -58,9 +60,9 @@ export class AppWorkspaceComponent implements OnInit {
 
   public selectedWorkspace$: Observable<Workspace>;
 
-  public actionbarMode = ActionbarMode.Overlay;
+  public actionbarMode: ActionbarMode = ActionbarMode.Overlay;
 
-  public scrollBehavior = EntityTableScrollBehavior.Instant;
+  public scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Instant;
 
   constructor(
     private dataSourceService: DataSourceService,
@@ -92,7 +94,7 @@ export class AppWorkspaceComponent implements OnInit {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
+      } as OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({

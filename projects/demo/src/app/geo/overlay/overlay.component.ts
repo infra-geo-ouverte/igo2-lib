@@ -1,13 +1,16 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 import {
-  DataSource,
   DataSourceService,
   FEATURE,
   Feature,
   FeatureMotion,
   IgoMap,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -16,7 +19,7 @@ import {
   styleUrls: ['./overlay.component.scss']
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     overlay: true,
     controls: {
       attribution: {
@@ -25,7 +28,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
@@ -35,24 +38,24 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
             baseLayer: true,
             visible: true
-          })
+          } as LayerOptions)
         );
       });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     const feature1: Feature = {
       type: FEATURE,
       projection: 'EPSG:4326',
@@ -103,7 +106,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     };
 
     this.map.overlay.setFeatures(
-      [feature1, feature2, feature3],
+      [feature1, feature2, feature3] as Feature[],
       FeatureMotion.None
     );
   }

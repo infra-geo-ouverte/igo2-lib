@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
-import { DataSource, DataSourceService, IgoMap, LayerService } from '@igo2/geo';
+import { Media, MediaService } from '@igo2/core';
+import { DataSourceService, IgoMap, LayerOptions, LayerService, MapViewOptions, OSMDataSource, OSMDataSourceOptions } from '@igo2/geo';
 
 @Component({
   selector: 'app-simple-map',
@@ -11,7 +11,7 @@ import { DataSource, DataSourceService, IgoMap, LayerService } from '@igo2/geo';
 export class AppSimpleMapComponent {
   public pointerCoord: string;
   public pointerCoordDelay: number = 0;
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -20,17 +20,17 @@ export class AppSimpleMapComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6,
     rotation: 0.75
   };
 
-  get media() {
+  get media(): Media {
     return this.mediaService.getMedia();
   }
 
-  get isTouchScreen() {
+  get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
 
@@ -42,20 +42,20 @@ export class AppSimpleMapComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
             visible: true,
             baseLayer: true
-          })
+          } as LayerOptions)
         );
       });
   }
 
-  onPointerMove(event) {
+  onPointerMove(event: string): void {
     this.pointerCoord = event;
   }
 }

@@ -10,7 +10,8 @@ import {
   ImageLayer,
   LayerOptions,
   LayerService,
-  MapService
+  MapService,
+  MapViewOptions
 } from '@igo2/geo';
 
 @Component({
@@ -20,7 +21,7 @@ import {
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -28,14 +29,14 @@ export class AppCatalogComponent implements OnInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
 
-  public catalogStore = new EntityStore<Catalog>([]);
+  public catalogStore: EntityStore = new EntityStore<Catalog>([]);
 
-  public catalogItemStore = new EntityStore<CatalogItem>([]);
+  public catalogItemStore: EntityStore = new EntityStore<CatalogItem>([]);
 
   constructor(
     private layerService: LayerService,
@@ -47,7 +48,7 @@ export class AppCatalogComponent implements OnInit {
   /**
    * @internal
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
@@ -68,18 +69,18 @@ export class AppCatalogComponent implements OnInit {
       )
       .subscribe((record: EntityRecord<Catalog>) => {
         if (record && record.entity) {
-          const catalog = record.entity;
+          const catalog: Catalog = record.entity;
           this.catalog = catalog;
         }
       });
   }
 
   /**
-   * When the selected catalog changes, toggle the the CatalogBrowser tool.
+   * When the selected catalog changes, toggle the CatalogBrowser tool.
    * @internal
    * @param event Select event
    */
-  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }) {
+  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }): void {
     this.loadCatalogItems(event.catalog);
   }
 
@@ -87,7 +88,7 @@ export class AppCatalogComponent implements OnInit {
    * Get all the available catalogs from the CatalogService and
    * load them into the store.
    */
-  private loadCatalogs() {
+  private loadCatalogs(): void {
     this.catalogService.loadCatalogs().subscribe((catalogs: Catalog[]) => {
       this.catalogStore.clear();
       this.catalogStore.load(
@@ -103,7 +104,7 @@ export class AppCatalogComponent implements OnInit {
    * load them into the store.
    * @param catalog Selected catalog
    */
-  private loadCatalogItems(catalog: Catalog) {
+  private loadCatalogItems(catalog: Catalog): void {
     this.catalogService
       .loadCatalogItems(catalog)
       .subscribe((items: CatalogItem[]) => {

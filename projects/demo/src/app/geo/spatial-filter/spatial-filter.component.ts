@@ -19,8 +19,10 @@ import {
   Layer,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   MeasureLengthUnit,
   OSMDataSource,
+  OSMDataSourceOptions,
   QueryableDataSource,
   QueryableDataSourceOptions,
   SpatialFilterItemType,
@@ -55,7 +57,7 @@ import { take, takeUntil, tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -63,7 +65,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
@@ -114,7 +116,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
+      } as OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -127,7 +129,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     for (const layer of this.map.layers) {
       if (
         layer.title &&
@@ -142,7 +144,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
@@ -316,7 +318,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             !buffer
           ) {
             if (!layer.title?.startsWith('Zone')) {
-              const index = this.layers.indexOf(layer);
+              const index: number = this.layers.indexOf(layer);
               this.layers.splice(index, 1);
             }
             return;
@@ -335,7 +337,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               this.activeLayers.length === 1 &&
               layer.title?.startsWith('Zone')
             ) {
-              const index = this.layers.indexOf(layer);
+              const index: number = this.layers.indexOf(layer);
               this.layers.splice(index, 1);
               this.map.removeLayer(layer);
             }

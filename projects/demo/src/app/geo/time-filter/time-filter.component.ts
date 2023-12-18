@@ -5,6 +5,7 @@ import {
   IgoMap,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
   TimeFilterStyle,
@@ -19,7 +20,7 @@ import {
   styleUrls: ['./time-filter.component.scss']
 })
 export class AppTimeFilterComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -27,7 +28,7 @@ export class AppTimeFilterComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
@@ -51,7 +52,6 @@ export class AppTimeFilterComponent {
         );
       });
 
-    // Couche Embâcles
     const datasourceYear: TimeFilterableDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',

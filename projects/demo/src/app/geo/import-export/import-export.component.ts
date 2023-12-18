@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { WorkspaceStore } from '@igo2/common';
-import { IgoMap, ImageLayer, LayerOptions, LayerService } from '@igo2/geo';
+import { IgoMap, ImageLayer, LayerOptions, LayerService, MapViewOptions } from '@igo2/geo';
 
 @Component({
   selector: 'app-import-export',
@@ -9,7 +9,7 @@ import { IgoMap, ImageLayer, LayerOptions, LayerService } from '@igo2/geo';
   styleUrls: ['./import-export.component.scss']
 })
 export class AppImportExportComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -17,12 +17,12 @@ export class AppImportExportComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9
   };
 
-  public store = new WorkspaceStore([]);
+  public store: WorkspaceStore = new WorkspaceStore([]);
 
   constructor(
     private layerService: LayerService

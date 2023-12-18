@@ -6,7 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { ActionStore, EntityStore } from '@igo2/common';
+import { Action, ActionStore, EntityStore } from '@igo2/common';
 import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
@@ -18,11 +18,13 @@ import {
   LayerOptions,
   LayerService,
   MapService,
+  MapViewOptions,
   Research,
   SearchResult
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 import { Coordinate } from 'ol/coordinate';
+import { Pixel } from 'ol/pixel';
 
 import * as proj from 'ol/proj';
 
@@ -34,13 +36,13 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./search.component.scss']
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
-  public store = new ActionStore([]);
+  public store: ActionStore = new ActionStore([]);
 
   public igoSearchPointerSummaryEnabled: boolean = false;
 
   public termSplitter: string = '|';
 
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     overlay: true,
     controls: {
       attribution: {
@@ -49,7 +51,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
@@ -61,7 +63,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public mapProjection: string;
   public term: string;
 
-  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+  public settingsChange$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
@@ -100,35 +102,35 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       ) as boolean) || false;
   }
 
-  onPointerSummaryStatusChange(value) {
+  onPointerSummaryStatusChange(value: boolean): void {
     this.igoSearchPointerSummaryEnabled = value;
   }
 
-  onSearchTermChange(term?: string) {
+  onSearchTermChange(term?: string): void {
     this.term = term;
     this.searchState.setSearchTerm(term);
-    const termWithoutHashtag = term.replace(/(#[^\s]*)/g, '').trim();
+    const termWithoutHashtag: string = term.replace(/(#[^\s]*)/g, '').trim();
     if (termWithoutHashtag.length < 2) {
       this.searchStore.clear();
       this.selectedFeature = undefined;
     }
   }
 
-  onSearch(event: { research: Research; results: SearchResult[] }) {
-    const results = event.results;
+  onSearch(event: { research: Research; results: SearchResult[] }): void {
+    const results: SearchResult[] = event.results;
     this.searchStore.state.updateAll({ focused: false, selected: false });
-    const newResults = this.searchStore.entities$.value
+    const newResults: SearchResult[] = this.searchStore.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.searchStore.updateMany(newResults);
   }
 
-  onReverseCoordsFormatStatusChange(value: boolean) {
+  onReverseCoordsFormatStatusChange(value: boolean): void {
     this.storageService.set('reverseSearchCoordsFormatEnabled', value);
     this.igoReverseSearchCoordsFormatEnabled = value;
   }
 
-  onSearchSettingsChange() {
+  onSearchSettingsChange(): void {
     this.settingsChange$.next(true);
   }
 
@@ -137,7 +139,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @internal
    * @param result A search result that could be a feature
    */
-  onResultFocus(result: SearchResult) {
+  onResultFocus(result: SearchResult): void {
     this.tryAddFeatureToMap(result);
     this.selectedFeature = (result as SearchResult<Feature>).data;
   }
@@ -146,7 +148,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(layer: SearchResult) {
+  private tryAddFeatureToMap(layer: SearchResult): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -162,7 +164,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.store.load([
       {
         id: 'coordinates',
@@ -179,29 +181,29 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         title: 'googleStreetView',
         handler: () => this.openGoogleStreetView(this.lonlat)
       }
-    ]);
+    ] as Action[]);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 
   /*
    * Remove a feature to the map overlay
    */
-  removeFeatureFromMap() {
+  removeFeatureFromMap(): void {
     this.map.searchResultsOverlay.clear();
   }
 
-  onContextMenuOpen(event: { x: number; y: number }) {
-    const position = this.mapPosition(event);
-    const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
+  onContextMenuOpen(event: {x: number, y: number}): void {
+    const position: Pixel = this.mapPosition(event);
+    const coord: Coordinate = this.mapService.getMap().ol.getCoordinateFromPixel(position);
     this.mapProjection = this.mapService.getMap().projectionCode;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
 
-  mapPosition(event: { x: number; y: number }) {
-    const contextmenuPoint = event;
+  mapPosition(event: { x: number; y: number }): Pixel {
+    const contextmenuPoint: { x: number; y: number } = event;
     contextmenuPoint.y =
       contextmenuPoint.y -
       this.mapBrowser.nativeElement.getBoundingClientRect().top +
@@ -210,11 +212,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       contextmenuPoint.x -
       this.mapBrowser.nativeElement.getBoundingClientRect().left +
       window.scrollX;
-    const position = [contextmenuPoint.x, contextmenuPoint.y];
+    const position: Pixel = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
   }
 
-  searchCoordinate(lonlat: Coordinate) {
+  searchCoordinate(lonlat: Coordinate): void {
     this.searchStore.clear();
     this.term = !this.igoReverseSearchCoordsFormatEnabled
       ? lonlat.map((c: number) => c.toFixed(6)).join(', ')
@@ -224,11 +226,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           .join(', ');
   }
 
-  openGoogleMaps(lonlat: Coordinate) {
+  openGoogleMaps(lonlat: Coordinate): void {
     window.open(GoogleLinks.getGoogleMapsCoordLink(lonlat[0], lonlat[1]));
   }
 
-  openGoogleStreetView(lonlat: Coordinate) {
+  openGoogleStreetView(lonlat: Coordinate): void {
     window.open(GoogleLinks.getGoogleStreetViewLink(lonlat[0], lonlat[1]));
   }
 }

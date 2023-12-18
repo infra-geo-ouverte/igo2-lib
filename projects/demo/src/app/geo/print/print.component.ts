@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { IgoMap, ImageLayer, ImageLayerOptions, LayerService, TileLayer, TileLayerOptions } from '@igo2/geo';
+import { IgoMap, ImageLayer, ImageLayerOptions, LayerService, MapViewOptions, TileLayer, TileLayerOptions } from '@igo2/geo';
 
 @Component({
   selector: 'app-print',
@@ -8,7 +8,7 @@ import { IgoMap, ImageLayer, ImageLayerOptions, LayerService, TileLayer, TileLay
   styleUrls: ['./print.component.scss']
 })
 export class AppPrintComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: false
@@ -16,7 +16,7 @@ export class AppPrintComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9
   };
@@ -24,7 +24,6 @@ export class AppPrintComponent {
   constructor(
     private layerService: LayerService
   ) {
-    // Fond
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
@@ -38,7 +37,6 @@ export class AppPrintComponent {
       } as TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
-    // Couche Embâcles
     this.layerService
       .createAsyncLayer({
         title: 'Embâcles',
@@ -54,7 +52,6 @@ export class AppPrintComponent {
       } as ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche radar météo
     this.layerService
       .createAsyncLayer({
         title: 'Radar météo',
@@ -70,7 +67,6 @@ export class AppPrintComponent {
       } as ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Aéroports
     this.layerService
       .createAsyncLayer({
         title: 'Aéroports',

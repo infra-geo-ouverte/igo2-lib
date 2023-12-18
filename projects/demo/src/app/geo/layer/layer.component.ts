@@ -1,15 +1,21 @@
 import { Component } from '@angular/core';
 
 import {
-  DataSource,
   DataSourceService,
+  FeatureDataSource,
   IgoMap,
-  Layer,
+  ImageLayer,
+  ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   MetadataLayerOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
   OgcFilterableDataSourceOptions,
+  VectorLayerOptions,
   WFSDataSourceOptions,
+  WMSDataSource,
   WMSDataSourceOptions
 } from '@igo2/geo';
 
@@ -19,7 +25,7 @@ import {
   styleUrls: ['./layer.component.scss']
 })
 export class AppLayerComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -27,7 +33,7 @@ export class AppLayerComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     maxLayerZoomExtent: [-11000000, 4500000, -4500000, 10000000],
     zoom: 7
@@ -37,23 +43,20 @@ export class AppLayerComponent {
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
-    // Couche OSM
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             baseLayer: true,
             visible: true,
             source: dataSource
-          })
+          } as LayerOptions)
         );
       });
-
-    //Couche WFS (Custom EPSG)
     interface WFSoptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
@@ -86,8 +89,8 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasourceCustomEPSG)
-      .subscribe((dataSource: DataSource) => {
-        const layerOptions: LayerOptions = {
+      .subscribe((dataSource: FeatureDataSource) => {
+        const layerOptions: VectorLayerOptions = {
           title: 'WFS (Custom EPSG)',
           visible: true,
           source: dataSource,
@@ -96,7 +99,6 @@ export class AppLayerComponent {
         this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
 
-    // Couche Parc routiers
     this.layerService
       .createAsyncLayer({
         title: 'Parcs routiers',
@@ -108,10 +110,9 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Réseau routier
     this.layerService
       .createAsyncLayer({
         title: 'Réseau routier',
@@ -124,10 +125,9 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Lieux habités
     this.layerService
       .createAsyncLayer({
         title: 'Lieux habités',
@@ -140,10 +140,9 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Distribution écoforestière
     this.layerService
       .createAsyncLayer({
         title: 'Distribution écoforestière',
@@ -156,10 +155,9 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Avertissements routiers
     this.layerService
       .createAsyncLayer({
         title: 'Avertissements routiers',
@@ -172,10 +170,9 @@ export class AppLayerComponent {
             VERSION: '1.3.0'
           }
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche Embâcles
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
@@ -192,7 +189,7 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource: DataSource) => {
+      .subscribe((dataSource: WMSDataSource) => {
         const layerOptions: LayerOptionsWithMetadata = {
           title: 'Embâcles',
           source: dataSource,

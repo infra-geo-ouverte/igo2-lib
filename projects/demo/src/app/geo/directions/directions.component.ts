@@ -6,6 +6,7 @@ import {
   LayerOptions,
   LayerService,
   MapService,
+  MapViewOptions,
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
@@ -20,7 +21,7 @@ import { Subject } from 'rxjs';
   styleUrls: ['./directions.component.scss']
 })
 export class AppDirectionsComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -28,7 +29,7 @@ export class AppDirectionsComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9,
     geolocate: false

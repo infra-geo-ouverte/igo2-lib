@@ -1,14 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EntityTableTemplate } from '@igo2/common';
 
 import {
-  DataSource,
   DataSourceService,
+  FeatureDataSource,
+  FeatureDataSourceOptions,
   FeatureMotion,
   FeatureStore,
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
+  LayerOptions,
   LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
   VectorLayer
 } from '@igo2/geo';
 
@@ -18,7 +24,7 @@ import {
   styleUrls: ['./feature.component.scss']
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -26,12 +32,12 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
 
-  public tableTemplate = {
+  public tableTemplate: EntityTableTemplate = {
     selection: true,
     selectMany: true,
     sort: true,
@@ -51,18 +57,18 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     ]
   };
 
-  public store = new FeatureStore([], { map: this.map });
+  public store: FeatureStore = new FeatureStore([], { map: this.map });
 
   constructor(
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
-    const loadingStrategy = new FeatureStoreLoadingStrategy({});
+  ngOnInit(): void {
+    const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({});
     this.store.addStrategy(loadingStrategy);
 
-    const selectionStrategy = new FeatureStoreSelectionStrategy({
+    const selectionStrategy: FeatureStoreSelectionStrategy = new FeatureStoreSelectionStrategy({
       map: this.map,
       motion: FeatureMotion.Default
     });
@@ -151,28 +157,27 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       }
     ]);
 
-    // Couche OSM
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             baseLayer: true,
             visible: true,
             source: dataSource
-          })
+          } as LayerOptions)
         );
       });
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
-      })
-      .subscribe((dataSource: DataSource) => {
-        const layer = this.layerService.createLayer({
+      } as FeatureDataSourceOptions)
+      .subscribe((dataSource: FeatureDataSource) => {
+        const layer: VectorLayer = this.layerService.createLayer({
           title: 'Vector Layer',
           source: dataSource,
           animation: {
@@ -192,7 +197,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 }

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { Media, MediaService } from '@igo2/core';
 import {
   DataSourceService,
   IgoMap,
-  Layer,
   LayerService,
+  MapViewOptions,
+  TileLayer,
+  TileLayerOptions,
   VectorLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions
@@ -17,11 +19,9 @@ import {
   styleUrls: ['./hover.component.scss']
 })
 export class AppHoverComponent {
-  public selected;
-  public pointerCoord;
   public pointerCoordDelay: number = 0;
   public pointerHoverFeatureDelay: number = 0;
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -30,17 +30,17 @@ export class AppHoverComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 8,
     projection: 'EPSG:3857'
   };
 
-  get media() {
+  get media(): Media {
     return this.mediaService.getMedia();
   }
 
-  get isTouchScreen() {
+  get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
 
@@ -49,7 +49,6 @@ export class AppHoverComponent {
     private layerService: LayerService,
     private mediaService: MediaService
   ) {
-    // Fond
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
@@ -59,12 +58,11 @@ export class AppHoverComponent {
           type: 'xyz',
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png'
         }
-      })
-      .subscribe((layer: Layer) => this.map.addLayer(layer));
+      } as TileLayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
     interface WFSDataOptions extends WFSDataSourceOptions {}
 
-    // Casernes
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',

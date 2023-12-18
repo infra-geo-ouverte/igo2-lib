@@ -7,6 +7,7 @@ import {
   ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
   OgcFilterDuringOptions,
@@ -28,7 +29,7 @@ import { Circle, Fill, Stroke, Style } from 'ol/style';
   styleUrls: ['./ogc-filter.component.scss']
 })
 export class AppOgcFilterComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -36,7 +37,7 @@ export class AppOgcFilterComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
@@ -45,7 +46,6 @@ export class AppOgcFilterComponent {
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
-    // Fond
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'

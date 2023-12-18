@@ -12,6 +12,7 @@ import {
   ImageLayerOptions,
   LayerOptions,
   LayerService,
+  MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
   QueryFormat,
@@ -38,9 +39,9 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./query.component.scss']
 })
 export class AppQueryComponent {
-  public features$ = new BehaviorSubject<Feature[]>([]);
+  public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>([]);
 
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -48,7 +49,7 @@ export class AppQueryComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
@@ -72,7 +73,6 @@ export class AppQueryComponent {
         );
       });
 
-    // Couche Réseau routier
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
@@ -92,7 +92,6 @@ export class AppQueryComponent {
         );
       });
 
-    // Couche Aéroports
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
@@ -114,7 +113,6 @@ export class AppQueryComponent {
         );
       });
 
-    // Couche Municipalités
     this.layerService
       .createAsyncLayer({
         title: 'WMS with different query url',
@@ -135,10 +133,9 @@ export class AppQueryComponent {
             version: '1.3.0'
           }
         }
-      } as any)
+      } as ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
-    // Couche vectorielle
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector',
@@ -158,7 +155,6 @@ export class AppQueryComponent {
         this.addFeatures(dataSource);
       });
 
-    // Couche Vector Tile
     this.layerService
       .createAsyncLayer({
         title: 'Vector tile with different query url',
@@ -214,7 +210,7 @@ export class AppQueryComponent {
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
   }
 
-  handleQueryResults(results: any): void{
+  handleQueryResults(results: any): void {
     const features: Feature[] = results.features;
     if (features.length && features[0]) {
       this.features$.next(features);

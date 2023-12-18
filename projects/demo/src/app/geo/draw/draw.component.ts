@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 
 import {
-  DataSource,
   DataSourceService,
   FeatureStore,
   FeatureWithDraw,
   IgoMap,
+  LayerOptions,
   LayerService,
-  MapService
+  MapService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -16,7 +19,7 @@ import {
   styleUrls: ['./draw.component.scss']
 })
 export class AppDrawComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -25,7 +28,7 @@ export class AppDrawComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6,
     projection: 'EPSG:3857'
@@ -42,15 +45,15 @@ export class AppDrawComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource: DataSource) => {
+      } as OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
             source: dataSource,
             baseLayer: true,
             visible: true
-          })
+          } as LayerOptions)
         );
       });
   }
