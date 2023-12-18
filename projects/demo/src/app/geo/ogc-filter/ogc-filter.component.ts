@@ -12,7 +12,6 @@ import {
   OgcFilterDuringOptions,
   OgcFilterOperatorType,
   OgcFilterableDataSourceOptions,
-  VectorLayer,
   VectorLayerOptions,
   WFSDataSource,
   WFSDataSourceOptions,
