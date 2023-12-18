@@ -11,10 +11,16 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-action',
   templateUrl: './action.component.html',
-  styleUrls: ['./action.component.scss']
+  styleUrls: ['./action.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoActionbarModule]
 })
 export class AppActionComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);

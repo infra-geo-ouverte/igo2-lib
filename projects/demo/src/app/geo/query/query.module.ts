@@ -13,7 +13,6 @@ import { AppQueryRoutingModule } from './query-routing.module';
 import { AppQueryComponent } from './query.component';
 
 @NgModule({
-  declarations: [AppQueryComponent],
   imports: [
     AppQueryRoutingModule,
     SharedModule,
@@ -21,7 +20,8 @@ import { AppQueryComponent } from './query.component';
     IgoMapModule,
     IgoOverlayModule,
     IgoQueryModule,
-    IgoFeatureModule
+    IgoFeatureModule,
+    AppQueryComponent
   ],
   exports: [AppQueryComponent]
 })

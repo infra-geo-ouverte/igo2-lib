@@ -10,10 +10,16 @@ import {
   WFSDataSourceOptions
 } from '@igo2/geo';
 
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-hover',
   templateUrl: './hover.component.html',
-  styleUrls: ['./hover.component.scss']
+  styleUrls: ['./hover.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppHoverComponent {
   public selected;

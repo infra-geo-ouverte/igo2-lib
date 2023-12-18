@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MonitoringComponent } from './monitoring.component';
 import { MONITORING_OPTIONS } from '@igo2/core';
+
 import { MOCK_MONITORING_OPTIONS } from 'packages/core/src/lib/monitoring/__mocks__/monitoring-mock';
+
+import { MonitoringComponent } from './monitoring.component';
 
 describe('MonitoringComponent', () => {
   let component: MonitoringComponent;
@@ -10,7 +12,7 @@ describe('MonitoringComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [MonitoringComponent],
+      imports: [MonitoringComponent],
       providers: [
         { provide: MONITORING_OPTIONS, useValue: MOCK_MONITORING_OPTIONS }
       ]

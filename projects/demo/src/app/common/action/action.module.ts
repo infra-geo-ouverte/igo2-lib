@@ -7,12 +7,12 @@ import { AppActionRoutingModule } from './action-routing.module';
 import { AppActionComponent } from './action.component';
 
 @NgModule({
-  declarations: [AppActionComponent],
   imports: [
     SharedModule,
     AppActionRoutingModule,
     IgoActionModule,
-    IgoContextMenuModule
+    IgoContextMenuModule,
+    AppActionComponent
   ],
   exports: [AppActionComponent]
 })

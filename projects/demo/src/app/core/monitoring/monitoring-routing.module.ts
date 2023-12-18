@@ -1,4 +1,5 @@
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
 import { MonitoringComponent } from './monitoring.component';
 
 const routes: Routes = [

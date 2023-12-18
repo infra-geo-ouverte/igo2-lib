@@ -12,13 +12,13 @@ import { AppDirectionsRoutingModule } from './directions-routing.module';
 import { AppDirectionsComponent } from './directions.component';
 
 @NgModule({
-  declarations: [AppDirectionsComponent],
   imports: [
     AppDirectionsRoutingModule,
     SharedModule,
     IgoMessageModule,
     IgoMapModule,
-    IgoDirectionsModule
+    IgoDirectionsModule,
+    AppDirectionsComponent
   ],
   exports: [AppDirectionsComponent],
   providers: [provideOsrmDirectionsSource()]

@@ -17,7 +17,6 @@ import { AppLegendRoutingModule } from './legend-routing.module';
 import { AppLegendComponent } from './legend.component';
 
 @NgModule({
-  declarations: [AppLegendComponent],
   imports: [
     SharedModule,
     AppLegendRoutingModule,
@@ -29,7 +28,8 @@ import { AppLegendComponent } from './legend.component';
     IgoLayerModule,
     IgoFilterModule,
     IgoMetadataModule,
-    IgoDownloadModule
+    IgoDownloadModule,
+    AppLegendComponent
   ],
   exports: [AppLegendComponent]
 })

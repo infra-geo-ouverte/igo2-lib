@@ -17,7 +17,6 @@ import { AppContextRoutingModule } from './context-routing.module';
 import { AppContextComponent } from './context.component';
 
 @NgModule({
-  declarations: [AppContextComponent],
   imports: [
     HttpClientJsonpModule,
     AppContextRoutingModule,
@@ -29,7 +28,8 @@ import { AppContextComponent } from './context.component';
     IgoOverlayModule,
     IgoQueryModule,
     IgoFeatureModule,
-    IgoContextModule
+    IgoContextModule,
+    AppContextComponent
   ],
   exports: [AppContextComponent]
 })

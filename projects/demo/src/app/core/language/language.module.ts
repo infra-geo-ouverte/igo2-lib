@@ -7,11 +7,11 @@ import { AppLanguageRoutingModule } from './language-routing.module';
 import { AppLanguageComponent } from './language.component';
 
 @NgModule({
-  declarations: [AppLanguageComponent],
   imports: [
     AppLanguageRoutingModule,
     SharedModule,
-    IgoLanguageModule.forRoot()
+    IgoLanguageModule.forRoot(),
+    AppLanguageComponent
   ],
   exports: [AppLanguageComponent]
 })

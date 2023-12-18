@@ -8,13 +8,13 @@ import { AppOgcFilterRoutingModule } from './ogc-filter-routing.module';
 import { AppOgcFilterComponent } from './ogc-filter.component';
 
 @NgModule({
-  declarations: [AppOgcFilterComponent],
   imports: [
     AppOgcFilterRoutingModule,
     SharedModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoFilterModule
+    IgoFilterModule,
+    AppOgcFilterComponent
   ],
   exports: [AppOgcFilterComponent]
 })

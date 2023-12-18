@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import { LanguageService } from '@igo2/core';
 import {
@@ -14,10 +15,23 @@ import {
 
 import { Subject } from 'rxjs';
 
+import { IgoDirectionsModule } from '../../../../../../packages/geo/src/lib/directions/directions.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-directions',
   templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss']
+  styleUrls: ['./directions.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoDirectionsModule
+  ]
 })
 export class AppDirectionsComponent {
   public map = new IgoMap({

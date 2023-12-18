@@ -7,8 +7,12 @@ import { AppHoverRoutingModule } from './hover-routing.module';
 import { AppHoverComponent } from './hover.component';
 
 @NgModule({
-  declarations: [AppHoverComponent],
-  imports: [SharedModule, AppHoverRoutingModule, IgoMapModule],
+  imports: [
+    SharedModule,
+    AppHoverRoutingModule,
+    IgoMapModule,
+    AppHoverComponent
+  ],
   exports: [AppHoverComponent]
 })
 export class AppHoverModule {}

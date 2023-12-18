@@ -1,15 +1,32 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 import { Form, FormFieldConfig, FormService } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { IgoFormGroupModule } from '../../../../../../packages/common/src/lib/form/form-group/form-group.module';
+import { IgoFormFormModule } from '../../../../../../packages/common/src/lib/form/form/form.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss']
+  styleUrls: ['./form.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    NgIf,
+    IgoFormFormModule,
+    IgoFormGroupModule,
+    MatButtonModule,
+    AsyncPipe
+  ]
 })
 export class AppFormComponent implements OnInit, OnDestroy {
   form$ = new BehaviorSubject<Form>(undefined);

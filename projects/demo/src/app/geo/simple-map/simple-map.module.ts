@@ -9,13 +9,13 @@ import { AppSimpleMapRoutingModule } from './simple-map-routing.module';
 import { AppSimpleMapComponent } from './simple-map.component';
 
 @NgModule({
-  declarations: [AppSimpleMapComponent],
   imports: [
     SharedModule,
     AppSimpleMapRoutingModule,
     MatCardModule,
     MatButtonModule,
-    IgoMapModule
+    IgoMapModule,
+    AppSimpleMapComponent
   ],
   exports: [AppSimpleMapComponent]
 })

@@ -10,14 +10,14 @@ import { AppCatalogRoutingModule } from './catalog-routing.module';
 import { AppCatalogComponent } from './catalog.component';
 
 @NgModule({
-  declarations: [AppCatalogComponent],
   imports: [
     SharedModule,
     AppCatalogRoutingModule,
     IgoConfigModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoCatalogModule
+    IgoCatalogModule,
+    AppCatalogComponent
   ],
   exports: [AppCatalogComponent],
   providers: [

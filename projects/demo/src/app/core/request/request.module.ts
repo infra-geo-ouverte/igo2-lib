@@ -8,14 +8,14 @@ import { AppRequestRoutingModule } from './request-routing.module';
 import { AppRequestComponent } from './request.component';
 
 @NgModule({
-  declarations: [AppRequestComponent],
   imports: [
     AppRequestRoutingModule,
     SharedModule,
     HttpClientModule,
     IgoLanguageModule.forRoot(),
-    IgoErrorModule.forRoot() // Only if you want register errors from http call in console
+    IgoErrorModule.forRoot(), // Only if you want register errors from http call in console
     // IgoLoggingModule.forRoot() // Only if you want register http calls in console
+    AppRequestComponent
   ],
   exports: [AppRequestComponent]
 })

@@ -7,11 +7,11 @@ import { AppEntitySelectorRoutingModule } from './entity-selector-routing.module
 import { AppEntitySelectorComponent } from './entity-selector.component';
 
 @NgModule({
-  declarations: [AppEntitySelectorComponent],
   imports: [
     SharedModule,
     AppEntitySelectorRoutingModule,
-    IgoEntitySelectorModule
+    IgoEntitySelectorModule,
+    AppEntitySelectorComponent
   ],
   exports: [AppEntitySelectorComponent]
 })

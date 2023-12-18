@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common';
@@ -22,10 +23,31 @@ import * as olproj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { IgoOverlayModule } from '../../../../../../packages/geo/src/lib/overlay/overlay.module';
+import { IgoQueryModule } from '../../../../../../packages/geo/src/lib/query/query.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-query',
   templateUrl: './query.component.html',
-  styleUrls: ['./query.component.scss']
+  styleUrls: ['./query.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoOverlayModule,
+    IgoQueryModule,
+    IgoPanelModule,
+    NgIf,
+    NgFor,
+    IgoFeatureDetailsModule,
+    AsyncPipe
+  ]
 })
 export class AppQueryComponent {
   public features$ = new BehaviorSubject<Feature[]>([]);

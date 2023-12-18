@@ -10,7 +10,6 @@ import { ExampleSeeCodeComponent } from './example-see-code/example-see-code.com
 import { ExampleViewerComponent } from './example-viewer/example-viewer.component';
 
 @NgModule({
-  declarations: [ExampleViewerComponent, ExampleSeeCodeComponent],
   exports: [ExampleViewerComponent],
   imports: [
     CommonModule,
@@ -18,7 +17,9 @@ import { ExampleViewerComponent } from './example-viewer/example-viewer.componen
     MatCardModule,
     MatDividerModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ExampleViewerComponent,
+    ExampleSeeCodeComponent
   ]
 })
 export class ExampleModule {}

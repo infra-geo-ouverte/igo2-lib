@@ -8,13 +8,13 @@ import { AppTimeFilterRoutingModule } from './time-filter-routing.module';
 import { AppTimeFilterComponent } from './time-filter.component';
 
 @NgModule({
-  declarations: [AppTimeFilterComponent],
   imports: [
     AppTimeFilterRoutingModule,
     SharedModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoFilterModule
+    IgoFilterModule,
+    AppTimeFilterComponent
   ],
   exports: [AppTimeFilterComponent]
 })

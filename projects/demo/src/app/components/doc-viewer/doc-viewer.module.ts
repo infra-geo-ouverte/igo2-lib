@@ -5,8 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { DocViewerComponent } from './doc-viewer.component';
 
 @NgModule({
-  declarations: [DocViewerComponent],
   exports: [DocViewerComponent],
-  imports: [CommonModule, MatCardModule]
+  imports: [CommonModule, MatCardModule, DocViewerComponent]
 })
 export class DocViewerModule {}

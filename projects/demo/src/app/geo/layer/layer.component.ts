@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import { LanguageService } from '@igo2/core';
 import {
@@ -12,10 +13,31 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoDownloadModule } from '../../../../../../packages/geo/src/lib/download/download.module';
+import { IgoFilterModule } from '../../../../../../packages/geo/src/lib/filter/filter.module';
+import { IgoLayerModule } from '../../../../../../packages/geo/src/lib/layer/layer.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { IgoMetadataModule } from '../../../../../../packages/geo/src/lib/metadata/metadata.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-layer',
   templateUrl: './layer.component.html',
-  styleUrls: ['./layer.component.scss']
+  styleUrls: ['./layer.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoLayerModule,
+    IgoMetadataModule,
+    IgoDownloadModule,
+    IgoFilterModule
+  ]
 })
 export class AppLayerComponent {
   public map = new IgoMap({

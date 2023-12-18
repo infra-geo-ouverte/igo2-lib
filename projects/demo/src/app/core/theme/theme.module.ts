@@ -6,8 +6,12 @@ import { AppRequestThemeModule } from './theme-routing.module';
 import { AppThemeComponent } from './theme.component';
 
 @NgModule({
-  declarations: [AppThemeComponent],
-  imports: [AppRequestThemeModule, SharedModule, MatSelectModule],
+  imports: [
+    AppRequestThemeModule,
+    SharedModule,
+    MatSelectModule,
+    AppThemeComponent
+  ],
   exports: [AppThemeComponent]
 })
 export class AppThemeModule {}

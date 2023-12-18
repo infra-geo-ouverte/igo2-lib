@@ -12,17 +12,15 @@ import {
 } from './tool.component';
 
 @NgModule({
-  declarations: [
-    AppToolComponent,
-    AppSalutationToolComponent,
-    AppAboutToolComponent
-  ],
   imports: [
     SharedModule,
     AppToolRoutingModule,
     IgoLanguageModule,
     IgoPanelModule,
-    IgoToolModule.forRoot()
+    IgoToolModule.forRoot(),
+    AppToolComponent,
+    AppSalutationToolComponent,
+    AppAboutToolComponent
   ],
   exports: [AppToolComponent]
 })

@@ -8,13 +8,13 @@ import { AppPrintRoutingModule } from './print-routing.module';
 import { AppPrintComponent } from './print.component';
 
 @NgModule({
-  declarations: [AppPrintComponent],
   imports: [
     SharedModule,
     AppPrintRoutingModule,
     IgoMessageModule,
     IgoMapModule,
-    IgoPrintModule
+    IgoPrintModule,
+    AppPrintComponent
   ],
   exports: [AppPrintComponent]
 })

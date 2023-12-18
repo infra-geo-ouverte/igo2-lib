@@ -7,8 +7,12 @@ import { AppAuthFormRoutingModule } from './auth-form-routing.module';
 import { AppAuthFormComponent } from './auth-form.component';
 
 @NgModule({
-  declarations: [AppAuthFormComponent],
-  imports: [AppAuthFormRoutingModule, SharedModule, IgoAuthModule.forRoot()],
+  imports: [
+    AppAuthFormRoutingModule,
+    SharedModule,
+    IgoAuthModule.forRoot(),
+    AppAuthFormComponent
+  ],
   exports: [AppAuthFormComponent]
 })
 export class AppAuthFormModule {}

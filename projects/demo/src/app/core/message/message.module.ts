@@ -7,8 +7,12 @@ import { AppMessageRoutingModule } from './message-routing.module';
 import { AppMessageComponent } from './message.component';
 
 @NgModule({
-  declarations: [AppMessageComponent],
-  imports: [AppMessageRoutingModule, SharedModule, IgoMessageModule.forRoot()],
+  imports: [
+    AppMessageRoutingModule,
+    SharedModule,
+    IgoMessageModule.forRoot(),
+    AppMessageComponent
+  ],
   exports: [AppMessageComponent]
 })
 export class AppMessageModule {}

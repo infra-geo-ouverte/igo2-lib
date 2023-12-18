@@ -8,14 +8,14 @@ import { AppFeatureRoutingModule } from './feature-routing.module';
 import { AppFeatureComponent } from './feature.component';
 
 @NgModule({
-  declarations: [AppFeatureComponent],
   imports: [
     SharedModule,
     AppFeatureRoutingModule,
     IgoPanelModule,
     IgoEntityTableModule,
     IgoMapModule,
-    IgoFeatureModule
+    IgoFeatureModule,
+    AppFeatureComponent
   ],
   exports: [AppFeatureComponent]
 })

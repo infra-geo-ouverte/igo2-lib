@@ -10,10 +10,22 @@ import {
   MapService
 } from '@igo2/geo';
 
+import { IgoDrawModule } from '../../../../../../packages/geo/src/lib/draw/draw/draw.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-draw',
   templateUrl: './draw.component.html',
-  styleUrls: ['./draw.component.scss']
+  styleUrls: ['./draw.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoDrawModule
+  ]
 })
 export class AppDrawComponent {
   public map = new IgoMap({

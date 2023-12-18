@@ -10,8 +10,7 @@ import { MonitoringRoutingModule } from './monitoring-routing.module';
 import { MonitoringComponent } from './monitoring.component';
 
 @NgModule({
-  declarations: [MonitoringComponent],
-  imports: [SharedModule, MonitoringRoutingModule],
+  imports: [SharedModule, MonitoringRoutingModule, MonitoringComponent],
   providers: [
     ...provideMonitoring(environment.igo.monitoring),
     ...provideAuthUserMonitoring(environment.igo.monitoring)

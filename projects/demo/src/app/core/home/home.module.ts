@@ -7,8 +7,12 @@ import { AppHomeRoutingModule } from './home-routing.module';
 import { AppHomeComponent } from './home.component';
 
 @NgModule({
-  declarations: [AppHomeComponent],
-  imports: [AppHomeRoutingModule, IgoInteractiveTourModule, SharedModule],
+  imports: [
+    AppHomeRoutingModule,
+    IgoInteractiveTourModule,
+    SharedModule,
+    AppHomeComponent
+  ],
   exports: [AppHomeComponent]
 })
 export class AppHomeModule {}

@@ -12,10 +12,22 @@ import {
   VectorLayer
 } from '@igo2/geo';
 
+import { IgoEntityTableModule } from '../../../../../../packages/common/src/lib/entity/entity-table/entity-table.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-feature',
   templateUrl: './feature.component.html',
-  styleUrls: ['./feature.component.scss']
+  styleUrls: ['./feature.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoEntityTableModule
+  ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
   public map = new IgoMap({

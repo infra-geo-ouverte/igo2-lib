@@ -15,7 +15,6 @@ import { AppDialogRoutingModule } from './dialog-routing.module';
 import { AppDialogComponent } from './dialog.component';
 
 @NgModule({
-  declarations: [AppDialogComponent],
   imports: [
     SharedModule,
     AppDialogRoutingModule,
@@ -25,7 +24,8 @@ import { AppDialogComponent } from './dialog.component';
     IgoJsonDialogModule,
     MatButtonModule,
     IgoLanguageModule.forRoot(),
-    MatDividerModule
+    MatDividerModule,
+    AppDialogComponent
   ],
   exports: [AppDialogComponent]
 })

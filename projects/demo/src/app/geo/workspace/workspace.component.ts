@@ -1,4 +1,6 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
@@ -21,10 +23,33 @@ import { WorkspaceState } from '@igo2/integration';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
+import { IgoEntityTablePaginatorModule } from '../../../../../../packages/common/src/lib/entity/entity-table-paginator/entity-table-paginator.module';
+import { IgoEntityTableModule } from '../../../../../../packages/common/src/lib/entity/entity-table/entity-table.module';
+import { IgoWorkspaceSelectorModule } from '../../../../../../packages/common/src/lib/workspace/workspace-selector/workspace-selector.module';
+import { IgoWorkspaceWidgetOutletModule } from '../../../../../../packages/common/src/lib/workspace/workspace-widget-outlet/workspace-widget-outlet.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
-  styleUrls: ['./workspace.component.scss']
+  styleUrls: ['./workspace.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoWorkspaceSelectorModule,
+    NgIf,
+    IgoEntityTablePaginatorModule,
+    IgoActionbarModule,
+    IgoEntityTableModule,
+    MatCardModule,
+    IgoWorkspaceWidgetOutletModule,
+    AsyncPipe
+  ]
 })
 export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;

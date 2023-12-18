@@ -7,8 +7,13 @@ import { AppDrawRoutingModule } from './draw-routing.module';
 import { AppDrawComponent } from './draw.component';
 
 @NgModule({
-  declarations: [AppDrawComponent],
-  imports: [AppDrawRoutingModule, SharedModule, IgoMapModule, IgoDrawModule],
+  imports: [
+    AppDrawRoutingModule,
+    SharedModule,
+    IgoMapModule,
+    IgoDrawModule,
+    AppDrawComponent
+  ],
   exports: [AppDrawComponent]
 })
 export class AppDrawModule {}

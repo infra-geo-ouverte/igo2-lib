@@ -11,15 +11,13 @@ import {
 } from './dynamic-component.component';
 
 @NgModule({
-  declarations: [
-    AppSalutationComponent,
-    AppDynamicComponentComponent,
-    AppExplanationComponent
-  ],
   imports: [
     SharedModule,
     AppDynamicComponentRoutingModule,
-    IgoDynamicComponentModule
+    IgoDynamicComponentModule,
+    AppSalutationComponent,
+    AppDynamicComponentComponent,
+    AppExplanationComponent
   ],
   exports: [AppDynamicComponentComponent]
 })

@@ -64,7 +64,7 @@ export const environment: EnvironmentOptions = {
     monitoring: {
       provider: 'sentry',
       dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
-      identifyUser: true,
+      identifyUser: true
     },
     searchSources: {
       storedqueriesreverse: { enabled: false },

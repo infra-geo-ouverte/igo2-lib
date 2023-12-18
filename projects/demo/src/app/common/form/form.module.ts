@@ -7,8 +7,12 @@ import { AppFormRoutingModule } from './form-routing.module';
 import { AppFormComponent } from './form.component';
 
 @NgModule({
-  declarations: [AppFormComponent],
-  imports: [SharedModule, AppFormRoutingModule, IgoFormModule],
+  imports: [
+    SharedModule,
+    AppFormRoutingModule,
+    IgoFormModule,
+    AppFormComponent
+  ],
   exports: [AppFormComponent]
 })
 export class AppFormModule {}

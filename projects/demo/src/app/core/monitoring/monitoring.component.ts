@@ -1,13 +1,19 @@
 import { JsonPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 import { AnyMonitoringOptions, MONITORING_OPTIONS } from '@igo2/core';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-monitoring',
   templateUrl: './monitoring.component.html',
   styleUrls: ['./monitoring.component.scss'],
-  providers: [JsonPipe]
+  providers: [JsonPipe],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
 })
 export class MonitoringComponent {
   exampleModuleCode: string = EXAMPLE_MODULE_PROVIDER;

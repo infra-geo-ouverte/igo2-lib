@@ -11,10 +11,26 @@ import {
   MapService
 } from '@igo2/geo';
 
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoCatalogBrowserModule } from '../../../../../../packages/geo/src/lib/catalog/catalog-browser/catalog-browser.module';
+import { IgoCatalogLibraryModule } from '../../../../../../packages/geo/src/lib/catalog/catalog-library/catalog-library.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['./catalog.component.scss']
+  styleUrls: ['./catalog.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoCatalogLibraryModule,
+    IgoCatalogBrowserModule
+  ]
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;

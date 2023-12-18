@@ -5,8 +5,7 @@ import { AppMediaRoutingModule } from './media-routing.module';
 import { AppMediaComponent } from './media.component';
 
 @NgModule({
-  declarations: [AppMediaComponent],
-  imports: [AppMediaRoutingModule, SharedModule],
+  imports: [AppMediaRoutingModule, SharedModule, AppMediaComponent],
   exports: [AppMediaComponent]
 })
 export class AppMediaModule {}

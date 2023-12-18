@@ -9,10 +9,22 @@ import {
   LayerService
 } from '@igo2/geo';
 
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { IgoMeasurerModule } from '../../../../../../packages/geo/src/lib/measure/measurer/measurer.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-measure',
   templateUrl: './measure.component.html',
-  styleUrls: ['./measure.component.scss']
+  styleUrls: ['./measure.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoMeasurerModule
+  ]
 })
 export class AppMeasureComponent {
   public map = new IgoMap({

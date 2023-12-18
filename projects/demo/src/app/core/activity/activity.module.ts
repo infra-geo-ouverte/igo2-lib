@@ -8,12 +8,12 @@ import { AppActivityRoutingModule } from './activity-routing.module';
 import { AppActivityComponent } from './activity.component';
 
 @NgModule({
-  declarations: [AppActivityComponent],
   imports: [
     AppActivityRoutingModule,
     SharedModule,
-    IgoActivityModule.forRoot(), // Only if you want register http calls
-    IgoSpinnerModule
+    IgoActivityModule.forRoot(),
+    IgoSpinnerModule,
+    AppActivityComponent
   ],
   exports: [AppActivityComponent]
 })

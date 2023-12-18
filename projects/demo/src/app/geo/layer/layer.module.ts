@@ -17,7 +17,6 @@ import { AppLayerRoutingModule } from './layer-routing.module';
 import { AppLayerComponent } from './layer.component';
 
 @NgModule({
-  declarations: [AppLayerComponent],
   imports: [
     SharedModule,
     AppLayerRoutingModule,
@@ -29,7 +28,8 @@ import { AppLayerComponent } from './layer.component';
     IgoLayerModule,
     IgoFilterModule,
     IgoMetadataModule,
-    IgoDownloadModule
+    IgoDownloadModule,
+    AppLayerComponent
   ],
   exports: [AppLayerComponent]
 })

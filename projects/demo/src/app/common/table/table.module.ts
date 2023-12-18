@@ -7,8 +7,12 @@ import { AppTableRoutingModule } from './table-routing.module';
 import { AppTableComponent } from './table.component';
 
 @NgModule({
-  declarations: [AppTableComponent],
-  imports: [SharedModule, AppTableRoutingModule, IgoTableModule],
+  imports: [
+    SharedModule,
+    AppTableRoutingModule,
+    IgoTableModule,
+    AppTableComponent
+  ],
   exports: [AppTableComponent]
 })
 export class AppTableModule {}

@@ -15,7 +15,6 @@ import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 
 @NgModule({
-  declarations: [AppSpatialFilterComponent],
   imports: [
     AppSpatialFilterRoutingModule,
     SharedModule,
@@ -26,7 +25,8 @@ import { AppSpatialFilterComponent } from './spatial-filter.component';
     IgoFeatureModule,
     IgoFeatureDetailsModule,
     IgoFilterModule,
-    IgoFormModule
+    IgoFormModule,
+    AppSpatialFilterComponent
   ],
   exports: [AppSpatialFilterComponent]
 })

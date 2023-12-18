@@ -13,14 +13,14 @@ import { AppImportExportRoutingModule } from './import-export-routing.module';
 import { AppImportExportComponent } from './import-export.component';
 
 @NgModule({
-  declarations: [AppImportExportComponent],
   imports: [
     AppImportExportRoutingModule,
     SharedModule,
     IgoMessageModule,
     IgoMapModule,
     IgoStyleModule,
-    IgoImportExportModule
+    IgoImportExportModule,
+    AppImportExportComponent
   ],
   exports: [AppImportExportComponent],
   providers: [

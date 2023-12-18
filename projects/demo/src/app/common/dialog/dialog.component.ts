@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 import {
   Choice,
@@ -13,10 +15,20 @@ import {
 
 import { SelectValueDialogType } from 'packages/common/src/lib/select-value-dialog/select-value-dialog.enums';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss']
+  styleUrls: ['./dialog.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatButtonModule,
+    MatDividerModule
+  ]
 })
 export class AppDialogComponent {
   constructor(

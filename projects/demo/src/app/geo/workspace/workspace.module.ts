@@ -13,7 +13,6 @@ import { AppWorkspaceRoutingModule } from './workspace-routing.module';
 import { AppWorkspaceComponent } from './workspace.component';
 
 @NgModule({
-  declarations: [AppWorkspaceComponent],
   imports: [
     SharedModule,
     AppWorkspaceRoutingModule,
@@ -22,7 +21,8 @@ import { AppWorkspaceComponent } from './workspace.component';
     IgoWorkspaceModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoGeoWorkspaceModule
+    IgoGeoWorkspaceModule,
+    AppWorkspaceComponent
   ],
   exports: [AppWorkspaceComponent]
 })

@@ -10,12 +10,12 @@ import { AppEntityTableRoutingModule } from './entity-table-routing.module';
 import { AppEntityTableComponent } from './entity-table.component';
 
 @NgModule({
-  declarations: [AppEntityTableComponent],
   imports: [
     AppEntityTableRoutingModule,
     SharedModule,
     IgoEntityTableModule,
-    IgoEntityTablePaginatorModule
+    IgoEntityTablePaginatorModule,
+    AppEntityTableComponent
   ],
   exports: [AppEntityTableComponent]
 })

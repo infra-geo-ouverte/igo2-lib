@@ -27,7 +27,6 @@ import { AppSearchRoutingModule } from './search-routing.module';
 import { AppSearchComponent } from './search.component';
 
 @NgModule({
-  declarations: [AppSearchComponent],
   imports: [
     SharedModule,
     AppSearchRoutingModule,
@@ -38,7 +37,8 @@ import { AppSearchComponent } from './search.component';
     IgoAppSearchModule,
     IgoActionbarModule,
     IgoContextMenuModule,
-    IgoFeatureModule
+    IgoFeatureModule,
+    AppSearchComponent
   ],
   exports: [AppSearchComponent],
   providers: [

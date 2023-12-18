@@ -12,13 +12,14 @@ import {
 } from './widget.component';
 
 @NgModule({
-  declarations: [AppSalutationWidgetComponent, AppWidgetComponent],
   imports: [
     SharedModule,
     AppWidgetRoutingModule,
     MatButtonModule,
     MatCardModule,
-    IgoWidgetModule
+    IgoWidgetModule,
+    AppSalutationWidgetComponent,
+    AppWidgetComponent
   ],
   exports: [AppWidgetComponent]
 })

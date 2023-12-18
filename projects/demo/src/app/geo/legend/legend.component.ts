@@ -12,10 +12,24 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoLayerModule } from '../../../../../../packages/geo/src/lib/layer/layer.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-legend',
   templateUrl: './legend.component.html',
-  styleUrls: ['./legend.component.scss']
+  styleUrls: ['./legend.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoLayerModule
+  ]
 })
 export class AppLegendComponent {
   public map = new IgoMap({

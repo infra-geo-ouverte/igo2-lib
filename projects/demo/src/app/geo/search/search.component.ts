@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -27,10 +28,35 @@ import * as proj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
+import { IgoContextMenuModule } from '../../../../../../packages/common/src/lib/context-menu/context-menu.module';
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { IgoSearchBarModule } from '../../../../../../packages/geo/src/lib/search/search-bar/search-bar.module';
+import { IgoSearchResultsModule } from '../../../../../../packages/geo/src/lib/search/search-results/search-results.module';
+import { IgoSearchModule } from '../../../../../../packages/geo/src/lib/search/search.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    NgIf,
+    IgoMapModule,
+    IgoContextMenuModule,
+    IgoSearchModule,
+    IgoPanelModule,
+    IgoSearchBarModule,
+    IgoSearchResultsModule,
+    IgoFeatureDetailsModule,
+    IgoActionbarModule
+  ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);

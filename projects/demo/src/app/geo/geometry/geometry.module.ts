@@ -8,13 +8,13 @@ import { AppGeometryRoutingModule } from './geometry-routing.module';
 import { AppGeometryComponent } from './geometry.component';
 
 @NgModule({
-  declarations: [AppGeometryComponent],
   imports: [
     SharedModule,
     AppGeometryRoutingModule,
     IgoFormModule,
     IgoGeometryModule,
-    IgoMapModule
+    IgoMapModule,
+    AppGeometryComponent
   ],
   exports: [AppGeometryComponent]
 })

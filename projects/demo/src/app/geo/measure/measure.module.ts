@@ -7,12 +7,12 @@ import { AppMeasureRoutingModule } from './measure-routing.module';
 import { AppMeasureComponent } from './measure.component';
 
 @NgModule({
-  declarations: [AppMeasureComponent],
   imports: [
     AppMeasureRoutingModule,
     SharedModule,
     IgoMapModule,
-    IgoMeasureModule
+    IgoMeasureModule,
+    AppMeasureComponent
   ],
   exports: [AppMeasureComponent]
 })

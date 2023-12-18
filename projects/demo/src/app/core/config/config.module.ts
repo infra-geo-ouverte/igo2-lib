@@ -8,8 +8,12 @@ import { AppConfigRoutingModule } from './config-routing.module';
 import { AppConfigComponent } from './config.component';
 
 @NgModule({
-  declarations: [AppConfigComponent],
-  imports: [AppConfigRoutingModule, SharedModule, IgoConfigModule.forRoot()],
+  imports: [
+    AppConfigRoutingModule,
+    SharedModule,
+    IgoConfigModule.forRoot(),
+    AppConfigComponent
+  ],
   exports: [AppConfigComponent],
   providers: [
     provideConfigOptions({

@@ -1,12 +1,19 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
 import { LanguageService, MediaService } from '@igo2/core';
 import { DataSourceService, IgoMap, LayerService } from '@igo2/geo';
 
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-simple-map',
   templateUrl: './simple-map.component.html',
-  styleUrls: ['./simple-map.component.scss']
+  styleUrls: ['./simple-map.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule, NgIf]
 })
 export class AppSimpleMapComponent {
   public pointerCoord;

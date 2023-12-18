@@ -7,12 +7,12 @@ import { AppOverlayRoutingModule } from './overlay-routing.module';
 import { AppOverlayComponent } from './overlay.component';
 
 @NgModule({
-  declarations: [AppOverlayComponent],
   imports: [
     SharedModule,
     AppOverlayRoutingModule,
     IgoMapModule,
-    IgoOverlayModule
+    IgoOverlayModule,
+    AppOverlayComponent
   ],
   exports: [AppOverlayComponent]
 })

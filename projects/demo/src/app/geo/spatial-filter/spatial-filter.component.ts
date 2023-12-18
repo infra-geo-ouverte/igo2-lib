@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,6 +7,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
 import { EntityStore, EntityStoreWithStrategy } from '@igo2/common';
@@ -42,6 +44,14 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 
+import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
+import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
+import { IgoFilterModule } from '../../../../../../packages/geo/src/lib/filter/filter.module';
+import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
+import { IgoQueryModule } from '../../../../../../packages/geo/src/lib/query/query.module';
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 /**
  * Spatial Filter Type
  */
@@ -49,7 +59,20 @@ import { take, takeUntil, tap } from 'rxjs/operators';
   selector: 'app-spatial-filter',
   templateUrl: './spatial-filter.component.html',
   styleUrls: ['./spatial-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoQueryModule,
+    IgoPanelModule,
+    IgoFilterModule,
+    NgIf,
+    IgoFeatureDetailsModule,
+    AsyncPipe
+  ]
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public map = new IgoMap({
