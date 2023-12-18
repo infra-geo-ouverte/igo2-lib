@@ -22,7 +22,19 @@
         "closestFeature": "Entités à proximité"
       },
       "catalog": {
-        "library.getCatalogList": "Obtenir la liste des services du catalogue"
+        "library.getCatalogList": "Obtenir la liste des services du catalogue",
+        "csv": {
+          "rank": "Rang",
+          "layerName": "Nom de la couche",
+          "layerGroup": "Nom du groupe de couches",
+          "thematic": "Thématique",
+          "externalProvider": "Fournisseur",
+          "url": "URL (Intranet/Internet)",
+          "fileName": "Nom du fichier - Service Web",
+          "PlaniactifsContext": "Contexte/Thématique PlaniActifs",
+          "dataDescription": "Description de la donnée",
+          "documentName": "listeCatalogue.csv"
+        }
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",

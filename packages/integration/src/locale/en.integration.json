@@ -22,7 +22,19 @@
         "closestFeature": "Closest feature tool"
       },
       "catalog": {
-        "library.getCatalogList": "Get the catalog services list"
+        "library.getCatalogList": "Get the catalog services list",
+        "csv": {
+          "rank": "Rank",
+          "layerName": "Layer name",
+          "layerGroup": "Layer Group",
+          "thematic": "Thematic",
+          "externalProvider": "Provider",
+          "url": "URL (Intranet/Internet)",
+          "fileName": "File name - Web service",
+          "PlaniactifsContext": "Context/Thematic PlaniActifs",
+          "dataDescription": "Data description",
+          "documentName": "catalogList.csv"
+        }
       },
       "searchResultsTool": {
         "noResults": "No results",

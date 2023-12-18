@@ -8,10 +8,10 @@ import {
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { ContextService } from '@igo2/context';
-import { StorageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { Catalog, CatalogService } from '@igo2/geo';
 
-import { forkJoin } from 'rxjs';
+import { forkJoin, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
@@ -55,7 +55,8 @@ export class CatalogLibraryToolComponent implements OnInit {
     private catalogService: CatalogService,
     private catalogState: CatalogState,
     private toolState: ToolState,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private languageService: LanguageService
   ) {}
 
   /**
@@ -116,20 +117,38 @@ export class CatalogLibraryToolComponent implements OnInit {
     var catalogRank = 1;
     let bufferArray = [
       [
-        'rang Catalog',
-        'Nom de la couche - Catalogue',
-        'Nom du groupe de couche - Catalogue',
-        'Nom de la thématique - Catalogue',
-        'Gestionnaire du service',
-        'URL (Intranet/Internet',
-        'Nom du fichier - Service Web',
-        'Contexte/Thématique PlaniActifs',
-        'Description de la donnée'
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.rank'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.layerName'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.layerGroup'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.thematic'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.externalProvider'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.url'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.fileName'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.PlaniactifsContext'
+        ),
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.dataDescription'
+        )
       ]
     ];
     var dataArray = [];
-    this.store.entities$
-      .pipe(
+    zip([
+      this.store.entities$.pipe(
         switchMap((catalogs) => {
           return forkJoin(
             catalogs.map((ca) =>
@@ -139,112 +158,112 @@ export class CatalogLibraryToolComponent implements OnInit {
             )
           );
         })
-      )
-      .subscribe((res) => {
-        res.forEach((catalogs: Object) => {
-          var catalogsList = Object.keys(catalogs[1]).map(
-            (key) => catalogs[1][key]
-          );
-          var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
-          catalogsList.forEach((catalogItemGroup) => {
-            if (catalogItemGroup.items) {
-              catalogItemGroup.items.forEach((item: any) => {
-                dataArray = [];
-                var gestionnaire = 'MTQ';
-                if (item.externalProvider !== undefined) {
-                  if (item.externalProvider === true) gestionnaire = 'Externe';
-                }
-                const absUrl =
-                  item.options.sourceOptions.url.charAt(0) === '/'
-                    ? window.location.origin + item.options.sourceOptions.url
-                    : item.options.sourceOptions.url;
-                dataArray.push(
-                  catalogRank,
-                  item.title,
-                  catalogItemGroup.title,
-                  catalogTitle,
-                  gestionnaire,
-                  absUrl,
-                  item.options.sourceOptions.params.LAYERS,
-                  '',
-                  this.getDescription(item)
-                );
-                bufferArray.push(dataArray);
-                dataArray = [];
-                catalogRank++;
-              });
-            } else {
-              var itemGroupWMTS: any = catalogItemGroup;
-              if (!itemGroupWMTS.options) {
-                dataArray.push(
-                  Object.keys(catalogItemGroup).map(
-                    (key) => catalogItemGroup[key]
-                  )
-                );
-                bufferArray.push(dataArray);
-                dataArray = [];
-              } else {
-                dataArray = [];
-                var gestionnaire = 'MTQ';
-                if (itemGroupWMTS.externalProvider !== undefined) {
-                  if (itemGroupWMTS.externalProvider === true)
-                    gestionnaire = 'Externe';
-                }
-                dataArray.push(
-                  catalogRank,
-                  itemGroupWMTS.title,
-                  itemGroupWMTS.title,
-                  catalogTitle,
-                  gestionnaire,
-                  itemGroupWMTS.options.sourceOptions.url,
-                  itemGroupWMTS.options.sourceOptions.layer,
-                  '',
-                  this.getDescription(itemGroupWMTS)
-                );
-                bufferArray.push(dataArray);
-                dataArray = [];
-                catalogRank++;
-              }
-            }
-          });
-        });
-        this.contextService
-          .getLocalContexts()
-          .pipe(
-            switchMap((contextsList) =>
-              forkJoin(
-                contextsList.ours.map((context) =>
-                  this.contextService.getLocalContext(context.uri)
-                )
+      ),
+      this.contextService
+        .getLocalContexts()
+        .pipe(
+          switchMap((contextsList) =>
+            forkJoin(
+              contextsList.ours.map((context) =>
+                this.contextService.getLocalContext(context.uri)
               )
             )
           )
-          .subscribe((contextLayers) => {
-            for (var index in bufferArray) {
-              if (index !== '0') {
-                var contextLayersList = [];
-                for (var layerContextList of contextLayers) {
-                  layerContextList.layers.forEach((layersName) => {
-                    if (bufferArray[index][6] === layersName.id) {
-                      contextLayersList.push(layerContextList.title);
-                    }
-                  });
-                }
-                bufferArray[index][7] = contextLayersList.toString();
+        )
+    ]).subscribe((returnv) => {
+      const res = returnv[0];
+      const layersfromContexts = returnv[1];
+      res.forEach((catalogs: Object) => {
+        var catalogsList = Object.keys(catalogs[1]).map(
+          (key) => catalogs[1][key]
+        );
+        var catalogTitle = catalogs[0].title ? catalogs[0].title : null;
+        catalogsList.forEach((catalogItemGroup) => {
+          if (catalogItemGroup.items) {
+            catalogItemGroup.items.forEach((item: any) => {
+              dataArray = [];
+              var administrator = item.externalProvider ? 'Externe' : 'MTQ';
+              const absUrl =
+                item.options.sourceOptions.url.charAt(0) === '/'
+                  ? window.location.origin + item.options.sourceOptions.url
+                  : item.options.sourceOptions.url;
+              dataArray.push(
+                catalogRank,
+                item.title,
+                catalogItemGroup.title,
+                catalogTitle,
+                administrator,
+                absUrl,
+                item.options.sourceOptions.params.LAYERS,
+                '',
+                this.getDescription(item)
+              );
+              bufferArray.push(dataArray);
+              dataArray = [];
+              catalogRank++;
+            });
+          } else {
+            var itemGroupWMTS: any = catalogItemGroup;
+            if (!itemGroupWMTS.options) {
+              dataArray.push(
+                Object.keys(catalogItemGroup).map(
+                  (key) => catalogItemGroup[key]
+                )
+              );
+              bufferArray.push(dataArray);
+              dataArray = [];
+            } else {
+              dataArray = [];
+              var administrator = itemGroupWMTS.externalProvider
+                ? 'Externe'
+                : 'MTQ';
+              dataArray.push(
+                catalogRank,
+                itemGroupWMTS.title,
+                itemGroupWMTS.title,
+                catalogTitle,
+                administrator,
+                itemGroupWMTS.options.sourceOptions.url,
+                itemGroupWMTS.options.sourceOptions.layer,
+                '',
+                this.getDescription(itemGroupWMTS)
+              );
+              bufferArray.push(dataArray);
+              dataArray = [];
+              catalogRank++;
+            }
+          }
+        });
+      });
+      for (var index = 1; index < bufferArray.length; index++) {
+        var contextLayersList = [];
+        for (var layerContextList of layersfromContexts) {
+          layerContextList.layers.forEach((layersName) => {
+            if (bufferArray[index][6] === layersName.id) {
+              if (layerContextList.title !== undefined) {
+                contextLayersList.push(layerContextList.title);
               }
             }
-            let csvContent = bufferArray.map((e) => e.join(';')).join('\n');
-            var encodedUri = encodeURI(csvContent);
-            var link = document.createElement('a');
-            link.setAttribute(
-              'href',
-              'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
-            );
-            link.setAttribute('download', 'liste_couches.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
           });
-      });
+        }
+        bufferArray[index][7] = contextLayersList.toString();
+      }
+      let csvContent = bufferArray.map((e) => e.join(';')).join('\n');
+      var encodedUri = encodeURI(csvContent);
+      var exportDocument = document.createElement('a');
+      exportDocument.setAttribute(
+        'href',
+        'data:text/csv;charset=utf-8,%EF%BB%BF' + encodedUri
+      );
+      exportDocument.setAttribute(
+        'download',
+        this.languageService.translate.instant(
+          'igo.integration.catalog.csv.documentName'
+        )
+      );
+      document.body.appendChild(exportDocument);
+      exportDocument.click();
+      document.body.removeChild(exportDocument);
+    });
   }
 }
