@@ -42,7 +42,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -50,7 +50,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
   }
@@ -106,7 +106,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     };
 
     this.map.overlay.setFeatures(
-      [feature1, feature2, feature3] as Feature[],
+      [feature1, feature2, feature3] satisfies Feature[],
       FeatureMotion.None
     );
   }

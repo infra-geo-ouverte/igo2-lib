@@ -57,7 +57,7 @@ export class AppCatalogComponent implements OnInit {
         sourceOptions: {
           type: 'osm'
         }
-      } as LayerOptions)
+      } satisfies LayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.loadCatalogs();

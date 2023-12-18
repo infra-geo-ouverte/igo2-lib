@@ -10,7 +10,9 @@ import {
   MapViewOptions,
   OSMDataSource,
   OSMDataSourceOptions,
+  OgcFilterAttributeOptions,
   OgcFilterDuringOptions,
+  OgcFilterEqualToOptions,
   OgcFilterOperatorType,
   OgcFilterableDataSourceOptions,
   VectorLayerOptions,
@@ -49,7 +51,7 @@ export class AppOgcFilterComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -57,7 +59,7 @@ export class AppOgcFilterComponent {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
@@ -92,7 +94,7 @@ export class AppOgcFilterComponent {
               operator: 'PropertyIsEqualTo',
               propertyName: 'code_municipalite',
               expression: '10043'
-            },
+            } satisfies OgcFilterEqualToOptions,
             {
               operator: 'Intersects',
               geometryName: 'the_geom',
@@ -134,7 +136,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -158,7 +160,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2016-01-21T00:00:00-05:00',
           end: '2016-01-26T00:00:00-05:00'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-10T00:00:00-05:00',
@@ -185,7 +187,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -204,7 +206,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -215,8 +217,8 @@ export class AppOgcFilterComponent {
           operator: 'During',
           propertyName: 'date_observation',
           begin: '2016-01-01T04:00:00-05:00',
-          end: '2016-01-12T16:00:00-05:00'
-        } as OgcFilterDuringOptions
+          end: '2016-01-12T16:00:00-05:00',
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-14T20:00:00-05:00',
@@ -243,7 +245,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -262,7 +264,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -275,7 +277,7 @@ export class AppOgcFilterComponent {
           begin: '2016-01-01T00:00:00-05:00',
           end: '2016-03-31T00:00:00-05:00',
           displayFormat: 'MMMM'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2018-12-31T00:00:00-05:00',
@@ -302,7 +304,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -321,7 +323,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -333,12 +335,8 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2014-01-01T00:00:00-05:00',
           end: '2019-12-31T00:00:00-05:00',
-          sliderOptions: {
-            interval: 2000,
-            displayFormat: 'YY'
-          },
           displayFormat: 'YYYY'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2014-01-01T00:00:00-05:00',
       maxDate: '2019-12-31T00:00:00-05:00',
@@ -365,7 +363,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -384,7 +382,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -396,7 +394,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: 'today - 2 days', // "now" can also be used. Instead of midnight, the current time will be used
           end: 'today' // "now" can also be used. Instead of midnight, the current time will be used
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -423,7 +421,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -442,7 +440,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -454,7 +452,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2019-01-01 00:00:00',
           restrictToStep: true
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -481,7 +479,7 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
       });
 
@@ -496,7 +494,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -507,7 +505,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2016-01-01 00:00:00',
           end: '2020-01-01 00:00:00',
-        } as OgcFilterDuringOptions,
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions,
         allowedOperatorsType: OgcFilterOperatorType.Time
       }
     };
@@ -519,7 +517,7 @@ export class AppOgcFilterComponent {
           this.layerService.createLayer({
             title: 'Inondations (During)',
             source: dataSource
-          } as ImageLayerOptions)
+          } satisfies ImageLayerOptions)
         );
       });
 
@@ -666,7 +664,7 @@ export class AppOgcFilterComponent {
         version: '1.1.0',
         outputFormat: 'geojson',
         outputFormatDownload: 'shp'
-      } as WFSDataSourceOptionsParams
+      } satisfies WFSDataSourceOptionsParams
     };
 
     this.dataSourceService
@@ -677,7 +675,7 @@ export class AppOgcFilterComponent {
             title:
               'Filterable WMS layers with predefined filters (push buttons)',
             source: dataSource
-          } as ImageLayerOptions)
+          } satisfies ImageLayerOptions)
         );
       });
   }

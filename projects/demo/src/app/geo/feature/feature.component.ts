@@ -160,7 +160,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -168,16 +168,16 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
             baseLayer: true,
             visible: true,
             source: dataSource
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
-      } as FeatureDataSourceOptions)
+      } satisfies FeatureDataSourceOptions)
       .subscribe((dataSource: FeatureDataSource) => {
-        const layer: VectorLayer = this.layerService.createLayer({
+        const layer = this.layerService.createLayer({
           title: 'Vector Layer',
           source: dataSource,
           animation: {

@@ -40,7 +40,7 @@ export class AppTimeFilterComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -48,7 +48,7 @@ export class AppTimeFilterComponent {
             baseLayer: true,
             visible: true,
             source: dataSource
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
@@ -77,7 +77,7 @@ export class AppTimeFilterComponent {
           this.layerService.createLayer({
             title: 'Embâcles',
             source: dataSource
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
   }

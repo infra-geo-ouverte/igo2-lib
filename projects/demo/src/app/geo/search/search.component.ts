@@ -93,13 +93,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         sourceOptions: {
           type: 'osm'
         }
-      } as LayerOptions)
+      } satisfies LayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
-      (this.storageService.get(
-        'reverseSearchCoordsFormatEnabled'
-      ) as boolean) || false;
+      (Boolean(this.storageService.get(
+        'reverseSearchCoordsFormatEnabled')
+      )) || false;
   }
 
   onPointerSummaryStatusChange(value: boolean): void {
@@ -139,16 +139,16 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * @internal
    * @param result A search result that could be a feature
    */
-  onResultFocus(result: SearchResult): void {
+  onResultFocus(result: SearchResult<Feature>): void {
     this.tryAddFeatureToMap(result);
-    this.selectedFeature = (result as SearchResult<Feature>).data;
+    this.selectedFeature = (result satisfies SearchResult<Feature>).data;
   }
 
   /**
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(layer: SearchResult): void | undefined {
+  private tryAddFeatureToMap(layer: SearchResult<Feature>): void | undefined {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -159,7 +159,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     }
 
     this.map.searchResultsOverlay.setFeatures(
-      [layer.data] as Feature[],
+      [layer.data] satisfies Feature[],
       FeatureMotion.Default
     );
   }
@@ -181,7 +181,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         title: 'googleStreetView',
         handler: () => this.openGoogleStreetView(this.lonlat)
       }
-    ] as Action[]);
+    ] satisfies Action[]);
   }
 
   ngOnDestroy(): void {

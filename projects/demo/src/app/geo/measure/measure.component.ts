@@ -42,7 +42,7 @@ export class AppMeasureComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -50,7 +50,7 @@ export class AppMeasureComponent {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
   }

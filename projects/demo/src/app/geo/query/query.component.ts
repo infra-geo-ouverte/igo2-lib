@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common';
 import {
+  DataSource,
   DataSourceService,
   Feature,
   FeatureDataSource,
@@ -17,7 +18,6 @@ import {
   OSMDataSourceOptions,
   QueryFormat,
   QueryHtmlTarget,
-  QueryableDataSource,
   QueryableDataSourceOptions,
   SearchResult,
   VectorLayerOptions,
@@ -61,7 +61,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -69,7 +69,7 @@ export class AppQueryComponent {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
@@ -83,12 +83,12 @@ export class AppQueryComponent {
           version: '1.3.0'
         }
       } as QueryableDataSourceOptions)
-      .subscribe((dataSource: QueryableDataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS',
             source: dataSource
-          } as ImageLayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
@@ -104,12 +104,12 @@ export class AppQueryComponent {
           version: '1.3.0'
         }
       } as QueryableDataSourceOptions)
-      .subscribe((dataSource: QueryableDataSource) => {
+      .subscribe((dataSource: DataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS html with a pre call in GML',
             source: dataSource
-          } as ImageLayerOptions)
+          } satisfies LayerOptions)
         );
       });
 
@@ -150,7 +150,7 @@ export class AppQueryComponent {
           this.layerService.createLayer({
             title: 'Vector layer',
             source: dataSource
-          } as VectorLayerOptions)
+          } satisfies VectorLayerOptions)
         );
         this.addFeatures(dataSource);
       });

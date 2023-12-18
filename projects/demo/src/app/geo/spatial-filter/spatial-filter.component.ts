@@ -116,7 +116,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -124,7 +124,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
   }
@@ -351,7 +351,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
         }
       }
       this.defaultStyle = (_feature, resolution) => {
-        const coordinates: Coordinate = (features[0] as any).coordinates;
+        const coordinates: Coordinate = features[0].geometry.coordinates;
         return new olstyle.Style({
           image: new olstyle.Circle({
             radius: coordinates
@@ -390,7 +390,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
+              )) satisfies string,
             workspace: { enabled: true },
             _internal: {
               code:
@@ -466,7 +466,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
+              )) satisfies string,
             source: dataSource,
             visible: true,
             style
@@ -488,7 +488,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
-              )) as string;
+              )) satisfies string;
             olLayer.options.title = olLayer.title;
           }
           this.iterator = i;
@@ -547,7 +547,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
-              )) as string,
+              )) satisfies string,
             source: dataSource,
             visible: true
           });
@@ -567,7 +567,7 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
               ' - ' +
               this.languageService.translate.instant(
                 'igo.geo.spatialFilter.spatialFilter'
-              )) as string;
+              )) satisfies string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);

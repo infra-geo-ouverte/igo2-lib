@@ -46,7 +46,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      } as OSMDataSourceOptions)
+      } satisfies OSMDataSourceOptions)
       .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -54,7 +54,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
             source: dataSource,
             baseLayer: true,
             visible: true
-          } as LayerOptions)
+          } satisfies LayerOptions)
         );
       });
 

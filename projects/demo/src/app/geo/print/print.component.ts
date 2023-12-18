@@ -34,7 +34,7 @@ export class AppPrintComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
           crossOrigin: 'anonymous'
         },
-      } as TileLayerOptions)
+      } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
     this.layerService
@@ -49,7 +49,7 @@ export class AppPrintComponent {
           },
           crossOrigin: 'anonymous'
         }
-      } as ImageLayerOptions)
+      } satisfies ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
@@ -64,7 +64,7 @@ export class AppPrintComponent {
           },
           crossOrigin: 'anonymous'
         }
-      } as ImageLayerOptions)
+      } satisfies ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
 
     this.layerService
@@ -79,7 +79,7 @@ export class AppPrintComponent {
           },
           crossOrigin: 'anonymous'
         }
-      } as ImageLayerOptions)
+      } satisfies ImageLayerOptions)
       .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
   }
 }
