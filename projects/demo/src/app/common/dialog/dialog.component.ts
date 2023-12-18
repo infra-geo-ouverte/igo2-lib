@@ -26,14 +26,14 @@ export class AppDialogComponent {
     private formDialogService: FormDialogService
   ) {}
 
-  confirm() {
+  confirm(): void {
     this.confirmDialogService
       .open('Do you want to continue?')
       .subscribe((r) => {
         alert(`Your choice is: ${r}`);
       });
   }
-  yesno() {
+  yesno(): void {
     this.confirmDialogService
       .open('Is the sky blue today? ', { modeYesNo: true })
       .subscribe((r) => {
@@ -41,7 +41,7 @@ export class AppDialogComponent {
       });
   }
 
-  private select(type: SelectValueDialogType) {
+  private select(type: SelectValueDialogType): void {
     const choices: Choice[] = [
       { value: '1', title: 'Chocolate' },
       { value: '2', title: 'Candy' },
@@ -59,14 +59,14 @@ export class AppDialogComponent {
     });
   }
 
-  check() {
+  check(): void {
     this.select(SelectValueDialogType.Checkbox);
   }
-  radio() {
+  radio(): void {
     this.select(SelectValueDialogType.Radio);
   }
 
-  json() {
+  json(): void {
     this.jsonDialogService.open(
       'A JSON viewer',
       {
@@ -85,7 +85,7 @@ export class AppDialogComponent {
       ['category']
     );
   }
-  form() {
+  form(): void {
     const formFieldConfigs: FormFieldConfig[] = [
       {
         name: 'country',
@@ -145,14 +145,14 @@ export class AppDialogComponent {
 
     this.formDialogService
       .open({ formFieldConfigs, formGroupsConfigs }, { minWidth: '50vh' })
-      .subscribe((data) => {
+      .subscribe((data: any) => {
         if (data) {
           alert(JSON.stringify(data));
         }
       });
   }
 
-  email() {
+  email(): void {
     const formFieldConfigs: FormFieldConfig[] = [
       {
         name: 'email',
@@ -175,7 +175,7 @@ export class AppDialogComponent {
       }
     ];
 
-    this.formDialogService.open({ formFieldConfigs }).subscribe((data) => {
+    this.formDialogService.open({ formFieldConfigs }).subscribe((data: any) => {
       if (data) {
         data.password = '°°°°°°°°°°';
         alert(JSON.stringify(data));
