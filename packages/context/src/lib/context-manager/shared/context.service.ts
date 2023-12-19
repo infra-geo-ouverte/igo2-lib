@@ -496,12 +496,7 @@ export class ContextService {
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         layerOptions,
-        sourceOptions: {
-          type: layer.dataSource.options.type,
-          params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url,
-          queryable: layer.queryable
-        }
+        sourceOptions: layer.dataSource.options
       };
       if (opts.sourceOptions.type) {
         context.layers.push(opts);
