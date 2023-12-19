@@ -13,7 +13,7 @@ import { AppRequestComponent } from './request.component';
     AppRequestRoutingModule,
     SharedModule,
     HttpClientModule,
-    IgoLanguageModule.forRoot(),
+    IgoLanguageModule,
     IgoErrorModule.forRoot() // Only if you want register errors from http call in console
     // IgoLoggingModule.forRoot() // Only if you want register http calls in console
   ],

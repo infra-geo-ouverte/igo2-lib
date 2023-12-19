@@ -8,11 +8,7 @@ import { AppLanguageComponent } from './language.component';
 
 @NgModule({
   declarations: [AppLanguageComponent],
-  imports: [
-    AppLanguageRoutingModule,
-    SharedModule,
-    IgoLanguageModule.forRoot()
-  ],
+  imports: [AppLanguageRoutingModule, SharedModule, IgoLanguageModule],
   exports: [AppLanguageComponent]
 })
 export class AppLanguageModule {}
