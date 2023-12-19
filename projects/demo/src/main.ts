@@ -35,13 +35,8 @@ import {
 import {
   IgoDirectionsModule,
   IgoGeoWorkspaceModule,
-  provideCoordinatesReverseSearchSource,
-  provideIChercheReverseSearchSource,
   provideIChercheSearchSource,
-  provideILayerSearchSource,
-  provideNominatimSearchSource,
   provideOsrmDirectionsSource,
-  provideStoredQueriesSearchSource,
   provideWorkspaceSearchSource
 } from '@igo2/geo';
 
@@ -95,12 +90,7 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideOsrmDirectionsSource(),
     provideIChercheSearchSource(),
-    provideNominatimSearchSource(),
-    provideWorkspaceSearchSource(),
-    provideIChercheReverseSearchSource(),
-    provideCoordinatesReverseSearchSource(),
-    provideILayerSearchSource(),
-    provideStoredQueriesSearchSource()
+    provideWorkspaceSearchSource()
   ]
 }).catch((err) => console.log(err));
 
