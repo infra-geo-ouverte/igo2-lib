@@ -5,7 +5,7 @@ import { Widget } from './widget';
 import { WidgetComponent } from './widget.interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any'
 })
 export class WidgetService {
   constructor(private dynamicComponentService: DynamicComponentService) {}

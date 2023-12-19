@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { LanguageService } from '@igo2/core';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule, LanguageService } from '@igo2/core';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -17,7 +15,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     MatButtonModule,
-    TranslateModule
+    IgoLanguageModule
   ]
 })
 export class AppLanguageComponent {

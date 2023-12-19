@@ -6,12 +6,7 @@
       </div>
     </igo-map-browser>
 
-    <igo-workspace-selector
-      igoWorkspaceSelector
-      [store]="workspaceStore"
-      [map]="map"
-    >
-    </igo-workspace-selector>
+    <igo-workspace-selector [store]="workspaceStore"> </igo-workspace-selector>
 
     <ng-container *ngIf="selectedWorkspace$ | async as workspace">
       <igo-entity-table-paginator

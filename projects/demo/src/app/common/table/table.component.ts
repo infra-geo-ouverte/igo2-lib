@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TableActionColor, TableDatabase } from '@igo2/common';
+import { IgoTableModule, TableActionColor, TableDatabase } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
-import { IgoTableModule } from '../../../../../../packages/common/src/lib/table/table.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

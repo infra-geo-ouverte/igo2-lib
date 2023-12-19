@@ -11,24 +11,26 @@ import {
   Workspace,
   WorkspaceStore
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
+import {
+  IgoActionbarModule,
+  IgoEntityTableModule,
+  IgoEntityTablePaginatorModule,
+  IgoWorkspaceSelectorModule,
+  IgoWorkspaceWidgetOutletModule
+} from '@igo2/common';
 import {
   DataSourceService,
+  IgoGeoWorkspaceModule,
   IgoMap,
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
+import { IgoMapModule } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
-import { IgoEntityTablePaginatorModule } from '../../../../../../packages/common/src/lib/entity/entity-table-paginator/entity-table-paginator.module';
-import { IgoEntityTableModule } from '../../../../../../packages/common/src/lib/entity/entity-table/entity-table.module';
-import { IgoWorkspaceSelectorModule } from '../../../../../../packages/common/src/lib/workspace/workspace-selector/workspace-selector.module';
-import { IgoWorkspaceWidgetOutletModule } from '../../../../../../packages/common/src/lib/workspace/workspace-widget-outlet/workspace-widget-outlet.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
@@ -38,17 +40,18 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   styleUrls: ['./workspace.component.scss'],
   standalone: true,
   imports: [
+    AsyncPipe,
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoWorkspaceSelectorModule,
-    NgIf,
-    IgoEntityTablePaginatorModule,
     IgoActionbarModule,
     IgoEntityTableModule,
-    MatCardModule,
+    IgoEntityTablePaginatorModule,
+    IgoGeoWorkspaceModule,
+    IgoMapModule,
+    IgoWorkspaceSelectorModule,
     IgoWorkspaceWidgetOutletModule,
-    AsyncPipe
+    MatCardModule,
+    NgIf
   ]
 })
 export class AppWorkspaceComponent implements OnInit {
@@ -84,7 +87,6 @@ export class AppWorkspaceComponent implements OnInit {
   public scrollBehavior = EntityTableScrollBehavior.Instant;
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
     public workspaceState: WorkspaceState

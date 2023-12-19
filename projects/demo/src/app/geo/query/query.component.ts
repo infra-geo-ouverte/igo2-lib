@@ -1,13 +1,17 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { getEntityTitle } from '@igo2/common';
+import { IgoPanelModule, getEntityTitle } from '@igo2/common';
 import {
   DataSourceService,
   Feature,
   FeatureDataSource,
   FeatureMotion,
+  IgoFeatureDetailsModule,
   IgoMap,
+  IgoMapModule,
+  IgoOverlayModule,
+  IgoQueryModule,
   LayerService,
   QueryFormat,
   QueryHtmlTarget,
@@ -23,11 +27,6 @@ import * as olproj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
-import { IgoOverlayModule } from '../../../../../../packages/geo/src/lib/overlay/overlay.module';
-import { IgoQueryModule } from '../../../../../../packages/geo/src/lib/query/query.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

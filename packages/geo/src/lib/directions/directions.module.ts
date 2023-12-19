@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 
+import { IgoSearchModule } from '../search/search.module';
 import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
 import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
 import { DirectionsResultsComponent } from './directions-results/directions-results.component';
@@ -39,7 +40,8 @@ import { provideDirectionsSourceService } from './shared/directions-source.servi
     MatSlideToggleModule,
     MatTooltipModule,
     MatAutocompleteModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    IgoSearchModule.forRoot()
   ],
   exports: [
     DirectionsComponent,

@@ -7,10 +7,10 @@ import {
   Feature,
   FeatureMotion,
   IgoMap,
+  IgoMapModule,
   LayerService
 } from '@igo2/geo';
 
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

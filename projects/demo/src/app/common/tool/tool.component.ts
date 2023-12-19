@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import {
+  IgoPanelModule,
+  IgoToolboxModule,
   OnUpdateInputs,
   Tool,
   ToolComponent,
@@ -21,8 +23,6 @@ import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoToolboxModule } from '../../../../../../packages/common/src/lib/tool/toolbox/toolbox.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

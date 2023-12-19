@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
+import { IgoAuthModule } from '@igo2/auth';
 import { LanguageService } from '@igo2/core';
 
-import { IgoAuthModule } from '../../../../../../packages/auth/src/lib/auth.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

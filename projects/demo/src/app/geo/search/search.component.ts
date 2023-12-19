@@ -8,19 +8,34 @@ import {
 } from '@angular/core';
 
 import { ActionStore, EntityStore } from '@igo2/common';
+import {
+  IgoActionbarModule,
+  IgoContextMenuModule,
+  IgoPanelModule
+} from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
   GoogleLinks,
+  IgoFeatureDetailsModule,
   IgoMap,
+  IgoMapModule,
+  IgoSearchBarModule,
+  IgoSearchModule,
+  IgoSearchResultsModule,
   Layer,
   LayerService,
   MapService,
   ProjectionService,
   Research,
-  SearchResult
+  SearchResult,
+  SearchService,
+  provideDefaultCoordinatesSearchResultFormatter,
+  provideDefaultIChercheSearchResultFormatter,
+  provideILayerSearchResultFormatter,
+  provideSearchSourceService
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 
@@ -28,14 +43,6 @@ import * as proj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
-import { IgoContextMenuModule } from '../../../../../../packages/common/src/lib/context-menu/context-menu.module';
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
-import { IgoSearchBarModule } from '../../../../../../packages/geo/src/lib/search/search-bar/search-bar.module';
-import { IgoSearchResultsModule } from '../../../../../../packages/geo/src/lib/search/search-results/search-results.module';
-import { IgoSearchModule } from '../../../../../../packages/geo/src/lib/search/search.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
@@ -56,6 +63,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     IgoSearchResultsModule,
     IgoFeatureDetailsModule,
     IgoActionbarModule
+  ],
+  providers: [
+    SearchService,
+    provideSearchSourceService(),
+    provideDefaultIChercheSearchResultFormatter(),
+    provideDefaultCoordinatesSearchResultFormatter(),
+    provideILayerSearchResultFormatter()
   ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {

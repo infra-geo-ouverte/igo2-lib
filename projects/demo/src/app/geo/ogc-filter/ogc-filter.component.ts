@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
+import { IgoPanelModule } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import {
   AnyBaseOgcFilterOptions,
   DataSourceService,
+  IgoFilterModule,
   IgoMap,
+  IgoMapModule,
   LayerService,
   OgcFilterDuringOptions,
   OgcFilterOperatorType,
@@ -17,9 +20,6 @@ import {
 
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoFilterModule } from '../../../../../../packages/geo/src/lib/filter/filter.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

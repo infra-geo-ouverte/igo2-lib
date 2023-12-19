@@ -50,7 +50,7 @@ const dbConfig: DBConfig = {
     IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
     provideRootTranslation(),
-    IgoMessageModule.forRoot(),
+    IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
   declarations: [],

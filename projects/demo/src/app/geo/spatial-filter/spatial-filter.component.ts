@@ -10,7 +10,11 @@ import {
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityStore, EntityStoreWithStrategy } from '@igo2/common';
+import {
+  EntityStore,
+  EntityStoreWithStrategy,
+  IgoPanelModule
+} from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
@@ -18,7 +22,11 @@ import {
   DataSourceService,
   Feature,
   FeatureMotion,
+  IgoFeatureDetailsModule,
+  IgoFilterModule,
   IgoMap,
+  IgoMapModule,
+  IgoQueryModule,
   Layer,
   LayerService,
   MeasureLengthUnit,
@@ -44,11 +52,6 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoFeatureDetailsModule } from '../../../../../../packages/geo/src/lib/feature/feature-details/feature-details.module';
-import { IgoFilterModule } from '../../../../../../packages/geo/src/lib/filter/filter.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
-import { IgoQueryModule } from '../../../../../../packages/geo/src/lib/query/query.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

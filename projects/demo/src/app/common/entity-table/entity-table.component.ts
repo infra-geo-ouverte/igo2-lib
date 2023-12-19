@@ -6,13 +6,12 @@ import {
   EntityTableButton,
   EntityTableColumnRenderer,
   EntityTablePaginatorOptions,
+  IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoEntityTableModule } from '../../../../../../packages/common/src/lib/entity/entity-table/entity-table.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
@@ -89,7 +88,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
     ]
   };
 
-  constructor(private languageService: LanguageService) {}
+  constructor() {}
 
   ngOnInit() {
     const ids = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];

@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EntityRecord, EntityStore } from '@igo2/common';
+import { EntityRecord, EntityStore, IgoPanelModule } from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import {
   Catalog,
   CatalogItem,
   CatalogService,
+  IgoCatalogBrowserModule,
+  IgoCatalogLibraryModule,
   IgoMap,
+  IgoMapModule,
   LayerService,
   MapService
 } from '@igo2/geo';
 
-import { IgoPanelModule } from '../../../../../../packages/common/src/lib/panel/panel.module';
-import { IgoCatalogBrowserModule } from '../../../../../../packages/geo/src/lib/catalog/catalog-browser/catalog-browser.module';
-import { IgoCatalogLibraryModule } from '../../../../../../packages/geo/src/lib/catalog/catalog-library/catalog-library.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

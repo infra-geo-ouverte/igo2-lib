@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
+import { IgoEntityTableModule } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
@@ -8,12 +9,11 @@ import {
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
+  IgoMapModule,
   LayerService,
   VectorLayer
 } from '@igo2/geo';
 
-import { IgoEntityTableModule } from '../../../../../../packages/common/src/lib/entity/entity-table/entity-table.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

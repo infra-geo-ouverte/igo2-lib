@@ -3,10 +3,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService } from '@igo2/geo';
+import {
+  IgoImportExportModule,
+  IgoMap,
+  IgoMapModule,
+  LayerService
+} from '@igo2/geo';
 
-import { IgoImportExportModule } from '../../../../../../packages/geo/src/lib/import-export/import-export.module';
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

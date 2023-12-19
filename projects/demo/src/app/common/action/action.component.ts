@@ -1,7 +1,7 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { ActionStore, ActionbarMode } from '@igo2/common';
+import { ActionStore, ActionbarMode, IgoActionbarModule } from '@igo2/common';
 import {
   LanguageService,
   Media,
@@ -11,7 +11,6 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
-import { IgoActionbarModule } from '../../../../../../packages/common/src/lib/action/actionbar/actionbar.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

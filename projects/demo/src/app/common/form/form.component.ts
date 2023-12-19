@@ -3,13 +3,17 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Form, FormFieldConfig, FormService } from '@igo2/common';
+import {
+  Form,
+  FormFieldConfig,
+  FormService,
+  IgoFormFormModule,
+  IgoFormGroupModule
+} from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import { IgoFormGroupModule } from '../../../../../../packages/common/src/lib/form/form-group/form-group.module';
-import { IgoFormFormModule } from '../../../../../../packages/common/src/lib/form/form/form.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 

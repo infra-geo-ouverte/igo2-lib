@@ -9,6 +9,10 @@ import {
   FormDialogService,
   FormFieldConfig,
   FormGroupsConfig,
+  IgoConfirmDialogModule,
+  IgoFormDialogModule,
+  IgoJsonDialogModule,
+  IgoSelectValueDialogModule,
   JsonDialogService,
   SelectValueDialogService
 } from '@igo2/common';
@@ -26,6 +30,10 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
+    IgoConfirmDialogModule,
+    IgoSelectValueDialogModule,
+    IgoFormDialogModule,
+    IgoJsonDialogModule,
     MatButtonModule,
     MatDividerModule
   ]

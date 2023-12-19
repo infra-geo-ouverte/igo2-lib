@@ -12,7 +12,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, MatButtonModule]
+  imports: [
+    // IgoErrorModule,
+    // IgoLoggingModule, // Import in your root module or main.ts, only if you want register http calls in console
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatButtonModule
+  ]
 })
 export class AppRequestComponent {
   constructor(

@@ -6,11 +6,11 @@ import {
   FeatureStore,
   FeatureWithMeasure,
   IgoMap,
+  IgoMapModule,
+  IgoMeasurerModule,
   LayerService
 } from '@igo2/geo';
 
-import { IgoMapModule } from '../../../../../../packages/geo/src/lib/map/map.module';
-import { IgoMeasurerModule } from '../../../../../../packages/geo/src/lib/measure/measurer/measurer.module';
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
