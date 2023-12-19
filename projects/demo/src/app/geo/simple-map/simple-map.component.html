@@ -1,0 +1,43 @@
+<app-doc-viewer
+  title="Simple Map"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/simple-map">
+    <igo-map-browser
+      [map]="map"
+      [view]="view"
+      igoPointerPosition
+      [pointerPositionDelay]="pointerCoordDelay"
+      (pointerPositionCoord)="onPointerMove($event)"
+    >
+      <igo-info-section [infoContent]="pointerCoord"></igo-info-section>
+      <div class="map-actions --vertical --top --right">
+        <div class="spinner-spacer"></div>
+        <igo-rotation-button
+          class="mat-elevation-z2"
+          [showIfNoRotation]="true"
+          [map]="map"
+          color="primary"
+        ></igo-rotation-button>
+      </div>
+      <div class="map-actions --vertical --bottom --right">
+        <igo-home-extent-button
+          class="mat-elevation-z2"
+          [map]="map"
+          color="primary"
+        >
+        </igo-home-extent-button>
+        <igo-wake-lock-button></igo-wake-lock-button>
+        <igo-geolocate-button
+          class="mat-elevation-z2"
+          [map]="map"
+          color="primary"
+        >
+        </igo-geolocate-button>
+        <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+      </div>
+    </igo-map-browser>
+    <p *ngIf="!isTouchScreen">{{ pointerCoord }}</p>
+  </app-example-viewer>
+</app-doc-viewer>

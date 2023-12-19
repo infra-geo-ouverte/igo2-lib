@@ -7,7 +7,6 @@ import { EntityStoreStrategy } from './strategy';
  * selected entities only.
  */
 export class EntityStoreFilterCustomFuncStrategy extends EntityStoreStrategy {
-
   constructor(protected options: EntityStoreStrategyFuncOptions) {
     super(options);
   }
@@ -73,7 +72,10 @@ export class EntityStoreFilterCustomFuncStrategy extends EntityStoreStrategy {
    * Filter a store and add it to the filters map
    */
   private filterStore(store: EntityStore) {
-    this.filters.set(store, store.stateView.addFilter(this.options.filterClauseFunc));
+    this.filters.set(
+      store,
+      store.stateView.addFilter(this.options.filterClauseFunc)
+    );
   }
 
   /**

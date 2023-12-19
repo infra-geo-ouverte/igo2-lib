@@ -1,19 +1,21 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
+  Input,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatSlider } from '@angular/material/slider';
-import { default as moment } from 'moment';
+
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
+import { default as moment } from 'moment';
+
 import { Layer } from '../../layer/shared/layers/layer';
+import { TimeFilterStyle, TimeFilterType } from '../shared/time-filter.enum';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
-import { TimeFilterType, TimeFilterStyle } from '../shared/time-filter.enum';
 
 @Component({
   selector: 'igo-time-filter-form',
@@ -290,7 +292,7 @@ export class TimeFilterFormComponent implements OnInit {
   findThumbLabel(test: any[]): any {
     let thumbLabel;
 
-    test.forEach(value => {
+    test.forEach((value) => {
       if (value.className === 'mat-slider-thumb-label-text') {
         thumbLabel = value;
       }
@@ -341,7 +343,7 @@ export class TimeFilterFormComponent implements OnInit {
     } else {
       this.playIcon = 'pause-circle';
       this.interval = setInterval(
-        that => {
+        (that) => {
           let newMinDateNumber;
           const maxDateNumber = new Date(that.max);
 
@@ -374,16 +376,18 @@ export class TimeFilterFormComponent implements OnInit {
       this.stopFilter();
     } else {
       this.playIcon = 'pause-circle';
-      this.interval = setInterval(() => {
-        if (
-          (this.year + this.mySlider.step) > this.max.getFullYear()) {
-          this.stopFilter();
-        } else {
-          this.year = this.year + this.mySlider.step;
-        }
-        this.yearChange.emit(this.year);
-
-      }, this.timeInterval, this);
+      this.interval = setInterval(
+        () => {
+          if (this.year + this.mySlider.step > this.max.getFullYear()) {
+            this.stopFilter();
+          } else {
+            this.year = this.year + this.mySlider.step;
+          }
+          this.yearChange.emit(this.year);
+        },
+        this.timeInterval,
+        this
+      );
     }
   }
 

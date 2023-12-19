@@ -1,43 +1,47 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   HttpEvent,
-  HttpInterceptor,
   HttpHandler,
+  HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+import { ConfigService } from '@igo2/core';
+
 import { Observable } from 'rxjs';
 import { Md5 } from 'ts-md5';
 
-import { ConfigService } from '@igo2/core';
+import {
+  AuthByKeyOptions,
+  AuthOptions,
+  WithCredentialsOptions
+} from './auth.interface';
 import { TokenService } from './token.service';
-import { AuthByKeyOptions, WithCredentialsOptions } from './auth.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
+  private authOptions: AuthOptions;
   private refreshInProgress = false;
-
-  private get trustHosts() {
-    const trustHosts = this.config.getConfig('auth.trustHosts') || [];
-    trustHosts.push(window.location.hostname);
-    return trustHosts;
-  }
-
-  private get hostsWithCredentials(): WithCredentialsOptions[] {
-    return this.config.getConfig('auth.hostsWithCredentials') || [];
-  }
-
-  private get hostsWithAuthByKey(): AuthByKeyOptions[] {
-    return this.config.getConfig('auth.hostsByKey') || [];
-  }
+  private trustHosts: string[];
+  private hostsWithCredentials: WithCredentialsOptions[];
+  private hostsWithAuthByKey: AuthByKeyOptions[];
 
   constructor(
     private config: ConfigService,
     private tokenService: TokenService,
     private http: HttpClient
-  ) {}
+  ) {
+    this.authOptions = this.config.getConfig('auth') as AuthOptions;
+
+    this.trustHosts = this.authOptions?.trustHosts || [];
+    this.trustHosts.push(window.location.hostname);
+
+    this.hostsWithCredentials = this.authOptions?.hostsWithCredentials || [];
+    this.hostsWithAuthByKey = this.authOptions?.hostsByKey || [];
+  }
 
   intercept(
     originalReq: HttpRequest<any>,
@@ -74,13 +78,8 @@ export class AuthInterceptor implements HttpInterceptor {
       headers: req.headers.set('Authorization', authHeader)
     });
 
-    const tokenDecoded: any = this.tokenService.decode();
-    if (
-      authReq.params.get('_i') === 'true' &&
-      tokenDecoded &&
-      tokenDecoded.user &&
-      tokenDecoded.user.sourceId
-    ) {
+    const tokenDecoded = this.tokenService.decode();
+    if (authReq.params.get('_i') === 'true' && tokenDecoded?.user?.sourceId) {
       const hashUser = Md5.hashStr(tokenDecoded.user.sourceId) as string;
       authReq = authReq.clone({
         params: authReq.params.set('_i', hashUser)
@@ -97,8 +96,8 @@ export class AuthInterceptor implements HttpInterceptor {
   interceptXhr(xhr, url: string): boolean {
     const withCredentials = this.handleHostsWithCredentials(url);
     if (withCredentials) {
-       xhr.withCredentials = withCredentials;
-       return true;
+      xhr.withCredentials = withCredentials;
+      return true;
     }
 
     this.refreshToken();
@@ -119,7 +118,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (hostWithKey) {
       const urlDecomposed = interceptedUrl.split(/[?&]/);
       let urlWithKeyAdded = urlDecomposed.shift();
-      const paramsToKeep = urlDecomposed.filter(p => p.length !== 0);
+      const paramsToKeep = urlDecomposed.filter((p) => p.length !== 0);
       paramsToKeep.push(`${hostWithKey.key}=${hostWithKey.value}`);
       if (paramsToKeep.length) {
         urlWithKeyAdded += '?' + paramsToKeep.join('&');
@@ -134,22 +133,28 @@ export class AuthInterceptor implements HttpInterceptor {
     for (const hostWithCredentials of this.hostsWithCredentials) {
       const domainRegex = new RegExp(hostWithCredentials.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
-        withCredentials = hostWithCredentials.withCredentials !== undefined ? hostWithCredentials.withCredentials : undefined;
+        withCredentials =
+          hostWithCredentials.withCredentials !== undefined
+            ? hostWithCredentials.withCredentials
+            : undefined;
         break;
       }
     }
     return withCredentials;
   }
 
-  private handleHostsAuthByKey(reqUrl: string): {key: string, value: string} {
+  private handleHostsAuthByKey(reqUrl: string): { key: string; value: string } {
     let hostWithKey;
     for (const hostWithAuthByKey of this.hostsWithAuthByKey) {
       const domainRegex = new RegExp(hostWithAuthByKey.domainRegFilters);
       if (domainRegex.test(reqUrl)) {
         var replace = `${hostWithAuthByKey.keyProperty}=${hostWithAuthByKey.keyValue}`;
-        var keyAdded = new RegExp(replace,"gm");
+        var keyAdded = new RegExp(replace, 'gm');
         if (!keyAdded.test(reqUrl)) {
-          hostWithKey = {key : hostWithAuthByKey.keyProperty, value: hostWithAuthByKey.keyValue};
+          hostWithKey = {
+            key: hostWithAuthByKey.keyProperty,
+            value: hostWithAuthByKey.keyValue
+          };
           break;
         }
       }
@@ -169,13 +174,13 @@ export class AuthInterceptor implements HttpInterceptor {
     ) {
       this.refreshInProgress = true;
 
-      const url = this.config.getConfig('auth.url');
+      const url = this.authOptions?.url;
       return this.http.post(`${url}/refresh`, {}).subscribe(
         (data: any) => {
           this.tokenService.set(data.token);
           this.refreshInProgress = false;
         },
-        err => {
+        (err) => {
           err.error.caught = true;
           return err;
         }

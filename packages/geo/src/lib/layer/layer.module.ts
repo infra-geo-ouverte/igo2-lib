@@ -1,5 +1,5 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,30 +15,28 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ColorPickerModule } from 'ngx-color-picker';
-
-import { IgoLanguageModule } from '@igo2/core';
 import {
-  IgoListModule,
   IgoCollapsibleModule,
+  IgoCustomHtmlModule,
   IgoImageModule,
-  IgoPanelModule,
+  IgoListModule,
   IgoMatBadgeIconModule,
-  IgoCustomHtmlModule
+  IgoPanelModule
 } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core';
 
-import { LayerService } from './shared/layer.service';
 import { StyleService } from '../style/style-service/style.service';
-import { LayerListToolService } from './layer-list-tool/layer-list-tool.service';
 import { LayerItemComponent } from './layer-item/layer-item.component';
-import { LayerLegendComponent } from './layer-legend/layer-legend.component';
-import { LayerListComponent } from './layer-list/layer-list.component';
-import { LayerListToolComponent } from './layer-list-tool/layer-list-tool.component';
-import { LayerListBindingDirective } from './layer-list/layer-list-binding.directive';
-import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legend-list-binding.directive';
-import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
-import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
+import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legend-list-binding.directive';
+import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
+import { LayerLegendComponent } from './layer-legend/layer-legend.component';
+import { LayerListToolComponent } from './layer-list-tool/layer-list-tool.component';
+import { LayerListToolService } from './layer-list-tool/layer-list-tool.service';
+import { LayerListBindingDirective } from './layer-list/layer-list-binding.directive';
+import { LayerListComponent } from './layer-list/layer-list.component';
+import { LayerService } from './shared/layer.service';
+import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
 @NgModule({
   imports: [
@@ -58,7 +56,6 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     MatSliderModule,
     MatBadgeModule,
     MatCheckboxModule,
-    ColorPickerModule,
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,

@@ -1,13 +1,13 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
+import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
-import { CartoDataSourceOptions } from './carto-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class CartoDataSource extends DataSource {
-  public ol: olSourceCarto;
-  public options: CartoDataSourceOptions;
+  public declare ol: olSourceCarto;
+  public declare options: CartoDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -50,7 +50,7 @@ export class CartoDataSource extends DataSource {
 
     let htmlString = '<table>';
     if (this.options.config.layers[0].legend !== null) {
-      this.options.config.layers[0].legend.items.forEach(f => {
+      this.options.config.layers[0].legend.items.forEach((f) => {
         if (f.visible === true) {
           htmlString +=
             '<tr><td>' +

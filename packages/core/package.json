@@ -1,9 +1,11 @@
 {
   "name": "@igo2/core",
-  "version": "1.15.2",
+  "version": "16.1.1",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,22 +15,57 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "scripts": {
+    "prestart": "npm run postbuild",
+    "build": "ng build core --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
+    "test": "ng test core --watch=false",
+    "watch": "ng build core --watch && npm run postbuild"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts",
+      "sass": "./index.scss"
+    },
+    "./style": {
+      "style": "./style/style.css"
+    },
+    "./*": {
+      "sass": "./src/style/*.scss",
+      "style": "./style/*.css"
+    },
+    "./partial/*": {
+      "sass": "./src/style/partial/*.scss"
+    },
+    "./theming": {
+      "sass": "./src/core-theme.scss"
+    },
+    "./prebuilt-themes/*": {
+      "style": "./theming/prebuilt-themes/*.css"
+    }
+  },
   "dependencies": {
-    "@ngx-translate/core": "^14.0.0",
-    "tslib": "^2.4.0"
+    "@ngx-translate/core": "^15.0.0",
+    "tslib": "^2.6.0"
   },
   "peerDependencies": {
-    "@angular/cdk": "^14.2.7",
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@angular/platform-browser": "^14.3.0",
-    "@angular/router": "^14.3.0",
-    "@igo2/utils": "^1.15.2",
-    "rxjs": "^7.5.6",
+    "@angular/cdk": "^16.2.4",
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@angular/platform-browser": "^16.2.5",
+    "@angular/router": "^16.2.5",
+    "@igo2/utils": "*",
+    "@sentry/angular-ivy": "^7.61.0",
     "ngx-indexed-db": "^11.0.2",
-    "ngx-toastr": "^15.0.0"
+    "ngx-toastr": "^17.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

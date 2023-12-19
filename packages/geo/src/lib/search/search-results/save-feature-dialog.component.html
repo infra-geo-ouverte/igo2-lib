@@ -1,4 +1,6 @@
-<h1 mat-dialog-title class="mat-typography">{{'igo.geo.layer.saveFeatureInLayer' | translate}}</h1>
+<h1 mat-dialog-title class="mat-typography">
+  {{ 'igo.geo.layer.saveFeatureInLayer' | translate }}
+</h1>
 
 <div mat-dialog-content class="mat-typography">
   <form class="igo-form" [formGroup]="form">
@@ -7,20 +9,26 @@
         igoListItem
         color="accent"
         [result]="feature"
-        showIcons="true">
+        showIcons="true"
+      >
       </igo-search-results-item>
     </igo-list>
-    
+
     <div class="igo-input-container">
       <mat-form-field>
-        <input type="text"
-          placeholder="{{'igo.geo.layer.chooseOrSet' | translate}}"
+        <input
+          type="text"
+          placeholder="{{ 'igo.geo.layer.chooseOrSet' | translate }}"
           matInput
           [matAutocomplete]="auto"
-          formControlName="layerName">
+          formControlName="layerName"
+        />
         <mat-autocomplete [displayWith]="displayFn" #auto="matAutocomplete">
-          <mat-option *ngFor="let layer of filteredLayers$ | async" [value]="layer">
-            <p mat-line>{{layer.title}}</p>
+          <mat-option
+            *ngFor="let layer of filteredLayers$ | async"
+            [value]="layer"
+          >
+            <p matListItemTitle>{{ layer.title }}</p>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -30,19 +38,17 @@
 
 <div mat-dialog-actions style="justify-content: center">
   <div class="igo-form-button-group create-layer-button-top-padding">
-    <button
-      mat-raised-button
-      type="button"
-      (click)="cancel()">
-      {{'igo.geo.layer.cancelBtn' | translate}}
+    <button mat-raised-button type="button" (click)="cancel()">
+      {{ 'igo.geo.layer.cancelBtn' | translate }}
     </button>
     <button
       id="createLayerBtnDialog"
       mat-raised-button
       type="button"
       color="primary"
-      (click)="save()">
-      {{'igo.geo.layer.saveBtn' | translate}}
+      (click)="save()"
+    >
+      {{ 'igo.geo.layer.saveBtn' | translate }}
     </button>
   </div>
 </div>

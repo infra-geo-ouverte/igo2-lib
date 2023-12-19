@@ -1,5 +1,32 @@
-<igo-directions-buttons [contextUri]="contextUri" [zoomToActiveRoute$]="zoomToActiveRoute$" [routesFeatureStore]="routesFeatureStore" [stopsStore]="stopsStore"></igo-directions-buttons>
+<div class="directions-options">
+  <mat-slide-toggle
+    [checked]="directionControlIsActive"
+    [labelPosition]="'before'"
+    (change)="onToggleDirectionsControl($event.checked)"
+  >
+    {{ 'igo.geo.directionsForm.toggleActive' | translate }}
+  </mat-slide-toggle>
+</div>
 
-<igo-directions-inputs (stopInputHasFocus)="onStopInputHasFocusChange($event)" [coordRoundedDecimals]="coordRoundedDecimals" [projection]="projection" [stopsFeatureStore]="stopsFeatureStore" [stopsStore]="stopsStore" [debounce]="debounce" [length]="length"></igo-directions-inputs>
-<br>
-<igo-directions-results [stepFeatureStore]="stepFeatureStore" [routesFeatureStore]="routesFeatureStore"></igo-directions-results>
+<igo-directions-buttons
+  [stepFeatureStore]="stepFeatureStore"
+  [contextUri]="contextUri"
+  [zoomToActiveRoute$]="zoomToActiveRoute$"
+  [routesFeatureStore]="routesFeatureStore"
+  [stopsStore]="stopsStore"
+></igo-directions-buttons>
+
+<igo-directions-inputs
+  (stopInputHasFocus)="onStopInputHasFocusChange($event)"
+  [coordRoundedDecimals]="coordRoundedDecimals"
+  [projection]="projection"
+  [stopsFeatureStore]="stopsFeatureStore"
+  [stopsStore]="stopsStore"
+  [debounce]="debounce"
+  [length]="length"
+></igo-directions-inputs>
+
+<igo-directions-results
+  [stepFeatureStore]="stepFeatureStore"
+  [routesFeatureStore]="routesFeatureStore"
+></igo-directions-results>

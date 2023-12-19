@@ -1,8 +1,10 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+
+import { ActivityService } from '@igo2/core';
+
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { ActivityService } from '@igo2/core';
 import { SpinnerComponent } from './spinner.component';
 
 /**

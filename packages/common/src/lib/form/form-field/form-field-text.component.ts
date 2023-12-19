@@ -1,18 +1,19 @@
 import {
-  Input,
-  Component,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
   OnInit
 } from '@angular/core';
 import type { UntypedFormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { IgoFormFieldComponent } from '../shared/form-field-component';
 import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a text field
@@ -24,8 +25,9 @@ import { IgoFormFieldComponent } from '../shared/form-field-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldTextComponent implements OnInit {
-
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  hide: boolean = true;
+  private lastTimeoutRequest;
 
   /**
    * The field's form control
@@ -38,9 +40,14 @@ export class FormFieldTextComponent implements OnInit {
   @Input() placeholder: string;
 
   /**
+   * if the input is a password
+   */
+  @Input() isPassword: boolean;
+
+  /**
    * Field placeholder
    */
-  @Input() errors: {[key: string]: string};
+  @Input() errors: { [key: string]: string };
 
   /**
    * Wheter a disable switch should be available
@@ -53,6 +60,8 @@ export class FormFieldTextComponent implements OnInit {
   get required(): boolean {
     return formControlIsRequired(this.formControl);
   }
+
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.disabled$.next(this.formControl.disabled);
@@ -79,4 +88,19 @@ export class FormFieldTextComponent implements OnInit {
     this.disabled$.next(disabled);
   }
 
+  togglePassword() {
+    this.hide = !this.hide;
+    this.delayedHide();
+  }
+  delayedHide(delayMS: number = 10000) {
+    if (this.isPassword && !this.hide) {
+      if (this.lastTimeoutRequest) {
+        clearTimeout(this.lastTimeoutRequest);
+      }
+      this.lastTimeoutRequest = setTimeout(() => {
+        this.hide = true;
+        this.cdRef.detectChanges();
+      }, delayMS);
+    }
+  }
 }

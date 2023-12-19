@@ -1,6 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 
-import { VectorLayer } from '../shared/layers';
+import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({
@@ -10,7 +15,6 @@ import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TrackFeatureButtonComponent implements OnInit {
-
   @Input() layer: VectorLayer;
 
   @Input() trackFeature = false;

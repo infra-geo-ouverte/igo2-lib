@@ -1,24 +1,23 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  OnInit
 } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
-
-import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 import { AuthService } from '@igo2/auth';
-
+import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 import {
-  IgoMap,
   Catalog,
   CatalogItem,
   CatalogItemState,
-  CatalogService
+  CatalogService,
+  IgoMap
 } from '@igo2/geo';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
 import { CatalogState } from '../catalog.state';

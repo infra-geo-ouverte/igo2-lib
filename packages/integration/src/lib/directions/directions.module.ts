@@ -1,10 +1,11 @@
 import {
-  NgModule,
+  CUSTOM_ELEMENTS_SCHEMA,
   ModuleWithProviders,
-  CUSTOM_ELEMENTS_SCHEMA
+  NgModule
 } from '@angular/core';
 
 import { IgoDirectionsModule } from '@igo2/geo';
+
 import { DirectionsToolComponent } from './directions-tool/directions-tool.component';
 
 @NgModule({

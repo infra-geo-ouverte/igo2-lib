@@ -1,7 +1,15 @@
-:host ::ng-deep small {
-  color: #8C8C8C;
-}
+:host {
+  ::ng-deep small {
+    color: #8c8c8c;
+  }
 
-::ng-deep .search-result-tooltip {
-   white-space: pre-line;
+  div[matlistitemmeta] {
+    &:empty {
+      display: none;
+    }
+  }
+
+  ::ng-deep .search-result-tooltip {
+    white-space: pre-line;
+  }
 }

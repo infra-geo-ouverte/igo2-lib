@@ -1,4 +1,4 @@
-import { FeatureGeometry } from '../../../feature';
+import { FeatureGeometry } from '../../../feature/shared/feature.interfaces';
 import { SearchSourceOptions } from './source.interfaces';
 
 export interface StoredQueriesSearchSourceOptions extends SearchSourceOptions {
@@ -25,7 +25,8 @@ export interface StoredQueriesResponse {
   features: StoredQueriesData[];
 }
 
-export interface StoredQueriesReverseSearchSourceOptions extends SearchSourceOptions {
+export interface StoredQueriesReverseSearchSourceOptions
+  extends SearchSourceOptions {
   storedquery_id: string;
   longField: string;
   latField: string;

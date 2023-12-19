@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { FlexibleState, getEntityTitle } from '@igo2/common';
+
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { Feature } from '../feature/shared/feature.interfaces';
+
 import { FeatureMotion } from '../feature/shared/feature.enums';
+import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 
@@ -54,7 +56,9 @@ export class ToastComponent {
   /**
    * @internal
    */
-  get title(): string { return getEntityTitle(this.feature); }
+  get title(): string {
+    return getEntityTitle(this.feature);
+  }
 
   constructor() {}
 
@@ -69,7 +73,11 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(
+        this.map.viewController,
+        [olFeature],
+        FeatureMotion.Zoom
+      );
     }
   }
 

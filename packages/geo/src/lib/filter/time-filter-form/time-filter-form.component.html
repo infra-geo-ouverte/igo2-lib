@@ -1,131 +1,233 @@
-<div *ngIf="style === 'calendar' && type !=='year'">
+<div *ngIf="style === 'calendar' && type !== 'year'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
     <mat-form-field>
-      <mat-datetimepicker-toggle class="time-filter-mat-datetimepicker-toggle" [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
-      <mat-datetimepicker #datetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
-      <input matInput autocomplete="false"
-        placeholder="{{'igo.geo.timeFilter.date' | translate}}"
+      <mat-datetimepicker-toggle
+        class="time-filter-mat-datetimepicker-toggle"
+        [for]="datetimePicker"
+        matSuffix
+      ></mat-datetimepicker-toggle>
+      <mat-datetimepicker
+        #datetimePicker
+        type="{{ type }}"
+        openOnFocus="true"
+        timeInterval="5"
+      ></mat-datetimepicker>
+      <input
+        matInput
+        autocomplete="false"
+        placeholder="{{ 'igo.geo.timeFilter.date' | translate }}"
         [matDatetimepicker]="datetimePicker"
         [(ngModel)]="date"
         [min]="min"
         [max]="max"
         readonly="readonly"
-        (dateChange)="handleDateChange($event)">
+        (dateChange)="handleDateChange($event)"
+      />
     </mat-form-field>
-
   </div>
 
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
       <mat-form-field>
-        <mat-datetimepicker-toggle class="time-filter-mat-datetimepicker-toggle" [for]="minDatetimePicker" matSuffix></mat-datetimepicker-toggle>
-        <mat-datetimepicker #minDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
-        <input matInput autocomplete="false"
-          placeholder="{{'igo.geo.timeFilter.startDate' | translate}}"
+        <mat-datetimepicker-toggle
+          class="time-filter-mat-datetimepicker-toggle"
+          [for]="minDatetimePicker"
+          matSuffix
+        ></mat-datetimepicker-toggle>
+        <mat-datetimepicker
+          #minDatetimePicker
+          type="{{ type }}"
+          openOnFocus="true"
+          timeInterval="5"
+        ></mat-datetimepicker>
+        <input
+          matInput
+          autocomplete="false"
+          placeholder="{{ 'igo.geo.timeFilter.startDate' | translate }}"
           [matDatetimepicker]="minDatetimePicker"
           [(ngModel)]="startDate"
           [min]="min"
           [max]="getRangeMaxDate()"
           readonly="readonly"
-          (input)="startDate"
-          (dateChange)="handleDateChange($event)">
+          (input)="(startDate)"
+          (dateChange)="handleDateChange($event)"
+        />
       </mat-form-field>
     </div>
 
     <div class="igo-col igo-col-100">
       <mat-form-field>
-        <mat-datetimepicker-toggle class="time-filter-mat-datetimepicker-toggle" [for]="maxDatetimePicker" matSuffix></mat-datetimepicker-toggle>
-        <mat-datetimepicker #maxDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
-        <input matInput autocomplete="false"
-          placeholder="{{'igo.geo.timeFilter.endDate' | translate}}"
+        <mat-datetimepicker-toggle
+          class="time-filter-mat-datetimepicker-toggle"
+          [for]="maxDatetimePicker"
+          matSuffix
+        ></mat-datetimepicker-toggle>
+        <mat-datetimepicker
+          #maxDatetimePicker
+          type="{{ type }}"
+          openOnFocus="true"
+          timeInterval="5"
+        ></mat-datetimepicker>
+        <input
+          matInput
+          autocomplete="false"
+          placeholder="{{ 'igo.geo.timeFilter.endDate' | translate }}"
           [matDatetimepicker]="maxDatetimePicker"
           [(ngModel)]="endDate"
           [min]="getRangeMinDate()"
           [max]="max"
           readonly="readonly"
-          (dateChange)="handleDateChange($event)">
+          (dateChange)="handleDateChange($event)"
+        />
       </mat-form-field>
     </div>
   </div>
 </div>
 
-<div *ngIf="style === 'calendar' && type ==='year'">
-
+<div *ngIf="style === 'calendar' && type === 'year'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
-        <mat-form-field>
-            <mat-select placeholder="{{'igo.geo.timeFilter.date' | translate}}" [(ngModel)]="year" (selectionChange)="handleYearChange($event)">
-                  <mat-option [value]="year" *ngFor="let year of listYears">{{year}}</mat-option>
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field>
+      <mat-select
+        placeholder="{{ 'igo.geo.timeFilter.date' | translate }}"
+        [(ngModel)]="year"
+        (selectionChange)="handleYearChange($event)"
+      >
+        <mat-option [value]="year" *ngFor="let year of listYears">{{
+          year
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
-        <mat-form-field>
-            <mat-select placeholder="{{'igo.geo.timeFilter.startDate' | translate}}" [(ngModel)]="startYear" (selectionChange)="handleYearChange($event)">
-              <mat-option [value]="startYear" *ngFor="let startYear of startListYears">{{startYear}}</mat-option>
-            </mat-select>
+      <mat-form-field>
+        <mat-select
+          placeholder="{{ 'igo.geo.timeFilter.startDate' | translate }}"
+          [(ngModel)]="startYear"
+          (selectionChange)="handleYearChange($event)"
+        >
+          <mat-option
+            [value]="startYear"
+            *ngFor="let startYear of startListYears"
+            >{{ startYear }}</mat-option
+          >
+        </mat-select>
       </mat-form-field>
     </div>
 
     <div class="igo-col igo-col-100">
-    <mat-form-field>
-        <mat-select placeholder="{{'igo.geo.timeFilter.endDate' | translate}}" [(ngModel)]="endYear" (selectionChange)="handleYearChange($event)">
-              <mat-option [value]="endYear" *ngFor="let endYear of endListYears">{{endYear}}</mat-option>
+      <mat-form-field>
+        <mat-select
+          placeholder="{{ 'igo.geo.timeFilter.endDate' | translate }}"
+          [(ngModel)]="endYear"
+          (selectionChange)="handleYearChange($event)"
+        >
+          <mat-option [value]="endYear" *ngFor="let endYear of endListYears">{{
+            endYear
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
   </div>
-
 </div>
 
-
-  <br>
-  <div *ngIf="!isRange && style === 'slider' && type === 'year'" class="igo-col igo-col-100 igo-col-100-m mat-typography">
-    <span>{{startYear}}</span>
-    <mat-slider
-        id="time-slider"
-        tickInterval="auto"
-        step="{{step}}"
-        [min]="startYear"
-        [max]="endYear"
-        [value]="handleSliderValue()"
-        [color]="color"
-        thumbLabel
-        (input)="handleSliderYearChange($event)"
-        (change)="handleSliderYearChange($event)"
-        [disabled]= "!options.enabled || !layer.visible">
-    </mat-slider>
-    <span>{{endYear}}</span>
-    <p *ngIf= "options.enabled" class="date-below">{{year}}</p>
-    <div #actions class="igo-layer-actions-container">
-      <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
-        [disabled]="!layer.visible">
-      </mat-slide-toggle>
-      <button [disabled]= "!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="playYear($event)">
-        <mat-icon svgIcon="{{playIcon}}"></mat-icon>
-       </button>
-      <button [disabled]="!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="resetFilter($event)">
-        <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
-      </button>
-    </div>
-  </div>
-
-<div *ngIf="style === 'slider' && type !== 'year'" class="igo-col igo-col-100 igo-col-100-m">
+<br />
+<div
+  *ngIf="!isRange && style === 'slider' && type === 'year'"
+  class="igo-col igo-col-100 igo-col-100-m mat-typography"
+>
+  <span>{{ startYear }}</span>
+  <!-- TODO: The 'tickInterval' property no longer exists -->
   <mat-slider
-      id="time-slider"
-      tickInterval="auto"
-      step="{{step}}"
-      [min]="dateToNumber(min)"
-      [max]="dateToNumber(max)"
+    id="time-slider"
+    step="{{ step }}"
+    [min]="startYear"
+    [max]="endYear"
+    [color]="color"
+    thumbLabel
+    [disabled]="!options.enabled || !layer.visible"
+    #ngSlider
+    ><input
+      matSliderThumb
       [value]="handleSliderValue()"
-      thumbLabel
-      (input)="handleSliderDateChange($event)"
-      (selectionChange)="handleSliderDateChange($event)">
+      (input)="
+        handleSliderYearChange({
+          source: ngSliderThumb,
+          parent: ngSlider,
+          value: ngSliderThumb.value
+        })
+      "
+      #ngSliderThumb="matSliderThumb"
+      (change)="
+        handleSliderYearChange({
+          source: ngSliderThumb,
+          parent: ngSlider,
+          value: ngSliderThumb.value
+        })
+      "
+    />
   </mat-slider>
-  <p class="date-below">{{handleSliderTooltip()}}</p>
+  <span>{{ endYear }}</span>
+  <p *ngIf="options.enabled" class="date-below">{{ year }}</p>
+  <div #actions class="igo-layer-actions-container">
+    <mat-slide-toggle
+      (change)="toggleFilterState()"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
+      [color]="color"
+      [checked]="options.enabled"
+      [disabled]="!layer.visible"
+    >
+    </mat-slide-toggle>
+    <button
+      [disabled]="!options.enabled || !layer.visible"
+      mat-icon-button
+      color="primary"
+      (click)="playYear($event)"
+    >
+      <mat-icon svgIcon="{{ playIcon }}"></mat-icon>
+    </button>
+    <button
+      [disabled]="!options.enabled || !layer.visible"
+      mat-icon-button
+      color="primary"
+      (click)="resetFilter($event)"
+    >
+      <mat-icon svgIcon="{{ resetIcon }}"></mat-icon>
+    </button>
+  </div>
+</div>
+
+<div
+  *ngIf="style === 'slider' && type !== 'year'"
+  class="igo-col igo-col-100 igo-col-100-m"
+>
+  <!-- TODO: The 'tickInterval' property no longer exists -->
+  <mat-slider
+    id="time-slider"
+    step="{{ step }}"
+    [min]="dateToNumber(min)"
+    [max]="dateToNumber(max)"
+    thumbLabel
+    (selectionChange)="handleSliderDateChange($event)"
+    #ngSlider
+    ><input
+      matSliderThumb
+      [value]="handleSliderValue()"
+      (input)="
+        handleSliderDateChange({
+          source: ngSliderThumb,
+          parent: ngSlider,
+          value: ngSliderThumb.value
+        })
+      "
+      #ngSliderThumb="matSliderThumb"
+    />
+  </mat-slider>
+  <p class="date-below">{{ handleSliderTooltip() }}</p>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
-   <mat-icon svgIcon="{{playIcon}}"></mat-icon>
+    <mat-icon svgIcon="{{ playIcon }}"></mat-icon>
   </button>
 </div>

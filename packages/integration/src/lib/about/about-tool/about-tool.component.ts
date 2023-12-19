@@ -1,11 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
+import { AuthService } from '@igo2/auth';
 import { ToolComponent } from '@igo2/common';
-import { ConfigService, LanguageService, Version } from '@igo2/core';
+import { ConfigService, LanguageService, version } from '@igo2/core';
+
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
-import { AuthService } from '@igo2/auth';
-import { HttpClient } from '@angular/common/http';
+
+import { AllEnvironmentOptions } from '../../environment';
 
 @ToolComponent({
   name: 'about',
@@ -18,6 +21,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./about-tool.component.scss']
 })
 export class AboutToolComponent implements OnInit {
+  private configOptions: AllEnvironmentOptions;
   @Input()
   get headerHtml() {
     return this._headerHtml;
@@ -34,7 +38,9 @@ export class AboutToolComponent implements OnInit {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
   private _discoverTitleInLocale: string = 'IGO';
-  public discoverTitleInLocale$: Observable<string> = of(this._discoverTitleInLocale);
+  public discoverTitleInLocale$: Observable<string> = of(
+    this._discoverTitleInLocale
+  );
 
   @Input()
   get discoverTitleInLocale() {
@@ -47,9 +53,9 @@ export class AboutToolComponent implements OnInit {
 
   @Input() trainingGuideURLs;
 
-  public version: Version;
+  public effectiveVersion: string;
   private _html: string = 'igo.integration.aboutTool.html';
-  private _headerHtml: string = this.languageService.translate.instant('igo.integration.aboutTool.headerHtml');
+  private _headerHtml: string;
 
   private baseUrlProfil;
   private baseUrlGuide;
@@ -61,41 +67,52 @@ export class AboutToolComponent implements OnInit {
     public auth: AuthService,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
-    private languageService: LanguageService) {
-    this.version = configService.getConfig('version');
-    this.baseUrlProfil = configService.getConfig('storage.url');
-    this.baseUrlGuide = configService.getConfig('depot.url') + configService.getConfig('depot.guideUrl');
+    private languageService: LanguageService
+  ) {
+    this.headerHtml = this.languageService.translate.instant(
+      'igo.integration.aboutTool.headerHtml'
+    );
+    this.configOptions = this.configService.getConfigs();
+    const configVersion = this.configOptions.version;
+    this.effectiveVersion =
+      configVersion?.app || configVersion?.lib || version.lib;
+    this.baseUrlProfil = this.configOptions.storage?.url;
+    this.baseUrlGuide =
+      this.configOptions.depot?.url +
+      // todo validate this property
+      (this.configOptions.depot as any)?.guideUrl;
   }
 
   ngOnInit() {
-    if (this.auth.authenticated && this.configService.getConfig('context.url')) {
+    if (this.auth.authenticated && this.configOptions.context?.url) {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
         this.trainingGuideURLs = recast.guides;
         this.cdRef.detectChanges();
       });
     } else if (
-        this.auth.authenticated &&
-        !this.configService.getConfig('context.url') &&
-        this.configService.getConfig('depot.trainingGuides')) {
-          this.trainingGuideURLs = this.configService.getConfig('depot.trainingGuides');
+      this.auth.authenticated &&
+      !this.configOptions.context?.url &&
+      this.configOptions.depot?.trainingGuides
+    ) {
+      this.trainingGuideURLs = this.configOptions.depot?.trainingGuides;
     }
   }
 
   openGuide(guide?) {
     this.loading = true;
-    const url = guide ?
-      this.baseUrlGuide + guide + '?' :
-      this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+    const url = guide
+      ? this.baseUrlGuide + guide + '?'
+      : this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
     this.http
-    .get(url, {
-      responseType: 'blob'
-    })
-    .subscribe(() => {
-      this.loading = false;
-      window.open(url, '_blank');
-      this.cdRef.detectChanges();
-    });
+      .get(url, {
+        responseType: 'blob'
+      })
+      .subscribe(() => {
+        this.loading = false;
+        window.open(url, '_blank');
+        this.cdRef.detectChanges();
+      });
   }
 
   formatFileName(name: string) {

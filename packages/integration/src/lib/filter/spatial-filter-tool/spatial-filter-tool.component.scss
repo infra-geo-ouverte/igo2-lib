@@ -1,0 +1,13 @@
+:host {
+  $base-padding: 0px 12px;
+
+  igo-spatial-filter-item {
+    display: block;
+    padding: $base-padding;
+  }
+
+  ::ng-deep .mat-mdc-tab-body-wrapper {
+    margin-top: 12px;
+    padding: $base-padding;
+  }
+}

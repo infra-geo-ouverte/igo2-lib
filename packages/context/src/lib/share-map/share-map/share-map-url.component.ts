@@ -1,11 +1,19 @@
-import { AfterViewInit, Component, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 
-import { Clipboard } from '@igo2/utils';
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
+import { Clipboard } from '@igo2/utils';
+
+import { Subscription, combineLatest } from 'rxjs';
 
 import { ShareMapService } from '../shared/share-map.service';
-import { combineLatest, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-share-map-url',
@@ -32,10 +40,11 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     this.resetUrl();
     this.mapState$$ = combineLatest([
       this.map.viewController.state$,
-      this.map.status$]).subscribe(c => {
-        this.resetUrl();
-        this.cdRef.detectChanges();
-      });
+      this.map.status$
+    ]).subscribe((c) => {
+      this.resetUrl();
+      this.cdRef.detectChanges();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -47,7 +56,10 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   resetUrl(values: any = {}) {
-    this.url = this.shareMapService.getUrlWithoutApi(this.map, this.publicShareOption);
+    this.url = this.shareMapService.getUrlWithoutApi(
+      this.map,
+      this.publicShareOption
+    );
   }
 
   copyTextToClipboard(textArea) {
@@ -55,7 +67,8 @@ export class ShareMapUrlComponent implements AfterViewInit, OnInit, OnDestroy {
     if (successful) {
       this.messageService.success(
         'igo.context.shareMap.dialog.copyMsg',
-        'igo.context.shareMap.dialog.copyTitle');
+        'igo.context.shareMap.dialog.copyTitle'
+      );
     }
   }
 }

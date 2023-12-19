@@ -9,91 +9,126 @@
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async"
   [radius]="radius"
-  [predefinedRadius]="predefinedRadius">
+  [predefinedRadius]="predefinedRadius"
+>
 </igo-geometry-form-field-input>
 
 <div class="header">
-    <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="drawControlIsActive"
-      [labelPosition]="'before'"
-      (change)="onDrawControlChange()">
-      {{'igo.geo.spatialFilter.drawControl' | translate}}
-    </mat-slide-toggle>
-    <mat-slide-toggle *ngIf="!isPredefined()"
-      [checked]="freehandDrawIsActive"
-      [labelPosition]="'before'"
-      (change)="onfreehandControlChange()">
-      {{'igo.geo.spatialFilter.freehandControl' | translate}}
-    </mat-slide-toggle>
+  <mat-slide-toggle
+    *ngIf="!isPredefined()"
+    [checked]="drawControlIsActive"
+    [labelPosition]="'before'"
+    (change)="onDrawControlChange()"
+  >
+    {{ 'igo.geo.spatialFilter.drawControl' | translate }}
+  </mat-slide-toggle>
+  <mat-slide-toggle
+    *ngIf="!isPredefined()"
+    [checked]="freehandDrawIsActive"
+    [labelPosition]="'before'"
+    (change)="onfreehandControlChange()"
+  >
+    {{ 'igo.geo.spatialFilter.freehandControl' | translate }}
+  </mat-slide-toggle>
 </div>
 
 <div class="buffer-unit" *ngIf="isPolygon()">
-  <form class="buffer-form">
-    <mat-form-field class="buffer">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
-      [value]="0" [readonly]="this.formControl.value === null">
-    </mat-form-field>
-  </form>
+  <mat-form-field class="buffer">
+    <input
+      type="number"
+      matInput
+      placeholder="{{ 'igo.geo.spatialFilter.buffer' | translate }}"
+      [formControl]="bufferFormControl"
+      [value]="0"
+      [readonly]="this.formControl.value === null"
+    />
+  </mat-form-field>
 
   <mat-form-field class="unit-field">
     <mat-select
-    [value]="measureUnit"
-    (selectionChange)="onMeasureUnitChange($event.value)">
-    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
-    </mat-option>
+      [value]="measureUnit"
+      (selectionChange)="onMeasureUnitChange($event.value)"
+    >
+      <mat-option
+        *ngFor="let measureUnit of measureUnits"
+        [value]="measureUnit"
+      >
+        {{ 'igo.geo.measure.' + measureUnit | translate }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 </div>
 
 <div class="radius-unit" *ngIf="isPoint()">
-  <form class="radius-form">
-    <mat-form-field class="radius">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-      [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.formControl.value === null">
-    </mat-form-field>
-  </form>
+  <mat-form-field class="radius">
+    <input
+      type="number"
+      matInput
+      placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
+      [formControl]="radiusFormControl"
+      [value]="1000"
+      (input)="getRadius()"
+      [readonly]="this.freehandDrawIsActive && this.formControl.value === null"
+    />
+  </mat-form-field>
 
   <mat-form-field class="unit-field">
     <mat-select
-    [value]="measureUnit"
-    (selectionChange)="onMeasureUnitChange($event.value)">
-    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
-    </mat-option>
+      [value]="measureUnit"
+      (selectionChange)="onMeasureUnitChange($event.value)"
+    >
+      <mat-option
+        *ngFor="let measureUnit of measureUnits"
+        [value]="measureUnit"
+      >
+        {{ 'igo.geo.measure.' + measureUnit | translate }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 </div>
 
-<mat-label class="title mat-typography">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
+<mat-label class="title mat-typography"
+  >{{ 'igo.geo.spatialFilter.search' | translate }} :
+</mat-label>
 <mat-radio-group [value]="selectedItemType">
-    <mat-radio-button *ngFor="let item of itemType"
-      [value]="item"
-      (change)="onItemTypeChange($event)">
-      {{'igo.geo.spatialFilter.' + item | translate}}
-    </mat-radio-button>
+  <mat-radio-button
+    *ngFor="let item of itemType"
+    [value]="item"
+    (change)="onItemTypeChange($event)"
+  >
+    {{ 'igo.geo.spatialFilter.' + item | translate }}
+  </mat-radio-button>
 </mat-radio-group>
 
-<div class="thematics" *ngIf="(selectedItemType==='Thematics' && !tableTemplate) || (selectedItemType==='Thematics' && tableTemplate && !listIsVisible)">
+<div
+  class="thematics"
+  *ngIf="
+    (selectedItemType === 'Thematics' && !tableTemplate) ||
+    (selectedItemType === 'Thematics' && tableTemplate && !listIsVisible)
+  "
+>
   <mat-table>
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef class="thematics-header">{{'igo.geo.spatialFilter.Thematics' | translate}}</mat-header-cell>
-      </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef class="thematics-header">{{
+        'igo.geo.spatialFilter.Thematics' | translate
+      }}</mat-header-cell>
+    </ng-container>
 
-      <!-- Select Column -->
-      <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef class="checks-header">
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="isAllSelected()"
-                        [indeterminate]="selectedThematics.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </mat-header-cell>
+    <!-- Select Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef class="checks-header">
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          [checked]="isAllSelected()"
+          [indeterminate]="selectedThematics.hasValue() && !isAllSelected()"
+        >
+        </mat-checkbox>
+      </mat-header-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
@@ -102,60 +137,94 @@
       <li class="mat-tree-node">
         <!-- use a disabled button to provide padding for tree leaf -->
         <button mat-icon-button disabled></button>
-        {{node.name}}
-        <mat-checkbox class="tree-check" (click)="$event.stopPropagation()"
-                      (change)="$event ? onToggleChange(node) : null"
-                      [checked]="selectedThematics.isSelected(node)">
+        {{ node.name }}
+        <mat-checkbox
+          class="tree-check"
+          (click)="$event.stopPropagation()"
+          (change)="$event ? onToggleChange(node) : null"
+          [checked]="selectedThematics.isSelected(node)"
+        >
         </mat-checkbox>
       </li>
     </mat-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
     <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-        <div class="mat-tree-node">
-          <button mat-icon-button
-            (click)="onToggleClick(node)">
-            <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'"></mat-icon>
-          </button>
-          {{node.name}}
-          <mat-checkbox class="tree-check-2" (change)="$event ? childrensToggle(node) : null"
-                        [checked]="isAllSelected(node)"
-                        [indeterminate]="hasChildrenSelected(node) && !isAllSelected(node)">
-          </mat-checkbox>
-        </div>
-        <ul class="tree-ul" [class.example-tree-invisible]="!treeControl.isExpanded(node)">
-          <ng-container matTreeNodeOutlet></ng-container>
-        </ul>
+      <div class="mat-tree-node">
+        <button mat-icon-button (click)="onToggleClick(node)">
+          <mat-icon
+            [svgIcon]="
+              treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'
+            "
+          ></mat-icon>
+        </button>
+        {{ node.name }}
+        <mat-checkbox
+          class="tree-check-2"
+          (change)="$event ? childrensToggle(node) : null"
+          [checked]="isAllSelected(node)"
+          [indeterminate]="hasChildrenSelected(node) && !isAllSelected(node)"
+        >
+        </mat-checkbox>
+      </div>
+      <ul
+        class="tree-ul"
+        [class.example-tree-invisible]="!treeControl.isExpanded(node)"
+      >
+        <ng-container matTreeNodeOutlet></ng-container>
+      </ul>
     </mat-nested-tree-node>
-
   </mat-tree>
 </div>
 
 <div class="buttons">
-
-  <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" [disabled]="disabledClearSearch()"
-    (click)="clearSearch()">
-      {{'igo.geo.spatialFilter.clearSearch' | translate}}
+  <button
+    *ngIf="isPredefined()"
+    mat-raised-button
+    class="clear-search-button"
+    [disabled]="disabledClearSearch()"
+    (click)="clearSearch()"
+  >
+    {{ 'igo.geo.spatialFilter.clearSearch' | translate }}
   </button>
 
-  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="this.formControl.value === null"
-    (click)="clearDrawZone()">
-    {{'igo.geo.spatialFilter.clearForm' | translate}}
+  <button
+    *ngIf="isPolygon() || isPoint()"
+    mat-raised-button
+    class="clear-form-button"
+    [disabled]="this.formControl.value === null"
+    (click)="clearDrawZone()"
+  >
+    {{ 'igo.geo.spatialFilter.clearForm' | translate }}
   </button>
 
-  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()" color="primary"
-    (click)="toggleSearchButton()">
-    {{'igo.geo.spatialFilter.goSearch' | translate}}
+  <button
+    mat-raised-button
+    class="search-button"
+    [disabled]="disableSearchButton()"
+    color="primary"
+    (click)="toggleSearchButton()"
+  >
+    {{ 'igo.geo.spatialFilter.goSearch' | translate }}
   </button>
 
-  <button mat-raised-button class="remove-button" [disabled]="allLayers.length === 0" (click)="clearButton()">
-    {{'igo.geo.spatialFilter.removeLayer' | translate}}
+  <button
+    mat-raised-button
+    class="remove-button"
+    [disabled]="allLayers.length === 0"
+    (click)="clearButton()"
+  >
+    {{ 'igo.geo.spatialFilter.removeLayer' | translate }}
   </button>
 
-  <button mat-raised-button class="export-button" [disabled]="!store.entities$.getValue().length" (click)="export.emit()">
-    {{'igo.geo.spatialFilter.exportLayer' | translate}}
+  <button
+    mat-raised-button
+    class="export-button"
+    [disabled]="!store.entities$.getValue().length"
+    (click)="export.emit()"
+  >
+    {{ 'igo.geo.spatialFilter.exportLayer' | translate }}
   </button>
-
 </div>
 
 <button
@@ -164,23 +233,29 @@
   mat-icon-button
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.spatialFilter.showSearchResults' | translate"
-  (click)="toggleVisibleList()">
+  (click)="toggleVisibleList()"
+>
   <mat-icon svgIcon="chevron-down"></mat-icon>
 </button>
 
-<div class="results" *ngIf="store.all().length && tableTemplate && listIsVisible">
+<div
+  class="results"
+  *ngIf="store.all().length && tableTemplate && listIsVisible"
+>
   <button
     *ngIf="listIsVisible"
     mat-icon-button
     matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.spatialFilter.hideSearchResults' | translate"
-    (click)="toggleVisibleList()">
-  <mat-icon svgIcon="chevron-up"></mat-icon>
+    (click)="toggleVisibleList()"
+  >
+    <mat-icon svgIcon="chevron-up"></mat-icon>
   </button>
   <igo-entity-table
     class="results-list"
     [template]="tableTemplate"
     [store]="store"
-    (entitySelectChange)="entityChange.emit($event)">
+    (entitySelectChange)="entityChange.emit($event)"
+  >
   </igo-entity-table>
 </div>

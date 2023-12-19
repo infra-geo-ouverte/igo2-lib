@@ -1,11 +1,5 @@
-@import '../../../../../core/src/style/partial/media';
-
-:host{
-  margin-top: -10px;
-  padding-right: 15px;
-
-  @include mobile {
-    margin-top: 0px;
-    padding-right: 5px;
+:host {
+  ::ng-deep .mat-mdc-paginator-container {
+    min-height: unset;
   }
 }

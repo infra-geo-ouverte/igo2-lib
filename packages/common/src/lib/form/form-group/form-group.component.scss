@@ -4,17 +4,13 @@
   display: block;
   overflow: auto;
   padding: 10px 5px;
-}
+  box-sizing: border-box;
 
-.igo-form-field-wrapper {
-  display: inline-block;
-  padding: 0 5px;
-}
+  .igo-form-field-colspan-2 {
+    width: 100%;
+  }
 
-.igo-form-field-colspan-2 {
-  width: 100%;
-}
-
-.igo-form-field-colspan-1 {
-  width: 50%;
+  .igo-form-field-colspan-1 {
+    width: 50%;
+  }
 }

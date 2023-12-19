@@ -1,9 +1,9 @@
-import olTileGridWMTS from 'ol/tilegrid/WMTS';
-import * as olproj from 'ol/proj';
 import {
   getTopLeft as extentGetTopLeft,
   getWidth as extentGetWidth
 } from 'ol/extent.js';
+import * as olproj from 'ol/proj';
+import olTileGridWMTS from 'ol/tilegrid/WMTS';
 
 export function createDefaultTileGrid(epsg?: string): olTileGridWMTS {
   const projection = epsg ? olproj.get(epsg) : olproj.get('EPSG:3857');

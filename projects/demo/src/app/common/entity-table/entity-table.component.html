@@ -1,0 +1,12 @@
+<app-doc-viewer title="Entity Table" subtitle="Common">
+  <app-example-viewer codeFolder="common/entity-table">
+    <igo-entity-table
+      [store]="store"
+      [withPaginator]="true"
+      [paginatorOptions]="paginatorOptions"
+      [template]="template"
+      (entitySortChange)="entitySortChange()"
+    >
+    </igo-entity-table>
+  </app-example-viewer>
+</app-doc-viewer>

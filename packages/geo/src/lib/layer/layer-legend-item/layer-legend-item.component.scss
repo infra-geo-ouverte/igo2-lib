@@ -3,14 +3,14 @@
 
 :host {
   overflow: hidden;
-}
 
-.igo-layer-list-item {
-  height: $igo-list-item-height;
-  clear: both;
-}
+  .igo-layer-list-item {
+    height: $igo-list-item-height;
+    clear: both;
+  }
 
-.igo-layer-legend-container {
-  padding-left: 18px;
-  width: calc(100% - 18px);
+  .igo-layer-legend-container {
+    padding-left: 18px;
+    width: calc(100% - 18px);
+  }
 }

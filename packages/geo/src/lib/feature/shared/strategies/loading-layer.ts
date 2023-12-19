@@ -1,10 +1,10 @@
-import OlEvent from 'ol/events/Event';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
-import { FeatureStore } from '../store';
-import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import OlEvent from 'ol/events/Event';
+
 import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import { FeatureStore } from '../store';
 
 /**
  * This strategy loads a layer's features into it's store counterpart.
@@ -15,7 +15,6 @@ import { ClusterDataSource } from '../../../datasource/shared/datasources/cluste
  * with a standard Loading strategy and it would probably cause recursion issues.
  */
 export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
-
   /**
    * Subscription to the store's OL source changes
    */
@@ -94,8 +93,9 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Stop watching for OL source changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach((entries: [FeatureStore, string]) => {
-    });
+    Array.from(this.stores$$.entries()).forEach(
+      (entries: [FeatureStore, string]) => {}
+    );
     this.stores$$.clear();
   }
 

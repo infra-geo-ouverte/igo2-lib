@@ -1,12 +1,13 @@
 import ImageArcGISRest from 'ol/source/ImageArcGISRest';
 
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 import { ArcGISRestImageDataSourceOptions } from './imagearcgisrest-datasource.interface';
-import { QueryHtmlTarget } from '../../../query/shared/query.enums';
+
 export class ImageArcGISRestDataSource extends DataSource {
-  public ol: ImageArcGISRest;
-  public options: ArcGISRestImageDataSourceOptions;
+  public declare ol: ImageArcGISRest;
+  public declare options: ArcGISRestImageDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -29,10 +30,13 @@ export class ImageArcGISRestDataSource extends DataSource {
   }
 
   protected createOlSource(): ImageArcGISRest {
-    const params = this.options.layer === undefined ? this.options.params : Object.assign(
-      {LAYERS: `show:${this.options.layer}`},
-      this.options.params
-    );
+    const params =
+      this.options.layer === undefined
+        ? this.options.params
+        : Object.assign(
+            { LAYERS: `show:${this.options.layer}` },
+            this.options.params
+          );
 
     if (typeof params.renderingRule === 'object') {
       params.renderingRule = JSON.stringify(params.renderingRule);
@@ -48,7 +52,11 @@ export class ImageArcGISRestDataSource extends DataSource {
   getLegend(): Legend[] {
     const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
+    if (
+      legendInfo === undefined ||
+      this.options.layer === undefined ||
+      legend.length > 0
+    ) {
       return legend;
     }
 

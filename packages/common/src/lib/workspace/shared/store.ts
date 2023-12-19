@@ -1,13 +1,13 @@
+import { BehaviorSubject } from 'rxjs';
+
 import { EntityStore } from '../../entity';
 import { Workspace } from './workspace';
-import { BehaviorSubject } from 'rxjs';
 
 /**
  * The class is a specialized version of an EntityStore that stores
  * workspaces.
  */
 export class WorkspaceStore extends EntityStore<Workspace> {
-
   activeWorkspace$: BehaviorSubject<Workspace> = new BehaviorSubject(undefined);
 
   /**
@@ -22,7 +22,7 @@ export class WorkspaceStore extends EntityStore<Workspace> {
 
     this.deactivateWorkspace();
     if (workspace !== undefined) {
-      this.state.update(workspace, {active: true, selected: true}, true);
+      this.state.update(workspace, { active: true, selected: true }, true);
       this.activeWorkspace$.next(workspace);
       workspace.activate();
     }
@@ -39,5 +39,4 @@ export class WorkspaceStore extends EntityStore<Workspace> {
       this.activeWorkspace$.next(undefined);
     }
   }
-
 }

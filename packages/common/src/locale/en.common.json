@@ -4,7 +4,22 @@
       "confirmDialog": {
         "cancelBtn": "Cancel",
         "confirmBtn": "Confirm",
-        "title": "Confirm"
+        "yes": "Yes",
+        "no": "No",
+        "title": "Confirm",
+        "applyBtn": "Apply"
+      },
+      "selectValueDialog": {
+        "cancelButtonText": "Cancel",
+        "processButtonText": "Select",
+        "multipleTitle": "Please, select values",
+        "title": "Please, select a value",
+        "selectFieldText": "Options"
+      },
+      "formDialog": {
+        "cancelButtonText": "Cancel",
+        "processButtonText": "Submit",
+        "title": "Fill the form"
       },
       "table": {
         "filter": "Filter"
@@ -14,6 +29,7 @@
       },
       "form": {
         "errors": {
+          "email": "You must provide a email",
           "required": "This field is required"
         }
       },

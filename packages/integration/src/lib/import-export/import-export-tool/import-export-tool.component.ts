@@ -1,13 +1,26 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
-import { IgoMap, ExportOptions, ProjectionsLimitationsOptions } from '@igo2/geo';
+import {
+  ExportOptions,
+  IgoMap,
+  ProjectionsLimitationsOptions
+} from '@igo2/geo';
 
-import { MapState } from '../../map/map.state';
-import { ImportExportMode, ImportExportState, ImportExportType } from '../import-export.state';
-import { WorkspaceState } from '../../workspace/workspace.state';
 import { ContextState } from '../../context/context.state';
+import { MapState } from '../../map/map.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
+import {
+  ImportExportMode,
+  ImportExportState,
+  ImportExportType
+} from '../import-export.state';
 
 @ToolComponent({
   name: 'importExport',
@@ -21,7 +34,6 @@ import { ContextState } from '../../context/context.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent implements OnInit {
-
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
   @Input() selectFirstProj: boolean = false;
@@ -30,7 +42,9 @@ export class ImportExportToolComponent implements OnInit {
    * Map to measure on
    * @internal
    */
-  get map(): IgoMap { return this.mapState.map; }
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
   get workspaceStore(): WorkspaceStore {
     return this.workspaceState.store;
@@ -69,7 +83,6 @@ export class ImportExportToolComponent implements OnInit {
       this.importExportState.setMode(userSelectedMode);
     } else {
       this.importExportState.setMode(ImportExportMode.import);
-
     }
   }
 

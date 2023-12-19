@@ -10,7 +10,7 @@ export class ClonePipe implements PipeTransform {
     }
 
     if (value instanceof Array) {
-      return value.map(obj => Object.assign(Object.create(obj), obj));
+      return value.map((obj) => Object.assign(Object.create(obj), obj));
     } else {
       return Object.assign(Object.create(value), value);
     }

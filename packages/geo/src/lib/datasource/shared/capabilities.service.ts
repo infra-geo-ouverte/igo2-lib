@@ -1,52 +1,44 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpParams
-} from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { Cacheable } from 'ts-cacheable';
-
-import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
-import { optionsFromCapabilities } from 'ol/source/WMTS.js';
-import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
+
+import olAttribution from 'ol/control/Attribution';
+import { EsriJSON, WMSCapabilities, WMTSCapabilities } from 'ol/format';
+import * as olproj from 'ol/proj';
+import { optionsFromCapabilities } from 'ol/source/WMTS.js';
+
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Cacheable } from 'ts-cacheable';
+
+import {
+  TimeFilterStyle,
+  TimeFilterType
+} from '../../filter/shared/time-filter.enum';
+import {
+  ItemStyleOptions,
+  LegendOptions
+} from '../../layer/shared/layers/legend.interface';
 import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
   QueryFormat,
   QueryFormatMimeType
 } from '../../query/shared/query.enums';
-
+import { EsriStyleGenerator } from '../../style/shared/datasource/esri-style-generator';
 import {
-  WMTSDataSourceOptions,
-  WMSDataSourceOptions,
-  CartoDataSourceOptions,
+  TypeCapabilities,
+  TypeCapabilitiesStrings
+} from './capabilities.interface';
+import {
   ArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions,
+  CartoDataSourceOptions,
   TileArcGISRestDataSourceOptions,
-  ArcGISRestImageDataSourceOptions
+  WMSDataSourceOptions,
+  WMTSDataSourceOptions
 } from './datasources';
-import {
-  LegendOptions,
-  ItemStyleOptions
-} from '../../layer/shared/layers/layer.interface';
-import {
-  TimeFilterType,
-  TimeFilterStyle
-} from '../../filter/shared/time-filter.enum';
-import * as olproj from 'ol/proj';
-
-export enum TypeCapabilities {
-  wms = 'wms',
-  wmts = 'wmts',
-  arcgisrest = 'esriJSON',
-  imagearcgisrest = 'esriJSON',
-  tilearcgisrest = 'esriJSON'
-}
-
-export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +50,10 @@ export class CapabilitiesService {
     esriJSON: new EsriJSON()
   };
 
-  constructor(private http: HttpClient, private mapService: MapService) {}
+  constructor(
+    private http: HttpClient,
+    private mapService: MapService
+  ) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -117,7 +112,10 @@ export class CapabilitiesService {
     baseOptions: ArcGISRestDataSourceOptions
   ): Observable<ArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-    const serviceCapabilities = this.getCapabilities('arcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'arcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     return forkJoin([arcgisOptions, serviceCapabilities]).pipe(
       map((res: any) => {
@@ -130,11 +128,18 @@ export class CapabilitiesService {
     maxCacheCount: 20
   })
   getImageArcgisOptions(
-    baseOptions: ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
+    baseOptions:
+      | ArcGISRestImageDataSourceOptions
+      | TileArcGISRestDataSourceOptions
+  ): Observable<
+    ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  > {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
-    const serviceCapabilities = this.getCapabilities('imagearcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'imagearcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
       map((res: any) => res),
@@ -145,7 +150,12 @@ export class CapabilitiesService {
     );
     return forkJoin([arcgisOptions, legend, serviceCapabilities]).pipe(
       map((res: any) => {
-        return this.parseTileOrImageArcgisOptions(baseOptions, res[0], res[1], res[2]);
+        return this.parseTileOrImageArcgisOptions(
+          baseOptions,
+          res[0],
+          res[1],
+          res[2]
+        );
       })
     );
   }
@@ -155,10 +165,15 @@ export class CapabilitiesService {
   })
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
-  ): Observable<ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions> {
+  ): Observable<
+    ArcGISRestImageDataSourceOptions | TileArcGISRestDataSourceOptions
+  > {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
-    const serviceCapabilities = this.getCapabilities('tilearcgisrest', baseOptions.url);
+    const serviceCapabilities = this.getCapabilities(
+      'tilearcgisrest',
+      baseOptions.url
+    );
     const arcgisOptions = this.http.get(baseUrl);
     const legendInfo = this.http.get(legendUrl).pipe(
       map((res: any) => res),
@@ -266,9 +281,13 @@ export class CapabilitiesService {
       isExtentInGeographic = false;
     }
 
-    const extent = isExtentInGeographic ?
-        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', this.mapService.getMap().projection) :
-        undefined;
+    const extent = isExtentInGeographic
+      ? olproj.transformExtent(
+          layer.EX_GeographicBoundingBox,
+          'EPSG:4326',
+          this.mapService.getMap().projection
+        )
+      : undefined;
 
     let queryFormat: QueryFormat;
     const queryFormatMimeTypePriority = [
@@ -369,7 +388,7 @@ export class CapabilitiesService {
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
     arcgisOptions: any,
-    serviceCapabilities: any,
+    serviceCapabilities: any
   ): ArcGISRestDataSourceOptions {
     const title = arcgisOptions.name;
     let legendInfo: any;
@@ -422,8 +441,9 @@ export class CapabilitiesService {
         maxResolution: getResolutionFromScale(arcgisOptions.minScale),
         metadata: {
           extern: false,
-          abstract: arcgisOptions.description || serviceCapabilities.serviceDescription
-        },
+          abstract:
+            arcgisOptions.description || serviceCapabilities.serviceDescription
+        }
       },
       legendInfo,
       timeFilter,
@@ -435,13 +455,17 @@ export class CapabilitiesService {
   }
 
   private parseTileOrImageArcgisOptions(
-    baseOptions: TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions,
+    baseOptions:
+      | TileArcGISRestDataSourceOptions
+      | ArcGISRestImageDataSourceOptions,
     arcgisOptions: any,
     legend: any,
     serviceCapabilities: any
   ): TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions {
     const title = arcgisOptions.name;
-    const legendInfo = legend.layers ? legend.layers.find(x => x.layerName === title) : undefined;
+    const legendInfo = legend.layers
+      ? legend.layers.find((x) => x.layerName === title)
+      : undefined;
     const attributions = new olAttribution({
       target: arcgisOptions.copyrightText
     });
@@ -477,8 +501,9 @@ export class CapabilitiesService {
         maxResolution: getResolutionFromScale(arcgisOptions.minScale),
         metadata: {
           extern: false,
-          abstract: arcgisOptions.description || serviceCapabilities.serviceDescription
-        },
+          abstract:
+            arcgisOptions.description || serviceCapabilities.serviceDescription
+        }
       },
       legendInfo,
       timeFilter,

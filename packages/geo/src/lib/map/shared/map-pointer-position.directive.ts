@@ -1,21 +1,22 @@
 import {
   Directive,
-  Input,
-  Output,
   EventEmitter,
+  Input,
   OnDestroy,
-  Self,
-  OnInit
+  OnInit,
+  Output,
+  Self
 } from '@angular/core';
 
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-
-import { transform } from 'ol/proj';
 import { MediaService } from '@igo2/core';
+
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
 import { unByKey } from 'ol/Observable';
+import { transform } from 'ol/proj';
+
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+
 /**
  * This directive return the pointer coordinate (on click or pointermove)
  * in [longitude, latitude], delayed by in input (pointerMoveDelay)
@@ -25,7 +26,6 @@ import { unByKey } from 'ol/Observable';
   selector: '[igoPointerPosition]'
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
-
   private lastTimeoutRequest;
 
   /**
@@ -63,7 +63,7 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   constructor(
     @Self() private component: MapBrowserComponent,
     private mediaService: MediaService
-  ) { }
+  ) {}
 
   /**
    * Start listening to pointermove
@@ -89,7 +89,8 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: MapBrowserPointerEvent<any>) => this.onPointerEvent(event, this.pointerPositionDelay)
+      (event: MapBrowserPointerEvent<any>) =>
+        this.onPointerEvent(event, this.pointerPositionDelay)
     );
   }
 
@@ -123,12 +124,19 @@ export class PointerPositionDirective implements OnInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private onPointerEvent(event: MapBrowserPointerEvent<any>, delay: number) {
-    if (event.dragging || this.mediaService.isTouchScreen()) {return; }
-    if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
+    if (event.dragging || this.mediaService.isTouchScreen()) {
+      return;
+    }
+    if (typeof this.lastTimeoutRequest !== 'undefined') {
+      // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
     }
 
-    const lonlat = transform(event.coordinate, this.mapProjection, 'EPSG:4326') as [number, number];
+    const lonlat = transform(
+      event.coordinate,
+      this.mapProjection,
+      'EPSG:4326'
+    ) as [number, number];
     this.lastTimeoutRequest = setTimeout(() => {
       this.pointerPositionCoord.emit(lonlat);
     }, delay);

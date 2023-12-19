@@ -1,9 +1,11 @@
-import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+
+import { Media, MediaService } from '@igo2/core';
+
 import { Subscription } from 'rxjs';
 
-import { MediaService, Media } from '@igo2/core';
-import { Layer } from '../../layer';
-import { IgoMap } from '../shared';
+import { Layer } from '../../layer/shared';
+import { IgoMap } from '../shared/map';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
 
 @Component({
@@ -22,6 +24,10 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
 
   private layers$$: Subscription;
 
+  get hasMoreThanTwo(): boolean {
+    return this.baseLayers.length > 1;
+  }
+
   constructor(private mediaService: MediaService) {
     const media = this.mediaService.media$.value;
     if (media === Media.Mobile && this.useStaticIcon === undefined) {
@@ -30,8 +36,8 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.layers$$ = this.map.layers$.subscribe(arrayLayers => {
-      this._baseLayers = arrayLayers.filter(l => l.baseLayer);
+    this.layers$$ = this.map.layers$.subscribe((arrayLayers) => {
+      this._baseLayers = arrayLayers.filter((l) => l.baseLayer);
     });
   }
 
@@ -40,7 +46,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   collapseOrExpand() {
-    if (this.baseLayers.length > 1 || this.useStaticIcon) {
+    if (this.hasMoreThanTwo || this.useStaticIcon) {
       this.expand = !this.expand;
     } else {
       this.expand = false;
@@ -51,17 +57,20 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
     const mapResolution = this.map.viewController.getResolution();
     const mapZoom = this.map.viewController.getZoom();
 
-    const bl = this._baseLayers.filter(l => {
+    const bl = this._baseLayers.filter((l) => {
       return (
         (!l.options.maxResolution ||
           mapResolution <= l.options.maxResolution) &&
-        (!l.options.minResolution || mapResolution >= l.options.minResolution) &&
-        (!l.options.source.options.maxZoom || mapZoom <= l.options.source.options.maxZoom) &&
-        (!l.options.source.options.minZoom || mapZoom >= l.options.source.options.minZoom)
+        (!l.options.minResolution ||
+          mapResolution >= l.options.minResolution) &&
+        (!l.options.source.options.maxZoom ||
+          mapZoom <= l.options.source.options.maxZoom) &&
+        (!l.options.source.options.minZoom ||
+          mapZoom >= l.options.source.options.minZoom)
       );
     });
 
-    const blHidden = bl.filter(l => !l.visible);
+    const blHidden = bl.filter((l) => !l.visible);
     return blHidden.length + 1 === bl.length ? blHidden : bl;
   }
 }

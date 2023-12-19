@@ -1,10 +1,10 @@
 import {
   Directive,
-  Input,
-  Output,
+  ElementRef,
   EventEmitter,
   HostListener,
-  ElementRef,
+  Input,
+  Output,
   Renderer2
 } from '@angular/core';
 
@@ -39,7 +39,10 @@ export class CollapseDirective {
     this.collapsed = !this.collapsed;
   }
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef
+  ) {}
 
   private collapseTarget() {
     this.renderer.addClass(this.target, 'igo-collapsed');

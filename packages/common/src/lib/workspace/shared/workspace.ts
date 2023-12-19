@@ -1,9 +1,8 @@
-import { Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 import { ActionStore } from '../../action';
+import { EntityStoreWithStrategy } from '../../entity';
 import { Widget } from '../../widget';
-import { EntityStore } from '../../entity';
-
 import { WorkspaceOptions } from './workspace.interfaces';
 
 /**
@@ -12,7 +11,6 @@ import { WorkspaceOptions } from './workspace.interfaces';
  * entity table template that may be used by an entity table component.
  */
 export class Workspace<E extends object = object> {
-
   /**
    * Observable of the selected widget
    */
@@ -21,12 +19,14 @@ export class Workspace<E extends object = object> {
   /**
    * Observable of the selected widget's inputs
    */
-  readonly widgetInputs$ = new BehaviorSubject<{[key: string]: any}>({});
+  readonly widgetInputs$ = new BehaviorSubject<{ [key: string]: any }>({});
 
   /**
    * Observable of the selected widget's subscribers
    */
-  readonly widgetSubscribers$ = new BehaviorSubject<{[key: string]: (event: any) => void}>({});
+  readonly widgetSubscribers$ = new BehaviorSubject<{
+    [key: string]: (event: any) => void;
+  }>({});
 
   /**
    * Subscription to the selected entity
@@ -46,37 +46,51 @@ export class Workspace<E extends object = object> {
   /**
    * Workspace id
    */
-  get id(): string { return this.options.id; }
+  get id(): string {
+    return this.options.id;
+  }
 
   /**
    * Workspace title
    */
-  get title(): string { return this.options.title; }
+  get title(): string {
+    return this.options.title;
+  }
 
   /**
    * Workspace title
    */
-  get meta(): {[key: string]: any} { return this.options.meta || {}; }
+  get meta(): { [key: string]: any } {
+    return this.options.meta || {};
+  }
 
   /**
    * Entities store
    */
-  get entityStore(): EntityStore<E> { return this.options.entityStore as EntityStore<E>; }
+  get entityStore(): EntityStoreWithStrategy<E> {
+    return this.options.entityStore as EntityStoreWithStrategy<E>;
+  }
 
   /**
    * Actions store (some actions activate a widget)
    */
-  get actionStore(): ActionStore { return this.options.actionStore; }
+  get actionStore(): ActionStore {
+    return this.options.actionStore;
+  }
 
   /**
    * Selected widget
    */
-  get widget(): Widget { return this.widget$.value; }
+  get widget(): Widget {
+    return this.widget$.value;
+  }
 
   /**
    * Whether a widget is selected
    */
-  get hasWidget(): boolean { return this.widget !== undefined; }
+  get hasWidget(): boolean {
+    return this.widget !== undefined;
+  }
 
   constructor(protected options: WorkspaceOptions) {}
 
@@ -84,7 +98,9 @@ export class Workspace<E extends object = object> {
    * Whether this strategy is active
    * @internal
    */
-  get active(): boolean { return this.active$.value; }
+  get active(): boolean {
+    return this.active$.value;
+  }
   readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
@@ -99,7 +115,8 @@ export class Workspace<E extends object = object> {
     this.active$.next(true);
 
     if (this.entityStore !== undefined) {
-      this.entities$$ = this.entityStore.stateView.all$()
+      this.entities$$ = this.entityStore.stateView
+        .all$()
         .subscribe(() => this.onStateChange());
     }
 
@@ -130,8 +147,8 @@ export class Workspace<E extends object = object> {
    */
   activateWidget(
     widget: Widget,
-    inputs: {[key: string]: any} = {},
-    subscribers: {[key: string]: (event: any) => void} = {}
+    inputs: { [key: string]: any } = {},
+    subscribers: { [key: string]: (event: any) => void } = {}
   ) {
     this.widget$.next(widget);
     this.widgetInputs$.next(inputs);
@@ -153,5 +170,4 @@ export class Workspace<E extends object = object> {
   private onStateChange() {
     this.change.next();
   }
-
 }

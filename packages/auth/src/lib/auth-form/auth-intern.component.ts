@@ -1,14 +1,19 @@
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
   Input,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
-import { Validators, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+
+import { LanguageService } from '@igo2/core';
 
 import { AuthService } from '../shared/auth.service';
-import { LanguageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-auth-intern',
@@ -54,7 +59,7 @@ export class AuthInternComponent {
         try {
           this.languageService.translate
             .get('igo.auth.error.' + error.error.message)
-            .subscribe(errorMsg => (this.error = errorMsg));
+            .subscribe((errorMsg) => (this.error = errorMsg));
         } catch (e) {
           this.error = error.error.message;
         }

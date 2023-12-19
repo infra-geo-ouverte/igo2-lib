@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
-import { StorageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
+import { StorageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-user-dialog',
@@ -18,7 +18,7 @@ export class UserDialogComponent {
     private storageService: StorageService
   ) {
     const decodeToken = this.auth.decodeToken();
-    this.user = decodeToken.user;
+    this.user = decodeToken?.user;
     this.exp = new Date(decodeToken.exp * 1000).toLocaleString();
   }
 

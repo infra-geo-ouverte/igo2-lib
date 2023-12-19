@@ -1,38 +1,33 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectorRef,
-  OnInit,
   ChangeDetectionStrategy,
-  OnDestroy
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AuthService } from '@igo2/auth';
+import { ActionStore, ActionbarMode } from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
+import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { debounce } from 'rxjs/operators';
+
+import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import {
-  DetailedContext,
-  ContextsList,
+  ContextProfils,
+  ContextServiceOptions,
   ContextUserPermission,
-  ContextProfils
+  ContextsList,
+  DetailedContext
 } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
-import {
-  Subscription,
-  BehaviorSubject,
-  ReplaySubject,
-  EMPTY,
-  timer
-} from 'rxjs';
-import { take } from 'rxjs/operators';
-
-import { MatDialog } from '@angular/material/dialog';
-import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
-import { debounce } from 'rxjs/operators';
-import { ActionStore, ActionbarMode } from '@igo2/common';
 
 @Component({
   selector: 'igo-context-list',
@@ -41,6 +36,7 @@ import { ActionStore, ActionbarMode } from '@igo2/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContextListComponent implements OnInit, OnDestroy {
+  public contextConfigs: ContextServiceOptions;
   private contextsInitial: ContextsList = { ours: [] };
   contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
     this.contextsInitial
@@ -56,7 +52,6 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
-    this.cdRef.detectChanges();
     this.next();
   }
   private _contexts: ContextsList = { ours: [] };
@@ -82,8 +77,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   @Input()
   get defaultContextId(): string {
-    return this.configService.getConfig('context') ? this._defaultContextId :
-      this.storageService.get('favorite.context.uri') as string || this._defaultContextId;
+    return this.contextConfigs
+      ? this._defaultContextId
+      : (this.storageService.get('favorite.context.uri') as string) ||
+          this._defaultContextId;
   }
   set defaultContextId(value: string) {
     this._defaultContextId = value;
@@ -151,6 +148,14 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   public thresholdToFilter = 5;
 
+  get isEmpty(): boolean {
+    return (
+      !this.contexts.ours.length &&
+      !this.contexts.public?.length &&
+      !this.contexts.shared?.length
+    );
+  }
+
   constructor(
     private cdRef: ChangeDetectorRef,
     public configService: ConfigService,
@@ -158,17 +163,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private languageService: LanguageService,
     private storageService: StorageService
-  ) {}
+  ) {
+    this.contextConfigs = this.configService.getConfig('context');
+  }
 
   ngOnInit() {
     this.change$$ = this.change$
-      .pipe(
-        debounce(() => {
-          return this.contexts.ours.length === 0 &&
-            this.contexts.public?.length === 0 &&
-            this.contexts.shared?.length === 0 ? EMPTY : timer(50);
-        })
-      )
+      .pipe(debounce(() => timer(50)))
       .subscribe(() => {
         this.contexts$.next(this.filterContextsList(this.contexts));
       });
@@ -207,7 +208,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.change$.next();
   }
 
-  private filterContextsList(contexts: ContextsList) {
+  private filterContextsList(contexts: ContextsList): ContextsList {
     if (this.term === '') {
       if (this.sortedAlpha) {
         contexts = this.sortContextsList(contexts);
@@ -364,7 +365,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     }
   }
 
-  userSelection(user, parent?) {
+  handleToggleCategory(user, parent?) {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;

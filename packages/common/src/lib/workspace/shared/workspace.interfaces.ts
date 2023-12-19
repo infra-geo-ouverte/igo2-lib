@@ -6,5 +6,5 @@ export interface WorkspaceOptions {
   title: string;
   entityStore?: EntityStore<object>;
   actionStore?: ActionStore;
-  meta?: {[key: string]: any};
+  meta?: { [key: string]: any };
 }

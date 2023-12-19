@@ -1,44 +1,27 @@
+import { ConfigService } from '@igo2/core';
+
 import {
   MSAL_GUARD_CONFIG,
   MSAL_INSTANCE,
-  MsalService,
+  MsalService
 } from '@azure/msal-angular';
-
-import {
-  PublicClientApplication,
-  InteractionType
-} from '@azure/msal-browser';
-
-import { ConfigService } from '@igo2/core';
-
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { BrowserAuthOptions } from '@azure/msal-browser';
 
-import { AuthMicrosoftOptions, MSPMsalGuardConfiguration } from './auth.interface';
-
 import { MsalServiceb2c } from './auth-msalServiceb2c.service.';
+import {
+  AuthMicrosoftOptions,
+  MSPMsalGuardConfiguration
+} from './auth.interface';
 
-export function MSALConfigFactory(config: ConfigService): PublicClientApplication {
+export function MSALConfigFactory(
+  config: ConfigService
+): PublicClientApplication {
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
 
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoft') || {};
-
-  msConf.redirectUri = msConf.redirectUri || window.location.href;
-  msConf.authority = msConf.authority || 'https://login.microsoftonline.com/organizations';
-
-  const myMsalObj = new PublicClientApplication({
-    auth: msConf,
-    cache: {
-      cacheLocation: 'sessionStorage'
-    }
-  });
-
-  return myMsalObj;
-}
-
-export function MSALConfigFactoryb2c(config: ConfigService): PublicClientApplication {
-
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoftb2c.browserAuthOptions') || {};
-  msConf.redirectUri = msConf.redirectUri || window.location.href;
-  msConf.authority = msConf.authority || 'https://login.microsoftonline.com/organizations';
+  msConf.redirectUri = msConf?.redirectUri || window.location.href;
+  msConf.authority =
+    msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
   const myMsalObj = new PublicClientApplication({
     auth: msConf,
@@ -50,28 +33,52 @@ export function MSALConfigFactoryb2c(config: ConfigService): PublicClientApplica
   return myMsalObj;
 }
 
-export function MSALAngularConfigFactory(config: ConfigService): MSPMsalGuardConfiguration {
+export function MSALConfigFactoryb2c(
+  config: ConfigService
+): PublicClientApplication {
+  const msConf = config.getConfig(
+    'auth.microsoftb2c.browserAuthOptions'
+  ) as BrowserAuthOptions;
+  msConf.redirectUri = msConf?.redirectUri || window.location.href;
+  msConf.authority =
+    msConf?.authority || 'https://login.microsoftonline.com/organizations';
 
-  const msConf: AuthMicrosoftOptions = config.getConfig('auth.microsoft') || {};
+  const myMsalObj = new PublicClientApplication({
+    auth: msConf,
+    cache: {
+      cacheLocation: 'sessionStorage'
+    }
+  });
+
+  return myMsalObj;
+}
+
+export function MSALAngularConfigFactory(
+  config: ConfigService
+): MSPMsalGuardConfiguration {
+  const msConf = config.getConfig('auth.microsoft') as AuthMicrosoftOptions;
 
   return {
     interactionType: InteractionType.Popup,
     authRequest: {
       scopes: ['user.read'],
-      loginHint: 'todo',
+      loginHint: 'todo'
     },
     type: 'add'
   };
 }
 
-export function MSALAngularConfigFactoryb2c(config: ConfigService): MSPMsalGuardConfiguration {
-
-  const msConf: BrowserAuthOptions = config.getConfig('auth.microsoftb2c.browserAuthOptions') || {};
+export function MSALAngularConfigFactoryb2c(
+  config: ConfigService
+): MSPMsalGuardConfiguration {
+  const msConf = config.getConfig(
+    'auth.microsoftb2c.browserAuthOptions'
+  ) as BrowserAuthOptions;
 
   return {
     interactionType: InteractionType.Popup,
     authRequest: {
-      scopes: [msConf.clientId]
+      scopes: [msConf?.clientId]
     },
     type: 'b2c'
   };

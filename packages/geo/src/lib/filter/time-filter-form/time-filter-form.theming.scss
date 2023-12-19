@@ -1,12 +1,5 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
 @mixin igo-time-filter-form-theming($theme) {
-  $primary: map-get($theme, primary);
-
-  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-header {
-    color: mat.get-color-from-palette($primary);
-  }
-
-  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-content .mat-datetimepicker-calendar-body-active {
-    background-color: mat.get-color-from-palette($primary, lighter);
-    border-radius: 100%;
-  }
 }

@@ -1,30 +1,39 @@
-<div class="igo-search-bar-container" [ngClass]="{empty: empty$ | async}">
+<div class="igo-search-bar-container" [ngClass]="{ empty: empty$ | async }">
   <mat-form-field [floatLabel]="floatLabel" [appearance]="appearance">
-    <mat-label *ngIf="label">{{label}}</mat-label>
+    <mat-label *ngIf="label">{{ label }}</mat-label>
     <input
       #input
       matInput
       autocomplete="off"
-      [ngClass]="{'hasSearchIcon': showSearchButton}"
+      [ngClass]="{ hasSearchIcon: showSearchButton }"
       [disabled]="disabled$ | async"
-      [placeholder]="placeholder ? placeholder : (placeholder$ | async) ? (placeholder$.value | translate) : undefined"
+      [placeholder]="
+        placeholder
+          ? placeholder
+          : (placeholder$ | async)
+          ? (placeholder$.value | translate)
+          : undefined
+      "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
-      (touchend)="onKeyup($event)">
-  </mat-form-field>
-
-  <div class="search-bar-buttons">
-    <button *ngIf="(empty$ | async)===false"
+      (touchend)="onKeyup($event)"
+    />
+    <button
+      *ngIf="(empty$ | async) === false"
       mat-icon-button
+      matSuffix
       [color]="color"
       (click)="onClearButtonClick()"
-      [matTooltip]="'igo.geo.search.clearSearch' | translate">
+      [matTooltip]="'igo.geo.search.clearSearch' | translate"
+    >
       <mat-icon svgIcon="close"></mat-icon>
     </button>
-    
-    <button *ngIf="showSearchButton"
-      mat-icon-button
-      [color]="color">
+  </mat-form-field>
+
+  <mat-divider *ngIf="withDivider" [vertical]="true"></mat-divider>
+
+  <div class="search-bar-buttons">
+    <button *ngIf="showSearchButton" mat-icon-button [color]="color">
       <mat-icon svgIcon="magnify"></mat-icon>
     </button>
 
@@ -32,7 +41,8 @@
       *ngIf="searchSelector"
       [searchTypes]="searchTypes"
       [searchType]="searchType$ | async"
-      (searchTypeChange)="onSearchTypeChange($event)">
+      (searchTypeChange)="onSearchTypeChange($event)"
+    >
     </igo-search-selector>
 
     <igo-search-settings
@@ -42,8 +52,11 @@
       [searchResultsGeometryEnabled]="searchResultsGeometryEnabled"
       (searchResultsGeometryStatus)="searchResultsGeometryStatus.emit($event)"
       [reverseSearchCoordsFormatEnabled]="reverseSearchCoordsFormatEnabled"
-      (reverseSearchCoordsFormatStatus)="reverseSearchCoordsFormatStatus.emit($event)"
-      (searchSourceChange)="onSearchSettingsChange()">
+      (reverseSearchCoordsFormatStatus)="
+        reverseSearchCoordsFormatStatus.emit($event)
+      "
+      (searchSourceChange)="onSearchSettingsChange()"
+    >
     </igo-search-settings>
   </div>
 </div>

@@ -1,9 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
+import { DataSourceOptions } from '../../datasource/shared/datasources';
+import { VectorLayer } from '../../layer/shared';
 import { Layer } from '../../layer/shared/layers/layer';
-
-import { VectorLayer } from '../../layer';
-import { DataSourceOptions } from '../../datasource';
 
 @Component({
   selector: 'igo-export-button',
@@ -42,7 +41,8 @@ export class ExportButtonComponent {
   layerIsExportable(): boolean {
     if (
       (this.layer instanceof VectorLayer && this.layer.exportable === true) ||
-      (this.layer.dataSource.options.download && this.layer.dataSource.options.download.url) ||
+      (this.layer.dataSource.options.download &&
+        this.layer.dataSource.options.download.url) ||
       (this.layer.options.workspace?.enabled &&
         this.layer.options.workspace?.workspaceId !== this.layer.id)
     ) {

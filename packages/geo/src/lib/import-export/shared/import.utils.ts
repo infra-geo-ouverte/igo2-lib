@@ -1,27 +1,31 @@
+import { ConfirmDialogService } from '@igo2/common';
 import { MessageService } from '@igo2/core';
+import { uuid } from '@igo2/utils';
 
+import { first, of } from 'rxjs';
+
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import {
+  computeOlFeaturesExtent,
   featureToOl,
-  moveToOlFeatures,
-  computeOlFeaturesExtent
+  moveToOlFeatures
 } from '../../feature/shared/feature.utils';
+import { ClusterParam } from '../../layer/shared/clusterParam';
+import { LayerService } from '../../layer/shared/layer.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { StyleService } from '../../style/style-service/style.service';
+import {
+  featureRandomStyle,
+  featureRandomStyleFunction
+} from '../../style/shared/feature/feature-style';
 import { StyleByAttribute } from '../../style/shared/vector/vector-style.interface';
 import { StyleListService } from '../../style/style-list/style-list.service';
-import { ClusterParam } from '../../layer/shared/clusterParam';
-import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
-import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
-import { uuid } from '@igo2/utils';
-import { featureRandomStyle, featureRandomStyleFunction } from '../../style/shared/feature/feature-style';
-import { LayerService } from '../../layer/shared/layer.service';
-import { ConfirmDialogService } from '@igo2/common';
-import { first, of } from 'rxjs';
+import { StyleService } from '../../style/style-service/style.service';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -47,7 +51,8 @@ export function addLayerAndFeaturesToMap(
   let editable: boolean = false;
   if (
     olFeatures[0].getKeys().includes('_style') ||
-    olFeatures[0].getKeys().includes('_mapTitle')) {
+    olFeatures[0].getKeys().includes('_mapTitle')
+  ) {
     randomStyle = featureRandomStyleFunction();
   } else {
     randomStyle = featureRandomStyle();
@@ -63,9 +68,9 @@ export function addLayerAndFeaturesToMap(
     idbInfo: { firstLoad: true, storeToIdb, contextUri: contextUri || '*' },
     style: randomStyle
   }) as VectorLayer;
-  layer.setExtent(computeOlFeaturesExtent(map, olFeatures));
+  layer.setExtent(computeOlFeaturesExtent(olFeatures, map.viewProjection));
   map.addLayer(layer);
-  moveToOlFeatures(map, olFeatures);
+  moveToOlFeatures(map.viewController, olFeatures);
 
   return layer;
 }
@@ -80,7 +85,6 @@ export function addLayerAndFeaturesStyledToMap(
   imposedSourceOptions?,
   imposedLayerOptions?,
   zoomTo: boolean = true
-
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -96,7 +100,11 @@ export function addLayerAndFeaturesStyledToMap(
     );
 
     style = (feature, resolution) => {
-      return styleService.createStyleByAttribute(feature, styleByAttribute, resolution);
+      return styleService.createStyleByAttribute(
+        feature,
+        styleByAttribute,
+        resolution
+      );
     };
   } else if (
     styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')
@@ -110,14 +118,24 @@ export function addLayerAndFeaturesStyledToMap(
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'), feature, resolution
+        styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'),
+        feature,
+        resolution
       );
-      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
+      return styleService.createClusterStyle(
+        feature,
+        resolution,
+        clusterParam,
+        baseStyle
+      );
     };
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList(layerTitle.toString() + '.style'), feature, resolution
-    );
+    style = (feature, resolution) =>
+      styleService.createStyle(
+        styleListService.getStyleList(layerTitle.toString() + '.style'),
+        feature,
+        resolution
+      );
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
     features[0].geometry.type === 'Point'
@@ -129,65 +147,89 @@ export function addLayerAndFeaturesStyledToMap(
 
     style = (feature, resolution) => {
       const baseStyle = styleService.createStyle(
-        styleListService.getStyleList('default.clusterStyle'), feature, resolution
+        styleListService.getStyleList('default.clusterStyle'),
+        feature,
+        resolution
       );
-      return styleService.createClusterStyle(feature, resolution, clusterParam, baseStyle);
+      return styleService.createClusterStyle(
+        feature,
+        resolution,
+        clusterParam,
+        baseStyle
+      );
     };
   } else {
-    style = (feature, resolution) => styleService.createStyle(
-      styleListService.getStyleList('default.style'), feature, resolution
-    );
+    style = (feature, resolution) =>
+      styleService.createStyle(
+        styleListService.getStyleList('default.style'),
+        feature,
+        resolution
+      );
   }
 
   let source;
   if (styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')) {
-    const sourceOptions: ClusterDataSourceOptions &
-      QueryableDataSourceOptions = {
-      distance,
-      type: 'cluster',
-      queryable: true
-    };
-    source = new ClusterDataSource(Object.assign(sourceOptions, imposedSourceOptions));
+    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
+      {
+        distance,
+        type: 'cluster',
+        queryable: true
+      };
+    source = new ClusterDataSource(
+      Object.assign(sourceOptions, imposedSourceOptions)
+    );
     source.ol.source.addFeatures(olFeatures);
   } else if (styleListService.getStyleList(layerTitle.toString())) {
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-      type: 'vector',
-      queryable: true
-    };
-    source = new FeatureDataSource(Object.assign(sourceOptions, imposedSourceOptions));
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
+      {
+        type: 'vector',
+        queryable: true
+      };
+    source = new FeatureDataSource(
+      Object.assign(sourceOptions, imposedSourceOptions)
+    );
     source.ol.addFeatures(olFeatures);
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
     features[0].geometry.type === 'Point'
   ) {
-    const sourceOptions: ClusterDataSourceOptions &
-      QueryableDataSourceOptions = {
-      distance,
-      type: 'cluster',
-      queryable: true
-    };
-    source = new ClusterDataSource(Object.assign(sourceOptions, imposedSourceOptions));
+    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions =
+      {
+        distance,
+        type: 'cluster',
+        queryable: true
+      };
+    source = new ClusterDataSource(
+      Object.assign(sourceOptions, imposedSourceOptions)
+    );
     source.ol.source.addFeatures(olFeatures);
   } else {
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-      type: 'vector',
-      queryable: true
-    };
-    source = new FeatureDataSource(Object.assign(sourceOptions, imposedSourceOptions));
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions =
+      {
+        type: 'vector',
+        queryable: true
+      };
+    source = new FeatureDataSource(
+      Object.assign(sourceOptions, imposedSourceOptions)
+    );
     source.ol.addFeatures(olFeatures);
   }
 
   const layer = new VectorLayer(
-    Object.assign({
-      title: layerTitle,
-      id: layerId || uuid(),
-      isIgoInternalLayer: true,
-      source,
-      style
-    }, imposedLayerOptions));
+    Object.assign(
+      {
+        title: layerTitle,
+        id: layerId || uuid(),
+        isIgoInternalLayer: true,
+        source,
+        style
+      },
+      imposedLayerOptions
+    )
+  );
   map.addLayer(layer);
-  if (zoomTo){
-    moveToOlFeatures(map, olFeatures);
+  if (zoomTo) {
+    moveToOlFeatures(map.viewController, olFeatures);
   }
   return layer;
 }
@@ -214,21 +256,31 @@ export function handleFileImportSuccess(
 
   let layerTitle = computeLayerTitleFromFile(file);
 
-  const obs$ = confirmDialogService ? confirmDialogService.open('igo.geo.import.promptStoreToIdb') : of(false);
+  const obs$ = confirmDialogService
+    ? confirmDialogService.open('igo.geo.import.promptStoreToIdb')
+    : of(false);
 
   obs$.pipe(first()).subscribe((confirm) => {
     const d = new Date();
     const dformat =
-    [d.getFullYear(),
-      padTo2Digits(d.getMonth() + 1),
-      padTo2Digits(d.getDate()), ].join('/') +
-    ' ' +
-    [padTo2Digits(d.getHours()),padTo2Digits(d.getMinutes())].join(':');
-
+      [
+        d.getFullYear(),
+        padTo2Digits(d.getMonth() + 1),
+        padTo2Digits(d.getDate())
+      ].join('/') +
+      ' ' +
+      [padTo2Digits(d.getHours()), padTo2Digits(d.getMinutes())].join(':');
 
     layerTitle = confirm ? `${layerTitle} (${dformat})` : layerTitle;
     if (!styleListService) {
-      addLayerAndFeaturesToMap(features, map, contextUri, layerTitle, layerService, confirm);
+      addLayerAndFeaturesToMap(
+        features,
+        map,
+        contextUri,
+        layerTitle,
+        layerService,
+        confirm
+      );
     } else {
       addLayerAndFeaturesStyledToMap(
         features,
@@ -243,7 +295,8 @@ export function handleFileImportSuccess(
       'igo.geo.dropGeoFile.success.text',
       'igo.geo.dropGeoFile.success.title',
       undefined,
-      { value: layerTitle });
+      { value: layerTitle }
+    );
   });
 }
 
@@ -261,12 +314,7 @@ export function handleFileImportError(
     'Invalid SRS definition': handleSRSImportError,
     'Error 500 with OGRE': handleOgreServerImportError
   };
-  errMapping[error.message](
-    file,
-    error,
-    messageService,
-    sizeMb
-  );
+  errMapping[error.message](file, error, messageService, sizeMb);
 }
 
 export function handleInvalidFileImportError(
@@ -281,7 +329,8 @@ export function handleInvalidFileImportError(
     {
       value: file.name,
       mimeType: file.type
-    });
+    }
+  );
 }
 
 export function handleUnreadbleFileImportError(
@@ -289,10 +338,12 @@ export function handleUnreadbleFileImportError(
   error: Error,
   messageService: MessageService
 ) {
-  messageService.error('igo.geo.dropGeoFile.unreadable.text',
+  messageService.error(
+    'igo.geo.dropGeoFile.unreadable.text',
     'igo.geo.dropGeoFile.unreadable.title',
     undefined,
-    { value: file.name });
+    { value: file.name }
+  );
 }
 
 export function handleSizeFileImportError(
@@ -308,12 +359,13 @@ export function handleSizeFileImportError(
     {
       value: file.name,
       size: sizeMb
-    });
+    }
+  );
 }
 
 export function handleNothingToImportError(
   file: File,
-  messageService: MessageService,
+  messageService: MessageService
 ) {
   messageService.error(
     'igo.geo.dropGeoFile.empty.text',
@@ -322,7 +374,8 @@ export function handleNothingToImportError(
     {
       value: file.name,
       mimeType: file.type
-    });
+    }
+  );
 }
 
 export function handleSRSImportError(
@@ -336,7 +389,8 @@ export function handleSRSImportError(
     {
       value: file.name,
       mimeType: file.type
-    });
+    }
+  );
 }
 
 export function handleOgreServerImportError(
@@ -344,14 +398,14 @@ export function handleOgreServerImportError(
   error: Error,
   messageService: MessageService
 ) {
-  messageService.error('igo.geo.dropGeoFile.ogreServer.text', 'igo.geo.dropGeoFile.ogreServer.title');
+  messageService.error(
+    'igo.geo.dropGeoFile.ogreServer.text',
+    'igo.geo.dropGeoFile.ogreServer.title'
+  );
 }
 
 export function getFileExtension(file: File): string {
-  return file.name
-    .split('.')
-    .pop()
-    .toLowerCase();
+  return file.name.split('.').pop().toLowerCase();
 }
 
 export function computeLayerTitleFromFile(file: File): string {

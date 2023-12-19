@@ -1,5 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -12,10 +12,7 @@ describe('LanguageService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([LanguageService], (service: LanguageService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([LanguageService], (service: LanguageService) => {
+    expect(service).toBeTruthy();
+  }));
 });

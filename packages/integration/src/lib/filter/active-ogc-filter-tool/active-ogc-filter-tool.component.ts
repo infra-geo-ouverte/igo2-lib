@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { MapState } from '../../map/map.state';
-import { Layer, IgoMap } from '@igo2/geo';
+import { IgoMap, Layer } from '@igo2/geo';
 
+import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-ogc-filter-tool.animation';
 
 @ToolComponent({
@@ -18,7 +18,6 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   animations: [toolSlideInOut()]
 })
 export class ActiveOgcFilterToolComponent {
-
   get map(): IgoMap {
     return this.mapState.map;
   }

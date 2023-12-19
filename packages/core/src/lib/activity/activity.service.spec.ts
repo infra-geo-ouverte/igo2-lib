@@ -9,10 +9,7 @@ describe('ActivityService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([ActivityService], (service: ActivityService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([ActivityService], (service: ActivityService) => {
+    expect(service).toBeTruthy();
+  }));
 });

@@ -8,9 +8,9 @@ table td {
   padding: $igo-padding;
 }
 
-#keyValue{
-   width: 30%;
- }
+#keyValue {
+  width: 30%;
+}
 
 table ::ng-deep .routing {
   cursor: pointer;
@@ -24,5 +24,5 @@ iframe {
 .copyClipboard {
   border: none;
   background: transparent;
-  cursor: pointer
+  cursor: pointer;
 }

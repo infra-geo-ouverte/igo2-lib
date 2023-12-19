@@ -1,23 +1,21 @@
-.buffer-div {
+:host {
+  display: block;
+
+  .buffer-div {
     display: flex;
     width: 100%;
-    margin-left: 2px;
-    padding: 5px;
-}
+  }
 
-.zone-list {
-    padding: 5px;
-    width: 95%;
-    margin-left: 2px;
-}
+  .zone-list {
+    width: 100%;
+  }
 
-.buffer {
-    display: flex;
-    flex-flow: column nowrap;
-    width: 110%;
-}
+  .buffer {
+    flex: 2;
+  }
 
-.unit-field {
-    width: 110px;
-    margin-left: 30px;
+  .unit-field {
+    flex: 1;
+    margin-left: 8px;
+  }
 }

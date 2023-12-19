@@ -49,6 +49,7 @@ Require:
 
 | IGO2 version | Node version |
 | ------------ | ------------ |
+| >= 16.x      | >= 18.10.0   |
 | >= 1.15.x    | >= 16.19.x   |
 | >= 1.13.x    | >= 14, <= 16 |
 |  1.5.x       | >= 12, <= 14 |
@@ -57,22 +58,12 @@ Require:
 
 If you want to develop in IGO2 Library, it can be installed by:
 
-1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2.  Deploy in `cd igo2-lib/` and install from npm `npm install`
+1.  Clone  current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+2.  Navigate to the folder igo2-lib : `cd igo2-lib/`
+3.  Install dependencies by running `npm install`
 3.  Build librairies: `npm run build.libs`
-4.  Start form npm `npm start`
+4.  Start form npm `npm start.demo` (or you can run the VsCode config (`Launch Demo`))
 5.  Open your browser at http://localhost:4200/
-
-### Development server
-
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the demo's source files.
-If you modify files from the lib (../packages/\*) you must run:
-
-1. npm run build.libs to rebuild all the libs
-2. OR
-3. npm run build.geo if you have only modifyed the geo package or whatever part of the lib...
-4. OR
-5. npm run start.watch to be aware of any modifications done to the lib.
 
 ### Build
 

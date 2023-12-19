@@ -1,40 +1,47 @@
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
+  Component,
   ContentChild,
-  OnInit,
-  OnDestroy,
-  Output,
+  ElementRef,
   EventEmitter,
-  ElementRef
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
-
-import scrollIntoView from 'scroll-into-view-if-needed';
-
 import { FloatLabelType } from '@angular/material/form-field';
-import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
-import { LayerListSelectVisibleEnum } from './layer-list.enum';
+import { MatSliderChange } from '@angular/material/slider';
+
+import * as olextent from 'ol/extent';
+
 import {
   BehaviorSubject,
+  EMPTY,
   ReplaySubject,
   Subscription,
-  EMPTY,
   timer
 } from 'rxjs';
 import { debounce } from 'rxjs/operators';
+import scrollIntoView from 'scroll-into-view-if-needed';
+
 import {
-  MetadataOptions,
-  MetadataLayerOptions
+  getAllChildLayersByProperty,
+  getRootParentByProperty
+} from '../../map/shared/linkedLayers.utils';
+import { IgoMap } from '../../map/shared/map';
+import {
+  MetadataLayerOptions,
+  MetadataOptions
 } from '../../metadata/shared/metadata.interface';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
-import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties } from '../shared/layers/layer.interface';
-import { MatSliderChange } from '@angular/material/slider';
-import * as olextent from 'ol/extent';
-import { getAllChildLayersByProperty, getRootParentByProperty } from '../../map/shared/linkedLayers.utils';
+import {
+  LayerListControlsEnum,
+  LayerListDisplacement
+} from './layer-list.enum';
+import { LayerListSelectVisibleEnum } from './layer-list.enum';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -226,7 +233,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
   private selectAllCheck$$: Subscription;
 
-  constructor(private elRef: ElementRef) { }
+  constructor(private elRef: ElementRef) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -257,7 +264,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (this.layers) {
         let checks = 0;
         for (const layer of this.layers) {
-          layer.status$.subscribe(valStatus => {
+          layer.status$.subscribe((valStatus) => {
             if (valStatus === 0) {
               this.map.removeLayer(layer);
             }
@@ -273,9 +280,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (this.excludeBaseLayers) {
           this.selectAllCheck =
             checks ===
-              this.layers.filter(
-                (lay) => lay.baseLayer !== true && lay.showInLayerList
-              ).length
+            this.layers.filter(
+              (lay) => lay.baseLayer !== true && lay.showInLayerList
+            ).length
               ? true
               : false;
         } else {
@@ -327,7 +334,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
     if (!olextent.isEmpty(layersExtent)) {
       if (maxLayerZoomExtent) {
-        valid = (olextent.containsExtent(maxLayerZoomExtent, layersExtent));
+        valid = olextent.containsExtent(maxLayerZoomExtent, layersExtent);
       } else {
         valid = true;
       }
@@ -340,7 +347,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   zoomLayersExtents(layers: Layer[]) {
-    const layersExtent = olextent.createEmpty() as [number, number, number, number];
+    const layersExtent = olextent.createEmpty() as [
+      number,
+      number,
+      number,
+      number
+    ];
 
     for (const layer of layers) {
       const layerExtent = layer.options.extent;
@@ -352,7 +364,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.viewController.zoomToExtent(layersExtent);
   }
 
-  changeOpacity(event: MatSliderChange ){
+  changeOpacity(event: MatSliderChange) {
     this.opacity = event.value;
   }
 
@@ -406,17 +418,30 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement, fromUi: boolean = false) {
+  moveActiveLayer(
+    activeLayer: Layer,
+    actiontype: LayerListDisplacement,
+    fromUi: boolean = false
+  ) {
     const sortedLayersToMove = [];
-    getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
-    let rootParentByProperty = getRootParentByProperty(this.map,activeLayer,LinkedProperties.ZINDEX);
+    getRootParentByProperty(this.map, activeLayer, LinkedProperties.ZINDEX);
+    let rootParentByProperty = getRootParentByProperty(
+      this.map,
+      activeLayer,
+      LinkedProperties.ZINDEX
+    );
     if (!rootParentByProperty) {
       rootParentByProperty = activeLayer;
     }
     const layersToMove = [rootParentByProperty];
-    getAllChildLayersByProperty(this.map, rootParentByProperty, layersToMove, LinkedProperties.ZINDEX);
+    getAllChildLayersByProperty(
+      this.map,
+      rootParentByProperty,
+      layersToMove,
+      LinkedProperties.ZINDEX
+    );
 
-    this.layers.map(layer => {
+    this.layers.map((layer) => {
       if (layersToMove.indexOf(layer) !== -1) {
         sortedLayersToMove.push(layer);
       }
@@ -487,8 +512,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.raiseLayers(layersToRaise);
     if (fromUi) {
       setTimeout(() => {
-        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
-        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        const checkItems = this.elRef.nativeElement.getElementsByClassName(
+          'mat-checkbox-checked'
+        );
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName(
+          'igo-layer-item-focused'
+        );
         let targetToScroll;
         if (checkItems.length) {
           targetToScroll = checkItems[0];
@@ -567,11 +596,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.map.lowerLayers(layersToLower);
     if (fromUi) {
       setTimeout(() => {
-        const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
-        const itemFocused = this.elRef.nativeElement.getElementsByClassName('igo-layer-item-focused');
+        const checkItems = this.elRef.nativeElement.getElementsByClassName(
+          'mat-checkbox-checked'
+        );
+        const itemFocused = this.elRef.nativeElement.getElementsByClassName(
+          'igo-layer-item-focused'
+        );
         let targetToScroll;
         if (checkItems.length) {
-          targetToScroll = checkItems[checkItems.length-1];
+          targetToScroll = checkItems[checkItems.length - 1];
         }
         if (itemFocused.length) {
           targetToScroll = itemFocused[0];
@@ -755,7 +788,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   isAllLayersRemovable(layers: Layer[]): boolean {
-    return layers.every(l => this.isLayerRemovable(l));
+    return layers.every((l) => this.isLayerRemovable(l));
   }
 
   get statusSelectedLayersCheck(): LayerListSelectVisibleEnum {

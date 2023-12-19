@@ -1,6 +1,5 @@
-import { Directive, Input, ElementRef, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-
 
 /**
  * This directive allow to add an icon inside a matBadge.
@@ -98,7 +97,9 @@ export class IgoBadgeIconDirective implements OnInit {
 
     if (this.color || this.backgroundColor) {
       this.badge.style.color = this.color ? this.color : '';
-      this.badge.style.background = this.backgroundColor ? this.backgroundColor : '';
+      this.badge.style.background = this.backgroundColor
+        ? this.backgroundColor
+        : '';
     } else if (this.inheritColor) {
       if (this.inverseColor) {
         this.badge.style.color = 'currentColor';

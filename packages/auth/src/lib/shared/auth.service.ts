@@ -1,15 +1,16 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { globalCacheBusterNotifier } from 'ts-cacheable';
 
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
-import { User, IInfosUser } from './auth.interface';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { globalCacheBusterNotifier } from 'ts-cacheable';
+
+import { AuthOptions, IInfosUser, User } from './auth.interface';
+import { IgoJwtPayload } from './token.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -21,9 +22,15 @@ export class AuthService {
   public redirectUrl: string;
   public languageForce = false;
   private anonymous = false;
+  private authOptions: AuthOptions;
 
   get hasAuthService() {
-    return this.config.getConfig('auth.url') !== undefined;
+    return this.authOptions?.url !== undefined;
+  }
+
+  get user(): User | null {
+    const decodedToken = this.decodeToken();
+    return decodedToken?.user ? decodedToken.user : null;
   }
 
   constructor(
@@ -34,6 +41,7 @@ export class AuthService {
     private messageService: MessageService,
     @Optional() private router: Router
   ) {
+    this.authOptions = this.config.getConfig('auth');
     this.authenticate$.next(this.authenticated);
     this.authenticate$.subscribe((authenticated) => {
       this.logged$.next(authenticated);
@@ -52,7 +60,11 @@ export class AuthService {
     return this.loginCall(body, myHeader);
   }
 
-  loginWithToken(token: string, type: string, infosUser?: IInfosUser): Observable<void> {
+  loginWithToken(
+    token: string,
+    type: string,
+    infosUser?: IInfosUser
+  ): Observable<void> {
     const myHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     const body = {
@@ -71,8 +83,7 @@ export class AuthService {
   }
 
   refresh(): Observable<void> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.post(`${url}/refresh`, {}).pipe(
+    return this.http.post(`${this.authOptions?.url}/refresh`, {}).pipe(
       tap((data: any) => {
         this.tokenService.set(data.token);
       }),
@@ -98,11 +109,11 @@ export class AuthService {
     return this.tokenService.get();
   }
 
-  decodeToken() {
+  decodeToken(): IgoJwtPayload | null {
     if (this.isAuthenticated()) {
       return this.tokenService.decode();
     }
-    return false;
+    return;
   }
 
   goToRedirectUrl() {
@@ -111,9 +122,8 @@ export class AuthService {
     }
     const redirectUrl = this.redirectUrl || this.router.url;
 
-    const options = this.config.getConfig('auth') || {};
-    if (redirectUrl === options.loginRoute) {
-      const homeRoute = options.homeRoute || '/';
+    if (redirectUrl === this.authOptions.loginRoute) {
+      const homeRoute = this.authOptions.homeRoute || '/';
       this.router.navigateByUrl(homeRoute);
     } else if (redirectUrl) {
       this.router.navigateByUrl(redirectUrl);
@@ -121,18 +131,18 @@ export class AuthService {
   }
 
   getUserInfo(): Observable<User> {
-    const url = this.config.getConfig('auth.url') + '/info';
+    const url = this.authOptions?.url + '/info';
     return this.http.get<User>(url);
   }
 
   getProfils(): Observable<{ profils: string[] }> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.get<{ profils: string[] }>(`${url}/profils`);
+    return this.http.get<{ profils: string[] }>(
+      `${this.authOptions?.url}/profils`
+    );
   }
 
   updateUser(user: User): Observable<User> {
-    const url = this.config.getConfig('auth.url');
-    return this.http.patch<User>(url, user);
+    return this.http.patch<User>(this.authOptions?.url, user);
   }
 
   private encodePassword(password: string) {
@@ -154,32 +164,33 @@ export class AuthService {
 
   get isAdmin(): boolean {
     const token = this.decodeToken();
-    if (token && token.user && token.user.isAdmin) {
+    if (token?.user?.isAdmin) {
       return true;
     }
     return false;
   }
 
   private loginCall(body, headers) {
-    const url = this.config.getConfig('auth.url');
-    return this.http.post(`${url}/login`, body, { headers }).pipe(
-      tap((data: any) => {
-        this.tokenService.set(data.token);
-        const tokenDecoded = this.decodeToken();
-        if (tokenDecoded && tokenDecoded.user) {
-          if (tokenDecoded.user.locale && !this.languageForce) {
-            this.languageService.setLanguage(tokenDecoded.user.locale);
-          }
-          if (tokenDecoded.user.isExpired) {
+    return this.http
+      .post(`${this.authOptions?.url}/login`, body, { headers })
+      .pipe(
+        tap((data: any) => {
+          this.tokenService.set(data.token);
+          const tokenDecoded = this.decodeToken();
+          if (tokenDecoded?.user) {
+            if (tokenDecoded.user.locale && !this.languageForce) {
+              this.languageService.setLanguage(tokenDecoded.user.locale);
+            }
+            if (tokenDecoded.user.isExpired) {
               this.messageService.alert('igo.auth.error.Password expired');
+            }
           }
-        }
-        this.authenticate$.next(true);
-      }),
-      catchError((err) => {
-        err.error.caught = true;
-        throw err;
-      })
-    );
+          this.authenticate$.next(true);
+        }),
+        catchError((err) => {
+          err.error.caught = true;
+          throw err;
+        })
+      );
   }
 }

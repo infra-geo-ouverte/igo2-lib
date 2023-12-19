@@ -1,9 +1,6 @@
 export class ObjectUtils {
   static resolve(obj: object, key: string): any {
-    const keysArray = key
-      .replace(/\[/g, '.')
-      .replace(/\]/g, '')
-      .split('.');
+    const keysArray = key.replace(/\[/g, '.').replace(/\]/g, '').split('.');
     let current = obj;
     while (keysArray.length) {
       if (typeof current !== 'object') {
@@ -33,8 +30,8 @@ export class ObjectUtils {
     const output = Object.assign({}, target);
     if (ObjectUtils.isObject(target) && ObjectUtils.isObject(source)) {
       Object.keys(source)
-        .filter(key => !ignoreUndefined || source[key] !== undefined)
-        .forEach(key => {
+        .filter((key) => !ignoreUndefined || source[key] !== undefined)
+        .forEach((key) => {
           if (ObjectUtils.isObject(source[key])) {
             if (!(key in target)) {
               Object.assign(output, { [key]: source[key] });
@@ -106,7 +103,7 @@ export class ObjectUtils {
             // defining the closest to lowercase property
             const paramClosestToLowercase = upperCaseCount
               .filter(
-                f => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
+                (f) => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
               )
               .reduce((prev, current) => {
                 return prev.y < current.y ? prev : current;
@@ -134,8 +131,8 @@ export class ObjectUtils {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
       Object.keys(obj)
-        .filter(key => obj[key] !== undefined)
-        .forEach(key => {
+        .filter((key) => obj[key] !== undefined)
+        .forEach((key) => {
           if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
             output[key] = ObjectUtils.removeUndefined(obj[key]);
           } else {
@@ -147,7 +144,7 @@ export class ObjectUtils {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(o => ObjectUtils.removeUndefined(o));
+      return obj.map((o) => ObjectUtils.removeUndefined(o));
     }
 
     return obj;
@@ -157,8 +154,8 @@ export class ObjectUtils {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
       Object.keys(obj)
-        .filter(key => obj[key] !== null)
-        .forEach(key => {
+        .filter((key) => obj[key] !== null)
+        .forEach((key) => {
           if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
             output[key] = ObjectUtils.removeNull(obj[key]);
           } else {
@@ -170,7 +167,7 @@ export class ObjectUtils {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(o => ObjectUtils.removeNull(o));
+      return obj.map((o) => ObjectUtils.removeNull(o));
     }
 
     return obj;
@@ -273,12 +270,16 @@ export class ObjectUtils {
    */
   static removeKeys(obj: object, keys: string[]): object {
     const newObj = Object.keys(obj)
-      .filter(key => keys.indexOf(key) < 0)
+      .filter((key) => keys.indexOf(key) < 0)
       .reduce((_obj, key) => {
         _obj[key] = obj[key];
         return _obj;
       }, {});
 
     return newObj;
+  }
+
+  static isEmpty(obj: object): boolean {
+    return Object.keys(obj).length === 0;
   }
 }

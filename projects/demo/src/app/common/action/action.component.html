@@ -1,0 +1,32 @@
+<app-doc-viewer title="Action" subtitle="Common">
+  <app-example-viewer title="Action Bar" codeFolder="common/action">
+    <igo-actionbar
+      [store]="store"
+      [withIcon]="true"
+      [withTitle]="actionbarMode === 'overlay'"
+      [horizontal]="true"
+      [mode]="actionbarMode"
+    >
+    </igo-actionbar>
+  </app-example-viewer>
+
+  <!-- <app-example-viewer title="Action context-menu" codeFolder="common/action">
+    <mat-card [igoContextMenu]="actionbarMenu">
+      <mat-card-header>
+        <mat-card-subtitle>Common</mat-card-subtitle>
+        <mat-card-title>Action context-menu</mat-card-title>
+      </mat-card-header>
+      <div></div>
+    </mat-card>
+
+    <ng-template #actionbarMenu>
+      <igo-actionbar
+        [store]="store"
+        [withIcon]="true"
+        [horizontal]="true"
+        [mode]="'context'"
+      >
+      </igo-actionbar>
+    </ng-template>
+  </app-example-viewer> -->
+</app-doc-viewer>

@@ -5,5 +5,18 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "allowedNonPeerDependencies": ["@ngx-translate"]
+  "allowedNonPeerDependencies": ["@ngx-translate"],
+  "assets": [
+    {
+      "input": "src",
+      "glob": "*.scss",
+      "output": "src",
+      "ignore": ["*.import.scss"]
+    },
+    { "input": "src", "glob": "**/*.them*.scss", "output": "src" },
+    { "input": "src/style", "glob": "**/*.scss", "output": "src/style" },
+    { "input": "src/assets", "glob": "**/*", "output": "assets" },
+    { "input": "src/locale", "glob": "*", "output": "locale" },
+    { "input": "src/theming", "glob": "**/*.scss", "output": "src/theming" }
+  ]
 }

@@ -1,7 +1,4 @@
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
-import { TimeFilterType, TimeFilterStyle } from './time-filter.enum';
-import { BehaviorSubject } from 'rxjs';
+import { TimeFilterStyle, TimeFilterType } from './time-filter.enum';
 
 export interface TimeFilterOptions {
   min?: string;
@@ -16,17 +13,4 @@ export interface TimeFilterOptions {
   timeInterval?: number;
   current?: boolean;
   enabled?: boolean;
-}
-
-export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
-  timeFilterable?: boolean;
-  timeFilter?: TimeFilterOptions;
-}
-
-export interface TimeFilterableDataSource extends WMSDataSource {
-  options: TimeFilterableDataSourceOptions;
-  timeFilter$: BehaviorSubject<TimeFilterOptions>;
-  setTimeFilter(ogcFilters: TimeFilterOptions, triggerEvent?: boolean );
-  filterByDate(date: Date | [Date, Date]);
-  filterByYear(year: string | [string, string]);
 }

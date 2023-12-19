@@ -1,24 +1,31 @@
-<form class="igo-form" [formGroup]="form"
-  (ngSubmit)="handleFormSubmit(form.value)">
-
+<form
+  class="igo-form"
+  [formGroup]="form"
+  (ngSubmit)="handleFormSubmit(form.value)"
+>
   <mat-form-field class="full-width">
-    <input matInput required
-           maxlength="128"
-           [placeholder]="'igo.context.contextManager.form.title' | translate"
-           formControlName="title">
-   <mat-error>
-    {{ 'igo.context.contextManager.form.titleRequired' | translate }}
-   </mat-error>
+    <input
+      matInput
+      required
+      maxlength="128"
+      [placeholder]="'igo.context.contextManager.form.title' | translate"
+      formControlName="title"
+    />
+    <mat-error>
+      {{ 'igo.context.contextManager.form.titleRequired' | translate }}
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field id="uriInput" class="full-width">
-    <span *ngIf="prefix" class="prefix">{{prefix}}-</span>
+    <span *ngIf="prefix" class="prefix">{{ prefix }}-</span>
     <span class="fieldWrapper">
-      <input matInput
-           maxlength="64"
-           floatLabel = "always"
-           [placeholder]="'igo.context.contextManager.form.uri' | translate"
-           formControlName="uri">
+      <input
+        matInput
+        maxlength="64"
+        floatLabel="always"
+        [placeholder]="'igo.context.contextManager.form.uri' | translate"
+        formControlName="uri"
+      />
     </span>
   </mat-form-field>
 
@@ -30,7 +37,8 @@
     matTooltipShowDelay="500"
     [matTooltip]="'igo.context.contextManager.form.copy' | translate"
     color="primary"
-    (click)="copyTextToClipboard()">
+    (click)="copyTextToClipboard()"
+  >
     <mat-icon svgIcon="content-copy"></mat-icon>
   </button>
 
@@ -38,9 +46,9 @@
     <button
       mat-raised-button
       type="submit"
-      [disabled]="!form.valid || disabled">
+      [disabled]="!form.valid || disabled"
+    >
       {{ 'igo.context.contextManager.form.edit' | translate }}
     </button>
   </div>
-
 </form>

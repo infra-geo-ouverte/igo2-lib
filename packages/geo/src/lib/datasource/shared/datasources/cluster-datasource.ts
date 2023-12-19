@@ -1,13 +1,13 @@
-import olSourceCluster from 'ol/source/Cluster';
-
 import { uuid } from '@igo2/utils';
 
-import { FeatureDataSource } from './feature-datasource';
+import olSourceCluster from 'ol/source/Cluster';
+
 import { ClusterDataSourceOptions } from './cluster-datasource.interface';
+import { FeatureDataSource } from './feature-datasource';
 
 export class ClusterDataSource extends FeatureDataSource {
-  public options: ClusterDataSourceOptions;
-  public ol: olSourceCluster;
+  public declare options: ClusterDataSourceOptions;
+  public declare ol: olSourceCluster;
 
   protected createOlSource(): olSourceCluster {
     this.options.format = this.getSourceFormatFromOptions(this.options);

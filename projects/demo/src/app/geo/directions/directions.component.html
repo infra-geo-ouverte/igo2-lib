@@ -1,0 +1,49 @@
+<app-doc-viewer
+  title="Directions"
+  subtitle="Geo"
+  [dependencies]="['LanguageService']"
+>
+  <app-example-viewer codeFolder="geo/directions">
+    <mat-grid-list cols="2" rowHeight="600px" gutterSize="16px">
+      <mat-grid-tile>
+        <div class="map-actions --vertical --top --right">
+          <div class="spinner-spacer"></div>
+          <igo-rotation-button
+            class="mat-elevation-z2"
+            [showIfNoRotation]="true"
+            [map]="map"
+            color="primary"
+          ></igo-rotation-button>
+        </div>
+        <div class="map-actions --vertical --bottom --right">
+          <igo-home-extent-button
+            class="mat-elevation-z2"
+            [map]="map"
+            color="primary"
+          >
+          </igo-home-extent-button>
+          <igo-geolocate-button
+            class="mat-elevation-z2"
+            [map]="map"
+            color="primary"
+          >
+          </igo-geolocate-button>
+          <igo-zoom-button [map]="map" color="primary"> </igo-zoom-button>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="flex align-start h-100 w-100 overflow-y-auto">
+          <igo-directions
+            class="w-100"
+            [stopsStore]="stopsStore"
+            [stopsFeatureStore]="stopsFeatureStore"
+            [stepFeatureStore]="stepFeatureStore"
+            [routesFeatureStore]="routesFeatureStore"
+            [zoomToActiveRoute$]="zoomToActiveRoute$"
+          >
+          </igo-directions>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </app-example-viewer>
+</app-doc-viewer>

@@ -1,23 +1,21 @@
 import { LanguageService } from '@igo2/core';
-import * as olstyle from 'ol/style';
-import OlPoint from 'ol/geom/Point';
-import OlLineString from 'ol/geom/LineString';
-import OlPolygon from 'ol/geom/Polygon';
-import OlCircle from 'ol/geom/Circle';
+
 import OlOverlay from 'ol/Overlay';
 import { getCenter as olGetCenter } from 'ol/extent';
-import {
-  getLength as olGetLength,
-  getArea as olGetArea
-} from 'ol/sphere';
+import OlCircle from 'ol/geom/Circle';
+import OlLineString from 'ol/geom/LineString';
+import OlPoint from 'ol/geom/Point';
+import OlPolygon from 'ol/geom/Polygon';
+import { getArea as olGetArea, getLength as olGetLength } from 'ol/sphere';
+import * as olstyle from 'ol/style';
 
-import { Measure } from './measure.interfaces';
 import {
   MeasureAreaUnit,
   MeasureAreaUnitAbbreviation,
   MeasureLengthUnit,
   MeasureLengthUnitAbbreviation
 } from './measure.enum';
+import { Measure } from './measure.interfaces';
 
 /**
  * Convert value from meters to kilometers
@@ -97,12 +95,15 @@ export function squareMetersToAcres(value: number): number {
  * @param unit Length unit
  * @returns Value in unit
  */
-export function metersToUnit(value: number, unit: MeasureLengthUnit): number | undefined {
+export function metersToUnit(
+  value: number,
+  unit: MeasureLengthUnit
+): number | undefined {
   const conversionMapper = new Map([
     [MeasureLengthUnit.Meters, (val: number) => val],
     [MeasureLengthUnit.Kilometers, metersToKilometers],
     [MeasureLengthUnit.Miles, metersToMiles],
-    [MeasureLengthUnit.Feet, metersToFeet],
+    [MeasureLengthUnit.Feet, metersToFeet]
   ]);
   const conversion = conversionMapper.get(unit);
 
@@ -115,14 +116,17 @@ export function metersToUnit(value: number, unit: MeasureLengthUnit): number | u
  * @param unit Area unit
  * @returns Value in unit
  */
-export function squareMetersToUnit(value: number, unit: MeasureAreaUnit): number | undefined {
+export function squareMetersToUnit(
+  value: number,
+  unit: MeasureAreaUnit
+): number | undefined {
   const conversionMapper = new Map([
     [MeasureAreaUnit.SquareMeters, (val: number) => val],
     [MeasureAreaUnit.SquareKilometers, squareMetersToSquareKilometers],
     [MeasureAreaUnit.SquareMiles, squareMetersToSquareMiles],
     [MeasureAreaUnit.SquareFeet, squareMetersToSquareFeet],
     [MeasureAreaUnit.Hectares, squareMetersToHectares],
-    [MeasureAreaUnit.Acres, squareMetersToAcres],
+    [MeasureAreaUnit.Acres, squareMetersToAcres]
   ]);
   const conversion = conversionMapper.get(unit);
 
@@ -143,7 +147,8 @@ export function formatMeasure(
     unitAbbr?: boolean;
     locale?: string;
   },
-  languageService?: LanguageService) {
+  languageService?: LanguageService
+) {
   let decimal = options.decimal;
   if (decimal === undefined || decimal < 0) {
     decimal = 1;
@@ -151,10 +156,12 @@ export function formatMeasure(
 
   const parts = [];
   if (options.locale !== undefined) {
-    parts.push(measure.toLocaleString(options.locale, {
-      minimumFractionDigits: decimal,
-      maximumFractionDigits: decimal
-    }));
+    parts.push(
+      measure.toLocaleString(options.locale, {
+        minimumFractionDigits: decimal,
+        maximumFractionDigits: decimal
+      })
+    );
   } else {
     parts.push(measure.toFixed(decimal).toString());
   }
@@ -162,18 +169,23 @@ export function formatMeasure(
   if (options.unit !== undefined && options.unitAbbr === true) {
     if (languageService) {
       parts.push(
-        MeasureLengthUnitAbbreviation[options.unit] ?
-          languageService.translate.instant('igo.geo.measure.' + MeasureLengthUnitAbbreviation[options.unit]) :
-          languageService.translate.instant('igo.geo.measure.' + MeasureAreaUnitAbbreviation[options.unit])
+        MeasureLengthUnitAbbreviation[options.unit]
+          ? languageService.translate.instant(
+              'igo.geo.measure.' + MeasureLengthUnitAbbreviation[options.unit]
+            )
+          : languageService.translate.instant(
+              'igo.geo.measure.' + MeasureAreaUnitAbbreviation[options.unit]
+            )
       );
     } else {
       parts.push(
-        MeasureLengthUnitAbbreviation[options.unit] || MeasureAreaUnitAbbreviation[options.unit]
+        MeasureLengthUnitAbbreviation[options.unit] ||
+          MeasureAreaUnitAbbreviation[options.unit]
       );
     }
   }
 
-  return parts.filter(p => p !== undefined).join(' ');
+  return parts.filter((p) => p !== undefined).join(' ');
 }
 
 /**
@@ -219,13 +231,13 @@ export function createMeasureInteractionStyle(): olstyle.Style {
       lineDash: [10, 10],
       width: 2
     }),
-    fill:  new olstyle.Fill({
+    fill: new olstyle.Fill({
       color: 'rgba(255, 255, 255, 0.2)'
     }),
     image: new olstyle.Circle({
       radius: 5,
       stroke: new olstyle.Stroke({
-        color: '#ffcc33',
+        color: '#ffcc33'
       }),
       fill: new olstyle.Fill({
         color: 'rgba(255, 255, 255, 0.2)'
@@ -244,7 +256,7 @@ export function createMeasureLayerStyle(): olstyle.Style {
       color: '#ffcc33',
       width: 2
     }),
-    fill:  new olstyle.Fill({
+    fill: new olstyle.Fill({
       color: 'rgba(255, 255, 255, 0.2)'
     })
   });
@@ -256,14 +268,17 @@ export function createMeasureLayerStyle(): olstyle.Style {
  * @param projection olGeometry's projection
  * @returns Length in meters
  */
-export function measureOlGeometryLength(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): number | undefined {
+export function measureOlGeometryLength(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle,
+  projection: string
+): number | undefined {
   if (olGeometry instanceof OlPoint) {
     return undefined;
   }
   if (olGeometry.getFlatCoordinates().length === 0) {
     return undefined;
   }
-  return olGetLength(olGeometry, {projection});
+  return olGetLength(olGeometry, { projection });
 }
 
 /**
@@ -272,14 +287,17 @@ export function measureOlGeometryLength(olGeometry: OlPoint | OlLineString | OlP
  * @param projection olGeometry's projection
  * @returns Area in square meters
  */
-export function measureOlGeometryArea(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): number | undefined {
+export function measureOlGeometryArea(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle,
+  projection: string
+): number | undefined {
   if (olGeometry instanceof OlPoint || olGeometry instanceof OlLineString) {
     return undefined;
   }
   if (olGeometry.getFlatCoordinates().length === 0) {
     return undefined;
   }
-  return olGetArea(olGeometry, {projection});
+  return olGetArea(olGeometry, { projection });
 }
 
 /**
@@ -289,7 +307,10 @@ export function measureOlGeometryArea(olGeometry: OlPoint | OlLineString | OlPol
  * @param projection olGeometry's projection
  * @returns Computed measure
  */
-export function measureOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, projection: string): Measure {
+export function measureOlGeometry(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle,
+  projection: string
+): Measure {
   const length = measureOlGeometryLength(olGeometry, projection);
   const area = measureOlGeometryArea(olGeometry, projection);
 
@@ -317,7 +338,9 @@ export function measureOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint[] {
+export function updateOlGeometryMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlPoint[] {
   let olMidpoints;
   if (olGeometry instanceof OlPoint) {
     const olMidpointPoint = new OlPoint(olGeometry.getFlatCoordinates());
@@ -351,7 +374,9 @@ export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | O
  * Clear an OL geometry midpoints and return an array of those points
  * @param olGeometry OL Geometry
  */
-export function clearOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle) {
+export function clearOlGeometryMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+) {
   const olMidpoints = olGeometry.get('_midpoints') || [];
   const midpointsLength = olMidpoints.length;
   for (let i = 0; i < midpointsLength; i++) {
@@ -373,12 +398,17 @@ export function clearOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | Ol
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-function getOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint[] {
+function getOlGeometryMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlPoint[] {
   let expectedNumber;
   if (olGeometry instanceof OlCircle) {
     expectedNumber = 0;
   } else {
-    expectedNumber = Math.max((olGeometry.getFlatCoordinates().length / 2) - 1, 0);
+    expectedNumber = Math.max(
+      olGeometry.getFlatCoordinates().length / 2 - 1,
+      0
+    );
   }
   // TODO: This works but it's quite messy. If time permits,
   // clean this. Maybe a Tooltip class could handle that
@@ -437,14 +467,16 @@ function clearOlMidpointTooltip(olMidpoint: OlPoint) {
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function updateOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
+export function updateOlTooltipsAtMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay[] {
   const olMidpoints = updateOlGeometryMidpoints(olGeometry);
   let typeGeom = '';
   if (olGeometry instanceof OlLineString) {
-  typeGeom = 'line-';
+    typeGeom = 'line-';
   } else if (olGeometry instanceof OlPolygon) {
     typeGeom = 'polygone-';
-    }
+  }
   const olTooltips = olMidpoints.map((olMidpoint: OlPoint) => {
     let olTooltip = olMidpoint.get('_tooltip');
     if (olTooltip === undefined) {
@@ -462,7 +494,9 @@ export function updateOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString |
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
+export function getOlTooltipsAtMidpoints(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay[] {
   const olMidpoints = getOlGeometryMidpoints(olGeometry);
   return olMidpoints.map((olMidpoint: OlPoint) => {
     return olMidpoint ? olMidpoint.get('_tooltip') : undefined;
@@ -474,7 +508,9 @@ export function getOlTooltipsAtMidpoints(olGeometry: OlPoint | OlLineString | Ol
  * @param olGeometry OL Geometry
  * @returns OL point
  */
-export function updateOlGeometryCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlPoint {
+export function updateOlGeometryCenter(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlPoint {
   let olCenter = olGeometry.get('_center');
   const centerCoordinate = olGetCenter(olGeometry.getExtent());
   if (olCenter !== undefined) {
@@ -492,7 +528,9 @@ export function updateOlGeometryCenter(olGeometry: OlPoint | OlLineString | OlPo
  * @param olGeometry OL Geometry
  * @returns OL overlay
  */
-export function updateOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay {
+export function updateOlTooltipAtCenter(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay {
   const olCenter = updateOlGeometryCenter(olGeometry);
   let olTooltip = olCenter.get('_tooltip');
   if (olTooltip === undefined) {
@@ -508,7 +546,9 @@ export function updateOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlP
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay {
+export function getOlTooltipAtCenter(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay {
   const olCenter = olGeometry.get('_center');
   return olCenter ? olCenter.get('_tooltip') : undefined;
 }
@@ -518,7 +558,9 @@ export function getOlTooltipAtCenter(olGeometry: OlPoint | OlLineString | OlPoly
  * @param olGeometry OL Geometry
  * @returns OL overlays
  */
-export function getTooltipsOfOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
+export function getTooltipsOfOlGeometry(
+  olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle
+): OlOverlay[] {
   const olTooltips = [].concat(getOlTooltipsAtMidpoints(olGeometry) || []);
   const olCenterTooltip = getOlTooltipAtCenter(olGeometry);
   if (olCenterTooltip !== undefined) {
@@ -532,14 +574,26 @@ export function getTooltipsOfOlGeometry(olGeometry: OlPoint | OlLineString | OlP
  * @param olPoint OL Point
  * @returns OL overlay
  */
-export function createOlTooltipAtPoint(olPoint: OlPoint, center: boolean = false, srcGeomType: string= ''): OlOverlay {
+export function createOlTooltipAtPoint(
+  olPoint: OlPoint,
+  center: boolean = false,
+  srcGeomType: string = ''
+): OlOverlay {
   const olTooltip = new OlOverlay({
     element: document.createElement('div'),
     offset: [-30, -10],
-    className: (center ?
-    [ 'igo-map-tooltip',
-      'igo-map-tooltip-measure', 'igo-map-tooltip-measure-area'] : ['igo-map-tooltip', 'igo-map-tooltip-measure',
-      `igo-map-tooltip-measure-${srcGeomType}segments`]).join(' '),
+    className: (center
+      ? [
+          'igo-map-tooltip',
+          'igo-map-tooltip-measure',
+          'igo-map-tooltip-measure-area'
+        ]
+      : [
+          'igo-map-tooltip',
+          'igo-map-tooltip-measure',
+          `igo-map-tooltip-measure-${srcGeomType}segments`
+        ]
+    ).join(' '),
     stopEvent: false
   });
   olTooltip.setPosition(olPoint.getFlatCoordinates());

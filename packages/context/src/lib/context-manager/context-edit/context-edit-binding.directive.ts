@@ -1,15 +1,16 @@
 import {
-  Output,
-  EventEmitter,
   Directive,
-  Self,
-  OnInit,
+  EventEmitter,
+  HostListener,
   OnDestroy,
-  HostListener
+  OnInit,
+  Output,
+  Self
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
 import { MessageService } from '@igo2/core';
+
+import { Subscription } from 'rxjs';
 
 import { Context, DetailedContext } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
@@ -32,9 +33,10 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
         'igo.context.contextManager.dialog.saveMsg',
         'igo.context.contextManager.dialog.saveTitle',
         undefined,
-      {
-        value: context.title || this.component.context.title
-      });
+        {
+          value: context.title || this.component.context.title
+        }
+      );
       this.contextService.setEditedContext(undefined);
       this.submitSuccessed.emit(context);
     });
@@ -50,7 +52,7 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editedContext$$ = this.contextService.editedContext$.subscribe(
-      context => this.handleEditedContextChange(context)
+      (context) => this.handleEditedContextChange(context)
     );
   }
 

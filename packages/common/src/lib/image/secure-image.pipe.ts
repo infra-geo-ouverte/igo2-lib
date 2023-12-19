@@ -1,10 +1,11 @@
-import { Pipe, PipeTransform } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Pipe, PipeTransform } from '@angular/core';
 
-import { Cacheable } from 'ts-cacheable';
+import { ConfigService } from '@igo2/core';
+
 import { Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { ConfigService } from '@igo2/core';
+import { Cacheable } from 'ts-cacheable';
 
 @Pipe({
   name: 'secureImage'
@@ -12,7 +13,8 @@ import { ConfigService } from '@igo2/core';
 export class SecureImagePipe implements PipeTransform {
   constructor(
     private http: HttpClient,
-    private configService?: ConfigService) {}
+    private configService?: ConfigService
+  ) {}
 
   @Cacheable({
     maxCacheCount: 20
@@ -24,7 +26,9 @@ export class SecureImagePipe implements PipeTransform {
       interceptError: 'false'
     });
 
-    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
+    const regexDepot = new RegExp(
+      this.configService?.getConfig('depot.url') + '.*?(?="|$)'
+    );
     if (regexDepot.test(url)) {
       url = url.match(regexDepot)[0];
     }

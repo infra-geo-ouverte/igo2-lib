@@ -1,20 +1,20 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord } from '../shared/entity.interfaces';
+import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
-import { getEntityTitle } from '../shared/entity.utils';
 
 @Component({
   selector: 'igo-entity-selector',
@@ -23,7 +23,6 @@ import { getEntityTitle } from '../shared/entity.utils';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntitySelectorComponent implements OnInit, OnDestroy {
-
   /**
    * The selected entity
    * @internal
@@ -36,9 +35,9 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    */
   readonly multiText$ = new BehaviorSubject<string>(undefined);
 
-  readonly multiSelectValue = {id: 'IGO_MULTI_SELECT'};
+  readonly multiSelectValue = { id: 'IGO_MULTI_SELECT' };
 
-  readonly emptyValue = {id: 'IGO_EMPTY_SELECT'};
+  readonly emptyValue = { id: 'IGO_EMPTY_SELECT' };
 
   /**
    * Subscription to the selected entity
@@ -110,7 +109,9 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
     this.selected$$ = this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
-        const entities = records.map((record: EntityRecord<object>) => record.entity);
+        const entities = records.map(
+          (record: EntityRecord<object>) => record.entity
+        );
         this.onSelectFromStore(entities);
       });
   }
@@ -128,11 +129,15 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * On selection change, update the store's state and emit an event
    * @internal
    */
-  onSelectionChange(event: {value: object | undefined}) {
+  onSelectionChange(event: { value: object | undefined }) {
     const values = event.value instanceof Array ? event.value : [event.value];
 
-    const multiSelect = values.find((_value: object) => _value === this.multiSelectValue);
-    let entities = values.filter((_value: object) => _value !== this.multiSelectValue);
+    const multiSelect = values.find(
+      (_value: object) => _value === this.multiSelectValue
+    );
+    let entities = values.filter(
+      (_value: object) => _value !== this.multiSelectValue
+    );
     if (multiSelect !== undefined) {
       if (entities.length === this.store.count) {
         entities = [];
@@ -143,13 +148,13 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
 
     entities = entities.filter((entity: object) => entity !== this.emptyValue);
     if (entities.length === 0) {
-      this.store.state.updateAll({selected: false});
+      this.store.state.updateAll({ selected: false });
     } else {
-      this.store.state.updateMany(entities, {selected: true}, true);
+      this.store.state.updateMany(entities, { selected: true }, true);
     }
 
     const value = this.multi ? entities : event.value;
-    this.selectedChange.emit({selected: true, value});
+    this.selectedChange.emit({ selected: true, value });
   }
 
   private onSelectFromStore(entities: object[]) {
@@ -164,11 +169,16 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   }
 
   private updateMultiToggleWithEntities(entities: object[]) {
-    if (entities.length === this.store.count && this.multiText$.value !== this.multiNoneText) {
+    if (
+      entities.length === this.store.count &&
+      this.multiText$.value !== this.multiNoneText
+    ) {
       this.multiText$.next(this.multiNoneText);
-    } else if (entities.length < this.store.count && this.multiText$.value !== this.multiAllText) {
+    } else if (
+      entities.length < this.store.count &&
+      this.multiText$.value !== this.multiAllText
+    ) {
       this.multiText$.next(this.multiAllText);
     }
   }
-
 }

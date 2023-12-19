@@ -1,6 +1,8 @@
 import { TemplateRef } from '@angular/core';
-import { MessageType } from './message.enum';
+
 import { IndividualConfig } from 'ngx-toastr';
+
+import { MessageType } from './message.enum';
 
 export interface Message {
   title?: string;
@@ -11,7 +13,7 @@ export interface Message {
   format?: 'text' | 'html';
   textInterpolateParams?: Object;
   titleInterpolateParams?: Object;
-  showIcon?: boolean
+  showIcon?: boolean;
 }
 
 export interface MessageOptions extends IndividualConfig {

@@ -1,4 +1,19 @@
+@use '../../../../../common/src/style/partial/common-utils';
 @import '../../../../../core/src/style/partial/core.variables';
+
+:host {
+  @include common-utils.square-button();
+}
+
+.basemap-list {
+  igo-mini-basemap {
+    display: block;
+
+    &:not(:first-child) {
+      margin-top: 4px;
+    }
+  }
+}
 
 .igo-baselayers-switcher-container {
   height: auto;
@@ -28,9 +43,4 @@
   &:hover {
     background-color: #efefef;
   }
-}
-
-button,
-:host ::ng-deep button .mat-button-ripple-round {
-  border-radius: 0;
 }

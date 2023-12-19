@@ -1,14 +1,15 @@
 import {
+  AfterViewInit,
   Component,
   Input,
-  OnInit,
-  AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  OnInit
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 
-import { SubjectStatus } from '@igo2/utils';
 import { ActivityService } from '@igo2/core';
+import { SubjectStatus, uuid } from '@igo2/utils';
+
+import { Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
 import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
@@ -48,12 +49,12 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   private _controls: MapControlsOptions;
 
-  public id = `igo-map-target-${new Date().getTime()}`;
+  public id = `igo-map-target-${uuid()}`;
 
   constructor(private activityService: ActivityService) {}
 
   ngOnInit() {
-    this.status$$ = this.map.status$.subscribe(status =>
+    this.status$$ = this.map.status$.subscribe((status) =>
       this.handleStatusChange(status)
     );
   }

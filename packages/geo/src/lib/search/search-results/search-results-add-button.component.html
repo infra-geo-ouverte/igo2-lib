@@ -1,44 +1,55 @@
 <button
-igoStopPropagation
-(mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)"
-*ngIf="layer.meta.dataType === 'Layer'"
-mat-icon-button
-tooltip-position="below"
-matTooltipShowDelay="500"
-[matTooltip]="computeTooltip() | translate"
-[color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
-(click)="onToggleClick($event)">
-<mat-icon
-  matBadge="icon"
-  [igoMatBadgeIcon]="getBadgeIcon()"
-  igoMatBadgeColor="rgba(0,0,0,0.87)"
-  igoMatBadgeBackgroundColor="none"
-  igoMatBadgeInverseColor="true"
-  [matBadgeHidden]="((inRange$ | async) && (isVisible$ | async) === true) || ((inRange$ | async) && !added) || ((inRange$ | async) && (isPreview$ | async))"
-  [matBadgeDisabled]="(inRange$ | async) === false"
-  matBadgeSize="small"
-  matBadgePosition="after"
-  [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
-</mat-icon>
+  igoStopPropagation
+  (mouseenter)="onMouseEvent($event)"
+  (mouseleave)="onMouseEvent($event)"
+  *ngIf="layer.meta.dataType === 'Layer'"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="computeTooltip() | translate"
+  [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+  (click)="onToggleClick($event)"
+>
+  <mat-icon
+    aria-hidden="false"
+    matBadge="icon"
+    [igoMatBadgeIcon]="getBadgeIcon()"
+    igoMatBadgeColor="rgba(0,0,0,0.87)"
+    igoMatBadgeBackgroundColor="none"
+    igoMatBadgeInverseColor="true"
+    [matBadgeHidden]="
+      ((inRange$ | async) && (isVisible$ | async) === true) ||
+      ((inRange$ | async) && !added) ||
+      ((inRange$ | async) && (isPreview$ | async))
+    "
+    [matBadgeDisabled]="(inRange$ | async) === false"
+    matBadgeSize="small"
+    matBadgePosition="after"
+    [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'"
+  >
+  </mat-icon>
 </button>
 
 <button
-[id]="(!isMobile) ? 'hide-save-search-result-btn' : ''"
-igoStopPropagation
-*ngIf="layer.meta.dataType === 'Feature' && saveSearchResultInLayer"
-mat-icon-button
-tooltip-position="below"
-matTooltipShowDelay="500"
-[matTooltip]="(addFeatureToLayerTooltip$ | async) | translate"
-(click)="addFeatureToLayer()">
-<mat-icon
-  matBadge="icon"
-  igoMatBadgeIcon="eye-off"
-  igoMatBadgeInverseColor="true"
-  [matBadgeHidden]="(inRange$ | async)"
-  matBadgeDisabled="true"
-  matBadgeSize="small"
-  matBadgePosition="after"
-  svgIcon="file-plus-outline">
-</mat-icon>
+  [id]="!isMobile ? 'hide-save-search-result-btn' : ''"
+  igoStopPropagation
+  *ngIf="layer.meta.dataType === 'Feature' && saveSearchResultInLayer"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="addFeatureToLayerTooltip$ | async | translate"
+  (click)="addFeatureToLayer()"
+>
+  <mat-icon
+    aria-hidden="false"
+    matBadge="icon"
+    igoMatBadgeIcon="eye-off"
+    igoMatBadgeInverseColor="true"
+    [matBadgeHidden]="inRange$ | async"
+    matBadgeDisabled="true"
+    matBadgeSize="small"
+    matBadgePosition="after"
+    svgIcon="file-plus-outline"
+  >
+  </mat-icon>
 </button>

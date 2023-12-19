@@ -1,11 +1,7 @@
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { IgoMap } from '../../map';
+import { IgoMap } from '../../map/shared/map';
 
 @Component({
   selector: 'igo-ogc-filterable-list',
@@ -14,7 +10,6 @@ import { IgoMap } from '../../map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterableListComponent {
-
   @Input() layers: Layer[];
 
   @Input() map: IgoMap;

@@ -1,25 +1,25 @@
-import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
+import OlMap from 'ol/Map';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import BasicEvent from 'ol/events/Event';
+import OlCircle from 'ol/geom/Circle';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
+import OlLineString from 'ol/geom/LineString';
+import OlLinearRing from 'ol/geom/LinearRing';
+import OlPolygon from 'ol/geom/Polygon';
+import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import OlDraw from 'ol/interaction/Draw';
+import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
+import OlInteraction from 'ol/interaction/Interaction';
+import OlModify from 'ol/interaction/Modify';
+import { ModifyEvent as OlModifyEvent } from 'ol/interaction/Modify';
+import OlTranslate from 'ol/interaction/Translate';
+import { TranslateEvent as OlTranslateEvent } from 'ol/interaction/Translate';
+import OlVectorLayer from 'ol/layer/Vector';
+import OlVectorSource from 'ol/source/Vector';
 import * as OlStyle from 'ol/style';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import OlVectorSource from 'ol/source/Vector';
-import OlVectorLayer from 'ol/layer/Vector';
-import OlModify from 'ol/interaction/Modify';
-import OlTranslate from 'ol/interaction/Translate';
-import OlDraw from 'ol/interaction/Draw';
-import OlPolygon from 'ol/geom/Polygon';
-import OlLineString from 'ol/geom/LineString';
-import OlCircle from 'ol/geom/Circle';
-import OlLinearRing from 'ol/geom/LinearRing';
-import OlInteraction from 'ol/interaction/Interaction';
-import OlDragBoxInteraction from 'ol/interaction/DragBox';
-import MapBrowserEvent from 'ol/MapBrowserEvent';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import BasicEvent from 'ol/events/Event';
-import { ModifyEvent as OlModifyEvent } from 'ol/interaction/Modify';
-import { TranslateEvent as OlTranslateEvent } from 'ol/interaction/Translate';
-import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
-import { unByKey } from 'ol/Observable';
 
 import { Subject, Subscription, fromEvent } from 'rxjs';
 
@@ -318,10 +318,11 @@ export class ModifyControl {
     this.onModifyKey = olGeometry.on(
       'change',
       (olGeometryEvent: BasicEvent) => {
-        this.mousePosition = getMousePositionFromOlGeometryEvent(
-          olGeometryEvent
+        this.mousePosition =
+          getMousePositionFromOlGeometryEvent(olGeometryEvent);
+        this.changes$.next(
+          olGeometryEvent.target as OlLineString | OlCircle | OlPolygon
         );
-        this.changes$.next(olGeometryEvent.target as OlLineString | OlCircle | OlPolygon);
       }
     );
     this.subscribeToKeyDown();
@@ -612,24 +613,21 @@ export class ModifyControl {
     const olGeometry = event.feature.getGeometry();
     this.olOuterGeometry = this.getOlGeometry().clone();
 
-    const linearRingCoordinates = ((olGeometry as any).getLinearRing() as any).getCoordinates();
+    const linearRingCoordinates = (
+      (olGeometry as any).getLinearRing() as any
+    ).getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
     this.start$.next(this.getOlGeometry());
 
-    this.onDrawKey = olGeometry.on(
-      'change',
-      (olGeometryEvent: BasicEvent) => {
-        this.mousePosition = getMousePositionFromOlGeometryEvent(
-          olGeometryEvent
-        );
-        const olGeometryTarget = olGeometryEvent.target as OlPolygon;
-        const _linearRingCoordinates = olGeometryTarget
-          .getLinearRing(0)
-          .getCoordinates();
-        this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
-        this.changes$.next(this.getOlGeometry());
-      }
-    );
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: BasicEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
+      const olGeometryTarget = olGeometryEvent.target as OlPolygon;
+      const _linearRingCoordinates = olGeometryTarget
+        .getLinearRing(0)
+        .getCoordinates();
+      this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
+      this.changes$.next(this.getOlGeometry());
+    });
     this.subscribeToKeyDown();
   }
 
@@ -641,10 +639,9 @@ export class ModifyControl {
     unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
-    const linearRingCoordinates = ((event.feature
-      .getGeometry() as any)
-      .getLinearRing() as any)
-      .getCoordinates();
+    const linearRingCoordinates = (
+      (event.feature.getGeometry() as any).getLinearRing() as any
+    ).getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();
     this.end$.next(this.getOlGeometry());

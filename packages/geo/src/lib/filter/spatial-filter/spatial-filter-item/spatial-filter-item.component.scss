@@ -1,198 +1,142 @@
 @import '../../../../../../core/src/style/partial/media';
+$slide-toggle-width: 60px;
 
-.header {
+:host {
+  .header {
     margin-top: 5px;
     width: 100%;
-}
+  }
 
-.mat-slide-toggle {
+  .mat-mdc-slide-toggle {
     padding: 5px;
-    margin-bottom: 15px;
-    width: 98%;
+    width: 100%;
 
-    ::ng-deep .mat-slide-toggle-content {
-        width: calc(100% - 20px);
+    ::ng-deep .mdc-form-field {
+      width: 100%;
     }
-}
 
-.title {
+    ::ng-deep .mdc-label {
+      margin-left: 0;
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
+
+  .title {
     margin-left: 5px;
     font-size: initial;
-}
+  }
 
-.mat-radio-group {
+  .mat-mdc-radio-group {
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
-}
+  }
 
-.mat-radio-button {
+  .mat-mdc-radio-button {
     display: inline-flex;
     position: relative;
-    margin-left: 16px;
-    margin-top: 10px;
-}
+    margin-left: 12px;
+  }
 
-.mat-form-field {
+  .mat-mdc-form-field {
     margin-top: 5px;
-}
+  }
 
-.mat-column-select {
+  .mat-column-select {
     overflow: auto;
-}
+  }
 
-.buttons {
-    margin-top: 15px;
-}
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
 
-.search-button {
-    left: 15px;
-    width: 46%;
-
-    @include mobile {
-        left: 10px;
-        width: 45%;
-        min-height: 35px;
-        white-space: normal;
-        line-height: normal;
-    }
-}
-
-.export-button {
-    left: 15px;
-    width: 46%;
-    margin-bottom: 5px;
-
-    @include mobile {
-        left: 10px;
-        margin-top: 10px;
-        width: 45%;
-        min-height: 35px;
-        white-space: normal;
-        line-height: normal;
-    }
-}
-
-.remove-button {
-    margin-top: 12px;
-    left: 5px;
-    width: 46%;
-
-    @include mobile {
-        margin: 0px;
-        width: 45%;
-        min-height: 35px;
-        white-space: normal;
-        line-height: normal;
-    }
-}
-
-.clear-form-button {
-    left: 5px;
-    width: 46%;
-
-    @include mobile {
-        width: 45%;
-        min-height: 35px;
-        white-space: normal;
-        line-height: normal;
-    }
-}
-
-.clear-search-button {
-    left: 5px;
-    width: 46%;
-
-    @include mobile {
-        width: 45%;
-        min-height: 35px;
-        white-space: normal;
-        line-height: normal;
-    }
-}
-
-.thematics {
+  .thematics {
     max-height: 35%;
     overflow: auto;
     margin-top: 5px;
     width: 98%;
-}
+  }
 
-.results {
+  .results {
     overflow: auto;
     max-height: 250px;
-    width: 98%
-}
+    width: 98%;
+  }
 
-.mat-column-typeResults {
+  .mat-column-typeResults {
     max-width: 100px;
     margin-right: 5px;
-}
+  }
 
-.buffer-unit, .radius-unit {
+  .buffer-unit,
+  .radius-unit {
     display: flex;
     width: 100%;
-    margin-left: 2px;
     padding: 5px;
-}
+    box-sizing: border-box;
+  }
 
-.radius, .buffer {
-    display: flex;
+  .radius,
+  .buffer {
     flex-flow: column nowrap;
-    width: 110%;
-}
+    flex: 2;
+  }
 
-.unit-field {
-    width: 110px;
-    margin-left: 30px;
-}
+  .unit-field {
+    flex: 1;
+    margin-left: 8px;
+  }
 
-.example-tree-invisible {
+  .example-tree-invisible {
     display: none;
-}
+  }
 
-.tree-ul {
+  .tree-ul {
     margin: 0px;
     padding: 0px;
     padding-left: 20px;
     list-style-type: none;
-}
+  }
 
-.tree-check, .tree-check-2 {
+  .tree-check,
+  .tree-check-2 {
     position: relative;
     margin-left: auto;
     margin-right: 5px;
-}
+  }
 
-.thematics-header {
+  .thematics-header {
     max-width: 250px;
-}
+  }
 
-.checks-header {
+  .checks-header {
     padding: none;
     max-width: calc(100% - 316px);
     overflow: hidden;
-}
+  }
 
-.mat-checkbox {
+  .mat-mdc-checkbox {
     padding: 5px;
-}
+  }
 
-.mat-tree-node {
+  .mat-tree-node {
     position: relative;
     min-height: 42px;
     width: 280px;
-}
+  }
 
-.mat-header-cell {
+  .mat-mdc-header-cell {
     height: 56px;
-}
+  }
 
-.results {
+  .results {
     max-height: 45%;
     width: 98%;
 
     igo-entity-table ::ng-deep div.table-container {
-        overflow: unset;
+      overflow: unset;
     }
+  }
 }

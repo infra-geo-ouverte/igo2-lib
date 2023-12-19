@@ -66,7 +66,8 @@
         "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte",
         "hide": "Masquer ce contexte",
         "show": "Montrer ce contexte",
-        "showHidden": "Montrer les contextes masqués"
+        "showHidden": "Montrer les contextes masqués",
+        "noResult": "Aucun résultat pour les filtres sélectionnés"
       },
       "contextImportExport": {
         "export": {
@@ -75,7 +76,7 @@
           "exportSelectAll": "Tout sélectionner",
           "success": {
             "text": "Contexte exporté avec succès.",
-            "title":"Exportation réussie"
+            "title": "Exportation réussie"
           },
           "nothing": {
             "text": "Impossible d’exporter, contexte non valide ou aucun contexte sélectionné.",

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import type { Media } from '@igo2/core';
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
+import type { Media } from '@igo2/core';
 import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
@@ -68,7 +68,7 @@ export class SidenavComponent {
       this._title = value;
     }
   }
-  private _title: string = this.titleService.getTitle();
+  private _title: string;
 
   public topPanelState: FlexibleState = 'initial';
 
@@ -76,15 +76,21 @@ export class SidenavComponent {
     return this.feature ? getEntityTitle(this.feature) : undefined;
   }
 
-  constructor(public titleService: Title) {}
+  constructor(public titleService: Title) {
+    this._title = this.titleService.getTitle();
+  }
 
   zoomToFeatureExtent() {
     if (this.feature.geometry) {
       const olFeature = this.format.readFeature(this.feature, {
         dataProjection: this.feature.projection,
-        featureProjection: this.map.projection
+        featureProjection: this.map.viewProjection
       });
-      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(
+        this.map.viewController,
+        [olFeature],
+        FeatureMotion.Zoom
+      );
     }
   }
 
@@ -95,5 +101,4 @@ export class SidenavComponent {
       this.topPanelState = 'initial';
     }
   }
-
 }

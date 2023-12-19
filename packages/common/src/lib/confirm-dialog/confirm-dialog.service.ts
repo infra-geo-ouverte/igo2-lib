@@ -1,21 +1,33 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { LanguageService } from '@igo2/core';
 
 import { Observable } from 'rxjs';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { ConfirmDialogOptions } from './confirm-dialog.interface';
 
 @Injectable()
 export class ConfirmDialogService {
-  constructor(private dialog: MatDialog, private languageService: LanguageService) {}
+  constructor(private dialog: MatDialog) {}
 
-  public open(message: string): Observable<any> {
+  public open(
+    message: string,
+    options?: ConfirmDialogOptions
+  ): Observable<boolean> {
+    const _options: ConfirmDialogOptions = {
+      title: 'igo.common.confirmDialog.title',
+      modeYesNo: false,
+      ...options
+    };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       disableClose: false
     });
-    dialogRef.componentInstance.confirmMessage = this.languageService.translate.instant(message);
-
+    dialogRef.componentInstance.confirmMessage = message;
+    dialogRef.componentInstance.titleKey = _options.title;
+    if (_options.modeYesNo) {
+      dialogRef.componentInstance.proccessKey = 'igo.common.confirmDialog.yes';
+      dialogRef.componentInstance.cancelKey = 'igo.common.confirmDialog.no';
+    }
     return dialogRef.afterClosed();
   }
 }

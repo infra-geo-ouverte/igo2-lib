@@ -1,21 +1,23 @@
 <div>
   <div class="geometry-type-toggle mat-typography">
     <mat-button-toggle-group
-      (change)="onGeometryTypeChange($event.value)" [value]="geometryType.Point">
+      (change)="onGeometryTypeChange($event.value)"
+      [value]="geometryType.Point"
+    >
       <mat-button-toggle [value]="geometryType.Point">
-        {{'igo.geo.draw.' + geometryType.Point | translate}}
+        {{ 'igo.geo.draw.' + geometryType.Point | translate }}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.LineString">
-        {{'igo.geo.draw.' + geometryType.LineString | translate}}
+        {{ 'igo.geo.draw.' + geometryType.LineString | translate }}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.Polygon">
-        {{'igo.geo.draw.' + geometryType.Polygon | translate}}
+        {{ 'igo.geo.draw.' + geometryType.Polygon | translate }}
       </mat-button-toggle>
 
       <mat-button-toggle [value]="geometryType.Circle">
-        {{'igo.geo.draw.' + geometryType.Circle | translate}}
+        {{ 'igo.geo.draw.' + geometryType.Circle | translate }}
       </mat-button-toggle>
     </mat-button-toggle-group>
   </div>
@@ -25,14 +27,16 @@
       [disabled]="drawControlIsDisabled"
       [checked]="drawControlIsActive"
       [labelPosition]="'before'"
-      (change)="onToggleDrawControl($event.checked)">
-      {{'igo.geo.spatialFilter.drawControl' | translate}}
+      (change)="onToggleDrawControl($event.checked)"
+    >
+      {{ 'igo.geo.draw.drawControl' | translate }}
     </mat-slide-toggle>
 
     <mat-slide-toggle
       [checked]="labelsAreShown"
       [labelPosition]="'before'"
-      (change)="onToggleLabels()">
+      (change)="onToggleLabels()"
+    >
       {{ 'igo.geo.draw.toggleMapTooltips' | translate }}
     </mat-slide-toggle>
 
@@ -40,30 +44,33 @@
       *ngIf="!isPoint()"
       [checked]="freehandMode"
       [labelPosition]="'before'"
-      (change)="onToggleFreehandMode($event)">
+      (change)="onToggleFreehandMode($event)"
+    >
       {{ 'igo.geo.draw.freehandMode' | translate }}
     </mat-slide-toggle>
 
     <div class="radius-unit" *ngIf="isCircle()">
-      <form class="radius-form">
-        <mat-form-field class="radius">
-          <input
-            matInput type="number"
-            min="0"
-            placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
-            [formControl]="radiusFormControl"
-            [readonly]="this.freehandMode">
-        </mat-form-field>
-      </form>
+      <mat-form-field class="radius">
+        <input
+          matInput
+          type="number"
+          min="0"
+          placeholder="{{ 'igo.geo.spatialFilter.radius' | translate }}"
+          [formControl]="radiusFormControl"
+          [readonly]="this.freehandMode"
+        />
+      </mat-form-field>
 
       <mat-form-field class="unit-field">
         <mat-select
           [value]="measureUnit"
-          (selectionChange)="onMeasureUnitChange($event.value)">
+          (selectionChange)="onMeasureUnitChange($event.value)"
+        >
           <mat-option
             *ngFor="let measureUnit of measureUnits"
-            [value]="measureUnit">
-            {{('igo.geo.measure.' + measureUnit) | translate}}
+            [value]="measureUnit"
+          >
+            {{ 'igo.geo.measure.' + measureUnit | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -72,15 +79,19 @@
 
   <mat-divider></mat-divider>
 
-  <div>
-    <mat-form-field appearance="outline" class="layer-select">
-      <mat-label>{{'igo.geo.draw.layer.title' | translate}}</mat-label>
-      <mat-select #selectedLayer (selectionChange)="onLayerChange(selectedLayer.value)" [value]="updateActiveLayer()">
+  <div class="layer-select-container">
+    <mat-form-field class="layer-select" subscriptSizing="dynamic">
+      <mat-label>{{ 'igo.geo.draw.layer.title' | translate }}</mat-label>
+      <mat-select
+        #selectedLayer
+        (selectionChange)="onLayerChange(selectedLayer.value)"
+        [value]="updateActiveLayer()"
+      >
         <mat-option *ngFor="let layer of allLayers" [value]="layer">
           {{ layer.title }}
         </mat-option>
-        <mat-option id="createNewLayer" >
-          {{'igo.geo.draw.layer.createNewLayer' | translate}}
+        <mat-option id="createNewLayer">
+          {{ 'igo.geo.draw.layer.createNewLayer' | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -91,12 +102,14 @@
       collapsibleButton
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="activeDrawingLayer.visible ?
-                    ('igo.geo.layer.hideLayer' | translate) :
-                    ('igo.geo.layer.showLayer' | translate)"
-      (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible">
-      <mat-icon
-        [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
+      [matTooltip]="
+        activeDrawingLayer.visible
+          ? ('igo.geo.layer.hideLayer' | translate)
+          : ('igo.geo.layer.showLayer' | translate)
+      "
+      (click)="activeDrawingLayer.visible = !activeDrawingLayer.visible"
+    >
+      <mat-icon [svgIcon]="activeDrawingLayer.visible ? 'eye' : 'eye-off'">
       </mat-icon>
     </button>
   </div>
@@ -121,7 +134,8 @@
         #table
         class="table-compact"
         [store]="activeStore"
-        [template]="tableTemplate">
+        [template]="tableTemplate"
+      >
       </igo-entity-table>
     </div>
   </div>
@@ -132,51 +146,60 @@
       <mat-select>
         <mat-select-trigger>
           <div *ngIf="icon" class="box">
-            <img src="{{ icon }}">
+            <img src="{{ icon }}" />
           </div>
         </mat-select-trigger>
-        <mat-option value="" (click)="onIconChange()">{{ 'igo.geo.draw.noIcon' | translate }}</mat-option>
+        <mat-option value="" (click)="onIconChange()">{{
+          'igo.geo.draw.noIcon' | translate
+        }}</mat-option>
         <mat-option
           *ngFor="let icon_html of icons"
           [value]="icon_html"
-          (click)="onIconChange(icon_html)">
+          (click)="onIconChange(icon_html)"
+        >
           <div class="box">
-            <img src="{{ icon_html }}">
+            <img src="{{ icon_html }}" />
           </div>
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <button
-    mat-icon-button
-    color="accent"
-    disableRipple="true"
-    (click)="openShorcutsDialog()"
-  >
-    <mat-icon
-      class="shortcuts-icon"
-      svgIcon="keyboard-outline"
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.draw.shortcuts' | translate"
+  <div class="actions-container">
+    <button
+      mat-icon-button
+      color="accent"
+      disableRipple="true"
+      (click)="openShorcutsDialog()"
     >
-    </mat-icon>
-  </button>
+      <mat-icon
+        class="shortcuts-icon"
+        svgIcon="keyboard-outline"
+        tooltip-position="below"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.draw.shortcuts' | translate"
+      >
+      </mat-icon>
+    </button>
 
-  <button
-    *ngIf="selectedFeatures$.value.length"
-    mat-raised-button
-    color="primary"
-    (click)="openStyleModalDialog()"
-    [matTooltip]="'igo.geo.style.styleModalTooltipSelected' | translate">
-    {{'igo.geo.style.styleModal' | translate}}
-    <mat-icon
-      class="style-icon"
-      svgIcon="palette"
-      [matBadge]="selectedFeatures$.value.length"
-      matBadgeColor="warn"
-      matBadgeSize="medium">
-    </mat-icon>
-  </button>
+    <button
+      *ngIf="selectedFeatures$.value.length"
+      mat-raised-button
+      color="primary"
+      (click)="openStyleModalDialog()"
+      [matTooltip]="'igo.geo.style.styleModalTooltipSelected' | translate"
+    >
+      {{ 'igo.geo.style.styleModal' | translate }}
+      <mat-icon
+        aria-hidden="false"
+        iconPositionEnd
+        class="style-icon"
+        svgIcon="palette"
+        [matBadge]="selectedFeatures$.value.length"
+        matBadgeColor="warn"
+        matBadgeSize="medium"
+      >
+      </mat-icon>
+    </button>
+  </div>
 </div>

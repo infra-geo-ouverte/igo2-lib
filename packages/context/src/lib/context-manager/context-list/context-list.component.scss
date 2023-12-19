@@ -1,7 +1,17 @@
-.context-filter-max-width {
-  width: calc(100% - 100px);
-  margin: 5px;
-  padding-left: 6px;
+:host {
+  ::ng-deep mat-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.context-filter-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+
+  mat-form-field {
+    flex: 1;
+  }
 }
 
 .context-filter-min-width {
@@ -10,14 +20,11 @@
   padding-left: 6px;
 }
 
-mat-form-field {
-  height: 40px;
-}
+.profil-menu {
+  padding-left: 8px;
 
-.profilsMenu {
-  display: flex;
-  & > mat-checkbox {
-    width: 8px;
+  mat-checkbox {
+    margin-right: 8px;
   }
 }
 
@@ -26,4 +33,11 @@ mat-form-field {
   width: 40px;
   display: inline-flex;
   overflow: hidden;
+}
+.actions-container {
+  margin-left: 4px;
+}
+
+.no-result {
+  padding: 16px;
 }

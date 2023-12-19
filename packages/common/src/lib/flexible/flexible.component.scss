@@ -4,58 +4,54 @@
   display: flex;
   height: 100%;
   width: 100%;
-}
+  &.column {
+    flex-direction: column;
+  }
 
-:host.column {
-  flex-direction: column;
-}
+  &.row {
+    flex-direction: row;
+  }
 
-:host.row {
-  flex-direction: row;
-}
+  .igo-flexible-main {
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
 
-.igo-flexible-main {
-  flex: 0 0 auto;
-  overflow: hidden;
-}
+  .igo-flexible-main.column {
+    transition: height 0.25s ease-in;
+  }
 
-.igo-flexible-main.column {
-  transition: height 0.25s ease-in;
-}
+  .igo-flexible-main.row {
+    transition: width 0.25s ease-in;
+  }
 
-.igo-flexible-main.row {
-  transition: width 0.25s ease-in;
-}
+  .igo-flexible-fill > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
-.igo-flexible-fill > div {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
+  .igo-container {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
 
-.igo-container {
-  width: calc(100% - 2 * #{$igo-padding});
-  height: 100%;
-  padding: $igo-padding 0;
-  margin: 0 $igo-padding;
-  overflow: hidden;
-  position: relative;
-}
+  ::ng-deep .igo-flexible-fill {
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
+  }
 
-::ng-deep .igo-flexible-fill {
-  flex: 1 1 auto;
-  overflow: hidden;
-  position: relative;
-}
+  ::ng-deep .igo-content {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+  }
 
-::ng-deep .igo-content {
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-}
-
-::ng-deep igo-panel {
-  height: 100%;
+  ::ng-deep igo-panel {
+    height: 100%;
+  }
 }

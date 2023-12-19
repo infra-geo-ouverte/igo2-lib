@@ -1,0 +1,38 @@
+<app-doc-viewer title="Tool" subtitle="Common">
+  <app-example-viewer codeFolder="common/tool">
+    <igo-panel [title]="panelTitle">
+      <button
+        mat-icon-button
+        panelLeftButton
+        (click)="toolbox.activatePreviousTool()"
+        *ngIf="activeTool$ | async"
+      >
+        <mat-icon svgIcon="arrow-back"></mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        panelRightButton
+        (click)="toolbox.deactivateTool()"
+        *ngIf="activeTool$ | async"
+      >
+        <mat-icon svgIcon="menu"></mat-icon>
+      </button>
+
+      <igo-toolbox
+        [toolbox]="toolbox"
+        [animate]="true"
+        color="primary"
+      ></igo-toolbox>
+    </igo-panel>
+
+    <button
+      mat-flat-button
+      type="button"
+      color="primary"
+      (click)="activateSalutationTool()"
+    >
+      Activate Salutation Tool
+    </button>
+  </app-example-viewer>
+</app-doc-viewer>

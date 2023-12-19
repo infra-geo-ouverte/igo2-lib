@@ -1,16 +1,18 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  OnInit,
+  Component,
+  EventEmitter,
   Input,
+  OnInit,
   Optional,
-  Output,
-  EventEmitter
+  Output
 } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { NavigationStart, Router } from '@angular/router';
 
 import { ConfigService } from '@igo2/core';
+
+import { filter } from 'rxjs/operators';
+
 import { AuthOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
@@ -83,7 +85,7 @@ export class AuthFormComponent implements OnInit {
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  public options: AuthOptions;
+  public options?: AuthOptions;
   public user;
 
   public visible = true;
@@ -96,7 +98,7 @@ export class AuthFormComponent implements OnInit {
     private config: ConfigService,
     @Optional() private router: Router
   ) {
-    this.options = this.config.getConfig('auth') || {};
+    this.options = this.config.getConfig('auth');
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
   }
 
@@ -115,18 +117,18 @@ export class AuthFormComponent implements OnInit {
     this.auth.logout().subscribe(() => {
       this.user = undefined;
       if (this.router) {
-        if (this.options.logoutRoute) {
-          this.router.navigate([this.options.logoutRoute]);
-        } else if (this.options.homeRoute) {
-          this.router.navigate([this.options.homeRoute]);
+        if (this.options?.logoutRoute) {
+          this.router.navigate([this.options?.logoutRoute]);
+        } else if (this.options?.homeRoute) {
+          this.router.navigate([this.options?.homeRoute]);
         }
       }
     });
   }
 
   public home() {
-    if (this.router && this.options.homeRoute) {
-      this.router.navigate([this.options.homeRoute]);
+    if (this.router && this.options?.homeRoute) {
+      this.router.navigate([this.options?.homeRoute]);
     }
   }
 
@@ -149,8 +151,8 @@ export class AuthFormComponent implements OnInit {
       .subscribe((changeEvent: any) => {
         if (changeEvent.url) {
           const currentRoute = changeEvent.url;
-          const logoutRoute = this.options.logoutRoute;
-          const loginRoute = this.options.loginRoute;
+          const logoutRoute = this.options?.logoutRoute;
+          const loginRoute = this.options?.loginRoute;
 
           this.isLogoutRoute = currentRoute === logoutRoute;
           this.isLoginRoute = currentRoute === loginRoute;

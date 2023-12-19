@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
 import { ExportOptions } from '@igo2/geo';
+
+import { BehaviorSubject } from 'rxjs';
 
 export enum ImportExportType {
   layer = 'layer',
@@ -20,10 +21,13 @@ export enum ImportExportMode {
   providedIn: 'root'
 })
 export class ImportExportState {
-
-  readonly importExportType$: BehaviorSubject<ImportExportType> = new BehaviorSubject(ImportExportType.layer);
-  readonly selectedMode$: BehaviorSubject<ImportExportMode> = new BehaviorSubject(ImportExportMode.import);
-  readonly exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(undefined);
+  readonly importExportType$: BehaviorSubject<ImportExportType> =
+    new BehaviorSubject(ImportExportType.layer);
+  readonly selectedMode$: BehaviorSubject<ImportExportMode> =
+    new BehaviorSubject(ImportExportMode.import);
+  readonly exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
+    undefined
+  );
 
   setImportExportType(type: ImportExportType) {
     this.importExportType$.next(type);
@@ -34,7 +38,6 @@ export class ImportExportState {
   }
 
   setsExportOptions(exportOptions: ExportOptions) {
-      this.exportOptions$.next(exportOptions);
-    }
-
+    this.exportOptions$.next(exportOptions);
+  }
 }

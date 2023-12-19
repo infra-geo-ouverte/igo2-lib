@@ -10,10 +10,7 @@ mat-radio-button {
   padding: 14px 14px 14px 0;
 }
 
-.scopeForm, form {
+.scopeForm,
+form {
   padding: 5px;
-}
-
-mat-option ::ng-deep .mat-option-text {
-  line-height: initial;
 }

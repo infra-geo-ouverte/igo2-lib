@@ -1,18 +1,19 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
-
-import { BehaviorSubject } from 'rxjs';
 
 import { EntityStore } from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
 
+import { BehaviorSubject } from 'rxjs';
+
+import { IgoMap } from '../../map/shared/map';
 import {
   AddedChangeEmitter,
   AddedChangeGroupEmitter,
@@ -22,7 +23,6 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { IgoMap } from '../../map';
 
 /**
  * Catalog browser group item
@@ -34,7 +34,6 @@ import { IgoMap } from '../../map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
-
   /**
    * Group's items store
    * @internal
@@ -116,7 +115,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       this.store.view.sort({
         direction: this.group.sortDirection,
         valueAccessor: (item: CatalogItem) => item.title
-        });
+      });
     }
   }
 
@@ -207,7 +206,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       .filter((item: CatalogItem) => item.id !== layer.id)
       .map((item: CatalogItem) => this.state.get(item).added || false);
 
-    if (layersAdded.every(value => value === added)) {
+    if (layersAdded.every((value) => value === added)) {
       added ? this.add(event.event) : this.remove(event.event);
     } else if (this.added$.value === true) {
       this.added$.next(false);

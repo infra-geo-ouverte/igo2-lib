@@ -1,34 +1,35 @@
+import { HttpClient } from '@angular/common/http';
 import {
-  Component,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Output,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  Output
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { getEntityIcon, getEntityTitle } from '@igo2/common';
+import type { Toolbox } from '@igo2/common';
+import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
+import { Clipboard } from '@igo2/utils';
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { NetworkService, ConnectionState, MessageService } from '@igo2/core';
-import { ConfigService } from '@igo2/core';
-import { getEntityTitle, getEntityIcon } from '@igo2/common';
-import type { Toolbox } from '@igo2/common';
-
-import { Feature } from '../shared';
-import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
-import { HttpClient } from '@angular/common/http';
-import { Clipboard } from '@igo2/utils';
+import { SearchSource } from '../../search/shared/sources/source';
+import { Feature } from '../shared';
+
 @Component({
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
   styleUrls: ['./feature-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;
   private unsubscribe$ = new Subject<void>();
@@ -78,7 +79,6 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return getEntityIcon(this.feature) || 'link';
   }
 
-
   constructor(
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
@@ -87,9 +87,12 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private configService: ConfigService
   ) {
-    this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
-      this.state = state;
-    });
+    this.networkService
+      .currentState()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
+      });
   }
 
   ngOnInit() {
@@ -105,9 +108,12 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
-
   isHtmlDisplay(): boolean {
-    if (this.feature && this.isObject(this.feature.properties) && this.feature.properties.target === 'iframe') {
+    if (
+      this.feature &&
+      this.isObject(this.feature.properties) &&
+      this.feature.properties.target === 'iframe'
+    ) {
       this.htmlDisplayEvent.emit(true);
       return true;
     } else {
@@ -123,7 +129,10 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     const regexBase = /<base href="[\w:\/\.]+">/;
     if (!regexBase.test(value.body)) {
       const url = new URL(value.url, window.location.origin);
-      value.body = value.body.replace('<head>', `<head><base href="${url.origin}">`);
+      value.body = value.body.replace(
+        '<head>',
+        `<head><base href="${url.origin}">`
+      );
     }
 
     return this.sanitizer.bypassSecurityTrustHtml(value.body);
@@ -135,22 +144,30 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   openSecureUrl(value) {
     let url: string;
-    const regexDepot = new RegExp(this.configService?.getConfig('depot.url') + '.*?(?="|$)');
+    const regexDepot = new RegExp(
+      this.configService?.getConfig('depot.url') + '.*?(?="|$)'
+    );
 
     if (regexDepot.test(value)) {
       url = value.match(regexDepot)[0];
 
-      this.http.get(url, {
-        responseType: 'blob'
-      })
-      .subscribe((docOrImage) => {
-        const fileUrl = URL.createObjectURL(docOrImage);
-        window.open(fileUrl, '_blank');
-        this.cdRef.detectChanges();
-      },
-      (error: Error) => {
-        this.messageService.error('igo.geo.targetHtmlUrlUnauthorized', 'igo.geo.targetHtmlUrlUnauthorizedTitle');
-      });
+      this.http
+        .get(url, {
+          responseType: 'blob'
+        })
+        .subscribe(
+          (docOrImage) => {
+            const fileUrl = URL.createObjectURL(docOrImage);
+            window.open(fileUrl, '_blank');
+            this.cdRef.detectChanges();
+          },
+          (error: Error) => {
+            this.messageService.error(
+              'igo.geo.targetHtmlUrlUnauthorized',
+              'igo.geo.targetHtmlUrlUnauthorizedTitle'
+            );
+          }
+        );
     } else {
       let url = value;
       if (this.isEmbeddedLink(value)) {
@@ -181,7 +198,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   isImg(value) {
-    if (typeof value ==='string') {
+    if (typeof value === 'string') {
       if (this.isUrl(value)) {
         const regex = /(jpe?g|png|gif)$/;
         return regex.test(value.toLowerCase());
@@ -193,17 +210,17 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   isEmbeddedLink(value) {
     if (typeof value === 'string') {
-        const matchRegex = /<a/g;
-        const match = value.match(matchRegex) || [];
-        const count = match.length;
-        if (count === 1) {
-            return true;
-        } else {
-            return false;
-        }
+      const matchRegex = /<a/g;
+      const match = value.match(matchRegex) || [];
+      const count = match.length;
+      if (count === 1) {
+        return true;
+      } else {
+        return false;
+      }
     }
     return false;
-}
+  }
 
   getEmbeddedLinkText(value) {
     const regex = /(?:>).*?(?=<|$)/;
@@ -218,50 +235,73 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     let offlineButtonState;
 
     if (this.map) {
-      this.map.forcedOffline$.pipe(takeUntil(this.unsubscribe$)).subscribe(state => {
-        offlineButtonState = state;
-      });
+      this.map.forcedOffline$
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((state) => {
+          offlineButtonState = state;
+        });
     }
 
-    if (feature.properties && feature.properties.Route && this.toolbox && !this.toolbox.getTool('directions')) {
+    if (
+      feature.properties &&
+      feature.properties.Route &&
+      this.toolbox &&
+      !this.toolbox.getTool('directions')
+    ) {
       delete feature.properties.Route;
     }
 
     if (allowedFieldsAndAlias) {
-      Object.keys(allowedFieldsAndAlias).forEach(field => {
+      Object.keys(allowedFieldsAndAlias).forEach((field) => {
         properties[allowedFieldsAndAlias[field]] = feature.properties[field];
       });
       return properties;
     } else if (offlineButtonState !== undefined) {
       if (!offlineButtonState) {
-        if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
+        if (
+          this.state.connection &&
+          feature.meta &&
+          feature.meta.excludeAttribute
+        ) {
           const excludeAttribute = feature.meta.excludeAttribute;
-          excludeAttribute.forEach(attribute => {
+          excludeAttribute.forEach((attribute) => {
             delete feature.properties[attribute];
           });
-        } else if (!this.state.connection && feature.meta && feature.meta.excludeAttributeOffline) {
+        } else if (
+          !this.state.connection &&
+          feature.meta &&
+          feature.meta.excludeAttributeOffline
+        ) {
           const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach(attribute => {
+          excludeAttributeOffline.forEach((attribute) => {
             delete feature.properties[attribute];
           });
         }
       } else {
         if (feature.meta && feature.meta.excludeAttributeOffline) {
           const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-          excludeAttributeOffline.forEach(attribute => {
+          excludeAttributeOffline.forEach((attribute) => {
             delete feature.properties[attribute];
           });
         }
       }
     } else {
-      if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
+      if (
+        this.state.connection &&
+        feature.meta &&
+        feature.meta.excludeAttribute
+      ) {
         const excludeAttribute = feature.meta.excludeAttribute;
-        excludeAttribute.forEach(attribute => {
+        excludeAttribute.forEach((attribute) => {
           delete feature.properties[attribute];
         });
-      } else if (!this.state.connection && feature.meta && feature.meta.excludeAttributeOffline) {
+      } else if (
+        !this.state.connection &&
+        feature.meta &&
+        feature.meta.excludeAttributeOffline
+      ) {
         const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
-        excludeAttributeOffline.forEach(attribute => {
+        excludeAttributeOffline.forEach((attribute) => {
           delete feature.properties[attribute];
         });
       }

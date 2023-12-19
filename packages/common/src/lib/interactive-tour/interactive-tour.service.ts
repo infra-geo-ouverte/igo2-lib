@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ShepherdService } from 'angular-shepherd';
 
-import { ConfigService, MediaService, LanguageService } from '@igo2/core';
-import { InteractiveTourLoader } from './interactive-tour.loader';
+import { ConfigService, LanguageService, MediaService } from '@igo2/core';
+
+import { autoPlacement, offset } from '@floating-ui/dom';
+import { ShepherdService } from 'angular-shepherd';
+import Shepherd from 'shepherd.js';
+
 import {
+  InteractiveTourAction,
   InteractiveTourOptions,
-  InteractiveTourStep,
-  InteractiveTourAction
+  InteractiveTourStep
 } from './interactive-tour.interface';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +33,9 @@ export class InteractiveTourService {
   }
 
   public isAppHaveTour() {
-    const haveTour = this.configService.getConfig('interactiveTour.activateInteractiveTour');
+    const haveTour = this.configService.getConfig(
+      'interactiveTour.activateInteractiveTour'
+    );
     if (haveTour === undefined) {
       return true;
     } else {
@@ -38,9 +44,8 @@ export class InteractiveTourService {
   }
 
   public isToolHaveTourConfig(toolName: string): boolean {
-    const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const checkTourActiveOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
     if (checkTourActiveOptions === undefined) {
       return false;
     } else {
@@ -49,9 +54,8 @@ export class InteractiveTourService {
   }
 
   public disabledTourButton(toolName: string): boolean {
-    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const stepConfig: InteractiveTourOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
 
     if (stepConfig?.conditions) {
       for (const condition of stepConfig?.conditions) {
@@ -71,10 +75,8 @@ export class InteractiveTourService {
     const showInMobile = this.configService.getConfig(
       'interactiveTour.tourInMobile'
     );
-    if (showInMobile === undefined) {
-      return true;
-    }
-    return this.configService.getConfig('interactiveTour.tourInMobile');
+
+    return showInMobile === undefined ? true : showInMobile;
   }
 
   private getButtons(buttonKind?: 'first' | 'last' | 'noBackButton') {
@@ -158,15 +160,22 @@ export class InteractiveTourService {
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
-        if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
+        if (
+          self.getCurrentStep().options.attachTo.element &&
+          !document.querySelector(
+            self.getCurrentStep().options.attachTo.element
+          )
+        ) {
           self.cancel();
           clearInterval(checkExist);
           return;
         } else {
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
-            const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
-            shepherdList.forEach(element => {
+            const shepherdList = currentStepElement.querySelectorAll(
+              '.shepherd-content, .shepherd-text'
+            );
+            shepherdList.forEach((element) => {
               element.classList.add('mat-typography');
             });
           }
@@ -198,7 +207,10 @@ export class InteractiveTourService {
 
   private checkNext(index, tour, service) {
     if (tour.getCurrentStep()) {
-      if (tour.getCurrentStep().options.attachTo.element && document.querySelector(tour.getCurrentStep().options.attachTo.element)) {
+      if (
+        tour.getCurrentStep().options.attachTo.element &&
+        document.querySelector(tour.getCurrentStep().options.attachTo.element)
+      ) {
         tour.complete();
         return;
       }
@@ -210,7 +222,10 @@ export class InteractiveTourService {
 
       tour.steps.splice(index.index, 1);
       const nextStep = tour.steps[index.index];
-      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
+      if (
+        nextStep.options.attachTo.element &&
+        !document.querySelector(nextStep.options.attachTo.element)
+      ) {
         service.checkNext(index, tour, service);
       } else {
         tour._setupModal();
@@ -268,18 +283,22 @@ export class InteractiveTourService {
     });
   }
 
-  private getShepherdSteps(stepConfig: InteractiveTourOptions) {
-    const shepherdSteps = [];
+  private getShepherdSteps(tourConfig: InteractiveTourOptions) {
+    const shepherdSteps: Shepherd.Step.StepOptions[] = [];
 
     let i = 0;
-    for (const step of stepConfig.steps) {
+    for (const step of tourConfig.steps) {
+      const position = step.position ?? tourConfig.position;
       shepherdSteps.push({
         attachTo: {
           element: step.element,
-          on: step.position || stepConfig.position
+          on: position as any // PopperPlacement
         },
-        popperOptions: {
-          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
+        floatingUIOptions: {
+          middleware: [
+            position === 'auto' && autoPlacement(),
+            offset({ mainAxis: 15 })
+          ].filter(Boolean)
         },
         beforeShowPromise: () => {
           return Promise.all([
@@ -293,20 +312,20 @@ export class InteractiveTourService {
         buttons: this.getButtons(
           i === 0
             ? 'first'
-            : i + 1 === stepConfig.steps.length
+            : i + 1 === tourConfig.steps.length
             ? 'last'
-            : stepConfig.steps[i].noBackButton
+            : tourConfig.steps[i].noBackButton
             ? 'noBackButton'
             : undefined
         ),
         classes: step.class,
         highlightClass: step.highlightClass,
-        scrollTo: step.scrollToElement || stepConfig.scrollToElement || true,
+        scrollTo: step.scrollToElement || tourConfig.scrollToElement || true,
         canClickTarget: step.disableInteraction
           ? !step.disableInteraction
           : undefined,
         title: this.languageService.translate.instant(
-          step.title || stepConfig.title
+          step.title || tourConfig.title
         ),
         text: [this.languageService.translate.instant(step.text)],
         when: {
@@ -318,7 +337,7 @@ export class InteractiveTourService {
             this.executeAction(step, step.onHide);
           }
         }
-      });
+      } satisfies Shepherd.Step.StepOptions);
       i++;
     }
 
@@ -326,9 +345,8 @@ export class InteractiveTourService {
   }
 
   public startTour(toolName: string) {
-    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
-      toolName
-    );
+    const stepConfig: InteractiveTourOptions =
+      this.interactiveTourLoader.getTourOptionData(toolName);
 
     this.shepherdService.defaultStepOptions = {
       classes: stepConfig.class,
@@ -348,7 +366,7 @@ export class InteractiveTourService {
     this.shepherdService.addSteps(shepherdSteps);
 
     this.shepherdService.tourObject.on('show', this.addProgress);
-    this.shepherdService.tourObject.on('cancel', (index) => {
+    this.shepherdService.tourObject.on('cancel', (index) => {
       this.checkNext(index, this.shepherdService.tourObject, this);
     });
 

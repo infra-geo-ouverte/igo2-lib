@@ -1,37 +1,36 @@
 import {
-  Directive,
-  Input,
-  Output,
-  EventEmitter,
-  OnDestroy,
   AfterViewInit,
+  Directive,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
   Self
 } from '@angular/core';
 
-import { Subscription, Observable, of, zip } from 'rxjs';
-import { unByKey } from 'ol/Observable';
-
 import OlFeature from 'ol/Feature';
-import OlRenderFeature from 'ol/render/Feature';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlLayer from 'ol/layer/Layer';
+import OlRenderFeature from 'ol/render/Feature';
 import OlSource from 'ol/source/Source';
 import olVectorSource from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { EventsKey } from 'ol/events';
+import { Observable, Subscription, of, zip } from 'rxjs';
 
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
-import { QueryService } from './query.service';
-import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
-import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { IgoMap } from '../../map/shared/map';
+import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { QueryableDataSourceOptions } from './query.interfaces';
+import { QueryService } from './query.service';
+import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -95,7 +94,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @internal
    */
   get map(): IgoMap {
-    return (this.component.map as any) as IgoMap;
+    return this.component.map as any as IgoMap;
   }
 
   constructor(
@@ -199,7 +198,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         event.pixel,
         (featureOL: OlFeature<OlGeometry>, layerOL: any) => {
           const layer = this.map.getLayerById(layerOL.values_._layer.id);
-          if ((layer.dataSource.options as QueryableDataSourceOptions).queryFormatAsWms) {
+          if (
+            (layer.dataSource.options as QueryableDataSourceOptions)
+              .queryFormatAsWms
+          ) {
             return;
           }
           if (featureOL) {
@@ -211,7 +213,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                   id: layerOL.values_._layer.id + '.' + feature.id_,
                   icon: feature.values_._icon,
                   sourceTitle: layerOL.values_.title,
-                  alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                  alias: this.queryService.getAllowedFieldsAndAlias(layer)
                   // title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
                 };
                 clickedFeatures.push(newFeature);
@@ -226,7 +228,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
               };
               clickedFeatures.push(newFeature);
             } else {
@@ -239,7 +243,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
               };
               clickedFeatures.push(newFeature);
             }
@@ -257,23 +263,31 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       const dragExtent = target.getGeometry().getExtent();
       this.map.layers
         .filter(layerIsQueryable)
-        .filter(layer => layer instanceof VectorLayer && layer.visible)
-        .map(layer => {
+        .filter((layer) => layer instanceof VectorLayer && layer.visible)
+        .map((layer) => {
           const featuresOL = layer.dataSource.ol as olVectorSource<OlGeometry>;
-          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: any) => {
-            const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
-            newFeature.meta = {
-              id: layer.id + '.' + olFeature.getId(),
-              icon: olFeature.values_._icon,
-              sourceTitle: layer.title,
-              alias: this.queryService.getAllowedFieldsAndAlias(layer),
-              title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
-            };
-            clickedFeatures.push(newFeature);
-          });
+          featuresOL.forEachFeatureIntersectingExtent(
+            dragExtent,
+            (olFeature: any) => {
+              const newFeature: Feature = featureFromOl(
+                olFeature,
+                this.map.projection,
+                layer.ol
+              );
+              newFeature.meta = {
+                id: layer.id + '.' + olFeature.getId(),
+                icon: olFeature.values_._icon,
+                sourceTitle: layer.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title:
+                  this.queryService.getQueryTitle(newFeature, layer) ||
+                  newFeature.meta.title
+              };
+              clickedFeatures.push(newFeature);
+            }
+          );
         });
     }
-
 
     return of(clickedFeatures);
   }

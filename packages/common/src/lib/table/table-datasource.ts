@@ -1,12 +1,13 @@
 import { DataSource } from '@angular/cdk/table';
 import { MatSort } from '@angular/material/sort';
 
-import { Observable, BehaviorSubject, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
-
 import { ObjectUtils } from '@igo2/utils';
 
-import { TableDatabase, TableModel } from './index';
+import { BehaviorSubject, Observable, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { TableDatabase } from './table-database';
+import { TableModel } from './table-model.interface';
 
 export class TableDataSource extends DataSource<any> {
   get filter(): string {
@@ -41,7 +42,7 @@ export class TableDataSource extends DataSource<any> {
       map(() => {
         return this.getFilteredData(this._database.data);
       }),
-      map(data => {
+      map((data) => {
         return this.getSortedData(data);
       })
     );
@@ -55,8 +56,8 @@ export class TableDataSource extends DataSource<any> {
     }
     return data.slice().filter((item: any) => {
       const searchStr: string = this._model.columns
-        .filter(c => c.filterable)
-        .map(c => ObjectUtils.resolve(item, c.name))
+        .filter((c) => c.filterable)
+        .map((c) => ObjectUtils.resolve(item, c.name))
         .join(' ')
         .toLowerCase();
 

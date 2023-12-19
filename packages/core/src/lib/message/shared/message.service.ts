@@ -1,28 +1,28 @@
-import { Injectable, Inject, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Inject, Injectable, Injector } from '@angular/core';
+
+import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, forkJoin } from 'rxjs';
+import { debounceTime, first } from 'rxjs/operators';
 
 import { ConfigService } from '../../config/config.service';
-
-import { Message, MessageOptions } from './message.interface';
-import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
-import { MessageType } from './message.enum';
 import { LanguageService } from '../../language/shared/language.service';
-import { debounceTime, first } from 'rxjs/operators';
+import { MessageType } from './message.enum';
+import { Message, MessageOptions } from './message.interface';
 
 interface ActiveMessageTranslation {
   id: number;
   titleKey: string;
   textKey: string;
-  textInterpolateParams?: Object
-  titleInterpolateParams?: Object
+  textInterpolateParams?: Object;
+  titleInterpolateParams?: Object;
 }
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
   public messages$ = new BehaviorSubject<Message[]>([]);
-  private options: MessageOptions;
+  private options?: MessageOptions;
   private activeMessageTranslations: ActiveMessageTranslation[] = [];
 
   constructor(
@@ -30,43 +30,63 @@ export class MessageService {
     private configService: ConfigService,
     private languageService: LanguageService
   ) {
-    this.options = this.configService.getConfig('message') || {};
-    this.languageService.language$.pipe(debounceTime(500)).subscribe(r => {
+    this.options = this.configService.getConfig('message');
+    this.languageService.language$.pipe(debounceTime(500)).subscribe((r) => {
       if (this.toastr.toasts.length === 0) {
         this.activeMessageTranslations = [];
       }
-      this.toastr.toasts.map(toast => {
-        const activeMessageTranslation = this.activeMessageTranslations.find(amt => amt.id === toast.toastId);
+      this.toastr.toasts.map((toast) => {
+        const activeMessageTranslation = this.activeMessageTranslations.find(
+          (amt) => amt.id === toast.toastId
+        );
         if (activeMessageTranslation) {
-          const translatedTextInterpolateParams = {...activeMessageTranslation.textInterpolateParams};
-          const translatedTitleInterpolateParams = {...activeMessageTranslation.titleInterpolateParams};
+          const translatedTextInterpolateParams = {
+            ...activeMessageTranslation.textInterpolateParams
+          };
+          const translatedTitleInterpolateParams = {
+            ...activeMessageTranslation.titleInterpolateParams
+          };
 
           if (activeMessageTranslation.textInterpolateParams) {
-            Object.keys(activeMessageTranslation.textInterpolateParams).map(k => {
-              if (k) {
-                translatedTextInterpolateParams[k] =
-                  this.languageService.translate.instant(activeMessageTranslation.textInterpolateParams[k]);
+            Object.keys(activeMessageTranslation.textInterpolateParams).map(
+              (k) => {
+                if (k) {
+                  translatedTextInterpolateParams[k] =
+                    this.languageService.translate.instant(
+                      activeMessageTranslation.textInterpolateParams[k]
+                    );
+                }
               }
-            });
+            );
           }
           if (activeMessageTranslation.titleInterpolateParams) {
-            Object.keys(activeMessageTranslation.titleInterpolateParams).map(k => {
-              if (k) {
-                translatedTitleInterpolateParams[k] =
-                  this.languageService.translate.instant(activeMessageTranslation.titleInterpolateParams[k]);
+            Object.keys(activeMessageTranslation.titleInterpolateParams).map(
+              (k) => {
+                if (k) {
+                  translatedTitleInterpolateParams[k] =
+                    this.languageService.translate.instant(
+                      activeMessageTranslation.titleInterpolateParams[k]
+                    );
+                }
               }
-
-            });
+            );
           }
 
-
           forkJoin([
-          this.languageService.translate.get(activeMessageTranslation.textKey, translatedTextInterpolateParams),
-          this.languageService.translate.get(activeMessageTranslation.titleKey, translatedTitleInterpolateParams)
-        ]).pipe(first()).subscribe((res: [string, string]) => {
-          toast.toastRef.componentInstance.message = res[0];
-          toast.toastRef.componentInstance.title = res[1];
-        });
+            this.languageService.translate.get(
+              activeMessageTranslation.textKey,
+              translatedTextInterpolateParams
+            ),
+            this.languageService.translate.get(
+              activeMessageTranslation.titleKey,
+              translatedTitleInterpolateParams
+            )
+          ])
+            .pipe(first())
+            .subscribe((res: [string, string]) => {
+              toast.toastRef.componentInstance.message = res[0];
+              toast.toastRef.componentInstance.title = res[1];
+            });
         }
       });
     });
@@ -87,20 +107,33 @@ export class MessageService {
 
     this.messages$.next(this.messages$.value.concat([message]));
 
-    message.options = message.options || {} as MessageOptions;
+    message.options = message.options || ({} as MessageOptions);
     const currentDate = new Date();
 
-    message.options.from = message.options.from ? message.options.from : new Date('1 jan 1900');
-    message.options.to = message.options.to ? message.options.to : new Date('1 jan 3000');
+    message.options.from = message.options.from
+      ? message.options.from
+      : new Date('1 jan 1900');
+    message.options.to = message.options.to
+      ? message.options.to
+      : new Date('1 jan 3000');
     if (typeof message.options.from === 'string') {
-      message.options.from = new Date(Date.parse(message.options.from.replace(/-/g, ' ')));
+      message.options.from = new Date(
+        Date.parse(message.options.from.replace(/-/g, ' '))
+      );
     }
     if (typeof message.options.to === 'string') {
-      message.options.to = new Date(Date.parse(message.options.to.replace(/-/g, ' ')));
+      message.options.to = new Date(
+        Date.parse(message.options.to.replace(/-/g, ' '))
+      );
     }
-    if (currentDate > message.options.from && currentDate < message.options.to) {
+    if (
+      currentDate > message.options.from &&
+      currentDate < message.options.to
+    ) {
       if (message.showIcon === false) {
-        this.toastr.toastrConfig.iconClasses[messageType] = `toast-${messageType} toast-no-icon`;
+        this.toastr.toastrConfig.iconClasses[
+          messageType
+        ] = `toast-${messageType} toast-no-icon`;
       }
       message = this.handleTemplate(message);
 
@@ -113,7 +146,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
           case MessageType.ERROR:
             messageShown = this.error(
@@ -121,7 +155,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
           case MessageType.INFO:
             messageShown = this.info(
@@ -129,7 +164,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
           case MessageType.SHOW:
             messageShown = this.show(
@@ -137,7 +173,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
           case MessageType.ALERT:
           case MessageType.WARNING:
@@ -146,7 +183,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
           default:
             messageShown = this.info(
@@ -154,7 +192,8 @@ export class MessageService {
               message.title,
               message.options,
               message.textInterpolateParams,
-              message.titleInterpolateParams);
+              message.titleInterpolateParams
+            );
             break;
         }
         message.options.id = messageShown.toastId;
@@ -167,8 +206,16 @@ export class MessageService {
     title: string = 'igo.core.message.success',
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-    return this.handleNgxToastr('success', text, title, options, textInterpolateParams, titleInterpolateParams);
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    return this.handleNgxToastr(
+      'success',
+      text,
+      title,
+      options,
+      textInterpolateParams,
+      titleInterpolateParams
+    );
   }
 
   error(
@@ -176,8 +223,16 @@ export class MessageService {
     title: string = 'igo.core.message.error',
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-    return this.handleNgxToastr('error', text, title, options, textInterpolateParams, titleInterpolateParams);
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    return this.handleNgxToastr(
+      'error',
+      text,
+      title,
+      options,
+      textInterpolateParams,
+      titleInterpolateParams
+    );
   }
 
   info(
@@ -185,8 +240,16 @@ export class MessageService {
     title: string = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-    return this.handleNgxToastr('info', text, title, options, textInterpolateParams, titleInterpolateParams);
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    return this.handleNgxToastr(
+      'info',
+      text,
+      title,
+      options,
+      textInterpolateParams,
+      titleInterpolateParams
+    );
   }
 
   alert(
@@ -194,8 +257,16 @@ export class MessageService {
     title: string = 'igo.core.message.alert',
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-    return this.handleNgxToastr('alert', text, title, options, textInterpolateParams, titleInterpolateParams);
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    return this.handleNgxToastr(
+      'alert',
+      text,
+      title,
+      options,
+      textInterpolateParams,
+      titleInterpolateParams
+    );
   }
 
   show(
@@ -203,8 +274,16 @@ export class MessageService {
     title: string = 'igo.core.message.info',
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-    return this.handleNgxToastr('show', text, title, options, textInterpolateParams, titleInterpolateParams);
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    return this.handleNgxToastr(
+      'show',
+      text,
+      title,
+      options,
+      textInterpolateParams,
+      titleInterpolateParams
+    );
   }
 
   private handleNgxToastr(
@@ -213,31 +292,42 @@ export class MessageService {
     title: string,
     options: Partial<IndividualConfig> = {},
     textInterpolateParams?: Object,
-    titleInterpolateParams?: Object): ActiveToast<any> {
-
-    const translatedTextInterpolateParams = {...textInterpolateParams};
-    const translatedTitlenterpolateParams = {...titleInterpolateParams};
+    titleInterpolateParams?: Object
+  ): ActiveToast<any> {
+    const translatedTextInterpolateParams = { ...textInterpolateParams };
+    const translatedTitlenterpolateParams = { ...titleInterpolateParams };
 
     if (textInterpolateParams) {
-      Object.keys(textInterpolateParams).map(k => {
-        if (textInterpolateParams[k]) {
+      Object.keys(textInterpolateParams).map((k) => {
+        const value = textInterpolateParams[k];
+        if (value) {
           translatedTextInterpolateParams[k] =
-            this.languageService.translate.instant(textInterpolateParams[k]);
+            typeof value === 'string'
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }
     if (titleInterpolateParams) {
-      Object.keys(titleInterpolateParams).map(k => {
+      Object.keys(titleInterpolateParams).map((k) => {
         if (k) {
+          const value = titleInterpolateParams[k];
           translatedTitlenterpolateParams[k] =
-            this.languageService.translate.instant(titleInterpolateParams[k]);
+            typeof value === 'string'
+              ? this.languageService.translate.instant(value)
+              : value;
         }
       });
     }
 
-
-    const message = this.languageService.translate.instant(text, translatedTextInterpolateParams);
-    const translatedTitle = this.languageService.translate.instant(title, translatedTitlenterpolateParams);
+    const message = this.languageService.translate.instant(
+      text,
+      translatedTextInterpolateParams
+    );
+    const translatedTitle = this.languageService.translate.instant(
+      title,
+      translatedTitlenterpolateParams
+    );
 
     let activeToast;
     switch (type) {
@@ -260,9 +350,9 @@ export class MessageService {
       titleKey: title,
       textKey: text,
       textInterpolateParams,
-      titleInterpolateParams });
+      titleInterpolateParams
+    });
     return activeToast;
-
   }
 
   remove(id?: number) {
@@ -278,11 +368,11 @@ export class MessageService {
   }
 
   private handleTemplate(message: Message): Message {
-    if (!this.options.template || message.html) {
+    if (!this.options?.template || message.html) {
       return message;
     }
 
-    let html = this.options.template;
+    let html = this.options?.template;
     html = html.replace('${text}', message.text);
     html = html.replace('${title}', message.title);
 

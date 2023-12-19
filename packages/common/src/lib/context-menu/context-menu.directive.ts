@@ -1,3 +1,5 @@
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Directive,
   ElementRef,
@@ -9,10 +11,8 @@ import {
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
-import { TemplatePortal } from '@angular/cdk/portal';
-import { fromEvent, Subscription } from 'rxjs';
+import { Subscription, fromEvent } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 
 @Directive({
   selector: '[igoContextMenu]'
@@ -35,12 +35,12 @@ export class ContextMenuDirective {
   public onContextMenu(e: MouseEvent | TouchEvent): void {
     let x;
     let y;
-    if (e instanceof TouchEvent) {
-      x = e.touches[0].pageX;
-      y = e.touches[0].pageY;
-    } else if (e instanceof MouseEvent) {
+    if (e instanceof MouseEvent) {
       x = e.x;
       y = e.y;
+    } else if (e instanceof TouchEvent) {
+      x = e.touches[0].pageX;
+      y = e.touches[0].pageY;
     }
     if (!x || !y) {
       return;
@@ -73,7 +73,7 @@ export class ContextMenuDirective {
 
     this.sub = fromEvent<MouseEvent>(document, 'click')
       .pipe(
-        filter(event => {
+        filter((event) => {
           const clickTarget = event.target as HTMLElement;
           this.close();
           return (
@@ -87,7 +87,7 @@ export class ContextMenuDirective {
 
     this.sub = fromEvent<MouseEvent>(document, 'contextmenu')
       .pipe(
-        filter(event => {
+        filter((event) => {
           const clickTarget = event.target as HTMLElement;
           if (
             clickTarget &&

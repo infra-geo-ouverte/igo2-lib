@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import {
-  CanActivate,
-  Router,
   ActivatedRouteSnapshot,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { map } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
+
+import { map } from 'rxjs/operators';
+
+import { AuthOptions } from './auth.interface';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProfilsGuard implements CanActivate {
+export class ProfilsGuard {
   constructor(
     private authService: AuthService,
     private config: ConfigService,
@@ -23,18 +25,18 @@ export class ProfilsGuard implements CanActivate {
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.authService.getProfils().pipe(
       map((profils: { profils: string[] }) => {
-        const authConfig = this.config.getConfig('auth');
+        const authConfig = this.config.getConfig('auth') as AuthOptions;
         if (
           profils &&
           profils.profils &&
-          profils.profils.some(v => authConfig.profilsGuard.indexOf(v) !== -1)
+          profils.profils.some((v) => authConfig.profilsGuard.indexOf(v) !== -1)
         ) {
           return true;
         }
 
         this.authService.redirectUrl = state.url;
 
-        if (authConfig && authConfig.loginRoute) {
+        if (authConfig?.loginRoute) {
           this.router.navigateByUrl(authConfig.loginRoute);
         }
 

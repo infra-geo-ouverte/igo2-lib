@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import type { default as OlGeometry } from 'ol/geom/Geometry';
-import * as olStyle from 'ol/style';
 import OlFeature from 'ol/Feature';
-
-import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import RenderFeature from 'ol/render/Feature';
-import { getResolutionFromScale } from '../../map/shared/map.utils';
-import { StyleByAttribute } from '../shared/vector/vector-style.interface';
+import * as olStyle from 'ol/style';
+
 import { ClusterParam } from '../../layer/shared/clusterParam';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
+import { createOverlayMarkerStyle } from '../shared/overlay/overlay-marker-style.utils';
+import { StyleByAttribute } from '../shared/vector/vector-style.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -51,8 +51,11 @@ export class StyleService {
    * @param resolution current map resolution, to control label resolution range
    * @returns
    */
-  createStyle(options: { [key: string]: any }, feature?: RenderFeature | OlFeature<OlGeometry>, resolution?: number) {
-
+  createStyle(
+    options: { [key: string]: any },
+    feature?: RenderFeature | OlFeature<OlGeometry>,
+    resolution?: number
+  ) {
     if (!options) {
       return createOverlayMarkerStyle();
     }
@@ -64,22 +67,41 @@ export class StyleService {
       let labelMinResolution = 0;
       let labelMaxResolution = Infinity;
       if (options.text) {
-        const labelMinResolutionFromScale =
-          options.text?.minScaleDenom ? getResolutionFromScale(Number(options.text.minScaleDenom)) : undefined;
-        const labelMaxResolutionFromScale =
-          options.text?.maxScaleDenom ? getResolutionFromScale(Number(options.text.maxScaleDenom)) : undefined;
-        const minResolution = options.text?.minResolution ? options.text.minResolution : 0;
-        const maxResolution = options.text?.maxResolution ? options.text.maxResolution : Infinity;
+        const labelMinResolutionFromScale = options.text?.minScaleDenom
+          ? getResolutionFromScale(Number(options.text.minScaleDenom))
+          : undefined;
+        const labelMaxResolutionFromScale = options.text?.maxScaleDenom
+          ? getResolutionFromScale(Number(options.text.maxScaleDenom))
+          : undefined;
+        const minResolution = options.text?.minResolution
+          ? options.text.minResolution
+          : 0;
+        const maxResolution = options.text?.maxResolution
+          ? options.text.maxResolution
+          : Infinity;
 
         labelMinResolution = labelMinResolutionFromScale || minResolution;
         labelMaxResolution = labelMaxResolutionFromScale || maxResolution;
       }
-      if (feature && resolution >= labelMinResolution && resolution <= labelMaxResolution) {
-        if (feature && options.text.attribute) {
-          parsedStyle.getText().setText(this.getLabel(feature, options.text.attribute));
+      if (
+        options.text?.minScaleDenom ||
+        options.text?.maxScaleDenom ||
+        options.text?.minResolution ||
+        options.text?.maxResolution
+      ) {
+        if (
+          feature &&
+          resolution >= labelMinResolution &&
+          resolution <= labelMaxResolution
+        ) {
+          if (feature && options.text.attribute) {
+            parsedStyle
+              .getText()
+              .setText(this.getLabel(feature, options.text.attribute));
+          }
+        } else {
+          parsedStyle.setText();
         }
-      } else {
-        parsedStyle.setText();
       }
     }
     return parsedStyle;
@@ -90,7 +112,7 @@ export class StyleService {
     const olCls = this.getOlCls(key);
 
     if (olCls && value instanceof Object) {
-      Object.keys(value).forEach(_key => {
+      Object.keys(value).forEach((_key) => {
         const olKey = this.getOlKey(_key);
         styleOptions[olKey] = this.parseStyle(_key, value[_key]);
       });
@@ -130,10 +152,15 @@ export class StyleService {
     return olCls;
   }
 
-  createStyleByAttribute(feature: RenderFeature | OlFeature<OlGeometry>, styleByAttribute: StyleByAttribute, resolution: number) {
-
+  createStyleByAttribute(
+    feature: RenderFeature | OlFeature<OlGeometry>,
+    styleByAttribute: StyleByAttribute,
+    resolution: number
+  ) {
     let style;
-    const type = styleByAttribute.type ? styleByAttribute.type : this.guessTypeFeature(feature);
+    const type = styleByAttribute.type
+      ? styleByAttribute.type
+      : this.guessTypeFeature(feature);
     const attribute = styleByAttribute.attribute;
     const data = styleByAttribute.data;
     const stroke = styleByAttribute.stroke;
@@ -144,25 +171,38 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data ? data.length : 0;
-    const label = styleByAttribute.label ? styleByAttribute.label.attribute : undefined;
-    const labelMinResolutionFromScale =
-      styleByAttribute.label?.minScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.minScaleDenom)) : undefined;
-    const labelMaxResolutionFromScale =
-      styleByAttribute.label?.maxScaleDenom ? getResolutionFromScale(Number(styleByAttribute.label.maxScaleDenom)) : undefined;
-    const minResolution = styleByAttribute.label?.minResolution ? styleByAttribute.label.minResolution : 0;
-    const maxResolution = styleByAttribute.label?.maxResolution ? styleByAttribute.label.maxResolution : Infinity;
+    const label = styleByAttribute.label
+      ? styleByAttribute.label.attribute
+      : undefined;
+    const labelMinResolutionFromScale = styleByAttribute.label?.minScaleDenom
+      ? getResolutionFromScale(Number(styleByAttribute.label.minScaleDenom))
+      : undefined;
+    const labelMaxResolutionFromScale = styleByAttribute.label?.maxScaleDenom
+      ? getResolutionFromScale(Number(styleByAttribute.label.maxScaleDenom))
+      : undefined;
+    const minResolution = styleByAttribute.label?.minResolution
+      ? styleByAttribute.label.minResolution
+      : 0;
+    const maxResolution = styleByAttribute.label?.maxResolution
+      ? styleByAttribute.label.maxResolution
+      : Infinity;
 
     const labelMinResolution = labelMinResolutionFromScale || minResolution;
     const labelMaxResolution = labelMaxResolutionFromScale || maxResolution;
 
-    let labelStyle = styleByAttribute.label?.style ? this.parseStyle('text', styleByAttribute.label.style) : undefined;
+    let labelStyle = styleByAttribute.label?.style
+      ? this.parseStyle('text', styleByAttribute.label.style)
+      : undefined;
     if (!labelStyle && label) {
-        labelStyle = new olStyle.Text();
+      labelStyle = new olStyle.Text();
     }
     const baseStyle = styleByAttribute.baseStyle;
 
     if (labelStyle) {
-      if (resolution >= labelMinResolution && resolution <= labelMaxResolution) {
+      if (
+        resolution >= labelMinResolution &&
+        resolution <= labelMaxResolution
+      ) {
         labelStyle.setText(this.getLabel(feature, label));
       } else {
         labelStyle.setText('');
@@ -172,10 +212,14 @@ export class StyleService {
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
         const val =
-          typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
+          typeof feature.get(attribute) !== 'undefined' &&
+          feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
+        if (
+          val === data[i] ||
+          val.toString().match(new RegExp(data[i], 'gmi'))
+        ) {
           if (icon) {
             style = [
               new olStyle.Style({
@@ -185,7 +229,8 @@ export class StyleService {
                   scale: scale ? scale[i] : 1,
                   anchor: anchor ? anchor[i] : [0.5, 0.5]
                 }),
-                text: labelStyle instanceof olStyle.Text ? labelStyle : undefined
+                text:
+                  labelStyle instanceof olStyle.Text ? labelStyle : undefined
               })
             ];
             return style;
@@ -234,10 +279,14 @@ export class StyleService {
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
         const val =
-        typeof feature.get(attribute) !== 'undefined' && feature.get(attribute) !== null
+          typeof feature.get(attribute) !== 'undefined' &&
+          feature.get(attribute) !== null
             ? feature.get(attribute)
             : '';
-        if (val === data[i] || val.toString().match(new RegExp(data[i], 'gmi'))) {
+        if (
+          val === data[i] ||
+          val.toString().match(new RegExp(data[i], 'gmi'))
+        ) {
           style = [
             new olStyle.Style({
               stroke: new olStyle.Stroke({
@@ -278,7 +327,12 @@ export class StyleService {
     }
   }
 
-  createClusterStyle(feature: RenderFeature | OlFeature<OlGeometry>, resolution: number, clusterParam: ClusterParam = {}, layerStyle) {
+  createClusterStyle(
+    feature: RenderFeature | OlFeature<OlGeometry>,
+    resolution: number,
+    clusterParam: ClusterParam = {},
+    layerStyle
+  ) {
     let style;
     const size = feature.get('features').length;
     if (size !== 1) {
@@ -359,7 +413,7 @@ export class StyleService {
     }
     const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
-    labelToGet.forEach(v => {
+    labelToGet.forEach((v) => {
       label = label.replace(v[0], feature.get(v[1]));
     });
 

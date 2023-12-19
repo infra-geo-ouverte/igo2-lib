@@ -1,16 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
-import { MapState } from '../../map.state';
+
 import { ToolState } from '../../../tool/tool.state';
+import { MapState } from '../../map.state';
 
 @Component({
   selector: 'igo-advanced-swipe',
   templateUrl: './advanced-swipe.component.html',
   styleUrls: ['./advanced-swipe.component.scss']
 })
-
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe: boolean = false;
   public layerList: Layer[];
@@ -31,24 +36,30 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     public mapState: MapState,
     private contextService: ContextService,
     private formBuilder: UntypedFormBuilder,
-    private toolState: ToolState) {
-      this.buildForm();
+    private toolState: ToolState
+  ) {
+    this.buildForm();
   }
 
   /**
    * Get the list of layers for swipe
    * @internal
    */
-   ngOnInit() {
-    this.map.layers$.subscribe(ll => this.userControlledLayerList = ll.filter(layer =>
-      (!layer.baseLayer && layer.showInLayerList && layer.displayed)));
+  ngOnInit() {
+    this.map.layers$.subscribe(
+      (ll) =>
+        (this.userControlledLayerList = ll.filter(
+          (layer) =>
+            !layer.baseLayer && layer.showInLayerList && layer.displayed
+        ))
+    );
   }
 
   /**
    * Desactivate the swipe
    * @internal
    */
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.swipe = false;
     this.map.swipeEnabled$.next(this.swipe);
   }
@@ -65,7 +76,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   /**
    * Activate the swipe, send a list of layers for a swipe-tool
    */
-  startSwipe(toggle: boolean){
+  startSwipe(toggle: boolean) {
     this.swipe = toggle;
     this.map.swipeEnabled$.next(toggle);
     this.listForSwipe = [];
@@ -81,10 +92,12 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   applyNewLayers(e) {
     this.startSwipe(false); // l'approche KISS
     this.startSwipe(true);
-    if (e._selected) {e._selected = false; }
+    if (e._selected) {
+      e._selected = false;
+    }
     const allLayers = this.userControlledLayerList.length;
     const selectedLayers = this.form.controls.layers.value.length;
-    if (selectedLayers === allLayers){
+    if (selectedLayers === allLayers) {
       e._selected = true;
     }
   }
@@ -96,8 +109,7 @@ export class AdvancedSwipeComponent implements OnInit, OnDestroy {
     if (e._selected) {
       this.form.controls.layers.setValue(this.userControlledLayerList);
       e._selected = true;
-    }
-    else {
+    } else {
       this.form.controls.layers.setValue([]);
     }
     this.startSwipe(false);

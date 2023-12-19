@@ -1,34 +1,54 @@
-textarea { resize: none; };
+@use '../shared/advanced-map-tool.utils' as vars;
 
-mat-form-field  { padding: 10px 15px;  };
-mat-form-field.coordinates2  { padding: 0px 10px 0px 3px };
-mat-form-field.igo-input-container { width: 100%; padding: 0px 15px; };
-
-.igo-form-button-group { padding: 0px 10px; margin: 0px 10px };
-
-.igo-zoom {
-  padding: 0px 15px;
+:host {
+  padding: vars.$ySpacer 0;
 }
 
-.advanced-coordinates__coordinates-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+textarea {
+  resize: none;
 }
 
-.advanced-coordinates__coordinates-container__inner {
-  flex: 1 1 0;
-}
+.advanced-coordinates {
+  &__coordinates-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: vars.$ySpacer 0;
 
-.advanced-coordinates__coordinates-container__inner .mat-form-field {
-  width: 50%;
-}
+    &__inner {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
 
-.advanced-coordinates__form ::ng-deep .mat-slide-toggle {
-  padding: 10px 15px 35px;
-  width: 100%;
-}
+      mat-form-field {
+        flex: 1;
+      }
 
-.advanced-coordinates__form ::ng-deep .mat-slide-toggle-content {
-  width: 100%
+      mat-form-field,
+      button {
+        &:not(:first-child) {
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+
+    mat-slide-toggle {
+      flex: 1;
+
+      ::ng-deep {
+        .mdc-form-field {
+          display: flex;
+          justify-content: space-between;
+        }
+        .mdc-label {
+          flex: 1;
+        }
+      }
+    }
+  }
 }

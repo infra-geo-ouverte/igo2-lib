@@ -1,8 +1,9 @@
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSource from 'ol/source/Source';
 import olSourceVector from 'ol/source/Vector';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import type { ServerType } from 'ol/source/wms';
 
+import { TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
 
@@ -33,4 +34,9 @@ export interface WMSDataSourceOptionsParams {
   DPI?: number;
   MAP_RESOLUTION?: number;
   FORMAT_OPTIONS?: string;
+}
+
+export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
+  timeFilterable?: boolean;
+  timeFilter?: TimeFilterOptions;
 }

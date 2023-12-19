@@ -1,29 +1,31 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Inject, Injectable } from '@angular/core';
 
 import { LanguageService, StorageService } from '@igo2/core';
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, customCacheHasher } from '@igo2/utils';
 
-import { getResolutionFromScale } from '../../../map/shared/map.utils';
-import { LAYER } from '../../../layer';
-import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
-
-import { SearchResult } from '../search.interfaces';
-import { SearchSource, TextSearch } from './source';
-import { TextSearchOptions } from './source.interfaces';
-import {
-  ILayerSearchSourceOptions,
-  ILayerData,
-  ILayerItemResponse,
-  ILayerServiceResponse,
-  ILayerDataSource
-} from './ilayer.interfaces';
-import { computeTermSimilarity } from '../search.utils';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Cacheable } from 'ts-cacheable';
+
+import { LAYER } from '../../../layer/shared/layer.enums';
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
+import { QueryableDataSourceOptions } from '../../../query/shared/query.interfaces';
+import { SearchResult, TextSearch } from '../search.interfaces';
+import { computeTermSimilarity } from '../search.utils';
+import {
+  QueryFormat,
+  QueryHtmlTarget
+} from './../../../query/shared/query.enums';
+import {
+  ILayerData,
+  ILayerDataSource,
+  ILayerItemResponse,
+  ILayerSearchSourceOptions,
+  ILayerServiceResponse
+} from './ilayer.interfaces';
+import { SearchSource } from './source';
+import { SearchSourceSettings, TextSearchOptions } from './source.interfaces';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -87,7 +89,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   ) {
     super(options, storageService);
     this.languageService.language$.subscribe(() => {
-      this.title$.next(this.languageService.translate.instant(this.options.title));
+      this.title$.next(
+        this.languageService.translate.instant(this.options.title)
+      );
     });
   }
 
@@ -108,6 +112,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
+
+    const showAdvancedParams = this.options.showAdvancedSettings;
+
     return {
       title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
@@ -130,7 +137,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               hashtags: ['gr-layer', 'gr-layers', 'gr-couche', 'gr-couches']
             }
           ]
-        },
+        } satisfies SearchSourceSettings,
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -162,40 +169,41 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
-        },
-        {
-          type: 'radiobutton',
-          title: 'ecmax',
-          name: 'ecmax',
-          values: [
-            {
-              title: '10 %',
-              value: 10,
-              enabled: ecmax === 10
-            },
-            {
-              title: '30 %',
-              value: 30,
-              enabled: ecmax === 30
-            },
-            {
-              title: '50 %',
-              value: 50,
-              enabled: ecmax === 50 || !ecmax
-            },
-            {
-              title: '75 %',
-              value: 75,
-              enabled: ecmax === 75
-            },
-            {
-              title: '100 %',
-              value: 100,
-              enabled: ecmax === 100
-            }
-          ]
-        }
-      ]
+        } satisfies SearchSourceSettings,
+        showAdvancedParams &&
+          ({
+            type: 'radiobutton',
+            title: 'ecmax',
+            name: 'ecmax',
+            values: [
+              {
+                title: '10 %',
+                value: 10,
+                enabled: ecmax === 10
+              },
+              {
+                title: '30 %',
+                value: 30,
+                enabled: ecmax === 30
+              },
+              {
+                title: '50 %',
+                value: 50,
+                enabled: ecmax === 50 || !ecmax
+              },
+              {
+                title: '75 %',
+                value: 75,
+                enabled: ecmax === 75
+              },
+              {
+                title: '100 %',
+                value: 100,
+                enabled: ecmax === 100
+              }
+            ]
+          } satisfies SearchSourceSettings)
+      ].filter(Boolean)
     };
   }
 
@@ -204,10 +212,6 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Layer name or keyword
    * @returns Observable of <SearchResult<LayerOptions>[]
    */
-
-  @Cacheable({
-    maxCacheCount: 20
-  })
   search(
     term: string | undefined,
     options?: TextSearchOptions
@@ -217,11 +221,23 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       return of([]);
     }
     this.options.params.page = params.get('page') || '1';
+    return this.getSearch(term, params);
+  }
 
+  @Cacheable({
+    maxCacheCount: 20,
+    cacheHasher: customCacheHasher
+  })
+  private getSearch(
+    term: string,
+    params: HttpParams
+  ): Observable<SearchResult<ILayerItemResponse>[]> {
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
-        map((response: ILayerServiceResponse) => this.extractResults(response, term))
+        map((response: ILayerServiceResponse) =>
+          this.extractResults(response, term)
+        )
       );
   }
 
@@ -273,10 +289,11 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   }
 
   private extractResults(
-    response: ILayerServiceResponse, term: string
+    response: ILayerServiceResponse,
+    term: string
   ): SearchResult<ILayerItemResponse>[] {
     return response.items.map((data: ILayerData) =>
-    this.dataToResult(data, term, response)
+      this.dataToResult(data, term, response)
     );
   }
 
@@ -301,7 +318,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
-        score: data.score || computeTermSimilarity(term.trim(), data.properties.name),
+        score:
+          data.score ||
+          computeTermSimilarity(term.trim(), data.properties.name),
         nextPage:
           response.items.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
@@ -312,9 +331,8 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   private computeLayerOptions(data: ILayerData): ILayerItemResponse {
     const url = data.properties.url;
-    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(
-      url
-    );
+    const queryParams: QueryableDataSourceOptions =
+      this.extractQueryParamsFromSourceUrl(url);
     return ObjectUtils.removeUndefined({
       sourceOptions: {
         id: data.properties.id,
@@ -322,8 +340,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         url,
         queryFormat: queryParams.queryFormat,
         queryHtmlTarget: queryParams.queryHtmlTarget,
-        params: data.properties.format === 'wms' ? {LAYERS: data.properties.name} : undefined,
-        layer: data.properties.format === 'wms' ? undefined : data.properties.name,
+        params:
+          data.properties.format === 'wms'
+            ? { LAYERS: data.properties.name }
+            : undefined,
+        layer:
+          data.properties.format === 'wms' ? undefined : data.properties.name,
         optionsFromCapabilities: true,
         crossOrigin: 'anonymous'
       },
@@ -343,9 +365,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractQueryParamsFromSourceUrl(
-    url: string
-  ): { queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget } {
+  private extractQueryParamsFromSourceUrl(url: string): {
+    queryFormat: QueryFormat;
+    queryHtmlTarget: QueryHtmlTarget;
+  } {
     let queryFormat;
     let queryHtmlTarget;
     const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
@@ -357,9 +380,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
           break;
         }
 
-        const urls = ((value as any) as { urls: string[] }).urls;
+        const urls = (value as any as { urls: string[] }).urls;
         if (Array.isArray(urls)) {
-          urls.forEach(urlOpt => {
+          urls.forEach((urlOpt) => {
             if (url.indexOf(urlOpt) !== -1) {
               queryFormat = QueryFormat[key.toUpperCase()];
             }

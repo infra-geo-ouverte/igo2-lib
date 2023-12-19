@@ -1,10 +1,10 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output
 } from '@angular/core';
 
 import { OnUpdateInputs, WidgetComponent } from '@igo2/common';
@@ -19,7 +19,6 @@ import { IgoMap } from '../../../map/shared/map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
-
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
@@ -49,5 +48,4 @@ export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
   onClose() {
     this.cancel.emit();
   }
-
 }

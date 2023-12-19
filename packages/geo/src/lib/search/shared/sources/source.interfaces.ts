@@ -5,10 +5,11 @@ export interface SearchSourceOptions {
   enabled?: boolean;
   order?: number;
   distance?: number;
-  params?: { [key: string]: string };
+  params?: ISearchSourceParams;
   settings?: SearchSourceSettings[];
   showInPointerSummary?: boolean;
   showInSettings?: boolean;
+  showAdvancedSettings?: boolean;
 }
 
 export interface SearchSourceSettings {
@@ -17,6 +18,14 @@ export interface SearchSourceSettings {
   title: string;
   name: string;
   allEnabled?: boolean;
+}
+
+export interface ISearchSourceParams {
+  limit?: string;
+  datasets?: string;
+  ecmax?: string;
+  page?: string;
+  type?: string;
 }
 
 export interface SettingOptions {

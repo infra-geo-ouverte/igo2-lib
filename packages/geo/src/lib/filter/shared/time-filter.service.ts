@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { TileArcGISRestDataSource } from '../../datasource/shared/datasources/tilearcgisrest-datasource';
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 
 @Injectable()
 export class TimeFilterService {
@@ -77,7 +77,8 @@ export class TimeFilterService {
       if (newdateformStart === newdateformEnd) {
         time = newdateformStart;
       }
-    } else { // to reset filter.
+    } else {
+      // to reset filter.
       time = year;
     }
 

@@ -1,21 +1,25 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
-  LayerListControlsEnum,
-  Layer,
+  ExportOptions,
   IgoMap,
+  Layer,
+  LayerListControlsEnum,
   LayerListControlsOptions,
   SearchSourceService,
-  sourceCanSearch,
-  ExportOptions
+  sourceCanSearch
 } from '@igo2/geo';
 
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import {
+  ImportExportMode,
+  ImportExportState
+} from '../../import-export/import-export.state';
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -136,7 +140,10 @@ export class MapDetailsToolComponent implements OnInit {
   activateExport(layer: Layer) {
     let id = layer.id;
     if (layer.options.workspace?.workspaceId) {
-      id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
+      id =
+        layer.options.workspace.workspaceId !== layer.id
+          ? layer.options.workspace.workspaceId
+          : layer.id;
     }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode(ImportExportMode.export);

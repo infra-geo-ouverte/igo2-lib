@@ -2,59 +2,51 @@
 @import '../../style/partial/common.variables';
 
 :host {
-  display: block;
-}
-
-.igo-panel-header {
-  height: $igo-panel-header-height;
-  padding: $igo-panel-header-padding;
-  text-align: center;
-}
-
-.igo-panel-header h3 {
-  margin: 0;
-  height: $igo-icon-size;
-}
-
-.igo-panel-header ::ng-deep [panelleftbutton] {
-  float: left;
-  margin-right: -40px;
-}
-
-.igo-panel-header ::ng-deep [panelrightbutton] {
-  float: right;
-}
-
-.igo-panel-content {
-  overflow: auto;
-}
-
-.igo-cursor-pointer {
-  cursor: pointer;
-}
-
-:host.igo-panel-with-header {
-  .igo-panel-content {
-    height: calc(100% - #{$igo-panel-header-height});
-  }
-}
-
-:host:not(.igo-panel-with-header) {
-  .igo-panel-content {
-    height: 100%;
-  }
-}
-
-.igo-panel-title {
-  display: block;
-  width: calc(100% - 80px);
-  margin-left: 40px;
-  height: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  line-height: 40px;
-  float: left;
-  font-weight: bold;
-  font-size: 1.17em;
+
+  igo-interactive-tour {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .igo-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: $igo-panel-header-height;
+    text-align: center;
+  }
+
+  .igo-panel-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .igo-panel-content {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .igo-cursor-pointer {
+    cursor: pointer;
+  }
+
+  .panel-left,
+  .panel-right {
+    display: flex;
+    min-width: 40px; // button widht at denstiy -2
+  }
+
+  .panel-right {
+    &:not(:empty) {
+      padding-right: 4px;
+    }
+  }
 }

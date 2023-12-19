@@ -1,18 +1,20 @@
-@mixin igo-menu-button-theming($theme) {
-  $primary: map-get($theme, primary);
+@use 'sass:map';
+@use '@angular/material' as mat;
+@import '../../../../../core/src/style/partial/core.variables';
 
-  igo-menu-button > #menu-button {
-    color: mat.get-color-from-palette($primary);
-  }
-
-  igo-menu-button > #menu-button.menu-button-reverse-color-close {
-    background-color: mat.get-color-from-palette($primary);
-    color: mat.get-color-from-palette($primary, default-contrast);
-  }
-
-  igo-menu-button > #menu-button.menu-button-reverse-color {
-    background-color: mat.get-color-from-palette($primary);
-    color: mat.get-color-from-palette($primary, default-contrast);
-  }
+@mixin theme($theme) {
+  @include color($theme);
 }
 
+@mixin color($theme) {
+  $primary: map.get($theme, primary);
+
+  igo-menu-button > button#menu-button {
+    color: $app-background-color;
+    background-color: mat.get-color-from-palette($primary);
+  }
+  igo-menu-button > button#menu-button.menu-button-white-background {
+    color: mat.get-color-from-palette($primary);
+    background-color: $app-background-color;
+  }
+}

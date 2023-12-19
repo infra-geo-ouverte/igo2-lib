@@ -1,12 +1,13 @@
 import {
-  Component,
-  ChangeDetectionStrategy,
   ApplicationRef,
-  Output,
-  EventEmitter
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output
 } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+
 import { AuthFacebookOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
@@ -17,7 +18,7 @@ import { AuthService } from '../shared/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthFacebookComponent {
-  private options: AuthFacebookOptions;
+  private options?: AuthFacebookOptions;
 
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -26,9 +27,9 @@ export class AuthFacebookComponent {
     private config: ConfigService,
     private appRef: ApplicationRef
   ) {
-    this.options = this.config.getConfig('auth.facebook') || {};
+    this.options = this.config.getConfig('auth.facebook');
 
-    if (this.options.appId) {
+    if (this.options?.appId) {
       this.loadSDKFacebook();
     } else {
       console.warn('Facebook authentification needs "appId" option');
@@ -36,7 +37,7 @@ export class AuthFacebookComponent {
   }
 
   private subscribeEvents() {
-    (window as any).FB.Event.subscribe('auth.statusChange', rep => {
+    (window as any).FB.Event.subscribe('auth.statusChange', (rep) => {
       this.statusChangeCallback(rep);
     });
   }
@@ -66,7 +67,7 @@ export class AuthFacebookComponent {
     const fjs = document.getElementsByTagName('script')[0];
     const js = document.createElement('script');
     js.id = 'facebook-jssdk';
-    js.src = `${urlSDK}&appId=${this.options.appId}`;
+    js.src = `${urlSDK}&appId=${this.options?.appId}`;
     js.onload = () => {
       this.subscribeEvents();
     };

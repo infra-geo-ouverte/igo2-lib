@@ -1,9 +1,11 @@
 {
   "name": "@igo2/integration",
-  "version": "1.15.2",
+  "version": "16.1.1",
   "description": "IGO Library",
   "author": "IGO Community",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,17 +15,30 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
-  "peerDependencies": {
-    "@angular/common": "^14.3.0",
-    "@angular/core": "^14.3.0",
-    "@igo2/geo": "1.15.2",
-    "@igo2/context": "1.15.2",
-    "rxjs": "^7.5.6"
+  "scripts": {
+    "build": "ng build integration --configuration production",
+    "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "test": "",
+    "watch": "ng build integration --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/public_api.ts"
+    }
   },
   "dependencies": {
-    "tslib": "^2.4.0"
+    "tslib": "^2.6.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^16.2.5",
+    "@angular/core": "^16.2.5",
+    "@igo2/context": "*",
+    "@igo2/geo": "*",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.29",
+    "rxjs": "^7.8.0"
   },
   "engines": {
-    "node": ">=16.19.0"
+    "node": ">=18.10.0"
   }
 }

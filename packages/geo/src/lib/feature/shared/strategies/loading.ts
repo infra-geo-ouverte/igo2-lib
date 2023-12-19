@@ -1,9 +1,12 @@
-import { Subscription } from 'rxjs';
-
 import { EntityStoreStrategy } from '@igo2/common';
 
+import { Subscription } from 'rxjs';
+
 import { FeatureMotion } from '../feature.enums';
-import { Feature, FeatureStoreLoadingStrategyOptions } from '../feature.interfaces';
+import {
+  Feature,
+  FeatureStoreLoadingStrategyOptions
+} from '../feature.interfaces';
 import { FeatureStore } from '../store';
 
 /**
@@ -15,7 +18,6 @@ import { FeatureStore } from '../store';
  * is not configurable yet.
  */
 export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
-
   /**
    * Subscription to the store's features
    */
@@ -86,8 +88,11 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
       return;
     }
 
-    const subscription = store.view.all$()
-      .subscribe((features: Feature[]) => this.onFeaturesChange(features, store));
+    const subscription = store.view
+      .all$()
+      .subscribe((features: Feature[]) =>
+        this.onFeaturesChange(features, store)
+      );
     this.stores$$.set(store, subscription);
   }
 
@@ -107,9 +112,11 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    * Stop watching for entities changes in all stores.
    */
   private unwatchAll() {
-    Array.from(this.stores$$.entries()).forEach((entries: [FeatureStore, Subscription]) => {
-      entries[1].unsubscribe();
-    });
+    Array.from(this.stores$$.entries()).forEach(
+      (entries: [FeatureStore, Subscription]) => {
+        entries[1].unsubscribe();
+      }
+    );
     this.stores$$.clear();
   }
 
@@ -138,7 +145,9 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    * @returns The motion selected
    */
   private selectMotion(store: FeatureStore) {
-    if (this.motion !== undefined) { return this.motion; }
+    if (this.motion !== undefined) {
+      return this.motion;
+    }
 
     if (store.pristine === true) {
       // If features have just been loaded into the store, move/zoom on them

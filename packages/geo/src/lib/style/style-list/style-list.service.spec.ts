@@ -1,5 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { StyleListService } from './style-list.service';
 
@@ -11,10 +11,7 @@ describe('StyleListService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([StyleListService], (service: StyleListService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([StyleListService], (service: StyleListService) => {
+    expect(service).toBeTruthy();
+  }));
 });

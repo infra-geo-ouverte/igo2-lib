@@ -1,18 +1,24 @@
 import { BehaviorSubject } from 'rxjs';
 
+import { EntityKey, EntityRecord, EntityState } from './entity.interfaces';
+import { getEntityId, getEntityProperty } from './entity.utils';
 import { EntityStateManager } from './state';
 import { EntityView } from './view';
-import { EntityKey, EntityState, EntityRecord, EntityStoreOptions } from './entity.interfaces';
-import { getEntityId, getEntityProperty } from './entity.utils';
-import { EntityStoreStrategy } from './strategies/strategy';
+
+export interface EntityStoreOptions {
+  getKey?: (entity: object) => EntityKey;
+  getProperty?: (entity: object, property: string) => any;
+}
 
 /**
  * An entity store class holds any number of entities
  * as well as their state. It can be observed, filtered and sorted and
  * provides methods to insert, update or delete entities.
  */
-export class EntityStore<E extends object = object, S extends EntityState = EntityState> {
-
+export class EntityStore<
+  E extends object = object,
+  S extends EntityState = EntityState
+> {
   /**
    * Observable of the raw entities
    */
@@ -22,13 +28,17 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
    * Number of entities
    */
   readonly count$ = new BehaviorSubject<number>(0);
-  get count(): number { return this.count$.value; }
+  get count(): number {
+    return this.count$.value;
+  }
 
   /**
    * Whether the store is empty
    */
   readonly empty$ = new BehaviorSubject<boolean>(true);
-  get empty(): boolean { return this.empty$.value; }
+  get empty(): boolean {
+    return this.empty$.value;
+  }
 
   /**
    * Entity store state
@@ -58,23 +68,24 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
   /**
    * Store index
    */
-  get index(): Map<EntityKey, E> { return this._index; }
+  get index(): Map<EntityKey, E> {
+    return this._index;
+  }
   private _index: Map<EntityKey, E>;
 
   /**
    * Store index
    */
-  get pristine(): boolean { return this._pristine; }
+  get pristine(): boolean {
+    return this._pristine;
+  }
   private _pristine: boolean = true;
-
-  /**
-   * Strategies
-   */
-  private strategies: EntityStoreStrategy[] = [];
 
   constructor(entities: E[], options: EntityStoreOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
-    this.getProperty = options.getProperty ? options.getProperty : getEntityProperty;
+    this.getProperty = options.getProperty
+      ? options.getProperty
+      : getEntityProperty;
 
     this.state = this.createStateManager();
     this.view = this.createDataView();
@@ -161,7 +172,9 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
    * @param entities Entities
    */
   insertMany(entities: E[]) {
-    entities.forEach((entity: E) => this.index.set(this.getKey(entity), entity));
+    entities.forEach((entity: E) =>
+      this.index.set(this.getKey(entity), entity)
+    );
     this._pristine = false;
     this.next();
   }
@@ -179,7 +192,9 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
    * @param entities Entities
    */
   updateMany(entities: E[]) {
-    entities.forEach((entity: E) => this.index.set(this.getKey(entity), entity));
+    entities.forEach((entity: E) =>
+      this.index.set(this.getKey(entity), entity)
+    );
     this._pristine = false;
     this.next();
   }
@@ -200,76 +215,6 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
     entities.forEach((entity: E) => this.index.delete(this.getKey(entity)));
     this._pristine = false;
     this.next();
-  }
-
-  /**
-   * Add a strategy to this store
-   * @param strategy Entity store strategy
-   * @returns Entity store
-   */
-  addStrategy(strategy: EntityStoreStrategy, activate: boolean = false): EntityStore {
-    const existingStrategy = this.strategies.find((_strategy: EntityStoreStrategy) => {
-      return strategy.constructor === _strategy.constructor;
-    });
-    if (existingStrategy !== undefined) {
-      throw new Error('A strategy of this type already exists on that EntityStore.');
-    }
-
-    this.strategies.push(strategy);
-    strategy.bindStore(this);
-
-    if (activate === true) {
-      strategy.activate();
-    }
-
-    return this;
-  }
-
-  /**
-   * Remove a strategy from this store
-   * @param strategy Entity store strategy
-   * @returns Entity store
-   */
-  removeStrategy(strategy: EntityStoreStrategy): EntityStore {
-    const index = this.strategies.indexOf(strategy);
-    if (index >= 0) {
-      this.strategies.splice(index, 1);
-      strategy.unbindStore(this);
-    }
-    return this;
-  }
-
-  /**
-   * Return strategies of a given type
-   * @param type Entity store strategy class
-   * @returns Strategies
-   */
-  getStrategyOfType(type: typeof EntityStoreStrategy): EntityStoreStrategy {
-    return this.strategies.find((strategy: EntityStoreStrategy) => {
-      return strategy instanceof type;
-    });
-  }
-
-  /**
-   * Activate strategies of a given type
-   * @param type Entity store strategy class
-   */
-  activateStrategyOfType(type: typeof EntityStoreStrategy) {
-    const strategy = this.getStrategyOfType(type);
-    if (strategy !== undefined) {
-      strategy.activate();
-    }
-  }
-
-  /**
-   * Deactivate strategies of a given type
-   * @param type Entity store strategy class
-   */
-  deactivateStrategyOfType(type: typeof EntityStoreStrategy) {
-    const strategy = this.getStrategyOfType(type);
-    if (strategy !== undefined) {
-      strategy.deactivate();
-    }
   }
 
   /**
@@ -305,7 +250,10 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
    * @returns EntityStateManager
    */
   private createStateManager() {
-    return new EntityStateManager<E, S>({store: this});
+    return new EntityStateManager<E, S>({
+      getKey: this.getKey,
+      index: this.index
+    });
   }
 
   /**
@@ -339,7 +287,7 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
 
           const revision = currentRecord ? currentRecord.revision + 1 : 1;
           const ref = `${key}-${revision}`;
-          return {entity, state, revision, ref};
+          return { entity, state, revision, ref };
         }
       })
       .createIndex((record: EntityRecord<E, S>) => this.getKey(record.entity));
@@ -354,5 +302,4 @@ export class EntityStore<E extends object = object, S extends EntityState = Enti
     const newStateIsEmpty = Object.keys(newState).length === 0;
     return currentStateIsEmpty && newStateIsEmpty;
   }
-
 }

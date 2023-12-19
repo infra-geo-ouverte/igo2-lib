@@ -1,4 +1,5 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy, OnInit, Self } from '@angular/core';
+
 import { Subscription } from 'rxjs';
 
 import { MapService } from '../../map/shared/map.service';
@@ -22,8 +23,8 @@ export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
     // Override input layers
     this.component.layers = [];
 
-    this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
-      this.component.layers = layers.filter(layer => layer.showInLayerList);
+    this.layers$$ = this.mapService.getMap().layers$.subscribe((layers) => {
+      this.component.layers = layers.filter((layer) => layer.showInLayerList);
     });
   }
 

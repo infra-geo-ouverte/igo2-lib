@@ -1,12 +1,19 @@
-<div *ngIf="withHeader" class="igo-panel-header mat-typography" title="" [ngClass]="{'igo-cursor-pointer': cursorPointer === true}">
-  <h3>
+<div
+  *ngIf="withHeader"
+  class="igo-panel-header"
+  title=""
+  [ngClass]="{ 'igo-cursor-pointer': cursorPointer === true }"
+>
+  <div class="panel-left">
     <ng-content select="[panelLeftButton]"></ng-content>
-    <div class="igo-panel-title">
-      {{ title }}
-      <ng-content select="[panelHeader]"></ng-content>
-    </div>
-    <ng-content select="[panelRightButton]"></ng-content>
+  </div>
+  <h3 class="igo-panel-title">
+    {{ title }}
+    <ng-content select="[panelHeader]"></ng-content>
   </h3>
+  <div class="panel-right">
+    <ng-content select="[panelRightButton]"></ng-content>
+  </div>
 </div>
 <div class="igo-panel-content" title="">
   <ng-content></ng-content>

@@ -1,7 +1,7 @@
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+
 import { SearchSource } from './source';
 import { WorkspaceSearchSource } from './workspace';
-
 
 /**
  * Workspace search source factory
@@ -27,10 +27,6 @@ export function provideWorkspaceSearchSource() {
     provide: SearchSource,
     useFactory: workspaceSearchSourceFactory,
     multi: true,
-    deps: [
-      LanguageService,
-      StorageService,
-      ConfigService
-    ]
+    deps: [LanguageService, StorageService, ConfigService]
   };
 }

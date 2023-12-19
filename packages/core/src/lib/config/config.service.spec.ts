@@ -1,5 +1,5 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from '@angular/core/testing';
 
 import { ConfigService } from './config.service';
 
@@ -11,10 +11,7 @@ describe('ConfigService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([ConfigService], (service: ConfigService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([ConfigService], (service: ConfigService) => {
+    expect(service).toBeTruthy();
+  }));
 });

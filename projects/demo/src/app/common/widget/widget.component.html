@@ -1,0 +1,11 @@
+<app-doc-viewer title="Widget" subtitle="Common">
+  <app-example-viewer codeFolder="common/widget">
+    <igo-widget-outlet
+      [widget]="widget"
+      [inputs]="inputs"
+      (complete)="onWidgetComplete($event)"
+      (cancel)="onWidgetCancel()"
+    >
+    </igo-widget-outlet>
+  </app-example-viewer>
+</app-doc-viewer>

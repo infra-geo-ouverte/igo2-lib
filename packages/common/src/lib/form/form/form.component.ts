@@ -1,13 +1,13 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
   ChangeDetectionStrategy,
-  ViewChild,
-  ElementRef
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 
 import { t } from 'typy';
@@ -25,7 +25,6 @@ import { getAllFormFields } from '../shared/form.utils';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormComponent implements OnChanges {
-
   /**
    * Form
    */
@@ -34,7 +33,7 @@ export class FormComponent implements OnChanges {
   /**
    * Input data
    */
-  @Input() formData: { [key: string]: any};
+  @Input() formData: { [key: string]: any };
 
   /**
    * Form autocomplete
@@ -44,7 +43,7 @@ export class FormComponent implements OnChanges {
   /**
    * Event emitted when the form is submitted
    */
-  @Output() submitForm = new EventEmitter<{[key: string]: any}>();
+  @Output() submitForm = new EventEmitter<{ [key: string]: any }>();
 
   @ViewChild('buttons', { static: true }) buttons: ElementRef;
 
@@ -78,7 +77,7 @@ export class FormComponent implements OnChanges {
     this.submitForm.emit(this.getData());
   }
 
-  getData(): { [key: string]: any} {
+  getData(): { [key: string]: any } {
     const data = {};
     getAllFormFields(this.form).forEach((field: FormField) => {
       this.updateDataWithFormField(data, field);
@@ -86,7 +85,7 @@ export class FormComponent implements OnChanges {
     return data;
   }
 
-  private setData(data: {[key: string]: any}) {
+  private setData(data: { [key: string]: any }) {
     this.form.fields.forEach((field: FormField) => {
       field.control.setValue(t(data, field.name).safeObject);
     });
@@ -98,7 +97,10 @@ export class FormComponent implements OnChanges {
     });
   }
 
-  private updateDataWithFormField(data: { [key: string]: any}, field: FormField) {
+  private updateDataWithFormField(
+    data: { [key: string]: any },
+    field: FormField
+  ) {
     const control = field.control;
     if (!control.disabled) {
       data[field.name] = control.value;
@@ -111,5 +113,4 @@ export class FormComponent implements OnChanges {
   private clear() {
     this.form.control.reset();
   }
-
 }

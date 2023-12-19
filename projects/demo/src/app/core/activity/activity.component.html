@@ -1,0 +1,21 @@
+<app-doc-viewer title="Activity" subtitle="Core">
+  <p>Register activities in service. Use to display a loading icon</p>
+
+  <li>
+    Import <code>IgoActivityModule</code> only if you want register http calls
+  </li>
+  <li>Import <code>IgoActivityModule</code> only once</li>
+
+  <app-example-viewer codeFolder="core/activity">
+    <div class="d-flex actions-container">
+      <button mat-raised-button (click)="register()">Register</button>
+      <button mat-raised-button (click)="unregister()">Unregister</button>
+    </div>
+
+    <div class="mat-body-1 sub-content">
+      <p>Counter: {{ counter }}</p>
+
+      <igo-spinner igoSpinnerActivity></igo-spinner>
+    </div>
+  </app-example-viewer>
+</app-doc-viewer>

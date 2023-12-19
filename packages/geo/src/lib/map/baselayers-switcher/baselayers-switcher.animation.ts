@@ -1,10 +1,10 @@
 import {
-  trigger,
+  AnimationTriggerMetadata,
+  animate,
   state,
   style,
   transition,
-  animate,
-  AnimationTriggerMetadata
+  trigger
 } from '@angular/animations';
 
 export function baseLayersSwitcherSlideInOut(): AnimationTriggerMetadata {
@@ -14,13 +14,6 @@ export function baseLayersSwitcherSlideInOut(): AnimationTriggerMetadata {
       style({
         height: '40px',
         width: '40px',
-        overflow: 'hidden'
-      })
-    ),
-    state(
-      'collapseMap',
-      style({
-        height: '85px',
         overflow: 'hidden'
       })
     ),

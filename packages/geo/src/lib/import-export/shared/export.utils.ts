@@ -1,7 +1,7 @@
 import {
-  getEntityProperty,
   EntityTableColumn,
-  EntityTableColumnRenderer
+  EntityTableColumnRenderer,
+  getEntityProperty
 } from '@igo2/common';
 import { MessageService } from '@igo2/core';
 import { downloadContent } from '@igo2/utils';
@@ -16,19 +16,24 @@ export function handleFileExportError(
     handleNothingToExportError(messageService);
     return;
   }
-  messageService.error('igo.geo.export.failed.text', 'igo.geo.export.failed.title');
+  messageService.error(
+    'igo.geo.export.failed.text',
+    'igo.geo.export.failed.title'
+  );
 }
 
-export function handleFileExportSuccess(
-  messageService: MessageService
-) {
-  messageService.success('igo.geo.export.success.text', 'igo.geo.export.success.title');
+export function handleFileExportSuccess(messageService: MessageService) {
+  messageService.success(
+    'igo.geo.export.success.text',
+    'igo.geo.export.success.title'
+  );
 }
 
-export function handleNothingToExportError(
-  messageService: MessageService
-) {
-  messageService.error('igo.geo.export.nothing.text', 'igo.geo.export.nothing.title');
+export function handleNothingToExportError(messageService: MessageService) {
+  messageService.error(
+    'igo.geo.export.nothing.text',
+    'igo.geo.export.nothing.title'
+  );
 }
 
 /**
@@ -37,7 +42,11 @@ export function handleNothingToExportError(
  * @param rows Array of arrays to export as CSV
  * @param separator Cell separator
  */
-export function exportToCSV(rows: any[][], fileName: string, separator: string = ';') {
+export function exportToCSV(
+  rows: any[][],
+  fileName: string,
+  separator: string = ';'
+) {
   const lines = rows.map((row: any[][], index: number) => row.join(separator));
   const csvContent = lines.join('\n');
   downloadContent(csvContent, 'text/csv;charset=utf-8', fileName);
@@ -49,11 +58,17 @@ export function exportToCSV(rows: any[][], fileName: string, separator: string =
  * @param entities Array of entities
  * @param scolumns Columns definition of the output data
  */
-export function entitiesToRowData(entities: object[], columns: EntityTableColumn[]) {
+export function entitiesToRowData(
+  entities: object[],
+  columns: EntityTableColumn[]
+) {
   return entities.map((entity: object) => {
     return columns.map((column: EntityTableColumn) => {
       let valueAccessor;
-      if (column.renderer === undefined || column.renderer === EntityTableColumnRenderer.Default) {
+      if (
+        column.renderer === undefined ||
+        column.renderer === EntityTableColumnRenderer.Default
+      ) {
         valueAccessor = column.valueAccessor;
       }
       valueAccessor = valueAccessor ? valueAccessor : getEntityProperty;

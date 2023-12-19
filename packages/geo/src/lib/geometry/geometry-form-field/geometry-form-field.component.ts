@@ -1,14 +1,21 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
-  Input, OnDestroy, OnInit
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
+
 import { IgoFormFieldComponent } from '@igo2/common';
+
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
+
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { IgoMap } from '../../map';
+
+import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 
 /**
@@ -23,8 +30,9 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
-
-  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
+  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(
+    undefined
+  );
 
   private value$$: Subscription;
 
@@ -59,9 +67,15 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   @Input()
-  set geometryType(value: Type) { this.geometryType$.next(value); }
-  get geometryType(): Type { return this.geometryType$.value; }
-  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(undefined);
+  set geometryType(value: Type) {
+    this.geometryType$.next(value);
+  }
+  get geometryType(): Type {
+    return this.geometryType$.value;
+  }
+  readonly geometryType$: BehaviorSubject<Type> = new BehaviorSubject(
+    undefined
+  );
 
   /**
    * Whether a geometry type toggle should be displayed
@@ -82,8 +96,12 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * The drawGuide around the mouse pointer to help drawing
    */
   @Input()
-  set drawGuide(value: number) { this.drawGuide$.next(value); }
-  get drawGuide(): number { return this.drawGuide$.value; }
+  set drawGuide(value: number) {
+    this.drawGuide$.next(value);
+  }
+  get drawGuide(): number {
+    return this.drawGuide$.value;
+  }
   readonly drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
 
   /**
@@ -99,7 +117,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * Control options
    */
-  @Input() controlOptions: {[key: string]: any} = {};
+  @Input() controlOptions: { [key: string]: any } = {};
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -119,10 +137,14 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.value$.next(this.formControl.value ? this.formControl.value : undefined);
-    this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      this.value$.next(value ? value : undefined);
-    });
+    this.value$.next(
+      this.formControl.value ? this.formControl.value : undefined
+    );
+    this.value$$ = this.formControl.valueChanges.subscribe(
+      (value: GeoJSONGeometry) => {
+        this.value$.next(value ? value : undefined);
+      }
+    );
   }
 
   /**

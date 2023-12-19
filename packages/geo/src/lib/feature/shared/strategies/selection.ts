@@ -1,27 +1,26 @@
+import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
+
 import OlFeature from 'ol/Feature';
+import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
+import { EventsKey } from 'ol/events';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import OlDragBoxInteraction, { DragBoxEvent } from 'ol/interaction/DragBox';
 import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
-import { EventsKey } from 'ol/events';
-import MapBrowserPointerEvent from 'ol/MapBrowserEvent';
-import { unByKey } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
-import { map, debounceTime, skip } from 'rxjs/operators';
+import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
-
-import { FeatureDataSource } from '../../../datasource';
+import { FeatureDataSource } from '../../../datasource/shared/datasources';
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../../map/shared/map';
 import { ctrlKeyDown } from '../../../map/shared/map.utils';
-
+import { FeatureMotion } from '../feature.enums';
 import {
   Feature,
   FeatureStoreSelectionStrategyOptions
 } from '../feature.interfaces';
 import { FeatureStore } from '../store';
-import { FeatureMotion } from '../feature.enums';
 
 export class OlDragSelectInteraction extends OlDragBoxInteraction {
   constructor(options) {
@@ -234,7 +233,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
-      layerFilter: olLayer => {
+      layerFilter: (olLayer) => {
         const storeOlLayer = this.stores.find((store: FeatureStore) => {
           return store.layer?.ol === olLayer;
         });
@@ -317,8 +316,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const olOverlayFeatures = this.overlayStore.layer.ol
       .getSource()
       .getFeatures();
-    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature<OlGeometry>) =>
-      olFeature.getId()
+    const overlayFeaturesKeys = olOverlayFeatures.map(
+      (olFeature: OlFeature<OlGeometry>) => olFeature.getId()
     );
     const featuresKeys = features.map(this.overlayStore.getKey);
 

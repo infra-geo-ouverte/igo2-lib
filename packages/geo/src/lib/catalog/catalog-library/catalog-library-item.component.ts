@@ -1,7 +1,14 @@
-import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common';
-import { IgoMap } from '../../map';
+
+import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
 
 /**
@@ -14,7 +21,6 @@ import { Catalog } from '../shared/catalog.abstract';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibaryItemComponent {
-
   /**
    * Catalog
    */
@@ -30,7 +36,9 @@ export class CatalogLibaryItemComponent {
   /**
    * @internal
    */
-  get title(): string { return getEntityTitle(this.catalog); }
+  get title(): string {
+    return getEntityTitle(this.catalog);
+  }
 
   removeCatalogFromLibrary(event) {
     event.stopPropagation();

@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x]
 
     steps:
     - name: The branch or tag ref that triggered the workflow run.
@@ -31,8 +31,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install -g gulp-cli
     - run: npm ci
+    - run: npm run circular-deps.check
     - run: npm run lint
-    - run: npm run build.libs --if-present
+    - run: npm run build.libs
+    - run: npm run e2e
     - run: npm run test

@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
+import { IgoImageModule, IgoKeyValueModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoKeyValueModule, IgoImageModule } from '@igo2/common';
 
 import { FeatureDetailsComponent } from './feature-details.component';
 import { FeatureDetailsDirective } from './feature-details.directive';
@@ -19,11 +19,7 @@ import { FeatureDetailsDirective } from './feature-details.directive';
     IgoKeyValueModule,
     IgoImageModule
   ],
-  exports: [
-    FeatureDetailsComponent,
-    FeatureDetailsDirective],
-  declarations: [
-    FeatureDetailsComponent,
-    FeatureDetailsDirective]
+  exports: [FeatureDetailsComponent, FeatureDetailsDirective],
+  declarations: [FeatureDetailsComponent, FeatureDetailsDirective]
 })
 export class IgoFeatureDetailsModule {}

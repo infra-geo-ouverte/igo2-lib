@@ -1,30 +1,32 @@
+import { EntityKey, EntityStoreWithStrategy, getEntityId } from '@igo2/common';
+
 import OlFeature from 'ol/Feature';
-import type { default as OlGeometry } from 'ol/geom/Geometry';
 import * as olextent from 'ol/extent';
+import type { default as OlGeometry } from 'ol/geom/Geometry';
 
 import { Document } from 'flexsearch';
 
-import {
-  getEntityId,
-  EntityKey,
-  EntityStore
-} from '@igo2/common';
-
-import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
-import { IgoMap, MapExtent } from '../../map';
-
+import { FeatureDataSource } from '../../datasource/shared/datasources';
+import { VectorLayer } from '../../layer/shared';
+import { IgoMap, MapExtent } from '../../map/shared';
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
-import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures, computeOlFeaturesExtent } from './feature.utils';
+import {
+  computeOlFeaturesDiff,
+  computeOlFeaturesExtent,
+  featureFromOl,
+  featureToOl,
+  moveToOlFeatures
+} from './feature.utils';
 
 /**
  * The class is a specialized version of an EntityStore that stores
  * features and the map layer to display them on. Synchronization
  * between the store and the layer is handled by strategies.
  */
-export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
-
+export class FeatureStore<
+  T extends Feature = Feature
+> extends EntityStoreWithStrategy<T> {
   /**
    * Vector layer to display the features on
    */
@@ -39,7 +41,9 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * The layer's data source
    */
   get source(): FeatureDataSource {
-    return this.layer ? this.layer.dataSource as FeatureDataSource : undefined;
+    return this.layer
+      ? (this.layer.dataSource as FeatureDataSource)
+      : undefined;
   }
 
   /**
@@ -53,7 +57,6 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     return this._searchDocument;
   }
   private _searchDocument: Document<T>;
-
 
   constructor(entities: T[], options: FeatureStoreOptions) {
     super(entities, options);
@@ -86,8 +89,9 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     getId = getId ? getId : getEntityId;
     this.checkLayer();
 
-    const olFeatures = features
-      .map((feature: Feature) => featureToOl(feature, this.map.projection, getId));
+    const olFeatures = features.map((feature: Feature) =>
+      featureToOl(feature, this.map.projection, getId)
+    );
     this.setLayerOlFeatures(olFeatures, motion, viewScale, areaRatio);
   }
 
@@ -145,10 +149,22 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     if (diff.add.length > 0) {
       // If features are added, do a motion toward the newly added features
-      moveToOlFeatures(this.map, diff.add, motion, viewScale, areaRatio);
+      moveToOlFeatures(
+        this.map.viewController,
+        diff.add,
+        motion,
+        viewScale,
+        areaRatio
+      );
     } else if (diff.remove.length > 0) {
       // Else, do a motion toward all the features
-      moveToOlFeatures(this.map, olFeatures, motion, viewScale, areaRatio);
+      moveToOlFeatures(
+        this.map.viewController,
+        olFeatures,
+        motion,
+        viewScale,
+        areaRatio
+      );
     }
   }
 
@@ -160,7 +176,10 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     features.forEach((feature) => {
       olFeatures.push(featureToOl(feature, this.map.projection));
     });
-    const featuresExtent = computeOlFeaturesExtent(this.map, olFeatures);
+    const featuresExtent = computeOlFeaturesExtent(
+      olFeatures,
+      this.map.viewProjection
+    );
     olextent.extend(extent, featuresExtent);
     this.layer.setExtent(extent);
   }
@@ -184,5 +203,4 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
       this.source.ol.removeFeature(olFeature);
     });
   }
-
 }
