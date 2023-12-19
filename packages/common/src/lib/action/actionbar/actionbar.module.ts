@@ -17,18 +17,18 @@ import { ActionbarComponent } from './actionbar.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoLanguageModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatMenuModule,
-    MatListModule,
-    MatCardModule,
-    MatCheckboxModule
-  ],
-  exports: [ActionbarComponent],
-  declarations: [ActionbarComponent, ActionbarItemComponent]
+    imports: [
+        CommonModule,
+        IgoLanguageModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatMenuModule,
+        MatListModule,
+        MatCardModule,
+        MatCheckboxModule,
+        ActionbarComponent, ActionbarItemComponent
+    ],
+    exports: [ActionbarComponent]
 })
 export class IgoActionbarModule {}

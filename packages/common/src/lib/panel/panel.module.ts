@@ -4,8 +4,7 @@ import { NgModule } from '@angular/core';
 import { PanelComponent } from './panel.component';
 
 @NgModule({
-  imports: [CommonModule],
-  exports: [PanelComponent],
-  declarations: [PanelComponent]
+    imports: [CommonModule, PanelComponent],
+    exports: [PanelComponent]
 })
 export class IgoPanelModule {}

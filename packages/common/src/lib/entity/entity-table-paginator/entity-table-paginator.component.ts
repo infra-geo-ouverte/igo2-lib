@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 
 import { LanguageService, MediaService } from '@igo2/core';
 
@@ -18,10 +18,12 @@ import { EntityStore } from '../shared';
 import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';
 
 @Component({
-  selector: 'igo-entity-table-paginator',
-  templateUrl: './entity-table-paginator.component.html',
-  styleUrls: ['./entity-table-paginator.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-entity-table-paginator',
+    templateUrl: './entity-table-paginator.component.html',
+    styleUrls: ['./entity-table-paginator.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatPaginatorModule]
 })
 export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
   public disabled: boolean = false;

@@ -11,16 +11,16 @@ import { CustomHtmlComponent } from './custom-html.component';
 import { SanitizeHtmlPipe } from './custom-html.pipe';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatInputModule,
-    MatButtonModule,
-    IgoLanguageModule
-  ],
-  exports: [SanitizeHtmlPipe, CustomHtmlComponent],
-  declarations: [SanitizeHtmlPipe, CustomHtmlComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatInputModule,
+        MatButtonModule,
+        IgoLanguageModule,
+        SanitizeHtmlPipe, CustomHtmlComponent
+    ],
+    exports: [SanitizeHtmlPipe, CustomHtmlComponent]
 })
 export class IgoCustomHtmlModule {
   static forRoot(): ModuleWithProviders<IgoCustomHtmlModule> {

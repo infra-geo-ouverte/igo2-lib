@@ -12,9 +12,8 @@ describe('CollapsibleComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatListModule, MatIconModule, MatIconTestingModule],
-      declarations: [CollapsibleComponent, CollapseDirective]
-    }).compileComponents();
+    imports: [MatListModule, MatIconModule, MatIconTestingModule, CollapsibleComponent, CollapseDirective]
+}).compileComponents();
   }));
 
   beforeEach(() => {

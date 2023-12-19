@@ -4,9 +4,8 @@ import { StopDropPropagationDirective } from './stop-drop-propagation.directive'
 import { StopPropagationDirective } from './stop-propagation.directive';
 
 @NgModule({
-  imports: [],
-  declarations: [StopDropPropagationDirective, StopPropagationDirective],
-  exports: [StopDropPropagationDirective, StopPropagationDirective]
+    imports: [StopDropPropagationDirective, StopPropagationDirective],
+    exports: [StopDropPropagationDirective, StopPropagationDirective]
 })
 export class IgoStopPropagationModule {
   static forRoot(): ModuleWithProviders<IgoStopPropagationModule> {

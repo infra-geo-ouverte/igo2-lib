@@ -15,17 +15,11 @@ import {
   SimpleChanges,
   TrackByFunction
 } from '@angular/core';
-import {
-  FormControlName,
-  NgControl,
-  NgForm,
-  UntypedFormBuilder,
-  UntypedFormGroup
-} from '@angular/forms';
-import { DateAdapter, ErrorStateMatcher } from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { FormControlName, NgControl, NgForm, UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DateAdapter, ErrorStateMatcher, MatOptionModule } from '@angular/material/core';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { StringUtils } from '@igo2/utils';
 
@@ -45,6 +39,23 @@ import {
   EntityTableSelectionState,
   EntityTableTemplate
 } from '../shared';
+import { TranslateModule } from '@ngx-translate/core';
+import { SecureImagePipe } from '../../image/secure-image.pipe';
+import { SanitizeHtmlPipe } from '../../custom-html/custom-html.pipe';
+import { EntityTablePaginatorComponent } from '../entity-table-paginator/entity-table-paginator.component';
+import { EntityTableRowDirective } from './entity-table-row.directive';
+import { StopPropagationDirective } from '../../stop-propagation/stop-propagation.directive';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ImageErrorDirective } from '../../image/image-error.directive';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSortModule } from '@angular/material/sort';
+import { NgStyle, NgClass, NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 interface CellData {
   [key: string]: {
@@ -61,13 +72,15 @@ interface RowData {
 }
 
 @Component({
-  selector: 'igo-entity-table',
-  templateUrl: './entity-table.component.html',
-  styleUrls: ['./entity-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: MatFormFieldControl, useExisting: EntityTableComponent }
-  ]
+    selector: 'igo-entity-table',
+    templateUrl: './entity-table.component.html',
+    styleUrls: ['./entity-table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        { provide: MatFormFieldControl, useExisting: EntityTableComponent }
+    ],
+    standalone: true,
+    imports: [NgStyle, MatTableModule, MatSortModule, NgClass, NgIf, MatCheckboxModule, NgFor, MatTooltipModule, ImageErrorDirective, FormsModule, ReactiveFormsModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatAutocompleteModule, MatIconModule, MatButtonModule, StopPropagationDirective, EntityTableRowDirective, EntityTablePaginatorComponent, AsyncPipe, SanitizeHtmlPipe, SecureImagePipe, TranslateModule]
 })
 export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);

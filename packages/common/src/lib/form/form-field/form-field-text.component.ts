@@ -5,7 +5,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import type { UntypedFormControl } from '@angular/forms';
+import type { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -14,15 +14,23 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * This component renders a text field
  */
 @IgoFormFieldComponent('text')
 @Component({
-  selector: 'igo-form-field-text',
-  templateUrl: './form-field-text.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-form-field-text',
+    templateUrl: './form-field-text.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf, MatIconModule, MatButtonModule, AsyncPipe, TranslateModule]
 })
 export class FormFieldTextComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);

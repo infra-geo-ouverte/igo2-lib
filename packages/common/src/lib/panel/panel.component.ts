@@ -4,12 +4,15 @@ import {
   HostBinding,
   Input
 } from '@angular/core';
+import { NgIf, NgClass } from '@angular/common';
 
 @Component({
-  selector: 'igo-panel',
-  templateUrl: './panel.component.html',
-  styleUrls: ['./panel.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-panel',
+    templateUrl: './panel.component.html',
+    styleUrls: ['./panel.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, NgClass]
 })
 export class PanelComponent {
   @Input() title: string;

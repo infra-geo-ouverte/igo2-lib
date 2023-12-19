@@ -7,8 +7,7 @@ import { DynamicOutletComponent } from './dynamic-outlet.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule],
-  exports: [DynamicOutletComponent],
-  declarations: [DynamicOutletComponent]
+    imports: [CommonModule, DynamicOutletComponent],
+    exports: [DynamicOutletComponent]
 })
 export class IgoDynamicOutletModule {}

@@ -4,7 +4,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import type { UntypedFormControl } from '@angular/forms';
+import type { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -13,15 +13,22 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * This component renders a textarea field
  */
 @IgoFormFieldComponent('textarea')
 @Component({
-  selector: 'igo-form-field-textarea',
-  templateUrl: './form-field-textarea.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-form-field-textarea',
+    templateUrl: './form-field-textarea.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf, MatIconModule, AsyncPipe, TranslateModule]
 })
 export class FormFieldTextareaComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);

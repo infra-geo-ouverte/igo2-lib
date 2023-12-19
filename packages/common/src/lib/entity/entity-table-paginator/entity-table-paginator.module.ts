@@ -7,8 +7,7 @@ import { EntityTablePaginatorComponent } from './entity-table-paginator.componen
  * @ignore
  */
 @NgModule({
-  imports: [MatPaginatorModule],
-  exports: [EntityTablePaginatorComponent],
-  declarations: [EntityTablePaginatorComponent]
+    imports: [MatPaginatorModule, EntityTablePaginatorComponent],
+    exports: [EntityTablePaginatorComponent]
 })
 export class IgoEntityTablePaginatorModule {}

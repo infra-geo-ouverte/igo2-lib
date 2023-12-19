@@ -9,8 +9,7 @@ import { ToolboxComponent } from './toolbox.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoActionModule, IgoDynamicComponentModule],
-  exports: [ToolboxComponent],
-  declarations: [ToolboxComponent]
+    imports: [CommonModule, IgoActionModule, IgoDynamicComponentModule, ToolboxComponent],
+    exports: [ToolboxComponent]
 })
 export class IgoToolboxModule {}

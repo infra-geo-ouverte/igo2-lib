@@ -15,12 +15,18 @@ import { EntityRecord } from '../shared/entity.interfaces';
 import { getEntityTitle } from '../shared/entity.utils';
 import { EntityStore } from '../shared/store';
 import { EntityStoreWatcher } from '../shared/watcher';
+import { MatOptionModule } from '@angular/material/core';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'igo-entity-selector',
-  templateUrl: './entity-selector.component.html',
-  styleUrls: ['./entity-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-entity-selector',
+    templateUrl: './entity-selector.component.html',
+    styleUrls: ['./entity-selector.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatFormFieldModule, MatSelectModule, NgIf, MatOptionModule, NgFor, AsyncPipe]
 })
 export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**

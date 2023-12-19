@@ -12,15 +12,15 @@ import { HomeButtonComponent } from './home-button.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    IgoLanguageModule
-  ],
-  exports: [HomeButtonComponent],
-  declarations: [HomeButtonComponent],
-  providers: []
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        HomeButtonComponent
+    ],
+    exports: [HomeButtonComponent],
+    providers: []
 })
 export class IgoHomeButtonModule {}

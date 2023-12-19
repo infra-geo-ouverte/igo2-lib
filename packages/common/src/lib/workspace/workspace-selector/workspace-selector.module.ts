@@ -8,8 +8,7 @@ import { WorkspaceSelectorComponent } from './workspace-selector.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoEntitySelectorModule],
-  exports: [WorkspaceSelectorComponent],
-  declarations: [WorkspaceSelectorComponent]
+    imports: [CommonModule, IgoEntitySelectorModule, WorkspaceSelectorComponent],
+    exports: [WorkspaceSelectorComponent]
 })
 export class IgoWorkspaceSelectorModule {}

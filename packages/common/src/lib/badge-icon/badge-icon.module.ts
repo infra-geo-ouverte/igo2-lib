@@ -5,9 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { IgoBadgeIconDirective } from './badge-icon.directive';
 
 @NgModule({
-  imports: [MatBadgeModule, MatIconModule],
-  declarations: [IgoBadgeIconDirective],
-  exports: [MatBadgeModule, IgoBadgeIconDirective]
+    imports: [MatBadgeModule, MatIconModule, IgoBadgeIconDirective],
+    exports: [MatBadgeModule, IgoBadgeIconDirective]
 })
 export class IgoMatBadgeIconModule {
   static forRoot(): ModuleWithProviders<IgoMatBadgeIconModule> {

@@ -11,15 +11,15 @@ import { InteractiveTourLoader } from './interactive-tour.loader';
 import { InteractiveTourService } from './interactive-tour.service';
 
 @NgModule({
-  declarations: [InteractiveTourComponent],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    IgoLanguageModule
-  ],
-  providers: [InteractiveTourService, InteractiveTourLoader],
-  exports: [InteractiveTourComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        InteractiveTourComponent
+    ],
+    providers: [InteractiveTourService, InteractiveTourLoader],
+    exports: [InteractiveTourComponent]
 })
 export class IgoInteractiveTourModule {}

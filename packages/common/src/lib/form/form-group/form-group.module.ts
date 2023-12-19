@@ -11,13 +11,13 @@ import { FormGroupComponent } from './form-group.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    IgoLanguageModule,
-    IgoFormFieldModule
-  ],
-  exports: [FormGroupComponent],
-  declarations: [FormGroupComponent]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        IgoLanguageModule,
+        IgoFormFieldModule,
+        FormGroupComponent
+    ],
+    exports: [FormGroupComponent]
 })
 export class IgoFormGroupModule {}

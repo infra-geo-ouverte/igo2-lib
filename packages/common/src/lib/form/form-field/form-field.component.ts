@@ -8,16 +8,20 @@ import {
   FormFieldOptions,
   FormFieldSubscribers
 } from '../shared/form.interfaces';
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
+import { NgIf } from '@angular/common';
 
 /**
  * This component renders the proper form input based on
  * the field configuration it receives.
  */
 @Component({
-  selector: 'igo-form-field',
-  templateUrl: './form-field.component.html',
-  styleUrls: ['./form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-form-field',
+    templateUrl: './form-field.component.html',
+    styleUrls: ['./form-field.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, DynamicOutletComponent]
 })
 export class FormFieldComponent {
   /**

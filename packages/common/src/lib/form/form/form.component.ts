@@ -14,15 +14,19 @@ import { t } from 'typy';
 
 import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
 import { getAllFormFields } from '../shared/form.utils';
+import { NgClass } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /**
  * A configurable form
  */
 @Component({
-  selector: 'igo-form',
-  templateUrl: './form.component.html',
-  styleUrls: ['./form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-form',
+    templateUrl: './form.component.html',
+    styleUrls: ['./form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, NgClass]
 })
 export class FormComponent implements OnChanges {
   /**

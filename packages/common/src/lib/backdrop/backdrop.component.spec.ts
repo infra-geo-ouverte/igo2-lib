@@ -8,8 +8,8 @@ describe('BackdropComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BackdropComponent]
-    }).compileComponents();
+    imports: [BackdropComponent]
+}).compileComponents();
   }));
 
   beforeEach(() => {

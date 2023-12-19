@@ -15,21 +15,21 @@ import { IgoLanguageModule } from '@igo2/core';
 import { TableComponent } from './table.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    CdkTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSortModule,
-    MatCheckboxModule,
-    IgoLanguageModule
-  ],
-  declarations: [TableComponent],
-  exports: [TableComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        CdkTableModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSortModule,
+        MatCheckboxModule,
+        IgoLanguageModule,
+        TableComponent
+    ],
+    exports: [TableComponent]
 })
 export class IgoTableModule {
   static forRoot(): ModuleWithProviders<IgoTableModule> {

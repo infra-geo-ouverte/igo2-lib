@@ -27,29 +27,29 @@ import { EntityTableComponent } from './entity-table.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatAutocompleteModule,
-    MatSortModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatSelectModule,
-    IgoStopPropagationModule,
-    IgoCustomHtmlModule,
-    IgoEntityTablePaginatorModule,
-    IgoImageModule,
-    IgoLanguageModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatTooltipModule,
-    MatNativeDateModule
-  ],
-  exports: [EntityTableComponent],
-  declarations: [EntityTableComponent, EntityTableRowDirective]
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatAutocompleteModule,
+        MatSortModule,
+        MatIconModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatSelectModule,
+        IgoStopPropagationModule,
+        IgoCustomHtmlModule,
+        IgoEntityTablePaginatorModule,
+        IgoImageModule,
+        IgoLanguageModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatTooltipModule,
+        MatNativeDateModule,
+        EntityTableComponent, EntityTableRowDirective
+    ],
+    exports: [EntityTableComponent]
 })
 export class IgoEntityTableModule {}

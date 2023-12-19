@@ -8,8 +8,7 @@ import { WorkspaceWidgetOutletComponent } from './workspace-widget-outlet.compon
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoWidgetOutletModule],
-  exports: [WorkspaceWidgetOutletComponent],
-  declarations: [WorkspaceWidgetOutletComponent]
+    imports: [CommonModule, IgoWidgetOutletModule, WorkspaceWidgetOutletComponent],
+    exports: [WorkspaceWidgetOutletComponent]
 })
 export class IgoWorkspaceWidgetOutletModule {}

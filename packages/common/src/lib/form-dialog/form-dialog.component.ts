@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core';
 
@@ -13,11 +13,20 @@ import {
 } from '../form/shared/form.interfaces';
 import { FormService } from '../form/shared/form.service';
 import { FormDialogData } from './form-dialog.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { CustomHtmlComponent } from '../custom-html/custom-html.component';
+import { MatButtonModule } from '@angular/material/button';
+import { FormGroupComponent } from '../form/form-group/form-group.component';
+import { FormFieldComponent } from '../form/form-field/form-field.component';
+import { FormComponent } from '../form/form/form.component';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-form-dialog',
-  templateUrl: './form-dialog.component.html',
-  styleUrls: ['./form-dialog.component.scss']
+    selector: 'igo-form-dialog',
+    templateUrl: './form-dialog.component.html',
+    styleUrls: ['./form-dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogTitle, NgIf, FormComponent, NgFor, FormFieldComponent, FormGroupComponent, MatDialogActions, MatButtonModule, CustomHtmlComponent, AsyncPipe, TranslateModule]
 })
 export class FormDialogComponent {
   form$ = new BehaviorSubject<Form>(undefined);

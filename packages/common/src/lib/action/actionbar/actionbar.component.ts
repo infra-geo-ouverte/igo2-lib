@@ -19,16 +19,27 @@ import { EntityStoreWatcher } from '../../entity';
 import { ActionbarMode } from '../shared/action.enums';
 import { Action } from '../shared/action.interfaces';
 import { ActionStore } from '../shared/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
+import { ActionbarItemComponent } from './actionbar-item.component';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 /**
  * A list of action buttons.
  * This component can be displayed in one of two way: 'dock' or 'overlay'
  */
 @Component({
-  selector: 'igo-actionbar',
-  templateUrl: './actionbar.component.html',
-  styleUrls: ['./actionbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-actionbar',
+    templateUrl: './actionbar.component.html',
+    styleUrls: ['./actionbar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, MatListModule, ActionbarItemComponent, NgFor, MatMenuModule, MatCardModule, AsyncPipe, TranslateModule]
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
   /**

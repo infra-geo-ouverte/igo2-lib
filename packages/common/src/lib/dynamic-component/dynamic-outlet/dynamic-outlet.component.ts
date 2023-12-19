@@ -16,10 +16,11 @@ import { DynamicComponent } from '../shared/dynamic-component';
 import { DynamicComponentService } from '../shared/dynamic-component.service';
 
 @Component({
-  selector: 'igo-dynamic-outlet',
-  templateUrl: 'dynamic-outlet.component.html',
-  styleUrls: ['dynamic-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-dynamic-outlet',
+    templateUrl: 'dynamic-outlet.component.html',
+    styleUrls: ['dynamic-outlet.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**

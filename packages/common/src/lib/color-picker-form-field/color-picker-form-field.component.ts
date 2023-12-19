@@ -9,20 +9,28 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { ColorEvent } from 'ngx-color';
 import tinycolor, { ColorInput } from 'tinycolor2';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { ColorChromeModule } from 'ngx-color/chrome';
+import { MatInputModule } from '@angular/material/input';
+import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 type ColorFormat = 'hex' | 'rgba' | 'hsla';
 
 @Component({
-  selector: 'igo-color-picker-form-field',
-  templateUrl: './color-picker-form-field.component.html',
-  styleUrls: ['./color-picker-form-field.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ColorPickerFormFieldComponent),
-      multi: true
-    }
-  ]
+    selector: 'igo-color-picker-form-field',
+    templateUrl: './color-picker-form-field.component.html',
+    styleUrls: ['./color-picker-form-field.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => ColorPickerFormFieldComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [MatFormFieldModule, CdkOverlayOrigin, MatInputModule, CdkConnectedOverlay, ColorChromeModule, MatButtonModule, TranslateModule]
 })
 export class ColorPickerFormFieldComponent implements ControlValueAccessor {
   isOpen: boolean = false;

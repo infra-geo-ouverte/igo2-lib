@@ -9,6 +9,8 @@ import {
 
 import { DynamicComponent } from '../../dynamic-component';
 import { WidgetComponent } from '../shared/widget.interfaces';
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
+import { NgIf } from '@angular/common';
 
 /**
  * This component dynamically renders a widget. It also subscribes
@@ -16,10 +18,12 @@ import { WidgetComponent } from '../shared/widget.interfaces';
  * when any of those event is emitted.
  */
 @Component({
-  selector: 'igo-widget-outlet',
-  templateUrl: './widget-outlet.component.html',
-  styleUrls: ['./widget-outlet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-widget-outlet',
+    templateUrl: './widget-outlet.component.html',
+    styleUrls: ['./widget-outlet.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {
   /**

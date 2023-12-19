@@ -19,29 +19,27 @@ import { FormFieldComponent } from './form-field.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    IgoLanguageModule,
-    IgoDynamicOutletModule,
-    MatButtonModule
-  ],
-  exports: [
-    FormFieldComponent,
-    FormFieldSelectComponent,
-    FormFieldTextComponent,
-    FormFieldTextareaComponent
-  ],
-  declarations: [
-    FormFieldComponent,
-    FormFieldSelectComponent,
-    FormFieldTextComponent,
-    FormFieldTextareaComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        IgoLanguageModule,
+        IgoDynamicOutletModule,
+        MatButtonModule,
+        FormFieldComponent,
+        FormFieldSelectComponent,
+        FormFieldTextComponent,
+        FormFieldTextareaComponent
+    ],
+    exports: [
+        FormFieldComponent,
+        FormFieldSelectComponent,
+        FormFieldTextComponent,
+        FormFieldTextareaComponent
+    ]
 })
 export class IgoFormFieldModule {}

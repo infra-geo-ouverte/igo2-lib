@@ -9,8 +9,7 @@ import { EntitySelectorComponent } from './entity-selector.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, FormsModule, MatSelectModule],
-  exports: [EntitySelectorComponent],
-  declarations: [EntitySelectorComponent]
+    imports: [CommonModule, FormsModule, MatSelectModule, EntitySelectorComponent],
+    exports: [EntitySelectorComponent]
 })
 export class IgoEntitySelectorModule {}

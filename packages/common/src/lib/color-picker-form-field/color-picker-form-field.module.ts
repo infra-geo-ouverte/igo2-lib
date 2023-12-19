@@ -13,18 +13,18 @@ import { ColorChromeModule } from 'ngx-color/chrome';
 import { ColorPickerFormFieldComponent } from './color-picker-form-field.component';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    CommonModule,
-    OverlayModule,
-    ColorChromeModule,
-    IgoLanguageModule
-  ],
-  declarations: [ColorPickerFormFieldComponent],
-  exports: [ColorPickerFormFieldComponent]
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        CommonModule,
+        OverlayModule,
+        ColorChromeModule,
+        IgoLanguageModule,
+        ColorPickerFormFieldComponent
+    ],
+    exports: [ColorPickerFormFieldComponent]
 })
 export class ColorPickerFormFieldModule {}

@@ -4,7 +4,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import type { UntypedFormControl } from '@angular/forms';
+import type { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -14,15 +14,23 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * This component renders a select field
  */
 @IgoFormFieldComponent('select')
 @Component({
-  selector: 'igo-form-field-select',
-  templateUrl: './form-field-select.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-form-field-select',
+    templateUrl: './form-field-select.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, NgFor, MatOptionModule, NgIf, MatIconModule, AsyncPipe, TranslateModule]
 })
 export class FormFieldSelectComponent implements OnInit {
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);

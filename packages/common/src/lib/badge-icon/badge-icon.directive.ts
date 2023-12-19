@@ -7,7 +7,8 @@ import { MatIconRegistry } from '@angular/material/icon';
  * The badge content will be overrided by this current directive.
  */
 @Directive({
-  selector: '[igoMatBadgeIcon]'
+    selector: '[igoMatBadgeIcon]',
+    standalone: true
 })
 export class IgoBadgeIconDirective implements OnInit {
   @Input()

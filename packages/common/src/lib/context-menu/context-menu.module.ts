@@ -4,9 +4,8 @@ import { ContextMenuDirective } from './context-menu.directive';
 import { LongPressDirective } from './long-press.directive';
 
 @NgModule({
-  imports: [],
-  declarations: [ContextMenuDirective, LongPressDirective],
-  exports: [ContextMenuDirective, LongPressDirective]
+    imports: [ContextMenuDirective, LongPressDirective],
+    exports: [ContextMenuDirective, LongPressDirective]
 })
 export class IgoContextMenuModule {
   static forRoot(): ModuleWithProviders<IgoContextMenuModule> {

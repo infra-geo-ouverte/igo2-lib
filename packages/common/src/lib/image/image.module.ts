@@ -4,9 +4,8 @@ import { ImageErrorDirective } from './image-error.directive';
 import { SecureImagePipe } from './secure-image.pipe';
 
 @NgModule({
-  imports: [],
-  declarations: [SecureImagePipe, ImageErrorDirective],
-  exports: [SecureImagePipe, ImageErrorDirective]
+    imports: [SecureImagePipe, ImageErrorDirective],
+    exports: [SecureImagePipe, ImageErrorDirective]
 })
 export class IgoImageModule {
   static forRoot(): ModuleWithProviders<IgoImageModule> {

@@ -6,8 +6,7 @@ import { SpinnerActivityDirective } from './spinner-activity.directive';
 import { SpinnerComponent } from './spinner.component';
 
 @NgModule({
-  imports: [CommonModule, MatProgressSpinnerModule],
-  declarations: [SpinnerActivityDirective, SpinnerComponent],
-  exports: [SpinnerActivityDirective, SpinnerComponent]
+    imports: [CommonModule, MatProgressSpinnerModule, SpinnerActivityDirective, SpinnerComponent],
+    exports: [SpinnerActivityDirective, SpinnerComponent]
 })
 export class IgoSpinnerModule {}

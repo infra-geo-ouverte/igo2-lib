@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 
 import { ToolService } from '../tool/shared/tool.service';
 import { InteractiveTourService } from './interactive-tour.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgClass, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-interactive-tour',
-  templateUrl: './interactive-tour.component.html',
-  styleUrls: ['./interactive-tour.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'igo-interactive-tour',
+    templateUrl: './interactive-tour.component.html',
+    styleUrls: ['./interactive-tour.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, NgClass, MatTooltipModule, MatIconModule, AsyncPipe, TranslateModule]
 })
 export class InteractiveTourComponent {
   /**

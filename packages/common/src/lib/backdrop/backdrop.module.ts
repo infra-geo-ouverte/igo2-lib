@@ -4,9 +4,8 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { BackdropComponent } from './backdrop.component';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [BackdropComponent],
-  exports: [BackdropComponent]
+    imports: [CommonModule, BackdropComponent],
+    exports: [BackdropComponent]
 })
 export class IgoBackdropModule {
   static forRoot(): ModuleWithProviders<IgoBackdropModule> {

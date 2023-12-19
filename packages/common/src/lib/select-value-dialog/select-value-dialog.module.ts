@@ -13,20 +13,20 @@ import { SelectValueCheckRadioDialogComponent } from './select-value-check-radio
 import { SelectValueDialogService } from './select-value-dialog.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatRadioModule,
-    FormsModule,
-    MatDialogModule,
-    ReactiveFormsModule,
-    IgoLanguageModule,
-    IgoFormModule
-  ],
-  declarations: [SelectValueCheckRadioDialogComponent],
-  exports: [SelectValueCheckRadioDialogComponent],
-  providers: [SelectValueDialogService]
+    imports: [
+        CommonModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatRadioModule,
+        FormsModule,
+        MatDialogModule,
+        ReactiveFormsModule,
+        IgoLanguageModule,
+        IgoFormModule,
+        SelectValueCheckRadioDialogComponent
+    ],
+    exports: [SelectValueCheckRadioDialogComponent],
+    providers: [SelectValueDialogService]
 })
 export class IgoSelectValueDialogModule {
   static forRoot(): ModuleWithProviders<IgoSelectValueDialogModule> {

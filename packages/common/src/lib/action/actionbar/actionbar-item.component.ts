@@ -11,15 +11,24 @@ import {
 import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
 import { Action } from '../shared/action.interfaces';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgClass, AsyncPipe } from '@angular/common';
 
 /**
  * An action button
  */
 @Component({
-  selector: 'igo-actionbar-item',
-  templateUrl: './actionbar-item.component.html',
-  styleUrls: ['./actionbar-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-actionbar-item',
+    templateUrl: './actionbar-item.component.html',
+    styleUrls: ['./actionbar-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatListModule, MatTooltipModule, NgClass, MatButtonModule, MatIconModule, MatCheckboxModule, AsyncPipe, TranslateModule]
 })
 export class ActionbarItemComponent implements OnInit, OnDestroy {
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
