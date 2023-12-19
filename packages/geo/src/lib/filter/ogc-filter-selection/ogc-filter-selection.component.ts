@@ -193,10 +193,10 @@ export class OgcFilterSelectionComponent implements OnInit {
     set autocompleteEnableds(filterList) {
       this.autocompleteEnableds$.next(filterList);
       clearTimeout(this.applyFiltersTimeout);
-      this.currentAutocompleteGroup.computedSelectors.forEach(compSelect => {
-        compSelect.selectors?.forEach(selector => {
+      this.currentAutocompleteGroup.computedSelectors.forEach((compSelect) => {
+        compSelect.selectors?.forEach((selector) => {
           selector.enabled = false;
-          for(let filter of filterList){
+          for(const filter of filterList){
             if(filter === selector.title){
               selector.enabled = true;
             }
@@ -300,8 +300,9 @@ export class OgcFilterSelectionComponent implements OnInit {
       }
       if (this.datasource.options.ogcFilters.autocomplete) {
         this.currentAutocompleteGroup =
-          this.datasource.options.ogcFilters.autocomplete.groups.find(group => group.enabled) ||
-          this.datasource.options.ogcFilters.autocomplete.groups[0];
+          this.datasource.options.ogcFilters.autocomplete.groups.find(
+            (group) => group.enabled
+          ) || this.datasource.options.ogcFilters.autocomplete.groups[0];
           this.getAutocompleteEnableds();
         await this.getAutocompleteDomValues();
       }
@@ -393,8 +394,8 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   private getAutocompleteEnableds() {
     let enabled = [];
-    this.currentAutocompleteGroup.computedSelectors.forEach(compSelect => {
-      compSelect.selectors?.forEach(selector => {
+    this.currentAutocompleteGroup.computedSelectors.forEach((compSelect) => {
+      compSelect.selectors?.forEach((selector) => {
         if (selector.enabled) {
           const dom = {
             id: selector.filters.expression,
@@ -497,8 +498,9 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.inputChangeAutocomplete.next();
   }
 
-  async getAutocompleteDomValues(update?: boolean) {
-    for (const bundle of this.datasource.options.ogcFilters.autocomplete.bundles) {
+  async getAutocompleteDomValues() {
+    for (const bundle of this.datasource.options.ogcFilters.autocomplete
+      .bundles) {
       if (bundle.domSelectors) {
         let domValues;
         for (const domSelector of bundle.domSelectors) {
@@ -533,8 +535,11 @@ export class OgcFilterSelectionComponent implements OnInit {
               size++;
               selector = {
                 title: value.value,
-                enabled: this.autocompleteEnableds && this.autocompleteEnableds.includes(value.value) ?
-                  true : false,
+                enabled:
+                  this.autocompleteEnableds &&
+                  this.autocompleteEnableds.includes(value.value)
+                    ? true
+                    : false,
                 filters: {
                   operator: domSelector.operator,
                   propertyName: domSelector.propertyName,
@@ -543,17 +548,31 @@ export class OgcFilterSelectionComponent implements OnInit {
               };
               newBundle.selectors.push(selector);
             }
-            this.autocompleteDomValueSize === undefined ? this.autocompleteDomValueSize = size : undefined;
-            this.getAutocompleteGroups().find(group => group.ids.includes(newBundle.id)).computedSelectors
-              .find(comp => comp.title === newBundle.title).selectors = newBundle.selectors;
+            this.autocompleteDomValueSize === undefined
+              ? this.autocompleteDomValueSize = size
+              : undefined;
+            this.getAutocompleteGroups()
+              .find((group) => group.ids.includes(newBundle.id))
+              .computedSelectors.find(
+                (comp) => comp.title === newBundle.title
+              ).selectors = newBundle.selectors;
           }
         }
+
         this.filteredOgcAutocomplete[bundle.id] = new Observable<any[]>();
         this.cdRef.detectChanges();
         const value = this.form.controls['autocomplete'].value;
         this.filteredOgcAutocomplete[bundle.id] = of(domValues?.filter((option) => {
-          const filterNormalized = value ? value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
-          const featureNameNormalized = option.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const filterNormalized = value
+            ? value
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+            : '';
+          const featureNameNormalized = option.value
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
           return featureNameNormalized.includes(filterNormalized);
         }));
       }
@@ -714,9 +733,10 @@ export class OgcFilterSelectionComponent implements OnInit {
   // Modifies autocompleteEnableds to reflect active filters
   autocompleteOptionClick(toggledFilter) {
     let removed = false;
-    for (let filter of this.autocompleteEnableds) {
-      if(toggledFilter === filter){
-        const temp = this.autocompleteEnableds.filter((element) => element !== toggledFilter);
+    for (const filter of this.autocompleteEnableds) {
+      if (toggledFilter === filter) {
+        const temp = this.autocompleteEnableds
+          .filter((element) => element !== toggledFilter);
         this.autocompleteEnableds = temp;
         removed = true;
       }
@@ -727,9 +747,10 @@ export class OgcFilterSelectionComponent implements OnInit {
       this.autocompleteEnableds = temp;
     }
 
-    this.activeFilters.includes(toggledFilter) ?
-      this.activeFilters = this.activeFilters.filter((element) => element !== toggledFilter) :
-      this.activeFilters.push(toggledFilter);
+    this.activeFilters.includes(toggledFilter)
+      ? this.activeFilters = this.activeFilters
+        .filter((element) => element !== toggledFilter)
+      : this.activeFilters.push(toggledFilter);
   }
 
   // Value displayed in the autocomplete input box
