@@ -289,7 +289,7 @@
       <ng-container
         *ngFor="let bundle of currentAutocompleteGroup.computedSelectors"
       >
-        <h3>{{bundle.title}}</h3>
+        <h3>{{ bundle.title }}</h3>
         <igo-ogc-filter-chips
           *ngIf="filteredOgcAutocomplete[bundle.id]"
           [activeFilters]="activeFilters"
