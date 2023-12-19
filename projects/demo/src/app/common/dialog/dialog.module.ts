@@ -10,7 +10,6 @@ import {
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
-
 import { AppDialogRoutingModule } from './dialog-routing.module';
 import { AppDialogComponent } from './dialog.component';
 
@@ -22,10 +21,10 @@ import { AppDialogComponent } from './dialog.component';
     IgoFormDialogModule,
     IgoJsonDialogModule,
     MatButtonModule,
-    IgoLanguageModule.forRoot(),
+    IgoLanguageModule,
     MatDividerModule,
     AppDialogComponent
-],
+  ],
   exports: [AppDialogComponent]
 })
 export class AppDialogModule {}
