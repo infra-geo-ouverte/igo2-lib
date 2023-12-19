@@ -127,7 +127,7 @@ export class CatalogLibraryToolComponent implements OnInit {
           'igo.integration.catalog.csv.layerGroup'
         ),
         this.languageService.translate.instant(
-          'igo.integration.catalog.csv.thematic'
+          'igo.integration.catalog.csv.catalog'
         ),
         this.languageService.translate.instant(
           'igo.integration.catalog.csv.externalProvider'
@@ -139,7 +139,7 @@ export class CatalogLibraryToolComponent implements OnInit {
           'igo.integration.catalog.csv.fileName'
         ),
         this.languageService.translate.instant(
-          'igo.integration.catalog.csv.PlaniactifsContext'
+          'igo.integration.catalog.csv.context'
         ),
         this.languageService.translate.instant(
           'igo.integration.catalog.csv.dataDescription'

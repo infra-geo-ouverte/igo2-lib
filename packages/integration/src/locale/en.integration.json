@@ -27,11 +27,11 @@
           "rank": "Rank",
           "layerName": "Layer name",
           "layerGroup": "Layer Group",
-          "thematic": "Thematic",
+          "catalog": "Catalog",
           "externalProvider": "Provider",
           "url": "URL (Intranet/Internet)",
           "fileName": "File name - Web service",
-          "PlaniactifsContext": "Context/Thematic PlaniActifs",
+          "context": "Context/Thematic",
           "dataDescription": "Data description",
           "documentName": "catalogList.csv"
         }
