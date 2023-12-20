@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,9 +9,8 @@ import {
 } from '@angular/core';
 
 import { DynamicComponent } from '../../dynamic-component';
-import { WidgetComponent } from '../shared/widget.interfaces';
 import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
-import { NgIf } from '@angular/common';
+import { WidgetComponent } from '../shared/widget.interfaces';
 
 /**
  * This component dynamically renders a widget. It also subscribes
@@ -18,12 +18,12 @@ import { NgIf } from '@angular/common';
  * when any of those event is emitted.
  */
 @Component({
-    selector: 'igo-widget-outlet',
-    templateUrl: './widget-outlet.component.html',
-    styleUrls: ['./widget-outlet.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, DynamicOutletComponent]
+  selector: 'igo-widget-outlet',
+  templateUrl: './widget-outlet.component.html',
+  styleUrls: ['./widget-outlet.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, DynamicOutletComponent]
 })
 export class WidgetOutletComponent implements OnDestroy {
   /**

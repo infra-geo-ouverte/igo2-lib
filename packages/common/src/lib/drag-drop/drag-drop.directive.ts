@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-    selector: '[igoDragAndDrop]',
-    standalone: true
+  selector: '[igoDragAndDrop]',
+  standalone: true
 })
 export class DragAndDropDirective {
   @Input() allowedExtensions: Array<string> = [];

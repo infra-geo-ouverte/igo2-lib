@@ -1,3 +1,4 @@
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,22 +12,27 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
+import { ActionbarComponent } from '../../action/actionbar/actionbar.component';
+import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
 import { Tool } from '../shared/tool.interface';
 import { Toolbox } from '../shared/toolbox';
 import { ToolboxColor } from '../shared/toolbox.enums';
 import { toolSlideInOut } from './toolbox.animation';
-import { DynamicOutletComponent } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.component';
-import { ActionbarComponent } from '../../action/actionbar/actionbar.component';
-import { NgIf, NgClass, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-toolbox',
-    templateUrl: 'toolbox.component.html',
-    styleUrls: ['toolbox.component.scss'],
-    animations: [toolSlideInOut()],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, ActionbarComponent, NgClass, DynamicOutletComponent, AsyncPipe]
+  selector: 'igo-toolbox',
+  templateUrl: 'toolbox.component.html',
+  styleUrls: ['toolbox.component.scss'],
+  animations: [toolSlideInOut()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    ActionbarComponent,
+    NgClass,
+    DynamicOutletComponent,
+    AsyncPipe
+  ]
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
   /**

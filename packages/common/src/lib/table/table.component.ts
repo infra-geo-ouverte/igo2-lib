@@ -1,4 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -10,10 +11,17 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 
 import { ObjectUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -21,21 +29,25 @@ import { TableActionColor } from './table-action-color.enum';
 import { TableDatabase } from './table-database';
 import { TableDataSource } from './table-datasource';
 import { TableModel } from './table-model.interface';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor, NgClass } from '@angular/common';
 
 @Component({
-    selector: 'igo-table',
-    templateUrl: './table.component.html',
-    styleUrls: ['./table.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, MatCheckboxModule, NgFor, NgClass, MatButtonModule, MatIconModule, TranslateModule]
+  selector: 'igo-table',
+  templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    NgFor,
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   @Input()

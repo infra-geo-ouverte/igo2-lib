@@ -1,25 +1,47 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
 import { LanguageService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { SelectValueDialogType } from './select-value-dialog.enums';
 import { SelectValueData } from './select-value-dialog.interface';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-select-value-check-radio-dialog',
-    templateUrl: './select-value-check-radio-dialog.component.html',
-    styleUrls: ['./select-value-check-radio-dialog.component.scss'],
-    standalone: true,
-    imports: [MatDialogTitle, FormsModule, ReactiveFormsModule, NgIf, NgFor, MatCheckboxModule, MatRadioModule, MatDialogActions, MatButtonModule, AsyncPipe, TranslateModule]
+  selector: 'igo-select-value-check-radio-dialog',
+  templateUrl: './select-value-check-radio-dialog.component.html',
+  styleUrls: ['./select-value-check-radio-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    NgFor,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SelectValueCheckRadioDialogComponent implements OnInit {
   public formGroup: UntypedFormGroup;

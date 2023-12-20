@@ -1,12 +1,13 @@
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
+import { TranslateModule } from '@ngx-translate/core';
+
+import { FormFieldComponent } from '../form-field/form-field.component';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
 import { getControlErrorMessage } from '../shared/form.utils';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormFieldComponent } from '../form-field/form-field.component';
-import { NgIf, NgFor, NgClass } from '@angular/common';
 
 /**
  * A configurable form, optionnally bound to an entity
@@ -14,12 +15,19 @@ import { NgIf, NgFor, NgClass } from '@angular/common';
  * emits an event with the form data but no other operation is performed.
  */
 @Component({
-    selector: 'igo-form-group',
-    templateUrl: './form-group.component.html',
-    styleUrls: ['./form-group.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, NgFor, NgClass, FormFieldComponent, MatFormFieldModule, TranslateModule]
+  selector: 'igo-form-group',
+  templateUrl: './form-group.component.html',
+  styleUrls: ['./form-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    FormFieldComponent,
+    MatFormFieldModule,
+    TranslateModule
+  ]
 })
 export class FormGroupComponent {
   /**

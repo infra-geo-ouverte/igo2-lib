@@ -8,7 +8,7 @@ import { WidgetOutletComponent } from './widget-outlet.component';
  * @ignore
  */
 @NgModule({
-    imports: [CommonModule, IgoDynamicComponentModule, WidgetOutletComponent],
-    exports: [WidgetOutletComponent]
+  imports: [CommonModule, IgoDynamicComponentModule, WidgetOutletComponent],
+  exports: [WidgetOutletComponent]
 })
 export class IgoWidgetOutletModule {}

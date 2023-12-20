@@ -8,8 +8,8 @@ import { MatSidenav } from '@angular/material/sidenav';
  * from focusing an element after it's closed
  */
 @Directive({
-    selector: '[igoSidenavShim]',
-    standalone: true
+  selector: '[igoSidenavShim]',
+  standalone: true
 })
 export class SidenavShimDirective {
   private focusedElement: HTMLElement;

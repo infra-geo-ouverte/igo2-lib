@@ -7,20 +7,20 @@ import {
 } from '@angular/core';
 
 import { getEntityTitle } from '../../entity';
+import { EntitySelectorComponent } from '../../entity/entity-selector/entity-selector.component';
 import { WorkspaceStore } from '../shared/store';
 import { Workspace } from '../shared/workspace';
-import { EntitySelectorComponent } from '../../entity/entity-selector/entity-selector.component';
 
 /**
  * Drop list that activates the selected workspace emit an event.
  */
 @Component({
-    selector: 'igo-workspace-selector',
-    templateUrl: './workspace-selector.component.html',
-    styleUrls: ['./workspace-selector.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [EntitySelectorComponent]
+  selector: 'igo-workspace-selector',
+  templateUrl: './workspace-selector.component.html',
+  styleUrls: ['./workspace-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [EntitySelectorComponent]
 })
 export class WorkspaceSelectorComponent {
   /**

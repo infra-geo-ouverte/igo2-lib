@@ -12,18 +12,18 @@ import { FormDialogComponent } from './form-dialog.component';
 import { FormDialogService } from './form-dialog.service';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatDialogModule,
-        IgoCustomHtmlModule,
-        IgoLanguageModule,
-        IgoFormModule,
-        MatDividerModule,
-        FormDialogComponent
-    ],
-    exports: [FormDialogComponent],
-    providers: [FormDialogService]
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDialogModule,
+    IgoCustomHtmlModule,
+    IgoLanguageModule,
+    IgoFormModule,
+    MatDividerModule,
+    FormDialogComponent
+  ],
+  exports: [FormDialogComponent],
+  providers: [FormDialogService]
 })
 export class IgoFormDialogModule {
   static forRoot(): ModuleWithProviders<IgoFormDialogModule> {

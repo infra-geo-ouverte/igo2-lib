@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-    selector: '[igoListItem]',
-    standalone: true
+  selector: '[igoListItem]',
+  standalone: true
 })
 export class ListItemDirective {
   static focusedCls = 'igo-list-item-focused';

@@ -10,9 +10,9 @@ describe('FlexibleComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [FlexibleComponent],
-    providers: [MediaService]
-}).compileComponents();
+      imports: [FlexibleComponent],
+      providers: [MediaService]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

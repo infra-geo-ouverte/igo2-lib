@@ -15,8 +15,8 @@ import { Subscription, fromEvent } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 @Directive({
-    selector: '[igoContextMenu]',
-    standalone: true
+  selector: '[igoContextMenu]',
+  standalone: true
 })
 export class ContextMenuDirective {
   private overlayRef: OverlayRef | null;

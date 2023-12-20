@@ -14,10 +14,10 @@ import { Subscription } from 'rxjs';
 import { FlexibleDirection, FlexibleState } from './flexible.type';
 
 @Component({
-    selector: 'igo-flexible',
-    templateUrl: './flexible.component.html',
-    styleUrls: ['./flexible.component.scss'],
-    standalone: true
+  selector: 'igo-flexible',
+  templateUrl: './flexible.component.html',
+  styleUrls: ['./flexible.component.scss'],
+  standalone: true
 })
 export class FlexibleComponent implements OnInit, OnDestroy {
   static transitionTime = 250;

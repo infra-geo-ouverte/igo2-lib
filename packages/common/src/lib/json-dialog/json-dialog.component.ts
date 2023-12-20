@@ -1,13 +1,27 @@
+import { KeyValuePipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component } from '@angular/core';
-import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { NgTemplateOutlet, NgFor, NgIf, KeyValuePipe } from '@angular/common';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 
 @Component({
-    selector: 'igo-json-dialog',
-    templateUrl: './json-dialog.component.html',
-    standalone: true,
-    imports: [MatDialogTitle, MatDialogContent, NgTemplateOutlet, NgFor, NgIf, MatDialogActions, MatButtonModule, KeyValuePipe]
+  selector: 'igo-json-dialog',
+  templateUrl: './json-dialog.component.html',
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    NgTemplateOutlet,
+    NgFor,
+    NgIf,
+    MatDialogActions,
+    MatButtonModule,
+    KeyValuePipe
+  ]
 })
 export class JsonDialogComponent {
   public title: string;

@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-    selector: '[igoCollapse]',
-    standalone: true
+  selector: '[igoCollapse]',
+  standalone: true
 })
 export class CollapseDirective {
   @Input()

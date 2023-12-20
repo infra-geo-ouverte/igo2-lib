@@ -18,6 +18,8 @@
   "scripts": {
     "build": "ng build common --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint common",
+    "lint.fix": "ng lint common --fix",
     "postbuild": "ts-node ../../scripts/src/common/postbuild-common.ts",
     "test": "ng test common --watch=false",
     "watch": "ng build common --watch"

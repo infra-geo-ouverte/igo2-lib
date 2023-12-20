@@ -15,8 +15,8 @@ import { userAgent } from '@igo2/utils';
  * @param iOSOnly define if longpress is triggered only for iOS, default value = true
  */
 @Directive({
-    selector: '[igoLongPress]',
-    standalone: true
+  selector: '[igoLongPress]',
+  standalone: true
 })
 export class LongPressDirective {
   private touchTimeout: any;

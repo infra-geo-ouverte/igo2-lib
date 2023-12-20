@@ -8,9 +8,14 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ConfirmDialogService } from './confirm-dialog.service';
 
 @NgModule({
-    imports: [MatButtonModule, MatDialogModule, IgoLanguageModule, ConfirmDialogComponent],
-    exports: [ConfirmDialogComponent],
-    providers: [ConfirmDialogService]
+  imports: [
+    MatButtonModule,
+    MatDialogModule,
+    IgoLanguageModule,
+    ConfirmDialogComponent
+  ],
+  exports: [ConfirmDialogComponent],
+  providers: [ConfirmDialogService]
 })
 export class IgoConfirmDialogModule {
   static forRoot(): ModuleWithProviders<IgoConfirmDialogModule> {

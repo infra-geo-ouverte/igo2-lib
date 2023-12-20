@@ -1,8 +1,8 @@
 import { Directive, HostListener } from '@angular/core';
 
 @Directive({
-    selector: '[igoStopDropPropagation]',
-    standalone: true
+  selector: '[igoStopDropPropagation]',
+  standalone: true
 })
 export class StopDropPropagationDirective {
   @HostListener('drop', ['$event'])
