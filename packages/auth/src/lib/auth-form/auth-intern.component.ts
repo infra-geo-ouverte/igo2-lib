@@ -5,21 +5,24 @@ import {
   Input,
   Output
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { LanguageService } from '@igo2/core';
 
 import { AuthService } from '../shared/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'igo-auth-intern',
-  templateUrl: './auth-intern.component.html',
-  styleUrls: ['./auth-intern.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default
+    selector: 'igo-auth-intern',
+    templateUrl: './auth-intern.component.html',
+    styleUrls: ['./auth-intern.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Default,
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NgIf, TranslateModule]
 })
 export class AuthInternComponent {
   @Input()

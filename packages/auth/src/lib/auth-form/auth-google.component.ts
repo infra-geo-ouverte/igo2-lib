@@ -12,10 +12,11 @@ import { AuthGoogleOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
 @Component({
-  selector: 'igo-auth-google',
-  templateUrl: './auth-google.component.html',
-  styleUrls: ['./auth-google.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-auth-google',
+    templateUrl: './auth-google.component.html',
+    styleUrls: ['./auth-google.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class AuthGoogleComponent {
   private options?: AuthGoogleOptions;

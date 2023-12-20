@@ -6,6 +6,8 @@ import {
   Inject,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ConfigService } from '@igo2/core';
 
@@ -22,6 +24,7 @@ import {
   PublicClientApplication,
   SilentRequest
 } from '@azure/msal-browser';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -35,7 +38,9 @@ import { AuthService } from '../shared/auth.service';
   selector: 'igo-auth-microsoft',
   templateUrl: './auth-microsoft.component.html',
   styleUrls: ['./auth-microsoft.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatButtonModule, MatIconModule, TranslateModule]
 })
 export class AuthMicrosoftComponent {
   private options?: AuthMicrosoftOptions;
