@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EntityRecord, EntityStore, IgoPanelModule } from '@igo2/common';
+import { EntityRecord, EntityStore, PanelComponent } from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import {
   Catalog,
@@ -26,7 +26,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     IgoMapModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoCatalogLibraryModule,
     IgoCatalogBrowserModule
   ]

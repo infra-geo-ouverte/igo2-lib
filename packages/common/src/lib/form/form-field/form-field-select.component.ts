@@ -1,11 +1,18 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnInit
 } from '@angular/core';
-import type { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import type { UntypedFormControl } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
@@ -14,23 +21,28 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatOptionModule } from '@angular/material/core';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * This component renders a select field
  */
 @IgoFormFieldComponent('select')
 @Component({
-    selector: 'igo-form-field-select',
-    templateUrl: './form-field-select.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatFormFieldModule, MatSelectModule, FormsModule, ReactiveFormsModule, NgFor, MatOptionModule, NgIf, MatIconModule, AsyncPipe, TranslateModule]
+  selector: 'igo-form-field-select',
+  templateUrl: './form-field-select.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    NgIf,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class FormFieldSelectComponent implements OnInit {
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);

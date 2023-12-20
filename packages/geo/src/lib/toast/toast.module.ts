@@ -3,7 +3,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { IgoFlexibleModule, IgoPanelModule } from '@igo2/common';
+import { IgoFlexibleModule, PanelComponent } from '@igo2/common';
 
 import { IgoFeatureModule } from '../feature/feature.module';
 import { ToastComponent } from './toast.component';
@@ -13,7 +13,7 @@ import { ToastComponent } from './toast.component';
     CommonModule,
     MatIconModule,
     MatButtonModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoFlexibleModule,
     IgoFeatureModule
   ],

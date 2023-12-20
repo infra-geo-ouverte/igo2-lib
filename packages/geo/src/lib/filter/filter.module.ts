@@ -24,9 +24,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 
 import {
+  ENTITY_DIRECTIVES,
   IgoCollapsibleModule,
   IgoDOMModule,
-  IgoEntityModule,
   IgoKeyValueModule,
   IgoListModule
 } from '@igo2/common';
@@ -93,7 +93,7 @@ import { TimeFilterListComponent } from './time-filter-list/time-filter-list.com
     IgoLayerModule,
     IgoCollapsibleModule,
     IgoListModule,
-    IgoEntityModule,
+    ...ENTITY_DIRECTIVES,
     IgoDOMModule,
     IgoKeyValueModule,
     IgoGeometryModule,

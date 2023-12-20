@@ -7,12 +7,13 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { ActionStore, EntityStore } from '@igo2/common';
 import {
-  IgoActionbarModule,
-  IgoContextMenuModule,
-  IgoPanelModule
+  ActionStore,
+  ActionbarComponent,
+  EntityStore,
+  PanelComponent
 } from '@igo2/common';
+import { IgoContextMenuModule } from '@igo2/common';
 import { LanguageService, MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
@@ -58,11 +59,11 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     IgoMapModule,
     IgoContextMenuModule,
     IgoSearchModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoSearchBarModule,
     IgoSearchResultsModule,
-    IgoFeatureDetailsModule,
-    IgoActionbarModule
+    ActionbarComponent,
+    IgoFeatureDetailsModule
   ],
   providers: [
     SearchService,

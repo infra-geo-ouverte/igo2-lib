@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -5,8 +6,14 @@ import {
   Input,
   OnInit
 } from '@angular/core';
-import type { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import type { UntypedFormControl } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoFormFieldComponent } from '../shared/form-field-component';
@@ -14,23 +21,27 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { NgIf, AsyncPipe } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 
 /**
  * This component renders a text field
  */
 @IgoFormFieldComponent('text')
 @Component({
-    selector: 'igo-form-field-text',
-    templateUrl: './form-field-text.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, NgIf, MatIconModule, MatButtonModule, AsyncPipe, TranslateModule]
+  selector: 'igo-form-field-text',
+  templateUrl: './form-field-text.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatIconModule,
+    MatButtonModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class FormFieldTextComponent implements OnInit {
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);

@@ -5,9 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 
 import {
   Form,
-  FormService,
-  IgoFormFormModule,
-  IgoFormGroupModule
+  FormComponent,
+  FormGroupComponent,
+  FormService
 } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import {
@@ -34,8 +34,8 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     IgoMapModule,
     NgIf,
-    IgoFormFormModule,
-    IgoFormGroupModule,
+    FormComponent,
+    FormGroupComponent,
     MatButtonModule,
     AsyncPipe
   ]

@@ -21,7 +21,7 @@ import {
   IgoImageModule,
   IgoListModule,
   IgoMatBadgeIconModule,
-  IgoPanelModule
+  PanelComponent
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -60,7 +60,7 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
     IgoListModule,
     IgoCollapsibleModule,
     IgoImageModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoMatBadgeIconModule,
     IgoCustomHtmlModule
   ],

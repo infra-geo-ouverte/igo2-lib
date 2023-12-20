@@ -1,7 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntityStore, IgoEntitySelectorModule } from '@igo2/common';
+import { EntitySelectorComponent, EntityStore } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
@@ -23,7 +23,7 @@ interface DemoEntity {
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoEntitySelectorModule,
+    EntitySelectorComponent,
     NgIf,
     AsyncPipe
   ]

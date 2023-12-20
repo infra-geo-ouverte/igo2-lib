@@ -4,28 +4,26 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
+  ActionbarComponent,
   ActionbarMode,
   EntityRecord,
+  EntityTableComponent,
+  EntityTablePaginatorComponent,
   EntityTablePaginatorOptions,
   EntityTableScrollBehavior,
   Workspace,
-  WorkspaceStore
-} from '@igo2/common';
-import {
-  IgoActionbarModule,
-  IgoEntityTableModule,
-  IgoEntityTablePaginatorModule,
-  IgoWorkspaceSelectorModule,
-  IgoWorkspaceWidgetOutletModule
+  WorkspaceSelectorComponent,
+  WorkspaceStore,
+  WorkspaceWidgetOutletComponent
 } from '@igo2/common';
 import {
   DataSourceService,
   IgoGeoWorkspaceModule,
   IgoMap,
+  IgoMapModule,
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
-import { IgoMapModule } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
 
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -43,13 +41,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     AsyncPipe,
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoActionbarModule,
-    IgoEntityTableModule,
-    IgoEntityTablePaginatorModule,
+    EntityTableComponent,
+    ActionbarComponent,
+    EntityTablePaginatorComponent,
     IgoGeoWorkspaceModule,
     IgoMapModule,
-    IgoWorkspaceSelectorModule,
-    IgoWorkspaceWidgetOutletModule,
+    WorkspaceSelectorComponent,
+    WorkspaceWidgetOutletComponent,
     MatCardModule,
     NgIf
   ]

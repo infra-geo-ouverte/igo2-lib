@@ -8,7 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   IgoCustomHtmlModule,
   IgoFlexibleModule,
-  IgoPanelModule
+  PanelComponent
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -33,7 +33,7 @@ import { SearchResultsToolComponent } from './search-results-tool.component';
     IgoFeatureModule,
     IgoSearchModule,
     IgoFlexibleModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoFeatureDetailsModule,
     IgoCustomHtmlModule
   ],

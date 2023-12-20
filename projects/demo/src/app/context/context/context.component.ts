@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import {
   ContextService,
   IgoContextImportExportModule,
@@ -30,7 +30,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     MatGridListModule,
     IgoMapModule,
     IgoContextManagerModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoLayerModule,
     IgoMetadataModule,
     IgoContextImportExportModule

@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoAuthModule } from '@igo2/auth';
 import {
-  IgoActionbarModule,
+  ActionbarComponent,
   IgoCollapsibleModule,
   IgoKeyValueModule,
   IgoListModule,
@@ -64,7 +64,7 @@ const CONTEXT_DIRECTIVES = [MapContextDirective, LayerContextDirective];
     IgoLanguageModule,
     IgoContextImportExportModule,
     IgoContextMapButtonModule,
-    IgoActionbarModule
+    ActionbarComponent
   ],
   exports: [
     ContextListComponent,

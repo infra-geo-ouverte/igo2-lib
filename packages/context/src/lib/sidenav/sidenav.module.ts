@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoFlexibleModule, IgoPanelModule } from '@igo2/common';
+import { IgoFlexibleModule, PanelComponent } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoFeatureModule } from '@igo2/geo';
 
@@ -20,7 +20,7 @@ import { SidenavComponent } from './sidenav.component';
     MatSidenavModule,
     MatTooltipModule,
     IgoLanguageModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoFlexibleModule,
     IgoFeatureModule,
     IgoContextManagerModule

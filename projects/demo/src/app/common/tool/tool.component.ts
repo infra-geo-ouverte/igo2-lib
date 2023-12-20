@@ -11,13 +11,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import {
-  IgoPanelModule,
-  IgoToolboxModule,
   OnUpdateInputs,
+  PanelComponent,
   Tool,
   ToolComponent,
   ToolService,
-  Toolbox
+  Toolbox,
+  ToolboxComponent
 } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 
@@ -69,11 +69,11 @@ export class AppAboutToolComponent {}
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoPanelModule,
+    PanelComponent,
     NgIf,
     MatButtonModule,
     MatIconModule,
-    IgoToolboxModule,
+    ToolboxComponent,
     AsyncPipe
   ]
 })

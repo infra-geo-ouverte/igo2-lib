@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
@@ -27,7 +27,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     DocViewerComponent,
     ExampleViewerComponent,
     IgoMapModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoLayerModule
   ]
 })

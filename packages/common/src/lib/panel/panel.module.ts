@@ -1,10 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { PanelComponent } from './panel.component';
 
+/**
+ * @deprecated import the PanelComponent directly
+ */
 @NgModule({
-    imports: [CommonModule, PanelComponent],
-    exports: [PanelComponent]
+  imports: [PanelComponent],
+  exports: [PanelComponent]
 })
 export class IgoPanelModule {}

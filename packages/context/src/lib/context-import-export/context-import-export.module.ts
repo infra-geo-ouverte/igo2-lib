@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoSpinnerModule } from '@igo2/common';
+import { SpinnerComponent } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { ContextImportExportComponent } from './context-import-export/context-import-export.component';
@@ -32,7 +32,7 @@ import { ContextImportExportComponent } from './context-import-export/context-im
     MatInputModule,
     MatCheckboxModule,
     IgoLanguageModule,
-    IgoSpinnerModule,
+    SpinnerComponent,
     MatTooltipModule
   ],
   exports: [ContextImportExportComponent],

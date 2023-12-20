@@ -1,7 +1,7 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { IgoPanelModule, getEntityTitle } from '@igo2/common';
+import { PanelComponent, getEntityTitle } from '@igo2/common';
 import {
   DataSourceService,
   Feature,
@@ -41,7 +41,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     IgoMapModule,
     IgoOverlayModule,
     IgoQueryModule,
-    IgoPanelModule,
+    PanelComponent,
     NgIf,
     NgFor,
     IgoFeatureDetailsModule,

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,9 +10,8 @@ import {
 import { BehaviorSubject } from 'rxjs';
 
 import { Widget } from '../../widget';
-import { Workspace } from '../shared/workspace';
 import { WidgetOutletComponent } from '../../widget/widget-outlet/widget-outlet.component';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { Workspace } from '../shared/workspace';
 
 /**
  * This component dynamically render an Workspace's active widget.
@@ -19,12 +19,12 @@ import { NgIf, AsyncPipe } from '@angular/common';
  * emit the 'cancel' or 'complete' event.
  */
 @Component({
-    selector: 'igo-workspace-widget-outlet',
-    templateUrl: './workspace-widget-outlet.component.html',
-    styleUrls: ['./workspace-widget-outlet.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, WidgetOutletComponent, AsyncPipe]
+  selector: 'igo-workspace-widget-outlet',
+  templateUrl: './workspace-widget-outlet.component.html',
+  styleUrls: ['./workspace-widget-outlet.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, WidgetOutletComponent, AsyncPipe]
 })
 export class WorkspaceWidgetOutletComponent {
   /**

@@ -16,7 +16,7 @@ import {
   IgoCustomHtmlModule,
   IgoDrapDropModule,
   IgoKeyValueModule,
-  IgoSpinnerModule
+  SpinnerComponent
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -40,7 +40,7 @@ import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
     MatInputModule,
     MatSlideToggleModule,
     IgoLanguageModule,
-    IgoSpinnerModule,
+    SpinnerComponent,
     IgoKeyValueModule,
     IgoDrapDropModule,
     IgoCustomHtmlModule

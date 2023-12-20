@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { IgoDynamicOutletModule, OnUpdateInputs } from '@igo2/common';
+import { DynamicOutletComponent, OnUpdateInputs } from '@igo2/common';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
 import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
@@ -50,7 +50,7 @@ export class AppExplanationComponent implements OnUpdateInputs {
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoDynamicOutletModule,
+    DynamicOutletComponent,
     MatButtonModule
   ]
 })

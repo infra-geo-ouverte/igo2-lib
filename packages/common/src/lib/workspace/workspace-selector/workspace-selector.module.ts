@@ -1,14 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { IgoEntitySelectorModule } from '../../entity/entity-selector/entity-selector.module';
 import { WorkspaceSelectorComponent } from './workspace-selector.component';
 
 /**
- * @ignore
+ * @deprecated import the WorkspaceSelectorComponent directly
  */
 @NgModule({
-    imports: [CommonModule, IgoEntitySelectorModule, WorkspaceSelectorComponent],
-    exports: [WorkspaceSelectorComponent]
+  imports: [WorkspaceSelectorComponent],
+  exports: [WorkspaceSelectorComponent]
 })
 export class IgoWorkspaceSelectorModule {}

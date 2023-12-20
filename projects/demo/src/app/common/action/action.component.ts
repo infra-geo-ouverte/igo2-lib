@@ -1,7 +1,7 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { ActionStore, ActionbarMode, IgoActionbarModule } from '@igo2/common';
+import { ActionStore, ActionbarComponent, ActionbarMode } from '@igo2/common';
 import {
   LanguageService,
   Media,
@@ -19,7 +19,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   templateUrl: './action.component.html',
   styleUrls: ['./action.component.scss'],
   standalone: true,
-  imports: [DocViewerComponent, ExampleViewerComponent, IgoActionbarModule]
+  imports: [DocViewerComponent, ExampleViewerComponent, ActionbarComponent]
 })
 export class AppActionComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);

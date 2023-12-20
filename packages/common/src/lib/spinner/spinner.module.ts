@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { SpinnerActivityDirective } from './spinner-activity.directive';
-import { SpinnerComponent } from './spinner.component';
+import { SPINNER_DIRECTIVES } from '.';
 
+/**
+ * @deprecated import the components/directives directly or SPINNER_DIRECTIVES for every components/directives
+ */
 @NgModule({
-    imports: [CommonModule, MatProgressSpinnerModule, SpinnerActivityDirective, SpinnerComponent],
-    exports: [SpinnerActivityDirective, SpinnerComponent]
+  imports: [...SPINNER_DIRECTIVES],
+  exports: [...SPINNER_DIRECTIVES]
 })
 export class IgoSpinnerModule {}

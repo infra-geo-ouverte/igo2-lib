@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ColorPickerFormFieldModule } from '@igo2/common';
+import { ColorPickerFormFieldComponent } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { IgoStyleListModule } from './style-list/style-list.module';
@@ -32,7 +32,7 @@ import { StyleService } from './style-service/style.service';
     MatSelectModule,
     MatTooltipModule,
     ReactiveFormsModule,
-    ColorPickerFormFieldModule,
+    ColorPickerFormFieldComponent,
     IgoStyleListModule.forRoot()
   ],
   exports: [

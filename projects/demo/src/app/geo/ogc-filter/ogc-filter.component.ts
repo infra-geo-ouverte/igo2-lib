@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
-import { IgoPanelModule } from '@igo2/common';
+import { PanelComponent } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
 import {
   AnyBaseOgcFilterOptions,
@@ -33,7 +33,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     ExampleViewerComponent,
     MatGridListModule,
     IgoMapModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoFilterModule
   ]
 })

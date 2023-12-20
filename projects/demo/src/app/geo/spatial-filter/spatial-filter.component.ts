@@ -13,7 +13,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import {
   EntityStore,
   EntityStoreWithStrategy,
-  IgoPanelModule
+  PanelComponent
 } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
@@ -70,7 +70,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
     MatGridListModule,
     IgoMapModule,
     IgoQueryModule,
-    IgoPanelModule,
+    PanelComponent,
     IgoFilterModule,
     NgIf,
     IgoFeatureDetailsModule,
