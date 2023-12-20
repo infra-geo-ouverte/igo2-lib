@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService, MessageService } from '@igo2/core';
@@ -7,11 +7,20 @@ import type { IgoMap } from '@igo2/geo';
 import { Clipboard, uuid } from '@igo2/utils';
 
 import { ShareMapService } from '../shared/share-map.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'igo-share-map-api',
-  templateUrl: './share-map-api.component.html',
-  styleUrls: ['./share-map-api.component.scss']
+    selector: 'igo-share-map-api',
+    templateUrl: './share-map-api.component.html',
+    styleUrls: ['./share-map-api.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, NgIf, MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class ShareMapApiComponent implements OnInit {
   public form: UntypedFormGroup;

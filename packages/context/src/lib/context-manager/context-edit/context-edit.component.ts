@@ -7,10 +7,15 @@ import {
 } from '@angular/core';
 
 import { Context } from '../shared/context.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { ContextFormComponent } from '../context-form/context-form.component';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'igo-context-edit',
-  templateUrl: './context-edit.component.html'
+    selector: 'igo-context-edit',
+    templateUrl: './context-edit.component.html',
+    standalone: true,
+    imports: [NgIf, ContextFormComponent, TranslateModule]
 })
 export class ContextEditComponent {
   @Input()

@@ -11,12 +11,22 @@ import { StorageService } from '@igo2/core';
 
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { CollapseDirective } from '../../../../../common/src/lib/collapsible/collapse.directive';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
+import { MatButtonModule } from '@angular/material/button';
+import { NgClass, NgIf } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'igo-context-item',
-  templateUrl: './context-item.component.html',
-  styleUrls: ['./context-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-context-item',
+    templateUrl: './context-item.component.html',
+    styleUrls: ['./context-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgClass, NgIf, MatButtonModule, StopPropagationDirective, MatTooltipModule, MatIconModule, CollapseDirective, TranslateModule]
 })
 export class ContextItemComponent {
   public typePermission = TypePermission;

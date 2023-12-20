@@ -16,11 +16,21 @@ import { take } from 'rxjs/operators';
 import { PoiDialogComponent } from './poi-dialog.component';
 import { Poi } from './shared/poi.interface';
 import { PoiService } from './shared/poi.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgFor } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'igo-poi-button',
-  templateUrl: './poi-button.component.html',
-  styleUrls: ['./poi-button.component.scss']
+    selector: 'igo-poi-button',
+    templateUrl: './poi-button.component.html',
+    styleUrls: ['./poi-button.component.scss'],
+    standalone: true,
+    imports: [MatSelectModule, MatOptionModule, MatButtonModule, StopPropagationDirective, MatIconModule, MatDividerModule, NgFor, TranslateModule]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
   @Input()

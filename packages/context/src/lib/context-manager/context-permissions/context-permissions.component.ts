@@ -7,11 +7,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AuthService } from '@igo2/auth';
 import { ConfigService } from '@igo2/core';
@@ -25,11 +21,27 @@ import {
   ContextPermissionsList,
   ContextProfils
 } from '../shared/context.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { CollapsibleComponent } from '../../../../../common/src/lib/collapsible/collapsible.component';
+import { ListComponent } from '../../../../../common/src/lib/list/list.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatRadioModule } from '@angular/material/radio';
+import { NgIf, NgFor, KeyValuePipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-context-permissions',
-  templateUrl: './context-permissions.component.html',
-  styleUrls: ['./context-permissions.component.scss']
+    selector: 'igo-context-permissions',
+    templateUrl: './context-permissions.component.html',
+    styleUrls: ['./context-permissions.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatRadioModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, NgFor, MatOptionModule, MatButtonModule, ListComponent, CollapsibleComponent, MatListModule, MatIconModule, StopPropagationDirective, MatTooltipModule, KeyValuePipe, TranslateModule]
 })
 export class ContextPermissionsComponent implements OnInit {
   public form: UntypedFormGroup;

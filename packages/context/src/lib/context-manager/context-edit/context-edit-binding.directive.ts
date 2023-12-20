@@ -17,7 +17,8 @@ import { ContextService } from '../shared/context.service';
 import { ContextEditComponent } from './context-edit.component';
 
 @Directive({
-  selector: '[igoContextEditBinding]'
+    selector: '[igoContextEditBinding]',
+    standalone: true
 })
 export class ContextEditBindingDirective implements OnInit, OnDestroy {
   private component: ContextEditComponent;

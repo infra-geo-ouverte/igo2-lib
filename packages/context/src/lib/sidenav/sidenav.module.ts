@@ -13,20 +13,20 @@ import { IgoContextManagerModule } from '../context-manager/context-manager.modu
 import { SidenavComponent } from './sidenav.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatTooltipModule,
-    IgoLanguageModule,
-    PanelComponent,
-    IgoFlexibleModule,
-    IgoFeatureModule,
-    IgoContextManagerModule
-  ],
-  exports: [SidenavComponent],
-  declarations: [SidenavComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        PanelComponent,
+        IgoFlexibleModule,
+        IgoFeatureModule,
+        IgoContextManagerModule,
+        SidenavComponent
+    ],
+    exports: [SidenavComponent]
 })
 export class IgoSidenavModule {
   static forRoot(): ModuleWithProviders<IgoSidenavModule> {

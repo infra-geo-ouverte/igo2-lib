@@ -18,25 +18,25 @@ import { IgoLanguageModule } from '@igo2/core';
 import { ContextImportExportComponent } from './context-import-export/context-import-export.component';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatDividerModule,
-    MatTabsModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
-    IgoLanguageModule,
-    SpinnerComponent,
-    MatTooltipModule
-  ],
-  exports: [ContextImportExportComponent],
-  declarations: [ContextImportExportComponent]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        CommonModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatDividerModule,
+        MatTabsModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatCheckboxModule,
+        IgoLanguageModule,
+        SpinnerComponent,
+        MatTooltipModule,
+        ContextImportExportComponent
+    ],
+    exports: [ContextImportExportComponent]
 })
 export class IgoContextImportExportModule {
   static forRoot(): ModuleWithProviders<IgoContextImportExportModule> {

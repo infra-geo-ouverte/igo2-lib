@@ -1,9 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ConfigService, MessageService } from '@igo2/core';
 import { Layer, VectorLayer } from '@igo2/geo';
@@ -22,11 +18,23 @@ import {
   handleFileImportError,
   handleFileImportSuccess
 } from '../shared/context-import.utils';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { SpinnerComponent } from '../../../../../common/src/lib/spinner/spinner.component';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
-  selector: 'igo-context-import-export',
-  templateUrl: './context-import-export.component.html',
-  styleUrls: ['./context-import-export.component.scss']
+    selector: 'igo-context-import-export',
+    templateUrl: './context-import-export.component.html',
+    styleUrls: ['./context-import-export.component.scss'],
+    standalone: true,
+    imports: [MatButtonToggleModule, NgIf, FormsModule, MatButtonModule, SpinnerComponent, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatDividerModule, NgFor, AsyncPipe, TranslateModule]
 })
 export class ContextImportExportComponent implements OnInit, OnDestroy {
   public form: UntypedFormGroup;
