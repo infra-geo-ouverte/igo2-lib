@@ -9,9 +9,4 @@ export * from './lib/context-map-button/context-map-button.module';
 export * from './lib/share-map/share-map.module';
 export * from './lib/sidenav/sidenav.module';
 
-export * from './lib/context-import-export';
-export * from './lib/context-manager';
-export * from './lib/context-map-button';
-export * from './lib/environment';
-export * from './lib/share-map';
-export * from './lib/sidenav';
+export * from './lib/index';
