@@ -20,32 +20,30 @@ import { DrawStyleService } from './style-service/draw-style.service';
 import { StyleService } from './style-service/style.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IgoLanguageModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatInputModule,
-    MatSelectModule,
-    MatTooltipModule,
-    ReactiveFormsModule,
-    ColorPickerFormFieldComponent,
-    IgoStyleListModule.forRoot()
-  ],
-  exports: [
-    IgoStyleListModule,
-    StyleModalDrawingComponent,
-    StyleModalLayerComponent,
-    StyleModalLayerButtonComponent
-  ],
-  declarations: [
-    StyleModalDrawingComponent,
-    StyleModalLayerComponent,
-    StyleModalLayerButtonComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IgoLanguageModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatInputModule,
+        MatSelectModule,
+        MatTooltipModule,
+        ReactiveFormsModule,
+        ColorPickerFormFieldComponent,
+        IgoStyleListModule.forRoot(),
+        StyleModalDrawingComponent,
+        StyleModalLayerComponent,
+        StyleModalLayerButtonComponent
+    ],
+    exports: [
+        IgoStyleListModule,
+        StyleModalDrawingComponent,
+        StyleModalLayerComponent,
+        StyleModalLayerButtonComponent
+    ]
 })
 export class IgoStyleModule {
   static forRoot(): ModuleWithProviders<IgoStyleModule> {

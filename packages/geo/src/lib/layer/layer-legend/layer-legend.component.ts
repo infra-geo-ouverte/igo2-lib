@@ -26,12 +26,26 @@ import {
   ItemStyleOptions,
   LegendMapViewOptions
 } from '../shared/layers/legend.interface';
+import { SanitizeHtmlPipe } from '../../../../../common/src/lib/custom-html/custom-html.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { ImageErrorDirective } from '../../../../../common/src/lib/image/image-error.directive';
+import { MatOptionModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { CollapseDirective } from '../../../../../common/src/lib/collapsible/collapse.directive';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgFor, NgClass, NgStyle, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-layer-legend',
-  templateUrl: './layer-legend.component.html',
-  styleUrls: ['./layer-legend.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-layer-legend',
+    templateUrl: './layer-legend.component.html',
+    styleUrls: ['./layer-legend.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, NgFor, MatListModule, MatIconModule, CollapseDirective, NgClass, MatFormFieldModule, MatSelectModule, MatTooltipModule, FormsModule, MatOptionModule, ImageErrorDirective, NgStyle, AsyncPipe, TranslateModule, SanitizeHtmlPipe]
 })
 export class LayerLegendComponent implements OnInit, OnDestroy {
   @Input() updateLegendOnResolutionChange: boolean = false;

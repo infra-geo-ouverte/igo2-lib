@@ -9,16 +9,16 @@ import { IgoFeatureModule } from '../feature/feature.module';
 import { ToastComponent } from './toast.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    PanelComponent,
-    IgoFlexibleModule,
-    IgoFeatureModule
-  ],
-  exports: [ToastComponent],
-  declarations: [ToastComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        PanelComponent,
+        IgoFlexibleModule,
+        IgoFeatureModule,
+        ToastComponent
+    ],
+    exports: [ToastComponent]
 })
 export class IgoToastModule {
   static forRoot(): ModuleWithProviders<IgoToastModule> {

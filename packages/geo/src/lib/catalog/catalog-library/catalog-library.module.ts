@@ -23,27 +23,25 @@ import { CatalogLibaryComponent } from './catalog-library.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatListModule,
-    MatTooltipModule,
-    IgoListModule,
-    IgoLanguageModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatSelectModule,
-    MatAutocompleteModule,
-    MatDialogModule
-  ],
-  exports: [CatalogLibaryComponent, AddCatalogDialogComponent],
-  declarations: [
-    CatalogLibaryComponent,
-    CatalogLibaryItemComponent,
-    AddCatalogDialogComponent
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatListModule,
+        MatTooltipModule,
+        IgoListModule,
+        IgoLanguageModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSelectModule,
+        MatAutocompleteModule,
+        MatDialogModule,
+        CatalogLibaryComponent,
+        CatalogLibaryItemComponent,
+        AddCatalogDialogComponent
+    ],
+    exports: [CatalogLibaryComponent, AddCatalogDialogComponent]
 })
 export class IgoCatalogLibraryModule {}

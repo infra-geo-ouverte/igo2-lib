@@ -7,14 +7,20 @@ import * as olproj from 'ol/proj';
 import { IgoMap } from '../shared/map';
 import { MapExtent } from '../shared/map.interface';
 import { HomeExtentButtonOptions } from './home-extent-button.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 /*
 Button to center the map to the home extent
 */
 @Component({
-  selector: 'igo-home-extent-button',
-  templateUrl: './home-extent-button.component.html',
-  styleUrls: ['./home-extent-button.component.scss']
+    selector: 'igo-home-extent-button',
+    templateUrl: './home-extent-button.component.html',
+    styleUrls: ['./home-extent-button.component.scss'],
+    standalone: true,
+    imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class HomeExtentButtonComponent {
   @Input() map: IgoMap;

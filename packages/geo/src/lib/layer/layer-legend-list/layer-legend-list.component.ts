@@ -18,12 +18,22 @@ import {
 import { debounce } from 'rxjs/operators';
 
 import { Layer } from '../shared/layers/layer';
+import { TranslateModule } from '@ngx-translate/core';
+import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
+import { LayerLegendItemComponent } from '../layer-legend-item/layer-legend-item.component';
+import { ListComponent } from '../../../../../common/src/lib/list/list.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-layer-legend-list',
-  templateUrl: './layer-legend-list.component.html',
-  styleUrls: ['./layer-legend-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-layer-legend-list',
+    templateUrl: './layer-legend-list.component.html',
+    styleUrls: ['./layer-legend-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatSlideToggleModule, MatTooltipModule, MatDividerModule, ListComponent, NgFor, LayerLegendItemComponent, ListItemDirective, AsyncPipe, TranslateModule]
 })
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;

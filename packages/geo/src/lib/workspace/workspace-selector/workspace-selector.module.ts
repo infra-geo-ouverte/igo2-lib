@@ -7,8 +7,7 @@ import { WorkspaceSelectorDirective } from './workspace-selector.directive';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule],
-  exports: [WorkspaceSelectorDirective],
-  declarations: [WorkspaceSelectorDirective]
+    imports: [CommonModule, WorkspaceSelectorDirective],
+    exports: [WorkspaceSelectorDirective]
 })
 export class IgoWorkspaceSelectorModule {}

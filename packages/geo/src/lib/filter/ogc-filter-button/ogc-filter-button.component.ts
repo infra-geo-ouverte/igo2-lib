@@ -11,12 +11,22 @@ import {
   IgoOgcSelector,
   OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
+import { OgcFilterableItemComponent } from '../ogc-filterable-item/ogc-filterable-item.component';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'igo-ogc-filter-button',
-  templateUrl: './ogc-filter-button.component.html',
-  styleUrls: ['./ogc-filter-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-ogc-filter-button',
+    templateUrl: './ogc-filter-button.component.html',
+    styleUrls: ['./ogc-filter-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, MatBadgeModule, OgcFilterableItemComponent, ListItemDirective, TranslateModule]
 })
 export class OgcFilterButtonComponent implements OnInit {
   public options: OgcFilterableDataSourceOptions;

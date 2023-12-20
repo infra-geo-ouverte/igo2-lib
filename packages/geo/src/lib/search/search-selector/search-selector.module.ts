@@ -16,18 +16,18 @@ import { SearchSelectorComponent } from './search-selector.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatRadioModule,
-    MatTabsModule,
-    MatCheckboxModule,
-    IgoLanguageModule
-  ],
-  exports: [SearchSelectorComponent],
-  declarations: [SearchSelectorComponent]
+    imports: [
+        CommonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatRadioModule,
+        MatTabsModule,
+        MatCheckboxModule,
+        IgoLanguageModule,
+        SearchSelectorComponent
+    ],
+    exports: [SearchSelectorComponent]
 })
 export class IgoSearchSelectorModule {}

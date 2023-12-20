@@ -12,14 +12,14 @@ import { FeatureDetailsDirective } from './feature-details.directive';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    IgoLanguageModule,
-    IgoKeyValueModule,
-    IgoImageModule
-  ],
-  exports: [FeatureDetailsComponent, FeatureDetailsDirective],
-  declarations: [FeatureDetailsComponent, FeatureDetailsDirective]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        IgoLanguageModule,
+        IgoKeyValueModule,
+        IgoImageModule,
+        FeatureDetailsComponent, FeatureDetailsDirective
+    ],
+    exports: [FeatureDetailsComponent, FeatureDetailsDirective]
 })
 export class IgoFeatureDetailsModule {}

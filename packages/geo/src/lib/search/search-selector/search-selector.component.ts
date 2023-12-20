@@ -13,6 +13,13 @@ import { distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -23,10 +30,12 @@ import { SEARCH_TYPES } from '../shared/search.enums';
  * more than one search source enabled.
  */
 @Component({
-  selector: 'igo-search-selector',
-  templateUrl: './search-selector.component.html',
-  styleUrls: ['./search-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-search-selector',
+    templateUrl: './search-selector.component.html',
+    styleUrls: ['./search-selector.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButtonModule, MatTooltipModule, MatMenuModule, MatIconModule, MatRadioModule, NgFor, AsyncPipe, TranslateModule]
 })
 export class SearchSelectorComponent implements OnInit, OnDestroy {
   readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(

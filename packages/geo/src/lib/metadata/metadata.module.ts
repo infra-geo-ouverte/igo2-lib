@@ -13,16 +13,16 @@ import {
 } from './metadata-button/metadata-button.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    IgoLanguageModule,
-    MatDialogModule
-  ],
-  exports: [MetadataButtonComponent, MetadataAbstractComponent],
-  declarations: [MetadataButtonComponent, MetadataAbstractComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        MatDialogModule,
+        MetadataButtonComponent, MetadataAbstractComponent
+    ],
+    exports: [MetadataButtonComponent, MetadataAbstractComponent]
 })
 export class IgoMetadataModule {
   static forRoot(): ModuleWithProviders<IgoMetadataModule> {

@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 
 import { asArray as ColorAsArray } from 'ol/color';
 import olStyle from 'ol/style/Style';
@@ -9,11 +9,18 @@ import {
   LayerMatDialogData,
   StyleModalData
 } from '../shared/style-modal.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { ColorPickerFormFieldComponent } from '../../../../../../common/src/lib/color-picker-form-field/color-picker-form-field.component';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'igo-style-modal-layer',
-  templateUrl: './style-modal-layer.component.html',
-  styleUrls: ['./style-modal-layer.component.scss']
+    selector: 'igo-style-modal-layer',
+    templateUrl: './style-modal-layer.component.html',
+    styleUrls: ['./style-modal-layer.component.scss'],
+    standalone: true,
+    imports: [MatDialogTitle, MatDialogContent, FormsModule, ReactiveFormsModule, NgIf, MatIconModule, ColorPickerFormFieldComponent, MatDialogActions, MatButtonModule, TranslateModule]
 })
 export class StyleModalLayerComponent implements OnInit {
   @Input() confirmFlag: boolean = false;

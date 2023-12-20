@@ -9,8 +9,7 @@ import { FeatureFormComponent } from './feature-form.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoFormModule],
-  exports: [IgoFormModule, FeatureFormComponent],
-  declarations: [FeatureFormComponent]
+    imports: [CommonModule, IgoFormModule, FeatureFormComponent],
+    exports: [IgoFormModule, FeatureFormComponent]
 })
 export class IgoFeatureFormModule {}

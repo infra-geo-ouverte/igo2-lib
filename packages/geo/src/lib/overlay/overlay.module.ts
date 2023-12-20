@@ -3,9 +3,8 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { OverlayDirective } from './shared/overlay.directive';
 
 @NgModule({
-  imports: [],
-  exports: [OverlayDirective],
-  declarations: [OverlayDirective]
+    imports: [OverlayDirective],
+    exports: [OverlayDirective]
 })
 export class IgoOverlayModule {
   static forRoot(): ModuleWithProviders<IgoOverlayModule> {

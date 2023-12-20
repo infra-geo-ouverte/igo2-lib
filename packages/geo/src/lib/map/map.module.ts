@@ -25,49 +25,47 @@ import { WakeLockButtonComponent } from './wake-lock-button/wake-lock-button.com
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoLanguageModule,
-    IgoConfirmDialogModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule
-  ],
-  exports: [
-    MapBrowserComponent,
-    ZoomButtonComponent,
-    GeolocateButtonComponent,
-    HomeExtentButtonComponent,
-    RotationButtonComponent,
-    InfoSectionComponent,
-    BaseLayersSwitcherComponent,
-    MiniBaseMapComponent,
-    MapOfflineDirective,
-    OfflineButtonComponent,
-    WakeLockButtonComponent,
-    PointerPositionDirective,
-    HoverFeatureDirective,
-    SwipeControlComponent,
-    MapCenterComponent,
-    MenuButtonComponent
-  ],
-  declarations: [
-    MapBrowserComponent,
-    ZoomButtonComponent,
-    GeolocateButtonComponent,
-    HomeExtentButtonComponent,
-    RotationButtonComponent,
-    InfoSectionComponent,
-    BaseLayersSwitcherComponent,
-    MiniBaseMapComponent,
-    MapOfflineDirective,
-    OfflineButtonComponent,
-    WakeLockButtonComponent,
-    PointerPositionDirective,
-    HoverFeatureDirective,
-    SwipeControlComponent,
-    MapCenterComponent,
-    MenuButtonComponent
-  ]
+    imports: [
+        CommonModule,
+        IgoLanguageModule,
+        IgoConfirmDialogModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MapBrowserComponent,
+        ZoomButtonComponent,
+        GeolocateButtonComponent,
+        HomeExtentButtonComponent,
+        RotationButtonComponent,
+        InfoSectionComponent,
+        BaseLayersSwitcherComponent,
+        MiniBaseMapComponent,
+        MapOfflineDirective,
+        OfflineButtonComponent,
+        WakeLockButtonComponent,
+        PointerPositionDirective,
+        HoverFeatureDirective,
+        SwipeControlComponent,
+        MapCenterComponent,
+        MenuButtonComponent
+    ],
+    exports: [
+        MapBrowserComponent,
+        ZoomButtonComponent,
+        GeolocateButtonComponent,
+        HomeExtentButtonComponent,
+        RotationButtonComponent,
+        InfoSectionComponent,
+        BaseLayersSwitcherComponent,
+        MiniBaseMapComponent,
+        MapOfflineDirective,
+        OfflineButtonComponent,
+        WakeLockButtonComponent,
+        PointerPositionDirective,
+        HoverFeatureDirective,
+        SwipeControlComponent,
+        MapCenterComponent,
+        MenuButtonComponent
+    ]
 })
 export class IgoMapModule {}

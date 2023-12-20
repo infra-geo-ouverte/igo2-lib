@@ -19,11 +19,18 @@ import {
   StepFeatureStore,
   StopsStore
 } from '../shared/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'igo-directions-buttons',
-  templateUrl: './directions-buttons.component.html',
-  styleUrls: ['./directions-buttons.component.scss']
+    selector: 'igo-directions-buttons',
+    templateUrl: './directions-buttons.component.html',
+    styleUrls: ['./directions-buttons.component.scss'],
+    standalone: true,
+    imports: [MatButtonModule, MatTooltipModule, MatIconModule, NgIf, AsyncPipe, TranslateModule]
 })
 export class DirectionsButtonsComponent {
   get activeRoute() {

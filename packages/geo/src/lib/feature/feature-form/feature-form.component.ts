@@ -15,6 +15,8 @@ import { BehaviorSubject } from 'rxjs';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
+import { AsyncPipe } from '@angular/common';
+import { FormComponent as FormComponent_1 } from '../../../../../common/src/lib/form/form/form.component';
 
 /**
  * A configurable form, optionnally bound to a feature.
@@ -24,10 +26,12 @@ import { Feature, FeatureMeta } from '../shared/feature.interfaces';
  * as well as disabling the selection of another feature.
  */
 @Component({
-  selector: 'igo-feature-form',
-  templateUrl: './feature-form.component.html',
-  styleUrls: ['./feature-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-feature-form',
+    templateUrl: './feature-form.component.html',
+    styleUrls: ['./feature-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [FormComponent_1, AsyncPipe]
 })
 export class FeatureFormComponent {
   /**

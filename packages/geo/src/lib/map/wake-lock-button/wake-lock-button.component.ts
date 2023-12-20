@@ -5,11 +5,18 @@ import { userAgent } from '@igo2/utils';
 
 import NoSleep from 'nosleep.js';
 import { BehaviorSubject } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'igo-wake-lock-button',
-  templateUrl: './wake-lock-button.component.html',
-  styleUrls: ['./wake-lock-button.component.scss']
+    selector: 'igo-wake-lock-button',
+    templateUrl: './wake-lock-button.component.html',
+    styleUrls: ['./wake-lock-button.component.scss'],
+    standalone: true,
+    imports: [MatButtonModule, MatTooltipModule, MatIconModule, AsyncPipe, TranslateModule]
 })
 
 /**

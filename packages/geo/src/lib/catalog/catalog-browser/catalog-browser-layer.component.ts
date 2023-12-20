@@ -18,15 +18,27 @@ import { Layer, TooltipType } from '../../layer/shared/layers';
 import { IgoMap } from '../../map/shared/map';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { AddedChangeEmitter, CatalogItemLayer } from '../shared';
+import { TranslateModule } from '@ngx-translate/core';
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
+import { IgoBadgeIconDirective } from '../../../../../common/src/lib/badge-icon/badge-icon.directive';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MetadataButtonComponent } from '../../metadata/metadata-button/metadata-button.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 /**
  * Catalog browser layer item
  */
 @Component({
-  selector: 'igo-catalog-browser-layer',
-  templateUrl: './catalog-browser-layer.component.html',
-  styleUrls: ['./catalog-browser-layer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-catalog-browser-layer',
+    templateUrl: './catalog-browser-layer.component.html',
+    styleUrls: ['./catalog-browser-layer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgIf, MatIconModule, NgClass, MatTooltipModule, MatButtonModule, MetadataButtonComponent, MatBadgeModule, IgoBadgeIconDirective, LayerLegendComponent, AsyncPipe, TranslateModule]
 })
 export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);

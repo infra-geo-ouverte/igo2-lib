@@ -24,38 +24,36 @@ import { DirectionsComponent } from './directions.component';
 import { provideDirectionsSourceService } from './shared/directions-source.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    DragDropModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatListModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatSlideToggleModule,
-    MatTooltipModule,
-    MatAutocompleteModule,
-    IgoLanguageModule,
-    IgoSearchModule.forRoot()
-  ],
-  exports: [
-    DirectionsComponent,
-    DirectionsInputsComponent,
-    DirectionsButtonsComponent,
-    DirectionsResultsComponent
-  ],
-  declarations: [
-    DirectionsComponent,
-    DirectionsInputsComponent,
-    DirectionsButtonsComponent,
-    DirectionsResultsComponent
-  ],
-  providers: [provideDirectionsSourceService()]
+    imports: [
+        CommonModule,
+        DragDropModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatListModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatSlideToggleModule,
+        MatTooltipModule,
+        MatAutocompleteModule,
+        IgoLanguageModule,
+        IgoSearchModule.forRoot(),
+        DirectionsComponent,
+        DirectionsInputsComponent,
+        DirectionsButtonsComponent,
+        DirectionsResultsComponent
+    ],
+    exports: [
+        DirectionsComponent,
+        DirectionsInputsComponent,
+        DirectionsButtonsComponent,
+        DirectionsResultsComponent
+    ],
+    providers: [provideDirectionsSourceService()]
 })
 export class IgoDirectionsModule {
   static forRoot(): ModuleWithProviders<IgoDirectionsModule> {

@@ -7,12 +7,19 @@ import {
 
 import { VectorLayer } from '../shared/layers/vector-layer';
 import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'igo-track-feature-button',
-  templateUrl: './track-feature-button.component.html',
-  styleUrls: ['./track-feature-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-track-feature-button',
+    templateUrl: './track-feature-button.component.html',
+    styleUrls: ['./track-feature-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class TrackFeatureButtonComponent implements OnInit {
   @Input() layer: VectorLayer;

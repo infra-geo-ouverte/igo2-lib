@@ -41,12 +41,22 @@ import { getTooltipsOfOlGeometry } from '../../measure';
 import { QueryableDataSourceOptions } from '../../query/shared';
 import { SearchResult } from '../shared/search.interfaces';
 import { SaveFeatureDialogComponent } from './save-feature-dialog.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { IgoBadgeIconDirective } from '../../../../../common/src/lib/badge-icon/badge-icon.directive';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-search-add-button',
-  templateUrl: './search-results-add-button.component.html',
-  styleUrls: ['./search-results-add-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-search-add-button',
+    templateUrl: './search-results-add-button.component.html',
+    styleUrls: ['./search-results-add-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, StopPropagationDirective, MatTooltipModule, MatIconModule, MatBadgeModule, IgoBadgeIconDirective, AsyncPipe, TranslateModule]
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   public tooltip$: BehaviorSubject<string> = new BehaviorSubject(

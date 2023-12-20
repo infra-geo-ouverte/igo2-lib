@@ -8,7 +8,8 @@ import { Layer } from '../shared/layers/layer';
 import { LayerLegendListComponent } from './layer-legend-list.component';
 
 @Directive({
-  selector: '[igoLayerLegendListBinding]'
+    selector: '[igoLayerLegendListBinding]',
+    standalone: true
 })
 export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
   private component: LayerLegendListComponent;

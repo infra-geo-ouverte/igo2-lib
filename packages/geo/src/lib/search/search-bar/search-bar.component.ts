@@ -9,10 +9,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {
-  FloatLabelType,
-  MatFormFieldAppearance
-} from '@angular/material/form-field';
+import { FloatLabelType, MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
 
 import { EntityStore } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
@@ -24,6 +21,15 @@ import { SearchSourceService } from '../shared/search-source.service';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { SearchSettingsComponent } from '../search-settings/search-settings.component';
+import { SearchSelectorComponent } from '../search-selector/search-selector.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { NgClass, NgIf, AsyncPipe } from '@angular/common';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -31,10 +37,12 @@ import { SearchService } from '../shared/search.service';
  * into that store. An event is always emitted when a research is completed.
  */
 @Component({
-  selector: 'igo-search-bar',
-  templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-search-bar',
+    templateUrl: './search-bar.component.html',
+    styleUrls: ['./search-bar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgClass, MatFormFieldModule, NgIf, MatInputModule, MatButtonModule, MatTooltipModule, MatIconModule, MatDividerModule, SearchSelectorComponent, SearchSettingsComponent, AsyncPipe, TranslateModule]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   /**

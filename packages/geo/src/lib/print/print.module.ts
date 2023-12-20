@@ -16,21 +16,21 @@ import { PrintFormComponent } from './print-form/print-form.component';
 import { PrintComponent } from './print/print.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSlideToggleModule,
-    IgoLanguageModule,
-    IgoKeyValueModule
-  ],
-  exports: [PrintComponent, PrintFormComponent],
-  declarations: [PrintComponent, PrintFormComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSlideToggleModule,
+        IgoLanguageModule,
+        IgoKeyValueModule,
+        PrintComponent, PrintFormComponent
+    ],
+    exports: [PrintComponent, PrintFormComponent]
 })
 export class IgoPrintModule {}

@@ -8,9 +8,10 @@ import { IgoMap } from '../shared/map';
  * Tool to display the center of the map
  */
 @Component({
-  selector: 'igo-map-center',
-  templateUrl: './map-center.component.html',
-  styleUrls: ['./map-center.component.scss']
+    selector: 'igo-map-center',
+    templateUrl: './map-center.component.html',
+    styleUrls: ['./map-center.component.scss'],
+    standalone: true
 })
 export class MapCenterComponent implements AfterViewInit, OnDestroy {
   /**

@@ -10,13 +10,13 @@ import { ConfirmationPopupComponent } from './confirmation-popup.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatButtonToggleModule
-  ],
-  exports: [ConfirmationPopupComponent],
-  declarations: [ConfirmationPopupComponent]
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatButtonToggleModule,
+        ConfirmationPopupComponent
+    ],
+    exports: [ConfirmationPopupComponent]
 })
 export class IgoConfirmationPopupModule {}

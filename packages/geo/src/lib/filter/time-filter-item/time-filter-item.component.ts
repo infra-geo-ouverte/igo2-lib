@@ -5,11 +5,22 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { TimeFilterableDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterService } from '../shared/time-filter.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { TimeFilterFormComponent } from '../time-filter-form/time-filter-form.component';
+import { LayerLegendComponent } from '../../layer/layer-legend/layer-legend.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { CollapseDirective } from '../../../../../common/src/lib/collapsible/collapse.directive';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgStyle, NgClass, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-time-filter-item',
-  templateUrl: './time-filter-item.component.html',
-  styleUrls: ['./time-filter-item.component.scss']
+    selector: 'igo-time-filter-item',
+    templateUrl: './time-filter-item.component.html',
+    styleUrls: ['./time-filter-item.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatListModule, MatIconModule, CollapseDirective, NgStyle, MatButtonModule, MatTooltipModule, NgClass, LayerLegendComponent, TimeFilterFormComponent, AsyncPipe, TranslateModule]
 })
 export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';

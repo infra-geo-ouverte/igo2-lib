@@ -41,14 +41,14 @@ describe('SearchSettingsComponent', () => {
     spy.getEnabledSources = jasmine.createSpy().and.returnValue([]);
 
     TestBed.configureTestingModule({
-      imports: [
+    imports: [
         HttpClientModule,
         TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
-          }
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         }),
         IgoLanguageModule,
         CommonModule,
@@ -60,16 +60,16 @@ describe('SearchSettingsComponent', () => {
         MatCheckboxModule,
         MatDividerModule,
         MatSlideToggleModule,
-        MatIconTestingModule
-      ],
-      declarations: [SearchSettingsComponent],
-      providers: [
+        MatIconTestingModule,
+        SearchSettingsComponent
+    ],
+    providers: [
         { provide: SearchSourceService, useValue: spy },
         provideDefaultIChercheSearchResultFormatter(),
         provideDefaultCoordinatesSearchResultFormatter(),
         provideILayerSearchResultFormatter()
-      ]
-    }).compileComponents();
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {

@@ -5,7 +5,7 @@ import {
   Input,
   ViewEncapsulation
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogTitle, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import {
@@ -13,12 +13,19 @@ import {
   MetadataOptions
 } from '../shared/metadata.interface';
 import { MetadataService } from '../shared/metadata.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'igo-metadata-button',
-  templateUrl: './metadata-button.component.html',
-  styleUrls: ['./metadata-button.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-metadata-button',
+    templateUrl: './metadata-button.component.html',
+    styleUrls: ['./metadata-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class MetadataButtonComponent {
   @Input()
@@ -77,10 +84,12 @@ export class MetadataButtonComponent {
 }
 
 @Component({
-  selector: 'igo-metadata-abstract',
-  templateUrl: './metadata-abstract.component.html',
-  styleUrls: ['./metadata-abstract.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'igo-metadata-abstract',
+    templateUrl: './metadata-abstract.component.html',
+    styleUrls: ['./metadata-abstract.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: true,
+    imports: [MatDialogTitle, MatButtonModule, MatDialogClose, NgIf, MatDialogContent]
 })
 export class MetadataAbstractComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: MetadataOptions) {}

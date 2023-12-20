@@ -8,10 +8,9 @@ import { QueryDirective } from './shared/query.directive';
 import { QueryService } from './shared/query.service';
 
 @NgModule({
-  imports: [CommonModule, IgoLanguageModule, IgoMessageModule],
-  exports: [QueryDirective],
-  declarations: [QueryDirective],
-  providers: [QueryService]
+    imports: [CommonModule, IgoLanguageModule, IgoMessageModule, QueryDirective],
+    exports: [QueryDirective],
+    providers: [QueryService]
 })
 export class IgoQueryModule {
   static forRoot(): ModuleWithProviders<IgoQueryModule> {

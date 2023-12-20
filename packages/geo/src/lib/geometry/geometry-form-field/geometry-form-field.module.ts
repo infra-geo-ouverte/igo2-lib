@@ -16,18 +16,18 @@ import { GeometryFormFieldComponent } from './geometry-form-field.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    IgoLanguageModule
-  ],
-  exports: [GeometryFormFieldComponent, GeometryFormFieldInputComponent],
-  declarations: [GeometryFormFieldComponent, GeometryFormFieldInputComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        IgoLanguageModule,
+        GeometryFormFieldComponent, GeometryFormFieldInputComponent
+    ],
+    exports: [GeometryFormFieldComponent, GeometryFormFieldInputComponent]
 })
 export class IgoGeometryFormFieldModule {}

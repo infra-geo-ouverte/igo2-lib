@@ -38,7 +38,8 @@ import { layerIsQueryable, olLayerFeatureIsQueryable } from './query.utils';
  * the layer level.
  */
 @Directive({
-  selector: '[igoQuery]'
+    selector: '[igoQuery]',
+    standalone: true
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
   /**

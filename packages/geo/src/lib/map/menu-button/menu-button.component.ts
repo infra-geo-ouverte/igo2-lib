@@ -1,11 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgClass } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'igo-menu-button',
-  templateUrl: './menu-button.component.html',
-  styleUrls: ['./menu-button.component.scss']
+    selector: 'igo-menu-button',
+    templateUrl: './menu-button.component.html',
+    styleUrls: ['./menu-button.component.scss'],
+    standalone: true,
+    imports: [MatButtonModule, NgClass, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class MenuButtonComponent {
   @Input()

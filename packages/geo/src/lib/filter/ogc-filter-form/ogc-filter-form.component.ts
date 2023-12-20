@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { FloatLabelType, MatFormFieldModule } from '@angular/material/form-field';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
@@ -12,11 +12,24 @@ import {
 } from '../../filter/shared/ogc-filter.interface';
 import { IgoMap } from '../../map/shared/map';
 import { WktService } from '../../wkt/shared/wkt.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { NgClass, NgIf, NgFor, AsyncPipe, KeyValuePipe } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
-  selector: 'igo-ogc-filter-form',
-  templateUrl: './ogc-filter-form.component.html',
-  styleUrls: ['./ogc-filter-form.component.scss']
+    selector: 'igo-ogc-filter-form',
+    templateUrl: './ogc-filter-form.component.html',
+    styleUrls: ['./ogc-filter-form.component.scss'],
+    standalone: true,
+    imports: [MatCheckboxModule, MatTooltipModule, MatFormFieldModule, NgClass, MatSelectModule, MatOptionModule, NgIf, MatInputModule, MatAutocompleteModule, NgFor, MatButtonModule, MatIconModule, OgcFilterTimeComponent, AsyncPipe, KeyValuePipe, TranslateModule]
 })
 export class OgcFilterFormComponent implements OnInit {
   ogcFilterOperator = OgcFilterOperator;

@@ -31,33 +31,31 @@ import { SearchResultsComponent } from './search-results.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoCollapsibleModule,
-    IgoLanguageModule,
-    IgoListModule,
-    IgoMatBadgeIconModule,
-    IgoMetadataModule,
-    IgoStopPropagationModule,
-    MatAutocompleteModule,
-    MatBadgeModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatSelectModule,
-    MatTabsModule,
-    MatTooltipModule,
-    ReactiveFormsModule
-  ],
-  exports: [SearchResultsComponent, SearchResultAddButtonComponent],
-  declarations: [
-    SearchResultsComponent,
-    SearchResultsItemComponent,
-    SearchResultAddButtonComponent,
-    SaveFeatureDialogComponent
-  ]
+    imports: [
+        CommonModule,
+        IgoCollapsibleModule,
+        IgoLanguageModule,
+        IgoListModule,
+        IgoMatBadgeIconModule,
+        IgoMetadataModule,
+        IgoStopPropagationModule,
+        MatAutocompleteModule,
+        MatBadgeModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        MatSelectModule,
+        MatTabsModule,
+        MatTooltipModule,
+        ReactiveFormsModule,
+        SearchResultsComponent,
+        SearchResultsItemComponent,
+        SearchResultAddButtonComponent,
+        SaveFeatureDialogComponent
+    ],
+    exports: [SearchResultsComponent, SearchResultAddButtonComponent]
 })
 export class IgoSearchResultsModule {}

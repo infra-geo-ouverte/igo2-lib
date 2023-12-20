@@ -11,7 +11,8 @@ import { RouteService } from '@igo2/core';
 import { SearchBarComponent } from './search-bar.component';
 
 @Directive({
-  selector: '[igoSearchUrlParam]'
+    selector: '[igoSearchUrlParam]',
+    standalone: true
 })
 export class SearchUrlParamDirective implements OnInit {
   constructor(

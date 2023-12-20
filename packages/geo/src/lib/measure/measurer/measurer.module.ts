@@ -23,27 +23,25 @@ import { MeasurerComponent } from './measurer.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatDialogModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSlideToggleModule,
-    MatDividerModule,
-    IgoLanguageModule,
-    IgoEntityTableModule
-  ],
-  declarations: [
-    MeasureFormatPipe,
-    MeasurerItemComponent,
-    MeasurerComponent,
-    MeasurerDialogComponent
-  ],
-  exports: [MeasureFormatPipe, MeasurerComponent]
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatDialogModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatSlideToggleModule,
+        MatDividerModule,
+        IgoLanguageModule,
+        IgoEntityTableModule,
+        MeasureFormatPipe,
+        MeasurerItemComponent,
+        MeasurerComponent,
+        MeasurerDialogComponent
+    ],
+    exports: [MeasureFormatPipe, MeasurerComponent]
 })
 export class IgoMeasurerModule {}

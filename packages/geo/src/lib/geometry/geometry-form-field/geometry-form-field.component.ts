@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IgoFormFieldComponent } from '@igo2/common';
 
@@ -17,6 +17,13 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { GeometryFormFieldInputComponent } from './geometry-form-field-input.component';
 
 /**
  * This input allows a user to draw a new geometry or to edit
@@ -24,10 +31,12 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
  */
 @IgoFormFieldComponent('geometry')
 @Component({
-  selector: 'igo-geometry-form-field',
-  templateUrl: './geometry-form-field.component.html',
-  styleUrls: ['./geometry-form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-geometry-form-field',
+    templateUrl: './geometry-form-field.component.html',
+    styleUrls: ['./geometry-form-field.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [GeometryFormFieldInputComponent, FormsModule, ReactiveFormsModule, NgIf, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatIconModule, AsyncPipe, TranslateModule]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(

@@ -10,15 +10,23 @@ import { getEntityTitle } from '@igo2/common';
 
 import { IgoMap } from '../../map/shared/map';
 import { Catalog } from '../shared/catalog.abstract';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 /**
  * Catalog library item
  */
 @Component({
-  selector: 'igo-catalog-library-item',
-  templateUrl: './catalog-library-item.component.html',
-  styleUrls: ['./catalog-library-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-catalog-library-item',
+    templateUrl: './catalog-library-item.component.html',
+    styleUrls: ['./catalog-library-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgIf, MatIconModule, MatTooltipModule, MatButtonModule, TranslateModule]
 })
 export class CatalogLibaryItemComponent {
   /**

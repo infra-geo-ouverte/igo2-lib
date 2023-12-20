@@ -14,10 +14,13 @@ import {
   PrintResolution,
   PrintSaveImageFormat
 } from '../shared/print.type';
+import { PrintFormComponent } from '../print-form/print-form.component';
 
 @Component({
-  selector: 'igo-print',
-  templateUrl: './print.component.html'
+    selector: 'igo-print',
+    templateUrl: './print.component.html',
+    standalone: true,
+    imports: [PrintFormComponent]
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);

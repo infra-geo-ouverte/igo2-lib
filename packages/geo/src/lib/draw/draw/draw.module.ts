@@ -28,34 +28,32 @@ import { DrawComponent } from './draw.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatListModule,
-    MatSelectModule,
-    MatSlideToggleModule,
-    MatDialogModule,
-    IgoLanguageModule,
-    IgoEntityTableModule,
-    MatRadioModule,
-    MatCheckboxModule
-  ],
-  declarations: [
-    DrawComponent,
-    DrawPopupComponent,
-    DrawLayerPopupComponent,
-    DrawShorcutsComponent
-  ],
-  exports: [DrawComponent]
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        CommonModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatDividerModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatListModule,
+        MatSelectModule,
+        MatSlideToggleModule,
+        MatDialogModule,
+        IgoLanguageModule,
+        IgoEntityTableModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        DrawComponent,
+        DrawPopupComponent,
+        DrawLayerPopupComponent,
+        DrawShorcutsComponent
+    ],
+    exports: [DrawComponent]
 })
 export class IgoDrawModule {}

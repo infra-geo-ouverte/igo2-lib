@@ -7,17 +7,28 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { FloatLabelType, MatFormFieldModule } from '@angular/material/form-field';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { LayerListControlsOptions } from './layer-list-tool.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { IgoBadgeIconDirective } from '../../../../../common/src/lib/badge-icon/badge-icon.directive';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'igo-layer-list-tool',
-  templateUrl: './layer-list-tool.component.html',
-  styleUrls: ['./layer-list-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-layer-list-tool',
+    templateUrl: './layer-list-tool.component.html',
+    styleUrls: ['./layer-list-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatFormFieldModule, MatInputModule, FormsModule, MatTooltipModule, NgIf, MatButtonModule, MatIconModule, MatBadgeModule, IgoBadgeIconDirective, TranslateModule]
 })
 export class LayerListToolComponent implements OnInit, OnDestroy {
   public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);

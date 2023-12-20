@@ -15,11 +15,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
@@ -87,30 +83,40 @@ import { DDtoDMS, createInteractionStyle } from '../shared/draw.utils';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { EntityTableComponent } from '../../../../../common/src/lib/entity/entity-table/entity-table.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
-  selector: 'igo-draw',
-  animations: [
-    trigger('openClose', [
-      state(
-        'open',
-        style({
-          opacity: 1
-        })
-      ),
-      state(
-        'closed',
-        style({
-          opacity: 0
-        })
-      ),
-      transition('open => closed', [animate('600ms ease')]),
-      transition('closed => open', [animate('800ms ease')])
-    ])
-  ],
-  templateUrl: './draw.component.html',
-  styleUrls: ['./draw.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-draw',
+    animations: [
+        trigger('openClose', [
+            state('open', style({
+                opacity: 1
+            })),
+            state('closed', style({
+                opacity: 0
+            })),
+            transition('open => closed', [animate('600ms ease')]),
+            transition('closed => open', [animate('800ms ease')])
+        ])
+    ],
+    templateUrl: './draw.component.html',
+    styleUrls: ['./draw.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButtonToggleModule, MatSlideToggleModule, NgIf, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatSelectModule, NgFor, MatOptionModule, MatDividerModule, MatButtonModule, MatTooltipModule, MatIconModule, EntityTableComponent, MatBadgeModule, AsyncPipe, TranslateModule]
 })
 export class DrawComponent implements OnInit, OnDestroy {
   /**

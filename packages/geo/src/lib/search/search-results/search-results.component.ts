@@ -27,6 +27,13 @@ import { Research, SearchResult } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 import { SearchSource } from '../shared/sources/source';
 import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
+import { SearchResultsItemComponent } from './search-results-item.component';
+import { CollapsibleComponent } from '../../../../../common/src/lib/collapsible/collapsible.component';
+import { ListComponent } from '../../../../../common/src/lib/list/list.component';
+import { NgIf, NgFor, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -38,10 +45,12 @@ export enum SearchResultMode {
  * This component is dumb and only emits events.
  */
 @Component({
-  selector: 'igo-search-results',
-  templateUrl: './search-results.component.html',
-  styleUrls: ['./search-results.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-search-results',
+    templateUrl: './search-results.component.html',
+    styleUrls: ['./search-results.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, ListComponent, NgFor, CollapsibleComponent, NgTemplateOutlet, SearchResultsItemComponent, ListItemDirective, MatTabsModule, AsyncPipe, TranslateModule]
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
   private showResultsCount: boolean = true;

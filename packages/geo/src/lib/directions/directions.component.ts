@@ -48,11 +48,18 @@ import {
   StopsFeatureStore,
   StopsStore
 } from './shared/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { DirectionsResultsComponent } from './directions-results/directions-results.component';
+import { DirectionsInputsComponent } from './directions-inputs/directions-inputs.component';
+import { DirectionsButtonsComponent } from './directions-buttons/directions-buttons.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'igo-directions',
-  templateUrl: './directions.component.html',
-  styleUrls: ['./directions.component.scss']
+    selector: 'igo-directions',
+    templateUrl: './directions.component.html',
+    styleUrls: ['./directions.component.scss'],
+    standalone: true,
+    imports: [MatSlideToggleModule, DirectionsButtonsComponent, DirectionsInputsComponent, DirectionsResultsComponent, TranslateModule]
 })
 export class DirectionsComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<Stop>;

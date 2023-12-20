@@ -1,10 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MediaService } from '@igo2/core';
 
@@ -19,11 +14,21 @@ import {
   PrintResolution,
   PrintSaveImageFormat
 } from '../shared/print.type';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NgIf, NgFor, AsyncPipe, KeyValuePipe } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'igo-print-form',
-  templateUrl: './print-form.component.html',
-  styleUrls: ['./print-form.component.scss']
+    selector: 'igo-print-form',
+    templateUrl: './print-form.component.html',
+    styleUrls: ['./print-form.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, NgIf, MatSlideToggleModule, MatSelectModule, NgFor, MatOptionModule, MatButtonModule, AsyncPipe, KeyValuePipe, TranslateModule]
 })
 export class PrintFormComponent implements OnInit {
   public form: UntypedFormGroup;

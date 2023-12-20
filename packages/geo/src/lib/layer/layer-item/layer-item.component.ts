@@ -19,12 +19,23 @@ import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer } from '../shared/layers/layer';
 import { TooltipType } from '../shared/layers/layer.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'igo-layer-item',
-  templateUrl: './layer-item.component.html',
-  styleUrls: ['./layer-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-layer-item',
+    templateUrl: './layer-item.component.html',
+    styleUrls: ['./layer-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgIf, MatCheckboxModule, MatTooltipModule, MatButtonModule, MatIconModule, MatBadgeModule, NgClass, LayerLegendComponent, AsyncPipe, TranslateModule]
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
   public focusedCls = 'igo-layer-item-focused';

@@ -23,25 +23,23 @@ import { CatalogBrowserComponent } from './catalog-browser.component';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatBadgeModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatTooltipModule,
-    IgoMatBadgeIconModule,
-    IgoLanguageModule,
-    IgoListModule,
-    IgoCollapsibleModule,
-    IgoMetadataModule,
-    IgoLayerModule
-  ],
-  exports: [CatalogBrowserComponent],
-  declarations: [
-    CatalogBrowserComponent,
-    CatalogBrowserGroupComponent,
-    CatalogBrowserLayerComponent
-  ]
+    imports: [
+        CommonModule,
+        MatBadgeModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatTooltipModule,
+        IgoMatBadgeIconModule,
+        IgoLanguageModule,
+        IgoListModule,
+        IgoCollapsibleModule,
+        IgoMetadataModule,
+        IgoLayerModule,
+        CatalogBrowserComponent,
+        CatalogBrowserGroupComponent,
+        CatalogBrowserLayerComponent
+    ],
+    exports: [CatalogBrowserComponent]
 })
 export class IgoCatalogBrowserModule {}

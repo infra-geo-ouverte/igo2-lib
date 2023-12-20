@@ -17,19 +17,19 @@ import { SearchSettingsComponent } from './search-settings.component';
  * @ignore
  */
 @NgModule({
-  declarations: [SearchSettingsComponent],
-  imports: [
-    CommonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatRadioModule,
-    MatCheckboxModule,
-    MatDividerModule,
-    MatSlideToggleModule,
-    IgoLanguageModule
-  ],
-  exports: [SearchSettingsComponent]
+    imports: [
+        CommonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatRadioModule,
+        MatCheckboxModule,
+        MatDividerModule,
+        MatSlideToggleModule,
+        IgoLanguageModule,
+        SearchSettingsComponent
+    ],
+    exports: [SearchSettingsComponent]
 })
 export class IgoSearchSettingsModule {}

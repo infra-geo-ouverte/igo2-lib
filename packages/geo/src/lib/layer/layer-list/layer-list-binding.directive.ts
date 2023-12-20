@@ -10,7 +10,8 @@ import { Layer } from '../shared/layers/layer';
 import { LayerListComponent } from './layer-list.component';
 
 @Directive({
-  selector: '[igoLayerListBinding]'
+    selector: '[igoLayerListBinding]',
+    standalone: true
 })
 export class LayerListBindingDirective implements OnInit, OnDestroy {
   private component: LayerListComponent;

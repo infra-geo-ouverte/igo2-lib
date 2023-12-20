@@ -39,53 +39,51 @@ import { LayerService } from './shared/layer.service';
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
 @NgModule({
-  imports: [
-    MatInputModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    CommonModule,
-    FormsModule,
-    MatDividerModule,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSlideToggleModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatListModule,
-    MatSliderModule,
-    MatBadgeModule,
-    MatCheckboxModule,
-    IgoLanguageModule,
-    IgoListModule,
-    IgoCollapsibleModule,
-    IgoImageModule,
-    PanelComponent,
-    IgoMatBadgeIconModule,
-    IgoCustomHtmlModule
-  ],
-  exports: [
-    LayerItemComponent,
-    LayerLegendItemComponent,
-    LayerLegendComponent,
-    LayerListComponent,
-    LayerListToolComponent,
-    LayerLegendListComponent,
-    LayerListBindingDirective,
-    LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent
-  ],
-  declarations: [
-    LayerItemComponent,
-    LayerLegendItemComponent,
-    LayerLegendComponent,
-    LayerListComponent,
-    LayerListToolComponent,
-    LayerLegendListComponent,
-    LayerListBindingDirective,
-    LayerLegendListBindingDirective,
-    TrackFeatureButtonComponent
-  ]
+    imports: [
+        MatInputModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        CommonModule,
+        FormsModule,
+        MatDividerModule,
+        MatMenuModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSlideToggleModule,
+        MatSelectModule,
+        MatTooltipModule,
+        MatListModule,
+        MatSliderModule,
+        MatBadgeModule,
+        MatCheckboxModule,
+        IgoLanguageModule,
+        IgoListModule,
+        IgoCollapsibleModule,
+        IgoImageModule,
+        PanelComponent,
+        IgoMatBadgeIconModule,
+        IgoCustomHtmlModule,
+        LayerItemComponent,
+        LayerLegendItemComponent,
+        LayerLegendComponent,
+        LayerListComponent,
+        LayerListToolComponent,
+        LayerLegendListComponent,
+        LayerListBindingDirective,
+        LayerLegendListBindingDirective,
+        TrackFeatureButtonComponent
+    ],
+    exports: [
+        LayerItemComponent,
+        LayerLegendItemComponent,
+        LayerLegendComponent,
+        LayerListComponent,
+        LayerListToolComponent,
+        LayerLegendListComponent,
+        LayerListBindingDirective,
+        LayerLegendListBindingDirective,
+        TrackFeatureButtonComponent
+    ]
 })
 export class IgoLayerModule {
   static forRoot(): ModuleWithProviders<IgoLayerModule> {

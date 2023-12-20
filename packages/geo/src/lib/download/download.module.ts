@@ -9,15 +9,15 @@ import { IgoLanguageModule } from '@igo2/core';
 import { DownloadButtonComponent } from './download-button/download-button.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    IgoLanguageModule
-  ],
-  exports: [DownloadButtonComponent],
-  declarations: [DownloadButtonComponent]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        DownloadButtonComponent
+    ],
+    exports: [DownloadButtonComponent]
 })
 export class IgoDownloadModule {
   static forRoot(): ModuleWithProviders<IgoDownloadModule> {

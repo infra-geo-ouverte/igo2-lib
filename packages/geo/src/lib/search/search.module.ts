@@ -13,21 +13,21 @@ import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/ic
 import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.providers';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    IgoSearchBarModule,
-    IgoSearchSelectorModule,
-    IgoSearchResultsModule,
-    IgoSearchSettingsModule
-  ],
-  exports: [
-    IgoSearchBarModule,
-    IgoSearchSelectorModule,
-    IgoSearchResultsModule,
-    IgoSearchSettingsModule,
-    SearchPointerSummaryDirective
-  ],
-  declarations: [SearchPointerSummaryDirective]
+    imports: [
+        CommonModule,
+        IgoSearchBarModule,
+        IgoSearchSelectorModule,
+        IgoSearchResultsModule,
+        IgoSearchSettingsModule,
+        SearchPointerSummaryDirective
+    ],
+    exports: [
+        IgoSearchBarModule,
+        IgoSearchSelectorModule,
+        IgoSearchResultsModule,
+        IgoSearchSettingsModule,
+        SearchPointerSummaryDirective
+    ]
 })
 export class IgoSearchModule {
   static forRoot(): ModuleWithProviders<IgoSearchModule> {

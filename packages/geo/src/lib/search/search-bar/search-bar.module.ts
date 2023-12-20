@@ -21,22 +21,22 @@ import { SearchUrlParamDirective } from './search-url-param.directive';
  * @ignore
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatMenuModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatInputModule,
-    IgoLanguageModule,
-    IgoSearchSelectorModule,
-    IgoSearchSettingsModule
-  ],
-  exports: [SearchBarComponent],
-  declarations: [SearchBarComponent, SearchUrlParamDirective]
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDividerModule,
+        MatMenuModule,
+        MatRadioModule,
+        MatFormFieldModule,
+        MatInputModule,
+        IgoLanguageModule,
+        IgoSearchSelectorModule,
+        IgoSearchSettingsModule,
+        SearchBarComponent, SearchUrlParamDirective
+    ],
+    exports: [SearchBarComponent]
 })
 export class IgoSearchBarModule {}

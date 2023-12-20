@@ -23,12 +23,19 @@ import { takeUntil } from 'rxjs/operators';
 import { IgoMap } from '../../map/shared/map';
 import { SearchSource } from '../../search/shared/sources/source';
 import { Feature } from '../shared';
+import { SecureImagePipe } from '../../../../../common/src/lib/image/secure-image.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { ImageErrorDirective } from '../../../../../common/src/lib/image/image-error.directive';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, NgFor, NgStyle, AsyncPipe, JsonPipe, KeyValuePipe } from '@angular/common';
 
 @Component({
-  selector: 'igo-feature-details',
-  templateUrl: './feature-details.component.html',
-  styleUrls: ['./feature-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-feature-details',
+    templateUrl: './feature-details.component.html',
+    styleUrls: ['./feature-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, NgFor, MatIconModule, NgStyle, ImageErrorDirective, AsyncPipe, JsonPipe, KeyValuePipe, TranslateModule, SecureImagePipe]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;

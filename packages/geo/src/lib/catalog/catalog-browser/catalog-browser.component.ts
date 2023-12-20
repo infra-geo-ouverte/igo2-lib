@@ -24,14 +24,21 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
+import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
+import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
+import { CatalogBrowserGroupComponent } from './catalog-browser-group.component';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { ListComponent } from '../../../../../common/src/lib/list/list.component';
 
 /**
  * Component to browse a catalog's groups and layers and display them on a map.
  */
 @Component({
-  selector: 'igo-catalog-browser',
-  templateUrl: './catalog-browser.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-catalog-browser',
+    templateUrl: './catalog-browser.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [ListComponent, NgFor, NgIf, CatalogBrowserGroupComponent, CatalogBrowserLayerComponent, ListItemDirective, AsyncPipe]
 })
 export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**

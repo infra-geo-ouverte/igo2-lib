@@ -11,8 +11,7 @@ import { OgcFilterComponent } from './ogc-filter.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, MatButtonModule, IgoLanguageModule, IgoFilterModule],
-  exports: [OgcFilterComponent],
-  declarations: [OgcFilterComponent]
+    imports: [CommonModule, MatButtonModule, IgoLanguageModule, IgoFilterModule, OgcFilterComponent],
+    exports: [OgcFilterComponent]
 })
 export class IgoOgcFilterModule {}

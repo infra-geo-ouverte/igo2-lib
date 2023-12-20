@@ -7,7 +7,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { default as moment } from 'moment';
 
@@ -18,11 +18,25 @@ import {
   OgcFilterableDataSource,
   OgcFilterableDataSourceOptions
 } from '../shared/ogc-filter.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { OgcFilterTimeSliderComponent } from './ogc-filter-time-slider.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'igo-ogc-filter-time',
-  templateUrl: './ogc-filter-time.component.html',
-  styleUrls: ['./ogc-filter-time.component.scss']
+    selector: 'igo-ogc-filter-time',
+    templateUrl: './ogc-filter-time.component.html',
+    styleUrls: ['./ogc-filter-time.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatSlideToggleModule, FormsModule, OgcFilterTimeSliderComponent, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatButtonModule, MatTooltipModule, MatIconModule, MatSelectModule, ReactiveFormsModule, NgFor, MatOptionModule, TranslateModule]
 })
 export class OgcFilterTimeComponent implements OnInit {
   @Input() datasource: OgcFilterableDataSource;

@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -64,15 +64,26 @@ import {
   updateOlTooltipsAtMidpoints
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { EntityTableComponent as EntityTableComponent_1 } from '../../../../../common/src/lib/entity/entity-table/entity-table.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MeasurerItemComponent } from './measurer-item.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 /**
  * Tool to measure lengths and areas
  */
 @Component({
-  selector: 'igo-measurer',
-  templateUrl: './measurer.component.html',
-  styleUrls: ['./measurer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-measurer',
+    templateUrl: './measurer.component.html',
+    styleUrls: ['./measurer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButtonToggleModule, MatSlideToggleModule, NgIf, MatDividerModule, MeasurerItemComponent, MatButtonModule, MatTooltipModule, MatIconModule, EntityTableComponent_1, AsyncPipe, TranslateModule]
 })
 export class MeasurerComponent implements OnInit, OnDestroy {
   /**
