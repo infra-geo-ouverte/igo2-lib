@@ -18,6 +18,8 @@
   "scripts": {
     "build": "ng build utils --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint utils",
+    "lint.fix": "ng lint utils --fix",
     "publish": "npm publish ../../dist/utils",
     "test": "ng test utils --watch=false",
     "watch": "ng build utils --watch"

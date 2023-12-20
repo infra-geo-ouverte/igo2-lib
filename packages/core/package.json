@@ -19,6 +19,8 @@
     "prestart": "npm run postbuild",
     "build": "ng build core --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint core",
+    "lint.fix": "ng lint core --fix",
     "postbuild": "ts-node ../../scripts/src/core/postbuild-core.ts",
     "test": "ng test core --watch=false",
     "watch": "ng build core --watch && npm run postbuild"

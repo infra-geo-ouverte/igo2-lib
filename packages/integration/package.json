@@ -18,6 +18,8 @@
   "scripts": {
     "build": "ng build integration --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
+    "lint": "ng lint integration",
+    "lint.fix": "ng lint integration --fix",
     "test": "",
     "watch": "ng build integration --watch"
   },
