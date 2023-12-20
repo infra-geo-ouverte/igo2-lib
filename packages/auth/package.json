@@ -21,6 +21,7 @@
     "lint": "ng lint auth",
     "lint.fix": "ng lint auth --fix",
     "test": "ng test auth --watch=false",
+    "test.watch": "ng test auth",
     "watch": "ng build auth --watch"
   },
   "exports": {
