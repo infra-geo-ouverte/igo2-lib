@@ -21,6 +21,8 @@ import { take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
 import { CatalogState } from '../catalog.state';
+import { CatalogBrowserComponent } from '../../../../../geo/src/lib/catalog/catalog-browser/catalog-browser.component';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 /**
  * Tool to browse a catalog's groups and layers and display them to a map.
@@ -32,9 +34,11 @@ import { CatalogState } from '../catalog.state';
   parent: 'catalog'
 })
 @Component({
-  selector: 'igo-catalog-browser-tool',
-  templateUrl: './catalog-browser-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-catalog-browser-tool',
+    templateUrl: './catalog-browser-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, CatalogBrowserComponent, AsyncPipe]
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   catalog: Catalog;

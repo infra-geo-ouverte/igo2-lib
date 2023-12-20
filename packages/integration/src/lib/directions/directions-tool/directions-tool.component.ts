@@ -21,6 +21,7 @@ import { Subject } from 'rxjs';
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
+import { DirectionsComponent } from '../../../../../geo/src/lib/directions/directions.component';
 
 @ToolComponent({
   name: 'directions',
@@ -28,8 +29,10 @@ import { DirectionState } from '../directions.state';
   icon: 'directions'
 })
 @Component({
-  selector: 'igo-directions-tool',
-  templateUrl: './directions-tool.component.html'
+    selector: 'igo-directions-tool',
+    templateUrl: './directions-tool.component.html',
+    standalone: true,
+    imports: [DirectionsComponent]
 })
 export class DirectionsToolComponent implements OnInit {
   public currentContextUri: string;

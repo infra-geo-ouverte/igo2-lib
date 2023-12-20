@@ -15,19 +15,19 @@ import { IgoLanguageModule } from '@igo2/core';
 import { AboutToolComponent } from './about-tool/about-tool.component';
 
 @NgModule({
-  imports: [
-    IgoLanguageModule,
-    IgoCustomHtmlModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatMenuModule,
-    IgoInteractiveTourModule,
-    CommonModule
-  ],
-  declarations: [AboutToolComponent],
-  exports: [AboutToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [
+        IgoLanguageModule,
+        IgoCustomHtmlModule,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatMenuModule,
+        IgoInteractiveTourModule,
+        CommonModule,
+        AboutToolComponent
+    ],
+    exports: [AboutToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppAboutModule {
   static forRoot(): ModuleWithProviders<IgoAppAboutModule> {

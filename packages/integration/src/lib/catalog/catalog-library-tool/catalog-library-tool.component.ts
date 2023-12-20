@@ -14,6 +14,7 @@ import { take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
+import { CatalogLibaryComponent } from '../../../../../geo/src/lib/catalog/catalog-library/catalog-library.component';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -24,9 +25,11 @@ import { CatalogState } from '../catalog.state';
   icon: 'layers-plus'
 })
 @Component({
-  selector: 'igo-catalog-library-tool',
-  templateUrl: './catalog-library-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-catalog-library-tool',
+    templateUrl: './catalog-library-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [CatalogLibaryComponent]
 })
 export class CatalogLibraryToolComponent implements OnInit {
   /**

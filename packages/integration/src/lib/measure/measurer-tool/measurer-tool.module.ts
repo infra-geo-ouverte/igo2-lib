@@ -8,9 +8,8 @@ import { MeasurerToolComponent } from './measurer-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [MeasurerComponent],
-  declarations: [MeasurerToolComponent],
-  exports: [MeasurerToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [MeasurerComponent, MeasurerToolComponent],
+    exports: [MeasurerToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMeasurerToolModule {}

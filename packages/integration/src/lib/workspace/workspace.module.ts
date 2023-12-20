@@ -9,15 +9,15 @@ import { IgoLanguageModule } from '@igo2/core';
 import { WorkspaceButtonComponent } from './workspace-button/workspace-button.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    IgoLanguageModule
-  ],
-  declarations: [WorkspaceButtonComponent],
-  exports: [WorkspaceButtonComponent],
-  providers: [DatePipe]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        IgoLanguageModule,
+        WorkspaceButtonComponent
+    ],
+    exports: [WorkspaceButtonComponent],
+    providers: [DatePipe]
 })
 export class IgoAppWorkspaceModule {}

@@ -9,6 +9,14 @@ import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import { AllEnvironmentOptions } from '../../environment';
+import { TranslateModule } from '@ngx-translate/core';
+import { CustomHtmlComponent } from '../../../../../common/src/lib/custom-html/custom-html.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgFor } from '@angular/common';
+import { InteractiveTourComponent } from '../../../../../common/src/lib/interactive-tour/interactive-tour.component';
 
 @ToolComponent({
   name: 'about',
@@ -16,9 +24,11 @@ import { AllEnvironmentOptions } from '../../environment';
   icon: 'help-circle'
 })
 @Component({
-  selector: 'igo-about-tool',
-  templateUrl: './about-tool.component.html',
-  styleUrls: ['./about-tool.component.scss']
+    selector: 'igo-about-tool',
+    templateUrl: './about-tool.component.html',
+    styleUrls: ['./about-tool.component.scss'],
+    standalone: true,
+    imports: [InteractiveTourComponent, NgIf, MatButtonModule, MatTooltipModule, MatIconModule, MatMenuModule, NgFor, CustomHtmlComponent, TranslateModule]
 })
 export class AboutToolComponent implements OnInit {
   private configOptions: AllEnvironmentOptions;

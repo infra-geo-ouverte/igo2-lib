@@ -21,6 +21,11 @@ import {
   ImportExportState,
   ImportExportType
 } from '../import-export.state';
+import { TranslateModule } from '@ngx-translate/core';
+import { ContextImportExportComponent } from '../../../../../context/src/lib/context-import-export/context-import-export/context-import-export.component';
+import { ImportExportComponent } from '../../../../../geo/src/lib/import-export/import-export/import-export.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @ToolComponent({
   name: 'importExport',
@@ -28,10 +33,12 @@ import {
   icon: 'file-move'
 })
 @Component({
-  selector: 'igo-import-export-tool',
-  templateUrl: './import-export-tool.component.html',
-  styleUrls: ['./import-export-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-import-export-tool',
+    templateUrl: './import-export-tool.component.html',
+    styleUrls: ['./import-export-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatTabsModule, ImportExportComponent, ContextImportExportComponent, AsyncPipe, TranslateModule]
 })
 export class ImportExportToolComponent implements OnInit {
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;

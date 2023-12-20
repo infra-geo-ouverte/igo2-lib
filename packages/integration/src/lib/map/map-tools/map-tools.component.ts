@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common';
 import {
@@ -30,6 +30,21 @@ import {
 import { ToolState } from '../../tool/tool.state';
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MapState } from '../map.state';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { LayerLegendListBindingDirective } from '../../../../../geo/src/lib/layer/layer-legend-list/layer-legend-list-binding.directive';
+import { LayerLegendListComponent } from '../../../../../geo/src/lib/layer/layer-legend-list/layer-legend-list.component';
+import { WorkspaceButtonComponent } from '../../workspace/workspace-button/workspace-button.component';
+import { ExportButtonComponent } from '../../../../../geo/src/lib/import-export/export-button/export-button.component';
+import { OgcFilterButtonComponent } from '../../../../../geo/src/lib/filter/ogc-filter-button/ogc-filter-button.component';
+import { TimeFilterButtonComponent } from '../../../../../geo/src/lib/filter/time-filter-button/time-filter-button.component';
+import { TrackFeatureButtonComponent } from '../../../../../geo/src/lib/layer/track-feature-button/track-feature-button.component';
+import { MetadataButtonComponent } from '../../../../../geo/src/lib/metadata/metadata-button/metadata-button.component';
+import { StyleModalLayerButtonComponent } from '../../../../../geo/src/lib/style/style-modal/layer-button/style-modal-layer-button.component';
+import { LayerListBindingDirective } from '../../../../../geo/src/lib/layer/layer-list/layer-list-binding.directive';
+import { LayerListComponent } from '../../../../../geo/src/lib/layer/layer-list/layer-list.component';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 /**
  * Tool to browse a map's layers or to choose a different map
@@ -40,10 +55,12 @@ import { MapState } from '../map.state';
   icon: 'map'
 })
 @Component({
-  selector: 'igo-map-tools',
-  templateUrl: './map-tools.component.html',
-  styleUrls: ['./map-tools.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-map-tools',
+    templateUrl: './map-tools.component.html',
+    styleUrls: ['./map-tools.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatTabsModule, NgIf, LayerListComponent, LayerListBindingDirective, StyleModalLayerButtonComponent, MetadataButtonComponent, TrackFeatureButtonComponent, TimeFilterButtonComponent, OgcFilterButtonComponent, ExportButtonComponent, WorkspaceButtonComponent, LayerLegendListComponent, LayerLegendListBindingDirective, MatListModule, MatIconModule, AsyncPipe, TranslateModule]
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);

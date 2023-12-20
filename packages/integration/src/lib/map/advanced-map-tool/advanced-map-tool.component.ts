@@ -3,6 +3,12 @@ import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 
 import { MapState } from '../map.state';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe } from '@angular/common';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AdvancedCoordinatesComponent } from './advanced-coordinates/advanced-coordinates.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { AdvancedSwipeComponent } from './advanced-swipe/advanced-swipe.component';
 
 @ToolComponent({
   name: 'advancedMap',
@@ -13,9 +19,11 @@ import { MapState } from '../map.state';
  * Tool to handle the advanced map tools
  */
 @Component({
-  selector: 'igo-advanced-map-tool',
-  templateUrl: './advanced-map-tool.component.html',
-  styleUrls: ['./advanced-map-tool.component.scss']
+    selector: 'igo-advanced-map-tool',
+    templateUrl: './advanced-map-tool.component.html',
+    styleUrls: ['./advanced-map-tool.component.scss'],
+    standalone: true,
+    imports: [AdvancedSwipeComponent, MatDividerModule, AdvancedCoordinatesComponent, MatSlideToggleModule, AsyncPipe, TranslateModule]
 })
 export class AdvancedMapToolComponent {
   get tracking$() {

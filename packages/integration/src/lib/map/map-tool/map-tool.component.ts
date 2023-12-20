@@ -15,6 +15,18 @@ import {
 } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from './../map.state';
+import { TranslateModule } from '@ngx-translate/core';
+import { ContextListBindingDirective } from '../../../../../context/src/lib/context-manager/context-list/context-list-binding.directive';
+import { ContextListComponent } from '../../../../../context/src/lib/context-manager/context-list/context-list.component';
+import { MetadataButtonComponent } from '../../../../../geo/src/lib/metadata/metadata-button/metadata-button.component';
+import { TrackFeatureButtonComponent } from '../../../../../geo/src/lib/layer/track-feature-button/track-feature-button.component';
+import { TimeFilterButtonComponent } from '../../../../../geo/src/lib/filter/time-filter-button/time-filter-button.component';
+import { OgcFilterButtonComponent } from '../../../../../geo/src/lib/filter/ogc-filter-button/ogc-filter-button.component';
+import { ExportButtonComponent } from '../../../../../geo/src/lib/import-export/export-button/export-button.component';
+import { WorkspaceButtonComponent } from '../../workspace/workspace-button/workspace-button.component';
+import { LayerListBindingDirective } from '../../../../../geo/src/lib/layer/layer-list/layer-list-binding.directive';
+import { LayerListComponent } from '../../../../../geo/src/lib/layer/layer-list/layer-list.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 /**
  * Tool to browse a map's layers or to choose a different map
@@ -25,10 +37,12 @@ import { MapState } from './../map.state';
   icon: 'map'
 })
 @Component({
-  selector: 'igo-map-tool',
-  templateUrl: './map-tool.component.html',
-  styleUrls: ['./map-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-map-tool',
+    templateUrl: './map-tool.component.html',
+    styleUrls: ['./map-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatTabsModule, LayerListComponent, LayerListBindingDirective, WorkspaceButtonComponent, ExportButtonComponent, OgcFilterButtonComponent, TimeFilterButtonComponent, TrackFeatureButtonComponent, MetadataButtonComponent, ContextListComponent, ContextListBindingDirective, TranslateModule]
 })
 export class MapToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;

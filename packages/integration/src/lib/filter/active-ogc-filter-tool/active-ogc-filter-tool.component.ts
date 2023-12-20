@@ -5,6 +5,7 @@ import { IgoMap, Layer } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-ogc-filter-tool.animation';
+import { OgcFilterableItemComponent } from '../../../../../geo/src/lib/filter/ogc-filterable-item/ogc-filterable-item.component';
 
 @ToolComponent({
   name: 'activeOgcFilter',
@@ -13,9 +14,11 @@ import { toolSlideInOut } from './active-ogc-filter-tool.animation';
   parent: 'mapTools'
 })
 @Component({
-  selector: 'igo-active-ogc-filter-tool',
-  templateUrl: './active-ogc-filter-tool.component.html',
-  animations: [toolSlideInOut()]
+    selector: 'igo-active-ogc-filter-tool',
+    templateUrl: './active-ogc-filter-tool.component.html',
+    animations: [toolSlideInOut()],
+    standalone: true,
+    imports: [OgcFilterableItemComponent]
 })
 export class ActiveOgcFilterToolComponent {
   get map(): IgoMap {

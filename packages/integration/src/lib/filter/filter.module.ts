@@ -14,22 +14,19 @@ import { SpatialFilterToolComponent } from './spatial-filter-tool/spatial-filter
 import { TimeFilterToolComponent } from './time-filter-tool/time-filter-tool.component';
 
 @NgModule({
-  imports: [IgoFilterModule, IgoQueryModule, CommonModule],
-  declarations: [
-    OgcFilterToolComponent,
-    ActiveOgcFilterToolComponent,
-    TimeFilterToolComponent,
-    ActiveTimeFilterToolComponent,
-    SpatialFilterToolComponent
-  ],
-  exports: [
-    OgcFilterToolComponent,
-    ActiveOgcFilterToolComponent,
-    TimeFilterToolComponent,
-    ActiveTimeFilterToolComponent,
-    SpatialFilterToolComponent
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [IgoFilterModule, IgoQueryModule, CommonModule, OgcFilterToolComponent,
+        ActiveOgcFilterToolComponent,
+        TimeFilterToolComponent,
+        ActiveTimeFilterToolComponent,
+        SpatialFilterToolComponent],
+    exports: [
+        OgcFilterToolComponent,
+        ActiveOgcFilterToolComponent,
+        TimeFilterToolComponent,
+        ActiveTimeFilterToolComponent,
+        SpatialFilterToolComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppFilterModule {
   static forRoot(): ModuleWithProviders<IgoAppFilterModule> {

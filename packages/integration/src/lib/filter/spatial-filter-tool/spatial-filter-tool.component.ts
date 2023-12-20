@@ -55,6 +55,9 @@ import {
   ImportExportMode,
   ImportExportState
 } from './../../import-export/import-export.state';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { SpatialFilterItemComponent } from '../../../../../geo/src/lib/filter/spatial-filter/spatial-filter-item/spatial-filter-item.component';
+import { SpatialFilterTypeComponent } from '../../../../../geo/src/lib/filter/spatial-filter/spatial-filter-type/spatial-filter-type.component';
 
 /**
  * Tool to apply spatial filter
@@ -68,10 +71,12 @@ import {
  * Spatial Filter Type
  */
 @Component({
-  selector: 'igo-spatial-filter-tool',
-  templateUrl: './spatial-filter-tool.component.html',
-  styleUrls: ['./spatial-filter-tool.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-spatial-filter-tool',
+    templateUrl: './spatial-filter-tool.component.html',
+    styleUrls: ['./spatial-filter-tool.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [SpatialFilterTypeComponent, SpatialFilterItemComponent, NgIf, AsyncPipe]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {

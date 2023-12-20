@@ -8,19 +8,16 @@ import { ContextPermissionManagerToolComponent } from './context-permission-mana
 import { ContextShareToolComponent } from './context-share-tool/context-share-tool.component';
 
 @NgModule({
-  imports: [IgoContextModule],
-  declarations: [
-    ContextEditorToolComponent,
-    ContextManagerToolComponent,
-    ContextPermissionManagerToolComponent,
-    ContextShareToolComponent
-  ],
-  exports: [
-    ContextEditorToolComponent,
-    ContextManagerToolComponent,
-    ContextPermissionManagerToolComponent,
-    ContextShareToolComponent
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [IgoContextModule, ContextEditorToolComponent,
+        ContextManagerToolComponent,
+        ContextPermissionManagerToolComponent,
+        ContextShareToolComponent],
+    exports: [
+        ContextEditorToolComponent,
+        ContextManagerToolComponent,
+        ContextPermissionManagerToolComponent,
+        ContextShareToolComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppContextModule {}

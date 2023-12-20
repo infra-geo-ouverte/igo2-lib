@@ -8,9 +8,8 @@ import { DrawingToolComponent } from './drawing-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [DrawComponent],
-  declarations: [DrawingToolComponent],
-  exports: [DrawingToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [DrawComponent, DrawingToolComponent],
+    exports: [DrawingToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppDrawingToolModule {}

@@ -11,6 +11,7 @@ import {
 
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
+import { DrawComponent } from '../../../../../geo/src/lib/draw/draw/draw.component';
 
 /**
  * Tool to measure lengths and areas
@@ -21,9 +22,11 @@ import { DrawState } from '../draw.state';
   icon: 'draw'
 })
 @Component({
-  selector: 'igo-drawing-tool',
-  templateUrl: './drawing-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-drawing-tool',
+    templateUrl: './drawing-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [DrawComponent]
 })
 export class DrawingToolComponent {
   /**

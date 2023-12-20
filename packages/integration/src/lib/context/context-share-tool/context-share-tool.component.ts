@@ -5,6 +5,7 @@ import { IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
 import { LayerListToolState } from '../../map/layer-list-tool.state';
 import { MapState } from '../../map/map.state';
+import { ShareMapComponent } from '../../../../../context/src/lib/share-map/share-map/share-map.component';
 
 @ToolComponent({
   name: 'shareMap',
@@ -12,8 +13,10 @@ import { MapState } from '../../map/map.state';
   icon: 'share-variant'
 })
 @Component({
-  selector: 'igo-context-share-tool',
-  templateUrl: './context-share-tool.component.html'
+    selector: 'igo-context-share-tool',
+    templateUrl: './context-share-tool.component.html',
+    standalone: true,
+    imports: [ShareMapComponent]
 })
 export class ContextShareToolComponent {
   get map(): IgoMap {

@@ -5,6 +5,8 @@ import { IgoMap } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { ToolState } from '../../tool/tool.state';
+import { ContextListBindingDirective } from '../../../../../context/src/lib/context-manager/context-list/context-list-binding.directive';
+import { ContextListComponent } from '../../../../../context/src/lib/context-manager/context-list/context-list.component';
 
 @ToolComponent({
   name: 'contextManager',
@@ -12,8 +14,10 @@ import { ToolState } from '../../tool/tool.state';
   icon: 'star'
 })
 @Component({
-  selector: 'igo-context-manager-tool',
-  templateUrl: './context-manager-tool.component.html'
+    selector: 'igo-context-manager-tool',
+    templateUrl: './context-manager-tool.component.html',
+    standalone: true,
+    imports: [ContextListComponent, ContextListBindingDirective]
 })
 export class ContextManagerToolComponent {
   @Input() toolToOpenOnContextChange: string = 'mapTools';

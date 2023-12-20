@@ -5,6 +5,7 @@ import { FeatureStore, FeatureWithMeasure, IgoMap } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { MeasureState } from '../measure.state';
+import { MeasurerComponent } from '../../../../../geo/src/lib/measure/measurer/measurer.component';
 
 /**
  * Tool to measure lengths and areas
@@ -15,9 +16,11 @@ import { MeasureState } from '../measure.state';
   icon: 'ruler'
 })
 @Component({
-  selector: 'igo-measurer-tool',
-  templateUrl: './measurer-tool.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'igo-measurer-tool',
+    templateUrl: './measurer-tool.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {
   /**

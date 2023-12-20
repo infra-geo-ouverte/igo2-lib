@@ -14,18 +14,18 @@ import { IgoImportExportModule, IgoStyleModule } from '@igo2/geo';
 import { ImportExportToolComponent } from './import-export-tool/import-export-tool.component';
 
 @NgModule({
-  imports: [
-    IgoImportExportModule,
-    IgoContextImportExportModule,
-    CommonModule,
-    IgoLanguageModule,
-    MatButtonToggleModule,
-    MatTabsModule,
-    IgoStyleModule
-  ],
-  declarations: [ImportExportToolComponent],
-  exports: [ImportExportToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [
+        IgoImportExportModule,
+        IgoContextImportExportModule,
+        CommonModule,
+        IgoLanguageModule,
+        MatButtonToggleModule,
+        MatTabsModule,
+        IgoStyleModule,
+        ImportExportToolComponent
+    ],
+    exports: [ImportExportToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppImportExportModule {
   static forRoot(): ModuleWithProviders<IgoAppImportExportModule> {

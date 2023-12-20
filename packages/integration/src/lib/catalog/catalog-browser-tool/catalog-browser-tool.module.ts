@@ -9,9 +9,8 @@ import { CatalogBrowserToolComponent } from './catalog-browser-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoCatalogBrowserModule],
-  declarations: [CatalogBrowserToolComponent],
-  exports: [CatalogBrowserToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [CommonModule, IgoCatalogBrowserModule, CatalogBrowserToolComponent],
+    exports: [CatalogBrowserToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppCatalogBrowserToolModule {}

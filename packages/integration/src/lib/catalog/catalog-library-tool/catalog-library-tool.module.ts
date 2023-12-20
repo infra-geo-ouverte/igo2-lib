@@ -9,9 +9,8 @@ import { CatalogLibraryToolComponent } from './catalog-library-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [CommonModule, IgoCatalogLibraryModule],
-  declarations: [CatalogLibraryToolComponent],
-  exports: [CatalogLibraryToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [CommonModule, IgoCatalogLibraryModule, CatalogLibraryToolComponent],
+    exports: [CatalogLibraryToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppCatalogLibraryToolModule {}

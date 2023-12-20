@@ -9,10 +9,9 @@ import { IgoDirectionsModule } from '@igo2/geo';
 import { DirectionsToolComponent } from './directions-tool/directions-tool.component';
 
 @NgModule({
-  imports: [IgoDirectionsModule],
-  declarations: [DirectionsToolComponent],
-  exports: [DirectionsToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    imports: [IgoDirectionsModule, DirectionsToolComponent],
+    exports: [DirectionsToolComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppDirectionsModule {
   static forRoot(): ModuleWithProviders<IgoAppDirectionsModule> {
