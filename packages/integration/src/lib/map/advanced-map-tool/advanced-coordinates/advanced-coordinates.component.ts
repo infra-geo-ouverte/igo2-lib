@@ -1,3 +1,4 @@
+import { AsyncPipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -5,7 +6,20 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import {
   ConfigService,
@@ -25,29 +39,36 @@ import { Clipboard } from '@igo2/utils';
 
 import * as olproj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { MapState } from '../../map.state';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
 
 /**
  * Tool to display the coordinates and a cursor of the center of the map
  */
 @Component({
-    selector: 'igo-advanced-coordinates',
-    templateUrl: './advanced-coordinates.component.html',
-    styleUrls: ['./advanced-coordinates.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatSelectModule, NgFor, MatOptionModule, MatSlideToggleModule, AsyncPipe, DecimalPipe, TranslateModule]
+  selector: 'igo-advanced-coordinates',
+  templateUrl: './advanced-coordinates.component.html',
+  styleUrls: ['./advanced-coordinates.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatSlideToggleModule,
+    AsyncPipe,
+    DecimalPipe,
+    TranslateModule
+  ]
 })
 export class AdvancedCoordinatesComponent implements OnInit, OnDestroy {
   public formattedScale$: BehaviorSubject<string> = new BehaviorSubject('');

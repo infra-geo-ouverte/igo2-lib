@@ -8,13 +8,12 @@ import {
 import { ToolComponent } from '@igo2/common';
 import { EntityStore } from '@igo2/common';
 import { StorageService } from '@igo2/core';
-import { Catalog, CatalogService } from '@igo2/geo';
+import { Catalog, CatalogLibaryComponent, CatalogService } from '@igo2/geo';
 
 import { take } from 'rxjs/operators';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
-import { CatalogLibaryComponent } from '../../../../../geo/src/lib/catalog/catalog-library/catalog-library.component';
 
 /**
  * Tool to browse the list of available catalogs.
@@ -25,11 +24,11 @@ import { CatalogLibaryComponent } from '../../../../../geo/src/lib/catalog/catal
   icon: 'layers-plus'
 })
 @Component({
-    selector: 'igo-catalog-library-tool',
-    templateUrl: './catalog-library-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [CatalogLibaryComponent]
+  selector: 'igo-catalog-library-tool',
+  templateUrl: './catalog-library-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CatalogLibaryComponent]
 })
 export class CatalogLibraryToolComponent implements OnInit {
   /**

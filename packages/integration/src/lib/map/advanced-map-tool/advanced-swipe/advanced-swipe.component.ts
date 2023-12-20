@@ -1,27 +1,47 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { ToolState } from '../../../tool/tool.state';
 import { MapState } from '../../map.state';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-    selector: 'igo-advanced-swipe',
-    templateUrl: './advanced-swipe.component.html',
-    styleUrls: ['./advanced-swipe.component.scss'],
-    standalone: true,
-    imports: [NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatDividerModule, NgFor, MatSlideToggleModule, MatListModule, MatIconModule, TranslateModule]
+  selector: 'igo-advanced-swipe',
+  templateUrl: './advanced-swipe.component.html',
+  styleUrls: ['./advanced-swipe.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDividerModule,
+    NgFor,
+    MatSlideToggleModule,
+    MatListModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class AdvancedSwipeComponent implements OnInit, OnDestroy {
   public swipe: boolean = false;
