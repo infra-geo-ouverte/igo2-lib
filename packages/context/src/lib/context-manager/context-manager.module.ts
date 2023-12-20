@@ -12,7 +12,7 @@ import { LayerContextDirective } from './shared/layer-context.directive';
 import { MapContextDirective } from './shared/map-context.directive';
 
 /**
- * @deprecated import the components/directives directly or CONTEXT_MANAGER_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or CONTEXT_MANAGER_DIRECTIVES for the set
  */
 @NgModule({
   imports: [

@@ -1,21 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 
-import { IgoClickoutModule } from '../clickout/clickout.module';
 import { ListItemDirective } from './list-item.directive';
 import { ListComponent } from './list.component';
 
+/**
+ * @deprecated import the components/directives directly or LIST_DIRECTIVES for the set
+ */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatListModule,
-    IgoClickoutModule,
-    ListItemDirective,
-    ListComponent
-  ],
+  imports: [ListItemDirective, ListComponent],
   exports: [ListItemDirective, ListComponent]
 })
 export class IgoListModule {

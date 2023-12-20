@@ -5,7 +5,7 @@ import { ShareMapUrlComponent } from './share-map/share-map-url.component';
 import { ShareMapComponent } from './share-map/share-map.component';
 
 /**
- * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for the set
  */
 @NgModule({
   imports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent],

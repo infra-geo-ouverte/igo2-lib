@@ -14,7 +14,7 @@ import { LayerService } from './shared/layer.service';
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
 /**
- * @deprecated import the components/directives directly or LAYER_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or LAYER_DIRECTIVES for the set
  */
 @NgModule({
   imports: [

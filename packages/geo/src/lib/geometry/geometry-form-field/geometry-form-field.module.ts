@@ -4,7 +4,7 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
 import { GeometryFormFieldComponent } from './geometry-form-field.component';
 
 /**
- * @deprecated import the components directly or the GEOMETRY_FORM_FIELD_DIRECTIVES for everything
+ * @deprecated import the components directly or the GEOMETRY_FORM_FIELD_DIRECTIVES for the set
  */
 @NgModule({
   imports: [GeometryFormFieldComponent, GeometryFormFieldInputComponent],

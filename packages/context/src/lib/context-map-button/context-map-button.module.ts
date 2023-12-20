@@ -7,7 +7,7 @@ import { PoiService } from './poi-button/shared/poi.service';
 import { UserButtonComponent } from './user-button/user-button.component';
 
 /**
- * @deprecated import the components/directives directly or CONTEXT_MAP_BUTTON_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or CONTEXT_MAP_BUTTON_DIRECTIVES for the set
  */
 @NgModule({
   imports: [

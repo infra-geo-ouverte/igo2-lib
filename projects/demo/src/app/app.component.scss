@@ -35,6 +35,10 @@ mat-expansion-panel {
   }
 }
 
+.active-link ::ng-deep span {
+  font-weight: bold;
+}
+
 .example-is-mobile .example-toolbar {
   position: fixed;
   z-index: 2;

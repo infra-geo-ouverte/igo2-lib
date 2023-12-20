@@ -25,6 +25,8 @@
               <a
                 mat-list-item
                 [routerLink]="routeConfig.path"
+                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="active-link"
                 class="p-h-24 m-t-8"
                 >{{ routeConfig.title }}</a
               >
@@ -41,6 +43,7 @@
                   *ngFor="let route of routeConfig.children"
                   mat-list-item
                   [routerLink]="routeConfig.path + '/' + route.path"
+                  routerLinkActive="active-link"
                   >{{ route.title }}</a
                 >
               </mat-nav-list>

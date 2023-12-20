@@ -45,7 +45,7 @@ const DIRECTIVES = [
   OgcFilterTimeSliderComponent
 ];
 /**
- * @deprecated import the components directly or the FILTER_DIRECTIVES for everything
+ * @deprecated import the components directly or the FILTER_DIRECTIVES for the set
  */
 @NgModule({
   imports: DIRECTIVES,

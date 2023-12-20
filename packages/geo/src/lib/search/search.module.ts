@@ -13,7 +13,7 @@ import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.prov
 
 /**
  * @todo determine if we deprecate or not
- * Import the components directly or the SEARCH_DIRECTIVES for everything
+ * Import the components directly or the SEARCH_DIRECTIVES for the set
  * You need to handle the search provider in your application
  */
 @NgModule({

@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
 /**
  * This directive allow to add an icon inside a matBadge.
@@ -8,7 +8,8 @@ import { MatIconRegistry } from '@angular/material/icon';
  */
 @Directive({
   selector: '[igoMatBadgeIcon]',
-  standalone: true
+  standalone: true,
+  providers: [MatIconModule]
 })
 export class IgoBadgeIconDirective implements OnInit {
   @Input()

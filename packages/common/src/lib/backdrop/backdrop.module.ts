@@ -1,10 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { BackdropComponent } from './backdrop.component';
 
+/**
+ * @deprecated import the BackdropComponent directly
+ */
 @NgModule({
-  imports: [CommonModule, BackdropComponent],
+  imports: [BackdropComponent],
   exports: [BackdropComponent]
 })
 export class IgoBackdropModule {

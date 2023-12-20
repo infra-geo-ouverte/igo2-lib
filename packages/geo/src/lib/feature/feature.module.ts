@@ -4,7 +4,7 @@ import { IgoFeatureDetailsModule } from './feature-details/feature-details.modul
 import { IgoFeatureFormModule } from './feature-form/feature-form.module';
 
 /**
- * @deprecated import the components directly or the FEATURE_DIRECTIVES for everything
+ * @deprecated import the components directly or the FEATURE_DIRECTIVES for the set
  */
 @NgModule({
   exports: [IgoFeatureDetailsModule, IgoFeatureFormModule]

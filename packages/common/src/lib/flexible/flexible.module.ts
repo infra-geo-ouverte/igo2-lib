@@ -2,6 +2,9 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { FlexibleComponent } from './flexible.component';
 
+/**
+ * @deprecated import the FlexibleComponent directly
+ */
 @NgModule({
   imports: [FlexibleComponent],
   exports: [FlexibleComponent]

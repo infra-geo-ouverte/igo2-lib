@@ -7,7 +7,7 @@ import { IgoShareMapModule } from './share-map/share-map.module';
 import { IgoSidenavModule } from './sidenav/sidenav.module';
 
 /**
- * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or SHARE_MAP_DIRECTIVES for the set
  */
 @NgModule({
   declarations: [],

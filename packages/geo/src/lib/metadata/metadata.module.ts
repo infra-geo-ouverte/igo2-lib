@@ -6,7 +6,7 @@ import {
 } from './metadata-button/metadata-button.component';
 
 /**
- * @deprecated import the components/directives directly or METADATA_DIRECTIVES for everything
+ * @deprecated import the components/directives directly or METADATA_DIRECTIVES for the set
  */
 @NgModule({
   imports: [MetadataButtonComponent, MetadataAbstractComponent],

@@ -7,7 +7,6 @@ import {
   IgoContextImportExportModule,
   IgoContextManagerModule
 } from '@igo2/context';
-import { LanguageService } from '@igo2/core';
 import {
   IgoLayerModule,
   IgoMap,
@@ -51,7 +50,6 @@ export class AppContextComponent {
   };
 
   constructor(
-    private languageService: LanguageService,
     private mapService: MapService,
     private contextService: ContextService
   ) {

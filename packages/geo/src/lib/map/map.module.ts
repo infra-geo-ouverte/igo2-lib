@@ -37,7 +37,7 @@ const DIRECTIVES = [
 ];
 
 /**
- * @deprecated import the components directly or the MAP_DIRECTIVES for everything
+ * @deprecated import the components directly or the MAP_DIRECTIVES for the set
  */
 @NgModule({
   imports: DIRECTIVES,
