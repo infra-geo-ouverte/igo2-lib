@@ -12,11 +12,11 @@ import { AuthFacebookOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
 @Component({
-    selector: 'igo-auth-facebook',
-    templateUrl: './auth-facebook.component.html',
-    styleUrls: ['./auth-facebook.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+  selector: 'igo-auth-facebook',
+  templateUrl: './auth-facebook.component.html',
+  styleUrls: ['./auth-facebook.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AuthFacebookComponent {
   private options?: AuthFacebookOptions;
