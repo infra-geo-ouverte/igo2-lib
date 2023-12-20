@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -6,16 +7,16 @@ import {
   Output
 } from '@angular/core';
 
-import { Context } from '../shared/context.interface';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { ContextFormComponent } from '../context-form/context-form.component';
-import { NgIf } from '@angular/common';
+import { Context } from '../shared/context.interface';
 
 @Component({
-    selector: 'igo-context-edit',
-    templateUrl: './context-edit.component.html',
-    standalone: true,
-    imports: [NgIf, ContextFormComponent, TranslateModule]
+  selector: 'igo-context-edit',
+  templateUrl: './context-edit.component.html',
+  standalone: true,
+  imports: [NgIf, ContextFormComponent, TranslateModule]
 })
 export class ContextEditComponent {
   @Input()

@@ -24,36 +24,36 @@ import { UserButtonComponent } from './user-button/user-button.component';
 import { UserDialogComponent } from './user-button/user-dialog.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IgoAuthModule,
-        IgoConfirmDialogModule,
-        IgoLanguageModule,
-        IgoStopPropagationModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatDividerModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatInputModule,
-        MatOptionModule,
-        MatSelectModule,
-        MatTooltipModule,
-        BookmarkButtonComponent,
-        BookmarkDialogComponent,
-        PoiButtonComponent,
-        PoiDialogComponent,
-        UserButtonComponent,
-        UserDialogComponent
-    ],
-    exports: [
-        BookmarkButtonComponent,
-        PoiButtonComponent,
-        UserButtonComponent,
-        BookmarkDialogComponent
-    ],
-    providers: [PoiService]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IgoAuthModule,
+    IgoConfirmDialogModule,
+    IgoLanguageModule,
+    IgoStopPropagationModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatTooltipModule,
+    BookmarkButtonComponent,
+    BookmarkDialogComponent,
+    PoiButtonComponent,
+    PoiDialogComponent,
+    UserButtonComponent,
+    UserDialogComponent
+  ],
+  exports: [
+    BookmarkButtonComponent,
+    PoiButtonComponent,
+    UserButtonComponent,
+    BookmarkDialogComponent
+  ],
+  providers: [PoiService]
 })
 export class IgoContextMapButtonModule {
   static forRoot(): ModuleWithProviders<IgoContextMapButtonModule> {

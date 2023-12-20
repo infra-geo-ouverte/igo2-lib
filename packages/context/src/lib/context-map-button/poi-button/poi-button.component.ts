@@ -1,5 +1,11 @@
+import { NgFor } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
 import { ConfirmDialogService } from '@igo2/common';
@@ -10,27 +16,30 @@ import * as oleasing from 'ol/easing';
 import olPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
 import { PoiDialogComponent } from './poi-dialog.component';
 import { Poi } from './shared/poi.interface';
 import { PoiService } from './shared/poi.service';
-import { TranslateModule } from '@ngx-translate/core';
-import { NgFor } from '@angular/common';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatIconModule } from '@angular/material/icon';
-import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
-import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-    selector: 'igo-poi-button',
-    templateUrl: './poi-button.component.html',
-    styleUrls: ['./poi-button.component.scss'],
-    standalone: true,
-    imports: [MatSelectModule, MatOptionModule, MatButtonModule, StopPropagationDirective, MatIconModule, MatDividerModule, NgFor, TranslateModule]
+  selector: 'igo-poi-button',
+  templateUrl: './poi-button.component.html',
+  styleUrls: ['./poi-button.component.scss'],
+  standalone: true,
+  imports: [
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    StopPropagationDirective,
+    MatIconModule,
+    MatDividerModule,
+    NgFor,
+    TranslateModule
+  ]
 })
 export class PoiButtonComponent implements OnInit, OnDestroy {
   @Input()

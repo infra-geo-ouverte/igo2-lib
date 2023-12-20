@@ -16,21 +16,23 @@ import { ShareMapUrlComponent } from './share-map/share-map-url.component';
 import { ShareMapComponent } from './share-map/share-map.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatTabsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        IgoLanguageModule,
-        IgoCustomHtmlModule,
-        ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent
-    ],
-    exports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    IgoLanguageModule,
+    IgoCustomHtmlModule,
+    ShareMapComponent,
+    ShareMapUrlComponent,
+    ShareMapApiComponent
+  ],
+  exports: [ShareMapComponent, ShareMapUrlComponent, ShareMapApiComponent]
 })
 export class IgoShareMapModule {
   static forRoot(): ModuleWithProviders<IgoShareMapModule> {

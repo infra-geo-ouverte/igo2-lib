@@ -23,8 +23,8 @@ import { DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-    selector: '[igoLayerContext]',
-    standalone: true
+  selector: '[igoLayerContext]',
+  standalone: true
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;

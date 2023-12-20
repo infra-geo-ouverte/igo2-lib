@@ -1,4 +1,9 @@
+import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
 
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
@@ -7,22 +12,29 @@ import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
+
 import { TranslateModule } from '@ngx-translate/core';
-import { IgoFeatureDetailsModule } from '../../../../geo/src/lib/feature/feature-details/feature-details.module';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
-import { PanelComponent } from '../../../../common/src/lib/panel/panel.component';
+
 import { FlexibleComponent } from '../../../../common/src/lib/flexible/flexible.component';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { PanelComponent } from '../../../../common/src/lib/panel/panel.component';
+import { IgoFeatureDetailsModule } from '../../../../geo/src/lib/feature/feature-details/feature-details.module';
 
 @Component({
-    selector: 'igo-sidenav',
-    templateUrl: './sidenav.component.html',
-    styleUrls: ['./sidenav.component.scss'],
-    standalone: true,
-    imports: [MatSidenavModule, FlexibleComponent, PanelComponent, NgIf, MatButtonModule, MatTooltipModule, MatIconModule, IgoFeatureDetailsModule, TranslateModule]
+  selector: 'igo-sidenav',
+  templateUrl: './sidenav.component.html',
+  styleUrls: ['./sidenav.component.scss'],
+  standalone: true,
+  imports: [
+    MatSidenavModule,
+    FlexibleComponent,
+    PanelComponent,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    IgoFeatureDetailsModule,
+    TranslateModule
+  ]
 })
 export class SidenavComponent {
   private format = new olFormatGeoJSON();

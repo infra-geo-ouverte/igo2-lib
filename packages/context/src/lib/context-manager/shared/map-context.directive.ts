@@ -16,8 +16,8 @@ import { ContextMapView, DetailedContext } from './context.interface';
 import { ContextService } from './context.service';
 
 @Directive({
-    selector: '[igoMapContext]',
-    standalone: true
+  selector: '[igoMapContext]',
+  standalone: true
 })
 export class MapContextDirective implements OnInit, OnDestroy {
   private component: MapBrowserComponent;

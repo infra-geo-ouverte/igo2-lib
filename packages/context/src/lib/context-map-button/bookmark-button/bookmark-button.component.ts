@@ -1,24 +1,24 @@
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'igo-bookmark-button',
-    templateUrl: './bookmark-button.component.html',
-    styleUrls: ['./bookmark-button.component.scss'],
-    standalone: true,
-    imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  selector: 'igo-bookmark-button',
+  templateUrl: './bookmark-button.component.html',
+  styleUrls: ['./bookmark-button.component.scss'],
+  standalone: true,
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class BookmarkButtonComponent {
   @Input()
