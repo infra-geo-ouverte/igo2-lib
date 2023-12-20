@@ -1,18 +1,30 @@
+import { NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { MeasureAreaUnit, MeasureLengthUnit } from '../shared/measure.enum';
 import { MeasurerDialogData } from '../shared/measure.interfaces';
 import { MeasureFormatPipe } from './measure-format.pipe';
-import { TranslateModule } from '@ngx-translate/core';
-import { NgIf } from '@angular/common';
 
 @Component({
-    selector: 'igo-measurer-dialog',
-    templateUrl: 'measurer-dialog.component.html',
-    styleUrls: ['./measurer-dialog.component.scss'],
-    standalone: true,
-    imports: [MatDialogTitle, MatDialogContent, NgIf, TranslateModule, MeasureFormatPipe]
+  selector: 'igo-measurer-dialog',
+  templateUrl: 'measurer-dialog.component.html',
+  styleUrls: ['./measurer-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    NgIf,
+    TranslateModule,
+    MeasureFormatPipe
+  ]
 })
 export class MeasurerDialogComponent {
   measureAreaUnit = MeasureAreaUnit;

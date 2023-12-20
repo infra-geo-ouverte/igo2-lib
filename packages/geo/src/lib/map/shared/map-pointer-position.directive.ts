@@ -23,8 +23,8 @@ import { IgoMap } from '../../map/shared/map';
  * to avoid too many emitted values.
  */
 @Directive({
-    selector: '[igoPointerPosition]',
-    standalone: true
+  selector: '[igoPointerPosition]',
+  standalone: true
 })
 export class PointerPositionDirective implements OnInit, OnDestroy {
   private lastTimeoutRequest;

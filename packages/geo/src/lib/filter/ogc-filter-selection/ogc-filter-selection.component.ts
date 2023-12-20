@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -5,13 +6,29 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DOMOptions, DOMService, DOMValue } from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
@@ -25,28 +42,37 @@ import {
   SelectorGroup
 } from '../../filter/shared/ogc-filter.interface';
 import { IgoMap } from '../../map/shared/map';
+import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
-import { TranslateModule } from '@ngx-translate/core';
-import { OgcFilterTimeComponent } from '../ogc-filter-time/ogc-filter-time.component';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDividerModule } from '@angular/material/divider';
-import { NgFor, NgIf, NgStyle, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-ogc-filter-selection',
-    templateUrl: './ogc-filter-selection.component.html',
-    styleUrls: ['./ogc-filter-selection.component.scss'],
-    providers: [DOMService],
-    standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, NgFor, NgIf, MatDividerModule, MatFormFieldModule, MatSelectModule, MatTooltipModule, MatOptionModule, MatButtonToggleModule, NgStyle, MatCheckboxModule, MatRadioModule, MatIconModule, MatInputModule, MatAutocompleteModule, OgcFilterTimeComponent, AsyncPipe, TranslateModule]
+  selector: 'igo-ogc-filter-selection',
+  templateUrl: './ogc-filter-selection.component.html',
+  styleUrls: ['./ogc-filter-selection.component.scss'],
+  providers: [DOMService],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    NgIf,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatOptionModule,
+    MatButtonToggleModule,
+    NgStyle,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatIconModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    OgcFilterTimeComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class OgcFilterSelectionComponent implements OnInit {
   @ViewChild('selection') sel: MatSelect;
@@ -853,14 +879,14 @@ export class OgcFilterSelectionComponent implements OnInit {
         return pos && pos === 1
           ? 'lowerBoundary'
           : pos && pos === 2
-          ? 'upperBoundary'
-          : undefined;
+            ? 'upperBoundary'
+            : undefined;
       case OgcFilterOperator.During:
         return pos && pos === 1
           ? 'begin'
           : pos && pos === 2
-          ? 'end'
-          : undefined;
+            ? 'end'
+            : undefined;
       default:
         return;
     }

@@ -1,21 +1,22 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
 import { StyleModalLayerComponent } from '../layer/style-modal-layer.component';
 import { LayerMatDialogData } from '../shared/style-modal.interface';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'igo-style-modal-layer-button',
-    templateUrl: './style-modal-layer-button.component.html',
-    styleUrls: ['./style-modal-layer-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  selector: 'igo-style-modal-layer-button',
+  templateUrl: './style-modal-layer-button.component.html',
+  styleUrls: ['./style-modal-layer-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
 })
 export class StyleModalLayerButtonComponent {
   @Input() layer: VectorLayer;

@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,23 +7,26 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 import { IgoFormFieldComponent } from '@igo2/common';
 
 import type { Type } from 'ol/geom/Geometry';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { NgIf, AsyncPipe } from '@angular/common';
 import { GeometryFormFieldInputComponent } from './geometry-form-field-input.component';
 
 /**
@@ -31,12 +35,23 @@ import { GeometryFormFieldInputComponent } from './geometry-form-field-input.com
  */
 @IgoFormFieldComponent('geometry')
 @Component({
-    selector: 'igo-geometry-form-field',
-    templateUrl: './geometry-form-field.component.html',
-    styleUrls: ['./geometry-form-field.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [GeometryFormFieldInputComponent, FormsModule, ReactiveFormsModule, NgIf, MatButtonToggleModule, MatFormFieldModule, MatInputModule, MatIconModule, AsyncPipe, TranslateModule]
+  selector: 'igo-geometry-form-field',
+  templateUrl: './geometry-form-field.component.html',
+  styleUrls: ['./geometry-form-field.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(

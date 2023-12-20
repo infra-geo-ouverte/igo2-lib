@@ -1,21 +1,29 @@
+import { AsyncPipe, NgIf, NgStyle } from '@angular/common';
 import { AfterContentInit, Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { bearingToAzimuth } from '@turf/helpers';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgIf, NgStyle, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-rotation-button',
-    templateUrl: './rotation-button.component.html',
-    styleUrls: ['./rotation-button.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatTooltipModule, MatButtonModule, MatIconModule, NgStyle, AsyncPipe, TranslateModule]
+  selector: 'igo-rotation-button',
+  templateUrl: './rotation-button.component.html',
+  styleUrls: ['./rotation-button.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    NgStyle,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class RotationButtonComponent implements AfterContentInit {
   readonly rotated$ = new BehaviorSubject<boolean>(false);

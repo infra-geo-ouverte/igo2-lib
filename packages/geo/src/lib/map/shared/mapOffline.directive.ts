@@ -14,8 +14,8 @@ interface OfflinableSourceOptions extends DataSourceOptions {
 }
 
 @Directive({
-    selector: '[igoMapOffline]',
-    standalone: true
+  selector: '[igoMapOffline]',
+  standalone: true
 })
 export class MapOfflineDirective implements AfterViewInit {
   private component: MapBrowserComponent;

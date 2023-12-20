@@ -1,21 +1,28 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { DownloadDataSourceOptions } from '../shared/download.interface';
 import { DownloadService } from '../shared/download.service';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
 
 @Component({
-    selector: 'igo-download-button',
-    templateUrl: './download-button.component.html',
-    styleUrls: ['./download-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, TranslateModule]
+  selector: 'igo-download-button',
+  templateUrl: './download-button.component.html',
+  styleUrls: ['./download-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class DownloadButtonComponent {
   @Input()

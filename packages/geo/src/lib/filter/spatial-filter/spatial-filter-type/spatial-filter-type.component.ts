@@ -1,3 +1,4 @@
+import { NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,8 +8,17 @@ import {
   Output
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EntityStore } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Feature } from '../../../feature';
 import { Layer } from '../../../layer';
@@ -17,27 +27,29 @@ import {
   SpatialFilterQueryType,
   SpatialFilterType
 } from '../../shared/spatial-filter.enum';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { SpatialFilterListComponent } from '../spatial-filter-list/spatial-filter-list.component';
-import { MatOptionModule } from '@angular/material/core';
-import { NgFor } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatTabsModule } from '@angular/material/tabs';
 
 /**
  * Spatial Filter Type
  */
 @Component({
-    selector: 'igo-spatial-filter-type',
-    templateUrl: './spatial-filter-type.component.html',
-    styleUrls: ['./spatial-filter-type.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatTabsModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, SpatialFilterListComponent, MatButtonToggleModule, MatTooltipModule, MatIconModule, TranslateModule]
+  selector: 'igo-spatial-filter-type',
+  templateUrl: './spatial-filter-type.component.html',
+  styleUrls: ['./spatial-filter-type.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    SpatialFilterListComponent,
+    MatButtonToggleModule,
+    MatTooltipModule,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class SpatialFilterTypeComponent implements OnInit {
   @Input()

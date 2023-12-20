@@ -43,8 +43,8 @@ import { StyleService } from '../../style/style-service/style.service';
  * the layer level.
  */
 @Directive({
-    selector: '[igoHoverFeature]',
-    standalone: true
+  selector: '[igoHoverFeature]',
+  standalone: true
 })
 export class HoverFeatureDirective implements OnInit, OnDestroy {
   public store: FeatureStore<Feature>;

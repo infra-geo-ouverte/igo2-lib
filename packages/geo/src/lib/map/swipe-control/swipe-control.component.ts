@@ -11,10 +11,10 @@ import { IgoMap } from '../shared/map';
  * Tool to swipe the layers
  */
 @Component({
-    selector: 'igo-swipe-control',
-    templateUrl: './swipe-control.component.html',
-    styleUrls: ['./swipe-control.component.scss'],
-    standalone: true
+  selector: 'igo-swipe-control',
+  templateUrl: './swipe-control.component.html',
+  styleUrls: ['./swipe-control.component.scss'],
+  standalone: true
 })
 export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   /**

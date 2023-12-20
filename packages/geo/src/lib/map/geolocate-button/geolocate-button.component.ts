@@ -1,22 +1,29 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { AfterContentInit, Component, Input, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ConfigService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { IgoMap } from '../shared/map';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-geolocate-button',
-    templateUrl: './geolocate-button.component.html',
-    styleUrls: ['./geolocate-button.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatButtonModule, MatTooltipModule, MatIconModule, AsyncPipe, TranslateModule]
+  selector: 'igo-geolocate-button',
+  templateUrl: './geolocate-button.component.html',
+  styleUrls: ['./geolocate-button.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class GeolocateButtonComponent implements AfterContentInit, OnDestroy {
   private tracking$$: Subscription;

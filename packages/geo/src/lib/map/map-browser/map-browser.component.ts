@@ -15,10 +15,10 @@ import { IgoMap } from '../shared/map';
 import { MapControlsOptions, MapViewOptions } from '../shared/map.interface';
 
 @Component({
-    selector: 'igo-map-browser',
-    templateUrl: './map-browser.component.html',
-    styleUrls: ['./map-browser.component.scss'],
-    standalone: true
+  selector: 'igo-map-browser',
+  templateUrl: './map-browser.component.html',
+  styleUrls: ['./map-browser.component.scss'],
+  standalone: true
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private activityId: string;

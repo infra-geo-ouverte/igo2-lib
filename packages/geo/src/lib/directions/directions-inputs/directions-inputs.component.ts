@@ -1,4 +1,11 @@
-import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray
+} from '@angular/cdk/drag-drop';
+import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -6,14 +13,24 @@ import {
   OnDestroy,
   Output
 } from '@angular/core';
-import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FormsModule } from '@angular/forms';
+import {
+  MatAutocomplete,
+  MatAutocompleteModule
+} from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LanguageService } from '@igo2/core';
 
 import * as olObservable from 'ol/Observable';
 import * as olProj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -26,21 +43,30 @@ import {
   updateStoreSorting
 } from '../shared/directions.utils';
 import { StopsFeatureStore, StopsStore } from '../shared/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgFor, NgClass, NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-directions-inputs',
-    templateUrl: './directions-inputs.component.html',
-    styleUrls: ['./directions-inputs.component.scss'],
-    standalone: true,
-    imports: [CdkDropList, NgFor, CdkDrag, NgClass, MatFormFieldModule, MatInputModule, FormsModule, MatAutocompleteModule, MatTooltipModule, NgIf, MatButtonModule, MatIconModule, MatOptionModule, CdkDragHandle, AsyncPipe, TranslateModule]
+  selector: 'igo-directions-inputs',
+  templateUrl: './directions-inputs.component.html',
+  styleUrls: ['./directions-inputs.component.scss'],
+  standalone: true,
+  imports: [
+    CdkDropList,
+    NgFor,
+    CdkDrag,
+    NgClass,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    MatOptionModule,
+    CdkDragHandle,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class DirectionsInputsComponent implements OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];

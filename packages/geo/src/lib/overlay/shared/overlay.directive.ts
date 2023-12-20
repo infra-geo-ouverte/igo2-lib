@@ -11,8 +11,8 @@ import { OverlayAction } from '../shared/overlay.enum';
 import { OverlayService } from '../shared/overlay.service';
 
 @Directive({
-    selector: '[igoOverlay]',
-    standalone: true
+  selector: '[igoOverlay]',
+  standalone: true
 })
 export class OverlayDirective implements OnInit, OnDestroy {
   private features$$: Subscription;

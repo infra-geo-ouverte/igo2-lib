@@ -1,8 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef
+} from '@angular/material/dialog';
 
 import { LanguageService } from '@igo2/core';
-import { MatButtonModule } from '@angular/material/button';
 
 export interface DialogData {
   type: string;
@@ -10,11 +15,11 @@ export interface DialogData {
 }
 
 @Component({
-    selector: 'igo-confirmation-popup-component',
-    templateUrl: './confirmation-popup.component.html',
-    styleUrls: ['./confirmation-popup.component.scss'],
-    standalone: true,
-    imports: [MatDialogContent, MatDialogActions, MatButtonModule]
+  selector: 'igo-confirmation-popup-component',
+  templateUrl: './confirmation-popup.component.html',
+  styleUrls: ['./confirmation-popup.component.scss'],
+  standalone: true,
+  imports: [MatDialogContent, MatDialogActions, MatButtonModule]
 })
 export class ConfirmationPopupComponent {
   constructor(

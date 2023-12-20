@@ -353,8 +353,8 @@ export class IgoMap implements MapBase {
         const offset = layer.zIndex
           ? 0
           : layer.baseLayer
-          ? offsetBaseLayerZIndex++
-          : offsetZIndex++;
+            ? offsetBaseLayerZIndex++
+            : offsetZIndex++;
         return this.doAddLayer(layer, offset);
       })
       .filter((layer: Layer | undefined) => layer !== undefined);

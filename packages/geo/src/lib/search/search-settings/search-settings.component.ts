@@ -1,3 +1,4 @@
+import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,10 +8,21 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule
+} from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MediaService, StorageService } from '@igo2/core';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import {
@@ -23,14 +35,6 @@ import {
   SearchSourceSettings,
   SettingOptions
 } from '../shared/sources/source.interfaces';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDividerModule } from '@angular/material/divider';
-import { NgIf, NgFor, NgSwitch, NgSwitchCase } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -41,12 +45,26 @@ import { MatButtonModule } from '@angular/material/button';
  * more than one search source enabled.
  */
 @Component({
-    selector: 'igo-search-settings',
-    templateUrl: './search-settings.component.html',
-    styleUrls: ['./search-settings.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatButtonModule, MatTooltipModule, MatMenuModule, MatIconModule, NgIf, NgFor, MatCheckboxModule, NgSwitch, NgSwitchCase, MatRadioModule, MatDividerModule, MatSlideToggleModule, TranslateModule]
+  selector: 'igo-search-settings',
+  templateUrl: './search-settings.component.html',
+  styleUrls: ['./search-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatIconModule,
+    NgIf,
+    NgFor,
+    MatCheckboxModule,
+    NgSwitch,
+    NgSwitchCase,
+    MatRadioModule,
+    MatDividerModule,
+    MatSlideToggleModule,
+    TranslateModule
+  ]
 })
 export class SearchSettingsComponent implements OnInit {
   public hasPointerReverseSearchSource: boolean = false;

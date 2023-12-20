@@ -1,5 +1,20 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core';
 
@@ -8,6 +23,8 @@ import Circle from 'ol/geom/Circle';
 import { fromCircle } from 'ol/geom/Polygon';
 import { transform } from 'ol/proj';
 import { getLength } from 'ol/sphere';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap, roundCoordTo } from '../../map/shared';
 import {
@@ -24,23 +41,28 @@ import {
 } from '../../measure/shared/measure.utils';
 import { CoordinatesUnit, GeometryType, LabelType } from '../shared/draw.enum';
 import { DDtoDMS } from '../shared/draw.utils';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-    selector: 'igo-draw-popup-component',
-    templateUrl: './draw-popup.component.html',
-    styleUrls: ['./draw-popup.component.scss'],
-    standalone: true,
-    imports: [MatDialogTitle, NgIf, MatDialogContent, MatButtonToggleModule, MatRadioModule, NgFor, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatDialogActions, MatButtonModule, TranslateModule]
+  selector: 'igo-draw-popup-component',
+  templateUrl: './draw-popup.component.html',
+  styleUrls: ['./draw-popup.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    NgIf,
+    MatDialogContent,
+    MatButtonToggleModule,
+    MatRadioModule,
+    NgFor,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDialogActions,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class DrawPopupComponent {
   @Input() confirmFlag: boolean = false;

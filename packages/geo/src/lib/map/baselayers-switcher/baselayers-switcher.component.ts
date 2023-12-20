@@ -1,26 +1,35 @@
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Media, MediaService } from '@igo2/core';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer/shared';
 import { IgoMap } from '../shared/map';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
-import { TranslateModule } from '@ngx-translate/core';
 import { MiniBaseMapComponent } from './mini-basemap.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf, NgClass, NgFor } from '@angular/common';
 
 @Component({
-    selector: 'igo-baselayers-switcher',
-    templateUrl: './baselayers-switcher.component.html',
-    styleUrls: ['./baselayers-switcher.component.scss'],
-    animations: [baseLayersSwitcherSlideInOut()],
-    standalone: true,
-    imports: [NgIf, NgClass, MatButtonModule, MatTooltipModule, MatIconModule, NgFor, MiniBaseMapComponent, TranslateModule]
+  selector: 'igo-baselayers-switcher',
+  templateUrl: './baselayers-switcher.component.html',
+  styleUrls: ['./baselayers-switcher.component.scss'],
+  animations: [baseLayersSwitcherSlideInOut()],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgClass,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    NgFor,
+    MiniBaseMapComponent,
+    TranslateModule
+  ]
 })
 export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   @Input() map: IgoMap;

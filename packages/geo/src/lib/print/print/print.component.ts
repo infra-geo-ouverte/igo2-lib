@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
+import { PrintFormComponent } from '../print-form/print-form.component';
 import { PrintOptions } from '../shared/print.interface';
 import { PrintService } from '../shared/print.service';
 import {
@@ -14,13 +15,12 @@ import {
   PrintResolution,
   PrintSaveImageFormat
 } from '../shared/print.type';
-import { PrintFormComponent } from '../print-form/print-form.component';
 
 @Component({
-    selector: 'igo-print',
-    templateUrl: './print.component.html',
-    standalone: true,
-    imports: [PrintFormComponent]
+  selector: 'igo-print',
+  templateUrl: './print.component.html',
+  standalone: true,
+  imports: [PrintFormComponent]
 })
 export class PrintComponent {
   public disabled$ = new BehaviorSubject(false);

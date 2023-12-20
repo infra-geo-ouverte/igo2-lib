@@ -11,8 +11,8 @@
         placeholder
           ? placeholder
           : (placeholder$ | async)
-          ? (placeholder$.value | translate)
-          : undefined
+            ? (placeholder$.value | translate)
+            : undefined
       "
       [value]="term$ | async"
       (keyup)="onKeyup($event)"

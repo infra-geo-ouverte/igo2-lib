@@ -1,18 +1,25 @@
+import { NgClass } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoMap } from '../shared/map';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'igo-offline-button',
-    templateUrl: './offline-button.component.html',
-    styleUrls: ['./offline-button.component.scss'],
-    standalone: true,
-    imports: [MatButtonModule, MatTooltipModule, NgClass, MatIconModule, TranslateModule]
+  selector: 'igo-offline-button',
+  templateUrl: './offline-button.component.html',
+  styleUrls: ['./offline-button.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    NgClass,
+    MatIconModule,
+    TranslateModule
+  ]
 })
 export class OfflineButtonComponent implements OnInit {
   btnStyle: string = 'onlineStyle';

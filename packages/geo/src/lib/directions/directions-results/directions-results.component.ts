@@ -1,3 +1,4 @@
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -5,6 +6,13 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
 
 import { LanguageService } from '@igo2/core';
 
@@ -12,6 +20,7 @@ import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olGeom from 'ol/geom';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -29,22 +38,25 @@ import {
   formatInstruction
 } from '../shared/directions.utils';
 import { RoutesFeatureStore, StepFeatureStore } from '../shared/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatOptionModule } from '@angular/material/core';
-import { FormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor, NgClass } from '@angular/common';
 
 @Component({
-    selector: 'igo-directions-results',
-    templateUrl: './directions-results.component.html',
-    styleUrls: ['./directions-results.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatFormFieldModule, MatSelectModule, FormsModule, NgFor, MatOptionModule, MatDividerModule, MatListModule, MatIconModule, NgClass, TranslateModule]
+  selector: 'igo-directions-results',
+  templateUrl: './directions-results.component.html',
+  styleUrls: ['./directions-results.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    NgFor,
+    MatOptionModule,
+    MatDividerModule,
+    MatListModule,
+    MatIconModule,
+    NgClass,
+    TranslateModule
+  ]
 })
 export class DirectionsResultsComponent implements OnInit, OnDestroy {
   public activeDirection: Direction;

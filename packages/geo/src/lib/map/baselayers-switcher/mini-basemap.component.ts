@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   AfterViewInit,
   ApplicationRef,
@@ -12,17 +13,16 @@ import OlView from 'ol/View';
 
 import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
-import { IgoMap } from '../shared/map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
-import { NgIf } from '@angular/common';
+import { IgoMap } from '../shared/map';
 
 @Component({
-    selector: 'igo-mini-basemap',
-    templateUrl: './mini-basemap.component.html',
-    styleUrls: ['./mini-basemap.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, MapBrowserComponent]
+  selector: 'igo-mini-basemap',
+  templateUrl: './mini-basemap.component.html',
+  styleUrls: ['./mini-basemap.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, MapBrowserComponent]
 })
 export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   @Input() map: IgoMap;
