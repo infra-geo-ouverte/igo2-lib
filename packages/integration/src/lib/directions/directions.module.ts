@@ -1,17 +1,13 @@
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  ModuleWithProviders,
-  NgModule
-} from '@angular/core';
-
-import { IgoDirectionsModule } from '@igo2/geo';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { DirectionsToolComponent } from './directions-tool/directions-tool.component';
 
+/**
+ * @deprecated import the DirectionsToolComponent directly
+ */
 @NgModule({
-    imports: [IgoDirectionsModule, DirectionsToolComponent],
-    exports: [DirectionsToolComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [DirectionsToolComponent],
+  exports: [DirectionsToolComponent]
 })
 export class IgoAppDirectionsModule {
   static forRoot(): ModuleWithProviders<IgoAppDirectionsModule> {

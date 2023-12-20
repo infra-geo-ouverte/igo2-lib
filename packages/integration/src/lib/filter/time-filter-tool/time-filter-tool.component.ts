@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { TimeFilterListBindingDirective } from '../../../../../geo/src/lib/filter/time-filter-list/time-filter-list-binding.directive';
-import { TimeFilterListComponent } from '../../../../../geo/src/lib/filter/time-filter-list/time-filter-list.component';
+import {
+  TimeFilterListBindingDirective,
+  TimeFilterListComponent
+} from '@igo2/geo';
 
 @ToolComponent({
   name: 'timeFilter',
@@ -10,10 +12,10 @@ import { TimeFilterListComponent } from '../../../../../geo/src/lib/filter/time-
   icon: 'history'
 })
 @Component({
-    selector: 'igo-time-filter-tool',
-    templateUrl: './time-filter-tool.component.html',
-    standalone: true,
-    imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
+  selector: 'igo-time-filter-tool',
+  templateUrl: './time-filter-tool.component.html',
+  standalone: true,
+  imports: [TimeFilterListComponent, TimeFilterListBindingDirective]
 })
 export class TimeFilterToolComponent {
   constructor() {}

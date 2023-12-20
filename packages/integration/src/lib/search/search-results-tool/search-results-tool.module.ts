@@ -1,39 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
-import {
-  IgoCustomHtmlModule,
-  IgoFlexibleModule,
-  PanelComponent
-} from '@igo2/common';
-import { IgoLanguageModule } from '@igo2/core';
-import { FeatureDetailsComponent, IgoSearchModule } from '@igo2/geo';
+import { NgModule } from '@angular/core';
 
 import { SearchResultsToolComponent } from './search-results-tool.component';
 
 /**
- * @ignore
+ * @deprecated import the SearchResultsToolComponent directly
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        MatIconModule,
-        MatBadgeModule,
-        MatTooltipModule,
-        MatButtonModule,
-        IgoLanguageModule,
-        IgoSearchModule,
-        IgoFlexibleModule,
-        PanelComponent,
-        FeatureDetailsComponent,
-        IgoCustomHtmlModule,
-        SearchResultsToolComponent
-    ],
-    exports: [SearchResultsToolComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SearchResultsToolComponent],
+  exports: [SearchResultsToolComponent]
 })
 export class IgoAppSearchResultsToolModule {}

@@ -1,11 +1,4 @@
-import { CommonModule } from '@angular/common';
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  ModuleWithProviders,
-  NgModule
-} from '@angular/core';
-
-import { IgoFilterModule, IgoQueryModule } from '@igo2/geo';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { ActiveOgcFilterToolComponent } from './active-ogc-filter-tool/active-ogc-filter-tool.component';
 import { ActiveTimeFilterToolComponent } from './active-time-filter-tool/active-time-filter-tool.component';
@@ -13,20 +6,24 @@ import { OgcFilterToolComponent } from './ogc-filter-tool/ogc-filter-tool.compon
 import { SpatialFilterToolComponent } from './spatial-filter-tool/spatial-filter-tool.component';
 import { TimeFilterToolComponent } from './time-filter-tool/time-filter-tool.component';
 
+/**
+ * @deprecated import the components directly or INTEGRATION_FILTER_DIRECTIVES for the set
+ */
 @NgModule({
-    imports: [IgoFilterModule, IgoQueryModule, CommonModule, OgcFilterToolComponent,
-        ActiveOgcFilterToolComponent,
-        TimeFilterToolComponent,
-        ActiveTimeFilterToolComponent,
-        SpatialFilterToolComponent],
-    exports: [
-        OgcFilterToolComponent,
-        ActiveOgcFilterToolComponent,
-        TimeFilterToolComponent,
-        ActiveTimeFilterToolComponent,
-        SpatialFilterToolComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [
+    OgcFilterToolComponent,
+    ActiveOgcFilterToolComponent,
+    TimeFilterToolComponent,
+    ActiveTimeFilterToolComponent,
+    SpatialFilterToolComponent
+  ],
+  exports: [
+    OgcFilterToolComponent,
+    ActiveOgcFilterToolComponent,
+    TimeFilterToolComponent,
+    ActiveTimeFilterToolComponent,
+    SpatialFilterToolComponent
+  ]
 })
 export class IgoAppFilterModule {
   static forRoot(): ModuleWithProviders<IgoAppFilterModule> {

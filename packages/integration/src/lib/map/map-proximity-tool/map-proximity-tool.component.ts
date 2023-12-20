@@ -1,4 +1,10 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
 import {
@@ -10,18 +16,11 @@ import { LanguageService, MessageService } from '@igo2/core';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Clipboard, NumberUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { MapProximityState } from '../map-proximity.state';
 import { MapState } from '../map.state';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, AsyncPipe } from '@angular/common';
-import { EntityTableComponent as EntityTableComponent_1 } from '../../../../../common/src/lib/entity/entity-table/entity-table.component';
 
 @ToolComponent({
   name: 'map-proximity',
@@ -32,11 +31,22 @@ import { EntityTableComponent as EntityTableComponent_1 } from '../../../../../c
  * Tool to handle the advanced map tools
  */
 @Component({
-    selector: 'igo-map-proximity-tool',
-    templateUrl: './map-proximity-tool.component.html',
-    styleUrls: ['./map-proximity-tool.component.scss'],
-    standalone: true,
-    imports: [EntityTableComponent_1, NgIf, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatRadioModule, FormsModule, AsyncPipe, TranslateModule]
+  selector: 'igo-map-proximity-tool',
+  templateUrl: './map-proximity-tool.component.html',
+  styleUrls: ['./map-proximity-tool.component.scss'],
+  standalone: true,
+  imports: [
+    EntityTableComponent,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRadioModule,
+    FormsModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class MapProximityToolComponent implements OnInit, OnDestroy {
   private subs$$: Subscription[] = [];

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap, Layer } from '@igo2/geo';
+import { IgoMap, Layer, TimeFilterItemComponent } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-time-filter-tool.animation';
-import { TimeFilterItemComponent } from '../../../../../geo/src/lib/filter/time-filter-item/time-filter-item.component';
 
 @ToolComponent({
   name: 'activeTimeFilter',
@@ -14,11 +13,11 @@ import { TimeFilterItemComponent } from '../../../../../geo/src/lib/filter/time-
   parent: 'mapTools'
 })
 @Component({
-    selector: 'igo-active-time-filter-tool',
-    templateUrl: './active-time-filter-tool.component.html',
-    animations: [toolSlideInOut()],
-    standalone: true,
-    imports: [TimeFilterItemComponent]
+  selector: 'igo-active-time-filter-tool',
+  templateUrl: './active-time-filter-tool.component.html',
+  animations: [toolSlideInOut()],
+  standalone: true,
+  imports: [TimeFilterItemComponent]
 })
 export class ActiveTimeFilterToolComponent {
   get map(): IgoMap {

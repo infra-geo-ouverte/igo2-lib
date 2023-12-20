@@ -1,23 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
-import { IgoContextModule } from '@igo2/context';
+import { INTEGRATION_CONTEXT_DIRECTIVES } from '.';
 
-import { ContextEditorToolComponent } from './context-editor-tool/context-editor-tool.component';
-import { ContextManagerToolComponent } from './context-manager-tool/context-manager-tool.component';
-import { ContextPermissionManagerToolComponent } from './context-permission-manager-tool/context-permission-manager-tool.component';
-import { ContextShareToolComponent } from './context-share-tool/context-share-tool.component';
-
+/**
+ * @deprecated import the components/directive directly or INTEGRATION_CONTEXT_DIRECTIVES for the set
+ */
 @NgModule({
-    imports: [IgoContextModule, ContextEditorToolComponent,
-        ContextManagerToolComponent,
-        ContextPermissionManagerToolComponent,
-        ContextShareToolComponent],
-    exports: [
-        ContextEditorToolComponent,
-        ContextManagerToolComponent,
-        ContextPermissionManagerToolComponent,
-        ContextShareToolComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [...INTEGRATION_CONTEXT_DIRECTIVES],
+  exports: [...INTEGRATION_CONTEXT_DIRECTIVES]
 })
 export class IgoAppContextModule {}

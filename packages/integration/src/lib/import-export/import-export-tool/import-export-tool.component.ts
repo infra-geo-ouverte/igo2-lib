@@ -1,17 +1,23 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
   OnInit
 } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
+import { ContextImportExportComponent } from '@igo2/context';
 import {
   ExportOptions,
   IgoMap,
+  ImportExportComponent,
   ProjectionsLimitationsOptions
 } from '@igo2/geo';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
@@ -21,11 +27,6 @@ import {
   ImportExportState,
   ImportExportType
 } from '../import-export.state';
-import { TranslateModule } from '@ngx-translate/core';
-import { ContextImportExportComponent } from '../../../../../context/src/lib/context-import-export/context-import-export/context-import-export.component';
-import { ImportExportComponent } from '../../../../../geo/src/lib/import-export/import-export/import-export.component';
-import { MatTabsModule } from '@angular/material/tabs';
-import { NgIf, AsyncPipe } from '@angular/common';
 
 @ToolComponent({
   name: 'importExport',
@@ -33,12 +34,19 @@ import { NgIf, AsyncPipe } from '@angular/common';
   icon: 'file-move'
 })
 @Component({
-    selector: 'igo-import-export-tool',
-    templateUrl: './import-export-tool.component.html',
-    styleUrls: ['./import-export-tool.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, MatTabsModule, ImportExportComponent, ContextImportExportComponent, AsyncPipe, TranslateModule]
+  selector: 'igo-import-export-tool',
+  templateUrl: './import-export-tool.component.html',
+  styleUrls: ['./import-export-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatTabsModule,
+    ImportExportComponent,
+    ContextImportExportComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class ImportExportToolComponent implements OnInit {
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;

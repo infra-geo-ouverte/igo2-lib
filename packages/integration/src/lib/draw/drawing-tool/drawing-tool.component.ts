@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import {
+  DrawComponent,
   DrawControl,
   FeatureStore,
   FeatureWithDraw,
@@ -11,7 +12,6 @@ import {
 
 import { MapState } from '../../map/map.state';
 import { DrawState } from '../draw.state';
-import { DrawComponent } from '../../../../../geo/src/lib/draw/draw/draw.component';
 
 /**
  * Tool to measure lengths and areas
@@ -22,11 +22,11 @@ import { DrawComponent } from '../../../../../geo/src/lib/draw/draw/draw.compone
   icon: 'draw'
 })
 @Component({
-    selector: 'igo-drawing-tool',
-    templateUrl: './drawing-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [DrawComponent]
+  selector: 'igo-drawing-tool',
+  templateUrl: './drawing-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [DrawComponent]
 })
 export class DrawingToolComponent {
   /**

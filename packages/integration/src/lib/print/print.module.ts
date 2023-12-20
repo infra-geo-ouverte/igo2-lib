@@ -1,17 +1,13 @@
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  ModuleWithProviders,
-  NgModule
-} from '@angular/core';
-
-import { IgoPrintModule } from '@igo2/geo';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { PrintToolComponent } from './print-tool/print-tool.component';
 
+/**
+ * @deprecated import the PrintToolComponent directly
+ */
 @NgModule({
-    imports: [IgoPrintModule, PrintToolComponent],
-    exports: [PrintToolComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [PrintToolComponent],
+  exports: [PrintToolComponent]
 })
 export class IgoAppPrintModule {
   static forRoot(): ModuleWithProviders<IgoAppPrintModule> {

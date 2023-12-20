@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,12 +7,18 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   EntityState,
   EntityStore,
   FlexibleComponent,
   FlexibleState,
+  PanelComponent,
+  SanitizeHtmlPipe,
   ToolComponent,
   getEntityTitle
 } from '@igo2/common';
@@ -19,11 +26,14 @@ import { ConfigService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   FeatureStore,
   IgoMap,
   Research,
   SearchResult,
+  SearchResultAddButtonComponent,
+  SearchResultsComponent,
   computeOlFeaturesExtent,
   featureFromOl,
   featureToOl,
@@ -41,6 +51,7 @@ import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olPoint from 'ol/geom/Point';
 import * as olProj from 'ol/proj';
 
+import { TranslateModule } from '@ngx-translate/core';
 import pointOnFeature from '@turf/point-on-feature';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -49,18 +60,6 @@ import { DirectionState } from '../../directions/directions.state';
 import { MapState } from '../../map/map.state';
 import { ToolState } from '../../tool/tool.state';
 import { SearchState } from '../search.state';
-import { SanitizeHtmlPipe } from '../../../../../common/src/lib/custom-html/custom-html.pipe';
-import { TranslateModule } from '@ngx-translate/core';
-import { FeatureDetailsComponent } from '../../../../../geo/src/lib/feature/feature-details/feature-details.component';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { PanelComponent } from '../../../../../common/src/lib/panel/panel.component';
-import { SearchResultAddButtonComponent } from '../../../../../geo/src/lib/search/search-results/search-results-add-button.component';
-import { SearchResultsComponent } from '../../../../../geo/src/lib/search/search-results/search-results.component';
-import { FlexibleComponent as FlexibleComponent_1 } from '../../../../../common/src/lib/flexible/flexible.component';
-import { NgIf, AsyncPipe } from '@angular/common';
 
 /**
  * Tool to browse the search results
@@ -71,11 +70,25 @@ import { NgIf, AsyncPipe } from '@angular/common';
   icon: 'magnify'
 })
 @Component({
-    selector: 'igo-search-results-tool',
-    templateUrl: './search-results-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, FlexibleComponent_1, SearchResultsComponent, SearchResultAddButtonComponent, PanelComponent, MatButtonModule, MatIconModule, MatTooltipModule, MatBadgeModule, FeatureDetailsComponent, AsyncPipe, TranslateModule, SanitizeHtmlPipe]
+  selector: 'igo-search-results-tool',
+  templateUrl: './search-results-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    FlexibleComponent,
+    SearchResultsComponent,
+    SearchResultAddButtonComponent,
+    PanelComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    FeatureDetailsComponent,
+    AsyncPipe,
+    TranslateModule,
+    SanitizeHtmlPipe
+  ]
 })
 export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**

@@ -9,6 +9,7 @@ import {
   StorageService
 } from '@igo2/core';
 import {
+  IgoDirectionsModule,
   IgoMap,
   RoutesFeatureStore,
   StepFeatureStore,
@@ -21,7 +22,6 @@ import { Subject } from 'rxjs';
 import { ContextState } from '../../context/context.state';
 import { MapState } from '../../map/map.state';
 import { DirectionState } from '../directions.state';
-import { DirectionsComponent } from '../../../../../geo/src/lib/directions/directions.component';
 
 @ToolComponent({
   name: 'directions',
@@ -29,10 +29,10 @@ import { DirectionsComponent } from '../../../../../geo/src/lib/directions/direc
   icon: 'directions'
 })
 @Component({
-    selector: 'igo-directions-tool',
-    templateUrl: './directions-tool.component.html',
-    standalone: true,
-    imports: [DirectionsComponent]
+  selector: 'igo-directions-tool',
+  templateUrl: './directions-tool.component.html',
+  standalone: true,
+  imports: [IgoDirectionsModule]
 })
 export class DirectionsToolComponent implements OnInit {
   public currentContextUri: string;

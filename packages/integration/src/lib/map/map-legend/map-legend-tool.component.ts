@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -5,16 +6,21 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 import { ToolComponent } from '@igo2/common';
 import {
   IgoMap,
   Layer,
+  LayerLegendListBindingDirective,
+  LayerLegendListComponent,
   LayerListControlsOptions,
   SearchSourceService,
   sourceCanSearch
 } from '@igo2/geo';
 
+import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   Observable,
@@ -26,12 +32,6 @@ import { debounceTime, map } from 'rxjs/operators';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { LayerLegendListBindingDirective } from '../../../../../geo/src/lib/layer/layer-legend-list/layer-legend-list-binding.directive';
-import { LayerLegendListComponent } from '../../../../../geo/src/lib/layer/layer-legend-list/layer-legend-list.component';
-import { NgIf, AsyncPipe } from '@angular/common';
 
 @ToolComponent({
   name: 'mapLegend',
@@ -39,11 +39,19 @@ import { NgIf, AsyncPipe } from '@angular/common';
   icon: 'format-list-bulleted-type'
 })
 @Component({
-    selector: 'igo-map-legend-tool',
-    templateUrl: './map-legend-tool.component.html',
-    styleUrls: ['./map-legend-tool.component.scss'],
-    standalone: true,
-    imports: [NgIf, LayerLegendListComponent, LayerLegendListBindingDirective, MatListModule, MatIconModule, AsyncPipe, TranslateModule]
+  selector: 'igo-map-legend-tool',
+  templateUrl: './map-legend-tool.component.html',
+  styleUrls: ['./map-legend-tool.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    LayerLegendListComponent,
+    LayerLegendListBindingDirective,
+    MatListModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
   public delayedShowEmptyMapContent: boolean = false;

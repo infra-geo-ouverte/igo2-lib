@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { ContextPermissionsBindingDirective } from '../../../../../context/src/lib/context-manager/context-permissions/context-permissions-binding.directive';
-import { ContextPermissionsComponent } from '../../../../../context/src/lib/context-manager/context-permissions/context-permissions.component';
+import {
+  ContextPermissionsBindingDirective,
+  ContextPermissionsComponent
+} from '@igo2/context';
 
 @ToolComponent({
   name: 'contextPermissionManager',
@@ -11,9 +13,9 @@ import { ContextPermissionsComponent } from '../../../../../context/src/lib/cont
   parent: 'contextManager'
 })
 @Component({
-    selector: 'igo-context-permission-manager-tool',
-    templateUrl: './context-permission-manager-tool.component.html',
-    standalone: true,
-    imports: [ContextPermissionsComponent, ContextPermissionsBindingDirective]
+  selector: 'igo-context-permission-manager-tool',
+  templateUrl: './context-permission-manager-tool.component.html',
+  standalone: true,
+  imports: [ContextPermissionsComponent, ContextPermissionsBindingDirective]
 })
 export class ContextPermissionManagerToolComponent {}

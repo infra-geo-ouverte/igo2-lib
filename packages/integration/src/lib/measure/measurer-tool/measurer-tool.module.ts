@@ -1,15 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-
-import { MeasurerComponent } from '@igo2/geo';
+import { NgModule } from '@angular/core';
 
 import { MeasurerToolComponent } from './measurer-tool.component';
 
 /**
- * @ignore
+ * @deprecated import the MeasurerToolComponent directly
  */
 @NgModule({
-    imports: [MeasurerComponent, MeasurerToolComponent],
-    exports: [MeasurerToolComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [MeasurerToolComponent],
+  exports: [MeasurerToolComponent]
 })
 export class IgoAppMeasurerToolModule {}

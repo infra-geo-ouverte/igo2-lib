@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 
-import { IgoSearchModule } from '@igo2/geo';
-
 import { SearchBarBindingDirective } from './search-bar-binding.directive';
 
 /**
- * @ignore
+ * @deprecated import the SearchBarBindingDirective directly
  */
 @NgModule({
-    imports: [IgoSearchModule, SearchBarBindingDirective],
-    exports: [SearchBarBindingDirective]
+  imports: [SearchBarBindingDirective],
+  exports: [SearchBarBindingDirective]
 })
 export class IgoAppSearchBarModule {}

@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { FeatureStore, FeatureWithMeasure, IgoMap } from '@igo2/geo';
+import {
+  FeatureStore,
+  FeatureWithMeasure,
+  IgoMap,
+  MeasurerComponent
+} from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { MeasureState } from '../measure.state';
-import { MeasurerComponent } from '../../../../../geo/src/lib/measure/measurer/measurer.component';
 
 /**
  * Tool to measure lengths and areas
@@ -16,11 +20,11 @@ import { MeasurerComponent } from '../../../../../geo/src/lib/measure/measurer/m
   icon: 'ruler'
 })
 @Component({
-    selector: 'igo-measurer-tool',
-    templateUrl: './measurer-tool.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MeasurerComponent]
+  selector: 'igo-measurer-tool',
+  templateUrl: './measurer-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MeasurerComponent]
 })
 export class MeasurerToolComponent {
   /**

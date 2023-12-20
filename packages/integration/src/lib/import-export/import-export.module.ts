@@ -1,31 +1,13 @@
-import { CommonModule } from '@angular/common';
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  ModuleWithProviders,
-  NgModule
-} from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatTabsModule } from '@angular/material/tabs';
-
-import { IgoContextImportExportModule } from '@igo2/context';
-import { IgoLanguageModule } from '@igo2/core';
-import { IgoImportExportModule, IgoStyleModule } from '@igo2/geo';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { ImportExportToolComponent } from './import-export-tool/import-export-tool.component';
 
+/**
+ * @deprecated import the ImportExportToolComponent directly
+ */
 @NgModule({
-    imports: [
-        IgoImportExportModule,
-        IgoContextImportExportModule,
-        CommonModule,
-        IgoLanguageModule,
-        MatButtonToggleModule,
-        MatTabsModule,
-        IgoStyleModule,
-        ImportExportToolComponent
-    ],
-    exports: [ImportExportToolComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [ImportExportToolComponent],
+  exports: [ImportExportToolComponent]
 })
 export class IgoAppImportExportModule {
   static forRoot(): ModuleWithProviders<IgoAppImportExportModule> {

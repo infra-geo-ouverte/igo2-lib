@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import {
+  ContextEditBindingDirective,
+  ContextEditComponent
+} from '@igo2/context';
 
 import { ToolState } from '../../tool/tool.state';
-import { ContextEditBindingDirective } from '../../../../../context/src/lib/context-manager/context-edit/context-edit-binding.directive';
-import { ContextEditComponent } from '../../../../../context/src/lib/context-manager/context-edit/context-edit.component';
 
 @ToolComponent({
   name: 'contextEditor',
@@ -13,10 +15,10 @@ import { ContextEditComponent } from '../../../../../context/src/lib/context-man
   parent: 'contextManager'
 })
 @Component({
-    selector: 'igo-context-editor-tool',
-    templateUrl: './context-editor-tool.component.html',
-    standalone: true,
-    imports: [ContextEditComponent, ContextEditBindingDirective]
+  selector: 'igo-context-editor-tool',
+  templateUrl: './context-editor-tool.component.html',
+  standalone: true,
+  imports: [ContextEditComponent, ContextEditBindingDirective]
 })
 export class ContextEditorToolComponent {
   constructor(private toolState: ToolState) {}

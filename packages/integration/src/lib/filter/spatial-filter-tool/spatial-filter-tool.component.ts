@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -11,6 +12,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import {
   EntityStore,
   EntityStoreWithStrategy,
+  PanelComponent,
   ToolComponent
 } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
@@ -20,17 +22,20 @@ import {
   DataSourceService,
   ExportOptions,
   Feature,
+  FeatureDetailsComponent,
   FeatureMotion,
   IgoMap,
   Layer,
   LayerService,
   MeasureLengthUnit,
   QueryableDataSourceOptions,
+  SpatialFilterItemComponent,
   SpatialFilterItemType,
   SpatialFilterQueryType,
   SpatialFilterService,
   SpatialFilterThematic,
   SpatialFilterType,
+  SpatialFilterTypeComponent,
   VectorLayer,
   createOverlayMarkerStyle,
   featureToOl,
@@ -55,9 +60,6 @@ import {
   ImportExportMode,
   ImportExportState
 } from './../../import-export/import-export.state';
-import { NgIf, AsyncPipe } from '@angular/common';
-import { SpatialFilterItemComponent } from '../../../../../geo/src/lib/filter/spatial-filter/spatial-filter-item/spatial-filter-item.component';
-import { SpatialFilterTypeComponent } from '../../../../../geo/src/lib/filter/spatial-filter/spatial-filter-type/spatial-filter-type.component';
 
 /**
  * Tool to apply spatial filter
@@ -71,12 +73,19 @@ import { SpatialFilterTypeComponent } from '../../../../../geo/src/lib/filter/sp
  * Spatial Filter Type
  */
 @Component({
-    selector: 'igo-spatial-filter-tool',
-    templateUrl: './spatial-filter-tool.component.html',
-    styleUrls: ['./spatial-filter-tool.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [SpatialFilterTypeComponent, SpatialFilterItemComponent, NgIf, AsyncPipe]
+  selector: 'igo-spatial-filter-tool',
+  templateUrl: './spatial-filter-tool.component.html',
+  styleUrls: ['./spatial-filter-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    SpatialFilterTypeComponent,
+    SpatialFilterItemComponent,
+    PanelComponent,
+    FeatureDetailsComponent,
+    NgIf,
+    AsyncPipe
+  ]
 })
 export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {

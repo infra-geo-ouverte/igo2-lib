@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap, Layer } from '@igo2/geo';
+import { IgoMap, Layer, OgcFilterableItemComponent } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { toolSlideInOut } from './active-ogc-filter-tool.animation';
-import { OgcFilterableItemComponent } from '../../../../../geo/src/lib/filter/ogc-filterable-item/ogc-filterable-item.component';
 
 @ToolComponent({
   name: 'activeOgcFilter',
@@ -14,11 +13,11 @@ import { OgcFilterableItemComponent } from '../../../../../geo/src/lib/filter/og
   parent: 'mapTools'
 })
 @Component({
-    selector: 'igo-active-ogc-filter-tool',
-    templateUrl: './active-ogc-filter-tool.component.html',
-    animations: [toolSlideInOut()],
-    standalone: true,
-    imports: [OgcFilterableItemComponent]
+  selector: 'igo-active-ogc-filter-tool',
+  templateUrl: './active-ogc-filter-tool.component.html',
+  animations: [toolSlideInOut()],
+  standalone: true,
+  imports: [OgcFilterableItemComponent]
 })
 export class ActiveOgcFilterToolComponent {
   get map(): IgoMap {
