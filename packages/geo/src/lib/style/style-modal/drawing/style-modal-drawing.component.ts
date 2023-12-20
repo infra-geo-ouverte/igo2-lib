@@ -1,6 +1,28 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+
+import { ColorPickerFormFieldComponent } from '@igo2/common';
+
+import { TranslateModule } from '@ngx-translate/core';
 
 import { FontType } from '../../shared/font.enum';
 import { DrawStyleService } from '../../style-service/draw-style.service';
@@ -8,22 +30,29 @@ import {
   DrawingMatDialogData,
   StyleModalData
 } from '../shared/style-modal.interface';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ColorPickerFormFieldComponent } from '../../../../../../common/src/lib/color-picker-form-field/color-picker-form-field.component';
-import { MatIconModule } from '@angular/material/icon';
-import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-    selector: 'igo-style-modal-drawing',
-    templateUrl: './style-modal-drawing.component.html',
-    styleUrls: ['./style-modal-drawing.component.scss'],
-    standalone: true,
-    imports: [MatDialogTitle, MatDialogContent, FormsModule, ReactiveFormsModule, NgIf, MatIconModule, ColorPickerFormFieldComponent, MatFormFieldModule, MatInputModule, MatSelectModule, NgFor, MatOptionModule, MatDialogActions, MatButtonModule, TranslateModule]
+  selector: 'igo-style-modal-drawing',
+  templateUrl: './style-modal-drawing.component.html',
+  styleUrls: ['./style-modal-drawing.component.scss'],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatIconModule,
+    ColorPickerFormFieldComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatDialogActions,
+    MatButtonModule,
+    TranslateModule
+  ]
 })
 export class StyleModalDrawingComponent implements OnInit {
   @Input() confirmFlag: boolean = false;

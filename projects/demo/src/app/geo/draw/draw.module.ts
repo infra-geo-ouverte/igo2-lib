@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { IgoDrawModule, IgoMapModule } from '@igo2/geo';
-
 import { AppDrawComponent } from './draw.component';
 
 @NgModule({
@@ -19,6 +17,6 @@ import { AppDrawComponent } from './draw.component';
 class RoutingModule {}
 
 @NgModule({
-  imports: [IgoMapModule, IgoDrawModule, AppDrawComponent, RoutingModule]
+  imports: [AppDrawComponent, RoutingModule]
 })
 export class AppDrawModule {}

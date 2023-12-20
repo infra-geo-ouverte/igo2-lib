@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,13 +11,29 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { UntypedFormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTreeNestedDataSource, MatTreeModule } from '@angular/material/tree';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 
 import {
   EntityStoreFilterSelectionStrategy,
   EntityStoreWithStrategy,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
@@ -28,11 +45,13 @@ import OlPoint from 'ol/geom/Point';
 import * as olproj from 'ol/proj';
 import * as olStyle from 'ol/style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { FeatureDataSource } from '../../../datasource/shared';
 import { FeatureMotion, FeatureStoreSelectionStrategy } from '../../../feature';
+import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Layer, VectorLayer } from '../../../layer/shared';
 import { IgoMap } from '../../../map/shared/map';
@@ -45,32 +64,38 @@ import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
-import { TranslateModule } from '@ngx-translate/core';
-import { EntityTableComponent } from '../../../../../../common/src/lib/entity/entity-table/entity-table.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { GeometryFormFieldInputComponent } from '../../../geometry/geometry-form-field/geometry-form-field-input.component';
 
 /**
  * Spatial-Filter-Item (search parameters)
  */
 @Component({
-    selector: 'igo-spatial-filter-item',
-    templateUrl: './spatial-filter-item.component.html',
-    styleUrls: ['./spatial-filter-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [GeometryFormFieldInputComponent, FormsModule, ReactiveFormsModule, NgIf, MatSlideToggleModule, MatFormFieldModule, MatInputModule, MatSelectModule, NgFor, MatOptionModule, MatRadioModule, MatTableModule, MatCheckboxModule, MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule, EntityTableComponent, AsyncPipe, TranslateModule]
+  selector: 'igo-spatial-filter-item',
+  templateUrl: './spatial-filter-item.component.html',
+  styleUrls: ['./spatial-filter-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    GeometryFormFieldInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatRadioModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    EntityTableComponent,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() map: IgoMap;

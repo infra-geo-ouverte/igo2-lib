@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
+import { CustomHtmlComponent } from '@igo2/common';
 import { MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 import { Clipboard } from '@igo2/utils';
@@ -19,7 +20,6 @@ import { Clipboard } from '@igo2/utils';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, combineLatest } from 'rxjs';
 
-import { CustomHtmlComponent } from '../../../../../common/src/lib/custom-html/custom-html.component';
 import { ShareMapService } from '../shared/share-map.service';
 
 @Component({

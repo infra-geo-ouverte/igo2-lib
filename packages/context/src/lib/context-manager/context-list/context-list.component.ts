@@ -20,7 +20,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
-import { ActionStore, ActionbarMode } from '@igo2/common';
+import {
+  ActionStore,
+  ActionbarComponent,
+  ActionbarMode,
+  CollapsibleComponent,
+  ListComponent,
+  ListItemDirective
+} from '@igo2/common';
 import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
@@ -29,10 +36,6 @@ import { BehaviorSubject, ReplaySubject, Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { debounce } from 'rxjs/operators';
 
-import { ActionbarComponent } from '../../../../../common/src/lib/action/actionbar/actionbar.component';
-import { CollapsibleComponent } from '../../../../../common/src/lib/collapsible/collapsible.component';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { ContextItemComponent } from '../context-item/context-item.component';
 import {

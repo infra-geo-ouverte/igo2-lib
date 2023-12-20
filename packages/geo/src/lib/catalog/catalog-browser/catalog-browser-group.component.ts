@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,10 +8,19 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
+import {
+  CollapseDirective,
+  EntityStore,
+  ListItemDirective
+} from '@igo2/common';
 import type { EntityStateManager } from '@igo2/common';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { IgoMap } from '../../map/shared/map';
@@ -23,26 +33,30 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { TranslateModule } from '@ngx-translate/core';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
 import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CollapseDirective } from '../../../../../common/src/lib/collapsible/collapse.directive';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
 
 /**
  * Catalog browser group item
  */
 @Component({
-    selector: 'igo-catalog-browser-group',
-    templateUrl: './catalog-browser-group.component.html',
-    styleUrls: ['./catalog-browser-group.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatListModule, MatIconModule, CollapseDirective, MatTooltipModule, NgIf, MatButtonModule, NgFor, CatalogBrowserLayerComponent, ListItemDirective, AsyncPipe, TranslateModule]
+  selector: 'igo-catalog-browser-group',
+  templateUrl: './catalog-browser-group.component.html',
+  styleUrls: ['./catalog-browser-group.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    MatIconModule,
+    CollapseDirective,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    NgFor,
+    CatalogBrowserLayerComponent,
+    ListItemDirective,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**

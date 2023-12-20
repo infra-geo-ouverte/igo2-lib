@@ -6,18 +6,25 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
 
-import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
+import {
+  FlexibleComponent,
+  FlexibleState,
+  PanelComponent,
+  Tool,
+  getEntityTitle
+} from '@igo2/common';
 import type { Media } from '@igo2/core';
-import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
+import {
+  Feature,
+  FeatureDetailsComponent,
+  FeatureMotion,
+  moveToOlFeatures
+} from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { TranslateModule } from '@ngx-translate/core';
-
-import { FlexibleComponent } from '../../../../common/src/lib/flexible/flexible.component';
-import { PanelComponent } from '../../../../common/src/lib/panel/panel.component';
-import { IgoFeatureDetailsModule } from '../../../../geo/src/lib/feature/feature-details/feature-details.module';
 
 @Component({
   selector: 'igo-sidenav',
@@ -32,7 +39,7 @@ import { IgoFeatureDetailsModule } from '../../../../geo/src/lib/feature/feature
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    IgoFeatureDetailsModule,
+    FeatureDetailsComponent,
     TranslateModule
   ]
 })

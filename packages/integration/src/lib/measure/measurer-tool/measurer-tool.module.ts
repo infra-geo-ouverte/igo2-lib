@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
-import { IgoMeasurerModule } from '@igo2/geo';
+import { MeasurerComponent } from '@igo2/geo';
 
 import { MeasurerToolComponent } from './measurer-tool.component';
 
@@ -8,7 +8,7 @@ import { MeasurerToolComponent } from './measurer-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [IgoMeasurerModule],
+  imports: [MeasurerComponent],
   declarations: [MeasurerToolComponent],
   exports: [MeasurerToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

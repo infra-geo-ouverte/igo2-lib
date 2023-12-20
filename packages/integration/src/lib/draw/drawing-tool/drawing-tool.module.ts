@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
-import { IgoDrawingToolModule } from '@igo2/geo';
+import { DrawComponent } from '@igo2/geo';
 
 import { DrawingToolComponent } from './drawing-tool.component';
 
@@ -8,7 +8,7 @@ import { DrawingToolComponent } from './drawing-tool.component';
  * @ignore
  */
 @NgModule({
-  imports: [IgoDrawingToolModule],
+  imports: [DrawComponent],
   declarations: [DrawingToolComponent],
   exports: [DrawingToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

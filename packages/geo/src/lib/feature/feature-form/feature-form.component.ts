@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,15 +9,13 @@ import {
 } from '@angular/core';
 
 import { Form, getEntityRevision } from '@igo2/common';
-import type { FormComponent } from '@igo2/common';
+import { FormComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { BehaviorSubject } from 'rxjs';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
-import { AsyncPipe } from '@angular/common';
-import { FormComponent as FormComponent_1 } from '../../../../../common/src/lib/form/form/form.component';
 
 /**
  * A configurable form, optionnally bound to a feature.
@@ -26,12 +25,12 @@ import { FormComponent as FormComponent_1 } from '../../../../../common/src/lib/
  * as well as disabling the selection of another feature.
  */
 @Component({
-    selector: 'igo-feature-form',
-    templateUrl: './feature-form.component.html',
-    styleUrls: ['./feature-form.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [FormComponent_1, AsyncPipe]
+  selector: 'igo-feature-form',
+  templateUrl: './feature-form.component.html',
+  styleUrls: ['./feature-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [FormComponent, AsyncPipe]
 })
 export class FeatureFormComponent {
   /**

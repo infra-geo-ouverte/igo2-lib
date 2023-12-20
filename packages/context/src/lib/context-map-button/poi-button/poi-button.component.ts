@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '@igo2/auth';
-import { ConfirmDialogService } from '@igo2/common';
+import { ConfirmDialogService, StopPropagationDirective } from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
@@ -20,7 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
 import { PoiDialogComponent } from './poi-dialog.component';
 import { Poi } from './shared/poi.interface';
 import { PoiService } from './shared/poi.service';

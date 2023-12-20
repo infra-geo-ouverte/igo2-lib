@@ -1,13 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { IgoFeatureDetailsModule } from './feature-details/feature-details.module';
 import { IgoFeatureFormModule } from './feature-form/feature-form.module';
 
+/**
+ * @deprecated import the components directly or the FEATURE_DIRECTIVES for everything
+ */
 @NgModule({
-  imports: [CommonModule],
-  exports: [IgoFeatureDetailsModule, IgoFeatureFormModule],
-  declarations: [],
-  providers: []
+  exports: [IgoFeatureDetailsModule, IgoFeatureFormModule]
 })
 export class IgoFeatureModule {}

@@ -1,26 +1,36 @@
+import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
-import { FlexibleState, getEntityTitle } from '@igo2/common';
+import {
+  FlexibleComponent,
+  FlexibleState,
+  PanelComponent,
+  getEntityTitle
+} from '@igo2/common';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
+import { FeatureDetailsComponent } from '../feature/feature-details/feature-details.component';
 import { FeatureMotion } from '../feature/shared/feature.enums';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
-import { FeatureDetailsComponent } from '../feature/feature-details/feature-details.component';
-import { NgIf } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { PanelComponent } from '../../../../common/src/lib/panel/panel.component';
-import { FlexibleComponent } from '../../../../common/src/lib/flexible/flexible.component';
 
 @Component({
-    selector: 'igo-toast',
-    templateUrl: './toast.component.html',
-    styleUrls: ['./toast.component.scss'],
-    standalone: true,
-    imports: [FlexibleComponent, PanelComponent, MatButtonModule, MatIconModule, NgIf, FeatureDetailsComponent]
+  selector: 'igo-toast',
+  templateUrl: './toast.component.html',
+  styleUrls: ['./toast.component.scss'],
+  standalone: true,
+  imports: [
+    FlexibleComponent,
+    PanelComponent,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
+    FeatureDetailsComponent
+  ]
 })
 export class ToastComponent {
   static SWIPE_ACTION = {

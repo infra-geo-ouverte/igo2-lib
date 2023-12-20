@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 import {
   IgoImportExportModule,
   IgoMap,
@@ -42,10 +41,7 @@ export class AppImportExportComponent {
 
   public store = new WorkspaceStore([]);
 
-  constructor(
-    private languageService: LanguageService,
-    private layerService: LayerService
-  ) {
+  constructor(private layerService: LayerService) {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',

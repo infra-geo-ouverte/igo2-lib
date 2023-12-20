@@ -1,3 +1,11 @@
+import {
+  AsyncPipe,
+  JsonPipe,
+  KeyValuePipe,
+  NgFor,
+  NgIf,
+  NgStyle
+} from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -9,33 +17,46 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { getEntityIcon, getEntityTitle } from '@igo2/common';
+import {
+  ImageErrorDirective,
+  SecureImagePipe,
+  getEntityIcon,
+  getEntityTitle
+} from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
 import { ConnectionState, MessageService, NetworkService } from '@igo2/core';
 import { ConfigService } from '@igo2/core';
 import { Clipboard } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
 import { SearchSource } from '../../search/shared/sources/source';
 import { Feature } from '../shared';
-import { SecureImagePipe } from '../../../../../common/src/lib/image/secure-image.pipe';
-import { TranslateModule } from '@ngx-translate/core';
-import { ImageErrorDirective } from '../../../../../common/src/lib/image/image-error.directive';
-import { MatIconModule } from '@angular/material/icon';
-import { NgIf, NgFor, NgStyle, AsyncPipe, JsonPipe, KeyValuePipe } from '@angular/common';
 
 @Component({
-    selector: 'igo-feature-details',
-    templateUrl: './feature-details.component.html',
-    styleUrls: ['./feature-details.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, NgFor, MatIconModule, NgStyle, ImageErrorDirective, AsyncPipe, JsonPipe, KeyValuePipe, TranslateModule, SecureImagePipe]
+  selector: 'igo-feature-details',
+  templateUrl: './feature-details.component.html',
+  styleUrls: ['./feature-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatIconModule,
+    NgStyle,
+    ImageErrorDirective,
+    AsyncPipe,
+    JsonPipe,
+    KeyValuePipe,
+    TranslateModule,
+    SecureImagePipe
+  ]
 })
 export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;

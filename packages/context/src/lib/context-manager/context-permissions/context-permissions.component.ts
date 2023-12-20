@@ -26,14 +26,16 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
+import {
+  CollapsibleComponent,
+  ListComponent,
+  StopPropagationDirective
+} from '@igo2/common';
 import { ConfigService } from '@igo2/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { CollapsibleComponent } from '../../../../../common/src/lib/collapsible/collapsible.component';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
-import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
 import { TypePermission } from '../shared/context.enum';
 import {
   Context,

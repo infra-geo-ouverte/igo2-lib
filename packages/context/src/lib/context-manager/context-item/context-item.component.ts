@@ -12,12 +12,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '@igo2/auth';
+import { CollapseDirective, StopPropagationDirective } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { CollapseDirective } from '../../../../../common/src/lib/collapsible/collapse.directive';
-import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
 

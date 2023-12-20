@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,11 +11,22 @@ import {
   Output
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { FloatLabelType } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { ListComponent, ListItemDirective, PanelComponent } from '@igo2/common';
 
 import * as olextent from 'ol/extent';
 
+import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
   EMPTY,
@@ -34,6 +46,8 @@ import {
   MetadataLayerOptions,
   MetadataOptions
 } from '../../metadata/shared/metadata.interface';
+import { LayerItemComponent } from '../layer-item/layer-item.component';
+import { LayerListToolComponent } from '../layer-list-tool/layer-list-tool.component';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties } from '../shared/layers/layer.interface';
@@ -42,30 +56,35 @@ import {
   LayerListDisplacement
 } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { PanelComponent } from '../../../../../common/src/lib/panel/panel.component';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
-import { LayerItemComponent } from '../layer-item/layer-item.component';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { LayerListToolComponent } from '../layer-list-tool/layer-list-tool.component';
-import { NgIf, NgFor, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
-    selector: 'igo-layer-list',
-    templateUrl: './layer-list.component.html',
-    styleUrls: ['./layer-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, LayerListToolComponent, MatCheckboxModule, MatDividerModule, ListComponent, NgFor, LayerItemComponent, ListItemDirective, PanelComponent, MatButtonModule, MatTooltipModule, MatIconModule, MatBadgeModule, MatMenuModule, MatSliderModule, NgTemplateOutlet, FormsModule, AsyncPipe, TranslateModule]
+  selector: 'igo-layer-list',
+  templateUrl: './layer-list.component.html',
+  styleUrls: ['./layer-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    LayerListToolComponent,
+    MatCheckboxModule,
+    MatDividerModule,
+    ListComponent,
+    NgFor,
+    LayerItemComponent,
+    ListItemDirective,
+    PanelComponent,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatSliderModule,
+    NgTemplateOutlet,
+    FormsModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class LayerListComponent implements OnInit, OnDestroy {
   orderable = true;

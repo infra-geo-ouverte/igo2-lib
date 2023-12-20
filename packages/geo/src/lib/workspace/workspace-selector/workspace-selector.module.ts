@@ -1,13 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { WorkspaceSelectorDirective } from './workspace-selector.directive';
 
 /**
- * @ignore
+ * @deprecated import the WorkspaceSelectorDirective directly
  */
 @NgModule({
-    imports: [CommonModule, WorkspaceSelectorDirective],
-    exports: [WorkspaceSelectorDirective]
+  imports: [WorkspaceSelectorDirective],
+  exports: [WorkspaceSelectorDirective]
 })
 export class IgoWorkspaceSelectorModule {}

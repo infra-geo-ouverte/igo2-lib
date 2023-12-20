@@ -1,22 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatDialogModule } from '@angular/material/dialog';
 
 import { ConfirmationPopupComponent } from './confirmation-popup.component';
 
 /**
- * @ignore
+ * @deprecated import the ConfirmationPopupComponent directly
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatButtonToggleModule,
-        ConfirmationPopupComponent
-    ],
-    exports: [ConfirmationPopupComponent]
+  imports: [ConfirmationPopupComponent],
+  exports: [ConfirmationPopupComponent]
 })
 export class IgoConfirmationPopupModule {}

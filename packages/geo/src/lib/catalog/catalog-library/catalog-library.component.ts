@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,12 +8,16 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore, ListComponent, ListItemDirective } from '@igo2/common';
 import { MessageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
@@ -22,25 +27,29 @@ import { IgoMap } from '../../map/shared/map';
 import { standardizeUrl } from '../../utils/id-generator';
 import { Catalog } from '../shared/catalog.abstract';
 import { AddCatalogDialogComponent } from './add-catalog-dialog.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
 import { CatalogLibaryItemComponent } from './catalog-library-item.component';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
 
 /**
  * Component to browse a list of available catalogs
  */
 @Component({
-    selector: 'igo-catalog-library',
-    templateUrl: './catalog-library.component.html',
-    styleUrls: ['./catalog-library.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [ListComponent, NgFor, CatalogLibaryItemComponent, ListItemDirective, NgIf, MatButtonModule, MatTooltipModule, MatIconModule, AsyncPipe, TranslateModule]
+  selector: 'igo-catalog-library',
+  templateUrl: './catalog-library.component.html',
+  styleUrls: ['./catalog-library.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgFor,
+    CatalogLibaryItemComponent,
+    ListItemDirective,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**

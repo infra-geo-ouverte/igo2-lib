@@ -1,3 +1,4 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,7 +8,12 @@ import {
   OnInit
 } from '@angular/core';
 
-import { EntityStore, EntityStoreWatcher } from '@igo2/common';
+import {
+  EntityStore,
+  EntityStoreWatcher,
+  ListComponent,
+  ListItemDirective
+} from '@igo2/common';
 
 import { BehaviorSubject, zip } from 'rxjs';
 
@@ -24,21 +30,26 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
-import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
 import { CatalogBrowserGroupComponent } from './catalog-browser-group.component';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
+import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
 
 /**
  * Component to browse a catalog's groups and layers and display them on a map.
  */
 @Component({
-    selector: 'igo-catalog-browser',
-    templateUrl: './catalog-browser.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [ListComponent, NgFor, NgIf, CatalogBrowserGroupComponent, CatalogBrowserLayerComponent, ListItemDirective, AsyncPipe]
+  selector: 'igo-catalog-browser',
+  templateUrl: './catalog-browser.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgFor,
+    NgIf,
+    CatalogBrowserGroupComponent,
+    CatalogBrowserLayerComponent,
+    ListItemDirective,
+    AsyncPipe
+  ]
 })
 export class CatalogBrowserComponent implements OnInit, OnDestroy {
   /**

@@ -1,3 +1,4 @@
+import { NgFor } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -5,19 +6,24 @@ import {
   Input
 } from '@angular/core';
 
+import { ListComponent, ListItemDirective } from '@igo2/common';
+
 import { Layer } from '../../layer/shared/layers/layer';
 import { FilterableDataSourcePipe } from '../shared/filterable-datasource.pipe';
-import { ListItemDirective } from '../../../../../common/src/lib/list/list-item.directive';
 import { TimeFilterItemComponent } from '../time-filter-item/time-filter-item.component';
-import { NgFor } from '@angular/common';
-import { ListComponent } from '../../../../../common/src/lib/list/list.component';
 
 @Component({
-    selector: 'igo-time-filter-list',
-    templateUrl: './time-filter-list.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [ListComponent, NgFor, TimeFilterItemComponent, ListItemDirective, FilterableDataSourcePipe]
+  selector: 'igo-time-filter-list',
+  templateUrl: './time-filter-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ListComponent,
+    NgFor,
+    TimeFilterItemComponent,
+    ListItemDirective,
+    FilterableDataSourcePipe
+  ]
 })
 export class TimeFilterListComponent {
   @Input()

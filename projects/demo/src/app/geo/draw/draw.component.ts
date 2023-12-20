@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
+  DrawComponent,
   FeatureStore,
   FeatureWithDraw,
-  IgoDrawModule,
   IgoMap,
-  IgoMapModule,
   LayerService,
-  MapService
+  MapBrowserComponent,
+  MapService,
+  ZoomButtonComponent
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -21,8 +21,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   styleUrls: ['./draw.component.scss'],
   standalone: true,
   imports: [
-    IgoMapModule,
-    IgoDrawModule,
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    DrawComponent,
     DocViewerComponent,
     ExampleViewerComponent
   ]
@@ -46,7 +47,6 @@ export class AppDrawComponent {
   public stores: FeatureStore<FeatureWithDraw>[] = [];
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
     private mapService: MapService

@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,8 +6,13 @@ import {
   Input,
   Output
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
+  StopPropagationDirective,
   getEntityIcon,
   getEntityTitle,
   getEntityTitleHtml
@@ -17,23 +23,24 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { FeatureMotion, moveToOlFeatures } from '../../feature';
 import { IgoMap } from '../../map/shared/map';
 import { SearchResult } from '../shared/search.interfaces';
-import { StopPropagationDirective } from '../../../../../common/src/lib/stop-propagation/stop-propagation.directive';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
-import { NgIf } from '@angular/common';
-import { MatListModule } from '@angular/material/list';
 
 /**
  * Search results list item
  */
 @Component({
-    selector: 'igo-search-results-item',
-    templateUrl: './search-results-item.component.html',
-    styleUrls: ['./search-results-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatListModule, NgIf, MatIconModule, MatTooltipModule, MatButtonModule, StopPropagationDirective]
+  selector: 'igo-search-results-item',
+  templateUrl: './search-results-item.component.html',
+  styleUrls: ['./search-results-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatListModule,
+    NgIf,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule,
+    StopPropagationDirective
+  ]
 })
 export class SearchResultsItemComponent {
   /**

@@ -11,11 +11,7 @@ import {
   PanelComponent
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
-import {
-  IgoFeatureDetailsModule,
-  IgoFeatureModule,
-  IgoSearchModule
-} from '@igo2/geo';
+import { FeatureDetailsComponent, IgoSearchModule } from '@igo2/geo';
 
 import { SearchResultsToolComponent } from './search-results-tool.component';
 
@@ -30,11 +26,10 @@ import { SearchResultsToolComponent } from './search-results-tool.component';
     MatTooltipModule,
     MatButtonModule,
     IgoLanguageModule,
-    IgoFeatureModule,
     IgoSearchModule,
     IgoFlexibleModule,
     PanelComponent,
-    IgoFeatureDetailsModule,
+    FeatureDetailsComponent,
     IgoCustomHtmlModule
   ],
   declarations: [SearchResultsToolComponent],

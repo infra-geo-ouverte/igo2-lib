@@ -1,5 +1,8 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
+/**
+ * @deprecated UNUSED
+ */
 @NgModule({
   imports: [],
   exports: [],

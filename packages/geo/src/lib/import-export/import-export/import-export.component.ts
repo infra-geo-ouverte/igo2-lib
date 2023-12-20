@@ -1,3 +1,4 @@
+import { AsyncPipe, KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -7,10 +8,32 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule
+} from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ConfirmDialogService, EntityRecord, Workspace } from '@igo2/common';
+import {
+  ConfirmDialogService,
+  CustomHtmlComponent,
+  EntityRecord,
+  SpinnerComponent,
+  Workspace
+} from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
 import {
   ConfigService,
@@ -26,6 +49,7 @@ import { circular } from 'ol/geom/Polygon';
 import olClusterSource from 'ol/source/Cluster';
 import olVectorSource from 'ol/source/Vector';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 
@@ -58,24 +82,33 @@ import {
   handleFileImportError,
   handleFileImportSuccess
 } from '../shared/import.utils';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatInputModule } from '@angular/material/input';
-import { CustomHtmlComponent } from '../../../../../common/src/lib/custom-html/custom-html.component';
-import { SpinnerComponent } from '../../../../../common/src/lib/spinner/spinner.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor, NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
-    selector: 'igo-import-export',
-    templateUrl: './import-export.component.html',
-    styleUrls: ['./import-export.component.scss'],
-    standalone: true,
-    imports: [MatButtonToggleModule, NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, MatTooltipModule, MatButtonModule, SpinnerComponent, CustomHtmlComponent, NgClass, MatSlideToggleModule, MatInputModule, AsyncPipe, KeyValuePipe, TranslateModule]
+  selector: 'igo-import-export',
+  templateUrl: './import-export.component.html',
+  styleUrls: ['./import-export.component.scss'],
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatTooltipModule,
+    MatButtonModule,
+    SpinnerComponent,
+    CustomHtmlComponent,
+    NgClass,
+    MatSlideToggleModule,
+    MatInputModule,
+    AsyncPipe,
+    KeyValuePipe,
+    TranslateModule
+  ],
+  providers: [ConfirmDialogService]
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: UntypedFormGroup;

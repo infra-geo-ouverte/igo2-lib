@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { SpinnerComponent } from '@igo2/common';
 import { ConfigService, MessageService } from '@igo2/core';
 import { Layer, VectorLayer } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
@@ -23,7 +24,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { SpinnerComponent } from '../../../../../common/src/lib/spinner/spinner.component';
 import { DetailedContext } from '../../context-manager/shared/context.interface';
 import { ContextService } from '../../context-manager/shared/context.service';
 import { ContextExportService } from '../shared/context-export.service';

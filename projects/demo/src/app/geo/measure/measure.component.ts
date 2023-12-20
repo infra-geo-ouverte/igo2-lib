@@ -6,9 +6,10 @@ import {
   FeatureStore,
   FeatureWithMeasure,
   IgoMap,
-  IgoMapModule,
-  IgoMeasurerModule,
-  LayerService
+  LayerService,
+  MapBrowserComponent,
+  MeasurerComponent,
+  ZoomButtonComponent
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -22,8 +23,9 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [
     DocViewerComponent,
     ExampleViewerComponent,
-    IgoMapModule,
-    IgoMeasurerModule
+    MapBrowserComponent,
+    ZoomButtonComponent,
+    MeasurerComponent
   ]
 })
 export class AppMeasureComponent {

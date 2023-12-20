@@ -5,6 +5,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,13 +16,31 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup
+} from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import {
   EntityRecord,
   EntityTableButton,
   EntityTableColumnRenderer,
+  EntityTableComponent,
   EntityTableTemplate
 } from '@igo2/common';
 import { LanguageService } from '@igo2/core';
@@ -41,6 +60,7 @@ import OlVectorSource from 'ol/source/Vector';
 import { getDistance, getLength } from 'ol/sphere';
 import * as OlStyle from 'ol/style';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first, skip } from 'rxjs/operators';
 
@@ -83,40 +103,51 @@ import { DDtoDMS, createInteractionStyle } from '../shared/draw.utils';
 import { DrawLayerPopupComponent } from './draw-layer-popup.component';
 import { DrawPopupComponent } from './draw-popup.component';
 import { DrawShorcutsComponent } from './draw-shorcuts.component';
-import { TranslateModule } from '@ngx-translate/core';
-import { MatBadgeModule } from '@angular/material/badge';
-import { EntityTableComponent } from '../../../../../common/src/lib/entity/entity-table/entity-table.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
-    selector: 'igo-draw',
-    animations: [
-        trigger('openClose', [
-            state('open', style({
-                opacity: 1
-            })),
-            state('closed', style({
-                opacity: 0
-            })),
-            transition('open => closed', [animate('600ms ease')]),
-            transition('closed => open', [animate('800ms ease')])
-        ])
-    ],
-    templateUrl: './draw.component.html',
-    styleUrls: ['./draw.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatButtonToggleModule, MatSlideToggleModule, NgIf, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatSelectModule, NgFor, MatOptionModule, MatDividerModule, MatButtonModule, MatTooltipModule, MatIconModule, EntityTableComponent, MatBadgeModule, AsyncPipe, TranslateModule]
+  selector: 'igo-draw',
+  animations: [
+    trigger('openClose', [
+      state(
+        'open',
+        style({
+          opacity: 1
+        })
+      ),
+      state(
+        'closed',
+        style({
+          opacity: 0
+        })
+      ),
+      transition('open => closed', [animate('600ms ease')]),
+      transition('closed => open', [animate('800ms ease')])
+    ])
+  ],
+  templateUrl: './draw.component.html',
+  styleUrls: ['./draw.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    NgFor,
+    MatOptionModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    EntityTableComponent,
+    MatBadgeModule,
+    AsyncPipe,
+    TranslateModule
+  ]
 })
 export class DrawComponent implements OnInit, OnDestroy {
   /**

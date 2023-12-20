@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { IgoSearchBarModule } from './search-bar/search-bar.module';
@@ -12,22 +11,26 @@ import { provideDefaultCoordinatesSearchResultFormatter } from './shared/sources
 import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.providers';
 
+/**
+ * @todo determine if we deprecate or not
+ * Import the components directly or the SEARCH_DIRECTIVES for everything
+ * You need to handle the search provider in your application
+ */
 @NgModule({
-    imports: [
-        CommonModule,
-        IgoSearchBarModule,
-        IgoSearchSelectorModule,
-        IgoSearchResultsModule,
-        IgoSearchSettingsModule,
-        SearchPointerSummaryDirective
-    ],
-    exports: [
-        IgoSearchBarModule,
-        IgoSearchSelectorModule,
-        IgoSearchResultsModule,
-        IgoSearchSettingsModule,
-        SearchPointerSummaryDirective
-    ]
+  imports: [
+    IgoSearchBarModule,
+    IgoSearchSelectorModule,
+    IgoSearchResultsModule,
+    IgoSearchSettingsModule,
+    SearchPointerSummaryDirective
+  ],
+  exports: [
+    IgoSearchBarModule,
+    IgoSearchSelectorModule,
+    IgoSearchResultsModule,
+    IgoSearchSettingsModule,
+    SearchPointerSummaryDirective
+  ]
 })
 export class IgoSearchModule {
   static forRoot(): ModuleWithProviders<IgoSearchModule> {

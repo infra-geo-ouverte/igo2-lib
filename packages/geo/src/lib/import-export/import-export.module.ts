@@ -25,30 +25,30 @@ import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
 
 @NgModule({
-    imports: [
-        MatIconModule,
-        MatTooltipModule,
-        FormsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatTabsModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSlideToggleModule,
-        IgoLanguageModule,
-        SpinnerComponent,
-        IgoKeyValueModule,
-        IgoDrapDropModule,
-        IgoCustomHtmlModule,
-        ImportExportComponent,
-        DropGeoFileDirective,
-        ExportButtonComponent
-    ],
-    exports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
+  imports: [
+    MatIconModule,
+    MatTooltipModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatTabsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    IgoLanguageModule,
+    SpinnerComponent,
+    IgoKeyValueModule,
+    IgoDrapDropModule,
+    IgoCustomHtmlModule,
+    ImportExportComponent,
+    DropGeoFileDirective,
+    ExportButtonComponent
+  ],
+  exports: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
 })
 export class IgoImportExportModule {
   static forRoot(): ModuleWithProviders<IgoImportExportModule> {
