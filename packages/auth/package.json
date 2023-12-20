@@ -19,6 +19,7 @@
     "build": "ng build auth --configuration production",
     "format": "prettier --write ./src/**/*.{ts,js,html,scss,css,json}",
     "test": "ng test auth --watch=false",
+    "test.watch": "ng test auth",
     "watch": "ng build auth --watch"
   },
   "exports": {
