@@ -36,6 +36,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    console.log('test');
     this.layers$$ = this.map.layers$.subscribe((arrayLayers) => {
       this._baseLayers = arrayLayers.filter((l) => l.baseLayer);
     });
