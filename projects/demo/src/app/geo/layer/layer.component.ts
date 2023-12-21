@@ -89,9 +89,9 @@ export class AppLayerComponent {
         this.map.addLayer(this.layerService.createLayer(layer));
       });
 
-    /*const wfsDatasourceCustomEPSG: WFSoptions = {
+    const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -125,9 +125,9 @@ export class AppLayerComponent {
           removable: false
         };
         this.map.addLayer(this.layerService.createLayer(layer));
-      });*/
+      });
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         sourceOptions: {
           type: 'wms',
@@ -139,7 +139,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -156,7 +156,7 @@ export class AppLayerComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'lieu habité',
         visible: false,
@@ -170,9 +170,9 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'sh_dis_eco',
         visible: false,
@@ -186,7 +186,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     /*this.layerService
       .createAsyncLayer({

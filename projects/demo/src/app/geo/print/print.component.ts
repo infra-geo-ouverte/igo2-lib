@@ -42,12 +42,12 @@ export class AppPrintComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'School board',
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
           params: {
             LAYERS: 'MELS_CS_ANGLO_S',
             VERSION: '1.3.0'
@@ -55,7 +55,7 @@ export class AppPrintComponent {
           crossOrigin: 'anonymous'
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
     //
     this.layerService
       .createAsyncLayer({

@@ -70,9 +70,9 @@ export class AppHoverComponent {
 
     interface WFSDataOptions extends WFSDataSourceOptions {}
 
-    /*const wfsDatasourcePolygon: WFSDataOptions = {
+    const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'adn_bassin_n1_public_v',
         fieldNameGeometry: 'geometry',
@@ -92,7 +92,7 @@ export class AppHoverComponent {
           source: dataSource
         };
         this.map.addLayer(this.layerService.createLayer(layer));
-      });*/
+      });
 
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',

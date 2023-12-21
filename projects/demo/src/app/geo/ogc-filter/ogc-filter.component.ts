@@ -477,9 +477,9 @@ export class AppOgcFilterComponent {
         );
       });
 
-    /*const wmsOgcFilterOptions: WMSoptions = {
+    const wmsOgcFilterOptions: WMSoptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       optionsFromCapabilities: true,
       params: {
         LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
@@ -512,7 +512,7 @@ export class AppOgcFilterComponent {
             source: dataSource
           })
         );
-      });*/
+      });
 
     interface WMSoptions
       extends WMSDataSourceOptions,
