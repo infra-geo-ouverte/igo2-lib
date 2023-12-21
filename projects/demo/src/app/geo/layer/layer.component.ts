@@ -188,7 +188,7 @@ export class AppLayerComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'nurc:Arc_Sample_Parent',
         visible: false,
@@ -211,7 +211,7 @@ export class AppLayerComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({

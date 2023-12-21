@@ -77,7 +77,7 @@ export class AppLegendComponent {
       }
     };
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'legend with display:false',
         visible: true,
@@ -95,7 +95,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
@@ -117,7 +117,7 @@ export class AppLegendComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'legend with url param',
         visible: true,
@@ -134,7 +134,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasource)
@@ -176,7 +176,7 @@ export class AppLegendComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    /*this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'lieu habité',
         visible: false,
@@ -190,7 +190,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));*/
+      .subscribe((l) => this.map.addLayer(l));
 
     this.layerService
       .createAsyncLayer({
