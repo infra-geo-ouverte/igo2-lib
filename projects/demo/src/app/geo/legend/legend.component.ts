@@ -57,7 +57,7 @@ export class AppLegendComponent {
 
     const wfsDatasource: WFSoptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -77,7 +77,7 @@ export class AppLegendComponent {
       }
     };
 
-    this.layerService
+    /*this.layerService
       .createAsyncLayer({
         title: 'legend with display:false',
         visible: true,
@@ -95,7 +95,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));*/
 
     this.layerService
       .createAsyncLayer({
@@ -117,7 +117,7 @@ export class AppLegendComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    this.layerService
+    /*this.layerService
       .createAsyncLayer({
         title: 'legend with url param',
         visible: true,
@@ -134,7 +134,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));*/
 
     this.dataSourceService
       .createAsyncDataSource(wfsDatasource)
@@ -176,7 +176,7 @@ export class AppLegendComponent {
       })
       .subscribe((l) => this.map.addLayer(l));
 
-    this.layerService
+    /*this.layerService
       .createAsyncLayer({
         title: 'lieu habité',
         visible: false,
@@ -190,7 +190,7 @@ export class AppLegendComponent {
           }
         }
       })
-      .subscribe((l) => this.map.addLayer(l));
+      .subscribe((l) => this.map.addLayer(l));*/
 
     this.layerService
       .createAsyncLayer({
@@ -209,7 +209,7 @@ export class AppLegendComponent {
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       refreshIntervalSec: 15,
       params: {
         LAYERS: 'vg_observation_v_inondation_embacle_wmst',

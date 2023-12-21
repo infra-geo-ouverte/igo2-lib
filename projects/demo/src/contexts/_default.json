@@ -5,7 +5,7 @@
     {
       "sourceOptions": {
         "type": "wms",
-        "url": "https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi",
+        "url": " https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi",
         "optionsFromCapabilities": true,
         "queryable": true,
         "params": {
