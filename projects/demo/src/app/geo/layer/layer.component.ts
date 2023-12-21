@@ -58,7 +58,7 @@ export class AppLayerComponent {
 
     const wfsDatasource: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -230,7 +230,7 @@ export class AppLayerComponent {
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       refreshIntervalSec: 15,
       params: {
         LAYERS: 'vg_observation_v_inondation_embacle_wmst',

@@ -62,7 +62,7 @@ export class AppPrintComponent {
         title: 'Embacle',
         sourceOptions: {
           type: 'wms',
-          url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
           params: {
             LAYERS: 'vg_observation_v_inondation_embacle_wmst',
             VERSION: '1.3.0'

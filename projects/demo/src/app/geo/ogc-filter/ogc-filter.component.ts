@@ -132,7 +132,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilter: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -183,7 +183,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTime: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -241,7 +241,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeMonth: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -300,7 +300,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeYear: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -363,7 +363,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeInterval: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -421,7 +421,7 @@ export class AppOgcFilterComponent {
 
     const datasourceDuringFilterTimeRestrictedToStep: WFSoptions = {
       type: 'wfs',
-      url: ' https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
