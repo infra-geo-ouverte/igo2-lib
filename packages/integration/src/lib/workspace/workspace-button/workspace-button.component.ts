@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,8 +29,7 @@ import { WorkspaceState } from '../workspace.state';
     MatTooltipModule,
     MatIconModule,
     AsyncPipe,
-    TranslateModule,
-    DatePipe
+    TranslateModule
   ]
 })
 export class WorkspaceButtonComponent implements OnInit, OnDestroy {

@@ -35,20 +35,20 @@ export * from './map-center';
 export * from './info-section';
 
 export const MAP_DIRECTIVES = [
-  MapBrowserComponent,
-  ZoomButtonComponent,
+  BaseLayersSwitcherComponent,
   GeolocateButtonComponent,
   HomeExtentButtonComponent,
-  RotationButtonComponent,
-  InfoSectionComponent,
-  BaseLayersSwitcherComponent,
-  MiniBaseMapComponent,
-  MapOfflineDirective,
-  OfflineButtonComponent,
-  WakeLockButtonComponent,
-  PointerPositionDirective,
   HoverFeatureDirective,
-  SwipeControlComponent,
+  InfoSectionComponent,
+  MapBrowserComponent,
   MapCenterComponent,
-  MenuButtonComponent
+  MapOfflineDirective,
+  MenuButtonComponent,
+  MiniBaseMapComponent,
+  OfflineButtonComponent,
+  PointerPositionDirective,
+  RotationButtonComponent,
+  SwipeControlComponent,
+  WakeLockButtonComponent,
+  ZoomButtonComponent
 ] as const;

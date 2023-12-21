@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action, Widget } from '@igo2/common';
@@ -40,8 +39,7 @@ export class EditionActionsService implements OnDestroy {
     private storageState: StorageState,
     public languageService: LanguageService,
     private mediaService: MediaService,
-    private toolState: ToolState,
-    private datePipe: DatePipe
+    private toolState: ToolState
   ) {
     this.maximize$ = new BehaviorSubject(
       this.storageService.get('workspaceMaximize') as boolean
@@ -95,8 +93,7 @@ export class EditionActionsService implements OnDestroy {
       this.storageService,
       this.languageService,
       this.mediaService,
-      this.toolState,
-      this.datePipe
+      this.toolState
     );
   }
 }
