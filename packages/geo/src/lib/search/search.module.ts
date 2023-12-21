@@ -11,11 +11,6 @@ import { provideDefaultCoordinatesSearchResultFormatter } from './shared/sources
 import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.providers';
 
-/**
- * @todo determine if we deprecate or not
- * Import the components directly or the SEARCH_DIRECTIVES for the set
- * You need to handle the search provider in your application
- */
 @NgModule({
   imports: [
     IgoSearchBarModule,

@@ -24,6 +24,9 @@ import { provideDirectionsSourceService } from './shared/directions-source.servi
   providers: [provideDirectionsSourceService()]
 })
 export class IgoDirectionsModule {
+  /**
+   * @deprecated it has no effect
+   */
   static forRoot(): ModuleWithProviders<IgoDirectionsModule> {
     return {
       ngModule: IgoDirectionsModule
