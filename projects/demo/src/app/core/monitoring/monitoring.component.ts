@@ -21,7 +21,7 @@ export class MonitoringComponent {
     throw new Error('Sentry Test Error');
   }
 
-  getBasicConfigExample = () => {
+  getBasicConfigExample(): string {
     const codeExample = `{"igo": {"monitoring": ${JSON.stringify(
       this.options,
       null,

@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   IgoMap,
+  LayerOptions,
   LayerService,
   MapService,
-  ProjectionService,
+  MapViewOptions,
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
-  StopsStore
+  StopsStore,
+  TileLayer
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -20,7 +21,7 @@ import { Subject } from 'rxjs';
   styleUrls: ['./directions.component.scss']
 })
 export class AppDirectionsComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -28,7 +29,7 @@ export class AppDirectionsComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 9,
     geolocate: false
@@ -47,8 +48,6 @@ export class AppDirectionsComponent {
   public zoomToActiveRoute$: Subject<void> = new Subject();
 
   constructor(
-    private projectionService: ProjectionService,
-    private languageService: LanguageService,
     private layerService: LayerService,
     private mapService: MapService
   ) {
@@ -56,10 +55,12 @@ export class AppDirectionsComponent {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((l) => this.map.addLayer(l));
+      } satisfies LayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }

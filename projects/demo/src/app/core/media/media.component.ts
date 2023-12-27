@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { MediaService } from '@igo2/core';
+import { Media, MediaOrientation, MediaService } from '@igo2/core';
 
 @Component({
   selector: 'app-media',
@@ -10,15 +10,15 @@ import { MediaService } from '@igo2/core';
 export class AppMediaComponent {
   constructor(private mediaService: MediaService) {}
 
-  get media() {
+  get media(): Media {
     return this.mediaService.getMedia();
   }
 
-  get orientation() {
+  get orientation(): MediaOrientation {
     return this.mediaService.getOrientation();
   }
 
-  get isTouchScreen() {
+  get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
 }
