@@ -13,7 +13,6 @@ export * from './lib/request/logging.module';
 
 export * from './lib/config/config.provider';
 export * from './lib/gesture/gesture.provider';
-export * from './lib/language/shared/language.provider';
 export * from './lib/route/route.service';
 export * from './lib/route/route.interface';
 

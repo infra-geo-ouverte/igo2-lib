@@ -24,7 +24,7 @@ import { AppDialogComponent } from './dialog.component';
     IgoFormDialogModule,
     IgoJsonDialogModule,
     MatButtonModule,
-    IgoLanguageModule.forRoot(),
+    IgoLanguageModule,
     MatDividerModule
   ],
   exports: [AppDialogComponent]
