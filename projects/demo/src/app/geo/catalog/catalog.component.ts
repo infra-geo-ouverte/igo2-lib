@@ -7,11 +7,11 @@ import {
   CatalogItem,
   CatalogService,
   IgoMap,
-  ImageLayer,
   LayerOptions,
   LayerService,
   MapService,
-  MapViewOptions
+  MapViewOptions,
+  TileLayer
 } from '@igo2/geo';
 
 @Component({
@@ -58,7 +58,7 @@ export class AppCatalogComponent implements OnInit {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
     this.loadCatalogs();
 

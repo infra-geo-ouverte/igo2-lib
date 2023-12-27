@@ -145,7 +145,7 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
-        title: 'Distribution écoforestière',
+        title: 'District écologique',
         visible: false,
         sourceOptions: {
           type: 'wms',

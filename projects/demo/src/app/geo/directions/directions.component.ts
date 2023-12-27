@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import {
   IgoMap,
-  ImageLayer,
   LayerOptions,
   LayerService,
   MapService,
@@ -10,7 +9,8 @@ import {
   RoutesFeatureStore,
   StepFeatureStore,
   StopsFeatureStore,
-  StopsStore
+  StopsStore,
+  TileLayer
 } from '@igo2/geo';
 
 import { Subject } from 'rxjs';
@@ -61,6 +61,6 @@ export class AppDirectionsComponent {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
   }
 }

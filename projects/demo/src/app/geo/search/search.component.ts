@@ -14,18 +14,18 @@ import {
   FeatureMotion,
   GoogleLinks,
   IgoMap,
-  ImageLayer,
   LayerOptions,
   LayerService,
   MapService,
   MapViewOptions,
   Research,
-  SearchResult
+  SearchResult,
+  TileLayer
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
+
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
-
 import * as proj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
@@ -63,7 +63,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public mapProjection: string;
   public term: string;
 
-  public settingsChange$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(undefined);
+  public settingsChange$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(undefined);
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
@@ -94,12 +95,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
-      (Boolean(this.storageService.get(
-        'reverseSearchCoordsFormatEnabled')
-      )) || false;
+      Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||
+      false;
   }
 
   onPointerSummaryStatusChange(value: boolean): void {
@@ -195,9 +195,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.map.searchResultsOverlay.clear();
   }
 
-  onContextMenuOpen(event: {x: number, y: number}): void {
+  onContextMenuOpen(event: { x: number; y: number }): void {
     const position: Pixel = this.mapPosition(event);
-    const coord: Coordinate = this.mapService.getMap().ol.getCoordinateFromPixel(position);
+    const coord: Coordinate = this.mapService
+      .getMap()
+      .ol.getCoordinateFromPixel(position);
     this.mapProjection = this.mapService.getMap().projectionCode;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
