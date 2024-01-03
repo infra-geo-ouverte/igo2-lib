@@ -63,6 +63,7 @@ export interface GeoWorkspaceQueryOptions {
 
 export interface LayersLink {
   linkId: string;
+  showInMiniBaseMap?: boolean;
   links?: LayersLinkProperties[];
 }
 export interface LayersLinkProperties {
