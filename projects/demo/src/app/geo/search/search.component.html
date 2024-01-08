@@ -4,26 +4,6 @@
   [dependencies]="['ConfigService', 'LanguageService']"
 >
   <app-example-viewer codeFolder="geo/search" configFolder="environments">
-    <span>Search in form</span>
-    <form>
-      <div class="igo-input-container">
-        <mat-form-field appearance="fill">
-          <mat-label>name</mat-label>
-          <input matInput placeholder="aaaa" />
-        </mat-form-field>
-      </div>
-      <div class="igo-input-container">
-        <igo-search-bar [label]="'sss'"> </igo-search-bar>
-      </div>
-      <div class="igo-input-container">
-        <mat-form-field appearance="fill">
-          <mat-label>name</mat-label>
-          <input matInput placeholder="aaaa" />
-        </mat-form-field>
-      </div>
-    </form>
-  </app-example-viewer>
-  <app-example-viewer codeFolder="geo/search" configFolder="environments">
     <span *ngIf="!isTouchScreen" title="Details">
       Pointer activated: {{ igoSearchPointerSummaryEnabled }} (F2
       activate/deactivate the pointer location).
