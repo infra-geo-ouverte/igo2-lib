@@ -45,22 +45,7 @@ export class AppPrintComponent {
 
     this.layerService
       .createAsyncLayer({
-        title: 'School board',
-        sourceOptions: {
-          type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
-          params: {
-            LAYERS: 'MELS_CS_ANGLO_S',
-            VERSION: '1.3.0'
-          },
-          crossOrigin: 'anonymous'
-        }
-      })
-      .subscribe((l) => this.map.addLayer(l));
-    //
-    this.layerService
-      .createAsyncLayer({
-        title: 'Embacle',
+        title: 'Embâcles',
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',

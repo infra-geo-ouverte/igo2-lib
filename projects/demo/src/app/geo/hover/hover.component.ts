@@ -63,30 +63,6 @@ export class AppHoverComponent {
 
     interface WFSDataOptions extends WFSDataSourceOptions {}
 
-    const wfsDatasourcePolygon: WFSDataOptions = {
-      type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
-      params: {
-        featureTypes: 'adn_bassin_n1_public_v',
-        fieldNameGeometry: 'geometry',
-        maxFeatures: 10000,
-        version: '3.0.0',
-        outputFormat: undefined,
-        outputFormatDownload: 'shp'
-      }
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wfsDatasourcePolygon)
-      .subscribe((dataSource: WFSDataSource) => {
-        const layer: VectorLayerOptions = {
-          title: 'WFS (polygon)',
-          visible: true,
-          source: dataSource
-        };
-        this.map.addLayer(this.layerService.createLayer(layer));
-      });
-
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/all.fcgi',

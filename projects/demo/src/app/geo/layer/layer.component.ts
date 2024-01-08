@@ -61,39 +61,6 @@ export class AppLayerComponent {
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-    const wfsDatasource: WFSoptions = {
-      type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
-      params: {
-        featureTypes: 'vg_observation_v_autre_wmst',
-        fieldNameGeometry: 'geometry',
-        maxFeatures: 10000,
-        version: '2.0.0',
-        outputFormat: 'geojson',
-        outputFormatDownload: 'shp'
-      },
-      ogcFilters: {
-        enabled: true,
-        editable: false,
-        filters: {
-          operator: 'PropertyIsEqualTo',
-          propertyName: 'code_municipalite',
-          expression: '10043'
-        }
-      }
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wfsDatasource)
-      .subscribe((dataSource) => {
-        const layer: LayerOptions = {
-          title: 'WFS ',
-          visible: true,
-          source: dataSource
-        };
-        this.map.addLayer(this.layerService.createLayer(layer));
-      });
-
     const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
