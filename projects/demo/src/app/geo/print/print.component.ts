@@ -1,6 +1,14 @@
 import { Component } from '@angular/core';
 
-import { IgoMap, ImageLayer, ImageLayerOptions, LayerService, MapViewOptions, TileLayer, TileLayerOptions } from '@igo2/geo';
+import {
+  IgoMap,
+  ImageLayer,
+  ImageLayerOptions,
+  LayerService,
+  MapViewOptions,
+  TileLayer,
+  TileLayerOptions
+} from '@igo2/geo';
 
 @Component({
   selector: 'app-print',
@@ -21,9 +29,7 @@ export class AppPrintComponent {
     zoom: 9
   };
 
-  constructor(
-    private layerService: LayerService
-  ) {
+  constructor(private layerService: LayerService) {
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
@@ -33,7 +39,7 @@ export class AppPrintComponent {
           type: 'xyz',
           url: 'https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_public@EPSG_3857/{z}/{x}/{-y}.png',
           crossOrigin: 'anonymous'
-        },
+        }
       } satisfies TileLayerOptions)
       .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
@@ -42,7 +48,7 @@ export class AppPrintComponent {
         title: 'Embâcles',
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
           params: {
             LAYERS: 'vg_observation_v_inondation_embacle_wmst',
             VERSION: '1.3.0'
@@ -75,7 +81,7 @@ export class AppPrintComponent {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?',
           params: {
             layers: 'aeroport',
-            version: '1.3.0',
+            version: '1.3.0'
           },
           crossOrigin: 'anonymous'
         }
