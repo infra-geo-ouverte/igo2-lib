@@ -61,7 +61,6 @@ export class AppLayerComponent {
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-<<<<<<< HEAD
     const wfsDatasource: WFSoptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
@@ -95,8 +94,6 @@ export class AppLayerComponent {
         this.map.addLayer(this.layerService.createLayer(layer));
       });
 
-=======
->>>>>>> 5a1514cf4949782bfcc91dfab4fb147a1b123a55
     const wfsDatasourceCustomEPSG: WFSoptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
