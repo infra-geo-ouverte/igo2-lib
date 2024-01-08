@@ -70,10 +70,3 @@ $dark-theme: mat.define-dark-theme(
   @include all-theme.all-component-themes($dark-theme); // @todo add the colors
   @include app.colors($dark-theme);
 }
-
-form igo-search-bar {
-  $config: (
-    density: 0
-  );
-  @include mat.form-field-density($config);
-}
