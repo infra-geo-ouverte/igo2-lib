@@ -10,18 +10,18 @@ import { MessageService } from '@igo2/core';
 export class AppMessageComponent {
   constructor(private messageService: MessageService) {}
 
-  success() {
+  success(): void {
     this.messageService.success('Congratulations', 'Success');
   }
 
-  info() {
+  info(): void {
     this.messageService.info('Welcome to IGO', 'Info');
   }
 
-  alert() {
+  alert(): void {
     this.messageService.alert('Warning', 'Alert');
   }
-  error() {
+  error(): void {
     this.messageService.error('There is a bug', 'Error');
   }
 }
