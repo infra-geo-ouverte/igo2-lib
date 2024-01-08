@@ -49,10 +49,10 @@ const dbConfig: DBConfig = {
     IgoActivityModule.forRoot(),
     IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
-    provideRootTranslation(),
     IgoMessageModule,
     NgxIndexedDBModule.forRoot(dbConfig)
   ],
+  providers: [provideRootTranslation()],
   declarations: [],
   exports: [
     IgoActivityModule,
