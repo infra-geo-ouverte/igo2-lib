@@ -30,8 +30,7 @@ export function provideRootTranslation(
     {
       provide: APP_INITIALIZER,
       useFactory: () => () => {},
-      // Force instantiation of these services.
-      deps: [ConfigService, LanguageService],
+      deps: [LanguageService],
       multi: true
     }
   ]);
@@ -55,5 +54,5 @@ export const DEFAULT_LANGUAGE_LOADER: Provider = {
 };
 
 function defaultLanguageLoader(http: HttpBackend, config?: ConfigService) {
-  return new LanguageLoader(http, config);
+  return new LanguageLoader(http, undefined, undefined, config);
 }
