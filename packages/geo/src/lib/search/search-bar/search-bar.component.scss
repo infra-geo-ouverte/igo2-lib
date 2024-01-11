@@ -24,10 +24,6 @@
       .mdc-line-ripple {
         display: none;
       }
-      .mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined)
-        .mat-mdc-floating-label {
-        display: initial;
-      }
 
       input {
         @include core-utils.text-ellipsis();
