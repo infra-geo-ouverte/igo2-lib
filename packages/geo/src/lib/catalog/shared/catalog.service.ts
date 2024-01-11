@@ -158,7 +158,9 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-
+        if (!capabilities?.Capability?.Layer?.Layer) {
+          return items;
+        }
         this.flattenWmsCapabilities(
           capabilities.Capability.Layer,
           0,
@@ -184,9 +186,7 @@ export class CatalogService {
       modifiedParent.Layer = [];
       finalLayers.push(modifiedParent);
     }
-    if (!parent || !parent.Layer) {
-      return;
-    }
+
     for (const layer of parent.Layer) {
       const modifiedLayer = Object.assign({}, layer);
       if (level > 0) {
