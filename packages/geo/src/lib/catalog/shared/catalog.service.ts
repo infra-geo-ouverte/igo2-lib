@@ -186,7 +186,6 @@ export class CatalogService {
       modifiedParent.Layer = [];
       finalLayers.push(modifiedParent);
     }
-
     for (const layer of parent.Layer) {
       const modifiedLayer = Object.assign({}, layer);
       if (level > 0) {
