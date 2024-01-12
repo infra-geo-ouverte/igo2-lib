@@ -69,7 +69,7 @@ export class AppLayerComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson_utf8',
+        outputFormat: 'geojson',
         srsName: 'EPSG:32198',
         outputFormatDownload: 'shp'
       },
