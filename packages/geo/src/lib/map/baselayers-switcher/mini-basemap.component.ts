@@ -10,7 +10,12 @@ import {
 import OlMap from 'ol/Map';
 import OlView from 'ol/View';
 
-import { Layer, LayerOptions, LayersLink, LayersLinkProperties } from '../../layer/shared';
+import {
+  Layer,
+  LayerOptions,
+  LayersLink,
+  LayersLinkProperties
+} from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../shared/map';
 
@@ -132,9 +137,8 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
               layerToApply.options,
               {
                 zIndex: 9000,
-                visible: layerToApply.options.linkedLayers?.showInMiniBaseMap !== undefined
-                ? layerToApply.options.linkedLayers.showInMiniBaseMap
-                : true,
+                visible:
+                  layerToApply.options.linkedLayers?.showInMiniBaseMap ?? true,
                 baseLayer: false
               } as LayerOptions
             );
