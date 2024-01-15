@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
-import { OlStyleParser as OpenLayersParser } from 'geostyler-openlayers-parser';
-import LegendRenderer from 'geostyler-legend/dist/LegendRenderer/LegendRenderer';
 
-import { Style as GeoStylerStyle, WriteStyleResult } from 'geostyler-style';
+import LegendRenderer from 'geostyler-legend/dist/LegendRenderer/LegendRenderer';
+import { OlStyleParser as OpenLayersParser } from 'geostyler-openlayers-parser';
+import {
+  Style as GeoStylerStyle,
+  IconSymbolizer,
+  LineSymbolizer,
+  MarkSymbolizer,
+  WriteStyleResult
+} from 'geostyler-style';
 import { Observable, from, map } from 'rxjs';
+
 import { StyleSourceType } from '../shared';
 
 @Injectable({
@@ -57,11 +64,13 @@ export class GeostylerStyleService {
     height: number = 300
   ): Observable<string> {
     // todo define height automatically?
+    const layerDescriptors: GeoStylerStyle[] =
+      this.transferLayersToLegend(styles);
     const renderer = new LegendRenderer({
       maxColumnWidth: 300,
       maxColumnHeight: 300,
       overflow: 'auto',
-      styles,
+      styles: layerDescriptors,
       size: [width, height],
       hideRect: true
     });
@@ -81,5 +90,43 @@ export class GeostylerStyleService {
       })
     );
   }
+
+  private transferLayersToLegend(styles: GeoStylerStyle[]) {
+    var stylesCopy = [...styles];
+    const layerDescriptorsList: GeoStylerStyle[] = [];
+    for (var index in stylesCopy) {
+      var DescriptorLayerRulesAdapted = [];
+      let descriptorLayerName = stylesCopy[index].name;
+      stylesCopy[index].rules.forEach(function (styleRule) {
+        var styleRuleSymbolizersAdapted = [];
+        styleRule.symbolizers.forEach(function (styleRuleSymbolizer) {
+          switch (styleRuleSymbolizer.kind) {
+            case 'Mark':
+              (styleRuleSymbolizer as MarkSymbolizer).radius = 10;
+              break;
+            case 'Line':
+              (styleRuleSymbolizer as LineSymbolizer).width = 3;
+              break;
+            case 'Icon':
+              (styleRuleSymbolizer as IconSymbolizer).size = 15;
+            default:
+              break;
+          }
+          styleRuleSymbolizersAdapted.push(styleRuleSymbolizer);
+        });
+        DescriptorLayerRulesAdapted.push({
+          name: styleRule.name,
+          symbolizers: styleRuleSymbolizersAdapted
+        });
+      });
+      let styleNoRadius: any = {
+        name: descriptorLayerName,
+        rules: DescriptorLayerRulesAdapted
+      };
+      layerDescriptorsList.push(styleNoRadius);
+    }
+    return layerDescriptorsList;
+  }
+
   private hoverStyleToGeostyler() {}
 }
