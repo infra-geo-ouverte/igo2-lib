@@ -49,6 +49,8 @@ mat-divider {
 .search-bar-buttons {
   position: relative;
   display: inline-flex;
+  align-items: center;
+
   & > button:nth-child(2)::before {
     content: '';
     border-right: 1px solid #ddd;
