@@ -158,9 +158,7 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-        if (!capabilities?.Capability?.Layer?.Layer) {
-          return items;
-        }
+
         this.flattenWmsCapabilities(
           capabilities.Capability.Layer,
           0,
@@ -176,6 +174,17 @@ export class CatalogService {
         );
         this.includeRecursiveItems(catalog, capabilitiesCapabilityLayer, items);
         return items;
+      }),
+      catchError(() => {
+        this.messageService.error(
+          catalog.title
+            ? 'igo.geo.catalog.unavailable'
+            : 'igo.geo.catalog.someUnavailable',
+          'igo.geo.catalog.unavailableTitle',
+          undefined,
+          catalog.title ? { value: catalog.title } : undefined
+        );
+        return EMPTY;
       })
     );
   }
