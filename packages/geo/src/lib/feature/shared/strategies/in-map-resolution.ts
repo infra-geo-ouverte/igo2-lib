@@ -30,7 +30,6 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
       return;
     }
     super.bindStore(store);
-
     if (this.active === true) {
       this.watchStore(store);
     }
