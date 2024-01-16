@@ -82,7 +82,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * whether to show search button or not
    */
 
-  public showSearchButton: boolean = false;
+  public showSearchButton: boolean = true;
 
   /**
    * List of available search types
@@ -278,7 +278,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     const configValue = this.configService.getConfig(
       'searchBar.showSearchButton'
     );
-    this.showSearchButton = configValue !== undefined ? configValue : false;
+    this.showSearchButton = configValue !== undefined ? configValue : true;
   }
 
   /**
@@ -484,5 +484,34 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .concat(results);
       this.store.updateMany(newResults);
     }
+  }
+
+  /**
+   * When the user clicks on the magnifying glass and
+   * this find the first object on the map otherwise the
+   * coordinate it will be the second option to be focused in the map
+   */
+
+ selectFirstElement(){
+
+  //Find the max value of scores
+   const maxScore = Math.max(...this.store.all().map(result => result.meta.score));
+
+   //Filter values who have the maxScore
+   const result = this.store.all().find(result => result.meta.score === maxScore);
+   //If the value has not a first maxScore it has to take the title
+   const coordInv=this.store.all().find(result => result.meta.title);
+
+   //Function to reverse the value of the parameter
+   function reverseString(coordReInv) {
+     return coordReInv;
+    }
+    //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
+    if(result){
+      this.store.state.update(result,{focused:true,selected:true},true);
+    }else{
+      reverseString(coordInv);
+      this.store.state.update(coordInv,{focused:true,selected:true},true);
+      }
   }
 }
