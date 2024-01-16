@@ -158,7 +158,6 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-
         this.flattenWmsCapabilities(
           capabilities.Capability.Layer,
           0,
