@@ -94,7 +94,9 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
       });
 
     this.authenticate$$ = this.authService.authenticate$.subscribe(() => {
-      this.loadCatalogItems(this.catalog);
+      if (this.catalog) {
+        this.loadCatalogItems(this.catalog);
+      }
     });
   }
 
