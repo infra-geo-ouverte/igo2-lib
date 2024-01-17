@@ -3,7 +3,7 @@
   class="igo-baselayers-switcher-container"
   [ngClass]="{ 'container-expand': expand }"
   [@baseLayerSwitcherState]="
-    expand ? 'expand' : useStaticIcon ? 'collapseIcon' : ''
+    expand ? 'expand' : useStaticIcon ? 'collapseIcon' : 'collapseMap'
   "
   (@baseLayerSwitcherState.start)="showButton = false"
   (@baseLayerSwitcherState.done)="showButton = true"
