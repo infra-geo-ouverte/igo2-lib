@@ -16,8 +16,8 @@ import {
   IgoMap
 } from '@igo2/geo';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { BehaviorSubject, Subscription, concat } from 'rxjs';
+import { first, take } from 'rxjs/operators';
 
 import { MapState } from '../../map/map.state';
 import { CatalogState } from '../catalog.state';
@@ -82,22 +82,18 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     const catalogStore = this.catalogState.catalogStore;
-    this.catalog$$ = catalogStore.stateView
-      .firstBy$(
-        (record: EntityRecord<Catalog>) => record.state.selected === true
-      )
-      .subscribe((record: EntityRecord<Catalog>) => {
-        if (record && record.entity) {
-          const catalog = record.entity;
-          this.catalog = catalog;
-        }
-      });
 
-    this.authenticate$$ = this.authService.authenticate$.subscribe(() => {
-      if (this.catalog) {
+    const catalog = catalogStore.stateView.firstBy$(
+      (record: EntityRecord<Catalog>) => record.state.selected === true
+    );
+    const authenticate = this.authService.authenticate$;
+    this.catalog$$ = concat(catalog, authenticate)
+      .pipe(first())
+      .subscribe((record) => {
+        const catalog = (record as EntityRecord<Catalog>).entity;
+        this.catalog = catalog;
         this.loadCatalogItems(this.catalog);
-      }
-    });
+      });
   }
 
   /**
@@ -105,7 +101,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
-    this.authenticate$$.unsubscribe();
+    // this.authenticate$$.unsubscribe();
   }
 
   /**
