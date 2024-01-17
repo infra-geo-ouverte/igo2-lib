@@ -53,11 +53,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private catalog$$: Subscription;
 
   /**
-   * Subscription for authentication
-   */
-  private authenticate$$: Subscription;
-
-  /**
    * Whether a group can be toggled when it's collapsed
    */
   @Input() toggleCollapsedGroup: boolean = true;
@@ -101,7 +96,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
-    // this.authenticate$$.unsubscribe();
   }
 
   /**
