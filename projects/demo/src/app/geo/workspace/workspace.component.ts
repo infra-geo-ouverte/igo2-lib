@@ -4,25 +4,30 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
+  Action,
   ActionbarMode,
   EntityRecord,
   EntityTablePaginatorOptions,
   EntityTableScrollBehavior,
-  Workspace,
-  WorkspaceStore
-} from '@igo2/common';
-import {
   IgoActionbarModule,
   IgoEntityTableModule,
   IgoEntityTablePaginatorModule,
   IgoWorkspaceSelectorModule,
-  IgoWorkspaceWidgetOutletModule
+  IgoWorkspaceWidgetOutletModule,
+  Workspace,
+  WorkspaceStore
 } from '@igo2/common';
 import {
   DataSourceService,
   IgoGeoWorkspaceModule,
   IgoMap,
+  LayerOptions,
   LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
+  VectorLayerOptions,
+  WFSDataSource,
   WFSDataSourceOptions
 } from '@igo2/geo';
 import { IgoMapModule } from '@igo2/geo';
@@ -63,7 +68,7 @@ export class AppWorkspaceComponent implements OnInit {
     showFirstLastButtons: true // Whether to show the first/last buttons UI to the user.
   };
 
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -71,7 +76,7 @@ export class AppWorkspaceComponent implements OnInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-72, 47.2],
     zoom: 5
   };
@@ -82,9 +87,10 @@ export class AppWorkspaceComponent implements OnInit {
 
   public selectedWorkspace$: Observable<Workspace>;
 
-  public actionbarMode = ActionbarMode.Overlay;
+  public actionbarMode: ActionbarMode = ActionbarMode.Overlay;
 
-  public scrollBehavior = EntityTableScrollBehavior.Instant;
+  public scrollBehavior: EntityTableScrollBehavior =
+    EntityTableScrollBehavior.Instant;
 
   constructor(
     private dataSourceService: DataSourceService,
@@ -92,21 +98,21 @@ export class AppWorkspaceComponent implements OnInit {
     public workspaceState: WorkspaceState
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedWorkspace$ = this.workspaceStore.stateView
       .firstBy$(
         (record: EntityRecord<Workspace>) => record.state.selected === true
       )
       .pipe(
         map((record: EntityRecord<Workspace>) => {
-          const entity = record === undefined ? undefined : record.entity;
+          const entity: Workspace =
+            record === undefined ? undefined : record.entity;
           if (entity) {
             // In fact, the download action is not fully functionnal into the igo2-lib demo
-            // The reason why it's has been remove is that this button trigger a tool (importExport)
-            // and this tool is not available in the igo2-lib demo.
-            // This is why it's has been removed frome the actions's list.
+            // The button triggers a tool (importExport) and this tool is not available in the igo2-lib demo.
+            // This is why it has been removed from the actions list.
             // Refer to the igo2 demo at https://infra-geo-ouverte.github.io/igo2/
-            entity.actionStore.view.filter((action) => {
+            entity.actionStore.view.filter((action: Action) => {
               return action.id !== 'wfsDownload';
             });
           }
@@ -117,13 +123,15 @@ export class AppWorkspaceComponent implements OnInit {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
 
@@ -145,18 +153,18 @@ export class AppWorkspaceComponent implements OnInit {
 
     this.dataSourceService
       .createAsyncDataSource(wfsDataSourceOptions)
-      .subscribe((dataSource) => {
-        const layer = {
+      .subscribe((dataSource: WFSDataSource) => {
+        const layerOptions: VectorLayerOptions = {
           title: 'Simple WFS ',
           maxResolution: 3000,
           visible: true,
           source: dataSource
         };
-        this.map.addLayer(this.layerService.createLayer(layer));
+        this.map.addLayer(this.layerService.createLayer(layerOptions));
       });
   }
 
-  paginatorChange(event: MatPaginator) {
+  paginatorChange(event: MatPaginator): void {
     this.workspacePaginator = event;
   }
 }

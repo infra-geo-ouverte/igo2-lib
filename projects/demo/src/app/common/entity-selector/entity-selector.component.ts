@@ -2,7 +2,6 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { EntityStore, IgoEntitySelectorModule } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -29,21 +28,23 @@ interface DemoEntity {
   ]
 })
 export class AppEntitySelectorComponent implements OnInit, OnDestroy {
-  public store = new EntityStore([]);
+  public store: EntityStore = new EntityStore([]);
 
-  public selected$ = new BehaviorSubject<DemoEntity>(undefined);
+  public selectedEntity$: BehaviorSubject<DemoEntity> =
+    new BehaviorSubject<DemoEntity>(undefined);
+  public entityIsSelected: boolean;
 
-  constructor(private languageService: LanguageService) {}
+  constructor() {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.store.load([
       { id: '2', name: 'Name 2', description: '<b>Description 2</b>' },
       { id: '1', name: 'Name 1', description: '<b>Description 1</b>' },
       { id: '3', name: 'Name 3', description: '<b>Description 3</b>' }
-    ]);
+    ] satisfies DemoEntity[]);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 
@@ -51,7 +52,8 @@ export class AppEntitySelectorComponent implements OnInit, OnDestroy {
     return entity.name;
   }
 
-  onSelectedChange(event: { selected: boolean; entity: DemoEntity }) {
-    this.selected$.next(event.entity);
+  onSelectedChange(event: { selected: boolean; value: DemoEntity }): void {
+    this.entityIsSelected = event.value.id ? true : false;
+    this.selectedEntity$.next(event.value);
   }
 }

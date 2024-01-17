@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { EntityRecord, EntityStore, IgoPanelModule } from '@igo2/common';
-import { ConfigService, LanguageService, StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core';
 import {
   Catalog,
   CatalogItem,
@@ -10,8 +10,11 @@ import {
   IgoCatalogLibraryModule,
   IgoMap,
   IgoMapModule,
+  LayerOptions,
   LayerService,
-  MapService
+  MapService,
+  MapViewOptions,
+  TileLayer
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -33,7 +36,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -41,18 +44,16 @@ export class AppCatalogComponent implements OnInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
 
-  public catalogStore = new EntityStore<Catalog>([]);
+  public catalogStore: EntityStore = new EntityStore<Catalog>([]);
 
-  public catalogItemStore = new EntityStore<CatalogItem>([]);
+  public catalogItemStore: EntityStore = new EntityStore<CatalogItem>([]);
 
   constructor(
-    private configService: ConfigService,
-    private languageService: LanguageService,
     private layerService: LayerService,
     private catalogService: CatalogService,
     private storageService: StorageService,
@@ -62,15 +63,17 @@ export class AppCatalogComponent implements OnInit {
   /**
    * @internal
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
+        baseLayer: true,
+        visible: true,
         sourceOptions: {
           type: 'osm'
         }
-      })
-      .subscribe((layer) => this.map.addLayer(layer));
+      } satisfies LayerOptions)
+      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
 
     this.loadCatalogs();
 
@@ -81,18 +84,18 @@ export class AppCatalogComponent implements OnInit {
       )
       .subscribe((record: EntityRecord<Catalog>) => {
         if (record && record.entity) {
-          const catalog = record.entity;
+          const catalog: Catalog = record.entity;
           this.catalog = catalog;
         }
       });
   }
 
   /**
-   * When the selected catalog changes, toggle the the CatalogBrowser tool.
+   * When the selected catalog changes, toggle the CatalogBrowser tool.
    * @internal
    * @param event Select event
    */
-  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }) {
+  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }): void {
     this.loadCatalogItems(event.catalog);
   }
 
@@ -100,7 +103,7 @@ export class AppCatalogComponent implements OnInit {
    * Get all the available catalogs from the CatalogService and
    * load them into the store.
    */
-  private loadCatalogs() {
+  private loadCatalogs(): void {
     this.catalogService.loadCatalogs().subscribe((catalogs: Catalog[]) => {
       this.catalogStore.clear();
       this.catalogStore.load(
@@ -116,7 +119,7 @@ export class AppCatalogComponent implements OnInit {
    * load them into the store.
    * @param catalog Selected catalog
    */
-  private loadCatalogItems(catalog: Catalog) {
+  private loadCatalogItems(catalog: Catalog): void {
     this.catalogService
       .loadCatalogItems(catalog)
       .subscribe((items: CatalogItem[]) => {

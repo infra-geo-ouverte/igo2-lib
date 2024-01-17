@@ -5,12 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 
 import {
   Form,
+  FormField,
   FormFieldConfig,
   FormService,
   IgoFormFormModule,
   IgoFormGroupModule
 } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
@@ -33,18 +33,17 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppFormComponent implements OnInit, OnDestroy {
-  form$ = new BehaviorSubject<Form>(undefined);
+  form$: BehaviorSubject<Form> = new BehaviorSubject<Form>(undefined);
 
-  data$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  data$: BehaviorSubject<object> = new BehaviorSubject<{ [key: string]: any }>(
+    undefined
+  );
 
   submitDisabled = true;
 
   private valueChanges$$: Subscription;
 
-  constructor(
-    private formService: FormService,
-    private languageService: LanguageService
-  ) {}
+  constructor(private formService: FormService) {}
 
   ngOnInit() {
     const fieldConfigs: FormFieldConfig[] = [
@@ -80,8 +79,10 @@ export class AppFormComponent implements OnInit, OnDestroy {
       }
     ];
 
-    const fields = fieldConfigs.map((config) => this.formService.field(config));
-    const form = this.formService.form(
+    const fields: FormField[] = fieldConfigs.map((config: FormFieldConfig) =>
+      this.formService.field(config)
+    );
+    const form: Form = this.formService.form(
       [],
       [this.formService.group({ name: 'info' }, fields)]
     );
@@ -93,11 +94,11 @@ export class AppFormComponent implements OnInit, OnDestroy {
     this.form$.next(form);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.valueChanges$$.unsubscribe();
   }
 
-  fillForm() {
+  fillForm(): void {
     this.data$.next({
       id: 1,
       name: 'Bob',
@@ -105,11 +106,11 @@ export class AppFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  clearForm() {
+  clearForm(): void {
     this.form$.value.control.reset();
   }
 
-  onSubmit(data: { [key: string]: any }) {
+  onSubmit(data: object): void {
     alert(JSON.stringify(data));
   }
 }

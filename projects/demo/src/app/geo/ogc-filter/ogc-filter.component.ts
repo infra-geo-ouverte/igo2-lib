@@ -2,19 +2,28 @@ import { Component } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { IgoPanelModule } from '@igo2/common';
-import { LanguageService } from '@igo2/core';
 import {
   AnyBaseOgcFilterOptions,
   DataSourceService,
   IgoFilterModule,
   IgoMap,
   IgoMapModule,
+  ImageLayerOptions,
+  LayerOptions,
   LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions,
+  OgcFilterAttributeOptions,
   OgcFilterDuringOptions,
+  OgcFilterEqualToOptions,
   OgcFilterOperatorType,
   OgcFilterableDataSourceOptions,
+  VectorLayerOptions,
+  WFSDataSource,
   WFSDataSourceOptions,
   WFSDataSourceOptionsParams,
+  WMSDataSource,
   WMSDataSourceOptions
 } from '@igo2/geo';
 
@@ -38,7 +47,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppOgcFilterComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -46,36 +55,37 @@ export class AppOgcFilterComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 7
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
 
-    interface WFSoptions
+    interface WFSOptions
       extends WFSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-    const datasource: WFSoptions = {
+    const datasource: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -100,7 +110,7 @@ export class AppOgcFilterComponent {
               operator: 'PropertyIsEqualTo',
               propertyName: 'code_municipalite',
               expression: '10043'
-            },
+            } satisfies OgcFilterEqualToOptions,
             {
               operator: 'Intersects',
               geometryName: 'the_geom',
@@ -125,10 +135,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (PropertyIsEqualTo OR Intersects)',
+            title: 'Embâcles (PropertyIsEqualTo OR Intersects polygon)',
             source: dataSource,
             style: new Style({
               image: new Circle({
@@ -142,13 +152,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilter: WFSoptions = {
+    const datasourceDuringFilter: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -166,7 +176,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2016-01-21T00:00:00-05:00',
           end: '2016-01-26T00:00:00-05:00'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-10T00:00:00-05:00',
@@ -175,10 +185,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Step: P2D)',
+            title: 'Embâcles (During, Step: P2D)',
             id: '1',
             source: dataSource,
             style: new Style({
@@ -193,13 +203,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilterTime: WFSoptions = {
+    const datasourceDuringFilterTime: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -212,7 +222,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -224,7 +234,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2016-01-01T04:00:00-05:00',
           end: '2016-01-12T16:00:00-05:00'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2016-02-14T20:00:00-05:00',
@@ -233,10 +243,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTime)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Step: PT4H)',
+            title: 'Embâcles (During, Step: PT4H)',
             id: '2',
             source: dataSource,
             style: new Style({
@@ -251,13 +261,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilterTimeMonth: WFSoptions = {
+    const datasourceDuringFilterTimeMonth: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -270,7 +280,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -283,7 +293,7 @@ export class AppOgcFilterComponent {
           begin: '2016-01-01T00:00:00-05:00',
           end: '2016-03-31T00:00:00-05:00',
           displayFormat: 'MMMM'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2018-12-31T00:00:00-05:00',
@@ -292,10 +302,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeMonth)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Step: P1M)',
+            title: 'Embâcles (During, Step: P1M)',
             id: '3',
             source: dataSource,
             style: new Style({
@@ -310,13 +320,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilterTimeYear: WFSoptions = {
+    const datasourceDuringFilterTimeYear: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -329,7 +339,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -341,12 +351,8 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2014-01-01T00:00:00-05:00',
           end: '2019-12-31T00:00:00-05:00',
-          sliderOptions: {
-            interval: 2000,
-            displayFormat: 'YY'
-          },
           displayFormat: 'YYYY'
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2014-01-01T00:00:00-05:00',
       maxDate: '2019-12-31T00:00:00-05:00',
@@ -355,10 +361,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeYear)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Step: P1Y)',
+            title: 'Embâcles (During, Step: P1Y)',
             id: '4',
             source: dataSource,
             style: new Style({
@@ -373,13 +379,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilterTimeInterval: WFSoptions = {
+    const datasourceDuringFilterTimeInterval: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -392,7 +398,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -404,7 +410,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: 'today - 2 days', // "now" can also be used. Instead of midnight, the current time will be used
           end: 'today' // "now" can also be used. Instead of midnight, the current time will be used
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -413,10 +419,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeInterval)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Interval from Now, Step: P1D)',
+            title: 'Embâcles (During, Interval from Now, Step: P1D)',
             id: '5',
             source: dataSource,
             style: new Style({
@@ -431,13 +437,13 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const datasourceDuringFilterTimeRestrictedToStep: WFSoptions = {
+    const datasourceDuringFilterTimeRestrictedToStep: WFSOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -450,7 +456,7 @@ export class AppOgcFilterComponent {
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -462,7 +468,7 @@ export class AppOgcFilterComponent {
           propertyName: 'date_observation',
           begin: '2019-01-01 00:00:00',
           restrictToStep: true
-        } as OgcFilterDuringOptions
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
       maxDate: '2025-12-31T00:00:00-05:00',
@@ -471,10 +477,10 @@ export class AppOgcFilterComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeRestrictedToStep)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WFSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, RestrictToStep, Step: P1M)',
+            title: 'Embâcles (During, RestrictToStep, Step: P1M)',
             id: '6',
             source: dataSource,
             style: new Style({
@@ -489,23 +495,23 @@ export class AppOgcFilterComponent {
                 })
               })
             })
-          })
+          } satisfies VectorLayerOptions)
         );
       });
 
-    const wmsOgcFilterOptions: WMSoptions = {
+    const wmsOgcFilterOptions: WMSOptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/wss/complet.fcgi',
       optionsFromCapabilities: true,
       params: {
-        LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
+        LAYERS: 'vg_observation_v_autre_wmst',
         VERSION: '1.3.0'
       },
       sourceFields: [
         {
           name: 'date_observation',
           alias: "Date de l'observation",
-          allowedOperatorsType: 'Time' as OgcFilterOperatorType
+          allowedOperatorsType: OgcFilterOperatorType.Time
         }
       ],
       ogcFilters: {
@@ -513,28 +519,30 @@ export class AppOgcFilterComponent {
         editable: true,
         filters: {
           operator: 'During',
-          propertyName: 'date_observation'
-        } as OgcFilterDuringOptions,
+          propertyName: 'date_observation',
+          begin: '2016-01-01 00:00:00',
+          end: '2020-01-01 00:00:00'
+        } satisfies OgcFilterDuringOptions | OgcFilterAttributeOptions,
         allowedOperatorsType: OgcFilterOperatorType.Time
       }
     };
 
     this.dataSourceService
       .createAsyncDataSource(wmsOgcFilterOptions)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WMSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Inondation (During, optionsFromCapabilities)',
+            title: 'Inondations (During)',
             source: dataSource
-          })
+          } satisfies ImageLayerOptions)
         );
       });
 
-    interface WMSoptions
+    interface WMSOptions
       extends WMSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-    const filterableWMSwithPushButtons: WMSoptions = {
+    const filterableWMSwithPushButtons: WMSOptions = {
       type: 'wms',
       url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
       urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
@@ -561,7 +569,7 @@ export class AppOgcFilterComponent {
                 {
                   title: 'Montréal & Laval',
                   enabled: false,
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     logical: 'Or',
                     filters: [
@@ -581,7 +589,7 @@ export class AppOgcFilterComponent {
                 {
                   title: 'Outside Montréal & Laval',
                   enabled: false,
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     logical: 'And',
                     filters: [
@@ -621,7 +629,7 @@ export class AppOgcFilterComponent {
                 {
                   title: 'Radar photo fixe',
                   enabled: true,
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     operator: 'PropertyIsEqualTo',
                     propertyName: 'typeAppareil',
@@ -631,7 +639,7 @@ export class AppOgcFilterComponent {
                 {
                   title: 'Radar photo mobile',
                   enabled: false,
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     operator: 'PropertyIsEqualTo',
                     propertyName: 'typeAppareil',
@@ -642,7 +650,7 @@ export class AppOgcFilterComponent {
                   title: 'Radar photo fixe + feu rouge',
                   enabled: false,
                   color: '0,200,0',
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     operator: 'PropertyIsEqualTo',
                     propertyName: 'typeAppareil',
@@ -653,7 +661,7 @@ export class AppOgcFilterComponent {
                   title: 'Radar feu rouge',
                   enabled: false,
                   color: '255,0,0',
-                  tooltip: 'Here a tooltip explaning ...',
+                  tooltip: 'Here a tooltip explaining ...',
                   filters: {
                     operator: 'PropertyIsEqualTo',
                     propertyName: 'typeAppareil',
@@ -673,95 +681,19 @@ export class AppOgcFilterComponent {
         version: '1.1.0',
         outputFormat: 'geojson',
         outputFormatDownload: 'shp'
-      } as WFSDataSourceOptionsParams
+      } satisfies WFSDataSourceOptionsParams
     };
 
     this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
-      .subscribe((dataSource) => {
+      .subscribe((dataSource: WMSDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title:
               'Filterable WMS layers with predefined filters (push buttons)',
             source: dataSource
-          })
+          } satisfies ImageLayerOptions)
         );
       });
-
-    // const datasourceWmsWith2Layers: WMSoptions = {
-    //   type: 'wms',
-    //   url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-    //   urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-    //   params: {
-    //     layers: 'stations_meteoroutieres,histo_stations_meteoroutieres',
-    //     version: '1.3.0'
-    //   },
-    //   ogcFilters: {
-    //     enabled: true,
-    //     editable: true
-    //   },
-    //   paramsWFS: {
-    //     featureTypes: 'histo_stations_meteoroutieres',
-    //     fieldNameGeometry: 'geometry',
-    //     maxFeatures: 10000,
-    //     version: '1.1.0',
-    //     outputFormat: 'geojson',
-    //     outputFormatDownload: 'shp'
-    //   } as WFSDataSourceOptionsParams
-    // };
-    //
-    // this.dataSourceService
-    //   .createAsyncDataSource(datasourceWmsWith2Layers)
-    //   .subscribe(dataSource => {
-    //     this.map.addLayer(
-    //       this.layerService.createLayer({
-    //         title: 'Layer build from 2 WMS layers',
-    //         source: dataSource
-    //       })
-    //     );
-    //   });
-
-    // const datasourceWms: WMSoptions = {
-    //   type: 'wms',
-    //   url: '/geoserver/wms',
-    //   urlWfs: '/geoserver/wfs',
-    //   params: {
-    //     LAYERS: 'water_areas',
-    //     VERSION: '1.3.0'
-    //   },
-    //   ogcFilters: {
-    //     enabled: true,
-    //     editable: true,
-    //     filters: {
-    //       operator: 'PropertyIsEqualTo',
-    //       propertyName: 'waterway',
-    //       expression: 'riverbank'
-    //     }
-    //   },
-    //   sourceFields: [
-    //     { name: 'waterway', alias: 'Chemin d eau' },
-    //     { name: 'osm_id' },
-    //     { name: 'landuse', values: ['yes', 'no'] }
-    //   ],
-    //   paramsWFS: {
-    //     featureTypes: 'water_areas',
-    //     fieldNameGeometry: 'the_geom',
-    //     maxFeatures: 10000,
-    //     version: '1.1.0',
-    //     outputFormat: 'application/json',
-    //     outputFormatDownload: 'application/vnd.google-earth.kml+xml'
-    //   } as WFSDataSourceOptionsParams
-    // };
-    //
-    // this.dataSourceService
-    //   .createAsyncDataSource(datasourceWms)
-    //   .subscribe(dataSource => {
-    //     this.map.addLayer(
-    //       this.layerService.createLayer({
-    //         title: 'Geoserver water_areas',
-    //         source: dataSource
-    //       })
-    //     );
-    //   });
   }
 }

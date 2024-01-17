@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
   FeatureStore,
@@ -8,7 +7,11 @@ import {
   IgoMap,
   IgoMapModule,
   IgoMeasurerModule,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -27,7 +30,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   ]
 })
 export class AppMeasureComponent {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     controls: {
       attribution: {
         collapsed: true
@@ -36,29 +39,32 @@ export class AppMeasureComponent {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6,
     projection: 'EPSG:3857'
   };
 
-  public store = new FeatureStore<FeatureWithMeasure>([], { map: this.map });
+  public store: FeatureStore = new FeatureStore<FeatureWithMeasure>([], {
+    map: this.map
+  });
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
   }

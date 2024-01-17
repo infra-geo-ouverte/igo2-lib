@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 import {
   DataSourceService,
   FEATURE,
@@ -8,7 +7,11 @@ import {
   FeatureMotion,
   IgoMap,
   IgoMapModule,
-  LayerService
+  LayerOptions,
+  LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
 } from '@igo2/geo';
 
 import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
@@ -22,7 +25,7 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {
-  public map = new IgoMap({
+  public map: IgoMap = new IgoMap({
     overlay: true,
     controls: {
       attribution: {
@@ -31,33 +34,34 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     }
   });
 
-  public view = {
+  public view: MapViewOptions = {
     center: [-73, 47.2],
     zoom: 6
   };
 
   constructor(
-    private languageService: LanguageService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'osm'
-      })
-      .subscribe((dataSource) => {
+      } satisfies OSMDataSourceOptions)
+      .subscribe((dataSource: OSMDataSource) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
-            source: dataSource
-          })
+            source: dataSource,
+            baseLayer: true,
+            visible: true
+          } satisfies LayerOptions)
         );
       });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     const feature1: Feature = {
       type: FEATURE,
       projection: 'EPSG:4326',
@@ -108,7 +112,7 @@ export class AppOverlayComponent implements OnInit, AfterViewInit {
     };
 
     this.map.overlay.setFeatures(
-      [feature1, feature2, feature3],
+      [feature1, feature2, feature3] satisfies Feature[],
       FeatureMotion.None
     );
   }

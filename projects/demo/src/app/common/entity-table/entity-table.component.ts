@@ -6,6 +6,7 @@ import {
   EntityTableButton,
   EntityTableColumnRenderer,
   EntityTablePaginatorOptions,
+  EntityTableTemplate,
   IgoEntityTableModule,
   getEntityProperty
 } from '@igo2/common';
@@ -23,13 +24,13 @@ import { ExampleViewerComponent } from '../../components/example/example-viewer/
   imports: [DocViewerComponent, ExampleViewerComponent, IgoEntityTableModule]
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
-  public store = new EntityStore([]);
+  public store: EntityStore = new EntityStore([]);
   public paginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public paginatorOptions: EntityTablePaginatorOptions = { pageSize: 10 };
 
-  public template = {
+  public template: EntityTableTemplate = {
     selection: true,
     selectionCheckbox: true,
     selectMany: true,
@@ -72,7 +73,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
       {
         name: 'action',
         title: '',
-        valueAccessor: (entity: object) => {
+        valueAccessor: () => {
           return [
             {
               icon: 'home',
@@ -90,10 +91,10 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
 
   constructor() {}
 
-  ngOnInit() {
-    const ids = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+  ngOnInit(): void {
+    const ids: number[] = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-    const entities = ids.map((id) => {
+    const entities: object[] = ids.map((id: number) => {
       if (id === 3) {
         return {
           id,
@@ -114,15 +115,15 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
     this.store.load(entities);
   }
 
-  entitySortChange() {
+  entitySortChange(): void {
     this.entitySortChange$.next(true);
   }
 
-  paginatorChange(event: MatPaginator) {
+  paginatorChange(event: MatPaginator): void {
     this.paginator = event;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.store.destroy();
   }
 }

@@ -32,7 +32,7 @@ export class AppActivityComponent {
     this.activityService.unregister(this.idsActivity.pop());
   }
 
-  get counter() {
+  get counter(): number {
     return this.activityService.counter$.value;
   }
 }

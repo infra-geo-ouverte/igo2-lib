@@ -44,7 +44,7 @@ export class AppThemeComponent {
     private renderer: Renderer2
   ) {}
 
-  loadTheme(matSelectChange: MatSelectChange) {
+  loadTheme(matSelectChange: MatSelectChange): void {
     if (matSelectChange.value === 'dark-demo-test') {
       this.isDark = true;
       this.renderer.addClass(document.body, 'dark-theme');
