@@ -10,6 +10,7 @@ import { ConfigService, StorageService } from '@igo2/core';
 import {
   CommonVectorStyleOptions,
   Feature,
+  FeatureMotion,
   FeatureStore,
   FeatureWorkspace,
   OverlayStyleOptions,
@@ -22,6 +23,14 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MapState } from '../map';
 import { WorkspaceState } from '../workspace/workspace.state';
+
+/**
+ * Define the FeatureMotion to apply when adding the SearchResult to the map as an overlay.
+ */
+export interface SearchFeatureMotion {
+  selected?: FeatureMotion;
+  focus?: FeatureMotion;
+}
 
 /**
  * Service that holds the state of the search module
@@ -37,6 +46,15 @@ export class SearchState {
 
   public focusedOrResolution$$: Subscription;
   public selectedOrResolution$$: Subscription;
+  /**
+   * Default feature motion are:
+   * on selection = FeatureMotion.Default and
+   * on focus = FeatureMotion.None
+   */
+  public featureMotion: SearchFeatureMotion = {
+    selected: FeatureMotion.Default,
+    focus: FeatureMotion.None
+  };
 
   readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(
     '|'

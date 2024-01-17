@@ -49,7 +49,7 @@
         placeholder="false"
         [settingsChange$]="settingsChange$"
         (resultFocus)="onResultFocus($event)"
-        (resultSelect)="onResultFocus($event)"
+        (resultSelect)="onResultSelect($event)"
         (moreResults)="onSearch($event)"
       >
         <ng-template #igoSearchItemToolbar let-result="result">
