@@ -225,6 +225,9 @@ export class IgoMap implements MapBase {
         options.projection
       );
     }
+    if (viewOptions?.rotation) {
+      this.viewController.rotation$.next(viewOptions.rotation);
+    }
 
     this.ol.setView(new olView(viewOptions));
 
