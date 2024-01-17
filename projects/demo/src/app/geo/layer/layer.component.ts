@@ -145,6 +145,29 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
+        title: 'Direction du vent',
+        visible: false,
+        legendOptions: {
+          stylesAvailable: [
+            {name: 'WDIR6-LINEAR', title: 'WDIR6-LINEAR'},
+            {name: 'WDIR6', title: 'WDIR6'},
+            {name: 'WDIR3-LINEAR', title: 'WDIR3-LINEAR'},
+            {name: 'WDIR3', title: 'WDIR3'}
+          ]
+        },
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://geo.weather.gc.ca/geomet?lang=fr',
+          params: {
+            LAYERS: 'HRDPS.CONTINENTAL_WD',
+            VERSION: '1.3.0'
+          }
+        }
+      } satisfies ImageLayerOptions)
+      .subscribe((layer: ImageLayer) => this.map.addLayer(layer));
+
+    this.layerService
+      .createAsyncLayer({
         title: 'District écologique',
         visible: false,
         sourceOptions: {
