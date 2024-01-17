@@ -486,11 +486,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
+   /**
+   * Event emitted when the search settings changes
+   */
+   @Output() selectElement = new EventEmitter();
+
   /**
    * When the user clicks on the magnifying glass and
    * this find the first object on the map otherwise the
    * coordinate it will be the second option to be focused in the map
    */
+
 
  selectFirstElement(){
 
@@ -508,6 +514,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
     //Condition to evaluate if the result has a maxScore if not it is going to take the value of coordinate
     if(result){
+      this.selectElement.emit(result);
       this.store.state.update(result,{focused:true,selected:true},true);
     }else{
       reverseString(coordInv);
