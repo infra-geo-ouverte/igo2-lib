@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -6,21 +7,35 @@ import {
   ViewChild
 } from '@angular/core';
 
-import { Action, ActionStore, EntityStore } from '@igo2/common';
+import { ActionStore, EntityStore } from '@igo2/common';
+import {
+  IgoActionbarModule,
+  IgoContextMenuModule,
+  IgoPanelModule
+} from '@igo2/common';
 import { MediaService, StorageService } from '@igo2/core';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
   GoogleLinks,
+  IgoFeatureDetailsModule,
   IgoMap,
+  IgoMapModule,
+  IgoSearchBarModule,
+  IgoSearchModule,
+  IgoSearchResultsModule,
   LayerOptions,
   LayerService,
   MapService,
   MapViewOptions,
   Research,
   SearchResult,
-  TileLayer
+  SearchService,
+  provideDefaultCoordinatesSearchResultFormatter,
+  provideDefaultIChercheSearchResultFormatter,
+  provideILayerSearchResultFormatter,
+  provideSearchSourceService
 } from '@igo2/geo';
 import { SearchState } from '@igo2/integration';
 
@@ -30,10 +45,34 @@ import * as proj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    NgIf,
+    IgoMapModule,
+    IgoContextMenuModule,
+    IgoSearchModule,
+    IgoPanelModule,
+    IgoSearchBarModule,
+    IgoSearchResultsModule,
+    IgoFeatureDetailsModule,
+    IgoActionbarModule
+  ],
+  providers: [
+    SearchService,
+    provideSearchSourceService(),
+    provideDefaultIChercheSearchResultFormatter(),
+    provideDefaultCoordinatesSearchResultFormatter(),
+    provideILayerSearchResultFormatter()
+  ]
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store: ActionStore = new ActionStore([]);
@@ -95,7 +134,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
           type: 'osm'
         }
       } satisfies LayerOptions)
-      .subscribe((layer: TileLayer) => this.map.addLayer(layer));
+      .subscribe((layer) => this.map.addLayer(layer));
 
     this.igoReverseSearchCoordsFormatEnabled =
       Boolean(this.storageService.get('reverseSearchCoordsFormatEnabled')) ||
@@ -181,7 +220,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         title: 'googleStreetView',
         handler: () => this.openGoogleStreetView(this.lonlat)
       }
-    ] satisfies Action[]);
+    ]);
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import {
   IgoMap,
+  IgoMapModule,
+  IgoPrintModule,
   ImageLayer,
   ImageLayerOptions,
   LayerService,
@@ -10,10 +13,21 @@ import {
   TileLayerOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-print',
   templateUrl: './print.component.html',
-  styleUrls: ['./print.component.scss']
+  styleUrls: ['./print.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoPrintModule
+  ]
 })
 export class AppPrintComponent {
   public map: IgoMap = new IgoMap({

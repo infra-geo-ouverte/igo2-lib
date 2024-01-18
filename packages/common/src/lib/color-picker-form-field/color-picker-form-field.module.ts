@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { IgoLanguageModule } from '@igo2/core';
+
 import { ColorChromeModule } from 'ngx-color/chrome';
 
 import { ColorPickerFormFieldComponent } from './color-picker-form-field.component';
@@ -21,7 +22,7 @@ import { ColorPickerFormFieldComponent } from './color-picker-form-field.compone
     CommonModule,
     OverlayModule,
     ColorChromeModule,
-    TranslateModule
+    IgoLanguageModule
   ],
   declarations: [ColorPickerFormFieldComponent],
   exports: [ColorPickerFormFieldComponent]

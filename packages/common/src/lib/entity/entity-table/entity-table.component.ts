@@ -695,8 +695,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy {
     return selectionCount === 0
       ? states.None
       : selectionCount === this.store.stateView.count
-      ? states.All
-      : states.Some;
+        ? states.All
+        : states.Some;
   }
 
   /**

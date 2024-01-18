@@ -4,7 +4,9 @@ import {
   DataSourceService,
   FeatureStore,
   FeatureWithDraw,
+  IgoDrawModule,
   IgoMap,
+  IgoMapModule,
   LayerOptions,
   LayerService,
   MapService,
@@ -13,10 +15,20 @@ import {
   OSMDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-draw',
   templateUrl: './draw.component.html',
-  styleUrls: ['./draw.component.scss']
+  styleUrls: ['./draw.component.scss'],
+  standalone: true,
+  imports: [
+    IgoMapModule,
+    IgoDrawModule,
+    DocViewerComponent,
+    ExampleViewerComponent
+  ]
 })
 export class AppDrawComponent {
   public map: IgoMap = new IgoMap({

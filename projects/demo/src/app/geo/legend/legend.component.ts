@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 
+import { IgoPanelModule } from '@igo2/common';
 import {
   DataSourceService,
+  IgoLayerModule,
   IgoMap,
+  IgoMapModule,
   ImageLayer,
   ImageLayerOptions,
   LayerOptions,
@@ -15,10 +18,21 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-legend',
   templateUrl: './legend.component.html',
-  styleUrls: ['./legend.component.scss']
+  styleUrls: ['./legend.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoLayerModule
+  ]
 })
 export class AppLegendComponent {
   public map: IgoMap = new IgoMap({

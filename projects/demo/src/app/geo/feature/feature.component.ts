@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EntityTableTemplate } from '@igo2/common';
 
+import { EntityTableTemplate, IgoEntityTableModule } from '@igo2/common';
 import {
   DataSourceService,
   FeatureDataSource,
@@ -10,6 +10,7 @@ import {
   FeatureStoreLoadingStrategy,
   FeatureStoreSelectionStrategy,
   IgoMap,
+  IgoMapModule,
   LayerOptions,
   LayerService,
   MapViewOptions,
@@ -18,10 +19,20 @@ import {
   VectorLayer
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-feature',
   templateUrl: './feature.component.html',
-  styleUrls: ['./feature.component.scss']
+  styleUrls: ['./feature.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoEntityTableModule
+  ]
 })
 export class AppFeatureComponent implements OnInit, OnDestroy {
   public map: IgoMap = new IgoMap({
@@ -65,13 +76,15 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const loadingStrategy: FeatureStoreLoadingStrategy = new FeatureStoreLoadingStrategy({});
+    const loadingStrategy: FeatureStoreLoadingStrategy =
+      new FeatureStoreLoadingStrategy({});
     this.store.addStrategy(loadingStrategy);
 
-    const selectionStrategy: FeatureStoreSelectionStrategy = new FeatureStoreSelectionStrategy({
-      map: this.map,
-      motion: FeatureMotion.Default
-    });
+    const selectionStrategy: FeatureStoreSelectionStrategy =
+      new FeatureStoreSelectionStrategy({
+        map: this.map,
+        motion: FeatureMotion.Default
+      });
     this.store.addStrategy(selectionStrategy);
 
     this.store.load([

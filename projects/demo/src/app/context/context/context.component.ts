@@ -1,12 +1,40 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
-import { ContextService } from '@igo2/context';
-import { IgoMap, MapService, MapViewOptions } from '@igo2/geo';
+import { IgoPanelModule } from '@igo2/common';
+import {
+  ContextService,
+  IgoContextImportExportModule,
+  IgoContextManagerModule
+} from '@igo2/context';
+import {
+  IgoLayerModule,
+  IgoMap,
+  IgoMapModule,
+  IgoMetadataModule,
+  MapService,
+  MapViewOptions
+} from '@igo2/geo';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-context',
   templateUrl: './context.component.html',
-  styleUrls: ['./context.component.scss']
+  styleUrls: ['./context.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoContextManagerModule,
+    IgoPanelModule,
+    IgoLayerModule,
+    IgoMetadataModule,
+    IgoContextImportExportModule
+  ]
 })
 export class AppContextComponent {
   public map: IgoMap = new IgoMap({

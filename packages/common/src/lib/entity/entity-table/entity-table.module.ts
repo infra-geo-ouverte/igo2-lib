@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -45,7 +46,8 @@ import { EntityTableComponent } from './entity-table.component';
     ReactiveFormsModule,
     MatInputModule,
     MatDatepickerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatNativeDateModule
   ],
   exports: [EntityTableComponent],
   declarations: [EntityTableComponent, EntityTableRowDirective]

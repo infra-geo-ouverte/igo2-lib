@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,8 +7,12 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import {
+  IgoPanelModule,
+  IgoToolboxModule,
   OnUpdateInputs,
   Tool,
   ToolComponent,
@@ -16,6 +21,9 @@ import {
 } from '@igo2/common';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @ToolComponent({
   name: 'demo-salutation',
@@ -26,7 +34,8 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'app-salutation-tool',
   template: ` <p>Hello, my name is {{ name }}.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AppSalutationToolComponent implements OnUpdateInputs {
   @Input() name: string;
@@ -46,14 +55,26 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 @Component({
   selector: 'app-about-tool',
   template: ` <p>I'm a tool inside a toolbox.</p> `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class AppAboutToolComponent {}
 
 @Component({
   selector: 'app-tool',
   templateUrl: './tool.component.html',
-  styleUrls: ['./tool.component.scss']
+  styleUrls: ['./tool.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoPanelModule,
+    NgIf,
+    MatButtonModule,
+    MatIconModule,
+    IgoToolboxModule,
+    AsyncPipe
+  ]
 })
 export class AppToolComponent implements OnInit, OnDestroy {
   toolbox: Toolbox = new Toolbox();

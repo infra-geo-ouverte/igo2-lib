@@ -1,4 +1,6 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatPaginator } from '@angular/material/paginator';
 
 import {
@@ -7,11 +9,17 @@ import {
   EntityRecord,
   EntityTablePaginatorOptions,
   EntityTableScrollBehavior,
+  IgoActionbarModule,
+  IgoEntityTableModule,
+  IgoEntityTablePaginatorModule,
+  IgoWorkspaceSelectorModule,
+  IgoWorkspaceWidgetOutletModule,
   Workspace,
   WorkspaceStore
 } from '@igo2/common';
 import {
   DataSourceService,
+  IgoGeoWorkspaceModule,
   IgoMap,
   LayerOptions,
   LayerService,
@@ -22,15 +30,34 @@ import {
   WFSDataSource,
   WFSDataSourceOptions
 } from '@igo2/geo';
+import { IgoMapModule } from '@igo2/geo';
 import { WorkspaceState } from '@igo2/integration';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
-  styleUrls: ['./workspace.component.scss']
+  styleUrls: ['./workspace.component.scss'],
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoActionbarModule,
+    IgoEntityTableModule,
+    IgoEntityTablePaginatorModule,
+    IgoGeoWorkspaceModule,
+    IgoMapModule,
+    IgoWorkspaceSelectorModule,
+    IgoWorkspaceWidgetOutletModule,
+    MatCardModule,
+    NgIf
+  ]
 })
 export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;
@@ -62,7 +89,8 @@ export class AppWorkspaceComponent implements OnInit {
 
   public actionbarMode: ActionbarMode = ActionbarMode.Overlay;
 
-  public scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Instant;
+  public scrollBehavior: EntityTableScrollBehavior =
+    EntityTableScrollBehavior.Instant;
 
   constructor(
     private dataSourceService: DataSourceService,
@@ -77,7 +105,8 @@ export class AppWorkspaceComponent implements OnInit {
       )
       .pipe(
         map((record: EntityRecord<Workspace>) => {
-          const entity: Workspace = record === undefined ? undefined : record.entity;
+          const entity: Workspace =
+            record === undefined ? undefined : record.entity;
           if (entity) {
             // In fact, the download action is not fully functionnal into the igo2-lib demo
             // The button triggers a tool (importExport) and this tool is not available in the igo2-lib demo.

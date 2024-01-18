@@ -1,9 +1,16 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
+import { IgoPanelModule } from '@igo2/common';
 import {
   DataSourceService,
   FeatureDataSource,
+  IgoDownloadModule,
+  IgoFilterModule,
+  IgoLayerModule,
   IgoMap,
+  IgoMapModule,
+  IgoMetadataModule,
   ImageLayer,
   ImageLayerOptions,
   LayerOptions,
@@ -19,10 +26,25 @@ import {
   WMSDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-layer',
   templateUrl: './layer.component.html',
-  styleUrls: ['./layer.component.scss']
+  styleUrls: ['./layer.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoLayerModule,
+    IgoMetadataModule,
+    IgoDownloadModule,
+    IgoFilterModule
+  ]
 })
 export class AppLayerComponent {
   public map: IgoMap = new IgoMap({

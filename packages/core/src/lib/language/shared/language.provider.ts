@@ -21,12 +21,6 @@ export function provideRootTranslation(
   return TranslateModule.forRoot(setTranslationConfig(loader));
 }
 
-export function provideMockTranslation(
-  loader?: Provider
-): ImportProvidersSource {
-  return TranslateModule.forRoot();
-}
-
 export const setTranslationConfig = (
   loader?: Provider
 ): TranslateModuleConfig => ({

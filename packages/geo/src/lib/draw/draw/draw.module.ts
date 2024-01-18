@@ -15,8 +15,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { IgoEntityTableModule } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
@@ -49,8 +47,6 @@ import { DrawComponent } from './draw.component';
     MatDialogModule,
     IgoLanguageModule,
     IgoEntityTableModule,
-    BrowserModule,
-    BrowserAnimationsModule,
     MatRadioModule,
     MatCheckboxModule
   ],

@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EntityRecord, EntityStore } from '@igo2/common';
+import { EntityRecord, EntityStore, IgoPanelModule } from '@igo2/common';
 import { StorageService } from '@igo2/core';
 import {
   Catalog,
   CatalogItem,
   CatalogService,
+  IgoCatalogBrowserModule,
+  IgoCatalogLibraryModule,
   IgoMap,
+  IgoMapModule,
   LayerOptions,
   LayerService,
   MapService,
@@ -14,10 +17,22 @@ import {
   TileLayer
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['./catalog.component.scss']
+  styleUrls: ['./catalog.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoPanelModule,
+    IgoCatalogLibraryModule,
+    IgoCatalogBrowserModule
+  ]
 })
 export class AppCatalogComponent implements OnInit {
   catalog: Catalog;

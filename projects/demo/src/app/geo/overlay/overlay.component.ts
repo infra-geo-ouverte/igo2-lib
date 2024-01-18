@@ -6,6 +6,7 @@ import {
   Feature,
   FeatureMotion,
   IgoMap,
+  IgoMapModule,
   LayerOptions,
   LayerService,
   MapViewOptions,
@@ -13,10 +14,15 @@ import {
   OSMDataSourceOptions
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-overlay',
   templateUrl: './overlay.component.html',
-  styleUrls: ['./overlay.component.scss']
+  styleUrls: ['./overlay.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule]
 })
 export class AppOverlayComponent implements OnInit, AfterViewInit {
   public map: IgoMap = new IgoMap({

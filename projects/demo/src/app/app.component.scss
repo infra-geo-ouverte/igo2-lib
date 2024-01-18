@@ -17,6 +17,23 @@
     margin: 0;
   }
 }
+mat-panel-title {
+  font-size: 14px;
+}
+
+mat-nav-list {
+  padding: 0;
+}
+
+mat-expansion-panel {
+  box-shadow: unset !important;
+
+  ::ng-deep {
+    .mat-expansion-panel-body {
+      padding: 0 8px 16px;
+    }
+  }
+}
 
 .example-is-mobile .example-toolbar {
   position: fixed;

@@ -1,6 +1,7 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { getEntityTitle } from '@igo2/common';
+import { IgoPanelModule, getEntityTitle } from '@igo2/common';
 import {
   DataSource,
   DataSourceService,
@@ -8,7 +9,11 @@ import {
   FeatureDataSource,
   FeatureDataSourceOptions,
   FeatureMotion,
+  IgoFeatureDetailsModule,
   IgoMap,
+  IgoMapModule,
+  IgoOverlayModule,
+  IgoQueryModule,
   ImageLayer,
   ImageLayerOptions,
   LayerOptions,
@@ -33,13 +38,31 @@ import * as olproj from 'ol/proj';
 
 import { BehaviorSubject } from 'rxjs';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-query',
   templateUrl: './query.component.html',
-  styleUrls: ['./query.component.scss']
+  styleUrls: ['./query.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoMapModule,
+    IgoOverlayModule,
+    IgoQueryModule,
+    IgoPanelModule,
+    NgIf,
+    NgFor,
+    IgoFeatureDetailsModule,
+    AsyncPipe
+  ]
 })
 export class AppQueryComponent {
-  public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>([]);
+  public features$: BehaviorSubject<Feature[]> = new BehaviorSubject<Feature[]>(
+    []
+  );
 
   public map: IgoMap = new IgoMap({
     controls: {

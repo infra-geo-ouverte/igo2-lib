@@ -4,10 +4,8 @@ import { TestBed, inject } from '@angular/core/testing';
 import {
   IgoLanguageModule,
   IgoMessageModule,
-  provideMockTranslation
+  provideMockRootTranslation
 } from '@igo2/core';
-
-import { TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from './auth.service';
 
@@ -16,11 +14,11 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
-        provideMockTranslation(),
+        provideMockRootTranslation(),
         IgoLanguageModule,
         IgoMessageModule
       ],
-      providers: [AuthService, TranslateService]
+      providers: [AuthService]
     });
   });
 

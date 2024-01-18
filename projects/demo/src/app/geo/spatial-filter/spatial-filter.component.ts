@@ -1,3 +1,4 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,16 +7,26 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { EntityKey, EntityStore, EntityStoreWithStrategy } from '@igo2/common';
+import {
+  EntityKey,
+  EntityStore,
+  EntityStoreWithStrategy,
+  IgoPanelModule
+} from '@igo2/common';
 import { LanguageService, MessageService } from '@igo2/core';
 import {
   ClusterDataSource,
   DataSourceService,
   Feature,
   FeatureMotion,
+  IgoFeatureDetailsModule,
+  IgoFilterModule,
   IgoMap,
+  IgoMapModule,
+  IgoQueryModule,
   Layer,
   LayerOptions,
   LayerService,
@@ -35,8 +46,8 @@ import {
   featureToOl,
   moveToOlFeatures
 } from '@igo2/geo';
-import { Coordinate } from 'ol/coordinate';
 
+import { Coordinate } from 'ol/coordinate';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import type { default as OlGeometry } from 'ol/geom/Geometry';
 import olSourceCluster from 'ol/source/Cluster';
@@ -47,6 +58,9 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { take, takeUntil, tap } from 'rxjs/operators';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 /**
  * Spatial Filter Type
  */
@@ -54,7 +68,20 @@ import { take, takeUntil, tap } from 'rxjs/operators';
   selector: 'app-spatial-filter',
   templateUrl: './spatial-filter.component.html',
   styleUrls: ['./spatial-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoQueryModule,
+    IgoPanelModule,
+    IgoFilterModule,
+    NgIf,
+    IgoFeatureDetailsModule,
+    AsyncPipe
+  ]
 })
 export class AppSpatialFilterComponent implements OnInit, OnDestroy {
   public map: IgoMap = new IgoMap({
@@ -91,7 +118,9 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private format: olFormatGeoJSON = new olFormatGeoJSON();
 
-  public store: EntityStoreWithStrategy = new EntityStoreWithStrategy<Feature>([]); // Store to print results at the end
+  public store: EntityStoreWithStrategy = new EntityStoreWithStrategy<Feature>(
+    []
+  ); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -502,19 +531,21 @@ export class AppSpatialFilterComponent implements OnInit, OnDestroy {
 
   private createSvgIcon(icon: string): olstyle.Style {
     let style: olstyle.Style;
-    this.matIconRegistry.getNamedSvgIcon(icon).subscribe((svgObj: SVGElement) => {
-      const xmlSerializer: XMLSerializer = new XMLSerializer();
-      svgObj.setAttribute('width', '30');
-      svgObj.setAttribute('height', '30');
-      svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
-      svgObj.setAttribute('stroke', 'white');
-      const svg: string = xmlSerializer.serializeToString(svgObj);
-      style = new olstyle.Style({
-        image: new olstyle.Icon({
-          src: 'data:image/svg+xml;utf8,' + svg
-        })
+    this.matIconRegistry
+      .getNamedSvgIcon(icon)
+      .subscribe((svgObj: SVGElement) => {
+        const xmlSerializer: XMLSerializer = new XMLSerializer();
+        svgObj.setAttribute('width', '30');
+        svgObj.setAttribute('height', '30');
+        svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
+        svgObj.setAttribute('stroke', 'white');
+        const svg: string = xmlSerializer.serializeToString(svgObj);
+        style = new olstyle.Style({
+          image: new olstyle.Icon({
+            src: 'data:image/svg+xml;utf8,' + svg
+          })
+        });
       });
-    });
     return style;
   }
   /**

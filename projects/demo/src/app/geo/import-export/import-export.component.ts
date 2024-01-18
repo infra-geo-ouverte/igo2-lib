@@ -1,18 +1,32 @@
 import { Component } from '@angular/core';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import { WorkspaceStore } from '@igo2/common';
 import {
+  IgoImportExportModule,
   IgoMap,
+  IgoMapModule,
   LayerOptions,
   LayerService,
   MapViewOptions,
   TileLayer
 } from '@igo2/geo';
 
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
+
 @Component({
   selector: 'app-import-export',
   templateUrl: './import-export.component.html',
-  styleUrls: ['./import-export.component.scss']
+  styleUrls: ['./import-export.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    MatGridListModule,
+    IgoMapModule,
+    IgoImportExportModule
+  ]
 })
 export class AppImportExportComponent {
   public map: IgoMap = new IgoMap({

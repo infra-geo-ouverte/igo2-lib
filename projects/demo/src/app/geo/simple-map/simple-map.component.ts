@@ -1,12 +1,27 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 
 import { Media, MediaService } from '@igo2/core';
-import { DataSourceService, IgoMap, LayerOptions, LayerService, MapViewOptions, OSMDataSource, OSMDataSourceOptions } from '@igo2/geo';
+import {
+  DataSourceService,
+  IgoMap,
+  IgoMapModule,
+  LayerOptions,
+  LayerService,
+  MapViewOptions,
+  OSMDataSource,
+  OSMDataSourceOptions
+} from '@igo2/geo';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 @Component({
   selector: 'app-simple-map',
   templateUrl: './simple-map.component.html',
-  styleUrls: ['./simple-map.component.scss']
+  styleUrls: ['./simple-map.component.scss'],
+  standalone: true,
+  imports: [DocViewerComponent, ExampleViewerComponent, IgoMapModule, NgIf]
 })
 export class AppSimpleMapComponent {
   public pointerCoord: string;

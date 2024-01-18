@@ -6,7 +6,7 @@ import {
   ConfigService,
   MONITORING_OPTIONS,
   MessageService,
-  provideMockTranslation
+  provideMockRootTranslation
 } from '@igo2/core';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -22,8 +22,8 @@ const initialize = (
   TestBed.configureTestingModule({
     imports: [
       HttpClientModule,
+      provideMockRootTranslation(),
       IgoAuthModule,
-      provideMockTranslation(),
       ToastrModule
     ],
     providers: [

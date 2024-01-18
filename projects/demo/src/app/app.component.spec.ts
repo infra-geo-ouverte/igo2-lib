@@ -16,7 +16,7 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
+    imports: [
         RouterTestingModule,
         NoopAnimationsModule,
         MatCardModule,
@@ -26,10 +26,10 @@ describe('AppComponent', () => {
         MatSidenavModule,
         MatListModule,
         MatIconTestingModule,
-        IgoAuthModule
-      ],
-      declarations: [AppComponent]
-    }).compileComponents();
+        IgoAuthModule,
+        AppComponent
+    ]
+}).compileComponents();
   }));
   it('should create the app', waitForAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);

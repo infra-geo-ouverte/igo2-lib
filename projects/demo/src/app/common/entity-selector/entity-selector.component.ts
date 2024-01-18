@@ -1,8 +1,12 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
+import { EntityStore, IgoEntitySelectorModule } from '@igo2/common';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { DocViewerComponent } from '../../components/doc-viewer/doc-viewer.component';
+import { ExampleViewerComponent } from '../../components/example/example-viewer/example-viewer.component';
 
 interface DemoEntity {
   id: string;
@@ -13,12 +17,21 @@ interface DemoEntity {
 @Component({
   selector: 'app-entity-selector',
   templateUrl: './entity-selector.component.html',
-  styleUrls: ['./entity-selector.component.scss']
+  styleUrls: ['./entity-selector.component.scss'],
+  standalone: true,
+  imports: [
+    DocViewerComponent,
+    ExampleViewerComponent,
+    IgoEntitySelectorModule,
+    NgIf,
+    AsyncPipe
+  ]
 })
 export class AppEntitySelectorComponent implements OnInit, OnDestroy {
   public store: EntityStore = new EntityStore([]);
 
-  public selectedEntity$: BehaviorSubject<DemoEntity> = new BehaviorSubject<DemoEntity>(undefined);
+  public selectedEntity$: BehaviorSubject<DemoEntity> =
+    new BehaviorSubject<DemoEntity>(undefined);
   public entityIsSelected: boolean;
 
   constructor() {}
